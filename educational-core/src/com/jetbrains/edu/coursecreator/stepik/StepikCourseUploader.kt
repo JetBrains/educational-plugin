@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
+import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
 import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
@@ -164,7 +165,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
 
   private fun processSectionChanges(lastUpdateDate: Date) {
     val pushCandidates = course.sections.filter { it.stepikChangeStatus != StepikChangeStatus.UP_TO_DATE }
-    val sectionsFromStepik = StepikNewConnector.getSections(
+    val sectionsFromStepik = StepikMultipleRequestsConnector.getSections(
       pushCandidates.map { it.id }.filter { it != 0 })
 
     val deleteCandidates = ArrayList<Int>()
@@ -188,7 +189,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       }
     }
 
-    lessonsToDelete.addAll(StepikNewConnector.getUnits(deleteCandidates).filter { it.updateDate <= lastUpdateDate }.map { it.id })
+    lessonsToDelete.addAll(StepikMultipleRequestsConnector.getUnits(deleteCandidates).filter { it.updateDate <= lastUpdateDate }.map { it.id })
   }
 
   private fun processSectionContentChanged(section: Section,
@@ -232,7 +233,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       }
     }
 
-    lessonsToDelete.addAll(StepikNewConnector.getUnits(deleteCandidates).filter { it.updateDate <= lastUpdateDate }.map { it.id })
+    lessonsToDelete.addAll(StepikMultipleRequestsConnector.getUnits(deleteCandidates).filter { it.updateDate <= lastUpdateDate }.map { it.id })
   }
 
   private fun processLessonContentChanged(lesson: Lesson,
@@ -250,7 +251,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       }
     }
 
-    val stepSources = StepikNewConnector.getStepSources(deleteCandidates, lesson.course.languageID)
+    val stepSources = StepikMultipleRequestsConnector.getStepSources(deleteCandidates, lesson.course.languageID)
     val tasksFromStep = StepikCourseLoader.getTasks(course.languageById, lesson, stepSources)
     tasksToDelete.addAll(tasksFromStep.filter { it.updateDate <= lastUpdateDate }.map { it.stepId })
   }
@@ -293,7 +294,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     }
 
     val remoteSectionIds = courseInfo.sectionIds
-    val sections = StepikNewConnector.getSections(remoteSectionIds)
+    val sections = StepikMultipleRequestsConnector.getSections(remoteSectionIds)
     val localSectionIds = course.sections.map { it.id }
     for (section in sections) {
       if (section.name == StepikNames.PYCHARM_ADDITIONAL) {

@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
+import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -252,7 +253,7 @@ public class CCStepikConnector {
       EduCourse courseInfo = StepikNewConnector.INSTANCE.getCourseInfo(course.getId(), true);
       if (courseInfo != null) {
         List<Integer> sectionIds = courseInfo.getSectionIds();
-        List<Section> sections = StepikNewConnector.INSTANCE.getSections(sectionIds);
+        List<Section> sections = StepikMultipleRequestsConnector.INSTANCE.getSections(sectionIds);
         for (Section section : sections) {
           if (section.getName().equals(courseInfo.getName())) {
             return section.getId();

@@ -11,8 +11,6 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.*
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.getStepSources
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.getUnits
 import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -48,7 +46,7 @@ object StepikCourseLoader {
   }
 
   private fun setAuthors(result: List<EduCourse>) {
-    val allUsers = StepikNewConnector.getUsers(result)
+    val allUsers = StepikMultipleRequestsConnector.getUsers(result)
     val usersById = allUsers.associateBy { it.id }
 
     for (course in result) {
@@ -95,7 +93,7 @@ object StepikCourseLoader {
 
   fun fillItems(remoteCourse: EduCourse) {
     val sectionIds = remoteCourse.sectionIds
-    val allSections = StepikNewConnector.getSections(sectionIds)
+    val allSections = StepikMultipleRequestsConnector.getSections(sectionIds)
 
     if (hasVisibleSections(allSections, remoteCourse.name)) {
       remoteCourse.sectionIds = emptyList()
@@ -132,7 +130,7 @@ object StepikCourseLoader {
   }
 
   fun getUnitsIds(remoteCourse: EduCourse): List<Int> {
-    val sections = StepikNewConnector.getSections(remoteCourse.sectionIds)
+    val sections = StepikMultipleRequestsConnector.getSections(remoteCourse.sectionIds)
     return sections.flatMap { section -> section.units }.distinct()
   }
 
@@ -203,7 +201,7 @@ object StepikCourseLoader {
         progressIndicator.text = "Loading lesson $readableIndex from $lessonCount"
         progressIndicator.fraction = readableIndex.toDouble() / lessonCount
       }
-      val allStepSources = getStepSources(lesson.steps, remoteCourse.languageID)
+      val allStepSources = StepikMultipleRequestsConnector.getStepSources(lesson.steps, remoteCourse.languageID)
 
       if (!allStepSources.isEmpty()) {
         val options = allStepSources[0].block.options
@@ -221,9 +219,9 @@ object StepikCourseLoader {
   }
 
   fun getLessonsFromUnitIds(unitIds: List<Int>): List<Lesson> {
-    val units = getUnits(unitIds)
+    val units = StepikMultipleRequestsConnector.getUnits(unitIds)
     val lessonIds = units.map { unit -> unit.lesson }
-    val lessons = StepikNewConnector.getLessons(lessonIds)
+    val lessons = StepikMultipleRequestsConnector.getLessons(lessonIds)
 
     for ((i, lesson) in lessons.withIndex()) {
       val unit = units[i]

@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
+import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
@@ -234,7 +235,7 @@ public class StepikSolutionsLoader implements Disposable {
     Task[] allTasks = allLessons.flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
 
     List<String> progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + task.getStepId()).collect(Collectors.toList());
-    List<Boolean> taskStatuses = StepikNewConnector.INSTANCE.taskStatuses(progresses);
+    List<Boolean> taskStatuses = StepikMultipleRequestsConnector.INSTANCE.taskStatuses(progresses);
     if (taskStatuses == null) return tasksToUpdate;
     for (int j = 0; j < allTasks.length; j++) {
       Boolean isSolved = taskStatuses.get(j);
