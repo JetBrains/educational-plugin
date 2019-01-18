@@ -228,4 +228,31 @@ object StepikNewConnector {
       LOG.warn("Error while Views post, code: " + response.code())
     }
   }
+
+  fun deleteLesson(lessonId: Int) {
+    val response = service.deleteLesson(lessonId).execute()
+    validateDeleteResponse(response.code(), lessonId)
+  }
+
+  fun deleteSection(sectionId: Int) {
+    val response = service.deleteSection(sectionId).execute()
+    validateDeleteResponse(response.code(), sectionId)
+  }
+
+  fun deleteUnit(unitId: Int) {
+    val response = service.deleteUnit(unitId).execute()
+    validateDeleteResponse(response.code(), unitId)
+  }
+
+  fun deleteTask(taskId: Int) {
+    val response = service.deleteStepSource(taskId).execute()
+    validateDeleteResponse(response.code(), taskId)
+  }
+
+  private fun validateDeleteResponse(responseCode: Int, id: Int) {
+    if (responseCode != HttpStatus.SC_NO_CONTENT) {
+      // If parent item was deleted its children are deleted too, so it's ok to fail to delete item here
+      LOG.warn("Failed to delete item $id")
+    }
+  }
 }

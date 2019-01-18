@@ -13,6 +13,10 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.deleteLesson
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.deleteSection
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.deleteTask
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.deleteUnit
 import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
 import kotlin.collections.ArrayList

@@ -64,17 +64,6 @@ interface StepikService {
   @GET("assignments")
   fun assignments(@Query("ids[]") vararg ids: Int): Call<AssignmentsList>
 
-  // PUT requests:
-
-  @PUT("sections/{id}")
-  fun sections(@Path("id") sectionId: Int, @Body sectionData: SectionData): Call<SectionsList>
-
-  @PUT("lessons/{id}")
-  fun lessons(@Path("id") lessonId: Int, @Body lessonData: LessonData): Call<LessonsList>
-
-  @PUT("units/{id}")
-  fun unit(@Path("id") unitId: Int, @Body unitData: UnitData): Call<UnitsList>
-
   // POST requests:
 
   @POST("enrollments")
@@ -97,4 +86,30 @@ interface StepikService {
 
   @POST("views")
   fun view(@Body viewData: ViewData): Call<ResponseBody>
+
+  // PUT requests:
+
+  @PUT("sections/{id}")
+  fun sections(@Path("id") sectionId: Int, @Body sectionData: SectionData): Call<SectionsList>
+
+  @PUT("lessons/{id}")
+  fun lessons(@Path("id") lessonId: Int, @Body lessonData: LessonData): Call<LessonsList>
+
+  @PUT("units/{id}")
+  fun unit(@Path("id") unitId: Int, @Body unitData: UnitData): Call<UnitsList>
+
+  // DELETE requests:
+
+  @DELETE("lessons/{id}")
+  fun deleteLesson(@Path("id") lessonId: Int): Call<Any>
+
+  @DELETE("sections/{id}")
+  fun deleteSection(@Path("id") sectionId: Int): Call<Any>
+
+  @DELETE("units/{id}")
+  fun deleteUnit(@Path("id") unitId: Int): Call<Any>
+
+  @DELETE("step-sources/{id}")
+  fun deleteStepSource(@Path("id") taskId: Int): Call<Any>
+
 }

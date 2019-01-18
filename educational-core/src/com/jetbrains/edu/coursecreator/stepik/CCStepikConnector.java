@@ -27,7 +27,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
 import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector;
@@ -36,7 +35,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
@@ -605,7 +603,7 @@ public class CCStepikConnector {
 
     // Remove all tasks from Stepik which are not in our lessons now
     for (Integer step : taskIdsToDelete) {
-      deleteTask(step);
+      StepikNewConnector.INSTANCE.deleteTask(step);
     }
 
     for (Task task : localLesson.getTaskList()) {
@@ -724,58 +722,6 @@ public class CCStepikConnector {
     final JsonObject details = new JsonParser().parse(responseString).getAsJsonObject();
     final JsonElement detail = details.get("detail");
     return detail != null ? detail.getAsString() : responseString;
-  }
-
-  @Nullable
-  public static Lesson getLessonFromString(@NotNull String responseString) {
-    final JsonObject jsonTree = new Gson().fromJson(responseString, JsonObject.class);
-    if (jsonTree.has(SerializationUtils.LESSONS)) {
-      final JsonArray lessons = jsonTree.get(SerializationUtils.LESSONS).getAsJsonArray();
-      if (lessons.size() == 1) {
-        return new Gson().fromJson(lessons.get(0), Lesson.class);
-      }
-    }
-    return null;
-  }
-
-  public static void deleteSection(final int sectionId) {
-    final HttpDelete request = new HttpDelete(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS + "/" + sectionId);
-    deleteFromStepik(request);
-  }
-
-  public static void deleteLesson(final int lessonId) {
-    final HttpDelete request = new HttpDelete(StepikNames.STEPIK_API_URL + StepikNames.LESSONS + "/" + lessonId);
-    deleteFromStepik(request);
-  }
-
-  public static void deleteUnit(final int unitId) {
-    final HttpDelete request = new HttpDelete(StepikNames.STEPIK_API_URL + StepikNames.UNITS + "/" + unitId);
-    deleteFromStepik(request);
-  }
-
-  public static void deleteTask(int task) {
-    final HttpDelete request = new HttpDelete(StepikNames.STEPIK_API_URL + StepikNames.STEP_SOURCES + task);
-    deleteFromStepik(request);
-  }
-
-  private static void deleteFromStepik(@NotNull HttpDelete request) {
-    try {
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) return;
-      final CloseableHttpResponse response = client.execute(request);
-      final HttpEntity responseEntity = response.getEntity();
-      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-      EntityUtils.consume(responseEntity);
-      final StatusLine line = response.getStatusLine();
-      if (line.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
-        // If parent item was deleted its children are deleted too, so
-        // it's ok to fail to delete item here
-        LOG.warn("Failed to delete item " + responseString);
-      }
-    }
-    catch (IOException e) {
-      LOG.error(e.getMessage());
-    }
   }
 
   public static boolean postTask(@NotNull final Project project, @NotNull final Task task, final int lessonId) {
