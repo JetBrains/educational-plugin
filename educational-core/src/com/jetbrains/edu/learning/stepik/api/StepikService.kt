@@ -66,9 +66,6 @@ interface StepikService {
 
   // POST requests:
 
-  @POST("enrollments")
-  fun enrollments(@Body enrollment: EnrollmentData): Call<Any>
-
   @POST("sections")
   fun sections(@Body sectionData: SectionData): Call<SectionsList>
 
@@ -77,6 +74,12 @@ interface StepikService {
 
   @POST("units")
   fun units(@Body unitData: UnitData): Call<UnitsList>
+
+  @POST("step-sources")
+  fun stepSource(@Body stepSourceData: StepSourceData): Call<StepSourcesList>
+
+  @POST("enrollments")
+  fun enrollments(@Body enrollment: EnrollmentData): Call<Any>
 
   @POST("submissions")
   fun submissions(@Body submissionData: SubmissionData): Call<SubmissionsList>
@@ -103,11 +106,11 @@ interface StepikService {
 
   // DELETE requests:
 
-  @DELETE("lessons/{id}")
-  fun deleteLesson(@Path("id") lessonId: Int): Call<Any>
-
   @DELETE("sections/{id}")
   fun deleteSection(@Path("id") sectionId: Int): Call<Any>
+
+  @DELETE("lessons/{id}")
+  fun deleteLesson(@Path("id") lessonId: Int): Call<Any>
 
   @DELETE("units/{id}")
   fun deleteUnit(@Path("id") unitId: Int): Call<Any>

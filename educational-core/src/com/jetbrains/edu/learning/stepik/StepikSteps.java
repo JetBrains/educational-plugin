@@ -99,17 +99,6 @@ public class StepikSteps {
     }
   }
 
-  public static class StepSourceWrapper {
-    @Expose StepSource stepSource;
-
-    @SuppressWarnings("unused")
-    public StepSourceWrapper() { }
-
-    public StepSourceWrapper(Project project, Task task, int lessonId) {
-      stepSource = new StepSource(project, task, lessonId);
-    }
-  }
-
   public static class StepSource {
     @Expose public int id;
     @Expose public Step block;

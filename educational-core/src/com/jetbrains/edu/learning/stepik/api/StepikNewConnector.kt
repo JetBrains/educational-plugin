@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -23,7 +22,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 object StepikNewConnector {
-  private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests
   private val LOG = Logger.getInstance(StepikNewConnector::class.java)
   private val converterFactory: JacksonConverterFactory
 
@@ -197,6 +195,15 @@ object StepikNewConnector {
     return service.lessons(LessonData(lesson)).execute().body()?.lessons?.firstOrNull()
   }
 
+  fun postTask(project: Project, task: Task, lessonId: Int): StepikSteps.StepSource? {
+    var stepSourceData: StepSourceData? = null
+    invokeAndWaitIfNeed {
+      FileDocumentManager.getInstance().saveAllDocuments()
+      stepSourceData = StepSourceData(project, task, lessonId)
+    }
+    return service.stepSource(stepSourceData!!).execute().body()?.steps?.firstOrNull()
+  }
+
   fun postSubmission(passed: Boolean, attempt: StepikWrappers.Attempt,
                      files: ArrayList<StepikWrappers.SolutionFile>, task: Task): List<StepikWrappers.Submission>? {
     return postSubmission(SubmissionData(attempt.id, if (passed) "1" else "0", files, task))
@@ -254,7 +261,6 @@ object StepikNewConnector {
   }
 
   fun updateTask(project: Project, task: Task): Int {
-    ApplicationManager.getApplication().invokeAndWait {  }
     var stepSourceData: StepSourceData? = null
     invokeAndWaitIfNeed {
       FileDocumentManager.getInstance().saveAllDocuments()

@@ -1,7 +1,10 @@
 package com.jetbrains.edu.coursecreator.stepik;
 
 import com.google.common.collect.Lists;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -10,7 +13,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -704,44 +706,15 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "postTask")) return false;
     if (task instanceof ChoiceTask || task instanceof CodeTask) return false;
 
-    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/step-sources");
-    final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-    final String[] requestBody = new String[1];
-    ApplicationManager.getApplication().invokeAndWait(
-      () -> ApplicationManager.getApplication().runWriteAction(() -> {
-        FileDocumentManager.getInstance().saveAllDocuments();
-        requestBody[0] = gson.toJson(new StepikSteps.StepSourceWrapper(project, task, lessonId));
-      }));
-
-    request.setEntity(new StringEntity(requestBody[0], ContentType.APPLICATION_JSON));
-
-    try {
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) return false;
-      final CloseableHttpResponse response = client.execute(request);
-      final StatusLine line = response.getStatusLine();
-      final HttpEntity responseEntity = response.getEntity();
-      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-      EntityUtils.consume(responseEntity);
-      if (line.getStatusCode() != HttpStatus.SC_CREATED) {
-        final String message = FAILED_TITLE + "task ";
-        LOG.error(message + responseString);
-        final String detailString = getErrorDetail(responseString);
-
-        showErrorNotification(project, message, detailString);
-        return false;
-      }
-
-      final JsonObject postedTask = new Gson().fromJson(responseString, JsonObject.class);
-      final JsonObject stepSource = postedTask.getAsJsonArray("step-sources").get(0).getAsJsonObject();
-      task.setStepId(stepSource.getAsJsonPrimitive("id").getAsInt());
-      return true;
+    final StepikSteps.StepSource stepSource = StepikNewConnector.INSTANCE.postTask(project, task, lessonId);
+    if (stepSource == null) {
+      final String message = FAILED_TITLE + "task in lesson " + lessonId;
+      LOG.error(message);
+      showErrorNotification(project, FAILED_TITLE, message);
+      return false;
     }
-    catch (IOException e) {
-      LOG.error(e.getMessage());
-    }
-
-    return false;
+    task.setStepId(stepSource.id);
+    return true;
   }
 
   public static int getTopLevelSectionId(@NotNull Project project, @NotNull EduCourse course) {

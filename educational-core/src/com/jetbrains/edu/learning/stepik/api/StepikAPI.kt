@@ -2,6 +2,7 @@
 
 package com.jetbrains.edu.learning.stepik.api
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.GsonBuilder
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -39,6 +40,11 @@ class UnitsList {
 }
 
 class StepsList {
+  lateinit var steps: List<StepikSteps.StepSource>
+}
+
+class StepSourcesList {
+  @JsonProperty("step-sources")
   lateinit var steps: List<StepikSteps.StepSource>
 }
 
