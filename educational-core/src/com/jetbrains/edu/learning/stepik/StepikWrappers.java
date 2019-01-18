@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,22 +34,6 @@ public class StepikWrappers {
         this.course.setPublic(((EduCourse)course).isPublic());
       }
     }
-  }
-
-  public static class LessonWrapper {
-    Lesson lesson;
-
-    public LessonWrapper(Lesson lesson) {
-      this.lesson = new Lesson();
-      this.lesson.setName(lesson.getName());
-      this.lesson.setId(lesson.getId());
-      this.lesson.steps = new ArrayList<>();
-      this.lesson.setPublic(true);
-    }
-  }
-
-  public static class LessonContainer {
-    public List<Lesson> lessons;
   }
 
   public static class Unit {

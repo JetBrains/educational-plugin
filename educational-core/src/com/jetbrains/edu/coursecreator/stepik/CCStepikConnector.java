@@ -561,46 +561,19 @@ public class CCStepikConnector {
                                         @NotNull final Lesson lesson,
                                         boolean showNotification, int sectionId) {
     if (!checkIfAuthorized(project, "update lesson")) return null;
+    // TODO: support case when lesson was removed from Stepik
 
-    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.LESSONS + lesson.getId());
-
-    String requestBody = new Gson().toJson(new StepikWrappers.LessonWrapper(lesson));
-    request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
-
-    try {
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) return null;
-      final CloseableHttpResponse response = client.execute(request);
-      final HttpEntity responseEntity = response.getEntity();
-      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-      final StatusLine line = response.getStatusLine();
-      EntityUtils.consume(responseEntity);
-      // TODO: support case when lesson was removed from Stepik
-      if (line.getStatusCode() != HttpStatus.SC_OK) {
-        final String message = "Failed to update lesson ";
-        LOG.error(message + responseString);
-        if (showNotification) {
-          final String detailString = getErrorDetail(responseString);
-
-          showErrorNotification(project, message, detailString);
-        }
-      }
-
-      final Lesson postedLesson = getLessonFromString(responseString);
-      if (postedLesson == null) {
-        return null;
-      }
-
-      if (!lesson.isAdditional()) {
-        updateUnit(lesson.unitId, lesson.getId(), lesson.getIndex(), sectionId, project);
-      }
-
-      return new Gson().fromJson(responseString, StepikWrappers.LessonContainer.class).lessons.get(0);
+    final Lesson updatedLesson = StepikNewConnector.INSTANCE.updateLesson(lesson);
+    if (updatedLesson == null && showNotification) {
+      showErrorNotification(project, FAILED_TITLE, "Failed to update lesson " + lesson.getId());
+      return null;
     }
-    catch (IOException e) {
-      LOG.error(e.getMessage());
+
+    if (!lesson.isAdditional()) {
+      updateUnit(lesson.unitId, lesson.getId(), lesson.getIndex(), sectionId, project);
     }
-    return null;
+
+    return updatedLesson;
   }
 
   public static Lesson updateLesson(@NotNull final Project project,
@@ -728,40 +701,14 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "postLesson")) return null;
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-
-    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/lessons");
-
-    String requestBody = new Gson().toJson(new StepikWrappers.LessonWrapper(lesson));
-    request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
-
-    Lesson postedLesson = null;
-    try {
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) return null;
-      final CloseableHttpResponse response = client.execute(request);
-      final HttpEntity responseEntity = response.getEntity();
-      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-      final StatusLine line = response.getStatusLine();
-      EntityUtils.consume(responseEntity);
-      if (line.getStatusCode() != HttpStatus.SC_CREATED) {
-        final String message = FAILED_TITLE + "lesson ";
-        LOG.error(message + responseString);
-        final JsonObject details = new JsonParser().parse(responseString).getAsJsonObject();
-        final JsonElement detail = details.get("detail");
-        final String detailString = detail != null ? detail.getAsString() : responseString;
-
-        showErrorNotification(project, message, detailString);
-        return null;
-      }
-
-      postedLesson = getLessonFromString(responseString);
-      if (postedLesson != null) {
-        postedLesson.unitId = postUnit(postedLesson.getId(), position, sectionId, project);
-      }
+    final Lesson postedLesson = StepikNewConnector.INSTANCE.postLesson(lesson);
+    if (postedLesson == null) {
+      final String message = FAILED_TITLE + "lesson " + lesson.getId();
+      showErrorNotification(project, FAILED_TITLE, message);
+      return null;
     }
-    catch (IOException e) {
-      LOG.error(e.getMessage());
-    }
+    postedLesson.unitId = postUnit(postedLesson.getId(), position, sectionId, project);
+
     return postedLesson;
   }
 

@@ -252,6 +252,14 @@ object StepikNewConnector {
     return service.sections(section.id, SectionData(section)).execute().body()?.sections?.firstOrNull()
   }
 
+  fun updateLesson(lesson: Lesson) : Lesson? {
+    return service.lessons(lesson.id, LessonData(lesson)).execute().body()?.lessons?.firstOrNull()
+  }
+
+  fun postLesson(lesson: Lesson) : Lesson? {
+    return service.lessons(LessonData(lesson)).execute().body()?.lessons?.firstOrNull()
+  }
+
   fun postSubmission(passed: Boolean, attempt: StepikWrappers.Attempt,
                              files: ArrayList<StepikWrappers.SolutionFile>, task: Task) : List<StepikWrappers.Submission>? {
     return postSubmission(SubmissionData(attempt.id, if (passed) "1" else "0", files, task))

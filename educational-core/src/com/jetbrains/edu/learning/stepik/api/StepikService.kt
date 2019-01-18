@@ -51,6 +51,12 @@ interface StepikService {
   @GET("lessons")
   fun lessons(@Query("ids[]") vararg ids: Int): Call<LessonsList>
 
+  @PUT("lessons/{id}")
+  fun lessons(@Path("id") lessonId: Int, @Body lessonData: LessonData): Call<LessonsList>
+
+  @POST("lessons")
+  fun lessons(@Body lessonData: LessonData): Call<LessonsList>
+
   @GET("units")
   fun units(@Query("ids[]") vararg ids: Int): Call<UnitsList>
 
@@ -195,3 +201,14 @@ class UnitData(lessonId: Int, position: Int, sectionId: Int, unitId: Int? = null
 }
 
 class SectionData(var section: Section)
+
+class LessonData(lesson: Lesson) {
+  var lesson: Lesson = Lesson()
+
+  init {
+    this.lesson.name = lesson.name
+    this.lesson.id = lesson.id
+    this.lesson.steps = ArrayList()
+    this.lesson.isPublic = true
+  }
+}

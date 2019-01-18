@@ -72,8 +72,10 @@ public class StepikFormatTest extends EduTestCase {
 
   public void testAdditionalMaterialsLesson() throws IOException {
     String responseString = loadJsonText();
-    Lesson lesson =
-        StepikClient.deserializeStepikResponse(StepikWrappers.LessonContainer.class, responseString, null).lessons.get(0);
+    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final LessonsList lessonsList = mapper.readValue(responseString, LessonsList.class);
+
+    Lesson lesson = lessonsList.lessons.get(0);
     assertEquals(EduNames.ADDITIONAL_MATERIALS, lesson.getName());
   }
 
@@ -156,12 +158,13 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testLesson() throws IOException {
-    Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepikWrappers.LessonContainer lessonContainer = gson.fromJson(jsonText, StepikWrappers.LessonContainer.class);
-    assertNotNull(lessonContainer);
-    assertEquals(1, lessonContainer.lessons.size());
-    final Lesson lesson = lessonContainer.lessons.get(0);
+    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final LessonsList lessonsList = mapper.readValue(jsonText, LessonsList.class);
+
+    assertNotNull(lessonsList);
+    assertEquals(1, lessonsList.lessons.size());
+    final Lesson lesson = lessonsList.lessons.get(0);
     assertNotNull(lesson);
   }
 
