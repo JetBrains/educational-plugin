@@ -11,14 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public class StepikWrappers {
-
-  public static class CoursesContainer {
-    public List<EduCourse> courses;
-    public Map meta;
-  }
 
   public static class CourseWrapper {
     EduCourse course;

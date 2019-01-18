@@ -93,16 +93,14 @@ object StepikNewConnector {
     return retrofit.create(StepikService::class.java)
   }
 
+  // Authorization requests:
+
   private fun StepikUser.refreshTokens() {
     val refreshToken = tokenInfo.refreshToken
     val tokens = authorizationService.refreshTokens("refresh_token", StepikNames.CLIENT_ID, refreshToken).execute().body()
     if (tokens != null) {
       updateTokens(tokens)
     }
-  }
-
-  fun getCurrentUserInfo(stepikUser: StepikUser): StepikUserInfo? {
-    return service(stepikUser).getCurrentUser().execute().body()?.users?.firstOrNull()
   }
 
   fun login(code: String, redirectUri: String): Boolean {
@@ -115,16 +113,15 @@ object StepikNewConnector {
     return true
   }
 
+  // Get requests:
+
+  fun getCurrentUserInfo(stepikUser: StepikUser): StepikUserInfo? {
+    return service(stepikUser).getCurrentUser().execute().body()?.users?.firstOrNull()
+  }
+
   fun isEnrolledToCourse(courseId: Int, stepikUser: StepikUser): Boolean {
     val response = service(stepikUser).enrollments(courseId).execute()
     return response.code() == HttpStatus.SC_OK
-  }
-
-  fun enrollToCourse(courseId: Int, stepikUser: StepikUser) {
-    val response = service(stepikUser).enrollments(EnrollmentData(courseId)).execute()
-    if (response.code() != HttpStatus.SC_CREATED) {
-      LOG.error("Failed to enroll user ${stepikUser.id} to course $courseId")
-    }
   }
 
   fun getCourses(isPublic: Boolean, currentPage: Int, enrolled: Boolean?) =
@@ -170,28 +167,26 @@ object StepikNewConnector {
     return submissions?.firstOrNull()?.reply
   }
 
-  fun postUnit(lessonId: Int, position: Int, sectionId: Int): StepikWrappers.Unit? {
-    return service.units(UnitData(lessonId, position, sectionId)).execute().body()?.units?.firstOrNull()
+  fun getAttempts(stepId: Int, userId: Int): List<StepikWrappers.Attempt>? {
+    return service.attempts(stepId, userId).execute().body()?.attempts
   }
 
-  fun updateUnit(unitId: Int, lessonId: Int, position: Int, sectionId: Int): StepikWrappers.Unit? {
-    return service.unit(unitId, UnitData(lessonId, position, sectionId, unitId)).execute().body()?.units?.firstOrNull()
+  // Post requests:
+
+  fun postCourse(course: Course): EduCourse? {
+    return service.course(CourseData(course)).execute().body()?.courses?.firstOrNull()
   }
 
   fun postSection(section: Section): Section? {
-    return service.sections(SectionData(section)).execute().body()?.sections?.firstOrNull()
-  }
-
-  fun updateSection(section: Section): Section? {
-    return service.sections(section.id, SectionData(section)).execute().body()?.sections?.firstOrNull()
-  }
-
-  fun updateLesson(lesson: Lesson): Lesson? {
-    return service.lessons(lesson.id, LessonData(lesson)).execute().body()?.lessons?.firstOrNull()
+    return service.section(SectionData(section)).execute().body()?.sections?.firstOrNull()
   }
 
   fun postLesson(lesson: Lesson): Lesson? {
-    return service.lessons(LessonData(lesson)).execute().body()?.lessons?.firstOrNull()
+    return service.lesson(LessonData(lesson)).execute().body()?.lessons?.firstOrNull()
+  }
+
+  fun postUnit(lessonId: Int, position: Int, sectionId: Int): StepikWrappers.Unit? {
+    return service.unit(UnitData(lessonId, position, sectionId)).execute().body()?.units?.firstOrNull()
   }
 
   fun postTask(project: Project, task: Task, lessonId: Int): StepSource? {
@@ -209,7 +204,7 @@ object StepikNewConnector {
   }
 
   fun postSubmission(submissionData: SubmissionData): List<StepikWrappers.Submission>? {
-    val response = service.submissions(submissionData).execute()
+    val response = service.submission(submissionData).execute()
     val submissions = response.body()?.submissions
     if (response.code() != HttpStatus.SC_CREATED) {
       LOG.error("Failed to make submission $submissions")
@@ -218,12 +213,8 @@ object StepikNewConnector {
     return submissions
   }
 
-  fun getAttempts(stepId: Int, userId: Int): List<StepikWrappers.Attempt>? {
-    return service.attempts(stepId, userId).execute().body()?.attempts
-  }
-
   fun postAttempt(id: Int): StepikWrappers.Attempt? {
-    val response = service.attempts(AttemptData(id)).execute()
+    val response = service.attempt(AttemptData(id)).execute()
     val attempt = response.body()?.attempts?.firstOrNull()
     if (response.code() != HttpStatus.SC_CREATED) {
       LOG.warn("Failed to make attempt $id")
@@ -239,14 +230,52 @@ object StepikNewConnector {
     }
   }
 
-  fun deleteLesson(lessonId: Int) {
-    val response = service.deleteLesson(lessonId).execute()
-    validateDeleteResponse(response.code(), lessonId)
+  fun postMember(userId: String, group: String): Int {
+    val response = service.members(MemberData(userId, group)).execute()
+    return response.code()
   }
+
+  fun enrollToCourse(courseId: Int, stepikUser: StepikUser) {
+    val response = service(stepikUser).enrollment(EnrollmentData(courseId)).execute()
+    if (response.code() != HttpStatus.SC_CREATED) {
+      LOG.error("Failed to enroll user ${stepikUser.id} to course $courseId")
+    }
+  }
+
+  // Update requests:
+
+  fun updateSection(section: Section): Section? {
+    return service.section(section.id, SectionData(section)).execute().body()?.sections?.firstOrNull()
+  }
+
+  fun updateLesson(lesson: Lesson): Lesson? {
+    return service.lesson(lesson.id, LessonData(lesson)).execute().body()?.lessons?.firstOrNull()
+  }
+
+  fun updateUnit(unitId: Int, lessonId: Int, position: Int, sectionId: Int): StepikWrappers.Unit? {
+    return service.unit(unitId, UnitData(lessonId, position, sectionId, unitId)).execute().body()?.units?.firstOrNull()
+  }
+
+  fun updateTask(project: Project, task: Task): Int {
+    var stepSourceData: StepSourceData? = null
+    invokeAndWaitIfNeed {
+      FileDocumentManager.getInstance().saveAllDocuments()
+      stepSourceData = StepSourceData(project, task, task.lesson.id)
+    }
+    val response = service.stepSource(task.stepId, stepSourceData!!).execute()
+    return response.code()
+  }
+
+  // Delete requests:
 
   fun deleteSection(sectionId: Int) {
     val response = service.deleteSection(sectionId).execute()
     validateDeleteResponse(response.code(), sectionId)
+  }
+
+  fun deleteLesson(lessonId: Int) {
+    val response = service.deleteLesson(lessonId).execute()
+    validateDeleteResponse(response.code(), lessonId)
   }
 
   fun deleteUnit(unitId: Int) {
@@ -257,16 +286,6 @@ object StepikNewConnector {
   fun deleteTask(taskId: Int) {
     val response = service.deleteStepSource(taskId).execute()
     validateDeleteResponse(response.code(), taskId)
-  }
-
-  fun updateTask(project: Project, task: Task): Int {
-    var stepSourceData: StepSourceData? = null
-    invokeAndWaitIfNeed {
-      FileDocumentManager.getInstance().saveAllDocuments()
-       stepSourceData = StepSourceData(project, task, task.lesson.id)
-    }
-    val response = service.stepSource(task.stepId, stepSourceData!!).execute()
-    return response.code()
   }
 
   private fun validateDeleteResponse(responseCode: Int, id: Int) {

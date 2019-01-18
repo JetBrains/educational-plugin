@@ -66,37 +66,43 @@ interface StepikService {
 
   // POST requests:
 
+  @POST("courses")
+  fun course(@Body sectionData: CourseData): Call<CoursesList>
+
   @POST("sections")
-  fun sections(@Body sectionData: SectionData): Call<SectionsList>
+  fun section(@Body sectionData: SectionData): Call<SectionsList>
 
   @POST("lessons")
-  fun lessons(@Body lessonData: LessonData): Call<LessonsList>
+  fun lesson(@Body lessonData: LessonData): Call<LessonsList>
 
   @POST("units")
-  fun units(@Body unitData: UnitData): Call<UnitsList>
+  fun unit(@Body unitData: UnitData): Call<UnitsList>
 
   @POST("step-sources")
   fun stepSource(@Body stepSourceData: StepSourceData): Call<StepSourcesList>
 
   @POST("enrollments")
-  fun enrollments(@Body enrollment: EnrollmentData): Call<Any>
+  fun enrollment(@Body enrollment: EnrollmentData): Call<Any>
 
   @POST("submissions")
-  fun submissions(@Body submissionData: SubmissionData): Call<SubmissionsList>
+  fun submission(@Body submissionData: SubmissionData): Call<SubmissionsList>
 
   @POST("attempts")
-  fun attempts(@Body attemptData: AttemptData): Call<AttemptsList>
+  fun attempt(@Body attemptData: AttemptData): Call<AttemptsList>
 
   @POST("views")
   fun view(@Body viewData: ViewData): Call<ResponseBody>
 
+  @POST("members")
+  fun members(@Body membersData: MemberData): Call<ResponseBody>
+
   // PUT requests:
 
   @PUT("sections/{id}")
-  fun sections(@Path("id") sectionId: Int, @Body sectionData: SectionData): Call<SectionsList>
+  fun section(@Path("id") sectionId: Int, @Body sectionData: SectionData): Call<SectionsList>
 
   @PUT("lessons/{id}")
-  fun lessons(@Path("id") lessonId: Int, @Body lessonData: LessonData): Call<LessonsList>
+  fun lesson(@Path("id") lessonId: Int, @Body lessonData: LessonData): Call<LessonsList>
 
   @PUT("units/{id}")
   fun unit(@Path("id") unitId: Int, @Body unitData: UnitData): Call<UnitsList>

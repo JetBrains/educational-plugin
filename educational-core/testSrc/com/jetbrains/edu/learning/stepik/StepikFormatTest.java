@@ -82,21 +82,22 @@ public class StepikFormatTest extends EduTestCase {
   public void testAdditionalMaterialsStep() throws IOException {
     String responseString = loadJsonText();
     for (String language : Arrays.asList(EduNames.KOTLIN, EduNames.PYTHON)) {
-      StepikSteps.StepSource step = StepikClient.deserializeStepikResponse(StepsList.class,
+      StepSource step = StepikClient.deserializeStepikResponse(StepsList.class,
                                                                               responseString,
                                                                               createParams(language)).steps.get(0);
-      assertEquals(EduNames.ADDITIONAL_MATERIALS, step.block.options.title);
-      assertEquals("task_file.py", step.block.options.files.get(0).getName());
-      assertEquals("test_helperq.py", step.block.getOptions().getFiles().get(1).getName());
+      assertEquals(EduNames.ADDITIONAL_MATERIALS, step.getBlock().getOptions().getTitle());
+      assertEquals("task_file.py", step.getBlock().getOptions().files.get(0).getName());
+      assertEquals("test_helperq.py", step.getBlock().getOptions().getFiles().get(1).getName());
     }
   }
 
   public void testAvailableCourses() throws IOException {
     String responseString = loadJsonText();
-    StepikWrappers.CoursesContainer container =
-      StepikClient.deserializeStepikResponse(StepikWrappers.CoursesContainer.class, responseString, null);
-    assertNotNull(container.courses);
-    assertEquals("Incorrect number of courses", 4, container.courses.size());
+    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final CoursesList coursesList = mapper.readValue(jsonText, CoursesList.class);
+
+    assertNotNull(coursesList.courses);
+    assertEquals("Incorrect number of courses", 4, coursesList.courses.size());
   }
 
   public void testPlaceholderSerialization() throws IOException {
@@ -173,7 +174,7 @@ public class StepikFormatTest extends EduTestCase {
     String jsonText = loadJsonText();
     final StepsList stepContainer = gson.fromJson(jsonText, StepsList.class);
     assertNotNull(stepContainer);
-    final StepikSteps.StepSource step = stepContainer.steps.get(0);
+    final StepSource step = stepContainer.steps.get(0);
     assertNotNull(step);
   }
 
@@ -181,15 +182,15 @@ public class StepikFormatTest extends EduTestCase {
     Gson gson = getGson();
     String jsonText = loadJsonText();
     final StepsList stepContainer = gson.fromJson(jsonText, StepsList.class);
-    final StepikSteps.StepSource step = stepContainer.steps.get(0);
-    final StepikSteps.Step block = step.getBlock();
+    final StepSource step = stepContainer.steps.get(0);
+    final Step block = step.getBlock();
     assertNotNull(block);
     assertNotNull(block.getOptions());
     assertTrue(block.getName().startsWith(PYCHARM_PREFIX));
   }
 
   public void testStepBlockOptions() throws IOException {
-    final StepikSteps.StepOptions options = getStepOptions();
+    final StepOptions options = getStepOptions();
     assertNotNull(options);
   }
 
@@ -197,17 +198,17 @@ public class StepikFormatTest extends EduTestCase {
     Gson gson = getGson();
     String jsonText = loadJsonText();
     final StepsList stepContainer = gson.fromJson(jsonText, StepsList.class);
-    final StepikSteps.StepSource step = stepContainer.steps.get(0);
+    final StepSource step = stepContainer.steps.get(0);
     assertNotNull(step.getUpdate_date());
   }
 
   public void testOptionsTitle() throws IOException {
-    final StepikSteps.StepOptions options = getStepOptions();
+    final StepOptions options = getStepOptions();
     assertEquals("Our first program", options.getTitle());
   }
 
   public void testOptionsDescription() throws IOException {
-    final StepikSteps.StepOptions options = getStepOptions();
+    final StepOptions options = getStepOptions();
 
     assertEquals("\n" +
         "Traditionally the first program you write in any programming language is <code>\"Hello World!\"</code>.\n" +
@@ -221,12 +222,12 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testOptionsFeedbackLinks() throws IOException {
-    StepikSteps.StepOptions stepOptions = getStepOptions();
+    StepOptions stepOptions = getStepOptions();
     assertEquals(FeedbackLink.LinkType.CUSTOM, stepOptions.getMyFeedbackLink().getType());
   }
 
   public void testOptionsFiles() throws IOException {
-    final StepikSteps.StepOptions options = getStepOptions();
+    final StepOptions options = getStepOptions();
 
     final List<TaskFile> files = options.getFiles();
     assertEquals(2, files.size());
@@ -249,21 +250,21 @@ public class StepikFormatTest extends EduTestCase {
                  "    passed()\n", taskFile2.getText());
   }
 
-  private StepikSteps.StepOptions getStepOptions() throws IOException {
+  private StepOptions getStepOptions() throws IOException {
     return getStepOptions(null);
   }
 
-  private StepikSteps.StepOptions getStepOptions(@Nullable String language) throws IOException {
+  private StepOptions getStepOptions(@Nullable String language) throws IOException {
     Gson gson = getGson(createParams(language));
     String jsonText = loadJsonText();
     final StepsList stepContainer = gson.fromJson(jsonText, StepsList.class);
-    final StepikSteps.StepSource step = stepContainer.steps.get(0);
-    final StepikSteps.Step block = step.getBlock();
+    final StepSource step = stepContainer.steps.get(0);
+    final Step block = step.getBlock();
     return block.getOptions();
   }
 
   public void testOptionsPlaceholder() throws IOException {
-    final StepikSteps.StepOptions options = getStepOptions();
+    final StepOptions options = getStepOptions();
     final List<TaskFile> files = options.getFiles();
     final TaskFile taskFile = files.get(0);
 

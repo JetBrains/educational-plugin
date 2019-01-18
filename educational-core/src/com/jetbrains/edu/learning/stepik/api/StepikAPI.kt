@@ -5,6 +5,7 @@ package com.jetbrains.edu.learning.stepik.api
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.GsonBuilder
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -91,14 +92,18 @@ class ViewData(assignment: Int, step: Int) {
   var view: View = View(assignment, step)
 }
 
-class UnitData(lessonId: Int, position: Int, sectionId: Int, unitId: Int? = null) {
-  var unit: StepikWrappers.Unit = StepikWrappers.Unit()
+class CourseData(course: Course) {
+  var course: EduCourse = EduCourse()
 
   init {
-    unit.lesson = lessonId
-    unit.position = position
-    unit.section = sectionId
-    unit.id = unitId
+    this.course.name = course.name
+    this.course.language = course.language
+    this.course.description = course.description
+    this.course.authors = course.authors
+    if (course is EduCourse && course.isRemote) {
+      this.course.instructors = course.instructors
+      this.course.isPublic = course.isPublic
+    }
   }
 }
 
@@ -115,8 +120,24 @@ class LessonData(lesson: Lesson) {
   }
 }
 
+class UnitData(lessonId: Int, position: Int, sectionId: Int, unitId: Int? = null) {
+  var unit: StepikWrappers.Unit = StepikWrappers.Unit()
+  init {
+    unit.lesson = lessonId
+    unit.position = position
+    unit.section = sectionId
+    unit.id = unitId
+  }
+}
+
 class StepSourceData(project: Project, task: Task, lessonId: Int) {
   var stepSource: StepSource = StepSource(project, task, lessonId)
+}
+
+class Member(var user: String, var group: String)
+
+class MemberData(userId: String, group: String) {
+  var member: Member = Member(userId, group)
 }
 
 // Auxiliary:

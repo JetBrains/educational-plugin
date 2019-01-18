@@ -47,6 +47,9 @@ abstract class StepikEduCourseMixin {
 
   @JsonProperty("language")
   lateinit var myLanguageCode: String
+
+  @JsonProperty("admins_group")
+  lateinit var adminsGroup: String
 }
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization

@@ -27,6 +27,7 @@ public class EduCourse extends Course {
   @Expose private int id;
   @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
   @Expose @SerializedName("is_public") boolean isPublic;
+  public String adminsGroup;
 
   // Not published to stepik:
   @Expose private boolean myLoadSolutions = true; // disabled for reset courses

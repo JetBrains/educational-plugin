@@ -37,7 +37,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -107,90 +106,48 @@ public class CCStepikConnector {
       course.setAuthors(Collections.singletonList(currentUser));
     }
 
-    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.COURSES);
-    String requestBody = new Gson().toJson(new StepikWrappers.CourseWrapper(course));
-    request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
-
-    try {
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) {
-        LOG.warn("Http client is null");
-        return;
-      }
-      final CloseableHttpResponse response = client.execute(request);
-      final HttpEntity responseEntity = response.getEntity();
-      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-      final StatusLine line = response.getStatusLine();
-      EntityUtils.consume(responseEntity);
-      if (line.getStatusCode() != HttpStatus.SC_CREATED) {
-        final String message = FAILED_TITLE + "course ";
-        LOG.error(message + responseString);
-        final String detailString = getErrorDetail(responseString);
-
-        showErrorNotification(project, FAILED_TITLE, detailString);
-        return;
-      }
-      final EduCourse courseOnRemote = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
-      courseOnRemote.setItems(Lists.newArrayList(course.getItems().stream().filter(it -> !it.getName().equals(EduNames.ADDITIONAL_MATERIALS) &&
-        !it.getName().equals(StepikNames.PYCHARM_ADDITIONAL)).collect(Collectors.toList())));
-      courseOnRemote.setAuthors(course.getAuthors());
-      courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
-      courseOnRemote.setLanguage(course.getLanguage());
-
-      if (!ApplicationManager.getApplication().isInternal() && !isTestAccount(currentUser)) {
-        addJetBrainsUserAsAdmin(client, getAdminsGroupId(responseString));
-      }
-      int sectionCount;
-      if (CourseExt.getHasSections(course)) {
-        sectionCount = postSections(project, courseOnRemote);
-      }
-      else {
-        sectionCount = 1;
-        postTopLevelLessons(project, courseOnRemote);
-      }
-
-      postAdditionalFiles(course, project, courseOnRemote.getId(), sectionCount + 1);
-      StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
-      courseOnRemote.init(null, null, true);
-      StepikUpdateDateExt.setUpdated(courseOnRemote);
-      showNotification(project, "Course is published", openOnStepikAction("/course/" + courseOnRemote.getId()));
+    final EduCourse courseOnRemote = StepikNewConnector.INSTANCE.postCourse(course);
+    if (courseOnRemote == null) {
+      final String message = FAILED_TITLE + "course " + course.getName();
+      LOG.error(message);
+      showErrorNotification(project, FAILED_TITLE, message);
+      return;
     }
-    catch (IOException e) {
-      LOG.error(e.getMessage());
+    courseOnRemote.setItems(Lists.newArrayList(course.getItems().stream().filter(it -> !it.getName().equals(EduNames.ADDITIONAL_MATERIALS) &&
+                                                                                       !it.getName().equals(StepikNames.PYCHARM_ADDITIONAL)).collect(Collectors.toList())));
+    courseOnRemote.setAuthors(course.getAuthors());
+    courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
+    courseOnRemote.setLanguage(course.getLanguage());
+
+    if (!ApplicationManager.getApplication().isInternal() && !isTestAccount(currentUser)) {
+      addJetBrainsUserAsAdmin(courseOnRemote.adminsGroup);
     }
+
+    int sectionCount;
+    if (CourseExt.getHasSections(course)) {
+      sectionCount = postSections(project, courseOnRemote);
+    }
+    else {
+      sectionCount = 1;
+      postTopLevelLessons(project, courseOnRemote);
+    }
+
+    postAdditionalFiles(course, project, courseOnRemote.getId(), sectionCount + 1);
+    StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
+    courseOnRemote.init(null, null, true);
+    StepikUpdateDateExt.setUpdated(courseOnRemote);
+    showNotification(project, "Course is published", openOnStepikAction("/course/" + courseOnRemote.getId()));
   }
 
   private static boolean isTestAccount(@Nullable StepikUserInfo user) {
     return user != null && TESTER_USER_IDS.contains(user.getId());
   }
 
-  private static void addJetBrainsUserAsAdmin(@NotNull CloseableHttpClient client, @NotNull String groupId) {
-    JsonObject object = new JsonObject();
-    JsonObject member = new JsonObject();
-    member.addProperty("group", groupId);
-    member.addProperty("user", JETBRAINS_USER_ID);
-    object.add("member", member);
-
-    HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.MEMBERS);
-    post.setEntity(new StringEntity(object.toString(), ContentType.APPLICATION_JSON));
-    try {
-      final CloseableHttpResponse response = client.execute(post);
-      final HttpEntity responseEntity = response.getEntity();
-      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-      final StatusLine line = response.getStatusLine();
-      EntityUtils.consume(responseEntity);
-      if (line.getStatusCode() != HttpStatus.SC_CREATED) {
-        LOG.warn("Failed to add JetBrains as admin " + responseString);
-      }
+  private static void addJetBrainsUserAsAdmin(@NotNull String groupId) {
+    final int responseCode = StepikNewConnector.INSTANCE.postMember(JETBRAINS_USER_ID, groupId);
+    if (responseCode != HttpStatus.SC_CREATED) {
+      LOG.warn("Failed to add JetBrains as admin ");
     }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-    }
-  }
-
-  private static String getAdminsGroupId(@NotNull String responseString) {
-    JsonObject coursesObject = new JsonParser().parse(responseString).getAsJsonObject();
-    return coursesObject.get("courses").getAsJsonArray().get(0).getAsJsonObject().get("admins_group").getAsString();
   }
 
   public static void wrapUnpushedLessonsIntoSections(@NotNull Project project, @NotNull Course course) {
