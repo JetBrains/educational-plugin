@@ -147,18 +147,6 @@ public class StepikWrappers {
     public List<String> options;
   }
 
-  public static class AttemptWrapper {
-    public AttemptWrapper(int step) {
-      attempt = new Attempt(step);
-    }
-
-    Attempt attempt;
-  }
-
-  static class AttemptContainer {
-    List<Attempt> attempts;
-  }
-
   public static class SolutionFile {
     public String name;
     public String text;
@@ -223,7 +211,6 @@ public class StepikWrappers {
         this.attempt = attempt;
         this.reply = reply;
       }
-
 
       interface Reply {}
 

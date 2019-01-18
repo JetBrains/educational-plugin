@@ -108,7 +108,7 @@ public class StepikAuthorizedClient {
     final StepikUser user = new StepikUser(tokenInfo);
     ourClient = createInitializedClient(user.getAccessToken());
 
-    final StepikUserInfo currentUser = getCurrentUser();
+    final StepikUserInfo currentUser = StepikNewConnector.INSTANCE.getCurrentUserInfo(user);
     if (currentUser != null) {
       user.setUserInfo(currentUser);
     }
@@ -128,25 +128,6 @@ public class StepikAuthorizedClient {
     parameters.add(new BasicNameValuePair("refresh_token", refreshToken));
 
     return getTokens(parameters);
-  }
-
-  @Nullable
-  public static StepikUserInfo getCurrentUser() {
-    CloseableHttpClient client = getHttpClient();
-    if (client != null) {
-      try {
-        final StepikWrappers.AuthorWrapper wrapper = StepikClient.getFromStepik(StepikNames.CURRENT_USER,
-                                                                                   StepikWrappers.AuthorWrapper.class,
-                                                                                   client);
-        if (wrapper != null && !wrapper.users.isEmpty()) {
-          return wrapper.users.get(0);
-        }
-      }
-      catch (IOException e) {
-        LOG.warn("Couldn't get a current user");
-      }
-    }
-    return null;
   }
 
   @Nullable

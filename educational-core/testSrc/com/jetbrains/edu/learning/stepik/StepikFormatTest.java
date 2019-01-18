@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots;
 import com.jetbrains.edu.learning.serialization.converter.TaskRootsKt;
+import com.jetbrains.edu.learning.stepik.api.AttemptsList;
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import com.jetbrains.edu.learning.stepik.api.SubmissionsList;
 import com.jetbrains.edu.learning.stepik.serialization.StepikReplyAdapter;
@@ -286,16 +287,15 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testAttempts() throws IOException {
-    final StepikWrappers.AttemptContainer container =
-      new GsonBuilder().registerTypeAdapter(StepikWrappers.AttemptWrapper.Dataset.class, new StepikCheckerConnector.DatasetAdapter())
-        .create().fromJson(loadJsonText(), StepikWrappers.AttemptContainer.class);
-    assertNotNull(container);
-    List<StepikWrappers.AttemptWrapper.Attempt> attempts = container.attempts;
+    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final AttemptsList attemptsList = mapper.readValue(loadJsonText(), AttemptsList.class);
+    assertNotNull(attemptsList);
+    List<? extends StepikWrappers.Attempt> attempts = attemptsList.attempts;
     assertNotNull(attempts);
     assertEquals(20, attempts.size());
-    StepikWrappers.AttemptWrapper.Attempt attempt1 = attempts.get(0);
+    StepikWrappers.Attempt attempt1 = attempts.get(0);
     assertNull(attempt1.dataset);
-    StepikWrappers.AttemptWrapper.Attempt attempt2 = attempts.get(11);
+    StepikWrappers.Attempt attempt2 = attempts.get(11);
     assertNotNull(attempt2.dataset);
   }
 

@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.stepik;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageCommenters;
 import com.intellij.openapi.diagnostic.Logger;
@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -30,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -46,32 +44,14 @@ public class StepikCheckerConnector {
 
   @Nullable
   public static StepikWrappers.Attempt getAttemptForStep(int stepId, int userId) {
-    try {
-      final List<StepikWrappers.Attempt> attempts = getAttempts(stepId, userId);
-      if (attempts != null && attempts.size() > 0) {
-        final StepikWrappers.Attempt attempt = attempts.get(0);
-        return attempt.isActive() ? attempt : StepikNewConnector.INSTANCE.postAttempt(stepId);
-      }
-      else {
-        return StepikNewConnector.INSTANCE.postAttempt(stepId);
-      }
+    final List<StepikWrappers.Attempt> attempts = StepikNewConnector.INSTANCE.getAttempts(stepId, userId);
+    if (attempts != null && attempts.size() > 0) {
+      final StepikWrappers.Attempt attempt = attempts.get(0);
+      return attempt.isActive() ? attempt : StepikNewConnector.INSTANCE.postAttempt(stepId);
     }
-    catch (URISyntaxException | IOException e) {
-      LOG.warn(e.getMessage());
+    else {
+      return StepikNewConnector.INSTANCE.postAttempt(stepId);
     }
-    return null;
-  }
-
-  @Nullable
-  private static List<StepikWrappers.Attempt> getAttempts(int stepId, int userId)
-    throws URISyntaxException, IOException {
-    final URI attemptUrl = new URIBuilder(StepikNames.ATTEMPTS)
-      .addParameter("step", String.valueOf(stepId))
-      .addParameter("user", String.valueOf(userId))
-      .build();
-    final StepikWrappers.AttemptContainer attempt =
-      StepikAuthorizedClient.getFromStepik(attemptUrl.toString(), StepikWrappers.AttemptContainer.class);
-    return attempt == null ? null : attempt.attempts;
   }
 
   private static void setTimeout(HttpRequestBase request) {
@@ -129,13 +109,7 @@ public class StepikCheckerConnector {
   }
 
   public static CheckResult checkCodeTask(@NotNull Project project, @NotNull Task task, @NotNull StepikUser user) {
-    int attemptId = -1;
-    try {
-      attemptId = getAttemptId(task);
-    }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-    }
+    int attemptId = getAttemptId(task);
     if (attemptId != -1) {
       Course course = task.getLesson().getCourse();
       Language courseLanguage = course.getLanguageById();
@@ -238,38 +212,8 @@ public class StepikCheckerConnector {
     return wrapper;
   }
 
-  private static int getAttemptId(@NotNull Task task) throws IOException {
-    final StepikWrappers.AttemptWrapper attemptWrapper = new StepikWrappers.AttemptWrapper(task.getStepId());
-
-    final HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.ATTEMPTS);
-    post.setEntity(new StringEntity(new Gson().toJson(attemptWrapper)));
-
-    final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-    if (client == null) return -1;
-    setTimeout(post);
-    final CloseableHttpResponse httpResponse = client.execute(post);
-    final int statusCode = httpResponse.getStatusLine().getStatusCode();
-    final HttpEntity entity = httpResponse.getEntity();
-    final String entityString = EntityUtils.toString(entity);
-    EntityUtils.consume(entity);
-    if (statusCode == HttpStatus.SC_CREATED) {
-      final StepikWrappers.AttemptContainer container =
-        new GsonBuilder().registerTypeAdapter(StepikWrappers.Dataset.class, new DatasetAdapter())
-          .create().fromJson(entityString, StepikWrappers.AttemptContainer.class);
-      return (container.attempts != null && !container.attempts.isEmpty()) ? container.attempts.get(0).id : -1;
-    }
-    return -1;
-  }
-
-  public static class DatasetAdapter implements JsonDeserializer<StepikWrappers.Dataset> {
-    @Override
-    public StepikWrappers.Dataset deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-      throws JsonParseException {
-      Gson gson = new Gson();
-      if (json instanceof JsonPrimitive) {
-        return null;
-      }
-      return gson.fromJson(json, StepikWrappers.Dataset.class);
-    }
+  private static int getAttemptId(@NotNull Task task) {
+    final StepikWrappers.Attempt attempt = StepikNewConnector.INSTANCE.postAttempt(task.getStepId()); //TODO: DatasetAdapter
+    return attempt != null ? attempt.id : -1;
   }
 }

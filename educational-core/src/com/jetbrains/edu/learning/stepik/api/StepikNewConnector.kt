@@ -100,7 +100,7 @@ object StepikNewConnector {
     }
   }
 
-  private fun getCurrentUserInfo(stepikUser: StepikUser): StepikUserInfo? {
+  fun getCurrentUserInfo(stepikUser: StepikUser): StepikUserInfo? {
     return service(stepikUser).getCurrentUser().execute().body()?.users?.firstOrNull()
   }
 
@@ -240,6 +240,10 @@ object StepikNewConnector {
     if (response.code() != HttpStatus.SC_CREATED) {
       LOG.error("Failed to make submission $responseString")
     }
+  }
+
+  fun getAttempts(stepId: Int, userId: Int): List<StepikWrappers.Attempt>? {
+    return service.attempts(stepId, userId).execute().body()?.attempts
   }
 
   fun postAttempt(id: Int): StepikWrappers.Attempt? {

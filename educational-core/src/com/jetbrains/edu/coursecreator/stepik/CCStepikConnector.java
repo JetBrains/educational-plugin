@@ -85,16 +85,18 @@ public class CCStepikConnector {
   }
 
   public static void postCourse(@NotNull final Project project, @NotNull Course course) {
-    if (!checkIfAuthorized(project, "post course")) return;
+    final StepikUser user = EduSettings.getInstance().getUser();
+    if (user == null) {
+      showStepikNotification(project, "post course");
+      return;
+    }
 
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     if (indicator != null) {
       indicator.setText("Uploading course to " + StepikNames.STEPIK_URL);
       indicator.setIndeterminate(false);
     }
-    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.COURSES);
-
-    final StepikUserInfo currentUser = StepikAuthorizedClient.getCurrentUser();
+    final StepikUserInfo currentUser = StepikNewConnector.INSTANCE.getCurrentUserInfo(user);
     if (currentUser != null) {
       final List<StepikUserInfo> courseAuthors = course.getAuthors();
       for (final StepikUserInfo courseAuthor : courseAuthors) {
@@ -104,6 +106,7 @@ public class CCStepikConnector {
       course.setAuthors(Collections.singletonList(currentUser));
     }
 
+    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.COURSES);
     String requestBody = new Gson().toJson(new StepikWrappers.CourseWrapper(course));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 

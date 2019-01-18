@@ -58,10 +58,6 @@ public class StepikClient {
     return ourClient;
   }
 
-  static <T> T getFromStepik(String link, final Class<T> container, @NotNull final CloseableHttpClient client) throws IOException {
-    return getFromStepik(link, container, client, null);
-  }
-
   static <T> T getFromStepik(String link,
                              final Class<T> container,
                              @NotNull final CloseableHttpClient client,

@@ -66,6 +66,9 @@ interface StepikService {
   @POST("submissions")
   fun submissions(@Body submissionData: SubmissionData): Call<ResponseBody>
 
+  @GET("attempts")
+  fun attempts(@Query("step") stepId: Int, @Query("user") userId: Int): Call<AttemptsList>
+
   @POST("attempts")
   fun attempts(@Body attemptData: AttemptData): Call<AttemptsList>
 

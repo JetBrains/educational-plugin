@@ -12,11 +12,9 @@ public class StepikNames {
 
   public static final String CONTENT_TYPE_APP_JSON = "application/json";
   public static final String LESSONS = "/lessons/";
-  public static final String ATTEMPTS = "/attempts";
   public static final String SUBMISSIONS = "/submissions";
   public static final String UNITS = "/units";
   public static final String STEP_SOURCES = "/step-sources/";
-  public static final String CURRENT_USER = "/stepics/1";
   public static final String COURSES = "/courses";
   public static final String SECTIONS = "/sections";
   public static final String PYCHARM_PREFIX = "pycharm";
