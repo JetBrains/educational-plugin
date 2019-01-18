@@ -10,6 +10,8 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -45,11 +47,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.jetbrains.edu.learning.stepik.StepikCheckerConnector.EDU_TOOLS_COMMENT;
-import static com.jetbrains.edu.learning.stepik.StepikConnector.CLOSE_PLACEHOLDER_TAG;
-import static com.jetbrains.edu.learning.stepik.StepikConnector.OPEN_PLACEHOLDER_TAG;
 
 public class StepikSolutionsLoader implements Disposable {
   public static final String PROGRESS_ID_PREFIX = "77-";
+  public static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
+  public static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
 
   private static final String NOTIFICATION_TITLE = "Outdated EduTools Plugin";
   private static final String NOTIFICATION_CONTENT = "<html>Your version of EduTools plugin is outdated to apply all solutions.\n" +
@@ -79,6 +81,46 @@ public class StepikSolutionsLoader implements Disposable {
       mySelectedTask = selectedEduEditor.getTaskFile().getTask();
     }
     addFileOpenListener();
+  }
+  public static void postSolution(@NotNull final Task task, boolean passed, @NotNull final Project project) {
+    if (task.getStepId() <= 0) {
+      return;
+    }
+
+    final StepikWrappers.Attempt attempt = StepikNewConnector.INSTANCE.postAttempt(task.getStepId());
+    if (attempt == null) {
+      LOG.warn("Failed to post an attempt " + task.getStepId());
+      return;
+    }
+    final ArrayList<StepikWrappers.SolutionFile> files = new ArrayList<>();
+    final VirtualFile taskDir = task.getTaskDir(project);
+    if (taskDir == null) {
+      LOG.error("Failed to find task directory " + task.getName());
+      return;
+    }
+    for (TaskFile taskFile : task.getTaskFiles().values()) {
+      final String fileName = taskFile.getName();
+      final VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
+      if (virtualFile != null) {
+        ApplicationManager.getApplication().runReadAction(() -> {
+          final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+          if (document != null) {
+            String text = document.getText();
+            int insertedTextLength = 0;
+            StringBuilder builder = new StringBuilder(text);
+            for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
+              builder.insert(placeholder.getOffset() + insertedTextLength, OPEN_PLACEHOLDER_TAG);
+              builder.insert(placeholder.getOffset() + insertedTextLength + placeholder.getLength() + OPEN_PLACEHOLDER_TAG.length(),
+                             CLOSE_PLACEHOLDER_TAG);
+              insertedTextLength += OPEN_PLACEHOLDER_TAG.length() + CLOSE_PLACEHOLDER_TAG.length();
+            }
+            files.add(new StepikWrappers.SolutionFile(fileName, builder.toString()));
+          }
+        });
+      }
+    }
+
+    StepikNewConnector.INSTANCE.postSubmission(passed, attempt, files, task);
   }
 
   public void loadSolutionsInBackground() {

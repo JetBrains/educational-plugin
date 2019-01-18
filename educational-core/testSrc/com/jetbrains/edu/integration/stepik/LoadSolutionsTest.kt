@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.PROGRESS_ID_PREFIX
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
@@ -150,7 +149,7 @@ class LoadSolutionsTest : StepikTestCase() {
       EduUtils.replaceAnswerPlaceholder(document!!, answerPlaceholder, answerPlaceholder.realLength, answerPlaceholder.possibleAnswer)
     }
 
-    StepikConnector.postSolution(task, true, project)
+    StepikSolutionsLoader.postSolution(task, true, project)
   }
 
   private fun getInitialFileName() = "fizz.kt"

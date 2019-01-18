@@ -1,27 +1,18 @@
 package com.jetbrains.edu.learning.stepik;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.intellij.ide.BrowserUtil;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Backgroundable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -38,7 +29,6 @@ import org.jetbrains.ide.BuiltInServerManager;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Map;
 
 import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
@@ -46,22 +36,7 @@ import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
 public class StepikConnector {
   private static final Logger LOG = Logger.getInstance(StepikConnector.class.getName());
 
-  public static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
-  public static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
-
   public static final Key<String> COURSE_LANGUAGE = Key.create("COURSE_LANGUAGE");
-  private static final ExclusionStrategy ourExclusionStrategy = new ExclusionStrategy() {
-    @Override
-    public boolean shouldSkipField(FieldAttributes f) {
-      return false;
-    }
-
-    @Override
-    public boolean shouldSkipClass(Class<?> clazz) {
-      return clazz == Dataset.class;
-    }
-  };
-
   private StepikConnector() {
   }
 
@@ -76,43 +51,6 @@ public class StepikConnector {
       return StepikAuthorizedClient.getFromStepik(link, container, user, params);
     }
     return StepikClient.getFromStepik(link, container, params);
-  }
-
-  public static void postSolution(@NotNull final Task task, boolean passed, @NotNull final Project project) {
-    if (task.getStepId() <= 0) {
-      return;
-    }
-
-    final Attempt attempt = StepikNewConnector.INSTANCE.postAttempt(task.getStepId());
-    final ArrayList<SolutionFile> files = new ArrayList<>();
-    final VirtualFile taskDir = task.getTaskDir(project);
-    if (taskDir == null) {
-      LOG.error("Failed to find task directory " + task.getName());
-      return;
-    }
-    for (TaskFile taskFile : task.getTaskFiles().values()) {
-      final String fileName = taskFile.getName();
-      final VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
-      if (virtualFile != null) {
-        ApplicationManager.getApplication().runReadAction(() -> {
-          final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-          if (document != null) {
-            String text = document.getText();
-            int insertedTextLength = 0;
-            StringBuilder builder = new StringBuilder(text);
-            for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
-              builder.insert(placeholder.getOffset() + insertedTextLength, OPEN_PLACEHOLDER_TAG);
-              builder.insert(placeholder.getOffset() + insertedTextLength + placeholder.getLength() + OPEN_PLACEHOLDER_TAG.length(),
-                             CLOSE_PLACEHOLDER_TAG);
-              insertedTextLength += OPEN_PLACEHOLDER_TAG.length() + CLOSE_PLACEHOLDER_TAG.length();
-            }
-            files.add(new SolutionFile(fileName, builder.toString()));
-          }
-        });
-      }
-    }
-
-    StepikNewConnector.INSTANCE.postSubmission(passed, attempt, files, task);
   }
 
   @NotNull
