@@ -240,6 +240,10 @@ object StepikNewConnector {
     return service.units(UnitData(lessonId, position, sectionId)).execute().body()?.units?.firstOrNull()
   }
 
+  fun updateUnit(unitId: Int, lessonId: Int, position: Int, sectionId: Int) : StepikWrappers.Unit? {
+    return service.unit(unitId, UnitData(lessonId, position, sectionId, unitId)).execute().body()?.units?.firstOrNull()
+  }
+
   fun postSubmission(passed: Boolean, attempt: StepikWrappers.Attempt,
                              files: ArrayList<StepikWrappers.SolutionFile>, task: Task) : List<StepikWrappers.Submission>? {
     return postSubmission(SubmissionData(attempt.id, if (passed) "1" else "0", files, task))

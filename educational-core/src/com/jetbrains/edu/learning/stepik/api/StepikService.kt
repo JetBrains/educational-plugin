@@ -54,6 +54,9 @@ interface StepikService {
   @POST("units")
   fun units(@Body unitData: UnitData): Call<UnitsList>
 
+  @PUT("units/{id}")
+  fun unit(@Path("id") unitId: Int, @Body unitData: UnitData): Call<UnitsList>
+
   @GET("steps")
   fun steps(@Query("ids[]") vararg ids: Int): Call<StepsList>
 
@@ -61,14 +64,14 @@ interface StepikService {
   fun progresses(@Query("ids[]") vararg ids: String): Call<ProgressesList>
 
   @GET("submissions")
-  fun submissions(@Query("order") order: String="desc",
-                  @Query("page") page: Int=1,
+  fun submissions(@Query("order") order: String = "desc",
+                  @Query("page") page: Int = 1,
                   @Query("status") status: String,
                   @Query("step") step: Int): Call<SubmissionsList>
 
   @GET("submissions")
-  fun submissions(@Query("order") order: String="desc",
-                  @Query("attempt") attempt: Int=1,
+  fun submissions(@Query("order") order: String = "desc",
+                  @Query("attempt") attempt: Int = 1,
                   @Query("user") user: Int): Call<SubmissionsList>
 
   @POST("submissions")
@@ -174,12 +177,13 @@ class ViewData(assignment: Int, step: Int) {
 
 class View(internal var assignment: Int, internal var step: Int)
 
-class UnitData(lessonId: Int, position: Int, sectionId: Int) {
+class UnitData(lessonId: Int, position: Int, sectionId: Int, unitId: Int? = null) {
   var unit: StepikWrappers.Unit = StepikWrappers.Unit()
 
   init {
     unit.lesson = lessonId
     unit.position = position
     unit.section = sectionId
+    unit.id = unitId
   }
 }

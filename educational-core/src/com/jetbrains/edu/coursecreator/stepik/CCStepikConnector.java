@@ -382,35 +382,9 @@ public class CCStepikConnector {
   public static void updateUnit(int unitId, int lessonId, int position, int sectionId, @NotNull Project project) {
     if (!checkIfAuthorized(project, "updateUnit")) return;
 
-    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.UNITS + "/" + unitId);
-    final StepikWrappers.UnitWrapper unitWrapper = new StepikWrappers.UnitWrapper();
-    final StepikWrappers.Unit unit = new StepikWrappers.Unit();
-    unit.setLesson(lessonId);
-    unit.setPosition(position);
-    unit.setSection(sectionId);
-    unit.setId(unitId);
-    unitWrapper.setUnit(unit);
-
-    String requestBody = new Gson().toJson(unitWrapper);
-    request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
-
-    try {
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) return;
-      final CloseableHttpResponse response = client.execute(request);
-      final HttpEntity responseEntity = response.getEntity();
-      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-      final StatusLine line = response.getStatusLine();
-      EntityUtils.consume(responseEntity);
-      if (line.getStatusCode() != HttpStatus.SC_OK && line.getStatusCode() != HttpStatus.SC_CREATED) {
-        LOG.error("Failed to update Unit" + responseString);
-        final String detailString = getErrorDetail(responseString);
-
-        showErrorNotification(project, FAILED_TITLE, detailString);
-      }
-    }
-    catch (IOException e) {
-      LOG.error(e.getMessage());
+    final StepikWrappers.Unit unit = StepikNewConnector.INSTANCE.updateUnit(unitId, lessonId, position, sectionId);
+    if (unit == null) {
+      showErrorNotification(project, FAILED_TITLE, "Failed to update unit");
     }
   }
 

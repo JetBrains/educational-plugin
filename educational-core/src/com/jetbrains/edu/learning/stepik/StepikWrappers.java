@@ -70,7 +70,7 @@ public class StepikWrappers {
   }
 
   public static class Unit {
-    public int id;
+    public Integer id;
     public int section;
     public int lesson;
     public int position;
@@ -111,14 +111,6 @@ public class StepikWrappers {
 
     public void setUpdateDate(Date updateDate) {
       this.updateDate = updateDate;
-    }
-  }
-
-  public static class UnitWrapper {
-    Unit unit;
-
-    public void setUnit(Unit unit) {
-      this.unit = unit;
     }
   }
 
