@@ -50,22 +50,16 @@ public class StepikCheckerConnector {
       final List<StepikWrappers.Attempt> attempts = getAttempts(stepId, userId);
       if (attempts != null && attempts.size() > 0) {
         final StepikWrappers.Attempt attempt = attempts.get(0);
-        return attempt.isActive() ? attempt : createNewAttempt(stepId);
+        return attempt.isActive() ? attempt : StepikNewConnector.INSTANCE.postAttempt(stepId);
       }
       else {
-        return createNewAttempt(stepId);
+        return StepikNewConnector.INSTANCE.postAttempt(stepId);
       }
     }
     catch (URISyntaxException | IOException e) {
       LOG.warn(e.getMessage());
     }
     return null;
-  }
-
-  private static StepikWrappers.Attempt createNewAttempt(int id) {
-    final String response = StepikNewConnector.INSTANCE.postAttempt(id);
-    final StepikWrappers.AttemptContainer attempt = new Gson().fromJson(response, StepikWrappers.AttemptContainer.class);
-    return attempt.attempts.get(0);
   }
 
   @Nullable
@@ -103,7 +97,7 @@ public class StepikCheckerConnector {
                                                                                                         createChoiceTaskAnswerArray(task));
       final CheckResult result = doCheck(wrapper, attemptId, user.getId());
       if (result.getStatus() == CheckStatus.Failed) {
-        createNewAttempt(task.getStepId());
+        StepikNewConnector.INSTANCE.postAttempt(task.getStepId());
         StepikSteps.StepSource step = StepikNewConnector.INSTANCE.getStep(task.getStepId());
         if (step == null) {
           LOG.error("Failed to get step " + task.getStepId());

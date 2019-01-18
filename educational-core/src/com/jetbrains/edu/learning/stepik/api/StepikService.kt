@@ -2,15 +2,19 @@
 
 package com.jetbrains.edu.learning.stepik.api
 
+import com.google.gson.GsonBuilder
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikSteps
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.StepikWrappers
+import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
+import java.util.*
 
 interface StepikService {
   @GET("stepics/1/")
@@ -56,8 +60,11 @@ interface StepikService {
                   @Query("status") status: String,
                   @Query("step") step: Int): Call<SubmissionsList>
 
+  @POST("submissions")
+  fun submissions(@Body submissionData: SubmissionData): Call<ResponseBody>
+
   @POST("attempts")
-  fun attempts(@Body attemptData: AttemptData): Call<ResponseBody>
+  fun attempts(@Body attemptData: AttemptData): Call<AttemptsList>
 }
 
 class UsersList {
@@ -96,6 +103,19 @@ class SubmissionsList {
   lateinit var submissions: List<StepikWrappers.Submission>
 }
 
+class SubmissionData(attemptId: Int, score: String, files: ArrayList<StepikWrappers.SolutionFile>, task: Task) {
+  var submission: StepikWrappers.Submission
+
+  init {
+    val serializedTask = GsonBuilder()   // TODO: use jackson
+      .excludeFieldsWithoutExposeAnnotation()
+      .registerTypeAdapter(Task::class.java, StepikSubmissionTaskAdapter())
+      .create()
+      .toJson(StepikWrappers.TaskWrapper(task))
+    submission = StepikWrappers.Submission(score, attemptId, files, serializedTask)
+  }
+}
+
 class ProgressesList {
   lateinit var progresses: List<Progress>
 }
@@ -112,4 +132,8 @@ class AttemptData {
   constructor(step: Int) {
     attempt = StepikWrappers.Attempt(step)
   }
+}
+
+class AttemptsList {
+  lateinit var attempts: List<StepikWrappers.Attempt>
 }

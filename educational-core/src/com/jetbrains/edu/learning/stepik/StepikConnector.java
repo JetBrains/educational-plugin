@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -23,9 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
@@ -33,7 +30,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.BuiltInServerOptions;
@@ -87,61 +83,36 @@ public class StepikConnector {
       return;
     }
 
-    try {
-      final String response = StepikNewConnector.INSTANCE.postAttempt(task.getStepId());
-      if (response.isEmpty()) return;
-      final Gson gson = new GsonBuilder().addDeserializationExclusionStrategy(ourExclusionStrategy).create();
-      final Attempt attempt = gson.fromJson(response, AttemptContainer.class).attempts.get(0);
-      final ArrayList<SolutionFile> files = new ArrayList<>();
-      final VirtualFile taskDir = task.getTaskDir(project);
-      if (taskDir == null) {
-        LOG.error("Failed to find task directory " + task.getName());
-        return;
-      }
-      for (TaskFile taskFile : task.getTaskFiles().values()) {
-        final String fileName = taskFile.getName();
-        final VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
-        if (virtualFile != null) {
-          ApplicationManager.getApplication().runReadAction(() -> {
-            final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-            if (document != null) {
-              String text = document.getText();
-              int insertedTextLength = 0;
-              StringBuilder builder = new StringBuilder(text);
-              for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
-                builder.insert(placeholder.getOffset() + insertedTextLength, OPEN_PLACEHOLDER_TAG);
-                builder.insert(placeholder.getOffset() + insertedTextLength + placeholder.getLength() + OPEN_PLACEHOLDER_TAG.length(),
-                               CLOSE_PLACEHOLDER_TAG);
-                insertedTextLength += OPEN_PLACEHOLDER_TAG.length() + CLOSE_PLACEHOLDER_TAG.length();
-              }
-              files.add(new SolutionFile(fileName, builder.toString()));
+    final Attempt attempt = StepikNewConnector.INSTANCE.postAttempt(task.getStepId());
+    final ArrayList<SolutionFile> files = new ArrayList<>();
+    final VirtualFile taskDir = task.getTaskDir(project);
+    if (taskDir == null) {
+      LOG.error("Failed to find task directory " + task.getName());
+      return;
+    }
+    for (TaskFile taskFile : task.getTaskFiles().values()) {
+      final String fileName = taskFile.getName();
+      final VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
+      if (virtualFile != null) {
+        ApplicationManager.getApplication().runReadAction(() -> {
+          final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+          if (document != null) {
+            String text = document.getText();
+            int insertedTextLength = 0;
+            StringBuilder builder = new StringBuilder(text);
+            for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
+              builder.insert(placeholder.getOffset() + insertedTextLength, OPEN_PLACEHOLDER_TAG);
+              builder.insert(placeholder.getOffset() + insertedTextLength + placeholder.getLength() + OPEN_PLACEHOLDER_TAG.length(),
+                             CLOSE_PLACEHOLDER_TAG);
+              insertedTextLength += OPEN_PLACEHOLDER_TAG.length() + CLOSE_PLACEHOLDER_TAG.length();
             }
-          });
-        }
+            files.add(new SolutionFile(fileName, builder.toString()));
+          }
+        });
       }
+    }
 
-      postSubmission(passed, attempt, files, task);
-    }
-    catch (IOException e) {
-      LOG.error(e.getMessage());
-    }
-  }
-
-  private static void postSubmission(boolean passed, Attempt attempt,
-                                     ArrayList<SolutionFile> files, Task task) throws IOException {
-    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.SUBMISSIONS);
-    String requestBody = new Gson().toJson(new SubmissionWrapper(attempt.id, passed ? "1" : "0", files, task));
-    request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
-    final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-    if (client == null) return;
-    final CloseableHttpResponse response = client.execute(request);
-    final HttpEntity responseEntity = response.getEntity();
-    final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-    final StatusLine line = response.getStatusLine();
-    EntityUtils.consume(responseEntity);
-    if (line.getStatusCode() != HttpStatus.SC_CREATED) {
-      LOG.error("Failed to make submission " + responseString);
-    }
+    StepikNewConnector.INSTANCE.postSubmission(passed, attempt, files, task);
   }
 
   @NotNull

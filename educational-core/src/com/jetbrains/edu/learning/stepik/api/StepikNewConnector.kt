@@ -199,7 +199,7 @@ object StepikNewConnector {
     return service.steps(stepId).execute().body()?.steps?.firstOrNull()
   }
 
-  private fun getSubmissions(isSolved: Boolean, stepId: Int) =
+  fun getSubmissions(isSolved: Boolean, stepId: Int) =
     service.submissions(status = if (isSolved) "correct" else "wrong", step = stepId).execute().body()?.submissions
 
   fun getLastSubmission(stepId: Int, isSolved: Boolean, language: String): StepikWrappers.Reply? {
@@ -208,26 +208,13 @@ object StepikNewConnector {
     return submissions?.firstOrNull()?.reply
   }
 
-  fun getSolutionForStepikAssignment(task: Task, isSolved: Boolean): HashMap<String, String> {
-    val taskFileToText = HashMap<String, String>()
-    val submissions = getSubmissions(isSolved, task.stepId)
-    if (submissions == null) {
-      return taskFileToText
+  fun postSubmission(passed: Boolean, attempt: StepikWrappers.Attempt,
+                             files: ArrayList<StepikWrappers.SolutionFile>, task: Task) {
+    val response = service.submissions(SubmissionData(attempt.id, if (passed) "1" else "0", files, task)).execute()
+    val responseString = response.body()?.string() ?: ""
+    if (response.code() != HttpStatus.SC_CREATED) {
+      LOG.error("Failed to make submission $responseString")
     }
-    val courseLanguage = task.lesson.course.languageById
-    val stepikLanguage = StepikLanguages.langOfId(courseLanguage!!.id).langName
-    for (submission in submissions) {
-      val reply = submission.reply
-      if (stepikLanguage != null && stepikLanguage == reply.language) {
-        val taskFiles = task.taskFiles.values
-        assert(taskFiles.size == 1)
-        for (taskFile in taskFiles) {
-          taskFileToText[taskFile.name] = reply.code
-        }
-      }
-    }
-
-    return taskFileToText
   }
 
   fun taskStatuses(ids: List<String>): List<Boolean>? {
@@ -241,13 +228,13 @@ object StepikNewConnector {
     return ids.mapNotNull { progressesMap[it] }
   }
 
-  fun postAttempt(id: Int): String {
+  fun postAttempt(id: Int): StepikWrappers.Attempt? {
     val response = service.attempts(AttemptData(id)).execute()
-    val attemptResponseString = response.body()?.string() ?: ""
+    val attempt = response.body()?.attempts?.firstOrNull()
     if (response.code() != HttpStatus.SC_CREATED) {
-      LOG.warn("Failed to make attempt $attemptResponseString")
-      return ""
+      LOG.warn("Failed to make attempt $id")
+      return null
     }
-    return attemptResponseString
+    return attempt
   }
 }

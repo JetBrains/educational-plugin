@@ -266,7 +266,7 @@ public class StepikSolutionsLoader implements Disposable {
         }
       }
       else {
-        HashMap<String, String> solution = StepikNewConnector.INSTANCE.getSolutionForStepikAssignment(task, isSolved);
+        HashMap<String, String> solution = getSolutionForStepikAssignment(task, isSolved);
         if (!solution.isEmpty()) {
           return true;
         }
@@ -297,7 +297,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static HashMap<String, String> getStepikTaskSolution(@NotNull Task task, boolean isSolved) {
-    HashMap<String, String> solutions = StepikNewConnector.INSTANCE.getSolutionForStepikAssignment(task, isSolved);
+    HashMap<String, String> solutions = getSolutionForStepikAssignment(task, isSolved);
     if (!solutions.isEmpty()) {
       for (Map.Entry<String, String> entry : solutions.entrySet()) {
         String solutionWithoutEduPrefix = removeEduPrefix(task, entry.getValue());
@@ -451,6 +451,29 @@ public class StepikSolutionsLoader implements Disposable {
     String result = text.replaceAll(OPEN_PLACEHOLDER_TAG, "");
     result = result.replaceAll(CLOSE_PLACEHOLDER_TAG, "");
     return result;
+  }
+
+
+  @NotNull
+  static HashMap<String, String> getSolutionForStepikAssignment(@NotNull Task task, boolean isSolved) {
+    HashMap<String, String> taskFileToText = new HashMap<>();
+    final List<StepikWrappers.Submission> submissions = StepikNewConnector.INSTANCE.getSubmissions(isSolved, task.getStepId());
+    if (submissions == null) {
+      return taskFileToText;
+    }
+    Language language = task.getLesson().getCourse().getLanguageById();
+    String stepikLanguage = StepikLanguages.langOfId(language.getID()).getLangName();
+    for (StepikWrappers.Submission submission : submissions) {
+      StepikWrappers.Reply reply = submission.reply;
+      if (stepikLanguage != null && stepikLanguage.equals(reply.language)) {
+        Collection<TaskFile> taskFiles = task.getTaskFiles().values();
+        assert taskFiles.size() == 1;
+        for (TaskFile taskFile : taskFiles) {
+          taskFileToText.put(taskFile.getName(), reply.code);
+        }
+      }
+    }
+    return taskFileToText;
   }
 
   private static String removeEduPrefix(@NotNull Task task, String solution) {
