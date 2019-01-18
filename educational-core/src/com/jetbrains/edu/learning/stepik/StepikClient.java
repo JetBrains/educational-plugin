@@ -58,14 +58,6 @@ public class StepikClient {
     return ourClient;
   }
 
-  public static <T> T getFromStepik(String link, final Class<T> container) throws IOException {
-    return getFromStepik(link, container, (Map<Key, Object>) null);
-  }
-
-  public static <T> T getFromStepik(String link, final Class<T> container, @Nullable Map<Key, Object> params) throws IOException {
-    return getFromStepik(link, container, getHttpClient(), params);
-  }
-
   static <T> T getFromStepik(String link, final Class<T> container, @NotNull final CloseableHttpClient client) throws IOException {
     return getFromStepik(link, container, client, null);
   }

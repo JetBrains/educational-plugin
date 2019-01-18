@@ -6,10 +6,9 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.event.EditorFactoryEvent;
 import com.intellij.openapi.editor.event.EditorFactoryListener;
-import com.intellij.openapi.editor.event.EditorMouseAdapter;
 import com.intellij.openapi.editor.event.EditorMouseEvent;
+import com.intellij.openapi.editor.event.EditorMouseListener;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -43,7 +42,7 @@ import java.util.List;
 public class EduEditorFactoryListener implements EditorFactoryListener {
   private static final Logger LOG = Logger.getInstance(EduEditorFactoryListener.class.getName());
 
-  private static class WindowSelectionListener extends EditorMouseAdapter {
+  private static class WindowSelectionListener implements EditorMouseListener {
     private final TaskFile myTaskFile;
 
     public WindowSelectionListener(TaskFile file) {
@@ -79,7 +78,8 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       TaskFile taskFile = EduUtils.getTaskFile(project, openedFile);
       if (taskFile != null) {
         WolfTheProblemSolver.getInstance(project).clearProblems(openedFile);
-        final ToolWindow studyToolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
+        final ToolWindow studyToolWindow =
+          ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
         if (studyToolWindow != null) {
           EduUtils.updateToolWindows(project);
           studyToolWindow.show(null);
@@ -120,13 +120,13 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     }
     final int stepId = task.getStepId();
     int lessonId = task.getLesson().getId();
-    ProgressManager.getInstance().runProcessWithProgressAsynchronously(
+    ProgressManager.getInstance().run(
       new com.intellij.openapi.progress.Task.Backgroundable(project, "Posting Theory to Stepik", false) {
         @Override
         public void run(@NotNull ProgressIndicator progressIndicator) {
           markStepAsViewed(lessonId, stepId);
         }
-      }, new EmptyProgressIndicator());
+      });
   }
 
   private static void markStepAsViewed(int lessonId, int stepId) {

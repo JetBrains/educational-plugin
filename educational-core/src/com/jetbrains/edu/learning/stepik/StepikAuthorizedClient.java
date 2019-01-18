@@ -59,7 +59,7 @@ public class StepikAuthorizedClient {
   @Nullable
   public static <T> T getFromStepik(@NotNull String link,
                                     @NotNull final Class<T> container) throws IOException {
-    return getFromStepik(link, container, (Map<Key, Object>) null);
+    return getFromStepik(link, container, null);
   }
 
   @Nullable
@@ -70,26 +70,6 @@ public class StepikAuthorizedClient {
     return client == null ? null : StepikClient.getFromStepik(link, container, client, params);
   }
 
-  /*
-   * This method should be used only in project generation while project is not available.
-   * Make sure you saved stepik user in EduSettings after using this method.
-   */
-  @NotNull
-  public static CloseableHttpClient getHttpClient(@NotNull final StepikUser user) {
-    final boolean isUpToDate = user.getTokenInfo().isUpToDate();
-
-    if (ourClient != null && isUpToDate) {
-      return ourClient;
-    }
-
-    if (!isUpToDate && !updateTokens(user)) {
-      return StepikClient.getHttpClient();
-    }
-
-    ourClient = createInitializedClient(user.getAccessToken());
-    return ourClient;
-  }
-
   private static boolean updateTokens(@NotNull StepikUser user) {
     TokenInfo tokenInfo = getUpdatedTokens(user.getRefreshToken());
     if (tokenInfo != null) {
@@ -97,19 +77,6 @@ public class StepikAuthorizedClient {
       return true;
     }
     return false;
-  }
-
-  /*
-   * This method should be used only in project generation while project is not available.
-   */
-  public static <T> T getFromStepik(String link, final Class<T> container, @NotNull final StepikUser stepikUser) throws IOException {
-    return StepikClient.getFromStepik(link, container, getHttpClient(stepikUser));
-  }
-
-  public static <T> T getFromStepik(String link, final Class<T> container,
-                                    @NotNull final StepikUser stepikUser,
-                                    @Nullable Map<Key, Object> params) throws IOException {
-    return StepikClient.getFromStepik(link, container, getHttpClient(stepikUser), params);
   }
 
   @NotNull
