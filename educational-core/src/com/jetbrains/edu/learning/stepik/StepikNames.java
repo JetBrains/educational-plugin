@@ -19,8 +19,6 @@ public class StepikNames {
   public static final String CURRENT_USER = "/stepics/1";
   public static final String COURSES = "/courses";
   public static final String SECTIONS = "/sections";
-  public static final String VIEWS = "/views";
-  public static final String ASSIGNMENTS = "/assignments";
   public static final String PYCHARM_PREFIX = "pycharm";
   public static final String EDU_STEPIK_SERVICE_NAME = "edu/stepik";
   public static final String STEP_ID = "step_id";

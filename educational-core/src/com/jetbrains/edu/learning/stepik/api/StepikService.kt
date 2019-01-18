@@ -48,6 +48,9 @@ interface StepikService {
   @GET("units")
   fun units(@Query("ids[]") vararg ids: Int): Call<UnitsList>
 
+  @GET("units")
+  fun lessonUnit(@Query("lesson") lesson: Int): Call<UnitsList>
+
   @GET("steps")
   fun steps(@Query("ids[]") vararg ids: Int): Call<StepsList>
 
@@ -65,6 +68,13 @@ interface StepikService {
 
   @POST("attempts")
   fun attempts(@Body attemptData: AttemptData): Call<AttemptsList>
+
+  @GET("assignments")
+  fun assignments(@Query("ids[]") vararg ids: Int): Call<AssignmentsList>
+
+  @POST("views")
+  fun view(@Body viewData: ViewData): Call<ResponseBody>
+
 }
 
 class UsersList {
@@ -136,4 +146,12 @@ class AttemptData {
 
 class AttemptsList {
   lateinit var attempts: List<StepikWrappers.Attempt>
+}
+
+class AssignmentsList {
+  lateinit var assignments: List<StepikWrappers.Assignment>
+}
+
+class ViewData(assignment: Int, step: Int) {
+  var view: StepikWrappers.View = StepikWrappers.View(assignment, step)
 }

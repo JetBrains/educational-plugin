@@ -1,56 +1,21 @@
 package com.jetbrains.edu.learning.stepik;
 
-import com.google.gson.Gson;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.EmptyProgressIndicator;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task.Backgroundable;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicHeader;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.BuiltInServerOptions;
 import org.jetbrains.ide.BuiltInServerManager;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
-
-import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
 
 public class StepikConnector {
   private static final Logger LOG = Logger.getInstance(StepikConnector.class.getName());
 
   public static final Key<String> COURSE_LANGUAGE = Key.create("COURSE_LANGUAGE");
   private StepikConnector() {
-  }
-
-  private static <T> T getFromStepik(String link, final Class<T> container) throws IOException {
-    return getFromStepik(link, container, null);
-  }
-
-  private static <T> T getFromStepik(String link, final Class<T> container, @Nullable Map<Key, Object> params) throws IOException {
-    if (EduSettings.isLoggedIn()) {
-      final StepikUser user = EduSettings.getInstance().getUser();
-      assert user != null;
-      return StepikAuthorizedClient.getFromStepik(link, container, user, params);
-    }
-    return StepikClient.getFromStepik(link, container, params);
   }
 
   @NotNull
@@ -104,64 +69,6 @@ public class StepikConnector {
     BrowserUtil.browse(link);
     if (!redirectUrl.startsWith("http://localhost")) {
       externalRedirectUrlHandler.run();
-    }
-  }
-
-  public static void postTheory(Task task, final Project project) {
-    if (!EduSettings.isLoggedIn()) {
-      return;
-    }
-    final int stepId = task.getStepId();
-    int lessonId = task.getLesson().getId();
-    ProgressManager.getInstance().runProcessWithProgressAsynchronously(
-      new Backgroundable(project, "Posting Theory to Stepik", false) {
-        @Override
-        public void run(@NotNull ProgressIndicator progressIndicator) {
-          try {
-            markStepAsViewed(lessonId, stepId);
-          }
-          catch (URISyntaxException | IOException e) {
-            LOG.warn(e.getMessage());
-          }
-        }
-      }, new EmptyProgressIndicator());
-  }
-
-  private static void markStepAsViewed(int lessonId, int stepId) throws URISyntaxException, IOException {
-    final URI unitsUrl = new URIBuilder(StepikNames.UNITS).addParameter("lesson", String.valueOf(lessonId)).build();
-    final UnitContainer unitContainer = getFromStepik(unitsUrl.toString(), UnitContainer.class);
-    if (unitContainer.units.size() == 0) {
-      LOG.warn("Got unexpected numbers of units: " + unitContainer.units.size());
-      return;
-    }
-
-    final URIBuilder builder = new URIBuilder(StepikNames.ASSIGNMENTS);
-    for (Integer assignmentId : unitContainer.units.get(0).assignments) {
-      builder.addParameter("ids[]", String.valueOf(assignmentId));
-    }
-
-    final AssignmentsWrapper assignments = getFromStepik(builder.toString(), AssignmentsWrapper.class);
-    if (assignments.assignments.size() > 0) {
-      for (Assignment assignment : assignments.assignments) {
-        if (assignment.step != stepId) {
-          continue;
-        }
-        final HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.VIEWS);
-        final ViewsWrapper viewsWrapper = new ViewsWrapper(assignment.id, stepId);
-        post.setEntity(new StringEntity(new Gson().toJson(viewsWrapper)));
-        post.addHeader(new BasicHeader("Content-Type", ContentType.APPLICATION_JSON.getMimeType()));
-
-        CloseableHttpClient httpClient = StepikAuthorizedClient.getHttpClient();
-        if (httpClient != null) {
-          final CloseableHttpResponse viewPostResult = httpClient.execute(post);
-          if (viewPostResult.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED) {
-            LOG.warn("Error while Views post, code: " + viewPostResult.getStatusLine().getStatusCode());
-          }
-        }
-      }
-    }
-    else {
-      LOG.warn("Got assignments of incorrect length: " + assignments.assignments.size());
     }
   }
 }

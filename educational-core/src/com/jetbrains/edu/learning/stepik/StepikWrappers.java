@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik;
 
-import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.jetbrains.edu.learning.EduVersions;
@@ -9,7 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -72,12 +70,12 @@ public class StepikWrappers {
   }
 
   public static class Unit {
-    int id;
-    int section;
+    public int id;
+    public int section;
     public int lesson;
-    int position;
-    @SerializedName("update_date") Date updateDate;
-    List<Integer> assignments;
+    public int position;
+    public @SerializedName("update_date") Date updateDate;
+    public List<Integer> assignments;
 
     public void setSection(int section) {
       this.section = section;
@@ -177,19 +175,6 @@ public class StepikWrappers {
     List<StepikUserInfo> users;
   }
 
-  static class SubmissionWrapper {
-    Submission submission;
-
-    public SubmissionWrapper(int attemptId, String score, ArrayList<SolutionFile> files, Task task) {
-      String serializedTask = new GsonBuilder()
-        .excludeFieldsWithoutExposeAnnotation()
-        .registerTypeAdapter(Task.class, new StepikSubmissionTaskAdapter())
-        .create()
-        .toJson(new StepikWrappers.TaskWrapper(task));
-      submission = new Submission(score, attemptId, files, serializedTask);
-    }
-  }
-
   public static class Reply {
     public String score;
     public List<SolutionFile> solution;
@@ -272,24 +257,12 @@ public class StepikWrappers {
     }
   }
 
-  static class AssignmentsWrapper {
-    List<Assignment> assignments;
+  public class Assignment {
+    public int id;
+    public int step;
   }
 
-  static class Assignment {
-    int id;
-    int step;
-  }
-
-  static class ViewsWrapper {
-    View view;
-
-    public ViewsWrapper(final int assignment, final int step) {
-      this.view = new View(assignment, step);
-    }
-  }
-
-  static class View {
+  public static class View {
     int assignment;
     int step;
 

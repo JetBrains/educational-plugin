@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.editor;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
@@ -8,6 +9,9 @@ import com.intellij.openapi.editor.event.EditorFactoryListener;
 import com.intellij.openapi.editor.event.EditorMouseAdapter;
 import com.intellij.openapi.editor.event.EditorMouseEvent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.EmptyProgressIndicator;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -15,6 +19,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -27,13 +32,16 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikWrappers;
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.List;
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
+  private static final Logger LOG = Logger.getInstance(EduEditorFactoryListener.class.getName());
 
   private static class WindowSelectionListener extends EditorMouseAdapter {
     private final TaskFile myTaskFile;
@@ -84,7 +92,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         Task task = taskFile.getTask();
         if (task instanceof TheoryTask && task.getStatus() != CheckStatus.Solved) {
           task.setStatus(CheckStatus.Solved);
-          StepikConnector.postTheory(task, project);
+          postTheory(task, project);
         }
 
         boolean isStudyProject = course.isStudy();
@@ -104,5 +112,36 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
   @Override
   public void editorReleased(@NotNull EditorFactoryEvent event) {
     event.getEditor().getSelectionModel().removeSelection();
+  }
+
+  private static void postTheory(Task task, final Project project) {
+    if (!EduSettings.isLoggedIn()) {
+      return;
+    }
+    final int stepId = task.getStepId();
+    int lessonId = task.getLesson().getId();
+    ProgressManager.getInstance().runProcessWithProgressAsynchronously(
+      new com.intellij.openapi.progress.Task.Backgroundable(project, "Posting Theory to Stepik", false) {
+        @Override
+        public void run(@NotNull ProgressIndicator progressIndicator) {
+          markStepAsViewed(lessonId, stepId);
+        }
+      }, new EmptyProgressIndicator());
+  }
+
+  private static void markStepAsViewed(int lessonId, int stepId) {
+    final StepikWrappers.Unit unit = StepikNewConnector.INSTANCE.getLessonUnit(lessonId);
+    if (unit == null) {
+      LOG.warn("Failed to get lesson unit " + lessonId);
+      return;
+    }
+
+    final List<StepikWrappers.Assignment> assignments = StepikNewConnector.INSTANCE.getAssignments(unit.assignments);
+    for (StepikWrappers.Assignment assignment : assignments) {
+      if (assignment.step != stepId) {
+        continue;
+      }
+      StepikNewConnector.INSTANCE.postView(assignment.id, stepId);
+    }
   }
 }

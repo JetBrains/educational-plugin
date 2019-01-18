@@ -181,8 +181,14 @@ object StepikNewConnector {
     return allUnits
   }
 
-  fun getUnit(unitId: Int): StepikWrappers.Unit? {
-    return service.units(unitId).execute().body()?.units?.firstOrNull()
+  fun getAssignments(ids: List<Int>): List<StepikWrappers.Assignment> {
+    val idsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
+    val assignments = mutableListOf<StepikWrappers.Assignment>()
+    idsChunks
+      .mapNotNull { service.assignments(*it.toIntArray()).execute().body()?.assignments }
+      .forEach { assignments.addAll(it) }
+
+    return assignments
   }
 
   fun getStepSources(stepIds: List<Int>, language: String): List<StepikSteps.StepSource> {
@@ -193,6 +199,25 @@ object StepikNewConnector {
       .mapNotNull { service.steps(*it.toIntArray()).execute().body()?.steps }
       .forEach { steps.addAll(it) }
     return steps
+  }
+
+  fun taskStatuses(ids: List<String>): List<Boolean>? {
+    val idsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
+    val progresses = mutableListOf<Progress>()
+    idsChunks
+      .mapNotNull { service.progresses(*it.toTypedArray()).execute().body()?.progresses }
+      .forEach { progresses.addAll(it) }
+
+    val progressesMap = progresses.associate { it.id to it.isPassed }
+    return ids.mapNotNull { progressesMap[it] }
+  }
+
+  fun getUnit(unitId: Int): StepikWrappers.Unit? {
+    return service.units(unitId).execute().body()?.units?.firstOrNull()
+  }
+
+  fun getLessonUnit(lessonId: Int): StepikWrappers.Unit? {
+    return service.lessonUnit(lessonId).execute().body()?.units?.firstOrNull()
   }
 
   fun getStep(stepId: Int): StepikSteps.StepSource? {
@@ -217,17 +242,6 @@ object StepikNewConnector {
     }
   }
 
-  fun taskStatuses(ids: List<String>): List<Boolean>? {
-    val idsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
-    val progresses = mutableListOf<Progress>()
-    idsChunks
-      .mapNotNull { service.progresses(*it.toTypedArray()).execute().body()?.progresses }
-      .forEach { progresses.addAll(it) }
-
-    val progressesMap = progresses.associate { it.id to it.isPassed }
-    return ids.mapNotNull { progressesMap[it] }
-  }
-
   fun postAttempt(id: Int): StepikWrappers.Attempt? {
     val response = service.attempts(AttemptData(id)).execute()
     val attempt = response.body()?.attempts?.firstOrNull()
@@ -236,5 +250,12 @@ object StepikNewConnector {
       return null
     }
     return attempt
+  }
+
+  fun postView(assignmentId: Int, stepId: Int) {
+    val response = service.view(ViewData(assignmentId, stepId)).execute()
+    if (response.code() != HttpStatus.SC_CREATED) {
+      LOG.warn("Error while Views post, code: " + response.code())
+    }
   }
 }
