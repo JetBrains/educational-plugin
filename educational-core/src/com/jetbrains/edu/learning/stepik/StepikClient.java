@@ -97,7 +97,7 @@ public class StepikClient {
   }
 
   public static Gson createGson(@Nullable Map<Key, Object> params) {
-    String language = StepikConnector.COURSE_LANGUAGE.get(params);
+    String language = StepikAuthorizer.COURSE_LANGUAGE.get(params);
     return new GsonBuilder()
         .registerTypeAdapter(StepikSteps.StepOptions.class, new StepikStepOptionsAdapter(language))
         .registerTypeAdapter(Lesson.class, new StepikLessonAdapter(language))

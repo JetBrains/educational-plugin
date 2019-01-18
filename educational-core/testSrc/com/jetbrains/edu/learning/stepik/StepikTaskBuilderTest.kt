@@ -32,7 +32,7 @@ class StepikTaskBuilderTest : EduTestCase() {
   private inline fun <reified T : Task> doTest() {
     for (language in listOf(PlainTextLanguage.INSTANCE, FakeGradleBasedLanguage)) {
       val response = loadResponse()
-      val params: Map<Key<*>, Any> = mapOf(StepikConnector.COURSE_LANGUAGE to language.id)
+      val params: Map<Key<*>, Any> = mapOf(StepikAuthorizer.COURSE_LANGUAGE to language.id)
       val stepSource = StepikClient.deserializeStepikResponse(StepikSteps.StepsList::class.java, response, params).steps[0]
 
       val course = EduCourse()

@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.CONTENT
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.INFO
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.stepik.StepikConnector
+import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
 import junit.framework.TestCase
 
@@ -352,7 +352,7 @@ class EventBasedUpdateTest : StepikTestCase() {
   private fun checkSections(courseFromStepik: Course?, localCourse: Course) {
     assertNotNull("Uploaded courses not found among courses available to instructor", courseFromStepik)
 
-    StepikConnector.fillItems(courseFromStepik as EduCourse)
+    StepikAuthorizer.fillItems(courseFromStepik as EduCourse)
     TestCase.assertTrue("Sections number mismatch. Expected: ${localCourse.sections.size}. Actual: ${courseFromStepik.sections.size}",
                         localCourse.sections.size == courseFromStepik.sections.size)
     localCourse.sections.forEachIndexed { index, section ->
@@ -378,7 +378,7 @@ class EventBasedUpdateTest : StepikTestCase() {
     TestCase.assertTrue("Section name mismatch. Expected: ${localCourse.name}.\n Actual: ${section.name}",
                         section.name == localCourse.name)
 
-    val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, section.units, false)
+    val lessonsFromUnits = StepikAuthorizer.getLessonsFromUnits(courseFromStepik, section.units, false)
 
     TestCase.assertTrue("Lessons number mismatch. Expected: ${localCourse.lessons.size}. Actual: ${lessonsFromUnits.size}",
                         lessonsFromUnits.size == localCourse.lessons.size)

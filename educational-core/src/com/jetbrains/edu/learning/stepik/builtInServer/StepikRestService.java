@@ -172,7 +172,7 @@ public class StepikRestService extends OAuthRestService {
     if (codeMatcher.matches()) {
       String code = getStringParameter("code", urlDecoder);
       if (code != null) {
-        final boolean success = StepikAuthorizedClient.login(code, StepikConnector.getOAuthRedirectUrl());
+        final boolean success = StepikAuthorizedClient.login(code, StepikAuthorizer.getOAuthRedirectUrl());
         final StepikUser user = EduSettings.getInstance().getUser();
         if (success && user != null) {
           EduSettings.getInstance().setUser(user);

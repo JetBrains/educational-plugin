@@ -35,7 +35,7 @@ import java.net.URL
 private const val PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt"
 private const val IN_PROGRESS_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/in_progress_courses.txt"
 
-private val LOG = Logger.getInstance(StepikConnector::class.java)
+private val LOG = Logger.getInstance(StepikAuthorizer::class.java)
 
 val featuredCourses = getFeaturedCoursesIds()
 val inProgressCourses = getInProgressCoursesIds()

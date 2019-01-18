@@ -55,7 +55,7 @@ public class StepikOptions extends OauthOptions<StepikUser> {
           updateLoginLabels();
         });
 
-        StepikConnector.doAuthorize(() -> showDialog());
+        StepikAuthorizer.doAuthorize(() -> showDialog());
       }
     };
   }

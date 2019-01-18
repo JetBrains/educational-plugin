@@ -409,6 +409,6 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   private static Map<Key, Object> createParams(@Nullable String language) {
-    return language == null ? null : Collections.singletonMap(StepikConnector.COURSE_LANGUAGE, language);
+    return language == null ? null : Collections.singletonMap(StepikAuthorizer.COURSE_LANGUAGE, language);
   }
 }

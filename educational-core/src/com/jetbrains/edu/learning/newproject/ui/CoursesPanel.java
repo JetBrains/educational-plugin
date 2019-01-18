@@ -38,7 +38,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseLoading.CourseLoader;
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikAuthorizer;
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction;
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
@@ -114,7 +114,7 @@ public class CoursesPanel extends JPanel {
     myErrorLabel.addHyperlinkListener(e -> {
       if (myErrorState == ErrorState.NotLoggedIn.INSTANCE || myErrorState == ErrorState.StepikLoginRequired.INSTANCE) {
         addLoginListener(this::updateCoursesList);
-        StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
+        StepikAuthorizer.doAuthorize(EduUtils::showOAuthDialog);
       }
       else if (myErrorState instanceof ErrorState.CheckiOLoginRequired) {
         addCheckiOLoginListener((CheckiOCourse)myCoursesList.getSelectedValue());
@@ -408,7 +408,7 @@ public class CoursesPanel extends JPanel {
                 int result = Messages.showOkCancelDialog("Stepik authorization is required to import courses", "Log in to Stepik", "Log in", "Cancel", null);
                 if (result == Messages.OK) {
                   addLoginListener(CoursesPanel.this::updateCoursesList,  () -> importStepikCourse());
-                  StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
+                  StepikAuthorizer.doAuthorize(EduUtils::showOAuthDialog);
                 }
               }
               else {

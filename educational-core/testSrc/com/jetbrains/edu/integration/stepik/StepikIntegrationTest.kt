@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.stepik.StepikConnector
+import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
 
 open class StepikIntegrationTest : StepikTestCase() {
@@ -263,7 +263,7 @@ open class StepikIntegrationTest : StepikTestCase() {
 
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
     val section = StepikNewConnector.getSection(courseFromStepik.sectionIds[0])!!
-    val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, section.units, false)
+    val lessonsFromUnits = StepikAuthorizer.getLessonsFromUnits(courseFromStepik, section.units, false)
 
     val taskFromStepik = lessonsFromUnits[0].getTask("task1") ?: error("Can't find `task1`")
     assertEquals(taskText, taskFromStepik.getTaskFile("src/Task.kt")?.text)
@@ -289,7 +289,7 @@ open class StepikIntegrationTest : StepikTestCase() {
   private fun checkSections(localCourse: Course) {
     val courseFromStepik = getCourseFromStepik(localCourse.id)
 
-    StepikConnector.fillItems(courseFromStepik)
+    StepikAuthorizer.fillItems(courseFromStepik)
     assertEquals("Sections number mismatch", localCourse.sections.size, courseFromStepik.sections.size)
     localCourse.sections.forEachIndexed { index, section ->
       val sectionFromStepik = courseFromStepik.sections[index]
@@ -310,7 +310,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     val section = StepikNewConnector.getSection(courseFromStepik.sectionIds[0])!!
     assertEquals("Section name mismatch", localCourse.name, section.name)
 
-    val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, section.units, false)
+    val lessonsFromUnits = StepikAuthorizer.getLessonsFromUnits(courseFromStepik, section.units, false)
 
     assertEquals("Lessons number mismatch", localCourse.lessons.size, lessonsFromUnits.size)
     localCourse.lessons.forEachIndexed { index, lesson ->

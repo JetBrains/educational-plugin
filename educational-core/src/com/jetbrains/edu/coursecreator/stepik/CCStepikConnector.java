@@ -792,7 +792,7 @@ public class CCStepikConnector {
 
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
-        StepikConnector.doAuthorize(() -> showOAuthDialog());
+        StepikAuthorizer.doAuthorize(() -> showOAuthDialog());
         notification.expire();
       }
     });

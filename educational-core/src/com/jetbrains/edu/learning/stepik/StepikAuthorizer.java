@@ -11,11 +11,12 @@ import org.jetbrains.ide.BuiltInServerManager;
 
 import java.io.IOException;
 
-public class StepikConnector {
-  private static final Logger LOG = Logger.getInstance(StepikConnector.class.getName());
+public class StepikAuthorizer {
+  private static final Logger LOG = Logger.getInstance(StepikAuthorizer.class.getName());
 
   public static final Key<String> COURSE_LANGUAGE = Key.create("COURSE_LANGUAGE");
-  private StepikConnector() {
+
+  private StepikAuthorizer() {
   }
 
   @NotNull
@@ -36,16 +37,14 @@ public class StepikConnector {
       }
 
       try {
-        return CustomAuthorizationServer.create(
-          StepikNames.STEPIK,
-          "",
-          StepikConnector::codeHandler
-        ).getHandlingUri();
-      } catch (IOException e) {
+        return CustomAuthorizationServer.create(StepikNames.STEPIK, "", StepikAuthorizer::codeHandler).getHandlingUri();
+      }
+      catch (IOException e) {
         LOG.warn(e.getMessage());
         return StepikNames.EXTERNAL_REDIRECT_URL;
       }
-    } else {
+    }
+    else {
       int port = BuiltInServerManager.getInstance().getPort();
 
       // according to https://confluence.jetbrains.com/display/IDEADEV/Remote+communication
