@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.stepik.StepikLanguages
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector.getLessons
 import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector.getStepSources
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.getCourseInfo
+import com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo
 import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL

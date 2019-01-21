@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.StepikWrappers
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.service
+import com.jetbrains.edu.learning.stepik.api.StepikConnector.service
 
 object StepikMultipleRequestsConnector {
   private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests

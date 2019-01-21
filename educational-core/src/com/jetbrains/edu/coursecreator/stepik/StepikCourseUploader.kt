@@ -12,11 +12,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.deleteLesson
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.deleteSection
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.deleteTask
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.deleteUnit
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteLesson
+import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteSection
+import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteTask
+import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteUnit
 import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
 import kotlin.collections.ArrayList
@@ -273,7 +273,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       lessonsToPush.addAll(course.lessons.filter { it.id == 0 })
       // process lessons moved to top-level
 
-      val section = StepikNewConnector.getSection(courseInfo.sectionIds[0])
+      val section = StepikConnector.getSection(courseInfo.sectionIds[0])
       if (section != null) {
         val lessonsFromSection = StepikCourseLoader.getLessonsFromUnits(courseInfo, section.units, false)
         val topLevelLessonsIds = course.lessons.map { it.id }

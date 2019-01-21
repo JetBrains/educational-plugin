@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient
 import com.jetbrains.edu.learning.stepik.StepikClient
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikUser
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import org.apache.http.Consts
 import org.apache.http.NameValuePair
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -97,7 +97,7 @@ abstract class StepikTestCase : EduTestCase() {
   }
 
   fun checkCourseUploaded(course: EduCourse) {
-    val uploadedCourse = StepikNewConnector.getCourseInfo(course.id, true)
+    val uploadedCourse = StepikConnector.getCourseInfo(course.id, true)
     assertNotNull("Uploaded course not found among courses available to instructor", uploadedCourse)
     println("Course with id ${(uploadedCourse as EduCourse).id} was uploaded successfully")
   }

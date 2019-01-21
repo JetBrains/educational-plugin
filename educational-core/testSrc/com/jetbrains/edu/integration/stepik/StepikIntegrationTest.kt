@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
 
 open class StepikIntegrationTest : StepikTestCase() {
 
@@ -262,7 +262,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     CCPushCourse.doPush(project, localCourse)
 
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
-    val section = StepikNewConnector.getSection(courseFromStepik.sectionIds[0])!!
+    val section = StepikConnector.getSection(courseFromStepik.sectionIds[0])!!
     val lessonsFromUnits = StepikAuthorizer.getLessonsFromUnits(courseFromStepik, section.units, false)
 
     val taskFromStepik = lessonsFromUnits[0].getTask("task1") ?: error("Can't find `task1`")
@@ -307,7 +307,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     assertEquals("Course with top-level lessons should have only one section", 1, localCourse.sectionIds.size)
 
     assertEquals("Top-level lessons section id mismatch", localCourse.sectionIds[0], courseFromStepik.sectionIds[0])
-    val section = StepikNewConnector.getSection(courseFromStepik.sectionIds[0])!!
+    val section = StepikConnector.getSection(courseFromStepik.sectionIds[0])!!
     assertEquals("Section name mismatch", localCourse.name, section.name)
 
     val lessonsFromUnits = StepikAuthorizer.getLessonsFromUnits(courseFromStepik, section.units, false)
@@ -325,7 +325,7 @@ open class StepikIntegrationTest : StepikTestCase() {
   }
 
   private fun getCourseFromStepik(courseId: Int): EduCourse =
-    StepikNewConnector.getCourseInfo(courseId, true) ?: error(
+    StepikConnector.getCourseInfo(courseId, true) ?: error(
       "Uploaded course `$courseId` not found among courses available to instructor")
 }
 

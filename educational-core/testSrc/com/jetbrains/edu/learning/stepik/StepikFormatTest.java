@@ -72,7 +72,7 @@ public class StepikFormatTest extends EduTestCase {
 
   public void testAdditionalMaterialsLesson() throws IOException {
     String responseString = loadJsonText();
-    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
     final LessonsList lessonsList = mapper.readValue(responseString, LessonsList.class);
 
     Lesson lesson = lessonsList.lessons.get(0);
@@ -93,7 +93,7 @@ public class StepikFormatTest extends EduTestCase {
 
   public void testAvailableCourses() throws IOException {
     String responseString = loadJsonText();
-    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
     final CoursesList coursesList = mapper.readValue(jsonText, CoursesList.class);
 
     assertNotNull(coursesList.courses);
@@ -117,7 +117,7 @@ public class StepikFormatTest extends EduTestCase {
 
   public void testTokenUptoDate() throws IOException {
     String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
     final UsersList usersList = mapper.readValue(jsonText, UsersList.class);
     assertNotNull(usersList);
     assertFalse(usersList.users.isEmpty());
@@ -128,7 +128,7 @@ public class StepikFormatTest extends EduTestCase {
 
   public void testCourseAuthor() throws IOException {
     String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
     final UsersList usersList = mapper.readValue(jsonText, UsersList.class);
     assertNotNull(usersList);
     assertFalse(usersList.users.isEmpty());
@@ -139,7 +139,7 @@ public class StepikFormatTest extends EduTestCase {
 
   public void testSections() throws IOException {
     String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
     final SectionsList sectionsList = mapper.readValue(jsonText, SectionsList.class);
     assertNotNull(sectionsList);
     assertEquals(1, sectionsList.sections.size());
@@ -149,7 +149,7 @@ public class StepikFormatTest extends EduTestCase {
 
   public void testUnit() throws IOException {
     String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
     final UnitsList unitsList = mapper.readValue(jsonText, UnitsList.class);
     assertNotNull(unitsList);
     assertNotNull(unitsList);
@@ -160,7 +160,7 @@ public class StepikFormatTest extends EduTestCase {
 
   public void testLesson() throws IOException {
     String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
     final LessonsList lessonsList = mapper.readValue(jsonText, LessonsList.class);
 
     assertNotNull(lessonsList);
@@ -279,7 +279,7 @@ public class StepikFormatTest extends EduTestCase {
 
   public void testTaskStatuses() throws IOException {
     String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
     final ProgressesList progressesList = mapper.readValue(jsonText, ProgressesList.class);
     assertNotNull(progressesList);
     List<Progress> progressList = progressesList.progresses;
@@ -290,7 +290,7 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testAttempts() throws IOException {
-    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
     final AttemptsList attemptsList = mapper.readValue(loadJsonText(), AttemptsList.class);
     assertNotNull(attemptsList);
     List<? extends StepikWrappers.Attempt> attempts = attemptsList.attempts;
@@ -304,7 +304,7 @@ public class StepikFormatTest extends EduTestCase {
 
   public void testLastSubmission() throws IOException {
     String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
     final SubmissionsList submissionsList = mapper.readValue(jsonText, SubmissionsList.class);
     assertNotNull(submissionsList);
     assertNotNull(submissionsList.submissions);

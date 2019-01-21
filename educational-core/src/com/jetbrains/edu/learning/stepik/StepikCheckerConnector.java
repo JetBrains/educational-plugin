@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.SubmissionData;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.jetbrains.annotations.NotNull;
@@ -30,13 +30,13 @@ public class StepikCheckerConnector {
 
   @Nullable
   public static StepikWrappers.Attempt getAttemptForStep(int stepId, int userId) {
-    final List<StepikWrappers.Attempt> attempts = StepikNewConnector.INSTANCE.getAttempts(stepId, userId);
+    final List<StepikWrappers.Attempt> attempts = StepikConnector.INSTANCE.getAttempts(stepId, userId);
     if (attempts != null && attempts.size() > 0) {
       final StepikWrappers.Attempt attempt = attempts.get(0);
-      return attempt.isActive() ? attempt : StepikNewConnector.INSTANCE.postAttempt(stepId);
+      return attempt.isActive() ? attempt : StepikConnector.INSTANCE.postAttempt(stepId);
     }
     else {
-      return StepikNewConnector.INSTANCE.postAttempt(stepId);
+      return StepikConnector.INSTANCE.postAttempt(stepId);
     }
   }
 
@@ -54,8 +54,8 @@ public class StepikCheckerConnector {
 
       final CheckResult result = doCheck(submissionData, attemptId, user.getId());
       if (result.getStatus() == CheckStatus.Failed) {
-        StepikNewConnector.INSTANCE.postAttempt(task.getStepId());
-        StepSource step = StepikNewConnector.INSTANCE.getStep(task.getStepId());
+        StepikConnector.INSTANCE.postAttempt(task.getStepId());
+        StepSource step = StepikConnector.INSTANCE.getStep(task.getStepId());
         if (step == null) {
           LOG.error("Failed to get step " + task.getStepId());
           return result;
@@ -132,7 +132,7 @@ public class StepikCheckerConnector {
                                      int attemptId, int userId) {
     final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
     if (client != null) {
-      List<StepikWrappers.Submission> submissions = StepikNewConnector.INSTANCE.postSubmission(submission);
+      List<StepikWrappers.Submission> submissions = StepikConnector.INSTANCE.postSubmission(submission);
       if (submissions != null) {
         submissions = getCheckResults(submissions, attemptId, userId);
         if (submissions.size() > 0) {
@@ -163,7 +163,7 @@ public class StepikCheckerConnector {
     try {
       while (submissions != null && submissions.size() == 1 && submissions.get(0).status.equals("evaluation")) {
         TimeUnit.MILLISECONDS.sleep(500);
-        submissions = StepikNewConnector.INSTANCE.getSubmissions(attemptId, userId);
+        submissions = StepikConnector.INSTANCE.getSubmissions(attemptId, userId);
       }
     }
     catch (InterruptedException e) {
@@ -173,7 +173,7 @@ public class StepikCheckerConnector {
   }
 
   private static int getAttemptId(@NotNull Task task) {
-    final StepikWrappers.Attempt attempt = StepikNewConnector.INSTANCE.postAttempt(task.getStepId()); //TODO: DatasetAdapter
+    final StepikWrappers.Attempt attempt = StepikConnector.INSTANCE.postAttempt(task.getStepId()); //TODO: DatasetAdapter
     return attempt != null ? attempt.id : -1;
   }
 }

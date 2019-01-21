@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthRestService;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.stepik.*;
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
@@ -126,7 +126,7 @@ public class StepikRestService extends OAuthRestService {
         return log("Unrecognized the Unit id");
       }
 
-      StepikWrappers.Unit unit = StepikNewConnector.INSTANCE.getUnit(unitId);
+      StepikWrappers.Unit unit = StepikConnector.INSTANCE.getUnit(unitId);
       if (unit == null) {
         return log("No section found with id " + unitId);
       }
@@ -135,7 +135,7 @@ public class StepikRestService extends OAuthRestService {
         return log("Unrecognized the Unit id");
       }
 
-      Section section = StepikNewConnector.INSTANCE.getSection(unit.getSection());
+      Section section = StepikConnector.INSTANCE.getSection(unit.getSection());
       if (section == null) {
         return log("No section found with id " + unit.getSection());
       }
@@ -143,7 +143,7 @@ public class StepikRestService extends OAuthRestService {
       if (courseId == 0) {
         return log("Unrecognized the course id");
       }
-      Lesson lesson = StepikNewConnector.INSTANCE.getLesson(lessonId);
+      Lesson lesson = StepikConnector.INSTANCE.getLesson(lessonId);
       if (lesson == null) {
         return log("No lesson found with id " + lessonId);
       }

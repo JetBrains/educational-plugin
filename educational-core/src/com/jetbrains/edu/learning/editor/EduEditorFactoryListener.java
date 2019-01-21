@@ -34,7 +34,7 @@ import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
 import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import com.jetbrains.edu.learning.stepik.api.Assignment;
 import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector;
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -132,7 +132,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
   }
 
   private static void markStepAsViewed(int lessonId, int stepId) {
-    final StepikWrappers.Unit unit = StepikNewConnector.INSTANCE.getLessonUnit(lessonId);
+    final StepikWrappers.Unit unit = StepikConnector.INSTANCE.getLessonUnit(lessonId);
     if (unit == null) {
       LOG.warn("Failed to get lesson unit " + lessonId);
       return;
@@ -143,7 +143,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       if (assignment.getStep() != stepId) {
         continue;
       }
-      StepikNewConnector.INSTANCE.postView(assignment.getId(), stepId);
+      StepikConnector.INSTANCE.postView(assignment.getId(), stepId);
     }
   }
 }

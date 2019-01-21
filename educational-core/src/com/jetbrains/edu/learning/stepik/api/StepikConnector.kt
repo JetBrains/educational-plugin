@@ -21,8 +21,8 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-object StepikNewConnector {
-  private val LOG = Logger.getInstance(StepikNewConnector::class.java)
+object StepikConnector {
+  private val LOG = Logger.getInstance(StepikConnector::class.java)
   private val converterFactory: JacksonConverterFactory
 
   init {

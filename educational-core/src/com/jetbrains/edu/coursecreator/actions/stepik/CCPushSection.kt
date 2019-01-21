@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
 
 class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Section on Stepik", null) {
 
@@ -77,7 +77,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
         override fun run(indicator: ProgressIndicator) {
           indicator.text = "Uploading section to " + StepikNames.STEPIK_URL
           if (section.id > 0) {
-            val sectionFromServer = StepikNewConnector.getSection(section.id)
+            val sectionFromServer = StepikConnector.getSection(section.id)
             section.position = sectionPosition(course, section.name)
             val positionChanged = sectionFromServer?.position != section.position
             val updated = CCStepikConnector.updateSection(project, section)

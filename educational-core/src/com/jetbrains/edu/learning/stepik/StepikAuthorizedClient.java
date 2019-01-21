@@ -8,7 +8,7 @@ import com.intellij.openapi.util.Key;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -93,7 +93,7 @@ public class StepikAuthorizedClient {
   }
 
   public static boolean login(@NotNull final String code, String redirectUrl) {
-    final boolean success = StepikNewConnector.INSTANCE.login(code, redirectUrl);
+    final boolean success = StepikConnector.INSTANCE.login(code, redirectUrl);
     if (!success) return false;
     final StepikUser user = EduSettings.getInstance().getUser();
     if (user == null) {
@@ -108,7 +108,7 @@ public class StepikAuthorizedClient {
     final StepikUser user = new StepikUser(tokenInfo);
     ourClient = createInitializedClient(user.getAccessToken());
 
-    final StepikUserInfo currentUser = StepikNewConnector.INSTANCE.getCurrentUserInfo(user);
+    final StepikUserInfo currentUser = StepikConnector.INSTANCE.getCurrentUserInfo(user);
     if (currentUser != null) {
       user.setUserInfo(currentUser);
     }

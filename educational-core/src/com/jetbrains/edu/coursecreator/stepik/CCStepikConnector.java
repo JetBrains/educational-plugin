@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
 import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector;
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -66,13 +66,13 @@ public class CCStepikConnector {
   }
 
   public static int getTaskPosition(final int taskId) {
-    StepSource step = StepikNewConnector.INSTANCE.getStep(taskId);
+    StepSource step = StepikConnector.INSTANCE.getStep(taskId);
     return step != null ? step.getPosition() : -1;
   }
 
   @Nullable
   public static EduCourse getCourseInfo(@NotNull String courseId) {
-    return StepikNewConnector.INSTANCE.getCourseInfo(Integer.valueOf(courseId), null);
+    return StepikConnector.INSTANCE.getCourseInfo(Integer.valueOf(courseId), null);
   }
 
   public static void postCourseWithProgress(@NotNull final Project project, @NotNull final Course course) {
@@ -96,7 +96,7 @@ public class CCStepikConnector {
       indicator.setText("Uploading course to " + StepikNames.STEPIK_URL);
       indicator.setIndeterminate(false);
     }
-    final StepikUserInfo currentUser = StepikNewConnector.INSTANCE.getCurrentUserInfo(user);
+    final StepikUserInfo currentUser = StepikConnector.INSTANCE.getCurrentUserInfo(user);
     if (currentUser != null) {
       final List<StepikUserInfo> courseAuthors = course.getAuthors();
       for (final StepikUserInfo courseAuthor : courseAuthors) {
@@ -106,7 +106,7 @@ public class CCStepikConnector {
       course.setAuthors(Collections.singletonList(currentUser));
     }
 
-    final EduCourse courseOnRemote = StepikNewConnector.INSTANCE.postCourse(course);
+    final EduCourse courseOnRemote = StepikConnector.INSTANCE.postCourse(course);
     if (courseOnRemote == null) {
       final String message = FAILED_TITLE + "course " + course.getName();
       LOG.error(message);
@@ -144,7 +144,7 @@ public class CCStepikConnector {
   }
 
   private static void addJetBrainsUserAsAdmin(@NotNull String groupId) {
-    final int responseCode = StepikNewConnector.INSTANCE.postMember(JETBRAINS_USER_ID, groupId);
+    final int responseCode = StepikConnector.INSTANCE.postMember(JETBRAINS_USER_ID, groupId);
     if (responseCode != HttpStatus.SC_CREATED) {
       LOG.warn("Failed to add JetBrains as admin ");
     }
@@ -201,13 +201,13 @@ public class CCStepikConnector {
 
   public static int findTopLevelLessonsSection(@NotNull Project project, @Nullable Lesson topLevelLesson) {
     if (topLevelLesson != null) {
-      StepikWrappers.Unit unit = StepikNewConnector.INSTANCE.getUnit(topLevelLesson.unitId);
+      StepikWrappers.Unit unit = StepikConnector.INSTANCE.getUnit(topLevelLesson.unitId);
       return unit != null ? unit.getSection() : -1;
     }
     else {
       Course course = StudyTaskManager.getInstance(project).getCourse();
       assert  course != null;
-      EduCourse courseInfo = StepikNewConnector.INSTANCE.getCourseInfo(course.getId(), true);
+      EduCourse courseInfo = StepikConnector.INSTANCE.getCourseInfo(course.getId(), true);
       if (courseInfo != null) {
         List<Integer> sectionIds = courseInfo.getSectionIds();
         List<Section> sections = StepikMultipleRequestsConnector.INSTANCE.getSections(sectionIds);
@@ -329,7 +329,7 @@ public class CCStepikConnector {
   public static int postUnit(int lessonId, int position, int sectionId, @NotNull Project project) {
     if (!checkIfAuthorized(project, "postUnit")) return lessonId;
 
-    final StepikWrappers.Unit unit = StepikNewConnector.INSTANCE.postUnit(lessonId, position, sectionId);
+    final StepikWrappers.Unit unit = StepikConnector.INSTANCE.postUnit(lessonId, position, sectionId);
     if (unit == null) {
       showErrorNotification(project, FAILED_TITLE, "Failed to post unit");
       return -1;
@@ -340,7 +340,7 @@ public class CCStepikConnector {
   public static void updateUnit(int unitId, int lessonId, int position, int sectionId, @NotNull Project project) {
     if (!checkIfAuthorized(project, "updateUnit")) return;
 
-    final StepikWrappers.Unit unit = StepikNewConnector.INSTANCE.updateUnit(unitId, lessonId, position, sectionId);
+    final StepikWrappers.Unit unit = StepikConnector.INSTANCE.updateUnit(unitId, lessonId, position, sectionId);
     if (unit == null) {
       showErrorNotification(project, FAILED_TITLE, "Failed to update unit");
     }
@@ -350,7 +350,7 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "post section")) return -1;
 
     section.setCourseId(courseId);
-    final Section postedSection = StepikNewConnector.INSTANCE.postSection(section);
+    final Section postedSection = StepikConnector.INSTANCE.postSection(section);
     if (postedSection == null) {
       showErrorNotification(project, FAILED_TITLE, "Failed to post section " + section.getId());
       return -1;
@@ -361,7 +361,7 @@ public class CCStepikConnector {
 
   public static boolean updateSectionInfo(@NotNull Project project, @NotNull Section section) {
     Section sectionCopy = copySection(section);
-    final Section updatedSection = StepikNewConnector.INSTANCE.updateSection(sectionCopy);
+    final Section updatedSection = StepikConnector.INSTANCE.updateSection(sectionCopy);
     if (updatedSection == null) {
       showErrorNotification(project, FAILED_TITLE, "Failed to post section " + section.getId());
       return false;
@@ -378,7 +378,7 @@ public class CCStepikConnector {
     final EduConfigurator configurator = CourseExt.getConfigurator(course);
     if (configurator == null) return false;
 
-    final int responseCode = StepikNewConnector.INSTANCE.updateTask(project, task);
+    final int responseCode = StepikConnector.INSTANCE.updateTask(project, task);
 
     switch (responseCode) {
       case HttpStatus.SC_OK:
@@ -451,7 +451,7 @@ public class CCStepikConnector {
 
     List<Integer> sectionIds = courseInfo.getSectionIds();
     for (Integer sectionId : sectionIds) {
-      final Section section = StepikNewConnector.INSTANCE.getSection(sectionId);
+      final Section section = StepikConnector.INSTANCE.getSection(sectionId);
       if (section != null && StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
         section.setPosition(sectionIds.size());
         section.setId(sectionId);
@@ -481,7 +481,7 @@ public class CCStepikConnector {
 
     List<Integer> sectionIds = courseInfo.getSectionIds();
     for (Integer sectionId : sectionIds) {
-      final Section section = StepikNewConnector.INSTANCE.getSection(sectionId);
+      final Section section = StepikConnector.INSTANCE.getSection(sectionId);
       if (section != null && StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
         section.setPosition(sectionIds.size());
         updateSectionInfo(project, section);
@@ -497,7 +497,7 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "update lesson")) return null;
     // TODO: support case when lesson was removed from Stepik
 
-    final Lesson updatedLesson = StepikNewConnector.INSTANCE.updateLesson(lesson);
+    final Lesson updatedLesson = StepikConnector.INSTANCE.updateLesson(lesson);
     if (updatedLesson == null && showNotification) {
       showErrorNotification(project, FAILED_TITLE, "Failed to update lesson " + lesson.getId());
       return null;
@@ -538,7 +538,7 @@ public class CCStepikConnector {
 
     // Remove all tasks from Stepik which are not in our lessons now
     for (Integer step : taskIdsToDelete) {
-      StepikNewConnector.INSTANCE.deleteTask(step);
+      StepikConnector.INSTANCE.deleteTask(step);
     }
 
     for (Task task : localLesson.getTaskList()) {
@@ -635,7 +635,7 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "postLesson")) return null;
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    final Lesson postedLesson = StepikNewConnector.INSTANCE.postLesson(lesson);
+    final Lesson postedLesson = StepikConnector.INSTANCE.postLesson(lesson);
     if (postedLesson == null) {
       final String message = FAILED_TITLE + "lesson " + lesson.getId();
       showErrorNotification(project, FAILED_TITLE, message);
@@ -663,7 +663,7 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "postTask")) return false;
     if (task instanceof ChoiceTask || task instanceof CodeTask) return false;
 
-    final StepSource stepSource = StepikNewConnector.INSTANCE.postTask(project, task, lessonId);
+    final StepSource stepSource = StepikConnector.INSTANCE.postTask(project, task, lessonId);
     if (stepSource == null) {
       final String message = FAILED_TITLE + "task in lesson " + lessonId;
       LOG.error(message);

@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikWrappers;
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.twelvemonkeys.lang.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -137,7 +137,7 @@ public class CCPushLesson extends DumbAwareAction {
   // public for tests
   public static void doPush(Lesson lesson, Project project, Course course) {
     if (lesson.getId() > 0) {
-      StepikWrappers.Unit unit = StepikNewConnector.INSTANCE.getUnit(lesson.unitId);
+      StepikWrappers.Unit unit = StepikConnector.INSTANCE.getUnit(lesson.unitId);
       if (unit == null) {
         LOG.error("Failed to get unit for unit id " + lesson.unitId);
         return;

@@ -31,7 +31,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog;
 import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -164,7 +164,7 @@ public class EduBuiltInServerUtils {
     ApplicationManager.getApplication().invokeLater(() -> ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
       execCancelable(() -> {
-        EduCourse course = StepikNewConnector.INSTANCE.getCourseInfo(courseId, true);
+        EduCourse course = StepikConnector.INSTANCE.getCourseInfo(courseId, true);
         showDialog(course, stepId);
         return null;
       });

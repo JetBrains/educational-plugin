@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.fillItems
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.getCourseInfo
+import com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo
 import java.util.*
 
 

@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.loadCourseStructure
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.getCourseInfo
+import com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo
 import java.io.IOException
 import java.net.URISyntaxException
 import java.util.*

@@ -21,7 +21,7 @@ object StepikCourseLoader {
   private val EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER)
 
   fun getLessons(remoteCourse: EduCourse, sectionId: Int): List<Lesson> {
-    val section = StepikNewConnector.getSection(sectionId) ?: return emptyList()
+    val section = StepikConnector.getSection(sectionId) ?: return emptyList()
     return getLessonsFromUnits(remoteCourse, section.units, true)
   }
 
@@ -62,7 +62,7 @@ object StepikCourseLoader {
     val indicator = ProgressManager.getInstance().progressIndicator
     while (true) {
       if (indicator != null && indicator.isCanceled) break
-      val coursesList = StepikNewConnector.getCourses(isPublic, currentPage, enrolled)
+      val coursesList = StepikConnector.getCourses(isPublic, currentPage, enrolled)
       if (coursesList == null) break
 
       val availableCourses = getAvailableCourses(coursesList)
@@ -76,7 +76,7 @@ object StepikCourseLoader {
   private fun getInProgressCourses(): List<EduCourse> {
     val result = ContainerUtil.newArrayList<EduCourse>()
     for (courseId in inProgressCourses) {
-      val info = StepikNewConnector.getCourseInfo(courseId, false) ?: continue
+      val info = StepikConnector.getCourseInfo(courseId, false) ?: continue
       val compatibility = info.compatibility
       if (compatibility === CourseCompatibility.UNSUPPORTED) continue
       val visibility = CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(info.id))
