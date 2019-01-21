@@ -30,8 +30,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector;
+import com.jetbrains.edu.learning.stepik.api.Attempt;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
+import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.update.UpdateNotification;
@@ -88,7 +89,7 @@ public class StepikSolutionsLoader implements Disposable {
       return;
     }
 
-    final StepikWrappers.Attempt attempt = StepikConnector.INSTANCE.postAttempt(task.getStepId());
+    final Attempt attempt = StepikConnector.INSTANCE.postAttempt(task.getStepId());
     if (attempt == null) {
       LOG.warn("Failed to post an attempt " + task.getStepId());
       return;

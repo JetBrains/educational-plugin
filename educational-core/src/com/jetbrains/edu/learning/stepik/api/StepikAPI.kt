@@ -1,7 +1,8 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "PropertyName")
 
 package com.jetbrains.edu.learning.stepik.api
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.GsonBuilder
 import com.intellij.openapi.project.Project
@@ -58,7 +59,7 @@ class ProgressesList {
 }
 
 class AttemptsList {
-  lateinit var attempts: List<StepikWrappers.Attempt>
+  lateinit var attempts: List<Attempt>
 }
 
 class AssignmentsList {
@@ -85,7 +86,7 @@ class SubmissionData() {
 }
 
 class AttemptData(step: Int) {
-  var attempt: StepikWrappers.Attempt = StepikWrappers.Attempt(step)
+  var attempt: Attempt = Attempt(step)
 }
 
 class ViewData(assignment: Int, step: Int) {
@@ -154,4 +155,27 @@ class Progress {
 class Assignment {
   var id: Int = 0
   var step: Int = 0
+}
+
+class Dataset {
+  var is_multiple_choice: Boolean = false
+  var options: List<String>? = null
+}
+
+class Attempt {
+  constructor()
+
+  constructor(step: Int) {
+    this.step = step
+  }
+
+  var step: Int = 0
+  var dataset: Dataset? = null
+  var status: String? = null
+  var user: String? = null
+  var id: Int = 0
+
+  val isActive: Boolean
+    @JsonIgnore
+    get() = status == "active"
 }

@@ -293,12 +293,12 @@ public class StepikFormatTest extends EduTestCase {
     final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
     final AttemptsList attemptsList = mapper.readValue(loadJsonText(), AttemptsList.class);
     assertNotNull(attemptsList);
-    List<? extends StepikWrappers.Attempt> attempts = attemptsList.attempts;
+    List<? extends Attempt> attempts = attemptsList.attempts;
     assertNotNull(attempts);
     assertEquals(20, attempts.size());
-    StepikWrappers.Attempt attempt1 = attempts.get(0);
+    Attempt attempt1 = attempts.get(0);
     assertNull(attempt1.dataset);
-    StepikWrappers.Attempt attempt2 = attempts.get(11);
+    Attempt attempt2 = attempts.get(11);
     assertNotNull(attempt2.dataset);
   }
 

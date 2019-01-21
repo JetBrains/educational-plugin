@@ -20,6 +20,8 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
+import com.jetbrains.edu.learning.stepik.api.Attempt;
+import com.jetbrains.edu.learning.stepik.api.Dataset;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -165,12 +167,12 @@ public class StepikTaskBuilder {
     task.setDescriptionText(myStep.getText());
 
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      final StepikWrappers.Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepId, myUserId);
+      final Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepId, myUserId);
       if (attempt != null) {
-        final StepikWrappers.Dataset dataset = attempt.dataset;
+        final Dataset dataset = attempt.getDataset();
         if (dataset != null) {
-          task.setChoiceVariants(dataset.options);
-          task.setMultipleChoice(dataset.is_multiple_choice);
+          task.setChoiceVariants(dataset.getOptions());
+          task.setMultipleChoice(dataset.is_multiple_choice());
         }
         else {
           LOG.warn("Dataset for step " + myStepId + " is null");

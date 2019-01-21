@@ -12,9 +12,10 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.stepik.api.Attempt;
+import com.jetbrains.edu.learning.stepik.api.Dataset;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.SubmissionData;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,10 +30,10 @@ public class StepikCheckerConnector {
   private static final String CODE_COMPLEXITY_NOTE = "code complexity score";
 
   @Nullable
-  public static StepikWrappers.Attempt getAttemptForStep(int stepId, int userId) {
-    final List<StepikWrappers.Attempt> attempts = StepikConnector.INSTANCE.getAttempts(stepId, userId);
+  public static Attempt getAttemptForStep(int stepId, int userId) {
+    final List<Attempt> attempts = StepikConnector.INSTANCE.getAttempts(stepId, userId);
     if (attempts != null && attempts.size() > 0) {
-      final StepikWrappers.Attempt attempt = attempts.get(0);
+      final Attempt attempt = attempts.get(0);
       return attempt.isActive() ? attempt : StepikConnector.INSTANCE.postAttempt(stepId);
     }
     else {
@@ -42,13 +43,13 @@ public class StepikCheckerConnector {
 
   public static CheckResult checkChoiceTask(@NotNull ChoiceTask task, @NotNull StepikUser user) {
     if (task.getSelectedVariants().isEmpty()) return new CheckResult(CheckStatus.Failed, "No variants selected");
-    final StepikWrappers.Attempt attempt = getAttemptForStep(task.getStepId(), user.getId());
+    final Attempt attempt = getAttemptForStep(task.getStepId(), user.getId());
 
     if (attempt != null) {
-      final int attemptId = attempt.id;
-
+      final int attemptId = attempt.getId();
+      final Dataset dataset = attempt.getDataset();
       final boolean isActiveAttempt = task.getSelectedVariants().stream()
-        .allMatch(index -> attempt.dataset.options.get(index).equals(task.getChoiceVariants().get(index)));
+        .allMatch(index -> dataset.getOptions().get(index).equals(task.getChoiceVariants().get(index)));
       if (!isActiveAttempt) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
       final SubmissionData submissionData = createChoiceSubmissionData(task, attemptId);
 
@@ -130,29 +131,26 @@ public class StepikCheckerConnector {
 
   private static CheckResult doCheck(@NotNull SubmissionData submission,
                                      int attemptId, int userId) {
-    final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-    if (client != null) {
-      List<StepikWrappers.Submission> submissions = StepikConnector.INSTANCE.postSubmission(submission);
-      if (submissions != null) {
-        submissions = getCheckResults(submissions, attemptId, userId);
-        if (submissions.size() > 0) {
-          final String status = submissions.get(0).status;
-          final String hint = submissions.get(0).hint;
-          final boolean isSolved = !status.equals("wrong");
-          String message = hint;
-          if (message.isEmpty() || message.contains(CODE_COMPLEXITY_NOTE)) {
-            message = StringUtil.capitalize(status) + " solution";
-          }
-          return new CheckResult(isSolved ? CheckStatus.Solved : CheckStatus.Failed, message);
+    List<StepikWrappers.Submission> submissions = StepikConnector.INSTANCE.postSubmission(submission);
+    if (submissions != null) {
+      submissions = getCheckResults(submissions, attemptId, userId);
+      if (submissions.size() > 0) {
+        final String status = submissions.get(0).status;
+        final String hint = submissions.get(0).hint;
+        final boolean isSolved = !status.equals("wrong");
+        String message = hint;
+        if (message.isEmpty() || message.contains(CODE_COMPLEXITY_NOTE)) {
+          message = StringUtil.capitalize(status) + " solution";
         }
-        else {
-          LOG.warn("Got a submission wrapper with incorrect submissions number: " + submissions.size());
-        }
+        return new CheckResult(isSolved ? CheckStatus.Solved : CheckStatus.Failed, message);
       }
       else {
-        LOG.warn("Can't perform check: wrapper is null");
-        return new CheckResult(CheckStatus.Unchecked, "Can't get check results for Stepik");
+        LOG.warn("Got a submission wrapper with incorrect submissions number: " + submissions.size());
       }
+    }
+    else {
+      LOG.warn("Can't perform check: wrapper is null");
+      return new CheckResult(CheckStatus.Unchecked, "Can't get check results for Stepik");
     }
     return CheckResult.FAILED_TO_CHECK;
   }
@@ -173,7 +171,7 @@ public class StepikCheckerConnector {
   }
 
   private static int getAttemptId(@NotNull Task task) {
-    final StepikWrappers.Attempt attempt = StepikConnector.INSTANCE.postAttempt(task.getStepId()); //TODO: DatasetAdapter
-    return attempt != null ? attempt.id : -1;
+    final Attempt attempt = StepikConnector.INSTANCE.postAttempt(task.getStepId()); //TODO: DatasetAdapter
+    return attempt != null ? attempt.getId() : -1;
   }
 }

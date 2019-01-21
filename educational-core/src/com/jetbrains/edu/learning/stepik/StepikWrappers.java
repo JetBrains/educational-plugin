@@ -75,27 +75,6 @@ public class StepikWrappers {
     }
   }
 
-  public static class Attempt {
-    public int step;
-    public Dataset dataset;
-    public String status;
-    public String user;
-    public int id;
-
-    public Attempt(int step) {
-      this.step = step;
-    }
-
-    public boolean isActive() {
-      return status.equals("active");
-    }
-  }
-
-  public static class Dataset {
-    public boolean is_multiple_choice;
-    public List<String> options;
-  }
-
   public static class SolutionFile {
     public String name;
     public String text;

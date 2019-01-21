@@ -41,7 +41,6 @@ object StepikConnector {
       objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)
       objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, StepikAnswerPlaceholderDependencyMixin::class.java)
       objectMapper.addMixIn(FeedbackLink::class.java, StepikFeedbackLinkMixin::class.java)
-      objectMapper.addMixIn(StepikWrappers.Attempt::class.java, AttemptMixin::class.java)
       objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
       objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
       objectMapper.registerModule(module)
@@ -167,7 +166,7 @@ object StepikConnector {
     return submissions?.firstOrNull()?.reply
   }
 
-  fun getAttempts(stepId: Int, userId: Int): List<StepikWrappers.Attempt>? {
+  fun getAttempts(stepId: Int, userId: Int): List<Attempt>? {
     return service.attempts(stepId, userId).execute().body()?.attempts
   }
 
@@ -198,7 +197,7 @@ object StepikConnector {
     return service.stepSource(stepSourceData!!).execute().body()?.steps?.firstOrNull()
   }
 
-  fun postSubmission(passed: Boolean, attempt: StepikWrappers.Attempt,
+  fun postSubmission(passed: Boolean, attempt: Attempt,
                      files: ArrayList<StepikWrappers.SolutionFile>, task: Task): List<StepikWrappers.Submission>? {
     return postSubmission(SubmissionData(attempt.id, if (passed) "1" else "0", files, task))
   }
@@ -213,7 +212,7 @@ object StepikConnector {
     return submissions
   }
 
-  fun postAttempt(id: Int): StepikWrappers.Attempt? {
+  fun postAttempt(id: Int): Attempt? {
     val response = service.attempt(AttemptData(id)).execute()
     val attempt = response.body()?.attempts?.firstOrNull()
     if (response.code() != HttpStatus.SC_CREATED) {
