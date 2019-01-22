@@ -4,16 +4,26 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 
 class FrameworkLessonNavigationTest : EduTestCase() {
 
   private val rootDir: VirtualFile get() = LightPlatformTestCase.getSourceRoot()
+
+  override fun tearDown() {
+    AbstractStorage.deleteFiles(FrameworkLessonManagerImpl.constructStoragePath(project))
+    super.tearDown()
+  }
 
   fun `test next`() {
     val course = createFrameworkCourse()
@@ -206,6 +216,68 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       doTest(PreviousTaskAction(), task1) { task2.openTaskFileInEditor("buzz.kt") }
       doTest(NextTaskAction(), task3) { task2.openTaskFileInEditor("buzz.kt") }
     }
+  }
+
+  fun `test save student changes`() {
+    val course = createFrameworkCourse()
+    val task = course.findTask("lesson1", "task1")
+    withVirtualFileListener(course) {
+      task.openTaskFileInEditor("fizz.kt", 0)
+      myFixture.type("\"Fizz\"")
+      myFixture.editor.caretModel.moveToOffset(0)
+      myFixture.type("fn foo() {}\n")
+      task.status = CheckStatus.Solved
+      myFixture.testAction(NextTaskAction())
+
+      myFixture.testAction(PreviousTaskAction())
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          file("fizz.kt", """
+            fn foo() {}
+            fn fizz() = "Fizz"
+          """)
+        }
+      }
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
+  fun `test save student changes 2`() {
+    val course = createFrameworkCourse()
+    val task = course.findTask("lesson1", "task1")
+    withVirtualFileListener(course) {
+      task.openTaskFileInEditor("fizz.kt", 0)
+      myFixture.type("\"Fizz\"")
+      task.status = CheckStatus.Solved
+      myFixture.testAction(NextTaskAction())
+
+      val task2 = course.findTask("lesson1", "task2")
+      task2.openTaskFileInEditor("buzz.kt", 0)
+      myFixture.type("\"Buzz\"")
+      myFixture.editor.caretModel.moveToOffset(0)
+      myFixture.type("fn bar() {}\n")
+      myFixture.testAction(PreviousTaskAction())
+
+      myFixture.testAction(NextTaskAction())
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          file("fizz.kt", """
+            fn fizz() = "Fizz"
+          """)
+          file("buzz.kt", """
+            fn bar() {}
+            fn buzz() = "Buzz"
+          """)
+        }
+      }
+    }
+    fileTree.assertEquals(rootDir, myFixture)
   }
 
   private inline fun doTest(action: TaskNavigationAction, expectedTask: Task, init: () -> Unit) {

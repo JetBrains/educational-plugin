@@ -61,6 +61,8 @@ public abstract class Task extends StudyItem {
   @NotNull
   private FeedbackLink myFeedbackLink = new FeedbackLink();
 
+  private int myRecord = -1;
+
   public Task() {}
 
   public Task(@NotNull final String name) {
@@ -320,5 +322,13 @@ public abstract class Task extends StudyItem {
   @Override
   public StudyItem getParent() {
     return myLesson;
+  }
+
+  public int getRecord() {
+    return myRecord;
+  }
+
+  public void setRecord(int record) {
+    myRecord = record;
   }
 }
