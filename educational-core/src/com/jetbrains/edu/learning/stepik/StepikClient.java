@@ -11,9 +11,7 @@ import com.intellij.util.net.ssl.CertificateManager;
 import com.intellij.util.net.ssl.ConfirmingTrustManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.PluginUtils;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.stepik.api.Reply;
-import com.jetbrains.edu.learning.stepik.serialization.StepikLessonAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikReplyAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikStepOptionsAdapter;
 import org.apache.http.HttpHost;
@@ -44,7 +42,6 @@ public class StepikClient {
     String language = StepikAuthorizer.COURSE_LANGUAGE.get(params);
     return new GsonBuilder()
         .registerTypeAdapter(StepOptions.class, new StepikStepOptionsAdapter(language))
-        .registerTypeAdapter(Lesson.class, new StepikLessonAdapter(language))
         .registerTypeAdapter(Reply.class, new StepikReplyAdapter(language))
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();

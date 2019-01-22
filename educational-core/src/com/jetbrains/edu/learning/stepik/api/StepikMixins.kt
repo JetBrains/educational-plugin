@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
@@ -83,6 +84,7 @@ class StepikSectionMixin {
                 fieldVisibility = JsonAutoDetect.Visibility.NONE,
                 setterVisibility = JsonAutoDetect.Visibility.NONE,
                 creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonDeserialize(using = JacksonLessonDeserializer::class)
 class StepikLessonMixin {
   @JsonProperty("id")
   var myId: Int = 0
