@@ -375,13 +375,13 @@ public class StepikSolutionsLoader implements Disposable {
       return new TaskSolutions(loadSolutionTheOldWay(task, reply));
     }
 
-    StepikWrappers.TaskWrapper updatedTask = new GsonBuilder()
+    TaskData updatedTask = new GsonBuilder()
       .registerTypeAdapter(Task.class, new StepikSubmissionTaskAdapter(reply.getVersion(), language))
       .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
       .create()
-      .fromJson(serializedTask, StepikWrappers.TaskWrapper.class);
+      .fromJson(serializedTask, TaskData.class);
 
-    if (updatedTask == null || updatedTask.task == null) {
+    if (updatedTask == null || updatedTask.getTask() == null) {
       return TaskSolutions.EMPTY;
     }
 
@@ -390,7 +390,7 @@ public class StepikSolutionsLoader implements Disposable {
     Map<String, String> taskFileToText = new HashMap<>();
     for (SolutionFile file : reply.getSolution()) {
       TaskFile taskFile = task.getTaskFile(file.getName());
-      TaskFile updatedTaskFile = updatedTask.task.getTaskFile(file.getName());
+      TaskFile updatedTaskFile = updatedTask.getTask().getTaskFile(file.getName());
       if (taskFile != null && updatedTaskFile != null) {
         setPlaceholders(taskFile, updatedTaskFile);
         taskFileToText.put(file.getName(), removeAllTags(file.getText()));

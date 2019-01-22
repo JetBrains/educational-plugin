@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
-import com.jetbrains.edu.learning.stepik.StepikWrappers
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter
 import java.util.*
 
@@ -81,7 +80,7 @@ class SubmissionData() {
       .excludeFieldsWithoutExposeAnnotation()
       .registerTypeAdapter(Task::class.java, StepikSubmissionTaskAdapter())
       .create()
-      .toJson(StepikWrappers.TaskWrapper(task))
+      .toJson(TaskData(task))
     submission = Submission(score, attemptId, files, serializedTask)
   }
 }
@@ -136,13 +135,15 @@ class StepSourceData(project: Project, task: Task, lessonId: Int) {
   var stepSource: StepSource = StepSource(project, task, lessonId)
 }
 
-class Member(var user: String, var group: String)
-
 class MemberData(userId: String, group: String) {
   var member: Member = Member(userId, group)
 }
 
+class TaskData(var task: Task)
+
 // Auxiliary:
+
+class Member(var user: String, var group: String)
 
 class Enrollment(var course: String)
 

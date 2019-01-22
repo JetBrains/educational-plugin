@@ -296,9 +296,9 @@ public class StepikFormatTest extends EduTestCase {
     assertNotNull(attempts);
     assertEquals(20, attempts.size());
     Attempt attempt1 = attempts.get(0);
-    assertNull(attempt1.dataset);
+    assertNull(attempt1.getDataset());
     Attempt attempt2 = attempts.get(11);
-    assertNotNull(attempt2.dataset);
+    assertNotNull(attempt2.getDataset());
   }
 
   public void testLastSubmission() throws IOException {
@@ -308,12 +308,12 @@ public class StepikFormatTest extends EduTestCase {
     assertNotNull(submissionsList);
     assertNotNull(submissionsList.submissions);
     assertEquals(20, submissionsList.submissions.size());
-    final StepikWrappers.Reply reply = submissionsList.submissions.get(0).reply;
+    final Reply reply = submissionsList.submissions.get(0).getReply();
     assertNotNull(reply);
-    List<StepikWrappers.SolutionFile> solutionFiles = reply.solution;
+    List<SolutionFile> solutionFiles = reply.getSolution();
     assertEquals(1, solutionFiles.size());
-    assertEquals("hello_world.py", solutionFiles.get(0).name);
-    assertEquals("print(\"Hello, world! My name is type your name\")\n", solutionFiles.get(0).text);
+    assertEquals("hello_world.py", solutionFiles.get(0).getName());
+    assertEquals("print(\"Hello, world! My name is type your name\")\n", solutionFiles.get(0).getText());
   }
 
   public void testReplyTo7Version() throws IOException {

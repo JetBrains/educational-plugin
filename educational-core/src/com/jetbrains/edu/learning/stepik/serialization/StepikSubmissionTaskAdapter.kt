@@ -27,7 +27,7 @@ class StepikReplyAdapter(private val language: String?) : JsonDeserializer<Reply
     val gson = GsonBuilder().setPrettyPrinting().create()
     return gson.fromJson<Reply>(jsonObject).apply {
       // We need to save original version of reply object
-      // to correct deserialize StepikWrappers.Reply#edu_task
+      // to correct deserialize Reply#eduTask
       this.version = initialVersion
     }
   }
