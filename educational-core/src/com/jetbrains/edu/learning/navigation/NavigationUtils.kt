@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.saveStudentAnswersIfNeeded
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 import java.util.*
@@ -213,13 +214,14 @@ object NavigationUtils {
   private fun prepareFilesForTargetTask(project: Project, frameworkLesson: FrameworkLesson, currentTask: Task, targetTask: Task) {
     val dir = currentTask.getTaskDir(project) ?: return
 
+    val frameworkLessonManager = FrameworkLessonManager.getInstance(project)
     @Suppress("NAME_SHADOWING")
     var currentTask = currentTask
     while (currentTask.index != targetTask.index) {
       if (currentTask.index < targetTask.index) {
-        frameworkLesson.prepareNextTask(project, dir)
+        frameworkLessonManager.prepareNextTask(frameworkLesson, dir)
       } else {
-        frameworkLesson.preparePrevTask(project, dir)
+        frameworkLessonManager.preparePrevTask(frameworkLesson, dir)
       }
       currentTask = frameworkLesson.currentTask()
     }
