@@ -108,6 +108,22 @@ class CourseData(course: Course) {
   }
 }
 
+
+class CourseData(course: Course) {
+  var course: EduCourse = EduCourse()
+
+  init {
+    this.course.name = course.name
+    this.course.language = course.language
+    this.course.description = course.description
+    this.course.authors = course.authors
+    if (course is EduCourse && course.isRemote) {
+      this.course.instructors = course.instructors
+      this.course.isPublic = course.isPublic
+    }
+  }
+}
+
 class SectionData(var section: Section)
 
 class LessonData(lesson: Lesson) {

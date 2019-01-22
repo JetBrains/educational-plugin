@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.stepik;
 
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -30,23 +29,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
 import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector;
-import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -398,7 +388,6 @@ public class CCStepikConnector {
 
   public static boolean updateCourseInfo(@NotNull final Project project, @NotNull final EduCourse course) {
     if (!checkIfAuthorized(project, "update course")) return false;
-
     // Course info parameters such as isPublic() and isCompatible can be changed from Stepik site only
     // so we get actual info here
     EduCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
@@ -409,39 +398,19 @@ public class CCStepikConnector {
     else {
       LOG.warn("Failed to get current course info");
     }
+    int responseCode = StepikConnector.INSTANCE.updateCourse(course)
 
-    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.COURSES + "/" + course.getId());
-    String requestBody = new Gson().toJson(new StepikWrappers.CourseWrapper(course));
-    request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
-    try {
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) {
-        LOG.warn("Http client is null");
-        return false;
-      }
-      final CloseableHttpResponse response = client.execute(request);
-      final HttpEntity responseEntity = response.getEntity();
-      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-      final StatusLine line = response.getStatusLine();
-      EntityUtils.consume(responseEntity);
-      if (line.getStatusCode() == HttpStatus.SC_FORBIDDEN) {
-        showNoRightsToUpdateNotification(project, course);
-        return false;
-      }
-      if (line.getStatusCode() != HttpStatus.SC_OK) {
-        final String message = FAILED_TITLE + "course ";
-        LOG.warn(message + responseString);
-        final String detailString = getErrorDetail(responseString);
-
-        showErrorNotification(project, FAILED_TITLE, detailString);
-      }
-
-      return true;
-    }
-    catch (IOException e) {
-      LOG.error(e.getMessage());
+    if (responseCode == HttpStatus.SC_FORBIDDEN) {
+      showNoRightsToUpdateNotification(project, course);
       return false;
     }
+    if (responseCode != HttpStatus.SC_OK) {
+      final String message = FAILED_TITLE + "course " + course.getId();
+      LOG.warn(message);
+      showErrorNotification(project, FAILED_TITLE, message);
+      return false;
+    }
+    return true;
   }
 
   public static void updateAdditionalMaterials(@NotNull Project project, int courseId) {

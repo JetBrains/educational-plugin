@@ -243,6 +243,11 @@ object StepikConnector {
 
   // Update requests:
 
+  fun updateCourse(course: Course): Int {
+    var response = service.course(course.id, CourseData(section)).execute()
+    return response.code()
+  }
+
   fun updateSection(section: Section): Section? {
     return service.section(section.id, SectionData(section)).execute().body()?.sections?.firstOrNull()
   }

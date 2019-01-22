@@ -3,32 +3,13 @@ package com.jetbrains.edu.learning.stepik;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.jetbrains.edu.learning.EduVersions;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class StepikWrappers {
-
-  public static class CourseWrapper {
-    EduCourse course;
-
-    public CourseWrapper(@NotNull Course course) {
-      this.course = new EduCourse();
-      this.course.setName(course.getName());
-      this.course.setLanguage(course.getLanguage());
-      this.course.setDescription(course.getDescription());
-      this.course.setAuthors(course.getAuthors());
-      if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
-        this.course.setInstructors(((EduCourse)course).getInstructors());
-        this.course.setPublic(((EduCourse)course).isPublic());
-      }
-    }
-  }
 
   public static class Unit {
     public Integer id;

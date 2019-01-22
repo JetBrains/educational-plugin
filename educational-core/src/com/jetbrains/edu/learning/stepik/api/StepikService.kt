@@ -98,6 +98,9 @@ interface StepikService {
 
   // PUT requests:
 
+  @PUT("courses/{id}")
+  fun course(@Path("id") courseId: Int, @Body courseData: CourseData): Call<Any>
+
   @PUT("sections/{id}")
   fun section(@Path("id") sectionId: Int, @Body sectionData: SectionData): Call<SectionsList>
 
