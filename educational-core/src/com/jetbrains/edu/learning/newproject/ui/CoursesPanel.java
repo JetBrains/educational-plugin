@@ -189,8 +189,10 @@ public class CoursesPanel extends JPanel {
       for (Runnable action : postLoginActions) {
         action.run();
       }
-      myBusConnection.disconnect();
-      myBusConnection = null;
+      if (myBusConnection != null) {
+        myBusConnection.disconnect();
+        myBusConnection = null;
+      }
     }, ModalityState.any());
   }
 

@@ -27,28 +27,30 @@ import java.util.concurrent.TimeUnit
 object StepikConnector {
   private val LOG = Logger.getInstance(StepikConnector::class.java)
   private val converterFactory: JacksonConverterFactory
+  val objectMapper: ObjectMapper
 
   init {
+    val module = SimpleModule()
+    module.addDeserializer(Lesson::class.java, JacksonLessonDeserializer())
+    objectMapper = getMapper(module)
     converterFactory = JacksonConverterFactory.create(objectMapper)
   }
 
-  val objectMapper: ObjectMapper
-    get() {
-      val module = SimpleModule()
-      val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-      objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
-      objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
-      objectMapper.addMixIn(Section::class.java, StepikSectionMixin::class.java)
-      objectMapper.addMixIn(Lesson::class.java, StepikLessonMixin::class.java)
-      objectMapper.addMixIn(TaskFile::class.java, StepikTaskFileMixin::class.java)
-      objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)
-      objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, StepikAnswerPlaceholderDependencyMixin::class.java)
-      objectMapper.addMixIn(FeedbackLink::class.java, StepikFeedbackLinkMixin::class.java)
-      objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-      objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
-      objectMapper.registerModule(module)
-      return objectMapper
-    }
+  fun getMapper(module: SimpleModule) : ObjectMapper {
+    val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+    objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
+    objectMapper.addMixIn(Section::class.java, StepikSectionMixin::class.java)
+    objectMapper.addMixIn(Lesson::class.java, StepikLessonMixin::class.java)
+    objectMapper.addMixIn(TaskFile::class.java, StepikTaskFileMixin::class.java)
+    objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)
+    objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, StepikAnswerPlaceholderDependencyMixin::class.java)
+    objectMapper.addMixIn(FeedbackLink::class.java, StepikFeedbackLinkMixin::class.java)
+    objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
+    objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+    objectMapper.registerModule(module)
+    return objectMapper
+  }
 
   private val authorizationService: StepikOAuthService
     get() {
@@ -129,7 +131,8 @@ object StepikConnector {
   fun getCourses(isPublic: Boolean, currentPage: Int, enrolled: Boolean?) =
     service.courses(true, isPublic, currentPage, enrolled).execute().body()
 
-  fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean?): EduCourse? {
+  @JvmOverloads
+  fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean? = null): EduCourse? {
     val course = service.courses(courseId, isIdeaCompatible).execute().body()?.courses?.firstOrNull()
     if (course != null) {
       setCourseLanguage(course)

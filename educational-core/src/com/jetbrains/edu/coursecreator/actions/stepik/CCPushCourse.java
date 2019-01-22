@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import org.jetbrains.annotations.NotNull;
 
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
@@ -86,7 +87,7 @@ public class CCPushCourse extends DumbAwareAction {
 
   public static boolean doPush(Project project, Course course) {
     if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
-      if (getCourseInfo(String.valueOf(course.getId())) == null) {
+      if (StepikConnector.INSTANCE.getCourseInfo(course.getId()) == null) {
         String message = "Cannot find course on Stepik. <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
         Notification notification = new Notification("update.course", "Failed ot update", message, NotificationType.ERROR,
                                                      createPostCourseNotificationListener(project, (EduCourse)course));

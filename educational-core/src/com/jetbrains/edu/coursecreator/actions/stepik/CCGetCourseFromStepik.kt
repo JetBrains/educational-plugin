@@ -8,8 +8,8 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
-import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 
 @Suppress("ComponentNotRegistered") // registered in educational-core.xml
@@ -28,7 +28,7 @@ class CCGetCourseFromStepik : DumbAwareAction("Get Course From Stepik", "Get Cou
   }
 
   private fun createCourse(courseId: String) {
-    val info = CCStepikConnector.getCourseInfo(courseId)
+    val info = StepikConnector.getCourseInfo(Integer.valueOf(courseId))
     if (info == null) {
       showError(courseId)
       return

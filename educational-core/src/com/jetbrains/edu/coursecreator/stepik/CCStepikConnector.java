@@ -58,11 +58,6 @@ public class CCStepikConnector {
     return step != null ? step.getPosition() : -1;
   }
 
-  @Nullable
-  public static EduCourse getCourseInfo(@NotNull String courseId) {
-    return StepikConnector.INSTANCE.getCourseInfo(Integer.valueOf(courseId), null);
-  }
-
   public static void postCourseWithProgress(@NotNull final Project project, @NotNull final Course course) {
     ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Modal(project, "Uploading Course", true) {
       @Override
@@ -388,7 +383,7 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "update course")) return false;
     // Course info parameters such as isPublic() and isCompatible can be changed from Stepik site only
     // so we get actual info here
-    EduCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
+    EduCourse courseInfo = StepikConnector.INSTANCE.getCourseInfo(course.getId());
     if (courseInfo != null) {
       course.setPublic(courseInfo.isPublic());
       course.setCompatible(courseInfo.isCompatible());
@@ -413,7 +408,7 @@ public class CCStepikConnector {
 
   public static void updateAdditionalMaterials(@NotNull Project project, int courseId) {
     AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
-    EduCourse courseInfo = getCourseInfo(String.valueOf(courseId));
+    EduCourse courseInfo = StepikConnector.INSTANCE.getCourseInfo(courseId);
     assert courseInfo != null;
 
     List<Integer> sectionIds = courseInfo.getSectionIds();
@@ -443,7 +438,7 @@ public class CCStepikConnector {
     EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
 
-    EduCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
+    EduCourse courseInfo = StepikConnector.INSTANCE.getCourseInfo(course.getId());
     assert courseInfo != null;
 
     List<Integer> sectionIds = courseInfo.getSectionIds();
