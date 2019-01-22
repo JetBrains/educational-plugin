@@ -1,60 +1,13 @@
 package com.jetbrains.edu.learning.stepik;
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class StepikWrappers {
-
-  public static class Unit {
-    public Integer id;
-    public int section;
-    public int lesson;
-    public int position;
-    public @SerializedName("update_date") Date updateDate;
-    public List<Integer> assignments;
-
-    public void setSection(int section) {
-      this.section = section;
-    }
-
-    public void setPosition(int position) {
-      this.position = position;
-    }
-
-    public int getPosition() {
-      return position;
-    }
-
-    public void setLesson(int lesson) {
-      this.lesson = lesson;
-    }
-
-    public int getSection() {
-      return section;
-    }
-
-    public int getId() {
-      return id;
-    }
-
-    public void setId(int id) {
-      this.id = id;
-    }
-
-    public Date getUpdateDate() {
-      return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-      this.updateDate = updateDate;
-    }
-  }
 
   public static class SolutionFile {
     public String name;

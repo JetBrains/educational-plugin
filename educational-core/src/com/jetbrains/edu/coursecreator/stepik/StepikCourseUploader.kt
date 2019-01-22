@@ -10,13 +10,13 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
-import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteLesson
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteSection
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteTask
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteUnit
+import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
+import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector
 import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
 import kotlin.collections.ArrayList
@@ -193,7 +193,8 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       }
     }
 
-    lessonsToDelete.addAll(StepikMultipleRequestsConnector.getUnits(deleteCandidates).filter { it.updateDate <= lastUpdateDate }.map { it.id })
+    lessonsToDelete.addAll(StepikMultipleRequestsConnector.getUnits(deleteCandidates)
+                             .filter { it.updateDate <= lastUpdateDate }.mapNotNull { it.id })
   }
 
   private fun processSectionContentChanged(section: Section,
@@ -237,7 +238,8 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       }
     }
 
-    lessonsToDelete.addAll(StepikMultipleRequestsConnector.getUnits(deleteCandidates).filter { it.updateDate <= lastUpdateDate }.map { it.id })
+    lessonsToDelete.addAll(StepikMultipleRequestsConnector.getUnits(deleteCandidates)
+                             .filter { it.updateDate <= lastUpdateDate }.mapNotNull { it.id })
   }
 
   private fun processLessonContentChanged(lesson: Lesson,

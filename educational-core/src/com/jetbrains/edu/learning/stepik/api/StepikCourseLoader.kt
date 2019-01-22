@@ -237,7 +237,7 @@ object StepikCourseLoader {
    * Stepik sorts result of multiple requests by id, but in some cases unit-wise and lessonId-wise order differ.
    * So we need to sort lesson by units to keep correct course structure
    */
-  private fun sortLessonsByUnits(units: List<StepikWrappers.Unit>, lessons: List<Lesson>): List<Lesson> {
+  private fun sortLessonsByUnits(units: List<StepikUnit>, lessons: List<Lesson>): List<Lesson> {
     val idToLesson = lessons.associateBy { it.id }
     return units.sortedBy { unit -> unit.section }.mapNotNull { idToLesson[it.lesson] }
   }

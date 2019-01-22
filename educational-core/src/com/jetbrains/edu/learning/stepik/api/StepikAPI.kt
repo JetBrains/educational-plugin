@@ -38,7 +38,7 @@ class LessonsList {
 }
 
 class UnitsList {
-  lateinit var units: List<StepikWrappers.Unit>
+  lateinit var units: List<StepikUnit>
 }
 
 class StepsList {
@@ -122,7 +122,7 @@ class LessonData(lesson: Lesson) {
 }
 
 class UnitData(lessonId: Int, position: Int, sectionId: Int, unitId: Int? = null) {
-  var unit: StepikWrappers.Unit = StepikWrappers.Unit()
+  var unit: StepikUnit = StepikUnit()
   init {
     unit.lesson = lessonId
     unit.position = position
@@ -178,4 +178,14 @@ class Attempt {
   val isActive: Boolean
     @JsonIgnore
     get() = status == "active"
+}
+
+class StepikUnit {
+  var id: Int? = 0
+  var section: Int = 0
+  var lesson: Int = 0
+  var position: Int = 0
+  var assignments: List<Int>? = null
+  @JsonProperty("update_date")
+  var updateDate: Date = Date()
 }

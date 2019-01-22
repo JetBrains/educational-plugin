@@ -142,11 +142,11 @@ object StepikConnector {
     return service.lessons(lessonId).execute().body()?.lessons?.firstOrNull()
   }
 
-  fun getUnit(unitId: Int): StepikWrappers.Unit? {
+  fun getUnit(unitId: Int): StepikUnit? {
     return service.units(unitId).execute().body()?.units?.firstOrNull()
   }
 
-  fun getLessonUnit(lessonId: Int): StepikWrappers.Unit? {
+  fun getLessonUnit(lessonId: Int): StepikUnit? {
     return service.lessonUnit(lessonId).execute().body()?.units?.firstOrNull()
   }
 
@@ -184,7 +184,7 @@ object StepikConnector {
     return service.lesson(LessonData(lesson)).execute().body()?.lessons?.firstOrNull()
   }
 
-  fun postUnit(lessonId: Int, position: Int, sectionId: Int): StepikWrappers.Unit? {
+  fun postUnit(lessonId: Int, position: Int, sectionId: Int): StepikUnit? {
     return service.unit(UnitData(lessonId, position, sectionId)).execute().body()?.units?.firstOrNull()
   }
 
@@ -256,7 +256,7 @@ object StepikConnector {
     return service.lesson(lesson.id, LessonData(lesson)).execute().body()?.lessons?.firstOrNull()
   }
 
-  fun updateUnit(unitId: Int, lessonId: Int, position: Int, sectionId: Int): StepikWrappers.Unit? {
+  fun updateUnit(unitId: Int, lessonId: Int, position: Int, sectionId: Int): StepikUnit? {
     return service.unit(unitId, UnitData(lessonId, position, sectionId, unitId)).execute().body()?.units?.firstOrNull()
   }
 

@@ -1,9 +1,6 @@
 package com.jetbrains.edu.coursecreator.stepik;
 
 import com.google.common.collect.Lists;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -32,6 +29,7 @@ import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
 import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector;
+import com.jetbrains.edu.learning.stepik.api.StepikUnit;
 import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -191,7 +189,7 @@ public class CCStepikConnector {
 
   public static int findTopLevelLessonsSection(@NotNull Project project, @Nullable Lesson topLevelLesson) {
     if (topLevelLesson != null) {
-      StepikWrappers.Unit unit = StepikConnector.INSTANCE.getUnit(topLevelLesson.unitId);
+      StepikUnit unit = StepikConnector.INSTANCE.getUnit(topLevelLesson.unitId);
       return unit != null ? unit.getSection() : -1;
     }
     else {
@@ -319,18 +317,18 @@ public class CCStepikConnector {
   public static int postUnit(int lessonId, int position, int sectionId, @NotNull Project project) {
     if (!checkIfAuthorized(project, "postUnit")) return lessonId;
 
-    final StepikWrappers.Unit unit = StepikConnector.INSTANCE.postUnit(lessonId, position, sectionId);
+    final StepikUnit unit = StepikConnector.INSTANCE.postUnit(lessonId, position, sectionId);
     if (unit == null) {
       showErrorNotification(project, FAILED_TITLE, "Failed to post unit");
       return -1;
     }
-    return unit.id;
+    return unit.getId() != null ? unit.getId() : -1;
   }
 
   public static void updateUnit(int unitId, int lessonId, int position, int sectionId, @NotNull Project project) {
     if (!checkIfAuthorized(project, "updateUnit")) return;
 
-    final StepikWrappers.Unit unit = StepikConnector.INSTANCE.updateUnit(unitId, lessonId, position, sectionId);
+    final StepikUnit unit = StepikConnector.INSTANCE.updateUnit(unitId, lessonId, position, sectionId);
     if (unit == null) {
       showErrorNotification(project, FAILED_TITLE, "Failed to update unit");
     }
@@ -620,12 +618,6 @@ public class CCStepikConnector {
     if (indicator != null) {
       indicator.checkCanceled();
     }
-  }
-
-  private static String getErrorDetail(@NotNull String responseString) {
-    final JsonObject details = new JsonParser().parse(responseString).getAsJsonObject();
-    final JsonElement detail = details.get("detail");
-    return detail != null ? detail.getAsString() : responseString;
   }
 
   public static boolean postTask(@NotNull final Project project, @NotNull final Task task, final int lessonId) {

@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
-import com.jetbrains.edu.learning.stepik.StepikWrappers
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.service
 
 object StepikMultipleRequestsConnector {
@@ -40,9 +39,9 @@ object StepikMultipleRequestsConnector {
     return allLessons
   }
 
-  fun getUnits(unitIds: List<Int>): List<StepikWrappers.Unit> {
+  fun getUnits(unitIds: List<Int>): List<StepikUnit> {
     val unitsIdsChunks = unitIds.distinct().chunked(MAX_REQUEST_PARAMS)
-    val allUnits = mutableListOf<StepikWrappers.Unit>()
+    val allUnits = mutableListOf<StepikUnit>()
     unitsIdsChunks
       .mapNotNull { service.units(*it.toIntArray()).execute().body()?.units }
       .forEach { allUnits.addAll(it) }
