@@ -398,7 +398,7 @@ public class CCStepikConnector {
     else {
       LOG.warn("Failed to get current course info");
     }
-    int responseCode = StepikConnector.INSTANCE.updateCourse(course)
+    int responseCode = StepikConnector.INSTANCE.updateCourse(course);
 
     if (responseCode == HttpStatus.SC_FORBIDDEN) {
       showNoRightsToUpdateNotification(project, course);

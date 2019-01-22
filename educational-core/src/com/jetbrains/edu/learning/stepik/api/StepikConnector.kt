@@ -243,8 +243,8 @@ object StepikConnector {
 
   // Update requests:
 
-  fun updateCourse(course: Course): Int {
-    var response = service.course(course.id, CourseData(section)).execute()
+  fun updateCourse(course: EduCourse): Int {
+    val response = service.course(course.id, CourseData(course)).execute()
     return response.code()
   }
 
