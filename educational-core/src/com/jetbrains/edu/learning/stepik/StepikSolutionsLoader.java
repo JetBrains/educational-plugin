@@ -30,9 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.stepik.api.Attempt;
-import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector;
+import com.jetbrains.edu.learning.stepik.api.*;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.update.UpdateNotification;
@@ -94,7 +92,7 @@ public class StepikSolutionsLoader implements Disposable {
       LOG.warn("Failed to post an attempt " + task.getStepId());
       return;
     }
-    final ArrayList<StepikWrappers.SolutionFile> files = new ArrayList<>();
+    final ArrayList<SolutionFile> files = new ArrayList<>();
     final VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
       LOG.error("Failed to find task directory " + task.getName());
@@ -116,7 +114,7 @@ public class StepikSolutionsLoader implements Disposable {
                              CLOSE_PLACEHOLDER_TAG);
               insertedTextLength += OPEN_PLACEHOLDER_TAG.length() + CLOSE_PLACEHOLDER_TAG.length();
             }
-            files.add(new StepikWrappers.SolutionFile(fileName, builder.toString()));
+            files.add(new SolutionFile(fileName, builder.toString()));
           }
         });
       }
@@ -304,8 +302,8 @@ public class StepikSolutionsLoader implements Disposable {
     else if (!isSolved) {
       if (task instanceof EduTask) {
         String language = task.getCourse().getLanguageID();
-        StepikWrappers.Reply reply = StepikConnector.INSTANCE.getLastSubmission(stepId, isSolved, language);
-        if (reply != null && reply.solution != null && !reply.solution.isEmpty()) {
+        Reply reply = StepikConnector.INSTANCE.getLastSubmission(stepId, isSolved, language);
+        if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
           return true;
         }
       }
@@ -354,31 +352,31 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static TaskSolutions getEduTaskSolution(@NotNull Task task, boolean isSolved) {
     String language = task.getCourse().getLanguageID();
-    StepikWrappers.Reply reply = StepikConnector.INSTANCE.getLastSubmission(task.getStepId(), isSolved, language);
-    if (reply == null || reply.solution == null || reply.solution.isEmpty()) {
+    Reply reply = StepikConnector.INSTANCE.getLastSubmission(task.getStepId(), isSolved, language);
+    if (reply == null || reply.getSolution() == null || reply.getSolution().isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449
-      if (reply != null && reply.solution == null) {
+      if (reply != null && reply.getSolution() == null) {
         LOG.warn(String.format("`solution` field of reply object is null for task `%s`", task.getName()));
       }
       task.setStatus(CheckStatus.Unchecked);
       return TaskSolutions.EMPTY;
     }
 
-    if (reply.version > EduVersions.JSON_FORMAT_VERSION) {
+    if (reply.getVersion() > EduVersions.JSON_FORMAT_VERSION) {
       // TODO: show notification with suggestion to update plugin
       LOG.warn(String.format("The plugin supports versions of submission reply not greater than %d. The current version is `%d`",
-                             EduVersions.JSON_FORMAT_VERSION, reply.version));
+                             EduVersions.JSON_FORMAT_VERSION, reply.getVersion()));
       return TaskSolutions.INCOMPATIBLE;
     }
 
-    String serializedTask = reply.edu_task;
+    String serializedTask = reply.getEduTask();
     if (serializedTask == null) {
       task.setStatus(checkStatus(isSolved));
       return new TaskSolutions(loadSolutionTheOldWay(task, reply));
     }
 
     StepikWrappers.TaskWrapper updatedTask = new GsonBuilder()
-      .registerTypeAdapter(Task.class, new StepikSubmissionTaskAdapter(reply.version, language))
+      .registerTypeAdapter(Task.class, new StepikSubmissionTaskAdapter(reply.getVersion(), language))
       .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
       .create()
       .fromJson(serializedTask, StepikWrappers.TaskWrapper.class);
@@ -390,12 +388,12 @@ public class StepikSolutionsLoader implements Disposable {
     task.setStatus(checkStatus(isSolved));
 
     Map<String, String> taskFileToText = new HashMap<>();
-    for (StepikWrappers.SolutionFile file : reply.solution) {
-      TaskFile taskFile = task.getTaskFile(file.name);
-      TaskFile updatedTaskFile = updatedTask.task.getTaskFile(file.name);
+    for (SolutionFile file : reply.getSolution()) {
+      TaskFile taskFile = task.getTaskFile(file.getName());
+      TaskFile updatedTaskFile = updatedTask.task.getTaskFile(file.getName());
       if (taskFile != null && updatedTaskFile != null) {
         setPlaceholders(taskFile, updatedTaskFile);
-        taskFileToText.put(file.name, removeAllTags(file.text));
+        taskFileToText.put(file.getName(), removeAllTags(file.getText()));
       }
     }
     return new TaskSolutions(taskFileToText);
@@ -418,25 +416,25 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   /**
-   * Before we decided to store the information about placeholders as a separate field of Stepik reply{@link StepikWrappers.Reply#edu_task},
+   * Before we decided to store the information about placeholders as a separate field of Stepik reply{@link Reply#eduTask},
    * we used to pass full text of task file marking placeholders with <placeholder> </placeholder> tags
    */
-  private static Map<String, String> loadSolutionTheOldWay(@NotNull Task task, @NotNull StepikWrappers.Reply reply) {
+  private static Map<String, String> loadSolutionTheOldWay(@NotNull Task task, @NotNull Reply reply) {
     HashMap<String, String> taskFileToText = new HashMap<>();
-    List<StepikWrappers.SolutionFile> solutionFiles = reply.solution;
-    if (solutionFiles.isEmpty()) {
+    List<SolutionFile> solutionFiles = reply.getSolution();
+    if (solutionFiles == null || solutionFiles.isEmpty()) {
       task.setStatus(CheckStatus.Unchecked);
       return taskFileToText;
     }
 
-    for (StepikWrappers.SolutionFile file : solutionFiles) {
-      TaskFile taskFile = task.getTaskFile(file.name);
+    for (SolutionFile file : solutionFiles) {
+      TaskFile taskFile = task.getTaskFile(file.getName());
       if (taskFile != null) {
         if (setPlaceholdersFromTags(taskFile, file)) {
-          taskFileToText.put(file.name, removeAllTags(file.text));
+          taskFileToText.put(file.getName(), removeAllTags(file.getText()));
         }
         else {
-          taskFileToText.put(file.name, file.text);
+          taskFileToText.put(file.getName(), file.getText());
         }
       }
     }
@@ -457,9 +455,9 @@ public class StepikSolutionsLoader implements Disposable {
    * @param solutionFile from Stepik with text of last submission
    * @return false if there're invalid placeholders
    */
-  static boolean setPlaceholdersFromTags(@NotNull TaskFile taskFile, @NotNull StepikWrappers.SolutionFile solutionFile) {
+  static boolean setPlaceholdersFromTags(@NotNull TaskFile taskFile, @NotNull SolutionFile solutionFile) {
     int lastIndex = 0;
-    StringBuilder builder = new StringBuilder(solutionFile.text);
+    StringBuilder builder = new StringBuilder(solutionFile.getText());
     List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
     boolean isPlaceholdersValid = true;
     for (AnswerPlaceholder placeholder : placeholders) {
@@ -501,19 +499,19 @@ public class StepikSolutionsLoader implements Disposable {
   @NotNull
   static HashMap<String, String> getSolutionForStepikAssignment(@NotNull Task task, boolean isSolved) {
     HashMap<String, String> taskFileToText = new HashMap<>();
-    final List<StepikWrappers.Submission> submissions = StepikConnector.INSTANCE.getSubmissions(isSolved, task.getStepId());
+    final List<Submission> submissions = StepikConnector.INSTANCE.getSubmissions(isSolved, task.getStepId());
     if (submissions == null) {
       return taskFileToText;
     }
     Language language = task.getLesson().getCourse().getLanguageById();
     String stepikLanguage = StepikLanguages.langOfId(language.getID()).getLangName();
-    for (StepikWrappers.Submission submission : submissions) {
-      StepikWrappers.Reply reply = submission.reply;
-      if (stepikLanguage != null && stepikLanguage.equals(reply.language)) {
+    for (Submission submission : submissions) {
+      Reply reply = submission.getReply();
+      if (reply != null && stepikLanguage != null && stepikLanguage.equals(reply.getLanguage())) {
         Collection<TaskFile> taskFiles = task.getTaskFiles().values();
         assert taskFiles.size() == 1;
         for (TaskFile taskFile : taskFiles) {
-          taskFileToText.put(taskFile.getName(), reply.code);
+          taskFileToText.put(taskFile.getName(), reply.getCode());
         }
       }
     }

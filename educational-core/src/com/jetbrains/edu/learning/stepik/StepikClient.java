@@ -12,27 +12,19 @@ import com.intellij.util.net.ssl.ConfirmingTrustManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.PluginUtils;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.stepik.api.Reply;
 import com.jetbrains.edu.learning.stepik.serialization.StepikLessonAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikReplyAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikStepOptionsAdapter;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URI;
@@ -44,52 +36,8 @@ import java.util.Map;
 
 public class StepikClient {
   private static final Logger LOG = Logger.getInstance(StepikClient.class.getName());
-  private static CloseableHttpClient ourClient;
-  private static final int TIMEOUT_SECONDS = 10;
 
   private StepikClient() {
-  }
-
-  @NotNull
-  public static CloseableHttpClient getHttpClient() {
-    if (ourClient == null) {
-      initializeClient();
-    }
-    return ourClient;
-  }
-
-  static <T> T getFromStepik(String link,
-                             final Class<T> container,
-                             @NotNull final CloseableHttpClient client,
-                             @Nullable Map<Key, Object> params) throws IOException {
-    if (!link.startsWith("/")) link = "/" + link;
-    final HttpGet request = new HttpGet(StepikNames.STEPIK_API_URL + link);
-    addTimeout(request);
-
-    final CloseableHttpResponse response = client.execute(request);
-    final StatusLine statusLine = response.getStatusLine();
-    final HttpEntity responseEntity = response.getEntity();
-    final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-    EntityUtils.consume(responseEntity);
-    if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
-      throw new IOException("Stepik returned non 200 status code " + responseString);
-    }
-    return deserializeStepikResponse(container, responseString, params);
-  }
-
-  private static void addTimeout(@NotNull HttpGet request) {
-    int connectionTimeoutMs = TIMEOUT_SECONDS * 1000;
-    RequestConfig requestConfig = RequestConfig.custom()
-            .setConnectionRequestTimeout(connectionTimeoutMs)
-            .setConnectTimeout(connectionTimeoutMs)
-            .setSocketTimeout(connectionTimeoutMs)
-            .build();
-    request.setConfig(requestConfig);
-  }
-
-  static <T> T deserializeStepikResponse(Class<T> container, String responseString, @Nullable Map<Key, Object> params) {
-    Gson gson = createGson(params);
-    return gson.fromJson(responseString, container);
   }
 
   public static Gson createGson(@Nullable Map<Key, Object> params) {
@@ -97,16 +45,9 @@ public class StepikClient {
     return new GsonBuilder()
         .registerTypeAdapter(StepOptions.class, new StepikStepOptionsAdapter(language))
         .registerTypeAdapter(Lesson.class, new StepikLessonAdapter(language))
-        .registerTypeAdapter(StepikWrappers.Reply.class, new StepikReplyAdapter(language))
+        .registerTypeAdapter(Reply.class, new StepikReplyAdapter(language))
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-  }
-
-  private static void initializeClient() {
-    if (ourClient == null) {
-      final HttpClientBuilder builder = getBuilder();
-      ourClient = builder.build();
-    }
   }
 
   @NotNull

@@ -14,18 +14,18 @@ import com.jetbrains.edu.learning.serialization.converter.TaskRoots
 import com.jetbrains.edu.learning.serialization.converter.json.ToFifthVersionJsonStepOptionsConverter
 import com.jetbrains.edu.learning.serialization.converter.json.ToSeventhVersionJsonStepOptionConverter
 import com.jetbrains.edu.learning.serialization.converter.json.local.To9VersionLocalCourseConverter
-import com.jetbrains.edu.learning.stepik.StepikWrappers
+import com.jetbrains.edu.learning.stepik.api.Reply
 import java.lang.reflect.Type
 
-class StepikReplyAdapter(private val language: String?) : JsonDeserializer<StepikWrappers.Reply> {
+class StepikReplyAdapter(private val language: String?) : JsonDeserializer<Reply> {
 
   @Throws(JsonParseException::class)
-  override fun deserialize(json: JsonElement, type: Type, context: JsonDeserializationContext): StepikWrappers.Reply {
+  override fun deserialize(json: JsonElement, type: Type, context: JsonDeserializationContext): Reply {
     val jsonObject = json.asJsonObject
     val initialVersion = jsonObject.migrate(JSON_FORMAT_VERSION, language)
 
     val gson = GsonBuilder().setPrettyPrinting().create()
-    return gson.fromJson<StepikWrappers.Reply>(jsonObject).apply {
+    return gson.fromJson<Reply>(jsonObject).apply {
       // We need to save original version of reply object
       // to correct deserialize StepikWrappers.Reply#edu_task
       this.version = initialVersion

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.api
 
-import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -10,7 +9,6 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector.service
 
 object StepikMultipleRequestsConnector {
   private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests
-  private val LOG = Logger.getInstance(StepikMultipleRequestsConnector::class.java)
 
   fun getUsers(result: List<EduCourse>): MutableList<StepikUserInfo> {
     val instructorIds = result.flatMap { it -> it.instructors }.distinct().chunked(MAX_REQUEST_PARAMS)

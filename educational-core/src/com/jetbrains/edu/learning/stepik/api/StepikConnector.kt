@@ -9,9 +9,12 @@ import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.util.PlatformUtils
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.*
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
@@ -72,12 +75,12 @@ object StepikConnector {
       .readTimeout(60, TimeUnit.SECONDS)
       .connectTimeout(60, TimeUnit.SECONDS)
       .addInterceptor { chain ->
+        val builder = chain.request().newBuilder().addHeader("User-Agent", getUserAgent())
         val tokenInfo = account?.tokenInfo
-        if (tokenInfo == null) return@addInterceptor chain.proceed(chain.request())
-
-        val newRequest = chain.request().newBuilder()
-          .addHeader("Authorization", "Bearer ${tokenInfo.accessToken}")
-          .build()
+        if (tokenInfo != null) {
+          builder.addHeader("Authorization", "Bearer ${tokenInfo.accessToken}")
+        }
+        val newRequest = builder.build()
         chain.proceed(newRequest)
       }
       .dispatcher(dispatcher)
@@ -160,7 +163,7 @@ object StepikConnector {
   fun getSubmissions(attemptId: Int, userId: Int) =
     service.submissions(attempt = attemptId, user = userId).execute().body()?.submissions
 
-  fun getLastSubmission(stepId: Int, isSolved: Boolean, language: String): StepikWrappers.Reply? {
+  fun getLastSubmission(stepId: Int, isSolved: Boolean, language: String): Reply? {
     // TODO: make use of language
     val submissions = getSubmissions(isSolved, stepId)
     return submissions?.firstOrNull()?.reply
@@ -198,11 +201,11 @@ object StepikConnector {
   }
 
   fun postSubmission(passed: Boolean, attempt: Attempt,
-                     files: ArrayList<StepikWrappers.SolutionFile>, task: Task): List<StepikWrappers.Submission>? {
+                     files: ArrayList<SolutionFile>, task: Task): List<Submission>? {
     return postSubmission(SubmissionData(attempt.id, if (passed) "1" else "0", files, task))
   }
 
-  fun postSubmission(submissionData: SubmissionData): List<StepikWrappers.Submission>? {
+  fun postSubmission(submissionData: SubmissionData): List<Submission>? {
     val response = service.submission(submissionData).execute()
     val submissions = response.body()?.submissions
     if (response.code() != HttpStatus.SC_CREATED) {
@@ -298,4 +301,11 @@ object StepikConnector {
       LOG.warn("Failed to delete item $id")
     }
   }
+}
+
+private fun getUserAgent(): String {
+  val version = pluginVersion(EduNames.PLUGIN_ID) ?: "unknown"
+
+  return String.format("%s/version(%s)/%s/%s", StepikNames.PLUGIN_NAME, version, System.getProperty("os.name"),
+                       PlatformUtils.getPlatformPrefix())
 }

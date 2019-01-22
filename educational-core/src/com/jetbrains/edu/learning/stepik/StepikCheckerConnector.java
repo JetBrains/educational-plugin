@@ -12,10 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepik.api.Attempt;
-import com.jetbrains.edu.learning.stepik.api.Dataset;
-import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import com.jetbrains.edu.learning.stepik.api.SubmissionData;
+import com.jetbrains.edu.learning.stepik.api.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,8 +45,11 @@ public class StepikCheckerConnector {
     if (attempt != null) {
       final int attemptId = attempt.getId();
       final Dataset dataset = attempt.getDataset();
+      if (dataset == null) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
+      final List<String> options = dataset.getOptions();
+      if (options == null) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
       final boolean isActiveAttempt = task.getSelectedVariants().stream()
-        .allMatch(index -> dataset.getOptions().get(index).equals(task.getChoiceVariants().get(index)));
+        .allMatch(index -> options.get(index).equals(task.getChoiceVariants().get(index)));
       if (!isActiveAttempt) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
       final SubmissionData submissionData = createChoiceSubmissionData(task, attemptId);
 
@@ -80,21 +80,23 @@ public class StepikCheckerConnector {
   @NotNull
   private static SubmissionData createChoiceSubmissionData(@NotNull ChoiceTask task, int attemptId) {
     final SubmissionData submissionData = new SubmissionData();
-    submissionData.submission = new StepikWrappers.Submission();
-    submissionData.submission.attempt = attemptId;
-    submissionData.submission.reply = new StepikWrappers.Reply();
-    submissionData.submission.reply.choices = createChoiceTaskAnswerArray(task);
+    submissionData.submission = new Submission();
+    submissionData.submission.setAttempt(attemptId);
+    final Reply reply = new Reply();
+    reply.setChoices(createChoiceTaskAnswerArray(task));
+    submissionData.submission.setReply(reply);
     return submissionData;
   }
 
   @NotNull
   private static SubmissionData createCodeSubmissionData(int attemptId, String language, String answer) {
     final SubmissionData submissionData = new SubmissionData();
-    submissionData.submission = new StepikWrappers.Submission();
-    submissionData.submission.attempt = attemptId;
-    submissionData.submission.reply = new StepikWrappers.Reply();
-    submissionData.submission.reply.language = language;
-    submissionData.submission.reply.code = answer;
+    submissionData.submission = new Submission();
+    submissionData.submission.setAttempt(attemptId);
+    final Reply reply = new Reply();
+    reply.setLanguage(language);
+    reply.setCode(answer);
+    submissionData.submission.setReply(reply);
     return submissionData;
   }
 
@@ -131,15 +133,16 @@ public class StepikCheckerConnector {
 
   private static CheckResult doCheck(@NotNull SubmissionData submission,
                                      int attemptId, int userId) {
-    List<StepikWrappers.Submission> submissions = StepikConnector.INSTANCE.postSubmission(submission);
+    List<Submission> submissions = StepikConnector.INSTANCE.postSubmission(submission);
     if (submissions != null) {
       submissions = getCheckResults(submissions, attemptId, userId);
       if (submissions.size() > 0) {
-        final String status = submissions.get(0).status;
-        final String hint = submissions.get(0).hint;
+        final String status = submissions.get(0).getStatus();
+        if (status == null) return CheckResult.FAILED_TO_CHECK;
+        final String hint = submissions.get(0).getHint();
         final boolean isSolved = !status.equals("wrong");
         String message = hint;
-        if (message.isEmpty() || message.contains(CODE_COMPLEXITY_NOTE)) {
+        if (message == null || message.isEmpty() || message.contains(CODE_COMPLEXITY_NOTE)) {
           message = StringUtil.capitalize(status) + " solution";
         }
         return new CheckResult(isSolved ? CheckStatus.Solved : CheckStatus.Failed, message);
@@ -155,13 +158,14 @@ public class StepikCheckerConnector {
     return CheckResult.FAILED_TO_CHECK;
   }
 
-  private static List<StepikWrappers.Submission> getCheckResults(@NotNull List<StepikWrappers.Submission> submissions,
-                                                                 int attemptId,
-                                                                 int userId) {
+  private static List<Submission> getCheckResults(@NotNull List<Submission> submissions, int attemptId, int userId) {
     try {
-      while (submissions != null && submissions.size() == 1 && submissions.get(0).status.equals("evaluation")) {
+      String status = submissions.get(0).getStatus();
+      while ("evaluation".equals(status)) {
         TimeUnit.MILLISECONDS.sleep(500);
         submissions = StepikConnector.INSTANCE.getSubmissions(attemptId, userId);
+        if (submissions == null || submissions.size() != 1) break;
+        status = submissions.get(0).getStatus();
       }
     }
     catch (InterruptedException e) {

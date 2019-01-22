@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient
 import com.jetbrains.edu.learning.stepik.StepikClient
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikUser
@@ -39,7 +38,7 @@ abstract class StepikTestCase : EduTestCase() {
     login()
 
     httpClient = StepikClient.getBuilder()
-      .setDefaultHeaders(listOf(StepikAuthorizedClient.getAuthorizationHeader(user.accessToken)))
+//      .setDefaultHeaders(listOf(StepikAuthorizedClient.getAuthorizationHeader(user.accessToken)))
       .setDefaultCookieStore(BasicCookieStore()).build()
   }
 
@@ -54,9 +53,19 @@ abstract class StepikTestCase : EduTestCase() {
 
   private fun login() {
     val tokenInfo = getTokens()!!
-    user = StepikAuthorizedClient.login(tokenInfo)
+    user = login(tokenInfo)
     EduSettings.getInstance().user = user
     println("Logged in as ${user.firstName} ${user.lastName}")
+  }
+
+  fun login(tokenInfo: TokenInfo): StepikUser {
+    val user = StepikUser(tokenInfo)
+
+    val currentUser = StepikConnector.getCurrentUserInfo(user)
+    if (currentUser != null) {
+      user.userInfo = currentUser
+    }
+    return user
   }
 
   /**
@@ -122,6 +131,7 @@ abstract class StepikTestCase : EduTestCase() {
     // Check that:
     // 1. Teamcity didn't change ips of agent
     // 2. Stepik still have our server in whitelist
-    return StepikAuthorizedClient.getTokens(parameters, "$clientId:$clientSecret")
+//    return StepikAuthorizedClient.getTokens(parameters, "$clientId:$clientSecret")
+    return null // TODO!
   }
 }

@@ -5,6 +5,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.builtInWebServer.BuiltInServerOptions;
 import org.jetbrains.ide.BuiltInServerManager;
@@ -58,7 +59,7 @@ public class StepikAuthorizer {
   }
 
   private static String codeHandler(@NotNull String code, @NotNull String redirectUri) {
-    final boolean success = StepikAuthorizedClient.login(code, redirectUri);
+    final boolean success = StepikConnector.INSTANCE.login(code, redirectUri);
     return success ? null : "Couldn't get user info";
   }
 

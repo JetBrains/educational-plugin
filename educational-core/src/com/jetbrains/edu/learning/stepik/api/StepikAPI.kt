@@ -1,4 +1,4 @@
-@file:Suppress("unused", "PropertyName")
+@file:Suppress("unused", "PropertyName", "MemberVisibilityCanBePrivate")
 
 package com.jetbrains.edu.learning.stepik.api
 
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.GsonBuilder
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -51,7 +52,7 @@ class StepSourcesList {
 }
 
 class SubmissionsList {
-  lateinit var submissions: List<StepikWrappers.Submission>
+  lateinit var submissions: List<Submission>
 }
 
 class ProgressesList {
@@ -73,15 +74,15 @@ class EnrollmentData(courseId: Int) {
 }
 
 class SubmissionData() {
-  lateinit var submission: StepikWrappers.Submission
+  lateinit var submission: Submission
 
-  constructor(attemptId: Int, score: String, files: ArrayList<StepikWrappers.SolutionFile>, task: Task) : this() {
+  constructor(attemptId: Int, score: String, files: ArrayList<SolutionFile>, task: Task) : this() {
     val serializedTask = GsonBuilder()   // TODO: use jackson
       .excludeFieldsWithoutExposeAnnotation()
       .registerTypeAdapter(Task::class.java, StepikSubmissionTaskAdapter())
       .create()
       .toJson(StepikWrappers.TaskWrapper(task))
-    submission = StepikWrappers.Submission(score, attemptId, files, serializedTask)
+    submission = Submission(score, attemptId, files, serializedTask)
   }
 }
 
@@ -188,4 +189,51 @@ class StepikUnit {
   var assignments: List<Int>? = null
   @JsonProperty("update_date")
   var updateDate: Date = Date()
+}
+
+
+class Submission {
+  var attempt: Int = 0
+  var reply: Reply? = null
+  var id: String? = null
+  var status: String? = null
+  var hint: String? = null
+
+  constructor()
+
+  constructor(score: String, attemptId: Int, files: ArrayList<SolutionFile>, serializedTask: String) {
+    reply = Reply(files, score, serializedTask)
+    this.attempt = attemptId
+  }
+}
+
+class Reply {
+  var choices: BooleanArray? = null
+  var score: String? = null
+  var solution: List<SolutionFile>? = null
+  var language: String? = null
+  var code: String? = null
+  @JsonProperty("edu_task")
+  var eduTask: String? = null
+  var version = JSON_FORMAT_VERSION
+
+  constructor()
+
+  constructor(files: List<SolutionFile>, score: String, serializedTask: String) {
+    this.score = score
+    solution = files
+    eduTask = serializedTask
+  }
+}
+
+class SolutionFile {
+  var name: String = ""
+  var text: String = ""
+
+  constructor()
+
+  constructor(name: String, text: String) {
+    this.name = name
+    this.text = text
+  }
 }

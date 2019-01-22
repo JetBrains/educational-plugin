@@ -26,7 +26,6 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.authUtils.OAuthRestService;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
-import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikUser;
@@ -176,7 +175,7 @@ public class StepikRestService extends OAuthRestService {
     if (codeMatcher.matches()) {
       String code = getStringParameter("code", urlDecoder);
       if (code != null) {
-        final boolean success = StepikAuthorizedClient.login(code, StepikAuthorizer.getOAuthRedirectUrl());
+        final boolean success = StepikConnector.INSTANCE.login(code, StepikAuthorizer.getOAuthRedirectUrl());
         final StepikUser user = EduSettings.getInstance().getUser();
         if (success && user != null) {
           EduSettings.getInstance().setUser(user);

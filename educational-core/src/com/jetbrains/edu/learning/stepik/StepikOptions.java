@@ -63,7 +63,7 @@ public class StepikOptions extends OauthOptions<StepikUser> {
   private void showDialog() {
     OAuthDialog dialog = new OAuthDialog();
     if (dialog.showAndGet()) {
-      StepikUser user = dialog.getUser();
+      final StepikUser user = EduSettings.getInstance().getUser();
       setLastSavedAccount(user);
       updateLoginLabels();
     }
@@ -75,7 +75,6 @@ public class StepikOptions extends OauthOptions<StepikUser> {
     return new HyperlinkAdapter() {
       @Override
       protected void hyperlinkActivated(HyperlinkEvent e) {
-        StepikAuthorizedClient.invalidateClient();
         setCurrentAccount(null);
         setLastSavedAccount(null);
         updateLoginLabels();

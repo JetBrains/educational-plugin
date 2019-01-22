@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.gson.*;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -62,7 +64,6 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
-import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
@@ -681,10 +682,7 @@ public class EduUtils {
 
   public static void showOAuthDialog() {
     OAuthDialog dialog = new OAuthDialog();
-    if (dialog.showAndGet()) {
-      StepikUser user = dialog.getUser();
-      EduSettings.getInstance().setUser(user);
-    }
+    dialog.show();
   }
 
   @Nullable

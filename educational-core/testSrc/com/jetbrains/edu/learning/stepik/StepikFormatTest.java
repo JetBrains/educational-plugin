@@ -82,9 +82,8 @@ public class StepikFormatTest extends EduTestCase {
   public void testAdditionalMaterialsStep() throws IOException {
     String responseString = loadJsonText();
     for (String language : Arrays.asList(EduNames.KOTLIN, EduNames.PYTHON)) {
-      StepSource step = StepikClient.deserializeStepikResponse(StepsList.class,
-                                                                              responseString,
-                                                                              createParams(language)).steps.get(0);
+      final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();  //use createParams(language)
+      StepSource step = mapper.readValue(responseString, StepsList.class).steps.get(0);
       assertEquals(EduNames.ADDITIONAL_MATERIALS, step.getBlock().getOptions().getTitle());
       assertEquals("task_file.py", step.getBlock().getOptions().files.get(0).getName());
       assertEquals("test_helperq.py", step.getBlock().getOptions().getFiles().get(1).getName());
@@ -94,7 +93,7 @@ public class StepikFormatTest extends EduTestCase {
   public void testAvailableCourses() throws IOException {
     String responseString = loadJsonText();
     final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
-    final CoursesList coursesList = mapper.readValue(jsonText, CoursesList.class);
+    final CoursesList coursesList = mapper.readValue(responseString, CoursesList.class);
 
     assertNotNull(coursesList.courses);
     assertEquals("Incorrect number of courses", 4, coursesList.courses.size());
