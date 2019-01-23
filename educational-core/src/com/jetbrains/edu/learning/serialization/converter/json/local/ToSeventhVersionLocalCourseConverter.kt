@@ -16,7 +16,7 @@ class ToSeventhVersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
       val taskFiles = JsonObject()
       for ((path, taskFileObject) in taskObject.getJsonObjectMap<JsonObject>(TASK_FILES)) {
-        ToSeventhVersionJsonStepOptionConverter.convertTaskFile(taskFileObject, taskFilesRoot)
+        convertTaskFile(taskFileObject, taskFilesRoot)
         taskFiles.add("$taskFilesRoot/$path", taskFileObject)
       }
       taskObject.add(TASK_FILES, taskFiles)
