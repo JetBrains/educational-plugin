@@ -16,7 +16,7 @@ class ToSeventhVersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
       val taskFiles = JsonObject()
       for ((path, taskFileObject) in taskObject.getJsonObjectMap<JsonObject>(TASK_FILES)) {
-//        ToSeventhVersionJsonStepOptionConverter.convertTaskFile(taskFileObject, taskFilesRoot)   //TODO: ktisha
+        ToSeventhVersionJsonStepOptionConverter.convertTaskFile(taskFileObject, taskFilesRoot)
         taskFiles.add("$taskFilesRoot/$path", taskFileObject)
       }
       taskObject.add(TASK_FILES, taskFiles)
@@ -35,5 +35,25 @@ class ToSeventhVersionLocalCourseConverter : JsonLocalCourseConverterBase() {
       additionalFiles.add(path, additionalFile)
     }
     taskObject.add(ADDITIONAL_FILES, additionalFiles)
+  }
+
+  companion object {
+
+    @JvmStatic
+    fun convertTaskFile(taskFile: JsonObject, taskFilesRoot: String) {
+      val path = taskFile.getAsJsonPrimitive(NAME)?.asString ?: return
+      taskFile.addProperty(NAME, "$taskFilesRoot/$path")
+      for (placeholder in taskFile.getAsJsonArray(PLACEHOLDERS)) {
+        val placeholderObject = placeholder as? JsonObject ?: continue
+        convertPlaceholder(placeholderObject, taskFilesRoot)
+      }
+    }
+
+    @JvmStatic
+    fun convertPlaceholder(placeholder: JsonObject, taskFilesRoot: String) {
+      val dependency = placeholder.getAsJsonObject(DEPENDENCY) ?: return
+      val dependencyFilePath = dependency.getAsJsonPrimitive(DEPENDENCY_FILE)?.asString ?: return
+      dependency.addProperty(DEPENDENCY_FILE, "$taskFilesRoot/$dependencyFilePath")
+    }
   }
 }
