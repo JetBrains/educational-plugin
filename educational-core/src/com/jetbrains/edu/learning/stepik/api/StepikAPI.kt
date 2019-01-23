@@ -78,7 +78,7 @@ class SubmissionData() {
   constructor(attemptId: Int, score: String, files: ArrayList<SolutionFile>, task: Task) : this() {
     val module = SimpleModule()
     module.addSerializer(Task::class.java, TaskSerializer())
-    val objectMapper = StepikConnector.getMapper(module)
+    val objectMapper = StepikConnector.createMapper(module)
     val serializedTask = objectMapper.writeValueAsString(TaskData(task))
 
     submission = Submission(score, attemptId, files, serializedTask)

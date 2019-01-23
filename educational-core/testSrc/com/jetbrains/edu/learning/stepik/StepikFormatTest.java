@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -52,10 +51,13 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testSixthVersion() throws IOException {
-    for (Map.Entry<String, TaskRoots> entry : TaskRootsKt.LANGUAGE_TASK_ROOTS.entrySet()) {
-      doStepOptionMigrationTest(7, entry.getKey(), getTestName(true) + ".gradle.after.json");
+    for (Map.Entry<String, TaskRoots> ignored : TaskRootsKt.LANGUAGE_TASK_ROOTS.entrySet()) {
+      doStepOptionMigrationTest(7, getTestName(true) + ".gradle.after.json");
     }
-    doStepOptionMigrationTest(7, EduNames.PYTHON, getTestName(true) + ".python.after.json");
+  }
+
+  public void testSixthVersionPython() throws IOException {
+    doStepOptionMigrationTest(7, getTestName(true) + ".after.json");
   }
 
   public void test8Version() throws Exception {
@@ -73,9 +75,8 @@ public class StepikFormatTest extends EduTestCase {
 
   public void testAdditionalMaterialsStep() throws IOException {
     String responseString = loadJsonText();
-    for (String language : Arrays.asList(EduNames.KOTLIN, EduNames.PYTHON)) {
+    for (String ignored : Arrays.asList(EduNames.KOTLIN, EduNames.PYTHON)) {
       final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
-      addDeserializingModule(language, mapper);
 
       StepSource step = mapper.readValue(responseString, StepsList.class).steps.get(0);
       assertEquals(EduNames.ADDITIONAL_MATERIALS, step.getBlock().getOptions().getTitle());
@@ -245,24 +246,12 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   private StepOptions getStepOptions() throws IOException {
-    return getStepOptions(null);
-  }
-
-  private StepOptions getStepOptions(@Nullable String language) throws IOException {
     String jsonText = loadJsonText();
     final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
-    addDeserializingModule(language, mapper);
     final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
     final StepSource step = stepContainer.steps.get(0);
     final Step block = step.getBlock();
     return block.getOptions();
-  }
-
-  private static void addDeserializingModule(@Nullable String language, ObjectMapper mapper) {
-    final SimpleModule languageModule = new SimpleModule();
-    languageModule.addDeserializer(StepOptions.class, new JacksonStepOptionsDeserializer(language));
-    languageModule.addDeserializer(Reply.class, new StepikReplyDeserializer(language));
-    mapper.registerModule(languageModule);
   }
 
   public void testOptionsPlaceholder() throws IOException {
@@ -351,11 +340,11 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   private void doStepOptionMigrationTest(int maxVersion) throws IOException {
-    doStepOptionMigrationTest(maxVersion, null, null);
+    doStepOptionMigrationTest(maxVersion, null);
   }
 
-  private void doStepOptionMigrationTest(int maxVersion, @Nullable String language, @Nullable String afterFileName) throws IOException {
-    doMigrationTest(afterFileName, jsonBefore -> JacksonStepOptionsDeserializer.migrate(jsonBefore, maxVersion, language));
+  private void doStepOptionMigrationTest(int maxVersion, @Nullable String afterFileName) throws IOException {
+    doMigrationTest(afterFileName, jsonBefore -> JacksonStepOptionsDeserializer.migrate(jsonBefore, maxVersion));
   }
 
   //private void doReplyMigrationTest(int maxVersion) throws IOException {

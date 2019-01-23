@@ -1,36 +1,44 @@
 package com.jetbrains.edu.learning.serialization.converter.json
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
-import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
 
-class ToSeventhVersionJsonStepOptionConverter(private val language: String?) : JsonStepOptionsConverter {
+class ToSeventhVersionJsonStepOptionConverter : JsonStepOptionsConverter {
 
   override fun convert(stepOptionsJson: ObjectNode): ObjectNode {
-    if (language == null) return stepOptionsJson
     if (stepOptionsJson.get(TITLE)?.asText() == EduNames.ADDITIONAL_MATERIALS) return stepOptionsJson
-    val (taskFilesRoot, testFilesRoot) = LANGUAGE_TASK_ROOTS[language] ?: return stepOptionsJson
 
-    val taskFiles = stepOptionsJson.get(FILES)
-    if (taskFiles != null) {
-      for (taskFile in taskFiles) {
-        if (taskFile !is ObjectNode) continue
-        convertTaskFile(taskFile, taskFilesRoot)
+    val taskFiles = stepOptionsJson.get(FILES) ?: ObjectMapper().createArrayNode()
+    val testFiles = stepOptionsJson.get(TESTS) ?: ObjectMapper().createArrayNode()
+
+    for (taskFile in taskFiles) {
+      if (isPythonFile(taskFile.get(NAME).asText())) {
+        return stepOptionsJson
+      }
+    }
+    for (testFile in testFiles) {
+      if (isPythonFile(testFile.get(NAME).asText())) {
+        return stepOptionsJson
       }
     }
 
-    val testFiles = stepOptionsJson.get(TESTS)
-    if (testFiles != null) {
-      for (testFile in testFiles) {
-        if (testFile !is ObjectNode) continue
-        val path = testFile.get(NAME)?.asText() ?: continue
-        testFile.put(NAME, "$testFilesRoot/$path")
-      }
+    for (taskFile in taskFiles) {
+      if (taskFile !is ObjectNode) continue
+      convertTaskFile(taskFile, "src")
+    }
+
+    for (testFile in testFiles) {
+      if (testFile !is ObjectNode) continue
+      val path = testFile.get(NAME)?.asText() ?: continue
+      testFile.put(NAME, "test/$path")
     }
 
     return stepOptionsJson
   }
+
+  private fun isPythonFile(path: String) = path.endsWith(".py")
 
   companion object {
 

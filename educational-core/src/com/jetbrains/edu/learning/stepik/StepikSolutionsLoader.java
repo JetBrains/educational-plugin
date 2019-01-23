@@ -301,7 +301,7 @@ public class StepikSolutionsLoader implements Disposable {
     else if (!isSolved) {
       if (task instanceof EduTask) {
         String language = task.getCourse().getLanguageID();
-        Reply reply = StepikConnector.INSTANCE.getLastSubmission(stepId, isSolved, language);
+        Reply reply = StepikConnector.INSTANCE.getLastSubmission(stepId, isSolved);
         if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
           return true;
         }
@@ -351,7 +351,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static TaskSolutions getEduTaskSolution(@NotNull Task task, boolean isSolved) {
     String language = task.getCourse().getLanguageID();
-    Reply reply = StepikConnector.INSTANCE.getLastSubmission(task.getStepId(), isSolved, language);
+    Reply reply = StepikConnector.INSTANCE.getLastSubmission(task.getStepId(), isSolved);
     if (reply == null || reply.getSolution() == null || reply.getSolution().isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449
       if (reply != null && reply.getSolution() == null) {
@@ -376,7 +376,8 @@ public class StepikSolutionsLoader implements Disposable {
 
     final SimpleModule module = new SimpleModule();
     module.addDeserializer(Task.class, new JacksonSubmissionDeserializer(reply.getVersion(), language));
-    final ObjectMapper objectMapper = StepikConnector.INSTANCE.getMapper(module);
+    final ObjectMapper objectMapper = StepikConnector.INSTANCE.getObjectMapper().copy();
+    objectMapper.registerModule(module);
     TaskData updatedTask;
     try {
       updatedTask = objectMapper.readValue(serializedTask, TaskData.class);

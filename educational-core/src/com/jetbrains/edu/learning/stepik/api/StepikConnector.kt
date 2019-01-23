@@ -28,15 +28,18 @@ object StepikConnector {
   private val LOG = Logger.getInstance(StepikConnector::class.java)
   private val converterFactory: JacksonConverterFactory
   val objectMapper: ObjectMapper
+  val language: String? = null
 
   init {
     val module = SimpleModule()
     module.addDeserializer(Lesson::class.java, JacksonLessonDeserializer())
-    objectMapper = getMapper(module)
+    module.addDeserializer(StepOptions::class.java, JacksonStepOptionsDeserializer())
+    module.addDeserializer(Reply::class.java, StepikReplyDeserializer())
+    objectMapper = createMapper(module)
     converterFactory = JacksonConverterFactory.create(objectMapper)
   }
 
-  fun getMapper(module: SimpleModule): ObjectMapper {
+  fun createMapper(module: SimpleModule): ObjectMapper {
     val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
     objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
@@ -52,15 +55,10 @@ object StepikConnector {
     return objectMapper
   }
 
-  private val authorizationService: StepikOAuthService
-    get() {
-      val retrofit = Retrofit.Builder()
-        .baseUrl(StepikNames.STEPIK_URL)
-        .addConverterFactory(converterFactory)
-        .build()
-
-      return retrofit.create(StepikOAuthService::class.java)
-    }
+  private val authorizationService: StepikOAuthService = Retrofit.Builder()
+    .baseUrl(StepikNames.STEPIK_URL)
+    .addConverterFactory(converterFactory)
+    .build().create(StepikOAuthService::class.java)
 
   internal val service: StepikService
     get() = service(EduSettings.getInstance().user)
@@ -166,12 +164,7 @@ object StepikConnector {
   fun getSubmissions(attemptId: Int, userId: Int) =
     service.submissions(attempt = attemptId, user = userId).execute().body()?.submissions
 
-  fun getLastSubmission(stepId: Int, isSolved: Boolean, language: String): Reply? {
-    val languageModule = SimpleModule()
-    languageModule.addDeserializer(StepOptions::class.java, JacksonStepOptionsDeserializer(language))
-    languageModule.addDeserializer(Reply::class.java, StepikReplyDeserializer(language))
-    objectMapper.registerModule(languageModule)
-
+  fun getLastSubmission(stepId: Int, isSolved: Boolean): Reply? {
     val submissions = getSubmissions(isSolved, stepId)
     return submissions?.firstOrNull()?.reply
   }

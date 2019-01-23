@@ -29,7 +29,7 @@ class JacksonLessonDeserializer @JvmOverloads constructor(vc: Class<*>? = null) 
 
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Lesson {
     val node: JsonNode = jp.codec.readTree(jp)
-    val objectMapper = StepikConnector.getMapper(SimpleModule())
+    val objectMapper = StepikConnector.createMapper(SimpleModule())
     val lesson = objectMapper.treeToValue(node, Lesson::class.java)
     val name = lesson.name
     if (StepikNames.PYCHARM_ADDITIONAL == name) {
@@ -39,21 +39,19 @@ class JacksonLessonDeserializer @JvmOverloads constructor(vc: Class<*>? = null) 
   }
 }
 
-class JacksonStepOptionsDeserializer @JvmOverloads constructor(var language: String? = null,
-                                                               vc: Class<*>? = null) : StdDeserializer<StepOptions>(vc) {
+class JacksonStepOptionsDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<StepOptions>(vc) {
 
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): StepOptions {
-    val objectMapper = StepikConnector.getMapper(SimpleModule())
+    val objectMapper = StepikConnector.createMapper(SimpleModule())
     val node: JsonNode = jp.codec.readTree(jp)
-    val migratedNode = migrate(node as ObjectNode, JSON_FORMAT_VERSION, language)
+    val migratedNode = migrate(node as ObjectNode, JSON_FORMAT_VERSION)
     return objectMapper.treeToValue(migratedNode, StepOptions::class.java)
   }
 
   companion object {
     @VisibleForTesting
-    @JvmOverloads
     @JvmStatic
-    fun migrate(node: ObjectNode, maxVersion: Int, language: String? = null): ObjectNode {
+    fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
       var convertedStepOptions = node
       val versionJson = node.get(SerializationUtils.Json.FORMAT_VERSION)
       var version = 1
@@ -67,7 +65,7 @@ class JacksonStepOptionsDeserializer @JvmOverloads constructor(var language: Str
           3 -> ToFourthVersionJsonStepOptionsConverter()
           4 -> ToFifthVersionJsonStepOptionsConverter()
           5 -> ToSixthVersionJsonStepOptionConverter()
-          6 -> ToSeventhVersionJsonStepOptionConverter(language)
+          6 -> ToSeventhVersionJsonStepOptionConverter()
           8 -> To9VersionJsonStepOptionConverter()
           else -> null
         }
@@ -82,13 +80,13 @@ class JacksonStepOptionsDeserializer @JvmOverloads constructor(var language: Str
   }
 }
 
-class StepikReplyDeserializer @JvmOverloads constructor(private val language: String?, vc: Class<*>? = null) : StdDeserializer<Reply>(vc) {
+class StepikReplyDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Reply>(vc) {
 
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Reply {
     val jsonObject: ObjectNode = jp.codec.readTree(jp) as ObjectNode
-    val initialVersion = jsonObject.migrate(JSON_FORMAT_VERSION, language)
+    val initialVersion = jsonObject.migrate(JSON_FORMAT_VERSION)
 
-    val objectMapper = StepikConnector.getMapper(SimpleModule())
+    val objectMapper = StepikConnector.createMapper(SimpleModule())
     val reply = objectMapper.treeToValue(jsonObject, Reply::class.java)
     // We need to save original version of reply object
     // to correct deserialize Reply#eduTask
@@ -102,12 +100,12 @@ class StepikReplyDeserializer @JvmOverloads constructor(private val language: St
      */
     @VisibleForTesting
     @JvmStatic
-    fun ObjectNode.migrate(maxVersion: Int, language: String?): Int {
+    fun ObjectNode.migrate(maxVersion: Int): Int {
       val initialVersion = get(SerializationUtils.Json.VERSION)?.asInt() ?: 1
       var version = initialVersion
       while (version < maxVersion) {
         when (version) {
-          6 -> toSeventhVersion(language)
+          6 -> toSeventhVersion()
         }
         version++
       }
@@ -115,13 +113,16 @@ class StepikReplyDeserializer @JvmOverloads constructor(private val language: St
       return initialVersion
     }
 
-    private fun ObjectNode.toSeventhVersion(language: String?) {
-      val taskFilesRoot = getTaskRoots(language)?.taskFilesRoot
-      if (taskFilesRoot != null) {
-        for (solutionFile in get("solution")) {
-          val value = solutionFile.get(NAME)?.asText()
-          (solutionFile as ObjectNode).put(NAME, "$taskFilesRoot/$value")
+    private fun ObjectNode.toSeventhVersion() {
+      val solutionFiles = get("solution")
+      for (solutionFile in solutionFiles) {
+        if (solutionFile.get(NAME).asText().endsWith(".py")) {
+          return
         }
+      }
+      for (solutionFile in solutionFiles) {
+        val value = solutionFile.get(NAME)?.asText()
+        (solutionFile as ObjectNode).put(NAME, "src/$value")
       }
     }
   }
@@ -134,9 +135,9 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Task? {
     val module = SimpleModule()
     module.addDeserializer(AnswerPlaceholder::class.java, StepikSubmissionAnswerPlaceholderDeserializer(replyVersion, language))
-    val objectMapper = StepikConnector.getMapper(module)
-    val node: JsonNode = objectMapper.readTree(jp)
-    (node as ObjectNode).migrate(replyVersion, JSON_FORMAT_VERSION, language)
+    val objectMapper = StepikConnector.createMapper(module)
+    val node: ObjectNode = objectMapper.readTree(jp) as ObjectNode
+    node.migrate(replyVersion, JSON_FORMAT_VERSION, language)
     return doDeserialize(node, objectMapper)
   }
 
@@ -257,7 +258,7 @@ private class StepikSubmissionAnswerPlaceholderDeserializer @JvmOverloads constr
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): AnswerPlaceholder? {
     val placeholderObject: ObjectNode = jp.codec.readTree(jp) as ObjectNode
     placeholderObject.migrate(replyVersion, language)
-    val objectMapper = StepikConnector.getMapper(SimpleModule())
+    val objectMapper = StepikConnector.createMapper(SimpleModule())
     val placeholder = objectMapper.treeToValue(placeholderObject, AnswerPlaceholder::class.java)
 
     if (placeholderObject.has(SerializationUtils.Json.SELECTED)) {
