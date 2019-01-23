@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.lang.Language;
@@ -31,7 +31,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.api.*;
-import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.update.UpdateNotification;
 import org.jetbrains.annotations.NotNull;
@@ -375,13 +374,14 @@ public class StepikSolutionsLoader implements Disposable {
       return new TaskSolutions(loadSolutionTheOldWay(task, reply));
     }
 
-    TaskData updatedTask = new GsonBuilder()
-      .registerTypeAdapter(Task.class, new StepikSubmissionTaskAdapter(reply.getVersion(), language))
-      .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-      .create()
-      .fromJson(serializedTask, TaskData.class);
-
-    if (updatedTask == null || updatedTask.getTask() == null) {
+    final SimpleModule module = new SimpleModule();
+    module.addDeserializer(Task.class, new JacksonSubmissionDeserializer(reply.getVersion(), language));
+    final ObjectMapper objectMapper = StepikConnector.INSTANCE.getMapper(module);
+    TaskData updatedTask;
+    try {
+      updatedTask = objectMapper.readValue(serializedTask, TaskData.class);
+    }
+    catch (IOException e) {
       return TaskSolutions.EMPTY;
     }
 

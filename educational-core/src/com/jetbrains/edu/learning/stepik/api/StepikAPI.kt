@@ -4,8 +4,9 @@ package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.google.gson.GsonBuilder
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.actions.mixins.TaskSerializer
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -14,7 +15,6 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
-import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter
 import java.util.*
 
 // List wrappers for GET requests:
@@ -76,11 +76,11 @@ class SubmissionData() {
   lateinit var submission: Submission
 
   constructor(attemptId: Int, score: String, files: ArrayList<SolutionFile>, task: Task) : this() {
-    val serializedTask = GsonBuilder()   // TODO: use jackson
-      .excludeFieldsWithoutExposeAnnotation()
-      .registerTypeAdapter(Task::class.java, StepikSubmissionTaskAdapter())
-      .create()
-      .toJson(TaskData(task))
+    val module = SimpleModule()
+    module.addSerializer(Task::class.java, TaskSerializer())
+    val objectMapper = StepikConnector.getMapper(module)
+    val serializedTask = objectMapper.writeValueAsString(TaskData(task))
+
     submission = Submission(score, attemptId, files, serializedTask)
   }
 }

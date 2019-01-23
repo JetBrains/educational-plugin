@@ -36,7 +36,7 @@ object StepikConnector {
     converterFactory = JacksonConverterFactory.create(objectMapper)
   }
 
-  fun getMapper(module: SimpleModule) : ObjectMapper {
+  fun getMapper(module: SimpleModule): ObjectMapper {
     val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
     objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
@@ -168,7 +168,8 @@ object StepikConnector {
 
   fun getLastSubmission(stepId: Int, isSolved: Boolean, language: String): Reply? {
     val languageModule = SimpleModule()
-   languageModule.addDeserializer(StepOptions::class.java, JacksonStepOptionsDeserializer(language))
+    languageModule.addDeserializer(StepOptions::class.java, JacksonStepOptionsDeserializer(language))
+    languageModule.addDeserializer(Reply::class.java, StepikReplyDeserializer(language))
     objectMapper.registerModule(languageModule)
 
     val submissions = getSubmissions(isSolved, stepId)
