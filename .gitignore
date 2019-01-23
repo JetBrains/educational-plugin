@@ -4,6 +4,9 @@
 # Log file
 *.log
 
+# From tests
+stale_outputs_checked
+
 # BlueJ files
 *.ctxt
 
