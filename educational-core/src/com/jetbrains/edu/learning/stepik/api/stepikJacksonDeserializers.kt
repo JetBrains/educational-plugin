@@ -39,7 +39,7 @@ class JacksonLessonDeserializer @JvmOverloads constructor(vc: Class<*>? = null) 
   }
 }
 
-class JacksonStepOptionsDeserializer @JvmOverloads constructor(var language: String,
+class JacksonStepOptionsDeserializer @JvmOverloads constructor(var language: String? = null,
                                                                vc: Class<*>? = null) : StdDeserializer<StepOptions>(vc) {
 
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): StepOptions {
@@ -147,17 +147,17 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
     }
     if (node.has(TASK_TYPE)) {
       val taskType = node.get(TASK_TYPE).asText()
-      when (taskType) {
-        "ide" -> return objectMapper.treeToValue(node, IdeTask::class.java)
-        "choice" -> return objectMapper.treeToValue(node, ChoiceTask::class.java)
-        "theory" -> return objectMapper.treeToValue(node, TheoryTask::class.java)
-        "code" -> return objectMapper.treeToValue(node, CodeTask::class.java)
-        "edu" -> return objectMapper.treeToValue(node, EduTask::class.java)
-        "output" -> return objectMapper.treeToValue(node, OutputTask::class.java)
-        "pycharm" -> return objectMapper.treeToValue(node, EduTask::class.java)     // deprecated: old courses have pycharm tasks
+      return when (taskType) {
+        "ide" -> objectMapper.treeToValue(node, IdeTask::class.java)
+        "choice" -> objectMapper.treeToValue(node, ChoiceTask::class.java)
+        "theory" -> objectMapper.treeToValue(node, TheoryTask::class.java)
+        "code" -> objectMapper.treeToValue(node, CodeTask::class.java)
+        "edu" -> objectMapper.treeToValue(node, EduTask::class.java)
+        "output" -> objectMapper.treeToValue(node, OutputTask::class.java)
+        "pycharm" -> objectMapper.treeToValue(node, EduTask::class.java)     // deprecated: old courses have pycharm tasks
         else -> {
           LOG.warn("Unsupported task type $taskType")
-          return null
+          null
         }
       }
     }
@@ -216,15 +216,43 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
     }
 
     private fun ObjectNode.to9Version() {
-//      To9VersionLocalCourseConverter.convertTaskObject(this)
+      convertTaskObject(this)
+    }
+
+    private fun convertTaskObject(taskObject: ObjectNode) {
+      val mapper = ObjectMapper()
+      val files = taskObject.remove(SerializationUtils.Json.TASK_FILES) as? ObjectNode ?: mapper.createObjectNode()
+      val tests = taskObject.remove(SerializationUtils.Json.TEST_FILES)
+      if (tests != null) {
+        for ((path, testText) in tests.fields()) {
+          if (files.has(path)) continue
+          if (!testText.isTextual) continue
+          val testObject = mapper.createObjectNode()
+          testObject.put(NAME, path)
+          testObject.put(SerializationUtils.Json.TEXT, testText.asText())
+          testObject.put(SerializationUtils.Json.IS_VISIBLE, false)
+          files.set(path, testObject)
+        }
+      }
+
+      val additionalFiles = taskObject.remove(SerializationUtils.Json.ADDITIONAL_FILES)
+      if (additionalFiles != null) {
+        for ((path, fileObject) in additionalFiles.fields()) {
+          if (files.has(path)) continue
+          if (fileObject !is ObjectNode) continue
+          fileObject.put(NAME, path)
+          files.set(path, fileObject)
+        }
+      }
+      taskObject.set(SerializationUtils.Json.FILES, files)
     }
   }
 }
 
-private class StepikSubmissionAnswerPlaceholderDeserializer @JvmOverloads constructor(private val replyVersion: Int,
-                                                                                      private val language: String?,
-                                                                                      vc: Class<*>? = null) : StdDeserializer<AnswerPlaceholder>(
-  vc) {
+private class StepikSubmissionAnswerPlaceholderDeserializer @JvmOverloads constructor(
+  private val replyVersion: Int,
+  private val language: String?,
+  vc: Class<*>? = null) : StdDeserializer<AnswerPlaceholder>(vc) {
 
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): AnswerPlaceholder? {
     val placeholderObject: ObjectNode = jp.codec.readTree(jp) as ObjectNode

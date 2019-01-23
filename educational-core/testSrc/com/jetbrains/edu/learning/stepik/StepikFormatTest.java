@@ -75,7 +75,7 @@ public class StepikFormatTest extends EduTestCase {
     String responseString = loadJsonText();
     for (String language : Arrays.asList(EduNames.KOTLIN, EduNames.PYTHON)) {
       final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
-      addLanguageModule(language, mapper);
+      addDeserializingModule(language, mapper);
 
       StepSource step = mapper.readValue(responseString, StepsList.class).steps.get(0);
       assertEquals(EduNames.ADDITIONAL_MATERIALS, step.getBlock().getOptions().getTitle());
@@ -251,17 +251,17 @@ public class StepikFormatTest extends EduTestCase {
   private StepOptions getStepOptions(@Nullable String language) throws IOException {
     String jsonText = loadJsonText();
     final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
-    addLanguageModule(language, mapper);
+    addDeserializingModule(language, mapper);
     final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
     final StepSource step = stepContainer.steps.get(0);
     final Step block = step.getBlock();
     return block.getOptions();
   }
 
-  private static void addLanguageModule(@Nullable String language, ObjectMapper mapper) {
-    if (language == null) return;
+  private static void addDeserializingModule(@Nullable String language, ObjectMapper mapper) {
     final SimpleModule languageModule = new SimpleModule();
     languageModule.addDeserializer(StepOptions.class, new JacksonStepOptionsDeserializer(language));
+    languageModule.addDeserializer(Reply.class, new StepikReplyDeserializer(language));
     mapper.registerModule(languageModule);
   }
 
