@@ -160,6 +160,9 @@ class Assignment {
 }
 
 class Dataset {
+  constructor()
+  constructor(emptyDataset: String)
+
   var is_multiple_choice: Boolean = false
   var options: List<String>? = null
 }

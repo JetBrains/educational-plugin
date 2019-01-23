@@ -170,7 +170,7 @@ public class StepikTaskBuilder {
       final Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepId, myUserId);
       if (attempt != null) {
         final Dataset dataset = attempt.getDataset();
-        if (dataset != null) {
+        if (dataset != null && dataset.getOptions() != null) {
           task.setChoiceVariants(dataset.getOptions());
           task.setMultipleChoice(dataset.is_multiple_choice());
         }

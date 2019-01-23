@@ -288,7 +288,7 @@ public class StepikFormatTest extends EduTestCase {
     assertNotNull(attempts);
     assertEquals(20, attempts.size());
     Attempt attempt1 = attempts.get(0);
-    assertNull(attempt1.getDataset());
+    assertNull(attempt1.getDataset().getOptions());
     Attempt attempt2 = attempts.get(11);
     assertNotNull(attempt2.getDataset());
   }
