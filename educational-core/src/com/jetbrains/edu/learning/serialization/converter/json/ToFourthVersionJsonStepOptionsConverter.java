@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.serialization.converter.json;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
@@ -12,11 +11,11 @@ public class ToFourthVersionJsonStepOptionsConverter implements JsonStepOptionsC
 
   @NotNull
   @Override
-  public JsonObject convert(@NotNull JsonObject stepOptionsJson) {
+  public ObjectNode convert(@NotNull ObjectNode stepOptionsJson) {
     if (stepOptionsJson.has(TITLE) &&
-        StepikNames.PYCHARM_ADDITIONAL.equals(stepOptionsJson.get(TITLE).getAsString())) {
+        StepikNames.PYCHARM_ADDITIONAL.equals(stepOptionsJson.get(TITLE).asText())) {
       stepOptionsJson.remove(TITLE);
-      stepOptionsJson.add(TITLE, new JsonPrimitive(EduNames.ADDITIONAL_MATERIALS));
+      stepOptionsJson.put(TITLE, EduNames.ADDITIONAL_MATERIALS);
     }
     return stepOptionsJson;
   }

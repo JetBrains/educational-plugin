@@ -1,39 +1,27 @@
 {
-  "test": [
-    {
-      "text": "from test_helper import run_common_tests, failed, passed, get_answer_placeholders\n\n\ndef test_ASCII():\n    windows = get_answer_placeholders()\n    for window in windows:\n        all_ascii = all(ord(c) < 128 for c in window)\n        if not all_ascii:\n            failed(\"Please use only English characters this time.\")\n            return\n    passed()\n\n\ndef test_is_alpha():\n    window = get_answer_placeholders()[0]\n    is_multiline = window.find(\"\\n\")\n    if is_multiline != -1:\n        window = window[:is_multiline-1]\n    splitted = window.split()\n    for s in splitted:\n        if not s.isalpha():\n            failed(\"Please use only English characters this time.\")\n            return\n\n    passed()\n\n\nif __name__ == '__main__':\n    test_ASCII()\n    run_common_tests(\"You should enter your name\")\n    test_is_alpha()\n\n\n",
-      "name": "tests.py"
-    }
-  ],
-  "files": [
-    {
-      "placeholders": [
-        {
-          "hint": "[\"Type your name here.\"]",
-          "offset": 32,
-          "length": 14,
-          "subtask_infos": [
-            {
-              "index": 0,
-              "hints": [
-                "Type your name here."
-              ],
-              "possible_answer": "Liana"
-            }
-          ]
-        }
-      ],
-      "text": "print(\"Hello, world! My name is type your name\")\n",
-      "name": "hello_world.py"
-    }
-  ],
-  "text": [
-    {
-      "name": "task",
-      "text": "Description"
-    }
-  ],
-  "title": "Our first program",
-  "format_version": 4,
-  "last_subtask_index": 0
+  "test" : [ {
+    "text" : "from test_helper import run_common_tests, failed, passed, get_answer_placeholders\n\n\ndef test_ASCII():\n    windows = get_answer_placeholders()\n    for window in windows:\n        all_ascii = all(ord(c) < 128 for c in window)\n        if not all_ascii:\n            failed(\"Please use only English characters this time.\")\n            return\n    passed()\n\n\ndef test_is_alpha():\n    window = get_answer_placeholders()[0]\n    is_multiline = window.find(\"\\n\")\n    if is_multiline != -1:\n        window = window[:is_multiline-1]\n    splitted = window.split()\n    for s in splitted:\n        if not s.isalpha():\n            failed(\"Please use only English characters this time.\")\n            return\n\n    passed()\n\n\nif __name__ == '__main__':\n    test_ASCII()\n    run_common_tests(\"You should enter your name\")\n    test_is_alpha()\n\n\n",
+    "name" : "tests.py"
+  } ],
+  "files" : [ {
+    "placeholders" : [ {
+      "hint" : "[\"Type your name here.\"]",
+      "offset" : 32,
+      "length" : 14,
+      "subtask_infos" : [ {
+        "index" : 0,
+        "hints" : [ "Type your name here." ],
+        "possible_answer" : "Liana"
+      } ]
+    } ],
+    "text" : "print(\"Hello, world! My name is type your name\")\n",
+    "name" : "hello_world.py"
+  } ],
+  "text" : [ {
+    "name" : "task",
+    "text" : "Description"
+  } ],
+  "title" : "Our first program",
+  "format_version" : 4,
+  "last_subtask_index" : 0
 }

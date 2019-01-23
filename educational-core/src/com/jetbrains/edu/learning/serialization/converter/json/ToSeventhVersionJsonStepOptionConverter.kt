@@ -1,31 +1,31 @@
 package com.jetbrains.edu.learning.serialization.converter.json
 
-import com.google.gson.JsonObject
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
 import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
 
 class ToSeventhVersionJsonStepOptionConverter(private val language: String?) : JsonStepOptionsConverter {
 
-  override fun convert(stepOptionsJson: JsonObject): JsonObject {
+  override fun convert(stepOptionsJson: ObjectNode): ObjectNode {
     if (language == null) return stepOptionsJson
-    if (stepOptionsJson.getAsJsonPrimitive(TITLE)?.asString == EduNames.ADDITIONAL_MATERIALS) return stepOptionsJson
+    if (stepOptionsJson.get(TITLE)?.asText() == EduNames.ADDITIONAL_MATERIALS) return stepOptionsJson
     val (taskFilesRoot, testFilesRoot) = LANGUAGE_TASK_ROOTS[language] ?: return stepOptionsJson
 
-    val taskFiles = stepOptionsJson.getAsJsonArray(FILES)
+    val taskFiles = stepOptionsJson.get(FILES)
     if (taskFiles != null) {
       for (taskFile in taskFiles) {
-        if (taskFile !is JsonObject) continue
+        if (taskFile !is ObjectNode) continue
         convertTaskFile(taskFile, taskFilesRoot)
       }
     }
 
-    val testFiles = stepOptionsJson.getAsJsonArray(TESTS)
+    val testFiles = stepOptionsJson.get(TESTS)
     if (testFiles != null) {
       for (testFile in testFiles) {
-        if (testFile !is JsonObject) continue
-        val path = testFile.getAsJsonPrimitive(NAME)?.asString ?: continue
-        testFile.addProperty(NAME, "$testFilesRoot/$path")
+        if (testFile !is ObjectNode) continue
+        val path = testFile.get(NAME)?.asText() ?: continue
+        testFile.put(NAME, "$testFilesRoot/$path")
       }
     }
 
@@ -35,20 +35,20 @@ class ToSeventhVersionJsonStepOptionConverter(private val language: String?) : J
   companion object {
 
     @JvmStatic
-    fun convertTaskFile(taskFile: JsonObject, taskFilesRoot: String) {
-      val path = taskFile.getAsJsonPrimitive(NAME)?.asString ?: return
-      taskFile.addProperty(NAME, "$taskFilesRoot/$path")
-      for (placeholder in taskFile.getAsJsonArray(PLACEHOLDERS)) {
-        val placeholderObject = placeholder as? JsonObject ?: continue
+    fun convertTaskFile(taskFile: ObjectNode, taskFilesRoot: String) {
+      val path = taskFile.get(NAME)?.asText() ?: return
+      taskFile.put(NAME, "$taskFilesRoot/$path")
+      for (placeholder in taskFile.get(PLACEHOLDERS)) {
+        val placeholderObject = placeholder as? ObjectNode ?: continue
         convertPlaceholder(placeholderObject, taskFilesRoot)
       }
     }
 
     @JvmStatic
-    fun convertPlaceholder(placeholder: JsonObject, taskFilesRoot: String) {
-      val dependency = placeholder.getAsJsonObject(DEPENDENCY) ?: return
-      val dependencyFilePath = dependency.getAsJsonPrimitive(DEPENDENCY_FILE)?.asString ?: return
-      dependency.addProperty(DEPENDENCY_FILE, "$taskFilesRoot/$dependencyFilePath")
+    fun convertPlaceholder(placeholder: ObjectNode, taskFilesRoot: String) {
+      val dependency = placeholder.get(DEPENDENCY) as? ObjectNode ?: return
+      val dependencyFilePath = dependency.get(DEPENDENCY_FILE)?.asText() ?: return
+      dependency.put(DEPENDENCY_FILE, "$taskFilesRoot/$dependencyFilePath")
     }
   }
 }

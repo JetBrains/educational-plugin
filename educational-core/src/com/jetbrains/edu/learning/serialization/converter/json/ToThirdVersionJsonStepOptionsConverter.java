@@ -1,8 +1,7 @@
 package com.jetbrains.edu.learning.serialization.converter.json;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
@@ -14,34 +13,34 @@ public class ToThirdVersionJsonStepOptionsConverter implements JsonStepOptionsCo
 
   @NotNull
   @Override
-  public JsonObject convert(@NotNull JsonObject stepOptionsJson) {
+  public ObjectNode convert(@NotNull ObjectNode stepOptionsJson) {
     if (!stepOptionsJson.has(LAST_SUBTASK)) return stepOptionsJson;
-    final int lastSubtaskIndex = stepOptionsJson.get(LAST_SUBTASK).getAsInt();
+    final int lastSubtaskIndex = stepOptionsJson.get(LAST_SUBTASK).asInt();
     if (lastSubtaskIndex == 0) return stepOptionsJson;
-    final JsonArray tests = stepOptionsJson.getAsJsonArray(TESTS);
+    final JsonNode tests = stepOptionsJson.get(TESTS);
     if (tests.size() > 0) {
-      final JsonObject fileWrapper = tests.get(0).getAsJsonObject();
+      final JsonNode fileWrapper = tests.get(0);
       if (fileWrapper.has(NAME)) {
-        replaceWithSubtask(fileWrapper);
+        replaceWithSubtask((ObjectNode)fileWrapper);
       }
     }
-    final JsonArray descriptions = stepOptionsJson.getAsJsonArray(TEXTS);
+    final JsonNode descriptions = stepOptionsJson.get(TEXTS);
     if (descriptions != null && descriptions.size() > 0) {
-      final JsonObject fileWrapper = descriptions.get(0).getAsJsonObject();
+      final JsonNode fileWrapper = descriptions.get(0);
       if (fileWrapper.has(NAME)) {
-        replaceWithSubtask(fileWrapper);
+        replaceWithSubtask((ObjectNode)fileWrapper);
       }
     }
     return stepOptionsJson;
   }
 
-  private static void replaceWithSubtask(@NotNull JsonObject fileWrapper) {
-    final String file = fileWrapper.get(NAME).getAsString();
+  private static void replaceWithSubtask(@NotNull ObjectNode fileWrapper) {
+    final String file = fileWrapper.get(NAME).asText();
     final String extension = FileUtilRt.getExtension(file);
     final String name = FileUtil.getNameWithoutExtension(file);
     if (!name.contains(SerializationUtils.SUBTASK_MARKER)) {
       fileWrapper.remove(NAME);
-      fileWrapper.add(NAME, new JsonPrimitive(name + "_subtask0." + extension));
+      fileWrapper.put(NAME, name + "_subtask0." + extension);
     }
   }
 }

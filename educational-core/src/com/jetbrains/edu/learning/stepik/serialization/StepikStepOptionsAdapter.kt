@@ -39,9 +39,9 @@ class StepikStepOptionsAdapter(val language: String?) : JsonDeserializer<StepOpt
           8 -> To9VersionJsonStepOptionConverter()
           else -> null
         }
-        if (converter != null) {
-          convertedStepOptions = converter.convert(convertedStepOptions)
-        }
+//        if (converter != null) {
+//          convertedStepOptions = converter.convert(convertedStepOptions)
+//        }
         version++
       }
       convertedStepOptions.addProperty(FORMAT_VERSION, maxVersion)

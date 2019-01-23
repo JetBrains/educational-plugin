@@ -11,8 +11,6 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
 import com.jetbrains.edu.learning.serialization.SerializationUtils.STATUS
 import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots
-import com.jetbrains.edu.learning.serialization.converter.json.ToFifthVersionJsonStepOptionsConverter
-import com.jetbrains.edu.learning.serialization.converter.json.ToSeventhVersionJsonStepOptionConverter
 import com.jetbrains.edu.learning.serialization.converter.json.local.To9VersionLocalCourseConverter
 import com.jetbrains.edu.learning.stepik.api.Reply
 import java.lang.reflect.Type
@@ -184,16 +182,16 @@ private class StepikSubmissionAnswerPlaceholderAdapter(
     private fun JsonObject.migrate(version: Int, language: String?) {
       @Suppress("NAME_SHADOWING")
       var version = version
-      while (version < JSON_FORMAT_VERSION) {
-        when (version) {
-          1 -> ToFifthVersionJsonStepOptionsConverter.removeSubtaskInfo(this)
-          6 -> {
-            val taskFilesRoot = getTaskRoots(language)?.taskFilesRoot
-            if (taskFilesRoot != null) {
-              ToSeventhVersionJsonStepOptionConverter.convertPlaceholder(this, taskFilesRoot)
-            }
-          }
-        }
+      while (version < JSON_FORMAT_VERSION) {  // TODO: ktisha
+//        when (version) {
+//          1 -> ToFifthVersionJsonStepOptionsConverter.removeSubtaskInfo(this)
+//          6 -> {
+//            val taskFilesRoot = getTaskRoots(language)?.taskFilesRoot
+//            if (taskFilesRoot != null) {
+//              ToSeventhVersionJsonStepOptionConverter.convertPlaceholder(this, taskFilesRoot)
+//            }
+//          }
+//        }
         version++
       }
     }

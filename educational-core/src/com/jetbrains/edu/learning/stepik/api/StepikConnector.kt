@@ -167,7 +167,10 @@ object StepikConnector {
     service.submissions(attempt = attemptId, user = userId).execute().body()?.submissions
 
   fun getLastSubmission(stepId: Int, isSolved: Boolean, language: String): Reply? {
-    // TODO: make use of language
+    val languageModule = SimpleModule()
+   languageModule.addDeserializer(StepOptions::class.java, JacksonStepOptionsDeserializer(language))
+    objectMapper.registerModule(languageModule)
+
     val submissions = getSubmissions(isSolved, stepId)
     return submissions?.firstOrNull()?.reply
   }

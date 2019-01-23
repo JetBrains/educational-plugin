@@ -1,26 +1,22 @@
 {
-  "task_type": "edu",
-  "test": [
-    {
-      "name": "Tests.kt",
-      "text": "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}"
-    }
-  ],
-  "title": "task1",
-  "description_text": "<html>\nWrite your task text here.\n<br>\n</html>",
-  "description_format": "html",
-  "files": [
-    {
-      "name": "Task.kt",
-      "text": "// type your solution here",
-      "placeholders": []
-    }
-  ],
-  "format_version": 6,
-  "additional_files": {
-    "additional_file.txt": {
-      "text": "some text",
-      "is_visible": true
+  "task_type" : "edu",
+  "test" : [ {
+    "name" : "Tests.kt",
+    "text" : "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}"
+  } ],
+  "title" : "task1",
+  "description_text" : "<html>\nWrite your task text here.\n<br>\n</html>",
+  "description_format" : "html",
+  "files" : [ {
+    "name" : "Task.kt",
+    "text" : "// type your solution here",
+    "placeholders" : [ ]
+  } ],
+  "format_version" : 6,
+  "additional_files" : {
+    "additional_file.txt" : {
+      "text" : "some text",
+      "is_visible" : true
     }
   }
 }

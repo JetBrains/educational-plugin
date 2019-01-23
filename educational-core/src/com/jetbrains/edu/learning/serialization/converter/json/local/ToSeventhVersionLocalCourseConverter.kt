@@ -5,7 +5,6 @@ import com.google.gson.JsonPrimitive
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
 import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
-import com.jetbrains.edu.learning.serialization.converter.json.ToSeventhVersionJsonStepOptionConverter
 
 class ToSeventhVersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
@@ -17,7 +16,7 @@ class ToSeventhVersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
       val taskFiles = JsonObject()
       for ((path, taskFileObject) in taskObject.getJsonObjectMap<JsonObject>(TASK_FILES)) {
-        ToSeventhVersionJsonStepOptionConverter.convertTaskFile(taskFileObject, taskFilesRoot)
+//        ToSeventhVersionJsonStepOptionConverter.convertTaskFile(taskFileObject, taskFilesRoot)   //TODO: ktisha
         taskFiles.add("$taskFilesRoot/$path", taskFileObject)
       }
       taskObject.add(TASK_FILES, taskFiles)
