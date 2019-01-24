@@ -6,13 +6,18 @@ import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.io.IOException
 
 class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLessonManager {
@@ -59,9 +64,58 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       emptyMap<String, String>()
     }
 
-    val changes = calculateChanges(initialCurrentFiles + currentUserChanges, targetTask.allFiles + nextUserChanges)
+    val currentState = initialCurrentFiles + currentUserChanges
+    val targetState = targetTask.allFiles + nextUserChanges
+
+    // There are special rules for hyperskill courses for now
+    // All user changes from current task should be propagated to next task as is
+    val changes = if (taskIndexDelta == 1 && lesson.course is HyperskillCourse) {
+      calculateHypeskillChanges(lesson, targetState, currentState, targetTask)
+    } else {
+      calculateChanges(currentState, targetState)
+    }
+
     for (change in changes) {
       change.apply(project, taskDir)
+    }
+  }
+
+  private fun calculateHypeskillChanges(
+    lesson: FrameworkLesson,
+    targetState: Map<String, String>,
+    currentState: Map<String, String>,
+    targetTask: Task
+  ): List<Change> {
+    val (currentTaskFilesState, currentTestFilesState) = currentState.split(lesson)
+    val (targetTaskFiles, targetTestFiles) = targetState.split(lesson)
+
+    // Creates [Change]s to propagates all current changes of task files to target task.
+    // Technically, we won't change text of task files, just add user created task files to target task
+    fun calculateCurrentTaskChanges(): List<Change> {
+      val newTaskFilesChanges = (currentTaskFilesState - targetTaskFiles.keys).map { (path, text) ->
+        Change.AddUserCreatedTaskFile(path, text, targetTask)
+      }
+      val testChanges = calculateChanges(currentTestFilesState, targetTestFiles)
+      return newTaskFilesChanges + testChanges  
+    }
+    
+    // target task initialization
+    return if (targetTask.record == -1) {
+      calculateCurrentTaskChanges()
+    } else {
+      if (currentTaskFilesState == targetTaskFiles) {
+        // if current and target states of task files are the same
+        // it needs to calculate only diff for test files
+        calculateChanges(currentTestFilesState, targetTestFiles)
+      } else {
+        val result = Messages.showYesNoDialog(project, "The current task changes conflict with next task. Replace with current changes?",
+                                              "Changes conflict", "Replace", "Keep", null)
+        if (result == Messages.NO) {
+          calculateChanges(currentState, targetState)
+        } else {
+          calculateCurrentTaskChanges()
+        }
+      }
     }
   }
 
@@ -109,6 +163,24 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
   private val Task.allFiles: Map<String, String> get() = taskFiles.mapValues { it.value.text }
 
+  private fun Map<String, String>.split(lesson: FrameworkLesson): Pair<Map<String, String>, Map<String, String>> {
+    val testDirs = lesson.course.testDirs
+    val defaultTestName = lesson.course.configurator?.testFileName ?: ""
+    val taskFiles = HashMap<String, String>()
+    val testFiles = HashMap<String, String>()
+
+    for ((path, text) in this) {
+      val state = if (path == defaultTestName || testDirs.any { path.startsWith(it) }) {
+        testFiles
+      } else {
+        taskFiles
+      }
+      state[path] = text
+    }
+
+    return taskFiles to testFiles
+  }
+
   companion object {
     private val LOG: Logger = Logger.getInstance(FrameworkLessonManagerImpl::class.java)
 
@@ -127,6 +199,14 @@ private sealed class Change(protected val path: String) {
 
   abstract fun apply(project: Project, taskDir: VirtualFile)
 
+  class AddUserCreatedTaskFile(path: String, private val text: String, private val task: Task) : Change(path) {
+    override fun apply(project: Project, taskDir: VirtualFile) {
+      val taskFile = TaskFile(path, text)
+      taskFile.isUserCreated = true
+      task.addTaskFile(taskFile)
+    }
+  }
+
   class AddFile(path: String, private val text: String) : Change(path) {
     override fun apply(project: Project, taskDir: VirtualFile) {
       try {
@@ -137,6 +217,7 @@ private sealed class Change(protected val path: String) {
     }
 
   }
+
   class RemoveFile(path: String) : Change(path) {
     override fun apply(project: Project, taskDir: VirtualFile) {
       runUndoTransparentWriteAction {
@@ -149,6 +230,7 @@ private sealed class Change(protected val path: String) {
     }
 
   }
+
   class ChangeFile(path: String, private val text: String) : Change(path) {
     override fun apply(project: Project, taskDir: VirtualFile) {
       val file = taskDir.findFileByRelativePath(path)

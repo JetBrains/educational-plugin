@@ -2,28 +2,17 @@ package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 
-class FrameworkLessonNavigationTest : EduTestCase() {
-
-  private val rootDir: VirtualFile get() = LightPlatformTestCase.getSourceRoot()
-
-  override fun tearDown() {
-    AbstractStorage.deleteFiles(FrameworkLessonManagerImpl.constructStoragePath(project))
-    super.tearDown()
-  }
+class FrameworkLessonNavigationTest : NavigationTestBase() {
 
   fun `test next`() {
     val course = createFrameworkCourse()
@@ -40,10 +29,10 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       dir("lesson1") {
         dir("task") {
           file("fizz.kt", """
-            fn fizz() = "Fizz"
+            fun fizz() = "Fizz"
           """)
           file("buzz.kt", """
-            fn buzz() = TODO()
+            fun buzz() = TODO()
           """)
         }
       }
@@ -72,7 +61,7 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       dir("lesson1") {
         dir("task") {
           file("fizzBuzz.kt", """
-            fn fizzBuzz() = "Fizz" + "Buzz"
+            fun fizzBuzz() = "Fizz" + "Buzz"
           """)
         }
       }
@@ -97,7 +86,7 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       dir("lesson1") {
         dir("task") {
           file("fizz.kt", """
-            fn fizz() = "Fizz"
+            fun fizz() = "Fizz"
           """)
         }
       }
@@ -110,14 +99,14 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       frameworkLesson {
         eduTask {
           taskFile("fizz.kt", """
-          fn fizzz() = <p>TODO()</p>
-          fn buzz() = <p>TODO()</p>
+          fun fizzz() = <p>TODO()</p>
+          fun buzz() = <p>TODO()</p>
         """)
         }
         eduTask {
           taskFile("fizz.kt", """
-          fn fizzz() = <p>TODO()</p>
-          fn buzz() = <p>TODO()</p>
+          fun fizzz() = <p>TODO()</p>
+          fun buzz() = <p>TODO()</p>
         """) {
             placeholder(0, dependency = "lesson1#task1#fizz.kt#1")
             placeholder(1, dependency = "lesson1#task1#fizz.kt#2")
@@ -142,8 +131,8 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       dir("lesson1") {
         dir("task") {
           file("fizz.kt", """
-            fn fizzz() = "Fizzz"
-            fn buzz() = "Buzz"
+            fun fizzz() = "Fizzz"
+            fun buzz() = "Buzz"
           """)
         }
       }
@@ -185,7 +174,7 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       dir("lesson1") {
         dir("task") {
           file("fizzBuzz.kt", """
-            fn fizzBuzz() = TODO() + TODO()
+            fun fizzBuzz() = TODO() + TODO()
           """)
         }
       }
@@ -199,7 +188,7 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       dir("lesson1") {
         dir("task") {
           file("fizz.kt", """
-            fn fizz() = TODO()
+            fun fizz() = TODO()
           """)
         }
       }
@@ -225,7 +214,7 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       task.openTaskFileInEditor("fizz.kt", 0)
       myFixture.type("\"Fizz\"")
       myFixture.editor.caretModel.moveToOffset(0)
-      myFixture.type("fn foo() {}\n")
+      myFixture.type("fun foo() {}\n")
       task.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
 
@@ -236,8 +225,8 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       dir("lesson1") {
         dir("task") {
           file("fizz.kt", """
-            fn foo() {}
-            fn fizz() = "Fizz"
+            fun foo() {}
+            fun fizz() = "Fizz"
           """)
         }
       }
@@ -258,7 +247,7 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       task2.openTaskFileInEditor("buzz.kt", 0)
       myFixture.type("\"Buzz\"")
       myFixture.editor.caretModel.moveToOffset(0)
-      myFixture.type("fn bar() {}\n")
+      myFixture.type("fun bar() {}\n")
       myFixture.testAction(PreviousTaskAction())
 
       myFixture.testAction(NextTaskAction())
@@ -268,17 +257,72 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       dir("lesson1") {
         dir("task") {
           file("fizz.kt", """
-            fn fizz() = "Fizz"
+            fun fizz() = "Fizz"
           """)
           file("buzz.kt", """
-            fn bar() {}
-            fn buzz() = "Buzz"
+            fun bar() {}
+            fun buzz() = "Buzz"
           """)
         }
       }
     }
     fileTree.assertEquals(rootDir, myFixture)
   }
+
+  fun `test do not propagate user created files`() {
+    val course = createFrameworkCourse()
+    val task = course.findTask("lesson1", "task1")
+    withVirtualFileListener(course) {
+      GeneratorUtils.createChildFile(rootDir, "lesson1/task/foo.kt", "fun foo() {}")
+      task.openTaskFileInEditor("fizz.kt")
+      task.status = CheckStatus.Solved
+      myFixture.testAction(NextTaskAction())
+
+      val task2 = course.findTask("lesson1", "task2")
+      task2.openTaskFileInEditor("buzz.kt")
+      myFixture.testAction(PreviousTaskAction())
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          file("fizz.kt", """
+            fun fizz() = TODO()
+          """)
+          file("foo.kt", """
+            fun foo() {}
+          """)
+        }
+      }
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
+  fun `test save user created files`() {
+    val course = createFrameworkCourse()
+    val task = course.findTask("lesson1", "task1")
+    withVirtualFileListener(course) {
+      GeneratorUtils.createChildFile(rootDir, "lesson1/task/foo.kt", "fun foo() {}")
+      task.openTaskFileInEditor("fizz.kt")
+      task.status = CheckStatus.Solved
+      myFixture.testAction(NextTaskAction())
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          file("fizz.kt", """
+            fun fizz() = TODO()
+          """)
+          file("buzz.kt", """
+            fun buzz() = TODO()
+          """)
+        }
+      }
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
 
   private inline fun doTest(action: TaskNavigationAction, expectedTask: Task, init: () -> Unit) {
     init()
@@ -294,22 +338,22 @@ class FrameworkLessonNavigationTest : EduTestCase() {
     frameworkLesson {
       eduTask {
         taskFile("fizz.kt", """
-          fn fizz() = <p>TODO()</p>
+          fun fizz() = <p>TODO()</p>
         """)
       }
       eduTask {
         taskFile("fizz.kt", """
-          fn fizz() = <p>TODO()</p>
+          fun fizz() = <p>TODO()</p>
         """) {
           placeholder(0, dependency = "lesson1#task1#fizz.kt#1", isVisible = false)
         }
         taskFile("buzz.kt", """
-          fn buzz() = <p>TODO()</p>
+          fun buzz() = <p>TODO()</p>
         """)
       }
       eduTask {
         taskFile("fizzBuzz.kt", """
-          fn fizzBuzz() = <p>TODO()</p> + <p>TODO()</p>
+          fun fizzBuzz() = <p>TODO()</p> + <p>TODO()</p>
         """) {
           placeholder(0, dependency = "lesson1#task2#fizz.kt#1")
           placeholder(1, dependency = "lesson1#task2#buzz.kt#1")

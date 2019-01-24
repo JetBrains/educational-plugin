@@ -35,6 +35,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import java.io.IOException
 
 abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
@@ -45,8 +46,10 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()
-    registerConfigurator(PlainTextLanguage.INSTANCE, PlainTextConfigurator::class.java, myFixture.testRootDisposable)
-    registerConfigurator(FakeGradleBasedLanguage, FakeGradleConfigurator::class.java, myFixture.testRootDisposable)
+    registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE)
+    registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE, HYPERSKILL)
+    registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage)
+    registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
     createCourse()
 
     val dockManager = DockManager.getInstance(myFixture.project)
@@ -137,9 +140,10 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     courseType: String = EduNames.PYCHARM,
     language: Language = PlainTextLanguage.INSTANCE,
     settings: Any = Unit,
+    courseProducer: () -> Course = ::EduCourse,
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
-    return course(name, language, courseType, courseMode, buildCourse).apply {
+    return course(name, language, courseType, courseMode, courseProducer, buildCourse).apply {
       createCourseFiles(project, LightPlatformTestCase.getSourceRoot(), settings)
     }
   }
@@ -220,10 +224,16 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     return remoteCourse
   }
 
-  private fun registerConfigurator(language: Language, configuratorClass: Class<*>, disposable: Disposable) {
+  private fun registerConfigurator(
+    disposable: Disposable,
+    configuratorClass: Class<*>,
+    language: Language,
+    courseType: String = EduNames.PYCHARM
+  ) {
     val extension = EducationalExtensionPoint<EduConfigurator<out Any>>()
     extension.language = language.id
     extension.implementationClass = configuratorClass.name
+    extension.courseType = courseType
     PlatformTestUtil.registerExtension(ExtensionPointName.create(EduConfigurator.EP_NAME), extension, disposable)
   }
 }

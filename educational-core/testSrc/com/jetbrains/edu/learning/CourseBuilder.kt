@@ -25,9 +25,10 @@ fun course(
   language: com.intellij.lang.Language = PlainTextLanguage.INSTANCE,
   courseType: String = EduNames.PYCHARM,
   courseMode: String = EduNames.STUDY,
+  courseProducer: () -> Course = ::EduCourse,
   buildCourse: CourseBuilder.() -> Unit
 ): Course {
-  val builder = CourseBuilder()
+  val builder = CourseBuilder(courseProducer())
   builder.withName(name)
   builder.withMode(courseMode)
   builder.buildCourse()
@@ -70,7 +71,7 @@ abstract class LessonOwnerBuilder(val course: Course) {
   }
 }
 
-class CourseBuilder : LessonOwnerBuilder(EduCourse()) {
+class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
 
   override val nextLessonIndex: Int get() = course.lessons.size + 1
 
