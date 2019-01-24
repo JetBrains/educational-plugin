@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "id": 399526,
+      "lesson": 116077,
+      "position": 1,
+      "status": "ready",
+      "block": {
+        "name": "pycharm",
+        "text": "<h2><code>var</code> &amp; <code>val</code></h2><p>Examples accompanying the atom.\n<a href=\"https://stepik.org/lesson/103806/step/1\">Read \"<code>var</code> &amp; <code>val</code>\" atom online.</a></p>",
+        "video": null,
+        "animation": null,
+        "options": {
+          "task_type": "theory",
+          "test": [],
+          "title": "Examples",
+          "description_text": "<body><h2><code>var</code> &amp; <code>val</code></h2><p>Examples accompanying the atom.\n<a href=\"https://stepik.org/lesson/103806/step/1\">Read &quot;<code>var</code> &amp; <code>val</code>&quot; atom online.</a></p></body>",
+          "description_format": "html",
+          "feedback_link": {
+            "link_type": "NONE"
+          },
+          "files": [
+            {
+              "name": "Vars.py",
+              "text": "// VarAndVal/Vars.py\n\nfun main(args: Array<String>) {\n  var whole = 11          // [1]\n  var fractional = 1.4    // [2]\n  var words = \"A value\"   // [3]\n  println(whole)\n  println(fractional)\n  println(words)\n}\n/* Output:\n11\n1.4\nA value\n*/",
+              "placeholders": []
+            },
+            {
+              "name": "AVarIsMutable.py",
+              "text": "// VarAndVal/AVarIsMutable.py\n\nfun main(args: Array<String>) {\n  var sum = 1\n  sum = sum + 2\n  sum += 3\n  println(sum)\n}\n/* Output:\n6\n*/",
+              "placeholders": []
+            },
+            {
+              "name": "Vals.py",
+              "text": "// VarAndVal/Vals.py\n\nfun main(args: Array<String>) {\n  val whole = 11\n  // whole = 15 // Error      // [1]\n  val fractional = 1.4\n  val words = \"Twas Brillig\"\n  println(whole)\n  println(fractional)\n  println(words)\n}\n/* Output:\n11\n1.4\nTwas Brillig\n*/",
+              "placeholders": []
+            }
+          ],
+          "additional_files": [],
+          "format_version": 5
+        },
+        "subtitle_files": []
+      },
+      "actions": {
+        "submit": "#"
+      },
+      "progress": "77-399526",
+      "subscriptions": [
+        "31-77-399526",
+        "30-77-399526"
+      ],
+      "instruction": null,
+      "session": null,
+      "instruction_type": null,
+      "viewed_by": 33,
+      "passed_by": 0,
+      "correct_ratio": null,
+      "worth": 0,
+      "is_solutions_unlocked": false,
+      "solutions_unlocked_attempts": 3,
+      "has_submissions_restrictions": false,
+      "max_submissions_count": 3,
+      "variation": 1,
+      "variations_count": 1,
+      "create_date": "2018-07-25T09:32:48Z",
+      "update_date": "2018-07-25T13:59:18Z",
+      "discussions_count": 0,
+      "discussion_proxy": "77-399526-1",
+      "discussion_threads": [
+        "77-399526-1"
+      ]
+    }
+  ]
+}

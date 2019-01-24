@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Key;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
@@ -14,8 +13,6 @@ import java.io.IOException;
 
 public class StepikAuthorizer {
   private static final Logger LOG = Logger.getInstance(StepikAuthorizer.class.getName());
-
-  public static final Key<String> COURSE_LANGUAGE = Key.create("COURSE_LANGUAGE");
 
   private StepikAuthorizer() {
   }

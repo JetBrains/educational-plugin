@@ -1,0 +1,77 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "id": 399527,
+      "lesson": 116077,
+      "position": 2,
+      "status": "ready",
+      "block": {
+        "name": "pycharm",
+        "text": "<h2><code>var</code> &amp; <code>val</code> (#1)</h2><p>Declare a <code>val answer</code> and set its value to <code>42</code>.\nOn the next line, try to reassign the <code>answer</code> to <code>43</code>.\nWhat error does the compiler produce?\nFix the error by replacing <code>val</code> with <code>var</code>.\nDisplay the value of <code>answer</code> on the console.</p><br><div><p><a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdkaliSwYkjiV21bZl0yP-In2g5p17sAQCfaGjyHx_QYMWTiQ/viewform?usp=pp_url&amp;entry.189755027=Programming+Basics+%2F+var+%26+val+%2F+Exercise1\n\">Share feedback</a></p></div>",
+        "video": null,
+        "animation": null,
+        "options": {
+          "task_type": "output",
+          "test": [],
+          "title": "Exercise 1",
+          "description_text": "<body><h2><code>var</code> &amp; <code>val</code> (#1)</h2><p>Declare a <code>val answer</code> and set its value to <code>42</code>.\nOn the next line, try to reassign the <code>answer</code> to <code>43</code>.\nWhat error does the compiler produce?\nFix the error by replacing <code>val</code> with <code>var</code>.\nDisplay the value of <code>answer</code> on the console.</p><br/><div align=\"right\"><p><small><a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdkaliSwYkjiV21bZl0yP-In2g5p17sAQCfaGjyHx_QYMWTiQ/viewform?usp=pp_url&entry.189755027=Programming+Basics+%2F+var+%26+val+%2F+Exercise1\n\">Share feedback</a></small></p></div></body>",
+          "description_format": "html",
+          "feedback_link": {
+            "link_type": "NONE"
+          },
+          "files": [
+            {
+              "name": "Task.py",
+              "text": "package varandval1\n\nfun main(args: Array<String>) {\n    TODO()\n}",
+              "placeholders": [
+                {
+                  "offset": 56,
+                  "length": 6,
+                  "hints": [],
+                  "possible_answer": "var answer = 42\n    answer = 43\n    println(answer)",
+                  "placeholder_text": "TODO()"
+                }
+              ]
+            }
+          ],
+          "additional_files": [],
+          "format_version": 5
+        },
+        "subtitle_files": []
+      },
+      "actions": {
+        "submit": "#"
+      },
+      "progress": "77-399527",
+      "subscriptions": [
+        "31-77-399527",
+        "30-77-399527"
+      ],
+      "instruction": null,
+      "session": null,
+      "instruction_type": null,
+      "viewed_by": 2,
+      "passed_by": 0,
+      "correct_ratio": null,
+      "worth": 0,
+      "is_solutions_unlocked": false,
+      "solutions_unlocked_attempts": 3,
+      "has_submissions_restrictions": false,
+      "max_submissions_count": 3,
+      "variation": 1,
+      "variations_count": 1,
+      "create_date": "2018-07-25T09:32:50Z",
+      "update_date": "2018-07-25T13:59:19Z",
+      "discussions_count": 0,
+      "discussion_proxy": "77-399527-1",
+      "discussion_threads": [
+        "77-399527-1"
+      ]
+    }
+  ]
+}

@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik
 
 import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
@@ -23,36 +22,38 @@ class StepikTaskBuilderTest : EduTestCase() {
 
   override fun getTestDataPath(): String = "testData/stepikTaskBuilder"
 
-  fun `test theory task`() = doTest<TheoryTask>()
-  fun `test choice task`() = doTest<ChoiceTask>()
-  fun `test code task`() = doTest<CodeTask>()
-  fun `test edu task`() = doTest<EduTask>()
-  fun `test edu theory task`() = doTest<TheoryTask>()
-  fun `test output task`() = doTest<OutputTask>()
-  fun `test ide task`() = doTest<IdeTask>()
+  fun `test theory task`() = doTest<TheoryTask>(FakeGradleBasedLanguage)
+  fun `test choice task`() = doTest<ChoiceTask>(FakeGradleBasedLanguage)
+  fun `test code task`() = doTest<CodeTask>(FakeGradleBasedLanguage)
+  fun `test edu task`() = doTest<EduTask>(FakeGradleBasedLanguage)
+  fun `test edu theory task`() = doTest<TheoryTask>(FakeGradleBasedLanguage)
+  fun `test output task`() = doTest<OutputTask>(FakeGradleBasedLanguage)
+  fun `test ide task`() = doTest<IdeTask>(FakeGradleBasedLanguage)
 
-  private inline fun <reified T : Task> doTest() {
-    for (language in listOf(PlainTextLanguage.INSTANCE, FakeGradleBasedLanguage)) {
-      val response = loadResponse()
-      val params: Map<Key<*>, Any> = mapOf(StepikAuthorizer.COURSE_LANGUAGE to language.id)
+  fun `test edu task python`() = doTest<EduTask>(PlainTextLanguage.INSTANCE)
+  fun `test edu theory task python`() = doTest<TheoryTask>(PlainTextLanguage.INSTANCE)
+  fun `test output task python`() = doTest<OutputTask>(PlainTextLanguage.INSTANCE)
+  fun `test ide task python`() = doTest<IdeTask>(PlainTextLanguage.INSTANCE)
 
-      val mapper = StepikConnector.objectMapper
-      val stepSource = mapper.readValue(response, StepsList::class.java).steps[0] //use params
+  private inline fun <reified T : Task> doTest(language: Language) {
+    val response = loadResponse()
 
-      val course = EduCourse()
-      course.language = language.id
-      val lesson = Lesson()
-      val task = StepikTaskBuilder(language, lesson, stepSource, -1, -1).createTask(stepSource.block?.name) ?: error("")
+    val mapper = StepikConnector.objectMapper
+    val stepSource = mapper.readValue(response, StepsList::class.java).steps[0]
 
-      assertInstanceOf(task, T::class.java)
+    val course = EduCourse()
+    course.language = language.id
+    val lesson = Lesson()
+    val task = StepikTaskBuilder(language, lesson, stepSource, -1, -1).createTask(stepSource.block?.name) ?: error("")
 
-      assertTrue(task.taskFiles.isNotEmpty())
-      for ((path, taskFile) in task.taskFiles) {
-        val pathPrefix = if (path.contains(TEST_FILE_PATTERN)) EduNames.TEST else EduNames.SRC
-        val pathMatcher = createPathMatcher("${pathPrefix}/", language)
-        assertThat(path, pathMatcher)
-        assertThat(taskFile.name, pathMatcher)
-      }
+    assertInstanceOf(task, T::class.java)
+
+    assertTrue(task.taskFiles.isNotEmpty())
+    for ((path, taskFile) in task.taskFiles) {
+      val pathPrefix = if (path.contains(TEST_FILE_PATTERN)) EduNames.TEST else EduNames.SRC
+      val pathMatcher = createPathMatcher("${pathPrefix}/", language)
+      assertThat(path, pathMatcher)
+      assertThat(taskFile.name, pathMatcher)
     }
   }
 

@@ -1,9 +1,10 @@
-package com.jetbrains.edu.learning.stepik;
+package com.jetbrains.edu.integration.stepik;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.net.HttpConfigurable;
 import com.intellij.util.net.ssl.CertificateManager;
 import com.intellij.util.net.ssl.ConfirmingTrustManager;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -20,10 +21,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.List;
 
-public class StepikClient {
-  private static final Logger LOG = Logger.getInstance(StepikClient.class.getName());
+public class StepikTestClient {
+  private static final Logger LOG = Logger.getInstance(StepikTestClient.class.getName());
 
-  private StepikClient() {
+  private StepikTestClient() {
   }
 
   @NotNull

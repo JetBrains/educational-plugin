@@ -1,15 +1,19 @@
 package com.jetbrains.edu.integration.stepik
 
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.stepik.StepikClient
+import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikUser
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import org.apache.commons.codec.binary.Base64
 import org.apache.http.Consts
+import org.apache.http.HttpStatus
 import org.apache.http.NameValuePair
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.HttpDelete
@@ -17,8 +21,10 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.BasicCookieStore
 import org.apache.http.impl.client.CloseableHttpClient
+import org.apache.http.message.BasicHeader
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
+import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
 
@@ -28,8 +34,7 @@ abstract class StepikTestCase : EduTestCase() {
     private const val CSRF = "csrfmiddlewaretoken"
   }
 
-  protected lateinit var user: StepikUser
-
+  private lateinit var user: StepikUser
   private lateinit var httpClient: CloseableHttpClient
 
   override fun setUp() {
@@ -37,9 +42,13 @@ abstract class StepikTestCase : EduTestCase() {
 
     login()
 
-    httpClient = StepikClient.getBuilder()
-//      .setDefaultHeaders(listOf(StepikAuthorizedClient.getAuthorizationHeader(user.accessToken)))
+    httpClient = StepikTestClient.getBuilder()
+      .setDefaultHeaders(listOf(getAuthorizationHeader(user.accessToken)))
       .setDefaultCookieStore(BasicCookieStore()).build()
+  }
+
+  private fun getAuthorizationHeader(accessToken: String): BasicHeader {
+    return BasicHeader("Authorization", "Bearer $accessToken")
   }
 
   override fun tearDown() {
@@ -58,7 +67,7 @@ abstract class StepikTestCase : EduTestCase() {
     println("Logged in as ${user.firstName} ${user.lastName}")
   }
 
-  fun login(tokenInfo: TokenInfo): StepikUser {
+  private fun login(tokenInfo: TokenInfo): StepikUser {
     val user = StepikUser(tokenInfo)
 
     val currentUser = StepikConnector.getCurrentUserInfo(user)
@@ -131,7 +140,39 @@ abstract class StepikTestCase : EduTestCase() {
     // Check that:
     // 1. Teamcity didn't change ips of agent
     // 2. Stepik still have our server in whitelist
-//    return StepikAuthorizedClient.getTokens(parameters, "$clientId:$clientSecret")
-    return null // TODO!
+    return getTokens(parameters, "$clientId:$clientSecret")
+  }
+
+  private fun getTokens(parameters: List<NameValuePair>, credentials: String?): TokenInfo? {
+    val gson = GsonBuilder()
+      .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+      .registerTypeAdapter(TokenInfo::class.java, SerializationUtils.TokenInfoDeserializer())
+      .create()
+
+    val request = HttpPost(StepikNames.TOKEN_URL)
+
+    if (credentials != null) {
+      request.addHeader("Authorization", "Basic " + Base64.encodeBase64String(credentials.toByteArray(Consts.UTF_8)))
+    }
+    request.entity = UrlEncodedFormEntity(parameters, Consts.UTF_8)
+
+    try {
+      val response = httpClient.execute(request)
+      val statusLine = response.statusLine
+      val responseEntity = response.entity
+      val responseString = if (responseEntity != null) EntityUtils.toString(responseEntity) else ""
+      EntityUtils.consume(responseEntity)
+      if (statusLine.statusCode == HttpStatus.SC_OK) {
+        return gson.fromJson(responseString, TokenInfo::class.java)
+      }
+      else {
+        LOG.warn("Failed to get tokens: " + statusLine.statusCode + statusLine.reasonPhrase)
+      }
+    }
+    catch (e: IOException) {
+      LOG.warn(e.message)
+    }
+
+    return null
   }
 }
