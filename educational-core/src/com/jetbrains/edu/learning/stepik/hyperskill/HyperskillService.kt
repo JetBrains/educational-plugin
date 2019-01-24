@@ -37,7 +37,7 @@ interface HyperskillService {
   @GET("api/steps/")
   fun steps(@Query("lesson") lessonId: Int): Call<StepikSteps.StepsList>
 
-  @POST("api/attempts/")
+  @POST("api/attempts")
   fun attempt(@Query("step") stepId: Int): Call<AttemptsList>
 
   @POST("api/submissions/")
