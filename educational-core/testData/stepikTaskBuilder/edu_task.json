@@ -25,7 +25,7 @@
           ],
           "title": "Exercise 2",
           "description_text": "<body><h2>Properties (#1)</h2><p>Now the field the robot can move in is constrained in size to <code>100 x 100</code>, but\nat the borders of the field the robot teleports: if the robot is in the cell\n<code>(0,0)</code> and goes up 1 step, he arrives at the cell <code>(0,99)</code>:</p><pre><code>(0,0)\n// goUp(1)\n(0,99)\n// goLeft(10)\n(90,99)\n</code></pre><br/><div align=\"right\"><p><small><a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdkaliSwYkjiV21bZl0yP-In2g5p17sAQCfaGjyHx_QYMWTiQ/viewform?usp=pp_url&entry.189755027=Introduction+to+Objects+%2F+Properties+%2F+Exercise2\n\">Share feedback</a></small></p></div></body>",
-          "description_format": "html",
+          "description_format": "HTML",
           "feedback_link": {
             "link_type": "NONE"
           },

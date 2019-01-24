@@ -62,7 +62,7 @@ class ToFifthVersionJsonStepOptionsConverter : JsonStepOptionsConverter {
         val description = taskTexts.get(0).get(FILE_WRAPPER_TEXT).asText()
         stepOptions.put(DESCRIPTION_TEXT, description)
       }
-      stepOptions.put(DESCRIPTION_FORMAT, DescriptionFormat.HTML.toString().toLowerCase())
+      stepOptions.put(DESCRIPTION_FORMAT, DescriptionFormat.HTML.toString())
       stepOptions.remove(TEXTS)
     }
 

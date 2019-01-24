@@ -25,7 +25,7 @@
           ],
           "title": "Exercise 3",
           "description_text": "<body><h2>Mastering the IDE: Tool Windows</h2><p>The <span class=\"control\"><code>Project</code></span> window showing the course structure \non the left and <span class=\"control\"><code>Task description</code></span> window on the \nright are called <em>tool windows</em>. You can adjust their size by clicking on the \nboundary and moving it. You can hide the tool window from the view temporarily\nto make better use of the screen: click the &quot;hide&quot; button (the one with an \narrow)  at the top right corner of the tool window. To show it again, choose \nits name by clicking  on the right or left side of the screen or by choosing it\nin the <span class=\"control\"><code>View | Tool Windows</code></span> application menu.</p><p>Hide the <span class=\"control\"><code>Task description</code></span> tool window and \nthen open it again.</p><br/><div align=\"right\"><p><small><a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdkaliSwYkjiV21bZl0yP-In2g5p17sAQCfaGjyHx_QYMWTiQ/viewform?usp=pp_url&entry.189755027=Programming+Basics+%2F+var+%26+val+%2F+Exercise3\n\">Share feedback</a></small></p></div></body>",
-          "description_format": "html",
+          "description_format": "HTML",
           "feedback_link": {
             "link_type": "NONE"
           },

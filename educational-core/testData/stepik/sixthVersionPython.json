@@ -6,7 +6,7 @@
   } ],
   "title" : "task2",
   "description_text" : "<html>\nWrite your task text here.\n<br>\n</html>",
-  "description_format" : "html",
+  "description_format" : "HTML",
   "files" : [ {
     "name" : "hello_world.py",
     "text" : "print(\"Hello, world! My name is type your name\")\n",

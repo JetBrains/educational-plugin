@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import static com.jetbrains.edu.learning.EduNames.TASK;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.Json.EDU_TASK;
 import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
 
 public class StepikFormatTest extends EduTestCase {
@@ -62,6 +64,10 @@ public class StepikFormatTest extends EduTestCase {
 
   public void test8Version() throws Exception {
     doStepOptionMigrationTest(9);
+  }
+
+  public void test9Version() throws IOException {
+    doStepOptionMigrationTest(10);
   }
 
   public void testAdditionalMaterialsLesson() throws IOException {
@@ -308,17 +314,17 @@ public class StepikFormatTest extends EduTestCase {
     assertEquals("print(\"Hello, world! My name is type your name\")\n", solutionFiles.get(0).getText());
   }
 
-  //public void testReplyTo7Version() throws IOException {
-  //  for (Map.Entry<String, TaskRoots> entry : TaskRootsKt.LANGUAGE_TASK_ROOTS.entrySet()) {
-  //    doReplyMigrationTest(7, getTestName(true) + ".gradle.after.json", entry.getKey());
-  //  }
-  //
-  //  doReplyMigrationTest(7, getTestName(true) + ".python.after.json", EduNames.PYTHON);
-  //}
-  //
-  //public void testReplyTo9Version() throws IOException {
-  //  doReplyMigrationTest(9);
-  //}
+  public void testReplyTo7Version() throws IOException {
+    for (Map.Entry<String, TaskRoots> entry : TaskRootsKt.LANGUAGE_TASK_ROOTS.entrySet()) {
+      doReplyMigrationTest(7, getTestName(true) + ".gradle.after.json", entry.getKey());
+    }
+
+    doReplyMigrationTest(7, getTestName(true) + ".python.after.json", EduNames.PYTHON);
+  }
+
+  public void testReplyTo9Version() throws IOException {
+    doReplyMigrationTest(9);
+  }
 
   public void testNonEduTasks() throws IOException {
     String jsonText = loadJsonText();
@@ -347,26 +353,30 @@ public class StepikFormatTest extends EduTestCase {
     doMigrationTest(afterFileName, jsonBefore -> JacksonStepOptionsDeserializer.migrate(jsonBefore, maxVersion));
   }
 
-  //private void doReplyMigrationTest(int maxVersion) throws IOException {
-  //  doReplyMigrationTest(maxVersion, null, null);
-  //}
-  //
-  //private void doReplyMigrationTest(int maxVersion, @Nullable String afterFileName, @Nullable String language) throws IOException {
-  //  doMigrationTest(afterFileName, replyObject -> {
-  //    int initialVersion = StepikReplyAdapter.migrate(replyObject, maxVersion, language);
-  //
-  //    String eduTaskWrapperString = replyObject.get(EDU_TASK).asText();
-  //
-  //    JsonParser parser = new JsonParser();
-  //    JsonObject eduTaskWrapperObject = parser.parse(eduTaskWrapperString).getAsJsonObject();
-  //    JsonObject eduTaskObject = eduTaskWrapperObject.getAsJsonObject(TASK);
-  //    StepikSubmissionTaskAdapter.migrate(eduTaskObject, initialVersion, maxVersion, language);
-  //    Gson gson = new Gson();
-  //    String eduTaskWrapperStringAfter = gson.toJson(eduTaskWrapperObject);
-  //    replyObject.put(EDU_TASK, eduTaskWrapperStringAfter);
-  //    return replyObject;
-  //  });
-  //}
+  private void doReplyMigrationTest(int maxVersion) throws IOException {
+    doReplyMigrationTest(maxVersion, null, null);
+  }
+
+  private void doReplyMigrationTest(int maxVersion, @Nullable String afterFileName, @Nullable String language) throws IOException {
+    doMigrationTest(afterFileName, replyObject -> {
+      int initialVersion = StepikReplyDeserializer.migrate(replyObject, maxVersion);
+
+      String eduTaskWrapperString = replyObject.get(EDU_TASK).asText();
+
+      try {
+        final ObjectNode eduTaskWrapperObject = (ObjectNode)new ObjectMapper().readTree(eduTaskWrapperString);
+        ObjectNode eduTaskObject = (ObjectNode)eduTaskWrapperObject.get(TASK);
+        JacksonSubmissionDeserializer.migrate(eduTaskObject, initialVersion, maxVersion, language);
+        final String eduTaskWrapperStringAfter = new ObjectMapper().writeValueAsString(eduTaskWrapperObject);
+        replyObject.put(EDU_TASK, eduTaskWrapperStringAfter);
+        return replyObject;
+      }
+      catch (IOException e) {
+        LOG.error(e);
+      }
+      return null;
+    });
+  }
 
   private void doMigrationTest(@Nullable String afterFileName,
                                @NotNull Function<ObjectNode, ObjectNode> migrationAction) throws IOException {

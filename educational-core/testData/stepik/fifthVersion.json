@@ -8,7 +8,7 @@
   ],
   "title": "task1",
   "description_text": "<html>\nWrite your task text here.\n<br>\n</html>",
-  "description_format": "html",
+  "description_format": "HTML",
   "files": [
     {
       "name": "Task.kt",

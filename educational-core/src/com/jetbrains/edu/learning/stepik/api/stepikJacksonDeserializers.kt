@@ -67,6 +67,7 @@ class JacksonStepOptionsDeserializer @JvmOverloads constructor(vc: Class<*>? = n
           5 -> ToSixthVersionJsonStepOptionConverter()
           6 -> ToSeventhVersionJsonStepOptionConverter()
           8 -> To9VersionJsonStepOptionConverter()
+          9 -> To10VersionJsonStepOptionConverter()
           else -> null
         }
         if (converter != null) {
@@ -162,7 +163,7 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
         }
       }
     }
-    LOG.warn("No task type found in json " + node.toString())
+    LOG.warn("No task type found in json $node")
     return null
   }
 
@@ -189,7 +190,7 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
         val description = taskTexts.fields().next()?.value?.asText()
         put(SerializationUtils.Json.DESCRIPTION_TEXT, description)
       }
-      put(SerializationUtils.Json.DESCRIPTION_FORMAT, DescriptionFormat.HTML.toString().toLowerCase())
+      put(SerializationUtils.Json.DESCRIPTION_FORMAT, DescriptionFormat.HTML.toString())
       remove(SerializationUtils.Json.TASK_TEXTS)
     }
 
@@ -197,22 +198,25 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
       val taskRoots = getTaskRoots(language)
       if (taskRoots != null) {
         val taskFiles = get(SerializationUtils.Json.TASK_FILES)
-        val convertedTaskFiles = ObjectMapper().createObjectNode()
-        for ((path, taskFile) in taskFiles.fields()) {
-          val convertedPath = "${taskRoots.taskFilesRoot}/$path"
-          (taskFile as ObjectNode).put(SerializationUtils.Json.NAME, convertedPath)
-          convertedTaskFiles.set(convertedPath, taskFile)
+        if (taskFiles != null) {
+          val convertedTaskFiles = ObjectMapper().createObjectNode()
+          for ((path, taskFile) in taskFiles.fields()) {
+            val convertedPath = "${taskRoots.taskFilesRoot}/$path"
+            (taskFile as ObjectNode).put(SerializationUtils.Json.NAME, convertedPath)
+            convertedTaskFiles.set(convertedPath, taskFile)
+          }
+          set(SerializationUtils.Json.TASK_FILES, convertedTaskFiles)
         }
-
-        set(SerializationUtils.Json.TASK_FILES, convertedTaskFiles)
 
         val testFiles = get(SerializationUtils.Json.TEST_FILES)
-        val convertedTestFiles = ObjectMapper().createObjectNode()
-        for ((path, testFile) in testFiles.fields()) {
-          convertedTestFiles.set("${taskRoots.testFilesRoot}/$path", testFile)
-        }
+        if (testFiles != null) {
+          val convertedTestFiles = ObjectMapper().createObjectNode()
+          for ((path, testFile) in testFiles.fields()) {
+            convertedTestFiles.set("${taskRoots.testFilesRoot}/$path", testFile)
+          }
 
-        set(SerializationUtils.Json.TEST_FILES, convertedTestFiles)
+          set(SerializationUtils.Json.TEST_FILES, convertedTestFiles)
+        }
       }
     }
 
