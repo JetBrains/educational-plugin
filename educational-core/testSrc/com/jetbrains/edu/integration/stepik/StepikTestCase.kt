@@ -1,13 +1,10 @@
 package com.jetbrains.edu.integration.stepik
 
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.GsonBuilder
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikUser
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -24,7 +21,6 @@ import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.message.BasicHeader
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
-import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
 
@@ -53,7 +49,7 @@ abstract class StepikTestCase : EduTestCase() {
   override fun tearDown() {
     val course = StudyTaskManager.getInstance(project).course
     if (course is EduCourse && course.isRemote) {
-      removeUploadedCourse(course.id, course.getLessons(true).map { it -> it.id })
+      removeUploadedCourse(course.id, course.getLessons(true).map { it.id })
     }
     EduSettings.getInstance().user = null
     super.tearDown()
@@ -142,34 +138,21 @@ abstract class StepikTestCase : EduTestCase() {
     return getTokens(parameters, "$clientId:$clientSecret")
   }
 
-  private fun getTokens(parameters: List<NameValuePair>, credentials: String?): TokenInfo? {
-    val gson = GsonBuilder()
-      .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-      .registerTypeAdapter(TokenInfo::class.java, SerializationUtils.TokenInfoDeserializer())
-      .create()
-
+  private fun getTokens(parameters: List<NameValuePair>, credentials: String): TokenInfo? {
     val request = HttpPost(StepikNames.TOKEN_URL)
-
-    if (credentials != null) {
-      request.addHeader("Authorization", "Basic " + Base64.encodeBase64String(credentials.toByteArray(Consts.UTF_8)))
-    }
+    request.addHeader("Authorization", "Basic " + Base64.encodeBase64String(credentials.toByteArray(Consts.UTF_8)))
     request.entity = UrlEncodedFormEntity(parameters, Consts.UTF_8)
 
-    try {
-      val response = httpClient.execute(request)
-      val statusLine = response.statusLine
-      val responseEntity = response.entity
-      val responseString = if (responseEntity != null) EntityUtils.toString(responseEntity) else ""
-      EntityUtils.consume(responseEntity)
-      if (statusLine.statusCode == HttpStatus.SC_OK) {
-        return gson.fromJson(responseString, TokenInfo::class.java)
-      }
-      else {
-        LOG.warn("Failed to get tokens: " + statusLine.statusCode + statusLine.reasonPhrase)
-      }
+    val response = httpClient.execute(request)
+    val statusLine = response.statusLine
+    val responseEntity = response.entity
+    val responseString = if (responseEntity != null) EntityUtils.toString(responseEntity) else ""
+    EntityUtils.consume(responseEntity)
+    if (statusLine.statusCode == HttpStatus.SC_OK) {
+      return StepikConnector.objectMapper.readValue(responseString, TokenInfo::class.java)
     }
-    catch (e: IOException) {
-      LOG.warn(e.message)
+    else {
+      LOG.warn("Failed to get tokens: " + statusLine.statusCode + statusLine.reasonPhrase)
     }
 
     return null
