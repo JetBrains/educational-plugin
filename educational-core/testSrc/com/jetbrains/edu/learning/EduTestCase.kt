@@ -194,7 +194,6 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
 
   protected fun Course.asEduCourse(): EduCourse {
     val eduCourse = EduCourse()
-    eduCourse.id = 1
     eduCourse.name = name
     eduCourse.courseMode = CCUtils.COURSE_MODE
     eduCourse.items = Lists.newArrayList(items)
