@@ -13,7 +13,6 @@ import com.intellij.openapi.progress.Task.Modal;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -36,12 +35,17 @@ public class CCPushCourse extends DumbAwareAction {
   public void update(@NotNull AnActionEvent e) {
     Presentation presentation = e.getPresentation();
     Project project = e.getProject();
-    presentation.setEnabledAndVisible(project != null && CCUtils.isCourseCreator(project));
-    if (project != null) {
-      final Course course = StudyTaskManager.getInstance(project).getCourse();
-      if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
-        presentation.setText("Update Course on Stepik");
-      }
+    presentation.setEnabledAndVisible(false);
+    if (project == null) {
+      return;
+    }
+    final Course course = StudyTaskManager.getInstance(project).getCourse();
+    if (!(course instanceof EduCourse)) {
+      return;
+    }
+    presentation.setEnabledAndVisible(true);
+    if (((EduCourse)course).isRemote()) {
+      presentation.setText("Update Course on Stepik");
     }
   }
 
@@ -53,12 +57,12 @@ public class CCPushCourse extends DumbAwareAction {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
+    if (!(course instanceof EduCourse)) {
       return;
     }
 
-    if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
-      askToWrapTopLevelLessons(project, course);
+    if (((EduCourse)course).isRemote()) {
+      askToWrapTopLevelLessons(project, (EduCourse)course);
     }
     else {
       if (CourseExt.getHasSections(course) && CourseExt.getHasTopLevelLessons(course)) {
@@ -74,28 +78,28 @@ public class CCPushCourse extends DumbAwareAction {
       }
     }
 
-    String title = course instanceof EduCourse && ((EduCourse)course).isRemote() ? "Updating Course" : "Uploading Course";
+    String title = ((EduCourse)course).isRemote() ? "Updating Course" : "Uploading Course";
     ProgressManager.getInstance().run(new Modal(project, title, true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setIndeterminate(false);
-        doPush(project, course);
+        doPush(project, (EduCourse)course);
       }
     });
     EduUsagesCollector.courseUploaded();
   }
 
-  public static boolean doPush(Project project, Course course) {
-    if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
+  public static boolean doPush(Project project, @NotNull EduCourse course) {
+    if (course.isRemote()) {
       if (StepikConnector.INSTANCE.getCourseInfo(course.getId()) == null) {
         String message = "Cannot find course on Stepik. <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
         Notification notification = new Notification("update.course", "Failed ot update", message, NotificationType.ERROR,
-                                                     createPostCourseNotificationListener(project, (EduCourse)course));
+                                                     createPostCourseNotificationListener(project, course));
         notification.notify(project);
         return false;
       }
 
-      new StepikCourseUploader(project, (EduCourse)course).updateCourse();
+      new StepikCourseUploader(project, course).updateCourse();
     }
     else {
       postCourse(project, course);
@@ -103,7 +107,7 @@ public class CCPushCourse extends DumbAwareAction {
     return false;
   }
 
-  private static void askToWrapTopLevelLessons(Project project, Course course) {
+  private static void askToWrapTopLevelLessons(Project project, EduCourse course) {
     if (CourseExt.getHasSections(course) && CourseExt.getHasTopLevelLessons(course)) {
       boolean hasUnpushedLessons = course.getLessons().stream().anyMatch(lesson -> lesson.getId() == 0);
       if (hasUnpushedLessons) {

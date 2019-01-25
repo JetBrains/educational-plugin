@@ -192,6 +192,18 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     }
   }
 
+  protected fun Course.asEduCourse(): EduCourse {
+    val eduCourse = EduCourse()
+    eduCourse.id = 1
+    eduCourse.name = name
+    eduCourse.courseMode = CCUtils.COURSE_MODE
+    eduCourse.items = Lists.newArrayList(items)
+    eduCourse.language = language
+    eduCourse.init(null, null, true)
+    StudyTaskManager.getInstance(project).course = eduCourse
+    return eduCourse
+  }
+
   protected fun Course.asRemote(): EduCourse {
     val remoteCourse = EduCourse()
     remoteCourse.id = 1

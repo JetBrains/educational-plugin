@@ -1,4 +1,4 @@
-@file:Suppress("unused", "PropertyName", "MemberVisibilityCanBePrivate")
+@file:Suppress("unused", "PropertyName", "MemberVisibilityCanBePrivate", "UNUSED_PARAMETER")
 
 package com.jetbrains.edu.learning.stepik.api
 
@@ -190,7 +190,7 @@ class StepikUnit {
   var section: Int = 0
   var lesson: Int = 0
   var position: Int = 0
-  var assignments: List<Int>? = null
+  var assignments: List<Int> = mutableListOf()
   @JsonProperty("update_date")
   var updateDate: Date = Date()
 }

@@ -175,12 +175,16 @@ object StepikConnector {
 
   // Post requests:
 
-  fun postCourse(course: Course): EduCourse? {
+  fun postCourse(course: EduCourse): EduCourse? {
     return service.course(CourseData(course)).execute().body()?.courses?.firstOrNull()
   }
 
   fun postSection(section: Section): Section? {
-    return service.section(SectionData(section)).execute().body()?.sections?.firstOrNull()
+    val response = service.section(SectionData(section)).execute()
+    if (response.errorBody() != null) {
+      LOG.error(response.errorBody())
+    }
+    return response.body()?.sections?.firstOrNull()
   }
 
   fun postLesson(lesson: Lesson): Lesson? {
@@ -188,7 +192,11 @@ object StepikConnector {
   }
 
   fun postUnit(lessonId: Int, position: Int, sectionId: Int): StepikUnit? {
-    return service.unit(UnitData(lessonId, position, sectionId)).execute().body()?.units?.firstOrNull()
+    val response = service.unit(UnitData(lessonId, position, sectionId)).execute()
+    if (response.errorBody() != null) {
+      LOG.error(response.errorBody())
+    }
+    return response.body()?.units?.firstOrNull()
   }
 
   fun postTask(project: Project, task: Task, lessonId: Int): StepSource? {

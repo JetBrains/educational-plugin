@@ -9,11 +9,14 @@ import com.jetbrains.edu.learning.EduUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Section extends ItemContainer {
-  public List<Integer> units;
+  public Section() {}
+
+  public List<Integer> units = new ArrayList<>();
   @SerializedName("course")
   private int courseId;
   @Expose

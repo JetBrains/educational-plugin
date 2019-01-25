@@ -32,7 +32,7 @@ class EventBasedUpdateTest : StepikTestCase() {
     }
     StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCPushCourse.doPush(project, courseToPost)
+    CCPushCourse.doPush(project, courseToPost.asEduCourse())
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
     val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
@@ -54,7 +54,7 @@ class EventBasedUpdateTest : StepikTestCase() {
     }
     StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCStepikConnector.postCourse(project, courseToPost)
+    CCStepikConnector.postCourse(project, courseToPost.asEduCourse())
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
     addNewLesson("lesson3", 3, localCourse, localCourse)
@@ -80,7 +80,7 @@ class EventBasedUpdateTest : StepikTestCase() {
     }
     StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCPushCourse.doPush(project, courseToPost)
+    CCPushCourse.doPush(project, courseToPost.asEduCourse())
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
     val lesson1 = localCourse.getLesson("lesson1")!!
@@ -117,7 +117,7 @@ class EventBasedUpdateTest : StepikTestCase() {
     }
     StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCPushCourse.doPush(project, courseToPost)
+    CCPushCourse.doPush(project, courseToPost.asEduCourse())
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
     val section1 = localCourse.getSection("section1")
@@ -154,7 +154,7 @@ class EventBasedUpdateTest : StepikTestCase() {
     courseToPost.init(null, null, false)
     StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCStepikConnector.postCourse(project, courseToPost)
+    CCStepikConnector.postCourse(project, courseToPost.asEduCourse())
 
     val localCourse = StudyTaskManager.getInstance(project).course!! as EduCourse
 
@@ -185,7 +185,7 @@ class EventBasedUpdateTest : StepikTestCase() {
     courseToPost.init(null, null, false)
     StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCStepikConnector.postCourse(project, courseToPost)
+    CCStepikConnector.postCourse(project, courseToPost.asEduCourse())
 
     val localCourse = StudyTaskManager.getInstance(project).course!! as EduCourse
 
@@ -215,7 +215,7 @@ class EventBasedUpdateTest : StepikTestCase() {
       }
     }
     StudyTaskManager.getInstance(project).course = courseToPost
-    CCPushCourse.doPush(project, courseToPost)
+    CCPushCourse.doPush(project, courseToPost.asEduCourse())
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
 
@@ -239,7 +239,7 @@ class EventBasedUpdateTest : StepikTestCase() {
       }
     }
     StudyTaskManager.getInstance(project).course = courseToPost
-    CCPushCourse.doPush(project, courseToPost)
+    CCPushCourse.doPush(project, courseToPost.asEduCourse())
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
 
@@ -264,7 +264,7 @@ class EventBasedUpdateTest : StepikTestCase() {
       }
     }
     StudyTaskManager.getInstance(project).course = courseToPost
-    CCPushCourse.doPush(project, courseToPost)
+    CCPushCourse.doPush(project, courseToPost.asEduCourse())
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
 
@@ -290,7 +290,7 @@ class EventBasedUpdateTest : StepikTestCase() {
 
     StudyTaskManager.getInstance(project).course = courseToPost
     courseToPost.init(null, null, false)
-    CCPushCourse.doPush(project, courseToPost)
+    CCPushCourse.doPush(project, courseToPost.asEduCourse())
     val localCourse = StudyTaskManager.getInstance(project).course
     CCUtils.wrapIntoSection(project, localCourse!!, localCourse.lessons, "section1")
     StepikCourseChangeHandler.contentChanged(localCourse)
@@ -300,7 +300,7 @@ class EventBasedUpdateTest : StepikTestCase() {
         StepikCourseChangeHandler.infoChanged(lesson)
       }
     }
-    CCPushCourse.doPush(project, localCourse)
+    CCPushCourse.doPush(project, localCourse.asEduCourse())
 
     val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
     checkSections(courseFromStepik, localCourse)

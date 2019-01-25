@@ -58,7 +58,7 @@ public class CCStepikConnector {
     return step != null ? step.getPosition() : -1;
   }
 
-  public static void postCourseWithProgress(@NotNull final Project project, @NotNull final Course course) {
+  public static void postCourseWithProgress(@NotNull final Project project, @NotNull final EduCourse course) {
     ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Modal(project, "Uploading Course", true) {
       @Override
       public void run(@NotNull final ProgressIndicator indicator) {
@@ -67,7 +67,7 @@ public class CCStepikConnector {
     });
   }
 
-  public static void postCourse(@NotNull final Project project, @NotNull Course course) {
+  public static void postCourse(@NotNull final Project project, @NotNull EduCourse course) {
     final StepikUser user = EduSettings.getInstance().getUser();
     if (user == null) {
       showStepikNotification(project, "post course");

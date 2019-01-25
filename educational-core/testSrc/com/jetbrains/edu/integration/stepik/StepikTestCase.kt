@@ -39,9 +39,8 @@ abstract class StepikTestCase : EduTestCase() {
 
   override fun setUp() {
     super.setUp()
-
+    httpClient = StepikTestClient.getBuilder().setDefaultCookieStore(BasicCookieStore()).build()
     login()
-
     httpClient = StepikTestClient.getBuilder()
       .setDefaultHeaders(listOf(getAuthorizationHeader(user.accessToken)))
       .setDefaultCookieStore(BasicCookieStore()).build()

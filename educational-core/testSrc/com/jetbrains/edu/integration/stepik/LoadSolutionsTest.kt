@@ -33,7 +33,7 @@ class LoadSolutionsTest : StepikTestCase() {
         }
       }
     }
-    postCourse(project, StudyTaskManager.getInstance(project).course!!)
+    postCourse(project, StudyTaskManager.getInstance(project).course!!.asEduCourse())
 
     solveFirstTask()
 
@@ -72,7 +72,7 @@ class LoadSolutionsTest : StepikTestCase() {
       }
     }
 
-    postCourse(project, StudyTaskManager.getInstance(project).course!!)
+    postCourse(project, StudyTaskManager.getInstance(project).course!!.asEduCourse())
     solveFirstTask()
 
     val course = StudyTaskManager.getInstance(project).course!! as EduCourse

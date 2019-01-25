@@ -48,7 +48,7 @@ public abstract class Task extends StudyItem {
   @Expose private Map<String, TaskFile> myTaskFiles = new LinkedHashMap<>();
 
   @SerializedName("description_text")
-  @Expose private String descriptionText;
+  @Expose private String descriptionText = "";
 
   @SerializedName("description_format")
   @Expose private DescriptionFormat descriptionFormat = EduUtils.getDefaultTaskDescriptionFormat();

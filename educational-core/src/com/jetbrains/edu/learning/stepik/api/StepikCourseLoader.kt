@@ -188,7 +188,6 @@ object StepikCourseLoader {
   @VisibleForTesting
   fun getLessonsFromUnits(remoteCourse: EduCourse, unitIds: List<Int>, updateIndicator: Boolean): List<Lesson> {
     val progressIndicator = ProgressManager.getInstance().progressIndicator
-    progressIndicator.isIndeterminate = false
     val result = mutableListOf<Lesson>()
     val lessonsFromUnits = getLessonsFromUnitIds(unitIds)
 
@@ -197,6 +196,7 @@ object StepikCourseLoader {
       var lesson = lessonsFromUnits[lessonIndex]
       lesson.unitId = unitIds[lessonIndex]
       if (progressIndicator != null && updateIndicator) {
+        progressIndicator.isIndeterminate = false
         val readableIndex = lessonIndex + 1
         progressIndicator.checkCanceled()
         progressIndicator.text = "Loading lesson $readableIndex from $lessonCount"
