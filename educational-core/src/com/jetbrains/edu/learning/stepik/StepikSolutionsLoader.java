@@ -300,7 +300,6 @@ public class StepikSolutionsLoader implements Disposable {
     }
     else if (!isSolved) {
       if (task instanceof EduTask) {
-        String language = task.getCourse().getLanguageID();
         Reply reply = StepikConnector.INSTANCE.getLastSubmission(stepId, isSolved);
         if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
           return true;
