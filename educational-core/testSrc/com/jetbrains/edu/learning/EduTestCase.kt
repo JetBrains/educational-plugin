@@ -22,6 +22,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
+import com.intellij.util.xmlb.XmlSerializer
 import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
@@ -193,14 +194,10 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   protected fun Course.asEduCourse(): EduCourse {
-    val eduCourse = EduCourse()
-    eduCourse.name = name
-    eduCourse.courseMode = CCUtils.COURSE_MODE
-    eduCourse.items = Lists.newArrayList(items)
-    eduCourse.language = language
-    eduCourse.init(null, null, true)
-    StudyTaskManager.getInstance(project).course = eduCourse
-    return eduCourse
+    val element = XmlSerializer.serialize(this)
+    val copy = XmlSerializer.deserialize(element, EduCourse::class.java)
+    copy.init(null, null, true)
+    return copy
   }
 
   protected fun Course.asRemote(): EduCourse {
