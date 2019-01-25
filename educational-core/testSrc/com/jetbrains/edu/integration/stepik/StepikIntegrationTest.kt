@@ -259,7 +259,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     setText("lesson1/task1/test/Tests.kt", testText)
     setText("lesson1/task1/build.gradle", additionalText)
 
-    CCPushCourse.doPush(project, localCourse)
+    CCPushCourse.doPush(project, localCourse.asEduCourse())
 
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
     val section = StepikConnector.getSection(courseFromStepik.sectionIds[0])!!
@@ -275,7 +275,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {}
     course.language = course.language + " 2"
     val expectedLanguage = course.language
-    CCPushCourse.doPush(project, course)
+    CCPushCourse.doPush(project, course.asEduCourse())
     val uploadedCourse = StudyTaskManager.getInstance(project).course as EduCourse
     val remoteCourse = getCourseFromStepik(uploadedCourse.id)
     assertEquals(expectedLanguage, remoteCourse.language)
@@ -320,7 +320,7 @@ open class StepikIntegrationTest : StepikTestCase() {
 
   private fun initCourse(builder: CourseBuilder.() -> Unit): EduCourse {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, buildCourse = builder)
-    CCPushCourse.doPush(project, course)
+    CCPushCourse.doPush(project, course.asEduCourse())
     return StudyTaskManager.getInstance(project).course as EduCourse
   }
 

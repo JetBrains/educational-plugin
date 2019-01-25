@@ -2,9 +2,7 @@ package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
+import com.jetbrains.edu.learning.courseFormat.*
 import java.util.*
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
@@ -190,4 +188,21 @@ class StepikFeedbackLinkMixin {
 
   @JsonProperty("link")
   lateinit var myLink: String
+}
+
+@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE,
+                creatorVisibility = JsonAutoDetect.Visibility.NONE)
+class StepikTaskMixin {
+  var name: String? = null
+  var myStatus = CheckStatus.Unchecked
+
+  @JsonProperty("stepic_id")
+  private var myStepId: Int = 0
+
+  @JsonProperty("files")
+  private var myTaskFiles: MutableMap<String, TaskFile>? = LinkedHashMap()
 }

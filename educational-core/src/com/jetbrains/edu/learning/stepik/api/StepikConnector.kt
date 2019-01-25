@@ -10,6 +10,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.util.PlatformUtils
+import com.intellij.util.net.HttpConfigurable
+import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
@@ -21,6 +23,9 @@ import okhttp3.OkHttpClient
 import org.apache.http.HttpStatus
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.net.InetSocketAddress
+import java.net.Proxy
+import java.net.URI
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -46,6 +51,7 @@ object StepikConnector {
     objectMapper.addMixIn(Section::class.java, StepikSectionMixin::class.java)
     objectMapper.addMixIn(Lesson::class.java, StepikLessonMixin::class.java)
     objectMapper.addMixIn(TaskFile::class.java, StepikTaskFileMixin::class.java)
+    objectMapper.addMixIn(Task::class.java, StepikTaskMixin::class.java)
     objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)
     objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, StepikAnswerPlaceholderDependencyMixin::class.java)
     objectMapper.addMixIn(FeedbackLink::class.java, StepikFeedbackLinkMixin::class.java)
@@ -71,7 +77,7 @@ object StepikConnector {
     val dispatcher = Dispatcher()
     dispatcher.maxRequests = 10
 
-    val okHttpClient = OkHttpClient.Builder()
+    val builder = OkHttpClient.Builder()
       .readTimeout(60, TimeUnit.SECONDS)
       .connectTimeout(60, TimeUnit.SECONDS)
       .addInterceptor { chain ->
@@ -84,7 +90,18 @@ object StepikConnector {
         chain.proceed(newRequest)
       }
       .dispatcher(dispatcher)
-      .build()
+
+    val proxyConfigurable = HttpConfigurable.getInstance()
+    val proxies = proxyConfigurable.onlyBySettingsSelector.select(URI.create(StepikNames.STEPIK_URL))
+    val address = if (proxies.size > 0) proxies[0].address() as? InetSocketAddress else null
+    if (address != null) {
+      builder.proxy(Proxy(Proxy.Type.HTTP, address))
+    }
+    val trustManager = CertificateManager.getInstance().trustManager
+    val sslContext = CertificateManager.getInstance().sslContext
+    builder.sslSocketFactory(sslContext.socketFactory, trustManager)
+
+    val okHttpClient = builder.build()
 
     val retrofit = Retrofit.Builder()
       .baseUrl(StepikNames.STEPIK_API_URL_SLASH)
@@ -181,8 +198,9 @@ object StepikConnector {
 
   fun postSection(section: Section): Section? {
     val response = service.section(SectionData(section)).execute()
-    if (response.errorBody() != null) {
-      LOG.error(response.errorBody())
+    val errorBody = response.errorBody()
+    if (errorBody != null) {
+      LOG.error(errorBody.string())
     }
     return response.body()?.sections?.firstOrNull()
   }
@@ -193,8 +211,9 @@ object StepikConnector {
 
   fun postUnit(lessonId: Int, position: Int, sectionId: Int): StepikUnit? {
     val response = service.unit(UnitData(lessonId, position, sectionId)).execute()
-    if (response.errorBody() != null) {
-      LOG.error(response.errorBody())
+    val errorBody = response.errorBody()
+    if (errorBody != null) {
+      LOG.error(errorBody.string())
     }
     return response.body()?.units?.firstOrNull()
   }
