@@ -49,7 +49,11 @@ abstract class CourseYamlMixin {
 }
 
 private class ProgrammingLanguageConverter : StdConverter<String, String>() {
-  override fun convert(languageId: String): String = Language.findLanguageByID(languageId)!!.displayName
+  override fun convert(languageId: String): String {
+    val languageWithoutVersion = languageId.split(" ").first()
+    return Language.findLanguageByID(languageWithoutVersion)?.displayName
+           ?: throw InvalidYamlFormatException("Cannot save programming language: ${languageId}")
+  }
 }
 
 private class LanguageConverter : StdConverter<String, String>() {
