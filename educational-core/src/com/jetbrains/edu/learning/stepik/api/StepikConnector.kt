@@ -105,7 +105,7 @@ object StepikConnector {
     val okHttpClient = builder.build()
 
     val retrofit = Retrofit.Builder()
-      .baseUrl(StepikNames.STEPIK_API_URL_SLASH)
+      .baseUrl(StepikNames.STEPIK_API_URL)
       .addConverterFactory(converterFactory)
       .client(okHttpClient)
       .build()

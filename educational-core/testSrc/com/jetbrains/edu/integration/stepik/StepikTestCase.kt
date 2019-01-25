@@ -103,7 +103,7 @@ abstract class StepikTestCase : EduTestCase() {
 
   private fun deleteLesson(lessonId: Int) {
     val deleteRequest = HttpDelete(
-      StepikNames.STEPIK_API_URL + "/lessons/" + lessonId)
+      StepikNames.STEPIK_API_URL + "lessons/" + lessonId)
     deleteRequest.addHeader("Referer", "${StepikNames.STEPIK_URL}/edit-lesson/$lessonId/step/1")
     httpClient.execute(deleteRequest)
     println("Lesson $lessonId deleted")
@@ -116,7 +116,7 @@ abstract class StepikTestCase : EduTestCase() {
   }
 
   private fun getTokens(): TokenInfo? {
-    val parameters = ArrayList<NameValuePair>(listOf(BasicNameValuePair ("grant_type", "client_credentials")))
+    val parameters = ArrayList<NameValuePair>(listOf(BasicNameValuePair("grant_type", "client_credentials")))
 
     val clientSecret = System.getenv("STEPIK_TEST_CLIENT_SECRET")
     if (clientSecret == null || clientSecret.isEmpty()) {
