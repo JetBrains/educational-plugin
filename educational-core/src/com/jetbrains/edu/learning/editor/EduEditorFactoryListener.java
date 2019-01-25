@@ -139,7 +139,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     }
 
     final List<Integer> assignmentsIds = unit.getAssignments();
-    if (assignmentsIds == null) {
+    if (assignmentsIds.isEmpty()) {
       LOG.warn("No assignment ids in unit " + unit.getId());
       return;
     }
