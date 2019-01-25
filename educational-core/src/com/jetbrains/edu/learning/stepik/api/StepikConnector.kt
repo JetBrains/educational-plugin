@@ -34,7 +34,6 @@ object StepikConnector {
   private val LOG = Logger.getInstance(StepikConnector::class.java)
   private val converterFactory: JacksonConverterFactory
   val objectMapper: ObjectMapper
-  val language: String? = null
 
   init {
     val module = SimpleModule()
