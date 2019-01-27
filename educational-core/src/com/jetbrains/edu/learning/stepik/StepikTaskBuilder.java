@@ -128,33 +128,35 @@ public class StepikTaskBuilder {
 
     task.setStatus(CheckStatus.Unchecked);
     final StringBuilder taskDescription = new StringBuilder(myStep.getText());
-    if (myStep.getOptions().getSamples() != null) {
-      taskDescription.append("<br>");
-      for (List<String> sample : myStep.getOptions().getSamples()) {
-        if (sample.size() == 2) {
-          taskDescription.append("<b>Sample Input:</b><br>");
-          taskDescription.append(StringUtil.replace(sample.get(0), "\n", "<br>"));
-          taskDescription.append("<br>");
-          taskDescription.append("<b>Sample Output:</b><br>");
-          taskDescription.append(StringUtil.replace(sample.get(1), "\n", "<br>"));
-          taskDescription.append("<br><br>");
+    final StepOptions options = myStep.getOptions();
+    if (options != null) {
+      if (options.getSamples() != null) {
+        taskDescription.append("<br>");
+        for (List<String> sample : options.getSamples()) {
+          if (sample.size() == 2) {
+            taskDescription.append("<b>Sample Input:</b><br>");
+            taskDescription.append(StringUtil.replace(sample.get(0), "\n", "<br>"));
+            taskDescription.append("<br>");
+            taskDescription.append("<b>Sample Output:</b><br>");
+            taskDescription.append(StringUtil.replace(sample.get(1), "\n", "<br>"));
+            taskDescription.append("<br><br>");
+          }
         }
       }
+      if (options.getExecutionMemoryLimit() != null && options.getExecutionTimeLimit() != null) {
+        taskDescription.append("<br>").append("<b>Memory limit</b>: ").append(options.getExecutionMemoryLimit()).append(" Mb")
+          .append("<br>")
+          .append("<b>Time limit</b>: ").append(options.getExecutionTimeLimit()).append("s").append("<br><br>");
+      }
+
+      if (myLanguage.isKindOf(EduNames.PYTHON) && options.getSamples() != null) {
+        createTestFileFromSamples(task, options.getSamples());
+      }
+      final String templateForTask = getCodeTemplateForTask(myLanguage, options.getCodeTemplates());
+      createMockTaskFile(task, "write your answer here \n", templateForTask);
     }
 
-    if (myStep.getOptions().getExecutionMemoryLimit() != null && myStep.getOptions().getExecutionTimeLimit() != null) {
-      taskDescription.append("<br>").append("<b>Memory limit</b>: ").append(myStep.getOptions().getExecutionMemoryLimit()).append(" Mb")
-        .append("<br>")
-        .append("<b>Time limit</b>: ").append(myStep.getOptions().getExecutionTimeLimit()).append("s").append("<br><br>");
-    }
     task.setDescriptionText(taskDescription.toString());
-
-    if (myLanguage.isKindOf(EduNames.PYTHON) && myStep.getOptions().getSamples() != null) {
-      createTestFileFromSamples(task, myStep.getOptions().getSamples());
-    }
-
-    final String templateForTask = getCodeTemplateForTask(myLanguage, myStep.getOptions().getCodeTemplates());
-    createMockTaskFile(task, "write your answer here \n", templateForTask);
     return task;
   }
 
@@ -245,7 +247,12 @@ public class StepikTaskBuilder {
 
   @NotNull
   private Task createPluginTask() {
-    String type = myStep.getOptions().getTaskType();
+    final StepOptions options = myStep.getOptions();
+    if (options == null) {
+      LOG.error("No options in step source");
+      return eduTask();
+    }
+    String type = options.getTaskType();
     if (type == null || !pluginTaskTypes.containsKey(type)) {
       return eduTask();
     }
@@ -281,7 +288,9 @@ public class StepikTaskBuilder {
   }
 
   private void createMockTaskFile(@NotNull Task task, @NotNull String comment, @Nullable String editorText) {
-    final List<TaskFile> taskFiles = myStep.getOptions().getFiles();
+    final StepOptions options = myStep.getOptions();
+    if (options == null) return;
+    final List<TaskFile> taskFiles = options.getFiles();
     if (taskFiles != null && !taskFiles.isEmpty()) return;
 
     String taskFilePath = getTaskFilePath(myLanguage);
