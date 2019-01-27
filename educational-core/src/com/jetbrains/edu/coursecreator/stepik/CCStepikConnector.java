@@ -96,8 +96,10 @@ public class CCStepikConnector {
       showErrorNotification(project, FAILED_TITLE, message);
       return;
     }
-    courseOnRemote.setItems(Lists.newArrayList(course.getItems().stream().filter(it -> !it.getName().equals(EduNames.ADDITIONAL_MATERIALS) &&
-                                                                                       !it.getName().equals(StepikNames.PYCHARM_ADDITIONAL)).collect(Collectors.toList())));
+    final List<StudyItem> items = course.getItems().stream().filter(it -> !it.getName().equals(EduNames.ADDITIONAL_MATERIALS) &&
+                                                                          !it.getName().equals(StepikNames.PYCHARM_ADDITIONAL))
+      .collect(Collectors.toList());
+    courseOnRemote.setItems(Lists.newArrayList(items));
     courseOnRemote.setAuthors(course.getAuthors());
     courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
     courseOnRemote.setLanguage(course.getLanguage());
@@ -189,7 +191,7 @@ public class CCStepikConnector {
     }
     else {
       Course course = StudyTaskManager.getInstance(project).getCourse();
-      assert  course != null;
+      assert course != null;
       EduCourse courseInfo = StepikConnector.INSTANCE.getCourseInfo(course.getId(), true);
       if (courseInfo != null) {
         List<Integer> sectionIds = courseInfo.getSectionIds();
@@ -529,7 +531,7 @@ public class CCStepikConnector {
 
   @NotNull
   public static NotificationListener.Adapter createPostCourseNotificationListener(@NotNull Project project,
-                                                                                   @NotNull EduCourse course) {
+                                                                                  @NotNull EduCourse course) {
     return new NotificationListener.Adapter() {
       @Override
       protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
