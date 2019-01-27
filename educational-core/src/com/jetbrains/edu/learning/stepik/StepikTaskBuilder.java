@@ -124,7 +124,7 @@ public class StepikTaskBuilder {
     CodeTask task = new CodeTask(myName);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.getPosition());
-    task.setUpdateDate(myStepSource.getUpdate_date());
+    task.setUpdateDate(myStepSource.getUpdateDate());
 
     task.setStatus(CheckStatus.Unchecked);
     final StringBuilder taskDescription = new StringBuilder(myStep.getText());
@@ -163,7 +163,7 @@ public class StepikTaskBuilder {
     ChoiceTask task = new ChoiceTask(myName);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.getPosition());
-    task.setUpdateDate(myStepSource.getUpdate_date());
+    task.setUpdateDate(myStepSource.getUpdateDate());
     task.setDescriptionText(myStep.getText());
 
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
@@ -189,7 +189,7 @@ public class StepikTaskBuilder {
     TheoryTask task = new TheoryTask(myName);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.getPosition());
-    task.setUpdateDate(myStepSource.getUpdate_date());
+    task.setUpdateDate(myStepSource.getUpdateDate());
     task.setDescriptionText(myStep.getText());
 
     createMockTaskFile(task, "you can experiment here, it won’t be checked\n");
@@ -201,7 +201,7 @@ public class StepikTaskBuilder {
     TheoryTask task = new TheoryTask(myName);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.getPosition());
-    task.setUpdateDate(myStepSource.getUpdate_date());
+    task.setUpdateDate(myStepSource.getUpdateDate());
     final String stepText = StringUtil.capitalize(myName.toLowerCase()) + " tasks are not supported yet. <br>" +
                             "View this step on <a href=\"" + StepikUtils.getStepikLink(task, myLesson) +"\">Stepik</a>.";
     task.setDescriptionText(stepText);
@@ -218,7 +218,7 @@ public class StepikTaskBuilder {
     }
     Task task = createPluginTask();
     task.setStepId(myStepId);
-    task.setUpdateDate(myStepSource.getUpdate_date());
+    task.setUpdateDate(myStepSource.getUpdateDate());
     StepOptions stepOptions = myStep.getOptions();
     task.setName(stepOptions != null ? stepOptions.getTitle() : (PYCHARM_PREFIX + EduVersions.JSON_FORMAT_VERSION));
 

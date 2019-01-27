@@ -118,7 +118,8 @@ class StepSource {
   var lesson: Int = 0
   var progress: String? = null
   var cost = 1
-  var update_date: Date? = null
+  @JsonProperty("update_date")
+  var updateDate: Date? = null
 
   constructor()
 

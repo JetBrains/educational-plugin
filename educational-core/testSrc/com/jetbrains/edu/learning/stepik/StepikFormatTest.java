@@ -200,7 +200,7 @@ public class StepikFormatTest extends EduTestCase {
     final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
     final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
     final StepSource step = stepContainer.steps.get(0);
-    assertNotNull(step.getUpdate_date());
+    assertNotNull(step.getUpdateDate());
   }
 
   public void testOptionsTitle() throws IOException {
