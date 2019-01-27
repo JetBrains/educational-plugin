@@ -130,11 +130,8 @@ public class StepikRestService extends OAuthRestService {
       }
 
       StepikUnit unit = StepikConnector.INSTANCE.getUnit(unitId);
-      if (unit == null) {
-        return log("No section found with id " + unitId);
-      }
 
-      if (unit.getId() == null || unit.getId() == 0) {
+      if (unit == null || unit.getId() == null || unit.getId() == 0) {
         return log("Unrecognized the Unit id");
       }
 

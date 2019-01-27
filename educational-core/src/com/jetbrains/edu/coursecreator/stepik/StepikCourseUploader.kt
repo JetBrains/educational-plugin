@@ -268,7 +268,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
   }
 
   private fun processCourseContentChanged(lastUpdateDate: Date) {
-    val courseInfo = StepikConnector.getCourseInfo(Integer.valueOf(course.id))!!
+    val courseInfo = StepikConnector.getCourseInfo(course.id)!!
     val allLessons = course.allLessons().map { it.id }
     val hasTopLevelLessons = !course.lessons.isEmpty()
     if (hasTopLevelLessons) {
