@@ -77,9 +77,9 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
         override fun run(indicator: ProgressIndicator) {
           indicator.text = "Uploading section to " + StepikNames.STEPIK_URL
           if (section.id > 0) {
-            val sectionFromServer = StepikConnector.getSection(section.id)
+            val sectionFromServerPosition = StepikConnector.getSection(section.id)?.position ?: -1
             section.position = sectionPosition(course, section.name)
-            val positionChanged = sectionFromServer?.position != section.position
+            val positionChanged = sectionFromServerPosition != section.position
             val updated = CCStepikConnector.updateSection(project, section)
             section.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
             for (lesson in section.lessons) {
