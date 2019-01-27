@@ -3,10 +3,10 @@ package com.jetbrains.edu.learning.stepik.course
 import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.stepik.StepikLanguages
+import com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector.getLessons
 import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector.getStepSources
-import com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo
 import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL
@@ -77,7 +77,7 @@ object StepikCourseConnector {
       for (stepSource in allStepSources) {
         val step = stepSource.block
         if (step != null && step.name == "code" && step.options != null) {
-          val codeTemplates = step.options!!.codeTemplates
+          val codeTemplates = step.options?.codeTemplates
           if (codeTemplates != null) {
             return codeTemplates
           }
