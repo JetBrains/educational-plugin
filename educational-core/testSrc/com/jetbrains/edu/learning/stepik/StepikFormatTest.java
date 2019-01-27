@@ -318,8 +318,10 @@ public class StepikFormatTest extends EduTestCase {
     for (Map.Entry<String, TaskRoots> entry : TaskRootsKt.LANGUAGE_TASK_ROOTS.entrySet()) {
       doReplyMigrationTest(7, getTestName(true) + ".gradle.after.json", entry.getKey());
     }
+  }
 
-    doReplyMigrationTest(7, getTestName(true) + ".python.after.json", EduNames.PYTHON);
+  public void testReplyTo7VersionPython() throws IOException {
+    doReplyMigrationTest(7, getTestName(true) + ".after.json", EduNames.PYTHON);
   }
 
   public void testReplyTo9Version() throws IOException {
