@@ -13,6 +13,7 @@ import com.intellij.openapi.progress.Task.Modal;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -36,7 +37,7 @@ public class CCPushCourse extends DumbAwareAction {
     Presentation presentation = e.getPresentation();
     Project project = e.getProject();
     presentation.setEnabledAndVisible(false);
-    if (project == null) {
+    if (project == null || !CCUtils.isCourseCreator(project)) {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
