@@ -72,7 +72,7 @@ class StepikSectionMixin {
   private var id: Int = 0
 
   @JsonProperty("update_date")
-  lateinit var updateDate: Date
+  lateinit var myUpdateDate: Date
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
@@ -91,6 +91,7 @@ class StepikLessonMixin {
   @JsonProperty("is_public")
   var is_public: Boolean = false
 
+  @JsonProperty("update_date")
   lateinit var myUpdateDate: Date
 
   @JsonProperty("title")
