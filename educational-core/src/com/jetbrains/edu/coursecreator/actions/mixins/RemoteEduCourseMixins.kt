@@ -16,7 +16,8 @@ private const val UNIT_ID = "unit_id"
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
+                fieldVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonSerialize(using = CourseSerializer::class)
 @JsonPropertyOrder(ID, UPDATE_DATE)
 abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
@@ -55,7 +56,6 @@ abstract class RemoteLessonMixin : LocalLessonMixin() {
 
   @JsonProperty(UPDATE_DATE)
   private lateinit var myUpdateDate: Date
-
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization

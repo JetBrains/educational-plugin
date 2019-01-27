@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.serialization.converter.json.local
 
-import com.google.gson.JsonObject
+import com.fasterxml.jackson.databind.node.ObjectNode
 
 interface JsonLocalCourseConverter {
-  fun convert(localCourse: JsonObject): JsonObject
+  fun convert(localCourse: ObjectNode): ObjectNode
 }

@@ -1,26 +1,19 @@
 package com.jetbrains.edu.learning.serialization;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
-import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.coursera.CourseraCourse;
-import com.jetbrains.edu.learning.serialization.converter.json.local.JsonLocalCourseConverter;
-import com.jetbrains.edu.learning.serialization.converter.json.local.To8VersionLocalCourseConverter;
-import com.jetbrains.edu.learning.serialization.converter.json.local.To9VersionLocalCourseConverter;
-import com.jetbrains.edu.learning.serialization.converter.json.local.ToSeventhVersionLocalCourseConverter;
 import com.jetbrains.edu.learning.serialization.converter.xml.*;
-import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.course.StepikCourse;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import org.jdom.Attribute;
@@ -35,11 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 public class SerializationUtils {
-  private static final Logger LOG = Logger.getInstance(SerializationUtils.class);
 
   public static final String LINE = "line";
   public static final String START = "start";
-  public static final String LENGTH = "length";
   public static final String HINT = "hint";
   public static final String ADDITIONAL_HINTS = "additional_hints";
   public static final String OFFSET = "offset";
@@ -65,7 +56,6 @@ public class SerializationUtils {
     public final static String COURSE_ELEMENT = "courseElement";
     public final static String MAIN_ELEMENT = "StudyTaskManager";
     public final static String REMOTE_COURSE = "RemoteCourse";
-    public static final String CHECKIO_COURSE = "CheckiOCourse";
     public static final String SECTION = "Section";
     public static final String LESSON = "Lesson";
     public static final String FRAMEWORK_LESSON = "FrameworkLesson";
@@ -127,13 +117,10 @@ public class SerializationUtils {
     public static final String VISIBLE = "visible";
     public static final String TEST_FILES = "testsText";
     public static final String LANGUAGE = "language";
-    public static final String SECTION_IDS = "sectionIds";
     public static final String PLACEHOLDER_DEPENDENCY = "placeholderDependency";
     public static final String DEPENDENCY_FILE_NAME = "fileName";
     public static final String SETTINGS_NAME = "EduSettings";
     public static final String USER = "user";
-    public static final String LAST_TIME_CHECKED = "lastTimeChecked";
-    public static final String USE_JAVA_FX = "shouldUseJavaFx";
     public static final String STEPIK_USER = "StepikUser";
     public static final String COURSE_TYPE = "courseType";
     public static final String FILES = "files";
@@ -470,124 +457,6 @@ public class SerializationUtils {
     public static final String TASK = "task";
 
     private Json() {
-    }
-
-    public static class LessonSectionAdapter implements JsonDeserializer<StudyItem> {
-
-      @Override
-      public StudyItem deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation()
-            .registerTypeAdapter(Task.class, new TaskAdapter()).registerTypeAdapter(StudyItem.class, new LessonSectionAdapter()).create();
-        final StudyItem item = deserializeItem(json, gson);
-        final String name = item.getName();
-        if (StepikNames.PYCHARM_ADDITIONAL.equals(name)) {
-          item.setName(EduNames.ADDITIONAL_MATERIALS);
-        }
-        return item;
-      }
-
-      private static StudyItem deserializeItem(@NotNull JsonElement json, @NotNull Gson gson) {
-        JsonObject object = json.getAsJsonObject();
-        if (!object.has(ITEM_TYPE)) {
-          return gson.fromJson(object, Lesson.class);
-        } else {
-          String itemType = object.get(ITEM_TYPE).getAsString();
-          switch (itemType) {
-            case EduNames.LESSON: return gson.fromJson(object, Lesson.class);
-            case FRAMEWORK_TYPE: return gson.fromJson(object, FrameworkLesson.class);
-            case EduNames.SECTION: return gson.fromJson(object, Section.class);
-            default: throw new IllegalArgumentException("Unsupported lesson type: " + itemType);
-          }
-        }
-      }
-    }
-
-    public static class CourseAdapter implements JsonDeserializer<Course> {
-
-      @Override
-      public Course deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        JsonObject jsonObject = migrate(json.getAsJsonObject());
-        Gson gson = new GsonBuilder()
-          .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
-          .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
-          .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-          .create();
-        return gson.fromJson(jsonObject, typeOfT);
-      }
-
-      private static JsonObject migrate(@NotNull JsonObject jsonObject) {
-        return migrate(jsonObject, EduVersions.JSON_FORMAT_VERSION);
-      }
-
-      @NotNull
-      @VisibleForTesting
-      public static JsonObject migrate(@NotNull JsonObject jsonObject, int maxVersion) {
-        JsonPrimitive jsonVersion = jsonObject.getAsJsonPrimitive(VERSION);
-        int version;
-        if (jsonVersion == null) {
-          version = 1;
-        } else {
-          version = jsonVersion.getAsInt();
-        }
-
-        while (version < maxVersion) {
-          JsonLocalCourseConverter converter = null;
-          switch (version) {
-            case 6: converter = new ToSeventhVersionLocalCourseConverter(); break;
-            case 7: converter = new To8VersionLocalCourseConverter(); break;
-            case 8: converter = new To9VersionLocalCourseConverter(); break;
-          }
-          if (converter != null) {
-            jsonObject = converter.convert(jsonObject);
-          }
-          version++;
-        }
-        return jsonObject;
-      }
-    }
-
-    public static class TaskAdapter implements JsonDeserializer<Task> {
-
-      @Override
-      public Task deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-        return doDeserialize(json, gson);
-      }
-    }
-
-    @NotNull
-    public static JsonObject serializeWithTaskType(Task src, Gson gson) {
-      JsonElement tree = gson.toJsonTree(src);
-      final JsonObject task = tree.getAsJsonObject();
-      task.add(TASK_TYPE, new JsonPrimitive(src.getTaskType()));
-      return task;
-    }
-
-    @Nullable
-    public static Task doDeserialize(JsonElement json, Gson gson) {
-      final JsonObject object = json.getAsJsonObject();
-      if (object.has(NAME) && StepikNames.PYCHARM_ADDITIONAL.equals(object.get(NAME).getAsString())) {
-        object.remove(NAME);
-        object.add(NAME, new JsonPrimitive(EduNames.ADDITIONAL_MATERIALS));
-      }
-      if (object.has(TASK_TYPE)) {
-        final String taskType = object.get(TASK_TYPE).getAsString();
-        switch (taskType) {
-          case "ide": return gson.fromJson(object, IdeTask.class);
-          case "choice": return gson.fromJson(object, ChoiceTask.class);
-          case "theory": return gson.fromJson(object, TheoryTask.class);
-          case "code": return gson.fromJson(object, CodeTask.class);
-          case "edu": return gson.fromJson(object, EduTask.class);
-          case "output": return gson.fromJson(object, OutputTask.class);
-          case "pycharm": return gson.fromJson(object, EduTask.class);     // deprecated: old courses have pycharm tasks
-          default: {
-            LOG.warn("Unsupported task type " + taskType);
-            return null;
-          }
-        }
-      }
-      LOG.warn("No task type found in json " + json.toString());
-      return null;
     }
   }
 

@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning
 
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import com.jetbrains.edu.learning.serialization.SerializationUtils
 import java.io.File
 
 class LocalSourceMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
@@ -23,12 +23,9 @@ class LocalSourceMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
   private fun doTest(maxVersion: Int) {
     val before = loadJsonText(beforeFileName)
     val afterExpected = loadJsonText(afterFileName)
-    val parser = JsonParser()
-    val jsonBefore = parser.parse(before).asJsonObject
-    val jsonAfter = SerializationUtils.Json.CourseAdapter.migrate(jsonBefore, maxVersion)
-
-    val gson = GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
-    val afterActual = gson.toJson(jsonAfter)
+    val jsonBefore = ObjectMapper().readTree(before) as? ObjectNode
+    val jsonAfter = migrate(jsonBefore!!, maxVersion)
+    val afterActual = ObjectMapper().writer(DefaultPrettyPrinter()).writeValueAsString(jsonAfter)
     assertEquals(afterExpected, afterActual)
   }
 

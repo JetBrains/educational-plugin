@@ -1,39 +1,39 @@
 package com.jetbrains.edu.learning.serialization.converter.json.local
 
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
 
 class To9VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
-  override fun convertTaskObject(taskObject: JsonObject, language: String) {
+  override fun convertTaskObject(taskObject: ObjectNode, language: String) {
     convertTaskObject(taskObject)
   }
 
   companion object {
 
     @JvmStatic
-    fun convertTaskObject(taskObject: JsonObject) {
-      val files = taskObject.remove(TASK_FILES)?.asJsonObject ?: JsonObject()
-      val tests = taskObject.remove(TEST_FILES)?.asJsonObject
-      for ((path, testText) in tests?.entrySet().orEmpty()) {
+    fun convertTaskObject(taskObject: ObjectNode) {
+      val files = taskObject.remove(TASK_FILES) as? ObjectNode ?: ObjectMapper().createObjectNode()
+      val tests = taskObject.remove(TEST_FILES) as? ObjectNode ?: ObjectMapper().createObjectNode()
+      for ((path, testText) in tests.fields()) {
         if (files.has(path)) continue
-        if (testText !is JsonPrimitive) continue
-        val testObject = JsonObject()
-        testObject.addProperty(NAME, path)
-        testObject.addProperty(TEXT, testText.asString)
-        testObject.addProperty(IS_VISIBLE, false)
-        files.add(path, testObject)
+        if (!testText.isTextual) continue
+        val testObject = ObjectMapper().createObjectNode()
+        testObject.put(NAME, path)
+        testObject.put(TEXT, testText.asText())
+        testObject.put(IS_VISIBLE, false)
+        files.set(path, testObject)
       }
 
-      val additionalFiles = taskObject.remove(ADDITIONAL_FILES)?.asJsonObject
-      for ((path, fileObject) in additionalFiles?.entrySet().orEmpty()) {
+      val additionalFiles = taskObject.remove(ADDITIONAL_FILES) as? ObjectNode ?: ObjectMapper().createObjectNode()
+      for ((path, fileObject) in additionalFiles.fields()) {
         if (files.has(path)) continue
-        if (fileObject !is JsonObject) continue
-        fileObject.addProperty(NAME, path)
-        files.add(path, fileObject)
+        if (!fileObject.isObject) continue
+        (fileObject as ObjectNode).put(NAME, path)
+        files.set(path, fileObject)
       }
-      taskObject.add(FILES, files)
+      taskObject.set(FILES, files)
     }
   }
 }

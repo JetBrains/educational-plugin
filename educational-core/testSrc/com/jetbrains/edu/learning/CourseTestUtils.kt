@@ -1,39 +1,20 @@
 package com.jetbrains.edu.learning
 
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.GsonBuilder
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.serialization.SerializationUtils
+import com.jetbrains.edu.learning.serialization.converter.json.local.To10VersionLocalCourseConverter
 import java.io.File
 import java.io.IOException
 
 @Throws(IOException::class)
-fun createCourseFromJson(pathToJson: String, courseMode: CourseMode): Course {
+fun createCourseFromJson(pathToJson: String, courseMode: CourseMode): EduCourse {
   val courseJson = File(pathToJson).readText()
-  val gson = GsonBuilder()
-          .registerTypeAdapter(Task::class.java, SerializationUtils.Json.TaskAdapter())
-          .registerTypeAdapter(StudyItem::class.java, SerializationUtils.Json.LessonSectionAdapter())
-          .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-          .create()
-  return gson.fromJson(courseJson, EduCourse::class.java).apply {
-    this.courseMode = courseMode.toString()
-  }
-}
-
-@Throws(IOException::class)
-fun createRemoteCourseFromJson(pathToJson: String, courseMode: CourseMode): EduCourse {
-  val courseJson = File(pathToJson).readText()
-  val gson = GsonBuilder()
-    .registerTypeAdapter(Task::class.java, SerializationUtils.Json.TaskAdapter())
-    .registerTypeAdapter(StudyItem::class.java, SerializationUtils.Json.LessonSectionAdapter())
-    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-    .create()
-  return gson.fromJson(courseJson, EduCourse::class.java).apply {
+  var objectNode = courseMapper.readTree(courseJson) as ObjectNode
+  objectNode = To10VersionLocalCourseConverter().convert(objectNode)
+  return courseMapper.treeToValue(objectNode, EduCourse::class.java).apply {
     this.courseMode = courseMode.toString()
   }
 }

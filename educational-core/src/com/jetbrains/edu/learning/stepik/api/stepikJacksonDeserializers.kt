@@ -8,20 +8,19 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.NAME
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.TASK_TYPE
 import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots
 import com.jetbrains.edu.learning.serialization.converter.json.*
+import com.jetbrains.edu.learning.serialization.doDeserializeTask
 import com.jetbrains.edu.learning.stepik.StepOptions
 import com.jetbrains.edu.learning.stepik.StepikNames
 
@@ -136,39 +135,12 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Task? {
     val module = SimpleModule()
     module.addDeserializer(AnswerPlaceholder::class.java, StepikSubmissionAnswerPlaceholderDeserializer(replyVersion, language))
-    val objectMapper = StepikConnector.createMapper(module)
-    val node: ObjectNode = objectMapper.readTree(jp) as ObjectNode
+    val node: ObjectNode = jp.codec.readTree(jp) as ObjectNode
     node.migrate(replyVersion, JSON_FORMAT_VERSION, language)
-    return doDeserialize(node, objectMapper)
-  }
-
-  private fun doDeserialize(node: ObjectNode, objectMapper: ObjectMapper): Task? {
-    if (node.has(NAME) && StepikNames.PYCHARM_ADDITIONAL == node.get(NAME).asText()) {
-      node.remove(NAME)
-      node.put(NAME, EduNames.ADDITIONAL_MATERIALS)
-    }
-    if (node.has(TASK_TYPE)) {
-      val taskType = node.get(TASK_TYPE).asText()
-      return when (taskType) {
-        "ide" -> objectMapper.treeToValue(node, IdeTask::class.java)
-        "choice" -> objectMapper.treeToValue(node, ChoiceTask::class.java)
-        "theory" -> objectMapper.treeToValue(node, TheoryTask::class.java)
-        "code" -> objectMapper.treeToValue(node, CodeTask::class.java)
-        "edu" -> objectMapper.treeToValue(node, EduTask::class.java)
-        "output" -> objectMapper.treeToValue(node, OutputTask::class.java)
-        "pycharm" -> objectMapper.treeToValue(node, EduTask::class.java)     // deprecated: old courses have pycharm tasks
-        else -> {
-          LOG.warn("Unsupported task type $taskType")
-          null
-        }
-      }
-    }
-    LOG.warn("No task type found in json $node")
-    return null
+    return doDeserializeTask(node, jp.codec)
   }
 
   companion object {
-    private val LOG = Logger.getInstance(JacksonSubmissionDeserializer::class.java)
     @VisibleForTesting
     @JvmStatic
     fun ObjectNode.migrate(version: Int, maxVersion: Int, language: String?) {

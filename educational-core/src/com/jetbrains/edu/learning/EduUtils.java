@@ -1,9 +1,5 @@
 package com.jetbrains.edu.learning;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -62,7 +58,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
-import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
 import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
@@ -868,35 +863,24 @@ public class EduUtils {
   public static Course getLocalCourse(@NotNull final String zipFilePath) {
     try {
       final JBZipFile zipFile = new JBZipFile(zipFilePath);
-      final JBZipEntry entry = zipFile.getEntry(EduNames.COURSE_META_FILE);
-      if (entry == null) {
-        return null;
+      try {
+        final JBZipEntry entry = zipFile.getEntry(EduNames.COURSE_META_FILE);
+        if (entry == null) {
+          zipFile.close();
+          return null;
+        }
+        byte[] bytes = entry.getData();
+        final String jsonText = new String(bytes, CharsetToolkit.UTF8_CHARSET);
+        return CourseArchiveReader.readCourseJson(jsonText);
       }
-      byte[] bytes = entry.getData();
-      final String jsonText = new String(bytes, CharsetToolkit.UTF8_CHARSET);
-      zipFile.close();
-      return deserializeLocalCourse(jsonText);
+      finally {
+        zipFile.close();
+      }
     }
     catch (IOException e) {
       LOG.error("Failed to unzip course archive", e);
     }
     return null;
-  }
-
-  @VisibleForTesting
-  @Nullable
-  public static Course deserializeLocalCourse(@NotNull final String courseJsonText) {
-    Gson gson = new GsonBuilder()
-      .registerTypeHierarchyAdapter(Course.class, new SerializationUtils.Json.CourseAdapter())
-      .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-      .create();
-    try {
-      return gson.fromJson(courseJsonText, EduCourse.class);
-    }
-    catch (JsonSyntaxException e) {
-      LOG.error("Failed to deserialize local course json", e);
-      return null;
-    }
   }
 
   public static boolean isTaskDirectory(@NotNull Project project, @NotNull VirtualFile virtualFile) {

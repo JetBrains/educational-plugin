@@ -1,17 +1,11 @@
 package com.jetbrains.edu.learning;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -144,19 +138,12 @@ public class CourseFormatTest extends EduTestCase {
 
   private Course getCourseFromJson() throws IOException {
     final String fileName = getTestFile();
-    String courseJson = FileUtil.loadFile(new File(getTestDataPath(), fileName));
-
-    Gson gson = new GsonBuilder()
-        .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
-        .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
-        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-        .create();
-    return gson.fromJson(courseJson, EduCourse.class);
+    return CourseTestUtilsKt.createCourseFromJson(getTestDataPath()+fileName, CourseMode.STUDENT);
   }
 
   @NotNull
   protected String getTestDataPath() {
-    return super.getTestDataPath() + "/format";
+    return super.getTestDataPath() + "/format/";
   }
 
   @NotNull

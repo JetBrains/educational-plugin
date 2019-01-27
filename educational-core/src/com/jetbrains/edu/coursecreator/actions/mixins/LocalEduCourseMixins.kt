@@ -7,21 +7,27 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.ObjectCodec
 import com.fasterxml.jackson.databind.BeanDescription
+import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
-import com.fasterxml.jackson.databind.util.StdConverter
-import com.intellij.lang.Language
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.serialization.SerializationUtils
-import java.util.*
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWORK_TYPE
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
+import com.jetbrains.edu.learning.serialization.doDeserializeTask
+import com.jetbrains.edu.learning.stepik.StepikNames
 
-private const val VERSION = "version"
+const val VERSION = "version"
 private const val TITLE = "title"
 private const val LANGUAGE = "language"
 private const val SUMMARY = "summary"
@@ -60,11 +66,9 @@ abstract class LocalEduCourseMixin {
   @JsonProperty(SUMMARY)
   private lateinit var description: String
 
-  @JsonSerialize(converter = ProgrammingLanguageConverter::class)
   @JsonProperty(PROGRAMMING_LANGUAGE)
   private lateinit var myProgrammingLanguage: String
 
-  @JsonSerialize(converter = LanguageConverter::class)
   @JsonProperty(LANGUAGE)
   private lateinit var myLanguageCode: String
 
@@ -203,14 +207,6 @@ abstract class FeedbackLinkMixin {
   private var myLink: String? = null
 }
 
-class ProgrammingLanguageConverter : StdConverter<String, String>() {
-  override fun convert(languageId: String): String = Language.findLanguageByID(languageId)!!.displayName
-}
-
-class LanguageConverter : StdConverter<String, String>() {
-  override fun convert(languageCode: String): String = Locale(languageCode).displayName
-}
-
 class TaskSerializer : JsonSerializer<Task>() {
   override fun serialize(task: Task, generator: JsonGenerator, provider: SerializerProvider) {
     generator.writeStartObject()
@@ -259,4 +255,38 @@ private fun getJsonSerializer(provider: SerializerProvider, itemClass: Class<out
   val javaType = provider.constructType(itemClass)
   val beanDesc: BeanDescription = provider.config.introspect(javaType)
   return BeanSerializerFactory.instance.findBeanSerializer(provider, javaType, beanDesc)
+}
+
+class TaskDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Task>(vc) {
+  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext?): Task? {
+    val node: ObjectNode = jp.codec.readTree(jp) as ObjectNode
+    return doDeserializeTask(node, jp.codec)
+  }
+}
+
+class StudyItemDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<StudyItem>(vc) {
+  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext?): StudyItem? {
+    val node: ObjectNode = jp.codec.readTree(jp) as ObjectNode
+    val item = deserializeItem(node, jp.codec)
+    val name = item.name
+    if (StepikNames.PYCHARM_ADDITIONAL == name) {
+      item.name = EduNames.ADDITIONAL_MATERIALS
+    }
+    return item
+  }
+
+  private fun deserializeItem(jsonObject: ObjectNode, codec: ObjectCodec): StudyItem {
+    return if (!jsonObject.has(ITEM_TYPE)) {
+      codec.treeToValue(jsonObject, Lesson::class.java)
+    }
+    else {
+      val itemType = jsonObject.get(ITEM_TYPE).asText()
+      when (itemType) {
+        EduNames.LESSON -> codec.treeToValue(jsonObject, Lesson::class.java)
+        FRAMEWORK_TYPE -> codec.treeToValue(jsonObject, FrameworkLesson::class.java)
+        EduNames.SECTION -> codec.treeToValue(jsonObject, Section::class.java)
+        else -> throw IllegalArgumentException("Unsupported lesson type: $itemType")
+      }
+    }
+  }
 }
