@@ -1,13 +1,12 @@
 package com.jetbrains.edu.learning.stepik;
 
-import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class StepikUserInfo {
   private int id = -1;
-  @SerializedName("first_name") private String myFirstName;
-  @SerializedName("last_name") private String myLastName;
+  private String myFirstName;
+  private String myLastName;
   private boolean isGuest;
 
   private StepikUserInfo() {

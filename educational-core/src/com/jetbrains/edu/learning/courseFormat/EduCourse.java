@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.edu.learning.EduVersions;
@@ -17,21 +15,21 @@ public class EduCourse extends Course {
   private static final Logger LOG = Logger.getInstance(Course.class);
 
   // Fields from stepik:
-  @SerializedName("is_idea_compatible") private boolean isCompatible = true;
+  private boolean isCompatible = true;
   //course type in format "pycharm<version> <language>"
-  @SerializedName("course_format") private String myType =
+  private String myType =
     String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
   // in CC mode is used to store top-level lessons section id
-  @SerializedName("sections") List<Integer> sectionIds = new ArrayList<>();
+  List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
-  @Expose private int id;
-  @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
-  @Expose @SerializedName("is_public") boolean isPublic;
+  private int id;
+  private Date myUpdateDate = new Date(0);
+  boolean isPublic;
   public String adminsGroup;
 
   // Not published to stepik:
-  @Expose private boolean myLoadSolutions = true; // disabled for reset courses
-  @SerializedName("additional_materials_update_date") private Date myAdditionalMaterialsUpdateDate = new Date(0);
+  private boolean myLoadSolutions = true; // disabled for reset courses
+  private Date myAdditionalMaterialsUpdateDate = new Date(0);
 
   public String getType() {
     return myType;

@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -31,11 +29,11 @@ import java.util.stream.Collectors;
  */
 public abstract class Course extends ItemContainer {
   transient private List<StepikUserInfo> authors = new ArrayList<>();
-  @Expose @SerializedName("summary") private String description;
-  @Expose @SerializedName("title") private String name;
+  private String description;
+  private String name;
 
-  @Expose @SerializedName("programming_language") private String myProgrammingLanguage = EduNames.PYTHON;
-  @Expose @SerializedName("language") private String myLanguageCode = "en";
+  private String myProgrammingLanguage = EduNames.PYTHON;
+  private String myLanguageCode = "en";
 
   // flag for distinguishing courses imported from zip from Stepik courses
   // we use it to set StepikChangeStatus for zip-courses during generation
@@ -44,7 +42,7 @@ public abstract class Course extends ItemContainer {
 
   //this field is used to distinguish ordinary and CheckIO projects,
   //"PyCharm" is used here for historical reasons
-  @Expose @SerializedName("course_type") private String courseType = EduNames.PYCHARM;
+  private String courseType = EduNames.PYCHARM;
   protected String courseMode = EduNames.STUDY; //this field is used to distinguish study and course creator modes
 
   protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;

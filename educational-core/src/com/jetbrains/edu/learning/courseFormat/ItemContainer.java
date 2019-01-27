@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.google.gson.annotations.Expose;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
@@ -20,7 +19,7 @@ public abstract class ItemContainer extends StudyItem {
     FrameworkLesson.class,
     CheckiOStation.class
   })
-  @Expose protected List<StudyItem> items = new ArrayList<>();
+  protected List<StudyItem> items = new ArrayList<>();
 
   @Nullable
   public Lesson getLesson(@NotNull final String name) {

@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -21,31 +19,13 @@ import java.util.regex.Pattern;
 public class AnswerPlaceholderDependency {
   private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("(([^#]+)#)?([^#]+)#([^#]+)#([^#]+)#(\\d+)");
 
-  @Expose
-  @SerializedName("section")
   @Nullable
   private String mySectionName;
-
-  @Expose
-  @SerializedName("lesson")
   private String myLessonName;
-
-  @Expose
-  @SerializedName("task")
   private String myTaskName;
-
-  @Expose
-  @SerializedName("file")
   private String myFileName;
-
-  @Expose
-  @SerializedName("placeholder")
   private int myPlaceholderIndex;
-
-  @Expose
-  @SerializedName("is_visible")
   private boolean myIsVisible = true;
-
   private AnswerPlaceholder myAnswerPlaceholder = null;
 
   public AnswerPlaceholderDependency() {

@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat.tasks;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -37,31 +35,17 @@ import java.util.*;
  * - Update {@link StepikTaskBuilder#pluginTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder#stepikTaskTypes} otherwise
  */
 public abstract class Task extends StudyItem {
-  @Expose private String name;
-
+  private String name;
   protected CheckStatus myStatus = CheckStatus.Unchecked;
-
-  @SerializedName("stepic_id")
-  @Expose private int myStepId;
-
-  @SerializedName("files")
-  @Expose private Map<String, TaskFile> myTaskFiles = new LinkedHashMap<>();
-
-  @SerializedName("description_text")
-  @Expose private String descriptionText = "";
-
-  @SerializedName("description_format")
-  @Expose private DescriptionFormat descriptionFormat = EduUtils.getDefaultTaskDescriptionFormat();
-
-  @Transient private Lesson myLesson;
-  @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
-
-  @Expose
-  @SerializedName("feedback_link")
+  private int myStepId;
+  private Map<String, TaskFile> myTaskFiles = new LinkedHashMap<>();
+  private String descriptionText = "";
+  private DescriptionFormat descriptionFormat = EduUtils.getDefaultTaskDescriptionFormat();
+  private Date myUpdateDate = new Date(0);
   @NotNull
   private FeedbackLink myFeedbackLink = new FeedbackLink();
-
   private int myRecord = -1;
+  @Transient private Lesson myLesson;
 
   public Task() {}
 

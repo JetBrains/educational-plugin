@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
@@ -27,17 +25,13 @@ import java.util.List;
  *  - Handle xml migration in {@link com.jetbrains.edu.learning.serialization.converter.xml.BaseXmlConverter#convert}
  */
 public class Lesson extends StudyItem {
-  @Expose @SerializedName("id") private int myId;
+  private int myId;
   @Transient public List<Integer> steps;
   @Transient boolean is_public;
-  @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
+  private Date myUpdateDate = new Date(0);
 
-  @Expose
-  @SerializedName("title")
   private String name;
 
-  @Expose
-  @SerializedName("task_list")
   @AbstractCollection(elementTypes = {
     CheckiOMission.class,
     EduTask.class,
@@ -52,8 +46,6 @@ public class Lesson extends StudyItem {
   @Transient
   private Course myCourse = null;
 
-  @Expose
-  @SerializedName("unit_id")
   public int unitId = 0;
 
   @Transient

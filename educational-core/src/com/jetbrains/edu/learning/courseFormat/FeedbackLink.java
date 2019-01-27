@@ -1,18 +1,12 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class FeedbackLink {
-  @Expose
-  @SerializedName("link_type")
   @NotNull
   private LinkType myType;
 
-  @Expose
-  @SerializedName("link")
   @Nullable
   private String myLink;
 

@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.xmlb.annotations.Transient;
@@ -22,39 +20,21 @@ import java.util.List;
 
 public class AnswerPlaceholder {
 
-  @SerializedName("offset")
-  @Expose private int myOffset = -1;
-
-  @SerializedName("length")
-  @Expose private int myLength = -1;
-
+  private int myOffset = -1;
+  private int myLength = -1;
   private int myIndex = -1;
   private MyInitialState myInitialState;
   private boolean myUseLength = true; // if true -- taskText length used, else -- possible answer. Always true in student view
-
-  @Transient private TaskFile myTaskFile;
-
-  @Expose
-  @SerializedName("dependency")
   @Nullable
   private AnswerPlaceholderDependency myPlaceholderDependency = null;
-
   private boolean myIsInitializedFromDependency = false;
-
-  @SerializedName("hints")
-  @Expose private List<String> myHints = new ArrayList<>();
-
-  @SerializedName("possible_answer")
-  @Expose private String myPossibleAnswer = "";
-
-  @SerializedName("placeholder_text")
-  @Expose private String myPlaceholderText;
-
-  @SerializedName("selected")
+  private List<String> myHints = new ArrayList<>();
+  private String myPossibleAnswer = "";
+  private String myPlaceholderText;
   private boolean mySelected = false;
-
-  @SerializedName("status")
   private CheckStatus myStatus = CheckStatus.Unchecked;
+
+  @Transient private TaskFile myTaskFile;
 
   /*
    * Actual student's answer, used to restore state of task of framework lesson after navigation actions

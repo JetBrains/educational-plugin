@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
@@ -21,19 +19,14 @@ import java.util.List;
  */
 
 public class TaskFile {
-  @Expose @SerializedName("name") private String myName;
+  private String myName;
   private boolean myUserCreated = false;
   private boolean myTrackChanges = true;
   private boolean myTrackLengths = true;
   private boolean myHighlightErrors = false;
-  @Expose @SerializedName("placeholders") private List<AnswerPlaceholder> myAnswerPlaceholders = new ArrayList<>();
-
-  @Expose
-  @SerializedName("is_visible")
+  private List<AnswerPlaceholder> myAnswerPlaceholders = new ArrayList<>();
   private boolean myVisible = true;
 
-  @Expose
-  @SerializedName("text")
   private String myText = "";
 
   @Transient private Task myTask;

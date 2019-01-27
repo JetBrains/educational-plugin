@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.Transient;
@@ -17,17 +15,11 @@ public class Section extends ItemContainer {
   public Section() {}
 
   public List<Integer> units = new ArrayList<>();
-  @SerializedName("course")
   private int courseId;
-  @Expose
-  @SerializedName("title")
   private String name;
 
   private int position;
-  @Expose
   private int id;
-  @Expose
-  @SerializedName("update_date")
   private Date myUpdateDate = new Date(0);
 
   @Transient
