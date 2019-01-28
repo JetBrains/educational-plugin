@@ -13,16 +13,8 @@ class ToSeventhVersionJsonStepOptionConverter : JsonStepOptionsConverter {
     val taskFiles = stepOptionsJson.get(FILES) ?: ObjectMapper().createArrayNode()
     val testFiles = stepOptionsJson.get(TESTS) ?: ObjectMapper().createArrayNode()
 
-    for (taskFile in taskFiles) {
-      if (isPythonFile(taskFile.get(NAME).asText())) {
-        return stepOptionsJson
-      }
-    }
-    for (testFile in testFiles) {
-      if (isPythonFile(testFile.get(NAME).asText())) {
-        return stepOptionsJson
-      }
-    }
+    if (taskFiles.any{ it.get(NAME).asText().endsWith(".py") }) return stepOptionsJson
+    if (testFiles.any{ it.get(NAME).asText().endsWith(".py") }) return stepOptionsJson
 
     for (taskFile in taskFiles) {
       if (taskFile !is ObjectNode) continue
@@ -37,8 +29,6 @@ class ToSeventhVersionJsonStepOptionConverter : JsonStepOptionsConverter {
 
     return stepOptionsJson
   }
-
-  private fun isPythonFile(path: String) = path.endsWith(".py")
 
   companion object {
 
