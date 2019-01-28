@@ -159,22 +159,22 @@ class StepikAnswerPlaceholderMixin {
 class StepikAnswerPlaceholderDependencyMixin {
 
   @JsonProperty("section")
-  lateinit var sectionName: String
+  lateinit var mySectionName: String
 
   @JsonProperty("lesson")
-  lateinit var lessonName: String
+  lateinit var myLessonName: String
 
   @JsonProperty("task")
-  lateinit var taskName: String
+  lateinit var myTaskName: String
 
   @JsonProperty("file")
-  lateinit var fileName: String
+  lateinit var myFileName: String
 
   @JsonProperty("placeholder")
-  var placeholderIndex: Int = 0
+  var myPlaceholderIndex: Int = 0
 
   @JsonProperty("is_visible")
-  var isVisible = true
+  var myIsVisible = true
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
