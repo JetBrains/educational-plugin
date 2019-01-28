@@ -18,6 +18,7 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.BasicCookieStore
 import org.apache.http.impl.client.CloseableHttpClient
+import org.apache.http.impl.client.HttpClients
 import org.apache.http.message.BasicHeader
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
@@ -35,9 +36,9 @@ abstract class StepikTestCase : EduTestCase() {
 
   override fun setUp() {
     super.setUp()
-    httpClient = StepikTestClient.getBuilder().setDefaultCookieStore(BasicCookieStore()).build()
+    httpClient = HttpClients.createDefault()
     login()
-    httpClient = StepikTestClient.getBuilder()
+    httpClient = HttpClients.custom()
       .setDefaultHeaders(listOf(getAuthorizationHeader(user.accessToken)))
       .setDefaultCookieStore(BasicCookieStore()).build()
   }
