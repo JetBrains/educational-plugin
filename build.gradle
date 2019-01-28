@@ -252,15 +252,15 @@ prepareSandbox.finalizedBy(removeIncompatiblePyCharmPlugins)
 subprojects {
     sourceSets {
         main {
-            java.srcDirs 'src'
-            resources.srcDirs 'resources'
-            kotlin.srcDirs 'src'
+            java.srcDirs 'src', "branches/$environmentName/src"
+            resources.srcDirs 'resources', "branches/$environmentName/resources"
+            kotlin.srcDirs 'src', "branches/$environmentName/src"
         }
 
         test {
-            java.srcDirs 'testSrc'
-            resources.srcDirs 'testResources'
-            kotlin.srcDirs 'testSrc'
+            java.srcDirs 'testSrc', "branches/$environmentName/testSrc"
+            resources.srcDirs 'testResources', "branches/$environmentName/testResources"
+            kotlin.srcDirs 'testSrc', "branches/$environmentName/testSrc"
         }
     }
 
