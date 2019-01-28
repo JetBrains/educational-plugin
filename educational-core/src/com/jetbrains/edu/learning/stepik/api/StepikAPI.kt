@@ -151,6 +151,7 @@ class View(var assignment: Int, var step: Int)
 
 class Progress {
   lateinit var id: String
+  @JsonProperty("is_passed")
   var isPassed: Boolean = false
 }
 
