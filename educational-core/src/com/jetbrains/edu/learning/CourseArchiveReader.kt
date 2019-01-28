@@ -12,6 +12,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.coursecreator.actions.mixins.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.converter.json.local.*
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -38,7 +39,7 @@ private fun migrate(jsonObject: ObjectNode): ObjectNode {
 @VisibleForTesting
 fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
   var jsonObject = node
-  val jsonVersion = jsonObject.get(VERSION)
+  val jsonVersion = jsonObject.get(SerializationUtils.Json.VERSION)
   var version: Int
   version = jsonVersion?.asInt() ?: 1
 

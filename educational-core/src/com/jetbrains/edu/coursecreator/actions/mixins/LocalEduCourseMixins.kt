@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYP
 import com.jetbrains.edu.learning.serialization.doDeserializeTask
 import com.jetbrains.edu.learning.stepik.StepikNames
 
-const val VERSION = "version"
+private const val VERSION = "version"
 private const val TITLE = "title"
 private const val LANGUAGE = "language"
 private const val SUMMARY = "summary"
