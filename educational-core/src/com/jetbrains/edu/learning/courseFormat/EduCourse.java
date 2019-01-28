@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -25,7 +26,7 @@ public class EduCourse extends Course {
   private int id;
   private Date myUpdateDate = new Date(0);
   boolean isPublic;
-  public String adminsGroup;
+  @Transient public String adminsGroup;
 
   // Not published to stepik:
   private boolean myLoadSolutions = true; // disabled for reset courses
