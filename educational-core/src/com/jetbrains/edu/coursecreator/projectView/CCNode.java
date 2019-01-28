@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.projectView.DirectoryNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,7 +56,7 @@ public class CCNode extends DirectoryNode {
       if (!EduUtils.isTestsFile(myProject, virtualFile)) {
         return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
       } else {
-        if (EduGradleUtils.isConfiguredWithGradle(myProject) && CCUtils.isCourseCreator(myProject)) {
+        if (CCUtils.isCourseCreator(myProject)) {
           return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
         }
       }

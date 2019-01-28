@@ -276,7 +276,9 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
       dir("lesson1") {
         dir("task1") {
           file("Task.txt")
-          file("Tests.txt")
+          dir("tests") {
+            file("Tests.txt")
+          }
           file("task.html")
         }
       }

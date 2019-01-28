@@ -239,4 +239,45 @@ class NodesTest: CourseViewTestBase() {
       }
     }
   }
+
+  fun `test course with tests inside test dir`() {
+    courseWithFiles (courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+          taskFile("taskFile2.txt")
+          dir("tests") {
+            taskFile("Tests.txt", visible = false)
+          }
+        }
+        eduTask {
+          taskFile("additionalFile1.txt")
+          taskFile("additionalFile2.txt")
+          dir("folder") {
+            taskFile("additionalFile3.txt")
+            taskFile("additionalFile4.txt", visible = false)
+          }
+        }
+      }
+    }
+    assertCourseView("""
+      |-Project
+      | -CCCourseNode Test Course (Course Creation)
+      |  -CCLessonNode lesson1
+      |   -CCTaskNode task1
+      |    CCStudentInvisibleFileNode task.html
+      |    taskFile1.txt
+      |    taskFile2.txt
+      |    -CCNode tests
+      |     CCStudentInvisibleFileNode Tests.txt
+      |   -CCTaskNode task2
+      |    additionalFile1.txt
+      |    additionalFile2.txt
+      |    -CCNode folder
+      |     additionalFile3.txt
+      |     CCStudentInvisibleFileNode additionalFile4.txt
+      |    CCStudentInvisibleFileNode task.html
+    """.trimMargin("|"))
+  }
+
 }

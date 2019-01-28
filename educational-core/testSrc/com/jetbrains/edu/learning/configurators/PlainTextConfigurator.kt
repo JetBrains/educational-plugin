@@ -1,24 +1,22 @@
 package com.jetbrains.edu.learning.configurators
 
 import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
-class PlainTextConfigurator : EduConfigurator<Unit> {
+open class PlainTextConfigurator : EduConfigurator<Unit> {
 
   override fun getCourseBuilder() = PlainTextCourseBuilder()
   override fun getTestFileName() = "Tests.txt"
-  override fun isTestFile(project: Project, file: VirtualFile): Boolean = file.name == testFileName
+  override fun getTestDirs() = listOf("tests")
 
   override fun getTaskCheckerProvider() = TaskCheckerProvider { task, project ->
     object : TaskChecker<EduTask>(task, project) {
