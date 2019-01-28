@@ -139,7 +139,15 @@ class MemberData(userId: String, group: String) {
   var member: Member = Member(userId, group)
 }
 
-class TaskData(var task: Task)
+class TaskData {
+  constructor()
+
+  constructor(task: Task) {
+    this.task = task
+  }
+
+  lateinit var task: Task
+}
 
 // Auxiliary:
 

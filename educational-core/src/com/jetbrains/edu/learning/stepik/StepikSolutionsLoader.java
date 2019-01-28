@@ -377,11 +377,12 @@ public class StepikSolutionsLoader implements Disposable {
     module.addDeserializer(Task.class, new JacksonSubmissionDeserializer(reply.getVersion(), language));
     final ObjectMapper objectMapper = StepikConnector.INSTANCE.getObjectMapper().copy();
     objectMapper.registerModule(module);
-    TaskData updatedTask;
+    TaskData updatedTaskData;
     try {
-      updatedTask = objectMapper.readValue(serializedTask, TaskData.class);
+      updatedTaskData = objectMapper.readValue(serializedTask, TaskData.class);
     }
     catch (IOException e) {
+      LOG.error(e.getMessage());
       return TaskSolutions.EMPTY;
     }
 
@@ -390,7 +391,7 @@ public class StepikSolutionsLoader implements Disposable {
     Map<String, String> taskFileToText = new HashMap<>();
     for (SolutionFile file : reply.getSolution()) {
       TaskFile taskFile = task.getTaskFile(file.getName());
-      TaskFile updatedTaskFile = updatedTask.getTask().getTaskFile(file.getName());
+      TaskFile updatedTaskFile = updatedTaskData.getTask().getTaskFile(file.getName());
       if (taskFile != null && updatedTaskFile != null) {
         setPlaceholders(taskFile, updatedTaskFile);
         taskFileToText.put(file.getName(), removeAllTags(file.getText()));
