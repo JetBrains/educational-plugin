@@ -14,23 +14,24 @@ class To9VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
     @JvmStatic
     fun convertTaskObject(taskObject: ObjectNode) {
-      val files = taskObject.remove(TASK_FILES) as? ObjectNode ?: ObjectMapper().createObjectNode()
-      val tests = taskObject.remove(TEST_FILES) as? ObjectNode ?: ObjectMapper().createObjectNode()
+      val mapper = ObjectMapper()
+      val files = taskObject.remove(TASK_FILES) as? ObjectNode ?: mapper.createObjectNode()
+      val tests = taskObject.remove(TEST_FILES) as? ObjectNode ?: mapper.createObjectNode()
       for ((path, testText) in tests.fields()) {
         if (files.has(path)) continue
         if (!testText.isTextual) continue
-        val testObject = ObjectMapper().createObjectNode()
+        val testObject = mapper.createObjectNode()
         testObject.put(NAME, path)
         testObject.put(TEXT, testText.asText())
         testObject.put(IS_VISIBLE, false)
         files.set(path, testObject)
       }
 
-      val additionalFiles = taskObject.remove(ADDITIONAL_FILES) as? ObjectNode ?: ObjectMapper().createObjectNode()
+      val additionalFiles = taskObject.remove(ADDITIONAL_FILES) as? ObjectNode ?: mapper.createObjectNode()
       for ((path, fileObject) in additionalFiles.fields()) {
         if (files.has(path)) continue
-        if (!fileObject.isObject) continue
-        (fileObject as ObjectNode).put(NAME, path)
+        if (fileObject !is ObjectNode) continue
+        fileObject.put(NAME, path)
         files.set(path, fileObject)
       }
       taskObject.set(FILES, files)

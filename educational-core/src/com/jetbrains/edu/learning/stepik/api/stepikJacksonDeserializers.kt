@@ -20,6 +20,8 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.NAME
 import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots
 import com.jetbrains.edu.learning.serialization.converter.json.*
+import com.jetbrains.edu.learning.serialization.converter.json.local.To10VersionLocalCourseConverter
+import com.jetbrains.edu.learning.serialization.converter.json.local.To9VersionLocalCourseConverter
 import com.jetbrains.edu.learning.serialization.doDeserializeTask
 import com.jetbrains.edu.learning.stepik.StepOptions
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -151,6 +153,7 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
           1 -> toFifthVersion()
           6 -> toSeventhVersion(language)
           8 -> to9Version()
+          9 -> to10Version()
         }
         version++
       }
@@ -193,35 +196,11 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
     }
 
     private fun ObjectNode.to9Version() {
-      convertTaskObject(this)
+      To9VersionLocalCourseConverter.convertTaskObject(this)
     }
 
-    private fun convertTaskObject(taskObject: ObjectNode) {
-      val mapper = ObjectMapper()
-      val files = taskObject.remove(SerializationUtils.Json.TASK_FILES) as? ObjectNode ?: mapper.createObjectNode()
-      val tests = taskObject.remove(SerializationUtils.Json.TEST_FILES)
-      if (tests != null) {
-        for ((path, testText) in tests.fields()) {
-          if (files.has(path)) continue
-          if (!testText.isTextual) continue
-          val testObject = mapper.createObjectNode()
-          testObject.put(NAME, path)
-          testObject.put(SerializationUtils.Json.TEXT, testText.asText())
-          testObject.put(SerializationUtils.Json.IS_VISIBLE, false)
-          files.set(path, testObject)
-        }
-      }
-
-      val additionalFiles = taskObject.remove(SerializationUtils.Json.ADDITIONAL_FILES)
-      if (additionalFiles != null) {
-        for ((path, fileObject) in additionalFiles.fields()) {
-          if (files.has(path)) continue
-          if (fileObject !is ObjectNode) continue
-          fileObject.put(NAME, path)
-          files.set(path, fileObject)
-        }
-      }
-      taskObject.set(SerializationUtils.Json.FILES, files)
+    private fun ObjectNode.to10Version() {
+      To10VersionLocalCourseConverter.convertTaskObject(this)
     }
   }
 }

@@ -6,9 +6,16 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.DESCRIPT
 class To10VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
   override fun convertTaskObject(taskObject: ObjectNode, language: String) {
-    val descriptionFormat = taskObject.get(DESCRIPTION_FORMAT)?.asText()
-    if (descriptionFormat != null) {
-      taskObject.put(DESCRIPTION_FORMAT, descriptionFormat.toUpperCase())
+    convertTaskObject(taskObject)
+  }
+
+  companion object {
+    @JvmStatic
+    fun convertTaskObject(taskObject: ObjectNode) {
+      val descriptionFormat = taskObject.get(DESCRIPTION_FORMAT)?.asText()
+      if (descriptionFormat != null) {
+        taskObject.put(DESCRIPTION_FORMAT, descriptionFormat.toUpperCase())
+      }
     }
   }
 }

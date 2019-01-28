@@ -14,8 +14,7 @@ import java.io.IOException;
 public class StepikAuthorizer {
   private static final Logger LOG = Logger.getInstance(StepikAuthorizer.class.getName());
 
-  private StepikAuthorizer() {
-  }
+  private StepikAuthorizer() {}
 
   @NotNull
   private static String createOAuthLink(String authRedirectUrl) {

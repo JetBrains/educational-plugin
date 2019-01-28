@@ -328,6 +328,10 @@ public class StepikFormatTest extends EduTestCase {
     doReplyMigrationTest(9);
   }
 
+  public void testReplyTo10Version() throws IOException {
+    doReplyMigrationTest(10);
+  }
+
   public void testNonEduTasks() throws IOException {
     String jsonText = loadJsonText();
     final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
