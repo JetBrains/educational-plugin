@@ -37,8 +37,8 @@ private const val IN_PROGRESS_COURSES_LINK = "https://raw.githubusercontent.com/
 
 private val LOG = Logger.getInstance(StepikAuthorizer::class.java)
 
-val featuredCourses = getFeaturedCoursesIds()
-val inProgressCourses = getInProgressCoursesIds()
+val featuredCourses = getCoursesIds(PROMOTED_COURSES_LINK)
+val inProgressCourses = getCoursesIds(IN_PROGRESS_COURSES_LINK)
 
 fun setCourseLanguage(info: EduCourse) {
   val courseType = info.type
@@ -104,14 +104,6 @@ private fun showUpdateAvailableNotification(project: Project, course: Course) {
                                       "Updating Course", true, project)
                                   })
   notification.notify(project)
-}
-
-private fun getFeaturedCoursesIds(): List<Int> {
-  return getCoursesIds(PROMOTED_COURSES_LINK)
-}
-
-private fun getInProgressCoursesIds(): List<Int> {
-  return getCoursesIds(IN_PROGRESS_COURSES_LINK)
 }
 
 private fun getCoursesIds(link: String): List<Int> {
