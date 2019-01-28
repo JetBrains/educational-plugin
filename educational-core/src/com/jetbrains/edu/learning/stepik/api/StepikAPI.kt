@@ -191,7 +191,7 @@ class StepikUnit {
   var lesson: Int = 0
   var position: Int = 0
   var assignments: List<Int> = mutableListOf()
-  @JsonProperty("updateDate")
+  @JsonProperty("update_date")
   var updateDate: Date = Date()
 }
 

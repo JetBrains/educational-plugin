@@ -91,7 +91,7 @@ class StepikLessonMixin {
   @JsonProperty("is_public")
   var is_public: Boolean = false
 
-  @JsonProperty("updateDate")
+  @JsonProperty("update_date")
   lateinit var myUpdateDate: Date
 
   @JsonProperty("title")
