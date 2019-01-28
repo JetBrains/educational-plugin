@@ -372,7 +372,7 @@ object StepikConnector {
     }
   }
 
-  private fun checkForErrors(response: Response<out Any>) {
+  internal fun checkForErrors(response: Response<out Any>) {
     val errorBody = response.errorBody()
     if (errorBody != null) {
       LOG.error(errorBody.string())

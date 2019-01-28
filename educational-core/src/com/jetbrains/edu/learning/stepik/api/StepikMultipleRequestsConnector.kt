@@ -11,10 +11,14 @@ object StepikMultipleRequestsConnector {
   private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests
 
   fun getUsers(result: List<EduCourse>): MutableList<StepikUserInfo> {
-    val instructorIds = result.flatMap { it -> it.instructors }.distinct().chunked(MAX_REQUEST_PARAMS)
+    val instructorIds = result.flatMap { it.instructors }.distinct().chunked(MAX_REQUEST_PARAMS)
     val allUsers = mutableListOf<StepikUserInfo>()
     instructorIds
-      .mapNotNull { service.users(*it.toIntArray()).execute().body()?.users }
+      .mapNotNull {
+        val response = service.users(*it.toIntArray()).execute()
+        StepikConnector.checkForErrors(response)
+        response.body()?.users
+      }
       .forEach { allUsers.addAll(it) }
     return allUsers
   }
@@ -23,7 +27,11 @@ object StepikMultipleRequestsConnector {
     val sectionIdsChunks = sectionIds.distinct().chunked(MAX_REQUEST_PARAMS)
     val allSections = mutableListOf<Section>()
     sectionIdsChunks
-      .mapNotNull { service.sections(*it.toIntArray()).execute().body()?.sections }
+      .mapNotNull {
+        val response = service.sections(*it.toIntArray()).execute()
+        StepikConnector.checkForErrors(response)
+        response.body()?.sections
+      }
       .forEach { allSections.addAll(it) }
     return allSections
   }
@@ -32,7 +40,11 @@ object StepikMultipleRequestsConnector {
     val lessonsIdsChunks = lessonIds.distinct().chunked(MAX_REQUEST_PARAMS)
     val allLessons = mutableListOf<Lesson>()
     lessonsIdsChunks
-      .mapNotNull { service.lessons(*it.toIntArray()).execute().body()?.lessons }
+      .mapNotNull {
+        val response = service.lessons(*it.toIntArray()).execute()
+        StepikConnector.checkForErrors(response)
+        response.body()?.lessons
+      }
       .forEach { allLessons.addAll(it) }
     return allLessons
   }
@@ -41,7 +53,11 @@ object StepikMultipleRequestsConnector {
     val unitsIdsChunks = unitIds.distinct().chunked(MAX_REQUEST_PARAMS)
     val allUnits = mutableListOf<StepikUnit>()
     unitsIdsChunks
-      .mapNotNull { service.units(*it.toIntArray()).execute().body()?.units }
+      .mapNotNull {
+        val response = service.units(*it.toIntArray()).execute()
+        StepikConnector.checkForErrors(response)
+        response.body()?.units
+      }
       .forEach { allUnits.addAll(it) }
     return allUnits
   }
@@ -50,18 +66,25 @@ object StepikMultipleRequestsConnector {
     val idsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
     val assignments = mutableListOf<Assignment>()
     idsChunks
-      .mapNotNull { service.assignments(*it.toIntArray()).execute().body()?.assignments }
+      .mapNotNull {
+        val response = service.assignments(*it.toIntArray()).execute()
+        StepikConnector.checkForErrors(response)
+        response.body()?.assignments
+      }
       .forEach { assignments.addAll(it) }
 
     return assignments
   }
 
-  fun getStepSources(stepIds: List<Int>, language: String): List<StepSource> {
-    // TODO: use language parameter
+  fun getStepSources(stepIds: List<Int>): List<StepSource> {
     val stepsIdsChunks = stepIds.distinct().chunked(MAX_REQUEST_PARAMS)
     val steps = mutableListOf<StepSource>()
     stepsIdsChunks
-      .mapNotNull { service.steps(*it.toIntArray()).execute().body()?.steps }
+      .mapNotNull {
+        val response = service.steps(*it.toIntArray()).execute()
+        StepikConnector.checkForErrors(response)
+        response.body()?.steps
+      }
       .forEach { steps.addAll(it) }
     return steps
   }
@@ -70,7 +93,11 @@ object StepikMultipleRequestsConnector {
     val idsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
     val progresses = mutableListOf<Progress>()
     idsChunks
-      .mapNotNull { service.progresses(*it.toTypedArray()).execute().body()?.progresses }
+      .mapNotNull {
+        val response = service.progresses(*it.toTypedArray()).execute()
+        StepikConnector.checkForErrors(response)
+        response.body()?.progresses
+      }
       .forEach { progresses.addAll(it) }
 
     val progressesMap = progresses.associate { it.id to it.isPassed }

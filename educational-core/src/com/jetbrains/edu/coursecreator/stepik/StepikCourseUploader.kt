@@ -257,7 +257,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       }
     }
 
-    val stepSources = StepikMultipleRequestsConnector.getStepSources(deleteCandidates, lesson.course.languageID)
+    val stepSources = StepikMultipleRequestsConnector.getStepSources(deleteCandidates)
     val tasksFromStep = StepikCourseLoader.getTasks(course.languageById, lesson, stepSources)
     tasksToDelete.addAll(tasksFromStep.filter { it.updateDate <= lastUpdateDate }.map { it.stepId })
   }
