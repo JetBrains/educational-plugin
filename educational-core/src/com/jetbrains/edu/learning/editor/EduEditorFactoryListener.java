@@ -1,13 +1,14 @@
 package com.jetbrains.edu.learning.editor;
 
-import com.intellij.openapi.diagnostic.Logger;
+
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.openapi.editor.event.*;
+import com.intellij.openapi.editor.event.EditorFactoryEvent;
+import com.intellij.openapi.editor.event.EditorFactoryListener;
+import com.intellij.openapi.editor.event.EditorMouseAdapter;
+import com.intellij.openapi.editor.event.EditorMouseEvent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -28,18 +29,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
-import com.jetbrains.edu.learning.stepik.api.Assignment;
-import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector;
-import com.jetbrains.edu.learning.stepik.api.StepikUnit;
+import com.jetbrains.edu.learning.stepik.api.StepikConnectorUtils;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.List;
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
-  private static final Logger LOG = Logger.getInstance(EduEditorFactoryListener.class.getName());
 
   private static class WindowSelectionListener extends EditorMouseAdapter {
     private final TaskFile myTaskFile;
@@ -91,7 +87,9 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         Task task = taskFile.getTask();
         if (task instanceof TheoryTask && task.getStatus() != CheckStatus.Solved) {
           task.setStatus(CheckStatus.Solved);
-          postTheory(task, project);
+          if (EduSettings.isLoggedIn()) {
+            StepikConnectorUtils.postTheory(task, project);
+          }
         }
 
         boolean isStudyProject = course.isStudy();
@@ -113,39 +111,5 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     event.getEditor().getSelectionModel().removeSelection();
   }
 
-  private static void postTheory(Task task, final Project project) {
-    if (!EduSettings.isLoggedIn()) {
-      return;
-    }
-    final int stepId = task.getStepId();
-    int lessonId = task.getLesson().getId();
-    ProgressManager.getInstance().run(
-      new com.intellij.openapi.progress.Task.Backgroundable(project, "Posting Theory to Stepik", false) {
-        @Override
-        public void run(@NotNull ProgressIndicator progressIndicator) {
-          markStepAsViewed(lessonId, stepId);
-        }
-      });
-  }
 
-  private static void markStepAsViewed(int lessonId, int stepId) {
-    final StepikUnit unit = StepikConnector.INSTANCE.getLessonUnit(lessonId);
-    if (unit == null) {
-      LOG.warn("Failed to get lesson unit " + lessonId);
-      return;
-    }
-
-    final List<Integer> assignmentsIds = unit.getAssignments();
-    if (assignmentsIds.isEmpty()) {
-      LOG.warn("No assignment ids in unit " + unit.getId());
-      return;
-    }
-    final List<Assignment> assignments = StepikMultipleRequestsConnector.INSTANCE.getAssignments(assignmentsIds);
-    for (Assignment assignment : assignments) {
-      if (assignment.getStep() != stepId) {
-        continue;
-      }
-      StepikConnector.INSTANCE.postView(assignment.getId(), stepId);
-    }
-  }
 }
