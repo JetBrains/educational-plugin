@@ -174,7 +174,7 @@ public class StepikTaskBuilder {
         final Dataset dataset = attempt.getDataset();
         if (dataset != null && dataset.getOptions() != null) {
           task.setChoiceVariants(dataset.getOptions());
-          task.setMultipleChoice(dataset.is_multiple_choice());
+          task.setMultipleChoice(dataset.isMultipleChoice());
         }
         else {
           LOG.warn("Dataset for step " + myStepId + " is null");

@@ -162,9 +162,12 @@ class Assignment {
 
 class Dataset {
   constructor()
-  constructor(emptyDataset: String)
+  constructor(emptyDataset: String)  // stepik returns empty string instead of null
 
-  var is_multiple_choice: Boolean = false
+  @JsonProperty("is_multiple_choice")
+  var isMultipleChoice: Boolean = false
+
+  @JsonProperty("options")
   var options: List<String>? = null
 }
 
