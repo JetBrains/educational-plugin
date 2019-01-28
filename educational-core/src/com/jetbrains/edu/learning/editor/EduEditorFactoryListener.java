@@ -4,10 +4,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.openapi.editor.event.EditorFactoryEvent;
-import com.intellij.openapi.editor.event.EditorFactoryListener;
-import com.intellij.openapi.editor.event.EditorMouseEvent;
-import com.intellij.openapi.editor.event.EditorMouseListener;
+import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -44,7 +41,7 @@ import java.util.List;
 public class EduEditorFactoryListener implements EditorFactoryListener {
   private static final Logger LOG = Logger.getInstance(EduEditorFactoryListener.class.getName());
 
-  private static class WindowSelectionListener implements EditorMouseListener {
+  private static class WindowSelectionListener extends EditorMouseAdapter {
     private final TaskFile myTaskFile;
 
     public WindowSelectionListener(TaskFile file) {
