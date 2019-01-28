@@ -347,25 +347,21 @@ object StepikConnector {
 
   fun deleteSection(sectionId: Int) {
     val response = service.deleteSection(sectionId).execute()
-    checkForErrors(response)
     validateDeleteResponse(response.code(), sectionId)
   }
 
   fun deleteLesson(lessonId: Int) {
     val response = service.deleteLesson(lessonId).execute()
-    checkForErrors(response)
     validateDeleteResponse(response.code(), lessonId)
   }
 
   fun deleteUnit(unitId: Int) {
     val response = service.deleteUnit(unitId).execute()
-    checkForErrors(response)
     validateDeleteResponse(response.code(), unitId)
   }
 
   fun deleteTask(taskId: Int) {
     val response = service.deleteStepSource(taskId).execute()
-    checkForErrors(response)
     validateDeleteResponse(response.code(), taskId)
   }
 
