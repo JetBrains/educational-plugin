@@ -266,9 +266,9 @@ open class StepikIntegrationTest : StepikTestCase() {
     val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, unitIds.toTypedArray(), false)
 
     val taskFromStepik = lessonsFromUnits[0].getTask("task1") ?: error("Can't find `task1`")
-    assertEquals(taskText, taskFromStepik.getTaskFile("src/Task.kt")?.getText())
-    assertEquals(testText, taskFromStepik.getTaskFile("test/Tests.kt")?.getText())
-    assertEquals(additionalText, taskFromStepik.getTaskFile("build.gradle")?.getText())
+    assertEquals(taskText, taskFromStepik.getTaskFile("src/Task.kt")?.text)
+    assertEquals(testText, taskFromStepik.getTaskFile("test/Tests.kt")?.text)
+    assertEquals(additionalText, taskFromStepik.getTaskFile("build.gradle")?.text)
   }
 
   fun `test course with language version`() {

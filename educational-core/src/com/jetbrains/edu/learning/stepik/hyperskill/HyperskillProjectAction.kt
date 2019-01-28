@@ -5,7 +5,6 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
-import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -13,7 +12,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
@@ -23,11 +21,6 @@ import java.awt.event.ActionListener
 import javax.swing.event.HyperlinkEvent
 
 class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
-
-  override fun update(e: AnActionEvent) {
-    super.update(e)
-    e.presentation.isEnabledAndVisible = Experiments.isFeatureEnabled(EduExperimentalFeatures.HYPERSKILL)
-  }
 
   override fun actionPerformed(e: AnActionEvent) {
     val account = HyperskillSettings.INSTANCE.account
