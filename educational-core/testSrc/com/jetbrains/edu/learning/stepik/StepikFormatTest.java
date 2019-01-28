@@ -70,6 +70,10 @@ public class StepikFormatTest extends EduTestCase {
     doStepOptionMigrationTest(10);
   }
 
+  public void test10Version() throws IOException {
+    doStepOptionMigrationTest(10);
+  }
+
   public void testAdditionalMaterialsLesson() throws IOException {
     String responseString = loadJsonText();
     final ObjectMapper mapper = StepikConnector.INSTANCE.getObjectMapper();
