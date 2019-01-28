@@ -7,10 +7,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduTestCase;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots;
 import com.jetbrains.edu.learning.serialization.converter.TaskRootsKt;
 import com.jetbrains.edu.learning.stepik.api.*;
@@ -276,6 +273,21 @@ public class StepikFormatTest extends EduTestCase {
     final int length = placeholders.get(0).getLength();
     assertEquals(14, length);
     assertEquals("type your name", taskFile.getText().substring(offset, offset + length));
+  }
+
+  public void testOptionsPlaceholderDependency() throws IOException {
+    final StepOptions options = getStepOptions();
+    final List<TaskFile> files = options.getFiles();
+    final TaskFile taskFile = files.get(0);
+
+    final List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
+    assertEquals(1, placeholders.size());
+    final AnswerPlaceholderDependency dependency = placeholders.get(0).getPlaceholderDependency();
+    assertNotNull(dependency);
+    assertEquals("mysite/settings.py", dependency.getFileName());
+    assertEquals("task1", dependency.getTaskName());
+    assertEquals("lesson1", dependency.getLessonName());
+    assertEquals(1, dependency.getPlaceholderIndex());
   }
 
   public void testTaskStatuses() throws IOException {

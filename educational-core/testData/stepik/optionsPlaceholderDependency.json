@@ -1,0 +1,150 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "id": 323996,
+      "lesson": 88662,
+      "position": 2,
+      "status": "ready",
+      "block": {
+        "name": "pycharm",
+        "text": "\n<h3>Models</h3>\n\nA model is the single, definitive source of information about your data. It contains the essential fields and behaviors of the data you\u2019re storing. Generally, each model maps to a single database table.\n<br><br>\nThe basics:\n<ul>\n    <li>Each model is a Python class that subclasses <code>django.db.models.Model</code>.</li>\n    <li>Each attribute of the model represents a database field.</li>\n    <li>With all of this, Django gives you an automatically-generated database-access API; see <a href=\"https://docs.djangoproject.com/en/1.10/topics/db/queries/\">Making queries</a>.</li>\n</ul>\n\nQuick example\nThis example model defines a Person, which has a <code>first_name</code> and <code>last_name</code>:\n<pre><code>\nfrom django.db import models\n\nclass Person(models.Model):\n    first_name = models.CharField(max_length=30)\n    last_name = models.CharField(max_length=30)\nfirst_name and last_name are fields of the model. Each field is specified as a class attribute, and each attribute maps to a database column.\n</code></pre>\nThe above Person model would create a database table like this:\n<pre><code>\nCREATE TABLE myapp_person (\n    \"id\" serial NOT NULL PRIMARY KEY,\n    \"first_name\" varchar(30) NOT NULL,\n    \"last_name\" varchar(30) NOT NULL\n);\n</code></pre>\n\nTask:\nMake <code>Post</code> class a django model.\nThen define <code>title</code> as a <code>CharField</code> with maximum length equals to 200\nand <code>published_date</code> as a <code>DateTimeField</code>. Allow empty values for <code>published_date</code>\nand make Django store empty values as <code>NULL</code> in the database\n<br><br>\n<br><br>\n<p>For more information visit <a href=\"https://docs.djangoproject.com/en/1.10/topics/db/models/\">django documentation</a>.\n\n</p>",
+        "video": null,
+        "animation": null,
+        "options": {
+          "task_type": "edu",
+          "lesson_type": "framework",
+          "test": [
+            {
+              "name": "tests.py",
+              "text": "from test_helper import failed, passed, get_answer_placeholders, test_answer_placeholders_text_deleted, \\\n    test_is_not_empty\n\n\ndef test_answer_placeholders():\n    placeholders = get_answer_placeholders()\n    placeholder = placeholders[0]\n    if placeholder == \"models.Model\":\n        passed()\n    else:\n        failed(\"Use models.Model as an ancestor\")\n\n\ndef test_title():\n    placeholders = get_answer_placeholders()\n    placeholder = placeholders[1]\n    if \"title\" in placeholder:\n        passed()\n    else:\n        failed(\"Define title variable\")\n\n\ndef test_title1():\n    placeholders = get_answer_placeholders()\n    placeholder = placeholders[1]\n    if \"CharField\" in placeholder and \"max_length\" in placeholder and \"200\" in placeholder:\n        passed()\n    else:\n        failed(\"Create models.CharField(max_length=200) here\")\n\n\ndef test_published_date():\n    placeholders = get_answer_placeholders()\n    placeholder = placeholders[2]\n    if \"published_date\" in placeholder:\n        passed()\n    else:\n        failed(\"Define published_date variable\")\n\n\ndef test_published_date1():\n    placeholders = get_answer_placeholders()\n    placeholder = placeholders[2]\n    if \"DateTimeField\" in placeholder and \"blank\" in placeholder and \"null\" in placeholder:\n        passed()\n    else:\n        failed(\"Define variable as DateTimeField(blank=True, null=True)\")\n\n\nif __name__ == '__main__':\n    test_is_not_empty()\n    test_answer_placeholders_text_deleted()\n    test_answer_placeholders()\n    test_title()\n    test_title1()\n    test_published_date()\n    test_published_date1()\n\n\n"
+            }
+          ],
+          "title": "task2",
+          "description_text": "<html>\n<h3>Models</h3>\n\nA model is the single, definitive source of information about your data. It contains the essential fields and behaviors of the data you\u2019re storing. Generally, each model maps to a single database table.\n<br><br>\n<h4>The basics:</h4>\n<ul>\n    <li>Each model is a Python class that subclasses <code>django.db.models.Model</code>.</li>\n    <li>Each attribute of the model represents a database field.</li>\n    <li>With all of this, Django gives you an automatically-generated database-access API; see <a href=\"https://docs.djangoproject.com/en/1.10/topics/db/queries/\">Making queries</a>.</li>\n</ul>\n\n<h4>Quick example</h4>\nThis example model defines a Person, which has a <code>first_name</code> and <code>last_name</code>:\n<pre><code>\nfrom django.db import models\n\nclass Person(models.Model):\n    first_name = models.CharField(max_length=30)\n    last_name = models.CharField(max_length=30)\nfirst_name and last_name are fields of the model. Each field is specified as a class attribute, and each attribute maps to a database column.\n</code></pre>\nThe above Person model would create a database table like this:\n<pre><code>\nCREATE TABLE myapp_person (\n    \"id\" serial NOT NULL PRIMARY KEY,\n    \"first_name\" varchar(30) NOT NULL,\n    \"last_name\" varchar(30) NOT NULL\n);\n</code></pre>\n\n<h4>Task:</h4>\nMake <code>Post</code> class a django model.\nThen define <code>title</code> as a <code>CharField</code> with maximum length equals to 200\nand <code>published_date</code> as a <code>DateTimeField</code>. Allow empty values for <code>published_date</code>\nand make Django store empty values as <code>NULL</code> in the database\n<br/><br/>\n<br/><br/>\n<p style=\"color:#808080\">For more information visit <a href=\"https://docs.djangoproject.com/en/1.10/topics/db/models/\">django documentation</a>.\n</html>\n",
+          "description_format": "html",
+          "files": [
+            {
+              "name": "mysite/settings.py",
+              "text": "\"\"\"\nDjango settings for mysite project.\n\nGenerated by 'django-admin startproject' using Django 1.10.3.\n\nFor more information on this file, see\nhttps://docs.djangoproject.com/en/1.10/topics/settings/\n\nFor the full list of settings and their values, see\nhttps://docs.djangoproject.com/en/1.10/ref/settings/\n\"\"\"\n\nimport os\n\n# Build paths inside the project like this: os.path.join(BASE_DIR, ...)\nBASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\n\n\n# Quick-start development settings - unsuitable for production\n# See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/\n\n# SECURITY WARNING: keep the secret key used in production secret!\nSECRET_KEY = '-^c-ih(z2-7ze$jmth7bx+$=r&k@kl=9zm%iuopp7i&l0*#1ah'\n\n# SECURITY WARNING: don't run with debug turned on in production!\nDEBUG = True\n\nALLOWED_HOSTS = []\n\n\n# Application definition\n\nINSTALLED_APPS = [\n    'django.contrib.admin',\n    'django.contrib.auth',\n    'django.contrib.contenttypes',\n    'django.contrib.sessions',\n    'django.contrib.messages',\n    'django.contrib.staticfiles',\n    'blog',\n]\n\nMIDDLEWARE = [\n    'django.middleware.security.SecurityMiddleware',\n    'django.contrib.sessions.middleware.SessionMiddleware',\n    'django.middleware.common.CommonMiddleware',\n    'django.middleware.csrf.CsrfViewMiddleware',\n    'django.contrib.auth.middleware.AuthenticationMiddleware',\n    'django.contrib.messages.middleware.MessageMiddleware',\n    'django.middleware.clickjacking.XFrameOptionsMiddleware',\n]\n\nROOT_URLCONF = 'mysite.urls'\n\nTEMPLATES = [\n    {\n        'BACKEND': 'django.template.backends.django.DjangoTemplates',\n        'DIRS': [],\n        'APP_DIRS': True,\n        'OPTIONS': {\n            'context_processors': [\n                'django.template.context_processors.debug',\n                'django.template.context_processors.request',\n                'django.contrib.auth.context_processors.auth',\n                'django.contrib.messages.context_processors.messages',\n            ],\n        },\n    },\n]\n\nWSGI_APPLICATION = 'mysite.wsgi.application'\n\n\n# Database\n# https://docs.djangoproject.com/en/1.10/ref/settings/#databases\n\nDATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.sqlite3',\n        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),\n    }\n}\n\n\n# Password validation\n# https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators\n\nAUTH_PASSWORD_VALIDATORS = [\n    {\n        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',\n    },\n    {\n        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',\n    },\n    {\n        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',\n    },\n    {\n        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',\n    },\n]\n\n\n# Internationalization\n# https://docs.djangoproject.com/en/1.10/topics/i18n/\n\nLANGUAGE_CODE = 'en-us'\n\nTIME_ZONE = 'use correct time zone'\n\nUSE_I18N = True\n\nUSE_L10N = True\n\nUSE_TZ = True\n\n\n# Static files (CSS, JavaScript, Images)\n# https://docs.djangoproject.com/en/1.10/howto/static-files/\n\nSTATIC_URL = '/static/'\n",
+              "placeholders": [
+                {
+                  "offset": 2925,
+                  "length": 21,
+                  "dependency": {
+                    "lesson": "lesson1",
+                    "task": "task1",
+                    "file": "mysite/settings.py",
+                    "placeholder": 1
+                  },
+                  "hints": [
+                    "For instance, 'Europe/Berlin'"
+                  ],
+                  "possible_answer": "UTC",
+                  "placeholder_text": "use correct time zone"
+                }
+              ]
+            },
+            {
+              "name": "mysite/__init__.py",
+              "text": "",
+              "placeholders": []
+            },
+            {
+              "name": "blog/admin.py",
+              "text": "from django.contrib import admin\n\n# Register your models here.\n",
+              "placeholders": []
+            },
+            {
+              "name": "blog/models.py",
+              "text": "from django.db import models\nfrom django.utils import timezone\n\n\nclass Post(inherit Post from django models.Model):\n    author = models.ForeignKey('auth.User')\n    define title as a CharField with max length equals to 200\n    text = models.TextField()\n    created_date = models.DateTimeField(default=timezone.now)\n    define published_date as a DateTimeField\n\n    def publish(self):\n        self.published_date = timezone.now()\n        self.save()\n\n    def __str__(self):\n        return self.title\n",
+              "placeholders": [
+                {
+                  "offset": 76,
+                  "length": 37,
+                  "hints": [],
+                  "possible_answer": "models.Model",
+                  "placeholder_text": "inherit Post from django models.Model"
+                },
+                {
+                  "offset": 164,
+                  "length": 57,
+                  "hints": [
+                    "Use max_length parameter"
+                  ],
+                  "possible_answer": "title = models.CharField(max_length=200)",
+                  "placeholder_text": "define title as a CharField with max length equals to 200"
+                },
+                {
+                  "offset": 318,
+                  "length": 40,
+                  "hints": [
+                    "Use blank parameter to allow the field to be blank.",
+                    "Use null parameter to make Django store empty values as NULL in the database"
+                  ],
+                  "possible_answer": "published_date = models.DateTimeField(blank=True, null=True)",
+                  "placeholder_text": "define published_date as a DateTimeField"
+                }
+              ]
+            },
+            {
+              "name": "mysite/urls.py",
+              "text": "\"\"\"mysite URL Configuration\n\nThe `urlpatterns` list routes URLs to views. For more information please see:\n    https://docs.djangoproject.com/en/1.10/topics/http/urls/\nExamples:\nFunction views\n    1. Add an import:  from my_app import views\n    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')\nClass-based views\n    1. Add an import:  from other_app.views import Home\n    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')\nIncluding another URLconf\n    1. Import the include() function: from django.conf.urls import url, include\n    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))\n\"\"\"\nfrom django.conf.urls import url, include\nfrom django.contrib import admin\n\nurlpatterns = [\n    url(r'^admin/', admin.site.urls),\n    url(r'', include('blog.urls')),\n]\n",
+              "placeholders": []
+            },
+            {
+              "name": "mysite/wsgi.py",
+              "text": "\"\"\"\nWSGI config for mysite project.\n\nIt exposes the WSGI callable as a module-level variable named ``application``.\n\nFor more information on this file, see\nhttps://docs.djangoproject.com/en/1.10/howto/deployment/wsgi/\n\"\"\"\n\nimport os\n\nfrom django.core.wsgi import get_wsgi_application\n\nos.environ.setdefault(\"DJANGO_SETTINGS_MODULE\", \"mysite.settings\")\n\napplication = get_wsgi_application()\n",
+              "placeholders": []
+            },
+            {
+              "name": "blog/__init__.py",
+              "text": "",
+              "placeholders": []
+            },
+            {
+              "name": "blog/urls.py",
+              "text": "from django.conf.urls import url\nfrom . import views\n\nurlpatterns = [\n\n]\n",
+              "placeholders": []
+            }
+          ],
+          "additional_files": [],
+          "format_version": 5
+        },
+        "subtitle_files": []
+      },
+      "actions": {
+        "submit": "#"
+      },
+      "progress": "77-323996",
+      "subscriptions": [
+        "31-77-323996",
+        "30-77-323996"
+      ],
+      "instruction": null,
+      "session": null,
+      "instruction_type": null,
+      "viewed_by": 631,
+      "passed_by": 115,
+      "correct_ratio": 0.22454672245467225,
+      "worth": 1,
+      "is_solutions_unlocked": false,
+      "solutions_unlocked_attempts": 3,
+      "has_submissions_restrictions": false,
+      "max_submissions_count": 3,
+      "variation": 1,
+      "variations_count": 1,
+      "create_date": "2018-05-08T12:55:52Z",
+      "update_date": "2018-05-08T12:55:53Z",
+      "discussions_count": 0,
+      "discussion_proxy": "77-323996-1",
+      "discussion_threads": [
+        "77-323996-1"
+      ]
+    }
+  ]
+}

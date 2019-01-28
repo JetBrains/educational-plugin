@@ -19,7 +19,7 @@ class Step {
   var options: StepOptions? = null
   var text: String = ""
   var name = "pycharm"
-  var source: StepOptions? = null
+  var source: StepOptions? = null // used only in POST
 
   companion object {
 
