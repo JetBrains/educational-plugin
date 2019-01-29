@@ -148,7 +148,6 @@ object StepikConnector {
 
   fun isEnrolledToCourse(courseId: Int, stepikUser: StepikUser): Boolean {
     val response = service(stepikUser).enrollments(courseId).executeHandlingExceptions()
-    checkForErrors(response)
     return response?.code() == HttpStatus.SC_OK
   }
 
