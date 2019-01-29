@@ -1,8 +1,8 @@
 diff --git a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
-index b008fcf9e..38e0487f4 100644
+index 4d42dab03..473599e58 100644
 --- a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
 +++ b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
-@@ -44,8 +44,7 @@ class AndroidNewTaskDialog(
+@@ -45,8 +45,7 @@ class AndroidNewTaskDialog(
  
    override fun createAdditionalFields(builder: LayoutBuilder) {
      val androidVersionsInfo = AndroidVersionsInfo()
@@ -117,7 +117,7 @@ index 000000000..ddcf55829
 +  override fun getDefaultHighlightingMode(): String = "text/x-scala"
 +}
 diff --git a/build.gradle b/build.gradle
-index 3d9c57869..9bc26065d 100644
+index 420d9d5bf..d4a46ce7a 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -205,7 +205,7 @@ intellij {
@@ -142,11 +142,11 @@ index 3d9c57869..9bc26065d 100644
  }
  
 -configure(project(':Edu-JavaScript')) {
--  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
+-  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage", "CSS", "JavaScriptDebugger"
 -}
 +//no JS support in Android Studio
 +//configure(project(':Edu-JavaScript')) {
-+//  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
++//  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage", "CSS", "JavaScriptDebugger"
 +//}
  
  configure(project(':Edu-Rust')) {
