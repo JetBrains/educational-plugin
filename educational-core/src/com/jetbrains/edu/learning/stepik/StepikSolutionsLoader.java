@@ -393,6 +393,7 @@ public class StepikSolutionsLoader implements Disposable {
       TaskFile taskFile = task.getTaskFile(file.getName());
       TaskFile updatedTaskFile = updatedTaskData.getTask().getTaskFile(file.getName());
       if (taskFile != null && updatedTaskFile != null) {
+        if (taskFile.getAnswerPlaceholders().size() != updatedTaskFile.getAnswerPlaceholders().size()) continue;
         setPlaceholders(taskFile, updatedTaskFile);
         taskFileToText.put(file.getName(), removeAllTags(file.getText()));
       }
