@@ -15,7 +15,10 @@ import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
 import org.jdom.Element
 
 class EduFileEditorProvider : FileEditorProvider, DumbAware {
-  private val defaultTextEditorProvider = TextEditorProvider.getInstance()
+
+  // Initialize provider lazily to avoid PicoPluginExtensionInitializationException
+  // see https://youtrack.jetbrains.com/issue/EDU-1878
+  private val defaultTextEditorProvider: TextEditorProvider by lazy { TextEditorProvider.getInstance() }
 
   override fun accept(project: Project, file: VirtualFile): Boolean {
     val taskFile = EduUtils.getTaskFile(project, file)
