@@ -1,8 +1,8 @@
 diff --git a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
-index b008fcf9e..38e0487f4 100644
+index 4d42dab03..473599e58 100644
 --- a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
 +++ b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
-@@ -44,8 +44,7 @@ class AndroidNewTaskDialog(
+@@ -45,8 +45,7 @@ class AndroidNewTaskDialog(
 
    override fun createAdditionalFields(builder: LayoutBuilder) {
      val androidVersionsInfo = AndroidVersionsInfo()
@@ -38,20 +38,20 @@ index 000000000..29118bed4
 +  override fun getLanguageScriptUrl(): String = javaClass.classLoader.getResource("/code-mirror/clike.js").toExternalForm()
 +  override fun getDefaultHighlightingMode(): String = "text/x-java"
 +}
-diff --git a/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/checkio/newProject/JsCheckiOCourseProjectGenerator.java b/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/checkio/newProject/JsCheckiOCourseProjectGenerator.java
-index 30c8560ec..cbfe91819 100644
---- a/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/checkio/newProject/JsCheckiOCourseProjectGenerator.java
-+++ b/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/checkio/newProject/JsCheckiOCourseProjectGenerator.java
-@@ -2,7 +2,7 @@ package com.jetbrains.edu.javascript.learning.checkio.newProject;
-
+diff --git a/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/JsCourseProjectGenerator.java b/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/JsCourseProjectGenerator.java
+index c296c8803..303f0942f 100644
+--- a/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/JsCourseProjectGenerator.java
++++ b/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/JsCourseProjectGenerator.java
+@@ -4,7 +4,7 @@ import com.intellij.ide.fileTemplates.FileTemplate;
+ import com.intellij.ide.fileTemplates.FileTemplateManager;
  import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
  import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 -import com.intellij.javascript.nodejs.library.core.NodeCoreLibraryConfigurator;
 +import com.intellij.javascript.nodejs.library.core.NodeJsCoreLibraryConfigurator;
  import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable;
+ import com.intellij.lang.javascript.modules.InstallNodeLocalDependenciesAction;
  import com.intellij.openapi.application.ApplicationManager;
- import com.intellij.openapi.application.ModalityState;
-@@ -37,7 +37,7 @@ public class JsCheckiOCourseProjectGenerator extends CourseProjectGenerator<JsNe
+@@ -41,7 +41,7 @@ public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjec
      ModalityState modalityState = ModalityState.current();
      interpreter.provideCachedVersionOrFetch(version -> ApplicationManager.getApplication().invokeLater(() -> {
          if (version != null) {
