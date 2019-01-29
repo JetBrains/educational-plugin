@@ -64,11 +64,14 @@ public class StepikCheckerConnector {
         Course course = task.getLesson().getCourse();
         StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getLesson(), task.getName(),
                                                               step, task.getStepId(), user.getId());
-        final Task updatedTask = taskBuilder.createTask(step.getBlock().getName());
-        if (updatedTask instanceof ChoiceTask) {
-          final List<String> variants = ((ChoiceTask)updatedTask).getChoiceVariants();
-          task.setChoiceVariants(variants);
-          task.setSelectedVariants(new ArrayList<>());
+        final Step block = step.getBlock();
+        if (block != null) {
+          final Task updatedTask = taskBuilder.createTask(block.getName());
+          if (updatedTask instanceof ChoiceTask) {
+            final List<String> variants = ((ChoiceTask)updatedTask).getChoiceVariants();
+            task.setChoiceVariants(variants);
+            task.setSelectedVariants(new ArrayList<>());
+          }
         }
       }
       return result;
