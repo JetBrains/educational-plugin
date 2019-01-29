@@ -21,9 +21,11 @@ import com.jetbrains.edu.learning.stepik.*
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import org.apache.http.HttpStatus
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.URI
@@ -116,9 +118,9 @@ object StepikConnector {
 
   private fun StepikUser.refreshTokens() {
     val refreshToken = tokenInfo.refreshToken
-    val response = authorizationService.refreshTokens("refresh_token", StepikNames.CLIENT_ID, refreshToken).execute()
+    val response = authorizationService.refreshTokens("refresh_token", StepikNames.CLIENT_ID, refreshToken).executeHandlingExceptions()
     checkForErrors(response)
-    val tokens = response.body()
+    val tokens = response?.body()
     if (tokens != null) {
       updateTokens(tokens)
     }
@@ -126,9 +128,9 @@ object StepikConnector {
 
   fun login(code: String, redirectUri: String): Boolean {
     val response = authorizationService.getTokens(
-      StepikNames.CLIENT_ID, redirectUri, code, "authorization_code").execute()
+      StepikNames.CLIENT_ID, redirectUri, code, "authorization_code").executeHandlingExceptions()
     checkForErrors(response)
-    val tokenInfo = response.body() ?: return false
+    val tokenInfo = response?.body() ?: return false
     val stepikUser = StepikUser(tokenInfo)
     val stepikUserInfo = getCurrentUserInfo(stepikUser) ?: return false
     stepikUser.userInfo = stepikUserInfo
@@ -139,28 +141,28 @@ object StepikConnector {
   // Get requests:
 
   fun getCurrentUserInfo(stepikUser: StepikUser): StepikUserInfo? {
-    val response = service(stepikUser).getCurrentUser().execute()
+    val response = service(stepikUser).getCurrentUser().executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.users?.firstOrNull()
+    return response?.body()?.users?.firstOrNull()
   }
 
   fun isEnrolledToCourse(courseId: Int, stepikUser: StepikUser): Boolean {
-    val response = service(stepikUser).enrollments(courseId).execute()
+    val response = service(stepikUser).enrollments(courseId).executeHandlingExceptions()
     checkForErrors(response)
-    return response.code() == HttpStatus.SC_OK
+    return response?.code() == HttpStatus.SC_OK
   }
 
   fun getCourses(isPublic: Boolean, currentPage: Int, enrolled: Boolean?): CoursesList? {
-    val response = service.courses(true, isPublic, currentPage, enrolled).execute()
+    val response = service.courses(true, isPublic, currentPage, enrolled).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()
+    return response?.body()
   }
 
   @JvmOverloads
   fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean? = null): EduCourse? {
-    val response = service.courses(courseId, isIdeaCompatible).execute()
+    val response = service.courses(courseId, isIdeaCompatible).executeHandlingExceptions()
     checkForErrors(response)
-    val course = response.body()?.courses?.firstOrNull()
+    val course = response?.body()?.courses?.firstOrNull()
     if (course != null) {
       setCourseLanguage(course)
     }
@@ -168,45 +170,45 @@ object StepikConnector {
   }
 
   fun getSection(sectionId: Int): Section? {
-    val response = service.sections(sectionId).execute()
+    val response = service.sections(sectionId).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.sections?.firstOrNull()
+    return response?.body()?.sections?.firstOrNull()
   }
 
   fun getLesson(lessonId: Int): Lesson? {
-    val response = service.lessons(lessonId).execute()
+    val response = service.lessons(lessonId).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.lessons?.firstOrNull()
+    return response?.body()?.lessons?.firstOrNull()
   }
 
   fun getUnit(unitId: Int): StepikUnit? {
-    val response = service.units(unitId).execute()
+    val response = service.units(unitId).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.units?.firstOrNull()
+    return response?.body()?.units?.firstOrNull()
   }
 
   fun getLessonUnit(lessonId: Int): StepikUnit? {
-    val response = service.lessonUnit(lessonId).execute()
+    val response = service.lessonUnit(lessonId).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.units?.firstOrNull()
+    return response?.body()?.units?.firstOrNull()
   }
 
   fun getStep(stepId: Int): StepSource? {
-    val response = service.steps(stepId).execute()
+    val response = service.steps(stepId).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.steps?.firstOrNull()
+    return response?.body()?.steps?.firstOrNull()
   }
 
   fun getSubmissions(isSolved: Boolean, stepId: Int): List<Submission>? {
-    val response = service.submissions(status = if (isSolved) "correct" else "wrong", step = stepId).execute()
+    val response = service.submissions(status = if (isSolved) "correct" else "wrong", step = stepId).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.submissions
+    return response?.body()?.submissions
   }
 
   fun getSubmissions(attemptId: Int, userId: Int): List<Submission>? {
-    val response = service.submissions(attempt = attemptId, user = userId).execute()
+    val response = service.submissions(attempt = attemptId, user = userId).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.submissions
+    return response?.body()?.submissions
   }
 
   fun getLastSubmission(stepId: Int, isSolved: Boolean): Reply? {
@@ -215,35 +217,35 @@ object StepikConnector {
   }
 
   fun getAttempts(stepId: Int, userId: Int): List<Attempt>? {
-    val response = service.attempts(stepId, userId).execute()
+    val response = service.attempts(stepId, userId).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.attempts
+    return response?.body()?.attempts
   }
 
   // Post requests:
 
   fun postCourse(course: EduCourse): EduCourse? {
-    val response = service.course(CourseData(course)).execute()
+    val response = service.course(CourseData(course)).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.courses?.firstOrNull()
+    return response?.body()?.courses?.firstOrNull()
   }
 
   fun postSection(section: Section): Section? {
-    val response = service.section(SectionData(section)).execute()
+    val response = service.section(SectionData(section)).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.sections?.firstOrNull()
+    return response?.body()?.sections?.firstOrNull()
   }
 
   fun postLesson(lesson: Lesson): Lesson? {
-    val response = service.lesson(LessonData(lesson)).execute()
+    val response = service.lesson(LessonData(lesson)).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.lessons?.firstOrNull()
+    return response?.body()?.lessons?.firstOrNull()
   }
 
   fun postUnit(lessonId: Int, position: Int, sectionId: Int): StepikUnit? {
-    val response = service.unit(UnitData(lessonId, position, sectionId)).execute()
+    val response = service.unit(UnitData(lessonId, position, sectionId)).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.units?.firstOrNull()
+    return response?.body()?.units?.firstOrNull()
   }
 
   fun postTask(project: Project, task: Task, lessonId: Int): StepSource? {
@@ -252,9 +254,9 @@ object StepikConnector {
       FileDocumentManager.getInstance().saveAllDocuments()
       stepSourceData = StepSourceData(project, task, lessonId)
     }
-    val response = service.stepSource(stepSourceData!!).execute()
+    val response = service.stepSource(stepSourceData!!).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.steps?.firstOrNull()
+    return response?.body()?.steps?.firstOrNull()
   }
 
   fun postSubmission(passed: Boolean, attempt: Attempt,
@@ -263,10 +265,10 @@ object StepikConnector {
   }
 
   fun postSubmission(submissionData: SubmissionData): List<Submission>? {
-    val response = service.submission(submissionData).execute()
+    val response = service.submission(submissionData).executeHandlingExceptions()
     checkForErrors(response)
-    val submissions = response.body()?.submissions
-    if (response.code() != HttpStatus.SC_CREATED) {
+    val submissions = response?.body()?.submissions
+    if (response?.code() != HttpStatus.SC_CREATED) {
       LOG.error("Failed to make submission $submissions")
       return null
     }
@@ -274,10 +276,10 @@ object StepikConnector {
   }
 
   fun postAttempt(id: Int): Attempt? {
-    val response = service.attempt(AttemptData(id)).execute()
+    val response = service.attempt(AttemptData(id)).executeHandlingExceptions()
     checkForErrors(response)
-    val attempt = response.body()?.attempts?.firstOrNull()
-    if (response.code() != HttpStatus.SC_CREATED) {
+    val attempt = response?.body()?.attempts?.firstOrNull()
+    if (response?.code() != HttpStatus.SC_CREATED) {
       LOG.warn("Failed to make attempt $id")
       return null
     }
@@ -285,23 +287,23 @@ object StepikConnector {
   }
 
   fun postView(assignmentId: Int, stepId: Int) {
-    val response = service.view(ViewData(assignmentId, stepId)).execute()
+    val response = service.view(ViewData(assignmentId, stepId)).executeHandlingExceptions()
     checkForErrors(response)
-    if (response.code() != HttpStatus.SC_CREATED) {
-      LOG.warn("Error while Views post, code: " + response.code())
+    if (response?.code() != HttpStatus.SC_CREATED) {
+      LOG.warn("Error while Views post, code: " + response?.code())
     }
   }
 
   fun postMember(userId: String, group: String): Int {
-    val response = service.members(MemberData(userId, group)).execute()
+    val response = service.members(MemberData(userId, group)).executeHandlingExceptions()
     checkForErrors(response)
-    return response.code()
+    return response?.code() ?: -1
   }
 
   fun enrollToCourse(courseId: Int, stepikUser: StepikUser) {
-    val response = service(stepikUser).enrollment(EnrollmentData(courseId)).execute()
+    val response = service(stepikUser).enrollment(EnrollmentData(courseId)).executeHandlingExceptions()
     checkForErrors(response)
-    if (response.code() != HttpStatus.SC_CREATED) {
+    if (response?.code() != HttpStatus.SC_CREATED) {
       LOG.error("Failed to enroll user ${stepikUser.id} to course $courseId")
     }
   }
@@ -309,27 +311,27 @@ object StepikConnector {
   // Update requests:
 
   fun updateCourse(course: EduCourse): Int {
-    val response = service.course(course.id, CourseData(course)).execute()
+    val response = service.course(course.id, CourseData(course)).executeHandlingExceptions()
     checkForErrors(response)
-    return response.code()
+    return response?.code() ?: -1
   }
 
   fun updateSection(section: Section): Section? {
-    val response = service.section(section.id, SectionData(section)).execute()
+    val response = service.section(section.id, SectionData(section)).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.sections?.firstOrNull()
+    return response?.body()?.sections?.firstOrNull()
   }
 
   fun updateLesson(lesson: Lesson): Lesson? {
-    val response = service.lesson(lesson.id, LessonData(lesson)).execute()
+    val response = service.lesson(lesson.id, LessonData(lesson)).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.lessons?.firstOrNull()
+    return response?.body()?.lessons?.firstOrNull()
   }
 
   fun updateUnit(unitId: Int, lessonId: Int, position: Int, sectionId: Int): StepikUnit? {
-    val response = service.unit(unitId, UnitData(lessonId, position, sectionId, unitId)).execute()
+    val response = service.unit(unitId, UnitData(lessonId, position, sectionId, unitId)).executeHandlingExceptions()
     checkForErrors(response)
-    return response.body()?.units?.firstOrNull()
+    return response?.body()?.units?.firstOrNull()
   }
 
   fun updateTask(project: Project, task: Task): Int {
@@ -338,47 +340,61 @@ object StepikConnector {
       FileDocumentManager.getInstance().saveAllDocuments()
       stepSourceData = StepSourceData(project, task, task.lesson.id)
     }
-    val response = service.stepSource(task.stepId, stepSourceData!!).execute()
+    val response = service.stepSource(task.stepId, stepSourceData!!).executeHandlingExceptions()
     checkForErrors(response)
-    return response.code()
+    return response?.code() ?: -1
   }
 
   // Delete requests:
 
   fun deleteSection(sectionId: Int) {
-    val response = service.deleteSection(sectionId).execute()
-    validateDeleteResponse(response.code(), sectionId)
+    val response = service.deleteSection(sectionId).executeHandlingExceptions()
+    validateDeleteResponse(response, sectionId)
   }
 
   fun deleteLesson(lessonId: Int) {
-    val response = service.deleteLesson(lessonId).execute()
-    validateDeleteResponse(response.code(), lessonId)
+    val response = service.deleteLesson(lessonId).executeHandlingExceptions()
+    validateDeleteResponse(response, lessonId)
   }
 
   fun deleteUnit(unitId: Int) {
-    val response = service.deleteUnit(unitId).execute()
-    validateDeleteResponse(response.code(), unitId)
+    val response = service.deleteUnit(unitId).executeHandlingExceptions()
+    validateDeleteResponse(response, unitId)
   }
 
   fun deleteTask(taskId: Int) {
-    val response = service.deleteStepSource(taskId).execute()
-    validateDeleteResponse(response.code(), taskId)
+    val response = service.deleteStepSource(taskId).executeHandlingExceptions()
+    validateDeleteResponse(response, taskId)
   }
 
-  private fun validateDeleteResponse(responseCode: Int, id: Int) {
-    if (responseCode != HttpStatus.SC_NO_CONTENT) {
+  private fun validateDeleteResponse(response: Response<out Any>?, id: Int) {
+    if (response == null) return
+    if (response.code() != HttpStatus.SC_NO_CONTENT) {
       // If parent item was deleted its children are deleted too, so it's ok to fail to delete item here
       LOG.warn("Failed to delete item $id")
     }
   }
 
-  internal fun checkForErrors(response: Response<out Any>) {
+  internal fun checkForErrors(response: Response<out Any>?) {
+    if (response == null) return
     val errorBody = response.errorBody()
     if (errorBody != null) {
       LOG.error(errorBody.string())
     }
   }
 
+  private fun <T> Call<T>.executeHandlingExceptions(): Response<T>? {
+    try {
+      return this.execute()
+    }
+    catch (e: IOException) {
+      LOG.error("Failed to connect to server. ${e.message}")
+    }
+    catch (e: RuntimeException) {
+      LOG.error("Failed to connect to server. ${e.message}")
+    }
+    return null
+  }
 }
 
 private fun getUserAgent(): String {
