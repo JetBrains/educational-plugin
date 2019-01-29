@@ -175,7 +175,7 @@ public class StepikCheckerConnector {
   }
 
   private static int getAttemptId(@NotNull Task task) {
-    final Attempt attempt = StepikConnector.INSTANCE.postAttempt(task.getStepId()); //TODO: DatasetAdapter
+    final Attempt attempt = StepikConnector.INSTANCE.postAttempt(task.getStepId());
     return attempt != null ? attempt.getId() : -1;
   }
 }
