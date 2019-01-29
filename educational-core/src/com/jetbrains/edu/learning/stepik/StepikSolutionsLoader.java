@@ -528,7 +528,7 @@ public class StepikSolutionsLoader implements Disposable {
     return solution;
   }
 
-  private static void updateFiles(@NotNull Project project, @NotNull Task task, Map<String, String> solutionText) {
+  private static void updateFiles(@NotNull Project project, @NotNull Task task, Map<String, String> solutionsMap) {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
       return;
@@ -538,10 +538,13 @@ public class StepikSolutionsLoader implements Disposable {
         VirtualFile vFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
         if (vFile != null) {
           try {
-            taskFile.setTrackChanges(false);
-            VfsUtil.saveText(vFile, solutionText.get(taskFile.getName()));
-            SaveAndSyncHandler.getInstance().refreshOpenFiles();
-            taskFile.setTrackChanges(true);
+            final String solutionText = solutionsMap.get(taskFile.getName());
+            if (solutionText != null) {
+              taskFile.setTrackChanges(false);
+              VfsUtil.saveText(vFile, solutionText);
+              SaveAndSyncHandler.getInstance().refreshOpenFiles();
+              taskFile.setTrackChanges(true);
+            }
           }
           catch (IOException e) {
             LOG.warn(e.getMessage());
