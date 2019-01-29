@@ -26,6 +26,8 @@ group = 'org.jetbrains.edu'
 def buildNumber = System.getenv("BUILD_NUMBER")
 version = "$pluginVersion-${buildNumber == null ? "SNAPSHOT" : buildNumber}"
 
+def isStudio = environmentName.startsWith("studio")
+
 import de.undercouch.gradle.tasks.download.Download
 import org.apache.tools.ant.taskdefs.condition.Os
 import groovy.io.FileType
@@ -204,8 +206,13 @@ intellij {
     pluginName 'EduTools'
     updateSinceUntilBuild true
     downloadSources false
-    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion", 
-            "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage", "org.rust.lang:$rustPluginVersion"
+    def pluginsList = ['junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion",
+                       "org.rust.lang:$rustPluginVersion"]
+    if (!isStudio) {
+        pluginsList += ["NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"]
+    }
+    
+    plugins pluginsList.toArray()
 }
 
 task configurePyCharm {
@@ -288,7 +295,6 @@ configure([project(':Edu-Python'),
            project(':Edu-Kotlin'), 
            project(':Edu-Scala'), 
            project(':Edu-Android'), 
-           project(':Edu-JavaScript'),
            project(':Edu-Rust')]) {
     dependencies {
         compile project(':educational-core')
@@ -324,8 +330,15 @@ configure(project(':Edu-Android')) {
     }
 }
 
-configure(project(':Edu-JavaScript')) {
-  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage", "CSS", "JavaScriptDebugger"
+// no JS support in Android Studio
+if (!isStudio) {
+    configure(project(':Edu-JavaScript')) {
+        intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage", "CSS", "JavaScriptDebugger"
+        dependencies {
+            compile project(':educational-core')
+            testCompile project(':educational-core').sourceSets.test.output
+        }
+    }
 }
 
 configure(project(':Edu-Rust')) {
@@ -336,8 +349,11 @@ runIde.systemProperty("-Didea.is.internal", "true")
 runIde.systemProperty("-ea", "")
 
 dependencies {
-    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), 
-            project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-JavaScript'), project(':Edu-Rust')
+    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'),
+            project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-Rust')
+    if (!isStudio) {
+        compile project(':Edu-JavaScript')
+    }
 }
 
 idea {
