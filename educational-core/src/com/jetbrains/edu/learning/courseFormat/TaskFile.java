@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.util.text.StringUtil;
@@ -30,6 +31,7 @@ public class TaskFile {
 
   @Expose
   @SerializedName("is_visible")
+  @JsonProperty("is_visible")
   private boolean myVisible = true;
 
   @Expose
