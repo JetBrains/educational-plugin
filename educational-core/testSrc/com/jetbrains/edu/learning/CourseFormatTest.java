@@ -15,9 +15,9 @@ public class CourseFormatTest extends EduTestCase {
     final Course course = getCourseFromJson();
     final List<Lesson> lessons = course.getLessons(true);
     final Lesson additional = lessons.stream().
-        filter(lesson -> lesson.getName().equals(EduNames.ADDITIONAL_MATERIALS)).findFirst().orElse(null);
+      filter(lesson -> lesson.getName().equals(EduNames.ADDITIONAL_MATERIALS)).findFirst().orElse(null);
     final Lesson oldAdditional = lessons.stream().
-        filter(lesson -> lesson.getName().equals(StepikNames.PYCHARM_ADDITIONAL)).findFirst().orElse(null);
+      filter(lesson -> lesson.getName().equals(StepikNames.PYCHARM_ADDITIONAL)).findFirst().orElse(null);
     assertNotNull(additional);
     assertNull(oldAdditional);
   }
@@ -138,7 +138,7 @@ public class CourseFormatTest extends EduTestCase {
 
   private Course getCourseFromJson() throws IOException {
     final String fileName = getTestFile();
-    return CourseTestUtilsKt.createCourseFromJson(getTestDataPath()+fileName, CourseMode.STUDENT);
+    return CourseTestUtilsKt.createCourseFromJson(getTestDataPath() + fileName, CourseMode.STUDENT);
   }
 
   @NotNull
