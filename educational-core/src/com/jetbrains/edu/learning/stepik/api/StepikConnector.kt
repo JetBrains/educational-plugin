@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit
 object StepikConnector {
   private val LOG = Logger.getInstance(StepikConnector::class.java)
   private val converterFactory: JacksonConverterFactory
+  @JvmStatic
   val objectMapper: ObjectMapper
 
   init {
@@ -128,6 +129,7 @@ object StepikConnector {
     }
   }
 
+  @JvmStatic
   fun login(code: String, redirectUri: String): Boolean {
     val response = authorizationService.getTokens(
       StepikNames.CLIENT_ID, redirectUri, code, "authorization_code").executeHandlingExceptions()
@@ -142,17 +144,20 @@ object StepikConnector {
 
   // Get requests:
 
+  @JvmStatic
   fun getCurrentUserInfo(stepikUser: StepikUser): StepikUserInfo? {
     val response = service(stepikUser).getCurrentUser().executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.users?.firstOrNull()
   }
 
+  @JvmStatic
   fun isEnrolledToCourse(courseId: Int, stepikUser: StepikUser): Boolean {
     val response = service(stepikUser).enrollments(courseId).executeHandlingExceptions()
     return response?.code() == HttpStatus.SC_OK
   }
 
+  @JvmStatic
   fun getCourses(isPublic: Boolean, currentPage: Int, enrolled: Boolean?): CoursesList? {
     val response = service.courses(true, isPublic, currentPage, enrolled).executeHandlingExceptions()
     checkForErrors(response)
@@ -160,6 +165,7 @@ object StepikConnector {
   }
 
   @JvmOverloads
+  @JvmStatic
   fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean? = null): EduCourse? {
     val response = service.courses(courseId, isIdeaCompatible).executeHandlingExceptions()
     checkForErrors(response)
@@ -170,53 +176,62 @@ object StepikConnector {
     return course
   }
 
+  @JvmStatic
   fun getSection(sectionId: Int): Section? {
     val response = service.sections(sectionId).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.sections?.firstOrNull()
   }
 
+  @JvmStatic
   fun getLesson(lessonId: Int): Lesson? {
     val response = service.lessons(lessonId).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.lessons?.firstOrNull()
   }
 
+  @JvmStatic
   fun getUnit(unitId: Int): StepikUnit? {
     val response = service.units(unitId).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.units?.firstOrNull()
   }
 
+  @JvmStatic
   fun getLessonUnit(lessonId: Int): StepikUnit? {
     val response = service.lessonUnit(lessonId).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.units?.firstOrNull()
   }
 
+  @JvmStatic
   fun getStep(stepId: Int): StepSource? {
     val response = service.steps(stepId).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.steps?.firstOrNull()
   }
 
+  @JvmStatic
   fun getSubmissions(isSolved: Boolean, stepId: Int): List<Submission>? {
     val response = service.submissions(status = if (isSolved) "correct" else "wrong", step = stepId).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.submissions
   }
 
+  @JvmStatic
   fun getSubmissions(attemptId: Int, userId: Int): List<Submission>? {
     val response = service.submissions(attempt = attemptId, user = userId).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.submissions
   }
 
+  @JvmStatic
   fun getLastSubmission(stepId: Int, isSolved: Boolean): Reply? {
     val submissions = getSubmissions(isSolved, stepId)
     return submissions?.firstOrNull()?.reply
   }
 
+  @JvmStatic
   fun getAttempts(stepId: Int, userId: Int): List<Attempt>? {
     val response = service.attempts(stepId, userId).executeHandlingExceptions()
     checkForErrors(response)
@@ -225,30 +240,35 @@ object StepikConnector {
 
   // Post requests:
 
+  @JvmStatic
   fun postCourse(course: EduCourse): EduCourse? {
     val response = service.course(CourseData(course)).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.courses?.firstOrNull()
   }
 
+  @JvmStatic
   fun postSection(section: Section): Section? {
     val response = service.section(SectionData(section)).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.sections?.firstOrNull()
   }
 
+  @JvmStatic
   fun postLesson(lesson: Lesson): Lesson? {
     val response = service.lesson(LessonData(lesson)).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.lessons?.firstOrNull()
   }
 
+  @JvmStatic
   fun postUnit(lessonId: Int, position: Int, sectionId: Int): StepikUnit? {
     val response = service.unit(UnitData(lessonId, position, sectionId)).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.units?.firstOrNull()
   }
 
+  @JvmStatic
   fun postTask(project: Project, task: Task, lessonId: Int): StepSource? {
     var stepSourceData: StepSourceData? = null
     invokeAndWaitIfNeed {
@@ -260,11 +280,13 @@ object StepikConnector {
     return response?.body()?.steps?.firstOrNull()
   }
 
+  @JvmStatic
   fun postSubmission(passed: Boolean, attempt: Attempt,
                      files: ArrayList<SolutionFile>, task: Task): List<Submission>? {
     return postSubmission(SubmissionData(attempt.id, if (passed) "1" else "0", files, task))
   }
 
+  @JvmStatic
   fun postSubmission(submissionData: SubmissionData): List<Submission>? {
     val response = service.submission(submissionData).executeHandlingExceptions()
     checkForErrors(response)
@@ -276,6 +298,7 @@ object StepikConnector {
     return submissions
   }
 
+  @JvmStatic
   fun postAttempt(id: Int): Attempt? {
     val response = service.attempt(AttemptData(id)).executeHandlingExceptions()
     checkForErrors(response)
@@ -287,6 +310,7 @@ object StepikConnector {
     return attempt
   }
 
+  @JvmStatic
   fun postView(assignmentId: Int, stepId: Int) {
     val response = service.view(ViewData(assignmentId, stepId)).executeHandlingExceptions()
     checkForErrors(response)
@@ -295,12 +319,14 @@ object StepikConnector {
     }
   }
 
+  @JvmStatic
   fun postMember(userId: String, group: String): Int {
     val response = service.members(MemberData(userId, group)).executeHandlingExceptions()
     checkForErrors(response)
     return response?.code() ?: -1
   }
 
+  @JvmStatic
   fun enrollToCourse(courseId: Int, stepikUser: StepikUser) {
     val response = service(stepikUser).enrollment(EnrollmentData(courseId)).executeHandlingExceptions()
     checkForErrors(response)
@@ -311,30 +337,35 @@ object StepikConnector {
 
   // Update requests:
 
+  @JvmStatic
   fun updateCourse(course: EduCourse): Int {
     val response = service.course(course.id, CourseData(course)).executeHandlingExceptions()
     checkForErrors(response)
     return response?.code() ?: -1
   }
 
+  @JvmStatic
   fun updateSection(section: Section): Section? {
     val response = service.section(section.id, SectionData(section)).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.sections?.firstOrNull()
   }
 
+  @JvmStatic
   fun updateLesson(lesson: Lesson): Lesson? {
     val response = service.lesson(lesson.id, LessonData(lesson)).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.lessons?.firstOrNull()
   }
 
+  @JvmStatic
   fun updateUnit(unitId: Int, lessonId: Int, position: Int, sectionId: Int): StepikUnit? {
     val response = service.unit(unitId, UnitData(lessonId, position, sectionId, unitId)).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.units?.firstOrNull()
   }
 
+  @JvmStatic
   fun updateTask(project: Project, task: Task): Int {
     var stepSourceData: StepSourceData? = null
     invokeAndWaitIfNeed {
@@ -348,21 +379,25 @@ object StepikConnector {
 
   // Delete requests:
 
+  @JvmStatic
   fun deleteSection(sectionId: Int) {
     val response = service.deleteSection(sectionId).executeHandlingExceptions()
     validateDeleteResponse(response, sectionId)
   }
 
+  @JvmStatic
   fun deleteLesson(lessonId: Int) {
     val response = service.deleteLesson(lessonId).executeHandlingExceptions()
     validateDeleteResponse(response, lessonId)
   }
 
+  @JvmStatic
   fun deleteUnit(unitId: Int) {
     val response = service.deleteUnit(unitId).executeHandlingExceptions()
     validateDeleteResponse(response, unitId)
   }
 
+  @JvmStatic
   fun deleteTask(taskId: Int) {
     val response = service.deleteStepSource(taskId).executeHandlingExceptions()
     validateDeleteResponse(response, taskId)

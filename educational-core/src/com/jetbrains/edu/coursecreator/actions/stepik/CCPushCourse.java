@@ -92,7 +92,7 @@ public class CCPushCourse extends DumbAwareAction {
 
   public static boolean doPush(Project project, @NotNull EduCourse course) {
     if (course.isRemote()) {
-      if (StepikConnector.INSTANCE.getCourseInfo(course.getId()) == null) {
+      if (StepikConnector.getCourseInfo(course.getId()) == null) {
         String message = "Cannot find course on Stepik. <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
         Notification notification = new Notification("update.course", "Failed ot update", message, NotificationType.ERROR,
                                                      createPostCourseNotificationListener(project, course));

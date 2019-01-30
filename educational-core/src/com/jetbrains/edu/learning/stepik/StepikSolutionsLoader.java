@@ -86,7 +86,7 @@ public class StepikSolutionsLoader implements Disposable {
       return;
     }
 
-    final Attempt attempt = StepikConnector.INSTANCE.postAttempt(task.getStepId());
+    final Attempt attempt = StepikConnector.postAttempt(task.getStepId());
     if (attempt == null) {
       LOG.warn("Failed to post an attempt " + task.getStepId());
       return;
@@ -119,7 +119,7 @@ public class StepikSolutionsLoader implements Disposable {
       }
     }
 
-    StepikConnector.INSTANCE.postSubmission(passed, attempt, files, task);
+    StepikConnector.postSubmission(passed, attempt, files, task);
   }
 
   public void loadSolutionsInBackground() {
@@ -300,7 +300,7 @@ public class StepikSolutionsLoader implements Disposable {
     }
     else if (!isSolved) {
       if (task instanceof EduTask) {
-        Reply reply = StepikConnector.INSTANCE.getLastSubmission(stepId, isSolved);
+        Reply reply = StepikConnector.getLastSubmission(stepId, isSolved);
         if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
           return true;
         }
@@ -350,7 +350,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static TaskSolutions getEduTaskSolution(@NotNull Task task, boolean isSolved) {
     String language = task.getCourse().getLanguageID();
-    Reply reply = StepikConnector.INSTANCE.getLastSubmission(task.getStepId(), isSolved);
+    Reply reply = StepikConnector.getLastSubmission(task.getStepId(), isSolved);
     if (reply == null || reply.getSolution() == null || reply.getSolution().isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449
       if (reply != null && reply.getSolution() == null) {
@@ -375,7 +375,7 @@ public class StepikSolutionsLoader implements Disposable {
 
     final SimpleModule module = new SimpleModule();
     module.addDeserializer(Task.class, new JacksonSubmissionDeserializer(reply.getVersion(), language));
-    final ObjectMapper objectMapper = StepikConnector.INSTANCE.getObjectMapper().copy();
+    final ObjectMapper objectMapper = StepikConnector.getObjectMapper().copy();
     objectMapper.registerModule(module);
     TaskData updatedTaskData;
     try {
@@ -501,7 +501,7 @@ public class StepikSolutionsLoader implements Disposable {
   @NotNull
   static HashMap<String, String> getSolutionForStepikAssignment(@NotNull Task task, boolean isSolved) {
     HashMap<String, String> taskFileToText = new HashMap<>();
-    final List<Submission> submissions = StepikConnector.INSTANCE.getSubmissions(isSolved, task.getStepId());
+    final List<Submission> submissions = StepikConnector.getSubmissions(isSolved, task.getStepId());
     if (submissions == null) {
       return taskFileToText;
     }

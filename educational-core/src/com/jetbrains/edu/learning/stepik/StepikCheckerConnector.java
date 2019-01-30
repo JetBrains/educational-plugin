@@ -28,13 +28,13 @@ public class StepikCheckerConnector {
 
   @Nullable
   public static Attempt getAttemptForStep(int stepId, int userId) {
-    final List<Attempt> attempts = StepikConnector.INSTANCE.getAttempts(stepId, userId);
+    final List<Attempt> attempts = StepikConnector.getAttempts(stepId, userId);
     if (attempts != null && attempts.size() > 0) {
       final Attempt attempt = attempts.get(0);
-      return attempt.isActive() ? attempt : StepikConnector.INSTANCE.postAttempt(stepId);
+      return attempt.isActive() ? attempt : StepikConnector.postAttempt(stepId);
     }
     else {
-      return StepikConnector.INSTANCE.postAttempt(stepId);
+      return StepikConnector.postAttempt(stepId);
     }
   }
 
@@ -55,8 +55,8 @@ public class StepikCheckerConnector {
 
       final CheckResult result = doCheck(submissionData, attemptId, user.getId());
       if (result.getStatus() == CheckStatus.Failed) {
-        StepikConnector.INSTANCE.postAttempt(task.getStepId());
-        StepSource step = StepikConnector.INSTANCE.getStep(task.getStepId());
+        StepikConnector.postAttempt(task.getStepId());
+        StepSource step = StepikConnector.getStep(task.getStepId());
         if (step == null) {
           LOG.error("Failed to get step " + task.getStepId());
           return result;
@@ -136,7 +136,7 @@ public class StepikCheckerConnector {
 
   private static CheckResult doCheck(@NotNull SubmissionData submission,
                                      int attemptId, int userId) {
-    List<Submission> submissions = StepikConnector.INSTANCE.postSubmission(submission);
+    List<Submission> submissions = StepikConnector.postSubmission(submission);
     if (submissions != null) {
       submissions = getCheckResults(submissions, attemptId, userId);
       if (submissions.size() > 0) {
@@ -166,7 +166,7 @@ public class StepikCheckerConnector {
       String status = submissions.get(0).getStatus();
       while ("evaluation".equals(status)) {
         TimeUnit.MILLISECONDS.sleep(500);
-        submissions = StepikConnector.INSTANCE.getSubmissions(attemptId, userId);
+        submissions = StepikConnector.getSubmissions(attemptId, userId);
         if (submissions == null || submissions.size() != 1) break;
         status = submissions.get(0).getStatus();
       }
@@ -178,7 +178,7 @@ public class StepikCheckerConnector {
   }
 
   private static int getAttemptId(@NotNull Task task) {
-    final Attempt attempt = StepikConnector.INSTANCE.postAttempt(task.getStepId());
+    final Attempt attempt = StepikConnector.postAttempt(task.getStepId());
     return attempt != null ? attempt.getId() : -1;
   }
 }

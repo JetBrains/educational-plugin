@@ -49,7 +49,7 @@ public class OAuthDialog extends DialogWrapper {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
 
-      final Boolean success = EduUtils.execCancelable(() -> StepikConnector.INSTANCE.login(code, StepikNames.EXTERNAL_REDIRECT_URL));
+      final Boolean success = EduUtils.execCancelable(() -> StepikConnector.login(code, StepikNames.EXTERNAL_REDIRECT_URL));
       if (success != null && success) {
         doJustOkAction();
       }

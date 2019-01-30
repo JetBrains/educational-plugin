@@ -137,7 +137,7 @@ public class CCPushLesson extends DumbAwareAction {
   // public for tests
   public static void doPush(Lesson lesson, Project project, Course course) {
     if (lesson.getId() > 0) {
-      StepikUnit unit = StepikConnector.INSTANCE.getUnit(lesson.unitId);
+      StepikUnit unit = StepikConnector.getUnit(lesson.unitId);
       if (unit == null) {
         LOG.error("Failed to get unit for unit id " + lesson.unitId);
         return;
