@@ -26,7 +26,7 @@ public class EduCourse extends Course {
   private int id;
   private Date myUpdateDate = new Date(0);
   boolean isPublic;
-  @Transient public String adminsGroup;
+  @Transient private String myAdminsGroup;
 
   // Not published to stepik:
   private boolean myLoadSolutions = true; // disabled for reset courses
@@ -135,6 +135,16 @@ public class EduCourse extends Course {
 
   public void setAdditionalMaterialsUpdateDate(@NotNull Date additionalMaterialsUpdateDate) {
     myAdditionalMaterialsUpdateDate = additionalMaterialsUpdateDate;
+  }
+
+  @Transient
+  public String getAdminsGroup() {
+    return myAdminsGroup;
+  }
+
+  @Transient
+  public void setAdminsGroup(String adminsGroup) {
+    myAdminsGroup = adminsGroup;
   }
 
   @NotNull

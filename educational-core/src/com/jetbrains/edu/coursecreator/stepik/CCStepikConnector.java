@@ -105,7 +105,7 @@ public class CCStepikConnector {
     courseOnRemote.setLanguage(course.getLanguage());
 
     if (!ApplicationManager.getApplication().isInternal() && !isTestAccount(currentUser)) {
-      addJetBrainsUserAsAdmin(courseOnRemote.adminsGroup);
+      addJetBrainsUserAsAdmin(courseOnRemote.getAdminsGroup());
     }
 
     int sectionCount;
