@@ -44,7 +44,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
 
   fun `test default task description created`() {
     removeTaskDescriptionFile()
-    findTask(0, 0).descriptionText = null
+    findTask(0, 0).descriptionText = ""
     doOpenTaskDescription()
 
     val defaultTaskDescriptionText = FileTemplateManager.getDefaultInstance().getInternalTemplate(EduNames.TASK_HTML).text
