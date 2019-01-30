@@ -197,7 +197,7 @@ class StepikFeedbackLinkMixin {
                 fieldVisibility = JsonAutoDetect.Visibility.NONE,
                 setterVisibility = JsonAutoDetect.Visibility.NONE,
                 creatorVisibility = JsonAutoDetect.Visibility.NONE)
-class StepikTaskMixin {
+open class StepikTaskMixin {
   var name: String? = null
   var myStatus = CheckStatus.Unchecked
 
@@ -206,4 +206,22 @@ class StepikTaskMixin {
 
   @JsonProperty("files")
   private var myTaskFiles: MutableMap<String, TaskFile>? = LinkedHashMap()
+}
+
+@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE,
+                creatorVisibility = JsonAutoDetect.Visibility.NONE)
+class StepikChoiceTaskMixin : StepikTaskMixin() {
+  @JsonProperty("choice_variants")
+  lateinit var myChoiceVariants: List<String>
+
+  @JsonProperty("is_multichoice")
+  var myIsMultipleChoice: Boolean = false
+
+  @JsonProperty("selected_variants")
+  lateinit var mySelectedVariants: List<Int>
+
 }

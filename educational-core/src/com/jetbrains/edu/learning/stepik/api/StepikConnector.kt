@@ -15,6 +15,7 @@ import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.*
@@ -54,6 +55,7 @@ object StepikConnector {
     objectMapper.addMixIn(Lesson::class.java, StepikLessonMixin::class.java)
     objectMapper.addMixIn(TaskFile::class.java, StepikTaskFileMixin::class.java)
     objectMapper.addMixIn(Task::class.java, StepikTaskMixin::class.java)
+    objectMapper.addMixIn(ChoiceTask::class.java, StepikChoiceTaskMixin::class.java)
     objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)
     objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, StepikAnswerPlaceholderDependencyMixin::class.java)
     objectMapper.addMixIn(FeedbackLink::class.java, StepikFeedbackLinkMixin::class.java)

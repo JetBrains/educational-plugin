@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat.tasks;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -11,11 +10,8 @@ public class ChoiceTask extends Task {
   @SuppressWarnings("unused") //used for deserialization
   public ChoiceTask() {}
 
-  @JsonProperty("choice_variants")
   private List<String> myChoiceVariants = new ArrayList<>();
-  @JsonProperty("is_multichoice")
   private boolean myIsMultipleChoice;
-  @JsonProperty("selected_variants")
   private List<Integer> mySelectedVariants = new ArrayList<>();
 
   public List<Integer> getSelectedVariants() {
