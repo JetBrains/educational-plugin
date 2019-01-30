@@ -1,16 +1,10 @@
 package com.jetbrains.edu.learning.stepik.api
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.courseFormat.*
 import java.util.*
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE,
-                setterVisibility = JsonAutoDetect.Visibility.NONE,
-                creatorVisibility = JsonAutoDetect.Visibility.NONE)
 abstract class StepikEduCourseMixin {
   @JsonProperty("is_idea_compatible")
   var isCompatible = true
@@ -50,11 +44,6 @@ abstract class StepikEduCourseMixin {
 }
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE,
-                setterVisibility = JsonAutoDetect.Visibility.NONE,
-                creatorVisibility = JsonAutoDetect.Visibility.NONE)
 class StepikSectionMixin {
   @JsonProperty("units")
   lateinit var units: List<Int>
@@ -76,11 +65,6 @@ class StepikSectionMixin {
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE,
-                setterVisibility = JsonAutoDetect.Visibility.NONE,
-                creatorVisibility = JsonAutoDetect.Visibility.NONE)
 class StepikLessonMixin {
   @JsonProperty("id")
   var myId: Int = 0
@@ -102,11 +86,6 @@ class StepikLessonMixin {
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE,
-                setterVisibility = JsonAutoDetect.Visibility.NONE,
-                creatorVisibility = JsonAutoDetect.Visibility.NONE)
 class StepikTaskFileMixin {
   @JsonProperty("name")
   lateinit var myName: String
@@ -122,11 +101,6 @@ class StepikTaskFileMixin {
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE,
-                setterVisibility = JsonAutoDetect.Visibility.NONE,
-                creatorVisibility = JsonAutoDetect.Visibility.NONE)
 class StepikAnswerPlaceholderMixin {
   @JsonProperty("offset")
   var myOffset = -1
@@ -151,11 +125,6 @@ class StepikAnswerPlaceholderMixin {
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE,
-                setterVisibility = JsonAutoDetect.Visibility.NONE,
-                creatorVisibility = JsonAutoDetect.Visibility.NONE)
 class StepikAnswerPlaceholderDependencyMixin {
 
   @JsonProperty("section")
@@ -178,11 +147,6 @@ class StepikAnswerPlaceholderDependencyMixin {
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE,
-                setterVisibility = JsonAutoDetect.Visibility.NONE,
-                creatorVisibility = JsonAutoDetect.Visibility.NONE)
 class StepikFeedbackLinkMixin {
   @JsonProperty("link_type")
   lateinit var myType: FeedbackLink.LinkType
@@ -192,11 +156,6 @@ class StepikFeedbackLinkMixin {
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE,
-                setterVisibility = JsonAutoDetect.Visibility.NONE,
-                creatorVisibility = JsonAutoDetect.Visibility.NONE)
 open class StepikTaskMixin {
   var name: String? = null
   var myStatus = CheckStatus.Unchecked
@@ -209,11 +168,6 @@ open class StepikTaskMixin {
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE,
-                setterVisibility = JsonAutoDetect.Visibility.NONE,
-                creatorVisibility = JsonAutoDetect.Visibility.NONE)
 class StepikChoiceTaskMixin : StepikTaskMixin() {
   @JsonProperty("choice_variants")
   lateinit var myChoiceVariants: List<String>

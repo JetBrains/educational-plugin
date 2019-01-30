@@ -4,9 +4,8 @@ import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.PrettyPrinter
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
-import com.fasterxml.jackson.databind.DeserializationFeature.READ_ENUMS_USING_TO_STRING
+import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature.WRITE_ENUMS_USING_TO_STRING
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
@@ -156,9 +155,7 @@ class CourseArchiveCreator(
         mapper.addMixIn(Section::class.java, LocalSectionMixin::class.java)
         mapper.addMixIn(Lesson::class.java, LocalLessonMixin::class.java)
         mapper.addMixIn(Task::class.java, LocalTaskMixin::class.java)
-        addCommonMixins(mapper)
-        mapper.enable(WRITE_ENUMS_USING_TO_STRING)
-        mapper.enable(READ_ENUMS_USING_TO_STRING)
+        commonSetup(mapper)
         return mapper
       }
 
@@ -170,20 +167,21 @@ class CourseArchiveCreator(
         mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
         mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
         mapper.addMixIn(Task::class.java, RemoteTaskMixin::class.java)
-        addCommonMixins(mapper)
-        mapper.enable(WRITE_ENUMS_USING_TO_STRING)
-        mapper.enable(READ_ENUMS_USING_TO_STRING)
+        commonSetup(mapper)
         val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a")
         dateFormat.timeZone = TimeZone.getTimeZone("UTC")
         mapper.dateFormat = dateFormat
         return mapper
       }
 
-    private fun addCommonMixins(mapper: ObjectMapper) {
+    private fun commonSetup(mapper: ObjectMapper) {
       mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
       mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
       mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
       mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
+      mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
+      mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
+      mapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
     }
   }
 }

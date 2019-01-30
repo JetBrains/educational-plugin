@@ -1,9 +1,6 @@
 package com.jetbrains.edu.learning.stepik.api
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
-import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.diagnostic.Logger
@@ -62,6 +59,11 @@ object StepikConnector {
     objectMapper.addMixIn(FeedbackLink::class.java, StepikFeedbackLinkMixin::class.java)
     objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
     objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+    objectMapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
+    objectMapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
+    objectMapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
+    objectMapper.disable(MapperFeature.AUTO_DETECT_SETTERS)
+    objectMapper.disable(MapperFeature.AUTO_DETECT_CREATORS)
     objectMapper.registerModule(module)
     return objectMapper
   }

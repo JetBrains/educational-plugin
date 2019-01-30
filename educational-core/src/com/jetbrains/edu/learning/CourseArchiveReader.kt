@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -76,6 +77,10 @@ val courseMapper: ObjectMapper
     mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
     mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
     mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
+    mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
+    mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
+    mapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
+    mapper.disable(MapperFeature.AUTO_DETECT_CREATORS)
     val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a")
     dateFormat.timeZone = TimeZone.getTimeZone("UTC")
     mapper.dateFormat = dateFormat
