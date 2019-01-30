@@ -2,7 +2,6 @@
 
 package com.jetbrains.edu.coursecreator.actions.mixins
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
@@ -54,9 +53,6 @@ private const val DEPENDENCY = "dependency"
 private const val COURSE_TYPE = "course_type"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonPropertyOrder(VERSION, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS)
 @JsonSerialize(using = CourseSerializer::class)
 abstract class LocalEduCourseMixin {
@@ -80,9 +76,6 @@ abstract class LocalEduCourseMixin {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonSerialize(using = SectionSerializer::class)
 abstract class LocalSectionMixin {
   @JsonProperty(TITLE)
@@ -93,9 +86,6 @@ abstract class LocalSectionMixin {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonSerialize(using = LessonSerializer::class)
 abstract class LocalLessonMixin {
   @JsonProperty(TITLE)
@@ -106,9 +96,6 @@ abstract class LocalLessonMixin {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonSerialize(using = TaskSerializer::class)
 abstract class LocalTaskMixin {
   @JsonProperty(NAME)
@@ -128,9 +115,6 @@ abstract class LocalTaskMixin {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT)
 abstract class TaskFileMixin {
   @JsonProperty(NAME)
@@ -147,9 +131,6 @@ abstract class TaskFileMixin {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, POSSIBLE_ANSWER, PLACEHOLDER_TEXT)
 abstract class AnswerPlaceholderMixin {
   @JsonProperty(OFFSET)
@@ -170,9 +151,6 @@ abstract class AnswerPlaceholderMixin {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 abstract class AnswerPlaceholderDependencyMixin {
   @JsonProperty("section")
@@ -195,9 +173,6 @@ abstract class AnswerPlaceholderDependencyMixin {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 abstract class FeedbackLinkMixin {
   @JsonProperty(LINK_TYPE)

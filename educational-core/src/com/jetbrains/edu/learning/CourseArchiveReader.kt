@@ -60,7 +60,7 @@ fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
   return jsonObject
 }
 
-val courseMapper: ObjectMapper
+val courseMapper: ObjectMapper  // TODO: common mapper for archive creator and reader?
   get() {
     val factory = JsonFactory()
     val mapper = ObjectMapper(factory)

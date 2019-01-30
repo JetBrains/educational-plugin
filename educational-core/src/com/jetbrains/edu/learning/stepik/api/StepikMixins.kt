@@ -4,178 +4,223 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.courseFormat.*
 import java.util.*
 
+const val IS_IDEA_COMPATIBLE = "is_idea_compatible"
+const val COURSE_FORMAT = "course_format"
+const val SECTIONS = "sections"
+const val INSTRUCTORS = "instructors"
+const val ID = "id"
+const val UPDATE_DATE = "update_date"
+const val IS_PUBLIC = "is_public"
+const val SUMMARY = "summary"
+const val TITLE = "title"
+const val PROGRAMMING_LANGUAGE = "programming_language"
+const val LANGUAGE = "language"
+const val ADMINS_GROUP = "admins_group"
+const val UNITS = "units"
+const val COURSE = "course"
+const val POSITION = "position"
+const val STEPS = "steps"
+const val UNIT_ID = "unit_id"
+const val NAME = "name"
+const val PLACEHOLDERS = "placeholders"
+const val IS_VISIBLE = "is_visible"
+const val TEXT = "text"
+const val OFFSET = "offset"
+const val LENGTH = "length"
+const val DEPENDENCY = "dependency"
+const val HINTS = "hints"
+const val POSSIBLE_ANSWER = "possible_answer"
+const val PLACEHOLDER_TEXT = "placeholder_text"
+const val SELECTED = "selected"
+const val SECTION = "section"
+const val LESSON = "lesson"
+const val TASK = "task"
+const val FILE = "file"
+const val PLACEHOLDER = "placeholder"
+const val LINK_TYPE = "link_type"
+const val LINK = "link"
+const val STATUS = "status"
+const val STEPIK_ID = "stepic_id"
+const val FILES = "files"
+const val CHOICE_VARIANTS = "choice_variants"
+const val IS_MULTICHOICE = "is_multichoice"
+const val SELECTED_VARIANTS = "selected_variants"
+
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 abstract class StepikEduCourseMixin {
-  @JsonProperty("is_idea_compatible")
+  @JsonProperty(IS_IDEA_COMPATIBLE)
   var isCompatible = true
 
-  @JsonProperty("course_format")
+  @JsonProperty(COURSE_FORMAT)
   lateinit var myType: String
 
-  @JsonProperty("sections")
+  @JsonProperty(SECTIONS)
   lateinit var sectionIds: List<Int>
 
-  @JsonProperty("instructors")
+  @JsonProperty(INSTRUCTORS)
   lateinit var instructors: List<Int>
 
-  @JsonProperty("id")
+  @JsonProperty(ID)
   private var id: Int = 0
 
-  @JsonProperty("update_date")
+  @JsonProperty(UPDATE_DATE)
   lateinit var myUpdateDate: Date
 
-  @JsonProperty("is_public")
+  @JsonProperty(IS_PUBLIC)
   var isPublic: Boolean = false
 
-  @JsonProperty("summary")
+  @JsonProperty(SUMMARY)
   lateinit var description: String
 
-  @JsonProperty("title")
+  @JsonProperty(TITLE)
   lateinit var name: String
 
-  @JsonProperty("programming_language")
+  @JsonProperty(PROGRAMMING_LANGUAGE)
   lateinit var myProgrammingLanguage: String
 
-  @JsonProperty("language")
+  @JsonProperty(LANGUAGE)
   lateinit var myLanguageCode: String
 
-  @JsonProperty("admins_group")
+  @JsonProperty(ADMINS_GROUP)
   lateinit var myAdminsGroup: String
 }
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 class StepikSectionMixin {
-  @JsonProperty("units")
+  @JsonProperty(UNITS)
   lateinit var units: List<Int>
 
-  @JsonProperty("course")
+  @JsonProperty(COURSE)
   var courseId: Int = 0
 
-  @JsonProperty("title")
+  @JsonProperty(TITLE)
   lateinit var name: String
 
-  @JsonProperty("position")
+  @JsonProperty(POSITION)
   var position: Int = 0
 
-  @JsonProperty("id")
+  @JsonProperty(ID)
   private var id: Int = 0
 
-  @JsonProperty("update_date")
+  @JsonProperty(UPDATE_DATE)
   lateinit var myUpdateDate: Date
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 class StepikLessonMixin {
-  @JsonProperty("id")
+  @JsonProperty(ID)
   var myId: Int = 0
 
-  @JsonProperty("steps")
+  @JsonProperty(STEPS)
   lateinit var steps: MutableList<Int>
 
-  @JsonProperty("is_public")
+  @JsonProperty(IS_PUBLIC)
   var is_public: Boolean = false
 
-  @JsonProperty("update_date")
+  @JsonProperty(UPDATE_DATE)
   lateinit var myUpdateDate: Date
 
-  @JsonProperty("title")
+  @JsonProperty(TITLE)
   lateinit var name: String
 
-  @JsonProperty("unit_id")
+  @JsonProperty(UNIT_ID)
   var unitId: Int = 0
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 class StepikTaskFileMixin {
-  @JsonProperty("name")
+  @JsonProperty(NAME)
   lateinit var myName: String
 
-  @JsonProperty("placeholders")
+  @JsonProperty(PLACEHOLDERS)
   lateinit var myAnswerPlaceholders: MutableList<AnswerPlaceholder>
 
-  @JsonProperty("is_visible")
+  @JsonProperty(IS_VISIBLE)
   var myVisible = true
 
-  @JsonProperty("text")
+  @JsonProperty(TEXT)
   lateinit var myText : String
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 class StepikAnswerPlaceholderMixin {
-  @JsonProperty("offset")
+  @JsonProperty(OFFSET)
   var myOffset = -1
 
-  @JsonProperty("length")
+  @JsonProperty(LENGTH)
   private var myLength = -1
 
-  @JsonProperty("dependency")
+  @JsonProperty(DEPENDENCY)
   lateinit var myPlaceholderDependency: AnswerPlaceholderDependency
 
-  @JsonProperty("hints")
+  @JsonProperty(HINTS)
   lateinit var myHints: List<String>
 
-  @JsonProperty("possible_answer")
+  @JsonProperty(POSSIBLE_ANSWER)
   lateinit var myPossibleAnswer : String
 
-  @JsonProperty("placeholder_text")
+  @JsonProperty(PLACEHOLDER_TEXT)
   lateinit var myPlaceholderText: String
 
-  @JsonProperty("selected")
+  @JsonProperty(SELECTED)
   private var mySelected = false
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 class StepikAnswerPlaceholderDependencyMixin {
 
-  @JsonProperty("section")
+  @JsonProperty(SECTION)
   lateinit var mySectionName: String
 
-  @JsonProperty("lesson")
+  @JsonProperty(LESSON)
   lateinit var myLessonName: String
 
-  @JsonProperty("task")
+  @JsonProperty(TASK)
   lateinit var myTaskName: String
 
-  @JsonProperty("file")
+  @JsonProperty(FILE)
   lateinit var myFileName: String
 
-  @JsonProperty("placeholder")
+  @JsonProperty(PLACEHOLDER)
   var myPlaceholderIndex: Int = 0
 
-  @JsonProperty("is_visible")
+  @JsonProperty(IS_VISIBLE)
   var myIsVisible = true
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 class StepikFeedbackLinkMixin {
-  @JsonProperty("link_type")
+  @JsonProperty(LINK_TYPE)
   lateinit var myType: FeedbackLink.LinkType
 
-  @JsonProperty("link")
+  @JsonProperty(LINK)
   lateinit var myLink: String
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 open class StepikTaskMixin {
+  @JsonProperty(NAME)
   var name: String? = null
+
+  @JsonProperty(STATUS)
   var myStatus = CheckStatus.Unchecked
 
-  @JsonProperty("stepic_id")
+  @JsonProperty(STEPIK_ID)
   private var myStepId: Int = 0
 
-  @JsonProperty("files")
+  @JsonProperty(FILES)
   private var myTaskFiles: MutableMap<String, TaskFile>? = LinkedHashMap()
 }
 
 @Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 class StepikChoiceTaskMixin : StepikTaskMixin() {
-  @JsonProperty("choice_variants")
+  @JsonProperty(CHOICE_VARIANTS)
   lateinit var myChoiceVariants: List<String>
 
-  @JsonProperty("is_multichoice")
+  @JsonProperty(IS_MULTICHOICE)
   var myIsMultipleChoice: Boolean = false
 
-  @JsonProperty("selected_variants")
+  @JsonProperty(SELECTED_VARIANTS)
   lateinit var mySelectedVariants: List<Int>
 
 }
