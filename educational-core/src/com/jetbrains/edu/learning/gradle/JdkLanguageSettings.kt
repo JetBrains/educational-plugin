@@ -22,8 +22,13 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
   private fun createSdkModel(): ProjectSdksModel {
     val project = ProjectManager.getInstance().defaultProject
-    return ProjectStructureConfigurable.getInstance(project).projectJdksModel.apply { reset(project) }
+    return ProjectStructureConfigurable.getInstance(project).projectJdksModel.apply {
+      reset(project)
+      setupProjectSdksModel(this)
+    }
   }
+
+  protected open fun setupProjectSdksModel(model: ProjectSdksModel) {}
 
   override fun getLanguageSettingsComponents(course: Course): List<LabeledComponent<JComponent>> {
     val sdkTypeFilter = Condition<SdkTypeId> { sdkTypeId -> sdkTypeId is JavaSdkType && !(sdkTypeId as JavaSdkType).isDependent }

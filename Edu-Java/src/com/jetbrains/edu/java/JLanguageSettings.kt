@@ -4,10 +4,31 @@ import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
+import com.intellij.openapi.util.SystemInfo
+import com.intellij.util.JdkBundle
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.gradle.JdkLanguageSettings
+import java.io.File
 
 class JLanguageSettings : JdkLanguageSettings() {
+
+  override fun setupProjectSdksModel(model: ProjectSdksModel) {
+    val jdkBundle = JdkBundle.createBundled()
+    if (jdkBundle != null && jdkBundle.isJdk) {
+      val bundledJdkPath = jdkBundle.homeLocation.absolutePath
+      if (model.sdks.none { it.homePath == bundledJdkPath }) {
+        model.addSdk(JavaSdk.getInstance(), bundledJdkPath, null)
+      }
+    }
+  }
+
+  private val JdkBundle.homeLocation get(): File {
+    // `JdkBundle#getLocation` returns only location of bundled jdk/jre root folder
+    // but we need to get directory where `javac` is located, and for macOS these folders are not the same
+    // See implementation of `com.intellij.util.JdkBundle#createBundle`
+    return if (SystemInfo.isMac) File(location, "Contents/Home") else location
+  }
+
   override fun getLanguageVersions() = JavaSdkVersion.values().filter { it.isAtLeast(DEFAULT_JAVA) }.map { it.description }
 
   override fun validate(course: Course?): String? {
