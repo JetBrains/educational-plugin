@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -31,9 +30,6 @@ class CCEditTaskDescription : DumbAwareAction(TEXT, TEXT, AllIcons.Modules.Edit)
     if (descriptionFile != null) return descriptionFile
 
     val taskDir = task.getTaskDir(project) ?: error("Task dir for task ${task.name} not found")
-    if (task.descriptionText == null) {
-      task.addDefaultTaskDescription()
-    }
     return GeneratorUtils.createDescriptionFile(taskDir, task) ?: error("Failed to create description file in $taskDir")
   }
 

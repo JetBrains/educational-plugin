@@ -39,6 +39,7 @@ public abstract class Task extends StudyItem {
   protected CheckStatus myStatus = CheckStatus.Unchecked;
   private int myStepId;
   private Map<String, TaskFile> myTaskFiles = new LinkedHashMap<>();
+  @NotNull
   private String descriptionText = "";
   private DescriptionFormat descriptionFormat = EduUtils.getDefaultTaskDescriptionFormat();
   private Date myUpdateDate = new Date(0);
@@ -81,11 +82,12 @@ public abstract class Task extends StudyItem {
     this.name = name;
   }
 
+  @NotNull
   public String getDescriptionText() {
     return descriptionText;
   }
 
-  public void setDescriptionText(String descriptionText) {
+  public void setDescriptionText(@NotNull String descriptionText) {
     this.descriptionText = descriptionText;
   }
 
