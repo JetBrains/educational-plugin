@@ -13,12 +13,33 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.serialization.SerializationUtils
+import com.jetbrains.edu.learning.stepik.api.*
 import java.util.*
 
+const val SOURCE = "source"
+const val TASK_TYPE = "task_type"
+const val LESSON_TYPE = "lesson_type"
+const val FEEDBACK_LINK = "feedback_link"
+const val SAMPLES = "samples"
+const val EXECUTION_MEMORY_LIMIT = "execution_memory_limit"
+const val EXECUTION_TIME_LIMIT = "execution_time_limit"
+const val CODE_TEMPLATES = "code_templates"
+const val FORMAT_VERSION = "format_version"
+const val BLOCK = "block"
+const val PROGRESS = "progress"
+const val COST = "cost"
+
 class Step {
+  @JsonProperty(OPTIONS)
   var options: StepOptions? = null
+
+  @JsonProperty(TEXT)
   var text: String = ""
+
+  @JsonProperty(NAME)
   var name = "pycharm"
+
+  @JsonProperty(SOURCE)
   var source: StepOptions? = null // used only in POST
 
   companion object {
@@ -33,13 +54,13 @@ class Step {
 }
 
 class StepOptions {
-  @JsonProperty("task_type")
+  @JsonProperty(TASK_TYPE)
   var taskType: String? = null
 
-  @JsonProperty("lesson_type")
+  @JsonProperty(LESSON_TYPE)
   var lessonType: String? = null
 
-  @JsonProperty("title")
+  @JsonProperty(TITLE)
   var title: String? = null
 
   @JsonProperty(SerializationUtils.Json.DESCRIPTION_TEXT)
@@ -48,25 +69,25 @@ class StepOptions {
   @JsonProperty(SerializationUtils.Json.DESCRIPTION_FORMAT)
   var descriptionFormat: DescriptionFormat? = null
 
-  @JsonProperty("feedback_link")
+  @JsonProperty(FEEDBACK_LINK)
   var myFeedbackLink = FeedbackLink()
 
-  @JsonProperty("files")
+  @JsonProperty(FILES)
   var files: MutableList<TaskFile>? = null
 
-  @JsonProperty("samples")
+  @JsonProperty(SAMPLES)
   var samples: List<List<String>>? = null
 
-  @JsonProperty("execution_memory_limit")
+  @JsonProperty(EXECUTION_MEMORY_LIMIT)
   var executionMemoryLimit: Int? = null
 
-  @JsonProperty("execution_time_limit")
+  @JsonProperty(EXECUTION_TIME_LIMIT)
   var executionTimeLimit: Int? = null
 
-  @JsonProperty("code_templates")
+  @JsonProperty(CODE_TEMPLATES)
   var codeTemplates: Map<String, String>? = null
 
-  @JsonProperty("format_version")
+  @JsonProperty(FORMAT_VERSION)
   var formatVersion = JSON_FORMAT_VERSION
 
   companion object {
@@ -112,13 +133,25 @@ class StepOptions {
 }
 
 class StepSource {
+  @JsonProperty(ID)
   var id: Int = 0
+
+  @JsonProperty(BLOCK)
   var block: Step? = null
+
+  @JsonProperty(POSITION)
   var position: Int = 0
+
+  @JsonProperty(LESSON)
   var lesson: Int = 0
+
+  @JsonProperty(PROGRESS)
   var progress: String? = null
+
+  @JsonProperty(COST)
   var cost = 1
-  @JsonProperty("update_date")
+
+  @JsonProperty(UPDATE_DATE)
   var updateDate: Date? = null
 
   constructor()
