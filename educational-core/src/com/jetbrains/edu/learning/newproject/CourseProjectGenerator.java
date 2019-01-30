@@ -88,7 +88,7 @@ public abstract class CourseProjectGenerator<S> {
             StepikConnector.enrollToCourse(remoteCourse.getId(), user);
           }
         }
-        StepikCourseLoader.INSTANCE.loadCourseStructure(remoteCourse);
+        StepikCourseLoader.loadCourseStructure(remoteCourse);
         myCourse = remoteCourse;
         return true;
       }, "Loading Course", true, null);
@@ -207,7 +207,7 @@ public abstract class CourseProjectGenerator<S> {
   private void setStepikChangeStatuses(@NotNull Project project) {
     EduCourse courseFromStepik = StepikConnector.getCourseInfo(myCourse.getId(), ((EduCourse)myCourse).isCompatible());
     if (courseFromStepik != null) {
-      StepikCourseLoader.INSTANCE.fillItems(courseFromStepik);
+      StepikCourseLoader.fillItems(courseFromStepik);
       courseFromStepik.init(null, null, false);
       new StepikChangeRetriever(project, courseFromStepik).setStepikChangeStatuses();
     }

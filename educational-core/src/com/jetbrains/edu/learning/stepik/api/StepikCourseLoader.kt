@@ -20,11 +20,13 @@ object StepikCourseLoader {
   private val THREAD_NUMBER = Runtime.getRuntime().availableProcessors()
   private val EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER)
 
+  @JvmStatic
   fun getLessons(remoteCourse: EduCourse, sectionId: Int): List<Lesson> {
     val section = StepikConnector.getSection(sectionId) ?: return emptyList()
     return getLessonsFromUnits(remoteCourse, section.units, true)
   }
 
+  @JvmStatic
   fun getCourseInfos(): List<EduCourse> {
     LOG.info("Loading courses started...")
     val startTime = System.currentTimeMillis()
@@ -86,11 +88,13 @@ object StepikCourseLoader {
     return result
   }
 
+  @JvmStatic
   fun loadCourseStructure(remoteCourse: EduCourse) {
     if (!remoteCourse.items.isEmpty()) return
     fillItems(remoteCourse)
   }
 
+  @JvmStatic
   fun fillItems(remoteCourse: EduCourse) {
     val sectionIds = remoteCourse.sectionIds
     val allSections = StepikMultipleRequestsConnector.getSections(sectionIds)

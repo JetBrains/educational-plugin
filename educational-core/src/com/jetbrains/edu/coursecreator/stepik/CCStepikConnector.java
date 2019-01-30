@@ -420,7 +420,7 @@ public class CCStepikConnector {
         section.setPosition(sectionIds.size());
         section.setId(sectionId);
         updateSectionInfo(project, section);
-        final List<Lesson> lessons = StepikCourseLoader.INSTANCE.getLessons(courseInfo, sectionId);
+        final List<Lesson> lessons = StepikCourseLoader.getLessons(courseInfo, sectionId);
         lessons.stream()
           .filter(Lesson::isAdditional)
           .findFirst()
