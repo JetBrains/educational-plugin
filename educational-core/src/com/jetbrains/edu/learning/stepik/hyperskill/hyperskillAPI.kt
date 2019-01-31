@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 
 const val USERS = "users"
 const val STAGES = "stages"
@@ -92,4 +93,9 @@ class HyperskillTopic {
 
   @JsonProperty(CHILDREN)
   lateinit var children: List<String>
+}
+
+class AdditionalInfo {
+  @JsonProperty("additional_files")
+  lateinit var additionalFiles: List<TaskFile>
 }

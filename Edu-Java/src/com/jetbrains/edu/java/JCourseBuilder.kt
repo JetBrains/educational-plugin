@@ -2,7 +2,7 @@ package com.jetbrains.edu.java
 
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 
-class JCourseBuilder : GradleCourseBuilderBase() {
+open class JCourseBuilder : GradleCourseBuilderBase() {
 
   override val buildGradleTemplateName: String = JAVA_BUILD_GRADLE_TEMPLATE_NAME
 

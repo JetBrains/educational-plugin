@@ -4,8 +4,9 @@ import com.intellij.lang.Language
 import com.intellij.openapi.progress.ProgressManager
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
+import com.jetbrains.edu.learning.stepik.api.loadAttachment
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 fun getLesson(course: HyperskillCourse, lessonId: Int, language: Language): Lesson? {
@@ -17,7 +18,7 @@ fun getLesson(course: HyperskillCourse, lessonId: Int, language: Language): Less
   progressIndicator?.text2 = "Loading project steps"
   val stepSources = HyperskillConnector.getStepSources(lessonId) ?: return null
   lesson = FrameworkLesson(lesson)
-
+  loadAttachment(course, lesson)
   progressIndicator?.checkCanceled()
   progressIndicator?.text2 = "Loading tasks"
   val tasks = StepikCourseLoader.getTasks(language, lesson, stepSources)

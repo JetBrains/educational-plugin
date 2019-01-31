@@ -48,12 +48,24 @@ public abstract class Course extends ItemContainer {
   protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
   protected CourseCompatibility myCompatibility = CourseCompatibility.COMPATIBLE;
 
+  @Transient protected List<TaskFile> additionalFiles = new ArrayList<>();
+
   public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
     for (int i = 0; i < items.size(); i++) {
       StudyItem item = items.get(i);
       item.setIndex(i + 1);
       item.init(this, this, isRestarted);
     }
+  }
+
+  @Transient
+  public List<TaskFile> getAdditionalFiles() {
+    return additionalFiles;
+  }
+
+  @Transient
+  public void setAdditionalFiles(List<TaskFile> additionalFiles) {
+    this.additionalFiles = additionalFiles;
   }
 
   /**

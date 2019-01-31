@@ -95,6 +95,8 @@ object HyperskillConnector {
     return retrofit.create(HyperskillService::class.java)
   }
 
+  // Authorization requests:
+
   fun doAuthorize(vararg postLoginActions: Runnable) {
     createAuthorizationListener(*postLoginActions)
     BrowserUtil.browse(AUTHORISATION_CODE_URL)
@@ -123,6 +125,8 @@ object HyperskillConnector {
     }
   }
 
+  // Get requests:
+
   fun getCurrentUser(account: HyperskillAccount): HyperskillUserInfo? {
     val response = service(account).getUserInfo(0).executeHandlingExceptions()
     checkForErrors(response)
@@ -140,6 +144,29 @@ object HyperskillConnector {
     checkForErrors(response)
     return response?.body()?.steps
   }
+
+  fun fillTopics(course: HyperskillCourse, project: Project) {
+    for ((taskIndex, stage) in course.stages.withIndex()) {
+      val call = service.topics(stage.id)
+      call.enqueue(object: Callback<TopicsList> {
+        override fun onFailure(call: Call<TopicsList>, t: Throwable) {
+          LOG.warn("Failed to get topics for stage ${stage.id}")
+        }
+
+        override fun onResponse(call: Call<TopicsList>, response: Response<TopicsList>) {
+          val topics = response.body()?.topics?.filter { it.children.isEmpty() }
+          if (topics != null && topics.isNotEmpty()) {
+            course.taskToTopics[taskIndex] = topics
+            runInEdt {
+              TaskDescriptionView.getInstance(project).updateAdditionalTaskTab()
+            }
+          }
+        }
+      })
+    }
+  }
+
+  // Post requests:
 
   fun postSolution(task: Task, project: Project) {
     val taskDir = task.getTaskDir(project) ?: return LOG.error("Failed to find task directory ${task.name}")
@@ -175,27 +202,6 @@ object HyperskillConnector {
     val response = service.attempt(Attempt(step)).executeHandlingExceptions()
     checkForErrors(response)
     return response?.body()?.attempts?.firstOrNull() ?: return null
-  }
-
-  fun fillTopics(course: HyperskillCourse, project: Project) {
-    for ((taskIndex, stage) in course.stages.withIndex()) {
-      val call = service.topics(stage.id)
-      call.enqueue(object: Callback<TopicsList> {
-        override fun onFailure(call: Call<TopicsList>, t: Throwable) {
-          LOG.warn("Failed to get topics for stage ${stage.id}")
-        }
-
-        override fun onResponse(call: Call<TopicsList>, response: Response<TopicsList>) {
-          val topics = response.body()?.topics?.filter { it.children.isEmpty() }
-          if (topics != null && topics.isNotEmpty()) {
-            course.taskToTopics[taskIndex] = topics
-            runInEdt {
-              TaskDescriptionView.getInstance(project).updateAdditionalTaskTab()
-            }
-          }
-        }
-      })
-    }
   }
 
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
