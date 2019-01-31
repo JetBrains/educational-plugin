@@ -41,26 +41,15 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
                        request: FullHttpRequest,
                        context: ChannelHandlerContext): String? {
     val uri = decoder.uri()
-
     val matcher = OPEN_COURSE_PATTERN.matcher(uri)
     if (matcher.matches()) {
-      val stageId = RestService.getStringParameter("stage_id", decoder)?.toInt() ?: return "The stage_id parameter was not found"
-      val projectId = RestService.getStringParameter("project_id", decoder)?.toInt() ?: return "The project_id parameter was not found"
-      LOG.info("Opening a stage $stageId from project $projectId")
       val account = HyperskillSettings.INSTANCE.account
       if (account == null) {
-        Notification(HYPERSKILL, HYPERSKILL, "Please, <a href=\"\">login to Hyperskill</a> and select project.",
-                     NotificationType.INFORMATION, HSHyperlinkListener(true)).notify(null)
+        HyperskillConnector.doAuthorize(Runnable { openProject(decoder, request, context) })
       }
-      if (focusOpenProject(projectId, stageId) || openRecentProject(projectId, stageId) || createProject(projectId, stageId)) {
-        RestService.sendOk(request, context)
-        LOG.info("Hyperskill project opened: $projectId")
-        return null
+      else {
+        return openProject(decoder, request, context)
       }
-      RestService.sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
-      val message = "A project wasn't found or created"
-      LOG.info(message)
-      return message
     }
 
     if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
@@ -80,11 +69,27 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     return "Unknown command: $uri"
   }
 
+  private fun openProject(decoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
+    val stageId = RestService.getStringParameter("stage_id", decoder)?.toInt() ?: return "The stage_id parameter was not found"
+    val projectId = RestService.getStringParameter("project_id", decoder)?.toInt() ?: return "The project_id parameter was not found"
+    LOG.info("Opening a stage $stageId from project $projectId")
+
+    if (focusOpenProject(projectId, stageId) || openRecentProject(projectId, stageId) || createProject(projectId, stageId)) {
+      RestService.sendOk(request, context)
+      LOG.info("Hyperskill project opened: $projectId")
+      return null
+    }
+    RestService.sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
+    val message = "A project wasn't found or created"
+    LOG.info(message)
+    return message
+  }
+
   private fun focusOpenProject(courseId: Int, stageId: Int): Boolean {
     val courseProject = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillId == courseId }
     if (courseProject != null) {
       PropertiesComponent.getInstance().setValue(HYPERSKILL_STAGE, stageId, 0)
-      ApplicationManager.getApplication().invokeLater { openSelectedStage(courseProject.first, courseProject.second)}
+      ApplicationManager.getApplication().invokeLater { openSelectedStage(courseProject.first, courseProject.second) }
       return true
     }
     return false
@@ -99,7 +104,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     return false
   }
 
-  private fun createProject(projectId: Int, stageId: Int) : Boolean {
+  private fun createProject(projectId: Int, stageId: Int): Boolean {
     runInEdt {
       val hyperskillCourse = ProgressManager.getInstance().run(object : Task.WithResult<HyperskillCourse?, Exception>
                                                                         (null, "Loading project", true) {

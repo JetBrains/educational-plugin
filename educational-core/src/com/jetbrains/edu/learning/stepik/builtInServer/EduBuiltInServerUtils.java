@@ -93,7 +93,7 @@ public class EduBuiltInServerUtils {
   }
 
   public static void requestFocus(@NotNull Project project) {
-    ProjectUtil.focusProjectWindow(project, false);
+    ProjectUtil.focusProjectWindow(project, true);
   }
 
   public static Project openRecentProject(Predicate<Course> coursePredicate) {
