@@ -19,7 +19,7 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
   override fun beforeProjectGenerated(): Boolean {
     assert(myCourse is HyperskillCourse)
     return try {
-      ProgressManager.getInstance().run(object : Task.WithResult<Boolean, Exception>(null, "Loading course", true) {
+      ProgressManager.getInstance().run(object : Task.WithResult<Boolean, Exception>(null, "Loading hyperskill project", true) {
         override fun compute(indicator: ProgressIndicator): Boolean {
           val language = myCourse.languageById
           val hyperskillAccount = HyperskillSettings.INSTANCE.account

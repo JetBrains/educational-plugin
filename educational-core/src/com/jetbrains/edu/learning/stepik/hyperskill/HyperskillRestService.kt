@@ -11,7 +11,8 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.newproject.ui.CoursePanel
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import io.netty.channel.ChannelHandlerContext
@@ -126,8 +127,14 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
         }
       }) ?: return@runInEdt
 
-      val dialog = JoinCourseDialog(hyperskillCourse)
-      dialog.show()
+      val configurator = hyperskillCourse.configurator
+      if (configurator != null) {
+        configurator.beforeCourseStarted(hyperskillCourse)
+        hyperskillCourse.courseMode = EduNames.STUDY
+        val courseBuilder = configurator.courseBuilder
+        val projectGenerator = courseBuilder.getCourseProjectGenerator(hyperskillCourse)
+        projectGenerator?.doCreateCourseProject(CoursePanel.nameToLocation(hyperskillCourse), courseBuilder.languageSettings.settings)
+      }
       PropertiesComponent.getInstance().setValue(HYPERSKILL_STAGE, stageId, 0)
     }
     return true

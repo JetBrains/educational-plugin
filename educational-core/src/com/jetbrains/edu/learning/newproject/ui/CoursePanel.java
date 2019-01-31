@@ -232,7 +232,7 @@ public class CoursePanel extends JPanel {
   }
 
   @NotNull
-  private static String nameToLocation(@NotNull Course course) {
+  public static String nameToLocation(@NotNull Course course) {
     final String courseName = course.getName();
     final String language = course.getLanguageById().getDisplayName();
     final String humanLanguage = course.getHumanLanguage();
