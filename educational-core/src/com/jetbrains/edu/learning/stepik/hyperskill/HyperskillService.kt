@@ -3,7 +3,10 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.authUtils.TokenInfo
+import com.jetbrains.edu.learning.stepik.api.Attempt
+import com.jetbrains.edu.learning.stepik.api.AttemptsList
 import com.jetbrains.edu.learning.stepik.api.StepsList
+import com.jetbrains.edu.learning.stepik.api.Submission
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -37,46 +40,9 @@ interface HyperskillService {
   @GET("api/steps/")
   fun steps(@Query("lesson") lessonId: Int): Call<StepsList>
 
-  @POST("api/attempts")
-  fun attempt(@Query("step") stepId: Int): Call<AttemptsList>
+  @POST("api/attempts/")
+  fun attempt(@Body attempt: Attempt): Call<AttemptsList>
 
   @POST("api/submissions/")
   fun submission(@Body submission: Submission): Call<Any>
-
 }
-
-class UsersList {
-  lateinit var meta: Any
-  lateinit var users: List<HyperskillUserInfo>
-}
-
-class StagesList {
-  lateinit var meta: Any
-  lateinit var stages: List<HyperskillStage>
-}
-
-class TopicsList {
-  lateinit var topics: List<HyperskillTopic>
-}
-
-class HyperskillTopic {
-  var id: Int = -1
-  var title: String = ""
-  lateinit var children: List<String>
-}
-
-class AttemptsList {
-  lateinit var meta: Any
-  lateinit var attempts: List<Attempt>
-}
-
-class Attempt {
-  var step: Int = 0
-  var id: Int = 0
-}
-
-class SolutionFile(var name: String, var text: String)
-
-class Submission(var attempt: Int, var reply: Reply)
-
-class Reply(var score: String, var solution: ArrayList<SolutionFile>)

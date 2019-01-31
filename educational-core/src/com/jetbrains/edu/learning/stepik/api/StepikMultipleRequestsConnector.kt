@@ -6,6 +6,8 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.service
+import com.jetbrains.edu.learning.stepik.checkForErrors
+import com.jetbrains.edu.learning.stepik.executeHandlingExceptions
 
 object StepikMultipleRequestsConnector {
   private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests
@@ -15,9 +17,9 @@ object StepikMultipleRequestsConnector {
     val allUsers = mutableListOf<StepikUserInfo>()
     instructorIds
       .mapNotNull {
-        val response = service.users(*it.toIntArray()).execute()
-        StepikConnector.checkForErrors(response)
-        response.body()?.users
+        val response = service.users(*it.toIntArray()).executeHandlingExceptions()
+        checkForErrors(response)
+        response?.body()?.users
       }
       .forEach { allUsers.addAll(it) }
     return allUsers
@@ -28,9 +30,9 @@ object StepikMultipleRequestsConnector {
     val allSections = mutableListOf<Section>()
     sectionIdsChunks
       .mapNotNull {
-        val response = service.sections(*it.toIntArray()).execute()
-        StepikConnector.checkForErrors(response)
-        response.body()?.sections
+        val response = service.sections(*it.toIntArray()).executeHandlingExceptions()
+        checkForErrors(response)
+        response?.body()?.sections
       }
       .forEach { allSections.addAll(it) }
     return allSections
@@ -41,9 +43,9 @@ object StepikMultipleRequestsConnector {
     val allLessons = mutableListOf<Lesson>()
     lessonsIdsChunks
       .mapNotNull {
-        val response = service.lessons(*it.toIntArray()).execute()
-        StepikConnector.checkForErrors(response)
-        response.body()?.lessons
+        val response = service.lessons(*it.toIntArray()).executeHandlingExceptions()
+        checkForErrors(response)
+        response?.body()?.lessons
       }
       .forEach { allLessons.addAll(it) }
     return allLessons
@@ -54,9 +56,9 @@ object StepikMultipleRequestsConnector {
     val allUnits = mutableListOf<StepikUnit>()
     unitsIdsChunks
       .mapNotNull {
-        val response = service.units(*it.toIntArray()).execute()
-        StepikConnector.checkForErrors(response)
-        response.body()?.units
+        val response = service.units(*it.toIntArray()).executeHandlingExceptions()
+        checkForErrors(response)
+        response?.body()?.units
       }
       .forEach { allUnits.addAll(it) }
     return allUnits
@@ -67,9 +69,9 @@ object StepikMultipleRequestsConnector {
     val assignments = mutableListOf<Assignment>()
     idsChunks
       .mapNotNull {
-        val response = service.assignments(*it.toIntArray()).execute()
-        StepikConnector.checkForErrors(response)
-        response.body()?.assignments
+        val response = service.assignments(*it.toIntArray()).executeHandlingExceptions()
+        checkForErrors(response)
+        response?.body()?.assignments
       }
       .forEach { assignments.addAll(it) }
 
@@ -81,9 +83,9 @@ object StepikMultipleRequestsConnector {
     val steps = mutableListOf<StepSource>()
     stepsIdsChunks
       .mapNotNull {
-        val response = service.steps(*it.toIntArray()).execute()
-        StepikConnector.checkForErrors(response)
-        response.body()?.steps
+        val response = service.steps(*it.toIntArray()).executeHandlingExceptions()
+        checkForErrors(response)
+        response?.body()?.steps
       }
       .forEach { steps.addAll(it) }
     return steps
@@ -94,9 +96,9 @@ object StepikMultipleRequestsConnector {
     val progresses = mutableListOf<Progress>()
     idsChunks
       .mapNotNull {
-        val response = service.progresses(*it.toTypedArray()).execute()
-        StepikConnector.checkForErrors(response)
-        response.body()?.progresses
+        val response = service.progresses(*it.toTypedArray()).executeHandlingExceptions()
+        checkForErrors(response)
+        response?.body()?.progresses
       }
       .forEach { progresses.addAll(it) }
 

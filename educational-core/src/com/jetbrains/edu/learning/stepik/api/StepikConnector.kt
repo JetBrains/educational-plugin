@@ -19,11 +19,9 @@ import com.jetbrains.edu.learning.stepik.*
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import org.apache.http.HttpStatus
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.URI
@@ -410,27 +408,6 @@ object StepikConnector {
       // If parent item was deleted its children are deleted too, so it's ok to fail to delete item here
       LOG.warn("Failed to delete item $id")
     }
-  }
-
-  internal fun checkForErrors(response: Response<out Any>?) {
-    if (response == null) return
-    val errorBody = response.errorBody()
-    if (errorBody != null) {
-      LOG.error(errorBody.string())
-    }
-  }
-
-  private fun <T> Call<T>.executeHandlingExceptions(): Response<T>? {
-    try {
-      return this.execute()
-    }
-    catch (e: IOException) {
-      LOG.error("Failed to connect to server. ${e.message}")
-    }
-    catch (e: RuntimeException) {
-      LOG.error("Failed to connect to server. ${e.message}")
-    }
-    return null
   }
 }
 

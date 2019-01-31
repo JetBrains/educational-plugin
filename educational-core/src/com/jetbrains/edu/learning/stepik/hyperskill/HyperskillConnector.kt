@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
@@ -10,15 +9,17 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.actions.mixins.TaskSerializer
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepOptions
 import com.jetbrains.edu.learning.stepik.StepSource
+import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.stepik.checkForErrors
+import com.jetbrains.edu.learning.stepik.executeHandlingExceptions
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.serialization.JacksonStepOptionsDeserializer
-import com.jetbrains.edu.learning.stepik.hyperskill.serialization.JacksonTaskFileDeserializer
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
@@ -37,13 +38,16 @@ object HyperskillConnector {
   private val authorizationTopic = com.intellij.util.messages.Topic.create<HyperskillLoggedIn>("Edu.hyperskillLoggedIn",
                                                                                                HyperskillLoggedIn::class.java)
   private val converterFactory: JacksonConverterFactory
+  @JvmStatic
+  val objectMapper: ObjectMapper
 
   init {
     val module = SimpleModule()
+    module.addDeserializer(Lesson::class.java, JacksonLessonDeserializer())
     module.addDeserializer(StepOptions::class.java, JacksonStepOptionsDeserializer())
-    module.addDeserializer(TaskFile::class.java, JacksonTaskFileDeserializer())
-    val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    objectMapper.registerModule(module)
+    module.addDeserializer(Reply::class.java, StepikReplyDeserializer())
+    objectMapper = StepikConnector.createMapper(module)
+
     converterFactory = JacksonConverterFactory.create(objectMapper)
   }
 
@@ -97,7 +101,9 @@ object HyperskillConnector {
   }
 
   fun login(code: String): Boolean {
-    val tokenInfo = authorizationService.getTokens(CLIENT_ID, REDIRECT_URI, code, "authorization_code").execute().body() ?: return false
+    val response = authorizationService.getTokens(CLIENT_ID, REDIRECT_URI, code, "authorization_code").executeHandlingExceptions()
+    checkForErrors(response)
+    val tokenInfo = response?.body() ?: return false
     val account = HyperskillAccount()
     account.tokenInfo = tokenInfo
     val currentUser = getCurrentUser(account) ?: return false
@@ -109,22 +115,30 @@ object HyperskillConnector {
 
   private fun HyperskillAccount.refreshTokens() {
     val refreshToken = tokenInfo.refreshToken
-    val tokens = authorizationService.refreshTokens("refresh_token", CLIENT_ID, refreshToken).execute().body()
+    val response = authorizationService.refreshTokens("refresh_token", CLIENT_ID, refreshToken).executeHandlingExceptions()
+    checkForErrors(response)
+    val tokens = response?.body()
     if (tokens != null) {
       updateTokens(tokens)
     }
   }
 
   fun getCurrentUser(account: HyperskillAccount): HyperskillUserInfo? {
-    return service(account).getUserInfo(0).execute().body()?.users?.firstOrNull() ?: return null
+    val response = service(account).getUserInfo(0).executeHandlingExceptions()
+    checkForErrors(response)
+    return response?.body()?.users?.firstOrNull() ?: return null
   }
 
   fun getStages(projectId: Int): List<HyperskillStage>? {
-    return service.stages(projectId).execute().body()?.stages
+    val response = service.stages(projectId).executeHandlingExceptions()
+    checkForErrors(response)
+    return response?.body()?.stages
   }
 
   fun getStepSources(lessonId: Int): List<StepSource>? {
-    return service.steps(lessonId).execute().body()?.steps
+    val response = service.steps(lessonId).executeHandlingExceptions()
+    checkForErrors(response)
+    return response?.body()?.steps
   }
 
   fun postSolution(task: Task, project: Project) {
@@ -146,16 +160,21 @@ object HyperskillConnector {
 
   private fun postSubmission(attempt: Attempt, files: ArrayList<SolutionFile>, task: Task) {
     val score = if (task.status == CheckStatus.Solved) "1" else "0"
-    val reply = Reply(score, files)
-    val response = service.submission(Submission(attempt.id, reply)).execute()
-
-    if (response.code() != HttpStatus.SC_CREATED) {
+    val module = SimpleModule()
+    module.addSerializer(Task::class.java, TaskSerializer())
+    val objectMapper = StepikConnector.createMapper(module)
+    val serializedTask = objectMapper.writeValueAsString(TaskData(task))
+    val response = service.submission(Submission(score, attempt.id, files, serializedTask)).executeHandlingExceptions()
+    checkForErrors(response)
+    if (response?.code() != HttpStatus.SC_CREATED) {
       LOG.error("Failed to make submission for task ${task.stepId}")
     }
   }
 
   private fun postAttempt(step: Int): Attempt? {
-    return service.attempt(step).execute().body()?.attempts?.firstOrNull() ?: return null
+    val response = service.attempt(Attempt(step)).executeHandlingExceptions()
+    checkForErrors(response)
+    return response?.body()?.attempts?.firstOrNull() ?: return null
   }
 
   fun fillTopics(course: HyperskillCourse, project: Project) {

@@ -3,6 +3,11 @@
 package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.*
 import java.util.*
 
@@ -137,6 +142,7 @@ class StepikTaskFileMixin {
   var myVisible = true
 
   @JsonProperty(TEXT)
+  @JsonDeserialize(using = TaskFileTextDeserializer::class)
   lateinit var myText : String
 }
 
@@ -215,4 +221,10 @@ class StepikChoiceTaskMixin : StepikTaskMixin() {
 
   @JsonProperty(SELECTED_VARIANTS)
   lateinit var mySelectedVariants: List<Int>
+}
+
+class TaskFileTextDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<String>(vc) {
+  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): String {
+    return StringUtil.convertLineSeparators(jp.valueAsString)
+  }
 }
