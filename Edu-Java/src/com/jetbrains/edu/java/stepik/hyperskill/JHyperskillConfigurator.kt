@@ -33,7 +33,7 @@ class JHyperskillConfigurator : GradleConfiguratorBase() {
       topicsPanel.border = JBUI.Borders.empty(8, 16, 0, 0)
       val textPane = createTextPane()
       textPane.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
-      val topics = course.taskToTopics[currentTask.index]
+      val topics = course.taskToTopics[currentTask.index-1]
       var descriptionText = "<h3>Topics for current stage :</h3>"
       if (topics != null) {
         for (topic in topics) {
@@ -56,6 +56,7 @@ class JHyperskillConfigurator : GradleConfiguratorBase() {
     return null
   }
 
-  private fun topicLink(topic: HyperskillTopic): String = "<a style=\"color:$linkColor\" href=\"https://hyperskill.org/learn/topic/${topic.id}/\">${topic.title}</a>"
+  private fun topicLink(topic: HyperskillTopic): String =
+    "<a style=\"color:$linkColor\" href=\"https://hyperskill.org/learn/lesson/${topic.theoryId}/\">${topic.title}</a>"
   private val linkColor: String = if (UIUtil.isUnderDarcula()) "#6894C6" else "#5C84C9"
 }

@@ -154,7 +154,7 @@ object HyperskillConnector {
         }
 
         override fun onResponse(call: Call<TopicsList>, response: Response<TopicsList>) {
-          val topics = response.body()?.topics?.filter { it.children.isEmpty() }
+          val topics = response.body()?.topics?.filter { it.theoryId != null}
           if (topics != null && topics.isNotEmpty()) {
             course.taskToTopics[taskIndex] = topics
             runInEdt {

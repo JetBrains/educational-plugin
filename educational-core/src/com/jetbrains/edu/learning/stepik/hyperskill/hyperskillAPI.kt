@@ -9,7 +9,6 @@ const val STAGES = "stages"
 const val TOPICS = "topics"
 const val ID = "id"
 const val TITLE = "title"
-const val CHILDREN = "children"
 const val EMAIL = "email"
 const val FULL_NAME = "fullname"
 const val STAGE = "stage"
@@ -17,6 +16,7 @@ const val PROJECT = "project"
 const val DESCRIPTION = "description"
 const val LESSON_STEPIK_ID = "lesson_stepik_id"
 const val USE_IDE = "use_ide"
+const val THEORY_ID = "theory_id"
 
 class HyperskillAccount : OAuthAccount<HyperskillUserInfo>()
 
@@ -91,8 +91,8 @@ class HyperskillTopic {
   @JsonProperty(TITLE)
   var title: String = ""
 
-  @JsonProperty(CHILDREN)
-  lateinit var children: List<String>
+  @JsonProperty(THEORY_ID)
+  var theoryId: Int? = null
 }
 
 class AdditionalInfo {
