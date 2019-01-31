@@ -95,7 +95,7 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
     }
     else {
       val info = lastSavedAccount!!.userInfo
-      loginLabel.text = "You're logged in as " + info.toString()
+      loginLabel.text = "You're logged in as $info"
       loginLink.text = "Log out"
       loginListener = createLogoutListener()
     }

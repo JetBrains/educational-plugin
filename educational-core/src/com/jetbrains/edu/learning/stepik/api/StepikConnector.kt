@@ -63,7 +63,6 @@ object StepikConnector {
     objectMapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
     objectMapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
     objectMapper.disable(MapperFeature.AUTO_DETECT_SETTERS)
-    objectMapper.disable(MapperFeature.AUTO_DETECT_CREATORS)
     objectMapper.registerModule(module)
     return objectMapper
   }

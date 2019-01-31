@@ -1,3 +1,5 @@
+@file:Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
+
 package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -46,7 +48,6 @@ const val CHOICE_VARIANTS = "choice_variants"
 const val IS_MULTICHOICE = "is_multichoice"
 const val SELECTED_VARIANTS = "selected_variants"
 
-@Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 abstract class StepikEduCourseMixin {
   @JsonProperty(IS_IDEA_COMPATIBLE)
   var isCompatible = true
@@ -85,7 +86,6 @@ abstract class StepikEduCourseMixin {
   lateinit var myAdminsGroup: String
 }
 
-@Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 class StepikSectionMixin {
   @JsonProperty(UNITS)
   lateinit var units: List<Int>
@@ -106,7 +106,6 @@ class StepikSectionMixin {
   lateinit var myUpdateDate: Date
 }
 
-@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 class StepikLessonMixin {
   @JsonProperty(ID)
   var myId: Int = 0
@@ -127,7 +126,6 @@ class StepikLessonMixin {
   var unitId: Int = 0
 }
 
-@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 class StepikTaskFileMixin {
   @JsonProperty(NAME)
   lateinit var myName: String
@@ -142,7 +140,6 @@ class StepikTaskFileMixin {
   lateinit var myText : String
 }
 
-@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 class StepikAnswerPlaceholderMixin {
   @JsonProperty(OFFSET)
   var myOffset = -1
@@ -166,7 +163,6 @@ class StepikAnswerPlaceholderMixin {
   private var mySelected = false
 }
 
-@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 class StepikAnswerPlaceholderDependencyMixin {
 
   @JsonProperty(SECTION)
@@ -188,7 +184,6 @@ class StepikAnswerPlaceholderDependencyMixin {
   var myIsVisible = true
 }
 
-@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 class StepikFeedbackLinkMixin {
   @JsonProperty(LINK_TYPE)
   lateinit var myType: FeedbackLink.LinkType
@@ -197,7 +192,6 @@ class StepikFeedbackLinkMixin {
   lateinit var myLink: String
 }
 
-@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 open class StepikTaskMixin {
   @JsonProperty(NAME)
   var name: String? = null
@@ -212,7 +206,6 @@ open class StepikTaskMixin {
   private var myTaskFiles: MutableMap<String, TaskFile>? = LinkedHashMap()
 }
 
-@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
 class StepikChoiceTaskMixin : StepikTaskMixin() {
   @JsonProperty(CHOICE_VARIANTS)
   lateinit var myChoiceVariants: List<String>
@@ -222,5 +215,4 @@ class StepikChoiceTaskMixin : StepikTaskMixin() {
 
   @JsonProperty(SELECTED_VARIANTS)
   lateinit var mySelectedVariants: List<Int>
-
 }

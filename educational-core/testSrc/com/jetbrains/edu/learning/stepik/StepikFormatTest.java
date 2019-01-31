@@ -125,7 +125,6 @@ public class StepikFormatTest extends EduTestCase {
     assertFalse(usersList.users.isEmpty());
     StepikUserInfo user = usersList.users.get(0);
     assertNotNull(user);
-    assertFalse(user.isGuest());
   }
 
   public void testCourseAuthor() throws IOException {
@@ -136,7 +135,6 @@ public class StepikFormatTest extends EduTestCase {
     assertFalse(usersList.users.isEmpty());
     StepikUserInfo user = usersList.users.get(0);
     assertNotNull(user);
-    assertFalse(user.isGuest());
   }
 
   public void testSections() throws IOException {

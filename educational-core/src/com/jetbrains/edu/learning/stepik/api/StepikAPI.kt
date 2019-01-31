@@ -157,7 +157,7 @@ class CourseData(course: Course) {
   }
 }
 
-class SectionData(@JsonProperty(SECTION) var section: Section)
+class SectionData(@field:JsonProperty(SECTION) var section: Section)
 
 class LessonData(lesson: Lesson) {
   @JsonProperty(LESSON)
@@ -206,11 +206,11 @@ class TaskData {
 
 // Auxiliary:
 
-class Member(@JsonProperty(USER) var user: String, @JsonProperty(GROUP) var group: String)
+class Member(@field:JsonProperty(USER) var user: String, @field:JsonProperty(GROUP) var group: String)
 
-class Enrollment(@JsonProperty(COURSE) var course: String)
+class Enrollment(@field:JsonProperty(COURSE) var course: String)
 
-class View(@JsonProperty(ASSIGNMENT) var assignment: Int, @JsonProperty(STEP) var step: Int)
+class View(@field:JsonProperty(ASSIGNMENT) var assignment: Int, @field:JsonProperty(STEP) var step: Int)
 
 class Progress {
   @JsonProperty(ID)

@@ -1,13 +1,18 @@
 package com.jetbrains.edu.learning.stepik;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class StepikUserInfo {
+  @JsonProperty("id")
   private int id = -1;
+
+  @JsonProperty("first_name")
   private String myFirstName;
+
+  @JsonProperty("last_name")
   private String myLastName;
-  private boolean isGuest;
 
   private StepikUserInfo() {
     myFirstName = "";
@@ -46,14 +51,6 @@ public class StepikUserInfo {
     return StringUtil.join(new String[]{myFirstName, myLastName}, " ");
   }
 
-  public boolean isGuest() {
-    return isGuest;
-  }
-
-  public void setGuest(boolean guest) {
-    isGuest = guest;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -62,7 +59,6 @@ public class StepikUserInfo {
     StepikUserInfo user = (StepikUserInfo)o;
 
     if (id != user.id) return false;
-    if (isGuest != user.isGuest) return false;
     if (!myFirstName.equals(user.myFirstName)) return false;
     if (!myLastName.equals(user.myLastName)) return false;
 
