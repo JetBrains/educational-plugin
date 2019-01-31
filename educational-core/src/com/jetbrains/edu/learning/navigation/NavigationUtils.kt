@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.util.*
 import javax.swing.tree.TreePath
 
@@ -26,6 +27,8 @@ object NavigationUtils {
 
   @JvmStatic
   fun nextTask(task: Task): Task? {
+    if (task.course is HyperskillCourse && task.status != CheckStatus.Solved) return null
+
     val currentLesson = task.lesson
     val taskList = currentLesson.getTaskList()
     if (task.index < taskList.size) return taskList[task.index]
