@@ -9,14 +9,14 @@ import com.intellij.psi.util.PsiMethodUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.edu.learning.checker.gradle.GradleTaskCheckerProvider
 
-class JTaskCheckerProvider : GradleTaskCheckerProvider() {
+open class JTaskCheckerProvider : GradleTaskCheckerProvider() {
 
-    override fun mainClassForFile(project: Project, file: VirtualFile): String? {
-        val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
-        val mainClass = PsiTreeUtil.findChildrenOfType(psiFile, PsiClass::class.java).find { psiClass ->
-            PsiMethodUtil.MAIN_CLASS.value(psiClass) && PsiMethodUtil.hasMainMethod(psiClass)
-        } ?: return null
+  override fun mainClassForFile(project: Project, file: VirtualFile): String? {
+    val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
+    val mainClass = PsiTreeUtil.findChildrenOfType(psiFile, PsiClass::class.java).find { psiClass ->
+      PsiMethodUtil.MAIN_CLASS.value(psiClass) && PsiMethodUtil.hasMainMethod(psiClass)
+    } ?: return null
 
-        return JavaExecutionUtil.getRuntimeQualifiedName(mainClass)
-    }
+    return JavaExecutionUtil.getRuntimeQualifiedName(mainClass)
+  }
 }
