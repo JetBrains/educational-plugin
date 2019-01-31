@@ -892,7 +892,13 @@ public class EduUtils {
       .registerTypeHierarchyAdapter(Course.class, new SerializationUtils.Json.CourseAdapter())
       .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
       .create();
-    return gson.fromJson(courseJsonText, EduCourse.class);
+    try {
+      return gson.fromJson(courseJsonText, EduCourse.class);
+    }
+    catch (JsonSyntaxException e) {
+      LOG.error("Failed to deserialize local course json", e);
+      return null;
+    }
   }
 
   public static boolean isTaskDirectory(@NotNull Project project, @NotNull VirtualFile virtualFile) {
