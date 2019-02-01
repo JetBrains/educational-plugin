@@ -32,23 +32,58 @@ Please submit your issues to [Educational Plugin YouTrack](https://youtrack.jetb
 should be used
 7. To build plugin distributions use *buildPlugin* gradle task
 
+### Supporting different platforms
+
+We support some latest releases of platform (for example, 2018.2 and 2018.3) and the latest EAP.
+Also, it's important to check API compatibility in Android Studio.
+So we have to build plugin with different versions of IDEA/Android Studio/other IDE.
+The plugin project has separate settings for each platform version (in general, IDE and plugin versions) 
+to avoid manual changes when you want to compiler project with non default platform version.
+These settings are stored in `gradle-%platform.name%.properties` files.
+
+Sometimes there are not compatible changes in new platform version.
+To avoid creating several parallel vcs branches for each version, we have separate
+folders for each version to keep platform dependent code.
+
+For example, `com.jetbrains.edu.android.AndroidVersionsInfoKt#loadTargetVersions` function in `Edu-Android` module
+should have separate implementations for 182 and 183 platforms.
+Then source code structure of the corresponding module will be
+
+     +-- Edu-Android
+     |   +-- branches/182/src
+     |       +-- com/jetbrains/edu/android
+     |           +-- AndroidVersionsInfo.kt
+     |   +-- branches/183/src
+     |       +-- com/jetbrains/edu/android
+     |           +-- AndroidVersionsInfo.kt
+     |   +-- branches/studio-182/src
+     |       +-- com/jetbrains/edu/android
+     |           +-- AndroidVersionsInfo.kt
+     |   +-- branches/studio-183/src
+     |       +-- com/jetbrains/edu/android
+     |           +-- AndroidVersionsInfo.kt     
+     |   +-- src
+     |       +-- other platfrom independent code
+     
+Of course, only one batch of platform dependent code will be used in compilation.
+To change platform version which you use during compilation, 
+i.e. change IDEA/Android Studio/plugins dependencies and platform dependent code,
+you need to modify `environmentName` property in `gradle.properties` file or 
+pass `-PenvironmentName=%platform.name%` argument to gradle command  
+
 ### Workflow for checking compatibility with different Idea/Studio branches
+
 1. Develop feature in feature branch %feature.branch%
 2. Commit changes
-3. Run `apply -3 --ignore-space-change --ignore-whitespace patcher/%branch.name%.patch` command where %branch.name% is desired branch.
-4. Use appropriate run configuration
-Different configurations use different *.properties file. This can be changed manually using `-PenvironmentName=%branch.name%` argument
+3. Change `environmentName` value in `gradle.properties` with `%platform.name%` where %platform.name% is desired platform. 
+4. Run tests to ensure that everything works
 
-Everything works:\
-5. Revert patch `git reset --hard && git clean -fd`\
-6. Push all the changes
+Everything works:
+5. Push all the changes
 
-Something went wrong:\
-5. Fix errors caused by compatibility issues in idea branches\
-6. Create new patch file `git diff %feature.branch% > patcher/%temporary.name%.patch`\
-7. Copy `patcher/%temporary.name%.patch` content to `patcher/%branch.name%.patch`
-7. Commit updated patch file\
-8. Revert `git reset --hard && git clean -fd`\
+Something went wrong (some API changes):
+5. Ensure that you can't use old API instead of new one for all platforms. If you can, just modify your current implementation
+6. If there isn't common API for all platforms, extract problem pieces of code into separate files as new functions or classes
+7. Create implementations for each platform and place them into `branches/%platform.name%/src` folders of the corresponding module
+8. Commit new files
 9. Push all the changes
-
-
