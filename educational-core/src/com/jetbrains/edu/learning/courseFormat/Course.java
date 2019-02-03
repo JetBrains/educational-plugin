@@ -69,20 +69,12 @@ public abstract class Course extends ItemContainer {
   }
 
   /**
-   * exclude service lesson containing additional files for the course. Returns lessons copy.
+   * Returns lessons copy.
    */
   @NotNull
   @Override
   public List<Lesson> getLessons() {
-    return getLessons(false);
-  }
-
-  /**
-   * returns service lesson as well. Meant to be used in project generation/serialization
-   */
-  public List<Lesson> getLessons(boolean withAdditional) {
-    final List<Lesson> lessons = items.stream().filter(Lesson.class::isInstance).map(Lesson.class::cast).collect(Collectors.toList());
-    return withAdditional ? lessons : lessons.stream().filter(lesson -> !lesson.isAdditional()).collect(Collectors.toList());
+    return items.stream().filter(Lesson.class::isInstance).map(Lesson.class::cast).collect(Collectors.toList());
   }
 
   public void addSection(@NotNull Section section) {
@@ -96,11 +88,6 @@ public abstract class Course extends ItemContainer {
 
   public void removeSection(@NotNull final Section toRemove) {
     items.remove(toRemove);
-  }
-
-  public void removeAdditionalLesson() {
-    items.stream().filter(it -> it instanceof Lesson && ((Lesson)it).isAdditional()).findFirst().
-      ifPresent(lesson -> items.remove(lesson));
   }
 
   @Nullable

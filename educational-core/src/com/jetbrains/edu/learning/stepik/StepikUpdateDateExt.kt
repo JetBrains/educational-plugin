@@ -10,8 +10,8 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.fillItems
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo
+import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.fillItems
 import java.util.*
 
 
@@ -43,8 +43,7 @@ fun EduCourse.isUpToDate(courseFromStepik: EduCourse): Boolean {
   val sectionsFromServer = courseFromStepik.sections.associateBy { it.id }
   val lessonsFromServer = courseFromStepik.lessons.associateBy { it.id }
 
-  return isAdditionalMaterialsUpToDate(courseFromStepik)
-         && sections.all { it.isUpToDate(sectionsFromServer[it.id]) }
+  return sections.all { it.isUpToDate(sectionsFromServer[it.id]) }
          && lessons.all {it.isUpToDate(lessonsFromServer[it.id])}
 }
 
@@ -112,11 +111,6 @@ fun EduCourse.setUpdated() {
 internal fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
   val diff = time - otherDate.time
   return diff > Time.MINUTE
-}
-
-private fun EduCourse.isAdditionalMaterialsUpToDate(courseFromStepik: EduCourse): Boolean {
-  val additionalLesson = courseFromStepik.getLessons(true).singleOrNull { it.isAdditional } ?: return true
-  return !additionalLesson.updateDate.isSignificantlyAfter(additionalMaterialsUpdateDate)
 }
 
 private fun EduCourse.hasNewOrRemovedSections(courseFromStepik: EduCourse): Boolean {

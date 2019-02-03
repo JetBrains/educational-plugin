@@ -50,7 +50,7 @@ abstract class StepikTestCase : EduTestCase() {
   override fun tearDown() {
     val course = StudyTaskManager.getInstance(project).course
     if (course is EduCourse && course.isRemote) {
-      removeUploadedCourse(course.id, course.getLessons(true).map { it.id })
+      removeUploadedCourse(course.id, course.getLessons().map { it.id })
     }
     EduSettings.getInstance().user = null
     super.tearDown()

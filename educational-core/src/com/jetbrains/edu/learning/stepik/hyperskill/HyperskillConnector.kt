@@ -43,7 +43,6 @@ object HyperskillConnector {
 
   init {
     val module = SimpleModule()
-    module.addDeserializer(Lesson::class.java, JacksonLessonDeserializer())
     module.addDeserializer(StepOptions::class.java, JacksonStepOptionsDeserializer())
     module.addDeserializer(Reply::class.java, StepikReplyDeserializer())
     objectMapper = StepikConnector.createMapper(module)

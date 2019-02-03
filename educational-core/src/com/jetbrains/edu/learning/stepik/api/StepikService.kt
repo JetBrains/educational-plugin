@@ -2,6 +2,8 @@
 
 package com.jetbrains.edu.learning.stepik.api
 
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -64,6 +66,10 @@ interface StepikService {
   @GET("assignments")
   fun assignments(@Query("ids[]") vararg ids: Int): Call<AssignmentsList>
 
+  @GET("attachments")
+  fun attachments(@Query("course") courseId: Int): Call<AttachmentsList>
+
+
   // POST requests:
 
   @POST("courses")
@@ -96,10 +102,14 @@ interface StepikService {
   @POST("members")
   fun members(@Body membersData: MemberData): Call<ResponseBody>
 
+  @Multipart
+  @POST("attachments")
+  fun attachment(@Part file: MultipartBody.Part, @Part("course") course: RequestBody): Call<ResponseBody>
+
   // PUT requests:
 
   @PUT("courses/{id}")
-  fun course(@Path("id") courseId: Int, @Body courseData: CourseData): Call<Any>
+  fun course(@Path("id") courseId: Int, @Body courseData: CourseData): Call<CoursesList>
 
   @PUT("sections/{id}")
   fun section(@Path("id") sectionId: Int, @Body sectionData: SectionData): Call<SectionsList>
@@ -126,5 +136,8 @@ interface StepikService {
 
   @DELETE("step-sources/{id}")
   fun deleteStepSource(@Path("id") taskId: Int): Call<Any>
+
+  @DELETE("attachments/{id}")
+  fun deleteAttachment(@Path("id") attachmentId: Int): Call<Any>
 
 }

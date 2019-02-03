@@ -24,7 +24,6 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWORK_TYPE
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
 import com.jetbrains.edu.learning.serialization.doDeserializeTask
-import com.jetbrains.edu.learning.stepik.StepikNames
 
 private const val VERSION = "version"
 private const val TITLE = "title"
@@ -51,6 +50,7 @@ private const val PLACEHOLDER_TEXT = "placeholder_text"
 private const val POSSIBLE_ANSWER = "possible_answer"
 private const val DEPENDENCY = "dependency"
 private const val COURSE_TYPE = "course_type"
+private const val ADDITIONAL_FILES = "additional_files"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonPropertyOrder(VERSION, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS)
@@ -73,6 +73,9 @@ abstract class LocalEduCourseMixin {
 
   @JsonProperty(ITEMS)
   private lateinit var items: List<StudyItem>
+
+  @JsonProperty(ADDITIONAL_FILES)
+  private lateinit var additionalFiles: List<TaskFile>
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
@@ -242,12 +245,7 @@ class TaskDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDese
 class StudyItemDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<StudyItem>(vc) {
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext?): StudyItem? {
     val node: ObjectNode = jp.codec.readTree(jp) as ObjectNode
-    val item = deserializeItem(node, jp.codec)
-    val name = item.name
-    if (StepikNames.PYCHARM_ADDITIONAL == name) {
-      item.name = EduNames.ADDITIONAL_MATERIALS
-    }
-    return item
+    return deserializeItem(node, jp.codec)
   }
 
   private fun deserializeItem(jsonObject: ObjectNode, codec: ObjectCodec): StudyItem {

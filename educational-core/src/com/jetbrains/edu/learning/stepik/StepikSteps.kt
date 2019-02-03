@@ -108,23 +108,16 @@ class StepOptions {
 
     private fun setTaskFiles(project: Project, task: Task, source: StepOptions) {
       val files = mutableListOf<TaskFile>()
-      if (!task.lesson.isAdditional) {
-        val taskDir = task.getTaskDir(project)!!
-        for ((_, value) in task.taskFiles) {
-          ApplicationManager.getApplication().invokeAndWait {
-            ApplicationManager.getApplication().runWriteAction {
-              val answerFile = EduUtils.findTaskFileInDir(value, taskDir)
-              if (answerFile == null) return@runWriteAction
-              val studentTaskFile = EduUtils.createStudentFile(project, answerFile, task)
-              if (studentTaskFile == null) return@runWriteAction
-              files.add(studentTaskFile)
-            }
+      val taskDir = task.getTaskDir(project)!!
+      for ((_, value) in task.taskFiles) {
+        ApplicationManager.getApplication().invokeAndWait {
+          ApplicationManager.getApplication().runWriteAction {
+            val answerFile = EduUtils.findTaskFileInDir(value, taskDir)
+            if (answerFile == null) return@runWriteAction
+            val studentTaskFile = EduUtils.createStudentFile(project, answerFile, task)
+            if (studentTaskFile == null) return@runWriteAction
+            files.add(studentTaskFile)
           }
-        }
-      }
-      else {
-        for ((_, value) in task.taskFiles) {
-          files.add(value)
         }
       }
       source.files = files
@@ -160,8 +153,5 @@ class StepSource {
     this.lesson = lesson
     position = task.index
     block = Step.fromTask(project, task)
-    if (task.lesson.isAdditional) {
-      cost = 0
-    }
   }
 }

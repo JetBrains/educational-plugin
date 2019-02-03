@@ -49,12 +49,7 @@ object GeneratorUtils {
       indicator.fraction = (i + 1).toDouble() / items.size
 
       if (item is Lesson) {
-        if (!item.isAdditional) {
-          indicator.text = "Generating lesson ${i + 1} from ${items.size}"
-        }
-        else {
-          indicator.text = "Generating additional files"
-        }
+        indicator.text = "Generating lesson ${i + 1} from ${items.size}"
         createLesson(item, baseDir)
       }
       else if (item is Section) {
@@ -62,8 +57,8 @@ object GeneratorUtils {
         createSection(item, baseDir)
       }
     }
+    indicator.text = "Generating additional files"
     createAdditionalFiles(course, baseDir)
-    course.removeAdditionalLesson()
   }
 
   fun createSection(item: Section, baseDir: VirtualFile) {
@@ -77,20 +72,16 @@ object GeneratorUtils {
   @Throws(IOException::class)
   @JvmStatic
   fun createLesson(lesson: Lesson, courseDir: VirtualFile) {
-    if (lesson.isAdditional) {
-      createAdditionalFiles(lesson, courseDir)
-    } else {
-      val lessonDir = createUniqueDir(courseDir, lesson)
-      val taskList = lesson.getTaskList()
-      val isStudy = lesson.course.isStudy
-      for ((i, task) in taskList.withIndex()) {
-        // We don't want to create task only when:
-        // 1. Course is in student mode. In CC mode we always want to create full course structure
-        // 2. Lesson is framework lesson. For general lessons we create all tasks because their contents are independent (almost)
-        // 3. It's not first task of framework lesson. We create only first task of framework lesson as an entry point of lesson content
-        if (!isStudy || lesson !is FrameworkLesson || i == 0) {
-          createTask(task, lessonDir)
-        }
+    val lessonDir = createUniqueDir(courseDir, lesson)
+    val taskList = lesson.getTaskList()
+    val isStudy = lesson.course.isStudy
+    for ((i, task) in taskList.withIndex()) {
+      // We don't want to create task only when:
+      // 1. Course is in student mode. In CC mode we always want to create full course structure
+      // 2. Lesson is framework lesson. For general lessons we create all tasks because their contents are independent (almost)
+      // 3. It's not first task of framework lesson. We create only first task of framework lesson as an entry point of lesson content
+      if (!isStudy || lesson !is FrameworkLesson || i == 0) {
+        createTask(task, lessonDir)
       }
     }
   }
@@ -131,38 +122,12 @@ object GeneratorUtils {
   }
 
   @Throws(IOException::class)
-  private fun createFiles(taskDir: VirtualFile, texts: Map<String, String>) {
-    for ((name, value) in texts) {
-      val virtualTaskFile = taskDir.findChild(name)
-      if (virtualTaskFile == null) {
-        createChildFile(taskDir, name, value)
-      }
-    }
-  }
-
-  @Throws(IOException::class)
   private fun createAdditionalFiles(course: Course, courseDir: VirtualFile) {
     for (file in course.additionalFiles) {
       if (courseDir.findFileByRelativePath(file.name) == null) {
         createChildFile(courseDir, file.name, file.text)
       }
     }
-  }
-
-  @Throws(IOException::class)
-  private fun createAdditionalFiles(lesson: Lesson, courseDir: VirtualFile) {
-    val filesToCreate = additionalFilesToCreate(lesson)
-
-    createFiles(courseDir, filesToCreate)
-  }
-
-  fun additionalFilesToCreate(lesson: Lesson): Map<String, String> {
-    if (!lesson.isAdditional) {
-      return emptyMap()
-    }
-
-    val task = lesson.taskList.singleOrNull() ?: return emptyMap()
-    return task.taskFiles.mapValues { it.value.text }
   }
 
   @Throws(IOException::class)

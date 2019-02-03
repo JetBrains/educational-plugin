@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteLesson
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteSection
@@ -143,7 +142,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     }
 
     sectionsInfoToUpdate.forEach {
-      updateSectionInfo(project, it)
+      updateSectionInfo(it)
     }
   }
 
@@ -303,9 +302,6 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     val sections = StepikMultipleRequestsConnector.getSections(remoteSectionIds)
     val localSectionIds = course.sections.map { it.id }
     for (section in sections) {
-      if (section.name == StepikNames.PYCHARM_ADDITIONAL) {
-        continue
-      }
       if ((section.id !in localSectionIds && section.id !in course.sectionIds) && section.updateDate <= lastUpdateDate) {
         sectionsToDelete.add(section.id)
       }

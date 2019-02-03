@@ -16,8 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.*
-import okhttp3.Dispatcher
-import okhttp3.OkHttpClient
+import okhttp3.*
 import org.apache.http.HttpStatus
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -36,7 +35,6 @@ object StepikConnector {
 
   init {
     val module = SimpleModule()
-    module.addDeserializer(Lesson::class.java, JacksonLessonDeserializer())
     module.addDeserializer(StepOptions::class.java, JacksonStepOptionsDeserializer())
     module.addDeserializer(Reply::class.java, StepikReplyDeserializer())
     objectMapper = createMapper(module)
@@ -334,6 +332,21 @@ object StepikConnector {
     }
   }
 
+  @JvmStatic
+  fun postAttachment(additionalFiles: List<TaskFile>, course: EduCourse, courseId: Int): Int {
+    val additionalInfo = AdditionalInfo(additionalFiles)
+    val fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), objectMapper.writeValueAsString(additionalInfo))
+    val fileData = MultipartBody.Part.createFormData("file", StepikNames.ADDITIONAL_FILES, fileBody)
+    val courseBody = RequestBody.create(MediaType.parse("text/plain"), courseId.toString())
+
+    val response = service.attachment(fileData, courseBody).executeHandlingExceptions()
+    checkForErrors(response)
+
+    updateCourse(course)  // Needed to push forward update_date in course
+    course.setUpdated()
+    return response?.code() ?: -1
+  }
+
   // Update requests:
 
   @JvmStatic
@@ -374,6 +387,18 @@ object StepikConnector {
     val response = service.stepSource(task.stepId, stepSourceData!!).executeHandlingExceptions()
     checkForErrors(response)
     return response?.code() ?: -1
+  }
+
+  @JvmStatic
+  fun updateAttachment(additionalFiles: List<TaskFile>, course: EduCourse, courseId: Int): Int {
+    val attachments = service.attachments(courseId).executeHandlingExceptions()?.body()
+    if (attachments != null && attachments.attachments.isNotEmpty()) {
+      val attachmentId = attachments.attachments.firstOrNull { StepikNames.ADDITIONAL_FILES == it.name }?.id
+      if (attachmentId != null) {
+        service.deleteAttachment(attachmentId).executeHandlingExceptions()
+      }
+    }
+    return postAttachment(additionalFiles, course, courseId)
   }
 
   // Delete requests:

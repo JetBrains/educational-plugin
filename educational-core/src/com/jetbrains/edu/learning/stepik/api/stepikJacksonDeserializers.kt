@@ -8,12 +8,10 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.annotations.VisibleForTesting
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.NAME
@@ -24,21 +22,6 @@ import com.jetbrains.edu.learning.serialization.converter.json.local.To10Version
 import com.jetbrains.edu.learning.serialization.converter.json.local.To9VersionLocalCourseConverter
 import com.jetbrains.edu.learning.serialization.doDeserializeTask
 import com.jetbrains.edu.learning.stepik.StepOptions
-import com.jetbrains.edu.learning.stepik.StepikNames
-
-class JacksonLessonDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Lesson>(vc) {
-
-  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Lesson {
-    val node: JsonNode = jp.codec.readTree(jp)
-    val objectMapper = StepikConnector.createMapper(SimpleModule())
-    val lesson = objectMapper.treeToValue(node, Lesson::class.java)
-    val name = lesson.name
-    if (StepikNames.PYCHARM_ADDITIONAL == name) {
-      lesson.name = EduNames.ADDITIONAL_MATERIALS
-    }
-    return lesson
-  }
-}
 
 class JacksonStepOptionsDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<StepOptions>(vc) {
 

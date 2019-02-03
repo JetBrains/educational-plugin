@@ -14,15 +14,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.loadCourseStructure
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo
+import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.loadCourseStructure
 import java.io.IOException
 import java.net.URISyntaxException
 import java.util.*
@@ -62,7 +61,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     updateLessons(courseFromServer)
     updateAdditionalMaterialsFiles(courseFromServer)
 
-    course.items = Lists.newArrayList(courseFromServer.items.filter { it.name != StepikNames.PYCHARM_ADDITIONAL && it.name != EduNames.ADDITIONAL_MATERIALS })
+    course.items = Lists.newArrayList(courseFromServer.items)
   }
 
   private fun updateLessons(courseFromServer: Course) {
@@ -203,19 +202,10 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   }
 
   private fun updateAdditionalMaterialsFiles(courseFromServer: Course) {
-    for (lesson in courseFromServer.items.filterIsInstance(Lesson::class.java)) {
-      if (lesson.isAdditional) {
-        if (!lesson.updateDate.isSignificantlyAfter(course.additionalMaterialsUpdateDate)) {
-          return
-        }
-        course.additionalMaterialsUpdateDate = lesson.updateDate
-
-        val filesToCreate = GeneratorUtils.additionalFilesToCreate(lesson)
-        val baseDir = project.baseDir
-        for ((name, value) in filesToCreate) {
-          GeneratorUtils.createChildFile(baseDir, name, value)
-        }
-      }
+    val filesToCreate = courseFromServer.additionalFiles
+    val baseDir = project.baseDir
+    for (file in filesToCreate) {
+      GeneratorUtils.createChildFile(baseDir, file.name, file.text)
     }
   }
 

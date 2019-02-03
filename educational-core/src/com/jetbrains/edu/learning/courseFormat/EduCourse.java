@@ -30,7 +30,6 @@ public class EduCourse extends Course {
 
   // Not published to stepik:
   private boolean myLoadSolutions = true; // disabled for reset courses
-  private Date myAdditionalMaterialsUpdateDate = new Date(0);
 
   public String getType() {
     return myType;
@@ -129,14 +128,6 @@ public class EduCourse extends Course {
     isCompatible = compatible;
   }
 
-  public Date getAdditionalMaterialsUpdateDate() {
-    return myAdditionalMaterialsUpdateDate;
-  }
-
-  public void setAdditionalMaterialsUpdateDate(@NotNull Date additionalMaterialsUpdateDate) {
-    myAdditionalMaterialsUpdateDate = additionalMaterialsUpdateDate;
-  }
-
   @Transient
   public String getAdminsGroup() {
     return myAdminsGroup;
@@ -189,6 +180,5 @@ public class EduCourse extends Course {
     instructors = new ArrayList<>();
     myType = String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
     myLoadSolutions = true;
-    myAdditionalMaterialsUpdateDate = new Date(0);
   }
 }

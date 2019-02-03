@@ -21,6 +21,6 @@ fun getLesson(course: HyperskillCourse, lessonId: Int, language: Language): Less
   progressIndicator?.checkCanceled()
   val tasks = StepikCourseLoader.getTasks(language, lesson, stepSources)
   lesson.taskList.addAll(tasks)
-  loadAttachment(course, lesson)
+  course.additionalFiles = loadAttachment(course, lesson)
   return lesson
 }

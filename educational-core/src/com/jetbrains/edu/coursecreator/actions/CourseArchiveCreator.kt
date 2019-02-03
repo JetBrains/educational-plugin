@@ -18,7 +18,6 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.io.ZipUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.mixins.*
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -43,7 +42,7 @@ class CourseArchiveCreator(
     val courseCopy = course.copy()
     loadActualTexts(courseCopy)
     courseCopy.sortItems()
-    createAdditionalFiles(courseCopy)
+    courseCopy.additionalFiles = CCUtils.collectAdditionalFiles(courseCopy, project)
     return try {
       val json = generateJson(jsonFolder, courseCopy)
       VirtualFileManager.getInstance().refreshWithoutFileWatcher(false)
@@ -54,13 +53,6 @@ class CourseArchiveCreator(
     catch (e: IOException) {
       LOG.error("Failed to create course archive", e)
       false
-    }
-  }
-
-  private fun createAdditionalFiles(course: Course) {
-    val lesson = CCUtils.createAdditionalLesson(course, project, EduNames.ADDITIONAL_MATERIALS)
-    if (lesson != null) {
-      course.addLesson(lesson)
     }
   }
 

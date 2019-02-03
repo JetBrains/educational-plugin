@@ -8,10 +8,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.mixins.TaskSerializer
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
@@ -49,6 +46,8 @@ const val SOLUTION = "solution"
 const val CODE = "code"
 const val EDU_TASK = "edu_task"
 const val VERSION = "version"
+const val ATTACHMENTS = "attachments"
+const val ADDITIONAL_FILES = "additional_files"
 
 // List wrappers for GET requests:
 
@@ -108,6 +107,11 @@ class AttemptsList {
 class AssignmentsList {
   @JsonProperty(ASSIGNMENTS)
   lateinit var assignments: List<Assignment>
+}
+
+class AttachmentsList {
+  @JsonProperty(ATTACHMENTS)
+  lateinit var attachments: List<Attachment>
 }
 
 // Data wrappers for POST requests:
@@ -354,5 +358,24 @@ class SolutionFile {
   constructor(name: String, text: String) {
     this.name = name
     this.text = text
+  }
+}
+
+class Attachment {
+  @JsonProperty(ID)
+  var id: Int = 0
+
+  @JsonProperty(NAME)
+  lateinit var name: String
+}
+
+class AdditionalInfo {
+  @JsonProperty(ADDITIONAL_FILES)
+  lateinit var additionalFiles: List<TaskFile>
+
+  constructor()
+
+  constructor(additionalFiles: List<TaskFile>) {
+    this.additionalFiles = additionalFiles
   }
 }

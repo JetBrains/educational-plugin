@@ -6,7 +6,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.ConcurrencyUtil
 import com.intellij.util.containers.ContainerUtil
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -16,15 +15,9 @@ import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 
 object StepikCourseLoader {
-  private val LOG = Logger.getInstance(StepikCourseLoader ::class.java)
+  private val LOG = Logger.getInstance(StepikCourseLoader::class.java)
   private val THREAD_NUMBER = Runtime.getRuntime().availableProcessors()
   private val EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER)
-
-  @JvmStatic
-  fun getLessons(remoteCourse: EduCourse, sectionId: Int): List<Lesson> {
-    val section = StepikConnector.getSection(sectionId) ?: return emptyList()
-    return getLessonsFromUnits(remoteCourse, section.units, true)
-  }
 
   @JvmStatic
   fun getCourseInfos(): List<EduCourse> {
@@ -99,17 +92,33 @@ object StepikCourseLoader {
     val sectionIds = remoteCourse.sectionIds
     val allSections = StepikMultipleRequestsConnector.getSections(sectionIds)
 
-    if (hasVisibleSections(allSections, remoteCourse.name)) {
+    val realSections = allSections.filter { it.name != StepikNames.PYCHARM_ADDITIONAL }  // compatibility with old courses
+    if (hasVisibleSections(realSections, remoteCourse.name)) {
       remoteCourse.sectionIds = emptyList()
-      val sections = getOrderedListOfSections(allSections, remoteCourse)
+      val sections = getOrderedListOfSections(realSections, remoteCourse)
       val items = unpackTopLevelLessons(remoteCourse, sections)
-      items.forEachIndexed { index, item ->
-        item.index = index + 1
-      }
+      items.forEachIndexed { index, item -> item.index = index + 1 }
       remoteCourse.items = items
     }
     else {
-      addTopLevelLessons(remoteCourse, allSections)
+      addTopLevelLessons(remoteCourse, realSections)
+    }
+    loadAdditionalMaterials(remoteCourse, allSections.firstOrNull { it.name == StepikNames.PYCHARM_ADDITIONAL })
+  }
+
+  private fun loadAdditionalMaterials(course: EduCourse, additionalSection: Section?) {
+    val additionalFiles = loadAttachment(course, null)
+    if (additionalFiles.isEmpty() && additionalSection != null) {
+      // load the old way for compatibility with old courses
+      if (additionalSection.units.size == 1) {
+        val lesson = getLessonsFromUnits(course, additionalSection.units, false).firstOrNull()
+        if (lesson != null) {
+          val task = lesson.taskList.firstOrNull()
+          if (task != null) {
+            course.additionalFiles = task.taskFiles.values.toList()
+          }
+        }
+      }
     }
   }
 
@@ -119,9 +128,6 @@ object StepikCourseLoader {
       val lessons = getLessons(remoteCourse)
       remoteCourse.addLessons(lessons)
       remoteCourse.sectionIds = allSections.map { s -> s.id }
-      lessons.filter { lesson -> lesson.isAdditional }.forEach { lesson ->
-        remoteCourse.additionalMaterialsUpdateDate = lesson.updateDate
-      }
     }
   }
 
@@ -156,15 +162,12 @@ object StepikCourseLoader {
     if (sections.isEmpty()) {
       return false
     }
-    val firstSectionTitle = sections.first().name
-    if (firstSectionTitle == null || firstSectionTitle != courseName) return true
 
-    if (sections.size == 1) {
+    val firstSectionTitle = sections.first().name
+    if (sections.size == 1 && firstSectionTitle == courseName) {
       return false
     }
-    val secondSectionTitle = sections[1].name
-    return !(sections.size == 2 &&
-             (secondSectionTitle == EduNames.ADDITIONAL_MATERIALS || secondSectionTitle == StepikNames.PYCHARM_ADDITIONAL))
+    return true
   }
 
   private fun loadItemTask(remoteCourse: EduCourse, section: Section, index: Int): StudyItem? {
@@ -173,20 +176,11 @@ object StepikCourseLoader {
       return null
     }
     val lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds, false)
-    if (section.name == StepikNames.PYCHARM_ADDITIONAL) {
-      val lesson = lessonsFromUnits.first()
-      lesson.index = index
-      remoteCourse.additionalMaterialsUpdateDate = lesson.updateDate
-      return lesson
-    }
-    else {
-      lessonsFromUnits.forEachIndexed{ i, lesson ->
-        lesson.index = i + 1
-      }
-      section.addLessons(lessonsFromUnits)
-      section.index = index
-      return section
-    }
+
+    lessonsFromUnits.forEachIndexed { i, lesson -> lesson.index = i + 1 }
+    section.addLessons(lessonsFromUnits)
+    section.index = index
+    return section
   }
 
   @VisibleForTesting

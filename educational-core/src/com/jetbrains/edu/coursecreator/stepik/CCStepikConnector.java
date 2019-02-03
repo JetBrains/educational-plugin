@@ -16,7 +16,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
@@ -27,7 +26,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
 import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikUnit;
 import org.apache.http.HttpStatus;
@@ -38,14 +36,13 @@ import javax.swing.event.HyperlinkEvent;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.EduUtils.showOAuthDialog;
 
 public class CCStepikConnector {
   private static final Logger LOG = Logger.getInstance(CCStepikConnector.class.getName());
-  private static final String FAILED_TITLE = "Failed to publish ";
+  public static final String FAILED_TITLE = "Failed to publish ";
   private static final String JETBRAINS_USER_ID = "17813950";
   private static final List<Integer> TESTER_USER_IDS = Lists.newArrayList(17869355);
   private static final String PUSH_COURSE_GROUP_ID = "Push.course";
@@ -96,9 +93,7 @@ public class CCStepikConnector {
       showErrorNotification(project, FAILED_TITLE, message);
       return;
     }
-    final List<StudyItem> items = course.getItems().stream().filter(it -> !it.getName().equals(EduNames.ADDITIONAL_MATERIALS) &&
-                                                                          !it.getName().equals(StepikNames.PYCHARM_ADDITIONAL))
-      .collect(Collectors.toList());
+    final List<StudyItem> items = course.getItems();
     courseOnRemote.setItems(Lists.newArrayList(items));
     courseOnRemote.setAuthors(course.getAuthors());
     courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
@@ -108,16 +103,14 @@ public class CCStepikConnector {
       addJetBrainsUserAsAdmin(courseOnRemote.getAdminsGroup());
     }
 
-    int sectionCount;
     if (CourseExt.getHasSections(course)) {
-      sectionCount = postSections(project, courseOnRemote);
+      postSections(project, courseOnRemote);
     }
     else {
-      sectionCount = 1;
       postTopLevelLessons(project, courseOnRemote);
     }
 
-    postAdditionalFiles(course, project, courseOnRemote.getId(), sectionCount + 1);
+    postAdditionalFiles(course, project, courseOnRemote.getId());
     StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
     courseOnRemote.init(null, null, true);
     StepikUpdateDateExt.setUpdated(courseOnRemote);
@@ -150,7 +143,7 @@ public class CCStepikConnector {
   /**
    * This method should be used for courses with sections only
    */
-  private static int postSections(@NotNull Project project, @NotNull EduCourse course) {
+  private static void postSections(@NotNull Project project, @NotNull EduCourse course) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     course.sortItems();
     final List<Section> sections = course.getSections();
@@ -167,7 +160,6 @@ public class CCStepikConnector {
 
       postLessons(project, indicator, course, sectionId, lessons);
     }
-    return sections.size();
   }
 
   private static void postTopLevelLessons(@NotNull Project project, @NotNull EduCourse course) {
@@ -220,23 +212,23 @@ public class CCStepikConnector {
     return sectionId;
   }
 
-  public static boolean updateSection(@NotNull Project project, @NotNull Section section) {
-    EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
-    assert course != null;
+  public static boolean updateSection(@NotNull Section section, @NotNull Course course, @NotNull Project project) {
     section.setCourseId(course.getId());
-    boolean updated = updateSectionInfo(project, section);
-    if (updated) {
-      for (Lesson lesson : section.getLessons()) {
-        if (lesson.getId() > 0) {
-          updateLesson(project, lesson, false, section.getId());
-        }
-        else {
-          postLesson(project, lesson, lesson.getIndex(), section.getId());
-        }
+    final Section updatedSection = updateSectionInfo(section);
+    if (updatedSection == null) {
+      showErrorNotification(project, FAILED_TITLE, "Failed to update section " + section.getId());
+      return false;
+    }
+    for (Lesson lesson : section.getLessons()) {
+      if (lesson.getId() > 0) {
+        updateLesson(project, lesson, false, section.getId());
+      }
+      else {
+        postLesson(project, lesson, lesson.getIndex(), section.getId());
       }
     }
 
-    return updated;
+    return true;
   }
 
   public static Section copySection(@NotNull Section section) {
@@ -277,38 +269,22 @@ public class CCStepikConnector {
     return true;
   }
 
-  public static void postAdditionalFiles(@NotNull Course course, @NotNull final Project project, int id, int position) {
-    final Lesson lesson = CCUtils.createAdditionalLesson(course, project, StepikNames.PYCHARM_ADDITIONAL);
-    if (lesson != null) {
-      final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-      if (indicator != null) {
-        indicator.setText2("Publishing additional files");
-      }
-      final Section section = new Section();
-      section.setName(StepikNames.PYCHARM_ADDITIONAL);
-      section.setPosition(position);
-      final int sectionId = postSectionInfo(project, section, id);
-      postLesson(project, lesson, position, sectionId);
+  public static void postAdditionalFiles(@NotNull EduCourse course, @NotNull final Project project, int id) {
+    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+    if (indicator != null) {
+      indicator.setText2("Publishing additional files");
     }
+    final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
+    StepikConnector.postAttachment(additionalFiles, course, id);
   }
 
-  public static void updateAdditionalFiles(@NotNull Course course, @NotNull final Project project, Lesson lesson) {
-    final Lesson postedLesson = CCUtils.createAdditionalLesson(course, project, StepikNames.PYCHARM_ADDITIONAL);
-    if (postedLesson != null) {
-      postedLesson.setId(lesson.getId());
-      Section section = lesson.getSection();
-      assert section != null;
-      postedLesson.setSection(section);
-      final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-      if (indicator != null) {
-        indicator.setText2("Publishing additional files");
-      }
-
-      Lesson updatedLesson = updateLesson(project, postedLesson, false, section.getId());
-      if (updatedLesson != null) {
-        ((EduCourse)course).setAdditionalMaterialsUpdateDate(updatedLesson.getUpdateDate());
-      }
+  public static void updateAdditionalFiles(@NotNull EduCourse course, @NotNull final Project project, int id) {
+    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+    if (indicator != null) {
+      indicator.setText2("Publishing additional files");
     }
+    final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
+    StepikConnector.updateAttachment(additionalFiles, course, id);
   }
 
   public static int postUnit(int lessonId, int position, int sectionId, @NotNull Project project) {
@@ -344,14 +320,9 @@ public class CCStepikConnector {
     return postedSection.getId();
   }
 
-  public static boolean updateSectionInfo(@NotNull Project project, @NotNull Section section) {
-    Section sectionCopy = copySection(section);
-    final Section updatedSection = StepikConnector.updateSection(sectionCopy);
-    if (updatedSection == null) {
-      showErrorNotification(project, FAILED_TITLE, "Failed to post section " + section.getId());
-      return false;
-    }
-    return true;
+  public static Section updateSectionInfo(@NotNull Section section) {
+    Section sectionCopy = copySection(section);  // TODO: why do we copy section here
+    return StepikConnector.updateSection(sectionCopy);
   }
 
   public static boolean updateTask(@NotNull final Project project, @NotNull final Task task) {
@@ -409,50 +380,9 @@ public class CCStepikConnector {
   }
 
   public static void updateAdditionalMaterials(@NotNull Project project, int courseId) {
-    AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
     EduCourse courseInfo = StepikConnector.getCourseInfo(courseId);
     assert courseInfo != null;
-
-    List<Integer> sectionIds = courseInfo.getSectionIds();
-    for (Integer sectionId : sectionIds) {
-      final Section section = StepikConnector.getSection(sectionId);
-      if (section != null && StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
-        section.setPosition(sectionIds.size());
-        section.setId(sectionId);
-        updateSectionInfo(project, section);
-        final List<Lesson> lessons = StepikCourseLoader.getLessons(courseInfo, sectionId);
-        lessons.stream()
-          .filter(Lesson::isAdditional)
-          .findFirst()
-          .ifPresent(lesson -> {
-            lesson.setSection(section);
-            updateAdditionalFiles(courseInfo, project, lesson);
-            additionalMaterialsUpdated.set(true);
-          });
-      }
-    }
-    additionalMaterialsUpdated.get();
-  }
-
-  public static boolean updateAdditionalSection(@NotNull Project project) {
-    AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
-
-    EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
-    assert course != null;
-
-    EduCourse courseInfo = StepikConnector.getCourseInfo(course.getId());
-    assert courseInfo != null;
-
-    List<Integer> sectionIds = courseInfo.getSectionIds();
-    for (Integer sectionId : sectionIds) {
-      final Section section = StepikConnector.getSection(sectionId);
-      if (section != null && StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
-        section.setPosition(sectionIds.size());
-        updateSectionInfo(project, section);
-      }
-    }
-
-    return additionalMaterialsUpdated.get();
+    updateAdditionalFiles(courseInfo, project, courseId);
   }
 
   public static Lesson updateLessonInfo(@NotNull final Project project,
@@ -466,10 +396,7 @@ public class CCStepikConnector {
       showErrorNotification(project, FAILED_TITLE, "Failed to update lesson " + lesson.getId());
       return null;
     }
-
-    if (!lesson.isAdditional()) {
-      updateUnit(lesson.unitId, lesson.getId(), lesson.getIndex(), sectionId, project);
-    }
+    updateUnit(lesson.unitId, lesson.getId(), lesson.getIndex(), sectionId, project);
 
     return updatedLesson;
   }

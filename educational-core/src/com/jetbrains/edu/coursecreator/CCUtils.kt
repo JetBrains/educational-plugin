@@ -30,7 +30,6 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
@@ -123,24 +122,15 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun createAdditionalLesson(course: Course, project: Project, name: String): Lesson? {
+  fun collectAdditionalFiles(course: Course, project: Project): List<TaskFile> {
     ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
-
-    val baseDir = project.baseDir
     val configurator = course.configurator
-
-    val lesson = Lesson()
-    lesson.name = name
-    lesson.course = course
-    val task = EduTask()
-    task.lesson = lesson
-    task.name = name
-    task.index = 1
-
     val sanitizedName = FileUtil.sanitizeFileName(course.name)
     val archiveName = String.format("%s.zip", if (sanitizedName.startsWith("_")) EduNames.COURSE else sanitizedName)
+    val baseDir = project.baseDir
 
-    VfsUtilCore.visitChildrenRecursively(baseDir, object : VirtualFileVisitor<Any>(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
+    val additionalTaskFiles = mutableListOf<TaskFile>()
+    VfsUtilCore.visitChildrenRecursively(baseDir, object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
       override fun visitFile(file: VirtualFile): Boolean {
         @Suppress("NAME_SHADOWING")
         val name = file.name
@@ -153,27 +143,20 @@ object CCUtils {
         if (EduUtils.isTestsFile(project, file)) return true
         if (configurator != null && configurator.excludeFromArchive(project, file)) return false
 
-        val taskFile = EduUtils.getTaskFile(project, file)
+        var taskFile = EduUtils.getTaskFile(project, file)
         if (taskFile == null) {
-          addFileInAdditionalTask(task, baseDir, file)
+          val path = VfsUtilCore.getRelativePath(file, baseDir) ?: return true
+          taskFile = TaskFile(path, loadText(file))
+          try {
+            additionalTaskFiles.add(taskFile)
+          } catch (e: IOException) {
+            LOG.error(e)
+          }
         }
         return true
       }
     })
-    if (task.taskFiles.isEmpty()) return null
-    lesson.addTask(task)
-    lesson.index = course.items.size + 1
-    return lesson
-  }
-
-  private fun addFileInAdditionalTask(additionalTask: Task, baseDir: VirtualFile, file: VirtualFile) {
-    val path = VfsUtilCore.getRelativePath(file, baseDir) ?: return
-    val taskFile = TaskFile(path, loadText(file))
-    try {
-      additionalTask.addTaskFile(taskFile)
-    } catch (e: IOException) {
-      LOG.error(e)
-    }
+    return additionalTaskFiles
   }
 
   @JvmStatic

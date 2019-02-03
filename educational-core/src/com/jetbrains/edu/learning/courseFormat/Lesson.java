@@ -4,11 +4,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
-import com.jetbrains.edu.learning.stepik.StepikNames;
 import kotlin.collections.CollectionsKt;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
@@ -157,12 +155,6 @@ public class Lesson extends StudyItem {
     this.is_public = isPublic;
   }
 
-  public boolean isAdditional() {
-    // We still use `StepikNames.PYCHARM_ADDITIONAL` while Stepik interaction
-    // so we need to check it here
-    return EduNames.ADDITIONAL_MATERIALS.equals(name) || StepikNames.PYCHARM_ADDITIONAL.equals(name);
-  }
-
   @Transient
   @Nullable
   public Section getSection() {
@@ -178,8 +170,7 @@ public class Lesson extends StudyItem {
   public VirtualFile getLessonDir(@NotNull final Project project) {
     VirtualFile courseDir = EduUtils.getCourseDir(project);
 
-    if (mySection == null || EduNames.ADDITIONAL_MATERIALS.equals(mySection.getName()) ||
-        StepikNames.PYCHARM_ADDITIONAL.equals(mySection.getName())) {
+    if (mySection == null) {
       return courseDir.findChild(getName());
     }
     else {

@@ -137,8 +137,6 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    courseFromServer.getLessons(true).single { it.isAdditional }.updateDate = Date()
-
     TestCase.assertEquals(false, course.isUpToDate(courseFromServer))
   }
 
