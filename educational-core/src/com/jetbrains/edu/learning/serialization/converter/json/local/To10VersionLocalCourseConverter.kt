@@ -15,15 +15,15 @@ class To10VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
   private fun convertAdditionalFiles(localCourse: ObjectNode) {
     val additionalFiles = ObjectMapper().createArrayNode()
-    val additionalMaterialsLesson = localCourse.getJsonObjectList(ITEMS).single {
+    val additionalMaterialsLesson = localCourse.getJsonObjectList(ITEMS).singleOrNull {
       it.get(TITLE).asText() == EduNames.ADDITIONAL_MATERIALS || it.get(TITLE).asText() == StepikNames.PYCHARM_ADDITIONAL
     }
 
-    val task = additionalMaterialsLesson.getJsonObjectList(TASK_LIST).single {
-      it.get(NAME).asText() == EduNames.ADDITIONAL_MATERIALS || it.get(TITLE).asText() == StepikNames.PYCHARM_ADDITIONAL
+    val task = additionalMaterialsLesson?.getJsonObjectList(TASK_LIST)?.singleOrNull {
+      it.get(NAME).asText() == EduNames.ADDITIONAL_MATERIALS || it.get(NAME).asText() == StepikNames.PYCHARM_ADDITIONAL
     }
 
-    task.get(FILES)?.fields()?.forEach { (_, fileObject) -> additionalFiles.add(fileObject) }
+    task?.get(FILES)?.fields()?.forEach { (_, fileObject) -> additionalFiles.add(fileObject) }
     localCourse.set(ADDITIONAL_FILES, additionalFiles)
   }
 
