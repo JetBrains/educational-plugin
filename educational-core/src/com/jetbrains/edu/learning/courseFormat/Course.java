@@ -64,7 +64,7 @@ public abstract class Course extends ItemContainer {
   }
 
   @Transient
-  public void setAdditionalFiles(List<TaskFile> additionalFiles) {
+  public void setAdditionalFiles(@NotNull List<TaskFile> additionalFiles) {
     this.additionalFiles = additionalFiles;
   }
 

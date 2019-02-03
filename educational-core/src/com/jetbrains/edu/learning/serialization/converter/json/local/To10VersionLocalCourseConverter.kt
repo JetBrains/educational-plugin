@@ -15,17 +15,23 @@ class To10VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
   private fun convertAdditionalFiles(localCourse: ObjectNode) {
     val additionalFiles = ObjectMapper().createArrayNode()
-    val additionalMaterialsLesson = localCourse.getJsonObjectList(ITEMS).singleOrNull {
-      it.get(TITLE).asText() == EduNames.ADDITIONAL_MATERIALS || it.get(TITLE).asText() == StepikNames.PYCHARM_ADDITIONAL
+    val courseItems = localCourse.getJsonObjectList(ITEMS)
+    val additionalMaterialsLesson = courseItems.singleOrNull {
+      isAdditional(it.get(TITLE).asText())
     }
 
     val task = additionalMaterialsLesson?.getJsonObjectList(TASK_LIST)?.singleOrNull {
-      it.get(NAME).asText() == EduNames.ADDITIONAL_MATERIALS || it.get(NAME).asText() == StepikNames.PYCHARM_ADDITIONAL
+      isAdditional(it.get(NAME).asText())
     }
 
     task?.get(FILES)?.fields()?.forEach { (_, fileObject) -> additionalFiles.add(fileObject) }
     localCourse.set(ADDITIONAL_FILES, additionalFiles)
+    if (additionalMaterialsLesson != null) {
+      localCourse.get(ITEMS).removeAll { isAdditional(it.get(TITLE).asText()) }
+    }
   }
+
+  private fun isAdditional(name: String) = (name == EduNames.ADDITIONAL_MATERIALS || name == StepikNames.PYCHARM_ADDITIONAL)
 
   override fun convertTaskObject(taskObject: ObjectNode, language: String) {
     convertTaskObject(taskObject)

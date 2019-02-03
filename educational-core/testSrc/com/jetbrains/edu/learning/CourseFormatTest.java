@@ -11,15 +11,10 @@ import java.util.List;
 public class CourseFormatTest extends EduTestCase {
 
   public void testAdditionalMaterialsLesson() throws IOException {
-    // TODO: proper test
-    //final Course course = getCourseFromJson();
-    //final List<Lesson> lessons = course.getLessons();
-    //final Lesson additional = lessons.stream().
-    //  filter(lesson -> lesson.getName().equals(EduNames.ADDITIONAL_MATERIALS)).findFirst().orElse(null);
-    //final Lesson oldAdditional = lessons.stream().
-    //  filter(lesson -> lesson.getName().equals(StepikNames.PYCHARM_ADDITIONAL)).findFirst().orElse(null);
-    //assertNotNull(additional);
-    //assertNull(oldAdditional);
+    final Course course = getCourseFromJson();
+    assertNotNull(course.getAdditionalFiles());
+    assertFalse(course.getAdditionalFiles().isEmpty());
+    assertEquals("test_helper.py", course.getAdditionalFiles().get(0).getName());
   }
 
   public void testCourseWithSection() throws IOException {
