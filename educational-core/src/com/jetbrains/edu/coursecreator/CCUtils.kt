@@ -127,7 +127,7 @@ object CCUtils {
     val configurator = course.configurator
     val sanitizedName = FileUtil.sanitizeFileName(course.name)
     val archiveName = String.format("%s.zip", if (sanitizedName.startsWith("_")) EduNames.COURSE else sanitizedName)
-    val baseDir = project.baseDir
+    val baseDir = EduUtils.getCourseDir(project)
 
     val additionalTaskFiles = mutableListOf<TaskFile>()
     VfsUtilCore.visitChildrenRecursively(baseDir, object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {

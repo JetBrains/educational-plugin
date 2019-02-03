@@ -6,23 +6,29 @@
   "course_type" : "PyCharm",
   "items" : [
     {
-      "title" : "my lesson",
+      "title" : "lesson1",
       "task_list" : [
         {
           "name" : "task1",
           "files" : {
-            "Task.kt" : {
-              "name" : "Task.kt",
+            "fizz.kt" : {
+              "name" : "fizz.kt",
               "placeholders" : [
                 {
-                  "offset" : 20,
+                  "offset" : 13,
                   "length" : 6,
-                  "possible_answer" : "\"Foo\"",
+                  "possible_answer" : "",
+                  "placeholder_text" : "TODO()"
+                },
+                {
+                  "offset" : 32,
+                  "length" : 6,
+                  "possible_answer" : "",
                   "placeholder_text" : "TODO()"
                 }
               ],
               "is_visible" : true,
-              "text" : "fun foo(): String = TODO()"
+              "text" : "fn fizzz() = TODO()\nfn buzz() = TODO()"
             }
           },
           "description_text" : "solve task",
@@ -33,7 +39,15 @@
           "task_type" : "edu"
         }
       ],
-      "type" : "framework"
+      "type" : "lesson"
+    }
+  ],
+  "additional_files" : [
+    {
+      "name" : "additional.txt",
+      "placeholders" : [ ],
+      "is_visible" : true,
+      "text" : "file text"
     }
   ],
   "version" : 10

@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWORK_TYPE
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
-import com.jetbrains.edu.learning.serialization.doDeserializeTask
+import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
 
 private const val VERSION = "version"
 private const val TITLE = "title"
@@ -75,6 +75,7 @@ abstract class LocalEduCourseMixin {
   private lateinit var items: List<StudyItem>
 
   @JsonProperty(ADDITIONAL_FILES)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   private lateinit var additionalFiles: List<TaskFile>
 }
 

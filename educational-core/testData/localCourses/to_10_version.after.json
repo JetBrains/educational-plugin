@@ -122,31 +122,13 @@
       }
     } ],
     "type" : "framework"
+  } ],
+  "additional_files" : [ {
+    "name" : "util/src/testUtils.kt",
+    "text" : "",
+    "placeholders" : [ ]
   }, {
-    "id" : 0,
-    "update_date" : "Jan 1, 1970 3:00:00 AM",
-    "title" : "Edu additional materials",
-    "task_list" : [ {
-      "name" : "Edu additional materials",
-      "stepic_id" : 0,
-      "description_format" : "MD",
-      "update_date" : "Jan 1, 1970 3:00:00 AM",
-      "feedback_link" : {
-        "link_type" : "STEPIK"
-      },
-      "task_type" : "edu",
-      "files" : {
-        "util/src/testUtils.kt" : {
-          "name" : "util/src/testUtils.kt",
-          "text" : "",
-          "placeholders" : [ ]
-        },
-        "build.gradle" : {
-          "text" : "buildscript {\n    ext.kotlin_version = '1.2.71'\n\n    repositories {\n        mavenCentral()\n    }\n\n    dependencies {\n        classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"\n    }\n}\n\ndef printOutput(def output) {\n    return tasks.create(\"printOutput\") {\n        for (line in output.toString().readLines()) {\n            println \"#educational_plugin\" + line\n        }\n    }\n}\n\nsubprojects {\n    apply plugin: 'application'\n    apply plugin: 'java'\n    apply plugin: 'kotlin'\n\n    sourceCompatibility = 1.8\n\n    repositories {\n        mavenCentral()\n    }\n\n    dependencies {\n        compile \"org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version\"\n        testCompile group: 'junit', name: 'junit', version: '4.12'\n    }\n\n    compileKotlin.destinationDir = compileJava.destinationDir\n\n    compileKotlin {\n        kotlinOptions.jvmTarget = \"1.8\"\n    }\n    compileTestKotlin {\n        kotlinOptions.jvmTarget = \"1.8\"\n    }\n\n    sourceSets {\n        main {\n            kotlin.srcDir 'src'\n            java.srcDir 'src'\n        }\n        test {\n            kotlin.srcDir 'test'\n            java.srcDir 'test'\n        }\n    }\n\n    mainClassName = project.hasProperty(\"mainClass\") ? project.getProperty(\"mainClass\") : \"\"\n\n    test {\n        outputs.upToDateWhen { false }\n        afterTest { TestDescriptor test, TestResult result ->\n            if (result.resultType == TestResult.ResultType.FAILURE) {\n                def message = result.exception?.message ?: \"Wrong answer\"\n                def lines = message.readLines()\n                println \"#educational_plugin FAILED + \" + lines[0]\n                lines[1..-1].forEach { line ->\n                    println \"#educational_plugin\" + line\n                }\n                // we need this to separate output of different tests\n                println\n            }\n        }\n    }\n\n    def runOutput = new ByteArrayOutputStream()\n    tasks.run.setStandardOutput(runOutput)\n    tasks.run.doLast { printOutput(runOutput) }\n}\n\nproject(':util') {\n    dependencies {\n        compile group: 'junit', name: 'junit', version: '4.12'\n    }\n}\n\nconfigure(subprojects.findAll {it.name != 'util'}) {\n  dependencies {\n    compile project(':util').sourceSets.main.output\n    testCompile project(':util').sourceSets.test.output\n  }\n}\n\ntask wrapper(type: Wrapper) {\n  gradleVersion = '4.10'\n}\n",
-          "name" : "build.gradle"
-        }
-      }
-    } ],
-    "type" : "lesson"
+    "text" : "buildscript {\n    ext.kotlin_version = '1.2.71'\n\n    repositories {\n        mavenCentral()\n    }\n\n    dependencies {\n        classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"\n    }\n}\n\ndef printOutput(def output) {\n    return tasks.create(\"printOutput\") {\n        for (line in output.toString().readLines()) {\n            println \"#educational_plugin\" + line\n        }\n    }\n}\n\nsubprojects {\n    apply plugin: 'application'\n    apply plugin: 'java'\n    apply plugin: 'kotlin'\n\n    sourceCompatibility = 1.8\n\n    repositories {\n        mavenCentral()\n    }\n\n    dependencies {\n        compile \"org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version\"\n        testCompile group: 'junit', name: 'junit', version: '4.12'\n    }\n\n    compileKotlin.destinationDir = compileJava.destinationDir\n\n    compileKotlin {\n        kotlinOptions.jvmTarget = \"1.8\"\n    }\n    compileTestKotlin {\n        kotlinOptions.jvmTarget = \"1.8\"\n    }\n\n    sourceSets {\n        main {\n            kotlin.srcDir 'src'\n            java.srcDir 'src'\n        }\n        test {\n            kotlin.srcDir 'test'\n            java.srcDir 'test'\n        }\n    }\n\n    mainClassName = project.hasProperty(\"mainClass\") ? project.getProperty(\"mainClass\") : \"\"\n\n    test {\n        outputs.upToDateWhen { false }\n        afterTest { TestDescriptor test, TestResult result ->\n            if (result.resultType == TestResult.ResultType.FAILURE) {\n                def message = result.exception?.message ?: \"Wrong answer\"\n                def lines = message.readLines()\n                println \"#educational_plugin FAILED + \" + lines[0]\n                lines[1..-1].forEach { line ->\n                    println \"#educational_plugin\" + line\n                }\n                // we need this to separate output of different tests\n                println\n            }\n        }\n    }\n\n    def runOutput = new ByteArrayOutputStream()\n    tasks.run.setStandardOutput(runOutput)\n    tasks.run.doLast { printOutput(runOutput) }\n}\n\nproject(':util') {\n    dependencies {\n        compile group: 'junit', name: 'junit', version: '4.12'\n    }\n}\n\nconfigure(subprojects.findAll {it.name != 'util'}) {\n  dependencies {\n    compile project(':util').sourceSets.main.output\n    testCompile project(':util').sourceSets.test.output\n  }\n}\n\ntask wrapper(type: Wrapper) {\n  gradleVersion = '4.10'\n}\n",
+    "name" : "build.gradle"
   } ]
 }

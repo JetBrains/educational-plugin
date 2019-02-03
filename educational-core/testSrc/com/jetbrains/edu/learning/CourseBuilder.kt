@@ -69,6 +69,11 @@ abstract class LessonOwnerBuilder(val course: Course) {
     addLesson(lesson)
     lessonBuilder.buildLesson()
   }
+
+  fun additionalFiles(buildTaskFiles: AdditionalFilesBuilder.() -> Unit) {
+    val builder = AdditionalFilesBuilder(course)
+    builder.buildTaskFiles()
+  }
 }
 
 class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
@@ -285,7 +290,23 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   }
 }
 
-class TaskFileBuilder(val task: Task) {
+class AdditionalFilesBuilder(val course: Course) {
+
+  fun taskFile(
+    name: String, text: String = "",
+    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+  ) {
+    val taskFileBuilder = TaskFileBuilder()
+    taskFileBuilder.withName(name)
+    val textBuilder = StringBuilder(text.trimIndent())
+    taskFileBuilder.withText(textBuilder.toString())
+    taskFileBuilder.buildTaskFile()
+    val taskFile = taskFileBuilder.taskFile
+    course.additionalFiles.add(taskFile)
+  }
+}
+
+class TaskFileBuilder(val task: Task? = null) {
   val taskFile = TaskFile()
 
   init {

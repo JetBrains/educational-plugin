@@ -1,1 +1,57 @@
-{"summary":"my summary","title":"Test Course","programming_language":"TEXT","language":"en","course_type":"PyCharm","items":[{"items":[{"title":"lesson1","task_list":[{"name":"task1","files":{"additional.py":{"name":"additional.py","placeholders":[],"is_visible":false,"text":"my test"},"taskFile1.txt":{"name":"taskFile1.txt","placeholders":[],"is_visible":true,"text":""},"test.py":{"name":"test.py","placeholders":[],"is_visible":true,"text":"some test"},"visibleAdditional.py":{"name":"visibleAdditional.py","placeholders":[],"is_visible":true,"text":"my test"}},"description_text":"solve task","description_format":"HTML","feedback_link":{"link_type":"STEPIK"},"task_type":"edu"}],"type":"lesson"}],"title":"section1","type":"section"}],"version":10}
+{
+  "summary" : "my summary",
+  "title" : "Test Course",
+  "programming_language" : "TEXT",
+  "language" : "en",
+  "course_type" : "PyCharm",
+  "items" : [
+    {
+      "items" : [
+        {
+          "title" : "lesson1",
+          "task_list" : [
+            {
+              "name" : "task1",
+              "files" : {
+                "additional.py" : {
+                  "name" : "additional.py",
+                  "placeholders" : [ ],
+                  "is_visible" : false,
+                  "text" : "my test"
+                },
+                "taskFile1.txt" : {
+                  "name" : "taskFile1.txt",
+                  "placeholders" : [ ],
+                  "is_visible" : true,
+                  "text" : ""
+                },
+                "test.py" : {
+                  "name" : "test.py",
+                  "placeholders" : [ ],
+                  "is_visible" : true,
+                  "text" : "some test"
+                },
+                "visibleAdditional.py" : {
+                  "name" : "visibleAdditional.py",
+                  "placeholders" : [ ],
+                  "is_visible" : true,
+                  "text" : "my test"
+                }
+              },
+              "description_text" : "solve task",
+              "description_format" : "HTML",
+              "feedback_link" : {
+                "link_type" : "STEPIK"
+              },
+              "task_type" : "edu"
+            }
+          ],
+          "type" : "lesson"
+        }
+      ],
+      "title" : "section1",
+      "type" : "section"
+    }
+  ],
+  "version" : 10
+}

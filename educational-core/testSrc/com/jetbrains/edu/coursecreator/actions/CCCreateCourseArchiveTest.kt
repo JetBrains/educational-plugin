@@ -128,6 +128,26 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     TestCase.assertEquals(expectedCourseJson, generatedJsonFile)
   }
 
+  fun `test course additional files`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("fizz.kt", """
+          fn fizzz() = <p>TODO()</p>
+          fn buzz() = <p>TODO()</p>
+        """)
+        }
+      }
+      additionalFiles {
+        taskFile("additional.txt", "file text")
+      }
+    }
+    course.description = "my summary"
+    val generatedJsonFile = generateJson()
+    val expectedCourseJson = loadExpectedJson()
+    TestCase.assertEquals(expectedCourseJson, generatedJsonFile)
+  }
+
   private fun loadExpectedJson(): String {
     val fileName = getTestFile()
     return FileUtil.loadFile(File(testDataPath, fileName))
@@ -149,7 +169,7 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     TestCase.assertNotNull(courseFolder)
     val jsonFile = courseFolder!!.findChild(EduNames.COURSE_META_FILE)
     TestCase.assertNotNull(jsonFile)
-    return FileUtil.loadFile(File(jsonFile!!.path))
+    return FileUtil.loadFile(File(jsonFile!!.path)).replace(Regex("\\n\\n"), "\n")
   }
 
   override fun getTestDataPath(): String {

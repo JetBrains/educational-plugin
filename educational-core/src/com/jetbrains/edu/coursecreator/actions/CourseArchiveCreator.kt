@@ -131,9 +131,6 @@ class CourseArchiveCreator(
 
     private val printer: PrettyPrinter?
       get() {
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-          return null
-        }
         val prettyPrinter = DefaultPrettyPrinter()
         prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE)
         return prettyPrinter

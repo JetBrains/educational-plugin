@@ -74,10 +74,8 @@ public class StepikFormatTest extends EduTestCase {
   public void testAdditionalMaterialsLesson() throws IOException {
     String responseString = loadJsonText();
     final ObjectMapper mapper = StepikConnector.getObjectMapper();
-    final LessonsList lessonsList = mapper.readValue(responseString, LessonsList.class);
-
-    Lesson lesson = lessonsList.lessons.get(0);
-    assertEquals(EduNames.ADDITIONAL_MATERIALS, lesson.getName());
+    final AdditionalInfo additionalInfo = mapper.readValue(responseString, AdditionalInfo.class);
+    assertEquals(1, additionalInfo.additionalFiles.size());
   }
 
   public void testAdditionalMaterialsStep() throws IOException {
@@ -410,8 +408,8 @@ public class StepikFormatTest extends EduTestCase {
 
     final ObjectNode jsonBefore = (ObjectNode)new ObjectMapper().readTree(responseString);
     ObjectNode jsonAfter = migrationAction.apply(jsonBefore);
-
     String afterActual = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(jsonAfter);
+    afterActual = afterActual.replaceAll("\\n\\n", "\n");
     assertEquals(afterExpected, afterActual);
   }
 

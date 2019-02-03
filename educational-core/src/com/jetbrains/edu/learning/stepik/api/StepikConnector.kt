@@ -333,7 +333,7 @@ object StepikConnector {
   }
 
   @JvmStatic
-  fun postAttachment(additionalFiles: List<TaskFile>, course: EduCourse, courseId: Int): Int {
+  fun postAttachment(additionalFiles: List<TaskFile>, courseId: Int): Int {
     val additionalInfo = AdditionalInfo(additionalFiles)
     val fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), objectMapper.writeValueAsString(additionalInfo))
     val fileData = MultipartBody.Part.createFormData("file", StepikNames.ADDITIONAL_FILES, fileBody)
@@ -342,8 +342,6 @@ object StepikConnector {
     val response = service.attachment(fileData, courseBody).executeHandlingExceptions()
     checkForErrors(response)
 
-    updateCourse(course)  // Needed to push forward update_date in course
-    course.setUpdated()
     return response?.code() ?: -1
   }
 
@@ -390,15 +388,17 @@ object StepikConnector {
   }
 
   @JvmStatic
-  fun updateAttachment(additionalFiles: List<TaskFile>, course: EduCourse, courseId: Int): Int {
-    val attachments = service.attachments(courseId).executeHandlingExceptions()?.body()
+  fun updateAttachment(additionalFiles: List<TaskFile>, course: EduCourse): Int {
+    val attachments = service.attachments(course.id).executeHandlingExceptions()?.body()
     if (attachments != null && attachments.attachments.isNotEmpty()) {
       val attachmentId = attachments.attachments.firstOrNull { StepikNames.ADDITIONAL_FILES == it.name }?.id
       if (attachmentId != null) {
         service.deleteAttachment(attachmentId).executeHandlingExceptions()
       }
     }
-    return postAttachment(additionalFiles, course, courseId)
+    updateCourse(course)  // Needed to push forward update_date in course
+    course.setUpdated()
+    return postAttachment(additionalFiles, course.id)
   }
 
   // Delete requests:

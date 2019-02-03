@@ -14,7 +14,8 @@ import java.util.List;
 public class Section extends ItemContainer {
   public Section() {}
 
-  public List<Integer> units = new ArrayList<>();
+  @Transient
+  public List<Integer> units = new ArrayList<>();  // should be used only during deserialization from stepik
   private int courseId;
   private String name;
 

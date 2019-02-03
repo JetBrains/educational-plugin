@@ -137,6 +137,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
+    courseFromServer.updateDate = Date()
     TestCase.assertEquals(false, course.isUpToDate(courseFromServer))
   }
 
@@ -283,10 +284,6 @@ class StepikUpdateDateTest : EduTestCase() {
           taskFile("fizz.kt")
         }
       }
-
-      lesson("PyCharm additional materials") {
-        eduTask { }
-      }
     }.asRemote()
 
     TestCase.assertEquals(false, course.isUpToDate(courseFromServer))
@@ -367,10 +364,6 @@ class StepikUpdateDateTest : EduTestCase() {
         eduTask {
           taskFile("fizz.kt")
         }
-      }
-
-      lesson("PyCharm additional materials") {
-        eduTask { }
       }
     }.asRemote()
 

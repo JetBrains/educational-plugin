@@ -59,6 +59,7 @@ public class CCStepikConnector {
     ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Modal(project, "Uploading Course", true) {
       @Override
       public void run(@NotNull final ProgressIndicator indicator) {
+        indicator.setIndeterminate(false);
         postCourse(project, course);
       }
     });
@@ -70,12 +71,7 @@ public class CCStepikConnector {
       showStepikNotification(project, "post course");
       return;
     }
-
-    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-    if (indicator != null) {
-      indicator.setText("Uploading course to " + StepikNames.STEPIK_URL);
-      indicator.setIndeterminate(false);
-    }
+    updateProgress("Uploading course to " + StepikNames.STEPIK_URL);
     final StepikUserInfo currentUser = StepikConnector.getCurrentUserInfo(user);
     if (currentUser != null) {
       final List<StepikUserInfo> courseAuthors = course.getAuthors();
@@ -205,7 +201,7 @@ public class CCStepikConnector {
   public static int postSection(@NotNull Project project, @NotNull Section section, @Nullable ProgressIndicator indicator) {
     EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    final int sectionId = postSectionInfo(project, copySection(section), course.getId());
+    final int sectionId = postSectionInfo(project, section, course.getId());
     section.setId(sectionId);
     postLessons(project, indicator, course, sectionId, section.getLessons());
 
@@ -231,16 +227,6 @@ public class CCStepikConnector {
     return true;
   }
 
-  public static Section copySection(@NotNull Section section) {
-    Section sectionToPost = new Section();
-    sectionToPost.setName(section.getName());
-    sectionToPost.setPosition(section.getPosition());
-    sectionToPost.setId(section.getId());
-    sectionToPost.setCourseId(section.getCourseId());
-
-    return sectionToPost;
-  }
-
   private static void postLessons(@NotNull Project project,
                                   @Nullable ProgressIndicator indicator,
                                   @NotNull EduCourse course,
@@ -248,10 +234,7 @@ public class CCStepikConnector {
                                   @NotNull List<Lesson> lessons) {
     int position = 1;
     for (Lesson lesson : lessons) {
-      if (indicator != null) {
-        indicator.checkCanceled();
-        indicator.setText2("Publishing lesson " + lesson.getIndex());
-      }
+      updateProgress("Publishing lesson " + lesson.getIndex());
       postLesson(project, lesson, position, sectionId);
       if (indicator != null) {
         indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
@@ -270,21 +253,23 @@ public class CCStepikConnector {
   }
 
   public static void postAdditionalFiles(@NotNull EduCourse course, @NotNull final Project project, int id) {
-    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-    if (indicator != null) {
-      indicator.setText2("Publishing additional files");
-    }
+    updateProgress("Publishing additional files");
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
-    StepikConnector.postAttachment(additionalFiles, course, id);
+    StepikConnector.postAttachment(additionalFiles, id);
   }
 
-  public static void updateAdditionalFiles(@NotNull EduCourse course, @NotNull final Project project, int id) {
+  public static void updateAdditionalFiles(@NotNull EduCourse course, @NotNull final Project project) {
+    updateProgress("Publishing additional files");
+    final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
+    StepikConnector.updateAttachment(additionalFiles, course);
+  }
+
+  private static void updateProgress(@NotNull String text) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     if (indicator != null) {
-      indicator.setText2("Publishing additional files");
+      indicator.checkCanceled();
+      indicator.setText2(text);
     }
-    final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
-    StepikConnector.updateAttachment(additionalFiles, course, id);
   }
 
   public static int postUnit(int lessonId, int position, int sectionId, @NotNull Project project) {
@@ -321,8 +306,8 @@ public class CCStepikConnector {
   }
 
   public static Section updateSectionInfo(@NotNull Section section) {
-    Section sectionCopy = copySection(section);  // TODO: why do we copy section here
-    return StepikConnector.updateSection(sectionCopy);
+    section.units.clear();
+    return StepikConnector.updateSection(section);
   }
 
   public static boolean updateTask(@NotNull final Project project, @NotNull final Task task) {
@@ -382,7 +367,7 @@ public class CCStepikConnector {
   public static void updateAdditionalMaterials(@NotNull Project project, int courseId) {
     EduCourse courseInfo = StepikConnector.getCourseInfo(courseId);
     assert courseInfo != null;
-    updateAdditionalFiles(courseInfo, project, courseId);
+    updateAdditionalFiles(courseInfo, project);
   }
 
   public static Lesson updateLessonInfo(@NotNull final Project project,

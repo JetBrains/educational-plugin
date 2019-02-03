@@ -103,12 +103,12 @@ object StepikCourseLoader {
     else {
       addTopLevelLessons(remoteCourse, realSections)
     }
-    loadAdditionalMaterials(remoteCourse, allSections.firstOrNull { it.name == StepikNames.PYCHARM_ADDITIONAL })
+    fillAdditionalMaterials(remoteCourse, allSections.firstOrNull { it.name == StepikNames.PYCHARM_ADDITIONAL })
   }
 
-  private fun loadAdditionalMaterials(course: EduCourse, additionalSection: Section?) {
-    val additionalFiles = loadAttachment(course, null)
-    if (additionalFiles.isEmpty() && additionalSection != null) {
+  private fun fillAdditionalMaterials(course: EduCourse, additionalSection: Section?) {
+    course.additionalFiles = loadAttachment(course, null)
+    if (course.additionalFiles.isEmpty() && additionalSection != null) {
       // load the old way for compatibility with old courses
       if (additionalSection.units.size == 1) {
         val lesson = getLessonsFromUnits(course, additionalSection.units, false).firstOrNull()

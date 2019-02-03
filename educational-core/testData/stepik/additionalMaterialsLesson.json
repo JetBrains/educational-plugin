@@ -1,59 +1,10 @@
 {
-  "meta": {
-    "page": 1,
-    "has_next": false,
-    "has_previous": false
-  },
-  "lessons": [
+  "additional_files": [
     {
-      "id": 61864,
-      "steps": [
-        243558
-      ],
-      "actions": {
-        "view_statistics": "/lesson/61864/stats/",
-        "clone_lesson": "/lesson/61864/clone/",
-        "view_all_submissions": "#",
-        "edit_permissions": "/lesson/61864/permissions/",
-        "delete_lesson": "#",
-        "edit_lesson": "#",
-        "attachments": "/lesson/61864/attachments/"
-      },
-      "tags": [],
-      "required_tags": [],
-      "progress": "76-61864",
-      "subscriptions": [
-        "31-76-61864",
-        "30-76-61864"
-      ],
-      "viewed_by": 0,
-      "passed_by": 0,
-      "time_to_complete": null,
-      "cover_url": null,
-      "is_comments_enabled": true,
-      "owner": 625832,
-      "language": "en",
-      "is_featured": false,
-      "is_public": true,
-      "title": "PyCharm additional materials",
-      "slug": "PyCharm-additional-materials-61864",
-      "create_date": "2017-11-22T10:13:58Z",
-      "update_date": "2017-11-22T10:14:00Z",
-      "learners_group": 288208,
-      "testers_group": 288209,
-      "moderators_group": 288210,
-      "teachers_group": 288207,
-      "admins_group": 288211,
-      "discussions_count": 0,
-      "discussion_proxy": "76-61864-1",
-      "discussion_threads": [
-        "76-61864-1"
-      ],
-      "epic_count": 0,
-      "abuse_count": 0,
-      "vote": "76-61864",
-      "lti_consumer_key": "",
-      "lti_secret_key": ""
+      "name": "build.gradle1",
+      "placeholders": [],
+      "is_visible": true,
+      "text": "buildscript {\n    repositories {\n        mavenCentral()\n    }\n}\n\ndef printOutput(def output) {\n    return tasks.create(\"printOutput\") {\n        for (line in output.toString().readLines()) {\n            println \"#educational_plugin\" + line\n        }\n    }\n}\n// my comment 2\n\n// my comment\nsubprojects {\n    apply plugin: 'application'\n    apply plugin: 'java'\n\n    sourceCompatibility = 1.8\n\n    repositories {\n        mavenCentral()\n    }\n\n    dependencies {\n        testCompile group: 'junit', name: 'junit', version: '4.12'\n    }\n\n    sourceSets {\n        main {\n            java.srcDir 'src'\n        }\n        test {\n            java.srcDir 'test'\n        }\n    }\n\n    mainClassName = project.hasProperty(\"mainClass\") ? project.getProperty(\"mainClass\") : \"\"\n\n    test {\n        outputs.upToDateWhen { false }\n        afterTest { TestDescriptor test, TestResult result ->\n            if (result.resultType == TestResult.ResultType.FAILURE) {\n                def message = result.exception?.message ?: \"Wrong answer\"\n                def lines = message.readLines()\n                println \"#educational_plugin FAILED + \" + lines[0]\n                lines[1..-1].forEach { line ->\n                    println \"#educational_plugin\" + line\n                }\n                // we need this to separate output of different tests\n                println\n            }\n        }\n    }\n\n    def runOutput = new ByteArrayOutputStream()\n    tasks.run.setStandardOutput(runOutput)\n    tasks.run.doLast { printOutput(runOutput) }\n}\n\nproject(':util') {\n    dependencies {\n        compile group: 'junit', name: 'junit', version: '4.12'\n    }\n}\n\nconfigure(subprojects.findAll {it.name != 'util'}) {\n  dependencies {\n    compile project(':util').sourceSets.main.output\n    testCompile project(':util').sourceSets.test.output\n  }\n}\n\ntask wrapper(type: Wrapper) {\n  gradleVersion = '4.10'\n}\n"
     }
   ]
 }

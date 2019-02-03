@@ -5,7 +5,10 @@ import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.javascript.learning.JsCourseBuilder
 import com.jetbrains.edu.javascript.learning.JsNewProjectSettings
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.CourseGenerationTestBase
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.newCourse
 
 class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
 
@@ -42,11 +45,9 @@ class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
           taskFile("task.js")
           taskFile("test/test.js")
         }
-        lesson(EduNames.ADDITIONAL_MATERIALS) {
-          eduTask(EduNames.ADDITIONAL_MATERIALS) {
-            taskFile("package.json")
-          }
-        }
+      }
+      additionalFiles {
+        taskFile("package.json", "tmp")
       }
     }
     createCourseStructure(course)

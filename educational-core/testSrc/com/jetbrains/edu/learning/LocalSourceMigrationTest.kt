@@ -26,7 +26,8 @@ class LocalSourceMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
     val afterExpected = loadJsonText(afterFileName)
     val jsonBefore = ObjectMapper().readTree(before) as? ObjectNode
     val jsonAfter = migrate(jsonBefore!!, maxVersion)
-    val afterActual = ObjectMapper().writer(DefaultPrettyPrinter()).writeValueAsString(jsonAfter)
+    var afterActual = ObjectMapper().writer(DefaultPrettyPrinter()).writeValueAsString(jsonAfter)
+    afterActual = afterActual.replace(Regex("\\n\\n"), "\n")
     assertEquals(afterExpected, afterActual)
   }
 
