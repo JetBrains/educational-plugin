@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import icons.EducationalCoreIcons;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -175,10 +176,10 @@ public abstract class Task extends StudyItem {
     Task task = (Task)o;
 
     if (getIndex() != task.getIndex()) return false;
-    if (name != null ? !name.equals(task.name) : task.name != null) return false;
-    if (myTaskFiles != null ? !myTaskFiles.equals(task.myTaskFiles) : task.myTaskFiles != null) return false;
-    if (descriptionText != null ? !descriptionText.equals(task.descriptionText) : task.descriptionText != null) return false;
-    if (descriptionFormat != null ? !descriptionFormat.equals(task.descriptionFormat) : task.descriptionFormat != null) return false;
+    if (!Objects.equals(name, task.name)) return false;
+    if (!Objects.equals(myTaskFiles, task.myTaskFiles)) return false;
+    if (!descriptionText.equals(task.descriptionText)) return false;
+    if (!Objects.equals(descriptionFormat, task.descriptionFormat)) return false;
 
     return true;
   }
@@ -188,7 +189,7 @@ public abstract class Task extends StudyItem {
     int result = name != null ? name.hashCode() : 0;
     result = 31 * result + getIndex();
     result = 31 * result + (myTaskFiles != null ? myTaskFiles.hashCode() : 0);
-    result = 31 * result + (descriptionText != null ? descriptionText.hashCode() : 0);
+    result = 31 * result + descriptionText.hashCode();
     result = 31 * result + (descriptionFormat != null ? descriptionFormat.hashCode() : 0);
     return result;
   }
@@ -316,5 +317,12 @@ public abstract class Task extends StudyItem {
 
   public void setRecord(int record) {
     myRecord = record;
+  }
+
+  public String getUIName() {
+    if (getCourse() instanceof HyperskillCourse) {
+      return "Stage";
+    }
+    return "Task";
   }
 }

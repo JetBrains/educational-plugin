@@ -307,10 +307,11 @@ public class EduUtils {
     if (task == null || task.getLesson() == null) {
       return null;
     }
-    String text = task.getTaskDescription(taskDirectory) != null ? task.getTaskDescription(taskDirectory) : getTaskTextByTaskName(task, taskDirectory);
-
-    if (text == null) return null;
-
+    String text = task.getTaskDescription(taskDirectory) != null ? task.getTaskDescription(taskDirectory)
+                                                                 : getTaskTextByTaskName(task, taskDirectory);
+    if (task.getLesson() instanceof FrameworkLesson) {
+      text = "<h2>" + task.getUIName() + " #" + task.getIndex() + ": " + task.getName() + "<h2/> " + text;
+    }
     return text;
   }
 

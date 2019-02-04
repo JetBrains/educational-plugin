@@ -13,6 +13,8 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ex.ToolWindowEx
+import com.intellij.openapi.wm.impl.ToolWindowImpl
+import com.intellij.openapi.wm.impl.content.ToolWindowContentUi
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription
@@ -35,6 +37,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     }
     toolWindow.icon = EducationalCoreIcons.CourseToolWindow
     val taskDescriptionToolWindow = TaskDescriptionView.getInstance(project)
+    (toolWindow as ToolWindowImpl).component.putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
     toolWindow.initTitleActions()
     taskDescriptionToolWindow.init(toolWindow)
     (toolWindow as ToolWindowEx).setAdditionalGearActions(DefaultActionGroup(AdjustFontSize(taskDescriptionToolWindow)))

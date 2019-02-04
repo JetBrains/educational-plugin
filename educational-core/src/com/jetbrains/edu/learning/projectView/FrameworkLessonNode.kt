@@ -1,11 +1,9 @@
 package com.jetbrains.edu.learning.projectView
 
-import com.intellij.ide.projectView.PresentationData
 import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
-import com.intellij.ui.SimpleTextAttributes
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 
@@ -17,11 +15,6 @@ class FrameworkLessonNode private constructor(
 ) : LessonNode(project, value, viewSettings, lesson) {
 
   override fun getLesson(): FrameworkLesson = super.getLesson() as FrameworkLesson
-
-  override fun updateImpl(data: PresentationData) {
-    super.updateImpl(data)
-    data.addText("  (task ${lesson.currentTaskIndex + 1} of ${lesson.taskList.size})", SimpleTextAttributes.GRAYED_ATTRIBUTES)
-  }
 
   override fun modifyChildNode(child: AbstractTreeNode<*>): AbstractTreeNode<*>? {
     val task = lesson.currentTask()

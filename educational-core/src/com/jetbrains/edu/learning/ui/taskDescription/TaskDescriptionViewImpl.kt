@@ -108,7 +108,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     panel.add(bottomPanel, BorderLayout.SOUTH)
     UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
-    val content = ContentFactory.SERVICE.getInstance().createContent(panel, "Description", false)
+    val displayNamePrefix = currentTask?.uiName ?: "Task"
+    val content = ContentFactory.SERVICE.getInstance().createContent(panel, "$displayNamePrefix Description", false)
     content.isCloseable = false
     contentManager.addContent(content)
     currentTask = EduUtils.getCurrentTask(project)

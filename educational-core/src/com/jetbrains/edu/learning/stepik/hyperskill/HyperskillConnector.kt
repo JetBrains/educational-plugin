@@ -169,9 +169,9 @@ object HyperskillConnector {
   // Post requests:
 
   fun postSolution(task: Task, project: Project) {
-    val taskDir = task.getTaskDir(project) ?: return LOG.error("Failed to find task directory ${task.name}")
+    val taskDir = task.getTaskDir(project) ?: return LOG.error("Failed to find stage directory ${task.name}")
 
-    val attempt = postAttempt(task.stepId) ?: return LOG.error("Failed post attempt for task ${task.stepId}")
+    val attempt = postAttempt(task.stepId) ?: return LOG.error("Failed to post attempt for stage ${task.stepId}")
 
     val files = ArrayList<SolutionFile>()
     for (taskFile in task.taskFiles.values) {
@@ -194,7 +194,7 @@ object HyperskillConnector {
     val response = service.submission(Submission(score, attempt.id, files, serializedTask)).executeHandlingExceptions()
     checkForErrors(response)
     if (response?.code() != HttpStatus.SC_CREATED) {
-      LOG.error("Failed to make submission for task ${task.stepId}")
+      LOG.error("Failed to make submission for stage ${task.stepId}")
     }
   }
 

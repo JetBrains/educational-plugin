@@ -31,7 +31,7 @@ public class LessonNode extends EduNode {
   }
 
   @Override
-  protected void updateImpl(PresentationData data) {
+  protected void updateImpl(@NotNull PresentationData data) {
     CheckStatus status = myLesson.getStatus();
     boolean isSolved = status == CheckStatus.Solved;
     Icon icon = !isSolved ? EducationalCoreIcons.Lesson : EducationalCoreIcons.LessonSolved;

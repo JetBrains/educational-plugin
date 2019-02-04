@@ -57,7 +57,7 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
 
           lesson.taskList.forEachIndexed { index, task ->
             task.feedbackLink = feedbackLink(projectId, stages[index])
-            task.descriptionText = "<h2>Stage #${index + 1}: ${stages[index].title}<h2/> " + task.descriptionText
+            task.name = stages[index].title
           }
           lesson.name = hyperskillProject.title
 
