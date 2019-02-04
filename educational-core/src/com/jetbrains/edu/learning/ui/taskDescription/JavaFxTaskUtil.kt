@@ -165,7 +165,7 @@ fun htmlWithResources(project: Project, content: String): String {
   val templateText = loadText("/style/template.html.ft")
   val styleManager = StyleManager()
 
-  val textWithResources = StrSubstitutor(styleManager.resources(project, content)).replace(templateText) ?: "Cannot load task text"
+  val textWithResources = StrSubstitutor(styleManager.resources(content)).replace(templateText) ?: "Cannot load task text"
   return absolutizeImgPaths(project, textWithResources)
 }
 

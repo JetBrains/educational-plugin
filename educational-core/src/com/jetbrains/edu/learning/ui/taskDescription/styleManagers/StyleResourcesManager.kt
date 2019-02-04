@@ -1,19 +1,17 @@
 package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
 
-import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.ui.taskDescription.loadText
 import kotlinx.css.*
 import kotlinx.css.properties.lh
 
-internal class StyleResourcesManager(project: Project, taskText: String) {
+internal class StyleResourcesManager(taskText: String) {
 
   // update style/template.html.ft in case of changing key names
   val resources = mapOf(
     "typography_color_style" to typographyAndColorStylesheet(),
     "content" to taskText,
     "base_css" to loadText("/style/browser.css"),
-    resourcePair("mathjax_script", "/style/mathjaxConfigure.js"),
     resourcePair("stepik_link", "/style/stepikLink.css"),
     *panelSpecificHintFiles()
   )

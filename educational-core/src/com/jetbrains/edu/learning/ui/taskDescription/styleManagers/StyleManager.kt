@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
 import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
@@ -35,7 +34,7 @@ class StyleManager {
                                         resourceUrl(
                                           "/style/javafxButtons/buttonsDarcula.css").takeIf { UIUtil.isUnderDarcula() })
 
-  fun resources(project: Project, content: String) = StyleResourcesManager(project, content).resources
+  fun resources(content: String) = StyleResourcesManager(content).resources
 
   private fun getScrollBarStylesheetsUrls(): List<String> {
     return listOf(resourceUrl("/style/scrollbars/base.css"),
