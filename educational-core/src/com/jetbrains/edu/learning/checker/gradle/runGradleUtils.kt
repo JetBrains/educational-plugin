@@ -15,6 +15,9 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.ExecutionResult
+import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.checker.CheckUtils.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -153,7 +156,8 @@ fun runGradleRunTask(
     ?: return Err(CheckResult.FAILED_TO_CHECK)
 
   if (!gradleOutput.isSuccess) {
-    return Err(CheckResult(CheckStatus.Failed, gradleOutput.firstMessage, gradleOutput.messages.joinToString("\n")))
+    return Err(
+      CheckResult(CheckStatus.Failed, gradleOutput.firstMessage, gradleOutput.messages.joinToString("\n")))
   }
 
   return Ok(gradleOutput.firstMessage)

@@ -4,6 +4,8 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.FAILED_TO_CHECK
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
