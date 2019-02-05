@@ -35,13 +35,11 @@ import groovy.io.FileType
 String downloadStudioIfNeededAndGetPath() {
     if (!rootProject.hasProperty("studioVersion")) throw new IllegalStateException("studioVersion is unspecified")
     if (!rootProject.hasProperty("studioBuildVersion")) throw new IllegalStateException("studioBuildVersion is unspecified")
-    def osFamily = getOsFamily()
-    if (osFamily == null) throw new IllegalStateException("current os family is unsupported")
 
     def studioZip = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion-${osFamily}.zip")
     if (!studioZip.exists()) {
         download {
-            src "http://dl.google.com/dl/android/studio/ide-zips/$studioVersion/android-studio-ide-$studioBuildVersion-${osFamily}.zip"
+            src studioArtifactDownloadPath()
             dest studioZip
         }
     }
@@ -54,6 +52,32 @@ String downloadStudioIfNeededAndGetPath() {
         }
     }
     return studioPath(studioFolder)
+}
+
+@SuppressWarnings("GrMethodMayBeStatic") // uses {studioBuildVersion}
+private String studioArtifactDownloadPath() {
+    def osFamily = getOsFamily()
+    if (osFamily == null) throw new IllegalStateException("current os family is unsupported")
+
+    if (inJetBrainsNetwork()) {
+        return "https://repo.labs.intellij.net/edu-tools/android-studio-ide-${studioBuildVersion}-${osFamily}.zip"
+    }
+    else {
+        return "http://dl.google.com/dl/android/studio/ide-zips/${studioVersion}/android-studio-ide-${studioBuildVersion}-${osFamily}.zip"
+    }
+}
+
+static boolean inJetBrainsNetwork() {
+    def inJetBrainsNetwork = false
+    try {
+        inJetBrainsNetwork = InetAddress.getByName("repo.labs.intellij.net").isReachable(1000)
+        if (!inJetBrainsNetwork && org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+            inJetBrainsNetwork = Runtime.getRuntime().exec("ping -n 1 repo.labs.intellij.net").waitFor() == 0
+        }
+    }
+    catch (UnknownHostException ignored) {
+    }
+    return inJetBrainsNetwork
 }
 
 static String getOsFamily() {
