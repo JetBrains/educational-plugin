@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.lang.Language;
@@ -135,7 +136,8 @@ public class StepikSolutionsLoader implements Disposable {
     });
   }
 
-  private void loadSolutions(@Nullable ProgressIndicator progressIndicator, @NotNull Course course) {
+  @VisibleForTesting
+  public void loadSolutions(@Nullable ProgressIndicator progressIndicator, @NotNull Course course) {
     List<Task> tasksToUpdate = EduUtils.execCancelable(() -> tasksToUpdate(course));
     if (tasksToUpdate != null) {
       updateTasks(tasksToUpdate, progressIndicator);

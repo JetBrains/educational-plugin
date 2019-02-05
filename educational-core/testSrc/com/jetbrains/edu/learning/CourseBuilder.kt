@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
@@ -38,7 +39,7 @@ fun course(
   return course
 }
 
-fun Course.createCourseFiles(project: Project, baseDir: VirtualFile, settings: Any) {
+fun Course.createCourseFiles(project: Project, baseDir: VirtualFile = LightPlatformTestCase.getSourceRoot(), settings: Any = Unit) {
   @Suppress("UNCHECKED_CAST")
   val configurator = configurator as? EduConfigurator<Any>
 
