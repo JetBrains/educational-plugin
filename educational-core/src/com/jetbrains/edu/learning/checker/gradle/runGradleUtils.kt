@@ -16,7 +16,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.ExecutionResult
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.checker.CheckUtils.*
@@ -146,7 +146,7 @@ fun runGradleRunTask(
   project: Project,
   task: Task,
   mainClassForFile: (Project, VirtualFile) -> String?
-): ExecutionResult<String, CheckResult> {
+): Result<String, CheckResult> {
   val mainClassName = findMainClass(project, task, mainClassForFile)
                       ?: return Err(CheckResult(CheckStatus.Unchecked, "Unable to execute task ${task.name}"))
   val taskName = if (task.hasSeparateModule(project)) "${getGradleProjectName(task)}:run" else "run"
