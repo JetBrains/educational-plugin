@@ -6,26 +6,16 @@ import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.util.PlatformUtils
-import com.intellij.util.net.HttpConfigurable
-import com.intellij.util.net.ssl.CertificateManager
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.*
 import okhttp3.*
 import org.apache.http.HttpStatus
 import retrofit2.Response
-import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import java.net.InetSocketAddress
-import java.net.Proxy
-import java.net.URI
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 object StepikConnector {
   private val LOG = Logger.getInstance(StepikConnector::class.java)
@@ -63,10 +53,10 @@ object StepikConnector {
     return objectMapper
   }
 
-  private val authorizationService: StepikOAuthService = Retrofit.Builder()
-    .baseUrl(StepikNames.STEPIK_URL)
-    .addConverterFactory(converterFactory)
-    .build().create(StepikOAuthService::class.java)
+  private val authorizationService: StepikOAuthService = createRetrofitBuilder(StepikNames.STEPIK_URL)
+      .addConverterFactory(converterFactory)
+      .build()
+      .create(StepikOAuthService::class.java)
 
   internal val service: StepikService
     get() = service(EduSettings.getInstance().user)
@@ -76,42 +66,10 @@ object StepikConnector {
       account.refreshTokens()
     }
 
-    val dispatcher = Dispatcher()
-    dispatcher.maxRequests = 10
-
-    val builder = OkHttpClient.Builder()
-      .readTimeout(60, TimeUnit.SECONDS)
-      .connectTimeout(60, TimeUnit.SECONDS)
-      .addInterceptor { chain ->
-        val builder = chain.request().newBuilder().addHeader("User-Agent", getUserAgent())
-        val tokenInfo = account?.tokenInfo
-        if (tokenInfo != null) {
-          builder.addHeader("Authorization", "Bearer ${tokenInfo.accessToken}")
-        }
-        val newRequest = builder.build()
-        chain.proceed(newRequest)
-      }
-      .dispatcher(dispatcher)
-
-    val proxyConfigurable = HttpConfigurable.getInstance()
-    val proxies = proxyConfigurable.onlyBySettingsSelector.select(URI.create(StepikNames.STEPIK_URL))
-    val address = if (proxies.size > 0) proxies[0].address() as? InetSocketAddress else null
-    if (address != null) {
-      builder.proxy(Proxy(Proxy.Type.HTTP, address))
-    }
-    val trustManager = CertificateManager.getInstance().trustManager
-    val sslContext = CertificateManager.getInstance().sslContext
-    builder.sslSocketFactory(sslContext.socketFactory, trustManager)
-
-    val okHttpClient = builder.build()
-
-    val retrofit = Retrofit.Builder()
-      .baseUrl(StepikNames.STEPIK_API_URL)
+    return createRetrofitBuilder(StepikNames.STEPIK_URL, account?.tokenInfo?.accessToken)
       .addConverterFactory(converterFactory)
-      .client(okHttpClient)
       .build()
-
-    return retrofit.create(StepikService::class.java)
+      .create(StepikService::class.java)
   }
 
   // Authorization requests:
@@ -430,11 +388,4 @@ object StepikConnector {
       LOG.warn("Failed to delete item $id")
     }
   }
-}
-
-private fun getUserAgent(): String {
-  val version = pluginVersion(EduNames.PLUGIN_ID) ?: "unknown"
-
-  return String.format("%s/version(%s)/%s/%s", StepikNames.PLUGIN_NAME, version, System.getProperty("os.name"),
-                       PlatformUtils.getPlatformPrefix())
 }

@@ -13,22 +13,15 @@ import com.jetbrains.edu.coursecreator.actions.mixins.TaskSerializer
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.StepOptions
-import com.jetbrains.edu.learning.stepik.StepSource
+import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepik.api.*
-import com.jetbrains.edu.learning.stepik.checkForErrors
-import com.jetbrains.edu.learning.stepik.executeHandlingExceptions
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
-import okhttp3.Dispatcher
-import okhttp3.OkHttpClient
 import org.apache.http.HttpStatus
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import java.util.concurrent.TimeUnit
 
 object HyperskillConnector {
   private val LOG = Logger.getInstance(HyperskillConnector::class.java)
@@ -51,8 +44,7 @@ object HyperskillConnector {
 
   private val authorizationService: HyperskillService
     get() {
-      val retrofit = Retrofit.Builder()
-        .baseUrl(HYPERSKILL_URL)
+      val retrofit = createRetrofitBuilder(HYPERSKILL_URL)
         .addConverterFactory(converterFactory)
         .build()
 
@@ -67,27 +59,8 @@ object HyperskillConnector {
       account.refreshTokens()
     }
 
-    val dispatcher = Dispatcher()
-    dispatcher.maxRequests = 10
-
-    val okHttpClient = OkHttpClient.Builder()
-      .readTimeout(60, TimeUnit.SECONDS)
-      .connectTimeout(60, TimeUnit.SECONDS)
-      .addInterceptor { chain ->
-        val tokenInfo = account?.tokenInfo
-        if (tokenInfo == null) return@addInterceptor chain.proceed(chain.request())
-
-        val newRequest = chain.request().newBuilder()
-          .addHeader("Authorization", "Bearer ${tokenInfo.accessToken}")
-          .build()
-        chain.proceed(newRequest)
-      }
-      .dispatcher(dispatcher)
-      .build()
-    val retrofit = Retrofit.Builder()
-      .baseUrl(HYPERSKILL_URL)
+    val retrofit = createRetrofitBuilder(HYPERSKILL_URL, account?.tokenInfo?.accessToken)
       .addConverterFactory(converterFactory)
-      .client(okHttpClient)
       .build()
 
     return retrofit.create(HyperskillService::class.java)
