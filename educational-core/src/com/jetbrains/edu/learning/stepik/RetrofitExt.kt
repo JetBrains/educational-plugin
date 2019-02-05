@@ -1,14 +1,17 @@
 package com.jetbrains.edu.learning.stepik
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.PlatformUtils
 import com.intellij.util.net.HttpConfigurable
 import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.pluginVersion
-import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
+import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -18,7 +21,7 @@ import java.net.Proxy
 import java.net.URI
 import java.util.concurrent.TimeUnit
 
-private val LOG = Logger.getInstance(StepikConnector::class.java.name)
+private val LOG = Logger.getInstance("com.jetbrains.edu.learning.stepik.RetrofitExt")
 
 fun createRetrofitBuilder(baseUrl: String, accessToken: String? = null): Retrofit.Builder {
   return Retrofit.Builder()
@@ -29,6 +32,10 @@ fun createRetrofitBuilder(baseUrl: String, accessToken: String? = null): Retrofi
 private fun createOkHttpClient(baseUrl: String, accessToken: String?): OkHttpClient {
   val dispatcher = Dispatcher()
   dispatcher.maxRequests = 10
+
+  val logger = HttpLoggingInterceptor { LOG.debug(it) }
+  logger.level = if (ApplicationManager.getApplication().isInternal) BODY else BASIC
+
   val builder = OkHttpClient.Builder()
     .readTimeout(60, TimeUnit.SECONDS)
     .connectTimeout(60, TimeUnit.SECONDS)
@@ -40,6 +47,7 @@ private fun createOkHttpClient(baseUrl: String, accessToken: String?): OkHttpCli
       val newRequest = builder.build()
       chain.proceed(newRequest)
     }
+    .addInterceptor(logger)
     .dispatcher(dispatcher)
 
   val proxyConfigurable = HttpConfigurable.getInstance()
