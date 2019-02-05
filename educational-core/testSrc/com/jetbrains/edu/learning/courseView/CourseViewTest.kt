@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.UsefulTestCase
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -77,11 +76,8 @@ class CourseViewTest : CourseViewTestBase() {
   fun testCourseProgress() {
     createStudyCourse()
     configureByTaskFile(1, 1, "taskFile1.txt")
-    val projectView = ProjectView.getInstance(project)
-    projectView.changeView(CourseViewPane.ID)
-    val pane = projectView.currentProjectViewPane
-    UsefulTestCase.assertInstanceOf(pane, CourseViewPane::class.java)
-    TestCase.assertNotNull((pane as CourseViewPane).getProgressBar())
+    val pane = createPane()
+    TestCase.assertNotNull(pane.getProgressBar())
   }
 
   fun testSwitchingPane() {

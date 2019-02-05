@@ -171,7 +171,7 @@ public class EduUtils {
 
   public static void updateCourseProgress(@NotNull Project project) {
     final AbstractProjectViewPane pane = ProjectView.getInstance(project).getCurrentProjectViewPane();
-    if (pane instanceof CourseViewPane && isStudentProject(project)) {
+    if (pane instanceof CourseViewPane && isStudentProject(project) && !ApplicationManager.getApplication().isUnitTestMode()) {
       ((CourseViewPane)pane).updateCourseProgress();
     }
   }
