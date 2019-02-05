@@ -18,6 +18,12 @@ class UserChanges(val changes: Map<String, String>) {
   }
 
   companion object {
+
+    private val EMPTY = UserChanges(emptyMap())
+
+    @JvmStatic
+    fun empty(): UserChanges = EMPTY
+
     @Throws(IOException::class)
     fun read(input: DataInput): UserChanges {
       val size = DataInputOutputUtil.readINT(input)

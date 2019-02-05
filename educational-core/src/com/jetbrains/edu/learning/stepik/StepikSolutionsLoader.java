@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.framework.FrameworkLessonManager;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.api.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
@@ -414,6 +415,7 @@ public class StepikSolutionsLoader implements Disposable {
       answerPlaceholder.setOffset(updatedPlaceholder.getOffset());
       answerPlaceholder.setLength(updatedPlaceholder.getLength());
       answerPlaceholder.setSelected(updatedPlaceholder.getSelected());
+      answerPlaceholder.setPlaceholderDependency(answerPlaceholder.getPlaceholderDependency());
     }
   }
 
@@ -535,20 +537,26 @@ public class StepikSolutionsLoader implements Disposable {
       return;
     }
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+      FrameworkLessonManager frameworkLessonManager = FrameworkLessonManager.getInstance(project);
       for (TaskFile taskFile : task.getTaskFiles().values()) {
-        VirtualFile vFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
-        if (vFile != null) {
-          try {
-            final String solutionText = solutionsMap.get(taskFile.getName());
-            if (solutionText != null) {
-              taskFile.setTrackChanges(false);
-              VfsUtil.saveText(vFile, solutionText);
-              SaveAndSyncHandler.getInstance().refreshOpenFiles();
-              taskFile.setTrackChanges(true);
+        Lesson lesson = task.getLesson();
+        if (lesson instanceof FrameworkLesson && ((FrameworkLesson)lesson).currentTask() != task) {
+          frameworkLessonManager.saveSolution(task, solutionsMap);
+        } else {
+          VirtualFile vFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
+          if (vFile != null) {
+            try {
+              final String solutionText = solutionsMap.get(taskFile.getName());
+              if (solutionText != null) {
+                taskFile.setTrackChanges(false);
+                VfsUtil.saveText(vFile, solutionText);
+                SaveAndSyncHandler.getInstance().refreshOpenFiles();
+                taskFile.setTrackChanges(true);
+              }
             }
-          }
-          catch (IOException e) {
-            LOG.warn(e.getMessage());
+            catch (IOException e) {
+              LOG.warn(e.getMessage());
+            }
           }
         }
       }

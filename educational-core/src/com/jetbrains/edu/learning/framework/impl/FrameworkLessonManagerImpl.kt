@@ -32,8 +32,27 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     applyTargetTaskChanges(lesson, -1, taskDir)
   }
 
+  override fun saveSolution(task: Task, solutions: Map<String, String>) {
+    require(EduUtils.isStudentProject(project)) {
+      "`saveSolution` should be called only if course in study mode"
+    }
+    require(task.lesson is FrameworkLesson) {
+      "Only solutions of framework tasks can be saved"
+    }
+
+    // TODO: support removed files
+    val changes = calculateUserChanges(task.allFiles, solutions)
+    val currentRecord = task.record
+    task.record = try {
+      storage.updateUserChanges(currentRecord, changes)
+    } catch (e: IOException) {
+      LOG.error("Failed to save solution for task `${task.name}`", e)
+      currentRecord
+    }
+  }
+
   private fun applyTargetTaskChanges(lesson: FrameworkLesson, taskIndexDelta: Int, taskDir: VirtualFile) {
-    check(EduUtils.isStudentProject(project)) {
+    require(EduUtils.isStudentProject(project)) {
       "`applyTargetTaskChanges` should be called only if course in study mode"
     }
     val currentTaskIndex = lesson.currentTaskIndex
@@ -52,7 +71,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       updateUserChanges(currentRecord, initialCurrentFiles, taskDir)
     } catch (e: IOException) {
       LOG.error("Failed to save user changes for task `${currentTask.name}`", e)
-      UpdatedUserChanges(currentRecord, emptyMap())
+      UpdatedUserChanges(currentRecord, UserChanges.empty())
     }
 
     currentTask.record = newCurrentRecord
@@ -64,7 +83,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       emptyMap<String, String>()
     }
 
-    val currentState = initialCurrentFiles + currentUserChanges
+    val currentState = initialCurrentFiles + currentUserChanges.changes
     val targetState = targetTask.allFiles + nextUserChanges
 
     // There are special rules for hyperskill courses for now
@@ -119,36 +138,36 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
   }
 
-  @Synchronized
   private fun updateUserChanges(record: Int, initialFiles: Map<String, String>, taskDir: VirtualFile): UpdatedUserChanges {
     val documentManager = FileDocumentManager.getInstance()
-
-    val changes = HashMap<String, String>()
-    for ((path, originalText) in initialFiles) {
+    val currentState = HashMap<String, String>()
+    for ((path, _) in initialFiles) {
       val file = taskDir.findFileByRelativePath(path) ?: continue
-      val text = runReadAction { documentManager.getDocument(file)?.text } ?: continue
-      if (text != originalText) {
-        changes[path] = text
-      }
+      currentState[path] = runReadAction { documentManager.getDocument(file)?.text } ?: continue
     }
+    val userChanges = calculateUserChanges(initialFiles, currentState)
+    return updateUserChanges(record, userChanges)
+  }
 
+  @Synchronized
+  private fun updateUserChanges(record: Int, changes: UserChanges): UpdatedUserChanges {
     return try {
-      val newRecord = storage.updateUserChanges(record, UserChanges(changes))
+      val newRecord = storage.updateUserChanges(record, changes)
       storage.force()
       UpdatedUserChanges(newRecord, changes)
     } catch (e: IOException) {
       LOG.error("Failed to update user changes", e)
-      UpdatedUserChanges(record, emptyMap())
+      UpdatedUserChanges(record, UserChanges.empty())
     }
   }
 
   private fun calculateChanges(
     currentState: Map<String, String>,
-    nextState: Map<String, String>
+    targetState: Map<String, String>
   ): List<Change> {
     val changes = mutableListOf<Change>()
     val current = HashMap(currentState)
-    for ((path, nextText) in nextState) {
+    for ((path, nextText) in targetState) {
       val currentText = current.remove(path)
       changes += if (currentText == null) {
         Change.AddFile(path, nextText)
@@ -159,6 +178,17 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
     current.mapTo(changes) { Change.RemoveFile(it.key) }
     return changes
+  }
+
+  private fun calculateUserChanges(initialFiles: Map<String, String>, currentState: Map<String, String>): UserChanges {
+    val changes = HashMap<String, String>()
+    for ((path, initialText) in initialFiles) {
+      val text = currentState[path] ?: continue
+      if (text != initialText) {
+        changes[path] = text
+      }
+    }
+    return UserChanges(changes)
   }
 
   private val Task.allFiles: Map<String, String> get() = taskFiles.mapValues { it.value.text }
@@ -192,7 +222,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
 private data class UpdatedUserChanges(
   val record: Int,
-  val changes: Map<String, String>
+  val changes: UserChanges
 )
 
 private sealed class Change(protected val path: String) {
