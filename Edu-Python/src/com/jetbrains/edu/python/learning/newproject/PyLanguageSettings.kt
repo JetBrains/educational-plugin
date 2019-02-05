@@ -14,9 +14,11 @@ import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.ComboboxWithBrowseButton
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator.getBaseSdk
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.PyDetectedSdk
@@ -47,6 +49,13 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
     val pythonVersions = mutableListOf(ALL_VERSIONS, PYTHON_3, PYTHON_2)
     pythonVersions.addAll(LanguageLevel.values().map { it.toString() }.reversed())
     return pythonVersions
+  }
+
+  override fun validate(course: Course?): String? {
+    course ?: return null
+    val sdk = mySettings.sdk ?: return null
+    val flavor = PythonSdkFlavor.getApplicableFlavors(false)?.firstOrNull() ?: return null
+    return (flavor.isSdkApplicable(course, sdk.homePath!!) as? Err)?.error
   }
 
   protected open fun getInterpreterComboBox(fakeSdk: Sdk?): ComboboxWithBrowseButton {
@@ -94,6 +103,45 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
 
   companion object {
 
+    private val OK = Ok(Unit)
+
+    private fun PythonSdkFlavor.isSdkApplicable(course: Course, sdkPath: String): Result<Unit, String> {
+      val courseLanguageVersion = course.languageVersion
+
+      val sdkLanguageLevel = getLanguageLevel(sdkPath)
+      val isPython2Sdk = sdkLanguageLevel.isPython2
+
+      return when (courseLanguageVersion) {
+        null, ALL_VERSIONS -> OK
+        PYTHON_2 -> if (isPython2Sdk) OK else NoApplicablePythonError(2)
+        PYTHON_3 -> if (!isPython2Sdk) OK else NoApplicablePythonError(3)
+        else -> {
+          val courseLanguageLevel = LanguageLevel.fromPythonVersion(courseLanguageVersion)
+          when {
+            courseLanguageLevel.isPython2 != isPython2Sdk -> SpecificPythonRequiredError(courseLanguageVersion)
+            sdkLanguageLevel.isAtLeast(courseLanguageLevel) -> OK
+            else -> SpecificPythonRequiredError(courseLanguageVersion)
+          }
+        }
+      }
+    }
+
+    @JvmStatic
+    fun getBaseSdk(course: Course): String? {
+      val flavor = PythonSdkFlavor.getApplicableFlavors(false)[0]
+
+      val sdkPaths = ArrayList<String>(flavor.suggestHomePaths(null))
+      if (sdkPaths.isEmpty()) {
+        return null
+      }
+      return sdkPaths.filter {
+        isSdkApplicable(course, it) == OK && flavor.getVersionString(it) != null
+      }.maxBy { flavor.getVersionString(it)!! }
+    }
+
+    private class NoApplicablePythonError(requiredVersion: Int) : Err<String>("Required Python $requiredVersion")
+    private class SpecificPythonRequiredError(requiredVersion: String) : Err<String>("Required at least Python $requiredVersion")
+
     private fun createFakeSdk(course: Course): ProjectJdkImpl? {
       val fakeSdkPath = getBaseSdk(course) ?: return null
       val flavor = PythonSdkFlavor.getApplicableFlavors(false)[0]
@@ -109,7 +157,7 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
 
     private const val ALL_VERSIONS = "All versions"
 
-    const val PYTHON_3  = "3.x"
+    const val PYTHON_3 = "3.x"
     const val PYTHON_2 = "2.x"
   }
 }

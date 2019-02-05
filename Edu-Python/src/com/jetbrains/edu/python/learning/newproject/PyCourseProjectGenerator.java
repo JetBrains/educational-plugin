@@ -21,17 +21,14 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.python.learning.PyCourseBuilder;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.packaging.PyPackageManager;
-import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.sdk.PyDetectedSdk;
 import com.jetbrains.python.sdk.PySdkExtKt;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.sdk.PythonSdkUpdater;
-import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjectSettings> {
@@ -67,7 +64,7 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
     if (course == null) {
       return;
     }
-    final String baseSdkPath = getBaseSdk(course);
+    final String baseSdkPath = PyLanguageSettings.getBaseSdk(course);
     if (baseSdkPath != null) {
       final PyDetectedSdk baseSdk = new PyDetectedSdk(baseSdkPath);
       final String virtualEnvPath = project.getBasePath() + "/.idea/VirtualEnvironment";
@@ -89,40 +86,6 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
       SdkConfigurationUtil.addSdk(sdk);
       PySdkExtKt.associateWithModule(sdk, null, project.getBasePath());
     }
-  }
-
-  @Nullable
-  static String getBaseSdk(@NotNull final Course course) {
-    LanguageLevel baseLevel;
-    final String version = course.getLanguageVersion();
-    if (PyLanguageSettings.PYTHON_2.equals(version)) {
-      baseLevel = LanguageLevel.PYTHON27;
-    }
-    else if (PyLanguageSettings.PYTHON_3.equals(version)) {
-      baseLevel = LanguageLevel.PYTHON37;
-    }
-    else if (version != null) {
-      baseLevel = LanguageLevel.fromPythonVersion(version);
-    }
-    else {
-      baseLevel = LanguageLevel.PYTHON37;
-    }
-    final PythonSdkFlavor flavor = PythonSdkFlavor.getApplicableFlavors(false).get(0);
-    String baseSdk = null;
-    final Collection<String> baseSdks = flavor.suggestHomePaths();
-    for (String sdk : baseSdks) {
-      final String versionString = flavor.getVersionString(sdk);
-      final String prefix = flavor.getName() + " ";
-      if (versionString != null && versionString.startsWith(prefix)) {
-        final LanguageLevel level = LanguageLevel.fromPythonVersion(versionString.substring(prefix.length()));
-        if (level.isAtLeast(baseLevel)) {
-          baseSdk = sdk;
-          break;
-        }
-      }
-    }
-    if (baseSdk != null) return baseSdk;
-    return baseSdks.isEmpty() ? null : baseSdks.iterator().next();
   }
 
   @Nullable

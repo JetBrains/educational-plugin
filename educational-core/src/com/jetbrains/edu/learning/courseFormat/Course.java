@@ -204,11 +204,14 @@ public abstract class Course extends ItemContainer {
 
   @Nullable
   public String getLanguageVersion() {
-    String[] split = myProgrammingLanguage.split(" ");
-    if (split.length <= 1) {
+    if (!myProgrammingLanguage.contains(" ")) {
       return null;
     }
-    return split[1];
+    int languageVersionStartIndex = myProgrammingLanguage.indexOf(" ");
+    if (languageVersionStartIndex == myProgrammingLanguage.length() - 1) {
+      return null;
+    }
+    return myProgrammingLanguage.substring(languageVersionStartIndex + 1);
   }
 
   public void setAuthors(List<StepikUserInfo> authors) {
