@@ -360,7 +360,7 @@ public class StepikFormatTest extends EduTestCase {
 
   @NotNull
   private String loadJsonText(@NotNull String fileName) throws IOException {
-    return FileUtil.loadFile(new File(getTestDataPath(), fileName));
+    return FileUtil.loadFile(new File(getTestDataPath(), fileName), true);
   }
 
   private void doStepOptionMigrationTest(int maxVersion) throws IOException {

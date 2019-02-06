@@ -31,5 +31,5 @@ class LocalSourceMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
     assertEquals(afterExpected, afterActual)
   }
 
-  private fun loadJsonText(path: String): String = FileUtil.loadFile(File(testDataPath, path))
+  private fun loadJsonText(path: String): String = FileUtil.loadFile(File(testDataPath, path), true)
 }

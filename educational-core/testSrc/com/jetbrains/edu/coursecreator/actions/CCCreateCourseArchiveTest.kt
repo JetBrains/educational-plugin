@@ -169,7 +169,7 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     TestCase.assertNotNull(courseFolder)
     val jsonFile = courseFolder!!.findChild(EduNames.COURSE_META_FILE)
     TestCase.assertNotNull(jsonFile)
-    return FileUtil.loadFile(File(jsonFile!!.path)).replace(Regex("\\n\\n"), "\n")
+    return FileUtil.loadFile(File(jsonFile!!.path), true).replace(Regex("\\n\\n"), "\n")
   }
 
   override fun getTestDataPath(): String {
