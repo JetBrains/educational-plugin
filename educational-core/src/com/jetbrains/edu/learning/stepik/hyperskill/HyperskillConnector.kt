@@ -34,7 +34,7 @@ object HyperskillConnector {
   private val LOG = Logger.getInstance(HyperskillConnector::class.java)
 
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
-  private val authorizationTopic = com.intellij.util.messages.Topic.create<HyperskillLoggedIn>("Edu.hyperskillLoggedIn",
+  val hyperskillAuthorizationTopic = com.intellij.util.messages.Topic.create<HyperskillLoggedIn>("Edu.hyperskillLoggedIn",
                                                                                                HyperskillLoggedIn::class.java)
   private val converterFactory: JacksonConverterFactory
   @JvmStatic
@@ -109,7 +109,7 @@ object HyperskillConnector {
     val currentUser = getCurrentUser(account) ?: return false
     account.userInfo = currentUser
     HyperskillSettings.INSTANCE.account = account
-    ApplicationManager.getApplication().messageBus.syncPublisher<HyperskillLoggedIn>(authorizationTopic).userLoggedIn()
+    ApplicationManager.getApplication().messageBus.syncPublisher<HyperskillLoggedIn>(hyperskillAuthorizationTopic).userLoggedIn()
     return true
   }
 
@@ -205,7 +205,7 @@ object HyperskillConnector {
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
     authorizationBusConnection.disconnect()
     authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
-    authorizationBusConnection.subscribe(authorizationTopic, object : HyperskillLoggedIn {
+    authorizationBusConnection.subscribe(hyperskillAuthorizationTopic, object : HyperskillLoggedIn {
       override fun userLoggedIn() {
         for (action in postLoginActions) {
           action.run()
@@ -214,7 +214,7 @@ object HyperskillConnector {
     })
   }
 
-  private interface HyperskillLoggedIn {
+  interface HyperskillLoggedIn {
     fun userLoggedIn()
   }
 }
