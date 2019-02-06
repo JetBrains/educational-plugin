@@ -101,15 +101,13 @@ public class StepikUserWidget implements IconLikeCustomStatusBarWidget {
             EduUsagesCollector.progressFromWidget();
             SyncCourseAction.doUpdate(project);
           }
-          else {
-            if (loginText.equals(selectedValue)) {
-              EduUsagesCollector.loginFromWidget();
-              StepikAuthorizer.doAuthorize(EduUtils::showOAuthDialog);
-            }
-            else if (logOutText.equals(selectedValue)) {
-              EduUsagesCollector.logoutFromWidget();
-              EduSettings.getInstance().setUser(null);
-            }
+          else if (loginText.equals(selectedValue)) {
+            EduUsagesCollector.loginFromWidget();
+            StepikAuthorizer.doAuthorize(EduUtils::showOAuthDialog);
+          }
+          else if (logOutText.equals(selectedValue)) {
+            EduUsagesCollector.logoutFromWidget();
+            EduSettings.getInstance().setUser(null);
           }
         });
       }
