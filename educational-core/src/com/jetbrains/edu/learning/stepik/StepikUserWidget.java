@@ -83,9 +83,9 @@ public class StepikUserWidget implements IconLikeCustomStatusBarWidget {
   }
 
   private static ListPopup createPopup(@Nullable StepikUser user, @NotNull Project project) {
-    String loginText = "Log in ";
-    String logOutText = "Log out";
-    String syncCourseStep = "Synchronize course";
+    final String loginText = "Log in ";
+    final String logOutText = "Log out";
+    final String syncCourseStep = "Synchronize course";
     String userActionStep = user == null ? loginText : logOutText;
     ArrayList<String> steps = new ArrayList<>();
     if (user != null && SyncCourseAction.isAvailable(project)) {
@@ -97,17 +97,18 @@ public class StepikUserWidget implements IconLikeCustomStatusBarWidget {
       @Override
       public PopupStep onChosen(String selectedValue, boolean finalChoice) {
         return doFinalStep(() -> {
-          if (syncCourseStep.equals(selectedValue)) {
-            EduUsagesCollector.progressFromWidget();
-            SyncCourseAction.doUpdate(project);
-          }
-          else if (loginText.equals(selectedValue)) {
-            EduUsagesCollector.loginFromWidget();
-            StepikAuthorizer.doAuthorize(EduUtils::showOAuthDialog);
-          }
-          else if (logOutText.equals(selectedValue)) {
-            EduUsagesCollector.logoutFromWidget();
-            EduSettings.getInstance().setUser(null);
+          switch (selectedValue) {
+            case syncCourseStep:
+              EduUsagesCollector.progressFromWidget();
+              SyncCourseAction.doUpdate(project);
+              return;
+            case loginText:
+              EduUsagesCollector.loginFromWidget();
+              StepikAuthorizer.doAuthorize(EduUtils::showOAuthDialog);
+              return;
+            case logOutText:
+              EduUsagesCollector.logoutFromWidget();
+              EduSettings.getInstance().setUser(null);
           }
         });
       }
