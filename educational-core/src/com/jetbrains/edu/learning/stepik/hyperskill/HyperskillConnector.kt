@@ -75,7 +75,6 @@ object HyperskillConnector {
 
   fun login(code: String): Boolean {
     val response = authorizationService.getTokens(CLIENT_ID, REDIRECT_URI, code, "authorization_code").executeHandlingExceptions()
-    checkForErrors(response)
     val tokenInfo = response?.body() ?: return false
     val account = HyperskillAccount()
     account.tokenInfo = tokenInfo
@@ -89,7 +88,6 @@ object HyperskillConnector {
   private fun HyperskillAccount.refreshTokens() {
     val refreshToken = tokenInfo.refreshToken
     val response = authorizationService.refreshTokens("refresh_token", CLIENT_ID, refreshToken).executeHandlingExceptions()
-    checkForErrors(response)
     val tokens = response?.body()
     if (tokens != null) {
       updateTokens(tokens)
@@ -100,19 +98,16 @@ object HyperskillConnector {
 
   fun getCurrentUser(account: HyperskillAccount): HyperskillUserInfo? {
     val response = service(account).getUserInfo(0).executeHandlingExceptions()
-    checkForErrors(response)
     return response?.body()?.users?.firstOrNull() ?: return null
   }
 
   fun getStages(projectId: Int): List<HyperskillStage>? {
     val response = service.stages(projectId).executeHandlingExceptions()
-    checkForErrors(response)
     return response?.body()?.stages
   }
 
   fun getStepSources(lessonId: Int): List<StepSource>? {
     val response = service.steps(lessonId).executeHandlingExceptions()
-    checkForErrors(response)
     return response?.body()?.steps
   }
 
@@ -163,7 +158,6 @@ object HyperskillConnector {
     val objectMapper = StepikConnector.createMapper(module)
     val serializedTask = objectMapper.writeValueAsString(TaskData(task))
     val response = service.submission(Submission(score, attempt.id, files, serializedTask)).executeHandlingExceptions()
-    checkForErrors(response)
     if (response?.code() != HttpStatus.SC_CREATED) {
       LOG.error("Failed to make submission for stage ${task.stepId}")
     }
@@ -171,7 +165,6 @@ object HyperskillConnector {
 
   private fun postAttempt(step: Int): Attempt? {
     val response = service.attempt(Attempt(step)).executeHandlingExceptions()
-    checkForErrors(response)
     return response?.body()?.attempts?.firstOrNull() ?: return null
   }
 

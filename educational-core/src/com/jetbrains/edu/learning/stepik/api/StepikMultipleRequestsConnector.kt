@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.service
-import com.jetbrains.edu.learning.stepik.checkForErrors
 import com.jetbrains.edu.learning.stepik.executeHandlingExceptions
 
 object StepikMultipleRequestsConnector {
@@ -18,7 +17,6 @@ object StepikMultipleRequestsConnector {
     instructorIds
       .mapNotNull {
         val response = service.users(*it.toIntArray()).executeHandlingExceptions()
-        checkForErrors(response)
         response?.body()?.users
       }
       .forEach { allUsers.addAll(it) }
@@ -31,7 +29,6 @@ object StepikMultipleRequestsConnector {
     sectionIdsChunks
       .mapNotNull {
         val response = service.sections(*it.toIntArray()).executeHandlingExceptions()
-        checkForErrors(response)
         response?.body()?.sections
       }
       .forEach { allSections.addAll(it) }
@@ -44,7 +41,6 @@ object StepikMultipleRequestsConnector {
     lessonsIdsChunks
       .mapNotNull {
         val response = service.lessons(*it.toIntArray()).executeHandlingExceptions()
-        checkForErrors(response)
         response?.body()?.lessons
       }
       .forEach { allLessons.addAll(it) }
@@ -57,7 +53,6 @@ object StepikMultipleRequestsConnector {
     unitsIdsChunks
       .mapNotNull {
         val response = service.units(*it.toIntArray()).executeHandlingExceptions()
-        checkForErrors(response)
         response?.body()?.units
       }
       .forEach { allUnits.addAll(it) }
@@ -70,7 +65,6 @@ object StepikMultipleRequestsConnector {
     idsChunks
       .mapNotNull {
         val response = service.assignments(*it.toIntArray()).executeHandlingExceptions()
-        checkForErrors(response)
         response?.body()?.assignments
       }
       .forEach { assignments.addAll(it) }
@@ -84,7 +78,6 @@ object StepikMultipleRequestsConnector {
     stepsIdsChunks
       .mapNotNull {
         val response = service.steps(*it.toIntArray()).executeHandlingExceptions()
-        checkForErrors(response)
         response?.body()?.steps
       }
       .forEach { steps.addAll(it) }
@@ -97,7 +90,6 @@ object StepikMultipleRequestsConnector {
     idsChunks
       .mapNotNull {
         val response = service.progresses(*it.toTypedArray()).executeHandlingExceptions()
-        checkForErrors(response)
         response?.body()?.progresses
       }
       .forEach { progresses.addAll(it) }

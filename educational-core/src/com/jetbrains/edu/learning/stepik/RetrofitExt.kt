@@ -70,9 +70,15 @@ private val userAgent: String get() {
                        PlatformUtils.getPlatformPrefix())
 }
 
-fun <T> Call<T>.executeHandlingExceptions(): Response<T>? {
+fun <T> Call<T>.executeHandlingExceptions(optional: Boolean = false): Response<T>? {
   try {
-    return this.execute()
+    return this.execute().also {
+      val errorBody = it.errorBody() ?: return@also
+      when {
+        optional -> LOG.warn(errorBody.string())
+        else -> LOG.error(errorBody.string())
+      }
+    }
   }
   catch (e: IOException) {
     LOG.error("Failed to connect to server. ${e.message}")
@@ -81,14 +87,4 @@ fun <T> Call<T>.executeHandlingExceptions(): Response<T>? {
     LOG.error("Failed to connect to server. ${e.message}")
   }
   return null
-}
-
-fun checkForErrors(response: Response<out Any>?, optional: Boolean = false) {
-  if (response == null) return
-  val errorBody = response.errorBody()
-  if (errorBody == null) return
-  when {
-    optional -> LOG.warn(errorBody.string())
-    else -> LOG.error(errorBody.string())
-  }
 }
