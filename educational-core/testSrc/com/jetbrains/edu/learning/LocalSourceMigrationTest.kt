@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import java.io.File
 
@@ -27,9 +28,10 @@ class LocalSourceMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
     val jsonBefore = ObjectMapper().readTree(before) as? ObjectNode
     val jsonAfter = migrate(jsonBefore!!, maxVersion)
     var afterActual = ObjectMapper().writer(DefaultPrettyPrinter()).writeValueAsString(jsonAfter)
-    afterActual = afterActual.replace(Regex("\\n\\n"), "\n")
+    afterActual = StringUtilRt.convertLineSeparators(afterActual).replace(Regex("\\n\\n"), "\n")
     assertEquals(afterExpected, afterActual)
   }
 
-  private fun loadJsonText(path: String): String = FileUtil.loadFile(File(testDataPath, path), true)
+  private fun loadJsonText(path: String): String =
+    FileUtil.loadFile(File(testDataPath, path), true).replace(Regex("\\n\\n"), "\n")
 }

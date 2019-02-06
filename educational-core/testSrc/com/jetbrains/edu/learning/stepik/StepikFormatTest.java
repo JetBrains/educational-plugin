@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduTestCase;
@@ -360,7 +361,7 @@ public class StepikFormatTest extends EduTestCase {
 
   @NotNull
   private String loadJsonText(@NotNull String fileName) throws IOException {
-    return FileUtil.loadFile(new File(getTestDataPath(), fileName), true);
+    return FileUtil.loadFile(new File(getTestDataPath(), fileName), true).replace("\\n\\n", "\n");
   }
 
   private void doStepOptionMigrationTest(int maxVersion) throws IOException {
@@ -409,7 +410,7 @@ public class StepikFormatTest extends EduTestCase {
     final ObjectNode jsonBefore = (ObjectNode)new ObjectMapper().readTree(responseString);
     ObjectNode jsonAfter = migrationAction.apply(jsonBefore);
     String afterActual = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(jsonAfter);
-    afterActual = afterActual.replaceAll("\\n\\n", "\n");
+    afterActual = StringUtilRt.convertLineSeparators(afterActual).replaceAll("\\n\\n", "\n");
     assertEquals(afterExpected, afterActual);
   }
 
