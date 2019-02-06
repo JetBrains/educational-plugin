@@ -54,9 +54,19 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
   override fun validate(course: Course?): String? {
     course ?: return null
     val sdk = mySettings.sdk ?: return null
-    val flavor = PythonSdkFlavor.getApplicableFlavors(false)?.firstOrNull() ?: return null
-    return (flavor.isSdkApplicable(course, sdk.homePath!!) as? Err)?.error
+    return (isSdkApplicable(course, sdk.languageLevel) as? Err)?.error
   }
+
+  private val Sdk.languageLevel: LanguageLevel
+    get() {
+      return if (sdkType === PyFakeSdkType) {
+        val pythonVersion = versionString
+        if (pythonVersion == null) LanguageLevel.getDefault() else LanguageLevel.fromPythonVersion(pythonVersion)
+      }
+      else {
+        PythonSdkType.getLanguageLevelForSdk(this)
+      }
+    }
 
   protected open fun getInterpreterComboBox(fakeSdk: Sdk?): ComboboxWithBrowseButton {
     val project = ProjectManager.getInstance().defaultProject
@@ -105,10 +115,8 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
 
     private val OK = Ok(Unit)
 
-    private fun PythonSdkFlavor.isSdkApplicable(course: Course, sdkPath: String): Result<Unit, String> {
+    private fun isSdkApplicable(course: Course, sdkLanguageLevel: LanguageLevel): Result<Unit, String> {
       val courseLanguageVersion = course.languageVersion
-
-      val sdkLanguageLevel = getLanguageLevel(sdkPath)
       val isPython2Sdk = sdkLanguageLevel.isPython2
 
       return when (courseLanguageVersion) {
@@ -135,8 +143,10 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
         return null
       }
       return sdkPaths.filter {
-        isSdkApplicable(course, it) == OK && flavor.getVersionString(it) != null
-      }.maxBy { flavor.getVersionString(it)!! }
+        isSdkApplicable(course, flavor.getLanguageLevel(it)) == OK && flavor.getVersionString(it) != null
+      }.maxBy {
+        flavor.getVersionString(it)!!
+      }
     }
 
     private class NoApplicablePythonError(requiredVersion: Int) : Err<String>("Required Python $requiredVersion")
