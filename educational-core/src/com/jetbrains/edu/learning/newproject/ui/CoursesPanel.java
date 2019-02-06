@@ -161,7 +161,7 @@ public class CoursesPanel extends JPanel {
 
     checkiOOAuthConnector.doAuthorize(
       () -> myErrorLabel.setVisible(false),
-      () -> notifyListeners(true)
+      () -> doValidation(selectedCourse)
     );
   }
 
