@@ -5,8 +5,6 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.wm.StatusBar;
-import com.intellij.openapi.wm.WindowManager;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -14,7 +12,8 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import org.jetbrains.annotations.NotNull;
 
-import static com.jetbrains.edu.learning.EduUtils.*;
+import static com.jetbrains.edu.learning.EduUtils.isStudyProject;
+import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
 import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
 
 public class StepikProjectComponent implements ProjectComponent {
@@ -45,7 +44,6 @@ public class StepikProjectComponent implements ProjectComponent {
         }
       }
     );
-    addStepikWidget();
   }
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
@@ -61,15 +59,6 @@ public class StepikProjectComponent implements ProjectComponent {
         LOG.warn(e.getMessage());
       }
     }
-  }
-
-  private void addStepikWidget() {
-    StepikUserWidget widget = getVisibleWidget(myProject);
-    StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
-    if (widget != null) {
-      statusBar.removeWidget(StepikUserWidget.ID);
-    }
-    statusBar.addWidget(new StepikUserWidget(myProject), "before Position");
   }
 
   private void selectStep(@NotNull Course course) {

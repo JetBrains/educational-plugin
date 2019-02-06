@@ -6,22 +6,19 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.WindowManager;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
-import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.jetbrains.edu.learning.authUtils.OAuthAccountKt.deserializeAccount;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
@@ -118,10 +115,6 @@ public class EduSettings implements PersistentStateComponent<Element> {
   public void setUser(@Nullable final StepikUser user) {
     myUser = user;
     ApplicationManager.getApplication().getMessageBus().syncPublisher(SETTINGS_CHANGED).settingsChanged();
-
-    for (StepikUserWidget widget : getStepikWidgets()) {
-      widget.update();
-    }
   }
 
   public boolean shouldUseJavaFx() {
@@ -134,17 +127,6 @@ public class EduSettings implements PersistentStateComponent<Element> {
 
   public static boolean isLoggedIn() {
     return getInstance().myUser != null;
-  }
-
-  @NotNull
-  private static List<StepikUserWidget> getStepikWidgets() {
-    IdeFrame[] frames = WindowManager.getInstance().getAllProjectFrames();
-    return Arrays.stream(frames)
-      .filter(frame -> frame instanceof IdeFrameImpl)
-      .map(frame -> frame.getStatusBar().getWidget(StepikUserWidget.ID))
-      .filter(widget -> widget != null)
-      .map(widget -> (StepikUserWidget)widget)
-      .collect(Collectors.toList());
   }
 
   @FunctionalInterface

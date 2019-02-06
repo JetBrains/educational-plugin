@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
@@ -10,6 +11,7 @@ import com.intellij.openapi.wm.IconLikeCustomStatusBarWidget;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.ui.ClickListener;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.actions.SyncCourseAction;
@@ -30,6 +32,9 @@ public class StepikUserWidget implements IconLikeCustomStatusBarWidget {
   public StepikUserWidget(@NotNull Project project) {
     Icon icon = getWidgetIcon(EduSettings.getInstance().getUser());
     myComponent = new JLabel(icon);
+
+    final MessageBusConnection busConnection = ApplicationManager.getApplication().getMessageBus().connect();
+    busConnection.subscribe(EduSettings.SETTINGS_CHANGED, () -> update());
 
     new ClickListener() {
       @Override
@@ -67,7 +72,7 @@ public class StepikUserWidget implements IconLikeCustomStatusBarWidget {
     Disposer.dispose(this);
   }
 
-  public void update() {
+  private void update() {
     StepikUser user = EduSettings.getInstance().getUser();
     Icon icon = getWidgetIcon(user);
     myComponent.setIcon(icon);

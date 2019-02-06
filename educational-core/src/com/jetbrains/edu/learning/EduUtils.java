@@ -39,8 +39,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -59,7 +57,6 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
-import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import kotlin.collections.CollectionsKt;
@@ -664,15 +661,6 @@ public class EduUtils {
       }
       return true;
     });
-    return null;
-  }
-
-  @Nullable
-  public static StepikUserWidget getVisibleWidget(Project project) {
-    IdeFrame frame = WindowManager.getInstance().getIdeFrame(project);
-    if (frame != null) {
-      return (StepikUserWidget)frame.getStatusBar().getWidget(StepikUserWidget.ID);
-    }
     return null;
   }
 

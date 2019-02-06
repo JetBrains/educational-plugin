@@ -191,6 +191,7 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.StepikUserWidgetProvider" />
     <projectService serviceInterface="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView"
                     serviceImplementation="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionViewImpl"
                     testServiceImplementation="com.jetbrains.edu.learning.ui.taskDescription.MockTaskDescriptionView"/>
