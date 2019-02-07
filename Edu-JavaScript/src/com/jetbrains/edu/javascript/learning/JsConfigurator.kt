@@ -5,6 +5,8 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import icons.EducationalCoreIcons
+import javax.swing.Icon
 
 
 open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
@@ -21,4 +23,6 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
   override fun pluginRequirements() = listOf("NodeJS")
 
   override fun isEnabled() = !EduUtils.isAndroidStudio() && !PlatformUtils.isCommunityEdition() && !PlatformUtils.isPyCharmEducational()
+
+  override fun getLogo(): Icon = EducationalCoreIcons.JsLogo
 }
