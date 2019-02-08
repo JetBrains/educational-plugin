@@ -188,6 +188,9 @@
       <reference id="Educational.Educator.NewCourse"/>
       <add-to-group group-id="FileOpenGroup" relative-to-action="OpenFile" anchor="after"/>
     </group>
+    <action id="Educational.WatchTutorial" class="com.jetbrains.edu.learning.actions.LearnMoreAction">
+      <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
+    </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">

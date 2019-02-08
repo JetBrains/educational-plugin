@@ -24,12 +24,6 @@
     <coursesProvider implementation="com.jetbrains.edu.python.learning.PyBundledCoursesProvider"/>
   </extensions>
 
-  <actions>
-    <action id="Educational.WatchTutorial" class="com.jetbrains.edu.python.learning.actions.PyWatchTutorialAction">
-      <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
-    </action>
-  </actions>
-
   <project-components>
     <component>
       <implementation-class>com.jetbrains.edu.python.learning.PyShowTutorial</implementation-class>
