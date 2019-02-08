@@ -1,9 +1,8 @@
 package com.jetbrains.edu.coursecreator.stepik
 
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -45,8 +44,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     processTaskChanges()
 
     if (isUpToDate()) {
-      val notification = Notification(PUSH_COURSE_GROUP_ID, "Nothing to upload", "All course items is up to date", NotificationType.INFORMATION)
-      notification.notify(project)
+      EduUtils.showNotification(project, "Nothing to upload", null)
     }
     else {
       pushChanges()
@@ -56,7 +54,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       // fix for the case when we deleted section that was changed the last
       course.updateDate = lastUpdateDate
       course.setStatusRecursively(StepikChangeStatus.UP_TO_DATE)
-      showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.id))
+      EduUtils.showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.id))
     }
   }
 

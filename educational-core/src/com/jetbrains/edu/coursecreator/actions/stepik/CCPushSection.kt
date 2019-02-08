@@ -12,6 +12,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.FAILED_TITLE
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -86,8 +87,8 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
               updateSectionsPositions(project, course.sections.slice(IntRange(section.position, course.sections.size - 1)),
                                       section.position + 1)
             }
-            CCStepikConnector.showNotification(project, "Section \"${section.name}\" posted",
-                                               CCStepikConnector.openOnStepikAction("/course/" + course.id))
+            EduUtils.showNotification(project, "Section \"${section.name}\" posted",
+                                      CCStepikConnector.openOnStepikAction("/course/" + course.id))
           }
         }
       })
@@ -111,8 +112,8 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
       }
 
       if (updated) {
-        CCStepikConnector.showNotification(project, "Section \"${section.name}\" updated",
-                                           CCStepikConnector.openOnStepikAction("/course/" + course.id))
+        EduUtils.showNotification(project, "Section \"${section.name}\" updated",
+                                  CCStepikConnector.openOnStepikAction("/course/" + course.id))
       }
     }
 

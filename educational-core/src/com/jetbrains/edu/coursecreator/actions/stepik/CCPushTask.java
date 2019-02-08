@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
+import static com.jetbrains.edu.learning.EduUtils.showNotification;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushTask extends DumbAwareAction {

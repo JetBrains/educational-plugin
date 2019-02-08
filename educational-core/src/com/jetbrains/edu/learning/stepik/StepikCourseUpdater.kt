@@ -3,8 +3,6 @@ package com.jetbrains.edu.learning.stepik
 import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.Lists
 import com.intellij.ide.projectView.ProjectView
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
@@ -14,7 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.PUSH_COURSE_GROUP_ID
+import com.jetbrains.edu.learning.EduUtils.showNotification
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -48,7 +46,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     runInEdt {
       synchronize()
       ProjectView.getInstance(project).refresh()
-      showNotification()
+      showNotification(project, "Course updated", null)
       course.configurator?.courseBuilder?.refreshProject(project)
     }
   }
@@ -213,11 +211,6 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   private fun setCourseInfo(courseFromServer: Course) {
     course.name = courseFromServer.name
     course.description = courseFromServer.description
-  }
-
-  private fun showNotification() {
-    val updateNotification = Notification(PUSH_COURSE_GROUP_ID, "Course updated", "", NotificationType.INFORMATION)
-    updateNotification.notify(project)
   }
 
   private fun lessonContentChanged(taskIdsToUpdate: List<Int>) = !taskIdsToUpdate.isEmpty()

@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.jetbrains.edu.learning.EduUtils.showNotification;
 import static com.jetbrains.edu.learning.EduUtils.showOAuthDialog;
 
 public class CCStepikConnector {
@@ -429,8 +430,7 @@ public class CCStepikConnector {
   }
 
   public static void showErrorNotification(@NotNull Project project, @NotNull String title, @NotNull String message) {
-    final Notification notification =
-      new Notification(PUSH_COURSE_GROUP_ID, title, message, NotificationType.ERROR);
+    final Notification notification = new Notification(PUSH_COURSE_GROUP_ID, title, message, NotificationType.ERROR);
     notification.notify(project);
   }
 
@@ -452,17 +452,6 @@ public class CCStepikConnector {
         postCourseWithProgress(project, course);
       }
     };
-  }
-
-  public static void showNotification(@NotNull Project project,
-                                      @NotNull String title,
-                                      @Nullable AnAction action) {
-    final Notification notification =
-      new Notification(PUSH_COURSE_GROUP_ID, title, "", NotificationType.INFORMATION);
-    if (action != null) {
-      notification.addAction(action);
-    }
-    notification.notify(project);
   }
 
   public static AnAction openOnStepikAction(@NotNull String url) {
