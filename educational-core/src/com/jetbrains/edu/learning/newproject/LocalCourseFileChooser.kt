@@ -13,4 +13,6 @@ object LocalCourseFileChooser : FileChooserDescriptor(true, false, false,
   override fun isFileSelectable(file: VirtualFile): Boolean {
     return EduUtils.isZip(file.name)
   }
+
+  override fun isForcedToUseIdeaFileChooser(): Boolean = true
 }
