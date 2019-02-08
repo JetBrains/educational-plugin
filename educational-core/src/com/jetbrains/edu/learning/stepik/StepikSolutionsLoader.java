@@ -131,6 +131,7 @@ public class StepikSolutionsLoader implements Disposable {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
         if (course != null) {
           loadSolutions(progressIndicator, course);
+          EduUtils.updateCourseProgress(myProject);
         }
       }
     });
