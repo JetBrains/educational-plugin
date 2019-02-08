@@ -60,7 +60,7 @@ fun addTabToTaskDescription(project: Project) {
   content?.let { contentManager.removeContent(it, true) }
   val yamlInfoTab = ContentFactory.SERVICE.getInstance().createContent(YamlInfoTaskDescriptionTab(project), NAME, false)
   yamlInfoTab.isCloseable = false
-  contentManager.addContent(yamlInfoTab, 1)
+  contentManager.addContent(yamlInfoTab, contentManager.contents.size)
 }
 
 private val Project.taskDescriptionTWContentManager: ContentManager?

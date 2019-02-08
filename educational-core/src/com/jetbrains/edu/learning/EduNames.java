@@ -27,6 +27,7 @@ public class EduNames {
   public static final String HINTS = "hints";
   public static final String LESSON = "lesson";
   public static final String FRAMEWORK_LESSON = "framework lesson";
+  public static final String FRAMEWORK = "framework";
   public static final String SECTION = "section";
   public static final String TASK = "task";
   public static final String COURSE = "course";

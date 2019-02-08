@@ -33,5 +33,14 @@
     <action id="Educational.HyperskillProjectAction" class="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProjectAction">
       <add-to-group group-id="Educational.LearnAndTeachFileMenu" relative-to-action="Educational.StartCourseraAssignment" anchor="after"/>
     </action>
+
+    <!-- Only under Experimental Feature -->
+    <action id="Educational.Educator.NewHyperskillCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.NewHyperskillCourseAction">
+        <add-to-group group-id="Educational.LearnAndTeachFileMenu" relative-to-action="Educational.Educator.NewCourse" anchor="after"/>
+    </action>
+    <action id="Educational.Educator.PushHyperskillLesson" class="com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.PushHyperskillLesson">
+      <add-to-group group-id="Educational.Educator.ProjectView" relative-to-action="Educational.Educator.PushCourse" anchor="after"/>
+    </action>
+    <action id="Educational.Educator.GetHyperskillLesson" class="com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLesson"/>
   </actions>
 </idea-plugin>

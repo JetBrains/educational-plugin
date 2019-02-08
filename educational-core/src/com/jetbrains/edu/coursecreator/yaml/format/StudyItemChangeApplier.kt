@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 /**
  * Specific instance of this class applies changes from deserialized item, see [com.jetbrains.edu.coursecreator.yaml.YamlDeserializer],
@@ -31,7 +32,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
   }
 
   private fun <T : ItemContainer> changeType(project: Project, existingItem: T, deserializedItem: T) {
-    if (deserializedItem is EduCourse || deserializedItem is CourseraCourse) {
+    if (deserializedItem is EduCourse || deserializedItem is CourseraCourse || deserializedItem is HyperskillCourse) {
       deserializedItem.items = existingItem.items
       deserializedItem.init(null, null, false)
       StudyTaskManager.getInstance(project).course = deserializedItem as Course

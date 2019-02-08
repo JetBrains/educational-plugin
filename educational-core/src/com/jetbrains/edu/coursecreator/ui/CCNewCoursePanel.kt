@@ -39,7 +39,7 @@ import javax.swing.event.DocumentEvent
 import javax.swing.text.AttributeSet
 import javax.swing.text.PlainDocument
 
-class CCNewCoursePanel(course: Course? = null) : JPanel() {
+class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::EduCourse) : JPanel() {
 
   private val myPanel: JPanel
   private val myCourseDataComboBox: ComboBox<CourseData> = ComboBox()
@@ -52,7 +52,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
 
   private val myErrorLabel = HyperlinkLabel()
 
-  private val myCourse: Course = (course ?: EduCourse()).apply { courseMode = CCUtils.COURSE_MODE }
+  private val myCourse: Course = (course ?: courseProducer()).apply { courseMode = CCUtils.COURSE_MODE }
   private lateinit var myLanguageSettings: LanguageSettings<*>
 
   private var myRequiredAndDisabledPlugins: List<String> = emptyList()

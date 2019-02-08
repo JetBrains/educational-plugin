@@ -117,7 +117,7 @@ object StepikCourseLoader {
   }
 
   private fun fillAdditionalMaterials(course: EduCourse, additionalSection: Section?) {
-    course.additionalFiles = loadAttachment(course)
+    course.additionalFiles = loadAttachment(course, null)
     if (course.additionalFiles.isEmpty() && additionalSection != null) {
       // load the old way for compatibility with old courses
       if (additionalSection.units.size == 1) {
@@ -246,7 +246,7 @@ object StepikCourseLoader {
     return units.sortedBy { unit -> unit.section }.mapNotNull { idToLesson[it.lesson] }
   }
 
-  private fun getTasks(course: Course, lesson: Lesson, allStepSources: List<StepSource>): List<Task> {
+  fun getTasks(course: Course, lesson: Lesson, allStepSources: List<StepSource>): List<Task> {
     val user = EduSettings.getInstance().user
     val tasks = ArrayList<Task>()
     for (step in allStepSources) {

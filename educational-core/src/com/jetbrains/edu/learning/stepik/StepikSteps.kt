@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduNames.FRAMEWORK
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
@@ -18,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.util.*
 
 const val SOURCE = "source"
@@ -78,19 +81,22 @@ class Step {
       feedbackCorrect = task.messageCorrect
       feedbackWrong = task.messageIncorrect
     }
-    options = when (task) {
-      is ChoiceTask -> ChoiceStepOptions(task)
+    options = when {
+      task is ChoiceTask -> ChoiceStepOptions(task)
+      task.course is HyperskillCourse -> HyperskillStepOptions(project, task)
       else -> PyCharmStepOptions(project, task)
     }
   }
 }
 
+class HyperskillAdditionalInfo {
+  @JsonProperty(FILES)
+  var files: List<TaskFile>? = null
+}
+
 interface StepOptions
 
-class PyCharmStepOptions : StepOptions {
-  @JsonProperty(HYPERSKILL)
-  var hyperskill: Any? = null
-
+open class PyCharmStepOptions : StepOptions {
   @JsonProperty(TASK_TYPE)
   var taskType: String? = null
 
@@ -136,7 +142,7 @@ class PyCharmStepOptions : StepOptions {
     setTaskFiles(project, task)
 
     taskType = task.itemType
-    lessonType = if (task.lesson is FrameworkLesson) "framework" else null
+    lessonType = if (task.lesson is FrameworkLesson) FRAMEWORK else null
     myFeedbackLink = task.feedbackLink
   }
 
@@ -156,6 +162,20 @@ class PyCharmStepOptions : StepOptions {
     }
     this.files = files
   }
+}
+
+class HyperskillStepOptions : PyCharmStepOptions {
+  @JsonProperty(HYPERSKILL)
+  var hyperskill: HyperskillAdditionalInfo? = null
+
+  constructor()
+
+  constructor(project: Project, task: Task) : super(project, task) {
+    val hyperskillAdditionalInfo = HyperskillAdditionalInfo()
+    hyperskillAdditionalInfo.files = CCUtils.collectAdditionalFiles(task.course, project)
+    hyperskill = hyperskillAdditionalInfo
+  }
+
 }
 
 class ChoiceStepOptions : StepOptions {

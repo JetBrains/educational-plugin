@@ -24,14 +24,14 @@ interface HyperskillConfigurator<T> : EduConfigurator<T> {
     if (currentTask == null) return null
 
     val course = currentTask.lesson.course
-    if (course is HyperskillCourse) {
+    if (course is HyperskillCourse && course.isStudy) {
       if (!course.isTaskInProject(currentTask)) return null
       val topicsPanel = JPanel(VerticalFlowLayout())
       topicsPanel.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
       topicsPanel.border = JBUI.Borders.empty(8, 16, 0, 0)
       val textPane = createTextPane()
       textPane.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
-      val topics = course.taskToTopics[currentTask.index-1]
+      val topics = course.taskToTopics[currentTask.index - 1]
       var descriptionText = "<h3>Topics for current stage :</h3>"
       if (topics != null) {
         for (topic in topics) {

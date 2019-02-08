@@ -67,7 +67,8 @@ interface StepikService {
   fun assignments(@Query("ids[]") vararg ids: Int): Call<AssignmentsList>
 
   @GET("api/attachments")
-  fun attachments(@Query("course") courseId: Int): Call<AttachmentsList>
+  fun attachments(@Query("course") courseId: Int?,
+                  @Query("lesson") lessonId: Int? = null): Call<AttachmentsList>
 
   @GET("api/step-sources/{id}")
   fun choiceStepSource(@Path("id") stepId: Int): Call<ChoiceStepSourcesList>
@@ -106,7 +107,8 @@ interface StepikService {
 
   @Multipart
   @POST("api/attachments")
-  fun attachment(@Part file: MultipartBody.Part, @Part("course") course: RequestBody): Call<ResponseBody>
+  fun attachment(@Part file: MultipartBody.Part, @Part("course") course: RequestBody?,
+                 @Part("lesson") lesson: RequestBody? = null): Call<ResponseBody>
 
   // PUT requests:
 

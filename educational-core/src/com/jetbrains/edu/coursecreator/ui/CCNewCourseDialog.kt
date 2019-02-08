@@ -2,16 +2,18 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.openapi.ui.DialogWrapper
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import javax.swing.JComponent
 
 class CCNewCourseDialog(
   title: String,
   okButtonText: String,
-  course: Course? = null
+  course: Course? = null,
+  courseProducer: () -> Course = ::EduCourse
 ) : DialogWrapper(true) {
 
-  private val myPanel: CCNewCoursePanel = CCNewCoursePanel(course)
+  private val myPanel: CCNewCoursePanel = CCNewCoursePanel(course, courseProducer)
 
   init {
     setTitle(title)

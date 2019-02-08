@@ -209,7 +209,9 @@ public class CCStepikConnector {
       showErrorNotification(project, FAILED_TITLE, message);
       return null;
     }
-    postedLesson.unitId = postUnit(postedLesson.getId(), position, sectionId, project);
+    if (sectionId != -1) {
+      postedLesson.unitId = postUnit(postedLesson.getId(), position, sectionId, project);
+    }
 
     lesson.setId(postedLesson.getId());
     lesson.unitId = postedLesson.unitId;
@@ -278,7 +280,7 @@ public class CCStepikConnector {
     assert courseInfo != null;
     updateProgress("Publishing additional files");
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(courseInfo, project);
-    return StepikConnector.updateAttachment(additionalFiles, courseInfo) == HttpStatus.SC_CREATED;
+    return StepikConnector.updateCourseAttachment(additionalFiles, courseInfo) == HttpStatus.SC_CREATED;
   }
 
   public static boolean updateSectionForTopLevelLessons(@NotNull EduCourse course) {
@@ -336,7 +338,9 @@ public class CCStepikConnector {
       showErrorNotification(project, FAILED_TITLE, "Failed to update lesson " + lesson.getId());
       return null;
     }
-    updateUnit(lesson.unitId, lesson.getId(), lesson.getIndex(), sectionId, project);
+    if (sectionId != -1) {
+      updateUnit(lesson.unitId, lesson.getId(), lesson.getIndex(), sectionId, project);
+    }
 
     return updatedLesson;
   }
@@ -382,7 +386,6 @@ public class CCStepikConnector {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) return false;
     final Course course = task.getLesson().getCourse();
-    assert course instanceof EduCourse;
 
     final int responseCode = StepikConnector.updateTask(project, task);
 
@@ -479,7 +482,7 @@ public class CCStepikConnector {
     };
   }
 
-  private static void showStepikNotification(@NotNull Project project,
+  public static void showStepikNotification(@NotNull Project project,
                                              @NotNull String failedActionName) {
     String text = "Log in to Stepik to " + failedActionName;
     Notification notification = new Notification("Stepik", "Failed to " + failedActionName, text, NotificationType.ERROR);

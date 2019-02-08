@@ -273,13 +273,15 @@ object StepikConnector {
   }
 
   @JvmStatic
-  fun postAttachment(additionalFiles: List<TaskFile>, courseId: Int): Int {
+  @JvmOverloads
+  fun postAttachment(additionalFiles: List<TaskFile>, courseId: Int?, lessonId: Int? = null): Int {
     val additionalInfo = AdditionalInfo(additionalFiles)
     val fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), objectMapper.writeValueAsString(additionalInfo))
     val fileData = MultipartBody.Part.createFormData("file", StepikNames.ADDITIONAL_FILES, fileBody)
-    val courseBody = RequestBody.create(MediaType.parse("text/plain"), courseId.toString())
+    val courseBody = if (courseId != null) RequestBody.create(MediaType.parse("text/plain"), courseId.toString()) else null
+    val lessonBody = if (lessonId != null) RequestBody.create(MediaType.parse("text/plain"), lessonId.toString()) else null
 
-    val response = service.attachment(fileData, courseBody).executeHandlingExceptions()
+    val response = service.attachment(fileData, courseBody, lessonBody).executeHandlingExceptions()
     return response?.code() ?: -1
   }
 
@@ -338,16 +340,26 @@ object StepikConnector {
   }
 
   @JvmStatic
-  fun updateAttachment(additionalFiles: List<TaskFile>, course: EduCourse): Int {
-    val attachments = service.attachments(course.id).executeHandlingExceptions(true)?.body()
+  fun updateCourseAttachment(additionalFiles: List<TaskFile>, course: EduCourse): Int {
+    deleteAttachment(course.id)
+    updateCourse(course)  // Needed to push forward update_date in course
+    return postAttachment(additionalFiles, course.id)
+  }
+
+  @JvmStatic
+  fun updateLessonAttachment(additionalFiles: List<TaskFile>, lessonId: Int): Int {
+    deleteAttachment(null, lessonId)
+    return postAttachment(additionalFiles, null, lessonId)
+  }
+
+  private fun deleteAttachment(courseId: Int?, lessonId: Int? = null) {
+    val attachments = service.attachments(courseId, lessonId).executeHandlingExceptions(true)?.body()
     if (attachments != null && attachments.attachments.isNotEmpty()) {
       val attachmentId = attachments.attachments.firstOrNull { StepikNames.ADDITIONAL_FILES == it.name }?.id
       if (attachmentId != null) {
         service.deleteAttachment(attachmentId).executeHandlingExceptions()
       }
     }
-    updateCourse(course)  // Needed to push forward update_date in course
-    return postAttachment(additionalFiles, course.id)
   }
 
   // Delete requests:
