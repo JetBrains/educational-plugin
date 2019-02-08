@@ -259,12 +259,6 @@ public class CCStepikConnector {
     StepikConnector.postAttachment(additionalFiles, id);
   }
 
-  public static void updateAdditionalFiles(@NotNull EduCourse course, @NotNull final Project project) {
-    updateProgress("Publishing additional files");
-    final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
-    StepikConnector.updateAttachment(additionalFiles, course);
-  }
-
   private static void updateProgress(@NotNull String text) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     if (indicator != null) {
@@ -365,10 +359,12 @@ public class CCStepikConnector {
     return true;
   }
 
-  public static void updateAdditionalMaterials(@NotNull Project project, int courseId) {
+  public static int updateAdditionalMaterials(@NotNull Project project, int courseId) {
     EduCourse courseInfo = StepikConnector.getCourseInfo(courseId);
     assert courseInfo != null;
-    updateAdditionalFiles(courseInfo, project);
+    updateProgress("Publishing additional files");
+    final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(courseInfo, project);
+    return StepikConnector.updateAttachment(additionalFiles, courseInfo);
   }
 
   public static Lesson updateLessonInfo(@NotNull final Project project,

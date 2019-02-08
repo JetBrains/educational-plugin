@@ -6,8 +6,12 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
+import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.FAILED_TITLE
+import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
+import com.jetbrains.edu.learning.EduUtils.showNotification
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import org.apache.commons.httpclient.HttpStatus
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class UpdateAdditionalMaterials : DumbAwareAction("Update Additional Materials") {
@@ -20,7 +24,13 @@ class UpdateAdditionalMaterials : DumbAwareAction("Update Additional Materials")
     ProgressManager.getInstance().run(object : Task.Modal(project, "Updating Additional Materials", false) {
       override fun run(indicator: ProgressIndicator) {
         indicator.isIndeterminate = false
-        CCStepikConnector.updateAdditionalMaterials(project, course.id)
+        val responseCode = CCStepikConnector.updateAdditionalMaterials(project, course.id)
+        if (responseCode != HttpStatus.SC_CREATED) {
+          showErrorNotification(project, FAILED_TITLE, "Failed to update additional materials")
+        }
+        else {
+          showNotification(project, "Additional materials updated", null)
+        }
       }
     })
   }
