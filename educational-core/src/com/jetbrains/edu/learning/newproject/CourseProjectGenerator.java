@@ -205,7 +205,7 @@ public abstract class CourseProjectGenerator<S> {
   }
 
   private void setStepikChangeStatuses(@NotNull Project project) {
-    EduCourse courseFromStepik = StepikConnector.getCourseInfo(myCourse.getId(), ((EduCourse)myCourse).isCompatible());
+    EduCourse courseFromStepik = StepikConnector.getCourseInfo(myCourse.getId(), ((EduCourse)myCourse).isCompatible(), true);
     if (courseFromStepik != null) {
       StepikCourseLoader.fillItems(courseFromStepik);
       courseFromStepik.init(null, null, false);

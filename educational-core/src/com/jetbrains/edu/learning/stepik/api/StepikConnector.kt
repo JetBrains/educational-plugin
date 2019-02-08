@@ -163,9 +163,9 @@ object StepikConnector {
 
   @JvmOverloads
   @JvmStatic
-  fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean? = null): EduCourse? {
+  fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean? = null, optional: Boolean = false): EduCourse? {
     val response = service.courses(courseId, isIdeaCompatible).executeHandlingExceptions()
-    checkForErrors(response)
+    checkForErrors(response, optional)
     return response?.body()?.courses?.firstOrNull()?.apply { setCourseLanguage(this) }
   }
 

@@ -21,10 +21,12 @@ fun <T> Call<T>.executeHandlingExceptions(): Response<T>? {
   return null
 }
 
-fun checkForErrors(response: Response<out Any>?) {
+fun checkForErrors(response: Response<out Any>?, optional: Boolean = false) {
   if (response == null) return
   val errorBody = response.errorBody()
-  if (errorBody != null) {
-    LOG.error(errorBody.string())
+  if (errorBody == null) return
+  when {
+    optional -> LOG.warn(errorBody.string())
+    else -> LOG.error(errorBody.string())
   }
 }
