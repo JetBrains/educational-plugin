@@ -93,7 +93,7 @@ public class CCPushLesson extends DumbAwareAction {
     }
 
     final PsiDirectory lessonDir = directories[0];
-    if (lessonDir == null || !lessonDir.getName().contains("lesson")) {
+    if (lessonDir == null) {
       return;
     }
 
