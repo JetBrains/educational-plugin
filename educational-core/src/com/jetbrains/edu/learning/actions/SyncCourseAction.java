@@ -22,6 +22,8 @@ import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.PUSH_COURSE_GROUP_ID;
+
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class SyncCourseAction extends DumbAwareAction {
 
@@ -48,7 +50,7 @@ public class SyncCourseAction extends DumbAwareAction {
 
           if (StepikUpdateDateExt.isUpToDate((EduCourse)course)) {
             ApplicationManager.getApplication().invokeLater(() -> {
-              Notification notification = new Notification("Update.course", "Course is up to date", "", NotificationType.INFORMATION);
+              Notification notification = new Notification(PUSH_COURSE_GROUP_ID, "Course is up to date", "", NotificationType.INFORMATION);
               notification.notify(project);
             });
           }

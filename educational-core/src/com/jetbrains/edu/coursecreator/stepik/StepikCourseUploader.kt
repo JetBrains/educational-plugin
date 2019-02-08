@@ -45,7 +45,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     processTaskChanges()
 
     if (isUpToDate()) {
-      val notification = Notification("upload.course", "Nothing to upload", "All course items is up to date", NotificationType.INFORMATION)
+      val notification = Notification(PUSH_COURSE_GROUP_ID, "Nothing to upload", "All course items is up to date", NotificationType.INFORMATION)
       notification.notify(project)
     }
     else {

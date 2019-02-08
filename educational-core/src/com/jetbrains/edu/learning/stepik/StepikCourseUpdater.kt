@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.PUSH_COURSE_GROUP_ID
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -215,7 +216,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   }
 
   private fun showNotification() {
-    val updateNotification = Notification("Update.course", "Course updated", "", NotificationType.INFORMATION)
+    val updateNotification = Notification(PUSH_COURSE_GROUP_ID, "Course updated", "", NotificationType.INFORMATION)
     updateNotification.notify(project)
   }
 

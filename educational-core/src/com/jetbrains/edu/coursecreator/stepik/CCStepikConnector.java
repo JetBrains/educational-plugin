@@ -43,9 +43,9 @@ import static com.jetbrains.edu.learning.EduUtils.showOAuthDialog;
 public class CCStepikConnector {
   private static final Logger LOG = Logger.getInstance(CCStepikConnector.class.getName());
   public static final String FAILED_TITLE = "Failed to publish ";
+  public static final String PUSH_COURSE_GROUP_ID = "Push.course";
   private static final String JETBRAINS_USER_ID = "17813950";
   private static final List<Integer> TESTER_USER_IDS = Lists.newArrayList(17869355);
-  private static final String PUSH_COURSE_GROUP_ID = "Push.course";
 
   private CCStepikConnector() {
   }
@@ -458,7 +458,7 @@ public class CCStepikConnector {
                                       @NotNull String title,
                                       @Nullable AnAction action) {
     final Notification notification =
-      new Notification("Push.course", title, "", NotificationType.INFORMATION);
+      new Notification(PUSH_COURSE_GROUP_ID, title, "", NotificationType.INFORMATION);
     if (action != null) {
       notification.addAction(action);
     }
