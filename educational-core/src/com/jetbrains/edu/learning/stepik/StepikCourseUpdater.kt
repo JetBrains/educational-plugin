@@ -394,18 +394,12 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   }
 
   private fun courseFromServer(currentCourse: EduCourse): EduCourse? {
-    try {
-      val remoteCourse = getCourseInfo(currentCourse.id, true)
-      if (remoteCourse != null) {
-        loadCourseStructure(remoteCourse)
-        addTopLevelLessons(remoteCourse)
-        return remoteCourse
-      }
+    val remoteCourse = getCourseInfo(currentCourse.id, true)
+    if (remoteCourse != null) {
+      loadCourseStructure(remoteCourse)
+      addTopLevelLessons(remoteCourse)
+      return remoteCourse
     }
-    catch (e: IOException) {
-      LOG.warn(e.message)
-    }
-
     return null
   }
 

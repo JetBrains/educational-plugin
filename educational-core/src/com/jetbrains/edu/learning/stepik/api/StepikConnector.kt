@@ -166,11 +166,7 @@ object StepikConnector {
   fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean? = null): EduCourse? {
     val response = service.courses(courseId, isIdeaCompatible).executeHandlingExceptions()
     checkForErrors(response)
-    val course = response?.body()?.courses?.firstOrNull()
-    if (course != null) {
-      setCourseLanguage(course)
-    }
-    return course
+    return response?.body()?.courses?.firstOrNull()?.apply { setCourseLanguage(this) }
   }
 
   @JvmStatic

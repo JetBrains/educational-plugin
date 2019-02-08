@@ -43,7 +43,7 @@ object StepikCourseConnector {
     }
 
     if (courseId != -1) {
-      val info = getCourseInfo(courseId, false)
+      val info = getCourseInfo(courseId, false) ?: return null
       return stepikCourseFromRemote(info)
     }
     return null
