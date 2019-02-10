@@ -138,7 +138,11 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
     fun getBaseSdk(course: Course): String? {
       val flavor = PythonSdkFlavor.getApplicableFlavors(false)[0]
 
+      // BACKCOMPAT: 2018.2
+      // Replace `flavor.suggestHomePaths()` with `flavor.suggestHomePaths(null)`
+      @Suppress("DEPRECATION")
       val sdkPaths = ArrayList<String>(flavor.suggestHomePaths())
+
       if (sdkPaths.isEmpty()) {
         return null
       }
