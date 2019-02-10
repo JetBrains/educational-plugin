@@ -31,7 +31,15 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
 
     val task = studyState.task
 
-    val taskFiles = task.taskFiles.values.filter { !it.answerPlaceholders.isEmpty() }
+    var taskFiles = task.taskFiles.values.filter { !it.answerPlaceholders.isEmpty() }
+
+    val selectedTaskFileIndex = taskFiles.indexOf(studyState.taskFile)
+    if (selectedTaskFileIndex > 0) {
+      val tmp = mutableListOf(taskFiles[selectedTaskFileIndex])
+      tmp += taskFiles.take(selectedTaskFileIndex)
+      tmp += taskFiles.drop(selectedTaskFileIndex + 1)
+      taskFiles = tmp
+    }
     val requests = taskFiles.map {
       val virtualFile = it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found")
       val studentFileContent = DiffContentFactory.getInstance().create(VfsUtil.loadText(virtualFile), virtualFile.fileType)
