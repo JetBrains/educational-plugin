@@ -138,7 +138,7 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
     fun getBaseSdk(course: Course): String? {
       val flavor = PythonSdkFlavor.getApplicableFlavors(false)[0]
 
-      val sdkPaths = ArrayList<String>(flavor.suggestHomePaths(null))
+      val sdkPaths = ArrayList<String>(flavor.suggestHomePaths())
       if (sdkPaths.isEmpty()) {
         return null
       }
