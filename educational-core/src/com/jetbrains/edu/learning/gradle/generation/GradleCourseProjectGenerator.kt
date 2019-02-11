@@ -78,7 +78,7 @@ open class GradleCourseProjectGenerator(
     runWriteAction { ProjectRootManager.getInstance(project).projectSdk = jdk }
   }
 
-  private fun getJdk(settings: JdkProjectSettings): Sdk? {
+  protected open fun getJdk(settings: JdkProjectSettings): Sdk? {
     val selectedItem = settings.jdkItem ?: return null
     if (selectedItem is JdkComboBox.SuggestedJdkItem) {
       val type = selectedItem.sdkType

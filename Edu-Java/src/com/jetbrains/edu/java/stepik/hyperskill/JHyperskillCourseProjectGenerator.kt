@@ -5,6 +5,8 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
+import com.jetbrains.edu.java.JLanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
@@ -84,6 +86,9 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
 
     openSelectedStage(myCourse, project)
   }
+
+  override fun getJdk(settings: JdkProjectSettings): Sdk? =
+    super.getJdk(settings) ?: JLanguageSettings.findSuitableJdk(myCourse, settings.model)
 
   companion object {
     private val LOG = Logger.getInstance(JHyperskillCourseProjectGenerator::class.java)
