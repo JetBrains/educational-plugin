@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import java.util.*
 
 class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare your solution with answer", AllIcons.Diff.Diff) {
   companion object {
@@ -31,15 +32,9 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
 
     val task = studyState.task
 
-    var taskFiles = task.taskFiles.values.filter { !it.answerPlaceholders.isEmpty() }
+    val taskFiles = task.taskFiles.values.filter { !it.answerPlaceholders.isEmpty() }.toMutableList()
+    putSelectedTaskFileFirst(taskFiles, studyState.taskFile!!)
 
-    val selectedTaskFileIndex = taskFiles.indexOf(studyState.taskFile)
-    if (selectedTaskFileIndex > 0) {
-      val tmp = mutableListOf(taskFiles[selectedTaskFileIndex])
-      tmp += taskFiles.take(selectedTaskFileIndex)
-      tmp += taskFiles.drop(selectedTaskFileIndex + 1)
-      taskFiles = tmp
-    }
     val requests = taskFiles.map {
       val virtualFile = it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found")
       val studentFileContent = DiffContentFactory.getInstance().create(VfsUtil.loadText(virtualFile), virtualFile.fileType)
@@ -48,6 +43,13 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
     }
 
     DiffManager.getInstance().showDiff(project, SimpleDiffRequestChain(requests), DiffDialogHints.FRAME)
+  }
+
+  private fun putSelectedTaskFileFirst(taskFiles: MutableList<TaskFile>, selectedTaskFile: TaskFile) {
+    val selectedTaskFileIndex = taskFiles.indexOf(selectedTaskFile)
+    if (selectedTaskFileIndex > 0) {
+      Collections.swap(taskFiles, 0, selectedTaskFileIndex)
+    }
   }
 
   private fun TaskFile.toSolution(): String {
