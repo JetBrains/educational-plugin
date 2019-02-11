@@ -123,20 +123,12 @@ object StepikCourseLoader {
   }
 
   private fun addTopLevelLessons(remoteCourse: EduCourse, allSections: List<Section>) {
-    val unitIds = allSections.map { section -> section.units }
+    val unitIds = allSections.flatMap { section -> section.units }.distinct()
     if (unitIds.isNotEmpty()) {
-      val lessons = getLessons(remoteCourse)
+      val lessons = getLessonsFromUnits(remoteCourse, unitIds, true)
       remoteCourse.addLessons(lessons)
       remoteCourse.sectionIds = allSections.map { s -> s.id }
     }
-  }
-
-  private fun getLessons(remoteCourse: EduCourse): List<Lesson> {
-    val unitIds = getUnitsIds(remoteCourse)
-    return if (unitIds.isNotEmpty()) {
-      getLessonsFromUnits(remoteCourse, unitIds, true)
-    }
-    else emptyList()
   }
 
   fun getUnitsIds(remoteCourse: EduCourse): List<Int> {
