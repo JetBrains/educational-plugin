@@ -11,6 +11,7 @@ import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.ui.ClickListener
 import com.intellij.ui.awt.RelativePoint
+import com.intellij.util.IconUtil
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector.hyperskillAuthorizationTopic
 import icons.EducationalCoreIcons
 import java.awt.Point
@@ -63,35 +64,35 @@ class HyperskillWidget : IconLikeCustomStatusBarWidget {
 
   override fun getComponent(): JComponent = component
 
-  companion object {
-    const val ID = "HyperskillAccountWidget"
+  private fun createPopup(user: HyperskillAccount?): ListPopup {
+    val loginText = "Log in "
+    val logOutText = "Log out"
+    val userActionStep = if (user == null) loginText else logOutText
+    val steps = ArrayList<String>()
+    steps.add(userActionStep)
 
-    private fun getWidgetIcon(user: HyperskillAccount?): Icon {
-      return if (user == null) EducationalCoreIcons.HyperskillOff else EducationalCoreIcons.Hyperskill
-    }
-
-    private fun createPopup(user: HyperskillAccount?): ListPopup {
-      val loginText = "Log in "
-      val logOutText = "Log out"
-      val userActionStep = if (user == null) loginText else logOutText
-      val steps = ArrayList<String>()
-      steps.add(userActionStep)
-
-      val stepikStep = object : BaseListPopupStep<String>(null, steps) {
-        override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<*>? {
-          return doFinalStep {
-            when (selectedValue) {
-              loginText -> {
-                HyperskillConnector.doAuthorize()
-              }
-              logOutText -> {
-                HyperskillSettings.INSTANCE.account = null
-              }
+    val stepikStep = object : BaseListPopupStep<String>(null, steps) {
+      override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<*>? {
+        return doFinalStep {
+          when (selectedValue) {
+            loginText -> {
+              HyperskillConnector.doAuthorize()
+            }
+            logOutText -> {
+              HyperskillSettings.INSTANCE.account = null
+              update()
             }
           }
         }
       }
-      return JBPopupFactory.getInstance().createListPopup(stepikStep)
     }
+    return JBPopupFactory.getInstance().createListPopup(stepikStep)
+  }
+
+  companion object {
+    private fun getWidgetIcon(user: HyperskillAccount?): Icon {
+      return if (user == null) IconUtil.desaturate(EducationalCoreIcons.Hyperskill) else EducationalCoreIcons.Hyperskill
+    }
+    const val ID = "HyperskillAccountWidget"
   }
 }
