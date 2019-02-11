@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -108,7 +109,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     panel.add(bottomPanel, BorderLayout.SOUTH)
     UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
-    val displayNamePrefix = currentTask?.uiName ?: "Task"
+    val course = StudyTaskManager.getInstance(project).course
+    val displayNamePrefix = if (course is HyperskillCourse) "Stage" else "Task"
     val content = ContentFactory.SERVICE.getInstance().createContent(panel, "$displayNamePrefix Description", false)
     content.isCloseable = false
     contentManager.addContent(content)
