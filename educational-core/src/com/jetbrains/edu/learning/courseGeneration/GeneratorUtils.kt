@@ -49,11 +49,11 @@ object GeneratorUtils {
       indicator.fraction = (i + 1).toDouble() / items.size
 
       if (item is Lesson) {
-        indicator.text = "Generating lesson ${i + 1} from ${items.size}"
+        indicator.text = "Generating lesson ${i + 1} of ${items.size}"
         createLesson(item, baseDir)
       }
       else if (item is Section) {
-        indicator.text = "Generating section ${i + 1} from ${items.size}"
+        indicator.text = "Generating section ${i + 1} of ${items.size}"
         createSection(item, baseDir)
       }
     }

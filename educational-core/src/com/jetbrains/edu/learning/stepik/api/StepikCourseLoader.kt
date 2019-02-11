@@ -189,7 +189,7 @@ object StepikCourseLoader {
         progressIndicator.isIndeterminate = false
         val readableIndex = lessonIndex + 1
         progressIndicator.checkCanceled()
-        progressIndicator.text = "Loading lesson $readableIndex from $lessonCount"
+        progressIndicator.text = "Loading lesson $readableIndex of $lessonCount"
         progressIndicator.fraction = readableIndex.toDouble() / lessonCount
       }
       val allStepSources = StepikMultipleRequestsConnector.getStepSources(lesson.steps)

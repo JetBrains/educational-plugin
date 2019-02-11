@@ -166,7 +166,7 @@ public class StepikSolutionsLoader implements Disposable {
             boolean isSolved = task.getStatus() == CheckStatus.Solved;
             if (progressIndicator != null) {
               progressIndicator.setFraction((double)progressIndex / tasksToUpdate.size());
-              progressIndicator.setText(String.format("Loading solution %d from %d", progressIndex, tasksToUpdate.size()));
+              progressIndicator.setText(String.format("Loading solution %d of %d", progressIndex, tasksToUpdate.size()));
             }
             return loadSolution(myProject, task, isSolved);
           }
