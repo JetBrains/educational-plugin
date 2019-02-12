@@ -90,6 +90,12 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
   override fun getJdk(settings: JdkProjectSettings): Sdk? =
     super.getJdk(settings) ?: JLanguageSettings.findSuitableJdk(myCourse, settings.model)
 
+  override fun loadSolutions(project: Project, course: Course) {
+    if (course.isStudy && course is HyperskillCourse && HyperskillSettings.INSTANCE.account != null) {
+      HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground()
+    }
+  }
+
   companion object {
     private val LOG = Logger.getInstance(JHyperskillCourseProjectGenerator::class.java)
   }

@@ -13,6 +13,9 @@
     <component>
       <implementation-class>com.jetbrains.edu.learning.stepik.StepikProjectComponent</implementation-class>
     </component>
+    <component>
+      <implementation-class>com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProjectComponent</implementation-class>
+    </component>
 
   </project-components>
 
@@ -206,6 +209,8 @@
                     serviceImplementation="com.jetbrains.edu.learning.EduDocumentationManager" overrides="true"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.framework.FrameworkLessonManager"
                     serviceImplementation="com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl"/>
+    <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSolutionLoader"
+                    serviceInterface="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSolutionLoader"/>
     <projectConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
                          id="Educational" displayName="Education"/>
 

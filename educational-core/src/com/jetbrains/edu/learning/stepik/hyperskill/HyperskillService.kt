@@ -3,10 +3,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.authUtils.TokenInfo
-import com.jetbrains.edu.learning.stepik.api.Attempt
-import com.jetbrains.edu.learning.stepik.api.AttemptsList
-import com.jetbrains.edu.learning.stepik.api.StepsList
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.*
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -45,4 +42,7 @@ interface HyperskillService {
 
   @POST("api/submissions/")
   fun submission(@Body submission: Submission): Call<Any>
+
+  @GET("api/submissions")
+  fun submission(@Query("step") step: Int, @Query("page") page: Int): Call<SubmissionsList>
 }

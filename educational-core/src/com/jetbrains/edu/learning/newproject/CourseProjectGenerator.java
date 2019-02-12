@@ -97,6 +97,7 @@ public abstract class CourseProjectGenerator<S> {
   }
 
   protected void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
+    loadSolutions(project, myCourse);
     EduUtils.openFirstTask(myCourse, project);
     if (CCUtils.isCourseCreator(project)) {
       YamlFormatSynchronizer.saveAll(project);
@@ -198,7 +199,6 @@ public abstract class CourseProjectGenerator<S> {
 
         return null; // just to use correct overloading of `runProcessWithProgressSynchronously` method
       }, "Generating Course Structure", false, project);
-      loadSolutions(project, myCourse);
     } catch (IOException e) {
       LOG.error("Failed to generate course", e);
     }

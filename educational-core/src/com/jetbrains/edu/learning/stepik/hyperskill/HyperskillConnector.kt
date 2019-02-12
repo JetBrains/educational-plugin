@@ -132,6 +132,10 @@ object HyperskillConnector {
     }
   }
 
+  fun getSubmission(stepId: Int, page: Int = 1): Submission? {
+    return service.submission(stepId, page).executeHandlingExceptions()?.body()?.submissions?.firstOrNull()
+  }
+
   // Post requests:
 
   fun postSolution(task: Task, project: Project) {
