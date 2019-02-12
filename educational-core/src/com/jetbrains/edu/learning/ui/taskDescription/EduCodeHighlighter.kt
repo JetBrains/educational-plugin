@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.ui.taskDescription
 
 import com.intellij.codeEditor.printing.HTMLTextPainter
 import com.intellij.lang.Language
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
 import org.jsoup.Jsoup
@@ -48,6 +49,7 @@ class EduCodeHighlighter {
       val lang = when {
         hasAttr("data-lang") -> attr("data-lang").removePrefix("text/x-")
         attr("class").startsWith("language-") -> attr("class").removePrefix("language-")
+        attr("class") == "no-highlight" -> return PlainTextLanguage.INSTANCE
         else -> return null
       }
       if (lang.isEmpty()) return null

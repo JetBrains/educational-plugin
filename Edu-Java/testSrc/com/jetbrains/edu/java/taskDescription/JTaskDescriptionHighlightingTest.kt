@@ -97,4 +97,29 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
      </body>
     </html>
   """)
+
+  fun `test html description no highlighting class`() = doHtmlTest("""
+    <html>
+    <pre><code class="no-highlight">
+      class Main {
+          public static void main(String[] args) {
+            System.out.println("Hello!");
+          }
+      }
+    </code></pre>
+    </html>
+  """, """
+    <html>
+     <head></head>
+     <body>
+      <span class="code-block"><pre>
+      class Main {
+          public static void main(String[] args) {
+            System.out.println("Hello!");
+          }
+      }
+    </pre> </span>
+     </body>
+    </html>
+  """)
 }
