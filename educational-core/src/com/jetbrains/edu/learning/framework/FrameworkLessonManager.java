@@ -13,7 +13,7 @@ public interface FrameworkLessonManager {
   void prepareNextTask(@NotNull FrameworkLesson lesson, @NotNull VirtualFile taskDir);
   void preparePrevTask(@NotNull FrameworkLesson lesson, @NotNull VirtualFile taskDir);
 
-  void saveSolution(@NotNull Task task, @NotNull Map<String, String> solutions);
+  void saveExternalChanges(@NotNull Task task, @NotNull Map<String, String> externalState);
 
   @NotNull
   static FrameworkLessonManager getInstance(@NotNull Project project) {

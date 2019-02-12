@@ -544,7 +544,7 @@ public class StepikSolutionsLoader implements Disposable {
       for (TaskFile taskFile : task.getTaskFiles().values()) {
         Lesson lesson = task.getLesson();
         if (lesson instanceof FrameworkLesson && ((FrameworkLesson)lesson).currentTask() != task) {
-          frameworkLessonManager.saveSolution(task, solutionsMap);
+          frameworkLessonManager.saveExternalChanges(task, solutionsMap);
         } else {
           VirtualFile vFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
           if (vFile != null) {

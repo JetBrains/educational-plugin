@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.stepik.api.Submission
 
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
-  override fun tasksToUpdate(course: Course): List<Task> {
+  override fun provideTasksToUpdate(course: Course): List<Task> {
     return course.items.asSequence().flatMap {
       when (it) {
         is Lesson -> sequenceOf(it)
@@ -25,9 +25,9 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
   override fun loadLastSubmission(stepId: Int): Submission? = HyperskillConnector.getSubmission(stepId)
 
-  override fun loadTaskSolution(task: Task): TaskSolutions {
+  override fun loadSolution(task: Task): TaskSolutions {
     project.putUserData(IS_HYPERSKILL_SOLUTION_LOADING_STARTED, true)
-    return super.loadTaskSolution(task)
+    return super.loadSolution(task)
   }
 
   companion object {

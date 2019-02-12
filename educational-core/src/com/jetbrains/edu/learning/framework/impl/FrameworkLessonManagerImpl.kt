@@ -32,16 +32,16 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     applyTargetTaskChanges(lesson, -1, taskDir)
   }
 
-  override fun saveSolution(task: Task, solutions: Map<String, String>) {
+  override fun saveExternalChanges(task: Task, externalState: Map<String, String>) {
     require(EduUtils.isStudentProject(project)) {
-      "`saveSolution` should be called only if course in study mode"
+      "`saveExternalChanges` should be called only if course in study mode"
     }
     require(task.lesson is FrameworkLesson) {
       "Only solutions of framework tasks can be saved"
     }
 
     // TODO: support removed files
-    val changes = calculateUserChanges(task.allFiles, solutions)
+    val changes = calculateUserChanges(task.allFiles, externalState)
     val currentRecord = task.record
     task.record = try {
       storage.updateUserChanges(currentRecord, changes)

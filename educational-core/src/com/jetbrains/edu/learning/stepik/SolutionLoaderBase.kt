@@ -43,7 +43,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       override fun run(progressIndicator: ProgressIndicator) {
         val course = StudyTaskManager.getInstance(myProject).course
         if (course != null) {
-          loadSolutions(course, progressIndicator)
+          loadAndApplySolutions(course, progressIndicator)
         }
       }
     })
@@ -51,8 +51,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   @VisibleForTesting
   @JvmOverloads
-  fun loadSolutions(course: Course, progressIndicator: ProgressIndicator? = null) {
-    val tasksToUpdate = EduUtils.execCancelable { tasksToUpdate(course) }
+  fun loadAndApplySolutions(course: Course, progressIndicator: ProgressIndicator? = null) {
+    val tasksToUpdate = EduUtils.execCancelable { provideTasksToUpdate(course) }
     if (tasksToUpdate != null) {
       updateTasks(tasksToUpdate, progressIndicator)
     }
@@ -91,7 +91,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
               progressIndicator.fraction = progressIndex.toDouble() / tasksToUpdate.size
               progressIndicator.text = String.format("Loading solution %d of %d", progressIndex, tasksToUpdate.size)
             }
-            loadSolution(project, task)
+            updateTask(project, task)
           }
           finally {
             countDownLatch.countDown()
@@ -160,15 +160,15 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   /**
    * @return true if solutions for given task are incompatible with current plugin version, false otherwise
    */
-  private fun loadSolution(project: Project, task: Task): Boolean {
-    val taskSolutions = loadTaskSolution(task)
+  private fun updateTask(project: Project, task: Task): Boolean {
+    val taskSolutions = loadSolution(task)
     if (!taskSolutions.hasIncompatibleSolutions && !taskSolutions.solutions.isEmpty()) {
       applySolutions(project, task, taskSolutions)
     }
     return taskSolutions.hasIncompatibleSolutions
   }
 
-  protected open fun loadTaskSolution(task: Task): TaskSolutions {
+  protected open fun loadSolution(task: Task): TaskSolutions {
     val language = task.course.languageID
     val lastSubmission = loadLastSubmission(task.stepId)
     val reply = lastSubmission?.reply
@@ -240,7 +240,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   }
 
   protected abstract fun loadLastSubmission(stepId: Int): Submission?
-  protected abstract fun tasksToUpdate(course: Course): List<Task>
+  protected abstract fun provideTasksToUpdate(course: Course): List<Task>
 
   companion object {
 
@@ -272,7 +272,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
         val lesson = task.lesson
         if (lesson is FrameworkLesson && lesson.currentTask() != task) {
           val frameworkLessonManager = FrameworkLessonManager.getInstance(project)
-          frameworkLessonManager.saveSolution(task, solutionsMap)
+          frameworkLessonManager.saveExternalChanges(task, solutionsMap)
         }
         else {
           for (taskFile in task.taskFiles.values) {
