@@ -3,16 +3,20 @@ package com.jetbrains.edu.learning.stepik
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.SaveAndSyncHandler
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -20,7 +24,9 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import com.jetbrains.edu.learning.update.UpdateNotification
 import java.io.IOException
 import java.util.*
@@ -57,7 +63,21 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   private fun updateTasks(tasks: List<Task>, progressIndicator: ProgressIndicator?) {
     cancelUnfinishedTasks()
-    futures.clear()
+
+    val connection = ApplicationManager.getApplication().messageBus.connect()
+    // It's supposed to use `selectedTask` only in EDT
+    // so it doesn't require additional synchronization
+    var selectedTask: Task? = EduUtils.getSelectedEduEditor(project)?.taskFile?.task
+    connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
+      override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
+        val eduEditor = EduUtils.getSelectedEduEditor(project) ?: return
+        val task = eduEditor.taskFile.task
+        selectedTask = task
+        val future = futures[task.stepId] ?: return
+        eduEditor.startLoading()
+        enableEditorWhenFutureDone(task, future)
+      }
+    })
 
     val tasksToUpdate = tasks.filter { task -> task !is TheoryTask }
 
@@ -83,20 +103,31 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       }
     }
 
+    runInEdt {
+      @Suppress("NAME_SHADOWING")
+      val selectedTask = selectedTask ?: return@runInEdt
+      val future = futures[selectedTask.stepId] ?: return@runInEdt
+      val selectedEduEditor = EduUtils.getSelectedEduEditor(project) ?: return@runInEdt
+      selectedEduEditor.startLoading()
+      enableEditorWhenFutureDone(selectedTask, future)
+    }
+
     try {
       countDownLatch.await()
       val needToShowNotification = needToShowUpdateNotification()
       runInEdt {
-        runWriteAction {
-          if (needToShowNotification) {
-            UpdateNotification(NOTIFICATION_TITLE, NOTIFICATION_CONTENT).notify(project)
-          }
-          EduUtils.synchronize()
+        if (needToShowNotification) {
+          UpdateNotification(NOTIFICATION_TITLE, NOTIFICATION_CONTENT).notify(project)
         }
+        EduUtils.synchronize()
+        selectedTask?.let { updateUI(project, it) }
       }
     }
     catch (e: InterruptedException) {
       LOG.warn(e)
+    }
+    finally {
+      connection.disconnect()
     }
   }
 
@@ -123,6 +154,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
         future.cancel(true)
       }
     }
+    futures.clear()
   }
 
   /**
@@ -172,6 +204,35 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
 
     return TaskSolutions.from(lastSubmission.status ?: "", updatedTaskData.task, reply.solution.orEmpty())
+  }
+
+  private fun enableEditorWhenFutureDone(selectedTask: Task, future: Future<*>) {
+    if (future.isDone || future.isCancelled) return
+    ApplicationManager.getApplication().executeOnPooledThread {
+      try {
+        future.get()
+        runInEdt {
+          val selectedEditor = EduUtils.getSelectedEduEditor(project) ?: return@runInEdt
+          if (selectedEditor.taskFile.name in selectedTask.taskFiles) {
+            selectedEditor.stopLoading()
+            selectedEditor.validateTaskFile()
+          }
+        }
+      }
+      catch (e: InterruptedException) {
+        LOG.warn(e)
+      }
+      catch (e: ExecutionException) {
+        LOG.warn(e)
+      }
+    }
+  }
+
+  private fun updateUI(project: Project, task: Task) {
+    ProjectView.getInstance(project).refresh()
+    // TODO: do we really need it here?
+    TaskDescriptionView.getInstance(project).currentTask = task
+    NavigationUtils.navigateToTask(project, task)
   }
 
   override fun dispose() {
