@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
+import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -103,6 +104,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
       return;
     }
     revert(project);
+    EduUsagesCollector.taskReverted();
   }
 
   @Override

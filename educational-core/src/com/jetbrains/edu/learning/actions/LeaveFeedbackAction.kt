@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 import com.jetbrains.edu.learning.stepik.getStepikLink
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import icons.EducationalCoreIcons
@@ -21,6 +22,7 @@ class LeaveFeedbackAction : DumbAwareAction(ACTION_TEXT, ACTION_TEXT, Educationa
     val task = EduUtils.getCurrentTask(project) ?: return
     val link = getLink(task)
     BrowserUtil.browse(link)
+    EduUsagesCollector.leaveFeedback()
   }
 
   override fun update(e: AnActionEvent) {

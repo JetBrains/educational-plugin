@@ -100,6 +100,26 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
     advanceKey("taskFilePreviewCreated");
   }
 
+  public static void reviewStageTopics() {
+    advanceKey("reviewStageTopics");
+  }
+
+  public static void fullOutputShown() {
+    advanceKey("fullOutput");
+  }
+
+  public static void solutionShown() {
+    advanceKey("solutionShown");
+  }
+
+  public static void leaveFeedback() {
+    advanceKey("leaveFeedback");
+  }
+
+  public static void taskReverted() {
+    advanceKey("taskReverted");
+  }
+
   @NotNull
   @Override
   public Set<UsageDescriptor> getUsages(@NotNull Project project) {
