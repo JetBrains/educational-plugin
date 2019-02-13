@@ -239,6 +239,10 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
         if (lesson is FrameworkLesson && lesson.currentTask() != task) {
           val frameworkLessonManager = FrameworkLessonManager.getInstance(project)
           frameworkLessonManager.saveExternalChanges(task, solutionsMap)
+          for (taskFile in task.taskFiles.values) {
+            val placeholders = taskSolutions.solutions[taskFile.name]?.second ?: continue
+            updatePlaceholders(taskFile, placeholders)
+          }
         }
         else {
           for (taskFile in task.taskFiles.values) {
