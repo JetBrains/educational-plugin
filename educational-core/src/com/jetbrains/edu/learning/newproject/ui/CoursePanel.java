@@ -105,8 +105,12 @@ public class CoursePanel extends JPanel {
   }
 
   public LanguageSettings<?> bindCourse(@NotNull Course course) {
+    return bindCourse(course, null);
+  }
+
+  public LanguageSettings<?> bindCourse(@NotNull Course course, @Nullable CourseDisplaySettings settings) {
     myCourseDescriptionPanel.setVisible(true);
-    updateCourseDescriptionPanel(course);
+    updateCourseDescriptionPanel(course, settings == null ? CourseDisplaySettings.DEFAULT : settings);
     updateAdvancedSettings(course);
     return myLanguageSettings;
   }
@@ -149,16 +153,10 @@ public class CoursePanel extends JPanel {
     textArea.setBackground(UIUtil.getPanelBackground());
   }
 
-  private void updateCourseDescriptionPanel(@NotNull Course course) {
+  private void updateCourseDescriptionPanel(@NotNull Course course, @NotNull CourseDisplaySettings settings) {
     myCourseNameLabel.setText(course.getName());
-    updateTags(course);
-    String instructorText = htmlInstructorText(course);
-    if (instructorText == null) {
-      myInstructorField.setPreferredSize(JBUI.size(0, 0));
-    } else {
-      myInstructorField.setPreferredSize(null);
-      myInstructorField.setText(instructorText);
-    }
+    updateTags(course, settings.showTagsPanel);
+    updateInstructorField(course, settings.showInstructorField);
     myDescriptionTextArea.setText(htmlDescription(course));
   }
 
@@ -191,11 +189,26 @@ public class CoursePanel extends JPanel {
            !StepikUtils.getInProgressCourses().contains(course.getId());
   }
 
-  private void updateTags(@NotNull Course course) {
-    myTagsPanel.removeAll();
-    addTags(myTagsPanel, course);
-    myTagsPanel.revalidate();
-    myTagsPanel.repaint();
+  private void updateTags(@NotNull Course course, boolean showTagsPanel) {
+    if (showTagsPanel) {
+      myTagsPanel.setPreferredSize(null);
+      myTagsPanel.removeAll();
+      addTags(myTagsPanel, course);
+      myTagsPanel.revalidate();
+      myTagsPanel.repaint();
+    } else {
+      myTagsPanel.setPreferredSize(JBUI.size(0, 0));
+    }
+  }
+
+  private void updateInstructorField(@NotNull Course course, boolean showInstructorPanel) {
+    String instructorText = htmlInstructorText(course);
+    if (!showInstructorPanel || instructorText == null) {
+      myInstructorField.setPreferredSize(JBUI.size(0, 0));
+    } else {
+      myInstructorField.setPreferredSize(null);
+      myInstructorField.setText(instructorText);
+    }
   }
 
   private void updateAdvancedSettings(@NotNull Course course) {
@@ -292,5 +305,18 @@ public class CoursePanel extends JPanel {
 
   public void bindSearchField(@NotNull FilterComponent searchField) {
     mySearchField = searchField;
+  }
+
+  public static class CourseDisplaySettings {
+
+    public static final CourseDisplaySettings DEFAULT = new CourseDisplaySettings(true, true);
+
+    public final boolean showTagsPanel;
+    public final boolean showInstructorField;
+
+    public CourseDisplaySettings(boolean showTagsPanel, boolean showInstructorField) {
+      this.showTagsPanel = showTagsPanel;
+      this.showInstructorField = showInstructorField;
+    }
   }
 }

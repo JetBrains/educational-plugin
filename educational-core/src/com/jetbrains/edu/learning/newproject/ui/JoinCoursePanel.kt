@@ -11,7 +11,7 @@ import java.io.File
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
-class JoinCoursePanel : JPanel(BorderLayout()) {
+class JoinCoursePanel(private val settings: CoursePanel.CourseDisplaySettings) : JPanel(BorderLayout()) {
 
   private val myCoursePanel: CoursePanel = CoursePanel(true, true)
   private val myErrorLabel: JBLabel = JBLabel()
@@ -36,7 +36,7 @@ class JoinCoursePanel : JPanel(BorderLayout()) {
   val projectSettings: Any get() = myCoursePanel.projectSettings
 
   fun bindCourse(course: Course) {
-    myCoursePanel.bindCourse(course).addSettingsChangeListener { doValidation(course) }
+    myCoursePanel.bindCourse(course, settings).addSettingsChangeListener { doValidation(course) }
   }
 
   fun setValidationListener(course: Course, listener: ValidationListener?) {

@@ -14,8 +14,8 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.newproject.ui.CoursePanel.nameToLocation
+import com.jetbrains.edu.learning.newproject.ui.CoursePanel
+import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -48,14 +48,7 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
       else {
         val languageId = EduNames.JAVA
         val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
-        val configurator = hyperskillCourse.configurator
-        if (configurator != null) {
-          configurator.beforeCourseStarted(hyperskillCourse)
-          hyperskillCourse.courseMode = EduNames.STUDY
-          val courseBuilder = configurator.courseBuilder
-          val projectGenerator = courseBuilder.getCourseProjectGenerator(hyperskillCourse)
-          projectGenerator?.doCreateCourseProject(nameToLocation(hyperskillCourse), courseBuilder.languageSettings.settings)
-        }
+        HyperskillJoinCourseDialog(hyperskillCourse).show()
       }
     }
   }
@@ -95,4 +88,12 @@ class HSHyperlinkListener(private val authorize: Boolean) : ActionListener, Noti
       BrowserUtil.browse(HYPERSKILL_PROJECTS_URL)
     }
   }
+}
+
+private class HyperskillJoinCourseDialog(course: HyperskillCourse) : JoinCourseDialogBase(course, CoursePanel.CourseDisplaySettings(false, false)) {
+
+  override val allowViewAsEducatorAction: Boolean get() = false
+  override val openCourseActionName: String get() = "Continue"
+
+  init { init() }
 }
