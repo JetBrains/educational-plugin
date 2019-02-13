@@ -22,5 +22,9 @@ class HyperskillCourse : Course {
     courseType = HYPERSKILL
   }
 
+  // temporary solution for hyperskill java courses
+  // TODO: store language version on server side
+  override fun getLanguageVersion(): String = "11"
+
   private fun descriptionNote(projectId: Int): String = "<br/><br/>Learn more at <a href=\"https://hyperskill.org\">https://hyperskill.org/projects/${projectId}</a>"
 }
