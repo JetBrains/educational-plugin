@@ -6,6 +6,7 @@ import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
@@ -23,15 +24,12 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.api.*
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import com.jetbrains.edu.learning.update.UpdateNotification
 import java.io.IOException
 import java.util.*
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.ExecutionException
 import java.util.concurrent.Future
 
 abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
@@ -41,6 +39,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   fun loadSolutionsInBackground() {
     ProgressManager.getInstance().run(object : Backgroundable(project, "Getting Tasks to Update") {
       override fun run(progressIndicator: ProgressIndicator) {
+        progressIndicator.isIndeterminate = true
         val course = StudyTaskManager.getInstance(myProject).course
         if (course != null) {
           loadAndApplySolutions(course, progressIndicator)
@@ -63,85 +62,81 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   private fun updateTasks(tasks: List<Task>, progressIndicator: ProgressIndicator?) {
     cancelUnfinishedTasks()
+    val tasksToUpdate = tasks.filter { task -> task !is TheoryTask }
+    for (task in tasksToUpdate) {
+      invokeAndWaitIfNeed {
+        for (editor in getOpenTaskEditors(project, task)) {
+          editor.startLoading()
+        }
+      }
+      futures[task.stepId] = ApplicationManager.getApplication().executeOnPooledThread<Boolean> {
+        try {
+          ProgressManager.checkCanceled()
+          updateTask(project, task)
+        }
+        finally {
+          invokeAndWaitIfNeed {
+            for (editor in getOpenTaskEditors(project, task)) {
+              editor.stopLoading()
+              editor.validateTaskFile()
+            }
+          }
+        }
+      }
+    }
 
-    val connection = ApplicationManager.getApplication().messageBus.connect()
-    // It's supposed to use `selectedTask` only in EDT
-    // so it doesn't require additional synchronization
-    var selectedTask: Task? = EduUtils.getSelectedEduEditor(project)?.taskFile?.task
+    val connection = project.messageBus.connect()
     connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
-        val eduEditor = EduUtils.getSelectedEduEditor(project) ?: return
-        val task = eduEditor.taskFile.task
-        selectedTask = task
+        val task = EduUtils.getTaskForFile(project, file) ?: return
         val future = futures[task.stepId] ?: return
-        eduEditor.startLoading()
-        enableEditorWhenFutureDone(task, future)
+        if (!future.isDone) {
+          (source.getSelectedEditor(file) as? EduEditor)?.startLoading()
+        }
       }
     })
 
-    val tasksToUpdate = tasks.filter { task -> task !is TheoryTask }
-
-    val countDownLatch = CountDownLatch(tasksToUpdate.size)
-    for ((i, task) in tasksToUpdate.withIndex()) {
-      val progressIndex = i + 1
-      if (progressIndicator == null || !progressIndicator.isCanceled) {
-        futures[task.stepId] = ApplicationManager.getApplication().executeOnPooledThread<Boolean> {
-          try {
-            if (progressIndicator != null) {
-              progressIndicator.fraction = progressIndex.toDouble() / tasksToUpdate.size
-              progressIndicator.text = String.format("Loading solution %d of %d", progressIndex, tasksToUpdate.size)
-            }
-            updateTask(project, task)
-          }
-          finally {
-            countDownLatch.countDown()
-          }
-        }
-      }
-      else {
-        countDownLatch.countDown()
-      }
-    }
-
-    runInEdt {
-      @Suppress("NAME_SHADOWING")
-      val selectedTask = selectedTask ?: return@runInEdt
-      val future = futures[selectedTask.stepId] ?: return@runInEdt
-      val selectedEduEditor = EduUtils.getSelectedEduEditor(project) ?: return@runInEdt
-      selectedEduEditor.startLoading()
-      enableEditorWhenFutureDone(selectedTask, future)
-    }
-
     try {
-      countDownLatch.await()
-      val needToShowNotification = needToShowUpdateNotification()
-      runInEdt {
-        if (needToShowNotification) {
-          UpdateNotification(NOTIFICATION_TITLE, NOTIFICATION_CONTENT).notify(project)
-        }
-        EduUtils.synchronize()
-        selectedTask?.let { updateUI(project, it) }
-      }
-    }
-    catch (e: InterruptedException) {
-      LOG.warn(e)
+      waitAllTasks(futures.values)
     }
     finally {
       connection.disconnect()
+    }
+
+    val needToShowNotification = needToShowUpdateNotification()
+    runInEdt {
+      if (needToShowNotification) {
+        UpdateNotification(NOTIFICATION_TITLE, NOTIFICATION_CONTENT).notify(project)
+      }
+      EduUtils.synchronize()
+      ProjectView.getInstance(project).refresh()
+    }
+  }
+
+  private fun getOpenTaskEditors(project: Project, task: Task): List<EduEditor> {
+    return FileEditorManager.getInstance(project)
+      .allEditors
+      .filterIsInstance<EduEditor>()
+      .filter { it.taskFile.task == task }
+  }
+
+  private fun waitAllTasks(tasks: Collection<Future<*>>) {
+    for (task in tasks) {
+      try {
+        task.get()
+      }
+      catch (e: Exception) {
+        LOG.warn(e)
+      }
     }
   }
 
   private fun needToShowUpdateNotification(): Boolean {
     return futures.values.any { future ->
       try {
-        val result = future.get()
-        result == true
+        future.get() == true
       }
-      catch (e: InterruptedException) {
-        LOG.warn(e)
-        false
-      }
-      catch (e: ExecutionException) {
+      catch (e: Exception) {
         LOG.warn(e)
         false
       }
@@ -204,35 +199,6 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
 
     return TaskSolutions.from(lastSubmission.status ?: "", updatedTaskData.task, reply.solution.orEmpty())
-  }
-
-  private fun enableEditorWhenFutureDone(selectedTask: Task, future: Future<*>) {
-    if (future.isDone || future.isCancelled) return
-    ApplicationManager.getApplication().executeOnPooledThread {
-      try {
-        future.get()
-        runInEdt {
-          val selectedEditor = EduUtils.getSelectedEduEditor(project) ?: return@runInEdt
-          if (selectedEditor.taskFile.name in selectedTask.taskFiles) {
-            selectedEditor.stopLoading()
-            selectedEditor.validateTaskFile()
-          }
-        }
-      }
-      catch (e: InterruptedException) {
-        LOG.warn(e)
-      }
-      catch (e: ExecutionException) {
-        LOG.warn(e)
-      }
-    }
-  }
-
-  private fun updateUI(project: Project, task: Task) {
-    ProjectView.getInstance(project).refresh()
-    // TODO: do we really need it here?
-    TaskDescriptionView.getInstance(project).currentTask = task
-    NavigationUtils.navigateToTask(project, task)
   }
 
   override fun dispose() {
