@@ -25,14 +25,6 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
       val result = Messages.showOkCancelDialog("Stepik authorization is required to import courses", "Log in to Stepik",
                                                "Log in", "Cancel", null)
       if (result == Messages.OK) {
-        val myBusConnection = ApplicationManager.getApplication().messageBus.connect()
-        myBusConnection.subscribe(EduSettings.SETTINGS_CHANGED, EduSettings.StudySettingsListener {
-          if (EduSettings.isLoggedIn()) {
-            runInEdt {
-              doImport()
-            }
-          }
-        })
         StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
       }
     }
