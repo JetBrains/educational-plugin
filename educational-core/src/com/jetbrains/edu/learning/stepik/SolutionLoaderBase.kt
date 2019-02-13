@@ -39,7 +39,6 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   fun loadSolutionsInBackground() {
     ProgressManager.getInstance().run(object : Backgroundable(project, "Getting Tasks to Update") {
       override fun run(progressIndicator: ProgressIndicator) {
-        progressIndicator.isIndeterminate = true
         val course = StudyTaskManager.getInstance(myProject).course
         if (course != null) {
           loadAndApplySolutions(course, progressIndicator)
@@ -61,8 +60,10 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   }
 
   private fun updateTasks(tasks: List<Task>, progressIndicator: ProgressIndicator?) {
+    progressIndicator?.isIndeterminate = false
     cancelUnfinishedTasks()
     val tasksToUpdate = tasks.filter { task -> task !is TheoryTask }
+    var finishedTaskCount = 0
     for (task in tasksToUpdate) {
       invokeAndWaitIfNeed {
         for (editor in getOpenTaskEditors(project, task)) {
@@ -75,6 +76,13 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
           updateTask(project, task)
         }
         finally {
+          if (progressIndicator != null) {
+            synchronized(progressIndicator) {
+              finishedTaskCount++
+              progressIndicator.fraction = finishedTaskCount.toDouble() / tasksToUpdate.size
+              progressIndicator.text = "Loading solution $finishedTaskCount of ${tasksToUpdate.size}"
+            }
+          }
           invokeAndWaitIfNeed {
             for (editor in getOpenTaskEditors(project, task)) {
               editor.stopLoading()
