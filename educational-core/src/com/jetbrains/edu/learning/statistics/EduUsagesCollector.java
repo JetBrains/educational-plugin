@@ -96,6 +96,14 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
     advanceKey("project.with.placeholder.hints.all");
   }
 
+  public static void coursePreviewCreated() {
+    advanceKey("coursePreviewCreated");
+  }
+
+  public static void taskFilePreviewCreated() {
+    advanceKey("taskFilePreviewCreated");
+  }
+
   @NotNull
   @Override
   public Set<UsageDescriptor> getUsages(@NotNull Project project) {

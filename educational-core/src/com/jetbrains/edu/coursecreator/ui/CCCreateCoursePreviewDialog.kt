@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.CoursePanel
+import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 import java.io.IOException
 import javax.swing.JComponent
 
@@ -58,6 +59,7 @@ class CCCreateCoursePreviewDialog(
           val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)
           val settings = myPanel.projectSettings
           myConfigurator.courseBuilder.getCourseProjectGenerator(course)?.doCreateCourseProject(location.absolutePath, settings)
+          EduUsagesCollector.coursePreviewCreated()
         }
         catch (e: IOException) {
           LOG.error("Failed to create tmp dir for course preview", e)
