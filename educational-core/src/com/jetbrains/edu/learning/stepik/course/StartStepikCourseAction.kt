@@ -2,8 +2,6 @@ package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
