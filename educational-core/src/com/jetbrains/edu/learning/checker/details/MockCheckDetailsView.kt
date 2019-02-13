@@ -9,6 +9,9 @@ class MockCheckDetailsView : CheckDetailsView() {
   override fun showCompilationResults(message: String) {
   }
 
+  override fun showFailedToCheckMessage(message: String) {
+  }
+
   override fun showJavaFXResult(title: String, panel: JFXPanel) {
   }
 

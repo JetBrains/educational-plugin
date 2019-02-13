@@ -47,8 +47,11 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     val messagePanel = createTextPane()
     messagePanel.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
     val details = checkResult.details
-    if (checkResult.message == CheckUtils.COMPILATION_FAILED_MESSAGE && details != null) {
-      CheckDetailsView.getInstance(project).showCompilationResults(details)
+    if (details != null) {
+      when (checkResult.message) {
+        CheckUtils.COMPILATION_FAILED_MESSAGE -> CheckDetailsView.getInstance(project).showCompilationResults(details)
+        CheckUtils.FAILED_TO_CHECK_MESSAGE -> CheckDetailsView.getInstance(project).showFailedToCheckMessage(details)
+      }
     }
     var message = checkResult.escapedMessage
     if (message.length > 400) {

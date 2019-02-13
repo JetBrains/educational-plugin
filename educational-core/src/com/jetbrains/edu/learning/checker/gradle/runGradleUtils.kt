@@ -16,10 +16,12 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.checker.*
+import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.*
+import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -78,7 +80,7 @@ class GradleCommandLine private constructor(
 
     if (!output.stdout.contains(taskName)) {
       LOG.warn("#educational: executing $taskName fails: \n" + output.stdout)
-      return GradleOutput(false, listOf("$FAILED_TO_CHECK_MESSAGE. See idea.log for more details."))
+      return GradleOutput(false, listOf(FAILED_TO_CHECK_MESSAGE, stderr, output.stdout))
     }
 
     return GradleOutput(true, collectMessages(output))
