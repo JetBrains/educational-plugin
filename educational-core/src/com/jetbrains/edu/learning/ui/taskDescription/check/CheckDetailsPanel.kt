@@ -23,6 +23,9 @@ import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.ui.taskDescription.createTextPane
+import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
+import kotlinx.css.CSSBuilder
+import kotlinx.css.body
 import java.awt.BorderLayout
 import javax.swing.Icon
 import javax.swing.JEditorPane
@@ -59,9 +62,19 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, details ?: checkResult.message)),
                      BorderLayout.NORTH)
     }
-    messagePanel.text = message.replace("\n", "<br>")
+    messagePanel.text = messageWithFontStyle(message)
     messagePanel.margin.left = JBUI.scale(FOCUS_BORDER_WIDTH)
     return messagePanel
+  }
+
+  private fun messageWithFontStyle(message: String): String {
+    val result = message.replace("\n", "<br>")
+    val fontCss = CSSBuilder().apply {
+      body {
+        fontFamily = StyleManager().codeFont
+      }
+    }.toString()
+    return "<html><head><style>${fontCss}</style></head><body>${result}</body></html>"
   }
 
   private fun createLinksPanel(task: Task,
