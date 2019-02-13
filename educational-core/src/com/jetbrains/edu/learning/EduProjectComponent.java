@@ -194,7 +194,6 @@ public class EduProjectComponent implements ProjectComponent {
 
     if (hasPlaceholderHints.get()) {
       EduUsagesCollector.projectWithPlaceholderHintsAll();
-      EduUsagesCollector.projectWithPlaceholderHints(course.getId());
     }
   }
 

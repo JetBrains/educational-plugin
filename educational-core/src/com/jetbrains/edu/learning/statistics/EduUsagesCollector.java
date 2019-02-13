@@ -88,10 +88,6 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
     advanceKey("loginFromSettings");
   }
 
-  public static void projectWithPlaceholderHints(int courseId) {
-    advanceKey("project.with.placeholder.hints." + courseId);
-  }
-
   public static void projectWithPlaceholderHintsAll() {
     advanceKey("project.with.placeholder.hints.all");
   }
