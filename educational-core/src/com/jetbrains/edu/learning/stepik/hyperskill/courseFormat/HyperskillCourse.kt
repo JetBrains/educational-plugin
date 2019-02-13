@@ -16,13 +16,11 @@ class HyperskillCourse : Course {
 
   constructor(hyperskillProject: HyperskillProject, languageID: String) {
     name = hyperskillProject.title
-    description = hyperskillProject.description + HYPERSKILL_NOTE
+    description = hyperskillProject.description + descriptionNote(hyperskillProject.id)
     hyperskillId = hyperskillProject.id
     language = languageID
     courseType = HYPERSKILL
   }
 
-  companion object {
-    private const val HYPERSKILL_NOTE = "<br/><br/>Learn more at <a href=\"https://hyperskill.org\">https://hyperskill.org</a>"
-  }
+  private fun descriptionNote(projectId: Int): String = "<br/><br/>Learn more at <a href=\"https://hyperskill.org\">https://hyperskill.org/projects/${projectId}</a>"
 }
