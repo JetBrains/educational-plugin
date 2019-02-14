@@ -14,8 +14,6 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.newproject.ui.CoursePanel
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -88,12 +86,4 @@ class HSHyperlinkListener(private val authorize: Boolean) : ActionListener, Noti
       BrowserUtil.browse(HYPERSKILL_PROJECTS_URL)
     }
   }
-}
-
-private class HyperskillJoinCourseDialog(course: HyperskillCourse) : JoinCourseDialogBase(course, CoursePanel.CourseDisplaySettings(false, false)) {
-
-  override val allowViewAsEducatorAction: Boolean get() = false
-  override val openCourseActionName: String get() = "Continue"
-
-  init { init() }
 }
