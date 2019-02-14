@@ -17,9 +17,11 @@ package com.jetbrains.edu.learning.statistics;
 
 import com.intellij.internal.statistic.beans.UsageDescriptor;
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector;
+import com.intellij.internal.statistic.utils.StatisticsUtilKt;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.hash.HashSet;
+import com.jetbrains.edu.learning.EduSettings;
 import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -134,6 +136,10 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
       return true;
     });
     getDescriptors().clear();
+
+    descriptors.add(StatisticsUtilKt.getEnumUsage("taskPanel", EduSettings.getInstance().shouldUseJavaFx()
+                                                               ? TaskDescriptionPanel.JAVAFX
+                                                               : TaskDescriptionPanel.SWING));
     return descriptors;
   }
 
@@ -156,5 +162,9 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
   //BACKCOMPAT 191: add @Override annotation since versions were introduced only in 191
   public int getVersion() {
     return 2;
+  }
+
+  private enum TaskDescriptionPanel {
+    SWING, JAVAFX
   }
 }
