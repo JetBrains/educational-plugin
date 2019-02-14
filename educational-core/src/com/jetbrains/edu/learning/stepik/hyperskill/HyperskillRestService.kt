@@ -9,6 +9,9 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.wm.IdeFrame
+import com.intellij.openapi.wm.WindowManager
+import com.intellij.ui.AppIcon
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
@@ -105,6 +108,8 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
   private fun createProject(projectId: Int, stageId: Int): Boolean {
     runInEdt {
+      requestFocus()
+
       val hyperskillCourse = ProgressManager.getInstance().run(object : Task.WithResult<HyperskillCourse?, Exception>
                                                                         (null, "Loading project", true) {
         override fun compute(indicator: ProgressIndicator): HyperskillCourse? {
@@ -129,6 +134,16 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       PropertiesComponent.getInstance().setValue(HYPERSKILL_STAGE, stageId, 0)
     }
     return true
+  }
+
+  // We have to use visible frame here because project is not yet created
+  // See `com.intellij.ide.impl.ProjectUtil.focusProjectWindow` implementation for more details
+  private fun requestFocus() {
+    val frame = WindowManager.getInstance().findVisibleFrame()
+    if (frame is IdeFrame) {
+      AppIcon.getInstance().requestFocus(frame)
+    }
+    frame.toFront()
   }
 
   companion object {
