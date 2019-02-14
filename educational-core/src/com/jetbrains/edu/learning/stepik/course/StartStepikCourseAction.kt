@@ -44,6 +44,12 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
       showFailedToAddCourseNotification()
       return null
     }
+
+    // course language is already set if we opened idea compatible course by link
+    if (course.languageById != null) {
+      return course
+    }
+
     val languages = getLanguagesUnderProgress(course)
 
     if (languages.isEmpty()) {
