@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.HyperlinkAdapter
 import com.jetbrains.edu.learning.settings.OauthOptions
 import org.jetbrains.annotations.Nls
@@ -14,6 +15,13 @@ class HyperskillOptions : OauthOptions<HyperskillAccount>() {
 
   override fun setCurrentAccount(lastSavedAccount: HyperskillAccount?) {
     HyperskillSettings.INSTANCE.account = lastSavedAccount
+    val messageBus = ApplicationManager.getApplication().messageBus
+    if (lastSavedAccount != null) {
+      messageBus.syncPublisher<HyperskillConnector.HyperskillLoggedIn>(HyperskillConnector.hyperskillAuthorizationTopic).userLoggedIn()
+    }
+    else {
+      messageBus.syncPublisher<HyperskillConnector.HyperskillLoggedIn>(HyperskillConnector.hyperskillAuthorizationTopic).userLoggedOut()
+    }
   }
 
   @Nls

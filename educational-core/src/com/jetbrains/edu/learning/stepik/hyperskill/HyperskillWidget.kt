@@ -30,6 +30,10 @@ class HyperskillWidget : IconLikeCustomStatusBarWidget {
 
     val busConnection = ApplicationManager.getApplication().messageBus.connect()
     busConnection.subscribe(hyperskillAuthorizationTopic, object : HyperskillConnector.HyperskillLoggedIn {
+      override fun userLoggedOut() {
+        update()
+      }
+
       override fun userLoggedIn() {
         update()
       }
@@ -80,7 +84,8 @@ class HyperskillWidget : IconLikeCustomStatusBarWidget {
             }
             logOutText -> {
               HyperskillSettings.INSTANCE.account = null
-              update()
+              val messageBus = ApplicationManager.getApplication().messageBus
+              messageBus.syncPublisher<HyperskillConnector.HyperskillLoggedIn>(hyperskillAuthorizationTopic).userLoggedOut()
             }
           }
         }

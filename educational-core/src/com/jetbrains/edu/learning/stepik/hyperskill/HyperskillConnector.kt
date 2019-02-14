@@ -13,8 +13,11 @@ import com.jetbrains.edu.coursecreator.actions.mixins.TaskSerializer
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.*
+import com.jetbrains.edu.learning.stepik.StepOptions
+import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.stepik.createRetrofitBuilder
+import com.jetbrains.edu.learning.stepik.executeHandlingExceptions
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import org.apache.http.HttpStatus
@@ -176,6 +179,8 @@ object HyperskillConnector {
     authorizationBusConnection.disconnect()
     authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
     authorizationBusConnection.subscribe(hyperskillAuthorizationTopic, object : HyperskillLoggedIn {
+      override fun userLoggedOut() { }
+
       override fun userLoggedIn() {
         for (action in postLoginActions) {
           action.run()
@@ -186,5 +191,6 @@ object HyperskillConnector {
 
   interface HyperskillLoggedIn {
     fun userLoggedIn()
+    fun userLoggedOut()
   }
 }
