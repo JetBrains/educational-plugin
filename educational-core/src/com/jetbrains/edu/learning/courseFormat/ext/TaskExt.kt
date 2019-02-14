@@ -40,7 +40,7 @@ fun Task.findTestDirs(project: Project): List<VirtualFile> {
 }
 
 val Task.placeholderDependencies: List<AnswerPlaceholderDependency>
-  get() = taskFiles.values.flatMap { it.answerPlaceholders.mapNotNull { it.placeholderDependency } }
+  get() = taskFiles.values.flatMap { taskFile -> taskFile.answerPlaceholders.mapNotNull { it.placeholderDependency } }
 
 fun Task.getUnsolvedTaskDependencies(): List<Task> {
   return placeholderDependencies
@@ -65,7 +65,7 @@ fun Task.getDependentTasks(): Set<Task> {
 fun Task.hasChangedFiles(project: Project): Boolean {
   for (taskFile in taskFiles.values) {
     val document = taskFile.getDocument(project) ?: continue
-    if (document.text != taskFile.getText()) {
+    if (document.text != taskFile.text) {
       return true
     }
   }
@@ -90,7 +90,7 @@ fun Task.saveStudentAnswersIfNeeded(project: Project) {
 fun Task.addDefaultTaskDescription() {
   val format = EduUtils.getDefaultTaskDescriptionFormat()
   val fileName = format.descriptionFileName
-  val template = FileTemplateManager.getDefaultInstance().getInternalTemplate(fileName) ?: return
+  val template = FileTemplateManager.getDefaultInstance().getInternalTemplate(fileName)
   descriptionText = template.text
   descriptionFormat = format
 }

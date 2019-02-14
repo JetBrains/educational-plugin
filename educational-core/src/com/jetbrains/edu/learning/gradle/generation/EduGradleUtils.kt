@@ -36,7 +36,7 @@ object EduGradleUtils {
 
   @JvmStatic
   fun getInternalTemplateText(templateName: String, templateVariables: Map<String, Any>) =
-    FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName)?.getText(templateVariables)
+    FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName).getText(templateVariables)
 
 
   @JvmStatic
@@ -49,7 +49,7 @@ object EduGradleUtils {
     for ((name, templateName) in templates) {
       val child = projectDir.findChild(name)
       if (child == null) {
-        val configText = getInternalTemplateText(templateName, templateVariables) ?: continue
+        val configText = getInternalTemplateText(templateName, templateVariables)
         createChildFile(projectDir, name, configText)
       }
       else {
