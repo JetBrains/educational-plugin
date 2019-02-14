@@ -8,6 +8,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
+import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
 import com.jetbrains.edu.learning.stepik.StepikUser;
@@ -30,7 +31,7 @@ public class EduSettings implements PersistentStateComponent<Element> {
   @Nullable
   private StepikUser myUser;
   private long myLastTimeChecked;
-  private boolean myShouldUseJavaFx = EduUtils.hasJavaFx();
+  @Property private boolean myShouldUseJavaFx = EduUtils.hasJavaFx();
 
   private Set<Integer> myShownCourseIds;
 
