@@ -17,21 +17,19 @@ package com.jetbrains.edu.learning.stepik.builtInServer;
 
 import com.intellij.ide.RecentProjectsManagerBase;
 import com.intellij.ide.impl.ProjectUtil;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog;
-import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
+import kotlin.Pair;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -47,20 +45,22 @@ import java.util.function.Predicate;
 import static com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH;
 import static com.jetbrains.edu.learning.EduUtils.execCancelable;
 import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
+import static com.jetbrains.edu.learning.stepik.StepikProjectComponent.STEP_ID;
 
 public class EduBuiltInServerUtils {
 
   public static boolean focusOpenEduProject(int courseId, int stepId) {
-    final Pair<Course, Project> courseProject = focusOpenProject(
+    final Pair<Project, Course> projectAndCourse = focusOpenProject(
       course -> course instanceof EduCourse && ((EduCourse)course).isRemote() && course.getId() == courseId);
-    if (courseProject != null) {
-      ApplicationManager.getApplication().invokeLater(() -> navigateToStep(courseProject.second, courseProject.first, stepId));
+    if (projectAndCourse != null) {
+      ApplicationManager.getApplication().invokeLater(() -> navigateToStep(projectAndCourse.getFirst(), projectAndCourse.getSecond(), stepId));
       return true;
     }
     return false;
   }
 
-  public static Pair<Course, Project> focusOpenProject(Predicate<Course> coursePredicate) {
+  @Nullable
+  public static Pair<Project, Course> focusOpenProject(Predicate<Course> coursePredicate) {
     Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
     for (Project project : openProjects) {
       if (!project.isDefault()) {
@@ -73,7 +73,7 @@ public class EduBuiltInServerUtils {
           Course selectedCourse = coursePredicate.test(course) ? course : null;
           if (selectedCourse != null) {
             ApplicationManager.getApplication().invokeLater(() -> requestFocus(project));
-            return Pair.create(course, project);
+            return new Pair<>(project, course);
           }
         }
       }
@@ -96,7 +96,8 @@ public class EduBuiltInServerUtils {
     ProjectUtil.focusProjectWindow(project, true);
   }
 
-  public static Project openRecentProject(Predicate<Course> coursePredicate) {
+  @Nullable
+  public static Pair<Project, Course> openRecentProject(Predicate<Course> coursePredicate) {
     RecentProjectsManagerBase recentProjectsManager = RecentProjectsManagerBase.getInstanceEx();
     if (recentProjectsManager == null) {
       return null;
@@ -117,17 +118,17 @@ public class EduBuiltInServerUtils {
       }
       final Course course = getCourse(component);
       if (coursePredicate.test(course)) {
-        return openProject(projectPath);
+        return new Pair<>(openProject(projectPath), course);
       }
     }
     return null;
   }
 
   public static boolean openRecentEduCourse(int courseId, int stepId) {
-    final Project project =
+    final Pair<Project, Course> projectAndCourse =
       openRecentProject(course -> course instanceof EduCourse && ((EduCourse)course).isRemote() && course.getId() == courseId);
-    if (project != null) {
-      PropertiesComponent.getInstance().setValue(StepikNames.STEP_ID, stepId, 0);
+    if (projectAndCourse != null) {
+      projectAndCourse.getSecond().putUserData(STEP_ID, stepId);
       return true;
     }
     return false;
@@ -176,7 +177,7 @@ public class EduBuiltInServerUtils {
   private static void showDialog(@Nullable Course course, int stepId) {
     ApplicationManager.getApplication().invokeLater(() -> {
       if (course != null) {
-        PropertiesComponent.getInstance().setValue(StepikNames.STEP_ID, stepId, 0);
+        course.putUserData(STEP_ID, stepId);
         new JoinCourseDialog(course).show();
       } else {
         Messages.showErrorDialog("Can not get course info from Stepik", "Failed to Create Course");

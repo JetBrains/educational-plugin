@@ -14,8 +14,8 @@ class HyperskillProjectComponent(private val project: Project) : ProjectComponen
     if (project.isDisposed || !isStudyProject(project)) return
 
     StartupManager.getInstance(project).runWhenProjectIsInitialized {
-      if (StudyTaskManager.getInstance(project).course !is HyperskillCourse) return@runWhenProjectIsInitialized
-      val isSolutionLoadingStarted = IS_HYPERSKILL_SOLUTION_LOADING_STARTED.getRequired(project)
+      val course = StudyTaskManager.getInstance(project).course as? HyperskillCourse ?: return@runWhenProjectIsInitialized
+      val isSolutionLoadingStarted = IS_HYPERSKILL_SOLUTION_LOADING_STARTED.getRequired(course)
       if (HyperskillSettings.INSTANCE.account != null && !isSolutionLoadingStarted) {
         HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground()
       }

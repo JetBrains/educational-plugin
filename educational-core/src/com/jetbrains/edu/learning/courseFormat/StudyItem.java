@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
  * @see com.jetbrains.edu.learning.courseFormat.tasks.Task
  * @see com.jetbrains.edu.coursecreator.actions.StudyItemType
  */
-public abstract class StudyItem {
+public abstract class StudyItem extends UserDataHolderBase {
   // from 1 to number of items
   private int myIndex = -1;
 

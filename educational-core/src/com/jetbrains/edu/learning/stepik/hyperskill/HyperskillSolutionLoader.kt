@@ -26,7 +26,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
   override fun loadLastSubmission(stepId: Int): Submission? = HyperskillConnector.getSubmission(stepId)
 
   override fun loadSolution(task: Task): TaskSolutions {
-    project.putUserData(IS_HYPERSKILL_SOLUTION_LOADING_STARTED, true)
+    task.course.putUserData(IS_HYPERSKILL_SOLUTION_LOADING_STARTED, true)
     return super.loadSolution(task)
   }
 

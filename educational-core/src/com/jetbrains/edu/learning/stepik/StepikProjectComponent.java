@@ -5,6 +5,7 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.util.Key;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -14,10 +15,11 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.jetbrains.edu.learning.EduUtils.isStudyProject;
 import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
-import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
 
 public class StepikProjectComponent implements ProjectComponent {
   private static final Logger LOG = Logger.getInstance(StepikProjectComponent.class.getName());
+
+  public static final Key<Integer> STEP_ID = Key.create("STEP_ID");
   private final Project myProject;
 
   private StepikProjectComponent(@NotNull final Project project) {
@@ -62,8 +64,8 @@ public class StepikProjectComponent implements ProjectComponent {
   }
 
   private void selectStep(@NotNull Course course) {
-    int stepId = PropertiesComponent.getInstance().getInt(STEP_ID, 0);
-    if (stepId != 0) {
+    Integer stepId = course.getUserData(STEP_ID);
+    if (stepId != null) {
       navigateToStep(myProject, course, stepId);
     }
   }

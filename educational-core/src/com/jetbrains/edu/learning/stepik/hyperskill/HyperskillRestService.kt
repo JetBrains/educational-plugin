@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
-import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
@@ -88,22 +87,16 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   }
 
   private fun focusOpenProject(courseId: Int, stageId: Int): Boolean {
-    val courseProject = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillId == courseId }
-    if (courseProject != null) {
-      PropertiesComponent.getInstance().setValue(HYPERSKILL_STAGE, stageId, 0)
-      ApplicationManager.getApplication().invokeLater { openSelectedStage(courseProject.first, courseProject.second) }
-      return true
-    }
-    return false
+    val (project, course) = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillId == courseId } ?: return false
+    course.putUserData(HYPERSKILL_STAGE, stageId)
+    ApplicationManager.getApplication().invokeLater { openSelectedStage(course, project) }
+    return true
   }
 
   private fun openRecentProject(courseId: Int, stageId: Int): Boolean {
-    val project = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillId == courseId }
-    if (project != null) {
-      PropertiesComponent.getInstance().setValue(HYPERSKILL_STAGE, stageId, 0)
-      return true
-    }
-    return false
+    val (_, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillId == courseId } ?: return false
+    course.putUserData(HYPERSKILL_STAGE, stageId)
+    return true
   }
 
   private fun createProject(projectId: Int, stageId: Int): Boolean {
@@ -130,8 +123,8 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
         }
       }) ?: return@runInEdt
 
+      hyperskillCourse.putUserData(HYPERSKILL_STAGE, stageId)
       HyperskillJoinCourseDialog(hyperskillCourse).show()
-      PropertiesComponent.getInstance().setValue(HYPERSKILL_STAGE, stageId, 0)
     }
     return true
   }
