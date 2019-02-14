@@ -13,6 +13,10 @@ class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: Defau
     panel.addCourseValidationListener(this::setOKActionEnabled)
   }
 
+  override fun getPreferredFocusedComponent(): JComponent? {
+    return panel
+  }
+
   override val courseInfo: CourseInfo
     get() = CourseInfo(panel.selectedCourse, panel.locationString, panel.projectSettings)
 
