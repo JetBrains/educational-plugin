@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public interface FrameworkLessonManager {
-  void prepareNextTask(@NotNull FrameworkLesson lesson, @NotNull VirtualFile taskDir);
-  void preparePrevTask(@NotNull FrameworkLesson lesson, @NotNull VirtualFile taskDir);
+  void prepareNextTask(@NotNull FrameworkLesson lesson, @NotNull VirtualFile taskDir, boolean showDialogIfConflict);
+  void preparePrevTask(@NotNull FrameworkLesson lesson, @NotNull VirtualFile taskDir, boolean showDialogIfConflict);
 
   void saveExternalChanges(@NotNull Task task, @NotNull Map<String, String> externalState);
 

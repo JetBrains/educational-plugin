@@ -52,14 +52,14 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   fun loadAndApplySolutions(course: Course, progressIndicator: ProgressIndicator? = null) {
     val tasksToUpdate = EduUtils.execCancelable { provideTasksToUpdate(course) }
     if (tasksToUpdate != null) {
-      updateTasks(tasksToUpdate, progressIndicator)
+      updateTasks(course, tasksToUpdate, progressIndicator)
     }
     else {
       LOG.warn("Can't get a list of tasks to update")
     }
   }
 
-  private fun updateTasks(tasks: List<Task>, progressIndicator: ProgressIndicator?) {
+  protected open fun updateTasks(course: Course, tasks: List<Task>, progressIndicator: ProgressIndicator?) {
     progressIndicator?.isIndeterminate = false
     cancelUnfinishedTasks()
     val tasksToUpdate = tasks.filter { task -> task !is TheoryTask }

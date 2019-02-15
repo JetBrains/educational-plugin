@@ -24,12 +24,12 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
   private val storage: FrameworkStorage = FrameworkStorage(constructStoragePath(project))
 
-  override fun prepareNextTask(lesson: FrameworkLesson, taskDir: VirtualFile) {
-    applyTargetTaskChanges(lesson, 1, taskDir)
+  override fun prepareNextTask(lesson: FrameworkLesson, taskDir: VirtualFile, showDialogIfConflict: Boolean) {
+    applyTargetTaskChanges(lesson, 1, taskDir, showDialogIfConflict)
   }
 
-  override fun preparePrevTask(lesson: FrameworkLesson, taskDir: VirtualFile) {
-    applyTargetTaskChanges(lesson, -1, taskDir)
+  override fun preparePrevTask(lesson: FrameworkLesson, taskDir: VirtualFile, showDialogIfConflict: Boolean) {
+    applyTargetTaskChanges(lesson, -1, taskDir, showDialogIfConflict)
   }
 
   override fun saveExternalChanges(task: Task, externalState: Map<String, String>) {
@@ -51,7 +51,12 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
   }
 
-  private fun applyTargetTaskChanges(lesson: FrameworkLesson, taskIndexDelta: Int, taskDir: VirtualFile) {
+  private fun applyTargetTaskChanges(
+    lesson: FrameworkLesson,
+    taskIndexDelta: Int,
+    taskDir: VirtualFile,
+    showDialogIfConflict: Boolean
+  ) {
     require(EduUtils.isStudentProject(project)) {
       "`applyTargetTaskChanges` should be called only if course in study mode"
     }
@@ -89,7 +94,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     // There are special rules for hyperskill courses for now
     // All user changes from current task should be propagated to next task as is
     val changes = if (taskIndexDelta == 1 && lesson.course is HyperskillCourse) {
-      calculateHypeskillChanges(lesson, targetState, currentState, targetTask)
+      calculateHypeskillChanges(lesson, targetState, currentState, targetTask, showDialogIfConflict)
     } else {
       calculateChanges(currentState, targetState)
     }
@@ -103,7 +108,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     lesson: FrameworkLesson,
     targetState: Map<String, String>,
     currentState: Map<String, String>,
-    targetTask: Task
+    targetTask: Task,
+    showDialogIfConflict: Boolean
   ): List<Change> {
     val (currentTaskFilesState, currentTestFilesState) = currentState.split(lesson)
     val (targetTaskFiles, targetTestFiles) = targetState.split(lesson)
@@ -127,8 +133,12 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
         // it needs to calculate only diff for test files
         calculateChanges(currentTestFilesState, targetTestFiles)
       } else {
-        val result = Messages.showYesNoDialog(project, "The current task changes conflict with next task. Replace with current changes?",
-                                              "Changes conflict", "Replace", "Keep", null)
+        val result = if (showDialogIfConflict) {
+          Messages.showYesNoDialog(project, "The current task changes conflict with next task. Replace with current changes?",
+                                   "Changes conflict", "Replace", "Keep", null)
+        } else {
+          Messages.NO
+        }
         if (result == Messages.NO) {
           calculateChanges(currentState, targetState)
         } else {

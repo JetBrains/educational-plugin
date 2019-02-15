@@ -163,7 +163,7 @@ object NavigationUtils {
 
   @JvmOverloads
   @JvmStatic
-  fun navigateToTask(project: Project, task: Task, fromTask: Task? = null) {
+  fun navigateToTask(project: Project, task: Task, fromTask: Task? = null, showDialogIfConflict: Boolean = true) {
     for (file in FileEditorManager.getInstance(project).openFiles) {
       FileEditorManager.getInstance(project).closeFile(file)
     }
@@ -174,7 +174,7 @@ object NavigationUtils {
     // We should save student answers and apply diffs only in student mode
     if (lesson is FrameworkLesson && lesson.course.isStudy && fromTask != null && fromTask.lesson == lesson) {
       fromTask.saveStudentAnswersIfNeeded(project)
-      prepareFilesForTargetTask(project, lesson, fromTask, task)
+      prepareFilesForTargetTask(project, lesson, fromTask, task, showDialogIfConflict)
     }
 
     val taskDir = task.getTaskDir(project) ?: return
@@ -214,7 +214,12 @@ object NavigationUtils {
     ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
   }
 
-  private fun prepareFilesForTargetTask(project: Project, frameworkLesson: FrameworkLesson, currentTask: Task, targetTask: Task) {
+  private fun prepareFilesForTargetTask(
+    project: Project,
+    frameworkLesson: FrameworkLesson,
+    currentTask: Task, targetTask: Task,
+    showDialogIfConflict: Boolean
+  ) {
     val dir = currentTask.getTaskDir(project) ?: return
 
     val frameworkLessonManager = FrameworkLessonManager.getInstance(project)
@@ -222,9 +227,9 @@ object NavigationUtils {
     var currentTask = currentTask
     while (currentTask.index != targetTask.index) {
       if (currentTask.index < targetTask.index) {
-        frameworkLessonManager.prepareNextTask(frameworkLesson, dir)
+        frameworkLessonManager.prepareNextTask(frameworkLesson, dir, showDialogIfConflict)
       } else {
-        frameworkLessonManager.preparePrevTask(frameworkLesson, dir)
+        frameworkLessonManager.preparePrevTask(frameworkLesson, dir, showDialogIfConflict)
       }
       currentTask = frameworkLesson.currentTask()
     }

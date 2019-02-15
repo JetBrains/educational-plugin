@@ -15,7 +15,7 @@ fun openSelectedStage(course: Course, project: Project) {
     if (course.lessons.isNotEmpty()) {
       val taskList = course.lessons[0].taskList
       if (taskList.size > index) {
-        NavigationUtils.navigateToTask(project, taskList[index], taskList[0])
+        NavigationUtils.navigateToTask(project, taskList[index], taskList[0], false)
       }
     }
   }

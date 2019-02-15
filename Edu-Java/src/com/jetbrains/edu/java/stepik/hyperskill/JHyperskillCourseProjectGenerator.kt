@@ -83,8 +83,6 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
     super.afterProjectGenerated(project, projectSettings)
     HyperskillConnector.fillTopics(myCourse as HyperskillCourse, project)
-
-    openSelectedStage(myCourse, project)
   }
 
   override fun getJdk(settings: JdkProjectSettings): Sdk? =

@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.KeyWithDefaultValue
@@ -28,6 +30,13 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
   override fun loadSolution(task: Task): TaskSolutions {
     task.course.putUserData(IS_HYPERSKILL_SOLUTION_LOADING_STARTED, true)
     return super.loadSolution(task)
+  }
+
+  override fun updateTasks(course: Course, tasks: List<Task>, progressIndicator: ProgressIndicator?) {
+    super.updateTasks(course, tasks, progressIndicator)
+    runInEdt {
+      openSelectedStage(course, project)
+    }
   }
 
   companion object {
