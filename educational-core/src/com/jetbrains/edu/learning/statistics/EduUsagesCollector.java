@@ -128,4 +128,9 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
   private static TObjectIntHashMap<String> getDescriptors() {
     return ServiceManager.getService(EduStatistics.class).getUsageDescriptors();
   }
+
+  //BACKCOMPAT 191: add @Override annotation since versions were introduced only in 191
+  public int getVersion() {
+    return 2;
+  }
 }
