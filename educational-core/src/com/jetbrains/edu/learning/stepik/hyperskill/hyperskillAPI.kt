@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthAccount
 const val USERS = "users"
 const val STAGES = "stages"
 const val TOPICS = "topics"
+const val PROJECTS = "projects"
 const val ID = "id"
 const val TITLE = "title"
 const val EMAIL = "email"
@@ -46,9 +47,6 @@ class HyperskillStage {
 
   @JsonProperty(TITLE)
   var title: String = ""
-
-  @JsonProperty(PROJECT)
-  var hyperskillProject: HyperskillProject? = null
 }
 
 class HyperskillProject {
@@ -81,6 +79,11 @@ class StagesList {
 class TopicsList {
   @JsonProperty(TOPICS)
   lateinit var topics: List<HyperskillTopic>
+}
+
+class ProjectsList {
+  @JsonProperty(PROJECTS)
+  lateinit var projects: List<HyperskillProject>
 }
 
 class HyperskillTopic {

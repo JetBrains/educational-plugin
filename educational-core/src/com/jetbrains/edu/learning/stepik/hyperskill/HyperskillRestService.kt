@@ -106,9 +106,9 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       val hyperskillCourse = ProgressManager.getInstance().run(object : Task.WithResult<HyperskillCourse?, Exception>
                                                                         (null, "Loading project", true) {
         override fun compute(indicator: ProgressIndicator): HyperskillCourse? {
+          val hyperskillProject = HyperskillConnector.getProject(projectId) ?: return null
           val stages = HyperskillConnector.getStages(projectId) ?: return null
           val account = HyperskillSettings.INSTANCE.account ?: return null
-          val hyperskillProject = stages[0].hyperskillProject ?: return null
           account.userInfo.hyperskillProject = hyperskillProject
           if (!hyperskillProject.useIde) {
             LOG.warn("Project in not supported yet $projectId")

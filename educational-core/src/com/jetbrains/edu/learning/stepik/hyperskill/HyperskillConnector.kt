@@ -109,6 +109,11 @@ object HyperskillConnector {
     return response?.body()?.stages
   }
 
+  fun getProject(projectId: Int): HyperskillProject? {
+    val response = service.project(projectId).executeHandlingExceptions()
+    return response?.body()?.projects?.firstOrNull() ?: return null
+  }
+
   fun getStepSources(lessonId: Int): List<StepSource>? {
     val response = service.steps(lessonId).executeHandlingExceptions()
     return response?.body()?.steps
