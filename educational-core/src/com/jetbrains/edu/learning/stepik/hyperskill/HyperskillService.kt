@@ -10,7 +10,7 @@ import retrofit2.http.*
 @Suppress("unused")
 interface HyperskillService {
 
-  @POST("oauth2/token/")
+  @POST("oauth2/token")
   fun getTokens(
     @Query("client_id") clientId: String,
     @Query("redirect_uri") redirectUri: String,
@@ -18,29 +18,29 @@ interface HyperskillService {
     @Query("grant_type") grantType: String
   ): Call<TokenInfo>
 
-  @POST("oauth2/token/")
+  @POST("oauth2/token")
   fun refreshTokens(
     @Query("grant_type") grantType: String,
     @Query("client_id") clientId: String,
     @Query("refresh_token") refreshToken: String
   ): Call<TokenInfo>
 
-  @GET("api/users/{id}/")
+  @GET("api/users/{id}")
   fun getUserInfo(@Path("id") userId: Int): Call<UsersList>
 
-  @GET("api/stages/")
+  @GET("api/stages")
   fun stages(@Query("project") projectId: Int): Call<StagesList>
 
-  @GET("api/topics/")
+  @GET("api/topics")
   fun topics(@Query("stage") stageId: Int): Call<TopicsList>
 
-  @GET("api/steps/")
+  @GET("api/steps")
   fun steps(@Query("lesson") lessonId: Int): Call<StepsList>
 
-  @POST("api/attempts/")
+  @POST("api/attempts")
   fun attempt(@Body attempt: Attempt): Call<AttemptsList>
 
-  @POST("api/submissions/")
+  @POST("api/submissions")
   fun submission(@Body submission: Submission): Call<Any>
 
   @GET("api/submissions")
