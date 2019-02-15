@@ -220,7 +220,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
     }
 
     CheckActionListener.shouldFail()
-    CheckActionListener.expectedMessage { "${CheckUtils.FAILED_TO_CHECK_MESSAGE}. See idea.log for more details." }
+    CheckActionListener.expectedMessage { CheckUtils.FAILED_TO_CHECK_MESSAGE }
 
     doTest()
   }
