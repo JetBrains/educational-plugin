@@ -15,6 +15,7 @@
  */
 package com.jetbrains.edu.learning.stepik.builtInServer;
 
+import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -39,6 +40,7 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.RestService;
+import org.jetbrains.io.Responses;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -53,8 +55,10 @@ public class StepikRestService extends OAuthRestService {
   private static final Logger LOG = Logger.getInstance(StepikRestService.class.getName());
   private static final Pattern OPEN_COURSE_PATTERN = Pattern.compile("/" + StepikNames.EDU_STEPIK_SERVICE_NAME + "\\?link=.+");
   private static final Pattern COURSE_PATTERN = Pattern.compile("https://stepik\\.org/lesson(?:/[a-zA-Z\\-]*-|/)(\\d+)/step/(\\d+)");
-  private static final Pattern
-    OAUTH_CODE_PATTERN = Pattern.compile("/" + RestService.PREFIX + "/" + StepikNames.EDU_STEPIK_SERVICE_NAME + "/oauth" + "\\?code=(\\w+)");
+  private static final Pattern OAUTH_CODE_PATTERN =
+    Pattern.compile("/" + RestService.PREFIX + "/" + StepikNames.EDU_STEPIK_SERVICE_NAME + "/oauth" + "\\?code=(\\w+)");
+  private static final Pattern OAUTH_ERROR_CODE_PATTERN =
+    Pattern.compile("/" + RestService.PREFIX + "/" + StepikNames.EDU_STEPIK_SERVICE_NAME + "/oauth" + "\\?error=(\\w+)");
 
   public StepikRestService() {
     super(StepikNames.STEPIK);
@@ -81,7 +85,8 @@ public class StepikRestService extends OAuthRestService {
   protected boolean isHostTrusted(@NotNull FullHttpRequest request) throws InterruptedException, InvocationTargetException {
     String uri = request.uri();
     Matcher codeMatcher = OAUTH_CODE_PATTERN.matcher(uri);
-    if (request.method() == HttpMethod.GET && codeMatcher.matches()) {
+    Matcher errorMatcher = OAUTH_ERROR_CODE_PATTERN.matcher(uri);
+    if (request.method() == HttpMethod.GET && (codeMatcher.matches() || errorMatcher.matches())) {
       return true;
     }
     return super.isHostTrusted(request);
@@ -96,76 +101,14 @@ public class StepikRestService extends OAuthRestService {
 
     Matcher matcher = OPEN_COURSE_PATTERN.matcher(uri);
     if (matcher.matches()) {
-      int courseId;
-      int stepId;
-      String link = getStringParameter(StepikNames.LINK, urlDecoder);
+      return openCourse(urlDecoder, request, context);
+    }
 
-      if (link == null) {
-        return log("The link parameter was not found");
-      }
-
-      LOG.info("Try to open a course: " + link);
-
-      QueryStringDecoder linkDecoder = new QueryStringDecoder(link);
-
-      matcher = COURSE_PATTERN.matcher(linkDecoder.path());
-
-      if (!matcher.matches()) {
-        return log("Unrecognized the link parameter");
-      }
-
-      int lessonId;
-      int stepIndex;
-      try {
-        lessonId = Integer.parseInt(matcher.group(1));
-        stepIndex = Integer.parseInt(matcher.group(2));
-      } catch (NumberFormatException e) {
-        return log("Unrecognized the link");
-      }
-
-      int unitId = getIntParameter("unit", linkDecoder);
-
-      if (unitId == -1) {
-        return log("Unrecognized the Unit id");
-      }
-
-      StepikUnit unit = StepikConnector.getUnit(unitId);
-
-      if (unit == null || unit.getId() == null || unit.getId() == 0) {
-        return log("Unrecognized the Unit id");
-      }
-
-      Section section = StepikConnector.getSection(unit.getSection());
-      if (section == null) {
-        return log("No section found with id " + unit.getSection());
-      }
-      courseId = section.getCourseId();
-      if (courseId == 0) {
-        return log("Unrecognized the course id");
-      }
-      Lesson lesson = StepikConnector.getLesson(lessonId);
-      if (lesson == null) {
-        return log("No lesson found with id " + lessonId);
-      }
-      List<Integer> stepIds = lesson.steps;
-
-      if (stepIds.isEmpty()) {
-        return log("Unrecognized the step id");
-      }
-      stepId = stepIds.get(stepIndex - 1);
-
-      LOG.info(String.format("Try to open a course: courseId=%s, stepId=%s", courseId, stepId));
-
-      if (focusOpenEduProject(courseId, stepId) || openRecentEduCourse(courseId, stepId) || createEduCourse(courseId, stepId)) {
-        RestService.sendOk(request, context);
-        LOG.info("Course opened: " + courseId);
-        return null;
-      }
-
-      RestService.sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel());
-      String message = "A project didn't found or created";
-      LOG.info(message);
-      return message;
+    Matcher errorCodeMatcher = OAUTH_ERROR_CODE_PATTERN.matcher(uri);
+    if (errorCodeMatcher.matches()) {
+      String pageContent = FileTemplateManager.getDefaultInstance().getInternalTemplate("stepik.redirectPage.html").getText();
+      Responses.send(createResponse(pageContent), context.channel(), request);
+      return null;
     }
 
     Matcher codeMatcher = OAUTH_CODE_PATTERN.matcher(uri);
@@ -190,6 +133,75 @@ public class StepikRestService extends OAuthRestService {
 
     RestService.sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel());
     String message = "Unknown command: " + uri;
+    LOG.info(message);
+    return message;
+  }
+
+  @Nullable
+  private static String openCourse(@NotNull QueryStringDecoder urlDecoder, @NotNull FullHttpRequest request,
+                                   @NotNull ChannelHandlerContext context) {
+    String link = getStringParameter(StepikNames.LINK, urlDecoder);
+    if (link == null) {
+      return log("The link parameter was not found");
+    }
+
+    LOG.info("Try to open a course: " + link);
+
+    QueryStringDecoder linkDecoder = new QueryStringDecoder(link);
+    Matcher matcher = COURSE_PATTERN.matcher(linkDecoder.path());
+    if (!matcher.matches()) {
+      return log("Unrecognized the link parameter");
+    }
+
+    int lessonId;
+    int stepIndex;
+    try {
+      lessonId = Integer.parseInt(matcher.group(1));
+      stepIndex = Integer.parseInt(matcher.group(2));
+    }
+    catch (NumberFormatException e) {
+      return log("Unrecognized the link");
+    }
+
+    int unitId = getIntParameter("unit", linkDecoder);
+    if (unitId == -1) {
+      return log("Unrecognized the Unit id");
+    }
+
+    StepikUnit unit = StepikConnector.getUnit(unitId);
+    if (unit == null || unit.getId() == null || unit.getId() == 0) {
+      return log("Unrecognized the Unit id");
+    }
+
+    Section section = StepikConnector.getSection(unit.getSection());
+    if (section == null) {
+      return log("No section found with id " + unit.getSection());
+    }
+    int courseId = section.getCourseId();
+    if (courseId == 0) {
+      return log("Unrecognized the course id");
+    }
+    Lesson lesson = StepikConnector.getLesson(lessonId);
+    if (lesson == null) {
+      return log("No lesson found with id " + lessonId);
+    }
+    List<Integer> stepIds = lesson.steps;
+
+    if (stepIds.isEmpty()) {
+      return log("Unrecognized the step id");
+    }
+    int stepId = stepIds.get(stepIndex - 1);
+
+    LOG.info(String.format("Try to open a course: courseId=%s, stepId=%s", courseId, stepId));
+
+    if (focusOpenEduProject(courseId, stepId) || openRecentEduCourse(courseId, stepId) || createEduCourse(courseId, stepId)) {
+      RestService.sendOk(request, context);
+      LOG.info("Course opened: " + courseId);
+      return null;
+    }
+
+    RestService.sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel());
+    String message = "A project didn't found or created";
     LOG.info(message);
     return message;
   }
