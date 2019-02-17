@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicReference
@@ -59,6 +60,7 @@ object GeneratorUtils {
     }
     indicator.text = "Generating additional files"
     createAdditionalFiles(course, baseDir)
+    EduUsagesCollector.newStudyItemCreated(course)
   }
 
   fun createSection(item: Section, baseDir: VirtualFile) {
@@ -67,6 +69,7 @@ object GeneratorUtils {
     for (lesson in item.lessons) {
       createLesson(lesson, sectionDir)
     }
+    EduUsagesCollector.newStudyItemCreated(item)
   }
 
   @Throws(IOException::class)
@@ -84,6 +87,7 @@ object GeneratorUtils {
         createTask(task, lessonDir)
       }
     }
+    EduUsagesCollector.newStudyItemCreated(lesson)
   }
 
   @Throws(IOException::class)
@@ -91,6 +95,7 @@ object GeneratorUtils {
   fun createTask(task: Task, lessonDir: VirtualFile) {
     val taskDir = createUniqueDir(lessonDir, task)
     createTaskContent(task, taskDir)
+    EduUsagesCollector.newStudyItemCreated(task)
   }
 
   @Throws(IOException::class)

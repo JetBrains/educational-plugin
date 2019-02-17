@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.statistics.FeedbackSenderKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -125,6 +126,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     VirtualFile virtualFile = createItemDir(project, item, parentDir, course);
     YamlFormatSynchronizer.saveItem(item);
     YamlFormatSynchronizer.saveItem(item.getParent());
+    EduUsagesCollector.newStudyItemCreated(item);
     return virtualFile;
   }
 
