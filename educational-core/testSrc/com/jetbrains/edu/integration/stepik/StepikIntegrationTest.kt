@@ -373,9 +373,8 @@ internal fun addNewSection(name: String,
 
   val newSection = course.getSection(name)!!
   newSection.index = index
-  GeneratorUtils.createSection(newSection, virtualFile)
-
   courseToInit.addSection(newSection)
   courseToInit.init(null, null, false)
+  GeneratorUtils.createSection(newSection, virtualFile)
   return newSection
 }
