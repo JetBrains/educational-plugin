@@ -4,7 +4,6 @@ import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
-import com.intellij.javascript.nodejs.library.core.NodeJsCoreLibraryConfigurator;
 import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable;
 import com.intellij.lang.javascript.modules.InstallNodeLocalDependenciesAction;
 import com.intellij.openapi.application.ApplicationManager;
@@ -36,11 +35,7 @@ public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjec
     ModalityState modalityState = ModalityState.current();
     interpreter.provideCachedVersionOrFetch(version -> ApplicationManager.getApplication().invokeLater(() -> {
         if (version != null) {
-          // BACKCOMPAT: 2018.2
-          //  Replace `NodeJsCoreLibraryConfigurator` with `com.intellij.javascript.nodejs.library.core.NodeCoreLibraryConfigurator`
-          @SuppressWarnings("deprecation")
-          NodeJsCoreLibraryConfigurator configurator = NodeJsCoreLibraryConfigurator.getInstance(project);
-          configurator.configureAndAssociateWithProject(interpreter, version, null);
+          EduNodeJsCoreLibraryConfigurator.configureAndAssociateWithProject(project, interpreter, version);
         }
         else {
           LOG.warn("Couldn't retrieve Node interpreter version");
