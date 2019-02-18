@@ -19,35 +19,3 @@ Please submit your issues to [Educational Plugin YouTrack](https://youtrack.jetb
 * This plugins comes with integration with [Stepik](http://welcome.stepik.org/) learning platform
 * You can learn more about our Kotlin support from [this](https://blog.jetbrains.com/kotlin/2016/03/kotlin-educational-plugin/) blog post
 * You can read more about plugin development in [IntelliJ Sdk Docs](http://www.jetbrains.org/intellij/sdk/docs/index.html)
-
-### Configuring development environment
-
-1. Clone sources of this project to some folder
-2. Open this folder in IntelliJ Idea
-3. Import gradle project. If you are not familiar with IntelliJ IDEA gradle integration, check out [documentation](https://www.jetbrains.com/help/idea/gradle.html)
-4. You can modify gradle.properties if needed
-5. If you use openjdk, invoke prepareJavaFx gradle task first
-6. For running and debugging plugin with IDEA or PyCharm predefined run configurations *runIdea* and *runPyCharm* 
-should be used
-7. To build plugin distributions use *buildPlugin* gradle task
-
-### Workflow for checking compatibility with different Idea/Studio branches
-1. Develop feature in feature branch %feature.branch%
-2. Commit changes
-3. Run `apply -3 --ignore-space-change --ignore-whitespace patcher/%branch.name%.patch` command where %branch.name% is desired branch.
-4. Use appropriate run configuration
-Different configurations use different *.properties file. This can be changed manually using `-PenvironmentName=%branch.name%` argument
-
-Everything works:\
-5. Revert patch `git reset --hard && git clean -fd`\
-6. Push all the changes
-
-Something went wrong:\
-5. Fix errors caused by compatibility issues in idea branches\
-6. Create new patch file `git diff %feature.branch% > patcher/%temporary.name%.patch`\
-7. Copy `patcher/%temporary.name%.patch` content to `patcher/%branch.name%.patch`
-7. Commit updated patch file\
-8. Revert `git reset --hard && git clean -fd`\
-9. Push all the changes
-
-
