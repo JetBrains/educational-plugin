@@ -144,9 +144,12 @@ public class EduCourse extends Course {
 
     String courseType = courseInfo.getType();
     final List<String> typeLanguage = StringUtil.split(courseType, " ");
+    if (typeLanguage.size() < 2) {
+      return CourseCompatibility.UNSUPPORTED;
+    }
     String prefix = typeLanguage.get(0);
     if (!supportedLanguages.contains(courseInfo.getLanguageID())) return CourseCompatibility.UNSUPPORTED;
-    if (typeLanguage.size() < 2 || !prefix.startsWith(StepikNames.PYCHARM_PREFIX)) {
+    if (!prefix.startsWith(StepikNames.PYCHARM_PREFIX)) {
       return CourseCompatibility.UNSUPPORTED;
     }
     String versionString = prefix.substring(StepikNames.PYCHARM_PREFIX.length());
