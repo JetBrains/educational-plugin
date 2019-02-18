@@ -28,7 +28,7 @@ fun readCourseJson(jsonText: String): EduCourse? {
     courseMapper.treeToValue(courseNode)
   }
   catch (e: IOException) {
-    LOG.error("Failed to read course json")
+    LOG.error("Failed to read course json \n" + e.message)
     null
   }
 }
@@ -81,7 +81,7 @@ val courseMapper: ObjectMapper  // TODO: common mapper for archive creator and r
     mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
     mapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
     mapper.disable(MapperFeature.AUTO_DETECT_CREATORS)
-    val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a")
+    val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)
     dateFormat.timeZone = TimeZone.getTimeZone("UTC")
     mapper.dateFormat = dateFormat
     return mapper

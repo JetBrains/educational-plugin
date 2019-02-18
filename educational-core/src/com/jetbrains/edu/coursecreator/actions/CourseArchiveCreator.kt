@@ -157,7 +157,7 @@ class CourseArchiveCreator(
         mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
         mapper.addMixIn(Task::class.java, RemoteTaskMixin::class.java)
         commonSetup(mapper)
-        val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a")
+        val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)
         dateFormat.timeZone = TimeZone.getTimeZone("UTC")
         mapper.dateFormat = dateFormat
         return mapper

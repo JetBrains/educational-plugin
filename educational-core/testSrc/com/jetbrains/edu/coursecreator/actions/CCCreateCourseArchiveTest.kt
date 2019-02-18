@@ -86,7 +86,7 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
         }
       }
     }.asRemote()
-    val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a")
+    val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)
     dateFormat.timeZone = TimeZone.getTimeZone("UTC")
     val date = dateFormat.parse("Jan 01, 1970 03:00:00 AM")
     course.updateDate = date
