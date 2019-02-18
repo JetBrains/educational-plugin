@@ -345,6 +345,7 @@ class EventBasedUpdateTest : StepikTestCase() {
 
     val newSection = course.getSection(name)!!
     newSection.index = index
+    newSection.course = course
     GeneratorUtils.createSection(newSection, EduUtils.getCourseDir(project))
     return newSection
   }
