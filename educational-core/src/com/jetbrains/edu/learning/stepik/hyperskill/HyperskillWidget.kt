@@ -25,8 +25,11 @@ class HyperskillWidget : IconLikeCustomStatusBarWidget {
   private val component: JLabel
 
   init {
-    val icon = getWidgetIcon(HyperskillSettings.INSTANCE.account)
+    val account = HyperskillSettings.INSTANCE.account
+    val icon = getWidgetIcon(account)
     component = JLabel(icon)
+    val logInLogOutText = if (account == null) "Log In to" else "Log Out from"
+    component.toolTipText = "$logInLogOutText hyperskill.org"
 
     val busConnection = ApplicationManager.getApplication().messageBus.connect()
     busConnection.subscribe(hyperskillAuthorizationTopic, object : HyperskillConnector.HyperskillLoggedIn {
@@ -41,8 +44,7 @@ class HyperskillWidget : IconLikeCustomStatusBarWidget {
 
     object : ClickListener() {
       override fun onClick(e: MouseEvent, clickCount: Int): Boolean {
-        val account = HyperskillSettings.INSTANCE.account
-        val popup = createPopup(account)
+        val popup = createPopup(HyperskillSettings.INSTANCE.account)
         val preferredSize = popup.content.preferredSize
         val point = Point(-preferredSize.width, -preferredSize.height)
         popup.show(RelativePoint(component, point))
@@ -62,8 +64,11 @@ class HyperskillWidget : IconLikeCustomStatusBarWidget {
   }
 
   private fun update() {
-    val icon = getWidgetIcon(HyperskillSettings.INSTANCE.account)
+    val account = HyperskillSettings.INSTANCE.account
+    val icon = getWidgetIcon(account)
     component.icon = icon
+    val logInLogOutText = if (account == null) "Log In to" else "Log Out from"
+    component.toolTipText = "$logInLogOutText hyperskill.org"
   }
 
   override fun getComponent(): JComponent = component

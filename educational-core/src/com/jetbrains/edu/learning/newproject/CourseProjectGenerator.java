@@ -62,6 +62,7 @@ public abstract class CourseProjectGenerator<S> {
 
   public static final Key<Boolean> EDU_PROJECT_CREATED = Key.create("edu.projectCreated");
   public static final Key<String> COURSE_MODE_TO_CREATE = Key.create("edu.courseModeToCreate");
+  public static final Key<String> COURSE_TYPE_TO_CREATE = Key.create("edu.courseTypeToCreate");
 
   private static final Logger LOG = Logger.getInstance(CourseProjectGenerator.class);
 
@@ -159,6 +160,7 @@ public abstract class CourseProjectGenerator<S> {
     @SuppressWarnings("unchecked") ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, baseDir, (S)projectSettings);
     EnumSet<PlatformProjectOpenProcessor.Option> options = EnumSet.of(PlatformProjectOpenProcessor.Option.FORCE_NEW_FRAME);
     baseDir.putUserData(COURSE_MODE_TO_CREATE, myCourse.getCourseMode());
+    baseDir.putUserData(COURSE_TYPE_TO_CREATE, myCourse.getCourseType());
     Project project = PlatformProjectOpenProcessor.doOpenProject(baseDir, null, -1, callback, options);
     if (project != null) {
       project.putUserData(EDU_PROJECT_CREATED, true);
