@@ -70,12 +70,18 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
 
   private fun messageWithFontStyle(message: String): String {
     val result = message.replace("\n", "<br>")
-    val fontCss = CSSBuilder().apply {
-      body {
-        fontFamily = StyleManager().codeFont
-      }
-    }.toString()
-    return "<html><head><style>${fontCss}</style></head><body>${result}</body></html>"
+    val useMonospacedFont = (message.contains("expected", true) && message.contains("actual", true))
+    return if (useMonospacedFont) {
+      val fontCss = CSSBuilder().apply {
+        body {
+          fontFamily = StyleManager().codeFont
+        }
+      }.toString()
+      "<html><head><style>${fontCss}</style></head><body>${result}</body></html>"
+    }
+    else {
+      result
+    }
   }
 
   private fun createLinksPanel(task: Task,
