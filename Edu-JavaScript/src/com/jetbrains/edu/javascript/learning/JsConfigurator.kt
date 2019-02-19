@@ -1,5 +1,7 @@
 package com.jetbrains.edu.javascript.learning
 
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduUtils
@@ -25,4 +27,8 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
   override fun isEnabled() = !EduUtils.isAndroidStudio() && !PlatformUtils.isCommunityEdition() && !PlatformUtils.isPyCharmEducational()
 
   override fun getLogo(): Icon = EducationalCoreIcons.JsLogo
+
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
+    return super.excludeFromArchive(project, file) || file.path.contains("node_modules") || "package-lock.json" == file.name
+  }
 }
