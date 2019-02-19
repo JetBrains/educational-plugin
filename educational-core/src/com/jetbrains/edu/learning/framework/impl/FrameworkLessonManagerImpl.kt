@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.framework.impl
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -11,11 +10,9 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.io.IOException
@@ -40,8 +37,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       "Only solutions of framework tasks can be saved"
     }
 
-    // TODO: support removed files
-    val changes = calculateUserChanges(task.allFiles, externalState)
+    val changes = calculateChanges(task.allFiles, externalState)
     val currentRecord = task.record
     task.record = try {
       storage.updateUserChanges(currentRecord, changes)
@@ -82,14 +78,14 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     currentTask.record = newCurrentRecord
 
     val nextUserChanges = try {
-      storage.getUserChanges(targetRecord).changes
+      storage.getUserChanges(targetRecord)
     } catch (e: IOException) {
       LOG.error("Failed to get user changes for task `${currentTask.name}`", e)
-      emptyMap<String, String>()
+      UserChanges.empty()
     }
 
-    val currentState = initialCurrentFiles + currentUserChanges.changes
-    val targetState = targetTask.allFiles + nextUserChanges
+    val currentState = HashMap(initialCurrentFiles).apply { currentUserChanges.apply(this) }
+    val targetState = HashMap(targetTask.allFiles).apply { nextUserChanges.apply(this) }
 
     // There are special rules for hyperskill courses for now
     // All user changes from current task should be propagated to next task as is
@@ -99,9 +95,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       calculateChanges(currentState, targetState)
     }
 
-    for (change in changes) {
-      change.apply(project, taskDir)
-    }
+    changes.apply(project, taskDir, targetTask)
   }
 
   private fun calculateHypeskillChanges(
@@ -110,18 +104,18 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     currentState: Map<String, String>,
     targetTask: Task,
     showDialogIfConflict: Boolean
-  ): List<Change> {
+  ): UserChanges {
     val (currentTaskFilesState, currentTestFilesState) = currentState.split(lesson)
     val (targetTaskFiles, targetTestFiles) = targetState.split(lesson)
 
     // Creates [Change]s to propagates all current changes of task files to target task.
     // Technically, we won't change text of task files, just add user created task files to target task
-    fun calculateCurrentTaskChanges(): List<Change> {
+    fun calculateCurrentTaskChanges(): UserChanges {
       val newTaskFilesChanges = (currentTaskFilesState - targetTaskFiles.keys).map { (path, text) ->
-        Change.AddUserCreatedTaskFile(path, text, targetTask)
+        Change.AddUserCreatedTaskFile(path, text)
       }
       val testChanges = calculateChanges(currentTestFilesState, targetTestFiles)
-      return newTaskFilesChanges + testChanges  
+      return testChanges + newTaskFilesChanges
     }
     
     // target task initialization
@@ -155,7 +149,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       val file = taskDir.findFileByRelativePath(path) ?: continue
       currentState[path] = runReadAction { documentManager.getDocument(file)?.text } ?: continue
     }
-    val userChanges = calculateUserChanges(initialFiles, currentState)
+    val userChanges = calculateChanges(initialFiles, currentState)
     return updateUserChanges(record, userChanges)
   }
 
@@ -174,7 +168,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   private fun calculateChanges(
     currentState: Map<String, String>,
     targetState: Map<String, String>
-  ): List<Change> {
+  ): UserChanges {
     val changes = mutableListOf<Change>()
     val current = HashMap(currentState)
     for ((path, nextText) in targetState) {
@@ -187,17 +181,6 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
 
     current.mapTo(changes) { Change.RemoveFile(it.key) }
-    return changes
-  }
-
-  private fun calculateUserChanges(initialFiles: Map<String, String>, currentState: Map<String, String>): UserChanges {
-    val changes = HashMap<String, String>()
-    for ((path, initialText) in initialFiles) {
-      val text = currentState[path] ?: continue
-      if (text != initialText) {
-        changes[path] = text
-      }
-    }
     return UserChanges(changes)
   }
 
@@ -234,61 +217,3 @@ private data class UpdatedUserChanges(
   val record: Int,
   val changes: UserChanges
 )
-
-private sealed class Change(protected val path: String) {
-
-  abstract fun apply(project: Project, taskDir: VirtualFile)
-
-  class AddUserCreatedTaskFile(path: String, private val text: String, private val task: Task) : Change(path) {
-    override fun apply(project: Project, taskDir: VirtualFile) {
-      val taskFile = TaskFile(path, text)
-      taskFile.isUserCreated = true
-      task.addTaskFile(taskFile)
-    }
-  }
-
-  class AddFile(path: String, private val text: String) : Change(path) {
-    override fun apply(project: Project, taskDir: VirtualFile) {
-      try {
-        GeneratorUtils.createChildFile(taskDir, path, text)
-      } catch (e: IOException) {
-        LOG.error("Failed to create file `${taskDir.path}/$path`", e)
-      }
-    }
-
-  }
-
-  class RemoveFile(path: String) : Change(path) {
-    override fun apply(project: Project, taskDir: VirtualFile) {
-      runUndoTransparentWriteAction {
-        try {
-          taskDir.findFileByRelativePath(path)?.delete(RemoveFile::class.java)
-        } catch (e: IOException) {
-          LOG.error("Failed to delete file `${taskDir.path}/$path`", e)
-        }
-      }
-    }
-
-  }
-
-  class ChangeFile(path: String, private val text: String) : Change(path) {
-    override fun apply(project: Project, taskDir: VirtualFile) {
-      val file = taskDir.findFileByRelativePath(path)
-      if (file == null) {
-        LOG.warn("Can't find file `$path` in `$taskDir`")
-        return
-      }
-
-      val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
-      if (document == null) {
-        LOG.warn("Can't get document for `$file`")
-      } else {
-        runUndoTransparentWriteAction { document.setText(text) }
-      }
-    }
-  }
-
-  companion object {
-    private val LOG: Logger = Logger.getInstance(Change::class.java)
-  }
-}

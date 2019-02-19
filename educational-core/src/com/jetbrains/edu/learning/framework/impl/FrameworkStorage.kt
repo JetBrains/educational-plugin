@@ -27,7 +27,7 @@ class FrameworkStorage(storageFilePath: String) : AbstractStorage(storageFilePat
   @Throws(IOException::class)
   fun getUserChanges(record: Int): UserChanges {
     return if (record == -1) {
-      UserChanges(emptyMap())
+      UserChanges.empty()
     } else {
       synchronized(myLock) {
         readStream(record).use(UserChanges.Companion::read)
