@@ -6,7 +6,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.LabeledComponent
-import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
@@ -27,6 +26,7 @@ import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
 import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
+import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.ItemEvent
@@ -79,7 +79,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     myPathField.complementaryTextField = myTitleField
 
     myErrorLabel.border = JBUI.Borders.emptyTop(8)
-    myErrorLabel.foreground = MessageType.ERROR.titleForeground
+    myErrorLabel.foreground = EduColors.errorTextForeground
 
     val bottomPanel = JPanel(BorderLayout())
     bottomPanel.add(myErrorLabel, BorderLayout.SOUTH)

@@ -1,10 +1,10 @@
 package com.jetbrains.edu.coursecreator.ui;
 
 import com.intellij.openapi.ui.ComboBox;
-import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
+import com.jetbrains.edu.learning.ui.EduColors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +31,7 @@ public class CCCourseInfoPanel {
     myDescription.setFont(myAuthorField.getFont());
 
     myErrorLabel.setVisible(false);
-    myErrorLabel.setForeground(MessageType.ERROR.getTitleForeground());
+    myErrorLabel.setForeground(EduColors.INSTANCE.getErrorTextForeground());
 
     setupValidation();
 

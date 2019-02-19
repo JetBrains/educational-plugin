@@ -2,8 +2,6 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
-import com.intellij.openapi.ui.MessageType.ERROR
-import com.intellij.openapi.ui.MessageType.WARNING
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
@@ -17,6 +15,8 @@ import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.ui.EduColors.errorTextForeground
+import com.jetbrains.edu.learning.ui.EduColors.warningTextForeground
 import java.awt.Color
 
 sealed class ErrorState(
@@ -28,18 +28,18 @@ sealed class ErrorState(
 
   object NothingSelected : ErrorState(0, null, Color.BLACK, false)
   object None : ErrorState(1, null, Color.BLACK, true)
-  object NotLoggedIn : ErrorState(2, ErrorMessage("", "Log in", " to Stepik to see more courses"), WARNING.titleForeground, true)
-  abstract class LoginRequired(platformName: String) : ErrorState(3, ErrorMessage("", "Log in", " to $platformName to start this course"), ERROR.titleForeground, false)
+  object NotLoggedIn : ErrorState(2, ErrorMessage("", "Log in", " to Stepik to see more courses"), warningTextForeground, true)
+  abstract class LoginRequired(platformName: String) : ErrorState(3, ErrorMessage("", "Log in", " to $platformName to start this course"), errorTextForeground, false)
   object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)
   class CheckiOLoginRequired(courseName: String) : LoginRequired(courseName) // Name of CheckiO course equals corresponding CheckiO platform name
   object HyperskillLoginRequired : LoginRequired("Hyperskill")
-  object IncompatibleVersion : ErrorState(3, ErrorMessage("", "Update", " plugin to start this course"), ERROR.titleForeground, false)
+  object IncompatibleVersion : ErrorState(3, ErrorMessage("", "Update", " plugin to start this course"), errorTextForeground, false)
   data class RequiredPluginsDisabled(val disabledPluginIds: List<String>) :
-    ErrorState(3, errorMessage(disabledPluginIds), ERROR.titleForeground, false)
-  class LanguageSettingsError(message: String) : ErrorState(3, ErrorMessage(message), ERROR.titleForeground, false)
-  object JavaFXRequired: ErrorState(4, ErrorMessage("No JavaFX found. Please ", "switch", " to JetBrains Runtime to start the course"), ERROR.titleForeground, false)
+    ErrorState(3, errorMessage(disabledPluginIds), errorTextForeground, false)
+  class LanguageSettingsError(message: String) : ErrorState(3, ErrorMessage(message), errorTextForeground, false)
+  object JavaFXRequired: ErrorState(4, ErrorMessage("No JavaFX found. Please ", "switch", " to JetBrains Runtime to start the course"), errorTextForeground, false)
   class CustomSevereError(beforeLink: String, link: String = "", afterLink: String = "", val action: Runnable? = null):
-    ErrorState(3, ErrorMessage(beforeLink, link, afterLink), ERROR.titleForeground, false)
+    ErrorState(3, ErrorMessage(beforeLink, link, afterLink), errorTextForeground, false)
 
   fun merge(other: ErrorState): ErrorState = if (severity < other.severity) other else this
 

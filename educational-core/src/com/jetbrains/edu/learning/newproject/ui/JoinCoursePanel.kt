@@ -1,11 +1,11 @@
 package com.jetbrains.edu.learning.newproject.ui
 
-import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.io.File
 import javax.swing.JPanel
@@ -23,7 +23,7 @@ class JoinCoursePanel(private val settings: CoursePanel.CourseDisplaySettings) :
     minimumSize = JBUI.size(WIDTH, HEIGHT)
 
     myErrorLabel.border = JBUI.Borders.emptyTop(8)
-    myErrorLabel.foreground = MessageType.ERROR.titleForeground
+    myErrorLabel.foreground = EduColors.errorTextForeground
 
     add(myCoursePanel, BorderLayout.CENTER)
     add(myErrorLabel, BorderLayout.SOUTH)
