@@ -25,6 +25,10 @@ import com.jetbrains.edu.learning.stepik.api.Dataset;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.safety.Whitelist;
 
 import java.util.List;
 import java.util.Map;
@@ -127,7 +131,7 @@ public class StepikTaskBuilder {
     task.setUpdateDate(myStepSource.getUpdateDate());
 
     task.setStatus(CheckStatus.Unchecked);
-    final StringBuilder taskDescription = new StringBuilder(myStep.getText());
+    final StringBuilder taskDescription = new StringBuilder(clearCodeBlockFromTags());
     final StepOptions options = myStep.getOptions();
     if (options != null) {
       if (options.getSamples() != null) {
@@ -161,12 +165,25 @@ public class StepikTaskBuilder {
   }
 
   @NotNull
+  private String clearCodeBlockFromTags() {
+    String text = myStep.getText();
+    Document parsedText = Jsoup.parse(text);
+    for (Element element : parsedText.select("code")) {
+      String codeBlockWithoutTags = Jsoup.clean(element.html(), new Whitelist().addTags("br"));
+      codeBlockWithoutTags = codeBlockWithoutTags.replace("<br>", "\n");
+      codeBlockWithoutTags = codeBlockWithoutTags.replaceAll("[\n]+", "\n");
+      element.html(codeBlockWithoutTags);
+    }
+    return parsedText.toString();
+  }
+
+  @NotNull
   private ChoiceTask choiceTask() {
     ChoiceTask task = new ChoiceTask(myName);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.getPosition());
     task.setUpdateDate(myStepSource.getUpdateDate());
-    task.setDescriptionText(myStep.getText());
+    task.setDescriptionText(clearCodeBlockFromTags());
 
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       final Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepId, myUserId);
@@ -192,7 +209,7 @@ public class StepikTaskBuilder {
     task.setStepId(myStepId);
     task.setIndex(myStepSource.getPosition());
     task.setUpdateDate(myStepSource.getUpdateDate());
-    task.setDescriptionText(myStep.getText());
+    task.setDescriptionText(clearCodeBlockFromTags());
 
     createMockTaskFile(task, "you can experiment here, it won’t be checked\n");
     return task;
