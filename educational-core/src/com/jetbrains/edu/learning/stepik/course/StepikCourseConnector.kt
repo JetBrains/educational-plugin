@@ -5,7 +5,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.stepik.StepikLanguages
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
-import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector.getLessons
 import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector.getStepSources
 import java.io.IOException
 import java.net.MalformedURLException
@@ -70,7 +69,7 @@ object StepikCourseConnector {
 
   private fun getFirstCodeTemplates(remoteCourse: StepikCourse): Map<String, String> {
     val unitsIds = StepikCourseLoader.getUnitsIds(remoteCourse)
-    val lessons = getLessons(unitsIds)
+    val lessons = StepikCourseLoader.getLessonsFromUnitIds(unitsIds)
     for (lesson in lessons) {
       val allStepSources = getStepSources(lesson.steps)
 

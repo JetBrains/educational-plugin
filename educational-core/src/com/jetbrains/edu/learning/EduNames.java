@@ -63,6 +63,7 @@ public class EduNames {
   public static final String KOTLIN = "kotlin";
   public static final String PYTHON = "Python";
   public static final String SCALA = "Scala";
+  public static final String JAVASCRIPT = "JavaScript";
 
   private EduNames() {
   }
