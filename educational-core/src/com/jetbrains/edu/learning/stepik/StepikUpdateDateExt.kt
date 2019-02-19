@@ -5,6 +5,7 @@ package com.jetbrains.edu.learning.stepik
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.util.Time
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
@@ -16,6 +17,11 @@ import java.util.*
 
 
 fun EduCourse.isUpToDate(): Boolean {
+  // disable update for courses with framework lessons as now it's unsupported
+  if (lessons.plus(sections.flatMap { it.lessons }).any { it is FrameworkLesson }) {
+    return true
+  }
+
   if (updateDate == null || course.id == 0) {
     return true
   }
