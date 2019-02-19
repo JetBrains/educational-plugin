@@ -46,7 +46,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     }
 
     // course language is already set if we opened idea compatible course by link
-    if (course.languageById != null) {
+    if (course.isCompatible) {
       return course
     }
 
