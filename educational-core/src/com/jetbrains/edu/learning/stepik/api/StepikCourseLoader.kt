@@ -209,7 +209,7 @@ object StepikCourseLoader {
     return result
   }
 
-  private fun getLessonsFromUnitIds(unitIds: List<Int>): List<Lesson> {
+  fun getLessonsFromUnitIds(unitIds: List<Int>): List<Lesson> {
     val units = StepikMultipleRequestsConnector.getUnits(unitIds)
     val lessonIds = units.map { unit -> unit.lesson }
     val lessons = StepikMultipleRequestsConnector.getLessons(lessonIds)
