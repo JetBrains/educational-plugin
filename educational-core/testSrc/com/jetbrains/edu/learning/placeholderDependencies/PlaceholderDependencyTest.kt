@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.placeholderDependencies
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.EditorNotificationsImpl
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.RevertTaskAction
@@ -10,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 
-class PlaceholderDependencyTest : EduTestCase() {
+class PlaceholderDependencyTest : PlaceholderDependencyTestBase() {
 
   fun `test placeholder replaced with solution`() {
     courseWithFiles {
@@ -160,6 +161,7 @@ class PlaceholderDependencyTest : EduTestCase() {
   }
 
   private fun checkEditorNotification(virtualFile: VirtualFile, taskNames: List<String>) {
+    completeEditorNotificationAsyncTasks()
     val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile)!!
     val notificationPanel = fileEditor.getUserData(UnsolvedDependenciesNotificationProvider.KEY)
     assertNotNull("Notification not shown", notificationPanel)
