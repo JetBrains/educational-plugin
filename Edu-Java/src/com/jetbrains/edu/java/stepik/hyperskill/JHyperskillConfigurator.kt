@@ -56,6 +56,6 @@ class JHyperskillConfigurator : GradleConfiguratorBase() {
   }
 
   private fun topicLink(topic: HyperskillTopic): String =
-    "<a style=\"color:$linkColor\" href=\"https://hyperskill.org/learn/lesson/${topic.theoryId}/\">${topic.title}</a>"
+    "<a style=\"color:$linkColor\" href=\"https://hyperskill.org/learn/step/${topic.theoryId}/\">${topic.title}</a>"
   private val linkColor: String = if (UIUtil.isUnderDarcula()) "#6894C6" else "#5C84C9"
 }

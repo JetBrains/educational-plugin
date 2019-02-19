@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 
-const val USERS = "users"
+const val PROFILES = "profiles"
 const val STAGES = "stages"
 const val TOPICS = "topics"
 const val PROJECTS = "projects"
@@ -14,9 +14,10 @@ const val FULL_NAME = "fullname"
 const val STAGE = "stage"
 const val PROJECT = "project"
 const val DESCRIPTION = "description"
-const val LESSON_STEPIK_ID = "lesson_stepik_id"
+const val IDE_FILES = "ide_files"
 const val USE_IDE = "use_ide"
-const val THEORY_ID = "theory_id"
+const val THEORY_ID = "theory"
+const val STEP_ID = "step"
 
 class HyperskillAccount : OAuthAccount<HyperskillUserInfo>()
 
@@ -30,11 +31,8 @@ class HyperskillUserInfo {
   @JsonProperty(FULL_NAME)
   var fullname: String = ""
 
-  @JsonProperty(STAGE)
-  var stage: HyperskillStage? = null
-
   @JsonProperty(PROJECT)
-  var hyperskillProject: HyperskillProject? = null
+  var hyperskillProjectId: Int? = null
 
   override fun toString(): String {
     return fullname
@@ -47,6 +45,9 @@ class HyperskillStage {
 
   @JsonProperty(TITLE)
   var title: String = ""
+
+  @JsonProperty(STEP_ID)
+  var stepId: Int = -1
 }
 
 class HyperskillProject {
@@ -59,16 +60,16 @@ class HyperskillProject {
   @JsonProperty(DESCRIPTION)
   var description: String = ""
 
-  @JsonProperty(LESSON_STEPIK_ID)
-  var lesson: Int = -1
+  @JsonProperty(IDE_FILES)
+  var ideFiles: String = ""
 
   @JsonProperty(USE_IDE)
   var useIde: Boolean = false
 }
 
 class UsersList {
-  @JsonProperty(USERS)
-  lateinit var users: List<HyperskillUserInfo>
+  @JsonProperty(PROFILES)
+  lateinit var profiles: List<HyperskillUserInfo>
 }
 
 class StagesList {

@@ -18,6 +18,7 @@ import java.util.*
 
 const val SOURCE = "source"
 const val TASK_TYPE = "task_type"
+const val HYPERSKILL = "hyperskill"
 const val LESSON_TYPE = "lesson_type"
 const val FEEDBACK_LINK = "feedback_link"
 const val SAMPLES = "samples"
@@ -54,6 +55,9 @@ class Step {
 }
 
 class StepOptions {
+  @JsonProperty(HYPERSKILL)
+  var hyperskill: Any? = null
+
   @JsonProperty(TASK_TYPE)
   var taskType: String? = null
 

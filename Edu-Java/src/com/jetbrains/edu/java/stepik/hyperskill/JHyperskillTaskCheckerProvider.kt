@@ -17,7 +17,7 @@ class JHyperskillTaskCheckerProvider : JTaskCheckerProvider() {
         val checkResult = super.check(indicator)
         val course = task.course
         if (checkResult.status == CheckStatus.Solved && course is HyperskillCourse) {
-          return CheckResult(checkResult.status, SUCCESS.format(course.hyperskillId), needEscape = false)
+          return CheckResult(checkResult.status, SUCCESS, needEscape = false)
         }
         return checkResult
       }
@@ -26,6 +26,6 @@ class JHyperskillTaskCheckerProvider : JTaskCheckerProvider() {
 
   companion object {
     private const val SUCCESS = "<html>${TestsOutputParser.CONGRATULATIONS} " +
-                                "Continue on <a href=\"https://hyperskill.org/projects/%s\">Hyperskill</a>.</html>"
+                                "Continue on <a href=\"https://hyperskill.org/learning-path\">Hyperskill</a>.</html>"
   }
 }

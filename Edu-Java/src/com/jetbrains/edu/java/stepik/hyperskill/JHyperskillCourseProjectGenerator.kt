@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.*
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillStepikConnector.getLesson
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector.getLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
@@ -30,25 +30,20 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
             LOG.error("User is not logged in to the Hyperskill")
             return false
           }
-          val userInfo = hyperskillAccount.userInfo
-          val hyperskillProject = userInfo.hyperskillProject
-          if (hyperskillProject == null) {
-            LOG.error("User didn't choose project on hyperskill")
-            return false
-          }
-          else if (!hyperskillProject.useIde) {
+          val hyperskillCourse = myCourse as HyperskillCourse
+          val hyperskillProject = hyperskillCourse.hyperskillProject
+          if (!hyperskillProject.useIde) {
             LOG.error("Selected project is not supported")
             return false
           }
-          val lessonId = hyperskillProject.lesson
           val projectId = hyperskillProject.id
 
-          if ((myCourse as HyperskillCourse).stages.isEmpty()) {
+          if (hyperskillCourse.stages.isEmpty()) {
             val stages = HyperskillConnector.getStages(projectId) ?: return false
-            (myCourse as HyperskillCourse).stages = stages
+            hyperskillCourse.stages = stages
           }
-          val stages = (myCourse as HyperskillCourse).stages
-          val lesson = getLesson(myCourse as HyperskillCourse, lessonId, language)
+          val stages = hyperskillCourse.stages
+          val lesson = getLesson(hyperskillCourse, hyperskillProject.ideFiles, language)
           if (lesson == null) {
             LOG.warn("Project doesn't contain framework lesson")
             return false

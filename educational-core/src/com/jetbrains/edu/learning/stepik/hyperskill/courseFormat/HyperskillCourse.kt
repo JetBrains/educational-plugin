@@ -12,12 +12,12 @@ class HyperskillCourse : Course {
 
   var taskToTopics: MutableMap<Int, List<HyperskillTopic>> = ConcurrentHashMap()
   var stages: List<HyperskillStage> = mutableListOf()
-  var hyperskillId: Int = 0
+  lateinit var hyperskillProject: HyperskillProject
 
   constructor(hyperskillProject: HyperskillProject, languageID: String) {
+    this.hyperskillProject = hyperskillProject
     name = hyperskillProject.title
     description = hyperskillProject.description + descriptionNote(hyperskillProject.id)
-    hyperskillId = hyperskillProject.id
     language = languageID
     courseType = HYPERSKILL
   }

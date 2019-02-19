@@ -64,11 +64,12 @@ private fun markStepAsViewed(lessonId: Int, stepId: Int) {
     .forEach { StepikConnector.postView(it.id, stepId) }
 }
 
-fun loadAttachment(course: Course, lesson: Lesson?) : List<TaskFile> {
-  val id = lesson?.id ?: course.id
-  val lessonOrCourse = if (lesson != null) "lesson" else "course"
-  val attachmentLink = StepikNames.STEPIK_URL + "/media/attachments/" + lessonOrCourse + "/" + id + "/" + StepikNames.ADDITIONAL_FILES
+fun loadAttachment(course: Course) : List<TaskFile> {
+  val attachmentLink = "${StepikNames.STEPIK_URL}/media/attachments/course/${course.id}/${StepikNames.ADDITIONAL_FILES}"
+  return loadAttachment(attachmentLink)
+}
 
+fun loadAttachment(attachmentLink: String) : List<TaskFile> {
   return try {
     val attachmentUrl = URL(attachmentLink)
     val conn = attachmentUrl.openConnection()

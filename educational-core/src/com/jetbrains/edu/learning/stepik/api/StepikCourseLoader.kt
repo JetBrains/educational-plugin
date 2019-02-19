@@ -107,7 +107,7 @@ object StepikCourseLoader {
   }
 
   private fun fillAdditionalMaterials(course: EduCourse, additionalSection: Section?) {
-    course.additionalFiles = loadAttachment(course, null)
+    course.additionalFiles = loadAttachment(course)
     if (course.additionalFiles.isEmpty() && additionalSection != null) {
       // load the old way for compatibility with old courses
       if (additionalSection.units.size == 1) {

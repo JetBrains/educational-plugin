@@ -3,15 +3,19 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
+import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.mixins.TaskSerializer
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepOptions
 import com.jetbrains.edu.learning.stepik.StepSource
@@ -41,7 +45,6 @@ object HyperskillConnector {
     module.addDeserializer(StepOptions::class.java, JacksonStepOptionsDeserializer())
     module.addDeserializer(Reply::class.java, StepikReplyDeserializer())
     objectMapper = StepikConnector.createMapper(module)
-
     converterFactory = JacksonConverterFactory.create(objectMapper)
   }
 
@@ -100,8 +103,8 @@ object HyperskillConnector {
   // Get requests:
 
   fun getCurrentUser(account: HyperskillAccount): HyperskillUserInfo? {
-    val response = service(account).getUserInfo(0).executeHandlingExceptions()
-    return response?.body()?.users?.firstOrNull() ?: return null
+    val response = service(account).getCurrentUserInfo().executeHandlingExceptions()
+    return response?.body()?.profiles?.firstOrNull()
   }
 
   fun getStages(projectId: Int): List<HyperskillStage>? {
@@ -111,12 +114,12 @@ object HyperskillConnector {
 
   fun getProject(projectId: Int): HyperskillProject? {
     val response = service.project(projectId).executeHandlingExceptions()
-    return response?.body()?.projects?.firstOrNull() ?: return null
+    return response?.body()?.projects?.firstOrNull()
   }
 
-  fun getStepSources(lessonId: Int): List<StepSource>? {
-    val response = service.steps(lessonId).executeHandlingExceptions()
-    return response?.body()?.steps
+  private fun getStepSource(stepId: Int): StepSource? {
+    val response = service.step(stepId).executeHandlingExceptions()
+    return response?.body()?.steps?.firstOrNull()
   }
 
   fun fillTopics(course: HyperskillCourse, project: Project) {
@@ -138,6 +141,22 @@ object HyperskillConnector {
         }
       })
     }
+  }
+
+  fun getLesson(course: HyperskillCourse, attachmentLink: String, language: Language): Lesson? {
+    val progressIndicator = ProgressManager.getInstance().progressIndicator
+
+    val lesson = FrameworkLesson()
+    lesson.course = course
+    progressIndicator?.checkCanceled()
+    progressIndicator?.text2 = "Loading project stages"
+    val stepSources = course.stages.mapNotNull { HyperskillConnector.getStepSource(it.stepId) }
+
+    progressIndicator?.checkCanceled()
+    val tasks = StepikCourseLoader.getTasks(language, lesson, stepSources)
+    lesson.taskList.addAll(tasks)
+    course.additionalFiles = loadAttachment(attachmentLink)
+    return lesson
   }
 
   fun getSubmission(stepId: Int, page: Int = 1): Submission? {

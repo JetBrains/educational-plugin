@@ -87,14 +87,14 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   }
 
   private fun focusOpenProject(courseId: Int, stageId: Int): Boolean {
-    val (project, course) = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillId == courseId } ?: return false
+    val (project, course) = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillProject.id == courseId } ?: return false
     course.putUserData(HYPERSKILL_STAGE, stageId)
     ApplicationManager.getApplication().invokeLater { openSelectedStage(course, project) }
     return true
   }
 
   private fun openRecentProject(courseId: Int, stageId: Int): Boolean {
-    val (_, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillId == courseId } ?: return false
+    val (_, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject.id == courseId } ?: return false
     course.putUserData(HYPERSKILL_STAGE, stageId)
     return true
   }
@@ -108,8 +108,6 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
         override fun compute(indicator: ProgressIndicator): HyperskillCourse? {
           val hyperskillProject = HyperskillConnector.getProject(projectId) ?: return null
           val stages = HyperskillConnector.getStages(projectId) ?: return null
-          val account = HyperskillSettings.INSTANCE.account ?: return null
-          account.userInfo.hyperskillProject = hyperskillProject
           if (!hyperskillProject.useIde) {
             LOG.warn("Project in not supported yet $projectId")
             Notification(HYPERSKILL, HYPERSKILL, HYPERSKILL_PROJECT_NOT_SUPPORTED, NotificationType.WARNING,

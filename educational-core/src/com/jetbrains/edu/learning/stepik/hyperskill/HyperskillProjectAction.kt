@@ -27,16 +27,17 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
       showBalloon(e, "Please, <a href=\"\">login to Hyperskill</a> and select project.", true)
     }
     else {
-      ProgressManager.getInstance().run(object : Task.Modal(null, "Loading Selected Project", false) {
-        override fun run(indicator: ProgressIndicator) {
-          val currentUser = HyperskillConnector.getCurrentUser(account)
-          if (currentUser != null) {
-            account.userInfo = currentUser
+      val hyperskillProject = ProgressManager.getInstance().run(
+        object : Task.WithResult<HyperskillProject?, Exception>(null, "Loading Selected Project", false) {
+          override fun compute(indicator: ProgressIndicator): HyperskillProject? {
+            val currentUser = HyperskillConnector.getCurrentUser(account)
+            if (currentUser != null) {
+              account.userInfo = currentUser
+            }
+            val projectId = account.userInfo.hyperskillProjectId ?: return null
+            return HyperskillConnector.getProject(projectId)
           }
-        }
-      })
-
-      val hyperskillProject = account.userInfo.hyperskillProject
+        })
       if (hyperskillProject == null) {
         showBalloon(e, "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select project</a> ", false)
       }
@@ -52,8 +53,7 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
   }
 
   private fun showBalloon(e: AnActionEvent, message: String, authorize: Boolean) {
-    val builder = JBPopupFactory.getInstance()
-      .createHtmlTextBalloonBuilder(message,MessageType.INFO, null)
+    val builder = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, MessageType.INFO, null)
     builder.setHideOnClickOutside(true)
     builder.setClickHandler(HSHyperlinkListener(authorize), true)
     val balloon = builder.createBalloon()
