@@ -104,6 +104,7 @@ class StepikReplyDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : 
 
     private fun ObjectNode.toSeventhVersion() {
       val solutionFiles = get("solution")
+      if (solutionFiles == null) return
       if (solutionFiles.any { it.get(NAME).asText().endsWith(".py") }) return
       for (solutionFile in solutionFiles) {
         val value = solutionFile.get(NAME)?.asText()
