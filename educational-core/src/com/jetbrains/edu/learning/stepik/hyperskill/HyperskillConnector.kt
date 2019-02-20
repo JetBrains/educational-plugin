@@ -135,6 +135,7 @@ object HyperskillConnector {
           if (topics != null && topics.isNotEmpty()) {
             course.taskToTopics[taskIndex] = topics
             runInEdt {
+              if (project.isDisposed) return@runInEdt
               TaskDescriptionView.getInstance(project).updateAdditionalTaskTab()
             }
           }

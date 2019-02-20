@@ -36,12 +36,10 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   private var futures: Map<Int, Future<Boolean>> = HashMap()
 
   fun loadSolutionsInBackground() {
+    val course = StudyTaskManager.getInstance(project).course ?: return
     ProgressManager.getInstance().run(object : Backgroundable(project, "Getting Tasks to Update") {
       override fun run(progressIndicator: ProgressIndicator) {
-        val course = StudyTaskManager.getInstance(myProject).course
-        if (course != null) {
-          loadAndApplySolutions(course, progressIndicator)
-        }
+        loadAndApplySolutions(course, progressIndicator)
       }
     })
   }
@@ -66,6 +64,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     val futures = HashMap<Int, Future<Boolean>>(tasks.size)
     for (task in tasksToUpdate) {
       invokeAndWaitIfNeed {
+        if (project.isDisposed) return@invokeAndWaitIfNeed
         for (editor in getOpenTaskEditors(project, task)) {
           editor.startLoading()
         }
@@ -84,6 +83,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
             }
           }
           invokeAndWaitIfNeed {
+            if (project.isDisposed) return@invokeAndWaitIfNeed
             for (editor in getOpenTaskEditors(project, task)) {
               editor.stopLoading()
               editor.validateTaskFile()
@@ -117,6 +117,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
     val needToShowNotification = needToShowUpdateNotification(futures.values)
     runInEdt {
+      if (project.isDisposed) return@runInEdt
       if (needToShowNotification) {
         UpdateNotification(NOTIFICATION_TITLE, NOTIFICATION_CONTENT).notify(project)
       }
@@ -244,8 +245,9 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
 
     private fun applySolutions(project: Project, task: Task, taskSolutions: TaskSolutions) {
-      runInEdt {
-        val taskDir = task.getTaskDir(project) ?: return@runInEdt
+      invokeAndWaitIfNeed {
+        if (project.isDisposed) return@invokeAndWaitIfNeed
+        val taskDir = task.getTaskDir(project) ?: return@invokeAndWaitIfNeed
         task.status = taskSolutions.checkStatus
         val solutionsMap = taskSolutions.solutions.mapValues { it.value.first }
         val lesson = task.lesson
