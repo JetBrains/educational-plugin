@@ -2,6 +2,7 @@ buildscript {
     ext.pycharmSandbox = project.buildDir.absolutePath + File.separator + "pycharm-sandbox"
     ext.studioSandbox = project.buildDir.absolutePath + File.separator + "studio-sandbox"
     ext.webStormSandbox = project.buildDir.absolutePath + File.separator + "webstorm-sandbox"
+    ext.clionSandbox = project.buildDir.absolutePath + File.separator + "clion-sandbox"
     ext.kotlinVersion = "1.3.11"
     ext.jacksonVersion = "2.9.5"
     repositories {
@@ -258,6 +259,16 @@ task configureWebStorm {
         }
         intellij.sandboxDirectory webStormSandbox
         intellij.alternativeIdePath webStormPath
+    }
+}
+
+task configureCLion {
+    doLast {
+        if (!project.hasProperty("clionPath")) {
+            throw new InvalidUserDataException("Path to CLion installed locally is needed\nDefine \"clionPath\" property")
+        }
+        intellij.sandboxDirectory clionSandbox
+        intellij.alternativeIdePath clionPath
     }
 }
 
