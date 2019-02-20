@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -22,4 +24,8 @@ fun openSelectedStage(course: Course, project: Project) {
       }
     }
   }
+}
+
+fun isHyperskillSupportAvailable(): Boolean {
+  return Language.findLanguageByID("JAVA") != null && !EduUtils.isAndroidStudio()
 }
