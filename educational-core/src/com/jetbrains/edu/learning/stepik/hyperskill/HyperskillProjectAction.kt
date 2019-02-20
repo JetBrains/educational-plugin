@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -47,7 +48,11 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
       else {
         val languageId = EduNames.JAVA
         val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
-        HyperskillJoinCourseDialog(hyperskillCourse).show()
+        if (hyperskillCourse.configurator == null) {
+          showBalloon(e, HYPERSKILL_PROJECT_NOT_SUPPORTED, false)
+        } else {
+          HyperskillJoinCourseDialog(hyperskillCourse).show()
+        }
       }
     }
   }
