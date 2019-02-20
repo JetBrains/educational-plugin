@@ -22,6 +22,10 @@ import javax.swing.event.HyperlinkEvent
 
 class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
 
+  override fun update(e: AnActionEvent) {
+    e.presentation.isEnabledAndVisible = isHyperskillSupportAvailable()
+  }
+
   override fun actionPerformed(e: AnActionEvent) {
     val account = HyperskillSettings.INSTANCE.account
     if (account == null) {
