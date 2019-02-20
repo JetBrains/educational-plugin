@@ -29,12 +29,11 @@ import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.update.UpdateNotification
 import java.io.IOException
-import java.util.*
 import java.util.concurrent.Future
 
 abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
-  private val futures: MutableMap<Int, Future<Boolean>> = HashMap()
+  private var futures: Map<Int, Future<Boolean>> = HashMap()
 
   fun loadSolutionsInBackground() {
     ProgressManager.getInstance().run(object : Backgroundable(project, "Getting Tasks to Update") {
@@ -64,6 +63,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     cancelUnfinishedTasks()
     val tasksToUpdate = tasks.filter { task -> task !is TheoryTask }
     var finishedTaskCount = 0
+    val futures = HashMap<Int, Future<Boolean>>(tasks.size)
     for (task in tasksToUpdate) {
       invokeAndWaitIfNeed {
         for (editor in getOpenTaskEditors(project, task)) {
@@ -93,6 +93,10 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       }
     }
 
+    synchronized(this) {
+      this.futures = futures
+    }
+
     val connection = project.messageBus.connect()
     connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
@@ -111,7 +115,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       connection.disconnect()
     }
 
-    val needToShowNotification = needToShowUpdateNotification()
+    val needToShowNotification = needToShowUpdateNotification(futures.values)
     runInEdt {
       if (needToShowNotification) {
         UpdateNotification(NOTIFICATION_TITLE, NOTIFICATION_CONTENT).notify(project)
@@ -139,8 +143,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
   }
 
-  private fun needToShowUpdateNotification(): Boolean {
-    return futures.values.any { future ->
+  private fun needToShowUpdateNotification(tasks: Collection<Future<*>>): Boolean {
+    return tasks.any { future ->
       try {
         future.get() == true
       }
@@ -151,13 +155,13 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
   }
 
+  @Synchronized
   private fun cancelUnfinishedTasks() {
     for (future in futures.values) {
       if (!future.isDone) {
         future.cancel(true)
       }
     }
-    futures.clear()
   }
 
   /**
@@ -165,6 +169,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
    */
   private fun updateTask(project: Project, task: Task): Boolean {
     val taskSolutions = loadSolution(task)
+    ProgressManager.checkCanceled()
     if (!taskSolutions.hasIncompatibleSolutions && !taskSolutions.solutions.isEmpty()) {
       applySolutions(project, task, taskSolutions)
     }
