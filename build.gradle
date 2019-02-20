@@ -1,6 +1,7 @@
 buildscript {
     ext.pycharmSandbox = project.buildDir.absolutePath + File.separator + "pycharm-sandbox"
     ext.studioSandbox = project.buildDir.absolutePath + File.separator + "studio-sandbox"
+    ext.webStormSandbox = project.buildDir.absolutePath + File.separator + "webstorm-sandbox"
     ext.kotlinVersion = "1.3.11"
     ext.jacksonVersion = "2.9.5"
     repositories {
@@ -247,6 +248,16 @@ task configurePyCharm {
         }
         intellij.sandboxDirectory pycharmSandbox
         intellij.alternativeIdePath pycharmPath
+    }
+}
+
+task configureWebStorm {
+    doLast {
+        if (!project.hasProperty("webStormPath")) {
+            throw new InvalidUserDataException("Path to WebStorm installed locally is needed\nDefine \"webStormPath\" property")
+        }
+        intellij.sandboxDirectory webStormSandbox
+        intellij.alternativeIdePath webStormPath
     }
 }
 
