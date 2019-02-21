@@ -118,7 +118,15 @@ public class EduBuiltInServerUtils {
       }
       final Course course = getCourse(component);
       if (coursePredicate.test(course)) {
-        return new Pair<>(openProject(projectPath), course);
+        Project project = openProject(projectPath);
+        Course realProjectCourse = null;
+        if (project != null) {
+          StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
+          if (taskManager != null) {
+            realProjectCourse = taskManager.getCourse();
+          }
+          return new Pair<>(project, realProjectCourse);
+        }
       }
     }
     return null;
@@ -128,7 +136,10 @@ public class EduBuiltInServerUtils {
     final Pair<Project, Course> projectAndCourse =
       openRecentProject(course -> course instanceof EduCourse && ((EduCourse)course).isRemote() && course.getId() == courseId);
     if (projectAndCourse != null) {
-      projectAndCourse.getSecond().putUserData(STEP_ID, stepId);
+      Course course = projectAndCourse.getSecond();
+      if (course != null) {
+        course.putUserData(STEP_ID, stepId);
+      }
       return true;
     }
     return false;

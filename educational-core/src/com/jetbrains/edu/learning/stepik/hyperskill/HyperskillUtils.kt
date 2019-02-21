@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
@@ -13,9 +14,11 @@ fun openSelectedStage(course: Course, project: Project) {
   if (course is HyperskillCourse && stageId > 0) {
     val index = course.stages.indexOfFirst { stage -> stage.id == stageId }
     if (course.lessons.isNotEmpty()) {
-      val taskList = course.lessons[0].taskList
+      val lesson = course.lessons[0]
+      val taskList = lesson.taskList
       if (taskList.size > index) {
-        NavigationUtils.navigateToTask(project, taskList[index], taskList[0], false)
+        val fromTask = if (lesson is FrameworkLesson) lesson.currentTask() else taskList[0]
+        NavigationUtils.navigateToTask(project, taskList[index], fromTask, false)
       }
     }
   }
