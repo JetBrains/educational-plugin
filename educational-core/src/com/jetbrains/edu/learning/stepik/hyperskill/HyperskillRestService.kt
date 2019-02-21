@@ -95,7 +95,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
   private fun openRecentProject(courseId: Int, stageId: Int): Boolean {
     val (_, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject.id == courseId } ?: return false
-    course.putUserData(HYPERSKILL_STAGE, stageId)
+    course?.putUserData(HYPERSKILL_STAGE, stageId)
     return true
   }
 
