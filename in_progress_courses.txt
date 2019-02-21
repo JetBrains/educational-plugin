@@ -2,4 +2,3 @@
 6859 # Java. Statements and Arrays
 6864 # Java. Classes
 6860 # Java. Collections
-3432 # JavaScript for Beginners
