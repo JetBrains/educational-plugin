@@ -13,6 +13,8 @@ class HyperskillOptions : OauthOptions<HyperskillAccount>() {
 
   override fun getCurrentAccount() : HyperskillAccount? = HyperskillSettings.INSTANCE.account
 
+  override fun isAvailable(): Boolean = isHyperskillSupportAvailable()
+
   override fun setCurrentAccount(lastSavedAccount: HyperskillAccount?) {
     HyperskillSettings.INSTANCE.account = lastSavedAccount
     val messageBus = ApplicationManager.getApplication().messageBus
