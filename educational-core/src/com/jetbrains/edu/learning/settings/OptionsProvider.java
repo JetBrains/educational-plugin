@@ -6,4 +6,8 @@ import com.intellij.openapi.options.ConfigurableEP;
 
 public interface OptionsProvider extends Configurable {
   ExtensionPointName<ConfigurableEP<OptionsProvider>> EP_NAME = ExtensionPointName.create("Educational.optionsProvider");
+
+  default boolean isAvailable() {
+    return true;
+  }
 }

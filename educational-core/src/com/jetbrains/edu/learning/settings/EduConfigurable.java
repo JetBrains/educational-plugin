@@ -77,6 +77,9 @@ public class EduConfigurable extends CompositeConfigurable<OptionsProvider> {
       if (wrappedConfigurable == null) {
         continue;
       }
+      if (!wrappedConfigurable.isAvailable()) {
+        continue;
+      }
       result.add(wrappedConfigurable);
     }
     return result;
