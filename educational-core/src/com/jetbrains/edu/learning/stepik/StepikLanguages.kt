@@ -13,6 +13,7 @@ enum class StepikLanguages (val id: String?, val langName: String?) {
     KOTLIN(EduNames.KOTLIN, "kotlin"),
     PYTHON(EduNames.PYTHON, "python3"),
     JAVASCRIPT(EduNames.JAVASCRIPT, "javascript"),
+    SCALA(EduNames.SCALA, "scala"),
     INVALID(null, null);
 
 
