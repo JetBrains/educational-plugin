@@ -34,11 +34,13 @@ import java.net.URL
 
 private const val PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt"
 private const val IN_PROGRESS_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/in_progress_courses.txt"
+private const val FEATURED_STEPIK_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_stepik_courses.txt"
 
 private val LOG = Logger.getInstance(StepikAuthorizer::class.java)
 
 val featuredCourses = getCoursesIds(PROMOTED_COURSES_LINK)
 val inProgressCourses = getCoursesIds(IN_PROGRESS_COURSES_LINK)
+val featuredStepikCourses = getCourseIdsWithLanguage(FEATURED_STEPIK_COURSES_LINK)
 
 fun setCourseLanguage(info: EduCourse) {
   val courseType = info.type
@@ -104,6 +106,16 @@ private fun showUpdateAvailableNotification(project: Project, course: Course) {
                                       "Updating Course", true, project)
                                   })
   notification.notify(project)
+}
+
+private fun getCourseIdsWithLanguage(link: String): Map<Int, String> {
+  val url = URL(link)
+  val text = url.readText()
+  return text.lines().associate {
+    val partWithoutComment = it.split("#")[0]
+    val idWithLanguage = partWithoutComment.split(" ")
+    idWithLanguage[0].trim().toInt() to idWithLanguage[1].trim()
+  }
 }
 
 private fun getCoursesIds(link: String): List<Int> {
