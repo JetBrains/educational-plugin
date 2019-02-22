@@ -27,6 +27,7 @@ fun EduCourse.isUpToDate(): Boolean {
   }
 
   val courseInfo = getCourseInfo(id, isCompatible) ?: return true
+  courseInfo.language = language
   return isUpToDate(courseInfo)
 }
 
