@@ -197,6 +197,8 @@ object CCUtils {
   fun initializeTaskPlaceholders(task: Task, project: Project) {
     val taskDir = task.getTaskDir(project) ?: return
     for (entry in task.taskFiles.entries) {
+      // BACKCOMPAT: 2018.3
+      @Suppress("DEPRECATION")
       invokeAndWaitIfNeed { runWriteAction { initializeTaskFilePlaceholders(project, taskDir, entry.value) } }
     }
   }

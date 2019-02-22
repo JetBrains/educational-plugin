@@ -44,7 +44,7 @@ class ToFifthVersionJsonStepOptionsConverter : JsonStepOptionsConverter {
       }
 
       placeholderObject.put(POSSIBLE_ANSWER, info.get(POSSIBLE_ANSWER).asText())
-      placeholderObject.put(HINTS, info.get(HINTS))
+      placeholderObject.set(HINTS, info.get(HINTS))
       val placeholderText = info.get(PLACEHOLDER_TEXT)
       if (placeholderText != null) {
         placeholderObject.put(PLACEHOLDER_TEXT, placeholderText.asText())

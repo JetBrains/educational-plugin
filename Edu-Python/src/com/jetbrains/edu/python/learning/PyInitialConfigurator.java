@@ -3,7 +3,6 @@ package com.jetbrains.edu.python.learning;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.util.io.FileUtil;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.NonNls;
 import java.io.File;
 
 @SuppressWarnings({"UtilityClassWithoutPrivateConstructor", "UtilityClassWithPublicConstructor", "ComponentNotRegistered"}) // Edu-Python.xml
-public class PyInitialConfigurator implements ApplicationComponent {
+public class PyInitialConfigurator {
   @NonNls private static final String CONFIGURED_V40 = "StudyPyCharm.InitialConfiguration40";
 
   /**

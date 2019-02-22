@@ -37,6 +37,8 @@ import java.awt.*;
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
 
+  // BACKCOMPAT: 2018.2
+  @SuppressWarnings("deprecation")
   private static class WindowSelectionListener extends EditorMouseAdapter {
     private final TaskFile myTaskFile;
 

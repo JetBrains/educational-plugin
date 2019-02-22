@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.Range;
 import com.jetbrains.edu.learning.stepik.StepikNames;
+import kotlin.text.Charsets;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -130,7 +131,7 @@ public class CustomAuthorizationServer {
       LOG.info("Handling auth response");
 
       try {
-        final List<NameValuePair> parse = URLEncodedUtils.parse(new URI(request.getRequestLine().getUri()), "UTF-8");
+        final List<NameValuePair> parse = URLEncodedUtils.parse(new URI(request.getRequestLine().getUri()), Charsets.UTF_8);
         for (NameValuePair pair : parse) {
           if (pair.getName().equals("code")) {
             final String code = pair.getValue();

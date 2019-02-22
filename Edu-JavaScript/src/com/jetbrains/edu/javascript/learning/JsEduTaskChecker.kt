@@ -73,6 +73,8 @@ class JsEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(t
         }
       })
       for (configuration in configurations) {
+        // BACKCOMPAT: 2018.2
+        @Suppress("DEPRECATION")
         val runner = RunnerRegistry.getInstance().getRunner(DefaultRunExecutor.EXECUTOR_ID, configuration.configuration)
         val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configuration).build()
         environments.add(env)

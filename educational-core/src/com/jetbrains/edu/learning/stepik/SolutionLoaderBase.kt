@@ -63,6 +63,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     var finishedTaskCount = 0
     val futures = HashMap<Int, Future<Boolean>>(tasks.size)
     for (task in tasksToUpdate) {
+      // BACKCOMPAT: 2018.3
+      @Suppress("DEPRECATION")
       invokeAndWaitIfNeed {
         if (project.isDisposed) return@invokeAndWaitIfNeed
         for (editor in getOpenTaskEditors(project, task)) {
@@ -82,6 +84,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
               progressIndicator.text = "Loading solution $finishedTaskCount of ${tasksToUpdate.size}"
             }
           }
+          // BACKCOMPAT: 2018.3
+          @Suppress("DEPRECATION")
           invokeAndWaitIfNeed {
             if (project.isDisposed) return@invokeAndWaitIfNeed
             for (editor in getOpenTaskEditors(project, task)) {
@@ -245,6 +249,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
 
     private fun applySolutions(project: Project, task: Task, taskSolutions: TaskSolutions) {
+      // BACKCOMPAT: 2018.3
+      @Suppress("DEPRECATION")
       invokeAndWaitIfNeed {
         if (project.isDisposed) return@invokeAndWaitIfNeed
         val taskDir = task.getTaskDir(project) ?: return@invokeAndWaitIfNeed

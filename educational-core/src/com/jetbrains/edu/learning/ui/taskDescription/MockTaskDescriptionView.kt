@@ -9,7 +9,7 @@ import java.awt.Point
 class MockTaskDescriptionView : TaskDescriptionView() {
   override var currentTask: Task?
     get() = null
-    set(value) {}
+    set(_) {}
 
   override fun init(toolWindow: ToolWindow) {}
   override fun updateTaskSpecificPanel() {}

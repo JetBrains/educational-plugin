@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
-class CCEditTaskDescription : DumbAwareAction(TEXT, TEXT, AllIcons.Modules.Edit) {
+class CCEditTaskDescription : DumbAwareAction(TEXT, TEXT, AllIcons.Actions.Edit) {
   companion object {
     private const val TEXT = "Edit task description"
     const val ACTION_ID = "Educational.CCEditTaskDescription"

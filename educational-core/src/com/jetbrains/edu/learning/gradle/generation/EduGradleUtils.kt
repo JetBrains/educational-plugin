@@ -62,6 +62,8 @@ object EduGradleUtils {
   private fun evaluateExistingTemplate(child: VirtualFile, templateVariables: Map<String, Any>) {
     val rawContent = VfsUtil.loadText(child)
     val content = FileTemplateUtil.mergeTemplate(templateVariables, rawContent, false)
+    // BACKCOMPAT: 2018.3
+    @Suppress("DEPRECATION")
     invokeAndWaitIfNeed { runWriteAction { VfsUtil.saveText(child, content) } }
   }
 

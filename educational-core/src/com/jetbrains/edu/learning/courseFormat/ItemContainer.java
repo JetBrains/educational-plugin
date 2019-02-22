@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class ItemContainer extends StudyItem {
+  @SuppressWarnings("deprecation")
   @AbstractCollection(elementTypes = {
     Section.class,
     Lesson.class,

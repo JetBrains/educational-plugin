@@ -21,6 +21,8 @@ class StyleManager {
   val codeFont = typographyManager.codeFont
 
   val bodyColor = bodyColor()
+  // BACKCOMPAT: 2018.3
+  @Suppress("DEPRECATION")
   val linkColor = JBColor.link().asCssColor()
   val bodyBackground = JBColor.background().asCssColor()
   val codeBackground = if (EduSettings.getInstance().shouldUseJavaFx()) bodyBackground

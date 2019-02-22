@@ -11,7 +11,7 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ui.configuration.actions.ModuleDeleteProvider
-import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.Messages.*
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -69,8 +69,8 @@ class CCStudyItemDeleteProvider : DeleteProvider {
       }
     }
 
-    val result = Messages.showOkCancelDialog(project, message, title, Messages.getQuestionIcon())
-    if (result != Messages.OK) return
+    val result = showOkCancelDialog(project, message, title, OK_BUTTON, CANCEL_BUTTON, getQuestionIcon())
+    if (result != OK) return
 
     removeDependentPlaceholders(project, dependentTasks, containingTasks)
 

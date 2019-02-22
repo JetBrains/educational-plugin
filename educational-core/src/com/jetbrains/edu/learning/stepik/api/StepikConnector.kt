@@ -206,6 +206,8 @@ object StepikConnector {
   @JvmStatic
   fun postTask(project: Project, task: Task, lessonId: Int): StepSource? {
     var stepSourceData: StepSourceData? = null
+    // BACKCOMPAT: 2018.3
+    @Suppress("DEPRECATION")
     invokeAndWaitIfNeed {
       FileDocumentManager.getInstance().saveAllDocuments()
       stepSourceData = StepSourceData(project, task, lessonId)
@@ -304,6 +306,8 @@ object StepikConnector {
   @JvmStatic
   fun updateTask(project: Project, task: Task): Int {
     var stepSourceData: StepSourceData? = null
+    // BACKCOMPAT: 2018.3
+    @Suppress("DEPRECATION")
     invokeAndWaitIfNeed {
       FileDocumentManager.getInstance().saveAllDocuments()
       stepSourceData = StepSourceData(project, task, task.lesson.id)

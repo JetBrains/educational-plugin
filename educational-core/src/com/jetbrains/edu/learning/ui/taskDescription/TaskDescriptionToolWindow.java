@@ -97,6 +97,8 @@ public abstract class TaskDescriptionToolWindow {
 
     Application application = ApplicationManager.getApplication();
     application.invokeLater(() -> application.runReadAction(() -> {
+      // BACKCOMPAT: 2018.2
+      //noinspection deprecation
       for (QualifiedNameProvider provider : Extensions.getExtensions(QualifiedNameProvider.EP_NAME)) {
         PsiElement element = provider.qualifiedNameToElement(qualifiedName, project);
         if (element instanceof NavigatablePsiElement) {

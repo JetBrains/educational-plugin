@@ -96,6 +96,8 @@ public class CheckAction extends DumbAwareAction {
     if (task == null) {
       return;
     }
+    // BACKCOMPAT: 2018.2
+    //noinspection deprecation
     for (CheckListener listener : Extensions.getExtensions(CheckListener.EP_NAME)) {
       listener.beforeCheck(project, task);
     }

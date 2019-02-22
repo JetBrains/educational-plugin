@@ -13,6 +13,8 @@ class CheckResult @JvmOverloads constructor(
   val escapedMessage: String get() = message.escaped
   val escapedDetails: String? get() = details?.escaped
 
+  // BACKCOMPAT: 2018.3
+  @Suppress("DEPRECATION")
   private val String.escaped: String get() = if (needEscape) StringUtil.escapeXml(this) else this
 
   companion object {

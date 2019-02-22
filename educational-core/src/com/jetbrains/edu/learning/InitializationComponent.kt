@@ -4,7 +4,7 @@ import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ApplicationComponent
+import com.intellij.openapi.components.BaseComponent
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.util.text.StringUtil
@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
 import com.jetbrains.edu.learning.update.NewCoursesNotifier
 import java.util.*
 
-class InitializationComponent : ApplicationComponent {
+class InitializationComponent : BaseComponent {
 
     private val newCoursesNotifier = NewCoursesNotifier(ApplicationManager.getApplication())
 

@@ -30,6 +30,7 @@ public class Lesson extends StudyItem {
 
   private String name;
 
+  @SuppressWarnings("deprecation")
   @AbstractCollection(elementTypes = {
     CheckiOMission.class,
     EduTask.class,

@@ -30,6 +30,8 @@ open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<O
   override fun check(indicator: ProgressIndicator): CheckResult {
     val configuration = createDefaultRunConfiguration(project) ?: return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     val executor = DefaultRunExecutor.getRunExecutorInstance()
+    // BACKCOMPAT: 2018.2
+    @Suppress("DEPRECATION")
     val runner = RunnerRegistry.getInstance().getRunner(executor.id, configuration.configuration)
     configuration.isActivateToolWindowBeforeRun = false
     val env = ExecutionEnvironmentBuilder.create(executor, configuration).build()

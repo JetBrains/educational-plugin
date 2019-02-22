@@ -1,7 +1,7 @@
 package com.jetbrains.edu.coursecreator;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.project.Project;
@@ -14,14 +14,14 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
 
-public class CCProjectComponent extends AbstractProjectComponent {
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
+public class CCProjectComponent implements ProjectComponent {
   private static final Logger LOG = Logger.getInstance(CCProjectComponent.class);
 
   private CCVirtualFileListener myTaskFileLifeListener;
   private final Project myProject;
 
   protected CCProjectComponent(Project project) {
-    super(project);
     myProject = project;
   }
 

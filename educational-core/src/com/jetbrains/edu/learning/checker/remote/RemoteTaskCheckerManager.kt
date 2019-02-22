@@ -10,6 +10,8 @@ object RemoteTaskCheckerManager {
 
   @JvmStatic
   fun remoteCheckerForTask(project: Project, task: Task): RemoteTaskChecker? {
+    // BACKCOMPAT: 2018.2
+    @Suppress("DEPRECATION")
     val checkers = Extensions.getExtensions(EP_NAME).filter { it.canCheck(project, task) }
     if (checkers.isEmpty()) {
       return null

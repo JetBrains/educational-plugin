@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.components.impl.ComponentManagerImpl;
 import com.intellij.openapi.diagnostic.Logger;
@@ -185,61 +184,58 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
   }
 
   public static List<AnswerPlaceholder> getPlaceholders(Document document, boolean useLength) {
-    final List<AnswerPlaceholder> placeholders = new ArrayList<>();
-    new WriteCommandAction(null) {
-      @Override
-      protected void run(@NotNull Result result) {
-        final String openingTagRx = "<placeholder( taskText=\"(.+?)\")?( possibleAnswer=\"(.+?)\")?( hint=\"(.+?)\")?( hint2=\"(.+?)\")?>";
-        final String closingTagRx = "</placeholder>";
-        CharSequence text = document.getCharsSequence();
-        final Matcher openingMatcher = Pattern.compile(openingTagRx).matcher(text);
-        final Matcher closingMatcher = Pattern.compile(closingTagRx).matcher(text);
-        int pos = 0;
-        while (openingMatcher.find(pos)) {
-          AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
-          answerPlaceholder.setUseLength(useLength);
-          String taskText = openingMatcher.group(2);
-          if (taskText != null) {
-            answerPlaceholder.setPlaceholderText(taskText);
-            answerPlaceholder.setLength(taskText.length());
-          }
-          String possibleAnswer = openingMatcher.group(4);
-          if (possibleAnswer != null) {
-            answerPlaceholder.setPossibleAnswer(possibleAnswer);
-          }
-          final ArrayList<String> hints = ContainerUtil.newArrayList();
-          String hint = openingMatcher.group(6);
-          if (hint != null) {
-            hints.add(hint);
-          }
-          String hint2 = openingMatcher.group(8);
-          if (hint2 != null) {
-            hints.add(hint2);
-          }
-          if (!hints.isEmpty()) {
-            answerPlaceholder.setHints(hints);
-          }
-          answerPlaceholder.setOffset(openingMatcher.start());
-          if (!closingMatcher.find(openingMatcher.end())) {
-            LOG.error("No matching closing tag found");
-          }
-          if (useLength) {
-            answerPlaceholder.setPlaceholderText(String.valueOf(text.subSequence(openingMatcher.end(), closingMatcher.start())));
-            answerPlaceholder.setLength(closingMatcher.start() - openingMatcher.end());
-          } else {
-            if (possibleAnswer == null) {
-              answerPlaceholder.setPossibleAnswer(document.getText(TextRange.create(openingMatcher.end(), closingMatcher.start())));
-            }
-          }
-          document.deleteString(closingMatcher.start(), closingMatcher.end());
-          document.deleteString(openingMatcher.start(), openingMatcher.end());
-          FileDocumentManager.getInstance().saveDocument(document);
-          placeholders.add(answerPlaceholder);
-          pos = answerPlaceholder.getOffset() + answerPlaceholder.getRealLength();
+    return WriteCommandAction.writeCommandAction(null).compute(() -> {
+      final List<AnswerPlaceholder> placeholders = new ArrayList<>();
+      final String openingTagRx = "<placeholder( taskText=\"(.+?)\")?( possibleAnswer=\"(.+?)\")?( hint=\"(.+?)\")?( hint2=\"(.+?)\")?>";
+      final String closingTagRx = "</placeholder>";
+      CharSequence text = document.getCharsSequence();
+      final Matcher openingMatcher = Pattern.compile(openingTagRx).matcher(text);
+      final Matcher closingMatcher = Pattern.compile(closingTagRx).matcher(text);
+      int pos = 0;
+      while (openingMatcher.find(pos)) {
+        AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
+        answerPlaceholder.setUseLength(useLength);
+        String taskText = openingMatcher.group(2);
+        if (taskText != null) {
+          answerPlaceholder.setPlaceholderText(taskText);
+          answerPlaceholder.setLength(taskText.length());
         }
+        String possibleAnswer = openingMatcher.group(4);
+        if (possibleAnswer != null) {
+          answerPlaceholder.setPossibleAnswer(possibleAnswer);
+        }
+        final ArrayList<String> hints = ContainerUtil.newArrayList();
+        String hint = openingMatcher.group(6);
+        if (hint != null) {
+          hints.add(hint);
+        }
+        String hint2 = openingMatcher.group(8);
+        if (hint2 != null) {
+          hints.add(hint2);
+        }
+        if (!hints.isEmpty()) {
+          answerPlaceholder.setHints(hints);
+        }
+        answerPlaceholder.setOffset(openingMatcher.start());
+        if (!closingMatcher.find(openingMatcher.end())) {
+          LOG.error("No matching closing tag found");
+        }
+        if (useLength) {
+          answerPlaceholder.setPlaceholderText(String.valueOf(text.subSequence(openingMatcher.end(), closingMatcher.start())));
+          answerPlaceholder.setLength(closingMatcher.start() - openingMatcher.end());
+        } else {
+          if (possibleAnswer == null) {
+            answerPlaceholder.setPossibleAnswer(document.getText(TextRange.create(openingMatcher.end(), closingMatcher.start())));
+          }
+        }
+        document.deleteString(closingMatcher.start(), closingMatcher.end());
+        document.deleteString(openingMatcher.start(), openingMatcher.end());
+        FileDocumentManager.getInstance().saveDocument(document);
+        placeholders.add(answerPlaceholder);
+        pos = answerPlaceholder.getOffset() + answerPlaceholder.getRealLength();
       }
-    }.execute();
-    return placeholders;
+      return placeholders;
+    });
   }
 
   public Pair<Document, List<AnswerPlaceholder>> getPlaceholders(String name) {

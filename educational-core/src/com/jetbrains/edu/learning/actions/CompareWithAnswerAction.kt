@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 import java.util.*
 
-class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare your solution with answer", AllIcons.Diff.Diff) {
+class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare your solution with answer", AllIcons.Actions.Diff) {
   companion object {
     const val ACTION_ID = "Educational.CompareWithAnswer"
   }

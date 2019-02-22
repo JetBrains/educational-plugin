@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class EditInputAction extends DumbAwareAction {
 
   private static final Logger LOG = Logger.getInstance(EditInputAction.class.getName());
@@ -64,7 +65,7 @@ public class EditInputAction extends DumbAwareAction {
       assert taskFile != null;
       final Task currentTask = taskFile.getTask();
       tabbedPane = new JBEditorTabs(project, ActionManager.getInstance(), IdeFocusManager.findInstance(), project);
-      tabbedPane.addListener(new TabsListener.Adapter() {
+      tabbedPane.addListener(new TabsListener() {
         @Override
         public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
           if (newSelection.getIcon() != null) {

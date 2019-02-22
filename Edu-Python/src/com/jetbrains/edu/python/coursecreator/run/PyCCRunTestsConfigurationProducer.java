@@ -19,6 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import static com.jetbrains.edu.python.learning.PyConfigurator.TESTS_PY;
 
 public class PyCCRunTestsConfigurationProducer extends RunConfigurationProducer<PyCCRunTestConfiguration> {
+  // BACKCOMPAT: 2018.3
+  @SuppressWarnings("deprecation")
   protected PyCCRunTestsConfigurationProducer() {
     super(PyCCRunTestsConfigurationType.getInstance());
   }

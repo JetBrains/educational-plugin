@@ -6,20 +6,19 @@ import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.util.PlatformUtils;
 
 @SuppressWarnings("ComponentNotRegistered") // Edu-Python.xml
-public class PyShowTutorial extends AbstractProjectComponent {
+public class PyShowTutorial implements ProjectComponent {
 
   private static final String POPUP_SHOWN = "StudyShowPopup";
   private final Project myProject;
 
   protected PyShowTutorial(Project project) {
-    super(project);
     myProject = project;
   }
 

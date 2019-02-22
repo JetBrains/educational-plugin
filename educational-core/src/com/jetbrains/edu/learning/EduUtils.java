@@ -9,12 +9,12 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.command.undo.UndoManager;
 import com.intellij.openapi.command.undo.UndoableAction;
+import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -232,6 +232,8 @@ public class EduUtils {
   @Nullable
   public static EduEditor getSelectedEduEditor(@NotNull final Project project) {
     try {
+      // BACKCOMPAT: 2018.2
+      @SuppressWarnings("deprecation")
       final FileEditor fileEditor = FileEditorManagerEx.getInstanceEx(project).getSplitters().getCurrentWindow().
         getSelectedEditor().getSelectedEditorWithProvider().getFirst();
       if (fileEditor instanceof EduEditor) {
@@ -721,18 +723,18 @@ public class EduUtils {
   }
 
   public static void runUndoableAction(Project project, String name, UndoableAction action, UndoConfirmationPolicy confirmationPolicy) {
-    new WriteCommandAction(project, name) {
-      protected void run(@NotNull final Result result) throws Throwable {
-        action.redo();
-        UndoManager.getInstance(project).undoableActionPerformed(action);
-      }
-
-      @NotNull
-      @Override
-      protected UndoConfirmationPolicy getUndoConfirmationPolicy() {
-        return confirmationPolicy;
-      }
-    }.execute();
+    try {
+      WriteCommandAction.writeCommandAction(project)
+        .withName(name)
+        .withUndoConfirmationPolicy(confirmationPolicy)
+        .run(() -> {
+          action.redo();
+          UndoManager.getInstance(project).undoableActionPerformed(action);
+        });
+    }
+    catch (UnexpectedUndoException e) {
+      LOG.error(e);
+    }
   }
 
   public static boolean isAndroidStudio() {

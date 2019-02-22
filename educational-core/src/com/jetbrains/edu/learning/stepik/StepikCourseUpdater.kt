@@ -246,6 +246,8 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   private fun removeExistingDir(studentTask: Task,
                                 lessonDir: VirtualFile?) {
     val taskDir = getTaskDir(studentTask.name, lessonDir)
+    // BACKCOMPAT: 2018.3
+    @Suppress("DEPRECATION")
     invokeAndWaitIfNeed { runWriteAction { taskDir?.delete(studentTask) } }
   }
 
@@ -313,6 +315,8 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   }
 
   private fun rename(dirToRename: VirtualFile, s: String) {
+    // BACKCOMPAT: 2018.3
+    @Suppress("DEPRECATION")
     invokeAndWaitIfNeed {
       runWriteAction {
         try {
@@ -374,6 +378,8 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     val directoryMap = if (item is Lesson) oldLessonDirectories else oldSectionDirectories
 
     val id = (item as? Lesson)?.id ?: (item as? Section)?.id
+    // BACKCOMPAT: 2018.3
+    @Suppress("DEPRECATION")
     invokeAndWaitIfNeed {
       runWriteAction {
         try {

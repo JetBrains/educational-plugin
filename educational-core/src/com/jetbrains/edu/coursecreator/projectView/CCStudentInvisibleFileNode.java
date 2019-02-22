@@ -40,6 +40,7 @@ public class CCStudentInvisibleFileNode extends PsiFileNode {
     data.addText(myName, SimpleTextAttributes.GRAY_ATTRIBUTES);
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public String getTestPresentation() {
     return CourseViewUtils.testPresentation(this);

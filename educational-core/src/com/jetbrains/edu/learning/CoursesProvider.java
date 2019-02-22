@@ -54,6 +54,8 @@ public interface CoursesProvider {
   }
 
   static List<Course> loadAllCourses() {
+    // BACKCOMPAT: 2018.2
+    //noinspection deprecation
     return loadAllCourses(Arrays.asList(Extensions.getExtensions(EP_NAME)));
   }
 }

@@ -19,6 +19,8 @@ public class TwitterAction implements CheckListener {
 
   @Override
   public void afterCheck(@NotNull Project project, @NotNull Task task, @NotNull CheckResult result) {
+    // BACKCOMPAT: 2018.2
+    //noinspection deprecation
     for (TwitterPluginConfigurator twitterPluginConfigurator : Extensions.getExtensions(TwitterPluginConfigurator.EP_NAME)) {
       if (twitterPluginConfigurator.askToTweet(project, task, myStatusBeforeCheck)) {
         TwitterUtils.createTwitterDialogAndShow(project, twitterPluginConfigurator, task);

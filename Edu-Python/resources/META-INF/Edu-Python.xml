@@ -27,7 +27,6 @@
   <project-components>
     <component>
       <implementation-class>com.jetbrains.edu.python.learning.PyShowTutorial</implementation-class>
-      <interface-class>com.jetbrains.edu.python.learning.PyShowTutorial</interface-class>
     </component>
   </project-components>
 

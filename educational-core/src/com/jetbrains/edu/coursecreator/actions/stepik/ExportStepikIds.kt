@@ -30,7 +30,7 @@ class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids
     val project = e.project ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
 
-    val serializer = JsonSerializer<StudyItem> { item, type, context ->
+    val serializer = JsonSerializer<StudyItem> { item, _, context ->
       val jsonObject = JsonObject()
       jsonObject.addProperty("title", item.name)
       jsonObject.addProperty("id", item.id)

@@ -46,6 +46,7 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
   // Inspired by [com.android.tools.idea.updater.configure.SdkUpdaterConfigPanel#setUpSingleSdkChooser]
   override fun actionPerformed(e: ActionEvent) {
     val host = DialogWrapperHost(null)
+    @Suppress("DEPRECATION")
     val wizard = object : DynamicWizard(null, null, "SDK Setup", host) {
       override fun init() {
         val progressStep = DownloadingComponentsStep(myHost.disposable, myHost)

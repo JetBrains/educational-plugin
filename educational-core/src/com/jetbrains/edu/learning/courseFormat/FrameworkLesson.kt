@@ -13,6 +13,7 @@ class FrameworkLesson() : Lesson() {
     taskList = lesson.taskList
     section = lesson.section
     index = lesson.index
+    @Suppress("DEPRECATION")
     customPresentableName = lesson.customPresentableName
   }
 

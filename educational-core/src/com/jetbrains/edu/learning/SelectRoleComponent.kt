@@ -3,14 +3,14 @@ package com.jetbrains.edu.learning
 import com.intellij.ide.AppLifecycleListener
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ApplicationComponent
+import com.intellij.openapi.components.BaseComponent
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.util.Ref
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.ui.SelectRolePanel
 
 
-class SelectRoleComponent : ApplicationComponent {
+class SelectRoleComponent : BaseComponent {
 
   override fun getComponentName() = "edu.selectRole"
 
