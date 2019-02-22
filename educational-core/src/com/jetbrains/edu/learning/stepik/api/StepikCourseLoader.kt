@@ -27,6 +27,7 @@ object StepikCourseLoader {
     val tasks = ContainerUtil.newArrayList<Callable<List<EduCourse>>>()
     tasks.add(Callable { getCourseInfos(true) })
     tasks.add(Callable { getCourseInfos(false) })
+    tasks.add(Callable { getFeaturedStepikCourses() })
     tasks.add(Callable { getInProgressCourses() })
 
     ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)
@@ -69,13 +70,27 @@ object StepikCourseLoader {
   }
 
   private fun getInProgressCourses(): List<EduCourse> {
+    val result = getListedStepikCourses(inProgressCourses)
+    for (inProgressCourse in result) {
+      inProgressCourse.visibility = CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(inProgressCourse.id))
+    }
+    return result
+  }
+
+  private fun getFeaturedStepikCourses(): List<EduCourse> {
+    val result = getListedStepikCourses(featuredStepikCourses.keys.toList())
+    for (stepikCourse in result) {
+      stepikCourse.language = featuredStepikCourses[stepikCourse.id]
+    }
+    return result
+  }
+
+  private fun getListedStepikCourses(courseIds: List<Int>) : List<EduCourse> {
     val result = ContainerUtil.newArrayList<EduCourse>()
-    for (courseId in inProgressCourses) {
+    for (courseId in courseIds) {
       val info = StepikConnector.getCourseInfo(courseId, false) ?: continue
       val compatibility = info.compatibility
       if (compatibility === CourseCompatibility.UNSUPPORTED) continue
-      val visibility = CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(info.id))
-      info.visibility = visibility
       result.add(info)
     }
     return result
