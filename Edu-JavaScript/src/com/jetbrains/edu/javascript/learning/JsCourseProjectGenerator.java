@@ -48,12 +48,12 @@ public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjec
 
   @Override
   protected void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {
-    if (myCourse.isStudy()) {
-      return;
-    }
     String packageJson = "package.json";
-    final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(packageJson);
-    VirtualFile packageJsonFile = GeneratorUtils.createChildFile(baseDir, packageJson, template.getText());
+    VirtualFile packageJsonFile = baseDir.findChild(packageJson);
+    if (packageJsonFile == null && !myCourse.isStudy()) {
+      final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(packageJson);
+      packageJsonFile = GeneratorUtils.createChildFile(baseDir, packageJson, template.getText());
+    }
 
     if (packageJsonFile != null && !OpenApiExtKt.isUnitTestMode()) {
       InstallNodeLocalDependenciesAction.runAndShowConsole(project, packageJsonFile);
