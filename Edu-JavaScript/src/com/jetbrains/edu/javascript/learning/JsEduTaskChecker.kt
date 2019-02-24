@@ -22,6 +22,8 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.wm.ToolWindowId
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
@@ -37,6 +39,11 @@ import java.util.concurrent.CountDownLatch
 
 class JsEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
   override fun check(indicator: ProgressIndicator): CheckResult {
+    if (task.course.isStudy) {
+      runInEdt {
+        ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
+      }
+    }
     val connection = project.messageBus.connect()
     val testResults = mutableListOf<CheckResult>()
     connection.subscribe(SMTRunnerEventsListener.TEST_STATUS, object : SMTRunnerEventsAdapter() {
@@ -98,7 +105,7 @@ class JsEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(t
   private fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
     return task.getAllTests(project).mapNotNull {
       val configuration = ConfigurationContext(it).configuration?.apply {
-        isActivateToolWindowBeforeRun = false
+        isActivateToolWindowBeforeRun = !task.course.isStudy
         isTemporary = true
       }
       configuration
