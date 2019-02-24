@@ -3,11 +3,9 @@
 package com.jetbrains.edu.learning.courseFormat.ext
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
@@ -98,21 +96,6 @@ fun Task.addDefaultTaskDescription() {
 fun Task.getDescriptionFile(project: Project): VirtualFile? {
   val taskDir = getTaskDir(project) ?: return null
   return taskDir.findChild(descriptionFormat.descriptionFileName)
-}
-
-fun Task.hasVisibleTaskFilesNotInsideSourceDir(project: Project): Boolean {
-  val taskDir = getDir(project) ?: error("Directory for task $name not found")
-  val sourceDir = findSourceDir(taskDir) ?: return false
-  return taskFiles.values.any {
-    if (!it.isVisible) return@any false
-    val virtualFile = it.getVirtualFile(project)
-    if (virtualFile == null) {
-      Logger.getInstance(Task::class.java).error("VirtualFile for ${it.name} not found")
-      return@any false
-    }
-
-    !VfsUtil.isAncestor(sourceDir, virtualFile, true)
-  }
 }
 
 private fun TaskFile.canShowSolution() =

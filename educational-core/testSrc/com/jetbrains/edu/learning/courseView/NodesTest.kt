@@ -240,8 +240,8 @@ class NodesTest: CourseViewTestBase() {
     }
   }
 
-  fun `test course with tests inside test dir`() {
-    courseWithFiles (courseMode = CCUtils.COURSE_MODE) {
+  private fun createCourseWithTestsInsideTestDir(courseMode: String = EduNames.STUDY) {
+    courseWithFiles(courseMode = courseMode) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -260,6 +260,10 @@ class NodesTest: CourseViewTestBase() {
         }
       }
     }
+  }
+
+  fun `test course with tests inside test dir`() {
+    createCourseWithTestsInsideTestDir(CCUtils.COURSE_MODE)
     assertCourseView("""
       |-Project
       | -CCCourseNode Test Course (Course Creation)
@@ -277,6 +281,23 @@ class NodesTest: CourseViewTestBase() {
       |     additionalFile3.txt
       |     CCStudentInvisibleFileNode additionalFile4.txt
       |    CCStudentInvisibleFileNode task.html
+    """.trimMargin("|"))
+  }
+
+  fun `test student course with tests inside test dir`() {
+    createCourseWithTestsInsideTestDir()
+    assertCourseView("""
+      |-Project
+      | -CourseNode Test Course  0/2
+      |  -LessonNode lesson1
+      |   -TaskNode task1
+      |    taskFile1.txt
+      |    taskFile2.txt
+      |   -TaskNode task2
+      |    additionalFile1.txt
+      |    additionalFile2.txt
+      |    -DirectoryNode folder
+      |     additionalFile3.txt
     """.trimMargin("|"))
   }
 
