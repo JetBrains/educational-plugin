@@ -6,6 +6,7 @@ import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.BrowserHyperlinkListener
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillTopic
@@ -21,6 +22,8 @@ class JHyperskillConfigurator : GradleConfiguratorBase() {
   override fun getTestFileName() = ""
   override fun getTaskCheckerProvider() = JHyperskillTaskCheckerProvider()
   override fun isCourseCreatorEnabled() = false
+
+  override fun isEnabled(): Boolean = !EduUtils.isAndroidStudio()
 
   override fun additionalTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
     if (currentTask == null) return null
