@@ -169,7 +169,8 @@ public class StepikTaskBuilder {
     String text = myStep.getText();
     Document parsedText = Jsoup.parse(text);
     for (Element element : parsedText.select("code")) {
-      String codeBlockWithoutTags = Jsoup.clean(element.html(), new Whitelist().addTags("br"));
+      Document.OutputSettings settings = new Document.OutputSettings().prettyPrint(false);
+      String codeBlockWithoutTags = Jsoup.clean(element.html(), "", new Whitelist().addTags("br"), settings);
       codeBlockWithoutTags = codeBlockWithoutTags.replace("<br>", "\n");
       codeBlockWithoutTags = codeBlockWithoutTags.replaceAll("[\n]+", "\n");
       element.html(codeBlockWithoutTags);
