@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.courseFormat;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,7 +87,7 @@ public class Section extends ItemContainer {
   @Override
   @Nullable
   public VirtualFile getDir(@NotNull Project project) {
-    return EduUtils.getCourseDir(project).findChild(getName());
+    return OpenApiExtKt.getCourseDir(project).findChild(getName());
   }
 
   @Transient

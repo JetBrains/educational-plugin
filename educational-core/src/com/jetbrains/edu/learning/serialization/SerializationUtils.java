@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -216,7 +217,7 @@ public class SerializationUtils {
     @Nullable
     public static VirtualFile getTaskDir(@NotNull Project project, @NotNull Element lesson, @NotNull Element task)
       throws StudyUnrecognizedFormatException {
-      final VirtualFile lessonDir = project.getBaseDir().findChild(EduNames.LESSON + getAsInt(lesson, INDEX));
+      final VirtualFile lessonDir = OpenApiExtKt.getCourseDir(project).findChild(EduNames.LESSON + getAsInt(lesson, INDEX));
       if (lessonDir == null) return null;
       VirtualFile taskDir = lessonDir.findChild(EduNames.TASK + getAsInt(task, INDEX));
       if (taskDir == null) {

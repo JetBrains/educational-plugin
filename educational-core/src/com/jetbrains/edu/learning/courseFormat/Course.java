@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import one.util.streamex.StreamEx;
@@ -159,7 +159,7 @@ public abstract class Course extends ItemContainer {
   @Override
   @NotNull
   public VirtualFile getDir(@NotNull Project project) {
-    return EduUtils.getCourseDir(project);
+    return OpenApiExtKt.getCourseDir(project);
   }
 
   @NotNull

@@ -33,7 +33,7 @@ fun VirtualFile.fileInfo(project: Project): FileInfo? {
 }
 
 private fun shouldIgnore(file: VirtualFile, project: Project): Boolean {
-  val courseDir = EduUtils.getCourseDir(project)
+  val courseDir = project.courseDir
   if (!FileUtil.isAncestor(courseDir.path, file.path, true)) return true
   val course = StudyTaskManager.getInstance(project).course ?: return true
   if (course.configurator?.excludeFromArchive(project, file) == true) return true

@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -51,7 +52,7 @@ abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: 
                              project: Project,
                              course: Course): Boolean {
     val section = course.getSection(sourceDirectory.name)
-    return section != null || sourceDirectory == EduUtils.getCourseDir(project)
+    return section != null || sourceDirectory == project.courseDir
   }
 
   override fun sortSiblings(course: Course, parentItem: StudyItem?) {

@@ -6,6 +6,7 @@ import com.jetbrains.edu.integration.stepik.addNewSection
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.*
 
@@ -40,7 +41,7 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
 
 
     val courseFromServer = localCourse.copy() as EduCourse
-    addNewLesson("lesson2", 2, localCourse, localCourse, EduUtils.getCourseDir(project))
+    addNewLesson("lesson2", 2, localCourse, localCourse, project.courseDir)
     StepikChangeRetriever(project, courseFromServer).setStepikChangeStatuses()
     checkStatus(localCourse, CONTENT)
   }
@@ -56,7 +57,7 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
 
 
     val courseFromServer = localCourse.copy() as EduCourse
-    addNewSection("section1", 2, localCourse, EduUtils.getCourseDir(project))
+    addNewSection("section1", 2, localCourse, project.courseDir)
 
     StepikChangeRetriever(project, courseFromServer).setStepikChangeStatuses()
     checkStatus(localCourse, CONTENT)

@@ -156,7 +156,7 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
   private fun generateJson(): String {
     val baseDir = myFixture.project.baseDir
     VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
-    val created = CCCreateCourseArchive.createCourseArchive(myFixture.module, "course",
+    val created = CCCreateCourseArchive.createCourseArchive(myFixture.project, "course",
                                                             myFixture.project.basePath + "/" + GENERATED_FILES_FOLDER,
                                                             false)
     TestCase.assertTrue(created)

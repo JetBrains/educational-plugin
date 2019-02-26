@@ -7,10 +7,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushSection
-import com.jetbrains.edu.learning.CourseBuilder
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -82,8 +79,7 @@ open class StepikIntegrationTest : StepikTestCase() {
       }
     }
 
-    val newLesson = addNewLesson("lesson3", 3, localCourse, localCourse,
-                                 EduUtils.getCourseDir(project))
+    val newLesson = addNewLesson("lesson3", 3, localCourse, localCourse, project.courseDir)
     CCPushLesson.doPush(newLesson, project, localCourse)
 
     checkTopLevelLessons(localCourse)
@@ -177,7 +173,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     }
 
     val section = localCourse.getSection("section1")
-    val newLesson = addNewLesson("lesson3", 3, localCourse, section!!, EduUtils.getCourseDir(project))
+    val newLesson = addNewLesson("lesson3", 3, localCourse, section!!, project.courseDir)
     CCPushLesson.doPush(newLesson, project, StudyTaskManager.getInstance(project).course)
 
     checkSections(localCourse)
@@ -200,7 +196,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     }
 
     val section = localCourse.getSection("section1")
-    val newLesson = addNewLesson("lesson3", 3, localCourse, section!!, EduUtils.getCourseDir(project))
+    val newLesson = addNewLesson("lesson3", 3, localCourse, section!!, project.courseDir)
 
     CCPushLesson.doPush(newLesson, project, StudyTaskManager.getInstance(project).course)
 
@@ -218,7 +214,7 @@ open class StepikIntegrationTest : StepikTestCase() {
       }
     }
 
-    val newSection = addNewSection("section2", 2, localCourse, EduUtils.getCourseDir(project))
+    val newSection = addNewSection("section2", 2, localCourse, project.courseDir)
     CCPushSection.doPush(project, newSection, localCourse)
 
     checkSections(localCourse)

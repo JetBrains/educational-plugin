@@ -187,10 +187,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   private void updateTestHelper() {
     if (myProject == null) return;
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      final VirtualFile baseDir = myProject.getBaseDir();
-      if (baseDir == null) {
-        return;
-      }
+      final VirtualFile baseDir = OpenApiExtKt.getCourseDir(myProject);
       final VirtualFile testHelper = baseDir.findChild(EduNames.TEST_HELPER);
       if (testHelper != null) {
         EduUtils.deleteFile(testHelper);

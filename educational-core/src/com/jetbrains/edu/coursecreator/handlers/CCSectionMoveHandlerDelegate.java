@@ -20,7 +20,7 @@ import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Section;
@@ -93,7 +93,7 @@ public class CCSectionMoveHandlerDelegate extends MoveHandlerDelegate {
     int sourceSectionIndex = sourceSection.getIndex();
     sourceSection.setIndex(-1);
 
-    final VirtualFile[] itemDirs = EduUtils.getCourseDir(project).getChildren();
+    final VirtualFile[] itemDirs = OpenApiExtKt.getCourseDir(project).getChildren();
     CCUtils.updateHigherElements(itemDirs, file -> course.getItem(file.getName()), sourceSectionIndex, -1);
 
     final int newItemIndex = targetItem.getIndex() + delta;

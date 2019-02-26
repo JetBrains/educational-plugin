@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.io.FileUtil
@@ -19,7 +19,7 @@ import java.io.IOException
 import javax.swing.JComponent
 
 class CCCreateCoursePreviewDialog(
-  private val myModule: Module,
+  private val myProject: Project,
   private val myCourse: Course,
   private val myConfigurator: EduConfigurator<*>
 ) : DialogWrapper(true) {
@@ -39,7 +39,7 @@ class CCCreateCoursePreviewDialog(
   override fun createCenterPanel(): JComponent = myPanel
 
   override fun doOKAction() {
-    val folder = CCUtils.getGeneratedFilesFolder(myModule)
+    val folder = CCUtils.getGeneratedFilesFolder(myProject)
     if (folder == null) {
       showErrorMessage()
       return
@@ -48,7 +48,7 @@ class CCCreateCoursePreviewDialog(
     val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
     val locationDir = folder.path
     close(OK_EXIT_CODE)
-    val isSuccessful = CCCreateCourseArchive.createCourseArchive(myModule, archiveName, locationDir, false)
+    val isSuccessful = CCCreateCourseArchive.createCourseArchive(myProject, archiveName, locationDir, false)
 
     if (isSuccessful) {
       val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")

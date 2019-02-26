@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduNames;
@@ -41,10 +42,8 @@ class PyTestRunner {
     myCommandLine.withWorkDirectory(myTaskDir.getPath());
     final Map<String, String> env = myCommandLine.getEnvironment();
 
-    final VirtualFile courseDir = project.getBaseDir();
-    if (courseDir != null) {
-      env.put(PYTHONPATH, courseDir.getPath());
-    }
+    final VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
+    env.put(PYTHONPATH, courseDir.getPath());
     if (sdk != null) {
       String pythonPath = sdk.getHomePath();
       if (pythonPath != null) {

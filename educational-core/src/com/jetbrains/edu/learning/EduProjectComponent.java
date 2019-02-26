@@ -132,7 +132,7 @@ public class EduProjectComponent implements ProjectComponent {
     }
 
     // Android Studio creates `gradlew` not via VFS so we have to refresh project dir
-    VfsUtil.markDirtyAndRefresh(false, true, true, myProject.getBaseDir());
+    VfsUtil.markDirtyAndRefresh(false, true, true, OpenApiExtKt.getCourseDir(myProject));
     String projectBasePath = myProject.getBasePath();
     if (projectBasePath != null) {
       // Android Studio creates non executable `gradlew`

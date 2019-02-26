@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -48,7 +48,7 @@ public class CCWrapWithSection extends DumbAwareAction {
     final int sectionIndex = course.getSections().size() + 1;
     final String sectionName = Messages.showInputDialog("Enter Section Name", SECTION, null,
                                                         SECTION.toLowerCase() + sectionIndex,
-                                                        new CCUtils.PathInputValidator(EduUtils.getCourseDir(project)));
+                                                        new CCUtils.PathInputValidator(OpenApiExtKt.getCourseDir(project)));
     if (sectionName == null) {
       return;
     }

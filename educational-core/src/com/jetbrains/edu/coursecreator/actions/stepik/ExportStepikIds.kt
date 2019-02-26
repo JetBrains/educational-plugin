@@ -10,6 +10,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -57,7 +58,7 @@ class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids
     val gson = GsonBuilder().registerTypeAdapter(StudyItem::class.java, serializer).setPrettyPrinting().create()
     val json = gson.toJson(course, StudyItem::class.java)
     runWriteAction {
-      val stepikIdsFile = EduUtils.getCourseDir(project).findOrCreateChildData(this, EduNames.STEPIK_IDS_JSON)
+      val stepikIdsFile = project.courseDir.findOrCreateChildData(this, EduNames.STEPIK_IDS_JSON)
       VfsUtil.saveText(stepikIdsFile, json)
       FileEditorManager.getInstance(project).openFile(stepikIdsFile, true)
     }

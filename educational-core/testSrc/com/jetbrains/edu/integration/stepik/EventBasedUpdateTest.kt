@@ -4,9 +4,9 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.CONTENT
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.INFO
@@ -320,7 +320,7 @@ class EventBasedUpdateTest : StepikTestCase() {
 
     newLesson.init(courseToInit, parent, false)
     parent.addLesson(newLesson)
-    val courseDir = EduUtils.getCourseDir(project)
+    val courseDir = project.courseDir
     if (parent is Course) {
       GeneratorUtils.createLesson(newLesson, courseDir)
     }
@@ -346,7 +346,7 @@ class EventBasedUpdateTest : StepikTestCase() {
     val newSection = course.getSection(name)!!
     newSection.index = index
     newSection.course = course
-    GeneratorUtils.createSection(newSection, EduUtils.getCourseDir(project))
+    GeneratorUtils.createSection(newSection, project.courseDir)
     return newSection
   }
 

@@ -14,10 +14,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.*
@@ -194,6 +191,6 @@ private fun getSelectedFile(project: Project): VirtualFile? {
 fun Task.hasSeparateModule(project: Project): Boolean {
   val taskDir = getTaskDir(project) ?: error("Dir for task $name not found")
   val taskModule = ModuleUtil.findModuleForFile(taskDir, project) ?: error("Module for task $name not found")
-  val courseModule = ModuleUtil.findModuleForFile(EduUtils.getCourseDir(project), project)
+  val courseModule = ModuleUtil.findModuleForFile(project.courseDir, project)
   return taskModule != courseModule
 }

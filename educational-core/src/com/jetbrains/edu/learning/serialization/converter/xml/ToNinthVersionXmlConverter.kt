@@ -3,8 +3,9 @@ package com.jetbrains.edu.learning.serialization.converter.xml
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.*
@@ -22,41 +23,35 @@ class ToNinthVersionXmlConverter : XmlConverter {
     val clone = state.clone()
     val taskManagerElement = clone.getChild(MAIN_ELEMENT)
     val courseElement = getCourseElement(taskManagerElement)
+    val courseDir = project.courseDir
     for (lesson in getChildList(courseElement, LESSONS)) {
-      val lessonDir = EduUtils.getCourseDir(project).findChild(EduNames.LESSON + getAsInt(lesson, INDEX)) ?: throw StudyUnrecognizedFormatException()
+      val lessonDir = courseDir.findChild(EduNames.LESSON + getAsInt(lesson, INDEX)) ?: throw StudyUnrecognizedFormatException()
       for (task in getChildList(lesson, TASK_LIST)) {
         val taskDir = lessonDir.findChild(EduNames.TASK + getAsInt(task, INDEX)) ?: throw StudyUnrecognizedFormatException()
-        ApplicationManager.getApplication().invokeAndWait {
-          runWriteAction {
-            val taskName = getName(task)
-            val uniqueValidName = GeneratorUtils.getUniqueValidName(lessonDir, taskName)
-            val nameElement = getChildWithName(task, NAME)
-            if (nameElement != null && uniqueValidName != taskName) {
-              changeValue(nameElement, uniqueValidName)
-              addChildWithName(task, CUSTOM_NAME, taskName)
-            }
-            taskDir.rename(ToNinthVersionXmlConverter::class.java, uniqueValidName)
-          }
-        }
+        getUniqueName(task, lessonDir, taskDir)
         removeSubtaskInfos(task)
         migrateDescription(task)
       }
-      ApplicationManager.getApplication().invokeAndWait {
-        runWriteAction {
-          val lessonName = getName(lesson)
-          val uniqueValidName = GeneratorUtils.getUniqueValidName(project.baseDir, lessonName)
-          val nameElement = getChildWithName(lesson, NAME)
-          if (nameElement != null && uniqueValidName != lessonName) {
-            changeValue(nameElement, uniqueValidName)
-            addChildWithName(lesson, CUSTOM_NAME, lessonName)
-          }
-          lessonDir.rename(ToNinthVersionXmlConverter::class.java, uniqueValidName)
-        }
-      }
+      getUniqueName(lesson, courseDir, lessonDir)
     }
     val lessons = getChildWithName(courseElement, LESSONS)
     renameElement(lessons, ITEMS)
     return clone
+  }
+
+  private fun getUniqueName(studyItem: Element, parentItemDir: VirtualFile, itemDir: VirtualFile) {
+    ApplicationManager.getApplication().invokeAndWait {
+      runWriteAction {
+        val taskName = getName(studyItem)
+        val uniqueValidName = GeneratorUtils.getUniqueValidName(parentItemDir, taskName)
+        val nameElement = getChildWithName(studyItem, NAME)
+        if (nameElement != null && uniqueValidName != taskName) {
+          changeValue(nameElement, uniqueValidName)
+          addChildWithName(studyItem, CUSTOM_NAME, taskName)
+        }
+        itemDir.rename(ToNinthVersionXmlConverter::class.java, uniqueValidName)
+      }
+    }
   }
 
   @Throws(StudyUnrecognizedFormatException::class)

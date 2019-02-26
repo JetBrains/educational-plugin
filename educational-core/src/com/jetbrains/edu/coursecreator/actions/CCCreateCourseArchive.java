@@ -6,8 +6,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -52,17 +50,13 @@ public class CCCreateCourseArchive extends DumbAwareAction {
   public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
-    final VirtualFile baseDir = project.getBaseDir();
-    if (baseDir == null) return;
-    Module module = ModuleUtilCore.findModuleForFile(baseDir, project);
-    if (module == null) return;
 
     CCCreateCourseArchiveDialog dlg = new CCCreateCourseArchiveDialog(project, this);
     dlg.show();
     if (dlg.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
       return;
     }
-    boolean isSuccessful = createCourseArchive(module, myZipName, myLocationDir, true);
+    boolean isSuccessful = createCourseArchive(project, myZipName, myLocationDir, true);
     if (isSuccessful) {
       PropertiesComponent.getInstance(project).setValue(LAST_ARCHIVE_LOCATION, myLocationDir);
       EduUsagesCollector.createdCourseArchive();
@@ -75,14 +69,14 @@ public class CCCreateCourseArchive extends DumbAwareAction {
   /**
    * @return true if course archive was created successfully, false otherwise
    */
-  public static boolean createCourseArchive(Module module, String zipName, String locationDir, boolean showMessage) {
-    VirtualFile jsonFolder = CCUtils.generateFolder(module, zipName);
+  public static boolean createCourseArchive(@NotNull Project project, String zipName, String locationDir, boolean showMessage) {
+    VirtualFile jsonFolder = CCUtils.generateFolder(project, zipName);
     if (jsonFolder == null) {
       return false;
     }
     FileDocumentManager.getInstance().saveAllDocuments();
     final File zipFile = new File(locationDir, zipName + ".zip");
     return ApplicationManager.getApplication()
-      .runWriteAction(new CourseArchiveCreator(module.getProject(), jsonFolder, zipFile, showMessage));
+      .runWriteAction(new CourseArchiveCreator(project, jsonFolder, zipFile, showMessage));
   }
 }

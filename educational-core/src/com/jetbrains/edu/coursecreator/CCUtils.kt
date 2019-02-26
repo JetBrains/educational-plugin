@@ -10,7 +10,7 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
@@ -24,10 +24,7 @@ import com.intellij.util.Function
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
-import com.jetbrains.edu.learning.EduDocumentTransformListener
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -73,15 +70,20 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun getGeneratedFilesFolder(module: Module): VirtualFile? {
-    val baseDir = module.project.baseDir
+  fun getGeneratedFilesFolder(project: Project): VirtualFile? {
+    // TODO: come up with a way not to use `Project#getBaseDir`.
+    //  Currently, it's supposed that created file path is path in local file system
+    //  because it's used for zip archive creation where API uses IO Files instead of virtual files
+    @Suppress("DEPRECATION")
+    val baseDir = project.baseDir
     val folder = baseDir.findChild(GENERATED_FILES_FOLDER)
     if (folder != null) return folder
     return runWriteAction {
       try {
         val generatedRoot = baseDir.createChildDirectory(this, GENERATED_FILES_FOLDER)
-        val contentRootForFile = ProjectRootManager.getInstance(module.project).fileIndex.getContentRootForFile(generatedRoot)
+        val contentRootForFile = ProjectRootManager.getInstance(project).fileIndex.getContentRootForFile(generatedRoot)
                                  ?: return@runWriteAction generatedRoot
+        val module = ModuleUtilCore.findModuleForFile(baseDir, project) ?: return@runWriteAction generatedRoot
         ModuleRootModificationUtil.updateExcludedFolders(module, contentRootForFile, emptyList(), listOf(generatedRoot.url))
         generatedRoot
       } catch (e: IOException) {
@@ -92,8 +94,8 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun generateFolder(module: Module, name: String): VirtualFile? {
-    val generatedRoot = getGeneratedFilesFolder(module) ?: return null
+  fun generateFolder(project: Project, name: String): VirtualFile? {
+    val generatedRoot = getGeneratedFilesFolder(project) ?: return null
 
     var folder = generatedRoot.findChild(name)
     //need to delete old folder
@@ -127,7 +129,7 @@ object CCUtils {
     val configurator = course.configurator
     val sanitizedName = FileUtil.sanitizeFileName(course.name)
     val archiveName = String.format("%s.zip", if (sanitizedName.startsWith("_")) EduNames.COURSE else sanitizedName)
-    val baseDir = EduUtils.getCourseDir(project)
+    val baseDir = project.courseDir
 
     val additionalTaskFiles = mutableListOf<TaskFile>()
     VfsUtilCore.visitChildrenRecursively(baseDir, object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
@@ -182,7 +184,7 @@ object CCUtils {
   }
 
   private fun initializeSectionPlaceholders(project: Project, section: Section) {
-    EduUtils.getCourseDir(project).findChild(section.name) ?: return
+    project.courseDir.findChild(section.name) ?: return
     for (item in section.lessons) {
       initializeLessonPlaceholders(project, item)
     }
@@ -295,7 +297,7 @@ object CCUtils {
 
     val delta = -lessonsToWrap.size + 1
 
-    updateHigherElements(EduUtils.getCourseDir(project).children, Function { file ->  course.getItem(file.name) }, maxIndex, delta)
+    updateHigherElements(project.courseDir.children, Function { file ->  course.getItem(file.name) }, maxIndex, delta)
     course.addItem(section, section.index - 1)
     synchronizeChanges(project, course, section)
     return section
@@ -339,7 +341,7 @@ object CCUtils {
   fun createSectionDir(project: Project, sectionName: String): VirtualFile? {
     return ApplicationManager.getApplication().runWriteAction(Computable<VirtualFile> {
       try {
-        return@Computable VfsUtil.createDirectoryIfMissing(EduUtils.getCourseDir(project), sectionName)
+        return@Computable VfsUtil.createDirectoryIfMissing(project.courseDir, sectionName)
       }
       catch (e1: IOException) {
         LOG.error("Failed to create directory for section $sectionName")
@@ -352,7 +354,7 @@ object CCUtils {
   @JvmStatic
   fun lessonFromDir(course: Course, lessonDir: PsiDirectory, project: Project): Lesson? {
     val parentDir = lessonDir.parent
-    if (parentDir != null && parentDir.name == EduUtils.getCourseDir(project).name) {
+    if (parentDir != null && parentDir.name == project.courseDir.name) {
       return course.getLesson(lessonDir.name)
     }
     else {

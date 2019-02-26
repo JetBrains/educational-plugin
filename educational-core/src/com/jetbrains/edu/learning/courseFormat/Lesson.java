@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import kotlin.collections.CollectionsKt;
@@ -169,7 +169,7 @@ public class Lesson extends StudyItem {
 
   @Nullable
   public VirtualFile getLessonDir(@NotNull final Project project) {
-    VirtualFile courseDir = EduUtils.getCourseDir(project);
+    VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
 
     if (mySection == null) {
       return courseDir.findChild(getName());

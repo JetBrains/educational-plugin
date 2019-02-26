@@ -6,6 +6,7 @@ import com.jetbrains.edu.integration.stepik.addNewSection
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 
 class StepikCompareCourseTest : EduTestCase() {
@@ -39,8 +40,7 @@ class StepikCompareCourseTest : EduTestCase() {
     }.asRemote()
 
     val courseFromServer = localCourse.copy() as EduCourse
-    val newLesson = addNewLesson("lesson2", 2, localCourse, localCourse,
-                                                                      EduUtils.getCourseDir(project))
+    val newLesson = addNewLesson("lesson2", 2, localCourse, localCourse, project.courseDir)
     val expectedInfo = StepikChangesInfo(newLessons = arrayListOf(newLesson))
 
     checkChangedItems(courseFromServer, expectedInfo)
@@ -57,7 +57,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
 
     val courseFromServer = localCourse.copy() as EduCourse
-    val newSection = addNewSection("section1", 2, localCourse, EduUtils.getCourseDir(project))
+    val newSection = addNewSection("section1", 2, localCourse, project.courseDir)
     val expectedInfo = StepikChangesInfo(newSections = arrayListOf(newSection), newLessons = newSection.lessons)
 
     checkChangedItems(courseFromServer, expectedInfo)

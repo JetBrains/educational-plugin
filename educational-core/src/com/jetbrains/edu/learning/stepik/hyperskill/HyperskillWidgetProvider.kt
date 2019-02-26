@@ -6,13 +6,14 @@ import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetProvider
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class HyperskillWidgetProvider : StatusBarWidgetProvider {
   override fun getWidget(project: Project): StatusBarWidget? {
     if (EduUtils.isStudyProject(project)) {
-      val baseDir = project.baseDir
+      val baseDir = project.courseDir
       val courseType = baseDir.getUserData(CourseProjectGenerator.COURSE_TYPE_TO_CREATE)
       if (courseType == HYPERSKILL || StudyTaskManager.getInstance(project).course is HyperskillCourse) {
         return HyperskillWidget()

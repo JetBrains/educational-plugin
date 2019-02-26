@@ -107,7 +107,7 @@ class StepikStatusesTest: EduActionTestCase() {
       }
     }.asRemote()
 
-    val projectDir = EduUtils.getCourseDir(project)
+    val projectDir = project.courseDir
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
       testAction(dataContext(projectDir), CCCreateLesson())
     }
@@ -281,7 +281,7 @@ class StepikStatusesTest: EduActionTestCase() {
       }
     }.asRemote()
 
-    val sectionDir = EduUtils.getCourseDir(project).findChild(course.sections[0].name)
+    val sectionDir = project.courseDir.findChild(course.sections[0].name)
 
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson3")) {
       testAction(dataContext(sectionDir!!), CCCreateLesson())

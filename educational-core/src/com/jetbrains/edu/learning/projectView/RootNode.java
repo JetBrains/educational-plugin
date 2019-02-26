@@ -11,6 +11,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.projectView.CCCourseNode;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ public class RootNode extends ProjectViewProjectNode {
     else {
       final ArrayList<AbstractTreeNode> nodes = new ArrayList<>();
       if (!ApplicationManager.getApplication().isUnitTestMode()) {
-        final PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(myProject.getBaseDir());
+        final PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(OpenApiExtKt.getCourseDir(myProject));
         addCourseNode(course, nodes, psiDirectory);
       }
       else {

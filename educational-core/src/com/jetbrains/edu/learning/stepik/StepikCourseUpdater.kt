@@ -14,6 +14,7 @@ import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils.showNotification
 import com.jetbrains.edu.learning.EduUtils.synchronize
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -72,7 +73,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   private fun processNewLessons(courseFromServer: Course) {
     val newLessons = courseFromServer.lessons.filter { course.getLesson(it.id) == null }
     if (!newLessons.isEmpty()) {
-      createNewLessons(newLessons, project.baseDir)
+      createNewLessons(newLessons, project.courseDir)
     }
   }
 
@@ -202,7 +203,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
 
   private fun updateAdditionalMaterialsFiles(courseFromServer: Course) {
     val filesToCreate = courseFromServer.additionalFiles
-    val baseDir = project.baseDir
+    val baseDir = project.courseDir
     for (file in filesToCreate) {
       GeneratorUtils.createChildFile(baseDir, file.name, file.text)
     }
@@ -302,15 +303,15 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   }
 
   private fun createNewSections(project: Project, newSections: List<Section>) {
+    val baseDir = project.courseDir
     for (section in newSections) {
-      val baseDir = project.baseDir
       val sectionDir = baseDir.findChild(section.name)
       if (directoryAlreadyExists(sectionDir)) {
         saveExistingDirectory(sectionDir!!, section)
       }
 
       section.init(course, course, false)
-      GeneratorUtils.createSection(section, project.baseDir)
+      GeneratorUtils.createSection(section, baseDir)
     }
   }
 
@@ -367,7 +368,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
 
   private fun itemDir(item: StudyItem): VirtualFile? {
     return if (item is Section) {
-      project.baseDir.findChild(item.name)
+      project.courseDir.findChild(item.name)
     }
     else {
       (item as Lesson).getLessonDir(project)

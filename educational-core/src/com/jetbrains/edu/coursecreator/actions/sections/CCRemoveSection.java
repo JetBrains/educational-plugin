@@ -15,7 +15,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -51,14 +51,14 @@ public class CCRemoveSection extends DumbAwareAction {
       return;
     }
     final VirtualFile[] sectionChildren = VfsUtil.getChildren(file);
+    final VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
     for (VirtualFile child : sectionChildren) {
-      if (project.getBaseDir().findChild(child.getName()) != null) {
+      if (courseDir.findChild(child.getName()) != null) {
         Messages.showInfoMessage("Can't unwrap lesson " + child.getName() + ". Course contains directory " +
                                  "with the same name already.", "Unwrap Section Failed");
         return;
       }
     }
-    final VirtualFile courseDir = EduUtils.getCourseDir(project);
     if (removeSectionDir(file, courseDir)) {
       final List<Lesson> lessonsFromSection = section.getLessons();
       final int sectionIndex = section.getIndex();

@@ -26,11 +26,8 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
@@ -256,9 +253,10 @@ public class EduUtils {
   }
 
   public static boolean isRenameAndMoveForbidden(@NotNull final Project project, @NotNull final Course course, @NotNull final PsiElement element) {
+    VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
     if (element instanceof PsiFile) {
       VirtualFile virtualFile = ((PsiFile)element).getVirtualFile();
-      if (project.getBaseDir().equals(virtualFile.getParent())) {
+      if (courseDir.equals(virtualFile.getParent())) {
         return false;
       }
       TaskFile file = getTaskFile(project, virtualFile);
@@ -273,7 +271,7 @@ public class EduUtils {
       if (parent == null) {
         return true;
       }
-      if (project.getBaseDir().equals(parent)) {
+      if (courseDir.equals(parent)) {
         return false;
       }
       Lesson lesson = getLesson(parent, course);
@@ -364,10 +362,7 @@ public class EduUtils {
 
   @Nullable
   public static String getCourseModeForNewlyCreatedProject(@NotNull Project project) {
-    VirtualFile baseDir = project.getBaseDir();
-    if (baseDir == null) {
-      return null;
-    }
+    VirtualFile baseDir = OpenApiExtKt.getCourseDir(project);
     return baseDir.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE);
   }
 
@@ -408,15 +403,6 @@ public class EduUtils {
       file = lessonDirCandidate;
     }
     return null;
-  }
-
-  @NotNull
-  public static VirtualFile getCourseDir(@NotNull Project project) {
-    if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      return project.getBaseDir();
-    }
-    Module module = ModuleManager.getInstance(project).getModules()[0];
-    return ModuleRootManager.getInstance(module).getContentRoots()[0];
   }
 
   @Nullable

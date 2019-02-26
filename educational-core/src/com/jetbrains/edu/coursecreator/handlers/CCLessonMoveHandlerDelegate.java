@@ -23,6 +23,7 @@ import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import org.jetbrains.annotations.NotNull;
@@ -163,7 +164,7 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
   }
 
   private static StudyItem getTargetItem(@NotNull Course course, @NotNull VirtualFile targetVFile, @NotNull Project project) {
-    if (targetVFile.equals(EduUtils.getCourseDir(project))) return course;
+    if (targetVFile.equals(OpenApiExtKt.getCourseDir(project))) return course;
     StudyItem targetItem = course.getItem(targetVFile.getName());
     if (targetItem == null) {
       targetItem = EduUtils.getLesson(targetVFile, course);

@@ -8,7 +8,7 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase;
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo;
 import com.jetbrains.edu.coursecreator.actions.StudyItemType;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Section;
@@ -69,7 +69,7 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   protected boolean isAddedAsLast(@NotNull VirtualFile sourceDirectory,
                                   @NotNull Project project,
                                   @NotNull Course course) {
-    return sourceDirectory.equals(EduUtils.getCourseDir(project));
+    return sourceDirectory.equals(OpenApiExtKt.getCourseDir(project));
   }
 
   @Override
