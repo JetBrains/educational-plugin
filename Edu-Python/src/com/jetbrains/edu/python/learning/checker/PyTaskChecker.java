@@ -133,7 +133,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
     String stderr = output.getStderr();
     if (!stderr.isEmpty() && output.getStdout().isEmpty()) {
       LOG.info("#educational " + stderr);
-      return new CheckResult(CheckStatus.Failed, stderr, null, false);
+      return new CheckResult(CheckStatus.Failed, stderr, null, null, false);
     }
     return TestsOutputParser.getCheckResult(output.getStdoutLines(), false);
   }

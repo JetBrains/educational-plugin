@@ -7,6 +7,7 @@ class CheckResult @JvmOverloads constructor(
   val status: CheckStatus,
   val message: String,
   val details: String? = null,
+  val diff: CheckResultDiff? = null,
   private val needEscape: Boolean = true
 ) {
 
@@ -24,3 +25,5 @@ class CheckResult @JvmOverloads constructor(
     @JvmField val CONNECTION_FAILED = CheckResult(CheckStatus.Unchecked, "Connection failed")
   }
 }
+
+data class CheckResultDiff(val title: String, val expected: String, val actual: String)

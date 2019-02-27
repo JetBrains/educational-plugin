@@ -29,6 +29,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -142,8 +143,9 @@ class JsEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(t
     })
 
     val firstFailedTest = failedChildren.firstOrNull() ?: error("Testing failed although no failed tests found")
+    val diff = firstFailedTest.diffViewerProvider?.let { CheckResultDiff(it.diffTitle, it.left, it.right) }
 
-    return CheckResult(CheckStatus.Failed, removeAttributes(firstFailedTest.errorMessage))
+    return CheckResult(CheckStatus.Failed, removeAttributes(firstFailedTest.errorMessage), diff = diff)
   }
 
   /**

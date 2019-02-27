@@ -1,5 +1,9 @@
 package com.jetbrains.edu.learning.ui.taskDescription.check
 
+import com.intellij.diff.DiffContentFactory
+import com.intellij.diff.DiffDialogHints
+import com.intellij.diff.DiffManager
+import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -14,6 +18,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -28,10 +33,7 @@ import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
 import kotlinx.css.CSSBuilder
 import kotlinx.css.body
 import java.awt.BorderLayout
-import javax.swing.Icon
-import javax.swing.JEditorPane
-import javax.swing.JPanel
-import javax.swing.JTextPane
+import javax.swing.*
 
 class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) : JPanel(BorderLayout()) {
   init {
@@ -95,12 +97,33 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
     }
 
-    if (EduUtils.isStudentProject(project) && task.course !is CourseraCourse && task.canShowSolution()) {
-      val peekSolution = LightColoredActionLink("Peek Solution...",
-                                                ActionManager.getInstance().getAction(CompareWithAnswerAction.ACTION_ID))
-      linksPanel.add(peekSolution, BorderLayout.CENTER)
+    if (EduUtils.isStudentProject(project) && task.course !is CourseraCourse) {
+      val answerHintsPanel = createAnswerHintsPanel(project, task, checkResult)
+      if (answerHintsPanel != null) {
+        linksPanel.add(answerHintsPanel, BorderLayout.CENTER)
+      }
     }
     return linksPanel
+  }
+
+  private fun createAnswerHintsPanel(project: Project, task: Task, checkResult: CheckResult): JPanel? {
+    val answerHintsPanel = lazy(LazyThreadSafetyMode.NONE) {
+      val panel = JPanel()
+      panel.layout = BoxLayout(panel, BoxLayout.X_AXIS)
+      panel
+    }
+
+    if (task.canShowSolution()) {
+      val peekSolution = LightColoredActionLink("Peek Solution...",
+                                                ActionManager.getInstance().getAction(CompareWithAnswerAction.ACTION_ID))
+      answerHintsPanel.value.add(peekSolution)
+    }
+
+    if (checkResult.diff != null) {
+      val compareOutputs = LightColoredActionLink("Compare Outputs...", CompareOutputsAction(project, checkResult.diff))
+      answerHintsPanel.value.add(compareOutputs)
+    }
+    return if (answerHintsPanel.isInitialized()) answerHintsPanel.value else null
   }
 
   private fun JEditorPane.plainText() = document.getText(0, document.length)
@@ -108,7 +131,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
   class LightColoredActionLink(text: String, action: AnAction, icon: Icon? = null): ActionLink(text, icon, action) {
     init {
       setNormalColor(JBColor(0x6894C6, 0x5C84C9))
-      border = JBUI.Borders.empty(16, 0, 0, 0)
+      border = JBUI.Borders.empty(16, 0, 0, 16)
     }
   }
 
@@ -129,6 +152,15 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
           EduUsagesCollector.reviewStageTopics()
         }
       }
+    }
+  }
+
+  private class CompareOutputsAction(private val project: Project, private val diff: CheckResultDiff): DumbAwareAction(null) {
+    override fun actionPerformed(e: AnActionEvent) {
+      val expected = DiffContentFactory.getInstance().create(diff.expected)
+      val actual = DiffContentFactory.getInstance().create(diff.actual)
+      val request = SimpleDiffRequest(diff.title, expected, actual, "Expected", "Actual")
+      DiffManager.getInstance().showDiff(project, request, DiffDialogHints.FRAME)
     }
   }
 
