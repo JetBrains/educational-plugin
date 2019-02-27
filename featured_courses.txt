@@ -6,4 +6,4 @@
 3213 # Python Unit-Testing Course
 3212 # Django Tutorial
 2057 # Python. Functional Programming
-3432 JavaScript # JavaScript for Beginners
+3432 # JavaScript for Beginners
