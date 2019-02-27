@@ -82,7 +82,7 @@ object StepikCourseLoader {
     for (stepikCourse in result) {
       stepikCourse.language = featuredStepikCourses[stepikCourse.id]
     }
-    return result.filter { it.isCompatible }
+    return result.filter { it.compatibility == CourseCompatibility.COMPATIBLE }
   }
 
   private fun getListedStepikCourses(courseIds: List<Int>) : List<EduCourse> {
