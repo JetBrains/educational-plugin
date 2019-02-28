@@ -8,7 +8,13 @@ directly inside JetBrains IDEs based on IntelliJ Platform.
 
 This plugin is bundled into [PyCharm Edu IDE](https://www.jetbrains.com/pycharm-edu/).
 
-Building and taking courses is currently supported for the following languages: [Python](https://www.python.org/), [Kotlin](https://kotlinlang.org/), [Java](https://www.java.com).
+Building and taking courses is currently supported for the following languages: 
+ * [Python](https://www.python.org/)
+ * [Kotlin](https://kotlinlang.org/)
+ * [Java](https://www.java.com)
+ * [Scala](https://www.scala-lang.org/)
+ * [Rust](https://www.rust-lang.org/)
+ * [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 
 The best place to learn what this plugin is about is to check out PyCharm Edu [documentation](https://www.jetbrains.com/pycharm-edu/learners/#easy-start).
 
