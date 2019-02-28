@@ -11,6 +11,7 @@ import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
+import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
@@ -72,7 +73,8 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
     model: NewStudyItemUiModel,
     additionalPanels: List<AdditionalPanel>
   ): NewStudyItemInfo? {
-    return if (model.parent is FrameworkLesson) {
+    // Add `copy tests` checkbox only if task is in framework lesson and it can be non first
+    return if (model.parent is FrameworkLesson && (model.baseIndex > 1 || additionalPanels.any { it is CCItemPositionPanel })) {
       val copyTestsPanel = CopyTestsCheckBoxPanel()
       val panels = listOf(copyTestsPanel) + additionalPanels
       super.showCreateStudyItemDialog(project, course, model, panels)?.apply {
