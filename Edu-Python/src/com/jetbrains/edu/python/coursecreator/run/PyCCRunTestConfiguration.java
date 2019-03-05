@@ -15,12 +15,12 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.python.run.AbstractPythonRunConfiguration;
+import com.jetbrains.python.run.PythonRunConfiguration;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class PyCCRunTestConfiguration extends AbstractPythonRunConfiguration<PyCCRunTestConfiguration> {
+class PyCCRunTestConfiguration extends PythonRunConfiguration {
 
   public static final String PATH_ATTR = "studyTest";
   private Project myProject;

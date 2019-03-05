@@ -50,6 +50,7 @@ public class PyCCRunTestsConfigurationProducer extends RunConfigurationProducer<
 
     configuration.setPathToTest(testsPath);
     configuration.setName(generatedName);
+    configuration.setScriptName(testsFile.getPath());
     return true;
   }
 
