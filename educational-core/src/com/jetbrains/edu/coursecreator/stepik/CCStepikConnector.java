@@ -18,7 +18,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
@@ -311,8 +310,6 @@ public class CCStepikConnector {
     if (taskDir == null) return false;
     final Course course = task.getLesson().getCourse();
     assert course instanceof EduCourse;
-    final EduConfigurator configurator = CourseExt.getConfigurator(course);
-    if (configurator == null) return false;
 
     final int responseCode = StepikConnector.updateTask(project, task);
 

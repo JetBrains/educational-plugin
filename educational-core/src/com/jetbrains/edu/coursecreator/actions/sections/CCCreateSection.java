@@ -9,11 +9,9 @@ import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo;
 import com.jetbrains.edu.coursecreator.actions.StudyItemType;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,11 +38,6 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   @Nullable
   protected VirtualFile createItemDir(@NotNull final Project project, @NotNull final Section section,
                                       @NotNull final VirtualFile parentDirectory, @NotNull final Course course) {
-    EduConfigurator configurator = CourseExt.getConfigurator(course);
-    if (configurator == null) {
-      LOG.info("Failed to get configurator for " + course.getLanguageID());
-      return null;
-    }
     return CCUtils.createSectionDir(project, section.getName());
   }
 
