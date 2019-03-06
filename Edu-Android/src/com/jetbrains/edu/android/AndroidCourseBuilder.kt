@@ -1,14 +1,11 @@
 package com.jetbrains.edu.android
 
 import com.android.SdkConstants
-import com.android.ide.common.repository.GradleVersion
-import com.android.repository.io.FileOpUtils
 import com.android.tools.idea.gradle.plugin.AndroidPluginGeneration
 import com.android.tools.idea.gradle.project.sync.GradleSyncInvoker
 import com.android.tools.idea.gradle.project.sync.GradleSyncListener
 import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
 import com.android.tools.idea.sdk.IdeSdks
-import com.android.tools.idea.templates.RepositoryUrlManager
 import com.google.wireless.android.sdk.stats.GradleSyncStats
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ModalityState
@@ -135,21 +132,5 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
         TemplateFileInfo("android-AndroidEduTestRunner.kt", "src/androidTest/java/$packagePath/AndroidEduTestRunner.kt", false)
       )
     }
-  }
-
-  private fun getLibraryRevision(
-    artifactId: GoogleMavenArtifactId,
-    sdkLocation: File,
-    defaultVersion: String,
-    versionFilter: ((GradleVersion) -> Boolean)? = null
-  ): String {
-    return RepositoryUrlManager.get().getLibraryRevision(
-      artifactId.mavenGroupId,
-      artifactId.mavenArtifactId,
-      versionFilter,
-      false,
-      sdkLocation,
-      FileOpUtils.create()
-    ) ?: defaultVersion
   }
 }
