@@ -30,6 +30,9 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.jetbrains.edu.learning.EduUtils.isLessonDirectory;
+import static com.jetbrains.edu.learning.EduUtils.isTaskDirectory;
+
 public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCCreateStudyItemActionBase.class);
 
@@ -139,13 +142,20 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
                                                @NotNull final VirtualFile parentDirectory, @NotNull final Course course);
 
   @Nullable
-  protected Item getItem(@NotNull final VirtualFile sourceDirectory,
+  protected Item getItem(@NotNull VirtualFile sourceDirectory,
                          @NotNull final Project project,
                          @NotNull final Course course,
                          @Nullable StudyItem parentItem) {
     int index;
     String suggestedName;
     List<AdditionalPanel> additionalPanels = new ArrayList<>();
+
+    if(isTaskDirectory(project, sourceDirectory) && myItemType.equals(StudyItemType.TASK) ||
+       isLessonDirectory(project, sourceDirectory) && myItemType.equals(StudyItemType.LESSON) ||
+       isLessonDirectory(project, sourceDirectory) && myItemType.equals(StudyItemType.FRAMEWORK_LESSON)){
+      sourceDirectory = sourceDirectory.getParent();
+    }
+
     if (isAddedAsLast(sourceDirectory, project, course)) {
       index = getSiblingsSize(course, parentItem) + 1;
       suggestedName = getItemType().getPresentableName() + index;
@@ -160,6 +170,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
       suggestedName = itemName + (index + 1);
       additionalPanels.add(new CCItemPositionPanel(thresholdItem.getName()));
     }
+
     NewStudyItemUiModel model = new NewStudyItemUiModel(parentItem, sourceDirectory, getItemType(), suggestedName, index);
     NewStudyItemInfo info = showCreateStudyItemDialog(project, course, model, additionalPanels);
     if (info == null) {
