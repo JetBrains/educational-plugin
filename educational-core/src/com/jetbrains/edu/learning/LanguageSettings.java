@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning;
 
 import com.intellij.openapi.ui.LabeledComponent;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.newproject.ui.ErrorMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +36,7 @@ public abstract class LanguageSettings<Settings> {
   }
 
   @Nullable
-  public String validate(@Nullable Course course) {
+  public ErrorMessage validate(@Nullable Course course) {
     return null;
   }
 

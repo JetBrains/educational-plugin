@@ -36,9 +36,9 @@ sealed class ErrorState(
   object IncompatibleVersion : ErrorState(3, ErrorMessage("", "Update", " plugin to start this course"), errorTextForeground, false)
   data class RequiredPluginsDisabled(val disabledPluginIds: List<String>) :
     ErrorState(3, errorMessage(disabledPluginIds), errorTextForeground, false)
-  class LanguageSettingsError(message: String) : ErrorState(3, ErrorMessage(message), errorTextForeground, false)
-  object JavaFXRequired: ErrorState(4, ErrorMessage("No JavaFX found. Please ", "switch", " to JetBrains Runtime to start the course"), errorTextForeground, false)
-  class CustomSevereError(beforeLink: String, link: String = "", afterLink: String = "", val action: Runnable? = null):
+  class LanguageSettingsError(message: ErrorMessage) : ErrorState(3, message, errorTextForeground, false)
+  object JavaFXRequired : ErrorState(4, ErrorMessage("No JavaFX found. Please ", "switch", " to JetBrains Runtime to start the course"), errorTextForeground, false)
+  class CustomSevereError(beforeLink: String, link: String = "", afterLink: String = "", val action: Runnable? = null) :
     ErrorState(3, ErrorMessage(beforeLink, link, afterLink), errorTextForeground, false)
 
   fun merge(other: ErrorState): ErrorState = if (severity < other.severity) other else this
@@ -102,4 +102,5 @@ sealed class ErrorState(
   }
 }
 
-data class ErrorMessage(val beforeLink: String, val link: String = "", val afterLink: String = "")
+data class ErrorMessage @JvmOverloads constructor(val beforeLink: String, val linkText: String = "", val afterLink: String = "",
+                                                  val hyperlinkAddress: String? = null)

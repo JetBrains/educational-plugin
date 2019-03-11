@@ -6,6 +6,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.jetbrains.edu.learning.LanguageSettings;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.newproject.ui.ErrorMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,8 +50,9 @@ public class JsLanguageSettings extends LanguageSettings<JsNewProjectSettings> {
 
   @Nullable
   @Override
-  public String validate(@Nullable Course course) {
+  public ErrorMessage validate(@Nullable Course course) {
     NodeJsInterpreter interpreter = myInterpreterField.getInterpreter();
-    return NodeInterpreterUtil.validateAndGetErrorMessage(interpreter);
+    String message = NodeInterpreterUtil.validateAndGetErrorMessage(interpreter);
+    return message != null ? new ErrorMessage(message) : null;
   }
 }

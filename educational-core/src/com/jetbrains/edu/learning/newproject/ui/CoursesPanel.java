@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.newproject.ui;
 
 import com.google.common.collect.Lists;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.*;
@@ -119,11 +120,11 @@ public class CoursesPanel extends JPanel {
       else if (myErrorState instanceof ErrorState.CheckiOLoginRequired) {
         addCheckiOLoginListener((CheckiOCourse)myCoursesList.getSelectedValue());
       }
-      else if (myErrorState == ErrorState.JavaFXRequired.INSTANCE) {
-        invokeSwitchBootJdk();
-      }
       else if (myErrorState == ErrorState.HyperskillLoginRequired.INSTANCE) {
         addHyperskillLoginListener();
+      }
+      else if (myErrorState == ErrorState.JavaFXRequired.INSTANCE) {
+        invokeSwitchBootJdk();
       }
       else if (myErrorState == ErrorState.IncompatibleVersion.INSTANCE) {
         PluginsAdvertiser.installAndEnablePlugins(SetsKt.setOf(EduNames.PLUGIN_ID), () -> {});
@@ -138,7 +139,20 @@ public class CoursesPanel extends JPanel {
           action.run();
         }
       }
+      else if (myErrorState != null) {
+        browseHyperlink(myErrorState.getMessage());
+      }
     });
+  }
+
+  private static void browseHyperlink(@Nullable ErrorMessage message) {
+    if (message == null) {
+      return;
+    }
+    String hyperlink = message.getHyperlinkAddress();
+    if (hyperlink != null) {
+      BrowserUtil.browse(hyperlink);
+    }
   }
 
   private void invokeSwitchBootJdk() {
@@ -230,7 +244,7 @@ public class CoursesPanel extends JPanel {
   private void doValidation(@Nullable Course course) {
     ErrorState languageError = ErrorState.NothingSelected.INSTANCE;
     if (course != null) {
-      String languageSettingsMessage = myCoursePanel.validateSettings(course);
+      ErrorMessage languageSettingsMessage = myCoursePanel.validateSettings(course);
       languageError = languageSettingsMessage == null
                       ? ErrorState.None.INSTANCE
                       : new ErrorState.LanguageSettingsError(languageSettingsMessage);
@@ -245,7 +259,7 @@ public class CoursesPanel extends JPanel {
     ErrorMessage message = errorState.getMessage();
     if (message != null) {
       myErrorLabel.setVisible(true);
-      myErrorLabel.setHyperlinkText(message.getBeforeLink(), message.getLink(), message.getAfterLink());
+      myErrorLabel.setHyperlinkText(message.getBeforeLink(), message.getLinkText(), message.getAfterLink());
     } else {
       myErrorLabel.setVisible(false);
     }
@@ -253,13 +267,7 @@ public class CoursesPanel extends JPanel {
   }
 
   private static List<Course> sortCourses(List<Course> courses) {
-    return ContainerUtil.sorted(courses, (first, second) -> {
-      int visibilityCompared = first.getVisibility().compareTo(second.getVisibility());
-      if (visibilityCompared != 0) {
-        return visibilityCompared;
-      }
-      return first.getName().compareTo(second.getName());
-    });
+    return ContainerUtil.sorted(courses, Comparator.comparing(Course::getVisibility).thenComparing(Course::getName));
   }
 
   private void updateModel(List<Course> courses, @Nullable String courseToSelect, boolean isFromZip) {

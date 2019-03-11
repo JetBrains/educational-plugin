@@ -157,14 +157,14 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
         val errorMessage = myLanguageSettings.validate(null)
         if (errorMessage != null) {
           myAdvancedSettings.setOn(true)
-          ErrorMessage(errorMessage)
+          errorMessage
         } else {
           null
         }
       }
     }
     if (errorMessage != null) {
-      myErrorLabel.setHyperlinkText(errorMessage.beforeLink, errorMessage.link, errorMessage.afterLink)
+      myErrorLabel.setHyperlinkText(errorMessage.beforeLink, errorMessage.linkText, errorMessage.afterLink)
     }
     myErrorLabel.isVisible = errorMessage != null
     myValidationListener?.onInputDataValidated(errorMessage == null)

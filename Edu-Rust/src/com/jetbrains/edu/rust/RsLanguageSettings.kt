@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.ui.DocumentAdapter
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
 import org.rust.cargo.toolchain.RustToolchain
 import java.awt.BorderLayout
 import java.nio.file.Paths
@@ -45,11 +46,11 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
         return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(toolchainLocation, "Toolchain", BorderLayout.WEST))
     }
 
-    override fun validate(course: Course?): String? {
+    override fun validate(course: Course?): ErrorMessage? {
         val toolchain = rustToolchain
         return when {
-            toolchain == null -> "Specify Rust toolchain location"
-            !toolchain.looksLikeValidToolchain() -> "Can't find `rustup` in specified location"
+            toolchain == null -> ErrorMessage("Specify Rust toolchain location")
+            !toolchain.looksLikeValidToolchain() -> ErrorMessage("Can't find `rustup` in specified location")
             else -> null
         }
     }

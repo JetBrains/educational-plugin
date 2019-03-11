@@ -28,6 +28,6 @@ open class JoinCourseDialogBase(
 
   override fun setError(error: ErrorState) {
     val message = error.message ?: return
-    panel.updateErrorText(message.beforeLink + message.link + message.afterLink)
+    panel.updateErrorText(message)
   }
 }

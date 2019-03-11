@@ -18,6 +18,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.gradle.JdkLanguageSettings
+import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
 import java.awt.BorderLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -39,8 +40,8 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
     return super.getLanguageSettingsComponents(course) + androidSdkLocation
   }
 
-  override fun validate(course: Course?): String? {
-    return if (locationField.text.isEmpty()) "Specify Android SDK location" else null
+  override fun validate(course: Course?): ErrorMessage? {
+    return if (locationField.text.isEmpty()) ErrorMessage("Specify Android SDK location") else null
   }
 
   // Inspired by [com.android.tools.idea.updater.configure.SdkUpdaterConfigPanel#setUpSingleSdkChooser]

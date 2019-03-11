@@ -138,12 +138,12 @@ public class CoursePanel extends JPanel {
   }
 
   @Nullable
-  public String validateSettings(@Nullable Course course) {
-    String message = myLanguageSettings.validate(course);
-    if (message != null) {
+  public ErrorMessage validateSettings(@Nullable Course course) {
+    ErrorMessage errorMessage = myLanguageSettings.validate(course);
+    if (errorMessage != null) {
       myAdvancedSettings.setOn(true);
     }
-    return message;
+    return errorMessage;
   }
 
   private static void setTextAreaAttributes(JEditorPane textArea, int leftMargin) {
