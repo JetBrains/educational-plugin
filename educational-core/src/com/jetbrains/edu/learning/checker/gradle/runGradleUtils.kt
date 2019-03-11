@@ -147,8 +147,7 @@ fun runGradleRunTask(
   mainClassForFile: (Project, VirtualFile) -> String?
 ): Result<String, CheckResult> {
   val mainClassName = findMainClass(project, task, mainClassForFile)
-                      ?: return Err(CheckResult(CheckStatus.Unchecked, "Unable to execute task ${task.name}, " +
-                                                                       "main method is missing"))
+                      ?: return Err(CheckResult(CheckStatus.Unchecked, "Unable to execute task ${task.name}, main method is missing"))
   val taskName = if (task.hasSeparateModule(project)) "${getGradleProjectName(task)}:run" else "run"
 
   val gradleOutput = GradleCommandLine.create(project, taskName, "${MAIN_CLASS_PROPERTY_PREFIX}$mainClassName")
