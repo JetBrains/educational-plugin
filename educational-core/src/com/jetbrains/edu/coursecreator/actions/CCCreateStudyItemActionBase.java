@@ -30,16 +30,14 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jetbrains.edu.learning.EduUtils.isLessonDirectory;
-import static com.jetbrains.edu.learning.EduUtils.isTaskDirectory;
-
 public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCCreateStudyItemActionBase.class);
 
   private final StudyItemType myItemType;
 
   public CCCreateStudyItemActionBase(@NotNull StudyItemType itemType, Icon icon) {
-    super(StringUtil.toTitleCase(itemType.getPresentableName()), "Create New " + StringUtil.toTitleCase(itemType.getPresentableName()), icon);
+    super(StringUtil.toTitleCase(itemType.getPresentableName()), "Create New " + StringUtil.toTitleCase(itemType.getPresentableName()),
+          icon);
     myItemType = itemType;
   }
 
@@ -59,7 +57,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     askFeedback(course, project);
   }
 
-  private static void askFeedback(@NotNull final Course course, @NotNull final  Project project) {
+  private static void askFeedback(@NotNull final Course course, @NotNull final Project project) {
     if (FeedbackSenderKt.isFeedbackAsked()) {
       return;
     }
@@ -142,24 +140,18 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
                                                @NotNull final VirtualFile parentDirectory, @NotNull final Course course);
 
   @Nullable
-  protected Item getItem(@NotNull VirtualFile sourceDirectory,
+  protected Item getItem(@NotNull final VirtualFile sourceDirectory,
                          @NotNull final Project project,
                          @NotNull final Course course,
                          @Nullable StudyItem parentItem) {
     int index;
     String suggestedName;
     List<AdditionalPanel> additionalPanels = new ArrayList<>();
-
-    if(isTaskDirectory(project, sourceDirectory) && myItemType.equals(StudyItemType.TASK) ||
-       isLessonDirectory(project, sourceDirectory) && myItemType.equals(StudyItemType.LESSON) ||
-       isLessonDirectory(project, sourceDirectory) && myItemType.equals(StudyItemType.FRAMEWORK_LESSON)){
-      sourceDirectory = sourceDirectory.getParent();
-    }
-
     if (isAddedAsLast(sourceDirectory, project, course)) {
       index = getSiblingsSize(course, parentItem) + 1;
       suggestedName = getItemType().getPresentableName() + index;
-    } else {
+    }
+    else {
       StudyItem thresholdItem = getThresholdItem(course, sourceDirectory);
       if (thresholdItem == null) {
         return null;
@@ -170,8 +162,10 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
       suggestedName = itemName + (index + 1);
       additionalPanels.add(new CCItemPositionPanel(thresholdItem.getName()));
     }
-
-    NewStudyItemUiModel model = new NewStudyItemUiModel(parentItem, sourceDirectory, getItemType(), suggestedName, index);
+    if (parentItem == null) {
+      return null;
+    }
+    NewStudyItemUiModel model = new NewStudyItemUiModel(parentItem, parentItem.getDir(project), getItemType(), suggestedName, index);
     NewStudyItemInfo info = showCreateStudyItemDialog(project, course, model, additionalPanels);
     if (info == null) {
       return null;
@@ -209,7 +203,6 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
                                            @NotNull final Course course);
 
   protected abstract void sortSiblings(@NotNull final Course course, @Nullable final StudyItem parentItem);
-
 
 
   public abstract Item createAndInitItem(@NotNull Project project,
