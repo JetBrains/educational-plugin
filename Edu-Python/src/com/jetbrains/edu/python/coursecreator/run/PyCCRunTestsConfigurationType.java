@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class PyCCRunTestsConfigurationType implements ConfigurationType {
+  @NotNull
   @Override
   public String getDisplayName() {
     return "Run Study Tests";
