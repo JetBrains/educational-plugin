@@ -9,7 +9,7 @@ import com.intellij.openapi.util.Ref
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.ui.SelectRolePanel
 
-
+@Suppress("ComponentNotRegistered") // educational-core.xml
 class SelectRoleComponent : BaseComponent {
 
   override fun getComponentName() = "edu.selectRole"
