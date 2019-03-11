@@ -13,7 +13,7 @@ internal open class PyLanguageSettings : PyLanguageSettings() {
 
   override fun getInterpreterComboBox(fakeSdk: Sdk?): ComboboxWithBrowseButton {
     val registeredSdks = PyConfigurableInterpreterList.getInstance(null).allPythonSdks
-    registeredSdks.removeIf { it ->
+    registeredSdks.removeIf {
       if (it != null && PythonSdkType.isVirtualEnv(it)) {
         val data = it.sdkAdditionalData as PythonSdkAdditionalData?
         if (data != null) {

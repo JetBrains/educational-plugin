@@ -11,7 +11,6 @@ import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialogBase
-import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import org.jetbrains.android.util.AndroidUtils
 import java.awt.Component
 import javax.swing.JLabel
