@@ -113,10 +113,6 @@ class StepikSectionMixin {
 
   @JsonProperty(UPDATE_DATE)
   lateinit var myUpdateDate: Date
-
-  @JsonProperty(CREATE_DATE)
-  lateinit var myCreateDate: Date
-
 }
 
 class StepikLessonMixin {
@@ -131,9 +127,6 @@ class StepikLessonMixin {
 
   @JsonProperty(UPDATE_DATE)
   lateinit var myUpdateDate: Date
-
-  @JsonProperty(CREATE_DATE)
-  lateinit var myCreateDate: Date
 
   @JsonProperty(TITLE)
   lateinit var name: String

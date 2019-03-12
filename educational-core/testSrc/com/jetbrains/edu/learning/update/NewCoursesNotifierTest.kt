@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -52,6 +53,14 @@ class NewCoursesNotifierTest : EduTestCase() {
         else -> emptyList()
       }
     }
+  }
+
+  fun `test do not show notification for course with increased updateDate`() {
+    val course = createCourse(0)
+    course.createDate = Date(EduSettings.getInstance().lastTimeChecked - DateFormatUtil.DAY)
+    course.updateDate = Date(System.currentTimeMillis())
+
+    doTest(1, emptyList()) { if (it == 0) listOf(course) else emptyList() }
   }
 
   private fun doTest(expectedCheckNumber: Int, expectedCourses: List<EduCourse>, courseProducer: (Int) -> List<EduCourse>) {
