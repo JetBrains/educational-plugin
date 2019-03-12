@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.stepik.api.Attempt;
 import com.jetbrains.edu.learning.stepik.api.Dataset;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -187,15 +188,18 @@ public class StepikTaskBuilder {
     task.setDescriptionText(clearCodeBlockFromTags());
 
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      final Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepId, myUserId);
-      if (attempt != null) {
-        final Dataset dataset = attempt.getDataset();
-        if (dataset != null && dataset.getOptions() != null) {
-          task.setChoiceVariants(dataset.getOptions());
-          task.setMultipleChoice(dataset.isMultipleChoice());
-        }
-        else {
-          LOG.warn("Dataset for step " + myStepId + " is null");
+      final List<Attempt> attempts = StepikConnector.getAttempts(myStepId, myUserId);
+      if (attempts != null && attempts.size() > 0) {
+        final Attempt attempt = attempts.get(0);
+        if (attempt != null) {
+          final Dataset dataset = attempt.getDataset();
+          if (dataset != null && dataset.getOptions() != null) {
+            task.setChoiceVariants(dataset.getOptions());
+            task.setMultipleChoice(dataset.isMultipleChoice());
+          }
+          else {
+            LOG.warn("Dataset for step " + myStepId + " is null");
+          }
         }
       }
     }
