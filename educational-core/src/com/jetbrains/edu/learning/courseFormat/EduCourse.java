@@ -25,6 +25,7 @@ public class EduCourse extends Course {
   List<Integer> instructors = new ArrayList<>();
   private int id;
   private Date myUpdateDate = new Date(0);
+  private Date myCreateDate = new Date(0);
   boolean isPublic;
   @Transient private String myAdminsGroup;
 
@@ -77,6 +78,10 @@ public class EduCourse extends Course {
   public Date getUpdateDate() {
     return myUpdateDate;
   }
+
+  public Date getCreateDate() { return myCreateDate; }
+
+  public void setCreateDate(Date createDate) { myCreateDate = createDate; }
 
   public int getId() {
     return id;
@@ -160,7 +165,8 @@ public class EduCourse extends Course {
       Integer version = Integer.valueOf(versionString);
       if (version <= EduVersions.JSON_FORMAT_VERSION) {
         return CourseCompatibility.COMPATIBLE;
-      } else {
+      }
+      else {
         return CourseCompatibility.INCOMPATIBLE_VERSION;
       }
     }
@@ -179,6 +185,7 @@ public class EduCourse extends Course {
     isCompatible = true;
     id = 0;
     myUpdateDate = new Date(0);
+    myCreateDate = new Date(0);
     sectionIds = new ArrayList<>();
     instructors = new ArrayList<>();
     myType = String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());

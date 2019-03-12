@@ -17,6 +17,7 @@ const val SECTIONS = "sections"
 const val INSTRUCTORS = "instructors"
 const val ID = "id"
 const val UPDATE_DATE = "update_date"
+const val CREATE_DATE = "create_date"
 const val IS_PUBLIC = "is_public"
 const val SUMMARY = "summary"
 const val TITLE = "title"
@@ -72,6 +73,9 @@ abstract class StepikEduCourseMixin {
   @JsonProperty(UPDATE_DATE)
   lateinit var myUpdateDate: Date
 
+  @JsonProperty(CREATE_DATE)
+  lateinit var myCreateDate: Date
+
   @JsonProperty(IS_PUBLIC)
   var isPublic: Boolean = false
 
@@ -109,6 +113,10 @@ class StepikSectionMixin {
 
   @JsonProperty(UPDATE_DATE)
   lateinit var myUpdateDate: Date
+
+  @JsonProperty(CREATE_DATE)
+  lateinit var myCreateDate: Date
+
 }
 
 class StepikLessonMixin {
@@ -123,6 +131,9 @@ class StepikLessonMixin {
 
   @JsonProperty(UPDATE_DATE)
   lateinit var myUpdateDate: Date
+
+  @JsonProperty(CREATE_DATE)
+  lateinit var myCreateDate: Date
 
   @JsonProperty(TITLE)
   lateinit var name: String

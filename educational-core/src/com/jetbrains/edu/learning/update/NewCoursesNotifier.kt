@@ -55,7 +55,7 @@ class NewCoursesNotifier(parentDisposable: Disposable) {
       val courses = CoursesProvider.loadAllCourses()
 
       val updated = courses.filterIsInstance<EduCourse>()
-        .filter { it.id !in ids && it.updateDate.isSignificantlyAfter(Date(EduSettings.getInstance().lastTimeChecked)) }
+        .filter { it.id !in ids && it.createDate.isSignificantlyAfter(Date(EduSettings.getInstance().lastTimeChecked)) }
       if (!updated.isEmpty()) {
         showNewCoursesNotification(updated)
         updated.mapTo(ids) { it.id }
