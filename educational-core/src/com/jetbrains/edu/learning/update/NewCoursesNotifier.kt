@@ -54,11 +54,11 @@ class NewCoursesNotifier(parentDisposable: Disposable) {
     ApplicationManager.getApplication().executeOnPooledThread {
       val courses = CoursesProvider.loadAllCourses()
 
-      val updated = courses.filterIsInstance<EduCourse>()
+      val newlyCreated = courses.filterIsInstance<EduCourse>()
         .filter { it.id !in ids && it.createDate.isSignificantlyAfter(Date(EduSettings.getInstance().lastTimeChecked)) }
-      if (!updated.isEmpty()) {
-        showNewCoursesNotification(updated)
-        updated.mapTo(ids) { it.id }
+      if (!newlyCreated.isEmpty()) {
+        showNewCoursesNotification(newlyCreated)
+        newlyCreated.mapTo(ids) { it.id }
       }
 
       EduSettings.getInstance().shownCourseIds = ids
