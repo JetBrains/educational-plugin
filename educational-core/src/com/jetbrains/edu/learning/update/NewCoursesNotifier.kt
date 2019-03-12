@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.stepik.featuredCourses
 import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
 import org.jetbrains.annotations.TestOnly
 import java.util.*
@@ -55,7 +56,7 @@ class NewCoursesNotifier(parentDisposable: Disposable) {
       val courses = CoursesProvider.loadAllCourses()
 
       val newlyCreated = courses.filterIsInstance<EduCourse>()
-        .filter { it.id !in ids && it.createDate.isSignificantlyAfter(Date(EduSettings.getInstance().lastTimeChecked)) }
+        .filter { it.id !in ids && it.createDate.isSignificantlyAfter(Date(EduSettings.getInstance().lastTimeChecked)) && it.id in featuredCourses }
       if (!newlyCreated.isEmpty()) {
         showNewCoursesNotification(newlyCreated)
         newlyCreated.mapTo(ids) { it.id }
