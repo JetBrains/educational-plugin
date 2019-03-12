@@ -63,6 +63,7 @@ public class StepikTaskBuilder {
     .put("table", this::unsupportedTask)
     .put("dataset", this::unsupportedTask)
     .put("admin", this::unsupportedTask)
+    .put("manual-score", this::unsupportedTask)
     .build();
 
   private final Map<String, Computable<Task>> pluginTaskTypes = ImmutableMap.<String, Computable<Task>>builder()
@@ -87,6 +88,7 @@ public class StepikTaskBuilder {
     .put("table", "Table")
     .put("dataset", "Data")
     .put("admin", "Linux")
+    .put("manual-score", "Manual Score")
     .build();
   private static final String EMPTY_NAME = "";
 
@@ -313,7 +315,12 @@ public class StepikTaskBuilder {
     final StepOptions options = myStep.getOptions();
     if (options == null) return;
     final List<TaskFile> taskFiles = options.getFiles();
-    if (taskFiles != null && !taskFiles.isEmpty()) return;
+    if (taskFiles != null && !taskFiles.isEmpty()) {
+      for (TaskFile file : taskFiles) {
+        task.addTaskFile(file);
+      }
+      return;
+    }
 
     String taskFilePath = getTaskFilePath(myLanguage);
     if (taskFilePath == null) return;
