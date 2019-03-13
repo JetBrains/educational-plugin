@@ -7,6 +7,8 @@ import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.modifyModules
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.projectRoots.SdkModificator
+import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.util.Ref
@@ -75,7 +77,17 @@ open class GradleCourseProjectGenerator(
       LOG.error(e)
     }
 
-    runWriteAction { ProjectRootManager.getInstance(project).projectSdk = jdk }
+    runWriteAction {
+      ProjectRootManager.getInstance(project).projectSdk = jdk
+      addAnnotations(ProjectRootManager.getInstance(project).projectSdk?.sdkModificator)
+    }
+  }
+
+  private fun addAnnotations(sdkModificator: SdkModificator?) {
+    sdkModificator?.apply {
+      JavaSdkImpl.attachJdkAnnotations(this)
+      this.commitChanges()
+    }
   }
 
   protected open fun getJdk(settings: JdkProjectSettings): Sdk? {
