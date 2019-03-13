@@ -14,5 +14,5 @@ fun checkIsBackgroundThread() {
 }
 
 val Project.courseDir: VirtualFile get() {
-  return guessProjectDir() ?: error("Failed to filed course dir for $this")
+  return guessProjectDir() ?: error("Failed to find course dir for $this")
 }
