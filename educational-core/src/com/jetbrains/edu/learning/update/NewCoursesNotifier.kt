@@ -18,7 +18,7 @@ import org.jetbrains.annotations.TestOnly
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
-class NewCoursesNotifier(parentDisposable: Disposable) {
+class NewCoursesNotifier(parentDisposable: Disposable, private val featuredCoursesProvider: () -> List<Int> = { featuredCourses }) {
 
   private val checkRunnable = Runnable { updateCourseList().doWhenDone { queueNextCheck(checkInterval) } }
   private val checkForNotifyAlarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, parentDisposable)
@@ -54,7 +54,7 @@ class NewCoursesNotifier(parentDisposable: Disposable) {
 
     ApplicationManager.getApplication().executeOnPooledThread {
       val courses = CoursesProvider.loadAllCourses()
-
+      val featuredCourses = featuredCoursesProvider()
       val newlyCreated = courses.filterIsInstance<EduCourse>()
         .filter { it.id !in ids && it.createDate.isSignificantlyAfter(Date(EduSettings.getInstance().lastTimeChecked)) && it.id in featuredCourses }
       if (!newlyCreated.isEmpty()) {

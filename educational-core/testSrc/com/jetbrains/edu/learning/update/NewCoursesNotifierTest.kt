@@ -70,7 +70,7 @@ class NewCoursesNotifierTest : EduTestCase() {
   }
 
   private fun doTest(expectedCheckNumber: Int, expectedCourses: List<EduCourse>, courseProducer: (Int) -> List<EduCourse>) {
-    val newCoursesNotifier = NewCoursesNotifier(testRootDisposable)
+    val newCoursesNotifier = NewCoursesNotifier(testRootDisposable) { listOf(0, 1, 2) }
     PlatformTestUtil.registerExtension(CoursesProvider.EP_NAME, TestCoursesProvider(courseProducer), testRootDisposable)
 
     val actionCallback = ActionCallback()
