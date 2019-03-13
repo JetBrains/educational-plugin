@@ -17,7 +17,7 @@ public class StepikAuthorizer {
   private StepikAuthorizer() {}
 
   @NotNull
-  private static String createOAuthLink(String authRedirectUrl) {
+  public static String createOAuthLink(String authRedirectUrl) {
     return "https://stepik.org/oauth2/authorize/" +
            "?client_id=" + StepikNames.CLIENT_ID +
            "&redirect_uri=" + authRedirectUrl +

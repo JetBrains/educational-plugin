@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik;
 
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
@@ -10,9 +11,7 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.wm.CustomStatusBarWidget;
-import com.intellij.openapi.wm.StatusBarWidget;
-import com.intellij.openapi.wm.WindowManager;
+import com.intellij.openapi.wm.*;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -21,6 +20,9 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JComponent;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import static com.jetbrains.edu.learning.EduUtils.isStudyProject;
 import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
@@ -61,13 +63,26 @@ public class StepikProjectComponent implements ProjectComponent {
   }
 
   private void showBalloon() {
-    StatusBarWidget widget = WindowManager.getInstance().getIdeFrame(myProject).getStatusBar().getWidget(StepikUserWidget.ID);
-    if (widget == null) return;
+    IdeFrame frame = WindowManager.getInstance().getIdeFrame(myProject);
+    if (frame == null) return;
+    StatusBar statusBar = frame.getStatusBar();
+    if (statusBar == null) return;
+    StatusBarWidget widget = statusBar.getWidget(StepikUserWidget.ID);
+    if (!(widget instanceof CustomStatusBarWidget)) return;
     CustomStatusBarWidget customWidget = (CustomStatusBarWidget)widget;
     JComponent widgetComponent = customWidget.getComponent();
     if (widgetComponent == null) return;
+    String redirectUrl = StepikAuthorizer.getOAuthRedirectUrl();
+    String authLnk = StepikAuthorizer.createOAuthLink(redirectUrl);
     BalloonBuilder builder =
-      JBPopupFactory.getInstance().createHtmlTextBalloonBuilder("Log in to synchronize your study progress", MessageType.INFO, null);
+      JBPopupFactory.getInstance()
+        .createHtmlTextBalloonBuilder("<a href=\"\">Log in</a> to synchronize your study progress", MessageType.INFO, null);
+    builder.setClickHandler(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        BrowserUtil.browse(authLnk);
+      }
+    }, true);
     builder.setHideOnClickOutside(true);
     builder.setCloseButtonEnabled(true);
     builder.setHideOnCloseClick(true);
