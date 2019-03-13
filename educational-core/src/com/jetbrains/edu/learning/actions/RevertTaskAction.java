@@ -31,6 +31,8 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.openapi.ui.Messages.*;
+
 
 public class RevertTaskAction extends DumbAwareAction implements RightAlignedToolbarAction {
   public static final String ACTION_ID = "Educational.RefreshTask";
@@ -52,7 +54,8 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     });
     PlaceholderDependencyManager.updateDependentPlaceholders(project, currentTask);
     validateEditors(project);
-    String message = String.format("<b>%s</b> task  of <b>%s</b> lesson is reset.", currentTask.getName(), currentTask.getLesson().getName());
+    String message =
+      String.format("<b>%s</b> task  of <b>%s</b> lesson is reset.", currentTask.getName(), currentTask.getLesson().getName());
     Notification notification = new Notification("reset.task", EmptyIcon.ICON_16, "", "", message, NotificationType.INFORMATION, null);
     notification.notify(project);
     ProjectView.getInstance(project).refresh();
@@ -103,6 +106,9 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     if (project == null) {
       return;
     }
+    int result =
+      showOkCancelDialog(project, "Your task progress will be dropped", "Reset Task?", OK_BUTTON, CANCEL_BUTTON, getQuestionIcon());
+    if (result != OK) return;
     revert(project);
     EduUsagesCollector.taskReverted();
   }
