@@ -5,13 +5,22 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.ui.popup.BalloonBuilder;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.wm.CustomStatusBarWidget;
+import com.intellij.openapi.wm.StatusBarWidget;
+import com.intellij.openapi.wm.WindowManager;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.JComponent;
 
 import static com.jetbrains.edu.learning.EduUtils.isStudyProject;
 import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
@@ -39,6 +48,9 @@ public class StepikProjectComponent implements ProjectComponent {
           StepikUtils.updateCourseIfNeeded(myProject, (EduCourse)course);
 
           final StepikUser currentUser = EduSettings.getInstance().getUser();
+          if (currentUser == null) {
+            showBalloon();
+          }
           if (currentUser != null && !course.getAuthors().contains(currentUser.userInfo) && !CCUtils.isCourseCreator(myProject)) {
             loadSolutionsFromStepik(course);
           }
@@ -46,6 +58,21 @@ public class StepikProjectComponent implements ProjectComponent {
         }
       }
     );
+  }
+
+  private void showBalloon() {
+    StatusBarWidget widget = WindowManager.getInstance().getIdeFrame(myProject).getStatusBar().getWidget(StepikUserWidget.ID);
+    if (widget == null) return;
+    CustomStatusBarWidget customWidget = (CustomStatusBarWidget)widget;
+    JComponent widgetComponent = customWidget.getComponent();
+    if (widgetComponent == null) return;
+    BalloonBuilder builder =
+      JBPopupFactory.getInstance().createHtmlTextBalloonBuilder("Log in to synchronize your study progress", MessageType.INFO, null);
+    builder.setHideOnClickOutside(true);
+    builder.setCloseButtonEnabled(true);
+    builder.setHideOnCloseClick(true);
+    Balloon balloon = builder.createBalloon();
+    balloon.showInCenterOf(widgetComponent);
   }
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
@@ -75,5 +102,4 @@ public class StepikProjectComponent implements ProjectComponent {
   public String getComponentName() {
     return "StepikProjectComponent";
   }
-
 }
