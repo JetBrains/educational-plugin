@@ -6,17 +6,24 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.BaseComponent
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.util.Ref
+import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.ui.SelectRolePanel
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class SelectRoleComponent : BaseComponent {
+  private val IDEA_EDU_PREFIX = "IdeaEdu" // BACKCOMPAT: 2018.3
 
   override fun getComponentName() = "edu.selectRole"
 
   override fun disposeComponent() {}
 
   override fun initComponent() {
+    if (!PlatformUtils.isPyCharmEducational() && PlatformUtils.getPlatformPrefix() != IDEA_EDU_PREFIX) {
+      PropertiesComponent.getInstance().setValue(CCPluginToggleAction.COURSE_CREATOR_ENABLED, true)
+      return
+    }
+
     if (PropertiesComponent.getInstance().isValueSet(CCPluginToggleAction.COURSE_CREATOR_ENABLED)) {
       return
     }
