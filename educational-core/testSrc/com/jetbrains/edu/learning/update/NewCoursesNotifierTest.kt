@@ -102,7 +102,7 @@ class NewCoursesNotifierTest : EduTestCase() {
     name = "Test Course $courseId"
     id = courseId
     language = PlainTextLanguage.INSTANCE.id
-    updateDate = Date(System.currentTimeMillis() + if (isNew) DateFormatUtil.DAY else -DateFormatUtil.DAY)
+    createDate = Date(System.currentTimeMillis() + if (isNew) DateFormatUtil.DAY else -DateFormatUtil.DAY)
   }
 
   private class TestCoursesProvider(private val producer: (Int) -> List<EduCourse>) : CoursesProvider {
