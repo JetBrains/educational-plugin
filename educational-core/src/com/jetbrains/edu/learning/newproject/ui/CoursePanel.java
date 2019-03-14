@@ -41,7 +41,7 @@ import java.util.List;
 public class CoursePanel extends JPanel {
   private static final String ourNotVerifiedNote = "\n\nNote: We’re sorry, but this course feels a little incomplete. " +
                                                    "If you are the owner of the course please " +
-                                                   "<a href=\"mailto:intellij-support@jetbrains.com\">" +
+                                                   "<a href=\"mailto:academy@jetbrains.com\">" +
                                                    "get in touch with us</a>, " +
                                                    "we would like to verify this with you; we think with improvement this can be listed as " +
                                                    "a featured course in the future.";
