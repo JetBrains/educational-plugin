@@ -4,14 +4,6 @@ import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.fileTemplates.FileTemplateUtil
 import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
-import com.intellij.openapi.externalSystem.model.DataNode
-import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
-import com.intellij.openapi.externalSystem.model.project.ProjectData
-import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
-import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefreshCallback
-import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
@@ -91,37 +83,6 @@ object EduGradleUtils {
     projects.add(gradleProjectSettings)
     systemSettings.setLinkedProjectsSettings(projects)
     ExternalSystemUtil.ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID)
-  }
-
-  @JvmOverloads
-  @JvmStatic
-  fun importGradleProject(project: Project, projectBasePath: String, callback: ExternalProjectRefreshCallback? = null) {
-    val builder = ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
-      .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC)
-      .dontReportRefreshErrors()
-    if (callback == null) {
-      builder.useDefaultCallback()
-    }
-    else {
-      builder.callback(object : ExternalProjectRefreshCallback {
-        override fun onSuccess(externalProject: DataNode<ProjectData>?) {
-          // We have to import data manually because we use custom callback
-          // but default callback code is private.
-          // See `com.intellij.openapi.externalSystem.importing.ImportSpecBuilder#build`
-          if (externalProject != null) {
-            ServiceManager.getService(ProjectDataManager::class.java).importData(externalProject, project, false)
-          }
-          callback.onSuccess(externalProject)
-        }
-
-        override fun onFailure(errorMessage: String, errorDetails: String?) {
-          callback.onFailure(errorMessage, errorDetails)
-        }
-      })
-    }
-    // Build toolwindow will be opened if `ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT` is true while sync
-    project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, null)
-    ExternalSystemUtil.refreshProject(projectBasePath, builder.build())
   }
 
   @JvmStatic
