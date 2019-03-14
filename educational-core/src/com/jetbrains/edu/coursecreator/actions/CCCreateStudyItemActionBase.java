@@ -165,7 +165,11 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     if (parentItem == null) {
       return null;
     }
-    NewStudyItemUiModel model = new NewStudyItemUiModel(parentItem, parentItem.getDir(project), getItemType(), suggestedName, index);
+    VirtualFile parentItemDir = parentItem.getDir(project);
+    if (parentItemDir == null) {
+      return null;
+    }
+    NewStudyItemUiModel model = new NewStudyItemUiModel(parentItem, parentItemDir, getItemType(), suggestedName, index);
     NewStudyItemInfo info = showCreateStudyItemDialog(project, course, model, additionalPanels);
     if (info == null) {
       return null;
