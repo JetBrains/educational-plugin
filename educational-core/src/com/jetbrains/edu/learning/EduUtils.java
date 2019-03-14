@@ -230,9 +230,9 @@ public class EduUtils {
   public static EduEditor getSelectedEduEditor(@NotNull final Project project) {
     try {
       // BACKCOMPAT: 2018.2
-      @SuppressWarnings("deprecation")
-      final FileEditor fileEditor = FileEditorManagerEx.getInstanceEx(project).getSplitters().getCurrentWindow().
-        getSelectedEditor().getSelectedEditorWithProvider().getFirst();
+      @SuppressWarnings("deprecation") final FileEditor fileEditor =
+        FileEditorManagerEx.getInstanceEx(project).getSplitters().getCurrentWindow().
+          getSelectedEditor().getSelectedEditorWithProvider().getFirst();
       if (fileEditor instanceof EduEditor) {
         return (EduEditor)fileEditor;
       }
@@ -252,7 +252,9 @@ public class EduUtils {
     return null;
   }
 
-  public static boolean isRenameAndMoveForbidden(@NotNull final Project project, @NotNull final Course course, @NotNull final PsiElement element) {
+  public static boolean isRenameAndMoveForbidden(@NotNull final Project project,
+                                                 @NotNull final Course course,
+                                                 @NotNull final PsiElement element) {
     VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
     if (element instanceof PsiFile) {
       VirtualFile virtualFile = ((PsiFile)element).getVirtualFile();
@@ -424,7 +426,8 @@ public class EduUtils {
 
       if (lesson instanceof FrameworkLesson && course.isStudy()) {
         return ((FrameworkLesson)lesson).currentTask();
-      } else {
+      }
+      else {
         return lesson.getTask(taskDir.getName());
       }
     }
@@ -566,20 +569,7 @@ public class EduUtils {
   }
 
   public static void openFirstTask(@NotNull final Course course, @NotNull final Project project) {
-    LocalFileSystem.getInstance().refresh(false);
-    final StudyItem firstItem = getFirst(course.getItems());
-    if (firstItem == null) return;
-    final Lesson firstLesson;
-    if (firstItem instanceof Section) {
-      firstLesson = getFirst(((Section)firstItem).getLessons());
-    }
-    else {
-      firstLesson = (Lesson)firstItem;
-    }
-    if (firstLesson == null) {
-      return;
-    }
-    final Task firstTask = getFirst(firstLesson.getTaskList());
+    final Task firstTask = getFirstTask(course);
     if (firstTask == null) return;
     final VirtualFile taskDir = firstTask.getTaskDir(project);
     if (taskDir == null) return;
@@ -603,6 +593,24 @@ public class EduUtils {
       }
       FileEditorManager.getInstance(project).openFile(activeVirtualFile, true);
     }
+  }
+
+  @Nullable
+  public static Task getFirstTask(@NotNull final Course course) {
+    LocalFileSystem.getInstance().refresh(false);
+    final StudyItem firstItem = getFirst(course.getItems());
+    if (firstItem == null) return null;
+    final Lesson firstLesson;
+    if (firstItem instanceof Section) {
+      firstLesson = getFirst(((Section)firstItem).getLessons());
+    }
+    else {
+      firstLesson = (Lesson)firstItem;
+    }
+    if (firstLesson == null) {
+      return null;
+    }
+    return getFirst(firstLesson.getTaskList());
   }
 
   @Nullable

@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.actions;
 
+import com.intellij.ide.projectView.ProjectView;
+import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
@@ -7,16 +9,16 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ui.tree.TreeUtil;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.EduCourse;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -60,6 +62,21 @@ public class ResetCourseAction extends DumbAwareAction {
       }
       return true;
     }));
+    EduUtils.updateCourseProgress(project);
+    AbstractProjectViewPane pane = ProjectView.getInstance(project).getCurrentProjectViewPane();
+    if (pane == null) {
+      return;
+    }
+    JTree tree = pane.getTree();
+    if (tree == null) {
+      return;
+    }
+    TreeUtil.collapseAll(tree, 0);
+    Task firstTask = EduUtils.getFirstTask(course);
+    if (firstTask == null) {
+      return;
+    }
+    NavigationUtils.navigateToTask(project, firstTask);
   }
 
   @Override
