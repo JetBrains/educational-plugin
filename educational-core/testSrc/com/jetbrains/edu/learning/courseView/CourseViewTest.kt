@@ -3,12 +3,11 @@ package com.jetbrains.edu.learning.courseView
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestUtil
-import com.jetbrains.edu.learning.EduState
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -112,7 +111,9 @@ class CourseViewTest : CourseViewTestBase() {
     assertCourseView(structure)
 
     val refreshTaskFileAction = RevertTaskAction()
-    launchAction(taskFile, refreshTaskFileAction)
+    withTestDialog(EduTestDialog(Messages.OK)) {
+      launchAction(taskFile, refreshTaskFileAction)
+    }
   }
 
   private fun createStudyCourse() {
