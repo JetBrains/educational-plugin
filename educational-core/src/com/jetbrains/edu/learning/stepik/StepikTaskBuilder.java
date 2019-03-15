@@ -37,7 +37,6 @@ import java.util.Map;
 import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
 
 public class StepikTaskBuilder {
-  private static final String TASK_NAME = "task";
   private static final Logger LOG = Logger.getInstance(StepikTaskBuilder.class);
   private final StepSource myStepSource;
   private int myStepId;
@@ -311,7 +310,7 @@ public class StepikTaskBuilder {
     createMockTaskFile(task, comment, null);
   }
 
-  private void createMockTaskFile(@NotNull Task task, @NotNull String comment, @Nullable String editorText) {
+  private void createMockTaskFile(@NotNull Task task, @NotNull String comment, @Nullable String editorTextPrefix) {
     final StepOptions options = myStep.getOptions();
     if (options == null) return;
     final List<TaskFile> taskFiles = options.getFiles();
@@ -322,19 +321,14 @@ public class StepikTaskBuilder {
       return;
     }
 
-    String taskFilePath = getTaskFilePath(myLanguage);
-    if (taskFilePath == null) return;
-
     StringBuilder editorTextBuilder = new StringBuilder();
 
-    if (editorText == null) {
+    if (editorTextPrefix == null) {
       Commenter commenter = LanguageCommenters.INSTANCE.forLanguage(myLanguage);
       if (commenter != null) {
         String commentPrefix = commenter.getLineCommentPrefix();
         if (commentPrefix != null) {
-          editorTextBuilder.append(commentPrefix)
-            .append(" ")
-            .append(comment);
+          editorTextBuilder.append(commentPrefix).append(" ").append(comment);
         }
       }
 
@@ -342,17 +336,21 @@ public class StepikTaskBuilder {
         editorTextBuilder.append("\n").append(myConfigurator.getMockTemplate());
       }
     } else {
-      editorTextBuilder.append(editorText);
+      editorTextBuilder.append(editorTextPrefix);
     }
 
+    String editorText = editorTextBuilder.toString();
+    String taskFilePath = getTaskFilePath(myLanguage, editorText);
+    if (taskFilePath == null) return;
+
     final TaskFile taskFile = new TaskFile();
-    taskFile.setText(editorTextBuilder.toString());
+    taskFile.setText(editorText);
     taskFile.setName(taskFilePath);
     task.addTaskFile(taskFile);
   }
 
   @Nullable
-  private String getTaskFilePath(@NotNull Language language) {
+  private String getTaskFilePath(@NotNull Language language, String editorText) {
     // This is a hacky way to how we should name task file.
     // It's assumed that if test's name is capitalized we need to capitalize task file name too.
     if (myConfigurator == null) {
@@ -367,7 +365,8 @@ public class StepikTaskBuilder {
       return null;
     }
 
-    String name = (capitalize ? StringUtil.capitalize(TASK_NAME) : TASK_NAME) + "." + type.getDefaultExtension();
+    String fileName = CodeTaskHelper.fileName(editorText, language);
+    String name = (capitalize ? StringUtil.capitalize(fileName) : fileName) + "." + type.getDefaultExtension();
     return GeneratorUtils.joinPaths(myConfigurator.getSourceDir(), name);
   }
 

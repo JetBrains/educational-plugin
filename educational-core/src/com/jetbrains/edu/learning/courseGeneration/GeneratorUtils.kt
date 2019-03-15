@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.courseGeneration
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
@@ -11,9 +10,6 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiClassOwner
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiModifier
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
@@ -23,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 import org.apache.commons.codec.binary.Base64
@@ -189,61 +184,7 @@ object GeneratorUtils {
   @JvmStatic
   fun initializeCourse(project: Project, course: Course) {
     course.init(null, null, false)
-
-    if (updateTaskFilesNeeded(course)) {
-      updateJavaCodeTaskFileNames(project, course)
-    }
     StudyTaskManager.getInstance(project).course = course
-  }
-
-  private fun updateTaskFilesNeeded(course: Course): Boolean {
-    return course is EduCourse && course.isRemote && course.isStudy() && EduNames.JAVA == course.getLanguageID()
-  }
-
-  private fun updateJavaCodeTaskFileNames(project: Project, course: Course) {
-    course.visitLessons { lesson ->
-      for (task in lesson.getTaskList()) {
-        if (task is CodeTask) {
-          for (taskFile in task.getTaskFiles().values) {
-            nameTaskFileAfterContainingClass(project, task, taskFile)
-          }
-        }
-      }
-      true
-    }
-  }
-
-  private fun nameTaskFileAfterContainingClass(project: Project, task: Task, taskFile: TaskFile) {
-    val language = task.course.languageById
-    val fileType = language?.associatedFileType
-    if (fileType == null) {
-      LOG.warn("Cannot rename task file. Unable to find associated file type for language: " + language.id)
-      return
-    }
-
-    task.taskFiles.remove(taskFile.name)
-    val pathPrefix = taskFile.name.substringBeforeLast(VfsUtilCore.VFS_SEPARATOR_CHAR, "")
-    val className = publicClassName(project, taskFile, fileType) + "." + fileType.defaultExtension
-    taskFile.name = joinPaths(pathPrefix, className)
-    task.addTaskFile(taskFile)
-  }
-
-  private fun publicClassName(project: Project, taskFile: TaskFile, fileType: LanguageFileType): String {
-    var fileName = "Main"
-    val file = PsiFileFactory.getInstance(project).createFileFromText(taskFile.name, fileType, taskFile.text)
-    if (file is PsiClassOwner) {
-      val classes = file.classes
-      for (aClass in classes) {
-        val className = aClass.name
-        val isPublic = aClass.hasModifierProperty(PsiModifier.PUBLIC) || fileName == className
-        if (isPublic && className != null) {
-          fileName = className
-          break
-        }
-      }
-    }
-
-    return fileName
   }
 
   /**
