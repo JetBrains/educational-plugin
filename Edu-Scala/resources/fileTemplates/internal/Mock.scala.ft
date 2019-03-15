@@ -1,5 +1,5 @@
-class Task {
-  public static void main(String[] args) {
+object Task {
+  def main(args: Array[String]): Unit = {
     // put your code here
   }
 }
