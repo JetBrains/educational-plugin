@@ -147,14 +147,9 @@ public class StepikSolutionsLoader implements Disposable {
         return;
       }
       FileEditorManager manager = FileEditorManager.getInstance(myProject);
-      if(manager == null) {
-        return;
-      }
       final FileEditor studyEditor = manager.getSelectedEditor();
-      EduEditor eduEditor;
       if (studyEditor instanceof EduEditor) {
-        eduEditor = (EduEditor)studyEditor;
-        final Editor editor = eduEditor.getEditor();
+        final Editor editor = ((EduEditor)studyEditor).getEditor();
         if (currentTask.getStatus() == CheckStatus.Solved) {
           editor.getSelectionModel().removeSelection();
         }
