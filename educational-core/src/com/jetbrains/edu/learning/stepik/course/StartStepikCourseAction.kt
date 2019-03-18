@@ -5,29 +5,18 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikNames
 
 class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
 
   override fun actionPerformed(e: AnActionEvent) {
-    if (EduSettings.isLoggedIn()) {
-      doImport()
-    }
-    else {
-      val result = Messages.showOkCancelDialog("Stepik authorization is required to import courses", "Log in to Stepik",
-                                               "Log in", "Cancel", null)
-      if (result == Messages.OK) {
-        StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
-      }
-    }
+        doImport()
   }
 
   private fun doImport() {

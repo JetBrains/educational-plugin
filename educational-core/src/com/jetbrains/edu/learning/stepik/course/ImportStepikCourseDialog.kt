@@ -5,9 +5,9 @@ import com.intellij.openapi.ui.ValidationInfo
 import javax.swing.JComponent
 
 class ImportStepikCourseDialog : DialogWrapper(false) {
-    private var coursePanel: ImportStepikCoursePanel
+    private var coursePanel: ImportStepikCoursePanel = ImportStepikCoursePanel(myDisposable)
 
-    override fun createCenterPanel(): JComponent? = coursePanel.mainPanel
+    override fun createCenterPanel(): JComponent? = coursePanel.panel
 
     public override fun doValidate(): ValidationInfo? {
         val isValid = coursePanel.validate()
@@ -22,8 +22,12 @@ class ImportStepikCourseDialog : DialogWrapper(false) {
 
     init {
         title = "Import Stepik Course"
-        coursePanel = ImportStepikCoursePanel()
         init()
+        coursePanel.setValidationListener (object : ImportStepikCoursePanel.ValidationListener {
+          override fun onLoggedIn(isLoggedIn: Boolean) {
+            isOKActionEnabled = isLoggedIn
+          }
+        })
     }
 
     fun courseLink(): String = coursePanel.courseLink
