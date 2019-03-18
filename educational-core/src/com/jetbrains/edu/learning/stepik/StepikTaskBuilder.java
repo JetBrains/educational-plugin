@@ -228,7 +228,7 @@ public class StepikTaskBuilder {
     task.setIndex(myStepSource.getPosition());
     task.setUpdateDate(myStepSource.getUpdateDate());
     final String stepText = StringUtil.capitalize(myName.toLowerCase()) + " tasks are not supported yet. <br>" +
-                            "View this step on <a href=\"" + StepikUtils.getStepikLink(task, myLesson) +"\">Stepik</a>.";
+                            "View this step on <a href=\"" + StepikUtils.getStepikLink(task, myLesson) + "\">Stepik</a>.";
     task.setDescriptionText(stepText);
 
     createMockTaskFile(task, "this is a " + myName.toLowerCase() + " task. You can use this editor as a playground\n");
@@ -250,7 +250,8 @@ public class StepikTaskBuilder {
     if (stepOptions != null) {
       if (stepOptions.getDescriptionText() != null) {
         task.setDescriptionText(stepOptions.getDescriptionText());
-      } else {
+      }
+      else {
         task.setDescriptionText(myStep.getText());
       }
       if (stepOptions.getDescriptionFormat() != null) {
@@ -310,7 +311,7 @@ public class StepikTaskBuilder {
     createMockTaskFile(task, comment, null);
   }
 
-  private void createMockTaskFile(@NotNull Task task, @NotNull String comment, @Nullable String editorTextPrefix) {
+  private void createMockTaskFile(@NotNull Task task, @NotNull String comment, @Nullable String codeTemplate) {
     final StepOptions options = myStep.getOptions();
     if (options == null) return;
     final List<TaskFile> taskFiles = options.getFiles();
@@ -323,7 +324,7 @@ public class StepikTaskBuilder {
 
     StringBuilder editorTextBuilder = new StringBuilder();
 
-    if (editorTextPrefix == null) {
+    if (codeTemplate == null) {
       Commenter commenter = LanguageCommenters.INSTANCE.forLanguage(myLanguage);
       if (commenter != null) {
         String commentPrefix = commenter.getLineCommentPrefix();
@@ -335,8 +336,9 @@ public class StepikTaskBuilder {
       if (myConfigurator != null) {
         editorTextBuilder.append("\n").append(myConfigurator.getMockTemplate());
       }
-    } else {
-      editorTextBuilder.append(editorTextPrefix);
+    }
+    else {
+      editorTextBuilder.append(codeTemplate);
     }
 
     String editorText = editorTextBuilder.toString();
@@ -374,7 +376,7 @@ public class StepikTaskBuilder {
                                                @Nullable Map codeTemplates) {
     final String languageString = StepikLanguages.langOfId(language.getID()).getLangName();
     if (languageString != null && codeTemplates != null) {
-      return (String) codeTemplates.get(languageString);
+      return (String)codeTemplates.get(languageString);
     }
 
     return null;
