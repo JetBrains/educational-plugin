@@ -12,7 +12,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -132,6 +134,29 @@ public class StepikSolutionsLoader implements Disposable {
         if (course != null) {
           loadSolutions(progressIndicator, course);
           EduUtils.updateCourseProgress(myProject);
+        }
+        removeSolvedTaskSelection();
+      }
+    });
+  }
+
+  public void removeSolvedTaskSelection(){
+    ApplicationManager.getApplication().invokeLater(() -> {
+      Task currentTask = EduUtils.getCurrentTask(myProject);
+      if (currentTask == null) {
+        return;
+      }
+      FileEditorManager manager = FileEditorManager.getInstance(myProject);
+      if(manager == null) {
+        return;
+      }
+      final FileEditor studyEditor = manager.getSelectedEditor();
+      EduEditor eduEditor;
+      if (studyEditor instanceof EduEditor) {
+        eduEditor = (EduEditor)studyEditor;
+        final Editor editor = eduEditor.getEditor();
+        if (currentTask.getStatus() == CheckStatus.Solved) {
+          editor.getSelectionModel().removeSelection();
         }
       }
     });
