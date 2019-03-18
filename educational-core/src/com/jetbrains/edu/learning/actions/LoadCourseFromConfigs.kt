@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.DumbAwareAction
@@ -19,6 +20,7 @@ import com.jetbrains.edu.coursecreator.configuration.YamlFormatSettings
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer.deserializeLesson
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer.deserializeTask
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduProjectComponent
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -27,6 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
 
+@Suppress("ComponentNotRegistered") // educational-core.xml
 class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -161,4 +164,9 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
   private fun <T : StudyItem> loadStudyItem(courseConfig: VirtualFile, clazz: Class<T>): T =
     YamlFormatSynchronizer.MAPPER.readValue(VfsUtil.loadText(courseConfig), clazz) ?: error(
       "Failed to load ${clazz.simpleName} from ${courseConfig.path}")
+
+  override fun update(e: AnActionEvent) {
+    super.update(e)
+    e.presentation.isEnabled = Experiments.isFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT)
+  }
 }
