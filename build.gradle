@@ -29,6 +29,8 @@ def buildNumber = System.getenv("BUILD_NUMBER")
 version = "$pluginVersion-${buildNumber == null ? "SNAPSHOT" : buildNumber}"
 
 def isStudio = environmentName.startsWith("studio")
+// BACKCOMPAT: 2018.2
+def is182 = environmentName.endsWith("182")
 
 import de.undercouch.gradle.tasks.download.Download
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -233,8 +235,10 @@ intellij {
     pluginName 'EduTools'
     updateSinceUntilBuild true
     downloadSources false
-    def pluginsList = ['junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion",
-                       "org.rust.lang:$rustPluginVersion"]
+    def pluginsList = ['junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion"]
+    if (!is182) {
+        pluginsList += ["org.rust.lang:$rustPluginVersion"]
+    }
     if (!isStudio) {
         pluginsList += ["NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"]
     }
@@ -341,8 +345,7 @@ configure([project(':Edu-Python'),
            project(':Edu-Java'), 
            project(':Edu-Kotlin'), 
            project(':Edu-Scala'), 
-           project(':Edu-Android'), 
-           project(':Edu-Rust')]) {
+           project(':Edu-Android')]) {
     dependencies {
         compile project(':educational-core')
         testCompile project(':educational-core').sourceSets.test.output
@@ -388,8 +391,14 @@ if (!isStudio) {
     }
 }
 
-configure(project(':Edu-Rust')) {
-    intellij.plugins "org.rust.lang:$rustPluginVersion"  
+if (!is182) {
+    configure(project(':Edu-Rust')) {
+        intellij.plugins "org.rust.lang:$rustPluginVersion"
+        dependencies {
+            compile project(':educational-core')
+            testCompile project(':educational-core').sourceSets.test.output
+        }
+    }
 }
 
 runIde.systemProperty("-Didea.is.internal", "true")
@@ -397,7 +406,10 @@ runIde.systemProperty("-ea", "")
 
 dependencies {
     compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'),
-            project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-Rust')
+            project(':Edu-Scala'), project(':Edu-Android')
+    if (!is182) {
+        compile project(':Edu-Rust')   
+    }
     if (!isStudio) {
         compile project(':Edu-JavaScript')
     }

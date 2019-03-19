@@ -13,7 +13,9 @@ class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
 
     override fun afterProjectGenerated(project: Project, projectSettings: RsProjectSettings) {
         super.afterProjectGenerated(project, projectSettings)
-        project.rustSettings.data = project.rustSettings.data.copy(toolchain = projectSettings.toolchain)
+        project.rustSettings.modify {
+            it.toolchain = projectSettings.toolchain
+        }
         myCourse.visitLessons { lesson ->
             for (task in lesson.taskList) {
                 val manifestFile = task.getTaskDir(project)?.findChild(CargoConstants.MANIFEST_FILE) ?: continue
