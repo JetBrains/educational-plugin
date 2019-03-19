@@ -164,6 +164,21 @@ sealed class Change {
     }
   }
 
+  class RemoveTaskFile : Change {
+
+    constructor(path: String): super(path, "")
+    @Throws(IOException::class)
+    constructor(input: DataInput): super(input)
+
+    override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
+      task.taskFiles.remove(path)
+    }
+
+    override fun apply(state: MutableMap<String, String>) {
+      state[path] = text
+    }
+  }
+
   companion object {
     private val LOG: Logger = Logger.getInstance(Change::class.java)
 
@@ -175,6 +190,7 @@ sealed class Change {
         is RemoveFile -> 1
         is ChangeFile -> 2
         is AddUserCreatedTaskFile -> 3
+        is RemoveTaskFile -> 4
       }
       out.writeInt(ordinal)
       change.write(out)
@@ -189,6 +205,7 @@ sealed class Change {
         1 -> RemoveFile(input)
         2 -> ChangeFile(input)
         3 -> AddUserCreatedTaskFile(input)
+        4 -> RemoveTaskFile(input)
         else -> error("Unexpected change type: $ordinal")
       }
     }

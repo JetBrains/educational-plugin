@@ -109,13 +109,23 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     val (targetTaskFiles, targetTestFiles) = targetState.split(lesson)
 
     // Creates [Change]s to propagates all current changes of task files to target task.
-    // Technically, we won't change text of task files, just add user created task files to target task
+    // Technically, we won't change text of task files, just add/remove user created/removed task files to/from target task
     fun calculateCurrentTaskChanges(): UserChanges {
-      val newTaskFilesChanges = (currentTaskFilesState - targetTaskFiles.keys).map { (path, text) ->
-        Change.AddUserCreatedTaskFile(path, text)
+      val toRemove = HashMap<String, String>(targetTaskFiles)
+      val taskFileChanges = mutableListOf<Change>()
+
+      for ((path, text) in currentTaskFilesState) {
+        val targetText = toRemove.remove(path)
+        if (targetText == null) {
+          taskFileChanges += Change.AddUserCreatedTaskFile(path, text)
+        }
+      }
+
+      for ((path, _) in toRemove) {
+        taskFileChanges += Change.RemoveTaskFile(path)
       }
       val testChanges = calculateChanges(currentTestFilesState, targetTestFiles)
-      return testChanges + newTaskFilesChanges
+      return testChanges + taskFileChanges
     }
     
     // target task initialization

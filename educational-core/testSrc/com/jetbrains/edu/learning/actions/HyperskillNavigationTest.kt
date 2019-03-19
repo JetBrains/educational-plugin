@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.actions
 
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -13,6 +14,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.withTestDialog
 import org.hamcrest.CoreMatchers.hasItem
+import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
 
 class HyperskillNavigationTest : NavigationTestBase() {
@@ -262,6 +264,45 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  fun `test removed file`() {
+    val course = createHyperskillCourse()
+
+    val task1 = course.findTask("lesson1", "task1")
+    val task2 = course.findTask("lesson1", "task2")
+
+    withVirtualFileListener(course) {
+      withTestDialog(EduTestDialog(Messages.NO)) {
+        runWriteAction {
+          findFile("lesson1/task/src/Baz.kt").delete(HyperskillNavigationTest::class.java)
+        }
+        task1.openTaskFileInEditor("src/Task.kt")
+        task1.status = CheckStatus.Solved
+        myFixture.testAction(NextTaskAction())
+      }
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          dir("src") {
+            file("Task.kt", """
+              fun foo() {}
+            """)
+          }
+          dir("test") {
+            file("Tests2.kt", """
+              fun tests2() {}
+            """)
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+
+    assertThat(task2.taskFiles.keys, not(hasItem("src/Baz.kt")))
+  }
 
   private fun createHyperskillCourse(): Course {
     return courseWithFiles(
