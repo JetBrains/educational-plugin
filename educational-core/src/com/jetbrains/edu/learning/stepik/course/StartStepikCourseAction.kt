@@ -57,7 +57,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
       return null
     }
     val language = chooseLanguageIfNeeded(languages, course) ?: return null
-    course.type = String.format("%s%s %s", StepikNames.PYCHARM_PREFIX, JSON_FORMAT_VERSION, language.id)
+    course.type = "${StepikNames.PYCHARM_PREFIX}${JSON_FORMAT_VERSION} ${language.id}"
     course.language = language.id
     return course
   }
