@@ -299,6 +299,7 @@ public abstract class Course extends ItemContainer {
   }
 
   @Transient
+  @NotNull
   public CourseCompatibility getCompatibility() {
     return myCompatibility;
   }
