@@ -34,11 +34,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
   }
 
   fun importStepikCourse(): Course? {
-    val dialog = ImportStepikCourseDialog()
-    if (!dialog.showAndGet()) {
-      return null
-    }
-    val courseLink = dialog.courseLink()
+    val courseLink = showDialogAndGetCourseLink() ?: return null
     val course = StepikCourseConnector.getCourseInfoByLink(courseLink)
     if (course == null) {
       showFailedToAddCourseNotification()
@@ -48,6 +44,14 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     // course language is already set if we opened idea compatible course by link
     if (course.isCompatible) {
       return course
+    }
+
+    private fun showDialogAndGetCourseLink(): String? {
+      val dialog = ImportStepikCourseDialog()
+      if (!dialog.showAndGet()) {
+        return null
+      }
+      return dialog.courseLink()
     }
 
     val languages = getLanguagesUnderProgress(course)
