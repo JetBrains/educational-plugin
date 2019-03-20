@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.configuration
 
 import com.intellij.lang.Language
 import com.intellij.openapi.extensions.Extensions
+import com.jetbrains.edu.learning.EduNames
 
 object EduConfiguratorManager {
 
@@ -22,10 +23,10 @@ object EduConfiguratorManager {
       .filter { it.instance.isEnabled }
 
   /**
-   * Returns all languages with enabled [EduConfigurator]
+   * Returns all languages with enabled [EduConfigurator] for [EduNames.PYCHARM] course type
    */
   @JvmStatic
-  val supportedLanguages: List<String> by lazy {
-    allExtensions().map{ it.language }.toList()
+  val supportedEduLanguages: List<String> by lazy {
+    allExtensions().filter { it.courseType == EduNames.PYCHARM }.map { it.language }.toList()
   }
 }
