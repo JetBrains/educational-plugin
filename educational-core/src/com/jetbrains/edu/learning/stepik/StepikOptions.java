@@ -17,6 +17,7 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.HyperlinkAdapter;
+import com.jetbrains.edu.learning.EduLogInListener;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.settings.OauthOptions;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
@@ -49,24 +50,28 @@ public class StepikOptions extends OauthOptions<StepikUser> {
       @Override
       protected void hyperlinkActivated(HyperlinkEvent e) {
         EduUsagesCollector.loginFromSettings();
-        ApplicationManager.getApplication().getMessageBus().connect().subscribe(EduSettings.SETTINGS_CHANGED, () -> {
-          StepikUser user = EduSettings.getInstance().getUser();
-          setLastSavedAccount(user);
-          updateLoginLabels();
+        ApplicationManager.getApplication().getMessageBus().connect().subscribe(EduSettings.SETTINGS_CHANGED, new EduLogInListener() {
+          @Override
+          public void userLoggedIn() {
+            StepikUser user = EduSettings.getInstance().getUser();
+            setLastSavedAccount(user);
+            updateLoginLabels();
+          }
+          @Override
+          public void userLoggedOut() { }
         });
-
         StepikAuthorizer.doAuthorize(() -> showDialog());
       }
-    };
-  }
 
-  private void showDialog() {
-    OAuthDialog dialog = new OAuthDialog();
-    if (dialog.showAndGet()) {
-      final StepikUser user = EduSettings.getInstance().getUser();
-      setLastSavedAccount(user);
-      updateLoginLabels();
-    }
+      private void showDialog() {
+        OAuthDialog dialog = new OAuthDialog();
+        if (dialog.showAndGet()) {
+          final StepikUser user = EduSettings.getInstance().getUser();
+          setLastSavedAccount(user);
+          updateLoginLabels();
+        }
+      }
+    };
   }
 
   @Override

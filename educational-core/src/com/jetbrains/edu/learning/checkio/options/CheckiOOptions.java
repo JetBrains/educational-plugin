@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.checkio.options;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.HyperlinkAdapter;
+import com.intellij.util.messages.MessageBus;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.settings.OauthOptions;
@@ -27,6 +29,13 @@ public abstract class CheckiOOptions extends OauthOptions<CheckiOAccount> {
   @Override
   public void setCurrentAccount(@Nullable CheckiOAccount lastSavedAccount) {
     myOAuthConnector.setAccount(lastSavedAccount);
+    MessageBus messageBus = ApplicationManager.getApplication().getMessageBus();
+    if (lastSavedAccount != null) {
+      messageBus.syncPublisher(CheckiOOAuthConnector.getAuthorizationTopic()).userLoggedIn();
+    }
+    else {
+      messageBus.syncPublisher(CheckiOOAuthConnector.getAuthorizationTopic()).userLoggedOut();
+    }
   }
 
   @NotNull

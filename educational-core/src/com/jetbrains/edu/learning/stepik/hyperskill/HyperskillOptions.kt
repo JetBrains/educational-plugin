@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.HyperlinkAdapter
+import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.settings.OauthOptions
 import org.jetbrains.annotations.Nls
 import javax.swing.event.HyperlinkEvent
@@ -19,10 +20,10 @@ class HyperskillOptions : OauthOptions<HyperskillAccount>() {
     HyperskillSettings.INSTANCE.account = lastSavedAccount
     val messageBus = ApplicationManager.getApplication().messageBus
     if (lastSavedAccount != null) {
-      messageBus.syncPublisher<HyperskillConnector.HyperskillLoggedIn>(HyperskillConnector.hyperskillAuthorizationTopic).userLoggedIn()
+      messageBus.syncPublisher<EduLogInListener>(HyperskillConnector.hyperskillAuthorizationTopic).userLoggedIn()
     }
     else {
-      messageBus.syncPublisher<HyperskillConnector.HyperskillLoggedIn>(HyperskillConnector.hyperskillAuthorizationTopic).userLoggedOut()
+      messageBus.syncPublisher<EduLogInListener>(HyperskillConnector.hyperskillAuthorizationTopic).userLoggedOut()
     }
   }
 

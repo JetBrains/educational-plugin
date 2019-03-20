@@ -1,12 +1,9 @@
 package com.jetbrains.edu.learning.actions;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
@@ -18,26 +15,18 @@ import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
-public class SyncCourseAction extends DumbAwareAction {
+public class SyncStepikCourseAction extends SyncCourseAction {
 
-  public SyncCourseAction() {
+  public SyncStepikCourseAction() {
     super("Synchronize Course", "Synchronize Course", EducationalCoreIcons.StepikRefresh);
   }
 
   @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
-    Project project = e.getProject();
-    if (project != null) {
-      doUpdate(project);
-    }
-  }
-
-  public static void doUpdate(@NotNull Project project) {
+  public void synchronizeCourse(@NotNull Project project) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
@@ -65,7 +54,8 @@ public class SyncCourseAction extends DumbAwareAction {
     courseSynchronizer.loadSolutionsInBackground();
   }
 
-  public static boolean isAvailable(@Nullable Project project) {
+  @Override
+  public boolean isAvailable(@NotNull Project project) {
     if (project == null) {
       return false;
     }
@@ -79,12 +69,5 @@ public class SyncCourseAction extends DumbAwareAction {
       return true;
     }
     return false;
-  }
-
-  @Override
-  public void update(@NotNull AnActionEvent e) {
-    boolean visible = isAvailable(e.getProject());
-    Presentation presentation = e.getPresentation();
-    presentation.setEnabledAndVisible(visible);
   }
 }

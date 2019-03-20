@@ -6,13 +6,14 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.ui.EduColors
-
+import java.awt.BorderLayout
+import java.awt.Dimension
 import javax.swing.*
-import java.awt.*
 
 class ImportStepikCoursePanel(private val parent : Disposable) {
   private val courseLinkTextField = JTextField()
@@ -77,11 +78,12 @@ class ImportStepikCoursePanel(private val parent : Disposable) {
 
   private fun addLoginListener() {
     val busConnection = ApplicationManager.getApplication().messageBus.connect(parent)
-    busConnection.subscribe(EduSettings.SETTINGS_CHANGED, EduSettings.StudySettingsListener {
-      if (EduSettings.isLoggedIn()) {
+    busConnection.subscribe(EduSettings.SETTINGS_CHANGED, object : EduLogInListener {
+      override fun userLoggedIn() {
         busConnection.disconnect()
         ApplicationManager.getApplication().invokeLater({ doValidation() }, ModalityState.any())
       }
+      override fun userLoggedOut() {}
     })
   }
 

@@ -12,6 +12,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
@@ -35,8 +36,8 @@ object HyperskillConnector {
   private val LOG = Logger.getInstance(HyperskillConnector::class.java)
 
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
-  val hyperskillAuthorizationTopic = com.intellij.util.messages.Topic.create<HyperskillLoggedIn>("Edu.hyperskillLoggedIn",
-                                                                                               HyperskillLoggedIn::class.java)
+  val hyperskillAuthorizationTopic = com.intellij.util.messages.Topic.create<EduLogInListener>("Edu.hyperskillLoggedIn",
+                                                                                               EduLogInListener::class.java)
   private val converterFactory: JacksonConverterFactory
   @JvmStatic
   val objectMapper: ObjectMapper
@@ -88,7 +89,7 @@ object HyperskillConnector {
     val currentUser = getCurrentUser(account) ?: return false
     account.userInfo = currentUser
     HyperskillSettings.INSTANCE.account = account
-    ApplicationManager.getApplication().messageBus.syncPublisher<HyperskillLoggedIn>(hyperskillAuthorizationTopic).userLoggedIn()
+    ApplicationManager.getApplication().messageBus.syncPublisher<EduLogInListener>(hyperskillAuthorizationTopic).userLoggedIn()
     return true
   }
 
@@ -262,7 +263,7 @@ object HyperskillConnector {
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
     authorizationBusConnection.disconnect()
     authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
-    authorizationBusConnection.subscribe(hyperskillAuthorizationTopic, object : HyperskillLoggedIn {
+    authorizationBusConnection.subscribe(hyperskillAuthorizationTopic, object : EduLogInListener {
       override fun userLoggedOut() { }
 
       override fun userLoggedIn() {
@@ -271,10 +272,5 @@ object HyperskillConnector {
         }
       }
     })
-  }
-
-  interface HyperskillLoggedIn {
-    fun userLoggedIn()
-    fun userLoggedOut()
   }
 }

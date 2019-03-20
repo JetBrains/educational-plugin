@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
+import com.jetbrains.edu.learning.EduLogInListener;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.authUtils.OAuthUtils;
@@ -32,15 +33,19 @@ import java.util.regex.Pattern;
 public abstract class CheckiOOAuthConnector {
   private static final Logger LOG = Logger.getInstance(CheckiOOAuthConnector.class);
   private static final CheckiOOAuthInterface CHECKIO_OAUTH_INTERFACE = RetrofitUtils.createRetrofitOAuthInterface();
+  private static final Topic<EduLogInListener> myAuthorizationTopic = Topic.create("Edu.checkioUserLoggedIn", EduLogInListener.class);
 
   private final String myClientId;
   private final String myClientSecret;
-  private final Topic<CheckiOUserLoggedIn> myAuthorizationTopic = Topic.create("Edu.checkioUserLoggedIn", CheckiOUserLoggedIn.class);
   @NotNull private MessageBusConnection myAuthorizationBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
 
   protected CheckiOOAuthConnector(@NotNull String clientId, @NotNull String clientSecret) {
     myClientId = clientId;
     myClientSecret = clientSecret;
+  }
+
+  public static Topic<EduLogInListener> getAuthorizationTopic() {
+    return myAuthorizationTopic;
   }
 
   @Nullable
@@ -170,10 +175,16 @@ public abstract class CheckiOOAuthConnector {
   private void createAuthorizationListener(@NotNull Runnable... postLoginActions) {
     myAuthorizationBusConnection.disconnect();
     myAuthorizationBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
-    myAuthorizationBusConnection.subscribe(myAuthorizationTopic, () -> {
-      for (Runnable action : postLoginActions) {
-        action.run();
+    myAuthorizationBusConnection.subscribe(myAuthorizationTopic, new EduLogInListener() {
+      @Override
+      public void userLoggedIn() {
+        for (Runnable action : postLoginActions) {
+          action.run();
+        }
       }
+
+      @Override
+      public void userLoggedOut() { }
     });
   }
 
@@ -210,7 +221,7 @@ public abstract class CheckiOOAuthConnector {
 
   // In case of Android Studio
   @Nullable
-  public synchronized String codeHandler(@NotNull String code, @NotNull String handlingPath) {
+  private synchronized String codeHandler(@NotNull String code, @NotNull String handlingPath) {
     try {
       if (getAccount() != null) {
         ApplicationManager.getApplication().getMessageBus().syncPublisher(myAuthorizationTopic).userLoggedIn();
@@ -229,10 +240,5 @@ public abstract class CheckiOOAuthConnector {
     catch (ApiException e) {
       return "Couldn't get user info";
     }
-  }
-
-  @FunctionalInterface
-  private interface CheckiOUserLoggedIn {
-    void userLoggedIn();
   }
 }

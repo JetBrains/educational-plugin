@@ -24,10 +24,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.CoursesProvider;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction;
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
@@ -198,8 +195,13 @@ public class CoursesPanel extends JPanel {
       myBusConnection.disconnect();
     }
     myBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
-    myBusConnection.subscribe(EduSettings.SETTINGS_CHANGED, () -> {
-      if (EduSettings.isLoggedIn()) {
+    myBusConnection.subscribe(EduSettings.SETTINGS_CHANGED, new EduLogInListener() {
+
+      @Override
+      public void userLoggedOut() { }
+
+      @Override
+      public void userLoggedIn() {
         runPostLoginActions(postLoginActions);
       }
     });

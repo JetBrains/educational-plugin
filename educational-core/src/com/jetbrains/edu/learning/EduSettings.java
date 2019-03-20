@@ -26,7 +26,7 @@ import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 
 @State(name = "EduSettings", storages = @Storage("other.xml"))
 public class EduSettings implements PersistentStateComponent<Element> {
-  public static final Topic<StudySettingsListener> SETTINGS_CHANGED = Topic.create("Edu.UserSet", StudySettingsListener.class);
+  public static final Topic<EduLogInListener> SETTINGS_CHANGED = Topic.create("Edu.UserSet", EduLogInListener.class);
   @Transient
   @Nullable
   private StepikUser myUser;
@@ -115,7 +115,7 @@ public class EduSettings implements PersistentStateComponent<Element> {
   @Transient
   public void setUser(@Nullable final StepikUser user) {
     myUser = user;
-    ApplicationManager.getApplication().getMessageBus().syncPublisher(SETTINGS_CHANGED).settingsChanged();
+    ApplicationManager.getApplication().getMessageBus().syncPublisher(SETTINGS_CHANGED).userLoggedIn();
   }
 
   public boolean shouldUseJavaFx() {
@@ -128,10 +128,5 @@ public class EduSettings implements PersistentStateComponent<Element> {
 
   public static boolean isLoggedIn() {
     return getInstance().myUser != null;
-  }
-
-  @FunctionalInterface
-  public interface StudySettingsListener {
-    void settingsChanged();
   }
 }

@@ -16,7 +16,6 @@ public class EducationalCoreIcons {
   public static final Icon WatchInput = load("/icons/com/jetbrains/edu/learning/WatchInput.png"); // 24x24
 
   public static final Icon Stepik = load("/icons/com/jetbrains/edu/learning/Stepik.png"); // 16x16
-  public static final Icon StepikOff = load("/icons/com/jetbrains/edu/learning/StepikOff.png"); // 16x16
   public static final Icon StepikRefresh = load("/icons/com/jetbrains/edu/learning/StepikRefresh.png"); // 16x16
 
   public static final Icon CheckiO = load("/icons/com/jetbrains/edu/learning/PyCheckiO.svg");

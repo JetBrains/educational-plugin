@@ -67,7 +67,7 @@ public class StepikProjectComponent implements ProjectComponent {
     if (frame == null) return;
     StatusBar statusBar = frame.getStatusBar();
     if (statusBar == null) return;
-    StatusBarWidget widget = statusBar.getWidget(StepikUserWidget.ID);
+    StatusBarWidget widget = statusBar.getWidget(StepikWidget.ID);
     if (!(widget instanceof CustomStatusBarWidget)) return;
     CustomStatusBarWidget customWidget = (CustomStatusBarWidget)widget;
     JComponent widgetComponent = customWidget.getComponent();
