@@ -39,7 +39,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     val courseLink = showDialogAndGetCourseLink() ?: return null
     val course = StepikCourseConnector.getCourseInfoByLink(courseLink)
     if (course == null) {
-      showFailedToAddCourseNotification()
+      showFailedToAddCourseNotification(courseLink)
       return null
     }
 
@@ -110,8 +110,8 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     }
   }
 
-  private fun showFailedToAddCourseNotification() {
-    Messages.showErrorDialog("Cannot find course on Stepik, please check if link is correct", "Failed to Load Stepik Course")
+  private fun showFailedToAddCourseNotification(courseLink: String) {
+    Messages.showErrorDialog("Cannot find course on Stepik, please check if link is correct: ${courseLink}", "Failed to Load Stepik Course")
   }
 
   private fun getLanguagesUnderProgress(course: StepikCourse): List<Language> {
