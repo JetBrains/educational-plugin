@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.stepik.StepikLanguages
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
@@ -55,7 +56,7 @@ object StepikCourseConnector {
       for (languageName in codeTemplates.keys) {
         val id = StepikLanguages.langOfName(languageName).id
         val language = Language.findLanguageByID(id)
-        if (language != null) {
+        if (language != null && (language.id in EduConfiguratorManager.supportedEduLanguages)) {
           languages.add(language)
         }
       }
