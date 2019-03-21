@@ -2,6 +2,7 @@
 
 package com.jetbrains.edu.learning.courseFormat.ext
 
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -12,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 
 fun TaskFile.getDocument(project: Project): Document? {
   val virtualFile = getVirtualFile(project) ?: return null
-  return FileDocumentManager.getInstance().getDocument(virtualFile)
+  return runReadAction { FileDocumentManager.getInstance().getDocument(virtualFile) }
 }
 
 fun TaskFile.getVirtualFile(project: Project): VirtualFile? {

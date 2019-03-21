@@ -57,8 +57,8 @@ class UserChanges(val changes: List<Change>) {
 
 sealed class Change {
 
-  protected val path: String
-  protected val text: String
+  val path: String
+  val text: String
 
   constructor(path: String, text: String) {
     this.path = path

@@ -6,6 +6,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.KeyWithDefaultValue
+import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -14,6 +15,8 @@ import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.stepik.api.Submission
 
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
+
+  override val loadingTopic: Topic<SolutionLoadingListener> = SOLUTION_TOPIC
 
   override fun provideTasksToUpdate(course: Course): List<Task> {
     return course.items.asSequence().flatMap {
@@ -44,6 +47,8 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     fun getInstance(project: Project): HyperskillSolutionLoader = ServiceManager.getService(project, HyperskillSolutionLoader::class.java)
 
     val IS_HYPERSKILL_SOLUTION_LOADING_STARTED: Key<Boolean> = KeyWithDefaultValue.create("IS_HYPERSKILL_SOLUTION_LOADING_STARTED", false)
+
+    val SOLUTION_TOPIC: Topic<SolutionLoadingListener> = Topic.create("Hyperskill solutions loaded", SolutionLoadingListener::class.java)
   }
 }
 

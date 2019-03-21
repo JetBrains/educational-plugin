@@ -107,7 +107,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
                                                                         (null, "Loading project", true) {
         override fun compute(indicator: ProgressIndicator): HyperskillCourse? {
           val hyperskillProject = HyperskillConnector.getProject(projectId) ?: return null
-          val stages = HyperskillConnector.getStages(projectId) ?: return null
+
           if (!hyperskillProject.useIde) {
             LOG.warn("Project in not supported yet $projectId")
             Notification(HYPERSKILL, HYPERSKILL, HYPERSKILL_PROJECT_NOT_SUPPORTED, NotificationType.WARNING,
@@ -116,6 +116,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
           }
           val languageId = EduNames.JAVA
           val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
+          val stages = HyperskillConnector.getStages(projectId) ?: return null
           hyperskillCourse.stages = stages
           return hyperskillCourse
         }

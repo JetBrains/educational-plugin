@@ -85,23 +85,26 @@ fun updateCourseIfNeeded(project: Project, course: EduCourse) {
     object : com.intellij.openapi.progress.Task.Backgroundable(project, "Updating Course") {
       override fun run(indicator: ProgressIndicator) {
         if (!course.isUpToDate()) {
-          showUpdateAvailableNotification(project, course)
+          showUpdateAvailableNotification(project) {
+            StepikCourseUpdater(course, project).updateCourse()
+            course.setUpdated()
+          }
         }
       }
     })
 }
 
-private fun showUpdateAvailableNotification(project: Project, course: Course) {
+fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {
   val notification = Notification("Update.course", "Course Updates",
                                   "Course is ready to <a href=\"update\">update</a>",
                                   NotificationType.INFORMATION,
-                                  NotificationListener { _, _ ->
+                                  NotificationListener { notification, _ ->
                                     FileEditorManagerEx.getInstanceEx(project).closeAllFiles()
                                     ProgressManager.getInstance().runProcessWithProgressSynchronously(
                                       {
                                         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-                                        StepikCourseUpdater(course as EduCourse, project).updateCourse()
-                                        course.setUpdated()
+                                        notification.expire()
+                                        updateAction()
                                       },
                                       "Updating Course", true, project)
                                   })
