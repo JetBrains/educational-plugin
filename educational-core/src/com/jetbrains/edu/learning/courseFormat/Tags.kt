@@ -13,7 +13,7 @@ import java.awt.geom.RoundRectangle2D
 import java.util.*
 import javax.swing.JComponent
 
-private val DEFAULT_COLOR: Color = Color(70, 130, 180, 70)
+private val DEFAULT_COLOR: Color = Color(70, 130, 130, 130)
 
 open class Tag @JvmOverloads constructor(val text: String, val color: Color = DEFAULT_COLOR, private val searchOption: String = "tag") {
   fun getSearchText() : String = "$searchOption:$text".toLowerCase()
