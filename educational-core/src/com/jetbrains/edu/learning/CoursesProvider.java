@@ -2,8 +2,10 @@ package com.jetbrains.edu.learning;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseLoading.BundledCoursesProvider;
+import kotlin.collections.ArraysKt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -51,6 +53,14 @@ public interface CoursesProvider {
       }
     }
     return courses;
+  }
+
+  static List<Course> loadRemoteCourses() {
+    // BACKCOMPAT: 2018.2
+    @SuppressWarnings("deprecation")
+    List<CoursesProvider> providers = ArraysKt.asList(Extensions.getExtensions(EP_NAME));
+    List<CoursesProvider> remoteProviders = ContainerUtil.filter(providers, p -> !(p instanceof BundledCoursesProvider));
+    return loadAllCourses(remoteProviders);
   }
 
   static List<Course> loadAllCourses() {

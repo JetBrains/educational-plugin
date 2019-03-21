@@ -53,7 +53,7 @@ class NewCoursesNotifier(parentDisposable: Disposable, private val featuredCours
     val ids = EduSettings.getInstance().shownCourseIds
 
     ApplicationManager.getApplication().executeOnPooledThread {
-      val courses = CoursesProvider.loadAllCourses()
+      val courses = CoursesProvider.loadRemoteCourses()
       val featuredCourses = featuredCoursesProvider()
       val newlyCreated = courses.filterIsInstance<EduCourse>()
         .filter { it.id !in ids && it.createDate.isSignificantlyAfter(Date(EduSettings.getInstance().lastTimeChecked)) && it.id in featuredCourses }

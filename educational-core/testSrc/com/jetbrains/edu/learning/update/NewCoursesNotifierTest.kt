@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseLoading.BundledCoursesProvider
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -69,9 +70,20 @@ class NewCoursesNotifierTest : EduTestCase() {
     doTest(1, emptyList()) { if (it == 0) listOf(course) else emptyList() }
   }
 
-  private fun doTest(expectedCheckNumber: Int, expectedCourses: List<EduCourse>, courseProducer: (Int) -> List<EduCourse>) {
+  fun `test do not check local courses`() {
+    val localCourse = createCourse(0)
+    val remoteCourse = createCourse(1)
+
+    doTest(1, listOf(remoteCourse), listOf(localCourse)) { if (it == 0) listOf(remoteCourse) else emptyList() }
+  }
+
+  private fun doTest(expectedCheckNumber: Int,
+                     expectedCourses: List<EduCourse>,
+                     bundledCourses: List<EduCourse> = emptyList(),
+                     courseProducer: (Int) -> List<EduCourse>) {
     val newCoursesNotifier = NewCoursesNotifier(testRootDisposable) { listOf(0, 1, 2) }
     PlatformTestUtil.registerExtension(CoursesProvider.EP_NAME, TestCoursesProvider(courseProducer), testRootDisposable)
+    PlatformTestUtil.registerExtension(CoursesProvider.EP_NAME, TestBundledCoursesProvider(bundledCourses), testRootDisposable)
 
     val actionCallback = ActionCallback()
     try {
@@ -93,7 +105,8 @@ class NewCoursesNotifierTest : EduTestCase() {
       assertTrue("Invocation number should be at least `$expectedCheckNumber` but `${newCoursesNotifier.invocationNumber()}`",
                  newCoursesNotifier.invocationNumber() >= expectedCheckNumber)
       assertEquals(expectedCourses, newCourses)
-    } finally {
+    }
+    finally {
       actionCallback.setDone()
     }
   }
@@ -112,6 +125,17 @@ class NewCoursesNotifierTest : EduTestCase() {
     override fun loadCourses(): List<Course> {
       checkIsBackgroundThread()
       return producer(counter.getAndIncrement())
+    }
+  }
+
+  private class TestBundledCoursesProvider(private val bundledCourses: List<EduCourse>) : BundledCoursesProvider() {
+
+    override fun loadCourses(): List<Course> = bundledCourses
+
+    override fun getBundledCoursesNames(): List<String> {
+      val names = mutableListOf<String>()
+      bundledCourses.forEach { names.add(it.name) }
+      return bundledCourses.map { it.name }
     }
   }
 }
