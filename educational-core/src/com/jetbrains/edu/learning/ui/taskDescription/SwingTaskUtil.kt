@@ -77,11 +77,21 @@ fun createListener(task: ChoiceTask, index: Int): ItemListener? {
 }
 
 fun createTextPane(): JTextPane {
+  val editorKit = UIUtil.JBWordWrapHtmlEditorKit()
+  prepareCss(editorKit)
+
   val textPane = JTextPane()
-  textPane.contentType = HTMLEditorKit().contentType
-  textPane.editorKit = UIUtil.JBWordWrapHtmlEditorKit()
+  textPane.contentType = editorKit.contentType
+  textPane.editorKit = editorKit
   textPane.isEditable = false
   textPane.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
 
   return textPane
+}
+
+private fun prepareCss(editorKit: HTMLEditorKit) {
+  // ul padding of JBHtmlEditorKit is too small, so copy-pasted the style from
+  // com.intellij.codeInsight.documentation.DocumentationComponent.prepareCSS
+  editorKit.styleSheet.addRule("ul { padding: 5px 16px 0 7px; }")
+  editorKit.styleSheet.addRule("li { padding: 1px 0 2px 0; }")
 }
