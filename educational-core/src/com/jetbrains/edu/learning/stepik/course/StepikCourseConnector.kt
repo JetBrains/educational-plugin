@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.course
 import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.StepikLanguages
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
@@ -34,7 +35,7 @@ object StepikCourseConnector {
     return -1
   }
 
-  fun getCourseInfoByLink(link: String): StepikCourse? {
+  fun getCourseInfoByLink(link: String): EduCourse? {
     val courseId: Int = try {
       Integer.parseInt(link)
     }
@@ -44,7 +45,9 @@ object StepikCourseConnector {
 
     if (courseId != -1) {
       val info = getCourseInfo(courseId) ?: return null
-      return stepikCourseFromRemote(info)
+
+      // do not convert idea_compatible courses to StepikCourse
+      return if (info.isCompatible) info else stepikCourseFromRemote(info)
     }
     return null
   }
