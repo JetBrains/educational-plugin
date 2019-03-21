@@ -5,10 +5,7 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.invokeAndWaitIfNeed
-import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.application.*
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
@@ -18,6 +15,7 @@ import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -53,6 +51,10 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
     else {
       LOG.warn("Can't get a list of tasks to update")
+    }
+    runReadAction {
+      if (project.isDisposed) return@runReadAction
+      project.messageBus.syncPublisher(loadingTopic).solutionLoaded(course)
     }
   }
 
@@ -223,8 +225,13 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     cancelUnfinishedTasks()
   }
 
+  protected abstract val loadingTopic: Topic<SolutionLoadingListener>
   protected abstract fun loadLastSubmission(stepId: Int): Submission?
   protected abstract fun provideTasksToUpdate(course: Course): List<Task>
+
+  interface SolutionLoadingListener {
+    fun solutionLoaded(course: Course)
+  }
 
   companion object {
 

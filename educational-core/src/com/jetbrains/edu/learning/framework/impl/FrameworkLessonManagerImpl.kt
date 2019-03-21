@@ -47,6 +47,41 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
   }
 
+  override fun updateUserChanges(task: Task, newInitialState: Map<String, String>) {
+    require(EduUtils.isStudentProject(project)) {
+      "`updateUserChanges` should be called only if course in study mode"
+    }
+    require(task.lesson is FrameworkLesson) {
+      "Only solutions of framework tasks can be saved"
+    }
+
+    val currentRecord = task.record
+    if (currentRecord == -1) return
+
+    val changes = try {
+      storage.getUserChanges(currentRecord)
+    } catch (e: IOException) {
+      LOG.error("Failed to get user changes for task `${task.name}`", e)
+      return
+    }
+
+    val newChanges = changes.changes.mapNotNull {
+      when (it) {
+        is Change.AddFile -> if (it.path in newInitialState) Change.ChangeFile(it.path, it.text) else it
+        is Change.RemoveFile -> if (it.path !in newInitialState) null else it
+        is Change.ChangeFile -> if (it.path !in newInitialState) Change.AddFile(it.path, it.text) else it
+        is Change.AddUserCreatedTaskFile,
+        is Change.RemoveTaskFile -> it
+      }
+    }
+
+    try {
+      storage.updateUserChanges(currentRecord, UserChanges(newChanges))
+    } catch (e: IOException) {
+      LOG.error("Failed to update user changes for task `${task.name}`", e)
+    }
+  }
+
   private fun applyTargetTaskChanges(
     lesson: FrameworkLesson,
     taskIndexDelta: Int,
@@ -181,12 +216,12 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   ): UserChanges {
     val changes = mutableListOf<Change>()
     val current = HashMap(currentState)
-    for ((path, nextText) in targetState) {
+    loop@for ((path, nextText) in targetState) {
       val currentText = current.remove(path)
-      changes += if (currentText == null) {
-        Change.AddFile(path, nextText)
-      } else {
-        Change.ChangeFile(path, nextText)
+      changes += when {
+        currentText == null -> Change.AddFile(path, nextText)
+        currentText != nextText -> Change.ChangeFile(path, nextText)
+        else -> continue@loop
       }
     }
 

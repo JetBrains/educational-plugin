@@ -14,6 +14,7 @@ public interface FrameworkLessonManager {
   void preparePrevTask(@NotNull FrameworkLesson lesson, @NotNull VirtualFile taskDir, boolean showDialogIfConflict);
 
   void saveExternalChanges(@NotNull Task task, @NotNull Map<String, String> externalState);
+  void updateUserChanges(@NotNull Task task, @NotNull Map<String, String> newInitialState);
 
   @NotNull
   static FrameworkLessonManager getInstance(@NotNull Project project) {
