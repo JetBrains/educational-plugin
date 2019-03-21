@@ -4,8 +4,8 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
-import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
+import com.jetbrains.edu.learning.EduActionTestCase
 import junit.framework.TestCase
 
 class CCCreateLessonTest : EduActionTestCase() {
