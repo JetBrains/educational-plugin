@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import org.intellij.lang.annotations.Language
 import java.io.File
+import java.util.*
 import java.util.regex.Pattern
 
 private val OPENING_TAG: Pattern = Pattern.compile("<p>")
@@ -102,6 +103,14 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
     course.addSection(section)
     sectionBuilder.buildSection()
   }
+
+  fun additionalFile(name: String, text: String = "", buildTaskFile: TaskFileBuilder.() -> Unit = {}) {
+    val builder = TaskFileBuilder()
+    builder.withName(name)
+    builder.withText(text)
+    builder.buildTaskFile()
+    course.additionalFiles.add(builder.taskFile)
+  }
 }
 
 class SectionBuilder(course: Course, val section: Section = Section()) : LessonOwnerBuilder(course) {
@@ -133,6 +142,8 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     name: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     // we want to know task files order in tests
@@ -142,6 +153,8 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     val nextTaskIndex = lesson.taskList.size + 1
     taskBuilder.withName(name?: EduNames.TASK + nextTaskIndex)
     taskBuilder.withTaskDescription(taskDescription ?: "solve task", taskDescriptionFormat)
+    taskBuilder.withStepId(stepId)
+    taskBuilder.withUpdateDate(updateDate)
     taskBuilder.buildTask()
     lesson.addTask(taskBuilder.task)
   }
@@ -150,22 +163,28 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     name: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
-  ) = task(EduTask(), name, taskDescription, taskDescriptionFormat, buildTask)
+  ) = task(EduTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
 
   fun theoryTask(
     name: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
-  ) = task(TheoryTask(), name, taskDescription, taskDescriptionFormat, buildTask)
+  ) = task(TheoryTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
 
   fun outputTask(
     name: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
-  ) = task(OutputTask(), name, taskDescription, taskDescriptionFormat, buildTask)
+  ) = task(OutputTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
 }
 
 class TaskBuilder(val lesson: Lesson, val task: Task) {
@@ -179,6 +198,14 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   fun withTaskDescription(text: String, format: DescriptionFormat? = null) {
     task.descriptionText = text
     task.descriptionFormat = format ?: DescriptionFormat.HTML
+  }
+
+  fun withUpdateDate(date: Date) {
+    task.updateDate = date
+  }
+
+  fun withStepId(stepId: Int) {
+    task.stepId = stepId
   }
 
   /**
