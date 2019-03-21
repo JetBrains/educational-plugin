@@ -58,8 +58,8 @@ object StepikCourseConnector {
       val codeTemplates = getFirstCodeTemplates(remoteCourse)
       for (languageName in codeTemplates.keys) {
         val id = StepikLanguages.langOfName(languageName).id
-        val language = Language.findLanguageByID(id)
-        if (language != null && (language.id in EduConfiguratorManager.supportedEduLanguages)) {
+        val language = Language.findLanguageByID(id) ?: continue
+        if (language.id in EduConfiguratorManager.supportedEduLanguages) {
           languages.add(language)
         }
       }
