@@ -160,8 +160,9 @@ object StepikCourseLoader {
     ConcurrencyUtil.invokeAll(loadItemTasks, EXECUTOR_SERVICE)
       .filterNot { it.isCancelled }
       .mapNotNull { it.get() }
-      .forEach { sections.add(it.index - 1, it) }
+      .forEach { sections.add(it) }
 
+    sections.sortBy { it.index }
     return sections
   }
 
