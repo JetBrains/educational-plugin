@@ -1,8 +1,6 @@
 <html>
 Write your task text here.
-<br>
-<br>
 <div class="hint">
-  You can add hints anywhere in task text. Copy all hint div block and change its content.
+  Hints can be added anywhere in task text: type "hint" and press Tab.
 </div>
 </html>
