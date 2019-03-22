@@ -54,7 +54,7 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
 
   override fun validate(course: Course?): ErrorMessage? {
     course ?: return null
-    val sdk = mySettings.sdk ?: return null
+    val sdk = mySettings.sdk ?: return ErrorMessage("Please specify Python interpreter")
     return (isSdkApplicable(course, sdk.languageLevel) as? Err)?.error?.let { ErrorMessage(it) }
   }
 
@@ -95,7 +95,7 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
 
     val comboBoxWithBrowseButton = ComboboxWithBrowseButton(comboBox)
     val setupButton = comboBoxWithBrowseButton.button
-    comboBox.setSetupButton(setupButton, null, model, comboBox.model.selectedItem as JdkComboBox.JdkComboBoxItem, null, false)
+    comboBox.setSetupButton(setupButton, null, model, comboBox.model.selectedItem as JdkComboBox.JdkComboBoxItem?, null, false)
     return comboBoxWithBrowseButton
 
   }
