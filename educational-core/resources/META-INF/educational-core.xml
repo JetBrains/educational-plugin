@@ -275,6 +275,8 @@
     <experimentalFeature id="edu.course.hyperskill" percentOfUsers="100" internalFeature="true">
       <description>Enables project-based learning with Hyperskill</description>
     </experimentalFeature>
+    <defaultLiveTemplatesProvider implementation="com.jetbrains.edu.coursecreator.HintTemplateProvider"/>
+    <liveTemplateContext implementation="com.jetbrains.edu.coursecreator.HintTemplateContentType"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

@@ -1,0 +1,9 @@
+<templateSet group="Education">
+  <template name="hint" value="&lt;div class=&quot;hint&quot;&gt;&#10;  $TEXT$&#10;&lt;/div&gt;"
+            description="Insert hint block for task description" toReformat="false" toShortenFQNames="true">
+    <variable name="TEXT" expression="&quot;Hint text&quot;" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="EDU_TASK_DESCRIPTION_HINT" value="true"/>
+    </context>
+  </template>
+</templateSet>
