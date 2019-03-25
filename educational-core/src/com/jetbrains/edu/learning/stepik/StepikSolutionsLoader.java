@@ -319,21 +319,20 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static boolean isToUpdate(Task task, @NotNull Boolean isSolved, @NotNull CheckStatus currentStatus, int stepId) {
-    if (isSolved && currentStatus != CheckStatus.Solved) {
-      return true;
+    if (isSolved) {
+      return currentStatus != CheckStatus.Solved;
     }
-    else if (!isSolved) {
-      if (task instanceof EduTask) {
-        Reply reply = StepikConnector.getLastSubmission(stepId, isSolved);
-        if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
-          return true;
-        }
+
+    if (task instanceof EduTask) {
+      Reply reply = StepikConnector.getLastSubmission(stepId, false);
+      if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
+        return true;
       }
-      else {
-        HashMap<String, String> solution = getSolutionForStepikAssignment(task, isSolved);
-        if (!solution.isEmpty()) {
-          return true;
-        }
+    }
+    else {
+      String solution = getSolutionTextForStepikAssignment(task, false);
+      if (solution != null) {
+        return true;
       }
     }
 
@@ -353,26 +352,26 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static TaskSolutions loadSolutionTexts(@NotNull Task task, boolean isSolved) {
     if (task.isToSubmitToStepik()) {
-      return getEduTaskSolution(task, isSolved);
+      return getEduTaskSolutions(task, isSolved);
     }
     else {
-      return new TaskSolutions(getStepikTaskSolution(task, isSolved));
+      return getStepikTaskSolutions(task, isSolved);
     }
   }
 
-  private static HashMap<String, String> getStepikTaskSolution(@NotNull Task task, boolean isSolved) {
-    HashMap<String, String> solutions = getSolutionForStepikAssignment(task, isSolved);
-    if (!solutions.isEmpty()) {
-      for (Map.Entry<String, String> entry : solutions.entrySet()) {
-        String solutionWithoutEduPrefix = removeEduPrefix(task, entry.getValue());
-        solutions.put(entry.getKey(), solutionWithoutEduPrefix);
-      }
+  private static TaskSolutions getStepikTaskSolutions(@NotNull Task task, boolean isSolved) {
+    assert task.getTaskFiles().size() == 1;
+
+    String solution = getSolutionTextForStepikAssignment(task, isSolved);
+    if (solution != null) {
       task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
+      ArrayList<String> taskFileNames = new ArrayList<>(task.getTaskFiles().keySet());
+      return new TaskSolutions(Collections.singletonMap(taskFileNames.get(0), solution));
     }
-    return solutions;
+    return TaskSolutions.EMPTY;
   }
 
-  private static TaskSolutions getEduTaskSolution(@NotNull Task task, boolean isSolved) {
+  private static TaskSolutions getEduTaskSolutions(@NotNull Task task, boolean isSolved) {
     String language = task.getCourse().getLanguageID();
     Reply reply = StepikConnector.getLastSubmission(task.getStepId(), isSolved);
     if (reply == null || reply.getSolution() == null || reply.getSolution().isEmpty()) {
@@ -523,30 +522,35 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
 
-  @NotNull
-  static HashMap<String, String> getSolutionForStepikAssignment(@NotNull Task task, boolean isSolved) {
-    HashMap<String, String> taskFileToText = new HashMap<>();
+  @Nullable
+  static String getSolutionTextForStepikAssignment(@NotNull Task task, boolean isSolved) {
     final List<Submission> submissions = StepikConnector.getSubmissions(isSolved, task.getStepId());
     if (submissions == null) {
-      return taskFileToText;
+      return null;
     }
+
     Language language = task.getLesson().getCourse().getLanguageById();
-    String stepikLanguage = StepikLanguages.langOfId(language.getID()).getLangName();
-    for (Submission submission : submissions) {
-      Reply reply = submission.getReply();
-      if (reply != null && stepikLanguage != null && stepikLanguage.equals(reply.getLanguage())) {
-        Collection<TaskFile> taskFiles = task.getTaskFiles().values();
-        assert taskFiles.size() == 1;
-        for (TaskFile taskFile : taskFiles) {
-          taskFileToText.put(taskFile.getName(), reply.getCode());
-        }
-      }
-    }
-    return taskFileToText;
+    return findStepikSolutionForLanguage(submissions, language);
   }
 
-  private static String removeEduPrefix(@NotNull Task task, String solution) {
-    Language language = task.getLesson().getCourse().getLanguageById();
+  @Nullable
+  private static String findStepikSolutionForLanguage(List<Submission> submissions, Language language) {
+    String stepikLanguage = StepikLanguages.langOfId(language.getID()).getLangName();
+    if (stepikLanguage == null) {
+      return null;
+    }
+
+    for (Submission submission : submissions) {
+      Reply reply = submission.getReply();
+      if (reply != null && stepikLanguage.equals(reply.getLanguage()) && reply.getCode() != null) {
+        return removeEduPrefix(reply.getCode(), language);
+      }
+    }
+
+    return null;
+  }
+
+  private static String removeEduPrefix(String solution, Language language) {
     String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(language).getLineCommentPrefix();
     if (solution.contains(commentPrefix + EDU_TOOLS_COMMENT)) {
       return solution.replace(commentPrefix + EDU_TOOLS_COMMENT, "");
