@@ -64,6 +64,7 @@ public class EduNames {
   public static final String PYTHON = "Python";
   public static final String SCALA = "Scala";
   public static final String JAVASCRIPT = "JavaScript";
+  public static final String RUST = "Rust";
 
   private EduNames() {
   }

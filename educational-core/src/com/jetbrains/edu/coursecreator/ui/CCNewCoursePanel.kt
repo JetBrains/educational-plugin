@@ -16,6 +16,7 @@ import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.getDefaultCourseType
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
@@ -219,6 +220,11 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     courseTypeData
       .sortedBy { it.displayName }
       .forEach { myCourseTypesComboBox.addItem(it) }
+
+    val defaultCourseType = getDefaultCourseType(courseTypeData)
+    if (defaultCourseType != null) {
+      myCourseTypesComboBox.selectedItem = defaultCourseType
+    }
   }
 
   private fun obtainCourseTypeData(languageId: String, courseType: String): CourseTypeData? {
@@ -238,7 +244,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     fun onInputDataValidated(isInputDataComplete: Boolean)
   }
 
-  private data class CourseTypeData(val language: Language, val courseType: String, val icon: Icon?) {
+  data class CourseTypeData(val language: Language, val courseType: String, val icon: Icon?) {
   val displayName get(): String {
       return when (courseType) {
         EduNames.PYCHARM -> language.displayName

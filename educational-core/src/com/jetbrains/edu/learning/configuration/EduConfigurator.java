@@ -32,6 +32,12 @@ import java.util.List;
 /**
  * The main interface provides courses support for some language and course type.
  *
+ * IdeDefaultCourseTypes.kt provides default CourseTypeData. When creating new course, default course type will be suggested first,
+ * or, if default course type is not specified, course types will be shown in alphabetic order.
+ *
+ * @see CCNewCoursePanel
+ * @see IdeDefaultCourseTypes
+ *
  * To get configurator instance for some language use {@link EduConfiguratorManager}
  * and {@link EduConfiguratorManager} supports the corresponding filtering.
  *
