@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
@@ -40,6 +41,21 @@ public class CCShowPreviewTest extends CCTestCase {
 
   public void testSeveralPlaceholders() {
     doTest("several");
+  }
+
+  public void testNestedTaskFile() {
+    VirtualFile file = configureByTaskFile("src/Task.txt");
+    testAction(createDataContext(file), new CCShowPreview());
+    Editor editor = EditorFactory.getInstance().getAllEditors()[1];
+    try {
+      Document document = editor.getDocument();
+      VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
+      assert virtualFile != null;
+      assertEquals("Task.txt", virtualFile.getName());
+    }
+    finally {
+      EditorFactory.getInstance().releaseEditor(editor);
+    }
   }
 
   private void doTest(String name) {
