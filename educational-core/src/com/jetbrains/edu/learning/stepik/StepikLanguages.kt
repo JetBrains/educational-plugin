@@ -14,6 +14,7 @@ enum class StepikLanguages (val id: String?, val langName: String?) {
     PYTHON(EduNames.PYTHON, "python3"),
     JAVASCRIPT(EduNames.JAVASCRIPT, "javascript"),
     SCALA(EduNames.SCALA, "scala"),
+    CPP(EduNames.CPP, "c++"),
     INVALID(null, null);
 
 

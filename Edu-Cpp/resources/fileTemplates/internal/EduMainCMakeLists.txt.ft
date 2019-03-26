@@ -1,0 +1,19 @@
+cmake_minimum_required(VERSION ${CPP_TOOLCHAIN_VERSION})
+
+project(${PROJECT_NAME})
+
+MACRO(SUBDIRLIST result curdir)
+    FILE(GLOB_RECURSE cmake_file_path_list RELATIVE "${curdir}" CMakeLists.txt)
+    SET(dir_list "")
+    FOREACH(file_path ${cmake_file_path_list})
+        GET_FILENAME_COMPONENT(dir_path ${file_path} PATH)
+        SET(dir_list ${dir_list} ${dir_path})
+    ENDFOREACH()
+    LIST(REMOVE_DUPLICATES dir_list)
+    SET(${result} ${dir_list})
+ENDMACRO()
+
+SUBDIRLIST(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
+FOREACH(subdir ${SUBDIRS})
+    add_subdirectory(${subdir})
+ENDFOREACH()

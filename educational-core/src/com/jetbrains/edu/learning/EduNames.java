@@ -67,6 +67,8 @@ public class EduNames {
   public static final String SCALA = "Scala";
   public static final String JAVASCRIPT = "JavaScript";
   public static final String RUST = "Rust";
+  // Single `ObjectiveC` id is used both for `ObjectiveC` and `C/C++`
+  public static final String CPP = "ObjectiveC";
 
   private EduNames() {
   }

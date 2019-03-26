@@ -7,4 +7,5 @@ include 'educational-core',
         'Edu-Python', 
         'Edu-Android',
         'Edu-JavaScript',
-        'Edu-Rust'
+        'Edu-Rust',
+        'Edu-Cpp'

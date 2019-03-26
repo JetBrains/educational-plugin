@@ -18,6 +18,7 @@
     <depends optional="true" config-file="Edu-JavaScript.xml">NodeJS</depends>
     <depends optional="true" config-file="Edu-Android.xml">com.intellij.modules.androidstudio</depends>
     <depends optional="true" config-file="Edu-Rust.xml">org.rust.lang</depends>
+    <depends optional="true" config-file="Edu-Cpp.xml">com.intellij.modules.clion</depends>
     <!-- Hack! -->
     <!-- Platform doesn't take into account dependencies from optional config files including `org.jetbrains.android`. -->
     <!-- It leads to `NoClassDefFoundError` when you try to load any class from android plugin. -->
