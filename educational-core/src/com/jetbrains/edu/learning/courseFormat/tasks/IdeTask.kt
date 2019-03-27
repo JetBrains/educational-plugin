@@ -4,7 +4,12 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
-class IdeTask: Task() {
+class IdeTask: Task {
+
+  @Suppress("unused") //used for deserialization
+  constructor() : super()
+  constructor(name: String) : super(name)
+
   override fun getTaskType() = "ide"
 
   override fun getIcon(): Icon {

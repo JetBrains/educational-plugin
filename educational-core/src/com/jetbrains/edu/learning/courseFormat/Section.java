@@ -17,7 +17,6 @@ public class Section extends ItemContainer {
   @Transient
   public List<Integer> units = new ArrayList<>();  // should be used only during deserialization from stepik
   private int courseId;
-  private String name;
 
   private int position;
   private int id;
@@ -64,16 +63,6 @@ public class Section extends ItemContainer {
 
   public int getPosition() {
     return position;
-  }
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public void setName(String name) {
-    this.name = name;
   }
 
   public void setUpdateDate(Date updateDate) {

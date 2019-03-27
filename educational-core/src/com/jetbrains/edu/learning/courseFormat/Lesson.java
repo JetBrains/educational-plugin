@@ -29,8 +29,6 @@ public class Lesson extends StudyItem {
   @Transient boolean is_public;
   private Date myUpdateDate = new Date(0);
 
-  private String name;
-
   @SuppressWarnings("deprecation")
   @AbstractCollection(elementTypes = {
     CheckiOMission.class,
@@ -63,16 +61,6 @@ public class Lesson extends StudyItem {
       task.setIndex(i + 1);
       task.init(course, this, isRestarted);
     }
-  }
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public void setName(String name) {
-    this.name = name;
   }
 
   public List<Task> getTaskList() {

@@ -57,7 +57,7 @@ private const val ADDITIONAL_FILES = "additional_files"
 @JsonSerialize(using = CourseSerializer::class)
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
-  private lateinit var name: String
+  private lateinit var myName: String
 
   @JsonProperty(SUMMARY)
   private lateinit var description: String
@@ -83,7 +83,7 @@ abstract class LocalEduCourseMixin {
 @JsonSerialize(using = SectionSerializer::class)
 abstract class LocalSectionMixin {
   @JsonProperty(TITLE)
-  private lateinit var name: String
+  private lateinit var myName: String
 
   @JsonProperty(ITEMS)
   private lateinit var items: List<StudyItem>
@@ -93,7 +93,7 @@ abstract class LocalSectionMixin {
 @JsonSerialize(using = LessonSerializer::class)
 abstract class LocalLessonMixin {
   @JsonProperty(TITLE)
-  private lateinit var name: String
+  private lateinit var myName: String
 
   @JsonProperty(TASK_LIST)
   private lateinit var taskList: List<Task>
@@ -103,7 +103,7 @@ abstract class LocalLessonMixin {
 @JsonSerialize(using = TaskSerializer::class)
 abstract class LocalTaskMixin {
   @JsonProperty(NAME)
-  private lateinit var name: String
+  private lateinit var myName: String
 
   @JsonProperty(FILES)
   private lateinit var myTaskFiles: MutableMap<String, TaskFile>

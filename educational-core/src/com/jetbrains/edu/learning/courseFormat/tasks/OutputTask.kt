@@ -8,7 +8,11 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
  * Correct output is specified in output.txt file which is invisible for student.
  * @see OutputTaskChecker
  */
-class OutputTask : Task() {
+class OutputTask : Task {
+
+  constructor() : super()
+  constructor(name: String) : super(name)
+
   companion object {
     const val OUTPUT_TASK_TYPE = "output"
   }

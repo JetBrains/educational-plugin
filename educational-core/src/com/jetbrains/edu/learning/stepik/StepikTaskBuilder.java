@@ -8,10 +8,8 @@ import com.intellij.lang.LanguageCommenters;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -33,26 +31,26 @@ import org.jsoup.safety.Whitelist;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
 
 public class StepikTaskBuilder {
   private static final Logger LOG = Logger.getInstance(StepikTaskBuilder.class);
   private final StepSource myStepSource;
+  private Step myStep;
   private int myStepId;
   private int myUserId;
-  @NonNls private String myName;
   private final Language myLanguage;
   private final Lesson myLesson;
   @Nullable
   private final EduConfigurator<?> myConfigurator;
-  private Step myStep;
-  private final Map<String, Computable<Task>> stepikTaskTypes = ImmutableMap.<String, Computable<Task>>builder()
+  private final Map<String, Function<String, Task>> stepikTaskTypes = ImmutableMap.<String, Function<String, Task>>builder()
     .put("code", this::codeTask)
     .put("choice", this::choiceTask)
     .put("text", this::theoryTask)
     .put("string", this::theoryTask)
-    .put("pycharm", this::pycharmTask)
+    .put("pycharm", (name) -> pycharmTask())
     .put("video", this::unsupportedTask)
     .put("number", this::unsupportedTask)
     .put("sorting", this::unsupportedTask)
@@ -65,11 +63,11 @@ public class StepikTaskBuilder {
     .put("manual-score", this::unsupportedTask)
     .build();
 
-  private final Map<String, Computable<Task>> pluginTaskTypes = ImmutableMap.<String, Computable<Task>>builder()
+  private final Map<String, Function<String, Task>> pluginTaskTypes = ImmutableMap.<String, Function<String, Task>>builder()
     .put("edu", StepikTaskBuilder::eduTask)
     .put("output", StepikTaskBuilder::outputTask)
     .put("ide", StepikTaskBuilder::ideTask)
-    .put("theory", () -> theoryTask())
+    .put("theory", (name) -> theoryTask(name))
     .build();
 
   private static final Map<String, String> DEFAULT_NAMES = ImmutableMap.<String, String>builder()
@@ -89,20 +87,14 @@ public class StepikTaskBuilder {
     .put("admin", "Linux")
     .put("manual-score", "Manual Score")
     .build();
-  private static final String EMPTY_NAME = "";
 
-  public StepikTaskBuilder(@NotNull Language language, @NotNull Lesson lesson, @NotNull StepSource stepSource,
-                           int stepId, int userId) {
-    this(language, lesson, EMPTY_NAME, stepSource, stepId, userId);
-  }
-
+  private static final String DEFAULT_EDU_TASK_NAME = "Edu Task";
+  private static final String UNKNOWN_TASK_NAME = "Unknown Task";
 
   public StepikTaskBuilder(@NotNull Language language,
                            @NotNull Lesson lesson,
-                           @NotNull String name,
                            @NotNull StepSource stepSource,
                            int stepId, int userId) {
-    myName = name;
     myStepSource = stepSource;
     myStep = stepSource.getBlock();
     myStepId = stepId;
@@ -116,18 +108,18 @@ public class StepikTaskBuilder {
   }
 
   @Nullable
-  public Task createTask(String type) {
-    myName = myName == EMPTY_NAME ? DEFAULT_NAMES.get(type) : myName;
-    return stepikTaskTypes.get(type).compute();
+  public Task createTask(@NotNull String type) {
+    String taskName = DEFAULT_NAMES.get(type);
+    return stepikTaskTypes.get(type).apply(taskName != null ? taskName : UNKNOWN_TASK_NAME);
   }
 
-  public boolean isSupported(String type) {
+  public boolean isSupported(@NotNull String type) {
     return stepikTaskTypes.containsKey(type);
   }
 
   @NotNull
-  private CodeTask codeTask() {
-    CodeTask task = new CodeTask(myName);
+  private CodeTask codeTask(@NotNull String name) {
+    CodeTask task = new CodeTask(name);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.getPosition());
     task.setUpdateDate(myStepSource.getUpdateDate());
@@ -181,8 +173,8 @@ public class StepikTaskBuilder {
   }
 
   @NotNull
-  private ChoiceTask choiceTask() {
-    ChoiceTask task = new ChoiceTask(myName);
+  private ChoiceTask choiceTask(@NotNull String name) {
+    ChoiceTask task = new ChoiceTask(name);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.getPosition());
     task.setUpdateDate(myStepSource.getUpdateDate());
@@ -210,8 +202,8 @@ public class StepikTaskBuilder {
   }
 
   @NotNull
-  private TheoryTask theoryTask() {
-    TheoryTask task = new TheoryTask(myName);
+  private TheoryTask theoryTask(@NotNull String name) {
+    TheoryTask task = new TheoryTask(name);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.getPosition());
     task.setUpdateDate(myStepSource.getUpdateDate());
@@ -222,16 +214,16 @@ public class StepikTaskBuilder {
   }
 
   @NotNull
-  private Task unsupportedTask() {
-    TheoryTask task = new TheoryTask(myName);
+  private Task unsupportedTask(@NotNull @NonNls String name) {
+    TheoryTask task = new TheoryTask(name);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.getPosition());
     task.setUpdateDate(myStepSource.getUpdateDate());
-    final String stepText = StringUtil.capitalize(myName.toLowerCase()) + " tasks are not supported yet. <br>" +
+    final String stepText = StringUtil.capitalize(name.toLowerCase()) + " tasks are not supported yet. <br>" +
                             "View this step on <a href=\"" + StepikUtils.getStepikLink(task, myLesson) + "\">Stepik</a>.";
     task.setDescriptionText(stepText);
 
-    createMockTaskFile(task, "this is a " + myName.toLowerCase() + " task. You can use this editor as a playground\n");
+    createMockTaskFile(task, "this is a " + name.toLowerCase() + " task. You can use this editor as a playground\n");
     return task;
   }
 
@@ -241,11 +233,14 @@ public class StepikTaskBuilder {
       LOG.error("Got a block with non-pycharm prefix: " + myStep.getName() + " for step: " + myStepId);
       return null;
     }
-    Task task = createPluginTask();
+    StepOptions stepOptions = myStep.getOptions();
+    String taskName = DEFAULT_EDU_TASK_NAME;
+    if (stepOptions != null) {
+      taskName = stepOptions.getTitle() != null ? stepOptions.getTitle() : DEFAULT_EDU_TASK_NAME;
+    }
+    Task task = createPluginTask(taskName);
     task.setStepId(myStepId);
     task.setUpdateDate(myStepSource.getUpdateDate());
-    StepOptions stepOptions = myStep.getOptions();
-    task.setName(stepOptions != null ? stepOptions.getTitle() : (PYCHARM_PREFIX + EduVersions.JSON_FORMAT_VERSION));
 
     if (stepOptions != null) {
       if (stepOptions.getDescriptionText() != null) {
@@ -270,29 +265,29 @@ public class StepikTaskBuilder {
   }
 
   @NotNull
-  private Task createPluginTask() {
+  private Task createPluginTask(@NotNull String name) {
     final StepOptions options = myStep.getOptions();
     if (options == null) {
       LOG.error("No options in step source");
-      return eduTask();
+      return eduTask(name);
     }
     String type = options.getTaskType();
     if (type == null || !pluginTaskTypes.containsKey(type)) {
-      return eduTask();
+      return eduTask(name);
     }
-    return pluginTaskTypes.get(type).compute();
+    return pluginTaskTypes.get(type).apply(name);
   }
 
-  private static Task eduTask() {
-    return new EduTask();
+  private static Task eduTask(@NotNull String name) {
+    return new EduTask(name);
   }
 
-  private static Task ideTask() {
-    return new IdeTask();
+  private static Task ideTask(@NotNull String name) {
+    return new IdeTask(name);
   }
 
-  private static Task outputTask() {
-    return new OutputTask();
+  private static Task outputTask(@NotNull String name) {
+    return new OutputTask(name);
   }
 
   private static void addPlaceholdersTexts(TaskFile file) {

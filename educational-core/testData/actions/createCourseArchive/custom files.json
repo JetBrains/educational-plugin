@@ -6,6 +6,7 @@
   "course_type" : "PyCharm",
   "items" : [
     {
+      "title" : "section1",
       "items" : [
         {
           "title" : "lesson1",
@@ -49,7 +50,6 @@
           "type" : "lesson"
         }
       ],
-      "title" : "section1",
       "type" : "section"
     }
   ],

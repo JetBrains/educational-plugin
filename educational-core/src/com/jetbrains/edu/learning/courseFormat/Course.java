@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 public abstract class Course extends ItemContainer {
   transient private List<StepikUserInfo> authors = new ArrayList<>();
   private String description;
-  private String name;
 
   private String myProgrammingLanguage = EduNames.PYTHON;
   private String myLanguageCode = "en";
@@ -140,16 +139,6 @@ public abstract class Course extends ItemContainer {
         this.authors.add(user);
       }
     }
-  }
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public void setName(String name) {
-    this.name = name;
   }
 
   @Override

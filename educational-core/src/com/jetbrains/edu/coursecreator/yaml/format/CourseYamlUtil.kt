@@ -47,7 +47,7 @@ abstract class CourseYamlMixin {
   private lateinit var courseType: String
 
   @JsonProperty(TITLE)
-  private lateinit var name: String
+  private lateinit var myName: String
 
   @JsonProperty(SUMMARY)
   private lateinit var description: String

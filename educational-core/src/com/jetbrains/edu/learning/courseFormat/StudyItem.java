@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class StudyItem extends UserDataHolderBase {
   // from 1 to number of items
   private int myIndex = -1;
+  private String myName;
 
   private StepikChangeStatus myStepikChangeStatus = StepikChangeStatus.UP_TO_DATE;
 
@@ -28,16 +29,24 @@ public abstract class StudyItem extends UserDataHolderBase {
   // but original non unique name is displayed
   @Nullable private String myCustomPresentableName = null;
 
-  //TODO: move name to this class
-  // can't do it now because name in descendants have different serialized names and it will cause additional migration
+  public StudyItem() {}
+
+  public StudyItem(@NotNull String name) {
+    myName = name;
+  }
 
   /**
    * Initializes state of StudyItem
    */
   public abstract void init(@Nullable final Course course, @Nullable final StudyItem parentItem, boolean isRestarted);
 
-  abstract public String getName();
-  abstract public void setName(String name);
+  public String getName() {
+    return myName;
+  }
+
+  public void setName(String name) {
+    myName = name;
+  }
 
   /**
    *

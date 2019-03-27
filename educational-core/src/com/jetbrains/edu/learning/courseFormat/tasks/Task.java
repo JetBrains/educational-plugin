@@ -37,7 +37,6 @@ import java.util.*;
  * - Handle yaml deserialization in {@link com.jetbrains.edu.coursecreator.yaml.YamlDeserializer#deserializeTask(String)}
  */
 public abstract class Task extends StudyItem {
-  private String name;
   protected CheckStatus myStatus = CheckStatus.Unchecked;
   private int myStepId;
   private Map<String, TaskFile> myTaskFiles = new LinkedHashMap<>();
@@ -50,10 +49,10 @@ public abstract class Task extends StudyItem {
   private int myRecord = -1;
   @Transient private Lesson myLesson;
 
-  public Task() {}
+  public Task() {} //use only for deserialization
 
   public Task(@NotNull final String name) {
-    this.name = name;
+    super(name);
   }
 
   public void init(@Nullable Course course, @Nullable final StudyItem parentItem, boolean isRestarted) {
@@ -72,16 +71,6 @@ public abstract class Task extends StudyItem {
   @OptionTag("files")
   public void setTaskFiles(Map<String, TaskFile> taskFiles) {
     this.myTaskFiles = taskFiles;
-  }
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public void setName(String name) {
-    this.name = name;
   }
 
   @NotNull
@@ -177,7 +166,7 @@ public abstract class Task extends StudyItem {
     Task task = (Task)o;
 
     if (getIndex() != task.getIndex()) return false;
-    if (!Objects.equals(name, task.name)) return false;
+    if (!Objects.equals(getName(), task.getName())) return false;
     if (!Objects.equals(myTaskFiles, task.myTaskFiles)) return false;
     if (!descriptionText.equals(task.descriptionText)) return false;
     if (!Objects.equals(descriptionFormat, task.descriptionFormat)) return false;
@@ -187,7 +176,7 @@ public abstract class Task extends StudyItem {
 
   @Override
   public int hashCode() {
-    int result = name != null ? name.hashCode() : 0;
+    int result = getName() != null ? getName().hashCode() : 0;
     result = 31 * result + getIndex();
     result = 31 * result + (myTaskFiles != null ? myTaskFiles.hashCode() : 0);
     result = 31 * result + descriptionText.hashCode();

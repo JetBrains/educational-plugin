@@ -1,11 +1,12 @@
 {
   "id" : 1,
   "update_date" : "Jan 01, 1970 03:00:00 AM",
+  "title" : "Test Course",
   "items" : [
     {
       "id" : 1,
-      "update_date" : "Jan 01, 1970 03:00:00 AM",
       "title" : "lesson1",
+      "update_date" : "Jan 01, 1970 03:00:00 AM",
       "task_list" : [
         {
           "name" : "task1",
@@ -32,7 +33,6 @@
     }
   ],
   "summary" : "my summary",
-  "title" : "Test Course",
   "programming_language" : "TEXT",
   "language" : "en",
   "course_type" : "PyCharm",

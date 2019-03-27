@@ -83,7 +83,7 @@ abstract class StepikEduCourseMixin {
   lateinit var description: String
 
   @JsonProperty(TITLE)
-  lateinit var name: String
+  lateinit var myName: String
 
   @JsonProperty(PROGRAMMING_LANGUAGE)
   lateinit var myProgrammingLanguage: String
@@ -103,7 +103,7 @@ class StepikSectionMixin {
   var courseId: Int = 0
 
   @JsonProperty(TITLE)
-  lateinit var name: String
+  lateinit var myName: String
 
   @JsonProperty(POSITION)
   var position: Int = 0
@@ -129,7 +129,7 @@ class StepikLessonMixin {
   lateinit var myUpdateDate: Date
 
   @JsonProperty(TITLE)
-  lateinit var name: String
+  lateinit var myName: String
 
   @JsonProperty(UNIT_ID)
   var unitId: Int = 0
@@ -204,7 +204,7 @@ class StepikFeedbackLinkMixin {
 
 open class StepikTaskMixin {
   @JsonProperty(NAME)
-  var name: String? = null
+  var myName: String? = null
 
   @JsonProperty(STATUS)
   var myStatus = CheckStatus.Unchecked

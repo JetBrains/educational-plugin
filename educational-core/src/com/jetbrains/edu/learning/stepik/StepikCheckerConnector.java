@@ -62,8 +62,7 @@ public class StepikCheckerConnector {
           return result;
         }
         Course course = task.getLesson().getCourse();
-        StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getLesson(), task.getName(),
-                                                              step, task.getStepId(), user.getId());
+        StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getLesson(), step, task.getStepId(), user.getId());
         final Step block = step.getBlock();
         if (block != null) {
           final Task updatedTask = taskBuilder.createTask(block.getName());
