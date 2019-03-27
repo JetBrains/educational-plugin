@@ -1,14 +1,13 @@
 package com.jetbrains.edu.android
 
 import com.android.tools.idea.npw.FormFactor
-import com.android.tools.idea.npw.module.FormFactorApiComboBox
-import com.android.tools.idea.npw.platform.AndroidVersionsInfo
 import com.android.tools.idea.npw.model.NewProjectModel
+import com.android.tools.idea.npw.platform.AndroidVersionsInfo
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialogBase
 import org.jetbrains.android.util.AndroidUtils
@@ -33,9 +32,9 @@ class AndroidNewTaskDialog(
     }
   }
 
-  private val comboBox: FormFactorApiComboBox = FormFactorApiComboBox().apply {
-    renderer = LoadingRenderer(renderer)
-    isEnabled = false
+  private val comboBoxWrapper: AndroidApiLevelComboBoxWrapper = AndroidApiLevelComboBoxWrapper().apply {
+    combobox.renderer = LoadingRenderer(combobox.renderer)
+    combobox.isEnabled = false
   }
 
   private var compileSdkVersion: Int = FormFactor.MOBILE.maxOfflineApiLevel
@@ -47,8 +46,8 @@ class AndroidNewTaskDialog(
     androidVersionsInfo.loadTargetVersions { items ->
       val maxSdkVersion = items.map { it.minApiLevel }.max() ?: FormFactor.MOBILE.maxOfflineApiLevel
       compileSdkVersion = maxOf(maxSdkVersion, compileSdkVersion)
-      comboBox.init(FormFactor.MOBILE, items)
-      comboBox.isEnabled = true
+      comboBoxWrapper.init(FormFactor.MOBILE, items)
+      comboBoxWrapper.combobox.isEnabled = true
     }
     addTextValidator(packageNameField) { text ->
       if (text == null) return@addTextValidator "Empty package"
@@ -57,13 +56,13 @@ class AndroidNewTaskDialog(
 
     with(builder) {
       row("Package:") { packageNameField() }
-      row("Min Sdk:") { comboBox(CCFlags.growX) }
+      row("Min Sdk:") { comboBoxWrapper.combobox(CCFlags.growX) }
     }
   }
 
   override fun showAndGetResult(): NewStudyItemInfo? {
     val info = super.showAndGetResult()
-    val versionItem = comboBox.selectedItem as? AndroidVersionsInfo.VersionItem
+    val versionItem = comboBoxWrapper.combobox.selectedItem as? AndroidVersionsInfo.VersionItem
     return info?.apply {
       putUserData(AndroidCourseBuilder.PACKAGE_NAME, packageNameField.text)
       putUserData(AndroidCourseBuilder.MIN_ANDROID_SDK, versionItem?.minApiLevel ?: FormFactor.MOBILE.minOfflineApiLevel)
