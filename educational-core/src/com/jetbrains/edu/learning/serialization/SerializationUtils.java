@@ -214,6 +214,11 @@ public class SerializationUtils {
       return new To13VersionXmlConverter().convert(project, element);
     }
 
+    public static Element convertTo14Version(@NotNull Project project,
+                                             @NotNull Element element) throws StudyUnrecognizedFormatException {
+      return new To14VersionXmlConverter().convert(project, element);
+    }
+
     @Nullable
     public static VirtualFile getTaskDir(@NotNull Project project, @NotNull Element lesson, @NotNull Element task)
       throws StudyUnrecognizedFormatException {

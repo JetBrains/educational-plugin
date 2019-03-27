@@ -22,6 +22,7 @@ public abstract class StudyItem extends UserDataHolderBase {
   // from 1 to number of items
   private int myIndex = -1;
   private String myName;
+  protected int myId;
 
   private StepikChangeStatus myStepikChangeStatus = StepikChangeStatus.UP_TO_DATE;
 
@@ -84,9 +85,15 @@ public abstract class StudyItem extends UserDataHolderBase {
   }
 
   /**
-   * @return Stepik id
+   * @return id on remote resource (Stepik, CheckIO)
    */
-  public abstract int getId();
+  public int getId() {
+    return myId;
+  }
+
+  public void setId(int id) {
+    myId = id;
+  }
 
   public abstract VirtualFile getDir(@NotNull Project project);
 

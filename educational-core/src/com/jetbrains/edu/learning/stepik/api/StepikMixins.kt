@@ -68,7 +68,7 @@ abstract class StepikEduCourseMixin {
   lateinit var instructors: List<Int>
 
   @JsonProperty(ID)
-  private var id: Int = 0
+  private var myId: Int = 0
 
   @JsonProperty(UPDATE_DATE)
   lateinit var myUpdateDate: Date
@@ -109,7 +109,7 @@ class StepikSectionMixin {
   var position: Int = 0
 
   @JsonProperty(ID)
-  private var id: Int = 0
+  private var myId: Int = 0
 
   @JsonProperty(UPDATE_DATE)
   lateinit var myUpdateDate: Date
@@ -210,7 +210,7 @@ open class StepikTaskMixin {
   var myStatus = CheckStatus.Unchecked
 
   @JsonProperty(STEPIK_ID)
-  private var myStepId: Int = 0
+  private var myId: Int = 0
 
   @JsonProperty(FILES)
   private var myTaskFiles: MutableMap<String, TaskFile>? = LinkedHashMap()

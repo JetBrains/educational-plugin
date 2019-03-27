@@ -40,7 +40,7 @@ public class StepikCheckerConnector {
 
   public static CheckResult checkChoiceTask(@NotNull ChoiceTask task, @NotNull StepikUser user) {
     if (task.getSelectedVariants().isEmpty()) return new CheckResult(CheckStatus.Failed, "No variants selected");
-    final Attempt attempt = getAttemptForStep(task.getStepId(), user.getId());
+    final Attempt attempt = getAttemptForStep(task.getId(), user.getId());
 
     if (attempt != null) {
       final int attemptId = attempt.getId();
@@ -55,14 +55,14 @@ public class StepikCheckerConnector {
 
       final CheckResult result = doCheck(submissionData, attemptId, user.getId());
       if (result.getStatus() == CheckStatus.Failed) {
-        StepikConnector.postAttempt(task.getStepId());
-        StepSource step = StepikConnector.getStep(task.getStepId());
+        StepikConnector.postAttempt(task.getId());
+        StepSource step = StepikConnector.getStep(task.getId());
         if (step == null) {
-          LOG.error("Failed to get step " + task.getStepId());
+          LOG.error("Failed to get step " + task.getId());
           return result;
         }
         Course course = task.getLesson().getCourse();
-        StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getLesson(), step, task.getStepId(), user.getId());
+        StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getLesson(), step, task.getId(), user.getId());
         final Step block = step.getBlock();
         if (block != null) {
           final Task updatedTask = taskBuilder.createTask(block.getName());
@@ -177,7 +177,7 @@ public class StepikCheckerConnector {
   }
 
   private static int getAttemptId(@NotNull Task task) {
-    final Attempt attempt = StepikConnector.postAttempt(task.getStepId());
+    final Attempt attempt = StepikConnector.postAttempt(task.getId());
     return attempt != null ? attempt.getId() : -1;
   }
 }

@@ -84,7 +84,7 @@ class CheckiOCourseUpdater(
     var nextNewMissionIndex = oldStation.missions.size + 1
 
     for (newMission in newStation.missions) {
-      val oldMission = oldStation.getMission(newMission.stepId)
+      val oldMission = oldStation.getMission(newMission.id)
       if (oldMission != null) {
         updateMission(newMission, oldMission)
         newMission.index = oldMission.index

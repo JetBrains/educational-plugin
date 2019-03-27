@@ -37,7 +37,7 @@ class LoadSolutionsTest : StepikTestCase() {
     solveFirstTask()
 
     val task = firstTask(StudyTaskManager.getInstance(project).course)
-    val progresses = listOf(PROGRESS_ID_PREFIX + task.stepId.toString() )
+    val progresses = listOf(PROGRESS_ID_PREFIX + task.id.toString() )
 
     var isSolved = false
 

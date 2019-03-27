@@ -323,7 +323,7 @@ public class CCStepikConnector {
         showNoRightsToUpdateNotification(project, (EduCourse)course);
         return false;
       default:
-        final String message = "Failed to update task " + task.getStepId();
+        final String message = "Failed to update task " + task.getId();
         LOG.error(message);
         return false;
     }
@@ -398,7 +398,7 @@ public class CCStepikConnector {
                                         @NotNull Lesson remoteLesson) {
     final Set<Integer> localTasksIds = localLesson.getTaskList()
       .stream()
-      .map(task -> task.getStepId())
+      .map(task -> task.getId())
       .filter(id -> id > 0)
       .collect(Collectors.toSet());
 
@@ -413,7 +413,7 @@ public class CCStepikConnector {
 
     for (Task task : localLesson.getTaskList()) {
       checkCancelled();
-      if (task.getStepId() > 0) {
+      if (task.getId() > 0) {
         updateTask(project, task);
       }
       else {
@@ -522,7 +522,7 @@ public class CCStepikConnector {
       showErrorNotification(project, FAILED_TITLE, message);
       return false;
     }
-    task.setStepId(stepSource.getId());
+    task.setId(stepSource.getId());
     return true;
   }
 

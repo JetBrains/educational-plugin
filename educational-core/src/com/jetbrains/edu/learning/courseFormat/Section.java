@@ -19,7 +19,6 @@ public class Section extends ItemContainer {
   private int courseId;
 
   private int position;
-  private int id;
   private Date myUpdateDate = new Date(0);
 
   @Transient
@@ -39,14 +38,6 @@ public class Section extends ItemContainer {
         lesson.init(course, this, isRestarted);
       }
     }
-  }
-
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
   }
 
   public void setCourseId(int courseId) {

@@ -10,7 +10,9 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class CCChangeFileVisibilityTest : EduActionTestCase() {
@@ -97,7 +99,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
   ): Course = courseWithFiles(courseMode = courseMode) {
     lesson("lesson1") {
       eduTask("task1") {
-        task.stepId = 1
+        task.id = 1
         task.stepikChangeStatus = taskStepikStatus
         taskFile("TaskFile1.kt", "<p>some text</p>")
         taskFile("TaskFile2.kt", visible = false)

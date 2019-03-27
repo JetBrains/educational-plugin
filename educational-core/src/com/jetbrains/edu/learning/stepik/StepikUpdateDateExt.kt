@@ -145,7 +145,7 @@ private fun Lesson.setUpdated(lessonFromServer: Lesson) {
   updateDate = lessonFromServer.updateDate
   val tasksById = lessonFromServer.taskList.associateBy { it.id }
   taskList.forEach {
-    val taskFromServer = tasksById[it.stepId] ?: error("Task with id ${it.stepId} not found")
+    val taskFromServer = tasksById[it.id] ?: error("Task with id ${it.id} not found")
     it.updateDate = taskFromServer.updateDate
   }
 }

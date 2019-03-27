@@ -120,7 +120,7 @@ public class StepikTaskBuilder {
   @NotNull
   private CodeTask codeTask(@NotNull String name) {
     CodeTask task = new CodeTask(name);
-    task.setStepId(myStepId);
+    task.setId(myStepId);
     task.setIndex(myStepSource.getPosition());
     task.setUpdateDate(myStepSource.getUpdateDate());
 
@@ -175,7 +175,7 @@ public class StepikTaskBuilder {
   @NotNull
   private ChoiceTask choiceTask(@NotNull String name) {
     ChoiceTask task = new ChoiceTask(name);
-    task.setStepId(myStepId);
+    task.setId(myStepId);
     task.setIndex(myStepSource.getPosition());
     task.setUpdateDate(myStepSource.getUpdateDate());
     task.setDescriptionText(clearCodeBlockFromTags());
@@ -204,7 +204,7 @@ public class StepikTaskBuilder {
   @NotNull
   private TheoryTask theoryTask(@NotNull String name) {
     TheoryTask task = new TheoryTask(name);
-    task.setStepId(myStepId);
+    task.setId(myStepId);
     task.setIndex(myStepSource.getPosition());
     task.setUpdateDate(myStepSource.getUpdateDate());
     task.setDescriptionText(clearCodeBlockFromTags());
@@ -216,7 +216,7 @@ public class StepikTaskBuilder {
   @NotNull
   private Task unsupportedTask(@NotNull @NonNls String name) {
     TheoryTask task = new TheoryTask(name);
-    task.setStepId(myStepId);
+    task.setId(myStepId);
     task.setIndex(myStepSource.getPosition());
     task.setUpdateDate(myStepSource.getUpdateDate());
     final String stepText = StringUtil.capitalize(name.toLowerCase()) + " tasks are not supported yet. <br>" +
@@ -239,7 +239,7 @@ public class StepikTaskBuilder {
       taskName = stepOptions.getTitle() != null ? stepOptions.getTitle() : DEFAULT_EDU_TASK_NAME;
     }
     Task task = createPluginTask(taskName);
-    task.setStepId(myStepId);
+    task.setId(myStepId);
     task.setUpdateDate(myStepSource.getUpdateDate());
 
     if (stepOptions != null) {

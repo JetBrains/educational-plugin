@@ -215,7 +215,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     val lessonsFromStepik = StepikCourseLoader.getLessonsFromUnits(course, pushCandidates.map { it.unitId }, false)
 
     val deleteCandidates = ArrayList<Int>()
-    val allSteps = course.allLessons().flatMap { it.taskList }.map { it.stepId }
+    val allSteps = course.allLessons().flatMap { it.taskList }.map { it.id }
     for ((lesson, lessonFromServer) in pushCandidates.zip(lessonsFromStepik)) {
       when (lesson.stepikChangeStatus) {
         StepikChangeStatus.INFO -> {
@@ -245,9 +245,9 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
                                           allSteps: List<Int>,
                                           deleteCandidates: ArrayList<Int>,
                                           lastUpdateDate: Date) {
-    tasksToPush.addAll(lesson.taskList.filter { it.stepId == 0 })
+    tasksToPush.addAll(lesson.taskList.filter { it.id == 0 })
 
-    val localSteps = lesson.taskList.map { it.stepId }
+    val localSteps = lesson.taskList.map { it.id }
     for (step in lessonFromServer.steps) {
       val isMoved = step in allSteps
       if (step !in localSteps && !isMoved) {
@@ -257,7 +257,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
 
     val stepSources = StepikMultipleRequestsConnector.getStepSources(deleteCandidates)
     val tasksFromStep = StepikCourseLoader.getTasks(course.languageById, lesson, stepSources)
-    tasksToDelete.addAll(tasksFromStep.filter { it.updateDate <= lastUpdateDate }.map { it.stepId })
+    tasksToDelete.addAll(tasksFromStep.filter { it.updateDate <= lastUpdateDate }.map { it.id })
   }
 
   private fun processTaskChanges() {
@@ -330,7 +330,7 @@ private fun EduCourse.lastUpdateDate(): Date {
       lastUpdateDate = lesson.updateDate
     }
 
-    lesson.taskList.filter { it.stepId > 0 }.forEach {
+    lesson.taskList.filter { it.id > 0 }.forEach {
       if (lastUpdateDate < it.updateDate) {
         lastUpdateDate = it.updateDate
       }

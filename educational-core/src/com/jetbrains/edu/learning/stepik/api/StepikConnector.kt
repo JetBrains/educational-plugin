@@ -312,7 +312,7 @@ object StepikConnector {
       FileDocumentManager.getInstance().saveAllDocuments()
       stepSourceData = StepSourceData(project, task, task.lesson.id)
     }
-    val response = service.stepSource(task.stepId, stepSourceData!!).executeHandlingExceptions()
+    val response = service.stepSource(task.id, stepSourceData!!).executeHandlingExceptions()
     return response?.code() ?: -1
   }
 

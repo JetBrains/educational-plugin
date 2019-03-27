@@ -220,8 +220,8 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
                           lessonFromServer: Lesson,
                           currentLesson: Lesson,
                           lessonDir: VirtualFile?) {
-    val serverTasksById = lessonFromServer.taskList.associateBy({ it.stepId }, { it })
-    val tasksById = currentLesson.taskList.associateBy { it.stepId }
+    val serverTasksById = lessonFromServer.taskList.associateBy({ it.id }, { it })
+    val tasksById = currentLesson.taskList.associateBy { it.id }
     for (taskId in taskIdsToUpdate) {
       val taskFromServer = serverTasksById[taskId]
       val taskIndex = taskFromServer!!.index
@@ -272,8 +272,8 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   @Throws(URISyntaxException::class, IOException::class)
   private fun taskIdsToUpdate(lessonFromServer: Lesson,
                               currentLesson: Lesson): List<Int> {
-    val taskIds = lessonFromServer.getTaskList().map { task -> task.stepId.toString() }.toTypedArray()
-    val tasksById = currentLesson.taskList.associateBy({ it.stepId }, { it })
+    val taskIds = lessonFromServer.getTaskList().map { task -> task.id.toString() }.toTypedArray()
+    val tasksById = currentLesson.taskList.associateBy({ it.id }, { it })
 
     return lessonFromServer.taskList
       .zip(taskIds)
@@ -285,9 +285,9 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   }
 
   private fun tasksToDelete(lessonFromServer: Lesson, currentLesson: Lesson): List<Task> {
-    val tasksFromServerIds = lessonFromServer.getTaskList().map { task -> task.stepId }
+    val tasksFromServerIds = lessonFromServer.getTaskList().map { task -> task.id }
 
-    return currentLesson.taskList.filter { it.stepId !in tasksFromServerIds }
+    return currentLesson.taskList.filter { it.id !in tasksFromServerIds }
   }
 
   private fun createNewLessons(newLessons: List<Lesson>, parentDir: VirtualFile) {

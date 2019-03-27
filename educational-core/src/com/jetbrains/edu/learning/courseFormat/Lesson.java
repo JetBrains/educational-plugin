@@ -24,7 +24,6 @@ import java.util.List;
  *  - Handle yaml deserialization {@link com.jetbrains.edu.coursecreator.yaml.YamlDeserializer#deserializeLesson(String)}
  */
 public class Lesson extends StudyItem {
-  private int myId;
   @Transient public List<Integer> steps;
   @Transient boolean is_public;
   private Date myUpdateDate = new Date(0);
@@ -99,7 +98,7 @@ public class Lesson extends StudyItem {
 
   public Task getTask(int id) {
     for (Task task : taskList) {
-      if (task.getStepId() == id) {
+      if (task.getId() == id) {
         return task;
       }
     }
@@ -117,14 +116,6 @@ public class Lesson extends StudyItem {
       }
     }
     return CheckStatus.Solved;
-  }
-
-  public int getId() {
-    return myId;
-  }
-
-  public void setId(int id) {
-    this.myId = id;
   }
 
   public Date getUpdateDate() {

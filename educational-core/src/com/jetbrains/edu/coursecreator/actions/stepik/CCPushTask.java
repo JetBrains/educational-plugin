@@ -62,7 +62,7 @@ public class CCPushTask extends DumbAwareAction {
     if (lesson != null && lesson.getId() > 0 && course.getId() > 0) {
       e.getPresentation().setEnabledAndVisible(true);
       final Task task = lesson.getTask(taskDir.getName());
-      if (task != null && task.getStepId() <= 0) {
+      if (task != null && task.getId() <= 0) {
         e.getPresentation().setText("Upload Task to Stepik");
       }
     }
@@ -103,7 +103,7 @@ public class CCPushTask extends DumbAwareAction {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText("Uploading task to " + StepikNames.STEPIK_URL);
-        boolean toPost = task.getStepId() <= 0;
+        boolean toPost = task.getId() <= 0;
         if (toPost) {
           postNewTask(project, task, lesson);
         }
@@ -178,7 +178,7 @@ public class CCPushTask extends DumbAwareAction {
     taskCopy.setLesson(lesson);
     boolean isPosted = CCStepikConnector.postTask(project, taskCopy, lesson.getId());
     if (isPosted) {
-      task.setStepId(taskCopy.getStepId());
+      task.setId(taskCopy.getId());
       return true;
     }
 

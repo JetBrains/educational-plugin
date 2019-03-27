@@ -142,7 +142,7 @@ class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask()) {
     ) {
       lesson("lesson1") {
         eduTask("task1") {
-          task.stepId = 1
+          task.id = 1
           taskFile("src/taskFile.txt")
           taskFile("test/testFile.txt")
           taskFile("additionalFile.txt")

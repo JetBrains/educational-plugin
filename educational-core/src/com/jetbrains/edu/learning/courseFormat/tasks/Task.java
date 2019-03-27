@@ -38,7 +38,6 @@ import java.util.*;
  */
 public abstract class Task extends StudyItem {
   protected CheckStatus myStatus = CheckStatus.Unchecked;
-  private int myStepId;
   private Map<String, TaskFile> myTaskFiles = new LinkedHashMap<>();
   @NotNull
   private String descriptionText = "";
@@ -184,14 +183,6 @@ public abstract class Task extends StudyItem {
     return result;
   }
 
-  public void setStepId(int stepId) {
-    myStepId = stepId;
-  }
-
-  public int getStepId() {
-    return myStepId;
-  }
-
   public CheckStatus getStatus() {
     return myStatus;
   }
@@ -254,11 +245,6 @@ public abstract class Task extends StudyItem {
       return EducationalCoreIcons.Task;
     }
     return myStatus == CheckStatus.Solved ? EducationalCoreIcons.TaskSolved : EducationalCoreIcons.TaskFailed;
-  }
-
-  @Override
-  public int getId() {
-    return myStepId;
   }
 
   @NotNull

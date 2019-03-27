@@ -86,13 +86,13 @@ public class StepikSolutionsLoader implements Disposable {
     addFileOpenListener();
   }
   public static void postSolution(@NotNull final Task task, boolean passed, @NotNull final Project project) {
-    if (task.getStepId() <= 0) {
+    if (task.getId() <= 0) {
       return;
     }
 
-    final Attempt attempt = StepikConnector.postAttempt(task.getStepId());
+    final Attempt attempt = StepikConnector.postAttempt(task.getId());
     if (attempt == null) {
-      LOG.warn("Failed to post an attempt " + task.getStepId());
+      LOG.warn("Failed to post an attempt " + task.getId());
       return;
     }
     final ArrayList<SolutionFile> files = new ArrayList<>();
@@ -194,7 +194,7 @@ public class StepikSolutionsLoader implements Disposable {
             countDownLatch.countDown();
           }
         });
-        myFutures.put(task.getStepId(), future);
+        myFutures.put(task.getId(), future);
       }
       else {
         countDownLatch.countDown();
@@ -206,7 +206,7 @@ public class StepikSolutionsLoader implements Disposable {
         EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
         if (selectedEduEditor != null) {
           selectedEduEditor.startLoading();
-          enableEditorWhenFutureDone(myFutures.get(mySelectedTask.getStepId()));
+          enableEditorWhenFutureDone(myFutures.get(mySelectedTask.getId()));
         }
       }
     });
@@ -256,7 +256,7 @@ public class StepikSolutionsLoader implements Disposable {
     Stream<Lesson> allLessons = Stream.concat(lessonsFromSection, course.getLessons().stream());
     Task[] allTasks = allLessons.flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
 
-    List<String> progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + task.getStepId()).collect(Collectors.toList());
+    List<String> progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + task.getId()).collect(Collectors.toList());
     List<Boolean> taskStatuses = StepikMultipleRequestsConnector.INSTANCE.taskStatuses(progresses);
     if (taskStatuses == null) return tasksToUpdate;
     for (int j = 0; j < allTasks.length; j++) {
@@ -264,7 +264,7 @@ public class StepikSolutionsLoader implements Disposable {
       Task task = allTasks[j];
       boolean toUpdate = false;
       if (isSolved != null && !(task instanceof TheoryTask)) {
-        toUpdate = isToUpdate(task, isSolved, task.getStatus(), task.getStepId());
+        toUpdate = isToUpdate(task, isSolved, task.getStatus(), task.getId());
       }
       if (toUpdate) {
         task.setStatus(checkStatus(isSolved));
@@ -288,9 +288,9 @@ public class StepikSolutionsLoader implements Disposable {
         if (eduEditor != null && taskFile != null) {
           mySelectedTask = taskFile.getTask();
           Task task = taskFile.getTask();
-          if (myFutures.containsKey(task.getStepId())) {
+          if (myFutures.containsKey(task.getId())) {
             eduEditor.startLoading();
-            Future future = myFutures.get(task.getStepId());
+            Future future = myFutures.get(task.getId());
             if (!future.isDone() || !future.isCancelled()) {
               enableEditorWhenFutureDone(future);
             }
@@ -373,7 +373,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static TaskSolutions getEduTaskSolutions(@NotNull Task task, boolean isSolved) {
     String language = task.getCourse().getLanguageID();
-    Reply reply = StepikConnector.getLastSubmission(task.getStepId(), isSolved);
+    Reply reply = StepikConnector.getLastSubmission(task.getId(), isSolved);
     if (reply == null || reply.getSolution() == null || reply.getSolution().isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449
       if (reply != null && reply.getSolution() == null) {
@@ -524,7 +524,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   @Nullable
   static String getSolutionTextForStepikAssignment(@NotNull Task task, boolean isSolved) {
-    final List<Submission> submissions = StepikConnector.getSubmissions(isSolved, task.getStepId());
+    final List<Submission> submissions = StepikConnector.getSubmissions(isSolved, task.getId());
     if (submissions == null) {
       return null;
     }

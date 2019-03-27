@@ -46,7 +46,7 @@ fun postTheory(task: Task, project: Project) {
   ProgressManager.getInstance().run(
     object : Backgroundable(project, "Posting Theory to Stepik", false) {
       override fun run(progressIndicator: ProgressIndicator) {
-        markStepAsViewed(task.lesson.id, task.stepId)
+        markStepAsViewed(task.lesson.id, task.id)
       }
     })
 }

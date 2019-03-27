@@ -23,7 +23,6 @@ public class EduCourse extends Course {
   // in CC mode is used to store top-level lessons section id
   List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
-  private int id;
   private Date myUpdateDate = new Date(0);
   private Date myCreateDate = new Date(0);
   boolean isPublic;
@@ -84,11 +83,7 @@ public class EduCourse extends Course {
   public void setCreateDate(Date createDate) { myCreateDate = createDate; }
 
   public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
+    return myId;
   }
 
   private void updateType(String language) {
@@ -177,13 +172,13 @@ public class EduCourse extends Course {
   }
 
   public boolean isRemote() {
-    return id != 0;
+    return getId() != 0;
   }
 
   public void convertToLocal() {
     isPublic = false;
     isCompatible = true;
-    id = 0;
+    setId(0);
     myUpdateDate = new Date(0);
     myCreateDate = new Date(0);
     sectionIds = new ArrayList<>();

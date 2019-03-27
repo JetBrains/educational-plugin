@@ -216,7 +216,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
         for (lesson in item.lessons) {
           lesson.id = lesson.index
           for (task in lesson.taskList) {
-            task.stepId = task.index
+            task.id = task.index
           }
         }
       }
@@ -224,7 +224,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
       if (item is Lesson) {
         item.id = item.index
         for (task in item.taskList) {
-          task.stepId = task.index
+          task.id = task.index
         }
       }
     }

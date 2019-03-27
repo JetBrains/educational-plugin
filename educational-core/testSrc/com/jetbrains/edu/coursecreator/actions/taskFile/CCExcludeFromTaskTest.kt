@@ -140,7 +140,7 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask()) {
     ) {
       lesson("lesson1") {
         eduTask("task1") {
-          task.stepId = 1
+          task.id = 1
           dir("src/folder1") {
             taskFile("taskFile1.txt")
             taskFile("taskFile2.txt")

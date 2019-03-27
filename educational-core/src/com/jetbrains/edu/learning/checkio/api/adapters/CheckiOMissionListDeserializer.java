@@ -28,7 +28,7 @@ public class CheckiOMissionListDeserializer implements JsonDeserializer<List<Che
 
       CheckiOMission mission = new CheckiOMission();
       mission.setStation(station);
-      mission.setStepId(jsonMissionObject.get("id").getAsInt());
+      mission.setId(jsonMissionObject.get("id").getAsInt());
       mission.setName(jsonMissionObject.get("title").getAsString());
       mission.setDescriptionFormat(DescriptionFormat.HTML);
       mission.setDescriptionText(jsonMissionObject.get("description").getAsString());

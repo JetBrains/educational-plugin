@@ -80,12 +80,12 @@ public class CheckiOMission extends EduTask {
     if (o == null || getClass() != o.getClass()) return false;
 
     CheckiOMission other = (CheckiOMission)o;
-    return getStepId() == other.getStepId();
+    return getId() == other.getId();
   }
 
   @Override
   public int hashCode() {
-    return getStepId();
+    return getId();
   }
 
   @Override

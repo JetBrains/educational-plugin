@@ -4,7 +4,10 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import org.intellij.lang.annotations.Language
@@ -106,7 +109,7 @@ class ExportStepikIdsTest : EduTestCase() {
       lesson.id = 10 * sectionId + lesson.index
       lesson.unitId = lesson.id
       for (task in lesson.taskList) {
-        task.stepId = 10 * lesson.id + task.index
+        task.id = 10 * lesson.id + task.index
       }
       true
     }

@@ -85,7 +85,7 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
     stepikChanges.tasksToPostByLessonIndex.forEach { _, taskList ->
       if (!taskList.isEmpty()) {
         StepikCourseChangeHandler.contentChanged(taskList.single().lesson)
-        taskList.forEach { it.stepId = 0 }
+        taskList.forEach { it.id = 0 }
       }
     }
 
@@ -109,11 +109,11 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
     }
   }
 
-  private fun taskIds(lessonFormServer: Lesson) = lessonFormServer.taskList.map { task -> task.stepId }
+  private fun taskIds(lessonFormServer: Lesson) = lessonFormServer.taskList.map { task -> task.id }
 
   private fun newTasks(lessonFormServer: Lesson, updateCandidate: Lesson): List<Task> {
     val onServerTaskIds = taskIds(lessonFormServer)
-    return updateCandidate.taskList.filter { task -> !onServerTaskIds.contains(task.stepId) }
+    return updateCandidate.taskList.filter { task -> !onServerTaskIds.contains(task.id) }
   }
 
   private fun lessonIds(latestCourseFromServer: EduCourse) = latestCourseFromServer.lessons
@@ -129,10 +129,10 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
 
   private fun tasksToUpdate(lessonFormServer: Lesson, updateCandidate: Lesson): List<Task> {
     val onServerTaskIds = taskIds(lessonFormServer)
-    val tasksUpdateCandidate = updateCandidate.taskList.filter { task -> task.stepId in onServerTaskIds }
+    val tasksUpdateCandidate = updateCandidate.taskList.filter { task -> task.id in onServerTaskIds }
 
-    val taskById = lessonFormServer.taskList.associateBy({ it.stepId }, { it })
-    return tasksUpdateCandidate.filter { !it.isEqualTo(taskById[it.stepId]) }
+    val taskById = lessonFormServer.taskList.associateBy({ it.id }, { it })
+    return tasksUpdateCandidate.filter { !it.isEqualTo(taskById[it.id]) }
   }
 
   private fun lessonsInfoToUpdate(course: Course,

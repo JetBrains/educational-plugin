@@ -73,7 +73,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
           editor.startLoading()
         }
       }
-      futures[task.stepId] = ApplicationManager.getApplication().executeOnPooledThread<Boolean> {
+      futures[task.id] = ApplicationManager.getApplication().executeOnPooledThread<Boolean> {
         try {
           ProgressManager.checkCanceled()
           updateTask(project, task)
@@ -107,7 +107,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
         val task = EduUtils.getTaskForFile(project, file) ?: return
-        val future = futures[task.stepId] ?: return
+        val future = futures[task.id] ?: return
         if (!future.isDone) {
           (source.getSelectedEditor(file) as? EduEditor)?.startLoading()
         }
@@ -185,7 +185,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   protected open fun loadSolution(task: Task): TaskSolutions {
     val language = task.course.languageID
-    val lastSubmission = loadLastSubmission(task.stepId)
+    val lastSubmission = loadLastSubmission(task.id)
     val reply = lastSubmission?.reply
     val solution = reply?.solution
     if (solution == null || solution.isEmpty()) {

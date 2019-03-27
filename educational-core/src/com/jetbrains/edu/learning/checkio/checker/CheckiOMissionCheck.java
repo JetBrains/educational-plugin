@@ -87,12 +87,12 @@ public class CheckiOMissionCheck implements Callable<CheckResult> {
     final TaskFile taskFile = ((CheckiOMission) myTask).getTaskFile();
     final VirtualFile missionDir = myTask.getDir(myProject);
     if (missionDir == null) {
-      throw new IOException("Directory is not found for mission: " + myTask.getStepId() + ", " + myTask.getName());
+      throw new IOException("Directory is not found for mission: " + myTask.getId() + ", " + myTask.getName());
     }
 
     final VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, missionDir);
     if (virtualFile == null) {
-      throw new IOException("Virtual file is not found for mission: " + myTask.getStepId() + ", " + myTask.getName());
+      throw new IOException("Virtual file is not found for mission: " + myTask.getId() + ", " + myTask.getName());
     }
 
     final Document document = ApplicationManager.getApplication().runReadAction((Computable<Document>) () ->

@@ -19,7 +19,7 @@ private const val UNIT_ID = "unit_id"
 @JsonPropertyOrder(ID, UPDATE_DATE)
 abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
   @JsonProperty(ID)
-  private var id: Int = 0
+  private var myId: Int = 0
 
   @JsonProperty(UPDATE_DATE)
   private lateinit var myUpdateDate: Date
@@ -29,7 +29,7 @@ abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
 @JsonSerialize(using = SectionSerializer::class)
 abstract class RemoteSectionMixin : LocalSectionMixin() {
   @JsonProperty(ID)
-  private var id: Int = 0
+  private var myId: Int = 0
 
   @JsonProperty(UPDATE_DATE)
   private lateinit var myUpdateDate: Date
@@ -53,7 +53,7 @@ abstract class RemoteLessonMixin : LocalLessonMixin() {
 @JsonSerialize(using = TaskSerializer::class)
 abstract class RemoteTaskMixin : LocalTaskMixin() {
   @JsonProperty(STEPIK_ID)
-  private var myStepId: Int = 0
+  private var myId: Int = 0
 
   @JsonProperty(UPDATE_DATE)
   private lateinit var myUpdateDate: Date
