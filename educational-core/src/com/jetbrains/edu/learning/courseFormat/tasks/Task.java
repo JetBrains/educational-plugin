@@ -28,12 +28,13 @@ import java.util.*;
  *
  * Update {@link StepikChangeRetriever#isEqualTo(Task, Task)} if you added new property that has to be compared
  *
- * To implement new task there are 5 steps to be done:
+ * To implement new task there are 6 steps to be done:
  * - Extend {@link Task} class
  * - Go to {@link Lesson#taskList} and update elementTypes in AbstractCollection annotation. Needed for proper xml serialization
  * - Update {@link SerializationUtils.Json.TaskAdapter#deserialize} to handle json serialization
  * - Update {@link TaskCheckerProvider#getTaskChecker} and provide default checker for new task
  * - Update {@link StepikTaskBuilder#pluginTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder#stepikTaskTypes} otherwise
+ * - Handle yaml deserialization in {@link com.jetbrains.edu.coursecreator.yaml.YamlDeserializer#deserializeTask(String)}
  */
 public abstract class Task extends StudyItem {
   private String name;

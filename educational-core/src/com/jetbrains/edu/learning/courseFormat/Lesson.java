@@ -21,6 +21,7 @@ import java.util.List;
  *  - Extend Lesson class
  *  - Go to {@link ItemContainer#items} and update elementTypes in AbstractCollection annotation. Needed for proper xml serialization
  *  - Handle xml migration in {@link com.jetbrains.edu.learning.serialization.converter.xml.BaseXmlConverter#convert}
+ *  - Handle yaml deserialization {@link com.jetbrains.edu.coursecreator.yaml.YamlDeserializer#deserializeLesson(String)}
  */
 public class Lesson extends StudyItem {
   private int myId;
