@@ -23,33 +23,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
  */
 object YamlDeserializer {
 
-  // TODO: move to CCProjectComponent after rebase
-  fun deserializeCourseRecursively(project: Project, courseConfig: VirtualFile): Course {
-    val deserializedCourse = deserialize(VfsUtil.loadText(courseConfig), Course::class.java)
-    deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items)
-
-    deserializedCourse.items.forEach { deserializedItem ->
-      when (deserializedItem) {
-        is Section -> {
-          // set parent to correctly obtain dirs in deserializeContent method
-          deserializedItem.course = deserializedCourse
-          deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.items)
-          deserializedItem.lessons.forEach {
-            it.section = deserializedItem
-            it.taskList = it.deserializeContent(project, it.taskList)
-          }
-        }
-        is Lesson -> {
-          // set parent to correctly obtain dirs in deserializeContent method
-          deserializedItem.course = deserializedCourse
-          deserializedItem.taskList = deserializedItem.deserializeContent(project, deserializedItem.taskList)
-        }
-      }
-    }
-
-    return deserializedCourse
-  }
-
   fun deserializeItem(configFileText: String, configName: String): StudyItem {
     return when (configName) {
       COURSE_CONFIG -> deserialize(configFileText, Course::class.java)
@@ -60,7 +33,7 @@ object YamlDeserializer {
     }
   }
 
-  private inline fun <reified T : StudyItem> StudyItem.deserializeContent(project: Project, contentList: MutableList<T>): List<T> {
+  inline fun <reified T : StudyItem> StudyItem.deserializeContent(project: Project, contentList: MutableList<T>): List<T> {
     val parentDir = getDir(project) ?: noItemDirError(name)
 
     return contentList.map { titledItem ->

@@ -10,14 +10,11 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
-import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.loadItem
 import com.jetbrains.edu.coursecreator.yaml.format.getChangeApplierForItem
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.ext.typeId
@@ -30,18 +27,6 @@ import kotlin.reflect.KClass
  *  Uses [YamlDeserializer.deserializeItem] to deserialize object, than applies changes to existing object, see [loadItem].
  */
 object YamlLoader {
-
-  @JvmStatic
-  fun loadCourseRecursively(project: Project): Course {
-    val projectDir = project.courseDir
-    val courseConfig = projectDir.findChild(COURSE_CONFIG) ?: error("Cannot load course. Config file '$COURSE_CONFIG' not found.")
-    val course = YamlDeserializer.deserializeCourseRecursively(project, courseConfig)
-
-    course.init(null, null, true)
-    course.copyExistingCourseInfo(project)
-
-    return course
-  }
 
   fun loadItem(project: Project, configFile: VirtualFile, editor: Editor? = configFile.getEditor(project)) {
     if (editor != null) {
@@ -95,22 +80,6 @@ object YamlLoader {
 
   private fun <T : StudyItem> T.applyChanges(project: Project, deserializedItem: T) {
     getChangeApplierForItem(project, deserializedItem).applyChanges(this, deserializedItem)
-  }
-
-  private fun Task.setDescriptionInfo(project: Project) {
-    val taskDescriptionFile = findTaskDescriptionFile(project)
-    descriptionFormat = taskDescriptionFile.toDescriptionFormat()
-    descriptionText = VfsUtil.loadText(taskDescriptionFile)
-  }
-
-  private fun Task.findTaskDescriptionFile(project: Project): VirtualFile {
-    val taskDir = getTaskDir(project) ?: taskDirNotFoundError(name)
-    val file = taskDir.findChild(EduNames.TASK_HTML) ?: taskDir.findChild(EduNames.TASK_MD)
-    return file ?: error("No task description file for ${name}")
-  }
-
-  private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {
-    return DescriptionFormat.values().firstOrNull { it.fileExtension == extension } ?: error("Invalid description format")
   }
 
   private fun getStudyItemForConfig(project: Project, configFile: VirtualFile): StudyItem {
@@ -171,25 +140,6 @@ object YamlLoader {
 
   private fun <T : StudyItem> unexpectedItemError(expected: KClass<T>, actual: Any): Nothing = error(
     "Expected ${expected.simpleName} class, but was: ${actual.javaClass.simpleName}")
-
-  private fun Course.copyExistingCourseInfo(project: Project) {
-    val course = StudyTaskManager.getInstance(project).course
-    course?.let {
-      setDescriptionInfo(project)
-    }
-
-    courseMode = if (EduUtils.isStudentProject(project)) EduNames.STUDY else CCUtils.COURSE_MODE
-  }
-
-  private fun Course.setDescriptionInfo(project: Project) {
-    visitLessons { lesson ->
-      lesson.visitTasks { task, _ ->
-        task.setDescriptionInfo(project)
-        true
-      }
-      true
-    }
-  }
 }
 
 fun TaskFile.setPlaceholdersPossibleAnswer(project: Project) {
