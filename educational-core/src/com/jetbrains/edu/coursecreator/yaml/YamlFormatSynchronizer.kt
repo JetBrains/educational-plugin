@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.configuration
+package com.jetbrains.edu.coursecreator.yaml
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -16,11 +16,11 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.coursecreator.configuration.YamlFormatSettings.COURSE_CONFIG
-import com.jetbrains.edu.coursecreator.configuration.YamlFormatSettings.LESSON_CONFIG
-import com.jetbrains.edu.coursecreator.configuration.YamlFormatSettings.SECTION_CONFIG
-import com.jetbrains.edu.coursecreator.configuration.YamlFormatSettings.TASK_CONFIG
-import com.jetbrains.edu.coursecreator.configuration.mixins.*
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.LESSON_CONFIG
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.SECTION_CONFIG
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.TASK_CONFIG
+import com.jetbrains.edu.coursecreator.yaml.format.*
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.project

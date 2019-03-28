@@ -1,6 +1,6 @@
 @file:JvmName("TaskYamlUtil")
 
-package com.jetbrains.edu.coursecreator.configuration.mixins
+package com.jetbrains.edu.coursecreator.yaml.format
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -35,7 +35,8 @@ abstract class TaskYamlMixin {
 
   @JsonSerialize(converter = FeedbackLinkToStringConverter::class)
   @JsonDeserialize(converter = StringToFeedbackLinkConverter::class)
-  @JsonProperty(value = "feedback_link", access = JsonProperty.Access.READ_WRITE) lateinit var myFeedbackLink: FeedbackLink
+  @JsonProperty(value = "feedback_link", access = JsonProperty.Access.READ_WRITE)
+  lateinit var myFeedbackLink: FeedbackLink
 }
 
 private class TaskFileConverter : StdConverter<TaskFile, TaskFileWithoutPlaceholders>() {
@@ -46,7 +47,7 @@ private class TaskFileConverter : StdConverter<TaskFile, TaskFileWithoutPlacehol
 
 private class TaskFileWithoutPlaceholders(@JsonProperty("name") val name: String)
 
-private class FeedbackLinkToStringConverter: StdConverter<FeedbackLink?, String>() {
+private class FeedbackLinkToStringConverter : StdConverter<FeedbackLink?, String>() {
   override fun convert(value: FeedbackLink?): String? {
     if (value?.link.isNullOrBlank()) {
       return ""
@@ -56,7 +57,7 @@ private class FeedbackLinkToStringConverter: StdConverter<FeedbackLink?, String>
   }
 }
 
-private class StringToFeedbackLinkConverter: StdConverter<String?, FeedbackLink>() {
+private class StringToFeedbackLinkConverter : StdConverter<String?, FeedbackLink>() {
   override fun convert(value: String?): FeedbackLink {
     if (value == null || value.isBlank()) {
       return FeedbackLink()

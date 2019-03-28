@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.ui.EditorNotifications
-import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.tasks.Task

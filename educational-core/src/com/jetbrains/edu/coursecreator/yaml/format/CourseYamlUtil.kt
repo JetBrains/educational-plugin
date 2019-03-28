@@ -1,6 +1,6 @@
 @file:JvmName("CourseYamlUtil")
 
-package com.jetbrains.edu.coursecreator.configuration.mixins
+package com.jetbrains.edu.coursecreator.yaml.format
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -10,12 +10,13 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
-import com.jetbrains.edu.coursecreator.configuration.InvalidYamlFormatException
+import com.jetbrains.edu.coursecreator.yaml.InvalidYamlFormatException
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import java.util.*
 
+private const val TYPE = "type"
 private const val TITLE = "title"
 private const val LANGUAGE = "language"
 private const val SUMMARY = "summary"

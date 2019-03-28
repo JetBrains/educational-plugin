@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.configuration.mixins
+package com.jetbrains.edu.coursecreator.yaml.format
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JavaType

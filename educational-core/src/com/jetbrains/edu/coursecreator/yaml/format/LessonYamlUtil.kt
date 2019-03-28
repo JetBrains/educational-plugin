@@ -1,15 +1,15 @@
-@file:JvmName("SectionYamlUtil")
+@file:JvmName("LessonYamlUtil")
 
-package com.jetbrains.edu.coursecreator.configuration.mixins
+package com.jetbrains.edu.coursecreator.yaml.format
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.jetbrains.edu.coursecreator.configuration.InvalidYamlFormatException
-import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.coursecreator.yaml.InvalidYamlFormatException
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 private const val CONTENT = "content"
 
@@ -17,25 +17,28 @@ private const val CONTENT = "content"
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonDeserialize(builder = SectionBuilder::class)
-abstract class SectionYamlMixin {
+@JsonDeserialize(builder = LessonBuilder::class)
+abstract class LessonYamlMixin {
   @JsonProperty(CONTENT)
   @JsonSerialize(contentConverter = StudyItemConverter::class)
-  private lateinit var items: List<StudyItem>
+  private lateinit var taskList: List<Task>
 }
 
 @JsonPOJOBuilder(withPrefix = "")
-private class SectionBuilder(@JsonProperty(CONTENT) val content: List<String?>) {
+open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?>) {
   @Suppress("unused") //used for deserialization
-  private fun build(): Section {
-    val section = Section()
-    val items = content.map {
+  private fun build(): Lesson {
+    val lesson = createLesson()
+    val taskList = content.map {
       if (it == null) {
         throw InvalidYamlFormatException("Unnamed item")
       }
-      TitledStudyItem(it)
+      TaskWithType(it)
     }
-    section.items = items
-    return section
+    lesson.updateTaskList(taskList)
+    return lesson
   }
+
+  open fun createLesson() = Lesson()
 }
+

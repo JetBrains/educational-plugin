@@ -6,8 +6,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener;
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.CourseSetListener;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -41,7 +41,8 @@ public class CCProjectComponent implements ProjectComponent {
   public void projectOpened() {
     if (StudyTaskManager.getInstance(myProject).getCourse() != null) {
       initCCProject();
-    } else {
+    }
+    else {
       myProject.getMessageBus().connect().subscribe(StudyTaskManager.COURSE_SET, new CourseSetListener() {
         @Override
         public void courseSet(@NotNull Course course) {

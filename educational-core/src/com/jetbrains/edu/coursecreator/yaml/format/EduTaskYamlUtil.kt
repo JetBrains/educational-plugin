@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.configuration.mixins
+package com.jetbrains.edu.coursecreator.yaml.format
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty

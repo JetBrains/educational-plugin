@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
-import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;

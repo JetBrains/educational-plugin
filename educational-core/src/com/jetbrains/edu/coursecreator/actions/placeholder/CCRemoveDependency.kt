@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.ui.EditorNotifications
-import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 
 
 class CCRemoveDependency : CCAnswerPlaceholderAction("Remove Dependency", "Removes dependency on another placeholder") {

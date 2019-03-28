@@ -22,8 +22,8 @@ import com.intellij.openapi.vfs.*
 import com.intellij.psi.PsiDirectory
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
-import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator

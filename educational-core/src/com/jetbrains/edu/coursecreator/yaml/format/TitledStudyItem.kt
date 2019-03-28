@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.configuration.mixins
+package com.jetbrains.edu.coursecreator.yaml.format
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile

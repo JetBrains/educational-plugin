@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.configuration
+package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.application.Experiments
 import com.jetbrains.edu.learning.EduExperimentalFeatures

@@ -6,8 +6,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.*
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.PlaceholderPainter

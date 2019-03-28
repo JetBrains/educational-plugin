@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.configuration
+package com.jetbrains.edu.coursecreator.yaml
 
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
@@ -40,17 +40,17 @@ class YamlSerializationTest : EduTestCase() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
-          taskFile("Test.java", "<p>type here\nand here</p>") {
+          taskFile("Task.java", "<p>type here\nand here</p>") {
             placeholder(0, "42 is the answer", hints = listOf("hint 1", "hint 2"))
           }
-          testFile("Test.java", "")
+          taskFile("Test.java", "my test")
         }
       }
     }.findTask("lesson1", "task1")
     doTest(task, """
     |type: edu
-    |task_files:
-    |- name: Test.java
+    |files:
+    |- name: Task.java
     |  placeholders:
     |  - offset: 0
     |    length: 16
@@ -60,7 +60,6 @@ class YamlSerializationTest : EduTestCase() {
     |    hints:
     |    - hint 1
     |    - hint 2
-    |test_files:
     |- name: Test.java
     |""".trimMargin("|"))
   }
@@ -72,13 +71,13 @@ class YamlSerializationTest : EduTestCase() {
           taskFile("Test.java", "<p>type here\nand here</p>") {
             placeholder(0, "42 is the answer", hints = listOf("hint 1", "hint 2"))
           }
-          additionalFile("Additional.java", "")
+          taskFile("Additional.java", "")
         }
       }
     }.findTask("lesson1", "task1")
     doTest(task, """
     |type: edu
-    |task_files:
+    |files:
     |- name: Test.java
     |  placeholders:
     |  - offset: 0
@@ -89,7 +88,6 @@ class YamlSerializationTest : EduTestCase() {
     |    hints:
     |    - hint 1
     |    - hint 2
-    |additional_files:
     |- name: Additional.java
     |""".trimMargin("|"))
   }
