@@ -13,6 +13,5 @@ object YamlFormatSettings {
 
   fun isDisabled() = !Experiments.isFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT)
 
-  @JvmStatic
   fun Project.isEduYamlProject() = !isDisabled() && courseDir.findChild(COURSE_CONFIG) != null
 }
