@@ -29,11 +29,13 @@ private class SectionBuilder(@JsonProperty(CONTENT) val content: List<String?>) 
   @Suppress("unused") //used for deserialization
   private fun build(): Section {
     val section = Section()
-    val items = content.map {
-      if (it == null) {
+    val items = content.mapIndexed { index: Int, title: String? ->
+      if (title == null) {
         throw InvalidYamlFormatException("Unnamed item")
       }
-      TitledStudyItem(it)
+      val titledStudyItem = TitledStudyItem(title)
+      titledStudyItem.index = index
+      titledStudyItem
     }
     section.items = items
     return section

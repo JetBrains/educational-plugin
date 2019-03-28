@@ -6,8 +6,16 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.yaml.InvalidYamlFormatException
+import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings
+import com.jetbrains.edu.coursecreator.yaml.YamlLoader.taskDirNotFoundError
+import com.jetbrains.edu.coursecreator.yaml.setPlaceholdersPossibleAnswer
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 private const val CONTENT = "content"
@@ -29,12 +37,15 @@ open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?>) {
   @Suppress("unused") //used for deserialization
   private fun build(): Lesson {
     val lesson = createLesson()
-    val taskList = content.map {
-      if (it == null) {
+    val taskList = content.mapIndexed { index: Int, title: String? ->
+      if (title == null) {
         throw InvalidYamlFormatException("Unnamed item")
       }
-      TaskWithType(it)
+      val task = TaskWithType(title)
+      task.index = index + 1
+      task
     }
+
     lesson.updateTaskList(taskList)
     return lesson
   }

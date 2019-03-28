@@ -109,11 +109,13 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
           "Unknown programming language '$programmingLanguage'")
       }
       language = languageName.id
-      val items = content.map {
-        if (it == null) {
+      val items = content.mapIndexed { index, title ->
+        if (title == null) {
           throw InvalidYamlFormatException("Unnamed item")
         }
-        TitledStudyItem(it)
+        val titledStudyItem = TitledStudyItem(title)
+        titledStudyItem.index = index + 1
+        titledStudyItem
       }
       setItems(items)
     }
