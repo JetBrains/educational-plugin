@@ -32,7 +32,7 @@ public abstract class Course extends ItemContainer {
   transient private List<StepikUserInfo> authors = new ArrayList<>();
   private String description;
 
-  private String myProgrammingLanguage = EduNames.PYTHON;
+  private String myProgrammingLanguage = EduNames.PYTHON; // language and optional version in form "Language Version" (as "Python 3.7")
   private String myLanguageCode = "en";
 
   // flag for distinguishing courses imported from zip from Stepik courses
