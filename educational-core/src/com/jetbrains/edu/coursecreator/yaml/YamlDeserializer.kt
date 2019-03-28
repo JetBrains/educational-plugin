@@ -108,7 +108,7 @@ object YamlDeserializer {
     return if (node == null || node.isNull) null else node.asText()
   }
 
-  private val StudyItem.childrenConfigFileNames: Array<String>
+  val StudyItem.childrenConfigFileNames: Array<String>
     get() = when (this) {
       is Course -> arrayOf(SECTION_CONFIG, LESSON_CONFIG)
       is Section -> arrayOf(LESSON_CONFIG)
@@ -116,12 +116,12 @@ object YamlDeserializer {
       else -> error("Unexpected StudyItem: ${javaClass.simpleName}")
     }
 
-  private fun StudyItem.findConfigFile(parentDir: VirtualFile, vararg configFileNames: String): VirtualFile {
+  fun StudyItem.findConfigFile(parentDir: VirtualFile, vararg configFileNames: String): VirtualFile {
     val itemDir = parentDir.findChild(name) ?: noItemDirError(name)
     return configFileNames.map { itemDir.findChild(it) }.firstOrNull { it != null } ?: noItemDirError(itemDir.name)
   }
 
-  private fun noItemDirError(itemName: String): Nothing = error("Cannot find directory for item: '$itemName'")
+  fun noItemDirError(itemName: String): Nothing = error("Cannot find directory for item: '$itemName'")
 
   fun formatError(message: String): Nothing = throw InvalidYamlFormatException(message)
 }
