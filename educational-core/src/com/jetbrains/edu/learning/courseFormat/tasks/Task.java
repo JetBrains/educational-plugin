@@ -11,8 +11,8 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
-import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
+import com.jetbrains.edu.learning.stepik.api.StepikJacksonDeserializersKt;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import icons.EducationalCoreIcons;
 import org.jdom.Element;
@@ -31,7 +31,7 @@ import java.util.*;
  * To implement new task there are 6 steps to be done:
  * - Extend {@link Task} class
  * - Go to {@link Lesson#taskList} and update elementTypes in AbstractCollection annotation. Needed for proper xml serialization
- * - Update {@link SerializationUtils.Json.TaskAdapter#deserialize} to handle json serialization
+ * - Update {@link StepikJacksonDeserializersKt#doDeserializeTask} to handle json serialization
  * - Update {@link TaskCheckerProvider#getTaskChecker} and provide default checker for new task
  * - Update {@link StepikTaskBuilder#pluginTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder#stepikTaskTypes} otherwise
  * - Handle yaml deserialization in {@link com.jetbrains.edu.coursecreator.yaml.YamlDeserializer#deserializeTask(String)}
