@@ -9,13 +9,17 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.event.DocumentEvent
+import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.LESSON_CONFIG
@@ -26,13 +30,11 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-
 
 object YamlFormatSynchronizer {
   private val LOG = Logger.getInstance(YamlFormatSynchronizer.javaClass)
+  private val LOAD_FROM_CONFIG = Key<Boolean>("Edu.loadItem")
 
   @VisibleForTesting
   val MAPPER: ObjectMapper by lazy {
@@ -64,63 +66,93 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyYamlMixin::class.java)
   }
 
-  private fun VirtualFile.getDocument(): Document? = FileDocumentManager.getInstance().getDocument(this)
+  @JvmStatic
+  fun saveAll(project: Project) {
+    val course = StudyTaskManager.getInstance(project).course ?: error("Attempt to create config files for project without course")
+    saveItem(course)
+    course.visitSections { section -> saveItem(section) }
+    course.visitLessons { lesson ->
+      lesson.visitTasks { task, _ ->
+        saveItem(task)
+        true
+      }
+      saveItem(lesson)
+      true
+    }
+  }
 
   @JvmStatic
   fun saveItem(item: StudyItem) {
+    val course = item.course
+    if (YamlFormatSettings.isDisabled() || course.isStudy) {
+      return
+    }
+
+    val project = course.project ?: error("Failed to find project for course")
+    val undoManager = UndoManager.getInstance(project)
+    if (undoManager.isUndoInProgress || undoManager.isRedoInProgress) {
+      ApplicationManager.getApplication().invokeLater {
+        item.saveConfigDocument(project)
+      }
+    }
+    else {
+      item.saveConfigDocument(project)
+    }
+  }
+
+  @JvmStatic
+  fun startSynchronization(project: Project) {
     if (YamlFormatSettings.isDisabled()) {
       return
     }
-    val course = item.course
-    if (course.isStudy) {
-      return
+    val configFiles = getAllConfigFiles(project)
+    for (file in configFiles) {
+      file.addSynchronizationListener(project)
     }
-    val project = course.project
-    if (project == null) {
-      LOG.info("Failed to find project for course")
-      return
+
+    // create missing files if feature was enabled after project was created
+    YamlFormatSynchronizer.saveAll(project)
+  }
+
+  private fun StudyItem.saveConfigDocument(project: Project) {
+    val dir = getDir(project) ?: error("Failed to save ${javaClass.simpleName} '${name}' to config file: directory not found")
+    runUndoTransparentWriteAction {
+      val isNewConfigFile = dir.findChild(configFileName) == null
+      val file = dir.findOrCreateChildData(javaClass, configFileName)
+      if (isNewConfigFile) {
+        file.addSynchronizationListener(project)
+      }
+      file.putUserData(LOAD_FROM_CONFIG, false)
+      file.document?.setText(MAPPER.writeValueAsString(this))
+      file.putUserData(LOAD_FROM_CONFIG, true)
     }
-    val fileName = when (item) {
+  }
+
+  private val StudyItem.configFileName: String
+    get() = when (this) {
       is Course -> COURSE_CONFIG
       is Section -> SECTION_CONFIG
       is Lesson -> LESSON_CONFIG
       is Task -> TASK_CONFIG
-      else -> error("Unknown StudyItem type: ${item.javaClass.name}")
-    }
-    val dir = item.getDir(project)
-    if (dir == null) {
-      LOG.error("Failed to save ${item.javaClass.name} '${item.name}' to config file: directory not found")
-      return
+      else -> error("Unknown StudyItem type: ${javaClass.simpleName}")
     }
 
-    val undoManager = UndoManager.getInstance(project)
-    if (undoManager.isUndoInProgress || undoManager.isRedoInProgress) {
-      ApplicationManager.getApplication().invokeLater {
-        saveConfigDocument(dir, fileName, item)
+  private fun VirtualFile.addSynchronizationListener(project: Project) {
+    document?.addDocumentListener(object : DocumentListener {
+      override fun documentChanged(event: DocumentEvent) {
+        val loadFromConfig = getUserData(LOAD_FROM_CONFIG) ?: true
+        if (loadFromConfig) {
+          val configDocument = event.document
+          FileDocumentManager.getInstance().saveDocumentAsIs(configDocument)
+          YamlLoader.loadItem(project, this@addSynchronizationListener)
+          ProjectView.getInstance(project).refresh()
+        }
       }
-    }
-    else {
-      saveConfigDocument(dir, fileName, item)
-    }
+    }, project)
   }
 
-  @JvmStatic
-  fun saveAll(project: Project) {
-    val course = StudyTaskManager.getInstance(project).course
-    if (course == null) {
-      LOG.error("Attempt to create config files for project without course")
-      return
-    }
-    saveItem(course)
-    course.visitSections(SectionVisitor { section -> saveItem(section) })
-    course.visitLessons(LessonVisitor { lesson ->
-      for (task in lesson.getTaskList()) {
-        saveItem(task)
-      }
-      saveItem(lesson)
-      true
-    })
-  }
+  private val VirtualFile.document: Document?
+    get() = FileDocumentManager.getInstance().getDocument(this)
 
   @JvmStatic
   fun isConfigFile(file: VirtualFile): Boolean {
@@ -128,38 +160,32 @@ object YamlFormatSynchronizer {
     return COURSE_CONFIG == name || LESSON_CONFIG == name || TASK_CONFIG == name || SECTION_CONFIG == name
   }
 
-  fun deserializeTask(taskYaml: String): Task {
-    val treeNode = MAPPER.readTree(taskYaml)
-    val type = treeNode.get("type")?.asText()
-    val typeNotSpecifiedMessage = "task type not specified"
-    if (type == null) {
-      throw InvalidYamlFormatException(typeNotSpecifiedMessage)
+  private fun getAllConfigFiles(project: Project): List<VirtualFile> {
+    val configFiles = mutableListOf<VirtualFile?>()
+    val course = StudyTaskManager.getInstance(project).course ?: error("Accessing to config files in non-edu project")
+
+    configFiles.add(getConfigFile(project, course, COURSE_CONFIG))
+
+    course.visitLessons { lesson ->
+      configFiles.add(getConfigFile(project, lesson, LESSON_CONFIG))
+      lesson.visitTasks { task, _ ->
+        configFiles.add(getConfigFile(project, task, TASK_CONFIG))
+        true
+      }
+      true
     }
-    val clazz = when (type) {
-      "edu" -> EduTask::class.java
-      "output" -> OutputTask::class.java
-      "theory" -> TheoryTask::class.java
-      "null" -> throw InvalidYamlFormatException(typeNotSpecifiedMessage)
-      else -> throw InvalidYamlFormatException("Unsupported task type '$type'")
-    }
-    return MAPPER.treeToValue(treeNode, clazz)
+
+    course.visitSections { configFiles.add(getConfigFile(project, it, SECTION_CONFIG)) }
+
+    return configFiles.filterNotNull()
   }
 
-  fun deserializeLesson(lessonYaml: String): Lesson {
-    val treeNode = MAPPER.readTree(lessonYaml)
-    val type = treeNode.get("type")?.asText()
-    val clazz = when (type) {
-      "framework" -> FrameworkLesson::class.java
-      else -> Lesson::class.java
-    }
-    return MAPPER.treeToValue(treeNode, clazz)
-  }
-
-  private fun saveConfigDocument(dir: VirtualFile, configFileName: String, item: StudyItem) {
-    runUndoTransparentWriteAction {
-      val file = dir.findOrCreateChildData(javaClass, configFileName)
-      val document = file.getDocument() ?: return@runUndoTransparentWriteAction
-      document.setText(MAPPER.writeValueAsString(item))
-    }
+  private fun getConfigFile(project: Project, item: StudyItem, configFileName: String): VirtualFile? {
+    val itemDir = item.getDir(project)
+    itemDir?.findChild(configFileName)?.apply { return this }
+    val warning = if (itemDir == null) "Cannot find directory for a ${item.javaClass.simpleName}: ${item.name}"
+    else "No config file '$configFileName' in '${itemDir.name}'"
+    LOG.warn(warning)
+    return null
   }
 }

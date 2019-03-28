@@ -16,10 +16,10 @@ import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.coursecreator.CCProjectComponent
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeLesson
+import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.deserializeLesson
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.deserializeTask
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduProjectComponent
