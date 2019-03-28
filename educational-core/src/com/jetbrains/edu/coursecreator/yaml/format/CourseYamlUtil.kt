@@ -105,8 +105,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       description = summary
       val languageName = Language.getRegisteredLanguages().find { it.displayName == programmingLanguage }
       if (languageName == null) {
-        throw InvalidYamlFormatException(
-          "Unknown programming language '$programmingLanguage'")
+        throw InvalidYamlFormatException("Unknown programming language '$programmingLanguage'")
       }
       language = languageName.id
       val items = content.mapIndexed { index, title ->
