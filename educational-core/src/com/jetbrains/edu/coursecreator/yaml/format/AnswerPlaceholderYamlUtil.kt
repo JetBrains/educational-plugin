@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.yaml.format
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -16,9 +15,6 @@ private const val HINTS = "hints"
 private const val DEPENDENCY = "dependency"
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, HINTS, DEPENDENCY)
 @JsonDeserialize(builder = AnswerPlaceholderBuilder::class)
 abstract class AnswerPlaceholderYamlMixin {

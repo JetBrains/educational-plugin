@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
@@ -45,6 +46,7 @@ object YamlFormatSynchronizer {
     mapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
     mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    mapper.disable(MapperFeature.AUTO_DETECT_FIELDS, MapperFeature.AUTO_DETECT_GETTERS, MapperFeature.AUTO_DETECT_IS_GETTERS)
     addMixIns(mapper)
 
     mapper

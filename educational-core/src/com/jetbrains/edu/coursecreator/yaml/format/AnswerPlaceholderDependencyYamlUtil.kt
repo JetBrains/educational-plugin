@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.yaml.format
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -8,9 +7,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonPropertyOrder("section", "lesson", "task", "file", "placeholder", "is_visible")
 abstract class AnswerPlaceholderDependencyYamlMixin {
   @JsonProperty("section")

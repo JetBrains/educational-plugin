@@ -2,7 +2,6 @@
 
 package com.jetbrains.edu.coursecreator.yaml.format
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
@@ -14,9 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 private const val CONTENT = "content"
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonDeserialize(builder = LessonBuilder::class)
 abstract class LessonYamlMixin {
   @JsonProperty(CONTENT)
