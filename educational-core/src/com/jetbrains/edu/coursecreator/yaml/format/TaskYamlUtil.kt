@@ -43,14 +43,6 @@ abstract class TaskYamlMixin {
   lateinit var myFeedbackLink: FeedbackLink
 }
 
-private class TaskFileConverter : StdConverter<TaskFile, TaskFileWithoutPlaceholders>() {
-  override fun convert(value: TaskFile): TaskFileWithoutPlaceholders {
-    return TaskFileWithoutPlaceholders(value.name)
-  }
-}
-
-private class TaskFileWithoutPlaceholders(@JsonProperty("name") val name: String)
-
 private class FeedbackLinkToStringConverter : StdConverter<FeedbackLink?, String>() {
   override fun convert(value: FeedbackLink?): String? {
     if (value?.link.isNullOrBlank()) {
