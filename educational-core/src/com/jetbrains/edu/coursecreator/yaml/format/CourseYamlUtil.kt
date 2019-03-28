@@ -14,6 +14,12 @@ import com.jetbrains.edu.coursecreator.yaml.InvalidYamlFormatException
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.coursera.CourseraNames
+import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
+import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.util.*
 
 private const val TYPE = "type"
@@ -30,6 +36,10 @@ private const val CONTENT = "content"
 @JsonPropertyOrder(TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, CONTENT)
 @JsonDeserialize(builder = CourseBuilder::class)
 abstract class CourseYamlMixin {
+  @JsonSerialize(converter = CourseTypeSerializationConverter::class)
+  @JsonProperty(TYPE)
+  private lateinit var courseType: String
+
   @JsonProperty(TITLE)
   private lateinit var name: String
 
@@ -61,15 +71,29 @@ private class LanguageConverter : StdConverter<String, String>() {
   override fun convert(languageCode: String): String = Locale(languageCode).displayName
 }
 
+private class CourseTypeSerializationConverter : StdConverter<String, String?>() {
+  override fun convert(courseType: String): String? {
+    return if (courseType == EduNames.PYCHARM) null else courseType
+  }
+}
+
 @JsonPOJOBuilder(withPrefix = "")
-private class CourseBuilder(@JsonProperty(TITLE) val title: String,
+private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
+                            @JsonProperty(TITLE) val title: String,
                             @JsonProperty(SUMMARY) val summary: String,
                             @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
                             @JsonProperty(LANGUAGE) val language: String,
                             @JsonProperty(CONTENT) val content: List<String?>) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
-    val course = EduCourse()
+    val course = when (courseType) {
+      CourseraNames.COURSE_TYPE -> CourseraCourse()
+      CHECKIO_TYPE -> CheckiOCourse()
+      HYPERSKILL_TYPE -> HyperskillCourse()
+      STEPIK_TYPE -> StepikCourse()
+      null -> EduCourse()
+      else -> formatError("Unsupported course type: $courseType")
+    }
     course.apply {
       name = title
       description = summary

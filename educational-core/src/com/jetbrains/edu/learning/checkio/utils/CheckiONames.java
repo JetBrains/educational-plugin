@@ -4,6 +4,7 @@ public final class CheckiONames {
   private CheckiONames() {}
 
   public static final String CHECKIO = "CheckiO";
+  public static final String CHECKIO_TYPE = CHECKIO;
 
   public static final String CHECKIO_URL = "checkio.org";
 

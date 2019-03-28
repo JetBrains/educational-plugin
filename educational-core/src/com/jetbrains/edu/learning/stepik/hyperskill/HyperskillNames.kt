@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import org.jetbrains.ide.BuiltInServerManager
 
 const val HYPERSKILL = "Hyperskill"
+const val HYPERSKILL_TYPE = HYPERSKILL
 const val HYPERSKILL_URL = "https://hyperskill.org/"
 const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects"
 private val port = BuiltInServerManager.getInstance().port
