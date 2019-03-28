@@ -195,4 +195,15 @@ public class Lesson extends StudyItem {
   public VirtualFile getDir(@NotNull Project project) {
     return getLessonDir(project);
   }
+
+  public void visitTasks(@NotNull TaskVisitor visitor) {
+    int index = 1;
+    for (Task task : taskList) {
+      boolean visitNext = visitor.visit(task, index);
+      if (!visitNext) {
+        return;
+      }
+      index++;
+    }
+  }
 }
