@@ -10,8 +10,14 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.yaml.InvalidYamlFormatException
+import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.formatError
+import com.jetbrains.edu.coursecreator.yaml.YamlLoader
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
@@ -28,6 +34,10 @@ private const val SUMMARY = "summary"
 private const val PROGRAMMING_LANGUAGE = "programming_language"
 private const val CONTENT = "content"
 
+/**
+ * Mixin class is used to deserialize [Course] item.
+ * Update [CourseChangeApplier] if new fields added to mixin
+ */
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
 @JsonPropertyOrder(TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, CONTENT)
 @JsonDeserialize(builder = CourseBuilder::class)
@@ -113,5 +123,23 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
     }
     course.languageCode = Locale(locale).language
     return course
+  }
+}
+
+class CourseChangeApplier<T : Course> : StudyItemChangeApplier<T>() {
+  override fun applyChanges(existingItem: T, deserializedItem: T) {
+    existingItem.name = deserializedItem.name
+    existingItem.courseType = deserializedItem.courseType
+    existingItem.description = deserializedItem.description
+    existingItem.language = deserializedItem.language
+    existingItem.languageCode = deserializedItem.languageCode
+    updateItemContainerChildren(existingItem, deserializedItem)
+  }
+}
+
+fun updateItemContainerChildren(existingContainer: ItemContainer, deserializedContainer: ItemContainer) {
+  deserializedContainer.items.forEach {
+    val existingItem = existingContainer.getItem(it.name) ?: YamlLoader.itemNotFound(it.name)
+    existingItem.index = it.index
   }
 }
