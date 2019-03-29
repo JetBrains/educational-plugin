@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 import com.google.common.collect.Lists
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.components.impl.ComponentManagerImpl
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -60,6 +61,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     myManager.registerExtraEditorDataProvider(TextEditorPsiDataProvider(), null)
     myOldManager = (myFixture.project as ComponentManagerImpl).registerComponentInstance<FileEditorManager>(FileEditorManager::class.java, myManager)
     (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
+    Experiments.setFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT, false)
   }
 
   override fun tearDown() {
