@@ -48,6 +48,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()
+    Experiments.setFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT, false)
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE)
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE, HYPERSKILL)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage)
@@ -61,7 +62,6 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     myManager.registerExtraEditorDataProvider(TextEditorPsiDataProvider(), null)
     myOldManager = (myFixture.project as ComponentManagerImpl).registerComponentInstance<FileEditorManager>(FileEditorManager::class.java, myManager)
     (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
-    Experiments.setFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT, false)
   }
 
   override fun tearDown() {
