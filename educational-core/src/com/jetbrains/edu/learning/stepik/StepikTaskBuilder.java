@@ -303,15 +303,15 @@ public class StepikTaskBuilder {
 
   private void createMockTaskFile(@NotNull Task task, @NotNull String comment, @Nullable String codeTemplate) {
     final StepOptions options = myStep.getOptions();
-    if (options == null) return;
-    final List<TaskFile> taskFiles = options.getFiles();
-    if (taskFiles != null && !taskFiles.isEmpty()) {
-      for (TaskFile file : taskFiles) {
-        task.addTaskFile(file);
+    if (options != null) {
+      final List<TaskFile> taskFiles = options.getFiles();
+      if (taskFiles != null && !taskFiles.isEmpty()) {
+        for (TaskFile file : taskFiles) {
+          task.addTaskFile(file);
+        }
+        return;
       }
-      return;
     }
-
     StringBuilder editorTextBuilder = new StringBuilder();
 
     if (codeTemplate == null) {
