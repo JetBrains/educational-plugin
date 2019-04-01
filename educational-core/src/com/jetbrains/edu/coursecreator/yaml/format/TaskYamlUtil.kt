@@ -84,12 +84,16 @@ class TaskChangeApplier<T : Task> : StudyItemChangeApplier<T>() {
   private fun Task.applyPlaceholderChanges(project: Project, deserializedItem: Task) {
     for ((name, taskFile) in taskFiles) {
       val deserializedTaskFile = deserializedItem.taskFiles[name] ?: itemNotFound(name)
-      PlaceholderPainter.hidePlaceholders(taskFile)
-      taskFile.answerPlaceholders = deserializedTaskFile.answerPlaceholders
-      taskFile.setPlaceholdersPossibleAnswer(project)
+      taskFile.applyPlaceholderChanges(project, deserializedTaskFile)
       // init new placeholders to correctly paint them
       taskFile.initTaskFile(this, false)
     }
+  }
+
+  private fun TaskFile.applyPlaceholderChanges(project: Project, deserializedTaskFile: TaskFile) {
+    PlaceholderPainter.hidePlaceholders(this)
+    answerPlaceholders = deserializedTaskFile.answerPlaceholders
+    setPlaceholdersPossibleAnswer(project)
   }
 
   private fun paintPlaceholdersForOpenedFiles(project: Project, task: Task) {
