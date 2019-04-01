@@ -6,9 +6,9 @@ import java.util.regex.Pattern
 
 object TestsOutputParser {
   const val CONGRATULATIONS = "Congratulations!"
-  private const val TEST_OK = "test OK"
-  private const val TEST_FAILED = "FAILED + "
-  private const val CONGRATS_MESSAGE = "CONGRATS_MESSAGE "
+  const val TEST_OK = "test OK"
+  const val TEST_FAILED = "FAILED + "
+  const val CONGRATS_MESSAGE = "CONGRATS_MESSAGE "
   private val TEST_FAILED_PATTERN: Pattern = Pattern.compile("((.+) )?expected: ?(.*) but was: ?(.*)",
                                                              Pattern.MULTILINE or Pattern.DOTALL)
 
@@ -16,16 +16,24 @@ object TestsOutputParser {
   @JvmStatic
   fun getCheckResult(messages: List<String>, needEscapeResult: Boolean = true): CheckResult {
     var congratulations = TestsOutputParser.CONGRATULATIONS
-    loop@for (message in messages) {
+    loop@ for ((index, message) in messages.withIndex()) {
       when {
-        TestsOutputParser.TEST_OK in message -> continue@loop
-        TestsOutputParser.CONGRATS_MESSAGE in message -> {
-          congratulations = message.substringAfter(TestsOutputParser.CONGRATS_MESSAGE)
+        TEST_OK in message -> continue@loop
+        CONGRATS_MESSAGE in message -> {
+          congratulations = message.substringAfter(CONGRATS_MESSAGE)
         }
-        TestsOutputParser.TEST_FAILED in message -> {
-          return CheckResult(CheckStatus.Failed,
-                             message.substringAfter(TestsOutputParser.TEST_FAILED).prettify(),
-                             needEscape = needEscapeResult)
+        TEST_FAILED in message -> {
+          val builder = StringBuilder(message.substringAfter(TEST_FAILED) + "\n")
+          for (j in index + 1 until messages.size) {
+            val failedTextLine = messages[j]
+            if (failedTextLine.contains(CheckUtils.STUDY_PREFIX) &&
+                (failedTextLine.contains(CONGRATS_MESSAGE) || failedTextLine.contains(TEST_OK))) {
+              break
+            }
+            builder.append(failedTextLine)
+            builder.append("\n")
+          }
+          return CheckResult(CheckStatus.Failed, builder.toString().prettify(), needEscape = needEscapeResult)
         }
       }
     }
@@ -41,10 +49,12 @@ object TestsOutputParser {
       val actualText = matcher.group(4)
       if (errorMessage != null) {
         "$errorMessage\nExpected:\n$expectedText\nActual:\n$actualText"
-      } else {
+      }
+      else {
         "Expected:\n$expectedText\nActual:\n$actualText"
       }
-    } else {
+    }
+    else {
       this
     }
   }
