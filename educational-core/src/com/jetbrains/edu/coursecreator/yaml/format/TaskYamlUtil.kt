@@ -85,6 +85,7 @@ class TaskChangeApplier<T : Task> : StudyItemChangeApplier<T>() {
     for ((name, taskFile) in taskFiles) {
       val deserializedTaskFile = deserializedItem.taskFiles[name] ?: itemNotFound(name)
       taskFile.applyPlaceholderChanges(project, deserializedTaskFile)
+      taskFile.isVisible = deserializedTaskFile.isVisible
       // init new placeholders to correctly paint them
       taskFile.initTaskFile(this, false)
     }

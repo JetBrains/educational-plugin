@@ -31,6 +31,7 @@ class YamlSerializationTest : EduTestCase() {
     |type: edu
     |files:
     |- name: Test.java
+    |  visible: true
     |  placeholders:
     |  - offset: 0
     |    length: 16
@@ -50,7 +51,7 @@ class YamlSerializationTest : EduTestCase() {
           taskFile("Task.java", "<p>type here\nand here</p>") {
             placeholder(0, "42 is the answer", hints = listOf("hint 1", "hint 2"))
           }
-          taskFile("Test.java", "my test")
+          taskFile("Test.java", "my test", false)
         }
       }
     }.findTask("lesson1", "task1")
@@ -58,6 +59,7 @@ class YamlSerializationTest : EduTestCase() {
     |type: edu
     |files:
     |- name: Task.java
+    |  visible: true
     |  placeholders:
     |  - offset: 0
     |    length: 16
@@ -68,6 +70,7 @@ class YamlSerializationTest : EduTestCase() {
     |    - hint 1
     |    - hint 2
     |- name: Test.java
+    |  visible: false
     |""".trimMargin("|"))
   }
 
@@ -78,7 +81,7 @@ class YamlSerializationTest : EduTestCase() {
           taskFile("Test.java", "<p>type here\nand here</p>") {
             placeholder(0, "42 is the answer", hints = listOf("hint 1", "hint 2"))
           }
-          taskFile("Additional.java", "")
+          taskFile("Additional.java", "", false)
         }
       }
     }.findTask("lesson1", "task1")
@@ -86,6 +89,7 @@ class YamlSerializationTest : EduTestCase() {
     |type: edu
     |files:
     |- name: Test.java
+    |  visible: true
     |  placeholders:
     |  - offset: 0
     |    length: 16
@@ -96,6 +100,7 @@ class YamlSerializationTest : EduTestCase() {
     |    - hint 1
     |    - hint 2
     |- name: Additional.java
+    |  visible: false
     |""".trimMargin("|"))
   }
 
@@ -121,6 +126,7 @@ class YamlSerializationTest : EduTestCase() {
     |type: edu
     |files:
     |- name: Test.java
+    |  visible: true
     |  placeholders:
     |  - offset: 0
     |    length: 3
@@ -147,6 +153,7 @@ class YamlSerializationTest : EduTestCase() {
     |type: output
     |files:
     |- name: Test.java
+    |  visible: true
     |""".trimMargin("|"))
   }
 

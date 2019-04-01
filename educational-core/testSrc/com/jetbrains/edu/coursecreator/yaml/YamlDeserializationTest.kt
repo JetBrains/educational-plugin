@@ -253,4 +253,23 @@ class YamlDeserializationTest : EduTestCase() {
     assertEquals("http://example.com", task.feedbackLink.link)
     assertEquals(FeedbackLink.LinkType.CUSTOM, task.feedbackLink.type)
   }
+
+  fun `test file visibility`() {
+    val taskFileName = "Task.java"
+    val testFileName = "Test.java"
+    val yamlContent = """
+    |type: edu
+    |files:
+    |- name: $taskFileName
+    |  visible: true
+    |- name: $testFileName
+    |  visible: false
+    |""".trimMargin("|")
+    val task = YamlDeserializer.deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    val taskFile = task.taskFiles[taskFileName]!!
+    assertTrue("$taskFileName expected to be visible", taskFile.isVisible)
+    val testFile = task.taskFiles[testFileName]!!
+    assertTrue("$testFileName expected to be invisible", !testFile.isVisible)
+  }
 }
