@@ -77,11 +77,11 @@ class TaskChangeApplier<T : Task> : StudyItemChangeApplier<T>() {
     val project = existingItem.project ?: error("Cannot find project for a task: ${existingItem}")
     existingItem.feedbackLink = deserializedItem.feedbackLink
     hideOldPlaceholdersForOpenedFiles(project, existingItem)
-    existingItem.applyPlaceholderChanges(project, deserializedItem)
+    existingItem.applyTaskFileChanges(project, deserializedItem)
     paintPlaceholdersForOpenedFiles(project, existingItem)
   }
 
-  private fun Task.applyPlaceholderChanges(project: Project, deserializedItem: Task) {
+  private fun Task.applyTaskFileChanges(project: Project, deserializedItem: Task) {
     for ((name, taskFile) in taskFiles) {
       val deserializedTaskFile = deserializedItem.taskFiles[name] ?: itemNotFound(name)
       taskFile.applyPlaceholderChanges(project, deserializedTaskFile)
