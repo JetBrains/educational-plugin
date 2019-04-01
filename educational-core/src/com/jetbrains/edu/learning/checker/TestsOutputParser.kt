@@ -23,15 +23,15 @@ object TestsOutputParser {
           congratulations = message.substringAfter(CONGRATS_MESSAGE)
         }
         TEST_FAILED in message -> {
-          val builder = StringBuilder(message.substringAfter(TEST_FAILED) + "\n")
+          val builder = StringBuilder(message.substringAfter(TEST_FAILED))
           for (j in index + 1 until messages.size) {
             val failedTextLine = messages[j]
             if (failedTextLine.contains(CheckUtils.STUDY_PREFIX) &&
                 (failedTextLine.contains(CONGRATS_MESSAGE) || failedTextLine.contains(TEST_OK))) {
               break
             }
-            builder.append(failedTextLine)
             builder.append("\n")
+            builder.append(failedTextLine)
           }
           return CheckResult(CheckStatus.Failed, builder.toString().prettify(), needEscape = needEscapeResult)
         }
