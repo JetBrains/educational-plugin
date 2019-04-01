@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.messages.MessageBusConnection;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -31,6 +32,7 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -360,12 +362,20 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static TaskSolutions getStepikTaskSolutions(@NotNull Task task, boolean isSolved) {
-    assert task.getTaskFiles().size() == 1;
+    String emptyString = "";
+
+    GeneratorUtils.DefaultFileProperties taskFileProperties =
+      GeneratorUtils.createDefaultFile(task.getLesson().getCourse(), EduNames.TASK, emptyString);
+
+    String extension = taskFileProperties.getName().replace(EduNames.TASK, emptyString);
+    List<String> taskFileNames = task.getTaskFiles().keySet().stream()
+      .filter(fileName -> fileName.endsWith(extension)).collect(Collectors.toList());
+
+    assert taskFileNames.size() == 1;
 
     String solution = getSolutionTextForStepikAssignment(task, isSolved);
     if (solution != null) {
       task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
-      ArrayList<String> taskFileNames = new ArrayList<>(task.getTaskFiles().keySet());
       return new TaskSolutions(Collections.singletonMap(taskFileNames.get(0), solution));
     }
     return TaskSolutions.EMPTY;
