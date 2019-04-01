@@ -1,0 +1,106 @@
+<component name="StudySettings">
+  <StudyTaskManager>
+    <option name="course">
+      <EduCourse>
+        <option name="authors">
+          <list>
+            <StepicUser>
+              <option name="accessToken" value="" />
+              <option name="firstName" value="warrior" />
+              <option name="guest" value="false" />
+              <option name="id" value="-1" />
+              <option name="lastName" value="" />
+              <option name="refreshToken" value="" />
+            </StepicUser>
+          </list>
+        </option>
+        <option name="courseMode" value="Course Creator" />
+        <option name="courseType" value="PyCharm" />
+        <option name="customPresentableName" />
+        <option name="description" value="Test Course format 10" />
+        <option name="fromZip" value="false" />
+        <option name="index" value="-1" />
+        <option name="language" value="kotlin" />
+        <option name="languageCode" value="en" />
+        <option name="name" value="Test Course format 10" />
+        <option name="stepikChangeStatus" value="Content changed" />
+        <option name="items">
+          <list>
+            <Lesson>
+              <option name="customPresentableName" />
+              <option name="id" value="0" />
+              <option name="index" value="1" />
+              <option name="name" value="lesson1" />
+              <option name="stepikChangeStatus" value="Up to date" />
+              <option name="updateDate" value="0" />
+              <option name="taskList">
+                <list>
+                  <EduTask>
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="MD" />
+                    <option name="descriptionText" value="This is the markdown document.&#10;&#10;Write your task text here" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="1" />
+                    <option name="name" value="task1" />
+                    <option name="status" value="Unchecked" />
+                    <option name="id" value="0" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="updateDate" value="0" />
+                    <option name="files">
+                      <map>
+                        <entry key="additional_file.txt">
+                          <value>
+                            <TaskFile>
+                              <option name="text" value="" />
+                              <option name="visible" value="true" />
+                              <option name="name" value="additional_file.txt" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                        <entry key="Task.kt">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="false" />
+                              <option name="text" value="// type your solution here" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                              <option name="name" value="Task.kt" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                        <entry key="Tests.kt">
+                          <value>
+                            <TaskFile>
+                              <option name="name" value="Tests.kt" />
+                              <option name="text" value="import org.junit.Assert&#10;import org.junit.Test&#10;&#10;class Test {&#10;    @Test fun testSolution() {&#10;        //TODO: implement your test here&#10;        Assert.assertTrue(&quot;Tests not implemented for the task&quot;, false)&#10;    }&#10;}" />
+                              <option name="visible" value="false" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                  </EduTask>
+                </list>
+              </option>
+              <option name="unitId" value="0" />
+            </Lesson>
+          </list>
+        </option>
+      </EduCourse>
+    </option>
+    <option name="VERSION" value="13" />
+    <option name="myUserTests">
+      <map />
+    </option>
+  </StudyTaskManager>
+</component>

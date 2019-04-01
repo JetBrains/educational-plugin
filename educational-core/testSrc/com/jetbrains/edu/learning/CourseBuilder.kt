@@ -205,7 +205,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   }
 
   fun withStepId(stepId: Int) {
-    task.stepId = stepId
+    task.id = stepId
   }
 
   /**

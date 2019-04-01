@@ -59,7 +59,7 @@ object HyperskillCourseUpdater {
 
     return when {
       tasks.size > remoteTasks.size -> false
-      tasks.zip(remoteTasks).any { (task, remoteTask) -> task.stepId != remoteTask.stepId } -> false
+      tasks.zip(remoteTasks).any { (task, remoteTask) -> task.id != remoteTask.id } -> false
       tasks.zip(remoteTasks).any { (task, remoteTask) -> task.updateDate.before(remoteTask.updateDate) } -> true
       needUpdateCourseAdditionalFiles(project, remoteCourse.additionalFiles) -> true
       else -> false
