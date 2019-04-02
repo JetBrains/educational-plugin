@@ -28,7 +28,6 @@ group = 'org.jetbrains.edu'
 def buildNumber = System.getenv("BUILD_NUMBER")
 version = "$pluginVersion-${buildNumber == null ? "SNAPSHOT" : buildNumber}"
 
-def isStudio = environmentName.startsWith("studio")
 // BACKCOMPAT: 2018.2
 def is182 = environmentName.endsWith("182")
 
@@ -69,6 +68,14 @@ private String studioArtifactDownloadPath() {
     else {
         return "http://dl.google.com/dl/android/studio/ide-zips/${studioVersion}/android-studio-ide-${studioBuildVersion}-${osFamily}.zip"
     }
+}
+
+String studioPath() {
+    if (project.hasProperty("androidStudioPath")) {
+        return androidStudioPath
+    } else {
+        return downloadStudioIfNeededAndGetPath()
+    }    
 }
 
 static boolean inJetBrainsNetwork() {
@@ -128,6 +135,28 @@ task prepareJavaFx(type: Copy) {
 
 prepareJavaFx.dependsOn downloadJavaFx
 
+def baseVersion = baseVersion()
+def isJvmBasedIDE = baseIDE in ["idea", "studio"]
+
+String baseVersion() {
+    def version
+    switch (baseIDE) {
+        case "idea":
+            version = ideaVersion
+            break
+        case "clion":
+            version = clionVersion
+            break
+        case "studio":
+            // Just for consistency. Value is not used
+            version = studioVersion
+            break
+        default:
+            throw InvalidUserDataException("Unexpected IDE name: $baseIDE")
+    }
+    return version
+}
+
 allprojects {
     apply plugin: "org.jetbrains.intellij"
     apply plugin: "java"
@@ -145,18 +174,10 @@ allprojects {
     }
 
     intellij {
-        if (environmentName.startsWith("studio")) {
-            if (project.hasProperty("androidStudioPath")) {
-                localPath androidStudioPath
-            } else {
-                localPath downloadStudioIfNeededAndGetPath()
-            }
+        if (baseIDE == "studio") {
+            localPath studioPath()
         } else {
-            if (project.hasProperty("ideaVersion")) {
-                version ideaVersion
-            } else if (project.hasProperty("ideaPath")) {
-                localPath ideaPath
-            }
+            version = baseVersion
         }
     }
 
@@ -235,11 +256,14 @@ intellij {
     pluginName 'EduTools'
     updateSinceUntilBuild true
     downloadSources false
-    def pluginsList = ['junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion"]
+    def pluginsList = ["PythonCore:$pythonPluginVersion"]
+    if (isJvmBasedIDE) {
+        pluginsList += ['junit', 'Kotlin', "org.intellij.scala:$scalaPluginVersion"]
+    }
     if (!is182) {
         pluginsList += ["org.rust.lang:$rustPluginVersion"]
     }
-    if (!isStudio) {
+    if (baseIDE == "idea") {
         pluginsList += ["NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"]
     }
     
@@ -343,6 +367,10 @@ project(':educational-core') {
 
 project(':jvm-core') {
     intellij {
+        if (!isJvmBasedIDE) {
+            localPath = null
+            version = ideaVersion
+        }
         plugins 'junit', 'properties', 'gradle', 'Groovy'
     }
     
@@ -354,6 +382,8 @@ project(':jvm-core') {
 
 project(':Edu-Java') {
     intellij {
+        localPath = null
+        version ideaVersion
         plugins 'junit', 'properties', 'gradle', 'Groovy'
     }
 
@@ -367,6 +397,10 @@ project(':Edu-Java') {
 
 project(':Edu-Kotlin') {
     intellij {
+        if (!isJvmBasedIDE) {
+            localPath = null
+            version = ideaVersion
+        }
         plugins 'Kotlin', 'junit', 'properties', 'gradle', 'Groovy'
     }
 
@@ -380,6 +414,10 @@ project(':Edu-Kotlin') {
 
 project(':Edu-Scala') {
     intellij {
+        if (!isJvmBasedIDE) {
+            localPath = null
+            version = ideaVersion
+        }
         plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy'
     }
 
@@ -393,11 +431,7 @@ project(':Edu-Scala') {
 
 project(':Edu-Android') {
     intellij {
-        if (project.hasProperty("androidStudioPath")) {
-            localPath androidStudioPath
-        } else {
-            localPath downloadStudioIfNeededAndGetPath()
-        }
+        localPath studioPath()
         plugins 'android', 'junit', 'properties', 'gradle', 'Groovy', 'IntelliLang', 'smali'
     }
 
@@ -420,16 +454,15 @@ project(':Edu-Python') {
     }
 }
 
-// no JS support in Android Studio
-if (!isStudio) {
-    project(':Edu-JavaScript') {
-        intellij {
-            plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage", "CSS", "JavaScriptDebugger"
-        }
-        dependencies {
-            compile project(':educational-core')
-            testCompile project(':educational-core').sourceSets.test.output.classesDirs
-        }
+project(':Edu-JavaScript') {
+    intellij {
+        localPath = null
+        version ideaVersion
+        plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage", "CSS", "JavaScriptDebugger"
+    }
+    dependencies {
+        compile project(':educational-core')
+        testCompile project(':educational-core').sourceSets.test.output.classesDirs
     }
 }
 
@@ -450,13 +483,16 @@ runIde.systemProperty("-Didea.is.internal", "true")
 runIde.systemProperty("-ea", "")
 
 dependencies {
-    compile project(':educational-core'), project(':jvm-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'),
-            project(':Edu-Scala'), project(':Edu-Android')
+    compile project(':educational-core'), 
+            project(':jvm-core'), 
+            project(':Edu-Python'), 
+            project(':Edu-Kotlin'), 
+            project(':Edu-Java'),
+            project(':Edu-Scala'), 
+            project(':Edu-Android'),
+            project(':Edu-JavaScript')
     if (!is182) {
         compile project(':Edu-Rust')   
-    }
-    if (!isStudio) {
-        compile project(':Edu-JavaScript')
     }
 }
 

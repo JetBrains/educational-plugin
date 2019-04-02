@@ -5,11 +5,9 @@ include 'educational-core',
         'Edu-Scala', 
         'Edu-Kotlin', 
         'Edu-Python', 
-        'Edu-Android'
+        'Edu-Android',
+        'Edu-JavaScript'
 
 if (!environmentName.endsWith("182")) {
   include 'Edu-Rust'
-}
-if (!environmentName.startsWith("studio")) {
-  include 'Edu-JavaScript'
 }
