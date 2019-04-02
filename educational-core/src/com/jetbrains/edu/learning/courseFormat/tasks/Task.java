@@ -202,9 +202,6 @@ public abstract class Task extends StudyItem {
     return copy;
   }
 
-  // used in json serialization/deserialization
-  public abstract String getTaskType();
-
   public int getPosition() {
     final Lesson lesson = getLesson();
     return lesson.getTaskList().indexOf(this) + 1;

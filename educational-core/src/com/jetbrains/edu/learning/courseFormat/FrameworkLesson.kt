@@ -20,4 +20,6 @@ class FrameworkLesson() : Lesson() {
   var currentTaskIndex: Int = 0
 
   fun currentTask(): Task = taskList[currentTaskIndex]
+
+  override fun getItemType(): String  = "framework"
 }

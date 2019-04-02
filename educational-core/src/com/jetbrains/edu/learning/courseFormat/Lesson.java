@@ -80,6 +80,11 @@ public class Lesson extends StudyItem {
     return mySection == null ? myCourse : mySection;
   }
 
+  @Override
+  public String getItemType() {
+    return "lesson";
+  }
+
   @Transient
   public void setCourse(Course course) {
     myCourse = course;

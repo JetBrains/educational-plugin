@@ -24,7 +24,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.hash.HashSet;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
-import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExt;
 import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +42,7 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
     List<String> keyParts = new ArrayList<>();
     keyParts.add(!item.getCourse().isStudy() ? "educator" : "student");
     keyParts.add("created");
-    keyParts.add(StudyItemExt.getTypeId(item));
+    keyParts.add(item.getItemType());
     advanceKey(StringUtil.join(keyParts, "."));
   }
 

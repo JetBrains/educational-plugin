@@ -44,7 +44,9 @@ private const val CONTENT = "content"
 abstract class CourseYamlMixin {
   @JsonSerialize(converter = CourseTypeSerializationConverter::class)
   @JsonProperty(TYPE)
-  private lateinit var courseType: String
+  fun getItemType(): String {
+    throw NotImplementedInMixin()
+  }
 
   @JsonProperty(TITLE)
   private lateinit var myName: String
@@ -130,7 +132,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
 class CourseChangeApplier<T : Course> : StudyItemChangeApplier<T>() {
   override fun applyChanges(existingItem: T, deserializedItem: T) {
     existingItem.name = deserializedItem.name
-    existingItem.courseType = deserializedItem.courseType
+    // TODO: handle changing course type
     existingItem.description = deserializedItem.description
     existingItem.language = deserializedItem.language
     existingItem.languageCode = deserializedItem.languageCode

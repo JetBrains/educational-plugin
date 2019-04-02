@@ -17,7 +17,7 @@ object RemoteTaskCheckerManager {
       return null
     }
     if (checkers.size > 1) {
-      error("Several remote task checkers available for ${task.taskType}:${task.name}: $checkers")
+      error("Several remote task checkers available for ${task.itemType}:${task.name}: $checkers")
     }
     return checkers[0]
   }

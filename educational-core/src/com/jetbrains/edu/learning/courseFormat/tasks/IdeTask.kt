@@ -10,7 +10,7 @@ class IdeTask: Task {
   constructor() : super()
   constructor(name: String) : super(name)
 
-  override fun getTaskType() = "ide"
+  override fun getItemType() = "ide"
 
   override fun getIcon(): Icon {
     if (myStatus == CheckStatus.Unchecked) {

@@ -16,7 +16,7 @@ public class EduTask extends Task {
   }
 
   @Override
-  public String getTaskType() {
+  public String getItemType() {
     return "edu";
   }
 

@@ -24,7 +24,6 @@ public abstract class StudyItem extends UserDataHolderBase {
   // from 1 to number of items
   private int myIndex = -1;
   private String myName;
-
   protected int myId;
   private Date myUpdateDate = new Date(0);
   private StepikChangeStatus myStepikChangeStatus = StepikChangeStatus.UP_TO_DATE;
@@ -113,5 +112,8 @@ public abstract class StudyItem extends UserDataHolderBase {
   public void setUpdateDate(Date updateDate) {
     myUpdateDate = updateDate;
   }
+
+  // used in json/yaml serialization/deserialization
+  public abstract String getItemType();
 
 }

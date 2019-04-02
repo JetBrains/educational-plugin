@@ -20,13 +20,13 @@ open class ImportLocalCourseAction(text: String = "Import Local Course") : DumbA
   override fun actionPerformed(e: AnActionEvent) {
     FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()) { file ->
       val fileName = file.path
-      val course = EduUtils.getLocalCourse(fileName)
+      var course = EduUtils.getLocalCourse(fileName)
       when {
         course == null -> showInvalidCourseDialog()
         course.configurator == null -> showUnsupportedCourseDialog(course)
         else -> {
           saveLastImportLocation(file)
-          initCourse(course)
+          course = initCourse(course)
           EduUsagesCollector.courseArchiveImported()
           JoinCourseDialog(course).show()
         }
@@ -34,8 +34,9 @@ open class ImportLocalCourseAction(text: String = "Import Local Course") : DumbA
     }
   }
 
-  protected open fun initCourse(course: Course) {
+  protected open fun initCourse(course: Course): Course {
     course.isFromZip = true
+    return course
   }
 
   companion object {

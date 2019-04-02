@@ -104,7 +104,7 @@ class StepOptions {
 
       setTaskFiles(project, task, source)
 
-      source.taskType = task.taskType
+      source.taskType = task.itemType
       source.lessonType = if (task.lesson is FrameworkLesson) "framework" else null
       source.myFeedbackLink = task.feedbackLink
       return source

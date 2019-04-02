@@ -3,9 +3,7 @@ package com.jetbrains.edu.learning.placeholderDependencies
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.EditorNotificationsImpl
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus

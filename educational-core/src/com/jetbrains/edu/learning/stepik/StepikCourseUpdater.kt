@@ -241,7 +241,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     }
   }
 
-  private fun isTheory(currentTask: Task) = currentTask.taskType == TheoryTask().taskType
+  private fun isTheory(currentTask: Task) = currentTask.itemType == TheoryTask().itemType
 
   @Throws(IOException::class)
   private fun removeExistingDir(studentTask: Task,

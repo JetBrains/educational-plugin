@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.withTestDialog
 import org.hamcrest.CoreMatchers.hasItem
@@ -306,7 +305,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
   private fun createHyperskillCourse(): Course {
     return courseWithFiles(
       language = FakeGradleBasedLanguage,
-      courseType = HYPERSKILL,
       courseProducer = ::HyperskillCourse
     ) {
       frameworkLesson("lesson1") {

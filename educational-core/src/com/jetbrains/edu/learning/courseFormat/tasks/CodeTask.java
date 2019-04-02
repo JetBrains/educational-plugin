@@ -11,7 +11,7 @@ public class CodeTask extends Task {
   }
 
   @Override
-  public String getTaskType() {
+  public String getItemType() {
     return "code";
   }
 }

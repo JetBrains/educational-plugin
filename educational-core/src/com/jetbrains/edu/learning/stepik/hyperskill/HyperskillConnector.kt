@@ -11,7 +11,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.actions.mixins.TaskSerializer
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -189,9 +188,7 @@ object HyperskillConnector {
 
   private fun postSubmission(attempt: Attempt, files: ArrayList<SolutionFile>, task: Task) {
     val score = if (task.status == CheckStatus.Solved) "1" else "0"
-    val module = SimpleModule()
-    module.addSerializer(Task::class.java, TaskSerializer())
-    val objectMapper = StepikConnector.createMapper(module)
+    val objectMapper = StepikConnector.createMapper(SimpleModule())
     val serializedTask = objectMapper.writeValueAsString(TaskData(task))
     val response = service.submission(Submission(score, attempt.id, files, serializedTask)).executeHandlingExceptions()
     if (response == null || response.code() != HttpStatus.SC_CREATED) {

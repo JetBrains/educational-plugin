@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
-import com.jetbrains.edu.learning.courseFormat.ext.typeId
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.io.IOException
 import kotlin.reflect.KClass
@@ -72,7 +71,7 @@ object YamlLoader {
     val existingItem = getStudyItemForConfig(project, configFile)
     val deserializedItem = YamlDeserializer.deserializeItem(VfsUtil.loadText(configFile), configFile.name)
 
-    if (existingItem.typeId != deserializedItem.typeId) {
+    if (existingItem.itemType != deserializedItem.itemType) {
       unexpectedItemError(existingItem::class, deserializedItem)
     }
     existingItem.applyChanges(project, deserializedItem)

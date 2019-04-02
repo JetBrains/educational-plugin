@@ -75,4 +75,10 @@ public class Section extends ItemContainer {
   public StudyItem getParent() {
     return myCourse;
   }
+
+  @Override
+  public String getItemType() {
+    return "section";
+  }
+
 }

@@ -17,7 +17,7 @@ class OutputTask : Task {
     const val OUTPUT_TASK_TYPE = "output"
   }
 
-  override fun getTaskType() = OUTPUT_TASK_TYPE
+  override fun getItemType() = OUTPUT_TASK_TYPE
 
   override fun isToSubmitToStepik(): Boolean {
     return myStatus != CheckStatus.Unchecked

@@ -43,14 +43,14 @@ val inProgressCourses = getCoursesIds(IN_PROGRESS_COURSES_LINK)
 val featuredStepikCourses = getCourseIdsWithLanguage(FEATURED_STEPIK_COURSES_LINK)
 
 fun setCourseLanguage(info: EduCourse) {
-  val courseType = info.type
-  val separatorIndex = courseType.indexOf(" ")
+  val courseFormat = info.type
+  val separatorIndex = courseFormat.indexOf(" ")
   if (separatorIndex != -1) {
-    info.language = courseType.substring(separatorIndex + 1)
+    info.language = courseFormat.substring(separatorIndex + 1)
   }
   else {
     LOG.info(String.format("Language for course `%s` with `%s` type can't be set because it isn't \"pycharm\" course",
-                           info.name, courseType))
+                           info.name, courseFormat))
   }
 }
 

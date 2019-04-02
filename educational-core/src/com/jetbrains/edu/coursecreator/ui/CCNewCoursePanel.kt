@@ -40,7 +40,7 @@ import javax.swing.text.PlainDocument
 class CCNewCoursePanel(course: Course? = null) : JPanel() {
 
   private val myPanel: JPanel
-  private val myCourseTypesComboBox: ComboBox<CourseData> = ComboBox()
+  private val myCourseDataComboBox: ComboBox<CourseData> = ComboBox()
   private val myTitleField: CourseTitleField = CourseTitleField()
   private val myAuthorField: JBTextField = JBTextField()
   private val myDescriptionTextArea: JTextArea = JTextArea()
@@ -71,7 +71,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     myPanel = panel {
       row("Title:") { myTitleField(CCFlags.pushX) }
       row("Instructor:") { myAuthorField() }
-      row("Type:") { myCourseTypesComboBox(CCFlags.growX) }
+      row("Type:") { myCourseDataComboBox(CCFlags.growX) }
       row("Description:") { scrollPane(CCFlags.growX) }
     }
 
@@ -91,7 +91,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
 
     myErrorLabel.addHyperlinkListener { enablePlugins(myRequiredAndDisabledPlugins) }
 
-    myCourseTypesComboBox.renderer = object : DefaultListCellRenderer() {
+    myCourseDataComboBox.renderer = object : DefaultListCellRenderer() {
       override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
         val component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
         if (component is JLabel && value is CourseData) {
@@ -101,20 +101,20 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
         return component
       }
     }
-    myCourseTypesComboBox.addItemListener {
+    myCourseDataComboBox.addItemListener {
       if (it.stateChange == ItemEvent.SELECTED) {
-        onCourseTypeSelected(it.item as CourseData)
+        onCourseDataSelected(it.item as CourseData)
       }
     }
 
     setupValidation()
     setDefaultValues()
-    collectCourseTypes(course)
+    collectCoursesData(course)
 
     if (course != null) {
       myDescriptionTextArea.text = course.description
       myTitleField.setTextManually(course.name)
-      myCourseTypesComboBox.isEnabled = false
+      myCourseDataComboBox.isEnabled = false
     }
   }
 
@@ -186,7 +186,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     }
   }
 
-  private fun onCourseTypeSelected(courseData: CourseData) {
+  private fun onCourseDataSelected(courseData: CourseData) {
     val courseName = "${courseData.displayName.capitalize()} Course"
     val file = FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), courseName, "")
     if (!myTitleField.isChangedByUser) {
@@ -196,10 +196,9 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       }
     }
 
-    val configurator = EduConfiguratorManager.forLanguageTypeEnvironment(courseData.courseType, courseData.environment,
+    val configurator = EduConfiguratorManager.forTypeEnvironmentLanguage(courseData.courseType, courseData.environment,
                                                                          courseData.language) ?: return
     myCourse.language = courseData.language.id
-    myCourse.courseType = courseData.courseType
     myCourse.environment = courseData.environment
     myLanguageSettings = configurator.courseBuilder.languageSettings
     myLanguageSettings.addSettingsChangeListener { doValidation() }
@@ -212,9 +211,9 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     doValidation()
   }
 
-  private fun collectCourseTypes(course: Course?) {
+  private fun collectCoursesData(course: Course?) {
     val courseTypeData = if (course != null) {
-      listOfNotNull(obtainCourseData(course.languageID, course.environment, course.courseType))
+      listOfNotNull(obtainCourseData(course.languageID, course.environment, course.itemType))
     }
     else {
       EduConfiguratorManager.allExtensions()
@@ -223,11 +222,11 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     }
     courseTypeData
       .sortedBy { it.displayName }
-      .forEach { myCourseTypesComboBox.addItem(it) }
+      .forEach { myCourseDataComboBox.addItem(it) }
 
     val defaultCourseType = getDefaultCourseType(courseTypeData)
     if (defaultCourseType != null) {
-      myCourseTypesComboBox.selectedItem = defaultCourseType
+      myCourseDataComboBox.selectedItem = defaultCourseType
     }
   }
 
@@ -238,7 +237,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       return null
     }
     return CourseData(language, courseType, environment,
-                      EduConfiguratorManager.forLanguageTypeEnvironment(courseType, environment, language)?.logo)
+                      EduConfiguratorManager.forTypeEnvironmentLanguage(courseType, environment, language)?.logo)
   }
 
   companion object {

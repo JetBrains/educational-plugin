@@ -77,7 +77,7 @@ public class KtTwitterConfigurator implements TwitterPluginConfigurator {
     StudyTaskManager instance = StudyTaskManager.getInstance(project);
     if (instance == null) return false;
     Course course = instance.getCourse();
-    return course != null && EduNames.PYCHARM.equals(course.getCourseType()) && EduNames.KOTLIN.equals(course.getLanguageID());
+    return course != null && EduNames.PYCHARM.equals(course.getItemType()) && EduNames.KOTLIN.equals(course.getLanguageID());
   }
 
   public static int calculateTaskNumber(@NotNull final Task solvedTask) {

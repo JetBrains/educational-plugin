@@ -13,7 +13,7 @@ open class TaskChecker<out T : Task>(@JvmField val task: T, @JvmField val projec
   open fun onTaskFailed(message: String, details: String?) {
   }
 
-  open fun check(indicator: ProgressIndicator) = CheckResult(CheckStatus.Unchecked, "Check for ${task.taskType} task isn't available")
+  open fun check(indicator: ProgressIndicator) = CheckResult(CheckStatus.Unchecked, "Check for ${task.itemType} task isn't available")
 
   open fun clearState() {}
 

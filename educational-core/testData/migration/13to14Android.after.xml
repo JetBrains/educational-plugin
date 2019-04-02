@@ -95,7 +95,7 @@
             </Lesson>
           </list>
         </option>
-        <option name="environment" value="" />
+        <option name="environment" value="Android" />
       </EduCourse>
     </option>
     <option name="VERSION" value="13" />

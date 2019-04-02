@@ -56,6 +56,7 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
   fun test11to12Local() = doTest(11)
   fun test12to13() = doTest(12)
   fun test13to14() = doTest(13)
+  fun test13to14Android() = doTest(13)
 
   private fun doTest(version: Int) {
     val name = getTestName(true)

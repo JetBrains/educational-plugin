@@ -292,7 +292,6 @@ class HyperskillCourseUpdateTest : EduTestCase() {
   override fun createCourse() {
     course = courseWithFiles(
       language = FakeGradleBasedLanguage,
-      courseType = com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL,
       courseProducer = ::HyperskillCourse
     ) {
       frameworkLesson("lesson1") {

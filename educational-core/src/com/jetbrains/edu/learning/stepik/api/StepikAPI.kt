@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.actions.mixins.TaskSerializer
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -126,9 +125,7 @@ class SubmissionData() {
   lateinit var submission: Submission
 
   constructor(attemptId: Int, score: String, files: ArrayList<SolutionFile>, task: Task) : this() {
-    val module = SimpleModule()
-    module.addSerializer(Task::class.java, TaskSerializer())
-    val objectMapper = StepikConnector.createMapper(module)
+    val objectMapper = StepikConnector.createMapper(SimpleModule())
     val serializedTask = objectMapper.writeValueAsString(TaskData(task))
 
     submission = Submission(score, attemptId, files, serializedTask)

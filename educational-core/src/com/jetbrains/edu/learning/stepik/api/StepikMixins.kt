@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.intellij.openapi.util.text.StringUtil
+import com.jetbrains.edu.coursecreator.yaml.format.NotImplementedInMixin
 import com.jetbrains.edu.learning.courseFormat.*
 import java.util.*
 
@@ -53,6 +54,7 @@ const val FILES = "files"
 const val CHOICE_VARIANTS = "choice_variants"
 const val IS_MULTICHOICE = "is_multichoice"
 const val SELECTED_VARIANTS = "selected_variants"
+private const val TASK_TYPE = "task_type"
 
 abstract class StepikEduCourseMixin {
   @JsonProperty(IS_IDEA_COMPATIBLE)
@@ -214,6 +216,11 @@ open class StepikTaskMixin {
 
   @JsonProperty(FILES)
   private var myTaskFiles: MutableMap<String, TaskFile>? = LinkedHashMap()
+
+  @JsonProperty(TASK_TYPE)
+  fun getItemType(): String {
+    throw NotImplementedInMixin()
+  }
 }
 
 class StepikChoiceTaskMixin : StepikTaskMixin() {

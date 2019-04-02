@@ -8,9 +8,9 @@ import com.jetbrains.edu.learning.courseFormat.Course
 
 class ImportCourseraAssignment : ImportLocalCourseAction("Start Coursera Assignment") {
 
-  override fun initCourse(course: Course) {
+  override fun initCourse(course: Course): Course {
     super.initCourse(course)
-    course.courseType = CourseraNames.COURSE_TYPE
+    return courseraCourseFromLocal(course)
   }
 
   override fun update(e: AnActionEvent) {

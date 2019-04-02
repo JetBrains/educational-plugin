@@ -26,7 +26,6 @@ abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonSerialize(using = SectionSerializer::class)
 abstract class RemoteSectionMixin : LocalSectionMixin() {
   @JsonProperty(ID)
   private var myId: Int = 0
@@ -37,7 +36,6 @@ abstract class RemoteSectionMixin : LocalSectionMixin() {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonSerialize(using = LessonSerializer::class)
 abstract class RemoteLessonMixin : LocalLessonMixin() {
   @JsonProperty(ID)
   private var myId: Int = 0
@@ -50,7 +48,6 @@ abstract class RemoteLessonMixin : LocalLessonMixin() {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonSerialize(using = TaskSerializer::class)
 abstract class RemoteTaskMixin : LocalTaskMixin() {
   @JsonProperty(STEPIK_ID)
   private var myId: Int = 0

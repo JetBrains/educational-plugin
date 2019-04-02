@@ -19,12 +19,10 @@ fun createCourseFromJson(pathToJson: String, courseMode: CourseMode): EduCourse 
   }
 }
 
-fun newCourse(courseLanguage: Language, courseMode: CourseMode = CourseMode.EDUCATOR, courseType: String = EduNames.PYCHARM,
-              environment: String = ""): Course = EduCourse().apply {
+fun newCourse(courseLanguage: Language, courseMode: CourseMode = CourseMode.EDUCATOR, environment: String = ""): Course = EduCourse().apply {
   name = "Test Course"
   description = "Test Description"
   this.courseMode = courseMode.toString()
-  this.courseType = courseType
   this.environment = environment
   language = courseLanguage.id
 }

@@ -11,7 +11,7 @@ public class TheoryTask extends Task {
   }
 
   @Override
-  public String getTaskType() {
+  public String getItemType() {
     return "theory";
   }
 }

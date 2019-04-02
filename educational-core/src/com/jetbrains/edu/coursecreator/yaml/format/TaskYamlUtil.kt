@@ -32,7 +32,7 @@ private const val FEEDBACK_LINK = "feedback_link"
 @JsonPropertyOrder(TYPE, FILES, FEEDBACK_LINK)
 abstract class TaskYamlMixin {
   @JsonProperty(TYPE)
-  fun getTaskType(): String {
+  fun getItemType(): String {
     throw NotImplementedInMixin()
   }
 

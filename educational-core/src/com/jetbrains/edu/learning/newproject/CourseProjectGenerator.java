@@ -160,7 +160,7 @@ public abstract class CourseProjectGenerator<S> {
     @SuppressWarnings("unchecked") ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, baseDir, (S)projectSettings);
     EnumSet<PlatformProjectOpenProcessor.Option> options = EnumSet.of(PlatformProjectOpenProcessor.Option.FORCE_NEW_FRAME);
     baseDir.putUserData(COURSE_MODE_TO_CREATE, myCourse.getCourseMode());
-    baseDir.putUserData(COURSE_TYPE_TO_CREATE, myCourse.getCourseType());
+    baseDir.putUserData(COURSE_TYPE_TO_CREATE, myCourse.getItemType());
     Project project = PlatformProjectOpenProcessor.doOpenProject(baseDir, null, -1, callback, options);
     if (project != null) {
       project.putUserData(EDU_PROJECT_CREATED, true);

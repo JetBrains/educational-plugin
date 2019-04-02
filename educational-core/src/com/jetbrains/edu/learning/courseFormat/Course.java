@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  *  - Extend Course class
  *  - Update {@link SerializationUtils.Xml#COURSE_ELEMENT_TYPES} to handle xml migrations and deserialization
  *  - Update CourseBuilder#build() in {@link com.jetbrains.edu.coursecreator.yaml.format.CourseYamlUtil} to handle course loading from YAML
- *  - Introduce unique courseType, that's how we find appropriate {@link com.jetbrains.edu.learning.configuration.EduConfigurator}
+ *  - Override {@link Course#getItemType}, that's how we find appropriate {@link com.jetbrains.edu.learning.configuration.EduConfigurator}
  */
 public abstract class Course extends ItemContainer {
   transient private List<StepikUserInfo> authors = new ArrayList<>();
@@ -39,10 +39,6 @@ public abstract class Course extends ItemContainer {
   // we use it to set StepikChangeStatus for zip-courses during generation
   // plan to use to change appearance of these courses in courses panel
   private boolean myIsFromZip = false;
-
-  //this field is used to distinguish ordinary and CheckIO projects,
-  //"PyCharm" is used here for historical reasons
-  private String courseType = EduNames.PYCHARM;
   private String myEnvironment = "";
   protected String courseMode = EduNames.STUDY; //this field is used to distinguish study and course creator modes
 
@@ -127,7 +123,7 @@ public abstract class Course extends ItemContainer {
   }
 
   public void setEnvironment(String environment) {
-    this.myEnvironment = environment;
+    myEnvironment = environment;
   }
 
   public static String getAuthorsString(@NotNull List<StepikUserInfo> authors) {
@@ -218,12 +214,8 @@ public abstract class Course extends ItemContainer {
   }
 
   @NotNull
-  public String getCourseType() {
-    return courseType;
-  }
-
-  public void setCourseType(String courseType) {
-    this.courseType = courseType;
+  public String getItemType() {
+    return EduNames.PYCHARM;  //"PyCharm" is used here for historical reasons
   }
 
   public String getCourseMode() {

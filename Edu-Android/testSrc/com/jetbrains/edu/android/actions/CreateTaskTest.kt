@@ -15,8 +15,8 @@ class CreateTaskTest : EduActionTestCase() {
   private object FakeKotlin : Language("kotlin")
 
   fun `test create task in empty lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeKotlin,
-                                 environment = EduNames.ANDROID, settings = JdkProjectSettings.emptySettings()) {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, environment = EduNames.ANDROID,
+                                 language = FakeKotlin, settings = JdkProjectSettings.emptySettings()) {
       lesson()
     }
     val lessonFile = findFile("lesson1")

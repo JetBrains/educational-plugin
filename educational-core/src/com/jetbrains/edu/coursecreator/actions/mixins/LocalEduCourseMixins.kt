@@ -16,11 +16,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
+import com.jetbrains.edu.coursecreator.yaml.format.NotImplementedInMixin
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWORK_TYPE
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
 import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
@@ -51,9 +51,10 @@ private const val POSSIBLE_ANSWER = "possible_answer"
 private const val DEPENDENCY = "dependency"
 private const val COURSE_TYPE = "course_type"
 private const val ADDITIONAL_FILES = "additional_files"
+private const val ENVIRONMENT = "environment"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
-@JsonPropertyOrder(VERSION, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS)
+@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS)
 @JsonSerialize(using = CourseSerializer::class)
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
@@ -68,8 +69,14 @@ abstract class LocalEduCourseMixin {
   @JsonProperty(LANGUAGE)
   private lateinit var myLanguageCode: String
 
+  @JsonProperty(ENVIRONMENT)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private var myEnvironment = ""
+
   @JsonProperty(COURSE_TYPE)
-  private lateinit var courseType: String
+  fun getItemType(): String {
+    throw NotImplementedInMixin()
+  }
 
   @JsonProperty(ITEMS)
   private lateinit var items: List<StudyItem>
@@ -80,27 +87,34 @@ abstract class LocalEduCourseMixin {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonSerialize(using = SectionSerializer::class)
 abstract class LocalSectionMixin {
   @JsonProperty(TITLE)
   private lateinit var myName: String
 
   @JsonProperty(ITEMS)
   private lateinit var items: List<StudyItem>
+
+  @JsonProperty(TYPE)
+  fun getItemType(): String {
+    throw NotImplementedInMixin()
+  }
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonSerialize(using = LessonSerializer::class)
 abstract class LocalLessonMixin {
   @JsonProperty(TITLE)
   private lateinit var myName: String
 
   @JsonProperty(TASK_LIST)
   private lateinit var taskList: List<Task>
+
+  @JsonProperty(TYPE)
+  fun getItemType(): String {
+    throw NotImplementedInMixin()
+  }
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonSerialize(using = TaskSerializer::class)
 abstract class LocalTaskMixin {
   @JsonProperty(NAME)
   private lateinit var myName: String
@@ -116,6 +130,11 @@ abstract class LocalTaskMixin {
 
   @JsonProperty(FEEDBACK_LINK)
   private lateinit var myFeedbackLink: FeedbackLink
+
+  @JsonProperty(TASK_TYPE)
+  fun getItemType(): String {
+    throw NotImplementedInMixin()
+  }
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
@@ -186,40 +205,6 @@ abstract class FeedbackLinkMixin {
   private var myLink: String? = null
 }
 
-class TaskSerializer : JsonSerializer<Task>() {
-  override fun serialize(task: Task, generator: JsonGenerator, provider: SerializerProvider) {
-    generator.writeStartObject()
-    val serializer = getJsonSerializer(provider, Task::class.java)
-    serializer.unwrappingSerializer(null).serialize(task, generator, provider)
-    generator.writeObjectField(TASK_TYPE, task.taskType)
-    generator.writeEndObject()
-  }
-}
-
-open class StudyItemSerializer(private val clazz: Class<out StudyItem>) : JsonSerializer<StudyItem>() {
-  override fun serialize(item: StudyItem, generator: JsonGenerator, provider: SerializerProvider) {
-    generator.writeStartObject()
-    val serializer = getJsonSerializer(provider, clazz)
-    serializer.unwrappingSerializer(null).serialize(item, generator, provider)
-    generator.writeObjectField(TYPE, itemType(item))
-    generator.writeEndObject()
-  }
-
-  private fun itemType(lesson: StudyItem): String {
-    var itemType = EduNames.LESSON
-    if (lesson is FrameworkLesson) {
-      itemType = SerializationUtils.Json.FRAMEWORK_TYPE
-    }
-    else if (lesson is Section) {
-      itemType = EduNames.SECTION
-    }
-    return itemType
-  }
-}
-
-class LessonSerializer : StudyItemSerializer(Lesson::class.java)
-class SectionSerializer : StudyItemSerializer(Section::class.java)
-
 class CourseSerializer : JsonSerializer<EduCourse>() {
   override fun serialize(course: EduCourse, generator: JsonGenerator, provider: SerializerProvider) {
     generator.writeStartObject()
@@ -259,7 +244,7 @@ class StudyItemDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : St
         EduNames.LESSON -> codec.treeToValue(jsonObject, Lesson::class.java)
         FRAMEWORK_TYPE -> codec.treeToValue(jsonObject, FrameworkLesson::class.java)
         EduNames.SECTION -> codec.treeToValue(jsonObject, Section::class.java)
-        else -> throw IllegalArgumentException("Unsupported lesson type: $itemType")
+        else -> throw IllegalArgumentException("Unsupported item type: $itemType")
       }
     }
   }

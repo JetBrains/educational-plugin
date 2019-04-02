@@ -4,7 +4,6 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.integration.stepik.addNewLesson
 import com.jetbrains.edu.integration.stepik.addNewSection
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*

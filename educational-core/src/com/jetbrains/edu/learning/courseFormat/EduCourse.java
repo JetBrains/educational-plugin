@@ -122,8 +122,8 @@ public class EduCourse extends Course {
   private static CourseCompatibility courseCompatibility(@NotNull EduCourse courseInfo) {
     final List<String> supportedLanguages = EduConfiguratorManager.getSupportedEduLanguages();
 
-    String courseType = courseInfo.getType();
-    final List<String> typeLanguage = StringUtil.split(courseType, " ");
+    String courseFormat = courseInfo.getType();
+    final List<String> typeLanguage = StringUtil.split(courseFormat, " ");
     if (typeLanguage.size() < 2) {
       return CourseCompatibility.UNSUPPORTED;
     }

@@ -359,7 +359,7 @@ public class CoursesPanel extends JPanel {
     Language language = course.getLanguageById();
     EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
     if (configurator == null) {
-      LOG.info(String.format("configurator is null, language: %s course type: %s", language.getDisplayName(), course.getCourseType()));
+      LOG.info(String.format("configurator is null, language: %s course type: %s", language.getDisplayName(), course.getItemType()));
       return null;
     }
     return configurator.getLogo();

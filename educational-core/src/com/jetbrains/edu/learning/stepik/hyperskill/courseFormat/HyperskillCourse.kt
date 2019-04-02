@@ -19,7 +19,6 @@ class HyperskillCourse : Course {
     name = hyperskillProject.title
     description = hyperskillProject.description + descriptionNote(hyperskillProject.id)
     language = languageID
-    courseType = HYPERSKILL
   }
 
   // temporary solution for hyperskill java courses
@@ -27,4 +26,6 @@ class HyperskillCourse : Course {
   override fun getLanguageVersion(): String = "11"
 
   private fun descriptionNote(projectId: Int): String = "<br/><br/>Learn more at <a href=\"https://hyperskill.org\">https://hyperskill.org/projects/${projectId}</a>"
+
+  override fun getItemType(): String = HYPERSKILL
 }

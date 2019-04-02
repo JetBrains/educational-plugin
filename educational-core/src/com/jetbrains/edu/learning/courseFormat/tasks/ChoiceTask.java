@@ -43,7 +43,7 @@ public class ChoiceTask extends Task {
   }
 
   @Override
-  public String getTaskType() {
+  public String getItemType() {
     return "choice";
   }
 }

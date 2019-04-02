@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE;
 
 public class CheckiOCourse extends Course {
@@ -21,7 +20,6 @@ public class CheckiOCourse extends Course {
     setName(name);
     setDescription(COURSE_DESCRIPTION);
     setLanguage(languageID);
-    setCourseType(CHECKIO_TYPE);
   }
 
   public void addStation(@NotNull CheckiOStation station) {
@@ -36,5 +34,11 @@ public class CheckiOCourse extends Course {
   @Override
   public String toString() {
     return "stations=[" + getStations().stream().map(CheckiOStation::toString).collect(Collectors.joining("\n")) + "]";
+  }
+
+  @NotNull
+  @Override
+  public String getItemType() {
+    return CHECKIO_TYPE;
   }
 }

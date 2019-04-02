@@ -55,7 +55,7 @@ public interface TaskCheckerProvider {
             return getIdeTaskChecker((IdeTask) task, project);
         }
         else {
-            throw new IllegalStateException("Unknown task type: " + task.getTaskType());
+            throw new IllegalStateException("Unknown task type: " + task.getItemType());
         }
     }
 }

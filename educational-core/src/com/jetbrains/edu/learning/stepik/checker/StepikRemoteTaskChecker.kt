@@ -26,7 +26,7 @@ class StepikRemoteTaskChecker : RemoteTaskChecker {
     return when (task) {
       is ChoiceTask -> StepikCheckerConnector.checkChoiceTask(task, user)
       is CodeTask -> StepikCheckerConnector.checkCodeTask(project, task, user)
-      else -> error("Can't check ${task.taskType} on Stepik")
+      else -> error("Can't check ${task.itemType} on Stepik")
     }
   }
 }
