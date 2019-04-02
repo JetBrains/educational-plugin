@@ -362,7 +362,7 @@ public class StepikTaskBuilder {
       return null;
     }
 
-    String fileName = CodeTaskHelper.fileName(editorText, language);
+    String fileName = myConfigurator.getMockFileName(editorText);
     String name = (capitalize ? StringUtil.capitalize(fileName) : fileName) + "." + type.getDefaultExtension();
     return GeneratorUtils.joinPaths(myConfigurator.getSourceDir(), name);
   }

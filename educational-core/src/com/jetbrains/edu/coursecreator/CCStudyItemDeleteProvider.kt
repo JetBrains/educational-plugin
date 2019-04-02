@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.getDependentTasks
 import com.jetbrains.edu.learning.courseFormat.ext.placeholderDependencies
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import java.util.*
 import kotlin.collections.HashSet
@@ -31,9 +30,8 @@ class CCStudyItemDeleteProvider : DeleteProvider {
     val project = dataContext.getData(CommonDataKeys.PROJECT) ?: return
     val virtualFile = dataContext.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
     val studyItem = dataContext.getData(CourseViewPane.STUDY_ITEM) ?: return
-    // currently, only gradle projects have module for lessons and tasks
-    // so we can skip other projects
-    val module = if (EduGradleUtils.isConfiguredWithGradle(project)) dataContext.getData(LangDataKeys.MODULE_CONTEXT) else null
+    // currently, only gradle projects have module for study items
+    val module = dataContext.getData(LangDataKeys.MODULE_CONTEXT)
     val itemType = when (studyItem) {
       is Section -> "Section"
       is Lesson -> "Lesson"

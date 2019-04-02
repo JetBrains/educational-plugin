@@ -7,8 +7,8 @@ import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.JdkBundle
+import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.gradle.JdkLanguageSettings
 import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
 import java.io.File
 

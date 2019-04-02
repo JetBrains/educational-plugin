@@ -3,9 +3,9 @@ package com.jetbrains.edu.java.stepik.hyperskill
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.java.JTaskCheckerProvider
+import com.jetbrains.edu.jvm.gradle.checker.GradleEduTaskChecker
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TestsOutputParser
-import com.jetbrains.edu.learning.checker.gradle.GradleEduTaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse

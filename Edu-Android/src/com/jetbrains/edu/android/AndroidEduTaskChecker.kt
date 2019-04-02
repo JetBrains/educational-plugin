@@ -12,10 +12,10 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.jetbrains.edu.jvm.gradle.checker.GradleCommandLine
+import com.jetbrains.edu.jvm.gradle.checker.GradleEduTaskChecker
+import com.jetbrains.edu.jvm.gradle.checker.getGradleProjectName
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.gradle.GradleCommandLine
-import com.jetbrains.edu.learning.checker.gradle.GradleEduTaskChecker
-import com.jetbrains.edu.learning.checker.gradle.getGradleProjectName
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import org.jetbrains.android.sdk.AndroidSdkUtils

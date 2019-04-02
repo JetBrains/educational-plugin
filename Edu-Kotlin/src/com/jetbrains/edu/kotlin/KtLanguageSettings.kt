@@ -1,9 +1,9 @@
 package com.jetbrains.edu.kotlin
 
+import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.learning.DEFAULT_KOTLIN_VERSION
 import com.jetbrains.edu.learning.KotlinVersion
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.gradle.JdkLanguageSettings
 import com.jetbrains.edu.learning.kotlinVersion
 import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
 

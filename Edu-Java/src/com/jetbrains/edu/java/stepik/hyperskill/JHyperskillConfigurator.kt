@@ -6,9 +6,9 @@ import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.BrowserHyperlinkListener
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView

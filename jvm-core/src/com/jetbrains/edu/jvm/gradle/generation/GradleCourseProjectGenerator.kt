@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.gradle.generation
+package com.jetbrains.edu.jvm.gradle.generation
 
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.runWriteAction
@@ -14,10 +14,10 @@ import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Consumer
+import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.sanitizeName
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
-import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils.sanitizeName
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 open class GradleCourseProjectGenerator(
@@ -48,7 +48,8 @@ open class GradleCourseProjectGenerator(
       }
     }
 
-    PropertiesComponent.getInstance(project).setValue(SHOW_UNLINKED_GRADLE_POPUP, false, true)
+    PropertiesComponent.getInstance(project).setValue(
+      SHOW_UNLINKED_GRADLE_POPUP, false, true)
     super.createCourseStructure(project, baseDir, settings)
   }
 
@@ -64,7 +65,8 @@ open class GradleCourseProjectGenerator(
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
     val gradleCourseBuilder = myCourseBuilder as GradleCourseBuilderBase
-    EduGradleUtils.createProjectGradleFiles(baseDir, gradleCourseBuilder.templates, gradleCourseBuilder.templateVariables(project))
+    EduGradleUtils.createProjectGradleFiles(baseDir, gradleCourseBuilder.templates,
+                                            gradleCourseBuilder.templateVariables(project))
   }
 
   private fun setJdk(project: Project, settings: JdkProjectSettings) {

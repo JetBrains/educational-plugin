@@ -7,7 +7,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiMethodUtil
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.edu.learning.checker.gradle.GradleTaskCheckerProvider
+import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 
 open class JTaskCheckerProvider : GradleTaskCheckerProvider() {
 

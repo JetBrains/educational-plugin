@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.gradle
+package com.jetbrains.edu.jvm.gradle
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil

@@ -341,7 +341,8 @@ configure(project(':educational-core')) {
     }
 }
 
-configure([project(':Edu-Python'), 
+configure([project(':jvm-core'),
+           project(':Edu-Python'),
            project(':Edu-Java'), 
            project(':Edu-Kotlin'), 
            project(':Edu-Scala'), 
@@ -352,7 +353,17 @@ configure([project(':Edu-Python'),
     }
 }
 
-configure([project(':educational-core'), project(':Edu-Java')]) {
+configure([project(':Edu-Java'),
+           project(':Edu-Kotlin'),
+           project(':Edu-Scala'),
+           project(':Edu-Android')]) {
+    dependencies {
+        compile project(':jvm-core')
+        testCompile project(':jvm-core').sourceSets.test.output
+    }    
+}
+
+configure([project(':jvm-core'), project(':Edu-Java')]) {
     intellij.plugins 'junit', 'properties', 'gradle', 'Groovy'
 }
 
@@ -361,7 +372,6 @@ configure(project(':Edu-Kotlin')) {
 }
 
 configure(project(':Edu-Python')) {
-
     intellij.plugins "PythonCore:$pythonPluginVersion"
 }
 
@@ -405,7 +415,7 @@ runIde.systemProperty("-Didea.is.internal", "true")
 runIde.systemProperty("-ea", "")
 
 dependencies {
-    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'),
+    compile project(':educational-core'), project(':jvm-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'),
             project(':Edu-Scala'), project(':Edu-Android')
     if (!is182) {
         compile project(':Edu-Rust')   

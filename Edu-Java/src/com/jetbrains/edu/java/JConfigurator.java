@@ -1,10 +1,12 @@
 package com.jetbrains.edu.java;
 
 import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.lang.java.JavaLanguage;
+import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase;
+import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase;
+import com.jetbrains.edu.jvm.stepik.CodeTaskHelper;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
-import com.jetbrains.edu.learning.gradle.GradleConfiguratorBase;
-import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,6 +41,11 @@ public class JConfigurator extends GradleConfiguratorBase {
   @Override
   public TaskCheckerProvider getTaskCheckerProvider() {
     return new JTaskCheckerProvider();
+  }
+
+  @Override
+  public String getMockFileName(@NotNull String text) {
+    return CodeTaskHelper.fileName(JavaLanguage.INSTANCE, text);
   }
 
   @Override

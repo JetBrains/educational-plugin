@@ -146,10 +146,22 @@ public interface EduConfigurator<Settings> {
   }
 
   /**
+   * Constructs file name for Stepik tasks according to its text.
+   * For example, Java requires file name should be the same as name of public class in it
+   *
+   * @see com.jetbrains.edu.learning.stepik.StepikTaskBuilder
+   *
+   * @return file name without extension
+   */
+  default String getMockFileName(@NotNull String text) {
+    return "task";
+  }
+
+  /**
    * Allows to customize file template used as playground in theory and choice tasks
    * Template should work along with the according {@link TheoryTaskChecker}
    *
-   * @see StepikTaskBuilder
+   * @see com.jetbrains.edu.learning.stepik.StepikTaskBuilder
    *
    */
   default String getMockTemplate() {

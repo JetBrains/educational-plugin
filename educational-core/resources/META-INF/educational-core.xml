@@ -5,7 +5,6 @@
   <project-components>
     <component>
       <implementation-class>com.jetbrains.edu.learning.EduProjectComponent</implementation-class>
-      <interface-class>com.jetbrains.edu.learning.EduProjectComponent</interface-class>
     </component>
     <component>
       <implementation-class>com.jetbrains.edu.coursecreator.CCProjectComponent</implementation-class>

@@ -16,8 +16,8 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.io.FileUtil
+import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.gradle.JdkLanguageSettings
 import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
 import java.awt.BorderLayout
 import java.awt.event.ActionEvent

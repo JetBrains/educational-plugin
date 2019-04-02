@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.gradle
+package com.jetbrains.edu.jvm.gradle
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ModalityState
@@ -12,26 +12,28 @@ import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefres
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.jvm.JdkLanguageSettings
+import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
+import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
-import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.projectView.CourseViewPane
-import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.jetbrains.plugins.gradle.util.GradleConstants.*
 
 abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
   abstract val buildGradleTemplateName: String
-  open val settingGradleTemplateName: String = GradleConstants.SETTINGS_FILE_NAME
+  open val settingGradleTemplateName: String = SETTINGS_FILE_NAME
 
   /**
    * Map from config file name which should be created in project to template file name
    */
   open val templates: Map<String, String>
-    get() = mapOf(GradleConstants.DEFAULT_SCRIPT_NAME to buildGradleTemplateName,
-                  GradleConstants.SETTINGS_FILE_NAME to settingGradleTemplateName)
+    get() = mapOf(DEFAULT_SCRIPT_NAME to buildGradleTemplateName,
+                  SETTINGS_FILE_NAME to settingGradleTemplateName)
 
   open fun templateVariables(project: Project): Map<String, Any> {
     return mapOf(GRADLE_VERSION to EduGradleUtils.gradleVersion(),
@@ -45,7 +47,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
       return
     }
 
-    val builder = ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
+    val builder = ImportSpecBuilder(project, SYSTEM_ID)
       .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC)
       .dontReportRefreshErrors()
     if (listener == null) {

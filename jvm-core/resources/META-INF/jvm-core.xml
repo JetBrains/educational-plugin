@@ -1,0 +1,11 @@
+<idea-plugin>
+  <depends>com.intellij.modules.lang</depends>
+  <depends>org.jetbrains.plugins.gradle</depends>
+  <depends>JUnit</depends>
+
+  <project-components>
+    <component>
+      <implementation-class>com.jetbrains.edu.jvm.gradle.GradleProjectComponent</implementation-class>
+    </component>
+  </project-components>
+</idea-plugin>

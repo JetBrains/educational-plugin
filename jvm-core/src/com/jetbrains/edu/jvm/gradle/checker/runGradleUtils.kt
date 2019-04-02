@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.checker.gradle
+package com.jetbrains.edu.jvm.gradle.checker
 
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
@@ -14,6 +14,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
@@ -25,7 +26,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
-import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
 
@@ -150,7 +150,7 @@ fun runGradleRunTask(
                       ?: return Err(CheckResult(CheckStatus.Unchecked, "Unable to execute task ${task.name}, main method is missing"))
   val taskName = if (task.hasSeparateModule(project)) "${getGradleProjectName(task)}:run" else "run"
 
-  val gradleOutput = GradleCommandLine.create(project, taskName, "${MAIN_CLASS_PROPERTY_PREFIX}$mainClassName")
+  val gradleOutput = GradleCommandLine.create(project, taskName, "$MAIN_CLASS_PROPERTY_PREFIX$mainClassName")
     ?.launch()
     ?: return Err(CheckResult.FAILED_TO_CHECK)
 

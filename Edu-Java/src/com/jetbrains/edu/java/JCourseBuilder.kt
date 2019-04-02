@@ -1,6 +1,6 @@
 package com.jetbrains.edu.java
 
-import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 
 open class JCourseBuilder : GradleCourseBuilderBase() {
 

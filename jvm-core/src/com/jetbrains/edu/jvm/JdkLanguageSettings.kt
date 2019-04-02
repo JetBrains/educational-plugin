@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.gradle
+package com.jetbrains.edu.jvm
 
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.JavaSdkType

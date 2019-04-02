@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +50,7 @@ public class DirectoryNode extends EduNode {
   @Override
   protected void updateImpl(PresentationData data) {
     Project project = getProject();
-    if (project != null && EduGradleUtils.isConfiguredWithGradle(project)) {
+    if (project != null) {
       PsiDirectory dir = getValue();
       VirtualFile directoryFile = dir.getVirtualFile();
       String name = directoryFile.getName();

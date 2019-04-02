@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.edu.learning.checker.gradle.*
+import com.jetbrains.edu.jvm.gradle.checker.*
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import org.jetbrains.kotlin.idea.run.KotlinJUnitRunConfigurationProducer

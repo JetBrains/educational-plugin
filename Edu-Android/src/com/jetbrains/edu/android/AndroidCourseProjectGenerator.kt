@@ -6,12 +6,12 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
+import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
-import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
-import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import java.io.IOException
 

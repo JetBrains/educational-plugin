@@ -1,7 +1,7 @@
 package com.jetbrains.edu.kotlin
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.kotlinVersion
 
 open class KtCourseBuilder : GradleCourseBuilderBase() {

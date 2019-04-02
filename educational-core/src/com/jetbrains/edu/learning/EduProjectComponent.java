@@ -9,41 +9,33 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.gradle.GradleWrapperListener;
-import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.jetbrains.edu.learning.EduUtils.*;
-import static com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX;
+import static com.jetbrains.edu.learning.EduUtils.isStudentProject;
+import static com.jetbrains.edu.learning.EduUtils.isStudyProject;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class EduProjectComponent implements ProjectComponent {
@@ -79,10 +71,6 @@ public class EduProjectComponent implements ProjectComponent {
           propertiesComponent.setValue(HINTS_IN_DESCRIPTION_PROPERTY, true);
         }
 
-        if (EduGradleUtils.isConfiguredWithGradle(myProject)) {
-          setupGradleProject(course);
-        }
-
         ApplicationManager.getApplication().invokeLater(
           () -> ApplicationManager.getApplication().runWriteAction(() -> EduUsagesCollector.projectTypeOpened(course.getCourseMode())));
       }
@@ -95,54 +83,6 @@ public class EduProjectComponent implements ProjectComponent {
         TaskDescriptionView.getInstance(myProject).updateTaskDescription();
       }
     });
-  }
-
-  private void setupGradleProject(@NotNull Course course) {
-    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
-    if (configurator == null) {
-      LOG.warn(String.format("Failed to refresh gradle project: configurator for `%s` is null", course.getLanguageID()));
-      return;
-    }
-
-    if (myProject.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED) == Boolean.TRUE) {
-      configurator.getCourseBuilder().refreshProject(myProject);
-    } else if (isAndroidStudio()) {
-      // Unexpectedly, Android Studio corrupts content root paths after course project reopening
-      // And project structure can't show project tree because of it.
-      // We don't know better and cleaner way how to fix it than to refresh project.
-      configurator.getCourseBuilder().refreshProject(myProject, new EduCourseBuilder.ProjectRefreshListener() {
-        @Override
-        public void onSuccess() {
-          // We have to open current opened file in project view manually
-          // because it can't restore previous state.
-          VirtualFile[] files = FileEditorManager.getInstance(myProject).getSelectedFiles();
-          for (VirtualFile file : files) {
-            Task task = getTaskForFile(myProject, file);
-            if (task != null) {
-              ProjectView.getInstance(myProject).select(file, file, false);
-            }
-          }
-        }
-
-        @Override
-        public void onFailure(@NotNull String errorMessage) {
-          LOG.warn("Failed to refresh gradle project: " + errorMessage);
-        }
-      });
-    }
-
-    // Android Studio creates `gradlew` not via VFS so we have to refresh project dir
-    VfsUtil.markDirtyAndRefresh(false, true, true, OpenApiExtKt.getCourseDir(myProject));
-    String projectBasePath = myProject.getBasePath();
-    if (projectBasePath != null) {
-      // Android Studio creates non executable `gradlew`
-      File gradlew = new File(FileUtil.toSystemDependentName(projectBasePath), GRADLE_WRAPPER_UNIX);
-      if (gradlew.exists()) {
-        gradlew.setExecutable(true);
-      } else {
-        VirtualFileManager.getInstance().addVirtualFileListener(new GradleWrapperListener(myProject), myProject);
-      }
-    }
   }
 
   private void selectProjectView() {

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.checker.gradle
+package com.jetbrains.edu.jvm.gradle.checker
 
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -6,8 +6,11 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.checker.*
+import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.FAILED_TO_CHECK
+import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.learning.checker.OutputTaskChecker
+import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask

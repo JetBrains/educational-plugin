@@ -10,6 +10,7 @@
     <depends>com.intellij.modules.lang</depends>
 
     <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
+    <depends optional="true" config-file="jvm-core.xml">com.intellij.modules.java</depends>
     <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
     <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
     <depends optional="true" config-file="Edu-Kotlin.xml">org.jetbrains.kotlin</depends>

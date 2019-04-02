@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.gradle.generation
+package com.jetbrains.edu.jvm.gradle.generation
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.fileTemplates.FileTemplateUtil
