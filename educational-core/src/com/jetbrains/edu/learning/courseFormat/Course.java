@@ -43,6 +43,7 @@ public abstract class Course extends ItemContainer {
   //this field is used to distinguish ordinary and CheckIO projects,
   //"PyCharm" is used here for historical reasons
   private String courseType = EduNames.PYCHARM;
+  private String myEnvironment = "";
   protected String courseMode = EduNames.STUDY; //this field is used to distinguish study and course creator modes
 
   protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
@@ -119,6 +120,14 @@ public abstract class Course extends ItemContainer {
 
   public void setFromZip(boolean fromZip) {
     myIsFromZip = fromZip;
+  }
+
+  public String getEnvironment() {
+    return myEnvironment;
+  }
+
+  public void setEnvironment(String environment) {
+    this.myEnvironment = environment;
   }
 
   public static String getAuthorsString(@NotNull List<StepikUserInfo> authors) {

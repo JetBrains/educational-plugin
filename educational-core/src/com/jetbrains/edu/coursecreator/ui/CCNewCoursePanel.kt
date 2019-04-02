@@ -40,7 +40,7 @@ import javax.swing.text.PlainDocument
 class CCNewCoursePanel(course: Course? = null) : JPanel() {
 
   private val myPanel: JPanel
-  private val myCourseTypesComboBox: ComboBox<CourseTypeData> = ComboBox()
+  private val myCourseTypesComboBox: ComboBox<CourseData> = ComboBox()
   private val myTitleField: CourseTitleField = CourseTitleField()
   private val myAuthorField: JBTextField = JBTextField()
   private val myDescriptionTextArea: JTextArea = JTextArea()
@@ -94,16 +94,16 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     myCourseTypesComboBox.renderer = object : DefaultListCellRenderer() {
       override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
         val component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
-        if (component is JLabel && value is CourseTypeData) {
+        if (component is JLabel && value is CourseData) {
           component.text = value.displayName
           component.icon = value.icon
         }
         return component
       }
     }
-    myCourseTypesComboBox.addItemListener { e ->
-      if (e.stateChange == ItemEvent.SELECTED) {
-        onCourseTypeSelected(e.item as CourseTypeData)
+    myCourseTypesComboBox.addItemListener {
+      if (it.stateChange == ItemEvent.SELECTED) {
+        onCourseTypeSelected(it.item as CourseData)
       }
     }
 
@@ -118,13 +118,14 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     }
   }
 
-  val course: Course get() {
-    myCourse.name = myTitleField.text
-    myCourse.description = myDescriptionTextArea.text
-    myCourse.setAuthorsAsString(StringUtil.splitByLines(myAuthorField.text.orEmpty()))
+  val course: Course
+    get() {
+      myCourse.name = myTitleField.text
+      myCourse.description = myDescriptionTextArea.text
+      myCourse.setAuthorsAsString(StringUtil.splitByLines(myAuthorField.text.orEmpty()))
 
-    return myCourse
-  }
+      return myCourse
+    }
   val projectSettings: Any get() = myLanguageSettings.settings
   val locationString: String get() = myLocationField.component.text
 
@@ -185,8 +186,8 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     }
   }
 
-  private fun onCourseTypeSelected(courseTypeData: CourseTypeData) {
-    val courseName = "${courseTypeData.displayName.capitalize()} Course"
+  private fun onCourseTypeSelected(courseData: CourseData) {
+    val courseName = "${courseData.displayName.capitalize()} Course"
     val file = FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), courseName, "")
     if (!myTitleField.isChangedByUser) {
       myTitleField.setTextManually(file.name)
@@ -195,9 +196,11 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       }
     }
 
-    val configurator = EduConfiguratorManager.forLanguageAndCourseType(courseTypeData.courseType, courseTypeData.language) ?: return
-    myCourse.language = courseTypeData.language.id
-    myCourse.courseType = courseTypeData.courseType
+    val configurator = EduConfiguratorManager.forLanguageTypeEnvironment(courseData.courseType, courseData.environment,
+                                                                         courseData.language) ?: return
+    myCourse.language = courseData.language.id
+    myCourse.courseType = courseData.courseType
+    myCourse.environment = courseData.environment
     myLanguageSettings = configurator.courseBuilder.languageSettings
     myLanguageSettings.addSettingsChangeListener { doValidation() }
 
@@ -211,11 +214,12 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
 
   private fun collectCourseTypes(course: Course?) {
     val courseTypeData = if (course != null) {
-      listOfNotNull(obtainCourseTypeData(course.languageID, course.courseType))
-    } else {
+      listOfNotNull(obtainCourseData(course.languageID, course.environment, course.courseType))
+    }
+    else {
       EduConfiguratorManager.allExtensions()
         .filter { it.instance.isCourseCreatorEnabled }
-        .mapNotNull { extension -> obtainCourseTypeData(extension.language, extension.courseType) }
+        .mapNotNull { extension -> obtainCourseData(extension.language, extension.environment, extension.courseType) }
     }
     courseTypeData
       .sortedBy { it.displayName }
@@ -227,13 +231,14 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     }
   }
 
-  private fun obtainCourseTypeData(languageId: String, courseType: String): CourseTypeData? {
+  private fun obtainCourseData(languageId: String, environment: String, courseType: String): CourseData? {
     val language = Language.findLanguageByID(languageId)
     if (language == null) {
       LOG.info("Language with id $languageId not found")
       return null
     }
-    return CourseTypeData(language, courseType, EduConfiguratorManager.forLanguageAndCourseType(courseType, language)?.logo)
+    return CourseData(language, courseType, environment,
+                      EduConfiguratorManager.forLanguageTypeEnvironment(courseType, environment, language)?.logo)
   }
 
   companion object {
@@ -244,14 +249,14 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     fun onInputDataValidated(isInputDataComplete: Boolean)
   }
 
-  data class CourseTypeData(val language: Language, val courseType: String, val icon: Icon?) {
-  val displayName get(): String {
-      return when (courseType) {
-        EduNames.PYCHARM -> language.displayName
-        EduNames.ANDROID -> courseType
-        else -> "$courseType ${language.displayName}"
+  private data class CourseData(val language: Language, val courseType: String, val environment: String, val icon: Icon?) {
+    val displayName
+      get(): String {
+        return when (courseType) {
+          EduNames.PYCHARM -> if (environment.isBlank()) language.displayName else "${language.displayName} $environment"
+          else -> "$courseType ${language.displayName}"
+        }
       }
-    }
   }
 
   private class CourseTitleDocument : PlainDocument() {

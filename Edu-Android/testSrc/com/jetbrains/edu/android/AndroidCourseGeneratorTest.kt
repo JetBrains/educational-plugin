@@ -10,7 +10,7 @@ class AndroidCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>(
   override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
 
   fun `test new course structure`() {
-    val course = newCourse(PlainTextLanguage.INSTANCE, courseType = EduNames.ANDROID)
+    val course = newCourse(PlainTextLanguage.INSTANCE, environment = EduNames.ANDROID)
     createCourseStructure(course)
 
     val expectedFileTree = fileTree {

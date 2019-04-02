@@ -141,12 +141,13 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     name: String = "Test Course",
     courseMode: String = EduNames.STUDY,
     courseType: String = EduNames.PYCHARM,
+    environment: String = "",
     language: Language = PlainTextLanguage.INSTANCE,
     settings: Any = Unit,
     courseProducer: () -> Course = ::EduCourse,
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
-    return course(name, language, courseType, courseMode, courseProducer, buildCourse).apply {
+    return course(name, language, courseType, environment, courseMode, courseProducer, buildCourse).apply {
       createCourseFiles(project, LightPlatformTestCase.getSourceRoot(), settings)
     }
   }

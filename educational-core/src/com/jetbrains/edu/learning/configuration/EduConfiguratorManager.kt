@@ -7,12 +7,13 @@ import com.jetbrains.edu.learning.EduNames
 object EduConfiguratorManager {
 
   /**
-   * Returns any enabled [EduConfigurator] for given language and courseType
+   * Returns any enabled [EduConfigurator] for given language, courseType and environment
    */
   @JvmStatic
-  fun forLanguageAndCourseType(courseType: String, language: Language): EduConfigurator<out Any>? =
+  fun forLanguageTypeEnvironment(courseType: String, environment: String, language: Language): EduConfigurator<out Any>? =
     allExtensions().find { extension -> extension.language == language.id &&
-                                        extension.courseType == courseType}?.instance
+                                        extension.courseType == courseType &&
+                                        extension.environment == environment}?.instance
 
   /**
    * Returns all extension points of [EduConfigurator] where instance of [EduConfigurator] is enabled

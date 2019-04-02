@@ -62,10 +62,10 @@ open class ImportLocalCourseAction(text: String = "Import Local Course") : DumbA
 
     @JvmStatic
     fun showUnsupportedCourseDialog(course: Course) {
-      val courseType = course.courseType
-      val type = when (courseType) {
-        EduNames.PYCHARM -> course.languageById?.displayName
-        EduNames.ANDROID -> courseType
+      val environment = course.environment
+      val type = when (environment) {
+        EduNames.ANDROID -> environment
+        "" -> course.languageById?.displayName
         else -> null
       }
       val message = if (type != null) {
