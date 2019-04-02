@@ -292,11 +292,11 @@ task configureWebStorm {
 
 task configureCLion {
     doLast {
-        if (!project.hasProperty("clionPath")) {
-            throw new InvalidUserDataException("Path to CLion installed locally is needed\nDefine \"clionPath\" property")
+        if (project.hasProperty("clionPath")) {
+            intellij.alternativeIdePath clionPath
         }
         intellij.sandboxDirectory clionSandbox
-        intellij.alternativeIdePath clionPath
+        
     }
 }
 
@@ -323,9 +323,14 @@ jar.dependsOn(copyXmls)
 
 task removeIncompatiblePyCharmPlugins(type: Delete) {
     doLast {
-        file(pycharmSandbox + File.separator + "plugins" + File.separator + "python-ce").deleteDir()
-        file(pycharmSandbox + File.separator + "plugins" + File.separator + "Scala").deleteDir()
+        deletePlugin(pycharmSandbox, "python-ce")
+        deletePlugin(clionSandbox, "python-ce")
+        deletePlugin(pycharmSandbox, "Scala")
     }
+}
+
+def deletePlugin(String sandboxPath, String pluginName) {
+    file(sandboxPath + File.separator + "plugins" + File.separator + pluginName).deleteDir()    
 }
 
 // we need this so as not to install python and Scala plugins on PyCharm
@@ -445,6 +450,11 @@ project(':Edu-Android') {
 
 project(':Edu-Python') {
     intellij {
+        // FIXME we should compile python module with CLion too
+        if (!isJvmBasedIDE) {
+            localPath = null
+            version = ideaVersion
+        }
         plugins "PythonCore:$pythonPluginVersion"
     }
 
