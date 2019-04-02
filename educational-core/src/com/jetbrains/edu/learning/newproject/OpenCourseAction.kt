@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.OpenCourseDialogBase
+import kotlinx.css.dialog
 import java.awt.event.ActionEvent
 import javax.swing.AbstractAction
 import javax.swing.Action
@@ -42,11 +43,12 @@ class ViewAsEducatorAction(dialog: OpenCourseDialogBase) : OpenCourseActionBase(
 
 class OpenCourseAction(name: String, dialog: OpenCourseDialogBase, allowViewAsEducatorAction: Boolean) : OpenCourseActionBase(name, dialog, EduNames.STUDY), OptionAction {
 
-  private val viewAsEducatorAction: ViewAsEducatorAction? = if (allowViewAsEducatorAction && CCPluginToggleAction.isCourseCreatorFeaturesEnabled) {
+  val viewAsEducatorAction: ViewAsEducatorAction? = if (allowViewAsEducatorAction && CCPluginToggleAction.isCourseCreatorFeaturesEnabled) {
     ViewAsEducatorAction(dialog)
   } else {
     null
   }
 
   override fun getOptions(): Array<Action> = if (viewAsEducatorAction == null) arrayOf() else arrayOf(viewAsEducatorAction)
+
 }

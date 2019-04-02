@@ -19,4 +19,8 @@ abstract class OpenCourseDialogBase : DialogWrapper(true) {
     super.createDefaultActions()
     myOKAction = OpenCourseAction(openCourseActionName, this, allowViewAsEducatorAction)
   }
+
+  fun setEnabledViewAsEducator(enabled: Boolean) {
+    (myOKAction as? OpenCourseAction)?.viewAsEducatorAction?.isEnabled = enabled
+  }
 }

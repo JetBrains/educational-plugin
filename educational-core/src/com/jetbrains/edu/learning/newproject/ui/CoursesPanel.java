@@ -43,6 +43,7 @@ import com.jetbrains.edu.learning.stepik.StepikAuthorizer;
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction;
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
+import kotlin.Unit;
 import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +53,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.function.Function;
 
 import static com.jetbrains.edu.learning.PluginUtils.enablePlugins;
 
@@ -71,14 +73,18 @@ public class CoursesPanel extends JPanel {
   private List<CourseValidationListener> myListeners = new ArrayList<>();
   private MessageBusConnection myBusConnection;
   private @Nullable ActionGroup myCustomToolbarActions;
+  private Function<Boolean, Unit> myEnableCourseViewAsEducator;
 
   private ErrorState myErrorState = ErrorState.NothingSelected.INSTANCE;
 
-  public CoursesPanel(@NotNull List<Course> courses, @Nullable DefaultActionGroup customToolbarActions) {
+  public CoursesPanel(@NotNull List<Course> courses,
+                      @Nullable DefaultActionGroup customToolbarActions,
+                      Function<Boolean, Unit> enableCourseViewAsEducator) {
     myCourses = courses;
     setLayout(new BorderLayout());
     add(myMainPanel, BorderLayout.CENTER);
     myCustomToolbarActions = customToolbarActions;
+    myEnableCourseViewAsEducator = enableCourseViewAsEducator;
     initUI();
   }
 
@@ -237,6 +243,7 @@ public class CoursesPanel extends JPanel {
     Course selectedCourse = myCoursesList.getSelectedValue();
     if (selectedCourse != null) {
       myCoursePanel.bindCourse(selectedCourse).addSettingsChangeListener(() -> doValidation(selectedCourse));
+      myEnableCourseViewAsEducator.apply(!EduNames.PYCHARM.equals(selectedCourse.getCourseType()));
     }
     doValidation(selectedCourse);
   }

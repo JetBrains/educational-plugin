@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.JComponent
 
 class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: DefaultActionGroup? = null) : OpenCourseDialogBase() {
-  val panel = CoursesPanel(courses, customToolbarActions)
+  val panel = CoursesPanel(courses, customToolbarActions) { setEnabledViewAsEducator(it) }
 
   init {
     title = "Select Course"
