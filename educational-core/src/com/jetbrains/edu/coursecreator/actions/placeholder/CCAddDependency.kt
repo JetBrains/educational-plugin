@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.ui.Messages
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -18,17 +19,25 @@ class CCAddDependency : CCAnswerPlaceholderAction(null, "Adds/Edits dependency o
     EditorNotifications.getInstance(state.project).updateNotifications(state.file.virtualFile)
   }
 
-
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
     val state = getState(e) ?: return
     val answerPlaceholder = state.answerPlaceholder ?: return
-    val task = answerPlaceholder.taskFile.task
-    if (task.isFirstInCourse) {
-      return
-    }
     e.presentation.text = getActionName(answerPlaceholder)
     e.presentation.isEnabledAndVisible = true
+  }
+
+  override fun actionPerformed(e: AnActionEvent) {
+    val state = getState(e) ?: return
+    val answerPlaceholder = state.answerPlaceholder ?: return
+    val task = answerPlaceholder.taskFile.task
+    if (task.isFirstInCourse) {
+      Messages.showInfoMessage(
+        "At least one previous task with answer placeholders should be present to add dependency",
+        "Dependency Not Added")
+      return
+    }
+    super.actionPerformed(e)
   }
 
   companion object {
@@ -39,7 +48,7 @@ class CCAddDependency : CCAnswerPlaceholderAction(null, "Adds/Edits dependency o
 }
 
 private val Task.isFirstInCourse: Boolean
-  get()  {
+  get() {
     if (index > 1) {
       return false
     }

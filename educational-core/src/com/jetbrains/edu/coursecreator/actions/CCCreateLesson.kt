@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import icons.EducationalCoreIcons
 
 class CCCreateLesson : CCCreateLessonBase<Lesson>(StudyItemType.LESSON, EducationalCoreIcons.Lesson) {
-
   override fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, info: NewStudyItemInfo): Lesson {
     return Lesson().apply {
       this.name = info.name
