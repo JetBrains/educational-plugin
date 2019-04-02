@@ -332,7 +332,7 @@ sourceSets {
     }
 }
 
-configure(project(':educational-core')) {
+project(':educational-core') {
 
     task downloadColorFile(type: Download) {
         overwrite false
@@ -341,72 +341,107 @@ configure(project(':educational-core')) {
     }
 }
 
-configure([project(':jvm-core'),
-           project(':Edu-Python'),
-           project(':Edu-Java'), 
-           project(':Edu-Kotlin'), 
-           project(':Edu-Scala'), 
-           project(':Edu-Android')]) {
+project(':jvm-core') {
+    intellij {
+        plugins 'junit', 'properties', 'gradle', 'Groovy'
+    }
+    
     dependencies {
         compile project(':educational-core')
-        testCompile project(':educational-core').sourceSets.test.output
+        testCompile project(':educational-core').sourceSets.test.output.classesDirs
     }
 }
 
-configure([project(':Edu-Java'),
-           project(':Edu-Kotlin'),
-           project(':Edu-Scala'),
-           project(':Edu-Android')]) {
+project(':Edu-Java') {
+    intellij {
+        plugins 'junit', 'properties', 'gradle', 'Groovy'
+    }
+
     dependencies {
+        compile project(':educational-core')
         compile project(':jvm-core')
-        testCompile project(':jvm-core').sourceSets.test.output
-    }    
+        testCompile project(':educational-core').sourceSets.test.output.classesDirs
+        testCompile project(':jvm-core').sourceSets.test.output.classesDirs
+    }
 }
 
-configure([project(':jvm-core'), project(':Edu-Java')]) {
-    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy'
+project(':Edu-Kotlin') {
+    intellij {
+        plugins 'Kotlin', 'junit', 'properties', 'gradle', 'Groovy'
+    }
+
+    dependencies {
+        compile project(':educational-core')
+        compile project(':jvm-core')
+        testCompile project(':educational-core').sourceSets.test.output.classesDirs
+        testCompile project(':jvm-core').sourceSets.test.output.classesDirs
+    }
 }
 
-configure(project(':Edu-Kotlin')) {
-    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy'
+project(':Edu-Scala') {
+    intellij {
+        plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy'
+    }
+
+    dependencies {
+        compile project(':educational-core')
+        compile project(':jvm-core')
+        testCompile project(':educational-core').sourceSets.test.output.classesDirs
+        testCompile project(':jvm-core').sourceSets.test.output.classesDirs
+    }
 }
 
-configure(project(':Edu-Python')) {
-    intellij.plugins "PythonCore:$pythonPluginVersion"
-}
-
-configure(project(':Edu-Scala')) {
-    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy'
-}
-
-configure(project(':Edu-Android')) {
+project(':Edu-Android') {
     intellij {
         if (project.hasProperty("androidStudioPath")) {
             localPath androidStudioPath
         } else {
             localPath downloadStudioIfNeededAndGetPath()
         }
-        plugins 'junit', 'properties', 'android', 'gradle', 'Groovy', 'IntelliLang', 'smali'
+        plugins 'android', 'junit', 'properties', 'gradle', 'Groovy', 'IntelliLang', 'smali'
+    }
+
+    dependencies {
+        compile project(':educational-core')
+        compile project(':jvm-core')
+        testCompile project(':educational-core').sourceSets.test.output.classesDirs
+        testCompile project(':jvm-core').sourceSets.test.output.classesDirs
+    }
+}
+
+project(':Edu-Python') {
+    intellij {
+        plugins "PythonCore:$pythonPluginVersion"
+    }
+
+    dependencies {
+        compile project(':educational-core')
+        testCompile project(':educational-core').sourceSets.test.output.classesDirs
     }
 }
 
 // no JS support in Android Studio
 if (!isStudio) {
-    configure(project(':Edu-JavaScript')) {
-        intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage", "CSS", "JavaScriptDebugger"
+    project(':Edu-JavaScript') {
+        intellij {
+            plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage", "CSS", "JavaScriptDebugger"
+        }
         dependencies {
             compile project(':educational-core')
-            testCompile project(':educational-core').sourceSets.test.output
+            testCompile project(':educational-core').sourceSets.test.output.classesDirs
         }
     }
 }
 
 if (!is182) {
-    configure(project(':Edu-Rust')) {
-        intellij.plugins "org.rust.lang:$rustPluginVersion"
+    project(':Edu-Rust') {
+        intellij {
+            plugins "org.rust.lang:$rustPluginVersion"
+        }
+
         dependencies {
             compile project(':educational-core')
-            testCompile project(':educational-core').sourceSets.test.output
+            testCompile project(':educational-core').sourceSets.test.output.classesDirs
         }
     }
 }
