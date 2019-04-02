@@ -5,10 +5,10 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
+import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import junit.framework.TestCase
 
 class CreateTaskTest : EduActionTestCase() {

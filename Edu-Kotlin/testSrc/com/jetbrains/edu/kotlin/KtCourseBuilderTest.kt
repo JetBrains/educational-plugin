@@ -1,7 +1,7 @@
 package com.jetbrains.edu.kotlin
 
+import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {

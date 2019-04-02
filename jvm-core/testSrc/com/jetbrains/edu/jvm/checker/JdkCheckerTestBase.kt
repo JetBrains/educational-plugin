@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.checker
+package com.jetbrains.edu.jvm.checker
 
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
@@ -10,7 +10,8 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.IdeaTestUtil
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
+import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.learning.checker.CheckersTestBase
 import org.junit.Assert
 import java.io.File
 

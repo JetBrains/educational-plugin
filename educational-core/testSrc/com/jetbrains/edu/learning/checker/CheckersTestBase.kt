@@ -18,9 +18,11 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageManagerImpl
-import com.intellij.testFramework.*
+import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.MapDataContext
+import com.intellij.testFramework.TestActionEvent
+import com.intellij.testFramework.UsefulTestCase
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.intellij.util.ui.UIUtil
@@ -124,9 +126,6 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
 
         CheckActionListener.reset()
 
-        val myJdkHome = IdeaTestUtil.requireRealJdkHome()
-        VfsRootAccess.allowRootAccess(testRootDisposable, myJdkHome)
-
         myApplication = IdeaTestApplication.getInstance()
 
         setUpEnvironment()
@@ -134,7 +133,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
         myTestDir = File(FileUtil.getTempDirectory())
         myTestDir.mkdirs()
 
-        VfsUtil.markDirtyAndRefresh(false, true, true, VfsUtil.findFileByIoFile(myTestDir, true))
+        VfsUtil.markDirtyAndRefresh(false, true, true, VfsUtil.findFileByIoFile(myTestDir, true)!!)
 
         val prevDialog = Messages.setTestDialog(TestDialog.NO)
         try {

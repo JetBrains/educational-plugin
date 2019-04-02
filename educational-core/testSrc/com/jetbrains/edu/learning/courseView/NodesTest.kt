@@ -6,12 +6,11 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 
 class NodesTest: CourseViewTestBase() {
 
   fun testOutsideScrDir() {
-    courseWithFiles(language = FakeGradleBasedLanguage, settings = JdkProjectSettings.emptySettings()) {
+    courseWithFiles(language = FakeGradleBasedLanguage) {
       lesson {
         eduTask {
           taskFile("src/file.txt")

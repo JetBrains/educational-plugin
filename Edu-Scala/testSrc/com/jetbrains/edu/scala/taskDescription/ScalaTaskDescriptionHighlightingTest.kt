@@ -1,7 +1,7 @@
 package com.jetbrains.edu.scala.taskDescription
 
 import com.intellij.lang.Language
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
+import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
 import org.jetbrains.plugins.scala.ScalaLanguage
 

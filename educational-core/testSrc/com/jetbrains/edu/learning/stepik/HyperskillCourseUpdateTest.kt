@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseUpdater
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.util.*
@@ -293,7 +292,6 @@ class HyperskillCourseUpdateTest : EduTestCase() {
   override fun createCourse() {
     course = courseWithFiles(
       language = FakeGradleBasedLanguage,
-      settings = JdkProjectSettings.emptySettings(),
       courseType = com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL,
       courseProducer = ::HyperskillCourse
     ) {

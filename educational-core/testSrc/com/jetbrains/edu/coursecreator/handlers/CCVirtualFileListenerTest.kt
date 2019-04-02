@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.withTestDialog
 import junit.framework.TestCase
 
@@ -397,8 +396,7 @@ class CCVirtualFileListenerTest : EduTestCase() {
   private fun doAddFileTest(filePathInTask: String, checksProducer: (Task) -> List<FileCheck>) {
     val course = courseWithFiles(
       courseMode = CCUtils.COURSE_MODE,
-      language = FakeGradleBasedLanguage,
-      settings = JdkProjectSettings.emptySettings()
+      language = FakeGradleBasedLanguage
     ) {
       lesson("lesson1") {
         eduTask("task1") {
@@ -417,8 +415,7 @@ class CCVirtualFileListenerTest : EduTestCase() {
   private fun doRemoveFileTest(filePathInCourse: String, checksProducer: (Course) -> List<FileCheck>) {
     val course = courseWithFiles(
       courseMode = CCUtils.COURSE_MODE,
-      language = FakeGradleBasedLanguage,
-      settings = JdkProjectSettings.emptySettings()
+      language = FakeGradleBasedLanguage
     ) {
       lesson("lesson1") {
         eduTask("task1") {
@@ -452,8 +449,7 @@ class CCVirtualFileListenerTest : EduTestCase() {
   private fun doRenameFileTest(filePathInCourse: String, newName: String, checksProducer: (Course) -> List<FileCheck>) {
     val course = courseWithFiles(
       courseMode = CCUtils.COURSE_MODE,
-      language = FakeGradleBasedLanguage,
-      settings = JdkProjectSettings.emptySettings()
+      language = FakeGradleBasedLanguage
     ) {
       lesson("lesson1") {
         eduTask("task1") {
@@ -498,8 +494,7 @@ class CCVirtualFileListenerTest : EduTestCase() {
   private fun doMoveTest(filePath: String, newParentPath: String, checksProducer: (Course) -> List<FileCheck>) {
     val course = courseWithFiles(
       courseMode = CCUtils.COURSE_MODE,
-      language = FakeGradleBasedLanguage,
-      settings = JdkProjectSettings.emptySettings()
+      language = FakeGradleBasedLanguage
     ) {
       lesson("lesson1") {
         eduTask("task1") {

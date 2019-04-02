@@ -5,7 +5,6 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.`in`
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 
 class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask()) {
 
@@ -137,8 +136,7 @@ class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask()) {
   override fun createCourse() {
     courseWithFiles(
       courseMode = CCUtils.COURSE_MODE,
-      language = FakeGradleBasedLanguage,
-      settings = JdkProjectSettings.emptySettings()
+      language = FakeGradleBasedLanguage
     ) {
       lesson("lesson1") {
         eduTask("task1") {

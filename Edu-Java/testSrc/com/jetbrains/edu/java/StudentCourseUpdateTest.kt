@@ -1,9 +1,9 @@
 package com.jetbrains.edu.java
 
+import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater
 import junit.framework.TestCase
 import java.util.*

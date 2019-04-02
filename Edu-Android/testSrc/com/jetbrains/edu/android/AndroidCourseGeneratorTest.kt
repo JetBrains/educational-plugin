@@ -1,8 +1,8 @@
 package com.jetbrains.edu.android
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 
 class AndroidCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
 

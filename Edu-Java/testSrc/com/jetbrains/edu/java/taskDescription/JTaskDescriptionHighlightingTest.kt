@@ -2,7 +2,7 @@ package com.jetbrains.edu.java.taskDescription
 
 import com.intellij.lang.Language
 import com.intellij.lang.java.JavaLanguage
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
+import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
 
 class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {

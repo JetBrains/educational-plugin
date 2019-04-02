@@ -12,7 +12,6 @@ import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import junit.framework.TestCase
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.assertThat
@@ -201,7 +200,7 @@ class CCCreateTaskTest : EduActionTestCase() {
 
   private fun doCreateFrameworkTaskTest(copyTests: Boolean) {
     val lessonName = "lesson1"
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage, settings = JdkProjectSettings.emptySettings()) {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage) {
       frameworkLesson(lessonName) {
         eduTask("task1") {
           taskFile("src/Task.kt")
