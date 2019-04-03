@@ -42,7 +42,6 @@ public abstract class Task extends StudyItem {
   @NotNull
   private String descriptionText = "";
   private DescriptionFormat descriptionFormat = EduUtils.getDefaultTaskDescriptionFormat();
-  private Date myUpdateDate = new Date(0);
   @NotNull
   private FeedbackLink myFeedbackLink = new FeedbackLink();
   private int myRecord = -1;
@@ -201,14 +200,6 @@ public abstract class Task extends StudyItem {
     Task copy = XmlSerializer.deserialize(element, getClass());
     copy.init(null, null, true);
     return copy;
-  }
-
-  public void setUpdateDate(Date date) {
-    myUpdateDate = date;
-  }
-
-  public Date getUpdateDate() {
-    return myUpdateDate;
   }
 
   // used in json serialization/deserialization

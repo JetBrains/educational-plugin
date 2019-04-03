@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Section extends ItemContainer {
@@ -17,9 +16,7 @@ public class Section extends ItemContainer {
   @Transient
   public List<Integer> units = new ArrayList<>();  // should be used only during deserialization from stepik
   private int courseId;
-
   private int position;
-  private Date myUpdateDate = new Date(0);
 
   @Transient
   private Course myCourse;
@@ -54,14 +51,6 @@ public class Section extends ItemContainer {
 
   public int getPosition() {
     return position;
-  }
-
-  public void setUpdateDate(Date updateDate) {
-    myUpdateDate = updateDate;
-  }
-
-  public Date getUpdateDate() {
-    return myUpdateDate;
   }
 
   @Override

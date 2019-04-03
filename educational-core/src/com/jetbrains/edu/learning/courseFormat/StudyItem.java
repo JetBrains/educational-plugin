@@ -6,6 +6,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Date;
+
 /**
  * Base class for all items of course: section, lessons, tasks, etc.
  *
@@ -22,8 +24,9 @@ public abstract class StudyItem extends UserDataHolderBase {
   // from 1 to number of items
   private int myIndex = -1;
   private String myName;
-  protected int myId;
 
+  protected int myId;
+  private Date myUpdateDate = new Date(0);
   private StepikChangeStatus myStepikChangeStatus = StepikChangeStatus.UP_TO_DATE;
 
   // Non unique lesson/task/section names can be received from stepik. In this case unique directory name is generated,
@@ -102,4 +105,13 @@ public abstract class StudyItem extends UserDataHolderBase {
 
   @NotNull
   public abstract StudyItem getParent();
+
+  public Date getUpdateDate() {
+    return myUpdateDate;
+  }
+
+  public void setUpdateDate(Date updateDate) {
+    myUpdateDate = updateDate;
+  }
+
 }

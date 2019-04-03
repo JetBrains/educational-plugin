@@ -23,7 +23,6 @@ public class EduCourse extends Course {
   // in CC mode is used to store top-level lessons section id
   List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
-  private Date myUpdateDate = new Date(0);
   private Date myCreateDate = new Date(0);
   boolean isPublic;
   @Transient private String myAdminsGroup;
@@ -68,14 +67,6 @@ public class EduCourse extends Course {
       tags.add(new InProgressTag());
     }
     return tags;
-  }
-
-  public void setUpdateDate(Date date) {
-    myUpdateDate = date;
-  }
-
-  public Date getUpdateDate() {
-    return myUpdateDate;
   }
 
   public Date getCreateDate() { return myCreateDate; }
@@ -179,7 +170,7 @@ public class EduCourse extends Course {
     isPublic = false;
     isCompatible = true;
     setId(0);
-    myUpdateDate = new Date(0);
+    setUpdateDate(new Date(0));
     myCreateDate = new Date(0);
     sectionIds = new ArrayList<>();
     instructors = new ArrayList<>();

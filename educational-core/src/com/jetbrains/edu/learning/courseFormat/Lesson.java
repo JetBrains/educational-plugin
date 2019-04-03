@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,7 +25,6 @@ import java.util.List;
 public class Lesson extends StudyItem {
   @Transient public List<Integer> steps;
   @Transient boolean is_public;
-  private Date myUpdateDate = new Date(0);
 
   @SuppressWarnings("deprecation")
   @AbstractCollection(elementTypes = {
@@ -116,14 +114,6 @@ public class Lesson extends StudyItem {
       }
     }
     return CheckStatus.Solved;
-  }
-
-  public Date getUpdateDate() {
-    return myUpdateDate;
-  }
-
-  public void setUpdateDate(Date updateDate) {
-    myUpdateDate = updateDate;
   }
 
   @Transient
