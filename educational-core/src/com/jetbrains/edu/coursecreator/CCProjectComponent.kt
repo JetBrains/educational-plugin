@@ -11,15 +11,13 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
@@ -107,8 +105,9 @@ private fun loadCourseRecursively(project: Project): Course {
 
   val deserializedCourse = YamlDeserializer.deserialize(VfsUtil.loadText(courseConfig), Course::class.java)
   deserializedCourse.courseMode = if (EduUtils.isStudentProject(project)) EduNames.STUDY else CCUtils.COURSE_MODE
-  deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items)
+  deserializedCourse.setRemoteInfoFromConfig(project.courseDir.findChild(REMOTE_COURSE_CONFIG))
 
+  deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items)
   deserializedCourse.items.forEach { deserializedItem ->
     when (deserializedItem) {
       is Section -> {
@@ -133,6 +132,16 @@ private fun loadCourseRecursively(project: Project): Course {
   deserializedCourse.init(null, null, true)
   deserializedCourse.setDescriptionInfo(project)
   return deserializedCourse
+}
+
+private fun Course.setRemoteInfoFromConfig(remoteCourseConfig: VirtualFile?) {
+  if (this !is EduCourse || remoteCourseConfig == null) {
+    return
+  }
+
+  val courseWithRemoteInfo = YamlDeserializer.deserializeCourseWithRemoteInfo(VfsUtil.loadText(remoteCourseConfig))
+  id = courseWithRemoteInfo.id
+  updateDate = courseWithRemoteInfo.updateDate
 }
 
 private fun Course.setDescriptionInfo(project: Project) {
