@@ -35,6 +35,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.PathUtil;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
@@ -45,7 +46,6 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import org.gradle.internal.impldep.org.apache.maven.wagon.PathUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -127,7 +127,7 @@ public class CCShowPreview extends DumbAwareAction {
 
   private static void showPreviewDialog(@NotNull Project project, @NotNull TaskFile taskFile) {
     final FrameWrapper showPreviewFrame = new FrameWrapper(project);
-    final LightVirtualFile userFile = new LightVirtualFile(PathUtils.filename(taskFile.getName()), taskFile.getText());
+    final LightVirtualFile userFile = new LightVirtualFile(PathUtil.getFileName(taskFile.getName()), taskFile.getText());
     showPreviewFrame.setTitle(userFile.getName());
     LabeledEditor labeledEditor = new LabeledEditor(null);
     final EditorFactory factory = EditorFactory.getInstance();
