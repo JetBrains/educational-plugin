@@ -150,11 +150,10 @@ public interface EduConfigurator<Settings> {
    * For example, Java requires file name should be the same as name of public class in it
    *
    * @see com.jetbrains.edu.learning.stepik.StepikTaskBuilder
-   *
-   * @return file name without extension
    */
+  @Nullable
   default String getMockFileName(@NotNull String text) {
-    return "task";
+    return null;
   }
 
   /**

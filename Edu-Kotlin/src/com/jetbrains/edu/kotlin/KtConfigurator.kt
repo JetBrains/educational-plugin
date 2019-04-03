@@ -14,6 +14,8 @@ open class KtConfigurator : GradleConfiguratorBase() {
 
   override fun getTestFileName(): String = TESTS_KT
 
+  override fun getMockFileName(text: String): String = TASK_KT
+
   override fun getTaskCheckerProvider() = KtTaskCheckerProvider()
 
   override fun getMockTemplate(): String {

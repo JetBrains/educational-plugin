@@ -45,6 +45,7 @@ class FakeGradleConfigurator : EduConfigurator<Unit> {
 
   override fun getCourseBuilder(): FakeGradleCourseBuilder = courseBuilder
   override fun getTestFileName(): String = TEST_FILE_NAME
+  override fun getMockFileName(text: String): String = TASK_FILE_NAME
 
   override fun getTaskCheckerProvider() = TaskCheckerProvider { task, project ->
     object : TaskChecker<EduTask>(task, project) {
@@ -54,6 +55,7 @@ class FakeGradleConfigurator : EduConfigurator<Unit> {
 
   companion object {
     const val TEST_FILE_NAME = "Tests.kt"
+    const val TASK_FILE_NAME = "Task.kt"
   }
 }
 

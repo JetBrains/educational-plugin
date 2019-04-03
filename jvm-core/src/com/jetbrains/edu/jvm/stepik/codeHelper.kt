@@ -30,5 +30,5 @@ fun fileName(language: Language, fileText: String): String {
     }
   }
 
-  return fileName
+  return "$fileName.${fileType.defaultExtension}"
 }

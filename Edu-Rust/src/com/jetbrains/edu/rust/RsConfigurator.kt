@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.rust.checker.RsTaskCheckerProvider
 import org.rust.cargo.CargoConstants
 import org.rust.ide.icons.RsIcons
+import org.rust.lang.RsConstants
 import javax.swing.Icon
 
 class RsConfigurator : EduConfigurator<RsProjectSettings> {
@@ -20,6 +21,8 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
     override fun getTaskCheckerProvider(): TaskCheckerProvider = taskCheckerProvider
 
     override fun getTestFileName(): String = ""
+
+    override fun getMockFileName(text: String): String? = RsConstants.MAIN_RS_FILE
 
     override fun getCourseBuilder(): EduCourseBuilder<RsProjectSettings> = builder
 

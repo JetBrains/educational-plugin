@@ -32,6 +32,12 @@ public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
   }
 
   @Override
+  @NotNull
+  public String getMockFileName(@NotNull String text) {
+    return TASK_PY;
+  }
+
+  @Override
   public boolean excludeFromArchive(@NotNull Project project, @NotNull VirtualFile file) {
     String path = file.getPath();
     return EduConfigurator.super.excludeFromArchive(project, file) || path.contains("__pycache__") || path.endsWith(".pyc");

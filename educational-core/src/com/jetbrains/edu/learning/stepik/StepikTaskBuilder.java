@@ -7,7 +7,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.LanguageCommenters;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
@@ -337,7 +336,7 @@ public class StepikTaskBuilder {
     }
 
     String editorText = editorTextBuilder.toString();
-    String taskFilePath = getTaskFilePath(myLanguage, editorText);
+    String taskFilePath = getTaskFilePath(editorText);
     if (taskFilePath == null) return;
 
     final TaskFile taskFile = new TaskFile();
@@ -347,24 +346,12 @@ public class StepikTaskBuilder {
   }
 
   @Nullable
-  private String getTaskFilePath(@NotNull Language language, String editorText) {
-    // This is a hacky way to how we should name task file.
-    // It's assumed that if test's name is capitalized we need to capitalize task file name too.
-    if (myConfigurator == null) {
-      return null;
-    }
-    String testFileName = myConfigurator.getTestFileName();
-    boolean capitalize = !testFileName.isEmpty() && Character.isUpperCase(testFileName.charAt(0));
-
-    LanguageFileType type = language.getAssociatedFileType();
-    if (type == null) {
-      LOG.warn("Failed to create task file name: associated file type for " + language + " is null");
-      return null;
-    }
+  private String getTaskFilePath(String editorText) {
+    if (myConfigurator == null) return null;
 
     String fileName = myConfigurator.getMockFileName(editorText);
-    String name = (capitalize ? StringUtil.capitalize(fileName) : fileName) + "." + type.getDefaultExtension();
-    return GeneratorUtils.joinPaths(myConfigurator.getSourceDir(), name);
+    if (fileName == null) return null;
+    return GeneratorUtils.joinPaths(myConfigurator.getSourceDir(), fileName);
   }
 
   private static String getCodeTemplateForTask(@NotNull Language language,

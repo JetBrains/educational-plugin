@@ -16,6 +16,8 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
 
   override fun getCourseBuilder() = PlainTextCourseBuilder()
   override fun getTestFileName() = "Tests.txt"
+  override fun getMockFileName(text: String): String = "Task.txt"
+
   override fun getTestDirs() = listOf("tests")
 
   override fun getTaskCheckerProvider() = TaskCheckerProvider { task, project ->

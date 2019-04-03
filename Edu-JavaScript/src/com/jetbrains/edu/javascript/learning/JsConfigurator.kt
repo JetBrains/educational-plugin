@@ -18,6 +18,8 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
 
   override fun getTestFileName() = ""
 
+  override fun getMockFileName(text: String): String = "task.js"
+
   override fun getTestDirs() = listOf("test")
 
   override fun getTaskCheckerProvider(): TaskCheckerProvider = TaskCheckerProvider { task, project -> JsEduTaskChecker(task, project) }
