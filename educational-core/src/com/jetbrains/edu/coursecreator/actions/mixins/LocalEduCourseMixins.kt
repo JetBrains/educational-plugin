@@ -20,7 +20,7 @@ import com.jetbrains.edu.coursecreator.yaml.format.NotImplementedInMixin
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWORK_TYPE
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
 import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
@@ -106,7 +106,7 @@ abstract class LocalLessonMixin {
   private lateinit var myName: String
 
   @JsonProperty(TASK_LIST)
-  private lateinit var taskList: List<Task>
+  private lateinit var items: List<StudyItem>
 
   @JsonProperty(TYPE)
   fun getItemType(): String {
@@ -221,20 +221,17 @@ private fun getJsonSerializer(provider: SerializerProvider, itemClass: Class<out
   return BeanSerializerFactory.instance.findBeanSerializer(provider, javaType, beanDesc)
 }
 
-class TaskDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Task>(vc) {
-  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext?): Task? {
-    val node: ObjectNode = jp.codec.readTree(jp) as ObjectNode
-    return doDeserializeTask(node, jp.codec)
-  }
-}
-
 class StudyItemDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<StudyItem>(vc) {
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext?): StudyItem? {
     val node: ObjectNode = jp.codec.readTree(jp) as ObjectNode
     return deserializeItem(node, jp.codec)
   }
 
-  private fun deserializeItem(jsonObject: ObjectNode, codec: ObjectCodec): StudyItem {
+  private fun deserializeItem(jsonObject: ObjectNode, codec: ObjectCodec): StudyItem? {
+    if (jsonObject.has(SerializationUtils.Json.TASK_TYPE)) {
+      return doDeserializeTask(jsonObject, codec)
+    }
+
     return if (!jsonObject.has(ITEM_TYPE)) {
       codec.treeToValue(jsonObject, Lesson::class.java)
     }

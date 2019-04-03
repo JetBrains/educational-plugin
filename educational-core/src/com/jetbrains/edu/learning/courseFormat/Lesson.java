@@ -2,18 +2,17 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
-import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import kotlin.collections.CollectionsKt;
-import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * To introduce new lesson type it's required to:
@@ -22,27 +21,13 @@ import java.util.List;
  *  - Handle xml migration in {@link com.jetbrains.edu.learning.serialization.converter.xml.BaseXmlConverter#convert}
  *  - Handle yaml deserialization {@link com.jetbrains.edu.coursecreator.yaml.YamlDeserializer#deserializeLesson(String)}
  */
-public class Lesson extends StudyItem {
+public class Lesson extends ItemContainer {
   @Transient public List<Integer> steps;
   @Transient boolean is_public;
-
-  @SuppressWarnings("deprecation")
-  @AbstractCollection(elementTypes = {
-    CheckiOMission.class,
-    EduTask.class,
-    ChoiceTask.class,
-    TheoryTask.class,
-    CodeTask.class,
-    OutputTask.class,
-    IdeTask.class
-  })
-  public List<Task> taskList = new ArrayList<>();
+  public int unitId = 0;
 
   @Transient
   private Course myCourse = null;
-
-  public int unitId = 0;
-
   @Transient
   private Section mySection = null;
 
@@ -60,12 +45,15 @@ public class Lesson extends StudyItem {
     }
   }
 
+  /**
+   * Returns tasks copy. Dedicated methods should be used to modify list of lesson items ([addTask], [removeTask])
+   */
   public List<Task> getTaskList() {
-    return taskList;
+    return items.stream().filter(Task.class::isInstance).map(Task.class::cast).collect(Collectors.toList());
   }
 
   public List<Task> getTaskListForProgress() {
-    return CollectionsKt.filter(taskList, task -> !(task instanceof TheoryTask));
+    return CollectionsKt.filter(getTaskList(), task -> !(task instanceof TheoryTask));
   }
 
   @NotNull
@@ -91,16 +79,24 @@ public class Lesson extends StudyItem {
   }
 
   public void addTask(@NotNull final Task task) {
-    taskList.add(task);
+    items.add(task);
+  }
+
+  public void addTask(int index, @NotNull final Task task) {
+    items.add(index, task);
+  }
+
+  public void removeTask(@NotNull final Task task) {
+    items.remove(task);
   }
 
   @Nullable
   public Task getTask(@NotNull final String name) {
-    return StreamEx.of(taskList).findFirst(task -> name.equals(task.getName())).orElse(null);
+    return (Task)getItem(name);
   }
 
   public Task getTask(int id) {
-    for (Task task : taskList) {
+    for (Task task : getTaskList()) {
       if (task.getId() == id) {
         return task;
       }
@@ -108,12 +104,8 @@ public class Lesson extends StudyItem {
     return null;
   }
 
-  public void updateTaskList(List<Task> taskList) {
-    this.taskList = taskList;
-  }
-
   public CheckStatus getStatus() {
-    for (Task task : taskList) {
+    for (Task task : getTaskList()) {
       if (task.getStatus() != CheckStatus.Solved) {
         return CheckStatus.Unchecked;
       }
@@ -158,7 +150,7 @@ public class Lesson extends StudyItem {
   }
 
   @NotNull
-  public ItemContainer getContainer() {
+  public LessonContainer getContainer() {
     if (mySection != null) {
       return mySection;
     }
@@ -173,7 +165,7 @@ public class Lesson extends StudyItem {
 
   public void visitTasks(@NotNull TaskVisitor visitor) {
     int index = 1;
-    for (Task task : taskList) {
+    for (Task task : getTaskList()) {
       boolean visitNext = visitor.visit(task, index);
       if (!visitNext) {
         return;

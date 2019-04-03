@@ -306,7 +306,7 @@ class EventBasedUpdateTest : StepikTestCase() {
     checkSections(courseFromStepik, localCourse)
   }
 
-  private fun addNewLesson(name: String, index: Int, courseToInit: Course, parent: ItemContainer): Lesson {
+  private fun addNewLesson(name: String, index: Int, courseToInit: Course, parent: LessonContainer): Lesson {
     val course = course {
       lesson(name) {
         eduTask {

@@ -2,7 +2,9 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
+import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,33 +12,29 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class ItemContainer extends StudyItem {
   @SuppressWarnings("deprecation")
   @AbstractCollection(elementTypes = {
     Section.class,
+    //lessons:
     Lesson.class,
     FrameworkLesson.class,
-    CheckiOStation.class
+    //tasks:
+    CheckiOStation.class,
+    CheckiOMission.class,
+    EduTask.class,
+    ChoiceTask.class,
+    TheoryTask.class,
+    CodeTask.class,
+    OutputTask.class,
+    IdeTask.class
   })
   protected List<StudyItem> items = new ArrayList<>();
 
   @Nullable
-  public Lesson getLesson(@NotNull final String name) {
-    return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
-      .findFirst(lesson -> name.equals(lesson.getName())).orElse(null);
-  }
-
-  @Nullable
-  public Lesson getLesson(int id) {
-    return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
-      .findFirst(item -> id == item.getId()).orElse(null);
-  }
-
-  @Nullable
   public StudyItem getItem(@NotNull final String name) {
-    return items.stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
+    return StreamEx.of(items).findFirst(item -> item.getName().equals(name)).orElse(null);
   }
 
   @NotNull
@@ -44,55 +42,11 @@ public abstract class ItemContainer extends StudyItem {
     return Collections.unmodifiableList(items);
   }
 
-  @NotNull
-  public List<Lesson> getLessons() {
-    return items.stream().filter(Lesson.class::isInstance).map(Lesson.class::cast).collect(Collectors.toList());
-  }
-
-  public void addLessons(@NotNull final List<Lesson> lessons) {
-    items.addAll(lessons);
-  }
-
-  public void addLesson(@NotNull final Lesson lesson) {
-    items.add(lesson);
-  }
-
-  public void removeLesson(@NotNull Lesson lesson) {
-    items.remove(lesson);
+  public void setItems(List<StudyItem> items) {
+    this.items = items;
   }
 
   public void sortItems() {
     Collections.sort(items, EduUtils.INDEX_COMPARATOR);
-  }
-
-  public void visitLessons(@NotNull LessonVisitor visitor) {
-    for (StudyItem item : items) {
-      if (item instanceof Lesson) {
-        final boolean visitNext = visitor.visit((Lesson)item);
-        if (!visitNext) {
-          return;
-        }
-      }
-      else if (item instanceof Section) {
-        for (Lesson lesson : ((Section)item).getLessons()) {
-          final boolean visitNext = visitor.visit(lesson);
-          if (!visitNext) {
-            return;
-          }
-        }
-      }
-    }
-  }
-
-  public void visitSections(@NotNull SectionVisitor visitor) {
-    for (StudyItem item : items) {
-      if (item instanceof Section) {
-        visitor.visit((Section)item);
-      }
-    }
-  }
-
-  public void setItems(List<StudyItem> items) {
-    this.items = items;
   }
 }

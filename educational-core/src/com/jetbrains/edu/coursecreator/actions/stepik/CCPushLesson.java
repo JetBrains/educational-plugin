@@ -189,7 +189,7 @@ public class CCPushLesson extends DumbAwareAction {
   }
 
   private static void setUpdated(Lesson lesson) {
-    for (Task task : lesson.taskList) {
+    for (Task task : lesson.getTaskList()) {
       task.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
     }
   }

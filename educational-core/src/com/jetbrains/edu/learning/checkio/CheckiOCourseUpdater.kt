@@ -9,7 +9,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.EduUtils.INDEX_COMPARATOR
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
@@ -96,7 +95,7 @@ class CheckiOCourseUpdater(
       }
     }
 
-    newStation.getTaskList().sortWith(INDEX_COMPARATOR)
+    newStation.sortItems()
   }
 
   private fun createNewMission(oldStation: CheckiOStation,

@@ -29,7 +29,7 @@ private const val CONTENT = "content"
 abstract class LessonYamlMixin {
   @JsonProperty(CONTENT)
   @JsonSerialize(contentConverter = StudyItemConverter::class)
-  private lateinit var taskList: List<Task>
+  private lateinit var items: List<StudyItem>
 }
 
 @JsonPOJOBuilder(withPrefix = "")
@@ -46,7 +46,7 @@ open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?>) {
       task
     }
 
-    lesson.updateTaskList(taskList)
+    lesson.items = taskList
     return lesson
   }
 
@@ -86,7 +86,7 @@ class LessonChangeApplier<T : Lesson>(val project: Project) : StudyItemChangeApp
     deserializedTask.init(course, this, true)
     deserializedTask.taskFiles.values.forEach { it.setPlaceholdersPossibleAnswer(project) }
 
-    taskList.add(deserializedTask.index - 1, deserializedTask)
+    addTask(deserializedTask.index - 1, deserializedTask)
     course.configurator?.courseBuilder?.refreshProject(project)
   }
 

@@ -32,7 +32,7 @@
               <option name="name" value="lesson1" />
               <option name="stepikChangeStatus" value="Up to date" />
               <option name="updateDate" value="0" />
-              <option name="taskList">
+              <option name="items">
                 <list>
                   <EduTask>
                     <option name="customPresentableName" />

@@ -47,7 +47,7 @@ public class CCPushTask extends DumbAwareAction {
     }
     if (!course.getCourseMode().equals(CCUtils.COURSE_MODE)) return;
     final PsiDirectory[] directories = view.getDirectories();
-    if (directories.length == 0 || directories.length > 1) {
+    if (directories.length != 1) {
       return;
     }
     final PsiDirectory taskDir = directories[0];
@@ -80,7 +80,7 @@ public class CCPushTask extends DumbAwareAction {
       return;
     }
     final PsiDirectory[] directories = view.getDirectories();
-    if (directories.length == 0 || directories.length > 1) {
+    if (directories.length != 1) {
       return;
     }
 
@@ -124,7 +124,7 @@ public class CCPushTask extends DumbAwareAction {
 
 
     // if task was added in the middle we have to update positions of underlying pushed tasks
-    boolean isLast = task.getIndex() == lesson.taskList.size();
+    boolean isLast = task.getIndex() == lesson.getTaskList().size();
     if (!isLast) {
       List<Task> postedTasks = getPostedTasks(lesson);
       List<Task> underlyingTasks = postedTasks.subList(position, postedTasks.size());
@@ -138,7 +138,7 @@ public class CCPushTask extends DumbAwareAction {
 
 
   private static List<Task> getPostedTasks(Lesson lesson) {
-    return lesson.taskList.stream().filter(t -> t.getId() > 0).collect(Collectors.toList());
+    return lesson.getTaskList().stream().filter(t -> t.getId() > 0).collect(Collectors.toList());
   }
 
   private static void updateTask(Task task, Lesson lesson, Project project) {
@@ -205,7 +205,7 @@ public class CCPushTask extends DumbAwareAction {
    */
   private static int stepikPosition(@NotNull Task taskToUpdate, @NotNull Lesson lesson) {
     int position = 1;
-    for (Task task : lesson.taskList) {
+    for (Task task : lesson.getTaskList()) {
       if (task.getName().equals(taskToUpdate.getName())) {
         break;
       }

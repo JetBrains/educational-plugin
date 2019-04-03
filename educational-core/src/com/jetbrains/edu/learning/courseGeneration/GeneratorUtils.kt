@@ -71,7 +71,7 @@ object GeneratorUtils {
   @JvmStatic
   fun createLesson(lesson: Lesson, courseDir: VirtualFile) {
     val lessonDir = createUniqueDir(courseDir, lesson)
-    val taskList = lesson.getTaskList()
+    val taskList = lesson.taskList
     val isStudy = lesson.course.isStudy
     for ((i, task) in taskList.withIndex()) {
       // We don't want to create task only when:

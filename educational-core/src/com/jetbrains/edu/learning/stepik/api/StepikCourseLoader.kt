@@ -220,7 +220,9 @@ object StepikCourseLoader {
         }
       }
       val tasks = getTasks(remoteCourse.languageById!!, lesson, allStepSources)
-      lesson.taskList.addAll(tasks)
+      for (task in tasks) {
+        lesson.addTask(task)
+      }
       result.add(lesson)
     }
 

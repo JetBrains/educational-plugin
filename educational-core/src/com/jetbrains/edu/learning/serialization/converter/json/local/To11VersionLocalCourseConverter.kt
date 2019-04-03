@@ -2,8 +2,8 @@ package com.jetbrains.edu.learning.serialization.converter.json.local
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.serialization.SerializationUtils.ENVIRONMENT
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.COURSE_TYPE
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ENVIRONMENT
 
 class To11VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 

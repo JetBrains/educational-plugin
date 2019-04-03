@@ -111,13 +111,13 @@ private fun deserializeCourseRecursively(project: Project, courseConfig: Virtual
         deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.items)
         deserializedItem.lessons.forEach {
           it.section = deserializedItem
-          it.taskList = it.deserializeContent(project, it.taskList)
+          it.items = it.deserializeContent(project, it.taskList)
         }
       }
       is Lesson -> {
         // set parent to correctly obtain dirs in deserializeContent method
         deserializedItem.course = deserializedCourse
-        deserializedItem.taskList = deserializedItem.deserializeContent(project, deserializedItem.taskList)
+        deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.taskList)
       }
     }
   }

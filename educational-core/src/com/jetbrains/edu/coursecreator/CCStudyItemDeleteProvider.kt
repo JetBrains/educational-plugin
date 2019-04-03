@@ -45,7 +45,7 @@ class CCStudyItemDeleteProvider : DeleteProvider {
         allTasks to allTasks.flatMapTo(HashSet(), Task::getDependentTasks) - allTasks
       }
       is Lesson -> {
-        val allTasks = studyItem.getTaskList().toSet()
+        val allTasks = studyItem.taskList.toSet()
         allTasks to allTasks.flatMapTo(HashSet(), Task::getDependentTasks) - allTasks
       }
       is Task -> setOf(studyItem) to studyItem.getDependentTasks()

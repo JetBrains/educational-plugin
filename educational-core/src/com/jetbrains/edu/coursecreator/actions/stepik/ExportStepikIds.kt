@@ -8,7 +8,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -39,10 +38,10 @@ class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids
       val serializeStudyItem: (StudyItem) -> JsonElement = { itemToSerialize -> context.serialize(itemToSerialize, StudyItem::class.java) }
 
       if (item is ItemContainer) {
-        jsonObject.addChildren("items", item.items, serializeStudyItem)
+        val itemsName = if (item is Lesson) "task_list" else "items"
+        jsonObject.addChildren(itemsName, item.items, serializeStudyItem)
       }
       if (item is Lesson) {
-        jsonObject.addChildren("task_list", item.taskList, serializeStudyItem)
         jsonObject.addProperty("unit_id", item.unitId)
       }
       if (item is EduCourse && item.isRemote) {

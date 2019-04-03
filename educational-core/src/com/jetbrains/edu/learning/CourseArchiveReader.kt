@@ -67,7 +67,6 @@ val courseMapper: ObjectMapper  // TODO: common mapper for archive creator and r
     val mapper = ObjectMapper(factory)
     val module = SimpleModule()
     module.addDeserializer(StudyItem::class.java, StudyItemDeserializer())  // TODO: use JsonSubTypes
-    module.addDeserializer(Task::class.java, TaskDeserializer())
     mapper.registerModule(module)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     mapper.addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)

@@ -31,7 +31,7 @@ class EduFileEditorProvider : FileEditorProvider, DumbAware {
     if (task.isFrameworkTask && CCUtils.isCourseCreator(project) &&
         Experiments.isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR) &&
         CCSettings.getInstance().showSplitEditor()) {
-      val prevTaskFile = task.lesson.getTaskList().getOrNull(task.index - 2)?.getTaskFile(taskFile.name)
+      val prevTaskFile = task.lesson.taskList.getOrNull(task.index - 2)?.getTaskFile(taskFile.name)
       val taskDir = prevTaskFile?.task?.getTaskDir(project)
       if (prevTaskFile != null && taskDir != null) {
         val prevTaskVirtualFile = EduUtils.findTaskFileInDir(prevTaskFile, taskDir)

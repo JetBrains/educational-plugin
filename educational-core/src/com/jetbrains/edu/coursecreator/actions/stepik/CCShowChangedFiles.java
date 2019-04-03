@@ -67,7 +67,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
             continue;
           }
 
-          for (Task task : lesson.taskList) {
+          for (Task task : lesson.getTaskList()) {
             if (task.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
               appendChangeLine(task, builder);
             }
@@ -84,7 +84,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
           continue;
         }
 
-        for (Task task : ((Lesson)item).taskList) {
+        for (Task task : ((Lesson)item).getTaskList()) {
           if (task.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
             appendChangeLine(task, builder);
           }

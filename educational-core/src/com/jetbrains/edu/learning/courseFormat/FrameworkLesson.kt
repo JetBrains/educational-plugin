@@ -10,7 +10,7 @@ class FrameworkLesson() : Lesson() {
     is_public = lesson.is_public
     updateDate = lesson.updateDate
     name = lesson.name
-    taskList = lesson.taskList
+    items = lesson.items
     section = lesson.section
     index = lesson.index
     @Suppress("DEPRECATION")

@@ -48,7 +48,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
   }
 
   override fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int =
-    (parentItem as? Lesson)?.getTaskList()?.size ?: 0
+    (parentItem as? Lesson)?.taskList?.size ?: 0
 
   override fun getParentItem(course: Course, directory: VirtualFile): StudyItem? {
     val task = EduUtils.getTask(directory, course) ?: return EduUtils.getLesson(directory, course)
@@ -63,7 +63,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
 
   override fun sortSiblings(course: Course, parentItem: StudyItem?) {
     if (parentItem is Lesson) {
-      Collections.sort(parentItem.getTaskList(), EduUtils.INDEX_COMPARATOR)
+      parentItem.sortItems()
     }
   }
 

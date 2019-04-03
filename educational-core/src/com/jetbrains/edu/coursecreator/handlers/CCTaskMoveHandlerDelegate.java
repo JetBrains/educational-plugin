@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
@@ -161,14 +160,14 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
 
     final int newItemIndex = targetTask != null ? targetTask.getIndex() + indexDelta : 1;
     taskToMove.setIndex(-1);
-    taskToMove.getLesson().getTaskList().remove(taskToMove);
+    taskToMove.getLesson().removeTask(taskToMove);
     final Lesson finalTargetLesson = targetLesson;
     CCUtils.updateHigherElements(targetDirectory.getChildren(), file -> finalTargetLesson.getTask(file.getName()), newItemIndex - 1, 1);
 
     taskToMove.setIndex(newItemIndex);
     taskToMove.setLesson(targetLesson);
-    targetLesson.getTaskList().add(taskToMove);
-    Collections.sort(targetLesson.getTaskList(), EduUtils.INDEX_COMPARATOR);
+    targetLesson.addTask(taskToMove);
+    targetLesson.sortItems();
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {

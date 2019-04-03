@@ -30,14 +30,14 @@ object NavigationUtils {
     if (task.course is HyperskillCourse && task.status != CheckStatus.Solved) return null
 
     val currentLesson = task.lesson
-    val taskList = currentLesson.getTaskList()
+    val taskList = currentLesson.taskList
     if (task.index < taskList.size) return taskList[task.index]
 
     var nextLesson = nextLesson(currentLesson) ?: return null
-    var nextLessonTaskList = nextLesson.getTaskList()
+    var nextLessonTaskList = nextLesson.taskList
     while (nextLessonTaskList.isEmpty()) {
       nextLesson = nextLesson(nextLesson) ?: return null
-      nextLessonTaskList = nextLesson.getTaskList()
+      nextLessonTaskList = nextLesson.taskList
     }
     return EduUtils.getFirst(nextLessonTaskList)
   }
@@ -46,14 +46,14 @@ object NavigationUtils {
   fun previousTask(task: Task): Task? {
     val currentLesson = task.lesson
     val prevTaskIndex = task.index - 2
-    if (prevTaskIndex >= 0) return currentLesson.getTaskList()[prevTaskIndex]
+    if (prevTaskIndex >= 0) return currentLesson.taskList[prevTaskIndex]
 
     var prevLesson = previousLesson(currentLesson) ?: return null
     //getting last task in previous lesson
-    var prevLessonTaskList = prevLesson.getTaskList()
+    var prevLessonTaskList = prevLesson.taskList
     while (prevLessonTaskList.isEmpty()) {
       prevLesson = previousLesson(prevLesson) ?: return null
-      prevLessonTaskList = prevLesson.getTaskList()
+      prevLessonTaskList = prevLesson.taskList
     }
     return prevLessonTaskList[prevLessonTaskList.size - 1]
   }

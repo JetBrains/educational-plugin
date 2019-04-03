@@ -175,7 +175,7 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     val lessonDir = removedTask.parent ?: error("`$removedTask` parent shouldn't be null")
     val lesson = task.lesson
     CCUtils.updateHigherElements(lessonDir.children, Function { lesson.getTask(it.name) }, task.index, -1)
-    lesson.getTaskList().remove(task)
+    lesson.removeTask(task)
     YamlFormatSynchronizer.saveItem(lesson)
     StepikCourseChangeHandler.contentChanged(lesson)
 

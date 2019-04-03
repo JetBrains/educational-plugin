@@ -51,7 +51,7 @@ fun Task.getDependentTasks(): Set<Task> {
   val course = course
   return course.items.flatMap { item ->
     when (item) {
-      is Lesson -> item.getTaskList()
+      is Lesson -> item.taskList
       is Section -> item.lessons.flatMap { it.taskList }
       else -> emptyList()
     }

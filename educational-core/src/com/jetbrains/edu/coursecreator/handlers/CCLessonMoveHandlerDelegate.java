@@ -46,7 +46,7 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
     }
 
     final PsiDirectory[] directories = view.getDirectories();
-    if (directories.length == 0 || directories.length > 1) {
+    if (directories.length != 1) {
       return false;
     }
 
@@ -95,9 +95,9 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
       return;
     }
     VirtualFile sourceParentDir = sourceVFile.getParent();
-    VirtualFile targetParentDir = targetItem instanceof ItemContainer ? targetVFile : targetVFile.getParent();
+    VirtualFile targetParentDir = targetItem instanceof Lesson ? targetVFile.getParent() : targetVFile;
 
-    if (targetItem instanceof ItemContainer) {
+    if (targetItem instanceof Section || targetItem instanceof Course) {
       if (targetParentDir.findChild(sourceLesson.getName()) != null) {
         String prefix = targetItem instanceof Section ? "Section" : "Course";
         Messages.showInfoMessage(prefix + " contains lesson with the same name", "Incorrect Target For Move");
@@ -106,24 +106,23 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
 
     }
     final Section targetSection = course.getSection(targetParentDir.getName());
-    final ItemContainer targetContainer = targetSection != null ? targetSection : course;
+    final LessonContainer targetContainer = targetSection != null ? targetSection : course;
 
     int delta = 0;
-    if (!(targetItem instanceof ItemContainer)) {
+    if (targetItem instanceof Lesson) {
       delta = getDelta(project, targetItem);
     }
     if (delta == -1) {
       return;
     }
 
-    final ItemContainer sourceContainer = sourceLesson.getContainer();
+    final LessonContainer sourceContainer = sourceLesson.getContainer();
 
     int sourceLessonIndex = sourceLesson.getIndex();
     sourceLesson.setIndex(-1);
     CCUtils.updateHigherElements(sourceParentDir.getChildren(), file -> sourceContainer.getItem(file.getName()), sourceLessonIndex, -1);
 
-    final int newItemIndex = targetItem instanceof ItemContainer ? ((ItemContainer)targetItem).getItems().size() + 1
-                                                                 : targetItem.getIndex() + delta;
+    final int newItemIndex = targetItem instanceof Lesson ? targetItem.getIndex() + delta : ((ItemContainer)targetItem).getItems().size() + 1;
     CCUtils.updateHigherElements(targetParentDir.getChildren(), file -> targetContainer.getItem(file.getName()), newItemIndex - 1, 1);
 
     sourceLesson.setIndex(newItemIndex);

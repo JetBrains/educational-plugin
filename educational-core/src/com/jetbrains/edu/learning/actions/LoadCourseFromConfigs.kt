@@ -140,7 +140,7 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
     for ((i, item) in tasks.withIndex()) {
       item.index = i + 1
     }
-    lesson.taskList = tasks
+    lesson.items = tasks
     return lesson
   }
 

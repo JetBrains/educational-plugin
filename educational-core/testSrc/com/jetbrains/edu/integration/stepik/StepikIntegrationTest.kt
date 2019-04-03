@@ -7,7 +7,10 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushSection
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.CourseBuilder
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -328,7 +331,7 @@ open class StepikIntegrationTest : StepikTestCase() {
 internal fun addNewLesson(name: String,
                           index: Int,
                           courseToInit: Course,
-                          parent: ItemContainer,
+                          parent: LessonContainer,
                           virtualFile: VirtualFile): Lesson {
   val course = course {
     lesson(name) {

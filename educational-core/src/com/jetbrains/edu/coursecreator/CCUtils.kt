@@ -191,7 +191,7 @@ object CCUtils {
   }
 
   private fun initializeLessonPlaceholders(project: Project, lesson: Lesson) {
-    for (task in lesson.getTaskList()) {
+    for (task in lesson.taskList) {
       initializeTaskPlaceholders(task, project)
     }
   }

@@ -154,7 +154,9 @@ object HyperskillConnector {
 
     progressIndicator?.checkCanceled()
     val tasks = StepikCourseLoader.getTasks(language, lesson, stepSources)
-    lesson.taskList.addAll(tasks)
+    for (task in tasks) {
+      lesson.addTask(task)
+    }
     course.additionalFiles = loadAttachment(attachmentLink)
     return lesson
   }

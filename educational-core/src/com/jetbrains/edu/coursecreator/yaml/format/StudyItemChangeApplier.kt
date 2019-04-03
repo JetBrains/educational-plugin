@@ -18,10 +18,10 @@ abstract class StudyItemChangeApplier<T : StudyItem> {
 fun <T : StudyItem> getChangeApplierForItem(project: Project, item: T): StudyItemChangeApplier<T> {
   @Suppress("UNCHECKED_CAST") //
   return when (item) {
-    is Course -> CourseChangeApplier<Course>()
+    is Course -> CourseChangeApplier()
     is Section -> SectionChangeApplier()
     is Lesson -> LessonChangeApplier<Lesson>(project)
-    is Task -> TaskChangeApplier()
+    is Task -> TaskChangeApplier<Task>()
     else -> error("Unexpected item type: ${item.javaClass.simpleName}")
   } as StudyItemChangeApplier<T>
 }

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Section extends ItemContainer {
+public class Section extends LessonContainer {
   public Section() {}
 
   @Transient

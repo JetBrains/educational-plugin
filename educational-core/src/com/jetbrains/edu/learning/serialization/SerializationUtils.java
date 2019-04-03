@@ -45,6 +45,7 @@ public class SerializationUtils {
   public static final String AUTHORS = "authors";
   public static final String MY_INITIAL_START = "myInitialStart";
   public static final String SUBTASK_MARKER = "_subtask";
+  public static final String ENVIRONMENT = "environment";
 
   private SerializationUtils() {
   }
@@ -458,7 +459,6 @@ public class SerializationUtils {
     public static final String TEST_FILES = "test_files";
     public static final String VERSION = "version";
     public static final String COURSE_TYPE = "course_type";
-    public static final String ENVIRONMENT = "environment";
     public static final String PROGRAMMING_LANGUAGE = "programming_language";
     public static final String EDU_TASK = "edu_task";
     public static final String TASK = "task";
