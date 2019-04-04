@@ -419,10 +419,8 @@ project(':Edu-Kotlin') {
 
 project(':Edu-Scala') {
     intellij {
-        if (!isJvmBasedIDE) {
-            localPath = null
-            version = ideaVersion
-        }
+        localPath = null
+        version ideaVersion
         plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy'
     }
 
