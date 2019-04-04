@@ -138,23 +138,29 @@ public interface EduCourseBuilder<Settings> {
         taskFile.setText(taskFileProperties.getText());
       }
       task.addTaskFile(taskFile);
-
-      List<String> testDirs = TaskExt.getTestDirs(task);
-      String testDir = "";
-      if (!testDirs.isEmpty()) {
-        testDir = testDirs.get(0);
-      }
-      String testTemplateName = getTestTemplateName();
-      if (testTemplateName != null) {
-        String testText = GeneratorUtils.getInternalTemplateText(testTemplateName);
-        if (testText != null) {
-          TaskFile test =
-            new TaskFile(GeneratorUtils.joinPaths(testDir, testTemplateName), testText);
-          test.setVisible(false);
-          task.addTaskFile(test);
-        }
+      TaskFile defaultTestFile = createDefaultTestFile(task);
+      if (defaultTestFile != null) {
+        task.addTaskFile(defaultTestFile);
       }
     }
+  }
+
+  @Nullable
+  default TaskFile createDefaultTestFile(@NotNull Task task) {
+    List<String> testDirs = TaskExt.getTestDirs(task);
+    String testDir = "";
+    if (!testDirs.isEmpty()) {
+      testDir = testDirs.get(0);
+    }
+    String testTemplateName = getTestTemplateName();
+    if (testTemplateName != null) {
+      String testText = GeneratorUtils.getInternalTemplateText(testTemplateName);
+      TaskFile test =
+        new TaskFile(GeneratorUtils.joinPaths(testDir, testTemplateName), testText);
+      test.setVisible(false);
+      return test;
+    }
+    return null;
   }
 
   @Nullable

@@ -11,9 +11,13 @@ import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
 import junit.framework.TestCase
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.hasItem
 import org.junit.Assert.assertThat
 
 class CCCreateTaskTest : EduActionTestCase() {
@@ -204,7 +208,7 @@ class CCCreateTaskTest : EduActionTestCase() {
       frameworkLesson(lessonName) {
         eduTask("task1") {
           taskFile("src/Task.kt")
-          taskFile("test/Tests.kt", visible = false)
+          taskFile("test/Tests1.kt", "//text changed", visible = false)
         }
       }
     }
@@ -216,10 +220,14 @@ class CCCreateTaskTest : EduActionTestCase() {
     }
 
     val newTask = course.findTask(lessonName, newTaskName)
-    val baseTestFileMatcher = hasItem("test/Tests.kt")
-    val testFileMatcher = if (copyTests) baseTestFileMatcher else not(baseTestFileMatcher)
+    val copyTestFileMatcher = hasItem("test/Tests1.kt")
+    val notCopyTestFileMatcher = hasItem("test/Tests.kt")
+    val testFileMatcher = if (copyTests) copyTestFileMatcher else notCopyTestFileMatcher
 
     assertThat(newTask.taskFiles.keys, allOf(hasItem("src/Task.kt"), testFileMatcher))
+    val testText = if (copyTests) "//text changed" else getDefaultTestText(course)
+    TestCase.assertEquals(testText, newTask.taskFiles[if (copyTests) "test/Tests1.kt" else "test/Tests.kt"]?.text)
+
     fileTree {
       dir(lessonName) {
         dir("task1") {
@@ -227,7 +235,7 @@ class CCCreateTaskTest : EduActionTestCase() {
             file("Task.kt")
           }
           dir("test") {
-            file("Tests.kt")
+            file("Tests1.kt")
           }
           file("task.html")
         }
@@ -236,6 +244,11 @@ class CCCreateTaskTest : EduActionTestCase() {
             file("Task.kt")
           }
           if (copyTests) {
+            dir("test") {
+              file("Tests1.kt")
+            }
+          }
+          else {
             dir("test") {
               file("Tests.kt")
             }
@@ -246,6 +259,11 @@ class CCCreateTaskTest : EduActionTestCase() {
       file("build.gradle")
       file("settings.gradle")
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  private fun getDefaultTestText(course: Course): String? {
+    val testTemplateName = course.configurator?.courseBuilder?.testTemplateName ?: return null
+    return GeneratorUtils.getInternalTemplateText(testTemplateName)
   }
 }
 

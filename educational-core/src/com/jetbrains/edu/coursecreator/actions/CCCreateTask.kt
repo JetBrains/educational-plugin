@@ -107,10 +107,18 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
       val defaultTestFileName = course.configurator?.testFileName ?: ""
       val needCopyTests = info.getUserData(COPY_TESTS_FROM_PREV_TASK) ?: false
       for ((path, file) in prevTask.taskFiles) {
-        if (!needCopyTests && (testDirs.any { path.startsWith(it) } || path == defaultTestFileName)) continue
-        newTaskFiles[path] = file.copyForNewTask(prevTaskDir, newTask)
+        if (needCopyTests || !(testDirs.any { path.startsWith(it) } || path == defaultTestFileName)) {
+          newTaskFiles[path] = file.copyForNewTask(prevTaskDir)
+        }
       }
       newTask.taskFiles = newTaskFiles
+
+      if (!needCopyTests) {
+        val defaultTestFile = course.configurator?.courseBuilder?.createDefaultTestFile(newTask)
+        if (defaultTestFile != null) {
+          newTaskFiles[defaultTestFile.name] = defaultTestFile
+        }
+      }
 
       // If we insert new task between `task1` and `task2`
       // we should change target of all placeholder dependencies of `task2` from task file of `task1`
@@ -123,6 +131,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
             placeholder.placeholderDependency = dependency.copy(taskName = newTask.name)
           }
         }
+      newTask.init(course, parentItem, false)
     } else {
       initTask(course, parentItem, newTask, info)
     }
@@ -135,9 +144,8 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
     }
   }
 
-  private fun TaskFile.copyForNewTask(taskDir: VirtualFile, newTask: Task): TaskFile {
+  private fun TaskFile.copyForNewTask(taskDir: VirtualFile): TaskFile {
     val newTaskFile = TaskFile()
-    newTaskFile.task = newTask
     newTaskFile.name = name
     val text = try {
       EduUtils.findTaskFileInDir(this, taskDir)?.let(CCUtils::loadText) ?: ""
@@ -147,13 +155,12 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
     }
     newTaskFile.setText(text)
     newTaskFile.isVisible = isVisible
-    newTaskFile.answerPlaceholders = answerPlaceholders.map { it.copyForNewTaskFile(newTaskFile) }
+    newTaskFile.answerPlaceholders = answerPlaceholders.map { it.copyForNewTaskFile() }
     return newTaskFile
   }
 
-  private fun AnswerPlaceholder.copyForNewTaskFile(newTaskFile: TaskFile): AnswerPlaceholder {
+  private fun AnswerPlaceholder.copyForNewTaskFile(): AnswerPlaceholder {
     val newPlaceholder = AnswerPlaceholder()
-    newPlaceholder.taskFile = newTaskFile
     newPlaceholder.placeholderText = placeholderText
     newPlaceholder.offset = offset
     newPlaceholder.length = length
