@@ -1,6 +1,8 @@
 package com.jetbrains.edu.coursecreator.actions;
 
 import com.intellij.ide.projectView.ProjectView;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -12,6 +14,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection;
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel;
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
@@ -19,6 +22,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
@@ -55,6 +59,32 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
       ProjectView.getInstance(project).select(itemFile, itemFile, true);
     }
     askFeedback(course, project);
+    if (StudyItemType.LESSON.equals(myItemType)) {
+      suggestWrapLessonsIntoSection(project, course, selectedFiles[0]);
+    }
+  }
+
+  private void suggestWrapLessonsIntoSection(@NotNull final Project project,
+                                             @NotNull final Course course,
+                                             @NotNull final VirtualFile sourceDirectory) {
+    StudyItem parentItem = getParentItem(course, sourceDirectory);
+    if (parentItem != course) {
+      return;
+    }
+    final List<Lesson> lessonsToWrap = course.getLessons();
+    if (lessonsToWrap.size() != 20) {
+      return;
+    }
+    Notification notification = new Notification("WrapLessons", "Wrap Lessons With Section",
+                                                 "Lessons can be wrapped with section", NotificationType.INFORMATION);
+    notification.addAction(new DumbAwareAction("Wrap lessons") {
+      @Override
+      public void actionPerformed(@NotNull AnActionEvent e) {
+        CCWrapWithSection.wrapLessonsIntoSection(project, course, lessonsToWrap);
+        notification.expire();
+      }
+    });
+    notification.notify(project);
   }
 
   private static void askFeedback(@NotNull final Course course, @NotNull final Project project) {

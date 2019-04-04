@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CCWrapWithSection extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCWrapWithSection.class);
@@ -41,19 +42,8 @@ public class CCWrapWithSection extends DumbAwareAction {
     }
 
     final ArrayList<Lesson> lessonsToWrap = getLessonsToWrap(virtualFiles, course);
-    if (lessonsToWrap.isEmpty()) {
-      return;
-    }
 
-    final int sectionIndex = course.getSections().size() + 1;
-    final String sectionName = Messages.showInputDialog("Enter Section Name", SECTION, null,
-                                                        SECTION.toLowerCase() + sectionIndex,
-                                                        new CCUtils.PathInputValidator(OpenApiExtKt.getCourseDir(project)));
-    if (sectionName == null) {
-      return;
-    }
-
-    CCUtils.wrapIntoSection(project, course, lessonsToWrap, sectionName);
+    wrapLessonsIntoSection(project, course, lessonsToWrap);
   }
 
   @NotNull
@@ -66,6 +56,20 @@ public class CCWrapWithSection extends DumbAwareAction {
       }
     }
     return lessonsToWrap;
+  }
+
+  public static void wrapLessonsIntoSection(@NotNull Project project, @NotNull Course course, @NotNull List<Lesson> lessonsToWrap) {
+    if (lessonsToWrap.isEmpty()) {
+      return;
+    }
+    int sectionIndex = course.getSections().size() + 1;
+    String sectionName = Messages.showInputDialog("Enter Section Name", SECTION, null,
+                                                  SECTION.toLowerCase() + sectionIndex,
+                                                  new CCUtils.PathInputValidator(OpenApiExtKt.getCourseDir(project)));
+    if (sectionName == null) {
+      return;
+    }
+    CCUtils.wrapIntoSection(project, course, lessonsToWrap, sectionName);
   }
 
   @Override
