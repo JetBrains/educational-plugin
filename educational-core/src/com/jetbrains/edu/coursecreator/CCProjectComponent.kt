@@ -50,10 +50,6 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
       connection.subscribe(StudyTaskManager.COURSE_SET, object : CourseSetListener {
         override fun courseSet(course: Course) {
           connection.disconnect()
-          // in case course was reset from StudyTaskManager
-          if (myProject.isEduYamlProject()) {
-            loadCourse()
-          }
           initCCProject()
         }
       })
