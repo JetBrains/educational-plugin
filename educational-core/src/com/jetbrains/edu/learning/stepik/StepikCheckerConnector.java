@@ -27,7 +27,7 @@ public class StepikCheckerConnector {
   private static final String CODE_COMPLEXITY_NOTE = "code complexity score";
 
   @Nullable
-  private static Attempt getAttemptForStep(int stepId, int userId) {
+  public static Attempt getAttemptForStep(int stepId, int userId) {
     final List<Attempt> attempts = StepikConnector.getAttempts(stepId, userId);
     if (attempts != null && attempts.size() > 0) {
       final Attempt attempt = attempts.get(0);
