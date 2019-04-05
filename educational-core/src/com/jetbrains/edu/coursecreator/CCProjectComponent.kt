@@ -96,13 +96,13 @@ private fun loadCourseRecursively(project: Project): Course {
   val course = deserializeCourseRecursively(project, courseConfig)
 
   course.init(null, null, true)
-  course.copyExistingCourseInfo(project)
 
   return course
 }
 
 private fun deserializeCourseRecursively(project: Project, courseConfig: VirtualFile): Course {
   val deserializedCourse = YamlDeserializer.deserialize(VfsUtil.loadText(courseConfig), Course::class.java)
+  deserializedCourse.copyExistingCourseInfo(project)
   deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items)
 
   deserializedCourse.items.forEach { deserializedItem ->
