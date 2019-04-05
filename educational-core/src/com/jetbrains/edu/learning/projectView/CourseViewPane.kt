@@ -88,8 +88,10 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
       updateCourseProgress()
     }
     else {
-      myProject.messageBus.connect().subscribe(StudyTaskManager.COURSE_SET, object : CourseSetListener {
+      val connection = myProject.messageBus.connect()
+      connection.subscribe(StudyTaskManager.COURSE_SET, object : CourseSetListener {
         override fun courseSet(course: Course) {
+          connection.disconnect()
           updateCourseProgress()
         }
       })
