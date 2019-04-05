@@ -34,7 +34,7 @@ object YamlDeserializer {
       SECTION_CONFIG -> deserialize(configFileText, Section::class.java)
       LESSON_CONFIG -> deserializeLesson(configFileText)
       TASK_CONFIG -> deserializeTask(configFileText)
-      else -> error("Unexpected config file: $configName")
+      else -> unexpectedConfigFileError(configName)
     }
   }
 
