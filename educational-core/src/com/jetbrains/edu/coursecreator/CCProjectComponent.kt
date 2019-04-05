@@ -16,6 +16,7 @@ import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_COURSE_CON
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader
+import com.jetbrains.edu.coursecreator.yaml.format.getRemoteChangeApplierForItem
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -139,9 +140,9 @@ private fun Course.setRemoteInfoFromConfig(remoteCourseConfig: VirtualFile?) {
     return
   }
 
-  val courseWithRemoteInfo = YamlDeserializer.deserializeCourseWithRemoteInfo(VfsUtil.loadText(remoteCourseConfig))
-  id = courseWithRemoteInfo.id
-  updateDate = courseWithRemoteInfo.updateDate
+  val yamlText = VfsUtil.loadText(remoteCourseConfig)
+  val courseWithRemoteInfo = YamlDeserializer.deserializeRemoteItem(yamlText, remoteCourseConfig.name)
+  getRemoteChangeApplierForItem(courseWithRemoteInfo).applyChanges(this, courseWithRemoteInfo)
 }
 
 private fun Course.setDescriptionInfo(project: Project) {

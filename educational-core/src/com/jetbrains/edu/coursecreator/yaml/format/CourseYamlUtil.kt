@@ -182,3 +182,11 @@ fun updateItemContainerChildren(existingContainer: ItemContainer, deserializedCo
     existingItem.index = it.index
   }
 }
+
+class RemoteCourseChangeApplier<T : EduCourse> : RemoteInfoChangeApplierBase<T>() {
+  override fun applyChanges(existingItem: T, deserializedItem: T) {
+    super.applyChanges(existingItem, deserializedItem)
+    existingItem.updateDate = deserializedItem.updateDate
+    existingItem.sectionIds = deserializedItem.sectionIds
+  }
+}
