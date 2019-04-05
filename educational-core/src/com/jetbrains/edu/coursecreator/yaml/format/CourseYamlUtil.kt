@@ -145,7 +145,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       name = title
       description = summary
       val languageName = Language.getRegisteredLanguages().find { it.displayName == programmingLanguage }
-                         ?: throw InvalidYamlFormatException("Unknown programming language '$programmingLanguage'")
+                         ?: formatError("Unknown programming language '$programmingLanguage'")
       language = languageName.id
       environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
       val items = content.mapIndexed { index, title ->
@@ -158,8 +158,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       }
       setItems(items)
     }
-    val locale = Locale.getISOLanguages().find { Locale(it).displayLanguage == language }
-                 ?: throw InvalidYamlFormatException("Unknown language '$language'")
+    val locale = Locale.getISOLanguages().find { Locale(it).displayLanguage == language } ?: formatError("Unknown language '$language'")
     course.languageCode = Locale(locale).language
     return course
   }
