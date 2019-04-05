@@ -28,7 +28,10 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
@@ -362,23 +365,22 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static TaskSolutions getStepikTaskSolutions(@NotNull Task task, boolean isSolved) {
-    String emptyString = "";
-
-    GeneratorUtils.DefaultFileProperties taskFileProperties =
-      GeneratorUtils.createDefaultFile(task.getLesson().getCourse(), EduNames.TASK, emptyString);
-
-    String extension = taskFileProperties.getName().replace(EduNames.TASK, emptyString);
-    List<String> taskFileNames = task.getTaskFiles().keySet().stream()
-      .filter(fileName -> fileName.endsWith(extension)).collect(Collectors.toList());
-
-    assert taskFileNames.size() == 1;
-
+    String taskFileName = getTaskFileName(task);
     String solution = getSolutionTextForStepikAssignment(task, isSolved);
-    if (solution != null) {
+    if (solution != null && taskFileName != null) {
       task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
-      return new TaskSolutions(Collections.singletonMap(taskFileNames.get(0), solution));
+      return new TaskSolutions(Collections.singletonMap(taskFileName, solution));
     }
     return TaskSolutions.EMPTY;
+  }
+
+  @Nullable
+  private static String getTaskFileName(@NotNull Task task) {
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(task.getCourse());
+    if (configurator == null) return null;
+    String fileName = configurator.getMockFileName(configurator.getMockTemplate());
+    if (fileName == null) return null;
+    return GeneratorUtils.joinPaths(configurator.getSourceDir(), fileName);
   }
 
   private static TaskSolutions getEduTaskSolutions(@NotNull Task task, boolean isSolved) {
