@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.OpenCourseDialogBase
-import kotlinx.css.dialog
 import java.awt.event.ActionEvent
 import javax.swing.AbstractAction
 import javax.swing.Action
