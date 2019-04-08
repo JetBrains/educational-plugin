@@ -18,7 +18,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
         dir("task2") {
@@ -26,7 +26,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -36,7 +36,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -57,7 +57,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
           file("task.html")
         }
@@ -78,7 +78,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
           file("task.html")
         }
@@ -87,7 +87,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
           file("task.html")
         }
@@ -98,7 +98,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
           file("task.html")
         }

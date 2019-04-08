@@ -14,7 +14,7 @@ import javax.swing.*;
 
 public class JConfigurator extends GradleConfiguratorBase {
 
-  public static final String TEST_JAVA = "Test.java";
+  public static final String TEST_JAVA = "Tests.java";
   public static final String TASK_JAVA = "Task.java";
   public static final String MOCK_JAVA = "Mock.java";
 

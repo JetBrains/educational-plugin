@@ -13,16 +13,16 @@
           "files": {
             "src/Task.java": {
               "name": "src/Task.java",
-              "text": "class Task {\n  //put your task here\n}",
+              "text": "public class Task {\n  //put your task here\n}",
               "placeholders": []
             },
-            "test/Test.java": {
-              "name": "test/Test.java",
-              "text": "class Test {\n    // put your test here\n}",
+            "test/Tests.java": {
+              "name": "test/Tests.java",
+              "text": "import org.junit.Assert;\nimport org.junit.Test;\n\npublic class Tests {\n  @Test\n public void testSolution() {\n    // put your test here\n   Assert.fail(\"Tests not implemented for the task\");\n  }\n}"
+            }
+          },
               "placeholders": [],
               "is_visible": false
-            }
-          }
         },
         {
           "name": "task2",
@@ -33,12 +33,12 @@
           "files": {
             "src/Task.java": {
               "name": "src/Task.java",
-              "text": "class Task {\n  //put your task here\n}",
+              "text": "public class Task {\n  //put your task here\n}",
               "placeholders": []
             },
-            "test/Test.java": {
-              "name": "test/Test.java",
-              "text": "class Test {\n    // put your test here\n}",
+            "test/Tests.java": {
+              "name": "test/Tests.java",
+              "text": "import org.junit.Assert;\nimport org.junit.Test;\n\npublic class Tests {\n  @Test\n public void testSolution() {\n    // put your test here\n   Assert.fail(\"Tests not implemented for the task\");\n  }\n}",
               "placeholders": [],
               "is_visible": false
             }
@@ -59,12 +59,12 @@
           "files": {
             "src/Task.java": {
               "name": "src/Task.java",
-              "text": "class Task {\n  //put your task here\n}",
+              "text": "public class Task {\n  //put your task here\n}",
               "placeholders": []
             },
-            "test/Test.java": {
-              "name": "test/Test.java",
-              "text": "class Test {\n    // put your test here\n}",
+            "test/Tests.java": {
+              "name": "test/Tests.java",
+              "text": "import org.junit.Assert;\nimport org.junit.Test;\n\npublic class Tests {\n  @Test\n public void testSolution() {\n    // put your test here\n   Assert.fail(\"Tests not implemented for the task\");\n  }\n}",
               "placeholders": [],
               "is_visible": false
             }

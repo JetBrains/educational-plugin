@@ -20,7 +20,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -30,7 +30,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -49,7 +49,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -59,7 +59,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -79,7 +79,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
               file("Task.java")
             }
             dir("test") {
-              file("Test.java")
+              file("Tests.java")
             }
           }
         }
@@ -89,7 +89,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
               file("Task.java")
             }
             dir("test") {
-              file("Test.java")
+              file("Tests.java")
             }
           }
         }
@@ -110,7 +110,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -128,7 +128,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
         dir("task2") {
@@ -136,7 +136,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -155,7 +155,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
         dir("Theory") {
@@ -163,7 +163,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -182,7 +182,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
         dir("Theory") {
@@ -190,7 +190,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -211,7 +211,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
               file("Task.java")
             }
             dir("test") {
-              file("Test.java")
+              file("Tests.java")
             }
           }
           dir("task2") {
@@ -219,7 +219,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
               file("Task.java")
             }
             dir("test") {
-              file("Test.java")
+              file("Tests.java")
             }
           }
         }
@@ -240,7 +240,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -259,7 +259,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -278,7 +278,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Task_renamed.java")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -294,10 +294,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
       dir("lesson1") {
         dir("task1") {
           dir("src") {
-            file("Task.java",  "class Task {\n  //Changed put your task here\n}")
+            file("Task.java", "public class Task {\n  //Changed put your task here\n}")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -313,10 +313,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
       dir("lesson1") {
         dir("Theory") {
           dir("src") {
-            file("Task.java",  "class Task {\n  // Changed put your task here\n}")
+            file("Task.java", "public class Task {\n  // Changed put your task here\n}")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -333,10 +333,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("lesson1") {
           dir("task1") {
             dir("src") {
-              file("Task.java", "class Task {\n  //Changed put your task here\n}")
+              file("Task.java", "public class Task {\n  //Changed put your task here\n}")
             }
             dir("test") {
-              file("Test.java")
+              file("Tests.java")
             }
           }
         }
@@ -354,10 +354,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
       dir("lesson1") {
         dir("task1") {
           dir("src") {
-            file("Task.java",  "class Task {\n  // put your task here\n}")
+            file("Task.java", "public class Task {\n  // put your task here\n}")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -365,10 +365,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("lesson1") {
           dir("task1") {
             dir("src") {
-              file("Task.java",  "class Task {\n  // put your task here\n}")
+              file("Task.java", "public class Task {\n  // put your task here\n}")
             }
             dir("test") {
-              file("Test.java")
+              file("Tests.java")
             }
           }
         }
@@ -386,10 +386,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("lesson1") {
           dir("task1") {
             dir("src") {
-              file("Task.java",  "class Task {\n  // put your task here\n}")
+              file("Task.java", "public class Task {\n  // put your task here\n}")
             }
             dir("test") {
-              file("Test.java")
+              file("Tests.java")
             }
           }
         }
@@ -398,10 +398,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("lesson1") {
           dir("task1") {
             dir("src") {
-              file("Task.java",  "class Task {\n  // put your task here\n}")
+              file("Task.java", "public class Task {\n  // put your task here\n}")
             }
             dir("test") {
-              file("Test.java")
+              file("Tests.java")
             }
           }
         }
@@ -418,10 +418,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
       dir("lesson1") {
         dir("task1") {
           dir("src") {
-            file("Task.java",  "class Task {\n  // put your task here\n}")
+            file("Task.java", "public class Task {\n  // put your task here\n}")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -429,20 +429,20 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("lesson1") {
           dir("task1") {
             dir("src") {
-              file("Task.java",  "class Task {\n  // put your task here\n}")
+              file("Task.java", "public class Task {\n  // put your task here\n}")
             }
             dir("test") {
-              file("Test.java")
+              file("Tests.java")
             }
           }
         }
         dir("lesson2") {
           dir("task1") {
             dir("src") {
-              file("Task.java",  "class Task {\n  // put your task here\n}")
+              file("Task.java", "public class Task {\n  // put your task here\n}")
             }
             dir("test") {
-              file("Test.java")
+              file("Tests.java")
             }
           }
         }
@@ -460,10 +460,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
       dir("lesson1") {
         dir("task1") {
           dir("src") {
-            file("Task.java",  "class Task {\n  // put your task here\n}")
+            file("Task.java", "public class Task {\n  // put your task here\n}")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -471,10 +471,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("lesson1") {
           dir("task1") {
             dir("src") {
-              file("Task.java",  "class Task {\n  // put your task here\n}")
+              file("Task.java", "public class Task {\n  // put your task here\n}")
             }
             dir("test") {
-              file("Test.java")
+              file("Tests.java")
             }
           }
         }
@@ -491,10 +491,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
       dir("lesson1") {
         dir("task1") {
           dir("src") {
-            file("Task.java",  "class Task {\n  // put your task here\n}")
+            file("Task.java", "public class Task {\n  // put your task here\n}")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -502,10 +502,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("lesson1_renamed") {
           dir("task1") {
             dir("src") {
-              file("Task.java",  "class Task {\n  // put your task here\n}")
+              file("Task.java", "public class Task {\n  // put your task here\n}")
             }
             dir("test") {
-              file("Test.java")
+              file("Tests.java")
             }
           }
         }
@@ -522,10 +522,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
       dir("lesson1") {
         dir("task1") {
           dir("src") {
-            file("Task.java",  "class Task {\n  // put your task here\n}")
+            file("Task.java", "public class Task {\n  // put your task here\n}")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -541,10 +541,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
       dir("lesson1") {
         dir("task1") {
           dir("src") {
-            file("Task.java",  "class Task {\n  // put your task here\n}")
+            file("Task.java", "public class Task {\n  // put your task here\n}")
           }
           dir("test") {
-            file("Test.java")
+            file("Tests.java")
           }
         }
       }
@@ -561,10 +561,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("lesson1") {
           dir("task1") {
             dir("src") {
-              file("Task.java",  "class Task {\n  // put your task here\n}")
+              file("Task.java", "public class Task {\n  // put your task here\n}")
             }
             dir("test") {
-              file("Test.java")
+              file("Tests.java")
             }
           }
         }

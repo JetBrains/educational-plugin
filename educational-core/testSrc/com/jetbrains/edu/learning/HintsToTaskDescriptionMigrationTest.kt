@@ -9,7 +9,7 @@ class HintsToTaskDescriptionMigrationTest : EduTestCase() {
     val course = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
-          taskFile("Test.java", "<p>test</p>") {
+          taskFile("Tests.java", "<p>test</p>") {
             placeholder(0, hints = listOf("hint"))
           }
         }
