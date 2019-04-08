@@ -10,6 +10,8 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.*
+import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.stepik.course.stepikCourseFromRemote
 import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -77,8 +79,8 @@ object StepikCourseLoader {
     return result
   }
 
-  private fun getFeaturedStepikCourses(): List<EduCourse> {
-    val result = getListedStepikCourses(featuredStepikCourses.keys.toList())
+  private fun getFeaturedStepikCourses(): List<StepikCourse> {
+    val result = getListedStepikCourses(featuredStepikCourses.keys.toList()).mapNotNull { stepikCourseFromRemote(it) }
     for (stepikCourse in result) {
       stepikCourse.language = featuredStepikCourses[stepikCourse.id]
     }

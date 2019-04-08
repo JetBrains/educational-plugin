@@ -41,6 +41,7 @@ import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer;
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction;
+import com.jetbrains.edu.learning.stepik.course.StepikCourse;
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import kotlin.Unit;
@@ -243,7 +244,8 @@ public class CoursesPanel extends JPanel {
     Course selectedCourse = myCoursesList.getSelectedValue();
     if (selectedCourse != null) {
       myCoursePanel.bindCourse(selectedCourse).addSettingsChangeListener(() -> doValidation(selectedCourse));
-      myEnableCourseViewAsEducator.apply(!EduNames.PYCHARM.equals(selectedCourse.getCourseType()));
+      myEnableCourseViewAsEducator.apply(ApplicationManager.getApplication().isInternal() ||
+                                         !(selectedCourse instanceof StepikCourse) && !(selectedCourse instanceof CheckiOCourse));
     }
     doValidation(selectedCourse);
   }
