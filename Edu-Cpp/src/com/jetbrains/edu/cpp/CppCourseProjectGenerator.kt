@@ -2,20 +2,33 @@ package com.jetbrains.edu.cpp
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cidr.cpp.toolchains.CMake
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cmake.CMakeListsFileType
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import java.io.File
 
 class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   CourseProjectGenerator<CppProjectSettings>(builder, course) {
+
+  override fun beforeProjectGenerated(): Boolean {
+    val isDone = super.beforeProjectGenerated()
+
+    if (isDone) {
+      addCMakeListsToEachTaskInCourse()
+    }
+    return isDone
+  }
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
     if (baseDir.findChild(CMAKELISTS_FILE_NAME) != null) return
@@ -32,33 +45,44 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings) {
     super.afterProjectGenerated(project, projectSettings)
 
+    CMakeWorkspace.getInstance(project).selectProjectDir(VfsUtil.virtualToIoFile(project.courseDir))
+  }
+
+  private fun addCMakeListsToEachTaskInCourse() {
+    for (item in myCourse.items) {
+      if (item is Lesson) {
+        addCMakeListsForEachTaskInLesson(null, item)
+      }
+      else if (item is Section) {
+        item.visitLessons { lesson ->
+          addCMakeListsForEachTaskInLesson(item, lesson)
+          true
+        }
+      }
+    }
+  }
+
+  private fun addCMakeListsForEachTaskInLesson(section: Section?, lesson: Lesson) {
     val toolchain = CPPToolchains.getInstance().defaultToolchain
     val version = CMake.readCMakeVersion(toolchain)
 
-    myCourse.visitLessons { lesson ->
-      for (task in lesson.taskList) {
-        val params = mapOf("CPP_PROJECT_NAME" to getCMakeProjectUniqueName(lesson, task),
-                           "CPP_TOOLCHAIN_VERSION" to version)
-        val template = FileTemplateManager.getDefaultInstance().findInternalTemplate(EDU_CMAKELISTS)
-        val taskDir = task.getDir(project)
-        GeneratorUtils.createChildFile(taskDir!!, CMAKELISTS_FILE_NAME, template.getText(params))
-      }
+    lesson.visitTasks { task, _ ->
+      val params = mapOf("CPP_PROJECT_NAME" to getCMakeProjectUniqueName(section, lesson, task),
+                         "CPP_TOOLCHAIN_VERSION" to version)
+      val template = FileTemplateManager.getDefaultInstance().findInternalTemplate(EDU_CMAKELISTS)
+
+      val cMakeFile = TaskFile()
+      cMakeFile.name = CMAKELISTS_FILE_NAME
+      cMakeFile.setText(StringUtil.notNullize(template.getText(params)))
+      task.addTaskFile(cMakeFile)
       true
     }
-
-    val fileCMake = File(project.basePath)
-    CMakeWorkspace.getInstance(project).selectProjectDir(fileCMake)
   }
 
-
-  private fun getCMakeProjectUniqueName(lesson: Lesson, task: Task): String {
-    val taskName = task.name.replace("[^A-Za-z0-9]".toRegex(), "")
-    val projectName = "${lesson.id}-${taskName}"
-
-    if (lesson.section == null) {
-      return projectName
-    }
-    return "${lesson.parent.id}-$projectName"
+  private fun getCMakeProjectUniqueName(section: Section?, lesson: Lesson, task: Task): String {
+    val projectName = "lesson${lesson.index}-task${task.index}"
+    if (section == null) return projectName
+    return "section${section.index}-$projectName"
   }
 
   companion object {
