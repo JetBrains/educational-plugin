@@ -41,9 +41,9 @@ import java.util.List;
 public class CoursePanel extends JPanel {
   private static final String ourNotVerifiedNote = "\n\nNote: This course has not been verified by the JetBrains team. " +
                                                    "If you want to join it, keep in mind we are not responsible for the content provided. " +
-                                                   "If you are the owner of the course and you want it to be listed as " +
-                                                   "a featured course, please <a href=\"mailto:academy@jetbrains.com\">get in touch with us</a> " +
-                                                   "and we would be glad to verify this with you.";
+                                                   "If you are the owner of the course and you want it to be " +
+                                                   "featured, please <a href=\"mailto:academy@jetbrains.com\">get in touch with us</a> " +
+                                                   "and we would be glad to verify it with you.";
 
   private static final int HORIZONTAL_MARGIN = 10;
   private static final int LARGE_HORIZONTAL_MARGIN = 15;
