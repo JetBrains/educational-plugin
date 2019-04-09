@@ -323,7 +323,7 @@ task copyXmls(type: Copy) {
 
 jar.dependsOn(copyXmls)
 
-task removeIncompatiblePyCharmPlugins(type: Delete) {
+task removeIncompatiblePlugins(type: Delete) {
     doLast {
         deletePlugin(pycharmSandbox, "python-ce")
         deletePlugin(clionSandbox, "python-ce")
@@ -335,8 +335,9 @@ def deletePlugin(String sandboxPath, String pluginName) {
     file(sandboxPath + File.separator + "plugins" + File.separator + pluginName).deleteDir()    
 }
 
-// we need this so as not to install python and Scala plugins on PyCharm
-prepareSandbox.finalizedBy(removeIncompatiblePyCharmPlugins)
+// we need this so as not to install incompatible plugins.
+// for example, python and Scala plugins on PyCharm
+prepareSandbox.finalizedBy(removeIncompatiblePlugins)
 
 subprojects {
     sourceSets {
