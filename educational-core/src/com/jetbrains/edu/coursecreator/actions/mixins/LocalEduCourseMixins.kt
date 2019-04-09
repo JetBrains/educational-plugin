@@ -71,7 +71,7 @@ abstract class LocalEduCourseMixin {
 
   @JsonProperty(ENVIRONMENT)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
-  private var myEnvironment = ""
+  lateinit var myEnvironment: String
 
   @JsonProperty(COURSE_TYPE)
   fun getItemType(): String {

@@ -16,7 +16,7 @@ import javax.swing.Icon
 
 val Course.configurator: EduConfigurator<*>? get() {
   val language = languageById ?: return null
-  return EduConfiguratorManager.forTypeEnvironmentLanguage(itemType, environment, language)
+  return EduConfiguratorManager.findConfigurator(itemType, environment, language)
 }
 
 val Course.sourceDir: String? get() = configurator?.sourceDir

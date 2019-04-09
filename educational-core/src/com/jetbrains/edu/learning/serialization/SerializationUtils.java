@@ -126,6 +126,7 @@ public class SerializationUtils {
     public static final String STEPIK_USER = "StepikUser";
     public static final String COURSE_TYPE = "courseType";
     public static final String FILES = "files";
+    public static final String STEP_ID = "stepId";
 
     private Xml() {
     }

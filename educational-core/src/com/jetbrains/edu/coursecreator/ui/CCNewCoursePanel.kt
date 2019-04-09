@@ -196,8 +196,8 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       }
     }
 
-    val configurator = EduConfiguratorManager.forTypeEnvironmentLanguage(courseData.courseType, courseData.environment,
-                                                                         courseData.language) ?: return
+    val configurator = EduConfiguratorManager.findConfigurator(courseData.courseType, courseData.environment,
+                                                               courseData.language) ?: return
     myCourse.language = courseData.language.id
     myCourse.environment = courseData.environment
     myLanguageSettings = configurator.courseBuilder.languageSettings
@@ -212,7 +212,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
   }
 
   private fun collectCoursesData(course: Course?) {
-    val courseTypeData = if (course != null) {
+    val courseData = if (course != null) {
       listOfNotNull(obtainCourseData(course.languageID, course.environment, course.itemType))
     }
     else {
@@ -220,11 +220,11 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
         .filter { it.instance.isCourseCreatorEnabled }
         .mapNotNull { extension -> obtainCourseData(extension.language, extension.environment, extension.courseType) }
     }
-    courseTypeData
+    courseData
       .sortedBy { it.displayName }
       .forEach { myCourseDataComboBox.addItem(it) }
 
-    val defaultCourseType = getDefaultCourseType(courseTypeData)
+    val defaultCourseType = getDefaultCourseType(courseData)
     if (defaultCourseType != null) {
       myCourseDataComboBox.selectedItem = defaultCourseType
     }
@@ -237,7 +237,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       return null
     }
     return CourseData(language, courseType, environment,
-                      EduConfiguratorManager.forTypeEnvironmentLanguage(courseType, environment, language)?.logo)
+                      EduConfiguratorManager.findConfigurator(courseType, environment, language)?.logo)
   }
 
   companion object {
@@ -248,11 +248,11 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     fun onInputDataValidated(isInputDataComplete: Boolean)
   }
 
-  private data class CourseData(val language: Language, val courseType: String, val environment: String, val icon: Icon?) {
+  data class CourseData(val language: Language, val courseType: String, val environment: String, val icon: Icon?) {
     val displayName
       get(): String {
         return when (courseType) {
-          EduNames.PYCHARM -> if (environment.isBlank()) language.displayName else "${language.displayName} $environment"
+          EduNames.PYCHARM -> if (environment == EduNames.DEFAULT_ENVIRONMENT) language.displayName else "${language.displayName} $environment"
           else -> "$courseType ${language.displayName}"
         }
       }

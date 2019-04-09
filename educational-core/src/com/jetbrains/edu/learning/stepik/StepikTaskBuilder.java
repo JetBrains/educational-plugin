@@ -99,7 +99,7 @@ public class StepikTaskBuilder {
     myUserId = userId;
     myLanguage = language;
     myLesson = lesson;
-    myConfigurator = EduConfiguratorManager.forTypeEnvironmentLanguage(EduNames.PYCHARM, "", myLanguage);
+    myConfigurator = EduConfiguratorManager.findConfigurator(EduNames.PYCHARM, EduNames.DEFAULT_ENVIRONMENT, myLanguage);
     if (myConfigurator == null) {
       LOG.warn("Cannot get configurator for a language: " + myLanguage);
     }

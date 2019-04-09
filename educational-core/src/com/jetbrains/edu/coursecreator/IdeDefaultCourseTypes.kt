@@ -6,7 +6,7 @@ import com.jetbrains.edu.coursecreator.ui.CCNewCoursePanel
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 
-fun getDefaultCourseType(courses: List<CCNewCoursePanel.CourseTypeData>) = courses.find {
+fun getDefaultCourseType(courses: List<CCNewCoursePanel.CourseData>) = courses.find {
   it.language == Language.findLanguageByID(getDefaultLanguageId())
 }
 

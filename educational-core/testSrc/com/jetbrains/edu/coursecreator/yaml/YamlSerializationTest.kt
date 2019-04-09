@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.intellij.openapi.application.Experiments
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
@@ -241,6 +242,23 @@ class YamlSerializationTest : EduTestCase() {
     |type: edu
     |feedback_link: example.com
     |""".trimMargin("|"))
+  }
+
+  fun `test course with environment`() {
+    val course = course(courseMode = CCUtils.COURSE_MODE, environment = EduNames.ANDROID) {
+      lesson {
+        eduTask { }
+      }
+    }
+    doTest(course, """
+      |title: Test Course
+      |language: English
+      |programming_language: Plain text
+      |environment: Android
+      |content:
+      |- lesson1
+      |
+    """.trimMargin("|"))
   }
 
   private fun doTest(item: StudyItem, expected: String) {

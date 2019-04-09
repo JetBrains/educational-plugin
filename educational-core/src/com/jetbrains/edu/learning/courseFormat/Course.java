@@ -39,7 +39,7 @@ public abstract class Course extends LessonContainer {
   // we use it to set StepikChangeStatus for zip-courses during generation
   // plan to use to change appearance of these courses in courses panel
   private boolean myIsFromZip = false;
-  private String myEnvironment = "";
+  @NotNull private String myEnvironment = EduNames.DEFAULT_ENVIRONMENT;
   protected String courseMode = EduNames.STUDY; //this field is used to distinguish study and course creator modes
 
   protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
@@ -118,11 +118,12 @@ public abstract class Course extends LessonContainer {
     myIsFromZip = fromZip;
   }
 
+  @NotNull
   public String getEnvironment() {
     return myEnvironment;
   }
 
-  public void setEnvironment(String environment) {
+  public void setEnvironment(@NotNull String environment) {
     myEnvironment = environment;
   }
 

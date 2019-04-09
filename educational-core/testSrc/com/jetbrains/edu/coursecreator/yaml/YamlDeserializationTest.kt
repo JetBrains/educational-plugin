@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.application.Experiments
 import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
@@ -14,6 +15,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import junit.framework.TestCase
 
 
 class YamlDeserializationTest : EduTestCase() {
@@ -44,8 +46,25 @@ class YamlDeserializationTest : EduTestCase() {
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
     assertNotNull(course.description)
+    assertEquals(EduNames.DEFAULT_ENVIRONMENT, course.environment)
     assertTrue(course is EduCourse)
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
+  }
+
+  fun `test course with environment`() {
+    val environment = EduNames.ANDROID
+    val yamlContent = """
+      |title: Test Course
+      |language: English
+      |programming_language: Plain text
+      |summary: |-
+      |  This is a course about string theory.
+      |environment: $environment
+      |content:
+      |- lesson1
+      |""".trimMargin("|")
+    val course = YamlDeserializer.deserialize(yamlContent, Course::class.java)
+    assertEquals(environment, course.environment)
   }
 
   fun `test coursera course`() {

@@ -42,6 +42,8 @@ public class EduNames {
   public static final String COURSE_META_FILE = "course.json";
   public static final String ADDITIONAL_MATERIALS = "Edu additional materials";
 
+  public static final String DEFAULT_ENVIRONMENT = "";
+
   // Used as course type only
   public static final String PYCHARM = "PyCharm";
   public static final String ANDROID = "Android";

@@ -10,7 +10,7 @@ object EduConfiguratorManager {
    * Returns any enabled [EduConfigurator] for given language, courseType and environment
    */
   @JvmStatic
-  fun forTypeEnvironmentLanguage(courseType: String, environment: String, language: Language): EduConfigurator<out Any>? =
+  fun findConfigurator(courseType: String, environment: String, language: Language): EduConfigurator<out Any>? =
     allExtensions().find { extension -> extension.language == language.id &&
                                         extension.courseType == courseType &&
                                         extension.environment == environment}?.instance

@@ -66,7 +66,7 @@ open class ImportLocalCourseAction(text: String = "Import Local Course") : DumbA
       val environment = course.environment
       val type = when (environment) {
         EduNames.ANDROID -> environment
-        "" -> course.languageById?.displayName
+        EduNames.DEFAULT_ENVIRONMENT -> course.languageById?.displayName
         else -> null
       }
       val message = if (type != null) {
