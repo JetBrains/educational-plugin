@@ -179,6 +179,8 @@ allprojects {
         } else {
             version = baseVersion
         }
+        
+        buildSearchableOptions.enabled = findProperty("enableBuildSearchableOptions") != "false"
     }
 
     compileKotlin {
