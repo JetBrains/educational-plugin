@@ -12,6 +12,8 @@ import com.intellij.util.DocumentUtil;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency;
+import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog.DependencyInfo;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,6 +66,11 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     }
     answerPlaceholder.setPlaceholderText(answerPlaceholderText);
     answerPlaceholder.setLength(possibleAnswer.length());
+    final DependencyInfo dependencyInfo = dlg.getDependencyInfo();
+    if (dependencyInfo != null) {
+      answerPlaceholder.setPlaceholderDependency(
+        AnswerPlaceholderDependency.create(answerPlaceholder, dependencyInfo.getDependencyPath(), dependencyInfo.isVisible()));
+    }
 
     if (!model.hasSelection()) {
       DocumentUtil.writeInRunUndoTransparentAction(() -> document.insertString(offset, defaultPlaceholderText));
@@ -138,6 +145,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
   protected CCCreateAnswerPlaceholderDialog createDialog(Project project, AnswerPlaceholder answerPlaceholder) {
     String answerPlaceholderText = StringUtil.notNullize(answerPlaceholder.getPlaceholderText());
-    return new CCCreateAnswerPlaceholderDialog(project, answerPlaceholderText.isEmpty() ? "type here" : answerPlaceholderText, false);
+    return new CCCreateAnswerPlaceholderDialog(project, answerPlaceholderText.isEmpty() ? "type here" : answerPlaceholderText, false,
+                                               answerPlaceholder);
   }
 }

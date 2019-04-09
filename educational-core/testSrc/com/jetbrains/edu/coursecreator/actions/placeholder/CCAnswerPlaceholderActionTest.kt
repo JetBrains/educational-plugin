@@ -54,7 +54,7 @@ class CCAnswerPlaceholderActionTest : CCTestCase() {
   private class CCTestAction : CCAddAnswerPlaceholder() {
     override fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
       val placeholderText = answerPlaceholder.placeholderText
-      return object : CCCreateAnswerPlaceholderDialog(project, placeholderText ?: "type here", false) {
+      return object : CCCreateAnswerPlaceholderDialog(project, placeholderText ?: "type here", false, answerPlaceholder) {
         override fun showAndGet(): Boolean = true
         override fun getTaskText(): String = "type here"
       }

@@ -7,6 +7,8 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency;
+import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog.DependencyInfo;
 import org.jetbrains.annotations.NotNull;
 
 public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
@@ -30,11 +32,17 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
   }
 
   public static void performEditPlaceholder(@NotNull Project project, @NotNull AnswerPlaceholder answerPlaceholder) {
-    CCCreateAnswerPlaceholderDialog dlg = new CCCreateAnswerPlaceholderDialog(project, answerPlaceholder.getPlaceholderText(), true);
+    CCCreateAnswerPlaceholderDialog dlg =
+      new CCCreateAnswerPlaceholderDialog(project, answerPlaceholder.getPlaceholderText(), true, answerPlaceholder);
 
     if (dlg.showAndGet()) {
       final String answerPlaceholderText = dlg.getTaskText();
       answerPlaceholder.setPlaceholderText(answerPlaceholderText);
+      final DependencyInfo dependencyInfo = dlg.getDependencyInfo();
+      if (dependencyInfo != null) {
+        answerPlaceholder.setPlaceholderDependency(
+          AnswerPlaceholderDependency.create(answerPlaceholder, dependencyInfo.getDependencyPath(), dependencyInfo.isVisible()));
+      }
       YamlFormatSynchronizer.saveItem(answerPlaceholder.getTaskFile().getTask());
     }
   }

@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import java.awt.BorderLayout
@@ -11,8 +12,9 @@ import javax.swing.*
 
 class CCAddAnswerPlaceholderPanel(placeholderText: String) : JPanel() {
   private val HELP_TEXT = "Placeholder is shown to a student in place of selected code"
-
+  private val panel: JPanel
   private val textArea: JTextArea = JTextArea(placeholderText, 3, 1)
+
   init {
     layout = BorderLayout()
 
@@ -30,8 +32,12 @@ class CCAddAnswerPlaceholderPanel(placeholderText: String) : JPanel() {
 
     val scrollPane = JBScrollPane(textArea)
     scrollPane.border = null
-    add(scrollPane, BorderLayout.CENTER)
-    add(label, BorderLayout.SOUTH)
+
+    panel = panel {
+      row { scrollPane() }
+      row { label() }
+    }
+    add(panel, BorderLayout.NORTH)
   }
 
   fun getAnswerPlaceholderText(): String {
@@ -41,5 +47,4 @@ class CCAddAnswerPlaceholderPanel(placeholderText: String) : JPanel() {
   fun getPreferredFocusedComponent(): JComponent {
     return textArea
   }
-
 }
