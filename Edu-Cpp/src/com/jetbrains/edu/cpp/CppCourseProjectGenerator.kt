@@ -9,6 +9,7 @@ import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cidr.cpp.toolchains.CMake
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cmake.CMakeListsFileType
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -31,15 +32,8 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   }
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
-    if (baseDir.findChild(CMAKELISTS_FILE_NAME) != null) return
-
-    val toolchain = CPPToolchains.getInstance().defaultToolchain
-    val version = CMake.readCMakeVersion(toolchain)
-
-    val params = mapOf("CPP_TOOLCHAIN_VERSION" to version,
-                       "PROJECT_NAME" to baseDir.name)
-    val template = FileTemplateManager.getDefaultInstance().findInternalTemplate(EDU_MAIN_CMAKELISTS)
-    GeneratorUtils.createChildFile(baseDir, CMAKELISTS_FILE_NAME, template.getText(params))
+    if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
+    GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME, getFileTemplateTextWithParams(EDU_MAIN_CMAKELISTS, baseDir.name))
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings) {
@@ -63,31 +57,35 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   }
 
   private fun addCMakeListsForEachTaskInLesson(section: Section?, lesson: Lesson) {
-    val toolchain = CPPToolchains.getInstance().defaultToolchain
-    val version = CMake.readCMakeVersion(toolchain)
-
     lesson.visitTasks { task, _ ->
-      val params = mapOf("CPP_PROJECT_NAME" to getCMakeProjectUniqueName(section, lesson, task),
-                         "CPP_TOOLCHAIN_VERSION" to version)
-      val template = FileTemplateManager.getDefaultInstance().findInternalTemplate(EDU_CMAKELISTS)
-
       val cMakeFile = TaskFile()
-      cMakeFile.name = CMAKELISTS_FILE_NAME
-      cMakeFile.setText(StringUtil.notNullize(template.getText(params)))
+      cMakeFile.name = CMakeListsFileType.FILE_NAME
+      cMakeFile.setText(StringUtil.notNullize(
+        getFileTemplateTextWithParams(EDU_CMAKELISTS, getCMakeProjectUniqueName(section, lesson, task))))
       task.addTaskFile(cMakeFile)
       true
     }
   }
 
   private fun getCMakeProjectUniqueName(section: Section?, lesson: Lesson, task: Task): String {
-    val projectName = "lesson${lesson.index}-task${task.index}"
+    val projectName = "${EduNames.LESSON}${lesson.index}-${EduNames.TASK}${task.index}"
     if (section == null) return projectName
-    return "section${section.index}-$projectName"
+    return "${EduNames.SECTION}${section.index}-$projectName"
+  }
+
+  private fun getFileTemplateTextWithParams(templateName: String, cppProjectName: String): String {
+    val toolchain = CPPToolchains.getInstance().defaultToolchain
+    val version = CMake.readCMakeVersion(toolchain)
+
+    val params = mapOf(PROJECT_NAME to cppProjectName,
+                       CPP_TOOLCHAIN_VERSION to version)
+    return FileTemplateManager.getDefaultInstance().findInternalTemplate(templateName).getText(params)
   }
 
   companion object {
     private const val EDU_MAIN_CMAKELISTS = "EduMainCMakeLists.txt"
     private const val EDU_CMAKELISTS = "EduCMakeLists.txt"
-    private const val CMAKELISTS_FILE_NAME = CMakeListsFileType.FILE_NAME
+    private const val PROJECT_NAME = "PROJECT_NAME"
+    private const val CPP_TOOLCHAIN_VERSION = "CPP_TOOLCHAIN_VERSION"
   }
 }

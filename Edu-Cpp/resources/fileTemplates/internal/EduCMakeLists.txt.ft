@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION ${CPP_TOOLCHAIN_VERSION})
-project(${CPP_PROJECT_NAME})
+project(${PROJECT_NAME})
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(${CPP_PROJECT_NAME} src/task.cpp)
+add_executable(${PROJECT_NAME} src/task.cpp)
