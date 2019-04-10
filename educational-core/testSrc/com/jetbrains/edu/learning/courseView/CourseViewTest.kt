@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.actions.ResetCourseAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewPane
@@ -72,30 +71,6 @@ class CourseViewTest : CourseViewTestBase() {
                     "   +TaskNode task1\n" +
                     "   -TaskNode task2\n" +
                     "    taskFile2.txt\n" +
-                    "   +TaskNode task3\n" +
-                    "   +TaskNode task4\n"
-    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
-  }
-
-  fun testCollapseAfterResetCourse() {
-    createStudyCourse()
-    val course = StudyTaskManager.getInstance(project).course
-    course?.asRemote()?.courseMode = EduNames.STUDY
-    configureByTaskFile(1, 2, "taskFile2.txt")
-    val projectView = ProjectView.getInstance(project)
-    projectView.changeView(CourseViewPane.ID)
-    val fileName = "lesson1/task2/taskFile2.txt"
-    val taskFile = myFixture.findFileInTempDir(fileName)
-    val action = ResetCourseAction()
-    launchAction(taskFile, action)
-    val pane = projectView.currentProjectViewPane
-    waitWhileBusy(pane.tree)
-    val structure = "-Project\n" +
-                    " -CourseNode Edu test course  0/4\n" +
-                    "  -LessonNode lesson1\n" +
-                    "   -TaskNode task1\n" +
-                    "    taskFile1.txt\n" +
-                    "   +TaskNode task2\n" +
                     "   +TaskNode task3\n" +
                     "   +TaskNode task4\n"
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)

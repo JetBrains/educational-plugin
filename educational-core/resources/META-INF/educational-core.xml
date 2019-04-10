@@ -92,10 +92,6 @@
             text="Switch Task Description Panel">
     </action>
 
-    <action id="Educational.ResetCourse" popup="true" class="com.jetbrains.edu.learning.actions.ResetCourseAction">
-      <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
-    </action>
-
     <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.BrowseCoursesAction"/>
 
     <action id="Educational.LearnAndTeach" class="com.jetbrains.edu.learning.newproject.LearnAndTeachAction">

@@ -75,7 +75,7 @@ public class SyncCourseAction extends DumbAwareAction {
     }
 
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course instanceof EduCourse && ((EduCourse)course).isRemote() && ((EduCourse)course).isLoadSolutions()) {
+    if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
       return true;
     }
     return false;

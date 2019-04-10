@@ -27,9 +27,6 @@ public class EduCourse extends Course {
   boolean isPublic;
   @Transient private String myAdminsGroup;
 
-  // Not published to stepik:
-  private boolean myLoadSolutions = true; // disabled for reset courses
-
   public String getType() {
     return myType;
   }
@@ -103,14 +100,6 @@ public class EduCourse extends Course {
     this.isPublic = isPublic;
   }
 
-  public boolean isLoadSolutions() {
-    return myLoadSolutions;
-  }
-
-  public void setLoadSolutions(boolean myLoadSolutions) {
-    this.myLoadSolutions = myLoadSolutions;
-  }
-
   public boolean isCompatible() {
     return isCompatible;
   }
@@ -175,6 +164,5 @@ public class EduCourse extends Course {
     sectionIds = new ArrayList<>();
     instructors = new ArrayList<>();
     myType = String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
-    myLoadSolutions = true;
   }
 }
