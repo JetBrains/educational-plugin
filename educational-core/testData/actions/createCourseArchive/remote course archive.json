@@ -6,6 +6,7 @@
     {
       "id" : 1,
       "title" : "lesson1",
+      "update_date" : "Jan 01, 1970 03:00:00 AM",
       "task_list" : [
         {
           "name" : "task1",
@@ -27,7 +28,6 @@
           "task_type" : "edu"
         }
       ],
-      "update_date" : "Jan 01, 1970 03:00:00 AM",
       "unit_id" : 0,
       "type" : "lesson"
     }
