@@ -56,6 +56,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
 
     //need this because opening file with FileEditorManager#open doesn't set fixture's selected editor
     myFixture.openFileInEditor(findTaskDescriptionFile())
+    myFixture.editor.caretModel.moveToOffset(0)
     myFixture.type("Do not ")
 
     assertEquals("Do not solve task", findTask(0, 0).descriptionText)
