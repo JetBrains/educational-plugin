@@ -24,7 +24,7 @@ public class PyEduInspectionExtension extends PyInspectionExtension {
       return false;
     }
     TaskFile taskFile = EduUtils.getTaskFile(project, file.getVirtualFile());
-    if (taskFile == null || taskFile.isUserCreated() || taskFile.isHighlightErrors()) {
+    if (taskFile == null || taskFile.isHighlightErrors()) {
       return false;
     }
     if (PsiTreeUtil.getParentOfType(element, PyImportStatementBase.class) != null) {

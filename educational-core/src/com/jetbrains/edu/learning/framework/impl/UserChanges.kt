@@ -154,7 +154,6 @@ sealed class Change {
 
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
       val taskFile = TaskFile(path, text)
-      taskFile.isUserCreated = true
       task.addTaskFile(taskFile)
     }
 

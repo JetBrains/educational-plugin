@@ -20,7 +20,6 @@ import java.util.List;
 
 public class TaskFile {
   private String myName;
-  private boolean myUserCreated = false;
   private boolean myTrackChanges = true;
   private boolean myTrackLengths = true;
   private boolean myHighlightErrors = false;
@@ -109,14 +108,6 @@ public class TaskFile {
     }
     target.setName(source.getName());
     target.setAnswerPlaceholders(answerPlaceholdersCopy);
-  }
-
-  public void setUserCreated(boolean userCreated) {
-    myUserCreated = userCreated;
-  }
-
-  public boolean isUserCreated() {
-    return myUserCreated;
   }
 
   public boolean isTrackChanges() {

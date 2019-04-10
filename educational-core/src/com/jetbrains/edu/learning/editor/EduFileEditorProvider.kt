@@ -22,7 +22,7 @@ class EduFileEditorProvider : FileEditorProvider, DumbAware {
 
   override fun accept(project: Project, file: VirtualFile): Boolean {
     val taskFile = EduUtils.getTaskFile(project, file)
-    return taskFile != null && !taskFile.isUserCreated && TextEditorProvider.isTextFile(file)
+    return taskFile != null && TextEditorProvider.isTextFile(file)
   }
 
   override fun createEditor(project: Project, file: VirtualFile): FileEditor {
