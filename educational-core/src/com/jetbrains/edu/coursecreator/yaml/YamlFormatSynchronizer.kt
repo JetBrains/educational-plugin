@@ -21,6 +21,10 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.LESSON_CONFIG
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_LESSON_CONFIG
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.TASK_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.format.*
@@ -157,6 +161,15 @@ object YamlFormatSynchronizer {
       is Section -> SECTION_CONFIG
       is Lesson -> LESSON_CONFIG
       is Task -> TASK_CONFIG
+      else -> error("Unknown StudyItem type: ${javaClass.simpleName}")
+    }
+
+  private val StudyItem.remoteConfigFileName: String
+    get() = when (this) {
+      is Course -> REMOTE_COURSE_CONFIG
+      is Section -> REMOTE_SECTION_CONFIG
+      is Lesson -> REMOTE_LESSON_CONFIG
+      is Task -> REMOTE_TASK_CONFIG
       else -> error("Unknown StudyItem type: ${javaClass.simpleName}")
     }
 
