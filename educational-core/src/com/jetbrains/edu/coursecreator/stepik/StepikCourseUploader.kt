@@ -52,7 +52,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
 
       // TODO: after merging changes about isUpToDateExtension, inline this in course#setUpdated
       // fix for the case when we deleted section that was changed the last
-      course.updateDate = lastUpdateDate
+      course.updateDate = course.lastUpdateDate()
       course.setStatusRecursively(StepikChangeStatus.UP_TO_DATE)
       EduUtils.showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.id))
     }

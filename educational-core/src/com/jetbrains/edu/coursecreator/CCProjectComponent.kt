@@ -101,8 +101,7 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
 
 private fun loadCourseRecursively(project: Project): Course {
   val projectDir = project.courseDir
-  val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error(
-    "Cannot load course. Config file '${YamlFormatSettings.COURSE_CONFIG}' not found.")
+  val courseConfig = projectDir.findChild(COURSE_CONFIG) ?: error("Cannot load course. Config file '${COURSE_CONFIG}' not found.")
 
   val deserializedCourse = YamlDeserializer.deserialize(VfsUtil.loadText(courseConfig), Course::class.java)
   deserializedCourse.courseMode = if (EduUtils.isStudentProject(project)) EduNames.STUDY else CCUtils.COURSE_MODE
