@@ -1,8 +1,8 @@
 package com.jetbrains.edu.cpp
 
+import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
@@ -22,6 +22,10 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   CourseProjectGenerator<CppProjectSettings>(builder, course) {
 
+  private val version = CMake.readCMakeVersion(CPPToolchains.getInstance().defaultToolchain)
+  private val taskCMakeListsTemplate = getTemplate(EDU_CMAKELISTS)
+  private val mainCMakeListsTemplate = getTemplate(EDU_MAIN_CMAKELISTS)
+
   override fun beforeProjectGenerated(): Boolean {
     val isDone = super.beforeProjectGenerated()
 
@@ -33,7 +37,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
     if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
-    GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME, getFileTemplateTextWithParams(EDU_MAIN_CMAKELISTS, baseDir.name))
+    GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME, getText(mainCMakeListsTemplate, baseDir.name))
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings) {
@@ -60,8 +64,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     lesson.visitTasks { task, _ ->
       val cMakeFile = TaskFile()
       cMakeFile.name = CMakeListsFileType.FILE_NAME
-      cMakeFile.setText(StringUtil.notNullize(
-        getFileTemplateTextWithParams(EDU_CMAKELISTS, getCMakeProjectUniqueName(section, lesson, task))))
+      cMakeFile.setText(getText(taskCMakeListsTemplate, getCMakeProjectUniqueName(section, lesson, task)))
       task.addTaskFile(cMakeFile)
       true
     }
@@ -73,13 +76,13 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     return "${EduNames.SECTION}${section.index}-$projectName"
   }
 
-  private fun getFileTemplateTextWithParams(templateName: String, cppProjectName: String): String {
-    val toolchain = CPPToolchains.getInstance().defaultToolchain
-    val version = CMake.readCMakeVersion(toolchain)
+  private fun getText(templateName: FileTemplate, cppProjectName: String): String {
+    val params = mapOf(PROJECT_NAME to cppProjectName, CPP_TOOLCHAIN_VERSION to version)
+    return templateName.getText(params)
+  }
 
-    val params = mapOf(PROJECT_NAME to cppProjectName,
-                       CPP_TOOLCHAIN_VERSION to version)
-    return FileTemplateManager.getDefaultInstance().findInternalTemplate(templateName).getText(params)
+  private fun getTemplate(templateName: String): FileTemplate {
+    return FileTemplateManager.getDefaultInstance().findInternalTemplate(templateName)
   }
 
   companion object {
