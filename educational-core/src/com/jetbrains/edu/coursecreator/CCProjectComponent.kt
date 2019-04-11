@@ -91,16 +91,9 @@ private fun loadCourseRecursively(project: Project): Course {
   val projectDir = project.courseDir
   val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error(
     "Cannot load course. Config file '${YamlFormatSettings.COURSE_CONFIG}' not found.")
-  val course = deserializeCourseRecursively(project, courseConfig)
 
-  course.init(null, null, true)
-
-  return course
-}
-
-private fun deserializeCourseRecursively(project: Project, courseConfig: VirtualFile): Course {
   val deserializedCourse = YamlDeserializer.deserialize(VfsUtil.loadText(courseConfig), Course::class.java)
-  deserializedCourse.copyExistingCourseInfo(project)
+  deserializedCourse.courseMode = if (EduUtils.isStudentProject(project)) EduNames.STUDY else CCUtils.COURSE_MODE
   deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items)
 
   deserializedCourse.items.forEach { deserializedItem ->
@@ -122,16 +115,9 @@ private fun deserializeCourseRecursively(project: Project, courseConfig: Virtual
     }
   }
 
+  deserializedCourse.init(null, null, true)
+  deserializedCourse.setDescriptionInfo(project)
   return deserializedCourse
-}
-
-private fun Course.copyExistingCourseInfo(project: Project) {
-  val course = StudyTaskManager.getInstance(project).course
-  course?.let {
-    setDescriptionInfo(project)
-  }
-
-  courseMode = if (EduUtils.isStudentProject(project)) EduNames.STUDY else CCUtils.COURSE_MODE
 }
 
 private fun Course.setDescriptionInfo(project: Project) {
