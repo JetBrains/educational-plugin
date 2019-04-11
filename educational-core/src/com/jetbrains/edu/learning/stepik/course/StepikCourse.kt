@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.util.xmlb.XmlSerializer
+import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.StepikNames
 
@@ -10,7 +11,9 @@ import com.jetbrains.edu.learning.stepik.StepikNames
  * We do not push this kind of courses to the stepik.
  * Stepik courses do not contain pycharm tasks.
  */
-class StepikCourse : EduCourse()
+class StepikCourse : EduCourse() {
+  override fun courseCompatibility(courseInfo: EduCourse) = CourseCompatibility.COMPATIBLE;
+}
 
 fun stepikCourseFromRemote(remoteCourse: EduCourse): StepikCourse? {
   val element = XmlSerializer.serialize(remoteCourse)

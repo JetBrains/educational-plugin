@@ -18,7 +18,7 @@ public class EduCourse extends Course {
   // Fields from stepik:
   private boolean isCompatible = true;
   //course type in format "pycharm<version> <language>"
-  private String myType =
+  protected String myType =
     String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
   // in CC mode is used to store top-level lessons section id
   List<Integer> sectionIds = new ArrayList<>();
@@ -119,7 +119,7 @@ public class EduCourse extends Course {
   }
 
   @NotNull
-  private static CourseCompatibility courseCompatibility(@NotNull EduCourse courseInfo) {
+  protected CourseCompatibility courseCompatibility(@NotNull EduCourse courseInfo) {
     final List<String> supportedLanguages = EduConfiguratorManager.getSupportedEduLanguages();
 
     String courseFormat = courseInfo.getType();
