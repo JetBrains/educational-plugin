@@ -122,13 +122,11 @@ private fun loadCourseRecursively(project: Project): Course {
 
 private fun Course.setDescriptionInfo(project: Project) {
   visitLessons { lesson ->
-    lesson.visitTasks { task, _ ->
-      val taskDescriptionFile = task.findTaskDescriptionFile(project)
-      task.descriptionFormat = taskDescriptionFile.toDescriptionFormat()
-      task.descriptionText = VfsUtil.loadText(taskDescriptionFile)
-      true
+    lesson.visitTasks {
+      val taskDescriptionFile = it.findTaskDescriptionFile(project)
+      it.descriptionFormat = taskDescriptionFile.toDescriptionFormat()
+      it.descriptionText = VfsUtil.loadText(taskDescriptionFile)
     }
-    true
   }
 }
 

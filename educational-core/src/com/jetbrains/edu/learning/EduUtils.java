@@ -653,9 +653,7 @@ public class EduUtils {
       Task task = lesson.getTask(stepId);
       if (task != null) {
         taskRef.set(task);
-        return false;
       }
-      return true;
     });
     return null;
   }

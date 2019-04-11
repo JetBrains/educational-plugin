@@ -94,7 +94,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     final Ref<Integer> countTasks = new Ref<>(0);
     course.visitLessons((lesson) -> {
       countTasks.set(countTasks.get() + lesson.getTaskList().size());
-      return true;
+      return;
     });
     if (countTasks.get() == 5) {
       FeedbackSenderKt.showNotification(false, course, project);

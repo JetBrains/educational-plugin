@@ -128,8 +128,6 @@ public class EduProjectComponent implements ProjectComponent {
           }
         }
       }
-
-      return true;
     });
 
     if (hasPlaceholderHints.get()) {

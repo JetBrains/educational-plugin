@@ -15,7 +15,6 @@ object ProgressUtil {
     course.visitLessons { lesson ->
       taskNum += lesson.taskListForProgress.size
       taskSolved += getSolvedTasks(lesson)
-      true
     }
     return Pair(taskSolved, taskNum)
   }

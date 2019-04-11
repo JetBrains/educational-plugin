@@ -72,12 +72,10 @@ object YamlFormatSynchronizer {
     saveItem(course)
     course.visitSections { section -> saveItem(section) }
     course.visitLessons { lesson ->
-      lesson.visitTasks { task, _ ->
-        saveItem(task)
-        true
+      lesson.visitTasks {
+        saveItem(it)
       }
       saveItem(lesson)
-      true
     }
   }
 
@@ -168,11 +166,9 @@ object YamlFormatSynchronizer {
 
     course.visitLessons { lesson ->
       configFiles.add(getConfigFile(project, lesson, LESSON_CONFIG))
-      lesson.visitTasks { task, _ ->
-        configFiles.add(getConfigFile(project, task, TASK_CONFIG))
-        true
+      lesson.visitTasks {
+        configFiles.add(getConfigFile(project, it, TASK_CONFIG))
       }
-      true
     }
 
     course.visitSections { configFiles.add(getConfigFile(project, it, SECTION_CONFIG)) }

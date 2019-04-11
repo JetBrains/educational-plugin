@@ -6,11 +6,11 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
+import com.jetbrains.edu.learning.courseFormat.visitors.TaskVisitor;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -164,13 +164,8 @@ public class Lesson extends ItemContainer {
   }
 
   public void visitTasks(@NotNull TaskVisitor visitor) {
-    int index = 1;
     for (Task task : getTaskList()) {
-      boolean visitNext = visitor.visit(task, index);
-      if (!visitNext) {
-        return;
-      }
-      index++;
+      visitor.visit(task);
     }
   }
 }

@@ -63,15 +63,14 @@ class LessonChangeApplier<T : Lesson>(val project: Project) : StudyItemChangeApp
   private fun updateLessonChildren(project: Project,
                                    existingLesson: Lesson,
                                    deserializedLesson: Lesson) {
-    deserializedLesson.visitTasks { titledTask, _ ->
-      val existingTask = existingLesson.getTask(titledTask.name)
+    deserializedLesson.visitTasks {
+      val existingTask = existingLesson.getTask(it.name)
       if (existingTask != null) {
-        existingTask.index = titledTask.index
+        existingTask.index = it.index
       }
       else {
-        existingLesson.addAsNewTask(project, titledTask)
+        existingLesson.addAsNewTask(project, it)
       }
-      true
     }
   }
 

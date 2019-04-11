@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat;
 
+import com.jetbrains.edu.learning.courseFormat.visitors.LessonVisitor;
+import com.jetbrains.edu.learning.courseFormat.visitors.SectionVisitor;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,17 +42,11 @@ public abstract class LessonContainer extends ItemContainer {
   public void visitLessons(@NotNull LessonVisitor visitor) {
     for (StudyItem item : items) {
       if (item instanceof Lesson) {
-        final boolean visitNext = visitor.visit((Lesson)item);
-        if (!visitNext) {
-          return;
-        }
+        visitor.visit((Lesson)item);
       }
       else if (item instanceof Section) {
         for (Lesson lesson : ((Section)item).getLessons()) {
-          final boolean visitNext = visitor.visit(lesson);
-          if (!visitNext) {
-            return;
-          }
+          visitor.visit(lesson);
         }
       }
     }

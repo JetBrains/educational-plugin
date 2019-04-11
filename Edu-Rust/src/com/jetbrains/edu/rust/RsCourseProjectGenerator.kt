@@ -16,12 +16,11 @@ class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
         project.rustSettings.modify {
             it.toolchain = projectSettings.toolchain
         }
-        myCourse.visitLessons { lesson ->
-            for (task in lesson.taskList) {
+        myCourse.visitLessons {
+            for (task in it.taskList) {
                 val manifestFile = task.getTaskDir(project)?.findChild(CargoConstants.MANIFEST_FILE) ?: continue
                 project.cargoProjects.attachCargoProject(manifestFile.pathAsPath)
             }
-            true
         }
     }
 }

@@ -59,13 +59,12 @@ class CourseArchiveCreator(
   private fun loadActualTexts(courseCopy: Course) {
     courseCopy.visitLessons { lesson ->
       val lessonDir = lesson.getLessonDir(project)
-      if (lessonDir == null) return@visitLessons true
+      if (lessonDir == null) return@visitLessons
       for (task in lesson.taskList) {
         val taskDir = task.getTaskDir(project) ?: continue
         convertToStudentTaskFiles(task, taskDir)
         addDescriptions(task)
       }
-      true
     }
   }
 

@@ -55,9 +55,8 @@ fun setCourseLanguage(info: EduCourse) {
 }
 
 fun setStatusRecursively(course: Course, status: StepikChangeStatus) {
-  course.visitLessons { lesson ->
-    setLessonStatus(lesson, status)
-    true
+  course.visitLessons {
+    setLessonStatus(it, status)
   }
   for (section in course.sections) {
     section.stepikChangeStatus = status

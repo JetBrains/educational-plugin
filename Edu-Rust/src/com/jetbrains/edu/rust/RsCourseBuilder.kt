@@ -57,7 +57,6 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
                     toAttach.add(manifestFile.pathAsPath)
                 }
             }
-            true
         }
 
 

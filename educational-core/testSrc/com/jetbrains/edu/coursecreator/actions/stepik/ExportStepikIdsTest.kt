@@ -111,7 +111,6 @@ class ExportStepikIdsTest : EduTestCase() {
       for (task in lesson.taskList) {
         task.id = 10 * lesson.id + task.index
       }
-      true
     }
   }
 }
