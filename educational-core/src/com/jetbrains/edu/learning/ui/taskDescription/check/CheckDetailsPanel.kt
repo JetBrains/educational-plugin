@@ -9,12 +9,15 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.BrowserHyperlinkListener
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -35,23 +38,23 @@ import kotlinx.css.body
 import java.awt.BorderLayout
 import javax.swing.*
 
+private const val MAX_MESSAGE_LENGTH = 400
+private const val MAX_EXPECTED_ACTUAL_LENGTH = 150
+
 class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) : JPanel(BorderLayout()) {
   init {
-    val linksPanel = createLinksPanel(task, checkResult, project)
-    val messagePanel = createMessagePanel(checkResult, project, linksPanel)
+    val linksPanel = createLinksPanel(project, checkResult, task)
+    val messagePanel = createMessagePanel(project, checkResult, linksPanel)
 
     // hack to hide empty border if there are no check details to show
-    isVisible = !messagePanel.plainText().isEmpty() || !linksPanel.components.isEmpty()
+    isVisible = !messagePanel.isEmpty || !linksPanel.components.isEmpty()
     border = JBUI.Borders.empty(20, 0, 0, 0)
     add(messagePanel, BorderLayout.CENTER)
     add(linksPanel, BorderLayout.SOUTH)
   }
 
-  private fun createMessagePanel(checkResult: CheckResult,
-                                 project: Project,
-                                 linksPanel: JPanel): JTextPane {
-    val messagePanel = createTextPane()
-    messagePanel.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
+  private fun createMessagePanel(project: Project, checkResult: CheckResult, linksPanel: JPanel): CheckMessagePanel {
+    val messagePanel = CheckMessagePanel.create(checkResult)
     val details = checkResult.details
     if (details != null) {
       when (checkResult.message) {
@@ -59,36 +62,21 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
         CheckUtils.FAILED_TO_CHECK_MESSAGE -> CheckDetailsView.getInstance(project).showFailedToCheckMessage(details)
       }
     }
-    var message = checkResult.escapedMessage
-    if (message.length > 400) {
-      message = message.substring(0, 400) + "..."
+
+    val expectedActualTextLength = if (checkResult.diff != null) {
+      maxOf(checkResult.diff.actual.length, checkResult.diff.expected.length)
+    } else {
+      0
+    }
+
+    if (checkResult.escapedMessage.length > MAX_MESSAGE_LENGTH || expectedActualTextLength > MAX_EXPECTED_ACTUAL_LENGTH) {
       linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, details ?: checkResult.message)),
                      BorderLayout.NORTH)
     }
-    messagePanel.text = messageWithFontStyle(message)
-    messagePanel.margin.left = JBUI.scale(FOCUS_BORDER_WIDTH)
     return messagePanel
   }
 
-  private fun messageWithFontStyle(message: String): String {
-    val result = message.replace("\n", "<br>")
-    val useMonospacedFont = (message.contains("expected", true) && message.contains("actual", true))
-    return if (useMonospacedFont) {
-      val fontCss = CSSBuilder().apply {
-        body {
-          fontFamily = StyleManager().codeFont
-        }
-      }.toString()
-      "<html><head><style>${fontCss}</style></head><body>${result}</body></html>"
-    }
-    else {
-      result
-    }
-  }
-
-  private fun createLinksPanel(task: Task,
-                               checkResult: CheckResult,
-                               project: Project): JPanel {
+  private fun createLinksPanel(project: Project, checkResult: CheckResult, task: Task): JPanel {
     val linksPanel = JPanel(BorderLayout())
     linksPanel.border = JBUI.Borders.emptyLeft(2)
 
@@ -126,8 +114,6 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     return if (answerHintsPanel.isInitialized()) answerHintsPanel.value else null
   }
 
-  private fun JEditorPane.plainText() = document.getText(0, document.length)
-
   class LightColoredActionLink(text: String, action: AnAction, icon: Icon? = null): ActionLink(text, icon, action) {
     init {
       setNormalColor(JBColor(0x6894C6, 0x5C84C9))
@@ -163,8 +149,73 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       DiffManager.getInstance().showDiff(project, request, DiffDialogHints.FRAME)
     }
   }
+}
+
+private class CheckMessagePanel private constructor(): JPanel() {
+
+  private val messagePane: JTextPane = createTextPane().apply {
+    addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
+  }
+
+  init {
+    layout = BoxLayout(this, BoxLayout.Y_AXIS)
+    border = JBUI.Borders.emptyLeft(FOCUS_BORDER_WIDTH)
+    add(messagePane)
+  }
+
+  val isEmpty: Boolean get() = messagePane.document.getText(0, messagePane.document.length).isEmpty()
+
+  private fun setMessage(message: String) {
+    val displayMessage = if (message.length > MAX_MESSAGE_LENGTH) message.substring(0, MAX_MESSAGE_LENGTH) + "..." else message
+    messagePane.text = displayMessage
+  }
+
+  private fun setDiff(diff: CheckResultDiff) {
+    val expected = createLabeledComponent(diff.expected, "Expected", 16)
+    val actual = createLabeledComponent(diff.actual, "Actual", 8)
+    UIUtil.mergeComponentsWithAnchor(expected, actual)
+
+    add(expected)
+    add(actual)
+  }
+
+  private fun createLabeledComponent(resultText: String, labelText: String, topPadding: Int): LabeledComponent<JComponent> {
+    val text = if (resultText.length > MAX_EXPECTED_ACTUAL_LENGTH) resultText.substring(0, MAX_EXPECTED_ACTUAL_LENGTH) + "..." else resultText
+    val textPane = createTextPane()
+    textPane.text = text.escapeHtmlEntities().monospaced()
+
+    val labeledComponent = LabeledComponent.create<JComponent>(textPane, labelText, BorderLayout.WEST)
+    labeledComponent.label.foreground = UIUtil.getLabelDisabledForeground()
+    labeledComponent.label.verticalAlignment = JLabel.TOP
+    labeledComponent.border = JBUI.Borders.emptyTop(topPadding)
+    return labeledComponent
+  }
 
   companion object {
     private val FOCUS_BORDER_WIDTH = if (SystemInfo.isMac) 3 else if (SystemInfo.isWindows) 0 else 2
+
+    fun create(checkResult: CheckResult): CheckMessagePanel {
+      val messagePanel = CheckMessagePanel()
+      messagePanel.setMessage(checkResult.escapedMessage)
+      if (checkResult.diff != null) {
+        messagePanel.setDiff(checkResult.diff)
+      }
+      return messagePanel
+    }
   }
+}
+
+private fun String.escapeHtmlEntities(): String {
+  return StringUtil.replace(this,
+                            listOf("<", ">", "&", "'", "\"", " ", "\n"),
+                            listOf("&lt;", "&gt;", "&amp;", "&#39;", "&quot;", "&nbsp;", "<br>"))
+}
+
+private fun String.monospaced(): String {
+  val fontCss = CSSBuilder().apply {
+    body {
+      fontFamily = StyleManager().codeFont
+    }
+  }.toString()
+  return "<html><head><style>${fontCss}</style></head><body>${this}</body></html>"
 }
