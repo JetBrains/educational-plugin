@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
@@ -43,7 +44,9 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings) {
     super.afterProjectGenerated(project, projectSettings)
 
-    CMakeWorkspace.getInstance(project).selectProjectDir(VfsUtil.virtualToIoFile(project.courseDir))
+    if (!isUnitTestMode) {
+      CMakeWorkspace.getInstance(project).selectProjectDir(VfsUtil.virtualToIoFile(project.courseDir))
+    }
   }
 
   private fun addCMakeListsToEachTaskInCourse() {
