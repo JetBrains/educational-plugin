@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 open class RemoteInfoChangeApplierBase<T : StudyItem> : StudyItemChangeApplier<T>() {
   override fun applyChanges(existingItem: T, deserializedItem: T) {
     existingItem.id = deserializedItem.id
+    existingItem.updateDate = deserializedItem.updateDate
   }
 }
 
