@@ -9,14 +9,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.command.undo.UndoManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.editor.event.DocumentEvent
-import com.intellij.openapi.editor.event.DocumentListener
+import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -33,8 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 object YamlFormatSynchronizer {
-  private val LOG = Logger.getInstance(YamlFormatSynchronizer.javaClass)
-  private val LOAD_FROM_CONFIG = Key<Boolean>("Edu.loadItem")
+  val LOAD_FROM_CONFIG = Key<Boolean>("Edu.loadItem")
 
   @VisibleForTesting
   val MAPPER: ObjectMapper by lazy {
@@ -103,20 +99,13 @@ object YamlFormatSynchronizer {
     if (YamlFormatSettings.isDisabled()) {
       return
     }
-    val configFiles = getAllConfigFiles(project)
-    for (file in configFiles) {
-      file.addSynchronizationListener(project)
-    }
+    EditorFactory.getInstance().eventMulticaster.addDocumentListener(YamlSynchronizationListener(project), project)
   }
 
   private fun StudyItem.saveConfigDocument(project: Project) {
     val dir = getDir(project) ?: error("Failed to save ${javaClass.simpleName} '$name' to config file: directory not found")
     runUndoTransparentWriteAction {
-      val isNewConfigFile = dir.findChild(configFileName) == null
       val file = dir.findOrCreateChildData(javaClass, configFileName)
-      if (isNewConfigFile) {
-        file.addSynchronizationListener(project)
-      }
       file.putUserData(LOAD_FROM_CONFIG, false)
       file.document?.setText(MAPPER.writeValueAsString(this))
       file.putUserData(LOAD_FROM_CONFIG, true)
@@ -132,20 +121,6 @@ object YamlFormatSynchronizer {
       else -> error("Unknown StudyItem type: ${javaClass.simpleName}")
     }
 
-  private fun VirtualFile.addSynchronizationListener(project: Project) {
-    document?.addDocumentListener(object : DocumentListener {
-      override fun documentChanged(event: DocumentEvent) {
-        val loadFromConfig = getUserData(LOAD_FROM_CONFIG) ?: true
-        if (loadFromConfig) {
-          val configDocument = event.document
-          FileDocumentManager.getInstance().saveDocumentAsIs(configDocument)
-          YamlLoader.loadItem(project, this@addSynchronizationListener)
-          ProjectView.getInstance(project).refresh()
-        }
-      }
-    }, project)
-  }
-
   private val VirtualFile.document: Document?
     get() = FileDocumentManager.getInstance().getDocument(this)
 
@@ -153,32 +128,5 @@ object YamlFormatSynchronizer {
   fun isConfigFile(file: VirtualFile): Boolean {
     val name = file.name
     return COURSE_CONFIG == name || LESSON_CONFIG == name || TASK_CONFIG == name || SECTION_CONFIG == name
-  }
-
-  private fun getAllConfigFiles(project: Project): List<VirtualFile> {
-    val configFiles = mutableListOf<VirtualFile?>()
-    val course = StudyTaskManager.getInstance(project).course ?: error("Accessing to config files in non-edu project")
-
-    configFiles.add(getConfigFile(project, course, COURSE_CONFIG))
-
-    course.visitLessons { lesson ->
-      configFiles.add(getConfigFile(project, lesson, LESSON_CONFIG))
-      lesson.visitTasks {
-        configFiles.add(getConfigFile(project, it, TASK_CONFIG))
-      }
-    }
-
-    course.visitSections { configFiles.add(getConfigFile(project, it, SECTION_CONFIG)) }
-
-    return configFiles.filterNotNull()
-  }
-
-  private fun getConfigFile(project: Project, item: StudyItem, configFileName: String): VirtualFile? {
-    val itemDir = item.getDir(project)
-    itemDir?.findChild(configFileName)?.apply { return this }
-    val warning = if (itemDir == null) "Cannot find directory for a ${item.javaClass.simpleName}: ${item.name}"
-    else "No config file '$configFileName' in '${itemDir.name}'"
-    LOG.warn(warning)
-    return null
   }
 }
