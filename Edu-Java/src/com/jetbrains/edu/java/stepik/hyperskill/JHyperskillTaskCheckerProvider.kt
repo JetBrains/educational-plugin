@@ -3,16 +3,17 @@ package com.jetbrains.edu.java.stepik.hyperskill
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.java.JTaskCheckerProvider
-import com.jetbrains.edu.jvm.gradle.checker.GradleEduTaskChecker
+import com.jetbrains.edu.jvm.gradle.checker.NewGradleEduTaskChecker
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class JHyperskillTaskCheckerProvider : JTaskCheckerProvider() {
-  override fun getEduTaskChecker(task: EduTask, project: Project): GradleEduTaskChecker {
-    return object : GradleEduTaskChecker(task, project) {
+  override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
+    return object : NewGradleEduTaskChecker(task, project) {
       override fun check(indicator: ProgressIndicator): CheckResult {
         val checkResult = super.check(indicator)
         val course = task.course

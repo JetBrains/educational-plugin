@@ -34,11 +34,15 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
       }
     }
     val connection = project.messageBus.connect()
-    val testResults = mutableListOf<CheckResult>()
+    val testRoots = mutableListOf<SMTestProxy.SMRootTestProxy>()
 
     connection.subscribe(SMTRunnerEventsListener.TEST_STATUS, object : SMTRunnerEventsAdapter() {
-      override fun onTestingFinished(testsRoot: SMTestProxy.SMRootTestProxy) {
-        testResults.add(testsRoot.toCheckResult())
+      // We have to collect test roots in `onTestingStarted`
+      // because some test framework integrations (Gradle)
+      // have custom components in implementation that don't provide test events
+      // except `onTestingStarted`
+      override fun onTestingStarted(testsRoot: SMTestProxy.SMRootTestProxy) {
+        testRoots += testsRoot
       }
     })
 
@@ -73,6 +77,7 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
     latch.await()
     connection.disconnect()
 
+    val testResults = testRoots.map { it.toCheckResult() }
     if (testResults.isEmpty()) return NO_TESTS_RUN
 
     val firstFailure = testResults.firstOrNull { it.status != CheckStatus.Solved }
