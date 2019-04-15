@@ -1,5 +1,9 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning.format;
 
+import com.jetbrains.edu.learning.CourseMode;
+import com.jetbrains.edu.learning.CourseTestUtilsKt;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduTestCase;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
