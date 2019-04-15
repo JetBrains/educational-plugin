@@ -113,7 +113,7 @@ object YamlFormatSynchronizer {
   }
 
   private fun StudyItem.saveConfigDocument(project: Project) {
-    val dir = getDir(project) ?: error("Failed to save ${javaClass.simpleName} '${name}' to config file: directory not found")
+    val dir = getDir(project) ?: error("Failed to save ${javaClass.simpleName} '$name' to config file: directory not found")
     runUndoTransparentWriteAction {
       val isNewConfigFile = dir.findChild(configFileName) == null
       val file = dir.findOrCreateChildData(javaClass, configFileName)

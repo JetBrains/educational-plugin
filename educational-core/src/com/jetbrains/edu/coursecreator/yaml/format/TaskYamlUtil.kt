@@ -74,7 +74,7 @@ private class StringToFeedbackLinkConverter : StdConverter<String?, FeedbackLink
 
 class TaskChangeApplier<T : Task> : StudyItemChangeApplier<T>() {
   override fun applyChanges(existingItem: T, deserializedItem: T) {
-    val project = existingItem.project ?: error("Cannot find project for a task: ${existingItem}")
+    val project = existingItem.project ?: error("Cannot find project for a task: $existingItem")
     existingItem.feedbackLink = deserializedItem.feedbackLink
     hideOldPlaceholdersForOpenedFiles(project, existingItem)
     existingItem.applyTaskFileChanges(project, deserializedItem)

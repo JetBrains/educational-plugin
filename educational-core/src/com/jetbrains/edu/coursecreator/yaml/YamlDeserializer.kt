@@ -58,7 +58,7 @@ object YamlDeserializer {
     val clazz = when (type) {
       "framework" -> FrameworkLesson::class.java
       null -> Lesson::class.java
-      else -> formatError("Unsupported lesson type '${type}'")
+      else -> formatError("Unsupported lesson type '$type'")
     }
     return MAPPER.treeToValue(treeNode, clazz)
   }
@@ -72,7 +72,7 @@ object YamlDeserializer {
       "edu" -> EduTask::class.java
       "output" -> OutputTask::class.java
       "theory" -> TheoryTask::class.java
-      else -> formatError("Unsupported task type '${type}'")
+      else -> formatError("Unsupported task type '$type'")
     }
     return MAPPER.treeToValue(treeNode, clazz)
   }

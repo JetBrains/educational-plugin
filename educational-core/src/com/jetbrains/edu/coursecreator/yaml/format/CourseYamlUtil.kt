@@ -77,7 +77,7 @@ private class ProgrammingLanguageConverter : StdConverter<String, String>() {
   override fun convert(languageId: String): String {
     val languageWithoutVersion = languageId.split(" ").first()
     return Language.findLanguageByID(languageWithoutVersion)?.displayName
-           ?: throw InvalidYamlFormatException("Cannot save programming language: ${languageId}")
+           ?: throw InvalidYamlFormatException("Cannot save programming language: $languageId")
   }
 }
 
@@ -113,9 +113,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       name = title
       description = summary
       val languageName = Language.getRegisteredLanguages().find { it.displayName == programmingLanguage }
-      if (languageName == null) {
-        throw InvalidYamlFormatException("Unknown programming language '$programmingLanguage'")
-      }
+                         ?: throw InvalidYamlFormatException("Unknown programming language '$programmingLanguage'")
       language = languageName.id
       environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
       val items = content.mapIndexed { index, title ->
@@ -129,9 +127,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       setItems(items)
     }
     val locale = Locale.getISOLanguages().find { Locale(it).displayLanguage == language }
-    if (locale == null) {
-      throw InvalidYamlFormatException("Unknown language '$language'")
-    }
+                 ?: throw InvalidYamlFormatException("Unknown language '$language'")
     course.languageCode = Locale(locale).language
     return course
   }

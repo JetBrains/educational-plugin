@@ -129,9 +129,9 @@ object YamlLoader {
     return if (selectedEditor is TextEditor) selectedEditor.editor else null
   }
 
-  private fun unknownConfigError(name: String): Nothing = error("Unknown config file: ${name}")
+  private fun unknownConfigError(name: String): Nothing = error("Unknown config file: $name")
 
-  private fun notFoundError(elementType: String, elementName: String): Nothing = error("Unable to find ${elementType}: ${elementName}")
+  private fun notFoundError(elementType: String, elementName: String): Nothing = error("Unable to find $elementType: $elementName")
 
   fun taskDirNotFoundError(itemName: String): Nothing = error("Cannot find directory for a task: $itemName")
 
