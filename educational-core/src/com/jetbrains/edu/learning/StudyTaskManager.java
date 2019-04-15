@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
@@ -114,8 +115,9 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     return serialize();
   }
 
+  @VisibleForTesting
   @NotNull
-  private Element serialize() {
+  public Element serialize() {
     Element el = new Element("taskManager");
     Element taskManagerElement = new Element(MAIN_ELEMENT);
     XmlSerializer.serializeInto(this, taskManagerElement);
@@ -175,7 +177,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
           //  state = convertTo15Version(myProject, state);
         }
       }
-      deserialize(state);
+      myCourse = deserialize(state);
       VERSION = EduVersions.XML_FORMAT_VERSION;
       if (myCourse != null) {
         myCourse.init(null, null, true);
@@ -208,14 +210,15 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     }));
   }
 
-  private void deserialize(Element state) throws StudyUnrecognizedFormatException {
+  @VisibleForTesting
+  public Course deserialize(Element state) throws StudyUnrecognizedFormatException {
     final Element taskManagerElement = state.getChild(MAIN_ELEMENT);
     if (taskManagerElement == null) {
       throw new StudyUnrecognizedFormatException();
     }
     XmlSerializer.deserializeInto(this, taskManagerElement);
     final Element xmlCourse = getChildWithName(taskManagerElement, COURSE);
-    myCourse = deserializeCourse(xmlCourse);
+    return deserializeCourse(xmlCourse);
   }
 
   private static Course deserializeCourse(Element xmlCourse) {
