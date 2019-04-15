@@ -14,12 +14,6 @@
             {
               "name" : "task1",
               "files" : {
-                "additional.py" : {
-                  "name" : "additional.py",
-                  "placeholders" : [ ],
-                  "is_visible" : false,
-                  "text" : "my test"
-                },
                 "taskFile1.txt" : {
                   "name" : "taskFile1.txt",
                   "placeholders" : [ ],
@@ -31,6 +25,12 @@
                   "placeholders" : [ ],
                   "is_visible" : true,
                   "text" : "some test"
+                },
+                "additional.py" : {
+                  "name" : "additional.py",
+                  "placeholders" : [ ],
+                  "is_visible" : false,
+                  "text" : "my test"
                 },
                 "visibleAdditional.py" : {
                   "name" : "visibleAdditional.py",
