@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
+import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.OptionTag;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
@@ -60,6 +61,7 @@ public abstract class Task extends StudyItem {
     }
   }
 
+  @MapAnnotation(sortBeforeSave = false)
   @OptionTag("files")
   public Map<String, TaskFile> getTaskFiles() {
     return myTaskFiles;
