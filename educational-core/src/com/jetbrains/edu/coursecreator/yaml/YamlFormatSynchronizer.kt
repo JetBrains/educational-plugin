@@ -107,9 +107,6 @@ object YamlFormatSynchronizer {
     for (file in configFiles) {
       file.addSynchronizationListener(project)
     }
-
-    // create missing files if feature was enabled after project was created
-    YamlFormatSynchronizer.saveAll(project)
   }
 
   private fun StudyItem.saveConfigDocument(project: Project) {

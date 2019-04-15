@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -20,6 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
@@ -64,7 +66,18 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
 
       EduUsagesCollector.projectTypeOpened(CCUtils.COURSE_MODE)
       startTaskDescriptionFilesSynchronization()
+
       YamlFormatSynchronizer.startSynchronization(myProject)
+
+      if (!ApplicationManager.getApplication().isUnitTestMode) {
+        // check key value in post-startup activity as key is put after project is opened
+        StartupManager.getInstance(myProject).registerPostStartupActivity {
+          // for existing project, create missing files if feature was enabled after project was created
+          if (myProject.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED) == null) {
+            YamlFormatSynchronizer.saveAll(myProject)
+          }
+        }
+      }
     }
   }
 
