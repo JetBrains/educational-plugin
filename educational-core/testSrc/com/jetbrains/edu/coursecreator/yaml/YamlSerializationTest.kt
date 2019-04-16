@@ -261,6 +261,41 @@ class YamlSerializationTest : EduTestCase() {
     """.trimMargin("|"))
   }
 
+  fun `test empty lesson`() {
+    val lesson = course {
+      lesson {
+      }
+    }.items.first()
+
+    doTest(lesson, """
+      |{}
+      |
+    """.trimMargin("|"))
+  }
+
+  fun `test empty section`() {
+    val section = course {
+      section {
+      }
+    }.items.first()
+
+    doTest(section, """
+      |{}
+      |
+    """.trimMargin("|"))
+  }
+
+  fun `test empty course`() {
+    val course = course {}
+
+    doTest(course, """
+      |title: Test Course
+      |language: English
+      |programming_language: Plain text
+      |
+    """.trimMargin("|"))
+  }
+
   private fun doTest(item: StudyItem, expected: String) {
     val actual = YamlFormatSynchronizer.MAPPER.writeValueAsString(item)
     assertEquals(expected, actual)

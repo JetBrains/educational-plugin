@@ -98,7 +98,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
                             @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
                             @JsonProperty(LANGUAGE) val language: String,
                             @JsonProperty(ENVIRONMENT) val yamlEnvironment: String?,
-                            @JsonProperty(CONTENT) val content: List<String?>) {
+                            @JsonProperty(CONTENT) val content: List<String?> = emptyList()) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
     val course = when (courseType) {

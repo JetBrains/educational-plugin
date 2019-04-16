@@ -33,7 +33,7 @@ abstract class LessonYamlMixin {
 }
 
 @JsonPOJOBuilder(withPrefix = "")
-open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?>) {
+open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?> = emptyList()) {
   @Suppress("unused") //used for deserialization
   private fun build(): Lesson {
     val lesson = createLesson()

@@ -25,7 +25,7 @@ abstract class SectionYamlMixin {
 }
 
 @JsonPOJOBuilder(withPrefix = "")
-private class SectionBuilder(@JsonProperty(CONTENT) val content: List<String?>) {
+private class SectionBuilder(@JsonProperty(CONTENT) val content: List<String?> = emptyList()) {
   @Suppress("unused") //used for deserialization
   private fun build(): Section {
     val section = Section()

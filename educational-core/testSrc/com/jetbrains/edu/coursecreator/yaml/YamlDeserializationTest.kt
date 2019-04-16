@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import junit.framework.TestCase
 
 
 class YamlDeserializationTest : EduTestCase() {
@@ -290,5 +289,35 @@ class YamlDeserializationTest : EduTestCase() {
     assertTrue("$taskFileName expected to be visible", taskFile.isVisible)
     val testFile = task.taskFiles[testFileName]!!
     assertTrue("$testFileName expected to be invisible", !testFile.isVisible)
+  }
+
+  fun `test empty lesson`() {
+    val yamlContent = """
+    |
+    |{}
+    |""".trimMargin("|")
+    val lesson = YamlDeserializer.deserializeLesson(yamlContent)
+    assertTrue(lesson.taskList.isEmpty())
+  }
+
+  fun `test empty section`() {
+    val yamlContent = """
+    |
+    |{}
+    |""".trimMargin("|")
+    val section = YamlDeserializer.deserialize(yamlContent, Section::class.java)
+    assertTrue(section.lessons.isEmpty())
+  }
+
+  fun `test empty course`() {
+    val yamlContent = """
+    |
+    |title: Test Course
+    |language: English
+    |programming_language: Plain text
+    |summary: test
+    |""".trimMargin("|")
+    val course = YamlDeserializer.deserialize(yamlContent, Course::class.java)
+    assertTrue(course.items.isEmpty())
   }
 }
