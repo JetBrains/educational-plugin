@@ -69,7 +69,9 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       0
     }
 
-    if (checkResult.escapedMessage.length > MAX_MESSAGE_LENGTH || expectedActualTextLength > MAX_EXPECTED_ACTUAL_LENGTH) {
+    val messageLength = (checkResult.diff?.message ?: checkResult.escapedMessage).length
+
+    if (messageLength > MAX_MESSAGE_LENGTH || expectedActualTextLength > MAX_EXPECTED_ACTUAL_LENGTH) {
       linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, details ?: checkResult.message)),
                      BorderLayout.NORTH)
     }
@@ -163,7 +165,7 @@ private class CheckMessagePanel private constructor(): JPanel() {
     add(messagePane)
   }
 
-  val isEmpty: Boolean get() = messagePane.document.getText(0, messagePane.document.length).isEmpty()
+  val isEmpty: Boolean get() = messagePane.document.getText(0, messagePane.document.length).isEmpty() && componentCount == 1
 
   private fun setMessage(message: String) {
     val displayMessage = if (message.length > MAX_MESSAGE_LENGTH) message.substring(0, MAX_MESSAGE_LENGTH) + "..." else message
@@ -171,8 +173,10 @@ private class CheckMessagePanel private constructor(): JPanel() {
   }
 
   private fun setDiff(diff: CheckResultDiff) {
-    val expected = createLabeledComponent(diff.expected, "Expected", 16)
-    val actual = createLabeledComponent(diff.actual, "Actual", 8)
+    val (_, message, expectedText, actualText) = diff
+    setMessage(message)
+    val expected = createLabeledComponent(expectedText, "Expected", 16)
+    val actual = createLabeledComponent(actualText, "Actual", 8)
     UIUtil.mergeComponentsWithAnchor(expected, actual)
 
     add(expected)

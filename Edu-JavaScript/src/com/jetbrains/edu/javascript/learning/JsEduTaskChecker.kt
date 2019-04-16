@@ -20,6 +20,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowId
@@ -143,7 +144,9 @@ class JsEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(t
     })
 
     val firstFailedTest = failedChildren.firstOrNull() ?: error("Testing failed although no failed tests found")
-    val diff = firstFailedTest.diffViewerProvider?.let { CheckResultDiff(it.diffTitle, it.left, it.right) }
+    val diff = firstFailedTest.diffViewerProvider?.let {
+      CheckResultDiff(it.diffTitle, removeAttributes(firstFailedTest.comparisonMessage), it.left, it.right)
+    }
 
     return CheckResult(CheckStatus.Failed, removeAttributes(firstFailedTest.errorMessage), diff = diff)
   }
@@ -158,6 +161,12 @@ class JsEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(t
       buffer.append(chunk)
     }
     return buffer.toString()
+  }
+
+  private val SMTestProxy.comparisonMessage: String get() {
+    // It is tested only with Jest so may not work with other JS test frameworks
+    val index = StringUtil.indexOfIgnoreCase(errorMessage, "Expected:", 0)
+    return if (index != -1) errorMessage.substring(0, index).trim() else errorMessage
   }
 
   companion object {

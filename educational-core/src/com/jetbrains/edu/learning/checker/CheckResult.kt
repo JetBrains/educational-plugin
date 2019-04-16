@@ -26,4 +26,4 @@ class CheckResult @JvmOverloads constructor(
   }
 }
 
-data class CheckResultDiff(val title: String, val expected: String, val actual: String)
+data class CheckResultDiff(val title: String, val message: String, val expected: String, val actual: String)
