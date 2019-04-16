@@ -6,17 +6,16 @@ import com.jetbrains.edu.coursecreator.ui.CCNewCoursePanel
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 
-fun getDefaultCourseType(courses: List<CCNewCoursePanel.CourseData>) = courses.find {
+fun getDefaultCourseType(courses: List<CCNewCoursePanel.CourseData>): CCNewCoursePanel.CourseData? = courses.find {
   it.language == Language.findLanguageByID(getDefaultLanguageId())
 }
 
-fun getDefaultLanguageId() =
-  when (true) {
-    (PlatformUtils.isIntelliJ() || EduUtils.isAndroidStudio()) -> EduNames.KOTLIN
-    (PlatformUtils.isPyCharm()) -> EduNames.PYTHON
-    (PlatformUtils.isWebStorm()) -> EduNames.JAVASCRIPT
-    (PlatformUtils.isCLion()) -> EduNames.RUST
-    else -> null
-  }
+fun getDefaultLanguageId(): String? = when {
+  PlatformUtils.isIntelliJ() || EduUtils.isAndroidStudio() -> EduNames.KOTLIN
+  PlatformUtils.isPyCharm() -> EduNames.PYTHON
+  PlatformUtils.isWebStorm() -> EduNames.JAVASCRIPT
+  PlatformUtils.isCLion() -> EduNames.RUST
+  else -> null
+}
 
 
