@@ -135,7 +135,7 @@ private fun Course.setDescriptionInfo(project: Project) {
 private fun Task.findTaskDescriptionFile(project: Project): VirtualFile {
   val taskDir = getTaskDir(project) ?: YamlLoader.taskDirNotFoundError(name)
   val file = taskDir.findChild(EduNames.TASK_HTML) ?: taskDir.findChild(EduNames.TASK_MD)
-  return file ?: error("No task description file for ${name}")
+  return file ?: error("No task description file for $name")
 }
 
 private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {
