@@ -126,16 +126,23 @@ sealed class PlaceholderShape {
     val visibleX = when {
       point.x < visibleRect.x -> visibleRect.x
       point.x > visibleRect.x + visibleRect.width -> visibleRect.x + visibleRect.width
-      else -> point.x 
+      else -> point.x
     }
 
+    // We have to take into account stroke width to avoid weird rendering artifacts
+    val minVisibleY = visibleRect.y + HALF_STROKE_WIDTH
+    val maxVisibleY = visibleRect.y + visibleRect.height - HALF_STROKE_WIDTH
     val visibleY = when {
-      point.y < visibleRect.y -> visibleRect.y
-      point.y > visibleRect.y + visibleRect.height -> visibleRect.y + visibleRect.height
+      point.y < minVisibleY -> minVisibleY
+      point.y > maxVisibleY -> maxVisibleY
       else -> point.y
     }
 
     return Point(visibleX, visibleY)
+  }
+
+  companion object {
+    private val HALF_STROKE_WIDTH: Int = Math.round(PlaceholderPainter.STROKE_WIDTH / 2)
   }
 }
 

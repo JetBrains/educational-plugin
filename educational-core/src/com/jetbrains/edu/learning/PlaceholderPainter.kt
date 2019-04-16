@@ -24,6 +24,8 @@ import java.awt.Shape
 
 object PlaceholderPainter {
 
+  val STROKE_WIDTH: Float = JBUI.scale(2f)
+
   private val disposables: MutableMap<AnswerPlaceholder, MutableSet<Disposable>> = HashMap()
 
   @JvmOverloads
@@ -67,7 +69,7 @@ object PlaceholderPainter {
       override fun executePaint(component: Component?, g: Graphics2D) {
         if (isStudentProject && !placeholder.isVisible) return
         g.color = placeholder.color
-        g.stroke = BasicStroke(JBUI.scale(2f))
+        g.stroke = BasicStroke(STROKE_WIDTH)
         val shape = getPlaceholderShape(editor, placeholder.offset, placeholder.endOffset).getShape()
         if (!isVisible(shape, editor)) return
         g.draw(shape)
