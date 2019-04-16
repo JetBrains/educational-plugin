@@ -123,12 +123,19 @@ sealed class PlaceholderShape {
     if (ApplicationManager.getApplication().isUnitTestMode) {
       return point
     }
-    if (point.x > visibleRect.x + visibleRect.width) {
-      return Point(visibleRect.x + visibleRect.width, point.y)
+    val visibleX = when {
+      point.x < visibleRect.x -> visibleRect.x
+      point.x > visibleRect.x + visibleRect.width -> visibleRect.x + visibleRect.width
+      else -> point.x 
     }
-    if (point.x < visibleRect.x)
-      return Point(visibleRect.x, point.y)
-    return point
+
+    val visibleY = when {
+      point.y < visibleRect.y -> visibleRect.y
+      point.y > visibleRect.y + visibleRect.height -> visibleRect.y + visibleRect.height
+      else -> point.y
+    }
+
+    return Point(visibleX, visibleY)
   }
 }
 
