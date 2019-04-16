@@ -28,7 +28,6 @@ import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
@@ -51,12 +50,12 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
-import kotlin.collections.CollectionsKt;
 import org.apache.commons.codec.binary.Base64;
 import org.intellij.markdown.IElementType;
 import org.intellij.markdown.ast.ASTNode;
@@ -77,8 +76,6 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
-import static com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask;
 
 public class EduUtils {
 
@@ -571,28 +568,7 @@ public class EduUtils {
   public static void openFirstTask(@NotNull final Course course, @NotNull final Project project) {
     final Task firstTask = getFirstTask(course);
     if (firstTask == null) return;
-    final VirtualFile taskDir = firstTask.getTaskDir(project);
-    if (taskDir == null) return;
-    final Map<String, TaskFile> taskFiles = firstTask.getTaskFiles();
-    final VirtualFile activeVirtualFile = getActiveVirtualFile(taskDir, taskFiles);
-    if (activeVirtualFile != null) {
-      if (ApplicationManager.getApplication().isUnitTestMode()) {
-        ProjectView.getInstance(project).select(activeVirtualFile, activeVirtualFile, false);
-      }
-      else {
-        StartupManager.getInstance(project).registerPostStartupActivity(
-          () -> ProjectView.getInstance(project).select(activeVirtualFile, activeVirtualFile, false));
-      }
-      final FileEditor[] editors = FileEditorManager.getInstance(project).openFile(activeVirtualFile, true);
-      if (editors.length == 0) {
-        return;
-      }
-      final FileEditor studyEditor = editors[0];
-      if (studyEditor instanceof EduEditor) {
-        selectFirstAnswerPlaceholder((EduEditor)studyEditor, project);
-      }
-      FileEditorManager.getInstance(project).openFile(activeVirtualFile, true);
-    }
+    NavigationUtils.navigateToTask(project, firstTask);
   }
 
   @Nullable
@@ -613,36 +589,13 @@ public class EduUtils {
     return getFirst(firstLesson.getTaskList());
   }
 
-  @Nullable
-  private static VirtualFile getActiveVirtualFile(VirtualFile taskDir, Map<String, TaskFile> taskFiles) {
-    VirtualFile activeVirtualFile = null;
-    for (Map.Entry<String, TaskFile> entry : taskFiles.entrySet()) {
-      final TaskFile taskFile = entry.getValue();
-      if (!taskFile.isVisible()) continue;
-      taskDir.refresh(false, true);
-      final VirtualFile virtualFile = findTaskFileInDir(taskFile, taskDir);
-      if (virtualFile != null) {
-        if (!taskFile.getAnswerPlaceholders().isEmpty()) {
-          activeVirtualFile = virtualFile;
-        }
-      }
-    }
-    if (activeVirtualFile == null) {
-      Map.Entry<String, TaskFile> first = getFirst(CollectionsKt.filter(taskFiles.entrySet(), (entry) -> entry.getValue().isVisible()));
-      if (first != null) {
-        return findTaskFileInDir(first.getValue(), taskDir);
-      }
-    }
-    return activeVirtualFile;
-  }
-
   public static void navigateToStep(@NotNull Project project, @NotNull Course course, int stepId) {
     if (stepId == 0) {
       return;
     }
     Task task = getTask(course, stepId);
     if (task != null) {
-      navigateToTask(project, task);
+      NavigationUtils.navigateToTask(project, task);
     }
   }
 
