@@ -87,7 +87,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
     }
 
-    if (EduUtils.isStudentProject(project) && task.course !is CourseraCourse) {
+    if (task.course !is CourseraCourse) {
       val answerHintsPanel = createAnswerHintsPanel(project, task, checkResult)
       if (answerHintsPanel != null) {
         linksPanel.add(answerHintsPanel, BorderLayout.CENTER)
@@ -103,7 +103,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       panel
     }
 
-    if (task.canShowSolution()) {
+    if (EduUtils.isStudentProject(project) && task.canShowSolution()) {
       val peekSolution = LightColoredActionLink("Peek Solution...",
                                                 ActionManager.getInstance().getAction(CompareWithAnswerAction.ACTION_ID))
       answerHintsPanel.value.add(peekSolution)
