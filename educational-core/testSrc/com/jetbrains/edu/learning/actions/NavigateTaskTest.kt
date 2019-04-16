@@ -28,8 +28,8 @@ class NavigateTaskTest : EduTestCase() {
   )
 
   fun `test last task`() = doNextTest(
-    initialTaskFile = TaskFileInfo(2, 3, "taskFile4.txt"),
-    expectedTaskFile = TaskFileInfo(2, 3, "taskFile4.txt")
+    initialTaskFile = TaskFileInfo(2, 4, "taskFile5.txt"),
+    expectedTaskFile = TaskFileInfo(2, 4, "taskFile5.txt")
   )
 
   fun `test first task`() = doPrevTest(
@@ -52,6 +52,10 @@ class NavigateTaskTest : EduTestCase() {
     expectedTaskFile = TaskFileInfo(2, 2, "taskFile3.txt")
   )
 
+  fun `test open the first task file`() = doNextTest(
+    initialTaskFile = TaskFileInfo(2, 3, "taskFile4.txt"),
+    expectedTaskFile = TaskFileInfo(2, 4, "taskFile5.txt"))
+
   private fun doNextTest(initialTaskFile: TaskFileInfo, expectedTaskFile: TaskFileInfo) =
     doTest(NextTaskAction(), initialTaskFile, expectedTaskFile)
 
@@ -69,13 +73,14 @@ class NavigateTaskTest : EduTestCase() {
   }
 
   override fun createCourse() {
+    val textWithPlaceholder = "a = <p>TODO()</p>"
     courseWithFiles {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
         }
         eduTask {
-          taskFile("taskFile2.txt", "a = <p>TODO()</p>") {
+          taskFile("taskFile2.txt", textWithPlaceholder) {
             placeholder(0, "hello")
           }
         }
@@ -93,6 +98,11 @@ class NavigateTaskTest : EduTestCase() {
         }
         eduTask {
           taskFile("taskFile4.txt")
+        }
+        eduTask {
+          taskFile("taskFile5.txt", textWithPlaceholder)
+          taskFile("taskFile6.txt", textWithPlaceholder)
+          taskFile("taskFile7.txt")
         }
       }
     }

@@ -198,7 +198,9 @@ object NavigationUtils {
       if (!taskFile.isVisible || taskFile.answerPlaceholders.all { !it.isVisible }) continue
       val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
       FileEditorManager.getInstance(project).openFile(virtualFile, true)
-      fileToActivate = virtualFile
+      if (fileToActivate != null) {
+        fileToActivate = virtualFile
+      }
     }
     if (fileToActivate == null) {
       fileToActivate = getFirstTaskFile(taskDir, taskFiles.values)
