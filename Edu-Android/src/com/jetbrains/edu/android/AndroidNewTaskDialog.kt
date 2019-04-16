@@ -1,5 +1,6 @@
 package com.jetbrains.edu.android
 
+import com.android.sdklib.SdkVersionInfo
 import com.android.tools.idea.npw.FormFactor
 import com.android.tools.idea.npw.model.NewProjectModel
 import com.android.tools.idea.npw.platform.AndroidVersionsInfo
@@ -37,16 +38,17 @@ class AndroidNewTaskDialog(
     combobox.isEnabled = false
   }
 
-  private var compileSdkVersion: Int = FormFactor.MOBILE.maxOfflineApiLevel
+  private var compileSdkVersion: Int = SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
 
   init { init() }
 
   override fun createAdditionalFields(builder: LayoutBuilder) {
     val androidVersionsInfo = AndroidVersionsInfo()
     androidVersionsInfo.loadTargetVersions { items ->
-      val maxSdkVersion = items.map { it.minApiLevel }.max() ?: FormFactor.MOBILE.maxOfflineApiLevel
+      val nonPreviewItems = items.filter { it.androidTarget?.version?.isPreview != true }
+      val maxSdkVersion = nonPreviewItems.map { it.minApiLevel }.max() ?: SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
       compileSdkVersion = maxOf(maxSdkVersion, compileSdkVersion)
-      comboBoxWrapper.init(FormFactor.MOBILE, items)
+      comboBoxWrapper.init(FormFactor.MOBILE, nonPreviewItems)
       comboBoxWrapper.combobox.isEnabled = true
     }
     addTextValidator(packageNameField) { text ->
