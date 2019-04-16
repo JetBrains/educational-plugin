@@ -115,6 +115,8 @@ private fun loadCourseRecursively(project: Project): Course {
     }
   }
 
+  // we init course before setting description info, as we have to set lessons for tasks first
+  // to obtain task description file to set description info from
   deserializedCourse.init(null, null, true)
   deserializedCourse.setDescriptionInfo(project)
   return deserializedCourse
