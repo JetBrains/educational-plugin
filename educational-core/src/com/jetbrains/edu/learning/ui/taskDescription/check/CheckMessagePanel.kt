@@ -1,0 +1,91 @@
+package com.jetbrains.edu.learning.ui.taskDescription.check
+
+import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.ui.BrowserHyperlinkListener
+import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckResultDiff
+import com.jetbrains.edu.learning.ui.taskDescription.createTextPane
+import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
+import kotlinx.css.CSSBuilder
+import kotlinx.css.body
+import java.awt.BorderLayout
+import javax.swing.*
+
+class CheckMessagePanel private constructor(): JPanel() {
+
+  private val messagePane: JTextPane = createTextPane().apply {
+    addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
+  }
+
+  init {
+    layout = BoxLayout(this, BoxLayout.Y_AXIS)
+    border = JBUI.Borders.emptyLeft(FOCUS_BORDER_WIDTH)
+    add(messagePane)
+  }
+
+  val isEmpty: Boolean get() = messagePane.document.getText(0, messagePane.document.length).isEmpty() && componentCount == 1
+
+  private fun setMessage(message: String) {
+    val displayMessage = if (message.length > MAX_MESSAGE_LENGTH) message.substring(0, MAX_MESSAGE_LENGTH) + "..." else message
+    messagePane.text = displayMessage
+  }
+
+  private fun setDiff(diff: CheckResultDiff) {
+    val (_, message, expectedText, actualText) = diff
+    setMessage(message)
+    val expected = createLabeledComponent(expectedText, "Expected", 16)
+    val actual = createLabeledComponent(actualText, "Actual", 8)
+    UIUtil.mergeComponentsWithAnchor(expected, actual)
+
+    add(expected)
+    add(actual)
+  }
+
+  private fun createLabeledComponent(resultText: String, labelText: String, topPadding: Int): LabeledComponent<JComponent> {
+    val text = if (resultText.length > MAX_EXPECTED_ACTUAL_LENGTH) resultText.substring(0, MAX_EXPECTED_ACTUAL_LENGTH) + "..." else resultText
+    val textPane = createTextPane()
+    textPane.text = text.escapeHtmlEntities().monospaced()
+
+    val labeledComponent = LabeledComponent.create<JComponent>(textPane, labelText, BorderLayout.WEST)
+    labeledComponent.label.foreground = UIUtil.getLabelDisabledForeground()
+    labeledComponent.label.verticalAlignment = JLabel.TOP
+    labeledComponent.border = JBUI.Borders.emptyTop(topPadding)
+    return labeledComponent
+  }
+
+  companion object {
+    private val FOCUS_BORDER_WIDTH = if (SystemInfo.isMac) 3 else if (SystemInfo.isWindows) 0 else 2
+
+    const val MAX_MESSAGE_LENGTH = 400
+    const val MAX_EXPECTED_ACTUAL_LENGTH = 150
+
+    @JvmStatic
+    fun create(checkResult: CheckResult): CheckMessagePanel {
+      val messagePanel = CheckMessagePanel()
+      messagePanel.setMessage(checkResult.escapedMessage)
+      if (checkResult.diff != null) {
+        messagePanel.setDiff(checkResult.diff)
+      }
+      return messagePanel
+    }
+  }
+}
+
+private fun String.escapeHtmlEntities(): String {
+  return StringUtil.replace(this,
+                            listOf("<", ">", "&", "'", "\"", " ", "\n"),
+                            listOf("&lt;", "&gt;", "&amp;", "&#39;", "&quot;", "&nbsp;", "<br>"))
+}
+
+private fun String.monospaced(): String {
+  val fontCss = CSSBuilder().apply {
+    body {
+      fontFamily = StyleManager().codeFont
+    }
+  }.toString()
+  return "<html><head><style>${fontCss}</style></head><body>${this}</body></html>"
+}
