@@ -1,7 +1,0 @@
-fun goRight(steps: Int) {
-   ff<placeholder>oo</placeholder> oh my
-}
-
-fun goRight(steps: Int) {
-
-}
