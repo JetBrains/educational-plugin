@@ -190,7 +190,7 @@ class YamlDeserializationTest : EduTestCase() {
       |- $secondTask
     """.trimMargin("|")
     val lesson = YamlDeserializer.deserializeLesson(yamlContent)
-    assertEquals(listOf(firstTask, secondTask), lesson.getTaskList().map { it.name })
+    assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
   }
 
   fun `test framework lesson`() {
@@ -204,7 +204,7 @@ class YamlDeserializationTest : EduTestCase() {
     """.trimMargin("|")
     val lesson = YamlDeserializer.deserializeLesson(yamlContent)
     assertTrue(lesson is FrameworkLesson)
-    assertEquals(listOf(firstTask, secondTask), lesson.getTaskList().map { it.name })
+    assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
   }
 
   fun `test output task`() {
