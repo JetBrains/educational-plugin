@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -31,6 +32,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     val isDone = super.beforeProjectGenerated()
 
     if (isDone) {
+      swapItemNameAndCustomPresentableName()
       addCMakeListsToEachTaskInCourse()
     }
     return isDone
@@ -61,6 +63,26 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
         }
       }
     }
+  }
+
+  private fun swapItemNameAndCustomPresentableName() {
+    for (item in myCourse.items) {
+      if (item is Lesson) {
+        swapNames(item, EduNames.LESSON)
+      }
+      else if (item is Section) {
+        swapNames(item, EduNames.SECTION)
+        item.visitLessons { lesson ->
+          swapNames(lesson, EduNames.LESSON)
+          true
+        }
+      }
+    }
+  }
+
+  private fun swapNames(item: StudyItem, prefix: String) {
+    item.customPresentableName = item.name
+    item.name = "${prefix}${item.index}"
   }
 
   private fun addCMakeListsForEachTaskInLesson(section: Section?, lesson: Lesson) {
