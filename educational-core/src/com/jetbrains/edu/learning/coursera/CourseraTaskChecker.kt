@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.coursera
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
@@ -83,13 +84,14 @@ class CourseraTaskChecker : RemoteTaskChecker {
     return task.feedbackLink.link?.removeSuffix("/discussions") ?: "https://www.coursera.org/"
   }
 
-  private fun createSubmissionJson(project: Project, task: Task, courseraSettings: CourseraSettings): String {
+  @VisibleForTesting
+  fun createSubmissionJson(project: Project, task: Task, courseraSettings: CourseraSettings): String {
     val taskDir = task.getDir(project) ?: error("No directory for task ${task.name}")
 
-    val assignmentKey = taskDir.getValueFromChildFile("assignmentKey")
-    val partId = taskDir.getValueFromChildFile("partId")
+    val assignmentKey = taskDir.getValueFromChildFile(ASSIGNMENT_KEY)
+    val partId = taskDir.getValueFromChildFile(PART_ID)
 
-    val output = task.taskFiles.mapValues {
+    val output = task.taskFiles.filterValues { it.name != PART_ID && it.name != ASSIGNMENT_KEY }.mapValues {
       val file = it.value.getVirtualFile(project) ?: error("VirtualFile for ${it.key} not found")
       Base64.encodeBase64String(VfsUtilCore.loadBytes(file))
     }
@@ -152,5 +154,11 @@ class CourseraTaskChecker : RemoteTaskChecker {
     private const val NEED_CREDENTIALS = "${CourseraNames.COURSERA} Credentials"
     private const val SUCCESS = "<html>Submission successful, please <a href=\"%s\">check the status on Coursera</a></html>"
     private const val TIMEOUT_SECONDS = 10
+
+    @VisibleForTesting
+    const val ASSIGNMENT_KEY = "assignmentKey"
+
+    @VisibleForTesting
+    const val PART_ID = "partId"
   }
 }
