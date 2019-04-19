@@ -171,7 +171,8 @@ object YamlFormatSynchronizer {
     }
   }
 
-  private val StudyItem.configFileName: String
+  @VisibleForTesting
+  val StudyItem.configFileName: String
     get() = when (this) {
       is Course -> COURSE_CONFIG
       is Section -> SECTION_CONFIG

@@ -3,8 +3,8 @@ package com.jetbrains.edu.coursecreator
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -16,13 +16,13 @@ import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.noItemDirError
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.saveAll
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader
 import com.jetbrains.edu.coursecreator.yaml.format.getRemoteChangeApplierForItem
 import com.jetbrains.edu.coursecreator.yaml.remoteConfigFileName
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
@@ -69,16 +69,16 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
       startTaskDescriptionFilesSynchronization()
 
       YamlFormatSynchronizer.startSynchronization(myProject)
+      createYamlConfigFilesIfMissing()
+    }
+  }
 
-      if (!ApplicationManager.getApplication().isUnitTestMode) {
-        // check key value in post-startup activity as key is put after project is opened
-        StartupManager.getInstance(myProject).registerPostStartupActivity {
-          // for existing project, create missing files if feature was enabled after project was created
-          if (myProject.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED) == null) {
-            YamlFormatSynchronizer.saveAll(myProject)
-          }
-        }
-      }
+  private fun createYamlConfigFilesIfMissing() {
+    val courseDir = myProject.courseDir
+    val courseConfig = courseDir.findChild(COURSE_CONFIG)
+    if (courseConfig == null) {
+      saveAll(myProject)
+      FileDocumentManager.getInstance().saveAllDocuments()
     }
   }
 
@@ -105,7 +105,7 @@ private fun loadCourseRecursively(project: Project): Course {
   val projectDir = project.courseDir
   val courseConfig = projectDir.findChild(COURSE_CONFIG) ?: error("Cannot load course. Config file '${COURSE_CONFIG}' not found.")
 
-  val deserializedCourse = YamlDeserializer.deserialize(VfsUtil.loadText(courseConfig), Course::class.java)
+  val deserializedCourse = YamlDeserializer.deserializeItem(VfsUtil.loadText(courseConfig), courseConfig.name) as Course
   deserializedCourse.courseMode = if (EduUtils.isStudentProject(project)) EduNames.STUDY else CCUtils.COURSE_MODE
 
   deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items)
