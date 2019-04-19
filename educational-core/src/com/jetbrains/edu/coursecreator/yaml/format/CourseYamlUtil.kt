@@ -2,6 +2,7 @@
 
 package com.jetbrains.edu.coursecreator.yaml.format
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
@@ -35,6 +36,10 @@ private const val SUMMARY = "summary"
 private const val PROGRAMMING_LANGUAGE = "programming_language"
 private const val CONTENT = "content"
 private const val ENVIRONMENT = "environment"
+
+private const val ID = "id"
+private const val UPDATE_DATE = "update_date"
+private const val TOP_LEVEL_LESSONS_SECTION = "default_section"
 
 /**
  * Mixin class is used to deserialize [Course] item.
@@ -89,6 +94,33 @@ private class CourseTypeSerializationConverter : StdConverter<String, String?>()
   override fun convert(courseType: String): String? {
     return if (courseType == EduNames.PYCHARM) null else courseType
   }
+}
+
+/**
+ * Mixin class is used to deserialize remote information of [EduCourse] item stored on Stepik.
+ */
+@Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
+@JsonPropertyOrder(ID, UPDATE_DATE, TOP_LEVEL_LESSONS_SECTION)
+abstract class EduCourseRemoteInfoYamlMixin {
+  @JsonProperty(ID)
+  private var myId: Int = 0
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEE, dd MMM yyyy HH:mm:ss zzz")
+  @JsonProperty(UPDATE_DATE)
+  private lateinit var myUpdateDate: Date
+
+  @JsonSerialize(converter = TopLevelLessonsSectionSerializer::class)
+  @JsonDeserialize(converter = TopLevelLessonsSectionDeserializer::class)
+  @JsonProperty(TOP_LEVEL_LESSONS_SECTION)
+  private lateinit var sectionIds: List<Int>
+}
+
+private class TopLevelLessonsSectionSerializer : StdConverter<List<Int>, Int?>() {
+  override fun convert(value: List<Int>?) = value?.firstOrNull()
+}
+
+private class TopLevelLessonsSectionDeserializer : StdConverter<Int, List<Int>>() {
+  override fun convert(value: Int?) = if (value == null) emptyList() else listOf(value)
 }
 
 @JsonPOJOBuilder(withPrefix = "")

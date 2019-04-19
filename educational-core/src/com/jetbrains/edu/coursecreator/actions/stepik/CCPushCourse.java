@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Modal;
@@ -15,6 +16,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
@@ -85,6 +87,14 @@ public class CCPushCourse extends DumbAwareAction {
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setIndeterminate(false);
         doPush(project, (EduCourse)course);
+        // we set course inside postCourse method that's why have to get it here again
+        Course uploadedCourse = StudyTaskManager.getInstance(project).getCourse();
+        if (uploadedCourse != null) {
+          YamlFormatSynchronizer.saveItemRemoteInfo(uploadedCourse);
+        }
+        else {
+          throw new IllegalStateException("Course is null while pushing course to stepik");
+        }
       }
     });
     EduUsagesCollector.courseUploaded();

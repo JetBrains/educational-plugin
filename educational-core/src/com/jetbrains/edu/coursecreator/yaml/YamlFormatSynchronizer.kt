@@ -10,6 +10,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.Document
@@ -34,6 +35,21 @@ object YamlFormatSynchronizer {
 
   @VisibleForTesting
   val MAPPER: ObjectMapper by lazy {
+    val mapper = createMapper()
+    addMixIns(mapper)
+
+    mapper
+  }
+
+  @VisibleForTesting
+  val REMOTE_MAPPER: ObjectMapper by lazy {
+    val mapper = createMapper()
+    addRemoteMixIns(mapper)
+
+    mapper
+  }
+
+  private fun createMapper(): ObjectMapper {
     val yamlFactory = YAMLFactory()
     yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
     yamlFactory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
@@ -45,9 +61,8 @@ object YamlFormatSynchronizer {
     mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     mapper.disable(MapperFeature.AUTO_DETECT_FIELDS, MapperFeature.AUTO_DETECT_GETTERS, MapperFeature.AUTO_DETECT_IS_GETTERS)
-    addMixIns(mapper)
 
-    mapper
+    return mapper
   }
 
   private fun addMixIns(mapper: ObjectMapper) {
@@ -62,21 +77,42 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyYamlMixin::class.java)
   }
 
+  private fun addRemoteMixIns(mapper: ObjectMapper) {
+    mapper.addMixIn(EduCourse::class.java, EduCourseRemoteInfoYamlMixin::class.java)
+  }
+
   @JvmStatic
   fun saveAll(project: Project) {
     val course = StudyTaskManager.getInstance(project).course ?: error("Attempt to create config files for project without course")
-    saveItem(course)
-    course.visitSections { section -> saveItem(section) }
+    saveItemAndRemoteInfo(course)
+    course.visitSections { section -> saveItemAndRemoteInfo(section) }
     course.visitLessons { lesson ->
-      lesson.visitTasks {
-        saveItem(it)
+      lesson.visitTasks { task ->
+        saveItemAndRemoteInfo(task)
       }
-      saveItem(lesson)
+      saveItemAndRemoteInfo(lesson)
     }
+  }
+
+  private fun saveItemAndRemoteInfo(item: StudyItem) {
+    saveItem(item)
+    saveItemRemoteInfo(item)
   }
 
   @JvmStatic
   fun saveItem(item: StudyItem) {
+    doSaveItem(item, item.configFileName, MAPPER)
+  }
+
+  @JvmStatic
+  fun saveItemRemoteInfo(item: StudyItem) {
+    // we don't want to create remote info files in local courses
+    if (item.id > 0) {
+      doSaveItem(item, item.remoteConfigFileName, REMOTE_MAPPER)
+    }
+  }
+
+  private fun doSaveItem(item: StudyItem, configFile: String, objectMapper: ObjectMapper) {
     val course = item.course
     if (YamlFormatSettings.isDisabled() || course.isStudy) {
       return
@@ -86,11 +122,11 @@ object YamlFormatSynchronizer {
     val undoManager = UndoManager.getInstance(project)
     if (undoManager.isUndoInProgress || undoManager.isRedoInProgress) {
       ApplicationManager.getApplication().invokeLater {
-        item.saveConfigDocument(project)
+        item.saveConfigDocument(project, configFile, objectMapper)
       }
     }
     else {
-      item.saveConfigDocument(project)
+      item.saveConfigDocument(project, configFile, objectMapper)
     }
   }
 
@@ -102,13 +138,16 @@ object YamlFormatSynchronizer {
     EditorFactory.getInstance().eventMulticaster.addDocumentListener(YamlSynchronizationListener(project), project)
   }
 
-  private fun StudyItem.saveConfigDocument(project: Project) {
+  private fun StudyItem.saveConfigDocument(project: Project, configName: String, mapper: ObjectMapper) {
     val dir = getDir(project) ?: error("Failed to save ${javaClass.simpleName} '$name' to config file: directory not found")
-    runUndoTransparentWriteAction {
-      val file = dir.findOrCreateChildData(javaClass, configFileName)
-      file.putUserData(LOAD_FROM_CONFIG, false)
-      file.document?.setText(MAPPER.writeValueAsString(this))
-      file.putUserData(LOAD_FROM_CONFIG, true)
+    runInEdt {
+      runUndoTransparentWriteAction {
+        val file = dir.findOrCreateChildData(javaClass, configName)
+
+        file.putUserData(LOAD_FROM_CONFIG, false)
+        file.document?.setText(mapper.writeValueAsString(this))
+        file.putUserData(LOAD_FROM_CONFIG, true)
+      }
     }
   }
 

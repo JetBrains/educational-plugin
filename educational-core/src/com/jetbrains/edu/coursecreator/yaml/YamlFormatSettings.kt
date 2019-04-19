@@ -11,6 +11,11 @@ object YamlFormatSettings {
   const val LESSON_CONFIG = "lesson-info.yaml"
   const val TASK_CONFIG = "task-info.yaml"
 
+  const val REMOTE_COURSE_CONFIG = "course-remote-info.yaml"
+  const val REMOTE_SECTION_CONFIG = "section-remote-info.yaml"
+  const val REMOTE_LESSON_CONFIG = "lesson-remote-info.yaml"
+  const val REMOTE_TASK_CONFIG = "task-remote-info.yaml"
+
   fun isDisabled() = !Experiments.isFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT)
 
   fun Project.isEduYamlProject() = !isDisabled() && courseDir.findChild(COURSE_CONFIG) != null
