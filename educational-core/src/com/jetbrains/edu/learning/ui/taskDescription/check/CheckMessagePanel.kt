@@ -33,7 +33,11 @@ class CheckMessagePanel private constructor(): JPanel() {
   val isEmpty: Boolean get() = messagePane.document.getText(0, messagePane.document.length).isEmpty() && componentCount == 1
 
   private fun setMessage(message: String) {
-    val displayMessage = if (message.length > MAX_MESSAGE_LENGTH) message.substring(0, MAX_MESSAGE_LENGTH) + "..." else message
+    var displayMessage = if (message.length > MAX_MESSAGE_LENGTH) message.substring(0, MAX_MESSAGE_LENGTH) + "..." else message
+    displayMessage = StringUtil.replace(displayMessage, listOf(" ", "\n"), listOf("&nbsp;", "<br>"))
+    if (message.contains("expected", true) && message.contains("actual", true)) {
+      displayMessage = displayMessage.monospaced()
+    }
     messagePane.text = displayMessage
   }
 
@@ -80,12 +84,6 @@ class CheckMessagePanel private constructor(): JPanel() {
       return messagePanel
     }
   }
-}
-
-private fun String.escapeHtmlEntities(): String {
-  return StringUtil.replace(this,
-                            listOf("<", ">", "&", "'", "\"", " ", "\n"),
-                            listOf("&lt;", "&gt;", "&amp;", "&#39;", "&quot;", "&nbsp;", "<br>"))
 }
 
 private fun String.monospaced(): String {
