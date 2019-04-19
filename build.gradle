@@ -28,9 +28,6 @@ group = 'org.jetbrains.edu'
 def buildNumber = System.getenv("BUILD_NUMBER")
 version = "$pluginVersion-${buildNumber == null ? "SNAPSHOT" : buildNumber}"
 
-// BACKCOMPAT: 2018.2
-def is182 = environmentName.endsWith("182")
-
 import de.undercouch.gradle.tasks.download.Download
 import org.apache.tools.ant.taskdefs.condition.Os
 import groovy.io.FileType
@@ -271,12 +268,9 @@ intellij {
     pluginName 'EduTools'
     updateSinceUntilBuild true
     downloadSources false
-    def pluginsList = ["PythonCore:$pythonPluginVersion"]
+    def pluginsList = ["PythonCore:$pythonPluginVersion", "org.rust.lang:$rustPluginVersion"]
     if (isJvmBasedIDE) {
         pluginsList += ['junit', 'Kotlin', "org.intellij.scala:$scalaPluginVersion"]
-    }
-    if (!is182) {
-        pluginsList += ["org.rust.lang:$rustPluginVersion"]
     }
     if (baseIDE == "idea") {
         pluginsList += ["NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"]
@@ -490,16 +484,14 @@ project(':Edu-JavaScript') {
     }
 }
 
-if (!is182) {
-    project(':Edu-Rust') {
-        intellij {
-            plugins "org.rust.lang:$rustPluginVersion"
-        }
+project(':Edu-Rust') {
+    intellij {
+        plugins "org.rust.lang:$rustPluginVersion"
+    }
 
-        dependencies {
-            compile project(':educational-core')
-            testCompile project(':educational-core').sourceSets.test.output.classesDirs
-        }
+    dependencies {
+        compile project(':educational-core')
+        testCompile project(':educational-core').sourceSets.test.output.classesDirs
     }
 }
 
@@ -514,10 +506,8 @@ dependencies {
             project(':Edu-Java'),
             project(':Edu-Scala'), 
             project(':Edu-Android'),
-            project(':Edu-JavaScript')
-    if (!is182) {
-        compile project(':Edu-Rust')   
-    }
+            project(':Edu-JavaScript'),
+            project(':Edu-Rust')
 }
 
 idea {

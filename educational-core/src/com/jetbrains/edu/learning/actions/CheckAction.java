@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -96,9 +95,7 @@ public class CheckAction extends DumbAwareAction {
     if (task == null) {
       return;
     }
-    // BACKCOMPAT: 2018.2
-    //noinspection deprecation
-    for (CheckListener listener : Extensions.getExtensions(CheckListener.EP_NAME)) {
+    for (CheckListener listener : CheckListener.EP_NAME.getExtensionList()) {
       listener.beforeCheck(project, task);
     }
     ProgressManager.getInstance().run(new StudyCheckTask(project, task));

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.twitter;
 
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.checker.CheckListener;
 import com.jetbrains.edu.learning.checker.CheckResult;
@@ -19,9 +18,7 @@ public class TwitterAction implements CheckListener {
 
   @Override
   public void afterCheck(@NotNull Project project, @NotNull Task task, @NotNull CheckResult result) {
-    // BACKCOMPAT: 2018.2
-    //noinspection deprecation
-    for (TwitterPluginConfigurator twitterPluginConfigurator : Extensions.getExtensions(TwitterPluginConfigurator.EP_NAME)) {
+    for (TwitterPluginConfigurator twitterPluginConfigurator : TwitterPluginConfigurator.EP_NAME.getExtensionList()) {
       if (twitterPluginConfigurator.askToTweet(project, task, myStatusBeforeCheck)) {
         TwitterUtils.createTwitterDialogAndShow(project, twitterPluginConfigurator, task);
       }

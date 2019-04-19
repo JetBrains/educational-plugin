@@ -44,7 +44,8 @@ class AndroidNewTaskDialog(
 
   override fun createAdditionalFields(builder: LayoutBuilder) {
     val androidVersionsInfo = AndroidVersionsInfo()
-    androidVersionsInfo.loadTargetVersions { items ->
+    androidVersionsInfo.loadLocalVersions()
+    androidVersionsInfo.loadRemoteTargetVersions(FormFactor.MOBILE, FormFactor.MOBILE.minOfflineApiLevel) { items ->
       val nonPreviewItems = items.filter { it.androidTarget?.version?.isPreview != true }
       val maxSdkVersion = nonPreviewItems.map { it.minApiLevel }.max() ?: SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
       compileSdkVersion = maxOf(maxSdkVersion, compileSdkVersion)

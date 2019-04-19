@@ -3,7 +3,6 @@ package com.jetbrains.edu.javascript.learning
 import com.intellij.execution.ExecutionListener
 import com.intellij.execution.ExecutionManager
 import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.RunnerRegistry
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.process.AnsiEscapeDecoder
@@ -12,6 +11,7 @@ import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
+import com.intellij.execution.runners.ProgramRunner
 import com.intellij.execution.testframework.Filter
 import com.intellij.execution.testframework.sm.runner.SMTRunnerEventsAdapter
 import com.intellij.execution.testframework.sm.runner.SMTRunnerEventsListener
@@ -75,9 +75,7 @@ class JsEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(t
         }
       })
       for (configuration in configurations) {
-        // BACKCOMPAT: 2018.2
-        @Suppress("DEPRECATION")
-        val runner = RunnerRegistry.getInstance().getRunner(DefaultRunExecutor.EXECUTOR_ID, configuration.configuration)
+        val runner = ProgramRunner.getRunner(DefaultRunExecutor.EXECUTOR_ID, configuration.configuration)
         val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configuration).build()
         environments.add(env)
         runner?.execute(env) { descriptor ->

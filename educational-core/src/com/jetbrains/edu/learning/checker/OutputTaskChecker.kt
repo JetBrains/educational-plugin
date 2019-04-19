@@ -2,13 +2,13 @@ package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.ExecutionListener
 import com.intellij.execution.ExecutionManager
-import com.intellij.execution.RunnerRegistry
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
+import com.intellij.execution.runners.ProgramRunner
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -30,9 +30,7 @@ open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<O
   override fun check(indicator: ProgressIndicator): CheckResult {
     val configuration = createDefaultRunConfiguration(project) ?: return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     val executor = DefaultRunExecutor.getRunExecutorInstance()
-    // BACKCOMPAT: 2018.2
-    @Suppress("DEPRECATION")
-    val runner = RunnerRegistry.getInstance().getRunner(executor.id, configuration.configuration)
+    val runner = ProgramRunner.getRunner(executor.id, configuration.configuration)
     configuration.isActivateToolWindowBeforeRun = false
     val env = ExecutionEnvironmentBuilder.create(executor, configuration).build()
     var processNotStarted = false

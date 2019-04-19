@@ -226,10 +226,12 @@ public class EduUtils {
   @Nullable
   public static EduEditor getSelectedEduEditor(@NotNull final Project project) {
     try {
-      // BACKCOMPAT: 2018.2
-      @SuppressWarnings("deprecation") final FileEditor fileEditor =
-        FileEditorManagerEx.getInstanceEx(project).getSplitters().getCurrentWindow().
-          getSelectedEditor().getSelectedEditorWithProvider().getFirst();
+      final FileEditor fileEditor = FileEditorManagerEx.getInstanceEx(project)
+        .getSplitters()
+        .getCurrentWindow()
+        .getSelectedEditor()
+        .getSelectedWithProvider()
+        .getFileEditor();
       if (fileEditor instanceof EduEditor) {
         return (EduEditor)fileEditor;
       }

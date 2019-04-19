@@ -22,7 +22,6 @@ import com.intellij.ide.ui.LafManager;
 import com.intellij.ide.ui.LafManagerListener;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
@@ -97,9 +96,7 @@ public abstract class TaskDescriptionToolWindow {
 
     Application application = ApplicationManager.getApplication();
     application.invokeLater(() -> application.runReadAction(() -> {
-      // BACKCOMPAT: 2018.2
-      //noinspection deprecation
-      for (QualifiedNameProvider provider : Extensions.getExtensions(QualifiedNameProvider.EP_NAME)) {
+      for (QualifiedNameProvider provider : QualifiedNameProvider.EP_NAME.getExtensionList()) {
         PsiElement element = provider.qualifiedNameToElement(qualifiedName, project);
         if (element instanceof NavigatablePsiElement) {
           NavigatablePsiElement navigatableElement = (NavigatablePsiElement)element;

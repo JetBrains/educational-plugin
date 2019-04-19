@@ -4,10 +4,7 @@ package com.jetbrains.edu.learning.editor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.openapi.editor.event.EditorFactoryEvent;
-import com.intellij.openapi.editor.event.EditorFactoryListener;
-import com.intellij.openapi.editor.event.EditorMouseAdapter;
-import com.intellij.openapi.editor.event.EditorMouseEvent;
+import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -37,9 +34,7 @@ import java.awt.*;
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
 
-  // BACKCOMPAT: 2018.2
-  @SuppressWarnings("deprecation")
-  private static class WindowSelectionListener extends EditorMouseAdapter {
+  private static class WindowSelectionListener implements EditorMouseListener {
     private final TaskFile myTaskFile;
 
     public WindowSelectionListener(TaskFile file) {
