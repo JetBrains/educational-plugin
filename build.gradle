@@ -39,34 +39,47 @@ String downloadStudioIfNeededAndGetPath() {
     if (!rootProject.hasProperty("studioVersion")) throw new IllegalStateException("studioVersion is unspecified")
     if (!rootProject.hasProperty("studioBuildVersion")) throw new IllegalStateException("studioBuildVersion is unspecified")
 
-    def studioZip = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion-${osFamily}.zip")
-    if (!studioZip.exists()) {
-        download {
-            src studioArtifactDownloadPath()
-            dest studioZip
+    def studioFolder = null
+    
+    for (entry in ["zip": this.&zipTree, "tar.gz": this.&tarTree]) {
+        def archiveType = entry.key
+        def fileTreeMethod = entry.value
+        def studioArchive = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion-${osFamily}.$archiveType")
+        if (!studioArchive.exists()) {
+            try {
+                download {
+                    src studioArtifactDownloadPath(archiveType)
+                    dest studioArchive
+                }
+            }
+            catch (IllegalStateException e) {
+                continue
+            }
         }
-    }
 
-    def studioFolder = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion")
-    if (!studioFolder.exists()) {
-        copy {
-            from zipTree(studioZip)
-            into studioFolder
+        studioFolder = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion")
+        if (!studioFolder.exists()) {
+            copy {
+                from fileTreeMethod(studioArchive)
+                into studioFolder
+            }
         }
     }
+    
+    if (studioFolder == null) throw new IllegalStateException("Failed to download studio-$studioVersion-$studioBuildVersion-${osFamily}")
     return studioPath(studioFolder)
 }
 
 @SuppressWarnings("GrMethodMayBeStatic") // uses {studioBuildVersion}
-private String studioArtifactDownloadPath() {
+private String studioArtifactDownloadPath(String archiveType) {
     def osFamily = getOsFamily()
     if (osFamily == null) throw new IllegalStateException("current os family is unsupported")
 
     if (inJetBrainsNetwork()) {
-        return "https://repo.labs.intellij.net/edu-tools/android-studio-ide-${studioBuildVersion}-${osFamily}.zip"
+        return "https://repo.labs.intellij.net/edu-tools/android-studio-ide-${studioBuildVersion}-${osFamily}.$archiveType"
     }
     else {
-        return "http://dl.google.com/dl/android/studio/ide-zips/${studioVersion}/android-studio-ide-${studioBuildVersion}-${osFamily}.zip"
+        return "http://dl.google.com/dl/android/studio/ide-zips/${studioVersion}/android-studio-ide-${studioBuildVersion}-${osFamily}.$archiveType"
     }
 }
 
