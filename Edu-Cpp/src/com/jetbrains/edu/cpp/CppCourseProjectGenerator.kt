@@ -33,8 +33,20 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     val isDone = super.beforeProjectGenerated()
 
     if (isDone) {
-      swapItemNameAndCustomPresentableName()
-      addCMakeListsToEachTaskInCourse()
+      for (item in myCourse.items) {
+        if (item is Lesson) {
+          changeItemNameAndCustomPresentableName(item, EduNames.LESSON)
+          addCMakeListsForEachTaskInLesson(null, item)
+        }
+        else if (item is Section) {
+          changeItemNameAndCustomPresentableName(item, EduNames.SECTION)
+          item.visitLessons { lesson ->
+            changeItemNameAndCustomPresentableName(lesson, EduNames.LESSON)
+            addCMakeListsForEachTaskInLesson(item, lesson)
+            true
+          }
+        }
+      }
     }
     return isDone
   }
@@ -52,36 +64,12 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     }
   }
 
-  private fun addCMakeListsToEachTaskInCourse() {
-    for (item in myCourse.items) {
-      if (item is Lesson) {
-        addCMakeListsForEachTaskInLesson(null, item)
-      }
-      else if (item is Section) {
-        item.visitLessons { lesson ->
-          addCMakeListsForEachTaskInLesson(item, lesson)
-          true
-        }
-      }
-    }
-  }
-
-  private fun swapItemNameAndCustomPresentableName() {
-    for (item in myCourse.items) {
-      if (item is Lesson) {
-        swapNames(item, EduNames.LESSON)
-      }
-      else if (item is Section) {
-        swapNames(item, EduNames.SECTION)
-        item.visitLessons { lesson ->
-          swapNames(lesson, EduNames.LESSON)
-          true
-        }
-      }
-    }
-  }
-
-  private fun swapNames(item: StudyItem, prefix: String) {
+  private fun changeItemNameAndCustomPresentableName(item: StudyItem, prefix: String) {
+    // We support courses which section/lesson/task names can be in Russian,
+    // which may cause problems when creating a project with non-ascii paths.
+    // For example, CMake + MinGW and CLion + CMake + Cygwin does not work correctly with non-ascii symbols in project paths.
+    // Therefore, we generate folder names on the disk using ascii symbols (item.name)
+    // and in the course (item.customPresentableName) we show the names in the same form as in the remote course
     item.customPresentableName = item.name
     item.name = "${prefix}${item.index}"
   }
