@@ -3,6 +3,7 @@
 package com.jetbrains.edu.coursecreator.yaml.format
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -19,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 private const val CONTENT = "content"
+private const val UNIT = "unit"
 
 /**
  * Mixin class is used to deserialize [Lesson] item.
@@ -51,6 +53,16 @@ open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?> = emp
   }
 
   open fun createLesson() = Lesson()
+}
+
+/**
+ * Mixin class is used to deserialize remote information of [Lesson] item stored on Stepik.
+ */
+@Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
+@JsonPropertyOrder(ID, UPDATE_DATE, UNIT)
+abstract class RemoteLessonYamlMixin : RemoteStudyItemYamlMixin() {
+  @JsonProperty(UNIT)
+  private var unitId: Int = 0
 }
 
 class LessonChangeApplier<T : Lesson>(val project: Project) : StudyItemChangeApplier<T>() {

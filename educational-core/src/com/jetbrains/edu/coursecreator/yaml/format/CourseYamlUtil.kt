@@ -2,7 +2,6 @@
 
 package com.jetbrains.edu.coursecreator.yaml.format
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
@@ -37,8 +36,6 @@ private const val PROGRAMMING_LANGUAGE = "programming_language"
 private const val CONTENT = "content"
 private const val ENVIRONMENT = "environment"
 
-private const val ID = "id"
-private const val UPDATE_DATE = "update_date"
 private const val TOP_LEVEL_LESSONS_SECTION = "default_section"
 
 /**
@@ -101,13 +98,7 @@ private class CourseTypeSerializationConverter : StdConverter<String, String?>()
  */
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonPropertyOrder(ID, UPDATE_DATE, TOP_LEVEL_LESSONS_SECTION)
-abstract class EduCourseRemoteInfoYamlMixin {
-  @JsonProperty(ID)
-  private var myId: Int = 0
-
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEE, dd MMM yyyy HH:mm:ss zzz")
-  @JsonProperty(UPDATE_DATE)
-  private lateinit var myUpdateDate: Date
+abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
 
   @JsonSerialize(converter = TopLevelLessonsSectionSerializer::class)
   @JsonDeserialize(converter = TopLevelLessonsSectionDeserializer::class)
