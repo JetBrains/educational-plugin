@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.coursera
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.diagnostic.Logger
@@ -37,16 +38,15 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
       for (link in getCourseLinks()) {
         val tempFile = FileUtil.createTempFile("coursera-zip", null)
         DownloadUtil.downloadAtomically(null, link, tempFile)
-        val localCourse = EduUtils.getLocalCourse(tempFile.absolutePath)
-        if (localCourse == null) {
+        val courseraCourse = getCourseraCourse(tempFile.absolutePath)
+        if (courseraCourse == null) {
           LOG.error("Failed to get local course from $link")
           continue
         }
-
-        val courseraCourse = courseraCourseFromLocal(localCourse)
         if (courseraCourse.configurator == null) {
           continue
         }
+
         courses.add(courseraCourse)
       }
       return courses
@@ -64,6 +64,14 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
         LOG.warn("Failed to get courses from $LINK")
       }
       return emptyList()
+    }
+  }
+
+  companion object {
+    @VisibleForTesting
+    fun getCourseraCourse(zipPath: String): CourseraCourse? {
+      val localCourse = EduUtils.getLocalCourse(zipPath) ?: return null
+      return courseraCourseFromLocal(localCourse)
     }
   }
 }

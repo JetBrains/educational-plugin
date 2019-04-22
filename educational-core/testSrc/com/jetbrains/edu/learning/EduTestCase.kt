@@ -155,9 +155,11 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
 
   protected fun getCourse(): Course = StudyTaskManager.getInstance(project).course!!
 
-  protected fun findPlaceholder(lessonIndex: Int, taskIndex: Int, taskFile: String, placeholderIndex: Int) : AnswerPlaceholder {
-    return getCourse().lessons[lessonIndex].taskList[taskIndex].taskFiles[taskFile]!!.answerPlaceholders[placeholderIndex]
-  }
+  protected fun findPlaceholder(lessonIndex: Int, taskIndex: Int, taskFile: String, placeholderIndex: Int): AnswerPlaceholder =
+    findTaskFile(lessonIndex, taskIndex, taskFile).answerPlaceholders[placeholderIndex]
+
+  protected fun findTaskFile(lessonIndex: Int, taskIndex: Int, taskFile: String): TaskFile =
+    getCourse().lessons[lessonIndex].taskList[taskIndex].taskFiles[taskFile]!!
 
   protected fun findTask(lessonIndex: Int, taskIndex: Int): Task = getCourse().lessons[lessonIndex].taskList[taskIndex]
 
