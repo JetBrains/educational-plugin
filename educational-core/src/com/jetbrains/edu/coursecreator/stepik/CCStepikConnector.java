@@ -202,7 +202,6 @@ public class CCStepikConnector {
     EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     final int sectionId = postSectionInfo(project, section, course.getId());
-    section.setId(sectionId);
     postLessons(project, indicator, course, sectionId, section.getLessons());
 
     return sectionId;
@@ -215,6 +214,7 @@ public class CCStepikConnector {
       showErrorNotification(project, FAILED_TITLE, "Failed to update section " + section.getId());
       return false;
     }
+    section.setUpdateDate(updatedSection.getUpdateDate());
     for (Lesson lesson : section.getLessons()) {
       if (lesson.getId() > 0) {
         updateLesson(project, lesson, false, section.getId());
@@ -296,6 +296,7 @@ public class CCStepikConnector {
       return -1;
     }
     section.setId(postedSection.getId());
+    section.setUpdateDate(postedSection.getUpdateDate());
     return postedSection.getId();
   }
 
@@ -315,6 +316,13 @@ public class CCStepikConnector {
 
     switch (responseCode) {
       case HttpStatus.SC_OK:
+        StepSource step = StepikConnector.getStep(task.getId());
+        if (step != null) {
+          task.setUpdateDate(step.getUpdateDate());
+        }
+        else {
+          LOG.warn(String.format("Failed to get step for task '%s' with id %d while setting an update date", task.getName(), task.getId()));
+        }
         return true;
       case HttpStatus.SC_NOT_FOUND:
         // TODO: support case when lesson was removed from Stepik too
@@ -386,6 +394,7 @@ public class CCStepikConnector {
     Lesson postedLesson = updateLessonInfo(project, lesson, showNotification, sectionId);
 
     if (postedLesson != null) {
+      lesson.setUpdateDate(postedLesson.getUpdateDate());
       updateLessonTasks(project, lesson, postedLesson);
       return postedLesson;
     }
@@ -480,6 +489,7 @@ public class CCStepikConnector {
     }
     lesson.setId(postedLesson.getId());
     lesson.unitId = postedLesson.unitId;
+    lesson.setUpdateDate(postedLesson.getUpdateDate());
     for (Task task : lesson.getTaskList()) {
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       if (indicator != null) {
@@ -523,6 +533,7 @@ public class CCStepikConnector {
       return false;
     }
     task.setId(stepSource.getId());
+    task.setUpdateDate(stepSource.getUpdateDate());
     return true;
   }
 

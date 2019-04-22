@@ -179,6 +179,7 @@ public class CCPushTask extends DumbAwareAction {
     boolean isPosted = CCStepikConnector.postTask(project, taskCopy, lesson.getId());
     if (isPosted) {
       task.setId(taskCopy.getId());
+      task.setUpdateDate(taskCopy.getUpdateDate());
       return true;
     }
 
@@ -189,7 +190,9 @@ public class CCPushTask extends DumbAwareAction {
     Task taskCopy = task.copy();
     taskCopy.setIndex(position);
     taskCopy.setLesson(task.getLesson());
-    return CCStepikConnector.updateTask(project, taskCopy);
+    boolean updatedTask = CCStepikConnector.updateTask(project, taskCopy);
+    task.setUpdateDate(taskCopy.getUpdateDate());
+    return updatedTask;
   }
 
   private static void updateTasksPositions(@NotNull Project project, int initialPosition, List<Task> tasksToUpdate) {
