@@ -7,7 +7,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Modal;
@@ -90,7 +89,7 @@ public class CCPushCourse extends DumbAwareAction {
         // we set course inside postCourse method that's why have to get it here again
         Course uploadedCourse = StudyTaskManager.getInstance(project).getCourse();
         if (uploadedCourse != null) {
-          YamlFormatSynchronizer.saveItemRemoteInfo(uploadedCourse);
+          YamlFormatSynchronizer.saveRemoteInfo(uploadedCourse);
         }
         else {
           throw new IllegalStateException("Course is null while pushing course to stepik");

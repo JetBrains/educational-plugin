@@ -12,6 +12,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.FAILED_TITLE
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -69,6 +70,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
 
     val section = course.getSection(sectionDir.name) ?: return
     doPush(project, section, course)
+    YamlFormatSynchronizer.saveRemoteInfo(section)
   }
 
   companion object {

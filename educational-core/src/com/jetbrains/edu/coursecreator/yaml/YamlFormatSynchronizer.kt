@@ -91,19 +91,16 @@ object YamlFormatSynchronizer {
   @JvmStatic
   fun saveAll(project: Project) {
     val course = StudyTaskManager.getInstance(project).course ?: error("Attempt to create config files for project without course")
-    saveItemAndRemoteInfo(course)
-    course.visitSections { section -> saveItemAndRemoteInfo(section) }
+    saveItem(course)
+    course.visitSections { section -> saveItem(section) }
     course.visitLessons { lesson ->
       lesson.visitTasks { task ->
-        saveItemAndRemoteInfo(task)
+        saveItem(task)
       }
-      saveItemAndRemoteInfo(lesson)
+      saveItem(lesson)
     }
-  }
 
-  private fun saveItemAndRemoteInfo(item: StudyItem) {
-    saveItem(item)
-    saveItemRemoteInfo(item)
+    saveRemoteInfo(course)
   }
 
   @JvmStatic
@@ -112,7 +109,20 @@ object YamlFormatSynchronizer {
   }
 
   @JvmStatic
-  fun saveItemRemoteInfo(item: StudyItem) {
+  fun saveRemoteInfo(item: StudyItem) {
+    when (item) {
+      is ItemContainer -> {
+        saveItemRemoteInfo(item)
+        item.items.forEach { saveRemoteInfo(it) }
+      }
+      is Task -> {
+        saveItemRemoteInfo(item)
+      }
+    }
+  }
+
+  @JvmStatic
+  private fun saveItemRemoteInfo(item: StudyItem) {
     // we don't want to create remote info files in local courses
     if (item.id > 0) {
       doSaveItem(item, item.remoteConfigFileName, REMOTE_MAPPER)

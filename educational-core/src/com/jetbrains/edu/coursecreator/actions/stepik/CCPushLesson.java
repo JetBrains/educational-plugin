@@ -15,6 +15,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -113,6 +114,7 @@ public class CCPushLesson extends DumbAwareAction {
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText("Uploading lesson to " + StepikNames.STEPIK_URL);
         doPush(lesson, project, course);
+        YamlFormatSynchronizer.saveRemoteInfo(lesson);
       }
     });
   }
@@ -125,6 +127,7 @@ public class CCPushLesson extends DumbAwareAction {
         Section section = CCUtils.wrapIntoSection(project, course, Collections.singletonList(lesson), sectionToWrapIntoName(lesson));
         if (section != null) {
           CCPushSection.doPush(project, section, (EduCourse)course);
+          YamlFormatSynchronizer.saveRemoteInfo(section);
         }
       }
     });

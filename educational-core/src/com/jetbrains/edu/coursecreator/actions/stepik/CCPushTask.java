@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
@@ -110,6 +111,7 @@ public class CCPushTask extends DumbAwareAction {
         else {
           updateTask(task, lesson, project);
         }
+        YamlFormatSynchronizer.saveRemoteInfo(task);
       }
     });
   }
