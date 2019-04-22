@@ -36,6 +36,49 @@ class YamlRemoteSerializationTest : EduTestCase() {
     |""".trimMargin("|"))
   }
 
+  fun `test section`() {
+    val section = course {
+      section()
+    }.sections.first()
+
+    section.id = 1
+    section.updateDate = Date(0)
+    doTest(section, """
+    |id: 1
+    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
+    |""".trimMargin("|"))
+  }
+
+  fun `test lesson`() {
+    val lesson = course {
+      lesson()
+    }.lessons.first()
+
+    lesson.id = 1
+    lesson.updateDate = Date(0)
+    lesson.unitId = 1
+    doTest(lesson, """
+    |id: 1
+    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
+    |unit: 1
+    |""".trimMargin("|"))
+  }
+
+  fun `test task`() {
+    val task = course {
+      lesson {
+        eduTask()
+      }
+    }.lessons.first().taskList.first()
+
+    task.id = 1
+    task.updateDate = Date(0)
+    doTest(task, """
+    |id: 1
+    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
+    |""".trimMargin("|"))
+  }
+
   private fun doTest(item: StudyItem, expected: String) {
     val actual = YamlFormatSynchronizer.REMOTE_MAPPER.writeValueAsString(item)
     assertEquals(expected, actual)
