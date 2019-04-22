@@ -15,6 +15,7 @@ import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.TASK_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
+import com.jetbrains.edu.coursecreator.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
@@ -85,15 +86,11 @@ object YamlDeserializer {
   fun deserializeRemoteItem(configFileText: String, configName: String): StudyItem {
     return when (configName) {
       REMOTE_COURSE_CONFIG -> REMOTE_MAPPER.readValue(configFileText, EduCourse::class.java)
-      REMOTE_SECTION_CONFIG -> unsupportedException(configName)
-      REMOTE_LESSON_CONFIG -> unsupportedException(configName)
-      REMOTE_TASK_CONFIG -> unsupportedException(configName)
+      REMOTE_LESSON_CONFIG -> REMOTE_MAPPER.readValue(configFileText, Lesson::class.java)
+      REMOTE_SECTION_CONFIG,
+      REMOTE_TASK_CONFIG -> REMOTE_MAPPER.readValue(configFileText, RemoteStudyItem::class.java)
       else -> unexpectedConfigFileError(configName)
     }
-  }
-
-  private fun unsupportedException(configName: String): Nothing {
-    throw UnsupportedOperationException("Yaml deserialization for $configName is not supported yet")
   }
 
   private fun asText(node: JsonNode?): String? {
@@ -110,10 +107,13 @@ object YamlDeserializer {
 
   fun StudyItem.findConfigFile(parentDir: VirtualFile, vararg configFileNames: String): VirtualFile {
     val itemDir = parentDir.findChild(name) ?: noItemDirError(name)
-    return configFileNames.map { itemDir.findChild(it) }.firstOrNull { it != null } ?: noItemDirError(itemDir.name)
+    return configFileNames.map { itemDir.findChild(it) }.firstOrNull { it != null } ?: noConfigFileError(itemDir.name)
   }
 
   fun noItemDirError(itemName: String): Nothing = error("Cannot find directory for item: '$itemName'")
+
+  fun noConfigFileError(configName: String, configFileName: String = ""): Nothing = error(
+    "Cannot find config file $configFileName for item: '$configName'")
 
   fun formatError(message: String): Nothing = throw InvalidYamlFormatException(message)
 
