@@ -104,3 +104,10 @@ class LessonChangeApplier<T : Lesson>(val project: Project) : StudyItemChangeApp
   private fun noConfigFileError(it: StudyItem): Nothing = error("No config file for ${it.name}")
 }
 
+class RemoteLessonChangeApplier<T : Lesson> : RemoteInfoChangeApplierBase<T>() {
+  override fun applyChanges(existingItem: T, deserializedItem: T) {
+    super.applyChanges(existingItem, deserializedItem)
+    existingItem.unitId = deserializedItem.unitId
+  }
+}
+
