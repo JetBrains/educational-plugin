@@ -11,12 +11,14 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
+import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.noConfigFileError
+import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.noItemDirError
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader
 import com.jetbrains.edu.coursecreator.yaml.format.getRemoteChangeApplierForItem
+import com.jetbrains.edu.coursecreator.yaml.remoteConfigFileName
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -105,7 +107,6 @@ private fun loadCourseRecursively(project: Project): Course {
 
   val deserializedCourse = YamlDeserializer.deserialize(VfsUtil.loadText(courseConfig), Course::class.java)
   deserializedCourse.courseMode = if (EduUtils.isStudentProject(project)) EduNames.STUDY else CCUtils.COURSE_MODE
-  deserializedCourse.setRemoteInfoFromConfig(project.courseDir.findChild(REMOTE_COURSE_CONFIG))
 
   deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items)
   deserializedCourse.items.forEach { deserializedItem ->
@@ -127,20 +128,37 @@ private fun loadCourseRecursively(project: Project): Course {
     }
   }
 
-  // we init course before setting description info, as we have to set lessons for tasks first
-  // to obtain task description file to set description info from
+
+  // we init course before setting description and remote info, as we have to set parent item
+  // to obtain description/remote config file to set info from
   deserializedCourse.init(null, null, true)
+  deserializedCourse.loadRemoteInfoRecursively(project)
   deserializedCourse.setDescriptionInfo(project)
   return deserializedCourse
 }
 
-private fun Course.setRemoteInfoFromConfig(remoteCourseConfig: VirtualFile?) {
-  if (this !is EduCourse || remoteCourseConfig == null) {
-    return
+private fun Course.loadRemoteInfoRecursively(project: Project) {
+  course.loadRemoteInfo(project)
+  sections.forEach { section -> section.loadRemoteInfo(project) }
+
+  // top-level and from sections
+  visitLessons { lesson ->
+    lesson.loadRemoteInfo(project)
+    lesson.taskList.forEach { task -> task.loadRemoteInfo(project) }
+  }
+}
+
+private fun StudyItem.loadRemoteInfo(project: Project) {
+  val itemDir = getDir(project) ?: noItemDirError(name)
+  val remoteConfigFile = itemDir.findChild(remoteConfigFileName)
+  if (remoteConfigFile == null) {
+    if (id > 0) {
+      noConfigFileError(name, remoteConfigFileName)
+    }
+    else return
   }
 
-  val yamlText = VfsUtil.loadText(remoteCourseConfig)
-  val courseWithRemoteInfo = YamlDeserializer.deserializeRemoteItem(yamlText, remoteCourseConfig.name)
+  val courseWithRemoteInfo = YamlDeserializer.deserializeRemoteItem(VfsUtil.loadText(remoteConfigFile), remoteConfigFile.name)
   getRemoteChangeApplierForItem(courseWithRemoteInfo).applyChanges(this, courseWithRemoteInfo)
 }
 

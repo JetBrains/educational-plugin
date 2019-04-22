@@ -177,15 +177,6 @@ object YamlFormatSynchronizer {
       else -> error("Unknown StudyItem type: ${javaClass.simpleName}")
     }
 
-  private val StudyItem.remoteConfigFileName: String
-    get() = when (this) {
-      is Course -> REMOTE_COURSE_CONFIG
-      is Section -> REMOTE_SECTION_CONFIG
-      is Lesson -> REMOTE_LESSON_CONFIG
-      is Task -> REMOTE_TASK_CONFIG
-      else -> error("Unknown StudyItem type: ${javaClass.simpleName}")
-    }
-
   private val VirtualFile.document: Document?
     get() = FileDocumentManager.getInstance().getDocument(this)
 
@@ -196,3 +187,12 @@ object YamlFormatSynchronizer {
            REMOTE_COURSE_CONFIG == name || REMOTE_SECTION_CONFIG == name || REMOTE_LESSON_CONFIG == name || REMOTE_TASK_CONFIG == name
   }
 }
+
+val StudyItem.remoteConfigFileName: String
+  get() = when (this) {
+    is Course -> REMOTE_COURSE_CONFIG
+    is Section -> REMOTE_SECTION_CONFIG
+    is Lesson -> REMOTE_LESSON_CONFIG
+    is Task -> REMOTE_TASK_CONFIG
+    else -> error("Unknown StudyItem type: ${javaClass.simpleName}")
+  }
