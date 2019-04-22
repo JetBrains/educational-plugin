@@ -182,6 +182,7 @@ object YamlFormatSynchronizer {
   @JvmStatic
   fun isConfigFile(file: VirtualFile): Boolean {
     val name = file.name
-    return COURSE_CONFIG == name || LESSON_CONFIG == name || TASK_CONFIG == name || SECTION_CONFIG == name
+    return COURSE_CONFIG == name || SECTION_CONFIG == name || LESSON_CONFIG == name || TASK_CONFIG == name ||
+           REMOTE_COURSE_CONFIG == name || REMOTE_SECTION_CONFIG == name || REMOTE_LESSON_CONFIG == name || REMOTE_TASK_CONFIG == name
   }
 }
