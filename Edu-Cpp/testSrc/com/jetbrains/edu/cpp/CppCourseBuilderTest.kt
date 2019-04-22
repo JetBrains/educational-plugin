@@ -10,11 +10,11 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
   override val courseBuilder = CppCourseBuilder()
   override val defaultSettings = CppProjectSettings()
 
-  fun `test study course structure`() {
+  fun `test study course structure with top-level lesson`() {
     val course = course(language = OCLanguage.getInstance()) {
       lesson {
         eduTask {
-          taskFile("task.cpp")
+          taskFile("src/task.cpp")
           taskFile("CMakeLists.txt")
         }
       }
@@ -26,8 +26,230 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
 
     fileTree {
       dir("lesson1/task1") {
-        file("task.cpp")
+        dir("src") {
+          file("task.cpp")
+        }
         file("CMakeLists.txt")
+      }
+      file("CMakeLists.txt")
+    }.assertEquals(rootDir)
+  }
+
+  fun `test study course structure with top-level section`() {
+    val course = course(language = OCLanguage.getInstance()) {
+      section {
+        lesson {
+          eduTask {
+            taskFile("src/task.cpp")
+            taskFile("CMakeLists.txt")
+          }
+        }
+      }
+      additionalFiles {
+        taskFile("CMakeLists.txt")
+      }
+    }
+    createCourseStructure(course)
+
+    fileTree {
+      dir("section1/lesson1/task1") {
+        dir("src") {
+          file("task.cpp")
+        }
+        file("CMakeLists.txt")
+      }
+      file("CMakeLists.txt")
+    }.assertEquals(rootDir)
+  }
+
+  fun `test study course structure with top-level section and lesson`() {
+    val course = course(language = OCLanguage.getInstance()) {
+      section {
+        lesson {
+          eduTask {
+            taskFile("src/task.cpp")
+            taskFile("CMakeLists.txt")
+          }
+        }
+      }
+
+      lesson {
+        eduTask {
+          taskFile("src/task.cpp")
+          taskFile("CMakeLists.txt")
+        }
+      }
+
+      additionalFiles {
+        taskFile("CMakeLists.txt")
+      }
+    }
+    createCourseStructure(course)
+
+    fileTree {
+      dir("section1/lesson1/task1") {
+        dir("src") {
+          file("task.cpp")
+        }
+        file("CMakeLists.txt")
+      }
+      dir("lesson1/task1") {
+        dir("src") {
+          file("task.cpp")
+        }
+        file("CMakeLists.txt")
+      }
+      file("CMakeLists.txt")
+    }.assertEquals(rootDir)
+  }
+
+  fun `test study course structure with Russian names`() {
+    val course = course(language = OCLanguage.getInstance()) {
+      section(name = "Введение в язык") {
+        lesson(name = "Обзор") {
+          eduTask {
+            taskFile("src/task.cpp")
+            taskFile("CMakeLists.txt")
+          }
+        }
+      }
+
+      lesson(name ="История языка") {
+        eduTask {
+          taskFile("src/task.cpp")
+          taskFile("CMakeLists.txt")
+        }
+      }
+
+      additionalFiles {
+        taskFile("CMakeLists.txt")
+      }
+    }
+    createCourseStructure(course)
+
+    fileTree {
+      dir("section1/lesson1/task1") {
+        dir("src") {
+          file("task.cpp")
+        }
+        file("CMakeLists.txt")
+      }
+      dir("lesson1/task1") {
+        dir("src") {
+          file("task.cpp")
+        }
+        file("CMakeLists.txt")
+      }
+      file("CMakeLists.txt")
+    }.assertEquals(rootDir)
+  }
+
+  fun `test study course structure with custom names`() {
+    val course = course(language = OCLanguage.getInstance()) {
+      section(name = "Introduction") {
+        lesson(name = "Overview") {
+          eduTask {
+            taskFile("src/task.cpp")
+            taskFile("CMakeLists.txt")
+          }
+        }
+      }
+
+      lesson(name ="Language history") {
+        eduTask {
+          taskFile("src/task.cpp")
+          taskFile("CMakeLists.txt")
+        }
+      }
+
+      additionalFiles {
+        taskFile("CMakeLists.txt")
+      }
+    }
+    createCourseStructure(course)
+
+    fileTree {
+      dir("section1/lesson1/task1") {
+        dir("src") {
+          file("task.cpp")
+        }
+        file("CMakeLists.txt")
+      }
+      dir("lesson1/task1") {
+        dir("src") {
+          file("task.cpp")
+        }
+        file("CMakeLists.txt")
+      }
+      file("CMakeLists.txt")
+    }.assertEquals(rootDir)
+  }
+
+  fun `test study course structure with eduTask and theoryTask`() {
+    val course = course(language = OCLanguage.getInstance()) {
+      section {
+        lesson {
+          eduTask {
+            taskFile("src/task.cpp")
+            taskFile("CMakeLists.txt")
+          }
+
+          theoryTask {
+            taskFile("src/task.cpp")
+            taskFile("CMakeLists.txt")
+          }
+        }
+      }
+
+      lesson {
+        eduTask {
+          taskFile("src/task.cpp")
+          taskFile("CMakeLists.txt")
+        }
+
+        theoryTask {
+          taskFile("src/task.cpp")
+          taskFile("CMakeLists.txt")
+        }
+      }
+
+      additionalFiles {
+        taskFile("CMakeLists.txt")
+      }
+    }
+    createCourseStructure(course)
+
+    fileTree {
+      dir("section1/lesson1") {
+        dir("task1") {
+          dir("src") {
+            file("task.cpp")
+          }
+          file("CMakeLists.txt")
+        }
+
+        dir("task2") {
+          dir("src") {
+            file("task.cpp")
+          }
+          file("CMakeLists.txt")
+        }
+      }
+
+      dir("lesson1") {
+        dir("task1") {
+          dir("src") {
+            file("task.cpp")
+          }
+          file("CMakeLists.txt")
+        }
+
+        dir("task2") {
+          dir("src") {
+            file("task.cpp")
+          }
+          file("CMakeLists.txt")
+        }
       }
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
