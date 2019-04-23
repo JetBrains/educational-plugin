@@ -15,6 +15,7 @@ import com.intellij.execution.testframework.Filter
 import com.intellij.execution.testframework.sm.runner.SMTRunnerEventsAdapter
 import com.intellij.execution.testframework.sm.runner.SMTRunnerEventsListener
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
+import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
@@ -79,6 +80,11 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
 
     latch.await()
     connection.disconnect()
+
+    // We need to invoke all current pending EDT actions to get proper states of test roots.
+    // BACKCOMPAT: 2018.3
+    @Suppress("DEPRECATION")
+    invokeAndWaitIfNeed {}
 
     val testResults = testRoots.map { it.toCheckResult() }
     if (testResults.isEmpty()) return NO_TESTS_RUN
