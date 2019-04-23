@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.cpp.cmake.projectWizard.CLionProjectWizardUtils.getCMakeMinimumRequiredLine
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
-import com.jetbrains.cidr.cpp.toolchains.CMake
+import com.jetbrains.cidr.cpp.toolchains.CMake.readCMakeVersion
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.EduNames
@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   CourseProjectGenerator<CppProjectSettings>(builder, course) {
 
-  private val cmakeMinimumRequired = getCMakeMinimumRequiredLine(CMake.readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
+  private val cmakeMinimumRequired = getCMakeMinimumRequiredLine(readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
   private val taskCMakeListsTemplate = getTemplate(EDU_CMAKELISTS)
   private val mainCMakeListsTemplate = getTemplate(EDU_MAIN_CMAKELISTS)
 
@@ -36,13 +36,21 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
       for (item in myCourse.items) {
         if (item is Lesson) {
           changeItemNameAndCustomPresentableName(item, EduNames.LESSON)
-          addCMakeListsForEachTaskInLesson(null, item)
+          item.visitTasks { task, _ ->
+            addCMakeListsForTask(null, item, task)
+            changeItemNameAndCustomPresentableName(task, EduNames.TASK)
+            true
+          }
         }
         else if (item is Section) {
           changeItemNameAndCustomPresentableName(item, EduNames.SECTION)
           item.visitLessons { lesson ->
             changeItemNameAndCustomPresentableName(lesson, EduNames.LESSON)
-            addCMakeListsForEachTaskInLesson(item, lesson)
+            lesson.visitTasks { task, _ ->
+              addCMakeListsForTask(item, lesson, task)
+              changeItemNameAndCustomPresentableName(task, EduNames.TASK)
+              true
+            }
             true
           }
         }
@@ -74,14 +82,11 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     item.name = "${prefix}${item.index}"
   }
 
-  private fun addCMakeListsForEachTaskInLesson(section: Section?, lesson: Lesson) {
-    lesson.visitTasks { task, _ ->
-      val cMakeFile = TaskFile()
-      cMakeFile.name = CMakeListsFileType.FILE_NAME
-      cMakeFile.setText(getText(taskCMakeListsTemplate, getCMakeProjectUniqueName(section, lesson, task)))
-      task.addTaskFile(cMakeFile)
-      true
-    }
+  private fun addCMakeListsForTask(section: Section?, lesson: Lesson, task: Task) {
+    val cMakeFile = TaskFile()
+    cMakeFile.name = CMakeListsFileType.FILE_NAME
+    cMakeFile.setText(getText(taskCMakeListsTemplate, getCMakeProjectUniqueName(section, lesson, task)))
+    task.addTaskFile(cMakeFile)
   }
 
   private fun getCMakeProjectUniqueName(section: Section?, lesson: Lesson, task: Task): String {

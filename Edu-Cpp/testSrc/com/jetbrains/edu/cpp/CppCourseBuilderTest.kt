@@ -105,9 +105,9 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
 
   fun `test study course structure with Russian names`() {
     val course = course(language = OCLanguage.getInstance()) {
-      section(name = "Введение в язык") {
-        lesson(name = "Обзор") {
-          eduTask {
+      section(name = "Введение в язык C++") {
+        lesson(name = "Обзор возможностей") {
+          eduTask(name = "Задача 1") {
             taskFile("src/task.cpp")
             taskFile("CMakeLists.txt")
           }
@@ -115,7 +115,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       }
 
       lesson(name ="История языка") {
-        eduTask {
+        theoryTask(name = "Теоретическая задача") {
           taskFile("src/task.cpp")
           taskFile("CMakeLists.txt")
         }
@@ -146,9 +146,9 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
 
   fun `test study course structure with custom names`() {
     val course = course(language = OCLanguage.getInstance()) {
-      section(name = "Introduction") {
+      section(name = "Introduction to C++") {
         lesson(name = "Overview") {
-          eduTask {
+          eduTask(name = "First task") {
             taskFile("src/task.cpp")
             taskFile("CMakeLists.txt")
           }
@@ -156,7 +156,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       }
 
       lesson(name ="Language history") {
-        eduTask {
+        theoryTask(name = "Theory task") {
           taskFile("src/task.cpp")
           taskFile("CMakeLists.txt")
         }
