@@ -36,22 +36,19 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
       for (item in myCourse.items) {
         if (item is Lesson) {
           changeItemNameAndCustomPresentableName(item, EduNames.LESSON)
-          item.visitTasks { task, _ ->
+          item.visitTasks { task ->
             addCMakeListsForTask(null, item, task)
             changeItemNameAndCustomPresentableName(task, EduNames.TASK)
-            true
           }
         }
         else if (item is Section) {
           changeItemNameAndCustomPresentableName(item, EduNames.SECTION)
           item.visitLessons { lesson ->
             changeItemNameAndCustomPresentableName(lesson, EduNames.LESSON)
-            lesson.visitTasks { task, _ ->
+            lesson.visitTasks { task ->
               addCMakeListsForTask(item, lesson, task)
               changeItemNameAndCustomPresentableName(task, EduNames.TASK)
-              true
             }
-            true
           }
         }
       }
