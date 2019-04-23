@@ -83,9 +83,8 @@ object YamlFormatSynchronizer {
 
   private fun addRemoteMixIns(mapper: ObjectMapper) {
     mapper.addMixIn(EduCourse::class.java, EduCourseRemoteInfoYamlMixin::class.java)
-    mapper.addMixIn(Section::class.java, RemoteStudyItemYamlMixin::class.java)
     mapper.addMixIn(Lesson::class.java, RemoteLessonYamlMixin::class.java)
-    mapper.addMixIn(Task::class.java, RemoteStudyItemYamlMixin::class.java)
+    mapper.addMixIn(StudyItem::class.java, RemoteStudyItemYamlMixin::class.java)
   }
 
   @JvmStatic
