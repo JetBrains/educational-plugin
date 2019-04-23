@@ -3,4 +3,11 @@
   <extensions defaultExtensionNs="Educational">
     <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppConfigurator"/>
   </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <experimentalFeature id="com.jetbrains.edu.cpp" percentOfUsers="0" internalFeature="true">
+      <description>Enables support of C++ courses</description>
+    </experimentalFeature>
+  </extensions>
+
 </idea-plugin>

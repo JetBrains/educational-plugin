@@ -1,11 +1,14 @@
 package com.jetbrains.edu.cpp
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
+import com.intellij.openapi.application.Experiments
 import com.jetbrains.edu.cpp.checker.CppTaskCheckerProvider
 import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.isUnitTestMode
 
 class CppConfigurator : EduConfigurator<CppProjectSettings> {
 
@@ -25,6 +28,8 @@ class CppConfigurator : EduConfigurator<CppProjectSettings> {
   override fun getMockTemplate(): String = FileTemplateManager.getDefaultInstance().getInternalTemplate(MOCK_CPP).text
 
   override fun isCourseCreatorEnabled(): Boolean = false
+
+  override fun isEnabled(): Boolean = Experiments.isFeatureEnabled(EduExperimentalFeatures.CPP_COURSES) || isUnitTestMode
 
   companion object {
     private const val TASK_CPP = "task.cpp"
