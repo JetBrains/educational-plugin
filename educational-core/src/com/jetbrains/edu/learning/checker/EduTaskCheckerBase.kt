@@ -28,6 +28,9 @@ import java.util.concurrent.CountDownLatch
 abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
 
   override fun check(indicator: ProgressIndicator): CheckResult {
+    val preparationResult = prepareForCheck()
+    if (preparationResult.status != CheckStatus.Solved) return preparationResult
+
     if (task.course.isStudy) {
       runInEdt {
         ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
@@ -111,6 +114,12 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
     }
     return buffer.toString()
   }
+
+  /**
+   * Launches preparation tasks (e.g. compilation) before checking.
+   * If status of returning result is not [CheckStatus.Solved] then this result will be returned as check result
+   */
+  protected open fun prepareForCheck(): CheckResult = CheckResult(CheckStatus.Solved, "")
 
   /**
    * Creates and return list of run configurations to run task tests.

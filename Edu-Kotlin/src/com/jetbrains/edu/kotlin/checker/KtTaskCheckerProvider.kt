@@ -5,9 +5,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
+import com.jetbrains.edu.jvm.gradle.checker.GradleCommandLine
 import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import com.jetbrains.edu.jvm.gradle.checker.NewGradleEduTaskChecker
 import com.jetbrains.edu.jvm.gradle.checker.hasSeparateModule
+import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -20,6 +22,15 @@ class KtTaskCheckerProvider : GradleTaskCheckerProvider() {
 
   override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
     return object : NewGradleEduTaskChecker(task, project) {
+
+      override fun prepareForCheck(): CheckResult {
+        return if (task.hasSeparateModule(project)) {
+          super.prepareForCheck()
+        } else  {
+          GradleCommandLine.create(project, "testClasses")?.launchAndCheck() ?: CheckResult.FAILED_TO_CHECK
+        }
+      }
+
       override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
         val testConfigurations = super.createTestConfigurations()
         if (task.hasSeparateModule(project) || testConfigurations.size != 1) {
