@@ -32,8 +32,9 @@ public interface CoursesProvider {
   static List<Course> loadAllCourses(@NotNull List<CoursesProvider> providers) {
     checkIsBackgroundThread();
 
+    providers = ContainerUtil
+      .sorted(providers, (o1, o2) -> Boolean.compare(o1 instanceof BundledCoursesProvider, o2 instanceof BundledCoursesProvider));
     List<Course> courses = new ArrayList<>();
-    providers.sort((o1, o2) -> Boolean.compare(o1 instanceof BundledCoursesProvider, o2 instanceof BundledCoursesProvider));
     for (CoursesProvider provider : providers) {
       List<Course> providedCourses = provider.loadCourses();
       if (provider instanceof BundledCoursesProvider) {
