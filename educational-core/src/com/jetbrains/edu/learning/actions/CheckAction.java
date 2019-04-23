@@ -42,6 +42,12 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class CheckAction extends DumbAwareAction {
   public static final String ACTION_ID = "Educational.Check";
@@ -98,7 +104,35 @@ public class CheckAction extends DumbAwareAction {
     for (CheckListener listener : CheckListener.EP_NAME.getExtensionList()) {
       listener.beforeCheck(project, task);
     }
-    ProgressManager.getInstance().run(new StudyCheckTask(project, task));
+
+    StudyCheckTask checkTask = new StudyCheckTask(project, task);
+    if (checkTask.isHeadless()) {
+      // It's hack to make checker tests work properly.
+      // `com.intellij.openapi.progress.ProgressManager.run(com.intellij.openapi.progress.Task)` executes task synchronously
+      // if the task run in headless environment (e.g. in unit tests).
+      // It blocks EDT and any next `ApplicationManager.getApplication().invokeAndWait()` call will hang because of deadlock
+      Future<?> future = ApplicationManager.getApplication().executeOnPooledThread(() -> ProgressManager.getInstance().run(checkTask));
+      //noinspection TestOnlyProblems
+      waitAndDispatchInvocationEvents(future);
+    } else {
+      ProgressManager.getInstance().run(checkTask);
+    }
+  }
+
+  @TestOnly
+  private static <T> void waitAndDispatchInvocationEvents(@NotNull Future<T> future) {
+    while (true) {
+      try {
+        UIUtil.dispatchAllInvocationEvents();
+        future.get(10, TimeUnit.MILLISECONDS);
+        return;
+      }
+      catch (InterruptedException | ExecutionException e) {
+        throw new RuntimeException(e);
+      }
+      catch (TimeoutException ignored) {
+      }
+    }
   }
 
   private static void showCheckUnavailablePopup(Project project) {
