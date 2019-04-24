@@ -76,26 +76,22 @@ object StepikCourseLoader {
     for (inProgressCourse in result) {
       inProgressCourse.visibility = CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(inProgressCourse.id))
     }
-    return result.filter { it.compatibility == CourseCompatibility.COMPATIBLE }
+    return result
   }
 
   private fun getFeaturedStepikCourses(): List<StepikCourse> {
-    val result = getListedStepikCourses(featuredStepikCourses.keys.toList())
-    for (stepikCourse in result) {
-      stepikCourse.language = featuredStepikCourses[stepikCourse.id]
-    }
-    return result.filter { it.compatibility == CourseCompatibility.COMPATIBLE }
+    return getListedStepikCourses(featuredStepikCourses.keys.toList(), featuredStepikCourses)
   }
 
-  private fun getListedStepikCourses(courseIds: List<Int>): List<StepikCourse> {
-    val result = ContainerUtil.newArrayList<EduCourse>()
-    for (courseId in courseIds) {
-      val info = StepikConnector.getCourseInfo(courseId, false) ?: continue
-      val compatibility = info.compatibility
-      if (compatibility === CourseCompatibility.UNSUPPORTED) continue
-      result.add(info)
-    }
-    return result.mapNotNull { stepikCourseFromRemote(it) }
+  private fun getListedStepikCourses(courseIds: List<Int>, languageMap: Map<Int, String>? = null): List<StepikCourse> {
+    return courseIds.mapNotNull { courseId ->
+      val info = StepikConnector.getCourseInfo(courseId, false) ?: return@mapNotNull null
+      if (languageMap != null) {
+        info.language = languageMap[courseId]
+      }
+      if (info.compatibility == CourseCompatibility.UNSUPPORTED) return@mapNotNull null
+      stepikCourseFromRemote(info)
+    }.filter { it.compatibility == CourseCompatibility.COMPATIBLE }
   }
 
   @JvmStatic
