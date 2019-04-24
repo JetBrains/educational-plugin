@@ -7,10 +7,15 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checker.CheckActionListener
+import com.jetbrains.edu.learning.checker.CheckResultDiff
+import com.jetbrains.edu.learning.checker.CheckResultDiffMatcher.Companion.diff
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import org.hamcrest.CoreMatchers.equalTo
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.junit.Assert.assertThat
 
 class KtCheckErrorsTest : KtCheckersTestBase() {
 
@@ -157,55 +162,44 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
   }
 
   fun testErrors() {
-    CheckActionListener.shouldFail()
-    CheckActionListener.expectedMessage { task ->
-      when (task.name) {
-        "kotlinCompilationError", "javaCompilationError" -> CheckUtils.COMPILATION_FAILED_MESSAGE
-        "testFail" -> "foo() should return 42"
-        "comparisonTestFail" -> """
-                                Expected:
-                                <42>
-                                Actual:
-                                <43>
-                                """
-        "comparisonTestWithMessageFail" ->  """
-                                            foo() should return 42
-                                            Expected:
-                                            <42>
-                                            Actual:
-                                            <43>
-                                            """
-        "comparisonMultilineTestFail" ->  """
-                                          Wrong Answer
-                                          Expected:
-                                          <Hello[,]
-                                          World!>
-                                          Actual:
-                                          <Hello[]
-                                          World!>
-                                          """
-        "objectComparisonTestFail" -> """
-                                      Expected:
-                                      Foo<(0, 0)>
-                                      Actual:
-                                      Bar<(0, 0)>
-                                      """
-        "outputTaskFail" -> """
-                            Expected output:
-                            <OK!>
-                            Actual output:
-                            <OK>
-                            """
-        "multilineOutputTaskFail" ->  """
+    CheckActionListener.setCheckResultVerifier { task, checkResult ->
+      assertEquals(CheckStatus.Failed, checkResult.status)
+      val (messageMatcher, diffMatcher) = when (task.name) {
+        "kotlinCompilationError", "javaCompilationError" ->
+          equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE) to nullValue()
+        "testFail" ->
+          equalTo("foo() should return 42") to nullValue()
+        "comparisonTestFail" ->
+          equalTo("expected:<42> but was:<43>") to
+            diff(CheckResultDiff(title = "", message = "", expected = "42", actual = "43"))
+        "comparisonTestWithMessageFail" ->
+          equalTo("foo() should return 42 expected:<42> but was:<43>") to
+            diff(CheckResultDiff(title = "", message = "foo() should return 42", expected = "42", actual = "43"))
+        "comparisonMultilineTestFail" ->
+          equalTo("Wrong Answer expected:<Hello[,]\nWorld!> but was:<Hello[]\nWorld!>") to
+            diff(CheckResultDiff(title="", message="Wrong Answer", expected="Hello,\nWorld!", actual="Hello\nWorld!"))
+        "objectComparisonTestFail" ->
+          // TODO: find out why test framework doesn't provide diff for this case
+          equalTo("expected: Foo<(0, 0)> but was: Bar<(0, 0)>") to nullValue()
+        "outputTaskFail" ->
+          equalTo("""
+                  Expected output:
+                  <OK!>
+                  Actual output:
+                  <OK>
+                  """.trimIndent()) to nullValue()
+        "multilineOutputTaskFail" ->  equalTo("""
                                       Expected output:
                                       <Hello,
                                       World!>
                                       Actual output:
                                       <Hello
                                       World>
-                                      """
-        else -> null
-      }?.trimIndent()
+                                      """.trimIndent()) to nullValue()
+        else -> error("Unexpected task `${task.name}`")
+      }
+      assertThat("Checker message for ${task.name} doesn't match", checkResult.message, messageMatcher)
+      assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, diffMatcher)
     }
     doTest()
   }
