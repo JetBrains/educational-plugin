@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
  * Stepik courses do not contain pycharm tasks.
  */
 class StepikCourse : EduCourse() {
-  override fun courseCompatibility(courseInfo: EduCourse) = CourseCompatibility.COMPATIBLE;
+  override fun courseCompatibility(courseInfo: EduCourse) = CourseCompatibility.COMPATIBLE
 }
 
 fun stepikCourseFromRemote(remoteCourse: EduCourse): StepikCourse? {
