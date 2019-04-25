@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.nullValue
 import org.hamcrest.CoreMatchers.equalTo
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert.assertThat
@@ -171,31 +172,22 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
           equalTo("foo() should return 42") to nullValue()
         "comparisonTestFail" ->
           equalTo("expected:<42> but was:<43>") to
-            diff(CheckResultDiff(title = "", message = "", expected = "42", actual = "43"))
+            diff(CheckResultDiff(expected = "42", actual = "43"))
         "comparisonTestWithMessageFail" ->
           equalTo("foo() should return 42 expected:<42> but was:<43>") to
-            diff(CheckResultDiff(title = "", message = "foo() should return 42", expected = "42", actual = "43"))
+            diff(CheckResultDiff(expected = "42", actual = "43", message = "foo() should return 42"))
         "comparisonMultilineTestFail" ->
           equalTo("Wrong Answer expected:<Hello[,]\nWorld!> but was:<Hello[]\nWorld!>") to
-            diff(CheckResultDiff(title="", message="Wrong Answer", expected="Hello,\nWorld!", actual="Hello\nWorld!"))
+            diff(CheckResultDiff(expected = "Hello,\nWorld!", actual = "Hello\nWorld!", message="Wrong Answer"))
         "objectComparisonTestFail" ->
           // TODO: find out why test framework doesn't provide diff for this case
           equalTo("expected: Foo<(0, 0)> but was: Bar<(0, 0)>") to nullValue()
         "outputTaskFail" ->
-          equalTo("""
-                  Expected output:
-                  <OK!>
-                  Actual output:
-                  <OK>
-                  """.trimIndent()) to nullValue()
-        "multilineOutputTaskFail" ->  equalTo("""
-                                      Expected output:
-                                      <Hello,
-                                      World!>
-                                      Actual output:
-                                      <Hello
-                                      World>
-                                      """.trimIndent()) to nullValue()
+          equalTo("Expected output:\n<OK!>\nActual output:\n<OK>") to
+            diff(CheckResultDiff(expected = "OK!", actual = "OK"))
+        "multilineOutputTaskFail" ->
+          equalTo("Expected output:\n<Hello,\nWorld!>\nActual output:\n<Hello\nWorld>".trimIndent()) to
+            diff(CheckResultDiff(expected = "Hello,\nWorld!", actual = "Hello\nWorld"))
         else -> error("Unexpected task `${task.name}`")
       }
       assertThat("Checker message for ${task.name} doesn't match", checkResult.message, messageMatcher)

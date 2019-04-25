@@ -102,7 +102,7 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
 
     val firstFailedTest = failedChildren.firstOrNull() ?: error("Testing failed although no failed tests found")
     val diff = firstFailedTest.diffViewerProvider?.let {
-      CheckResultDiff(it.diffTitle, removeAttributes(firstFailedTest.comparisonMessage), it.left, it.right)
+      CheckResultDiff(it.left, it.right, it.diffTitle, removeAttributes(firstFailedTest.comparisonMessage))
     }
     return CheckResult(CheckStatus.Failed,
                        message = removeAttributes(firstFailedTest.errorMessage),
