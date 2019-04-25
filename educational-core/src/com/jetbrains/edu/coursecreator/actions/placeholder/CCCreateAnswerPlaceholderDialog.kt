@@ -65,7 +65,7 @@ open class CCCreateAnswerPlaceholderDialog(project: Project,
     }
     val errorText = try {
       val dependency = AnswerPlaceholderDependency.create(placeholder, currentText)
-      if (dependency == null) "invalid dependency" else null
+      if (dependency == null) "Invalid dependency" else null
     }
     catch (e: AnswerPlaceholderDependency.InvalidDependencyException) {
       e.customMessage
