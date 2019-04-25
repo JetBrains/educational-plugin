@@ -82,7 +82,8 @@ class RsOutputTaskChecker(project: Project, task: OutputTask) : OutputTaskChecke
 
       val output = CheckUtils.postProcessOutput(outputBuffer.toString())
       return if (expected != output) {
-        CheckResult(CheckStatus.Failed, "Expected output:\n<$expected>\nActual output:\n<$output>")
+        val diff = CheckResultDiff(expected = expected, actual = output)
+        CheckResult(CheckStatus.Failed, "Expected output:\n<$expected>\nActual output:\n<$output>", diff = diff)
       } else {
         CheckResult(CheckStatus.Solved, TestsOutputParser.CONGRATULATIONS)
       }

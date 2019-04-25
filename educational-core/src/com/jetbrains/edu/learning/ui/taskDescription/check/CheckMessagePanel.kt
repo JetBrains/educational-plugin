@@ -42,7 +42,7 @@ class CheckMessagePanel private constructor(): JPanel() {
   }
 
   private fun setDiff(diff: CheckResultDiff) {
-    val (_, message, expectedText, actualText) = diff
+    val (expectedText, actualText, _, message) = diff
     setMessage(message)
     val expected = createLabeledComponent(expectedText, "Expected", 16)
     val actual = createLabeledComponent(actualText, "Actual", 8)
