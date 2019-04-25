@@ -121,8 +121,8 @@ object YamlDeserializer {
 
   fun noItemDirError(itemName: String): Nothing = error("Cannot find directory for item: '$itemName'")
 
-  fun noConfigFileError(configName: String, configFileName: String = ""): Nothing = error(
-    "Cannot find config file $configFileName for item: '$configName'")
+  fun noConfigFileError(itemName: String, configFileName: String = ""): Nothing = error(
+    "Cannot find config file $configFileName for item: '$itemName'")
 
   fun formatError(message: String): Nothing = throw InvalidYamlFormatException(message)
 
