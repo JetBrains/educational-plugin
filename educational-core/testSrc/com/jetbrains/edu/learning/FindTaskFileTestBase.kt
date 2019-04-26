@@ -8,7 +8,10 @@ abstract class FindTaskFileTestBase<Settings> : CourseGenerationTestBase<Setting
 
   protected fun doTestGetTaskDir(pathToCourseJson: String, filePath: String, taskDirPath: String) {
     val course = generateCourseStructure(pathToCourseJson)
+    doTestGetTaskDir(course, filePath, taskDirPath)
+  }
 
+  protected fun doTestGetTaskDir(course: Course, filePath: String, taskDirPath: String) {
     val file = findFile(filePath)
     val expectedTaskDir = findFile(taskDirPath)
     assertEquals(expectedTaskDir, EduUtils.getTaskDir(course, file))
@@ -16,6 +19,10 @@ abstract class FindTaskFileTestBase<Settings> : CourseGenerationTestBase<Setting
 
   protected fun doTestGetTaskForFile(pathToCourseJson: String, filePath: String, expectedTask: (Course) -> Task) {
     val course = generateCourseStructure(pathToCourseJson)
+    doTestGetTaskForFile(course, filePath, expectedTask)
+  }
+
+  protected fun doTestGetTaskForFile(course: Course, filePath: String, expectedTask: (Course) -> Task) {
     val file = findFile(filePath)
     val task = expectedTask(course)
     val taskFromUtils = EduUtils.getTaskForFile(project, file)
@@ -25,6 +32,10 @@ abstract class FindTaskFileTestBase<Settings> : CourseGenerationTestBase<Setting
 
   protected fun doTestGetTaskFile(pathToCourseJson: String, filePath: String, expectedTaskFile: (Course) -> TaskFile) {
     val course = generateCourseStructure(pathToCourseJson)
+    doTestGetTaskFile(course, filePath, expectedTaskFile)
+  }
+
+  protected fun doTestGetTaskFile(course: Course, filePath: String, expectedTaskFile: (Course) -> TaskFile) {
     val file = findFile(filePath)
     val taskFile = expectedTaskFile(course)
     val taskFileFromUtils = EduUtils.getTaskFile(project, file)
