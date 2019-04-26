@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <linearGradient id="academy-b" x1="11.682%" x2="66.58%" y1="5.731%" y2="60.922%">
+      <stop offset="0%" stop-color="#AF1DF5"/>
+      <stop offset="100%" stop-color="#15DD69"/>
+    </linearGradient>
+    <path id="academy-a" d="M33.1176471,13.8823529 L11.3810739,35.6189261 C7.09160648,34.3109457 4,29.8286249 4,25.1764706 L4,13.8823529 L10.5882353,13.8823529 L10.5366417,4 L15.7598742,4 L15.7647059,13.8823529 L24.2352941,13.8823529 L24.2399666,4 L29.4631992,4 L29.4117647,13.8823529 L33.1176471,13.8823529 Z M36,13.8823529 L36,25.1764706 L36,13.8823529 Z M24.3811202,36 C24.3651507,36.0000633 24.3491767,36.000095 24.3331984,36.000095 L13.9301992,36.000095 C13.9165922,36.000095 13.9029922,36.0000633 13.8893995,36 L24.3811202,36 Z"/>
+    <linearGradient id="academy-c" x1="50%" x2="50%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#3D3D3D"/>
+      <stop offset="100%" stop-color="#010101"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <use fill="#15DD69" xlink:href="#academy-a"/>
+    <use fill="url(#academy-b)" xlink:href="#academy-a"/>
+    <polygon fill="url(#academy-c)" points="36 14 36 36 14 36"/>
+    <polygon fill="#FFF" points="24 32 32 32 32 30 24 30"/>
+  </g>
+</svg>
