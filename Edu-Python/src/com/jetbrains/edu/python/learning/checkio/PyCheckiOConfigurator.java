@@ -2,6 +2,7 @@ package com.jetbrains.edu.python.learning.checkio;
 
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduCourseBuilder;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider;
@@ -75,5 +76,10 @@ public class PyCheckiOConfigurator extends PyConfigurator implements CheckiOConn
     CheckiOCourseGenerationUtils.getCourseFromServerUnderProgress(myContentGenerator, (CheckiOCourse)course,
                                                                   PyCheckiOSettings.INSTANCE.getAccount(),
                                                                   PyCheckiONames.PY_CHECKIO_API_HOST);
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return super.isEnabled() && !EduUtils.isAndroidStudio();
   }
 }
