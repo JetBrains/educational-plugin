@@ -23,6 +23,7 @@ class CheckResult @JvmOverloads constructor(
     @JvmField val FAILED_TO_CHECK = CheckResult(CheckStatus.Unchecked, CheckUtils.FAILED_TO_CHECK_MESSAGE)
     @JvmField val LOGIN_NEEDED = CheckResult(CheckStatus.Unchecked, CheckUtils.LOGIN_NEEDED_MESSAGE)
     @JvmField val CONNECTION_FAILED = CheckResult(CheckStatus.Unchecked, "Connection failed")
+    @JvmField val SOLVED = CheckResult(CheckStatus.Solved, "")
   }
 }
 

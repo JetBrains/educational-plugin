@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.configurators
 
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -11,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import java.io.IOException
 
 open class PlainTextConfigurator : EduConfigurator<Unit> {
 
@@ -20,10 +23,51 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
 
   override fun getTestDirs() = listOf("tests")
 
+  /**
+   * To specify check result for plain text courses in tests:
+   * 1. Add file called [CHECK_RESULT_FILE] to a task.
+   * 2. [CHECK_RESULT_FILE] is used to determine check result.
+   * 3. Check result is specified in the following format: `status message`
+   *
+   * **Examples**:
+   *
+   * `Solved Great job!`
+   *
+   * `Failed Incorrect`
+   *
+   * `Unchecked Failed to check`*
+   */
   override fun getTaskCheckerProvider() = TaskCheckerProvider { task, project ->
     object : TaskChecker<EduTask>(task, project) {
-      override fun check(indicator: ProgressIndicator): CheckResult = CheckResult(CheckStatus.Solved, "")
+      override fun check(indicator: ProgressIndicator): CheckResult {
+        val taskDir = task.getDir(project) ?: error("No taskDir in tests")
+        val checkResultFile = taskDir.findChild(CHECK_RESULT_FILE)
+        if (checkResultFile == null) {
+          return CheckResult.SOLVED
+        }
+        return checkResultFile.checkResult
+      }
     }
+  }
+
+  private val VirtualFile.checkResult: CheckResult
+    get() =
+      try {
+        val text = VfsUtil.loadText(this)
+        val statusWithMessage = text.split(" ", limit = 2)
+        val message = if (statusWithMessage.size > 1) statusWithMessage[1] else ""
+        CheckResult(CheckStatus.valueOf(statusWithMessage[0]), message)
+      }
+      catch (e: IOException) {
+        CheckResult.SOLVED
+      }
+      catch (e: IllegalArgumentException) {
+        CheckResult.SOLVED
+      }
+
+
+  companion object {
+    const val CHECK_RESULT_FILE = "checkResult.txt"
   }
 }
 

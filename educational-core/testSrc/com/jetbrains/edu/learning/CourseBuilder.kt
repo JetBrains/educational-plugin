@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configurators.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -232,6 +233,10 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     taskFile.isVisible = visible
     taskFile.task = task
     task.addTaskFile(taskFile)
+  }
+
+  fun checkResultFile(status: CheckStatus, message: String = "") {
+    taskFile(PlainTextConfigurator.CHECK_RESULT_FILE, "$status $message")
   }
 
   fun kotlinTaskFile(
