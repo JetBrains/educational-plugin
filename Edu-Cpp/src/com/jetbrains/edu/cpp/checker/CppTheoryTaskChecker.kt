@@ -17,7 +17,6 @@ import com.jetbrains.cidr.execution.CidrTargetRunConfigurationProducer
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.TheoryTaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
@@ -26,7 +25,8 @@ class CppTheoryTaskChecker(task: TheoryTask, project: Project) : TheoryTaskCheck
 
   override fun check(indicator: ProgressIndicator): CheckResult {
     val configuration = runReadAction { getConfiguration() } ?:
-                        return CheckResult(CheckStatus.Unchecked, CheckUtils.NOT_RUNNABLE_MESSAGE)
+                        return CheckResult(CheckStatus.Unchecked, "No run configurations for this file.\n\n" +
+                                                                  "Please run the source code and then click the `Run` button again.")
 
     StudyTaskManager.getInstance(project).course?.let {
       runInEdt {
