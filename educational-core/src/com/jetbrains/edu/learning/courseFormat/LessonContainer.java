@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.jetbrains.edu.learning.courseFormat.visitors.LessonVisitor;
 import com.jetbrains.edu.learning.courseFormat.visitors.SectionVisitor;
+import com.jetbrains.edu.learning.courseFormat.visitors.TaskVisitor;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,5 +59,9 @@ public abstract class LessonContainer extends ItemContainer {
         visitor.visit((Section)item);
       }
     }
+  }
+
+  public void visitTasks(@NotNull TaskVisitor visitor) {
+    visitLessons(lesson -> lesson.visitTasks(visitor));
   }
 }

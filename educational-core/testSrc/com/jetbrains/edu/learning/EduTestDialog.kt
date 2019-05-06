@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.ui.TestInputDialog
+import com.intellij.util.ui.UIUtil
 
 sealed class EduTestDialogBase<T> {
 
@@ -51,6 +52,7 @@ inline fun <T: EduTestDialogBase<*>> withTestDialog(dialog: T, action: () -> Uni
       try {
         action()
       } finally {
+        UIUtil.dispatchAllInvocationEvents()
         Messages.setTestDialog(oldDialog)
       }
     }
