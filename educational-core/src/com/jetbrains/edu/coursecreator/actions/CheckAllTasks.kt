@@ -28,6 +28,7 @@ class CheckAllTasks : AnAction("Check All Tasks") {
             return@visitTasks
           }
           curTask++
+          indicator.fraction = curTask * 1.0 / tasksNum
           val checker = course.configurator?.taskCheckerProvider?.getTaskChecker(it, project)!!
           indicator.text = "Checking task $curTask/$tasksNum"
           if (checker.check(indicator).status != CheckStatus.Solved) {
