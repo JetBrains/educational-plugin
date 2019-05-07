@@ -15,8 +15,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
   override fun getSettings(): CppProjectSettings = CppProjectSettings(languageStandard)
 
   override fun getLanguageSettingsComponents(course: Course): List<LabeledComponent<JComponent>> {
-    val standards = if (course.isStudy) arrayOf(languageStandard) else
-      CMakeRecognizedCPPLanguageStandard.values().map { it.standard }.toTypedArray()
+    val standards = if (course.isStudy) arrayOf(languageStandard) else languageVersions.toTypedArray()
 
     val langStandardComboBox = ComboBox(standards)
     langStandardComboBox.selectedItem = languageStandard
@@ -27,5 +26,9 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
     }
 
     return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(langStandardComboBox, "C++ Standard", BorderLayout.WEST))
+  }
+
+  override fun getLanguageVersions(): List<String> {
+    return CMakeRecognizedCPPLanguageStandard.values().map { it.standard }
   }
 }
