@@ -1,3 +1,3 @@
 package com.jetbrains.edu.cpp
 
-data class CppProjectSettings(val languageVersion: String)
+data class CppProjectSettings(val languageStandard: String)

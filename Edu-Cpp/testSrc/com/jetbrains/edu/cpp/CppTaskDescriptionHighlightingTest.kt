@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTes
 
 class CppTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
   override val language: Language = OCLanguage.getInstance()
-  override val settings = CppProjectSettings(CMakeRecognizedCPPLanguageStandard.CPP14.displayString)
+  override val settings = CppProjectSettings(CMakeRecognizedCPPLanguageStandard.CPP14.standard)
 
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:

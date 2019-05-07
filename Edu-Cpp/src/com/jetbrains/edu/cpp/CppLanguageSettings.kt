@@ -2,7 +2,6 @@ package com.jetbrains.edu.cpp
 
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.LabeledComponent
-import com.jetbrains.cidr.cpp.cmake.projectWizard.generators.CMakeCPPProjectGenerator
 import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -11,19 +10,22 @@ import javax.swing.JComponent
 
 class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
 
-  private var languageVersion: String = CMakeRecognizedCPPLanguageStandard.CPP14.displayString
+  private var languageStandard: String = CMakeRecognizedCPPLanguageStandard.CPP14.standard
 
-  override fun getSettings(): CppProjectSettings = CppProjectSettings(languageVersion)
+  override fun getSettings(): CppProjectSettings = CppProjectSettings(languageStandard)
 
   override fun getLanguageSettingsComponents(course: Course): List<LabeledComponent<JComponent>> {
-    val langStandardComboBox = ComboBox(CMakeCPPProjectGenerator().languageVersions)
-    langStandardComboBox.selectedItem = languageVersion
+    val standards = if (course.isStudy) arrayOf(languageStandard) else
+      CMakeRecognizedCPPLanguageStandard.values().map { it.standard }.toTypedArray()
+
+    val langStandardComboBox = ComboBox(standards)
+    langStandardComboBox.selectedItem = languageStandard
 
     langStandardComboBox.addItemListener {
-      languageVersion = it.item.toString()
+      languageStandard = it.item.toString()
       notifyListeners()
     }
 
-    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(langStandardComboBox, "Language Standard", BorderLayout.WEST))
+    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(langStandardComboBox, "C++ Standard", BorderLayout.WEST))
   }
 }
