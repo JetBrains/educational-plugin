@@ -17,13 +17,16 @@ class CheckAllTasks : AnAction("Check All Tasks") {
     val project = e.project ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
 
-    ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Checking all tasks...") {
+    ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Checking all tasks...", true) {
       override fun run(indicator: ProgressIndicator) {
         var hasFailedTasks = false
         var curTask = 0
         var tasksNum = 0
         course.visitTasks { tasksNum++ }
         course.visitTasks {
+          if (indicator.isCanceled) {
+            return@visitTasks
+          }
           curTask++
           val checker = course.configurator?.taskCheckerProvider?.getTaskChecker(it, project)!!
           indicator.text = "Checking task $curTask/$tasksNum"
@@ -31,6 +34,9 @@ class CheckAllTasks : AnAction("Check All Tasks") {
             hasFailedTasks = true
           }
           checker.clearState()
+        }
+        if (indicator.isCanceled) {
+          return
         }
         runInEdt {
           Messages.showInfoMessage(if (hasFailedTasks) FAILED_MESSAGE else SUCCESS_MESSAGE, "Check Finished")
