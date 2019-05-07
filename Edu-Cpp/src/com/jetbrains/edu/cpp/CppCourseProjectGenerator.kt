@@ -29,36 +29,35 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   private val taskCMakeListsTemplate = getTemplate(EDU_CMAKELISTS)
   private val mainCMakeListsTemplate = getTemplate(EDU_MAIN_CMAKELISTS)
 
-  override fun beforeProjectGenerated(): Boolean {
-    val isDone = super.beforeProjectGenerated()
+  override fun createProject(locationString: String, projectSettings: Any): Project? {
+    val standard = (projectSettings as CppProjectSettings).languageStandard
 
-    if (isDone) {
-      for (item in myCourse.items) {
-        if (item is Lesson) {
-          changeItemNameAndCustomPresentableName(item, EduNames.LESSON)
-          item.visitTasks { task ->
-            addCMakeListsForTask(null, item, task)
-            changeItemNameAndCustomPresentableName(task, EduNames.TASK)
-          }
+    for (item in myCourse.items) {
+      if (item is Lesson) {
+        changeItemNameAndCustomPresentableName(item, EduNames.LESSON)
+        item.visitTasks { task ->
+          addCMakeListsForTask(null, item, task, standard)
+          changeItemNameAndCustomPresentableName(task, EduNames.TASK)
         }
-        else if (item is Section) {
-          changeItemNameAndCustomPresentableName(item, EduNames.SECTION)
-          item.visitLessons { lesson ->
-            changeItemNameAndCustomPresentableName(lesson, EduNames.LESSON)
-            lesson.visitTasks { task ->
-              addCMakeListsForTask(item, lesson, task)
-              changeItemNameAndCustomPresentableName(task, EduNames.TASK)
-            }
+      }
+      else if (item is Section) {
+        changeItemNameAndCustomPresentableName(item, EduNames.SECTION)
+        item.visitLessons { lesson ->
+          changeItemNameAndCustomPresentableName(lesson, EduNames.LESSON)
+          lesson.visitTasks { task ->
+            addCMakeListsForTask(item, lesson, task, standard)
+            changeItemNameAndCustomPresentableName(task, EduNames.TASK)
           }
         }
       }
     }
-    return isDone
+
+    return super.createProject(locationString, projectSettings)
   }
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
     if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
-    GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME, getText(mainCMakeListsTemplate, baseDir.name))
+    GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME, getText(mainCMakeListsTemplate, baseDir.name, ""))
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings) {
@@ -79,11 +78,11 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     item.name = "${prefix}${item.index}"
   }
 
-  private fun addCMakeListsForTask(section: Section?, lesson: Lesson, task: Task) {
+  private fun addCMakeListsForTask(section: Section?, lesson: Lesson, task: Task, standard: String) {
     val cMakeFile = TaskFile()
     cMakeFile.apply {
       name = CMakeListsFileType.FILE_NAME
-      setText(getText(taskCMakeListsTemplate, getCMakeProjectUniqueName(section, lesson, task)))
+      setText(getText(taskCMakeListsTemplate, getCMakeProjectUniqueName(section, lesson, task), standard))
       isVisible = false
     }
     task.addTaskFile(cMakeFile)
@@ -95,8 +94,10 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     return "${EduNames.SECTION}${section.index}-$projectName"
   }
 
-  private fun getText(templateName: FileTemplate, cppProjectName: String): String {
-    val params = mapOf(PROJECT_NAME to cppProjectName, CMAKE_MINIMUM_REQUIRED_LINE to cmakeMinimumRequired)
+  private fun getText(templateName: FileTemplate, cppProjectName: String, cppStandard: String): String {
+    val params = mapOf(PROJECT_NAME to cppProjectName,
+                       CMAKE_MINIMUM_REQUIRED_LINE to cmakeMinimumRequired,
+                       CPP_STANDARD to cppStandard)
     return templateName.getText(params)
   }
 
@@ -109,5 +110,6 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     private const val EDU_CMAKELISTS = "EduCMakeLists.txt"
     private const val PROJECT_NAME = "PROJECT_NAME"
     private const val CMAKE_MINIMUM_REQUIRED_LINE = "CMAKE_MINIMUM_REQUIRED_LINE"
+    private const val CPP_STANDARD = "CPP_STANDARD"
   }
 }
