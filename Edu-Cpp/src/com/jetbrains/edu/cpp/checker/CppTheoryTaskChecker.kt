@@ -22,8 +22,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 class CppTheoryTaskChecker(task: TheoryTask, project: Project) : TheoryTaskChecker(task, project) {
 
   override fun check(indicator: ProgressIndicator): CheckResult {
-    val configuration = runReadAction { getConfiguration() } ?: return CheckResult(CheckStatus.Unchecked, "No run configurations for this file.\n\n" +
-                                                                                        "Please run the source code and then click the `Run` button again.")
+    val configuration = runReadAction { getConfiguration() } ?:
+                        return CheckResult(CheckStatus.Unchecked, "This file has no `main()` method to run.")
     runInEdt {
       ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
     }
