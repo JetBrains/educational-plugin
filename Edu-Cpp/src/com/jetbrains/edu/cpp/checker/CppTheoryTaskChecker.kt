@@ -15,7 +15,6 @@ import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.cidr.cpp.cmake.model.CMakeTarget
 import com.jetbrains.cidr.execution.CidrTargetRunConfigurationProducer
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TheoryTaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -27,11 +26,8 @@ class CppTheoryTaskChecker(task: TheoryTask, project: Project) : TheoryTaskCheck
     val configuration = runReadAction { getConfiguration() } ?:
                         return CheckResult(CheckStatus.Unchecked, "No run configurations for this file.\n\n" +
                                                                   "Please run the source code and then click the `Run` button again.")
-
-    StudyTaskManager.getInstance(project).course?.let {
-      runInEdt {
-        ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
-      }
+    runInEdt {
+      ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
     }
     return CheckResult(CheckStatus.Solved, "")
   }
