@@ -4,7 +4,6 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -20,10 +19,14 @@ class CheckAllTasks : AnAction("Check All Tasks") {
 
     ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Checking all tasks...") {
       override fun run(indicator: ProgressIndicator) {
-        Logger.getInstance(CheckAllTasks::class.java).info("Progress was launched")
         var hasFailedTasks = false
+        var curTask = 0
+        var tasksNum = 0
+        course.visitTasks { tasksNum++ }
         course.visitTasks {
+          curTask++
           val checker = course.configurator?.taskCheckerProvider?.getTaskChecker(it, project)!!
+          indicator.text = "Checking task $curTask/$tasksNum"
           if (checker.check(indicator).status != CheckStatus.Solved) {
             hasFailedTasks = true
           }
@@ -35,7 +38,6 @@ class CheckAllTasks : AnAction("Check All Tasks") {
       }
     })
   }
-
 
   override fun update(e: AnActionEvent) {
     //TODO: implement
