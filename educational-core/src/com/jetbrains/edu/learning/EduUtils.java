@@ -424,23 +424,13 @@ public class EduUtils {
       }
 
       if (lesson instanceof FrameworkLesson && course.isStudy()) {
-        return getResultTask(project, taskDir, ((FrameworkLesson)lesson).currentTask());
+        return ((FrameworkLesson)lesson).currentTask();
       }
       else {
-        return getResultTask(project, taskDir, lesson.getTask(taskDir.getName()));
+        return lesson.getTask(taskDir.getName());
       }
     }
     return null;
-  }
-
-  @Nullable
-  private static Task getResultTask(@NotNull Project project, @NotNull VirtualFile file, Task task) {
-    if (task == null) return null;
-    VirtualFile taskDir = task.getDir(project);
-    if (taskDir == null || !taskDir.getPath().equals(file.getPath())) {
-      return null;
-    }
-    return task;
   }
 
   // supposed to be called under progress
