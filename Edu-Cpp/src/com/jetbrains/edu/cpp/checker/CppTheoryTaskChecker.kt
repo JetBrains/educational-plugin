@@ -35,7 +35,8 @@ class CppTheoryTaskChecker(task: TheoryTask, project: Project) : TheoryTaskCheck
     return runReadAction {
       val editor = EduUtils.getSelectedEditor(project) ?: return@runReadAction null
       val dataContext = DataManager.getInstance().getDataContext(editor.component)
-      val functions = PsiTreeUtil.findChildrenOfType(dataContext.getData(CommonDataKeys.PSI_FILE), OCFunctionDeclaration::class.java)
+      val psiFile = dataContext.getData(CommonDataKeys.PSI_FILE) ?: return@runReadAction null
+      val functions = PsiTreeUtil.findChildrenOfType(psiFile, OCFunctionDeclaration::class.java)
       val mainFunction = functions.find { CidrTargetRunLineMarkerProvider.isInEntryPointBody(it) } ?: return@runReadAction null
       val fromContext = CidrTargetRunConfigurationProducer.getInstance(project)
         ?.findOrCreateConfigurationFromContext(ConfigurationContext(mainFunction))
