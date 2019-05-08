@@ -24,7 +24,7 @@ class CppTheoryTaskChecker(task: TheoryTask, project: Project) : TheoryTaskCheck
 
   override fun check(indicator: ProgressIndicator): CheckResult {
     val configuration = getConfiguration(project) ?:
-                        return CheckResult(CheckStatus.Unchecked, "This file has no `main()` method to run.")
+                        return CheckResult(CheckStatus.Unchecked, "No <code>main</code> to run", needEscape = false)
     runInEdt {
       ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
     }
