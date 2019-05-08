@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 class CppTheoryTaskChecker(task: TheoryTask, project: Project) : TheoryTaskChecker(task, project) {
 
   override fun check(indicator: ProgressIndicator): CheckResult {
-    val configuration = runReadAction { getConfiguration() } ?:
+    val configuration = getConfiguration(project) ?:
                         return CheckResult(CheckStatus.Unchecked, "This file has no `main()` method to run.")
     runInEdt {
       ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
@@ -31,13 +31,15 @@ class CppTheoryTaskChecker(task: TheoryTask, project: Project) : TheoryTaskCheck
     return CheckResult(CheckStatus.Solved, "")
   }
 
-  private fun getConfiguration(): RunnerAndConfigurationSettings? {
-    val editor = EduUtils.getSelectedEditor(project) ?: return null
-    val dataContext = DataManager.getInstance().getDataContext(editor.component)
-    val functions = PsiTreeUtil.findChildrenOfType(dataContext.getData(CommonDataKeys.PSI_FILE), OCFunctionDeclaration::class.java)
-    val mainFunction = functions.find { CidrTargetRunLineMarkerProvider.isInEntryPointBody(it) } ?: return null
-    val fromContext = CidrTargetRunConfigurationProducer.getInstance(project)
-      ?.findOrCreateConfigurationFromContext(ConfigurationContext(mainFunction))
-    return fromContext?.configurationSettings
+  private fun getConfiguration(project: Project): RunnerAndConfigurationSettings? {
+    return runReadAction {
+      val editor = EduUtils.getSelectedEditor(project) ?: return@runReadAction null
+      val dataContext = DataManager.getInstance().getDataContext(editor.component)
+      val functions = PsiTreeUtil.findChildrenOfType(dataContext.getData(CommonDataKeys.PSI_FILE), OCFunctionDeclaration::class.java)
+      val mainFunction = functions.find { CidrTargetRunLineMarkerProvider.isInEntryPointBody(it) } ?: return@runReadAction null
+      val fromContext = CidrTargetRunConfigurationProducer.getInstance(project)
+        ?.findOrCreateConfigurationFromContext(ConfigurationContext(mainFunction))
+      return@runReadAction fromContext?.configurationSettings
+    }
   }
 }
