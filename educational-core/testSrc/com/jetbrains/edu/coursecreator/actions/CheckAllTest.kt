@@ -46,6 +46,29 @@ class CheckAllTest : EduActionTestCase() {
     }
   }
 
+  fun `test tasks with different statuses`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          checkResultFile(CheckStatus.Unchecked)
+        }
+        eduTask {
+          checkResultFile(CheckStatus.Solved)
+        }
+      }
+      lesson {
+        eduTask {
+          checkResultFile(CheckStatus.Failed)
+        }
+      }
+    }
+
+    doTestWithNotification {
+      assertEquals("2 of 3 tasks failed", it.subtitle)
+      assertEquals("<a href=\"0\">lesson1/task1</a><br><a href=\"1\">lesson2/task1</a>", it.content)
+    }
+  }
+
   private fun doTestWithNotification(checkNotification: (Notification) -> Unit) {
     var notificationShown = false
     connection.subscribe(Notifications.TOPIC, object: NotificationsAdapter() {
