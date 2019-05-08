@@ -81,9 +81,11 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
 
   private fun addCMakeListsForTask(section: Section?, lesson: Lesson, task: Task) {
     val cMakeFile = TaskFile()
-    cMakeFile.name = CMakeListsFileType.FILE_NAME
-    cMakeFile.setText(getText(taskCMakeListsTemplate, getCMakeProjectUniqueName(section, lesson, task)))
-    cMakeFile.isVisible = false
+    cMakeFile.apply {
+      name = CMakeListsFileType.FILE_NAME
+      setText(getText(taskCMakeListsTemplate, getCMakeProjectUniqueName(section, lesson, task)))
+      isVisible = false
+    }
     task.addTaskFile(cMakeFile)
   }
 
