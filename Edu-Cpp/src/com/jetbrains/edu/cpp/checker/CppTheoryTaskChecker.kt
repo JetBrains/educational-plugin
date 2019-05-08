@@ -5,6 +5,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.ide.DataManager
+import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
@@ -33,9 +34,7 @@ class CppTheoryTaskChecker(task: TheoryTask, project: Project) : TheoryTaskCheck
   private fun getConfiguration(): RunnerAndConfigurationSettings? {
     val editor = EduUtils.getSelectedEditor(project) ?: return null
     val dataContext = DataManager.getInstance().getDataContext(editor.component)
-    val context = ConfigurationContext.getFromContext(dataContext)
-    val location = context.location ?: return null
-    val functions = PsiTreeUtil.findChildrenOfType(location.psiElement.containingFile, OCFunctionDeclaration::class.java)
+    val functions = PsiTreeUtil.findChildrenOfType(dataContext.getData(CommonDataKeys.PSI_FILE), OCFunctionDeclaration::class.java)
     val mainFunction = functions.find { CidrTargetRunLineMarkerProvider.isInEntryPointBody(it) } ?: return null
     val fromContext = CidrTargetRunConfigurationProducer.getInstance(project)
       ?.findOrCreateConfigurationFromContext(ConfigurationContext(mainFunction))
