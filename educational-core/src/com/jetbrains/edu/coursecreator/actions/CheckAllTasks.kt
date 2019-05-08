@@ -88,9 +88,6 @@ class CheckAllTasks : AnAction("Check All Tasks") {
     @VisibleForTesting
     const val SUCCESS_MESSAGE = "All tasks are solved correctly"
 
-    @VisibleForTesting
-    const val FAILED_MESSAGE = "Failed"
-
     private const val GROUP_ID = "Education: all tasks check"
   }
 }
