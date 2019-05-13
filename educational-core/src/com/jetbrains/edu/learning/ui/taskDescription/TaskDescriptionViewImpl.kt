@@ -38,15 +38,9 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       setTaskText(value)
       separator.isVisible = value != null
       checkPanel.isVisible = value != null
-      if (value != null) {
-        readyToCheck()
-        checkPanel.updateCheckButton(value)
-      }
-
+      updateCheckButton(value)
       taskTextTW.updateTaskSpecificPanel(value)
       updateAdditionalTaskTab(value)
-
-      UIUtil.setBackgroundRecursively(checkPanel, getTaskDescriptionBackgroundColor())
       field = value
     }
 
@@ -65,6 +59,13 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     }
   }
 
+  private fun updateCheckButton(task: Task?) {
+    if (task == null) return
+    readyToCheck()
+    checkPanel.updateCheckButton(task)
+    UIUtil.setBackgroundRecursively(checkPanel, getTaskDescriptionBackgroundColor())
+  }
+
   override fun updateTaskSpecificPanel() {
     taskTextTW.updateTaskSpecificPanel(currentTask)
   }
@@ -76,6 +77,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
   override fun updateTaskDescription() {
     updateTaskDescription(currentTask)
+    updateCheckButton(currentTask)
   }
 
   override fun readyToCheck() {
