@@ -20,7 +20,7 @@ class JsEduTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(tas
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
     return task.getAllTests(project).mapNotNull {
       val configuration = ConfigurationContext(it).configuration?.apply {
-        isActivateToolWindowBeforeRun = !task.course.isStudy
+        isActivateToolWindowBeforeRun = activateRunToolWindow
         isTemporary = true
       }
       configuration

@@ -23,7 +23,7 @@ open class NewGradleEduTaskChecker(task: EduTask, project: Project) : EduTaskChe
         .mapNotNull { PsiManager.getInstance(project).findDirectory(it) }
         .mapNotNull {
           ConfigurationContext(it).configuration?.apply {
-            isActivateToolWindowBeforeRun = !task.course.isStudy
+            isActivateToolWindowBeforeRun = activateRunToolWindow
             isTemporary = true
           }
         }

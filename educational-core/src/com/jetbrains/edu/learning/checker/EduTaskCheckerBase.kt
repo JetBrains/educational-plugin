@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import java.util.concurrent.CountDownLatch
 
 abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
+  var activateRunToolWindow: Boolean = !task.course.isStudy
 
   override fun check(indicator: ProgressIndicator): CheckResult {
     val preparationResult = prepareForCheck()

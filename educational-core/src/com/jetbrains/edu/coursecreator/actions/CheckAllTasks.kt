@@ -12,6 +12,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -36,6 +37,9 @@ class CheckAllTasks : AnAction("Check All Tasks") {
           curTask++
           indicator.fraction = curTask * 1.0 / tasksNum
           val checker = course.configurator?.taskCheckerProvider?.getTaskChecker(it, project)!!
+          if (checker is EduTaskCheckerBase) {
+            checker.activateRunToolWindow = false
+          }
           indicator.text = "Checking task $curTask/$tasksNum"
           if (checker.check(indicator).status != CheckStatus.Solved) {
             failedTasks.add(it)
