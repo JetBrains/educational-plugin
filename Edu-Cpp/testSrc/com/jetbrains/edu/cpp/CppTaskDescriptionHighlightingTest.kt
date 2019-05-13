@@ -2,12 +2,11 @@ package com.jetbrains.edu.cpp
 
 import com.intellij.lang.Language
 import com.jetbrains.cidr.lang.OCLanguage
-import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
 
 class CppTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
   override val language: Language = OCLanguage.getInstance()
-  override val settings = CppProjectSettings(CMakeRecognizedCPPLanguageStandard.CPP14.standard)
+  override val settings = CppProjectSettings()
 
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:

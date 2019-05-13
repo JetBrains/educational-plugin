@@ -1,3 +1,5 @@
 package com.jetbrains.edu.cpp
 
-data class CppProjectSettings(val languageStandard: String)
+import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard
+
+data class CppProjectSettings(val languageStandard: String = CMakeRecognizedCPPLanguageStandard.CPP14.standard)

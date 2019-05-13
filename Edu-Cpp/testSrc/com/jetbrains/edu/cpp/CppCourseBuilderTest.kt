@@ -1,7 +1,6 @@
 package com.jetbrains.edu.cpp
 
 import com.jetbrains.cidr.lang.OCLanguage
-import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard
 import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.fileTree
@@ -9,7 +8,7 @@ import com.jetbrains.edu.learning.fileTree
 class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
 
   override val courseBuilder = CppCourseBuilder()
-  override val defaultSettings = CppProjectSettings(CMakeRecognizedCPPLanguageStandard.CPP14.standard)
+  override val defaultSettings = CppProjectSettings()
 
   fun `test study course structure with top-level lesson`() {
     val course = course(language = OCLanguage.getInstance()) {
