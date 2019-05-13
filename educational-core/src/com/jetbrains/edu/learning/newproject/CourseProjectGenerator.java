@@ -125,9 +125,10 @@ public abstract class CourseProjectGenerator<S> {
     if (!beforeProjectGenerated()) {
       return null;
     }
-    Project createdProject = createProject(location, projectSettings);
+    S castedProjectSettings = (S) projectSettings;
+    Project createdProject = createProject(location, castedProjectSettings);
     if (createdProject == null) return null;
-    afterProjectGenerated(createdProject, (S) projectSettings);
+    afterProjectGenerated(createdProject, castedProjectSettings);
     return createdProject;
   }
 
@@ -140,7 +141,7 @@ public abstract class CourseProjectGenerator<S> {
    * @return project of new course or null if new project can't be created
    */
   @Nullable
-  protected Project createProject(@NotNull String locationString, @NotNull Object projectSettings) {
+  protected Project createProject(@NotNull String locationString, @NotNull S projectSettings) {
     final File location = new File(FileUtil.toSystemDependentName(locationString));
     if (!location.exists() && !location.mkdirs()) {
       String message = ActionsBundle.message("action.NewDirectoryProject.cannot.create.dir", location.getAbsolutePath());
@@ -157,7 +158,7 @@ public abstract class CourseProjectGenerator<S> {
 
     RecentProjectsManager.getInstance().setLastProjectCreationLocation(PathUtil.toSystemIndependentName(location.getParent()));
 
-    @SuppressWarnings("unchecked") ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, baseDir, (S)projectSettings);
+    @SuppressWarnings("unchecked") ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, baseDir, projectSettings);
     EnumSet<PlatformProjectOpenProcessor.Option> options = EnumSet.of(PlatformProjectOpenProcessor.Option.FORCE_NEW_FRAME);
     baseDir.putUserData(COURSE_MODE_TO_CREATE, myCourse.getCourseMode());
     baseDir.putUserData(COURSE_TYPE_TO_CREATE, myCourse.getItemType());

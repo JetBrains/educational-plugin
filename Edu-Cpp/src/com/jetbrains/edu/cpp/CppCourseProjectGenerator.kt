@@ -29,14 +29,12 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   private val taskCMakeListsTemplate = getTemplate(EDU_CMAKELISTS)
   private val mainCMakeListsTemplate = getTemplate(EDU_MAIN_CMAKELISTS)
 
-  override fun createProject(locationString: String, projectSettings: Any): Project? {
-    val standard = (projectSettings as CppProjectSettings).languageStandard
-
+  override fun createProject(locationString: String, projectSettings: CppProjectSettings): Project? {
     for (item in myCourse.items) {
       if (item is Lesson) {
         changeItemNameAndCustomPresentableName(item, EduNames.LESSON)
         item.visitTasks { task ->
-          addCMakeListsForTask(null, item, task, standard)
+          addCMakeListsForTask(null, item, task, projectSettings.languageStandard)
           changeItemNameAndCustomPresentableName(task, EduNames.TASK)
         }
       }
@@ -45,7 +43,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
         item.visitLessons { lesson ->
           changeItemNameAndCustomPresentableName(lesson, EduNames.LESSON)
           lesson.visitTasks { task ->
-            addCMakeListsForTask(item, lesson, task, standard)
+            addCMakeListsForTask(item, lesson, task, projectSettings.languageStandard)
             changeItemNameAndCustomPresentableName(task, EduNames.TASK)
           }
         }
