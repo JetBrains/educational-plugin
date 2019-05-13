@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -81,7 +82,8 @@ class CheckAllTasks : AnAction("Check All Tasks") {
     get() = listOfNotNull(lesson.section, lesson, this).joinToString("/") { it.presentableName }
 
   override fun update(e: AnActionEvent) {
-    //TODO: implement
+    val project = e.project ?: return
+    e.presentation.isEnabledAndVisible = CCUtils.isCourseCreator(project)
   }
 
   companion object {

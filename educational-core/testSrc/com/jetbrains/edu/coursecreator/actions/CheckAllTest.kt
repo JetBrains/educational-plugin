@@ -69,6 +69,18 @@ class CheckAllTest : EduActionTestCase() {
     }
   }
 
+  fun `test disabled in student mode`() {
+    courseWithFiles {
+      lesson {
+        eduTask {
+          checkResultFile(CheckStatus.Solved)
+        }
+      }
+    }
+    val presentation = testAction(dataContext(emptyArray()), CheckAllTasks())
+    checkActionEnabled(presentation, false)
+  }
+
   private fun doTestWithNotification(checkNotification: (Notification) -> Unit) {
     var notificationShown = false
     connection.subscribe(Notifications.TOPIC, object: NotificationsAdapter() {
@@ -78,7 +90,8 @@ class CheckAllTest : EduActionTestCase() {
       }
     })
 
-    testAction(dataContext(emptyArray()), CheckAllTasks())
+    val presentation = testAction(dataContext(emptyArray()), CheckAllTasks())
+    checkActionEnabled(presentation, true)
     assertTrue("Notification wasn't shown", notificationShown)
   }
 }
