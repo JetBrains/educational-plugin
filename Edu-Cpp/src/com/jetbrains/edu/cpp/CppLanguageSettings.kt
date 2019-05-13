@@ -2,20 +2,26 @@ package com.jetbrains.edu.cpp
 
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.LabeledComponent
-import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard
+import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.CPP11
+import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.CPP14
+import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.values
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
 class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
 
-  private var languageStandard: String = CMakeRecognizedCPPLanguageStandard.CPP14.standard
+  private var languageStandard: String = CPP14.standard
 
   override fun getSettings(): CppProjectSettings = CppProjectSettings(languageStandard)
 
   override fun getLanguageSettingsComponents(course: Course): List<LabeledComponent<JComponent>> {
-    val standards = if (course.isStudy) arrayOf(languageStandard) else languageVersions.toTypedArray()
+    val standards = when(course) {
+      is StepikCourse -> arrayOf(CPP11.standard, languageStandard)
+      else -> languageVersions.toTypedArray()
+    }
 
     val langStandardComboBox = ComboBox(standards)
     langStandardComboBox.selectedItem = languageStandard
@@ -29,6 +35,6 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
   }
 
   override fun getLanguageVersions(): List<String> {
-    return CMakeRecognizedCPPLanguageStandard.values().map { it.standard }
+    return values().map { it.standard }
   }
 }
