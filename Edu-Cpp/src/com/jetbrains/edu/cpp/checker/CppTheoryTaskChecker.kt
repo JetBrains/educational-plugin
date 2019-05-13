@@ -8,6 +8,7 @@ import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiTreeUtil
@@ -40,7 +41,15 @@ class CppTheoryTaskChecker(task: TheoryTask, project: Project) : TheoryTaskCheck
       val mainFunction = functions.find { CidrTargetRunLineMarkerProvider.isInEntryPointBody(it) } ?: return@runReadAction null
       val fromContext = CidrTargetRunConfigurationProducer.getInstance(project)
         ?.findOrCreateConfigurationFromContext(ConfigurationContext(mainFunction))
-      return@runReadAction fromContext?.configurationSettings
+      if (fromContext == null) {
+        LOG.warn("Failed to create configuration from main function")
+        return@runReadAction null
+      }
+      return@runReadAction fromContext.configurationSettings
     }
+  }
+
+  companion object {
+    private val LOG: Logger = Logger.getInstance(CppTheoryTaskChecker::class.java)
   }
 }
