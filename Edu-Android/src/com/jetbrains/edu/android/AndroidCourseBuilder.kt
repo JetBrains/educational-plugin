@@ -1,7 +1,6 @@
 package com.jetbrains.edu.android
 
 import com.android.SdkConstants
-import com.android.tools.idea.gradle.plugin.AndroidPluginGeneration
 import com.android.tools.idea.gradle.project.sync.GradleSyncInvoker
 import com.android.tools.idea.gradle.project.sync.GradleSyncListener
 import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
@@ -41,7 +40,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator = AndroidCourseProjectGenerator(this, course)
 
   override fun templateVariables(project: Project): Map<String, Any> {
-    val androidGradlePluginVersion = AndroidPluginGeneration.ORIGINAL.latestKnownVersion
+    val androidGradlePluginVersion = getLatestAndroidGradlePluginVersion()
     val kotlinVersion = kotlinVersion()
     return super.templateVariables(project) + mapOf(
       GRADLE_VERSION to SdkConstants.GRADLE_LATEST_VERSION,
