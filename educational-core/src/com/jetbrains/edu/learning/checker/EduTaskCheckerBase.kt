@@ -17,9 +17,10 @@ import com.intellij.execution.testframework.sm.runner.SMTRunnerEventsListener
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -51,7 +52,7 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
       }
     })
 
-    val configurations = runReadAction { createTestConfigurations() }
+    val configurations = DumbService.getInstance(project).runReadActionInSmartMode(Computable { createTestConfigurations() })
 
     if (configurations.isEmpty()) return NO_TESTS_RUN
 
