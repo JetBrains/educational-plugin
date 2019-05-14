@@ -7,6 +7,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -41,8 +42,10 @@ class CheckAllTasks : AnAction("Check All Tasks") {
             checker.activateRunToolWindow = false
           }
           indicator.text = "Checking task $curTask/$tasksNum"
-          if (checker.check(indicator).status != CheckStatus.Solved) {
+          val checkResult = checker.check(indicator)
+          if (checkResult.status != CheckStatus.Solved) {
             failedTasks.add(it)
+            LOG.warn("Task ${it.name} ${checkResult.status}: ${checkResult.message}")
           }
           checker.clearState()
         }
@@ -95,5 +98,6 @@ class CheckAllTasks : AnAction("Check All Tasks") {
     const val SUCCESS_MESSAGE = "All tasks are solved correctly"
 
     private const val GROUP_ID = "Education: all tasks check"
+    private val LOG = Logger.getInstance(CheckAllTasks::class.java)
   }
 }
