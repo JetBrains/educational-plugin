@@ -253,7 +253,7 @@ public class CoursesPanel extends JPanel {
   private void doValidation(@Nullable Course course) {
     ErrorState languageError = ErrorState.NothingSelected.INSTANCE;
     if (course != null) {
-      ErrorMessage languageSettingsMessage = myCoursePanel.validateSettings(course);
+      ErrorMessage languageSettingsMessage = myCoursePanel.validateSettings(course, getLocationString());
       languageError = languageSettingsMessage == null
                       ? ErrorState.None.INSTANCE
                       : new ErrorState.LanguageSettingsError(languageSettingsMessage);

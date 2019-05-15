@@ -36,7 +36,7 @@ public abstract class LanguageSettings<Settings> {
   }
 
   @Nullable
-  public ErrorMessage validate(@Nullable Course course) {
+  public ErrorMessage validate(@Nullable Course course, @NotNull String courseLocation) {
     return null;
   }
 

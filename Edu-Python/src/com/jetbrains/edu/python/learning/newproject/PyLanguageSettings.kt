@@ -52,7 +52,7 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
     return pythonVersions
   }
 
-  override fun validate(course: Course?): ErrorMessage? {
+  override fun validate(course: Course?, courseLocation: String): ErrorMessage? {
     course ?: return null
     val sdk = mySettings.sdk ?: return ErrorMessage("Please specify Python interpreter")
     return (isSdkApplicable(course, sdk.languageLevel) as? Err)?.error?.let { ErrorMessage(it) }

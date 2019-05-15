@@ -57,7 +57,7 @@ class JoinCoursePanel(private val settings: CoursePanel.CourseDisplaySettings) :
     val message = when {
       locationString.isBlank() -> ErrorMessage("Enter course location")
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ErrorMessage("Can't create course at this location")
-      else -> myCoursePanel.validateSettings(course)
+      else -> myCoursePanel.validateSettings(course, locationString)
     }
     updateErrorText(message)
     myValidationListener?.onInputDataValidated(message == null)
