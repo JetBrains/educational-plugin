@@ -51,6 +51,6 @@ fun Course.getDecoratedLogo(icon: Icon?): Icon? {
   }
 }
 
-val Course.hasSections: Boolean get() = !sections.isEmpty()
+val Course.hasSections: Boolean get() = sections.isNotEmpty()
 
-val Course.hasTopLevelLessons: Boolean get() = !lessons.isEmpty()
+val Course.hasTopLevelLessons: Boolean get() = lessons.isNotEmpty()

@@ -9,11 +9,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
@@ -59,7 +57,6 @@ abstract class CCChangeFilePropertyActionBase(private val name: String) : DumbAw
     }
 
     collect(virtualFiles)
-    tasks.mapTo(states) { TaskState(it) }
 
     val action = ChangeFilesPropertyUndoableAction(project, states, tasks, affectedFiles)
     EduUtils.runUndoableAction(project, name, action)
@@ -102,17 +99,4 @@ private class ChangeFilesPropertyUndoableAction(
 interface State {
   fun changeState(project: Project)
   fun restoreState(project: Project)
-}
-
-private class TaskState(val task: Task) : State {
-
-  val initialStepikStatus: StepikChangeStatus = task.stepikChangeStatus
-
-  override fun changeState(project: Project) {
-    StepikCourseChangeHandler.changed(task)
-  }
-
-  override fun restoreState(project: Project) {
-    task.stepikChangeStatus = initialStepikStatus
-  }
 }

@@ -62,6 +62,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     updateAdditionalMaterialsFiles(courseFromServer)
 
     course.items = Lists.newArrayList(courseFromServer.items)
+    course.setUpdated(courseFromServer)
   }
 
   private fun updateLessons(courseFromServer: Course) {

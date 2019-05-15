@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.withTestDialog
 
 abstract class CCChangeFileOwnerTestBase(private val action: AnAction) : EduActionTestCase() {
@@ -22,9 +21,6 @@ abstract class CCChangeFileOwnerTestBase(private val action: AnAction) : EduActi
   protected fun doAvailableTest(vararg filePaths: String, checksProducer: (Course) -> Pair<List<FileCheck>, List<FileCheck>>) {
     val course = StudyTaskManager.getInstance(project).course!!
 
-    val task = course.findTask("lesson1", "task1")
-    val stepikInitialStatus = task.stepikChangeStatus
-
     val includedFiles = filePaths.map { findFile(it) }
     val context = dataContext(includedFiles.toTypedArray())
     val presentation = testAction(context, action, true)
@@ -32,23 +28,22 @@ abstract class CCChangeFileOwnerTestBase(private val action: AnAction) : EduActi
 
     val (constantChecks, regularChecks) = checksProducer(course)
 
-    fun check(checks: List<FileCheck>, expectedStepikStatus: StepikChangeStatus) {
+    fun check(checks: List<FileCheck>) {
       constantChecks.forEach(FileCheck::check)
       checks.forEach(FileCheck::check)
-      assertEquals(expectedStepikStatus, task.stepikChangeStatus)
     }
 
-    check(regularChecks, StepikChangeStatus.INFO_AND_CONTENT)
+    check(regularChecks)
 
     val dialog = EduTestDialog()
     withTestDialog(dialog) {
       UndoManager.getInstance(project).undo(null)
     }
-    check(regularChecks.map(FileCheck::invert), stepikInitialStatus)
+    check(regularChecks.map(FileCheck::invert))
 
     withTestDialog(dialog) {
       UndoManager.getInstance(project).redo(null)
     }
-    check(regularChecks, StepikChangeStatus.INFO_AND_CONTENT)
+    check(regularChecks)
   }
 }

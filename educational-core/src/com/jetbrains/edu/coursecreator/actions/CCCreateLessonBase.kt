@@ -4,7 +4,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -20,7 +19,6 @@ abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: 
   override fun addItem(course: Course, item: Item) {
     val itemContainer = item.container
     itemContainer.addLesson(item)
-    StepikCourseChangeHandler.contentChanged(itemContainer)
   }
 
   override fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem?> {

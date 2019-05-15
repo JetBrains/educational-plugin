@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -90,7 +89,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
                                       section.position + 1)
             }
             EduUtils.showNotification(project, "Section \"${section.name}\" posted",
-                                      CCStepikConnector.openOnStepikAction("/course/" + course.id))
+                                      CCStepikConnector.openOnStepikAction("/course/${course.id}"))
           }
         }
       })
@@ -101,13 +100,6 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
       section.position = sectionPosition(course, section.name)
       val positionChanged = sectionFromServerPosition != section.position
       val updated = CCStepikConnector.updateSection(section, course, project)
-      section.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
-      for (lesson in section.lessons) {
-        lesson.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
-        for (task in lesson.taskList) {
-          task.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
-        }
-      }
 
       if (positionChanged && section.position < course.sections.size) {
         updateSectionsPositions(project, course.sections, 1 + if (course.hasTopLevelLessons) 1 else 0)
@@ -115,7 +107,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
 
       if (updated) {
         EduUtils.showNotification(project, "Section \"${section.name}\" updated",
-                                  CCStepikConnector.openOnStepikAction("/course/" + course.id))
+                                  CCStepikConnector.openOnStepikAction("/course/${course.id}"))
       }
     }
 
@@ -134,10 +126,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
         if (section.id == 0) continue
         section.position = position++
         val updatedSectionInfo = CCStepikConnector.updateSectionInfo(section)
-        if (updatedSectionInfo != null) {
-          section.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
-        }
-        else {
+        if (updatedSectionInfo == null) {
           showErrorNotification(project, FAILED_TITLE, "Failed to update section " + section.id)
         }
       }

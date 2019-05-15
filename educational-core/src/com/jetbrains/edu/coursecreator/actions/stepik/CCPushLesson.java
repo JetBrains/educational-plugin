@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikUnit;
@@ -52,7 +51,7 @@ public class CCPushLesson extends DumbAwareAction {
     }
     if (!course.getCourseMode().equals(CCUtils.COURSE_MODE)) return;
     final PsiDirectory[] directories = view.getDirectories();
-    if (directories.length == 0 || directories.length > 1) {
+    if (directories.length != 1) {
       return;
     }
 
@@ -67,6 +66,10 @@ public class CCPushLesson extends DumbAwareAction {
     }
 
     if (lesson.getSection() != null && lesson.getSection().getId() <= 0) {
+      return;
+    }
+
+    if (lesson.getSection() == null && ((EduCourse)course).getSectionIds().isEmpty()) {
       return;
     }
 
@@ -90,7 +93,7 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
     final PsiDirectory[] directories = view.getDirectories();
-    if (directories.length == 0 || directories.length > 1) {
+    if (directories.length != 1) {
       return;
     }
 
@@ -113,7 +116,7 @@ public class CCPushLesson extends DumbAwareAction {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText("Uploading lesson to " + StepikNames.STEPIK_URL);
-        doPush(lesson, project, course);
+        doPush(lesson, project, (EduCourse)course);
         YamlFormatSynchronizer.saveRemoteInfo(lesson);
       }
     });
@@ -139,7 +142,7 @@ public class CCPushLesson extends DumbAwareAction {
   }
 
   // public for tests
-  public static void doPush(Lesson lesson, Project project, Course course) {
+  public static void doPush(Lesson lesson, Project project, EduCourse course) {
     if (lesson.getId() > 0) {
       StepikUnit unit = StepikConnector.getUnit(lesson.unitId);
       if (unit == null) {
@@ -151,12 +154,10 @@ public class CCPushLesson extends DumbAwareAction {
         sectionId = lesson.getSection().getId();
       }
       else {
-        sectionId = CCStepikConnector.getTopLevelSectionId(project, (EduCourse)course);
+        sectionId = course.getSectionIds().get(0);
       }
       Lesson updatedLesson = CCStepikConnector.updateLesson(project, lesson, true, sectionId);
       int lessonId = updatedLesson == null ? -1 : updatedLesson.getId();
-      lesson.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
-      setUpdated(lesson);
       if (lessonId != -1) {
         boolean positionChanged = lesson.getIndex() != unit.getPosition();
         if (positionChanged) {
@@ -179,7 +180,7 @@ public class CCPushLesson extends DumbAwareAction {
       else {
         int position = lessonPosition(course, lesson);
         int sectionId;
-        final List<Integer> sections = ((EduCourse)course).getSectionIds();
+        final List<Integer> sections = course.getSectionIds();
         sectionId = sections.get(sections.size() - 1);
         CCStepikConnector.postLesson(project, lesson, lesson.getIndex(), sectionId);
         if (lesson.getIndex() < course.getLessons().size()) {
@@ -188,12 +189,6 @@ public class CCPushLesson extends DumbAwareAction {
         }
       }
       EduUtils.showNotification(project, "Lesson uploaded", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.getId()));
-    }
-  }
-
-  private static void setUpdated(Lesson lesson) {
-    for (Task task : lesson.getTaskList()) {
-      task.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
     }
   }
 
@@ -220,10 +215,9 @@ public class CCPushLesson extends DumbAwareAction {
       else {
         EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
         assert course != null;
-        sectionId = CCStepikConnector.getTopLevelSectionId(project, course);
+        sectionId = course.getSectionIds().get(0);
       }
       CCStepikConnector.updateLessonInfo(project, lesson, false, sectionId);
-      lesson.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
       lesson.setIndex(index);
     }
   }

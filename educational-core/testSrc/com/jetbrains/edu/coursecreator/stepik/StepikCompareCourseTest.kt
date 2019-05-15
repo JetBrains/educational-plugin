@@ -6,16 +6,21 @@ import com.jetbrains.edu.integration.stepik.addNewSection
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 
 class StepikCompareCourseTest : EduTestCase() {
 
   fun `test the same course`() {
     val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
-      lesson {
-        eduTask { }
-        outputTask { }
-        theoryTask { }
+      section {
+        lesson {
+          eduTask { }
+          outputTask { }
+          theoryTask { }
+        }
       }
       section {
         lesson {
@@ -26,7 +31,7 @@ class StepikCompareCourseTest : EduTestCase() {
     }.asRemote()
 
     val expectedChangedItems = StepikChangesInfo()
-    checkChangedItems(localCourse, expectedChangedItems)
+    checkChangedItems(localCourse, localCourse, expectedChangedItems)
   }
 
   fun `test new lesson`() {
@@ -42,7 +47,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val newLesson = addNewLesson("lesson2", 2, localCourse, localCourse, project.courseDir)
     val expectedInfo = StepikChangesInfo(newLessons = arrayListOf(newLesson))
 
-    checkChangedItems(courseFromServer, expectedInfo)
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test new section`() {
@@ -57,9 +62,9 @@ class StepikCompareCourseTest : EduTestCase() {
 
     val courseFromServer = localCourse.copy() as EduCourse
     val newSection = addNewSection("section1", 2, localCourse, project.courseDir)
-    val expectedInfo = StepikChangesInfo(newSections = arrayListOf(newSection), newLessons = newSection.lessons)
+    val expectedInfo = StepikChangesInfo(newSections = arrayListOf(newSection), isTopLevelSectionRemoved = true)
 
-    checkChangedItems(courseFromServer, expectedInfo)
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test change lesson name`() {
@@ -75,7 +80,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val courseFromServer = localCourse.copy() as EduCourse
     localCourse.lessons.single().name = "renamed"
     val expectedInfo = StepikChangesInfo(lessonsInfoToUpdate = arrayListOf(localCourse.lessons.single()))
-    checkChangedItems(courseFromServer, expectedInfo)
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test change lesson index`() {
@@ -91,7 +96,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val courseFromServer = localCourse.copy() as EduCourse
     localCourse.lessons.single().index = 2
     val expectedInfo = StepikChangesInfo(lessonsInfoToUpdate = arrayListOf(localCourse.lessons.single()))
-    checkChangedItems(courseFromServer, expectedInfo)
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test change section name`() {
@@ -110,7 +115,7 @@ class StepikCompareCourseTest : EduTestCase() {
     localCourse.sections.single().name = "renamed"
     val expectedInfo = StepikChangesInfo(sectionInfosToUpdate = arrayListOf(localCourse.sections.single()))
 
-    checkChangedItems(courseFromServer, expectedInfo)
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test change section index`() {
@@ -129,7 +134,7 @@ class StepikCompareCourseTest : EduTestCase() {
     localCourse.sections.single().index = 2
     val expectedInfo = StepikChangesInfo(sectionInfosToUpdate = arrayListOf(localCourse.sections.single()))
 
-    checkChangedItems(courseFromServer, expectedInfo)
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test add new task`() {
@@ -148,8 +153,8 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val expectedInfo = StepikChangesInfo(tasksToPostByLessonIndex = mapOf(1 to listOf(localCourse.lessons.single().taskList[2])))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(newTasks = mutableListOf(localCourse.lessons.single().taskList[2]))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test change task name`() {
@@ -165,8 +170,8 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedTask = localCourse.lessons.single().taskList[0]
     changedTask.name = "renamed"
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test change task index`() {
@@ -182,8 +187,8 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedTask = localCourse.lessons.single().taskList[0]
     changedTask.index = 2
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test add task file`() {
@@ -199,8 +204,8 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedTask = localCourse.lessons.single().taskList[0]
     changedTask.taskFiles["new.txt"] = TaskFile()
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test change task description`() {
@@ -216,8 +221,8 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedTask = localCourse.lessons.single().taskList[0]
     changedTask.descriptionText = "new text"
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test change task file name`() {
@@ -233,8 +238,8 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedTask = localCourse.lessons.single().taskList.single()
     changedTask.taskFiles.values.single().name = "renamed.txt"
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test change task file text`() {
@@ -250,8 +255,8 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedTask = localCourse.lessons.single().taskList.single()
     changedTask.taskFiles.values.single().setText("text")
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test add placeholder`() {
@@ -267,8 +272,8 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedTask = localCourse.lessons.single().taskList.single()
     changedTask.taskFiles.values.single().answerPlaceholders.add(0, AnswerPlaceholder())
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test change placeholder offset`() {
@@ -287,8 +292,8 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.offset = 10
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test change placeholder answer`() {
@@ -307,8 +312,8 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.possibleAnswer = "new answer"
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test change placeholder length`() {
@@ -327,8 +332,8 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.length = 1
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test change placeholder index`() {
@@ -347,8 +352,8 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.index = 2
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test add placeholder dependency`() {
@@ -367,8 +372,8 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.placeholderDependency = AnswerPlaceholderDependency()
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test hints size`() {
@@ -387,8 +392,8 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedTask = localCourse.lessons.single().taskList.single()
     changedTask.taskFiles.values.single().answerPlaceholders.single().hints = listOf("hint1", "hint2")
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
   fun `test hints value`() {
@@ -407,12 +412,12 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedTask = localCourse.lessons.single().taskList.single()
     changedTask.taskFiles.values.single().answerPlaceholders.single().hints = listOf("hint2")
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
-  private fun checkChangedItems(courseFromServer: EduCourse, expected: StepikChangesInfo) {
-    val actual = StepikChangeRetriever(project, courseFromServer).getChangedItems()
+  private fun checkChangedItems(localCourse: EduCourse, courseFromServer: EduCourse, expected: StepikChangesInfo) {
+    val actual = StepikChangeRetriever(project, localCourse, courseFromServer).getChangedItems()
     assertEquals(expected, actual)
   }
 }

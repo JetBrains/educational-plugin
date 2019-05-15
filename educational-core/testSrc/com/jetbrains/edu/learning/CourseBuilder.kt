@@ -98,7 +98,7 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
   fun section(name: String? = null, buildSection: SectionBuilder.() -> Unit = {}) {
     val sectionBuilder = SectionBuilder(course, Section())
     val section = sectionBuilder.section
-    section.index = course.lessons.size + 1
+    section.index = course.items.size + 1
     val nextSectionIndex = course.items.size + 1
     sectionBuilder.withName(name ?: EduNames.SECTION + nextSectionIndex)
     course.addSection(section)

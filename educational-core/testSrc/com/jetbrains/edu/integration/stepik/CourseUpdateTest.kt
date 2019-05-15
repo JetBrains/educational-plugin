@@ -3,19 +3,16 @@ package com.jetbrains.edu.integration.stepik
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.CONTENT
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.INFO
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import junit.framework.TestCase
 
-class EventBasedUpdateTest : StepikTestCase() {
+class CourseUpdateTest : StepikTestCase() {
 
   fun `test upload course with top level lessons`() {
     val courseToPost = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
@@ -58,7 +55,6 @@ class EventBasedUpdateTest : StepikTestCase() {
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
     addNewLesson("lesson3", 3, localCourse, localCourse)
-    localCourse.stepikChangeStatus = CONTENT
     CCPushCourse.doPush(project, localCourse)
 
     val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
@@ -88,8 +84,6 @@ class EventBasedUpdateTest : StepikTestCase() {
     lesson1.index = 2
     lesson2.index = 1
     localCourse.sortItems()
-    lesson1.stepikChangeStatus = INFO
-    lesson2.stepikChangeStatus = INFO
     CCPushCourse.doPush(project, localCourse)
 
     val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
@@ -127,8 +121,6 @@ class EventBasedUpdateTest : StepikTestCase() {
     section1.position = 2
     section2.position = 1
 
-    section1.stepikChangeStatus = INFO
-    section2.stepikChangeStatus = INFO
     localCourse.sortItems()
     CCPushCourse.doPush(project, localCourse)
 
@@ -159,8 +151,7 @@ class EventBasedUpdateTest : StepikTestCase() {
     val localCourse = StudyTaskManager.getInstance(project).course!! as EduCourse
 
     val section = localCourse.getSection("section1")
-    section!!.stepikChangeStatus = CONTENT
-    addNewLesson("lesson3", 3, localCourse, section)
+    addNewLesson("lesson3", 3, localCourse, section!!)
     CCPushCourse.doPush(project, localCourse)
 
     val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
@@ -195,8 +186,6 @@ class EventBasedUpdateTest : StepikTestCase() {
     lesson1.index = 2
     lesson2.index = 1
     localCourse.sortItems()
-    lesson1.stepikChangeStatus = INFO
-    lesson2.stepikChangeStatus = INFO
     CCPushCourse.doPush(project, localCourse)
 
     val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
@@ -222,7 +211,6 @@ class EventBasedUpdateTest : StepikTestCase() {
     val newSection = newSection("section2", 2)
     localCourse.addSection(newSection)
     localCourse.init(null, null, false)
-    localCourse.stepikChangeStatus = CONTENT
     CCPushCourse.doPush(project, localCourse)
 
     val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
@@ -246,7 +234,6 @@ class EventBasedUpdateTest : StepikTestCase() {
     val newSection = newSection("section2", 2)
     localCourse.addSection(newSection)
     localCourse.init(null, null, false)
-    localCourse.stepikChangeStatus = CONTENT
     CCPushCourse.doPush(project, localCourse)
 
     val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
@@ -271,7 +258,6 @@ class EventBasedUpdateTest : StepikTestCase() {
     val newSection = newSection("section2", 2)
     localCourse.addSection(newSection)
     localCourse.init(null, null, false)
-    localCourse.stepikChangeStatus = CONTENT
     CCPushCourse.doPush(project, localCourse)
 
     val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
@@ -293,13 +279,6 @@ class EventBasedUpdateTest : StepikTestCase() {
     CCPushCourse.doPush(project, courseToPost.asEduCourse())
     val localCourse = StudyTaskManager.getInstance(project).course
     CCUtils.wrapIntoSection(project, localCourse!!, localCourse.lessons, "section1")
-    StepikCourseChangeHandler.contentChanged(localCourse)
-    val section = localCourse.getSection("section1")!!
-    for (lesson in section.lessons) {
-      if (lesson.id != 0) {
-        StepikCourseChangeHandler.infoChanged(lesson)
-      }
-    }
     CCPushCourse.doPush(project, localCourse.asEduCourse())
 
     val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)

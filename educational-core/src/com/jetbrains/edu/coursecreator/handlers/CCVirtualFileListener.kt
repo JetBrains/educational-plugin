@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.*
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.FileInfo
@@ -47,7 +46,6 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
       task.addTaskFile(taskFile)
     }
 
-    StepikCourseChangeHandler.changed(task)
     YamlFormatSynchronizer.saveItem(task)
   }
 
@@ -112,14 +110,12 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
       rename(oldPath, newPath)
     }
 
-    StepikCourseChangeHandler.changed(task)
     YamlFormatSynchronizer.saveItem(task)
   }
 
   override fun fileInTaskCreated(fileInfo: FileInfo.FileInTask, createFile: VirtualFile) {
     super.fileInTaskCreated(fileInfo, createFile)
     YamlFormatSynchronizer.saveItem(fileInfo.task)
-    StepikCourseChangeHandler.changed(fileInfo.task)
   }
 
   override fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {
@@ -149,12 +145,10 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     if (section != null) {
       CCUtils.updateHigherElements(parentDir.children, Function { section.getLesson(it.name) }, removedLesson.index, -1)
       section.removeLesson(removedLesson)
-      StepikCourseChangeHandler.contentChanged(section)
       YamlFormatSynchronizer.saveItem(section)
     } else {
       CCUtils.updateHigherElements(parentDir.children, Function { course.getItem(it.name) }, removedLesson.index, -1)
       course.removeLesson(removedLesson)
-      StepikCourseChangeHandler.contentChanged(course)
       YamlFormatSynchronizer.saveItem(course)
     }
   }
@@ -166,7 +160,6 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     CCUtils.updateHigherElements(parentDir.children, Function { course.getItem(it.name) }, removedSection.index, -1)
     course.removeSection(removedSection)
     YamlFormatSynchronizer.saveItem(course)
-    StepikCourseChangeHandler.contentChanged(course)
   }
 
   private fun deleteTask(info: FileInfo.TaskDirectory, removedTask: VirtualFile) {
@@ -177,7 +170,6 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     CCUtils.updateHigherElements(lessonDir.children, Function { lesson.getTask(it.name) }, task.index, -1)
     lesson.removeTask(task)
     YamlFormatSynchronizer.saveItem(lesson)
-    StepikCourseChangeHandler.contentChanged(lesson)
 
     val configurator = course.configurator
     if (configurator != null) {
@@ -198,7 +190,6 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
       taskFiles.remove(pathInTask)
     }
     YamlFormatSynchronizer.saveItem(task)
-    StepikCourseChangeHandler.changed(task)
   }
 
   companion object {

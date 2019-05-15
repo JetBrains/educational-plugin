@@ -121,7 +121,7 @@ interface StepikService {
   fun unit(@Path("id") unitId: Int, @Body unitData: UnitData): Call<UnitsList>
 
   @PUT("api/step-sources/{id}")
-  fun stepSource(@Path("id") stepSourceId: Int, @Body stepSourceData: StepSourceData): Call<Any>
+  fun stepSource(@Path("id") stepSourceId: Int, @Body stepSourceData: StepSourceData): Call<StepSourcesList>
 
   // DELETE requests:
 

@@ -2,14 +2,15 @@ package com.jetbrains.edu.coursecreator.actions.stepik
 
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.*
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import junit.framework.TestCase
 
-class CCShowChangedFilesTest: EduActionTestCase() {
+class CCShowChangedFilesTest : EduActionTestCase() {
 
   fun `test course up to date`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -26,11 +27,52 @@ class CCShowChangedFilesTest: EduActionTestCase() {
       }
     }.asRemote()
 
-    checkMessage(course, "No changes")
+    val remoteCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      section("section1") {
+        lesson("lesson1") {
+          eduTask {
+            taskFile("fizz.kt")
+          }
+        }
+      }
+      section("section2") {
+        lesson("lesson1") {
+          eduTask {
+            taskFile("fizz.kt")
+          }
+        }
+      }
+    }.asRemote()
+
+    checkMessage(course, remoteCourse, "No changes")
   }
 
   fun `test course content changed`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CCUtils.COURSE_MODE) {
+      section("section1") {
+        lesson("lesson1") {
+          eduTask {
+            taskFile("fizz.kt")
+          }
+        }
+      }
+      section("section2") {
+        lesson("lesson1") {
+          eduTask {
+            taskFile("fizz.kt")
+          }
+        }
+      }
+      section("section3") {
+        lesson("lesson1") {
+          eduTask {
+            taskFile("fizz.kt")
+          }
+        }
+      }
+    }.asRemote()
+
+    val remoteCourse = course(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -47,33 +89,31 @@ class CCShowChangedFilesTest: EduActionTestCase() {
       }
     }.asRemote()
 
-    val changedSection = course.getSection("section2")!!
-    changedSection.stepikChangeStatus = CONTENT
-    changedSection.id = 0
-    changedSection.lessons[0].id = 0
-
-    checkMessage(course,  "section2 $CONTENT\nsection2 New\nsection2/lesson1 New\n")
+    course.getSection("section3")!!.id = 0
+    checkMessage(course, remoteCourse, "section3 New\n")
   }
 
   fun `test course lesson moved`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CCUtils.COURSE_MODE) {
       lesson()
       lesson("lesson2")
       section()
     }.asRemote()
 
-    course.stepikChangeStatus = CONTENT
-    course.sections[0].stepikChangeStatus = INFO_AND_CONTENT
-    course.getLesson("lesson2")!!.stepikChangeStatus = INFO
-    val changedSection = course.sections[0]!!
-    val changedLesson = course.getLesson("lesson2")!!
+    val remoteCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson2")
+      lesson()
+      section()
+    }.asRemote()
 
-    checkMessage(course,
-                 "${course.name} ${CONTENT}\n${changedLesson.name} ${INFO}\n${changedSection.name} ${INFO_AND_CONTENT}\n")
+    course.sectionIds = listOf(123)
+    remoteCourse.sectionIds = listOf(123)
+    checkMessage(course, remoteCourse,
+                 "lesson1 Info Changed\n")
   }
 
   fun `test section renamed`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -83,14 +123,26 @@ class CCShowChangedFilesTest: EduActionTestCase() {
       }
     }.asRemote()
 
+    val remoteCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      section("section2") {
+        lesson("lesson1") {
+          eduTask {
+            taskFile("fizz.kt")
+          }
+        }
+      }
+    }.asRemote()
+
     val changedSection = course.sections[0]
-    changedSection.stepikChangeStatus = INFO
-    checkMessage(course, "${changedSection.name} $INFO\n")
+    checkMessage(course, remoteCourse, "${changedSection.name} Info Changed\n")
   }
 
   fun `test lesson added into section`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-      section("section1"){
+    val course = course(courseMode = CCUtils.COURSE_MODE) {
+      section("section1") {
+        lesson {
+          eduTask()
+        }
         lesson {
           eduTask()
         }
@@ -100,71 +152,103 @@ class CCShowChangedFilesTest: EduActionTestCase() {
       }
     }.asRemote()
 
-    val changedSection = course.sections[0]
-    changedSection.stepikChangeStatus = CONTENT
-    changedSection.lessons[1].id = 0
-    checkMessage(course, "${changedSection.name} ${CONTENT}\nsection1/lesson2 New\n")
+    val remoteCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      section("section1") {
+        lesson {
+          eduTask()
+        }
+        lesson {
+          eduTask()
+        }
+      }
+    }.asRemote()
+
+    course.sections[0].lessons[2].id = 0
+    checkMessage(course, remoteCourse, "section1/lesson3 New\n")
   }
 
   fun `test lesson moved between sections`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val remoteCourse = course(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
-        lesson("lesson1")
+        lesson("lesson11")
+        lesson("lesson12")
       }
       section("section2") {
-        lesson("lesson1")
-        lesson("lesson2")
+        lesson("lesson22")
+      }
+    }.asRemote()
+    val course = course(courseMode = CCUtils.COURSE_MODE) {
+      section("section1") {
+        lesson("lesson11")
+      }
+      section("section2") {
+        lesson("lesson12")
+        lesson("lesson22")
       }
     }.asRemote()
 
-    course.sections.forEach {
-      it.stepikChangeStatus = CONTENT
-    }
+    course.sections[1].getLesson("lesson12")!!.id = 21
+    remoteCourse.sections[0].getLesson("lesson12")!!.id = 12
 
-    val expected = course.sections.joinToString(separator = "") { "${it.name} ${CONTENT}\n" }
-    checkMessage(course, expected)
+    course.sections[1].getLesson("lesson22")!!.id = 22
+    remoteCourse.sections[1].getLesson("lesson22")!!.id = 22
+
+    checkMessage(course, remoteCourse, "section2/lesson12 New\n" +
+                                       "section1/lesson12 Removed\n" +
+                                       "section2/lesson22 Info Changed\n")
   }
 
   fun `test task moved between lessons`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1")
         eduTask("task2")
       }
-
       lesson("lesson2") {
         eduTask("task1")
         eduTask("task3")
       }
     }.asRemote()
+    val remoteCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask("task1")
+        eduTask("task3")
+      }
+      lesson("lesson2") {
+        eduTask("task1")
+        eduTask("task2")
+      }
+    }.asRemote()
+    course.sectionIds = listOf(123)
+    remoteCourse.sectionIds = listOf(123)
 
-    course.lessons.forEach {
-      it.stepikChangeStatus = CONTENT
-    }
-    val expected = course.lessons.joinToString(separator = "") { "${it.name} ${CONTENT}\n" }
-    checkMessage(course, expected)
+    checkMessage(course, remoteCourse, "lesson1/task2 Info Changed\nlesson2/task3 Info Changed\n")
   }
 
+
   fun `test task moved inside lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1")
         eduTask("task2")
         eduTask("task3")
       }
     }.asRemote()
+    val remoteCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask("task2")
+        eduTask("task1")
+        eduTask("task3")
+      }
+    }.asRemote()
 
-    val changedTask2 = course.lessons[0].getTask("task2")!!
-    changedTask2.stepikChangeStatus = INFO_AND_CONTENT
-
-    val changedTask3 = course.lessons[0].getTask("task3")!!
-    changedTask3.stepikChangeStatus = INFO_AND_CONTENT
-
-    checkMessage(course, "lesson1/${changedTask2.name} ${INFO_AND_CONTENT}\nlesson1/${changedTask3.name} ${INFO_AND_CONTENT}\n")
+    course.sectionIds = listOf(123)
+    remoteCourse.sectionIds = listOf(123)
+    checkMessage(course, remoteCourse, "lesson1/task1 Info Changed\nlesson1/task2 Info Changed\n")
   }
 
-  private fun checkMessage(course: Course, expectedMessage: String) {
-    TestCase.assertEquals(expectedMessage, CCShowChangedFiles.buildChangeMessage(course))
+  private fun checkMessage(course: EduCourse, remoteCourse: EduCourse, expectedMessage: String) {
+    TestCase.assertEquals(expectedMessage, CCShowChangedFiles.buildChangeMessage(course, remoteCourse, myFixture.project))
   }
 }
 

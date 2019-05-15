@@ -7,7 +7,6 @@ import com.intellij.openapi.editor.impl.event.DocumentEventImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -39,7 +38,6 @@ public class EduDocumentListener implements DocumentListener {
     if (!myTaskFile.isTrackChanges()) {
       return;
     }
-    StepikCourseChangeHandler.changed(myTaskFile);
     if (myTaskFile.getAnswerPlaceholders().isEmpty()) return;
 
     if (!(e instanceof DocumentEventImpl)) {

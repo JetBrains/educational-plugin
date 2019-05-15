@@ -18,7 +18,6 @@ import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.EduNames;
@@ -107,9 +106,6 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
         return;
       }
       List<Task> taskList = targetLesson.getTaskList();
-      StepikCourseChangeHandler.contentChanged(taskToMove.getLesson());
-      StepikCourseChangeHandler.contentChanged(targetLesson);
-      StepikCourseChangeHandler.changed(taskToMove);
       moveTask(sourceDirectory, taskToMove, taskList.isEmpty() ? null : taskList.get(taskList.size() - 1),
                1, targetVFile, targetLesson);
       YamlFormatSynchronizer.saveItem(sourceLesson);
@@ -128,7 +124,6 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
       if (delta == -1) {
         return;
       }
-      StepikCourseChangeHandler.changed(taskToMove);
       moveTask(sourceDirectory, taskToMove, targetTask, delta, lessonDir, targetTask.getLesson());
       YamlFormatSynchronizer.saveItem(sourceLesson);
       YamlFormatSynchronizer.saveItem(targetTask.getLesson());

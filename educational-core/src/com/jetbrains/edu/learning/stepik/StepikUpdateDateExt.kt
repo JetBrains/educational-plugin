@@ -96,19 +96,16 @@ private fun Task.isUpToDate(tasksFromServer: Task?): Boolean {
   return !tasksFromServer.updateDate.isSignificantlyAfter(updateDate)
 }
 
-fun EduCourse.setUpdated() {
-  val courseInfo = getCourseInfo(id, isCompatible) ?: return
-  fillItems(courseInfo)
+fun EduCourse.setUpdated(courseFromServer: EduCourse) {
+  updateDate = courseFromServer.updateDate
 
-  updateDate = courseInfo.updateDate
-
-  val lessonsById = courseInfo.lessons.associateBy { it.id }
+  val lessonsById = courseFromServer.lessons.associateBy { it.id }
   lessons.forEach {
     val lessonFromServer = lessonsById[it.id] ?: error("Lesson with id ${it.id} not found")
     it.setUpdated(lessonFromServer)
   }
 
-  val sectionsById = courseInfo.sections.associateBy { it.id }
+  val sectionsById = courseFromServer.sections.associateBy { it.id }
   sections.forEach {
     val sectionFromServer = sectionsById[it.id] ?: error("Section with id ${it.id} not found")
     it.setUpdated(sectionFromServer)

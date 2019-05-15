@@ -282,19 +282,31 @@ object StepikConnector {
   @JvmStatic
   fun updateCourse(course: EduCourse): Int {
     val response = service.course(course.id, CourseData(course)).executeHandlingExceptions()
+    val postedCourse = response?.body()?.courses?.firstOrNull()
+    if (postedCourse != null) {
+      course.updateDate = postedCourse.updateDate
+    }
     return response?.code() ?: -1
   }
 
   @JvmStatic
   fun updateSection(section: Section): Section? {
     val response = service.section(section.id, SectionData(section)).executeHandlingExceptions()
-    return response?.body()?.sections?.firstOrNull()
+    val postedSection = response?.body()?.sections?.firstOrNull()
+    if (postedSection != null) {
+      section.updateDate = postedSection.updateDate
+    }
+    return postedSection
   }
 
   @JvmStatic
   fun updateLesson(lesson: Lesson): Lesson? {
     val response = service.lesson(lesson.id, LessonData(lesson)).executeHandlingExceptions()
-    return response?.body()?.lessons?.firstOrNull()
+    val postedLesson = response?.body()?.lessons?.firstOrNull()
+    if (postedLesson != null) {
+      lesson.updateDate = postedLesson.updateDate
+    }
+    return postedLesson
   }
 
   @JvmStatic
@@ -305,14 +317,17 @@ object StepikConnector {
 
   @JvmStatic
   fun updateTask(project: Project, task: Task): Int {
-    var stepSourceData: StepSourceData? = null
     // BACKCOMPAT: 2018.3
     @Suppress("DEPRECATION")
     invokeAndWaitIfNeed {
       FileDocumentManager.getInstance().saveAllDocuments()
-      stepSourceData = StepSourceData(project, task, task.lesson.id)
     }
-    val response = service.stepSource(task.id, stepSourceData!!).executeHandlingExceptions()
+    val stepSourceData = StepSourceData(project, task, task.lesson.id)
+    val response = service.stepSource(task.id, stepSourceData).executeHandlingExceptions()
+    val stepSource = response?.body()?.steps?.firstOrNull()
+    if (stepSource != null) {
+      task.updateDate = stepSource.updateDate
+    }
     return response?.code() ?: -1
   }
 
@@ -326,7 +341,6 @@ object StepikConnector {
       }
     }
     updateCourse(course)  // Needed to push forward update_date in course
-    course.setUpdated()
     return postAttachment(additionalFiles, course.id)
   }
 

@@ -40,7 +40,6 @@ public class SyncStepikCourseAction extends SyncCourseAction {
           }
           else {
             new StepikCourseUpdater((EduCourse)course, project).updateCourse();
-            StepikUpdateDateExt.setUpdated((EduCourse)course);
           }
         }
       });

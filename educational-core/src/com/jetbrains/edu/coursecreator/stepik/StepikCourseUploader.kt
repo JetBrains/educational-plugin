@@ -4,369 +4,140 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteLesson
-import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteSection
-import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteTask
-import com.jetbrains.edu.learning.stepik.api.StepikConnector.deleteUnit
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
-import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector
-import com.jetbrains.edu.learning.stepik.setUpdated
-import java.util.*
-import kotlin.collections.ArrayList
 
 class StepikCourseUploader(val project: Project, val course: EduCourse) {
-  private var courseInfoToUpdate = false
-
-  private var sectionsToPush: MutableList<Section> = ArrayList()
-  private var sectionsToDelete: MutableList<Int> = ArrayList()
-  private var sectionsInfoToUpdate: MutableList<Section> = ArrayList()
-
-  private val lessonsToPush: MutableList<Lesson> = ArrayList()
-  private var lessonsToDelete: MutableList<Int> = ArrayList()
-  private var lessonsInfoToUpdate: MutableList<Lesson> = ArrayList()
-  private var lessonsToMove: MutableList<Lesson> = ArrayList()
-
-  private val tasksToPush: MutableList<Task> = ArrayList()
-  private var tasksToDelete: MutableList<Int> = ArrayList()
-  private var tasksToUpdate: MutableList<Task> = ArrayList()
 
   fun updateCourse() {
-    val lastUpdateDate = course.lastUpdateDate()
+    val remoteCourse = StepikConnector.getCourseInfo(course.id) ?: return
+    StepikCourseLoader.loadCourseStructure(remoteCourse)
+    remoteCourse.init(null, null, false)
+    pushChanges(remoteCourse)
+  }
 
-    processCourseChanges(lastUpdateDate)
-    processSectionChanges(lastUpdateDate)
-    processLessonChanges(lastUpdateDate)
-    processTaskChanges()
+  private fun pushChanges(remoteCourse: EduCourse) {
+    val changeRetriever = StepikChangeRetriever(project, course, remoteCourse)
+    val changedItems = changeRetriever.getChangedItems()
 
-    if (isUpToDate()) {
+    var pushed = processCourseElement(changedItems)
+    pushed = processTopLevelSection(changedItems) || pushed
+    pushed = processSections(changedItems) || pushed
+    pushed = processLessons(changedItems) || pushed
+    pushed = processTasks(changedItems) || pushed
+
+    if (!pushed) {
       EduUtils.showNotification(project, "Nothing to upload", null)
     }
     else {
-      pushChanges()
-      course.setUpdated()
-
-      // TODO: after merging changes about isUpToDateExtension, inline this in course#setUpdated
-      // fix for the case when we deleted section that was changed the last
-      course.updateDate = course.lastUpdateDate()
-      course.setStatusRecursively(StepikChangeStatus.UP_TO_DATE)
-      EduUtils.showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.id))
+      course.updateDate = remoteCourse.updateDate
+      EduUtils.showNotification(project, "Course is updated", openOnStepikAction("/course/${course.id}"))
     }
   }
 
-  private fun pushChanges() {
-    if (courseInfoToUpdate) {
-      updateCourseInfo(project, course)
+  private fun processCourseElement(changedItems: StepikChangesInfo): Boolean {
+    var pushed = false
+    if (changedItems.isCourseInfoChanged) {
+      pushed = updateCourseInfo(project, course)
     }
-
-    updateSections()
-    updateLessons()
-    updateTasks()
-    updateAdditionalMaterials(project, course.id)
+    if (changedItems.isCourseAdditionalFilesChanged) {
+      updateAdditionalMaterials(project, course.id)
+      pushed = true
+    }
+    return pushed
   }
 
-  private fun updateTasks() {
-    tasksToPush.forEach {
-      postTask(project, it, it.lesson.id)
+  private fun processTopLevelSection(changedItems: StepikChangesInfo): Boolean {
+    var pushed = false
+    if (changedItems.isTopLevelSectionNameChanged) {
+      pushed = updateSectionForTopLevelLessons(course)
     }
-
-    tasksToDelete.forEach {
-      deleteTask(it)
-    }
-
-    tasksToUpdate.forEach {
-      updateTask(project, it)
-    }
-  }
-
-  private fun updateLessons() {
-    lessonsToPush.forEach {
-      val sectionId: Int = sectionId(it)
-
-      val posted = postLessonInfo(project, it, sectionId, it.index)
-      it.id = posted.id
-      it.unitId = posted.unitId
-      for (task in it.taskList) {
-        postTask(project, task, it.id)
-      }
-    }
-
-    lessonsToMove.forEach {
-      val sectionId = if (it.section == null) getTopLevelSectionId(project, course) else it.section!!.id
-      deleteUnit(it.unitId)
-      it.unitId = postUnit(it.id, it.index, sectionId, project)
-    }
-
-    lessonsToDelete.forEach {
-      deleteLesson(it)
-    }
-
-    lessonsInfoToUpdate.forEach {
-      updateLessonInfo(project, it, false, sectionId(it))
-    }
-  }
-
-  private fun sectionId(it: Lesson): Int {
-    return if (it.section != null) {
-      it.section!!.id
-    }
-    else {
-      val topLevelSectionId = getTopLevelSectionId(project, course)
-      if (topLevelSectionId == -1) {
-        val sectionId = postSectionForTopLevelLessons(project, course)
-        course.sectionIds = arrayListOf(sectionId)
-        sectionId
-      }
-      else {
-        topLevelSectionId
-      }
-    }
-  }
-
-  private fun updateSections() {
-    sectionsToPush.forEach {
-      // all top-level lessons are stored in one section on Stepik
-      it.position = it.index - course.lessons.size + 1
-      it.units.clear()
-      val sectionId = postSectionInfo(project, it, course.id)
-      it.id = sectionId
-    }
-
-    sectionsToDelete.forEach {
-      deleteSection(it)
-    }
-
-    sectionsInfoToUpdate.forEach {
-      updateSectionInfo(it)
-    }
-  }
-
-  private fun processCourseChanges(lastUpdateDate: Date) {
-    when (course.stepikChangeStatus) {
-      StepikChangeStatus.INFO -> {
-        courseInfoToUpdate = true
-      }
-
-      StepikChangeStatus.CONTENT -> {
-        processCourseContentChanged(lastUpdateDate)
-      }
-
-      StepikChangeStatus.INFO_AND_CONTENT -> {
-        courseInfoToUpdate = true
-        processCourseContentChanged(lastUpdateDate)
-      }
-      StepikChangeStatus.UP_TO_DATE -> {
-        // do nothing
-      }
-    }
-  }
-
-  private fun processSectionChanges(lastUpdateDate: Date) {
-    val pushCandidates = course.sections.filter { it.stepikChangeStatus != StepikChangeStatus.UP_TO_DATE }
-    val sectionsFromStepik = StepikMultipleRequestsConnector.getSections(
-      pushCandidates.map { it.id }.filter { it != 0 })
-
-    val deleteCandidates = ArrayList<Int>()
-    for ((section, sectionFromServer) in pushCandidates.zip(sectionsFromStepik)) {
-      when (section.stepikChangeStatus) {
-        StepikChangeStatus.INFO -> {
-          sectionsInfoToUpdate.add(section)
-        }
-
-        StepikChangeStatus.CONTENT -> {
-          processSectionContentChanged(section, deleteCandidates, sectionFromServer)
-        }
-
-        StepikChangeStatus.INFO_AND_CONTENT -> {
-          sectionsInfoToUpdate.add(section)
-          processSectionContentChanged(section, deleteCandidates, sectionFromServer)
-        }
-        else -> {
-          // do nothing
-        }
-      }
-    }
-
-    lessonsToDelete.addAll(StepikMultipleRequestsConnector.getUnits(deleteCandidates)
-                             .filter { it.updateDate <= lastUpdateDate }.mapNotNull { it.id })
-  }
-
-  private fun processSectionContentChanged(section: Section,
-                                           deleteCandidates: ArrayList<Int>,
-                                           sectionFromServer: Section) {
-    lessonsToPush.addAll(section.lessons.filter { it.id == 0 })
-    val lessonFromServerIds = sectionFromServer.units
-    lessonsToMove.addAll(section.lessons.filter { it.id > 0 }.filter { it.unitId !in lessonFromServerIds })
-
-    val localSectionUnits = section.lessons.map { it.unitId }
-    val allLocalUnits = course.allLessons().map { it.unitId }
-    deleteCandidates.addAll(sectionFromServer.units.filter {
-      val isMoved = it in allLocalUnits
-      it !in localSectionUnits && !isMoved
-    })
-  }
-
-  private fun processLessonChanges(lastUpdateDate: Date) {
-    val pushCandidates = course.allLessons().filter { it.stepikChangeStatus != StepikChangeStatus.UP_TO_DATE }
-    val lessonsFromStepik = StepikCourseLoader.getLessonsFromUnits(course, pushCandidates.map { it.unitId }, false)
-
-    val deleteCandidates = ArrayList<Int>()
-    val allSteps = course.allLessons().flatMap { it.taskList }.map { it.id }
-    for ((lesson, lessonFromServer) in pushCandidates.zip(lessonsFromStepik)) {
-      when (lesson.stepikChangeStatus) {
-        StepikChangeStatus.INFO -> {
-          lessonsInfoToUpdate.add(lesson)
-        }
-
-        StepikChangeStatus.CONTENT -> {
-          processLessonContentChanged(lesson, lessonFromServer, allSteps, deleteCandidates, lastUpdateDate)
-        }
-
-        StepikChangeStatus.INFO_AND_CONTENT -> {
-          lessonsInfoToUpdate.add(lesson)
-          processLessonContentChanged(lesson, lessonFromServer, allSteps, deleteCandidates, lastUpdateDate)
-        }
-        else -> {
-          // do nothing
-        }
-      }
-    }
-
-    lessonsToDelete.addAll(StepikMultipleRequestsConnector.getUnits(deleteCandidates)
-                             .filter { it.updateDate <= lastUpdateDate }.mapNotNull { it.id })
-  }
-
-  private fun processLessonContentChanged(lesson: Lesson,
-                                          lessonFromServer: Lesson,
-                                          allSteps: List<Int>,
-                                          deleteCandidates: ArrayList<Int>,
-                                          lastUpdateDate: Date) {
-    tasksToPush.addAll(lesson.taskList.filter { it.id == 0 })
-
-    val localSteps = lesson.taskList.map { it.id }
-    for (step in lessonFromServer.steps) {
-      val isMoved = step in allSteps
-      if (step !in localSteps && !isMoved) {
-        deleteCandidates.add(step)
-      }
-    }
-
-    val stepSources = StepikMultipleRequestsConnector.getStepSources(deleteCandidates)
-    val tasksFromStep = StepikCourseLoader.getTasks(course.languageById, lesson, stepSources)
-    tasksToDelete.addAll(tasksFromStep.filter { it.updateDate <= lastUpdateDate }.map { it.id })
-  }
-
-  private fun processTaskChanges() {
-    val allTasks = course.allLessons().flatMap { it.taskList }
-    tasksToUpdate.addAll(allTasks.filter { it.stepikChangeStatus != StepikChangeStatus.UP_TO_DATE })
-  }
-
-  private fun processCourseContentChanged(lastUpdateDate: Date) {
-    val courseInfo = StepikConnector.getCourseInfo(course.id) ?: return
-    val allLessons = course.allLessons().map { it.id }
-    val hasTopLevelLessons = !course.lessons.isEmpty()
-    if (hasTopLevelLessons) {
-      lessonsToPush.addAll(course.lessons.filter { it.id == 0 })
-      // process lessons moved to top-level
-
-      val section = StepikConnector.getSection(courseInfo.sectionIds[0])
-      if (section != null) {
-        val lessonsFromSection = StepikCourseLoader.getLessonsFromUnits(courseInfo, section.units, false)
-        val topLevelLessonsIds = course.lessons.map { it.id }
-        for (lesson in lessonsFromSection) {
-          if (lesson.id !in topLevelLessonsIds) {
-            val isMoved = lesson.id in allLessons
-            if (!isMoved && lesson.updateDate <= lastUpdateDate) {
-              lessonsToDelete.add(lesson.id)
-            }
-          }
-        }
-      }
-    }
-    else {
+    if (changedItems.isTopLevelSectionRemoved) {
+      StepikConnector.deleteSection(course.sectionIds[0])
       course.sectionIds = emptyList()
+      pushed = true
     }
-    sectionsToPush.addAll(course.sections.filter { it.id == 0 })
-
-    for (sectionToPush in sectionsToPush) {
-      lessonsToMove.addAll(sectionToPush.lessons.filter { it.id > 0 })
-      lessonsToPush.addAll(sectionToPush.lessons.filter { it.id == 0 })
+    if (changedItems.isTopLevelSectionAdded) {
+      postSectionForTopLevelLessons(project, course)
+      pushed = true
     }
-
-    val remoteSectionIds = courseInfo.sectionIds
-    val sections = StepikMultipleRequestsConnector.getSections(remoteSectionIds)
-    val localSectionIds = course.sections.map { it.id }
-    for (section in sections) {
-      if ((section.id !in localSectionIds && section.id !in course.sectionIds) && section.updateDate <= lastUpdateDate) {
-        sectionsToDelete.add(section.id)
-      }
-    }
+    return pushed
   }
 
-  private fun isUpToDate(): Boolean {
-    return !courseInfoToUpdate
-        && sectionsToPush.isEmpty()
-        && sectionsToDelete.isEmpty()
-        && sectionsInfoToUpdate.isEmpty()
-        && lessonsToPush.isEmpty()
-        && lessonsToDelete.isEmpty()
-        && lessonsToMove.isEmpty()
-        && lessonsInfoToUpdate.isEmpty()
-        && tasksToPush.isEmpty()
-        && tasksToUpdate.isEmpty()
-        && tasksToDelete.isEmpty()
-  }
-}
+  private fun processSections(changedItems: StepikChangesInfo): Boolean {
+    var pushed = false
 
-
-private fun EduCourse.lastUpdateDate(): Date {
-  var lastUpdateDate = updateDate
-  allLessons().filter { it.id > 0 }.forEach { lesson ->
-    if (lastUpdateDate < lesson.updateDate) {
-      lastUpdateDate = lesson.updateDate
+    // delete old section
+    changedItems.sectionsToDelete.forEach {
+      StepikConnector.deleteSection(it.id)
+      pushed = true
     }
 
-    lesson.taskList.filter { it.id > 0 }.forEach {
-      if (lastUpdateDate < it.updateDate) {
-        lastUpdateDate = it.updateDate
-      }
+    // post new section
+    changedItems.newSections.forEach {
+      it.position = it.index
+      postSection(project, it, null)
+      pushed = true
     }
+
+    // update section
+    for (localSection in changedItems.sectionInfosToUpdate) {
+      localSection.position = localSection.index
+      updateSectionInfo(localSection)
+      pushed = true
+    }
+
+    return pushed
   }
 
-  sections.filter { it.id > 0 }.forEach {
-    if (lastUpdateDate < it.updateDate) {
-      lastUpdateDate = it.updateDate
+  private fun processLessons(changedItems: StepikChangesInfo): Boolean {
+    var pushed = false
+
+    // delete old lesson
+    changedItems.lessonsToDelete.forEach {
+      StepikConnector.deleteLesson(it.id)
+      StepikConnector.deleteUnit(it.unitId)
+      pushed = true
     }
+
+    // post new lesson
+    changedItems.newLessons.forEach {
+      val section = it.section?.id ?: course.sectionIds.first()
+      postLesson(project, it, it.index, section)
+      pushed = true
+    }
+
+    // update lesson
+    for (localLesson in changedItems.lessonsInfoToUpdate) {
+      val section = localLesson.section?.id ?: course.sectionIds.first()
+      updateLessonInfo(project, localLesson, false, section)
+      pushed = true
+    }
+
+    return pushed
   }
 
-  return lastUpdateDate
-}
+  private fun processTasks(changedItems: StepikChangesInfo): Boolean {
+    var pushed = false
 
-private fun EduCourse.allLessons() = lessons.plus(sections.flatMap { it.lessons })
-
-private fun EduCourse.setStatusRecursively(status: StepikChangeStatus) {
-  stepikChangeStatus = status
-  for (item in items) {
-    item.stepikChangeStatus = status
-
-    if (item is Lesson) {
-      item.setStatusRecursively(status)
+    // delete old task
+    changedItems.tasksToDelete.forEach {
+      StepikConnector.deleteTask(it.id)
+      pushed = true
     }
 
-    if (item is Section) {
-      for (lesson in item.lessons) {
-        lesson.setStatusRecursively(status)
-      }
+    // post new task
+    changedItems.newTasks.forEach {
+      postTask(project, it, it.lesson.id)
+      pushed = true
     }
-  }
-}
 
-private fun Lesson.setStatusRecursively(status: StepikChangeStatus) {
-  taskList.forEach {
-    it.stepikChangeStatus = status
+    // update tasks
+    for (localTask in changedItems.tasksToUpdate) {
+      updateTask(project, localTask)
+      pushed = true
+    }
+
+    return pushed
   }
 }

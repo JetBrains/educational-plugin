@@ -34,7 +34,6 @@ import com.intellij.platform.PlatformProjectOpenProcessor;
 import com.intellij.projectImport.ProjectOpenedCallback;
 import com.intellij.util.PathUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduSettings;
@@ -42,13 +41,11 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUser;
-import com.jetbrains.edu.learning.stepik.StepikUtils;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
 import org.jetbrains.annotations.NotNull;
@@ -103,10 +100,6 @@ public abstract class CourseProjectGenerator<S> {
     EduUtils.openFirstTask(myCourse, project);
     if (CCUtils.isCourseCreator(project)) {
       YamlFormatSynchronizer.saveAll(project);
-
-      // reset wrong statuses set during project generation in CCVirtualFileListener
-      // as it listens new files creation
-      StepikUtils.setStatusRecursively(myCourse, StepikChangeStatus.UP_TO_DATE);
     }
   }
 
@@ -197,7 +190,7 @@ public abstract class CourseProjectGenerator<S> {
           CCUtils.initializeCCPlaceholders(project,myCourse);
         }
         if (myCourse instanceof EduCourse && ((EduCourse)myCourse).isRemote() && myCourse.isFromZip() && CCUtils.isCourseCreator(project)) {
-          setStepikChangeStatuses(project);
+          checkIfAvailableOnRemote(project);
         }
         createAdditionalFiles(project, baseDir);
         EduUsagesCollector.projectTypeCreated(myCourse.getCourseMode());
@@ -209,14 +202,9 @@ public abstract class CourseProjectGenerator<S> {
     }
   }
 
-  private void setStepikChangeStatuses(@NotNull Project project) {
-    EduCourse courseFromStepik = StepikConnector.getCourseInfo(myCourse.getId(), ((EduCourse)myCourse).isCompatible(), true);
-    if (courseFromStepik != null) {
-      StepikCourseLoader.fillItems(courseFromStepik);
-      courseFromStepik.init(null, null, false);
-      new StepikChangeRetriever(project, courseFromStepik).setStepikChangeStatuses();
-    }
-    else {
+  private void checkIfAvailableOnRemote(@NotNull Project project) {
+    EduCourse courseFromStepik = StepikConnector.getCourseInfo(myCourse.getId(), null, true);
+    if (courseFromStepik == null) {
       LOG.warn("Failed to get stepik course for imported from zip course with id: " + myCourse.getId());
       LOG.info("Converting course to local. Course id: " + myCourse.getId());
       ((EduCourse)myCourse).convertToLocal();

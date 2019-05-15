@@ -27,7 +27,7 @@ import java.util.*;
 /**
  * Implementation of task which contains task files, tests, input file for tests
  *
- * Update {@link StepikChangeRetriever#isEqualTo(Task, Task)} if you added new property that has to be compared
+ * Update {@link StepikChangeRetriever#taskFilesChanged and StepikChangeRetriever#taskInfoChanged} if you added new property that has to be compared
  *
  * To implement new task there are 6 steps to be done:
  * - Extend {@link Task} class

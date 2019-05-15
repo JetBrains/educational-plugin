@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementation of windows which user should type in
+ * Implementation of answer placeholders which user should type in
  *
  * Update {@link StepikChangeRetriever#isEqualTo(AnswerPlaceholder, AnswerPlaceholder)} if you added new property that has to be compared
  */

@@ -7,9 +7,13 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
+import com.jetbrains.edu.coursecreator.stepik.StepikChangesInfo;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
+import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.helper.StringUtil;
 
@@ -19,9 +23,12 @@ import java.util.Collections;
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCShowChangedFiles extends DumbAwareAction {
 
+  private static final String INFO_CHANGED = "Info Changed";
+  private static final String REMOVED = "Removed";
+  private static final String NEW = "New";
+
   public CCShowChangedFiles() {
-    super("Compare with Course on Stepik",
-          "Show changed files comparing to the course on Stepik", null);
+    super("Compare with Course on Stepik", "Show changed files comparing to the course on Stepik", null);
   }
 
   @Override
@@ -32,65 +39,59 @@ public class CCShowChangedFiles extends DumbAwareAction {
     }
 
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    assert course != null;
+    if (!(course instanceof EduCourse)) {
+      return;
+    }
 
-    String message = buildChangeMessage(course);
+    EduCourse remoteCourse = StepikConnector.getCourseInfo(course.getId());
+    StepikCourseLoader.loadCourseStructure(remoteCourse);
+    remoteCourse.init(null, null, false);
+
+    String message = buildChangeMessage((EduCourse)course, remoteCourse, project);
     Messages.showInfoMessage(message, course.getName() + " Comparing to Stepik");
   }
 
   @VisibleForTesting
   @NotNull
-  public static String buildChangeMessage(@NotNull Course course) {
+  public static String buildChangeMessage(@NotNull EduCourse course, EduCourse remoteCourse, Project project) {
     StringBuilder builder = new StringBuilder();
-    if (course.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
+    StepikChangeRetriever changeRetriever = new StepikChangeRetriever(project, course, remoteCourse);
+    StepikChangesInfo changedItems = changeRetriever.getChangedItems();
+
+    if (changedItems.isCourseInfoChanged()) {
       appendChangeLine(course, builder);
     }
-
-    for (StudyItem item : course.getItems()) {
-      if (item.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-        appendChangeLine(item, builder);
-      }
-
-      if (isNew(item)) {
-        appendChangeLine(item, builder, "New");
-      }
-
-      if (item instanceof Section) {
-        for (Lesson lesson : ((Section)item).getLessons()) {
-          if (lesson.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-            appendChangeLine(lesson, builder);
-          }
-
-          // all tasks of new lesson are new
-          if (isNew(lesson)) {
-            appendChangeLine(lesson, builder, "New");
-            continue;
-          }
-
-          for (Task task : lesson.getTaskList()) {
-            if (task.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-              appendChangeLine(task, builder);
-            }
-            if (isNew(task)) {
-              appendChangeLine(task, builder, "New");
-            }
-          }
-        }
-      }
-
-      if (item instanceof Lesson) {
-        // all tasks of new lesson are new
-        if (isNew(item)) {
-          continue;
-        }
-
-        for (Task task : ((Lesson)item).getTaskList()) {
-          if (task.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-            appendChangeLine(task, builder);
-          }
-        }
-      }
+    if (changedItems.isCourseAdditionalFilesChanged()) {
+      builder.append("Additional Files Chaged").append("\n");
     }
+    for (Section section : changedItems.getNewSections()) {
+      appendChangeLine(section, builder, NEW);
+    }
+    for (Section section : changedItems.getSectionsToDelete()) {
+      appendChangeLine(section, builder, REMOVED);
+    }
+    for (Section section : changedItems.getSectionInfosToUpdate()) {
+      appendChangeLine(section, builder, INFO_CHANGED);
+    }
+    for (Lesson lesson : changedItems.getNewLessons()) {
+      appendChangeLine(lesson, builder, NEW);
+    }
+    for (Lesson lesson : changedItems.getLessonsToDelete()) {
+      appendChangeLine(lesson, builder, REMOVED);
+    }
+    for (Lesson lesson : changedItems.getLessonsInfoToUpdate()) {
+      appendChangeLine(lesson, builder, INFO_CHANGED);
+    }
+    for (Task task : changedItems.getNewTasks()) {
+      appendChangeLine(task, builder, NEW);
+    }
+    for (Task task : changedItems.getTasksToDelete()) {
+      appendChangeLine(task, builder, REMOVED);
+    }
+    for (Task task : changedItems.getTasksToUpdate()) {
+      appendChangeLine(task, builder, INFO_CHANGED);
+    }
+
     String message = builder.toString();
     if (message.isEmpty()) {
       return "No changes";
@@ -107,7 +108,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
   }
 
   private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder) {
-    appendChangeLine(item, stringBuilder, item.getStepikChangeStatus().toString());
+    appendChangeLine(item, stringBuilder, "Changed");
   }
 
   private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder, @NotNull String status) {

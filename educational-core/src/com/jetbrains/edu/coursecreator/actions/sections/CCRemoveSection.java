@@ -13,7 +13,6 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -66,13 +65,11 @@ public class CCRemoveSection extends DumbAwareAction {
       for (Lesson lesson : lessonsFromSection) {
         lesson.setIndex(lesson.getIndex() + sectionIndex - 1);
         lesson.setSection(null);
-        StepikCourseChangeHandler.infoChanged(lesson);
       }
       CCUtils.updateHigherElements(courseDir.getChildren(), it -> course.getItem(it.getName()),
                                    sectionIndex-1, lessonsFromSection.size());
       course.addLessons(lessonsFromSection);
       course.sortItems();
-      StepikCourseChangeHandler.contentChanged(course);
       YamlFormatSynchronizer.saveItem(course);
     }
 

@@ -16,7 +16,6 @@ import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.EduNames;
@@ -100,7 +99,6 @@ public class CCSectionMoveHandlerDelegate extends MoveHandlerDelegate {
     CCUtils.updateHigherElements(itemDirs, file -> course.getItem(file.getName()), newItemIndex - 1, 1);
 
     sourceSection.setIndex(newItemIndex);
-    StepikCourseChangeHandler.infoChanged(sourceSection);
     course.sortItems();
     ProjectView.getInstance(project).refresh();
     YamlFormatSynchronizer.saveItem(course);

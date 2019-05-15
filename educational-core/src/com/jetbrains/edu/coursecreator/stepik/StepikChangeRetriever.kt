@@ -4,172 +4,170 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.runInEdtAndWait
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.courseFormat.ext.hasSections
+import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 
 @VisibleForTesting
 data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
+                             var isCourseAdditionalFilesChanged: Boolean = false,
+                             var isTopLevelSectionNameChanged: Boolean = false,
+                             var isTopLevelSectionRemoved: Boolean = false,
+                             var isTopLevelSectionAdded: Boolean = false,
+                             var sectionsToDelete: List<Section> = ArrayList(),
                              var newSections: List<Section> = ArrayList(),
-                             var sectionInfosToUpdate: List<Section> = ArrayList(),
-                             var newLessons: List<Lesson> = ArrayList(),
-                             var lessonsInfoToUpdate: List<Lesson> = ArrayList(),
-                             var tasksToUpdateByLessonIndex: Map<Int, List<Task>> = HashMap(),
-                             var tasksToPostByLessonIndex: Map<Int, List<Task>> = HashMap())
+                             var sectionInfosToUpdate: MutableList<Section> = ArrayList(),
+                             var newLessons: MutableList<Lesson> = ArrayList(),
+                             var lessonsInfoToUpdate: MutableList<Lesson> = ArrayList(),
+                             var lessonsToDelete: MutableList<Lesson> = ArrayList(),
+                             var tasksToUpdate: MutableList<Task> = ArrayList(),
+                             var newTasks: MutableList<Task> = ArrayList(),
+                             var tasksToDelete: MutableList<Task> = ArrayList())
 
-class StepikChangeRetriever(val project: Project, private val courseFromServer: EduCourse) {
+class StepikChangeRetriever(private val project: Project, private val course: EduCourse, private val remoteCourse: EduCourse) {
 
   fun getChangedItems(): StepikChangesInfo {
-    val course = StudyTaskManager.getInstance(project).course as EduCourse
     if (!isUnitTestMode) {
-      setTaskFileTextFromDocuments()
+      setTaskFileTextFromDocuments(course, project)
     }
     val stepikChanges = StepikChangesInfo()
-
-    stepikChanges.isCourseInfoChanged = courseInfoChanged(course, courseFromServer)
-
-    val sectionIdsFromServer = courseFromServer.sections.map { it.id }
-    stepikChanges.newSections = course.sections.filter { it.id == 0 }
-    stepikChanges.sectionInfosToUpdate = sectionsInfoToUpdate(course, sectionIdsFromServer, courseFromServer)
-
-    val serverLessonIds = lessonIds(courseFromServer)
-    val allLessons = allLessons(course)
-
-    stepikChanges.newLessons = allLessons.filter { it.id == 0 }
-    stepikChanges.lessonsInfoToUpdate = lessonsInfoToUpdate(course, serverLessonIds, courseFromServer)
-
-    val updateCandidates = allLessons.filter { lesson -> serverLessonIds.contains(lesson.id) }
-    val lessonsById = allLessons(courseFromServer).associateBy({ it.id }, { it })
-    stepikChanges.tasksToPostByLessonIndex = updateCandidates
-      .filter { !stepikChanges.newLessons.contains(it) }
-      .associateBy({ it.index },
-                   { newTasks(lessonsById[it.id]!!, it) })
-      .filterValues { !it.isEmpty() }
-    stepikChanges.tasksToUpdateByLessonIndex = updateCandidates.associateBy({ it.index },
-                                                                            {
-                                                                              tasksToUpdate(lessonsById[it.id]!!, it)
-                                                                            }).filterValues { !it.isEmpty() }
+    processCourseElement(stepikChanges)
+    processTopLevelSection(stepikChanges)
+    processSections(stepikChanges)
+    processLessons(stepikChanges, course.lessons, remoteCourse.lessons)
 
     return stepikChanges
   }
 
-  private fun allLessons(course: EduCourse) = course.lessons.plus(course.sections.flatMap { it.lessons })
+  private fun processCourseElement(stepikChanges: StepikChangesInfo) {
+    stepikChanges.isCourseInfoChanged = courseInfoChanged()
+    stepikChanges.isCourseAdditionalFilesChanged = additionalFilesChanged(course, remoteCourse, project)
+  }
 
-  fun setStepikChangeStatuses() {
-    val course = StudyTaskManager.getInstance(project).course as EduCourse
-    val stepikChanges = getChangedItems()
+  private fun processTopLevelSection(stepikChanges: StepikChangesInfo) {
+    stepikChanges.isTopLevelSectionNameChanged = course.name != remoteCourse.name
+    stepikChanges.isTopLevelSectionRemoved = course.sectionIds.isNotEmpty() && course.hasSections && !course.hasTopLevelLessons
+    stepikChanges.isTopLevelSectionAdded = course.sectionIds.isEmpty() && course.hasTopLevelLessons && !course.hasSections
+  }
 
-    if (stepikChanges.isCourseInfoChanged) {
-      StepikCourseChangeHandler.infoChanged(course)
-    }
+  private fun processSections(stepikChanges: StepikChangesInfo) {
+    val localSectionIds = course.sections.map { it.id }
+    val remoteSectionIds = remoteCourse.sections.map { it.id }
+    stepikChanges.sectionsToDelete = remoteCourse.sections.filter { it.id !in localSectionIds && it.id !in course.sectionIds }
+    stepikChanges.newSections = course.sections.filter { it.id !in remoteSectionIds }
 
-    if (!stepikChanges.newSections.isEmpty()) {
-      StepikCourseChangeHandler.contentChanged(course)
-    }
-
-    stepikChanges.sectionInfosToUpdate.forEach {
-      StepikCourseChangeHandler.infoChanged(it)
-    }
-
-    stepikChanges.newLessons.forEach {
-      StepikCourseChangeHandler.contentChanged(it.section ?: course)
-    }
-
-    stepikChanges.lessonsInfoToUpdate.forEach {
-      StepikCourseChangeHandler.infoChanged(it)
-    }
-
-    stepikChanges.tasksToPostByLessonIndex.forEach { _, taskList ->
-      if (!taskList.isEmpty()) {
-        StepikCourseChangeHandler.contentChanged(taskList.single().lesson)
-        taskList.forEach { it.id = 0 }
-      }
-    }
-
-    stepikChanges.tasksToUpdateByLessonIndex.forEach { _, taskList ->
-      taskList.forEach {
-        StepikCourseChangeHandler.changed(it)
+    for (localSection in course.sections) {
+      if (remoteSectionIds.contains(localSection.id)) {
+        val remoteSection = remoteCourse.sections.singleOrNull { it.id == localSection.id } ?: continue
+        if (sectionInfoChanged(localSection, remoteSection)) {
+          stepikChanges.sectionInfosToUpdate.add(localSection)
+        }
+        processLessons(stepikChanges, localSection.lessons, remoteSection.lessons)
       }
     }
   }
 
+  private fun processLessons(stepikChanges: StepikChangesInfo, localLessons: List<Lesson>, remoteLessons: List<Lesson>) {
+    val localLessonIds = localLessons.map { it.id }
+    val remoteLessonIds = remoteLessons.map { it.id }
 
-  private fun setTaskFileTextFromDocuments() {
-    val course = StudyTaskManager.getInstance(project).course as EduCourse
-    runInEdtAndWait {
-      runReadAction {
-        course.lessons
-          .flatMap { it.taskList }
-          .flatMap { it.taskFiles.values }
-          .forEach { it.setText(EduUtils.createStudentFile(project, it.getVirtualFile(project)!!, it.task)!!.getText()) }
+    stepikChanges.lessonsToDelete.addAll(remoteLessons.filter { it.id !in localLessonIds })
+    stepikChanges.newLessons.addAll(localLessons.filter { it.id !in remoteLessonIds })
+
+    for (localLesson in localLessons) {
+      if (remoteLessonIds.contains(localLesson.id)) {
+        val remoteLesson = remoteLessons.singleOrNull { it.id == localLesson.id } ?: continue
+        if (lessonInfoChanged(localLesson, remoteLesson)) {
+          stepikChanges.lessonsInfoToUpdate.add(localLesson)
+        }
+        processTasks(stepikChanges, localLesson, remoteLesson)
       }
     }
   }
 
-  private fun taskIds(lessonFormServer: Lesson) = lessonFormServer.taskList.map { task -> task.id }
+  private fun processTasks(stepikChanges: StepikChangesInfo, localLesson: Lesson, remoteLesson: Lesson?) {
+    val localTasksIds = localLesson.taskList.map { it.id }
+    val remoteTasks = remoteLesson?.taskList ?: emptyList()
+    val remoteTasksIds = remoteTasks.map { it.id }
 
-  private fun newTasks(lessonFormServer: Lesson, updateCandidate: Lesson): List<Task> {
-    val onServerTaskIds = taskIds(lessonFormServer)
-    return updateCandidate.taskList.filter { task -> !onServerTaskIds.contains(task.id) }
-  }
+    stepikChanges.tasksToDelete.addAll(remoteTasks.filter { it.id !in localTasksIds })
+    stepikChanges.newTasks.addAll(localLesson.taskList.filter { it.id !in remoteTasksIds })
 
-  private fun lessonIds(latestCourseFromServer: EduCourse) = latestCourseFromServer.lessons
-    .plus(latestCourseFromServer.sections.flatMap { it.lessons })
-    .map { lesson -> lesson.id }
-
-  private fun courseInfoChanged(course: EduCourse, latestCourseFromServer: EduCourse): Boolean {
-    return course.name != latestCourseFromServer.name ||
-           course.description != latestCourseFromServer.description ||
-           course.humanLanguage != latestCourseFromServer.humanLanguage ||
-           course.languageID != latestCourseFromServer.languageID
-  }
-
-  private fun tasksToUpdate(lessonFormServer: Lesson, updateCandidate: Lesson): List<Task> {
-    val onServerTaskIds = taskIds(lessonFormServer)
-    val tasksUpdateCandidate = updateCandidate.taskList.filter { task -> task.id in onServerTaskIds }
-
-    val taskById = lessonFormServer.taskList.associateBy({ it.id }, { it })
-    return tasksUpdateCandidate.filter { !it.isEqualTo(taskById[it.id]) }
-  }
-
-  private fun lessonsInfoToUpdate(course: Course,
-                                  serverLessonIds: List<Int>,
-                                  latestCourseFromServer: EduCourse): List<Lesson> {
-    return course.lessons
-      .filter { lesson -> serverLessonIds.contains(lesson.id) }
-      .filter { updateCandidate ->
-        val lessonFormServer = latestCourseFromServer.getLesson(updateCandidate.id)!!
-        lessonFormServer.index != updateCandidate.index ||
-        lessonFormServer.name != updateCandidate.name ||
-        lessonFormServer.isPublic != updateCandidate.isPublic
+    for (localTask in localLesson.taskList) {
+      if (remoteTasksIds.contains(localTask.id)) {
+        val remoteTask = remoteTasks.singleOrNull { it.id == localTask.id } ?: continue
+        if (taskInfoChanged(localTask, remoteTask) || taskFilesChanged(localTask, remoteTask)) {
+          stepikChanges.tasksToUpdate.add(localTask)
+        }
       }
+    }
   }
 
-  private fun sectionsInfoToUpdate(course: EduCourse,
-                                   sectionIdsFromServer: List<Int>,
-                                   latestCourseFromServer: EduCourse): List<Section> {
-    val sectionsById = latestCourseFromServer.sections.associateBy({ it.id }, { it })
-    return course.sections
-      .filter { sectionIdsFromServer.contains(it.id) }
-      .filter {
-        val sectionFromServer = sectionsById[it.id]!!
-        it.index != sectionFromServer.index ||
-        it.name != sectionFromServer.name
-      }
+  private fun courseInfoChanged(): Boolean {
+    return course.name != remoteCourse.name ||
+           course.description != remoteCourse.description ||
+           course.humanLanguage != remoteCourse.humanLanguage ||
+           course.languageID != remoteCourse.languageID
   }
 
-  private fun AnswerPlaceholderDependency.isEqualTo(otherDependency: AnswerPlaceholderDependency?): Boolean {
-    if (this === otherDependency) return true
-    if (otherDependency == null) return false
+  private fun additionalFilesChanged(course: EduCourse, remoteCourse: EduCourse, project: Project): Boolean {
+    val additionalFiles = CCUtils.collectAdditionalFiles(course, project)
+    if (additionalFiles.size != remoteCourse.additionalFiles.size) return true
+    for ((index, additionalFile) in additionalFiles.withIndex()) {
+      val remoteAdditionalFile = remoteCourse.additionalFiles[index]
+      if (!additionalFile.isEqualTo(remoteAdditionalFile)) return true
+    }
+    return false
+  }
 
-    return isVisible == otherDependency.isVisible
-           && fileName == otherDependency.fileName
-           && lessonName == otherDependency.lessonName
-           && placeholderIndex == otherDependency.placeholderIndex
-           && sectionName == otherDependency.sectionName
+  private fun sectionInfoChanged(section: Section, remoteSection: Section): Boolean {
+    return section.index != remoteSection.index ||
+           section.name != remoteSection.name
+  }
+
+  private fun lessonInfoChanged(lesson: Lesson, remoteLesson: Lesson): Boolean {
+    val localSection = lesson.section?.id ?: (lesson.course as EduCourse).sectionIds.first()
+    val remoteSection = remoteLesson.section?.id ?: (remoteLesson.course as EduCourse).sectionIds.first()
+    return lesson.index != remoteLesson.index ||
+           lesson.name != remoteLesson.name ||
+           localSection != remoteSection
+  }
+
+  private fun taskInfoChanged(task: Task, remoteTask: Task): Boolean {
+    return task.name != remoteTask.name ||
+           task.index != remoteTask.index ||
+           task.descriptionText != remoteTask.descriptionText ||
+           task.descriptionFormat != remoteTask.descriptionFormat ||
+           task.feedbackLink.link != remoteTask.feedbackLink.link ||
+           task.feedbackLink.type != remoteTask.feedbackLink.type ||
+           task.lesson.id != remoteTask.lesson.id
+  }
+
+  private fun taskFilesChanged(task: Task, remoteTask: Task): Boolean {
+    val taskFiles = task.taskFiles
+    val remoteTaskFiles = remoteTask.taskFiles
+    if (taskFiles.size != remoteTaskFiles.size) return true
+
+    for ((path, taskFile) in taskFiles) {
+      val remoteTaskFile = remoteTaskFiles[path] ?: return true
+      if (!taskFile.isEqualTo(remoteTaskFile)) return true
+    }
+    return false
+  }
+
+  private fun TaskFile.isEqualTo(otherTaskFile: TaskFile): Boolean {
+    if (this === otherTaskFile) return true
+
+    return name == otherTaskFile.name
+           && text == otherTaskFile.text
+           && isVisible == otherTaskFile.isVisible
+           && answerPlaceholders.size == otherTaskFile.answerPlaceholders.size
+           && answerPlaceholders.zip(otherTaskFile.answerPlaceholders).all { it.first.isEqualTo(it.second) }
   }
 
   private fun AnswerPlaceholder.isEqualTo(otherPlaceholder: AnswerPlaceholder): Boolean {
@@ -184,46 +182,25 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
 
   }
 
-  private fun TaskFile.isEqualTo(otherTaskFile: TaskFile): Boolean {
-    if (this === otherTaskFile) return true
+  private fun AnswerPlaceholderDependency.isEqualTo(otherDependency: AnswerPlaceholderDependency?): Boolean {
+    if (this === otherDependency) return true
+    if (otherDependency == null) return false
 
-    return name == otherTaskFile.name
-           && getText() == otherTaskFile.getText()
-           && answerPlaceholders.size == otherTaskFile.answerPlaceholders.size
-           && answerPlaceholders.zip(otherTaskFile.answerPlaceholders).all { it.first.isEqualTo(it.second) }
+    return isVisible == otherDependency.isVisible
+           && fileName == otherDependency.fileName
+           && lessonName == otherDependency.lessonName
+           && placeholderIndex == otherDependency.placeholderIndex
+           && sectionName == otherDependency.sectionName
   }
 
-  private fun Task.isEqualTo(otherTask: Task?): Boolean {
-    if (this === otherTask) return true
-    if (otherTask == null) return false
-
-    return descriptionText == otherTask.descriptionText
-           && index == otherTask.index
-           && name == otherTask.name
-           && compareFiles(taskFiles, otherTask.taskFiles)
-  }
-
-  private fun compareFiles(files: Map<String, Any>, otherFiles: Map<String, Any>): Boolean {
-    if (files.size != otherFiles.size) {
-      return false
-    }
-
-    for (entry in files.entries) {
-      val name = entry.key
-      val file = entry.value
-
-      if (!otherFiles.containsKey(name)) {
-        return false
-      }
-
-      val otherFile = otherFiles[name]
-      return when (file) {
-        is String -> file != otherFile
-        is TaskFile -> file.isEqualTo(otherFile as TaskFile)
-        else -> true
+  private fun setTaskFileTextFromDocuments(course: EduCourse, project: Project) {
+    runInEdtAndWait {
+      runReadAction {
+        course.lessons
+          .flatMap { it.taskList }
+          .flatMap { it.taskFiles.values }
+          .forEach { it.setText(EduUtils.createStudentFile(project, it.getVirtualFile(project)!!, it.task)!!.text) }
       }
     }
-
-    return true
   }
 }

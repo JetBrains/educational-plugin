@@ -9,7 +9,6 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.layout.*
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import com.jetbrains.edu.learning.EduUtils
@@ -30,8 +29,6 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
 
   override fun addItem(course: Course, item: Task) {
     item.lesson.addTask(item)
-
-    StepikCourseChangeHandler.contentChanged(item.lesson)
   }
 
   override fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem> =

@@ -177,7 +177,7 @@ open class StepikIntegrationTest : StepikTestCase() {
 
     val section = localCourse.getSection("section1")
     val newLesson = addNewLesson("lesson3", 3, localCourse, section!!, project.courseDir)
-    CCPushLesson.doPush(newLesson, project, StudyTaskManager.getInstance(project).course)
+    CCPushLesson.doPush(newLesson, project, StudyTaskManager.getInstance(project).course as EduCourse)
 
     checkSections(localCourse)
   }
@@ -201,7 +201,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     val section = localCourse.getSection("section1")
     val newLesson = addNewLesson("lesson3", 3, localCourse, section!!, project.courseDir)
 
-    CCPushLesson.doPush(newLesson, project, StudyTaskManager.getInstance(project).course)
+    CCPushLesson.doPush(newLesson, project, StudyTaskManager.getInstance(project).course as EduCourse)
 
     checkSections(localCourse)
   }

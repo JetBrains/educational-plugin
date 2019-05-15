@@ -11,9 +11,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class CCChangeFileVisibilityTest : EduActionTestCase() {
 
@@ -23,7 +21,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
   fun `test directory 1`() = doAvailableTest(true, "lesson1/task1/folder1")
   fun `test directory 2`() = doAvailableTest(true, "lesson1/task1/folder2")
   fun `test save stepik change status after undo`() =
-    doAvailableTest(false, "TaskFile1.kt", pathPrefix = "lesson1/task1", status = StepikChangeStatus.INFO_AND_CONTENT)
+    doAvailableTest(false, "TaskFile1.kt", pathPrefix = "lesson1/task1")
   fun `test in student mode`() = doUnavailableTest("TaskFile1.kt", pathPrefix = "lesson1/task1", courseMode = EduNames.STUDY)
   fun `test multiple files with different visibility`() = doUnavailableTest("TaskFile1.kt", "TaskFile2.kt", pathPrefix = "lesson1/task1")
   fun `test file outside of task`() = doUnavailableTest("lesson1")
@@ -31,28 +29,25 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
   private fun doAvailableTest(
     shouldOppositeActionBeEnabled: Boolean,
     vararg paths: String,
-    pathPrefix: String = "",
-    status: StepikChangeStatus = StepikChangeStatus.UP_TO_DATE
+    pathPrefix: String = ""
   ) = doTest(true, shouldOppositeActionBeEnabled, *paths,
-             pathPrefix = pathPrefix,
              courseMode = CCUtils.COURSE_MODE,
-             status = status)
+             pathPrefix = pathPrefix)
 
   private fun doUnavailableTest(
     vararg paths: String,
     courseMode: String = CCUtils.COURSE_MODE,
     pathPrefix: String = ""
-  ) = doTest(false, false, *paths, pathPrefix = pathPrefix, courseMode = courseMode, status = StepikChangeStatus.UP_TO_DATE)
+  ) = doTest(false, false, *paths, courseMode = courseMode, pathPrefix = pathPrefix)
 
   private fun doTest(
     shouldActionBeEnabled: Boolean,
     shouldOppositeActionBeEnabled: Boolean,
     vararg paths: String,
     courseMode: String,
-    pathPrefix: String,
-    status: StepikChangeStatus
+    pathPrefix: String
   ) {
-    val course = createCourse(courseMode, status)
+    val course = createCourse(courseMode)
 
     val task = course.findTask("lesson1", "task1")
     val taskDir = task.getTaskDir(project) ?: error("Can't find task dir of `${task.name}` task")
@@ -88,19 +83,17 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
 
     val hide = CCHideFromStudent()
     val show = CCMakeVisibleToStudent()
-    checkAction(hide, show, dataContext, affectedCourseFiles, task, shouldActionBeEnabled, shouldOppositeActionBeEnabled)
+    checkAction(hide, show, dataContext, affectedCourseFiles, shouldActionBeEnabled, shouldOppositeActionBeEnabled)
     affectedCourseFiles.forEach { it.isVisible = !it.isVisible}
-    checkAction(show, hide, dataContext, affectedCourseFiles, task, shouldActionBeEnabled, shouldOppositeActionBeEnabled)
+    checkAction(show, hide, dataContext, affectedCourseFiles, shouldActionBeEnabled, shouldOppositeActionBeEnabled)
   }
 
   private fun createCourse(
-    courseMode: String,
-    taskStepikStatus: StepikChangeStatus
+    courseMode: String
   ): Course = courseWithFiles(courseMode = courseMode) {
     lesson("lesson1") {
       eduTask("task1") {
         task.id = 1
-        task.stepikChangeStatus = taskStepikStatus
         taskFile("TaskFile1.kt", "<p>some text</p>")
         taskFile("TaskFile2.kt", visible = false)
         taskFile("TaskFile3.kt")
@@ -121,13 +114,11 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
     oppositeAction: CCChangeFileVisibility,
     dataContext: DataContext,
     affectedCourseFiles: List<TaskFile>,
-    task: Task,
     shouldActionBeEnabled: Boolean = true,
     shouldOppositeActionBeEnabled: Boolean = false
   ) {
     val initialStates = affectedCourseFiles.associate { it to it.isVisible }
     val initialPlaceholders = affectedCourseFiles.associate { it to it.answerPlaceholders }
-    val stepikInitialStatus = task.stepikChangeStatus
 
     val oppositeActionPresentation = testAction(dataContext, oppositeAction, false)
     checkActionEnabled(oppositeActionPresentation, shouldOppositeActionBeEnabled)
@@ -143,13 +134,11 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
           }
         }
       }
-      assertEquals(StepikChangeStatus.INFO_AND_CONTENT, task.stepikChangeStatus)
       UndoManager.getInstance(project).undo(null)
       for (visibleFile in affectedCourseFiles) {
         assertEquals(initialStates[visibleFile], visibleFile.isVisible)
         assertEquals(initialPlaceholders[visibleFile], visibleFile.answerPlaceholders)
       }
-      assertEquals(stepikInitialStatus, task.stepikChangeStatus)
     }
   }
 }

@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
@@ -133,7 +132,6 @@ public class CCPushTask extends DumbAwareAction {
       updateTasksPositions(project, position + 1, underlyingTasks);
     }
 
-    task.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
     showNotification(project, "Task " + task.getName() + " uploaded",
                      openOnStepikAction("/lesson/" + lesson.getId() + "/step/" + task.getIndex()));
   }
@@ -169,7 +167,6 @@ public class CCPushTask extends DumbAwareAction {
       }
     }
 
-    task.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
     showNotification(project, "Task " + task.getName() + " updated",
                      openOnStepikAction("/lesson/" + lesson.getId() + "/step/" + task.getIndex()));
   }

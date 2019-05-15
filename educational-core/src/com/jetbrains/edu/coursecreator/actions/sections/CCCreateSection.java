@@ -7,7 +7,6 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase;
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo;
 import com.jetbrains.edu.coursecreator.actions.StudyItemType;
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Section;
@@ -25,7 +24,6 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   @Override
   protected void addItem(@NotNull Course course, @NotNull Section section) {
     course.addSection(section);
-    StepikCourseChangeHandler.contentChanged(course);
   }
 
   @Override

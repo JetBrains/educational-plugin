@@ -22,7 +22,6 @@ import com.intellij.openapi.vfs.*
 import com.intellij.psi.PsiDirectory
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
@@ -65,7 +64,6 @@ object CCUtils {
       val item = getStudyItem.`fun`(dir)
       val newIndex = item.index + delta
       item.index = newIndex
-      StepikCourseChangeHandler.infoChanged(item)
     }
   }
 
@@ -307,12 +305,6 @@ object CCUtils {
     YamlFormatSynchronizer.saveItem(section)
     YamlFormatSynchronizer.saveItem(course)
     ProjectView.getInstance(project).refresh()
-    StepikCourseChangeHandler.contentChanged(course)
-    for (lesson in section.lessons) {
-      if (lesson.id != 0) {
-        StepikCourseChangeHandler.infoChanged(lesson)
-      }
-    }
   }
 
   private fun createSection(lessonsToWrap: List<Lesson>, sectionName: String, index: Int): Section {

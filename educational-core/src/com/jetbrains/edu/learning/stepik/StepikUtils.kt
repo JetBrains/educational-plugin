@@ -28,7 +28,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.net.URL
 
@@ -54,22 +53,6 @@ fun setCourseLanguage(info: EduCourse) {
   }
 }
 
-fun setStatusRecursively(course: Course, status: StepikChangeStatus) {
-  course.visitLessons {
-    setLessonStatus(it, status)
-  }
-  for (section in course.sections) {
-    section.stepikChangeStatus = status
-  }
-}
-
-private fun setLessonStatus(lesson: Lesson, status: StepikChangeStatus) {
-  lesson.stepikChangeStatus = status
-  for (task in lesson.taskList) {
-    task.stepikChangeStatus = status
-  }
-}
-
 fun getStepikLink(task: Task, lesson: Lesson): String {
   return "${StepikNames.STEPIK_URL}/lesson/${lesson.id}/step/${task.index}"
 }
@@ -86,7 +69,6 @@ fun updateCourseIfNeeded(project: Project, course: EduCourse) {
         if (!course.isUpToDate()) {
           showUpdateAvailableNotification(project) {
             StepikCourseUpdater(course, project).updateCourse()
-            course.setUpdated()
           }
         }
       }

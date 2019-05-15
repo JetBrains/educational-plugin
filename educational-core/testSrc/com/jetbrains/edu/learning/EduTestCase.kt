@@ -214,6 +214,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     remoteCourse.items = Lists.newArrayList(items)
     remoteCourse.language = language
 
+    var hasSections = false
     for (item in remoteCourse.items) {
       if (item is Section) {
         item.id = item.index
@@ -223,6 +224,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
             task.id = task.index
           }
         }
+        hasSections = true
       }
 
       if (item is Lesson) {
@@ -233,6 +235,9 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
       }
     }
 
+    if (!hasSections) {
+      remoteCourse.sectionIds = listOf(1)
+    }
     remoteCourse.init(null, null, true)
     StudyTaskManager.getInstance(project).course = remoteCourse
     return remoteCourse

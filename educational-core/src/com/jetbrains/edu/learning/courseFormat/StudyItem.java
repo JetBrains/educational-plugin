@@ -26,7 +26,6 @@ public abstract class StudyItem extends UserDataHolderBase {
   private String myName;
   protected int myId;
   private Date myUpdateDate = new Date(0);
-  private StepikChangeStatus myStepikChangeStatus = StepikChangeStatus.UP_TO_DATE;
 
   // Non unique lesson/task/section names can be received from stepik. In this case unique directory name is generated,
   // but original non unique name is displayed
@@ -75,15 +74,6 @@ public abstract class StudyItem extends UserDataHolderBase {
 
   public void setIndex(int index) {
     myIndex = index;
-  }
-
-  @NotNull
-  public StepikChangeStatus getStepikChangeStatus() {
-    return myStepikChangeStatus;
-  }
-
-  public void setStepikChangeStatus(@NotNull StepikChangeStatus stepikChangeStatus) {
-    this.myStepikChangeStatus = stepikChangeStatus;
   }
 
   /**

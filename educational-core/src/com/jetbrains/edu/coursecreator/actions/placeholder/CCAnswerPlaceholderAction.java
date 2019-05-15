@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -64,7 +63,6 @@ abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
       return;
     }
     performAnswerPlaceholderAction(state);
-    StepikCourseChangeHandler.changed(state.myTaskFile);
   }
 
   protected abstract void performAnswerPlaceholderAction(@NotNull final CCState state);
