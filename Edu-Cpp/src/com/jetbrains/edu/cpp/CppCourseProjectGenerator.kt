@@ -55,7 +55,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
     if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
-    GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME, getText(mainCMakeListsTemplate, baseDir.name, ""))
+    GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME, getText(mainCMakeListsTemplate, baseDir.name))
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings) {
@@ -92,10 +92,10 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     return "${EduNames.SECTION}${section.index}-$projectName"
   }
 
-  private fun getText(templateName: FileTemplate, cppProjectName: String, cppStandard: String): String {
+  private fun getText(templateName: FileTemplate, cppProjectName: String, cppStandard: String? = null): String {
     val params = mapOf(PROJECT_NAME to cppProjectName,
                        CMAKE_MINIMUM_REQUIRED_LINE to cmakeMinimumRequired,
-                       CPP_STANDARD to cppStandard)
+                       CPP_STANDARD to cppStandard).filterValues { it != null }
     return templateName.getText(params)
   }
 
