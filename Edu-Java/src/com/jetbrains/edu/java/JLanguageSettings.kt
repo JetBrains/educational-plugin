@@ -39,7 +39,7 @@ class JLanguageSettings : JdkLanguageSettings() {
     }
     val courseJavaVersionDescription = course.languageVersion ?: DEFAULT_JAVA.description
     val courseJavaVersion = courseJavaVersionDescription.toJavaSdkVersion()
-                            ?: return ErrorMessage("Unsupported Java versions: ${courseJavaVersionDescription}")
+                            ?: return ErrorMessage("Unsupported Java versions: $courseJavaVersionDescription")
 
     val providedJavaVersion = myJdkSettings.jdkItem?.jdk?.versionString ?: return ErrorMessage("No Java sdk")
 
@@ -48,7 +48,7 @@ class JLanguageSettings : JdkLanguageSettings() {
     if (javaSdkVersion.isAtLeast(courseJavaVersion)) {
       return null
     }
-    return ErrorMessage("Java version should be at least ${courseJavaVersionDescription}. ",
+    return ErrorMessage("Java version should be at least $courseJavaVersionDescription. ",
                         "Download JDK", "", "https://www.oracle.com/technetwork/java/javase/downloads/index.html")
   }
 

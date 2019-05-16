@@ -8,7 +8,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -34,7 +33,7 @@ object HyperskillCourseUpdater {
       override fun run(indicator: ProgressIndicator) {
         val projectId = course.hyperskillProject.id
         val hyperskillProject = HyperskillConnector.getProject(projectId) ?: return
-        val languageId = EduNames.JAVA
+        val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language] ?: return
         val remoteCourse = HyperskillCourse(hyperskillProject, languageId)
         remoteCourse.stages = HyperskillConnector.getStages(projectId) ?: return
         val language = remoteCourse.languageById ?: return

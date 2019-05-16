@@ -4,7 +4,6 @@
   <depends>org.jetbrains.plugins.gradle</depends>
   <depends>JUnit</depends>
 
-
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceInterface="com.jetbrains.edu.kotlin.twitter.KtTwitterSettings"
                     serviceImplementation="com.jetbrains.edu.kotlin.twitter.KtTwitterSettings"/>
@@ -18,6 +17,9 @@
 
     <!-- Coursera -->
     <configurator implementationClass="com.jetbrains.edu.kotlin.coursera.CourseraKtConfigurator" language="kotlin" courseType="Coursera" />
+
+    <!-- Hyperskill -->
+    <configurator implementationClass="com.jetbrains.edu.kotlin.stepik.hyperskill.KtHyperskillConfigurator" language="kotlin" courseType="Hyperskill"/>
   </extensions>
 
 </idea-plugin>

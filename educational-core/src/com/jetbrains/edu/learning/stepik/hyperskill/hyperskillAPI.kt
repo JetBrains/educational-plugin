@@ -11,11 +11,11 @@ const val ID = "id"
 const val TITLE = "title"
 const val EMAIL = "email"
 const val FULL_NAME = "fullname"
-const val STAGE = "stage"
 const val PROJECT = "project"
 const val DESCRIPTION = "description"
 const val IDE_FILES = "ide_files"
 const val USE_IDE = "use_ide"
+const val LANGUAGE = "language"
 const val THEORY_ID = "theory"
 const val STEP_ID = "step"
 
@@ -65,6 +65,9 @@ class HyperskillProject {
 
   @JsonProperty(USE_IDE)
   var useIde: Boolean = false
+
+  @JsonProperty(LANGUAGE)
+  var language: String = ""
 }
 
 class UsersList {

@@ -60,8 +60,7 @@ object StepikCourseLoader {
     val indicator = ProgressManager.getInstance().progressIndicator
     while (true) {
       if (indicator != null && indicator.isCanceled) break
-      val coursesList = StepikConnector.getCourses(isPublic, currentPage, enrolled)
-      if (coursesList == null) break
+      val coursesList = StepikConnector.getCourses(isPublic, currentPage, enrolled) ?: break
 
       val availableCourses = getAvailableCourses(coursesList)
       result.addAll(availableCourses)
@@ -96,7 +95,7 @@ object StepikCourseLoader {
 
   @JvmStatic
   fun loadCourseStructure(remoteCourse: EduCourse) {
-    if (!remoteCourse.items.isEmpty()) return
+    if (remoteCourse.items.isNotEmpty()) return
     fillItems(remoteCourse)
   }
 
@@ -208,7 +207,7 @@ object StepikCourseLoader {
       }
       val allStepSources = StepikMultipleRequestsConnector.getStepSources(lesson.steps)
 
-      if (!allStepSources.isEmpty()) {
+      if (allStepSources.isNotEmpty()) {
         val options = allStepSources[0].block!!.options
         if (options?.lessonType != null) {
           // TODO: find a better way to get framework lessons from stepik

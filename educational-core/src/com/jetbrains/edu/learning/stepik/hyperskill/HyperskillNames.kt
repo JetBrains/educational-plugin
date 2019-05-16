@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.jetbrains.edu.learning.EduNames
 import org.jetbrains.ide.BuiltInServerManager
 
 const val HYPERSKILL = "Hyperskill"
@@ -15,3 +16,5 @@ val AUTHORISATION_CODE_URL = "https://hyperskill.org/oauth2/authorize/?" +
 
 const val HYPERSKILL_PROJECT_NOT_SUPPORTED = "Selected project is not supported yet. " +
                              "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select another project</a> "
+
+val HYPERSKILL_LANGUAGES = mapOf("java" to "${EduNames.JAVA} 11", "kotlin" to EduNames.KOTLIN, "python" to EduNames.PYTHON)

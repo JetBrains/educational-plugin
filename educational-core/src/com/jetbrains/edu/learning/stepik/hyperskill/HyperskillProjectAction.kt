@@ -13,7 +13,6 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.components.labels.ActionLink
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.awt.event.ActionEvent
@@ -50,7 +49,11 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
         showBalloon(e, HYPERSKILL_PROJECT_NOT_SUPPORTED, false)
       }
       else {
-        val languageId = EduNames.JAVA
+        val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language]
+        if (languageId == null) {
+          showBalloon(e, "Unsupported language ${hyperskillProject.language}", false)
+          return
+        }
         val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
         if (hyperskillCourse.configurator == null) {
           showBalloon(e, HYPERSKILL_PROJECT_NOT_SUPPORTED, false)

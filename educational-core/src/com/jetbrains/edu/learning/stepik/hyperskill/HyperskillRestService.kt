@@ -11,7 +11,6 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.AppIcon
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -114,7 +113,13 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
                          HSHyperlinkListener(false)).notify(project)
             return null
           }
-          val languageId = EduNames.JAVA
+          val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language]
+          if (languageId == null) {
+            LOG.warn("Language in not supported yet ${hyperskillProject.language}")
+            Notification(HYPERSKILL, HYPERSKILL, "Unsupported language ${hyperskillProject.language}",
+                         NotificationType.WARNING).notify(project)
+            return null
+          }
           val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
           val stages = HyperskillConnector.getStages(projectId) ?: return null
           hyperskillCourse.stages = stages

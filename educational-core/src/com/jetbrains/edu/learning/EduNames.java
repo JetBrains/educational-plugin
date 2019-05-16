@@ -52,7 +52,6 @@ public class EduNames {
 
   public static final String SRC = "src";
   public static final String TEST = "test";
-  public static final String UTIL = "util";
   public static final String BUILD = "build";
   public static final String OUT = "out";
 

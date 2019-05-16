@@ -13,7 +13,6 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.Consumer
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.sanitizeName
@@ -98,7 +97,7 @@ open class GradleCourseProjectGenerator(
       val type = selectedItem.sdkType
       val path = selectedItem.path
       val jdkRef = Ref<Sdk>()
-      settings.model.addSdk(type, path, Consumer<Sdk> { jdkRef.set(it) })
+      settings.model.addSdk(type, path) { jdkRef.set(it) }
       return jdkRef.get()
     }
     return selectedItem.jdk

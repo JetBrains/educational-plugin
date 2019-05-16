@@ -9,10 +9,12 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -150,7 +152,7 @@ object HyperskillConnector {
     lesson.course = course
     progressIndicator?.checkCanceled()
     progressIndicator?.text2 = "Loading project stages"
-    val stepSources = course.stages.mapNotNull { HyperskillConnector.getStepSource(it.stepId) }
+    val stepSources = course.stages.mapNotNull { getStepSource(it.stepId) }
 
     progressIndicator?.checkCanceled()
     val tasks = StepikCourseLoader.getTasks(language, lesson, stepSources)
@@ -159,6 +161,59 @@ object HyperskillConnector {
     }
     course.additionalFiles = loadAttachment(attachmentLink)
     return lesson
+  }
+
+  fun fillHyperskillCourse(hyperskillCourse: HyperskillCourse): Boolean {
+    return try {
+      ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.WithResult<Boolean, Exception>(null, "Loading hyperskill project", true) {
+        override fun compute(indicator: ProgressIndicator): Boolean {
+          val language = hyperskillCourse.languageById
+          val hyperskillAccount = HyperskillSettings.INSTANCE.account
+          if (hyperskillAccount == null) {
+            LOG.error("User is not logged in to the Hyperskill")
+            return false
+          }
+          val hyperskillProject = hyperskillCourse.hyperskillProject
+          if (!hyperskillProject.useIde) {
+            LOG.error("Selected project is not supported")
+            return false
+          }
+          val projectId = hyperskillProject.id
+
+          if (hyperskillCourse.stages.isEmpty()) {
+            val stages = getStages(projectId) ?: return false
+            hyperskillCourse.stages = stages
+          }
+          val stages = hyperskillCourse.stages
+          val lesson = getLesson(hyperskillCourse, hyperskillProject.ideFiles, language)
+          if (lesson == null) {
+            LOG.warn("Project doesn't contain framework lesson")
+            return false
+          }
+          if (lesson.taskList.size != stages.size) {
+            LOG.warn("Course has ${stages.size} stages, but ${lesson.taskList.size} tasks")
+            return false
+          }
+
+          lesson.taskList.forEachIndexed { index, task ->
+            task.feedbackLink = feedbackLink(projectId, stages[index])
+            task.name = stages[index].title
+          }
+          lesson.name = hyperskillProject.title
+
+          hyperskillCourse.addLesson(lesson)
+          return true
+        }
+      })
+    }
+    catch (e: Exception) {
+      LOG.warn(e)
+      false
+    }
+  }
+
+  fun feedbackLink(project: Int, stage: HyperskillStage): FeedbackLink {
+    return FeedbackLink("$HYPERSKILL_PROJECTS_URL/$project/stages/${stage.id}/implement")
   }
 
   fun getSubmission(stepId: Int, page: Int = 1): Submission? {
