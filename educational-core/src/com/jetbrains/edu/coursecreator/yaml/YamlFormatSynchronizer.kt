@@ -14,6 +14,8 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
@@ -150,6 +152,14 @@ object YamlFormatSynchronizer {
       return
     }
     EditorFactory.getInstance().eventMulticaster.addDocumentListener(YamlSynchronizationListener(project), project)
+    project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
+      override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
+        if (isConfigFile(file)) {
+          // load item to show editor notification if config file is invalid
+          YamlLoader.loadItem(project, file)
+        }
+      }
+    })
   }
 
   private fun StudyItem.saveConfigDocument(project: Project, configName: String, mapper: ObjectMapper) {
