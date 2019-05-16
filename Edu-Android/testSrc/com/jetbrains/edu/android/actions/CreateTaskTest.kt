@@ -1,6 +1,5 @@
 package com.jetbrains.edu.android.actions
 
-import com.intellij.lang.Language
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
@@ -10,13 +9,12 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.fileTree
 import junit.framework.TestCase
+import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class CreateTaskTest : EduActionTestCase() {
-  private object FakeKotlin : Language("kotlin")
-
   fun `test create task in empty lesson`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, environment = EduNames.ANDROID,
-                                 language = FakeKotlin, settings = JdkProjectSettings.emptySettings()) {
+                                 language = KotlinLanguage.INSTANCE, settings = JdkProjectSettings.emptySettings()) {
       lesson()
     }
     val lessonFile = findFile("lesson1")

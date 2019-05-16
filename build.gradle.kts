@@ -368,7 +368,7 @@ project(":Edu-Scala") {
 project(":Edu-Android") {
   intellij {
     localPath = studioPath
-    setPlugins("android", "junit", "properties", "gradle", "Groovy", "IntelliLang", "smali")
+    setPlugins("android", "junit", "properties", "gradle", "Groovy", "IntelliLang", "smali", "Kotlin")
   }
 
   dependencies {
