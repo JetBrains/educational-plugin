@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.ui.taskDescription.check
 
 import com.intellij.openapi.ui.LabeledComponent
-import com.intellij.openapi.ui.ex.MultiLineLabel
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.BrowserHyperlinkListener
+import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -83,6 +83,29 @@ class CheckMessagePanel private constructor(): JPanel() {
       }
       return messagePanel
     }
+  }
+}
+
+private class MultiLineLabelUI : com.intellij.openapi.ui.MultiLineLabelUI() {
+
+  private var text: String? = null
+  private var lines: Array<String> = ArrayUtil.EMPTY_STRING_ARRAY
+
+  // Almost identical with original implementation
+  // except it doesn't trim lines
+  override fun splitStringByLines(str: String?): Array<String> {
+    if (str == null) return ArrayUtil.EMPTY_STRING_ARRAY
+    if (str == text) return lines
+    val convertedStr = convertTabs(str, 2)
+    text = convertedStr
+    lines = StringUtil.splitByLinesDontTrim(convertedStr)
+    return lines
+  }
+}
+
+private class MultiLineLabel(text: String?) : com.intellij.openapi.ui.ex.MultiLineLabel(text) {
+  override fun updateUI() {
+    setUI(MultiLineLabelUI())
   }
 }
 
