@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.checker
 import com.intellij.idea.IdeaTestApplication
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.impl.ComponentManagerImpl
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
@@ -172,6 +173,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
             }
 
             (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
+            runWriteAction { Disposer.dispose(myProject) }
         } finally {
             super.tearDown()
         }
