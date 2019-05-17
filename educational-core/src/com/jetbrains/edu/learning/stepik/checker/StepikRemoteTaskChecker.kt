@@ -6,9 +6,9 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
@@ -19,7 +19,7 @@ class StepikRemoteTaskChecker : RemoteTaskChecker {
   }
 
   private val Task.shouldBeCheckedOnStepik: Boolean
-    get() = this is ChoiceTask || this is CodeTask
+    get() = this is CodeTask || (this is ChoiceTask && !canCheckLocally)
 
   override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {
     val user = EduSettings.getInstance().user ?: return CheckResult.LOGIN_NEEDED

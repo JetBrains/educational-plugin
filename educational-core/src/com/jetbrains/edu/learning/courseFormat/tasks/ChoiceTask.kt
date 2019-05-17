@@ -6,6 +6,8 @@ class ChoiceTask : Task {
   var isMultipleChoice: Boolean = false
   var selectedVariants = mutableListOf<Int>()
 
+  val canCheckLocally get() = choiceOptions.all { it.status != OptionStatus.UNKNOWN }
+
   //used for deserialization
   @Suppress("unused")
   constructor()

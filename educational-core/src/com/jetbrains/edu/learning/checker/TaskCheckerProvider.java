@@ -21,7 +21,7 @@ public interface TaskCheckerProvider {
 
     @Nullable
     default TaskChecker<ChoiceTask> getChoiceTaskChecker(@NotNull ChoiceTask task, @NotNull Project project) {
-        return null;
+        return task.getCanCheckLocally() ? new ChoiceTaskChecker(task, project) : null;
     }
 
     @Nullable

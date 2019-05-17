@@ -191,11 +191,13 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     stepId: Int = 0,
     updateDate: Date = Date(0),
     choiceOptions: Map<String, ChoiceTask.OptionStatus>,
+    isMultipleChoice: Boolean = false,
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val choiceTask = ChoiceTask()
     task(choiceTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
     choiceTask.choiceOptions = choiceOptions.map { ChoiceTask.ChoiceOption(it.key, it.value) }
+    choiceTask.isMultipleChoice = isMultipleChoice
   }
 }
 
