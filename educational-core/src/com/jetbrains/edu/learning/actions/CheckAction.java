@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -55,6 +56,8 @@ public class CheckAction extends DumbAwareAction {
   private static final String RUN_TASK = "Run";
   private static final String RUN_DESCRIPTION = "Run current task";
   private static final String CHECK_DESCRIPTION = "Check current task";
+
+  private static final Logger LOG = Logger.getInstance(CheckAction.class);
 
   protected final Ref<Boolean> myCheckInProgress = new Ref<>(false);
 
@@ -218,7 +221,10 @@ public class CheckAction extends DumbAwareAction {
       myCheckInProgress.set(true);
       TaskDescriptionView.getInstance(myProject).checkStarted();
 
+      long start = System.currentTimeMillis();
       CheckResult localCheckResult = myChecker == null ? CheckResult.NO_LOCAL_CHECK : myChecker.check(indicator);
+      long end = System.currentTimeMillis();
+      LOG.info(String.format("Checking of %s task took %d ms", myTask.getName(), end - start));
       if (localCheckResult.getStatus() == CheckStatus.Failed) {
         myResult = localCheckResult;
         return;
