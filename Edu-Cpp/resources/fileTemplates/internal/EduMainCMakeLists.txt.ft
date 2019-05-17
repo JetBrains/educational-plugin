@@ -1,15 +1,20 @@
-# This file handles building each Task as sub-project.
+# This file handles building each task as sub-project.
+#
+# Each task becomes an independent project in which you can experiment.
+#
+# Tasks are added as separate sub-projects so as compilation errors in
+# one task don't affect another task.
 
 ${CMAKE_MINIMUM_REQUIRED_LINE}
 project(${PROJECT_NAME})
 
 #-----------------------------------------------------------------------------------
-# The function returns a list of subdirectories that contain the CMakeLists.txt file.
+# The function returns a list of subdirectories containing the CMakeLists.txt files.
 #
 # Parameters:
 #
 # root_dir     Starting directory for traversing all subdirectories
-# return_dirs  List of subdirectories that contain CMakeLists.txt
+# return_dirs  List of subdirectories containing CMakeLists.txt
 #
 # Example usage:
 #
@@ -21,15 +26,15 @@ function(get_dirs_with_cmakelists root_dir return_dirs)
     file(GLOB_RECURSE cmake_file_path_list RELATIVE "${root_dir}" CMakeLists.txt)
     # Collect all subdirectories containing CMakeLists.txt
     set(dir_list)
-    foreach(file_path ${cmake_file_path_list})
+    foreach (file_path ${cmake_file_path_list})
         get_filename_component(dir_path ${file_path} PATH)
         list(APPEND dir_list ${dir_path})
-    endforeach()
+    endforeach ()
     list(REMOVE_DUPLICATES dir_list)
     set(${return_dirs} ${dir_list} PARENT_SCOPE)
 endfunction()
 
 get_dirs_with_cmakelists(${CMAKE_CURRENT_SOURCE_DIR} dirs)
-foreach(dir ${dirs})
+foreach (dir ${dirs})
     add_subdirectory(${dir})
-endforeach()
+endforeach ()
