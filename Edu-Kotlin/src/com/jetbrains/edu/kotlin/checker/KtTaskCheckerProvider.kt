@@ -23,9 +23,9 @@ class KtTaskCheckerProvider : GradleTaskCheckerProvider() {
   override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
     return object : NewGradleEduTaskChecker(task, project) {
 
-      override fun prepareForCheck(): CheckResult {
+      override fun checkIfFailedToRunTests(): CheckResult {
         return if (task.hasSeparateModule(project)) {
-          super.prepareForCheck()
+          super.checkIfFailedToRunTests()
         } else  {
           GradleCommandLine.create(project, "testClasses")?.launchAndCheck() ?: CheckResult.FAILED_TO_CHECK
         }

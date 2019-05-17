@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
 open class NewGradleEduTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(task, project) {
 
-  override fun prepareForCheck(): CheckResult {
+  override fun checkIfFailedToRunTests(): CheckResult {
     return GradleCommandLine.create(project, "${getGradleProjectName(task)}:testClasses")?.launchAndCheck() ?: CheckResult.FAILED_TO_CHECK
   }
 

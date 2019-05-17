@@ -31,9 +31,6 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
   var activateRunToolWindow: Boolean = !task.course.isStudy
 
   override fun check(indicator: ProgressIndicator): CheckResult {
-    val preparationResult = prepareForCheck()
-    if (preparationResult.status != CheckStatus.Solved) return preparationResult
-
     if (task.course.isStudy) {
       runInEdt {
         ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
@@ -88,6 +85,13 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
     @Suppress("DEPRECATION")
     invokeAndWaitIfNeed {}
 
+    if (testRoots.all { it.children.isEmpty() }) {
+      val compilationResult = checkIfFailedToRunTests()
+      if (!compilationResult.isSolved) {
+        return compilationResult
+      }
+    }
+
     val testResults = testRoots.map { it.toCheckResult() }
     if (testResults.isEmpty()) return NO_TESTS_RUN
 
@@ -124,10 +128,11 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
   }
 
   /**
-   * Launches preparation tasks (e.g. compilation) before checking.
-   * If status of returning result is not [CheckStatus.Solved] then this result will be returned as check result
+   * Launches additional task if tests cannot be run (e.g. because of compilation error).
+   * Main purpose is to get proper error message for such cases.
+   * If test framework support already provides correct message, you don't need to override this method
    */
-  protected open fun prepareForCheck(): CheckResult = CheckResult(CheckStatus.Solved, "")
+  protected open fun checkIfFailedToRunTests(): CheckResult = CheckResult.SOLVED
 
   /**
    * Creates and return list of run configurations to run task tests.
