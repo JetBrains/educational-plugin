@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
-import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 object CourseViewUtils {
@@ -48,12 +47,9 @@ object CourseViewUtils {
     val dirName = dir.name
     val hasTaskFileNotInsideSourceDir = task.hasVisibleTaskFilesNotInsideSourceDir(project)
     if (dirName == task.sourceDir) return hasTaskFileNotInsideSourceDir
-    if (task.testDirs.contains(dirName)) {
       return task.taskFiles.values.any {
         it.isVisible && VfsUtil.isAncestor(dir.virtualFile, it.getVirtualFile(project)?:return@any false, true)
       }
-    }
-    return true
   }
 
   private fun Task.hasVisibleTaskFilesNotInsideSourceDir(project: Project): Boolean {
