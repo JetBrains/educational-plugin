@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.checker.TestsOutputParser
 import org.jetbrains.ide.BuiltInServerManager
 
 const val HYPERSKILL = "Hyperskill"
@@ -18,3 +19,6 @@ const val HYPERSKILL_PROJECT_NOT_SUPPORTED = "Selected project is not supported 
                              "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select another project</a> "
 
 val HYPERSKILL_LANGUAGES = mapOf("java" to "${EduNames.JAVA} 11", "kotlin" to EduNames.KOTLIN, "python" to EduNames.PYTHON)
+
+const val SUCCESS_MESSAGE = "<html>${TestsOutputParser.CONGRATULATIONS} " +
+                            "Continue on <a href=\"https://hyperskill.org/learning-path\">Hyperskill</a>.</html>"

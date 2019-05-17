@@ -6,7 +6,6 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -31,7 +30,7 @@ fun openSelectedStage(course: Course, project: Project) {
 }
 
 fun isHyperskillSupportAvailable(): Boolean {
-  return Language.findLanguageByID(EduNames.JAVA) != null && !EduUtils.isAndroidStudio()
+  return Language.findLanguageByID(EduNames.JAVA) != null || Language.findLanguageByID(EduNames.PYTHON) != null
 }
 
 fun showFailedToPostNotification() {

@@ -1,20 +1,19 @@
-package com.jetbrains.edu.jvm.stepik.hyperskill
+package com.jetbrains.edu.python.learning.stepik.hyperskill
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
-import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector.fillHyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.python.learning.PyCourseBuilder
+import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator
 
-open class HyperskillGradleCourseProjectGenerator(builder: GradleCourseBuilderBase,
-                                                  course: Course) : GradleCourseProjectGenerator(builder, course) {
+class PyHyperskillCourseProjectGenerator(builder: PyCourseBuilder, course: Course) : PyCourseProjectGenerator(builder, course) {
 
   override fun beforeProjectGenerated(): Boolean {
     assert(myCourse is HyperskillCourse)
-    return fillHyperskillCourse(myCourse as HyperskillCourse)
+    return HyperskillConnector.fillHyperskillCourse(myCourse as HyperskillCourse)
   }
 
   override fun loadSolutions(project: Project, course: Course) {

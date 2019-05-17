@@ -1,0 +1,10 @@
+<idea-plugin>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.python.learning.stepik.hyperskill.PyHyperskillConfigurator"
+                  language="Python" courseType="Hyperskill"/>
+    <configurator implementationClass="com.jetbrains.edu.python.learning.stepik.hyperskill.pycharm.PyHyperskillConfigurator"
+                  language="Python" courseType="Hyperskill"/>
+  </extensions>
+
+</idea-plugin>

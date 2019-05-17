@@ -18,6 +18,9 @@ class HyperskillProjectComponent(private val project: Project) : ProjectComponen
       project.messageBus.connect().subscribe(HyperskillSolutionLoader.SOLUTION_TOPIC, this)
 
       val course = StudyTaskManager.getInstance(project).course as? HyperskillCourse ?: return@runWhenProjectIsInitialized
+      if (course.taskToTopics.isEmpty()) {
+        HyperskillConnector.fillTopics(course, project)
+      }
       val isSolutionLoadingStarted = IS_HYPERSKILL_SOLUTION_LOADING_STARTED.getRequired(course)
       if (HyperskillSettings.INSTANCE.account != null && !isSolutionLoadingStarted) {
         HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground()
