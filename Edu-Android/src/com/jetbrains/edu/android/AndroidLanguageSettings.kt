@@ -40,7 +40,7 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
     return super.getLanguageSettingsComponents(course) + androidSdkLocation
   }
 
-  override fun validate(course: Course?, courseLocation: String): ErrorMessage? {
+  override fun validate(course: Course?, courseLocation: String?): ErrorMessage? {
     return if (locationField.text.isEmpty()) ErrorMessage("Specify Android SDK location") else null
   }
 

@@ -44,8 +44,8 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
     return values().map { it.standard }
   }
 
-  override fun validate(course: Course?, courseLocation: String): ErrorMessage? = when {
-    SystemInfo.isWindows && !IOUtil.isAscii(courseLocation) -> {
+  override fun validate(course: Course?, courseLocation: String?): ErrorMessage? = when {
+    courseLocation != null && SystemInfo.isWindows && !IOUtil.isAscii(courseLocation) -> {
       val environment = defaultToolchain?.toolSet?.name
       val details = if (environment != null) "with ${environment} " else ""
       ErrorMessage("${EduNames.WARNING}: ", "Location should contain only ASCII characters, " +

@@ -46,7 +46,7 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
         return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(toolchainLocation, "Toolchain", BorderLayout.WEST))
     }
 
-    override fun validate(course: Course?, courseLocation: String): ErrorMessage? {
+    override fun validate(course: Course?, courseLocation: String?): ErrorMessage? {
         val toolchain = rustToolchain
         return when {
             toolchain == null -> ErrorMessage("Specify Rust toolchain location")

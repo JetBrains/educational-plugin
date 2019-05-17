@@ -33,7 +33,7 @@ class JLanguageSettings : JdkLanguageSettings() {
 
   override fun getLanguageVersions() = JavaSdkVersion.values().filter { it.isAtLeast(DEFAULT_JAVA) }.map { it.description }
 
-  override fun validate(course: Course?, courseLocation: String): ErrorMessage? {
+  override fun validate(course: Course?, courseLocation: String?): ErrorMessage? {
     if (course == null) {
       return null
     }
