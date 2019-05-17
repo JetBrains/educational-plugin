@@ -51,6 +51,8 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
       ErrorMessage("${EduNames.WARNING}: ", "Location should contain only ASCII characters, " +
                                             "CMake ${details}might not work properly")
     }
+    courseLocation != null && courseLocation.any { it.isWhitespace() } -> ErrorMessage(
+      "Location should not contain whitespace, CMake may not be built correctly.")
     else -> null
   }
 }
