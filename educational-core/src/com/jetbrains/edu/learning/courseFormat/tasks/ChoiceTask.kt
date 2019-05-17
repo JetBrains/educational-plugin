@@ -1,49 +1,15 @@
-package com.jetbrains.edu.learning.courseFormat.tasks;
+package com.jetbrains.edu.learning.courseFormat.tasks
 
-import org.jetbrains.annotations.NotNull;
+class ChoiceTask : Task {
 
-import java.util.ArrayList;
-import java.util.List;
+  var choiceVariants = mutableListOf<String>()
+  var isMultipleChoice: Boolean = false
+  var selectedVariants = mutableListOf<Int>()
 
-public class ChoiceTask extends Task {
+  //used for deserialization
+  constructor()
 
-  @SuppressWarnings("unused") //used for deserialization
-  public ChoiceTask() {}
+  constructor(name: String) : super(name)
 
-  private List<String> myChoiceVariants = new ArrayList<>();
-  private boolean myIsMultipleChoice;
-  private List<Integer> mySelectedVariants = new ArrayList<>();
-
-  public List<Integer> getSelectedVariants() {
-    return mySelectedVariants;
-  }
-
-  public void setSelectedVariants(List<Integer> selectedVariants) {
-    mySelectedVariants = selectedVariants;
-  }
-
-  public boolean isMultipleChoice() {
-    return myIsMultipleChoice;
-  }
-
-  public void setMultipleChoice(boolean multipleChoice) {
-    myIsMultipleChoice = multipleChoice;
-  }
-
-  public List<String> getChoiceVariants() {
-    return myChoiceVariants;
-  }
-
-  public void setChoiceVariants(List<String> choiceVariants) {
-    myChoiceVariants = choiceVariants;
-  }
-
-  public ChoiceTask(@NotNull final String name) {
-    super(name);
-  }
-
-  @Override
-  public String getItemType() {
-    return "choice";
-  }
+  override fun getItemType(): String = "choice"
 }
