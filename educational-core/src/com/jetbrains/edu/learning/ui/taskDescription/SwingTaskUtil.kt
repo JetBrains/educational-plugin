@@ -31,8 +31,8 @@ fun ChoiceTask.createSpecificPanel(): JPanel {
     val text = JLabel(MULTIPLE_CHOICE_LABEL, SwingConstants.LEFT)
     jPanel.add(text)
 
-    for ((index, variant) in this.choiceVariants.withIndex()) {
-      val checkBox = createCheckBox(variant, index, this)
+    for ((index, option) in this.choiceOptions.withIndex()) {
+      val checkBox = createCheckBox(option.text, index, this)
       jPanel.add(checkBox)
     }
   }
@@ -41,8 +41,8 @@ fun ChoiceTask.createSpecificPanel(): JPanel {
     jPanel.add(text)
 
     val group = ButtonGroup()
-    for ((index, variant) in this.choiceVariants.withIndex()) {
-      val checkBox = createRadioButton(variant, index, group, this)
+    for ((index, option) in this.choiceOptions.withIndex()) {
+      val checkBox = createRadioButton(option.text, index, group, this)
       jPanel.add(checkBox)
     }
   }

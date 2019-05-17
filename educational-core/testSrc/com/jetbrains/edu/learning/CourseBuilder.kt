@@ -11,10 +11,7 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configurators.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.courseFormat.tasks.*
 import org.intellij.lang.annotations.Language
 import java.io.File
 import java.util.*
@@ -186,6 +183,20 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
   ) = task(OutputTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+
+  fun choiceTask(
+    name: String? = null,
+    taskDescription: String? = null,
+    taskDescriptionFormat: DescriptionFormat? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
+    choiceOptions: Map<String, ChoiceTask.OptionStatus>,
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) {
+    val choiceTask = ChoiceTask()
+    task(choiceTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+    choiceTask.choiceOptions = choiceOptions.map { ChoiceTask.ChoiceOption(it.key, it.value) }
+  }
 }
 
 class TaskBuilder(val lesson: Lesson, val task: Task) {

@@ -49,7 +49,7 @@ public class StepikCheckerConnector {
       final List<String> options = dataset.getOptions();
       if (options == null) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
       final boolean isActiveAttempt = task.getSelectedVariants().stream()
-        .allMatch(index -> options.get(index).equals(task.getChoiceVariants().get(index)));
+        .allMatch(index -> options.get(index).equals(task.getChoiceOptions().get(index).getText()));
       if (!isActiveAttempt) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
       final SubmissionData submissionData = createChoiceSubmissionData(task, attemptId);
 
@@ -67,8 +67,8 @@ public class StepikCheckerConnector {
         if (block != null) {
           final Task updatedTask = taskBuilder.createTask(block.getName());
           if (updatedTask instanceof ChoiceTask) {
-            final List<String> variants = ((ChoiceTask)updatedTask).getChoiceVariants();
-            task.setChoiceVariants(variants);
+            final List<ChoiceTask.ChoiceOption> choiceOptions = ((ChoiceTask)updatedTask).getChoiceOptions();
+            task.setChoiceOptions(choiceOptions);
             task.setSelectedVariants(new ArrayList<>());
           }
         }
@@ -104,7 +104,7 @@ public class StepikCheckerConnector {
 
   private static boolean[] createChoiceTaskAnswerArray(@NotNull ChoiceTask task) {
     final List<Integer> selectedVariants = task.getSelectedVariants();
-    final boolean[] answer = new boolean[task.getChoiceVariants().size()];
+    final boolean[] answer = new boolean[task.getChoiceOptions().size()];
     for (Integer index : selectedVariants) {
       answer[index] = true;
     }

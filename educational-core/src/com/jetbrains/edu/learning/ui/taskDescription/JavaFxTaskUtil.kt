@@ -54,8 +54,8 @@ fun ChoiceTask.createScene(): Scene {
     val text = createLabel(MULTIPLE_CHOICE_LABEL)
 
     vBox.children.add(text)
-    for ((index, variant) in this.choiceVariants.withIndex()) {
-      val checkBox = createCheckbox(variant, index, this)
+    for ((index, option) in this.choiceOptions.withIndex()) {
+      val checkBox = createCheckbox(option.text, index, this)
       vBox.children.add(checkBox)
     }
   }
@@ -63,8 +63,8 @@ fun ChoiceTask.createScene(): Scene {
     val toggleGroup = ToggleGroup()
     val text = createLabel(SINGLE_CHOICE_LABEL)
     vBox.children.add(text)
-    for ((index, variant) in this.choiceVariants.withIndex()) {
-      val radioButton = createRadioButton(variant, index, toggleGroup, this)
+    for ((index, option) in this.choiceOptions.withIndex()) {
+      val radioButton = createRadioButton(option.text, index, toggleGroup, this)
       vBox.children.add(radioButton)
     }
   }

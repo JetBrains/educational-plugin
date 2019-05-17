@@ -8,6 +8,7 @@ import com.intellij.lang.LanguageCommenters;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
@@ -183,7 +184,7 @@ public class StepikTaskBuilder {
       if (attempt != null) {
         final Dataset dataset = attempt.getDataset();
         if (dataset != null && dataset.getOptions() != null) {
-          task.setChoiceVariants(dataset.getOptions());
+          task.setChoiceOptions(ContainerUtil.map(dataset.getOptions(), s -> new ChoiceTask.ChoiceOption(s)));
           task.setMultipleChoice(dataset.isMultipleChoice());
         }
         else {
