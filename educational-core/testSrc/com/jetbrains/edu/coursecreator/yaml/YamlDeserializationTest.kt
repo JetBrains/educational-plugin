@@ -1,9 +1,6 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.intellij.openapi.application.Experiments
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.*
@@ -19,11 +16,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 
-class YamlDeserializationTest : EduTestCase() {
-  override fun setUp() {
-    super.setUp()
-    Experiments.setFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT, true)
-  }
+class YamlDeserializationTest : YamlTestCase() {
 
   fun `test course`() {
     val name = "Test Course"

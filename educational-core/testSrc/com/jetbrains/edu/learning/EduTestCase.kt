@@ -27,6 +27,7 @@ import com.intellij.util.xmlb.XmlSerializer
 import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -50,6 +51,9 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   override fun setUp() {
     super.setUp()
     Experiments.setFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT, false)
+    // In this method course is set before course files are created so `CCProjectComponent.createYamlConfigFilesIfMissing` is called
+    // for course with no files. This flag is checked in this method and it does nothing if the flag is false
+    project.putUserData(YamlFormatSettings.YAML_TEST_PROJECT_READY, false)
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE)
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE, HYPERSKILL)
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE, CourseraNames.COURSE_TYPE)

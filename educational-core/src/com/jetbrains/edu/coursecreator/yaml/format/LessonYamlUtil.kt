@@ -23,7 +23,7 @@ private const val UNIT = "unit"
 
 /**
  * Mixin class is used to deserialize [Lesson] item.
- * Update [LessonChangeApplier] if new fields added to mixin
+ * Update [ItemContainerChangeApplier] if new fields added to mixin
  */
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonDeserialize(builder = LessonBuilder::class)

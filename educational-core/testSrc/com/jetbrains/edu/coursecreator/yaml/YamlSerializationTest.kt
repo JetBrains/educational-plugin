@@ -1,10 +1,7 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.intellij.openapi.application.Experiments
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -12,11 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import org.junit.Test
 
 
-class YamlSerializationTest : EduTestCase() {
-  override fun setUp() {
-    super.setUp()
-    Experiments.setFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT, true)
-  }
+class YamlSerializationTest : YamlTestCase() {
 
   @Test
   fun `test edu task`() {

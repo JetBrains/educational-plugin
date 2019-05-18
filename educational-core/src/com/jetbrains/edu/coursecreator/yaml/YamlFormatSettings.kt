@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseDir
 
@@ -19,4 +20,7 @@ object YamlFormatSettings {
   fun isDisabled() = !Experiments.isFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT)
 
   fun Project.isEduYamlProject() = !isDisabled() && courseDir.findChild(COURSE_CONFIG) != null
+
+  // it is here because it's used in test and main code
+  val YAML_TEST_PROJECT_READY = Key<Boolean>("EDU.yaml_test_project_ready")
 }

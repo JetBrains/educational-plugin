@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.coursecreator.yaml.YamlLoader.itemNotFound
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.taskDirNotFoundError
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
@@ -85,18 +84,28 @@ class TaskChangeApplier<T : Task>(val project: Project) : StudyItemChangeApplier
       TaskDescriptionView.getInstance(project).updateTaskDescription()
     }
     hideOldPlaceholdersForOpenedFiles(project, existingItem)
-    existingItem.applyTaskFileChanges(deserializedItem)
+    existingItem.applyTaskFileChanges(project, deserializedItem)
     paintPlaceholdersForOpenedFiles(project, existingItem)
   }
 
-  private fun Task.applyTaskFileChanges(deserializedItem: Task) {
-    for ((name, taskFile) in taskFiles) {
-      val deserializedTaskFile = deserializedItem.taskFiles[name] ?: itemNotFound(name)
-      taskFile.applyPlaceholderChanges(deserializedTaskFile)
-      taskFile.isVisible = deserializedTaskFile.isVisible
-      // init new placeholders to correctly paint them
-      taskFile.initTaskFile(this, false)
+  private fun Task.applyTaskFileChanges(project: Project, deserializedItem: Task) {
+    val orderedTaskFiles = LinkedHashMap<String, TaskFile>()
+    for ((name, deserializedTaskFile) in deserializedItem.taskFiles) {
+      val existingTaskFile = taskFiles[name]
+      val taskFile: TaskFile = if (existingTaskFile != null) {
+        existingTaskFile.applyPlaceholderChanges(deserializedTaskFile)
+        existingTaskFile.isVisible = deserializedTaskFile.isVisible
+        existingTaskFile
+      }
+      else {
+        val taskDir = getDir(project)
+        taskDir?.findFileByRelativePath(name) ?: continue
+        deserializedTaskFile
+      }
+      orderedTaskFiles[name] = taskFile
+      deserializedTaskFile.initTaskFile(this, false)
     }
+    taskFiles = orderedTaskFiles
   }
 
   private fun TaskFile.applyPlaceholderChanges(deserializedTaskFile: TaskFile) {

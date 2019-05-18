@@ -14,6 +14,7 @@ import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.noConfigFileError
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.noItemDirError
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_PROJECT_READY
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.saveAll

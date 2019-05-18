@@ -10,15 +10,14 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.yaml.InvalidYamlFormatException
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.formatError
-import com.jetbrains.edu.coursecreator.yaml.YamlLoader
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
@@ -155,22 +154,15 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
   }
 }
 
-class CourseChangeApplier<T : Course> : StudyItemChangeApplier<T>() {
-  override fun applyChanges(existingItem: T, deserializedItem: T) {
+class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>(project) {
+  override fun applyChanges(existingItem: Course, deserializedItem: Course) {
+    super.applyChanges(existingItem, deserializedItem)
     existingItem.name = deserializedItem.name
     // TODO: handle changing course type
     existingItem.description = deserializedItem.description
     existingItem.language = deserializedItem.language
     existingItem.languageCode = deserializedItem.languageCode
     existingItem.environment = deserializedItem.environment
-    updateItemContainerChildren(existingItem, deserializedItem)
-  }
-}
-
-fun updateItemContainerChildren(existingContainer: ItemContainer, deserializedContainer: ItemContainer) {
-  deserializedContainer.items.forEach {
-    val existingItem = existingContainer.getItem(it.name) ?: YamlLoader.itemNotFound(it.name)
-    existingItem.index = it.index
   }
 }
 

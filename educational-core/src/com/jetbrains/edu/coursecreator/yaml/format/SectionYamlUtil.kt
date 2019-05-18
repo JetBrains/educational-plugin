@@ -14,7 +14,7 @@ private const val CONTENT = "content"
 
 /**
  * Mixin class is used to deserialize [Section] item.
- * Update [SectionChangeApplier] if new fields added to mixin
+ * Update [ItemContainerChangeApplier] if new fields added to mixin
  */
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonDeserialize(builder = SectionBuilder::class)
@@ -34,16 +34,10 @@ private class SectionBuilder(@JsonProperty(CONTENT) val content: List<String?> =
         throw InvalidYamlFormatException("Unnamed item")
       }
       val titledStudyItem = TitledStudyItem(title)
-      titledStudyItem.index = index
+      titledStudyItem.index = index + 1
       titledStudyItem
     }
     section.items = items
     return section
-  }
-}
-
-class SectionChangeApplier<T : Section> : StudyItemChangeApplier<T>() {
-  override fun applyChanges(existingItem: T, deserializedItem: T) {
-    updateItemContainerChildren(existingItem, deserializedItem)
   }
 }

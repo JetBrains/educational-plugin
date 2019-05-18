@@ -4,12 +4,11 @@ import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_COURSE_CON
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_LESSON_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import java.util.*
 
-class YamlRemoteDeserializationTest : EduTestCase() {
+class YamlRemoteDeserializationTest : YamlTestCase() {
 
   fun `test course`() {
     val id = 1

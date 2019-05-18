@@ -1,12 +1,11 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import java.util.*
 
-class YamlRemoteSerializationTest : EduTestCase() {
+class YamlRemoteSerializationTest : YamlTestCase() {
 
   fun `test course`() {
     val course = course {
