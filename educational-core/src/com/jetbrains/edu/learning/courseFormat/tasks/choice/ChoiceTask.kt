@@ -1,4 +1,6 @@
-package com.jetbrains.edu.learning.courseFormat.tasks
+package com.jetbrains.edu.learning.courseFormat.tasks.choice
+
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class ChoiceTask : Task {
 

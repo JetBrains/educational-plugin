@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.checker;
 
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

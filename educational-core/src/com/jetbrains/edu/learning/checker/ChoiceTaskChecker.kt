@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.checker
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 
 
 class ChoiceTaskChecker(task: ChoiceTask, project: Project) : TaskChecker<ChoiceTask>(task, project) {

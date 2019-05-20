@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.checker
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 
 
