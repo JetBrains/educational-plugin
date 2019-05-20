@@ -12,7 +12,9 @@ import com.jetbrains.edu.learning.configurators.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.OptionStatus
 import org.intellij.lang.annotations.Language
 import java.io.File
 import java.util.*
@@ -191,13 +193,13 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
     updateDate: Date = Date(0),
-    choiceOptions: Map<String, ChoiceTask.OptionStatus>,
+    choiceOptions: Map<String, OptionStatus>,
     isMultipleChoice: Boolean = false,
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val choiceTask = ChoiceTask()
     task(choiceTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
-    choiceTask.choiceOptions = choiceOptions.map { ChoiceTask.ChoiceOption(it.key, it.value) }
+    choiceTask.choiceOptions = choiceOptions.map { ChoiceOption(it.key, it.value) }
     choiceTask.isMultipleChoice = isMultipleChoice
   }
 }

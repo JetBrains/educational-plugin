@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.api.*;
@@ -67,7 +68,7 @@ public class StepikCheckerConnector {
         if (block != null) {
           final Task updatedTask = taskBuilder.createTask(block.getName());
           if (updatedTask instanceof ChoiceTask) {
-            final List<ChoiceTask.ChoiceOption> choiceOptions = ((ChoiceTask)updatedTask).getChoiceOptions();
+            final List<ChoiceOption> choiceOptions = ((ChoiceTask)updatedTask).getChoiceOptions();
             task.setChoiceOptions(choiceOptions);
             task.setSelectedVariants(new ArrayList<>());
           }
