@@ -9,6 +9,8 @@ import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -216,6 +218,42 @@ class YamlDeserializationTest : EduTestCase() {
     val task = YamlDeserializer.deserializeTask(yamlContent)
     assertTrue(task is OutputTask)
     assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
+  }
+
+  fun `test choice task`() {
+    val yamlContent = """
+      |type: choice
+      |files:
+      |- name: Test.java
+      |  visible: true
+      |is_multiple_choice: false
+      |options:
+      |- text: 1
+      |  is_correct: true
+      |- text: 2
+      |  is_correct: false
+      |""".trimMargin("|")
+    val task = YamlDeserializer.deserializeTask(yamlContent)
+    assertTrue(task is ChoiceTask)
+    assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
+    assertEquals(mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT), (task as ChoiceTask).choiceOptions.associateBy({ it.text }, { it.status }))
+  }
+
+  fun `test choice task without answers`() {
+    val yamlContent = """
+      |type: choice
+      |files:
+      |- name: Test.java
+      |  visible: true
+      |is_multiple_choice: false
+      |options:
+      |- text: 1
+      |- text: 2
+      |""".trimMargin("|")
+    val task = YamlDeserializer.deserializeTask(yamlContent)
+    assertTrue(task is ChoiceTask)
+    assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
+    assertEquals(mapOf("1" to ChoiceOptionStatus.UNKNOWN, "2" to ChoiceOptionStatus.UNKNOWN), (task as ChoiceTask).choiceOptions.associateBy({ it.text }, { it.status }))
   }
 
   fun `test edu task`() {

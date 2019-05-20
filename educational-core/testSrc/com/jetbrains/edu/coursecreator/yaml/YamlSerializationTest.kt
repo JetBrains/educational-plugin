@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import org.junit.Test
 
 
@@ -156,6 +157,48 @@ class YamlSerializationTest : EduTestCase() {
     |- name: Test.java
     |  visible: true
     |""".trimMargin("|"))
+  }
+
+  fun `test quiz task`() {
+    val task = course {
+      lesson {
+        choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)) {
+          taskFile("Test.java", "")
+        }
+      }
+    }.findTask("lesson1", "task1")
+    doTest(task, """
+      |type: choice
+      |files:
+      |- name: Test.java
+      |  visible: true
+      |is_multiple_choice: false
+      |options:
+      |- text: 1
+      |  is_correct: true
+      |- text: 2
+      |  is_correct: false
+      |""".trimMargin("|"))
+  }
+
+  fun `test quiz task without answers`() {
+    val task = course {
+      lesson {
+        choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.UNKNOWN, "2" to ChoiceOptionStatus.UNKNOWN)) {
+          taskFile("Test.java", "")
+        }
+      }
+    }.findTask("lesson1", "task1")
+    doTest(task, """
+      |type: choice
+      |files:
+      |- name: Test.java
+      |  visible: true
+      |is_multiple_choice: false
+      |options:
+      |- text: 1
+      |- text: 2
+      |""".trimMargin("|"))
   }
 
   @Test

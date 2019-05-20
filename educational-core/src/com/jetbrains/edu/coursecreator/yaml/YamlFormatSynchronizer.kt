@@ -33,6 +33,8 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 
 object YamlFormatSynchronizer {
   val LOAD_FROM_CONFIG = Key<Boolean>("Edu.loadItem")
@@ -76,6 +78,8 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(FrameworkLesson::class.java, FrameworkLessonYamlUtil::class.java)
     mapper.addMixIn(Task::class.java, TaskYamlMixin::class.java)
     mapper.addMixIn(EduTask::class.java, EduTaskYamlMixin::class.java)
+    mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskYamlMixin::class.java)
+    mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionYamlMixin::class.java)
     mapper.addMixIn(TaskFile::class.java, TaskFileYamlMixin::class.java)
     mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderYamlMixin::class.java)
     mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyYamlMixin::class.java)
