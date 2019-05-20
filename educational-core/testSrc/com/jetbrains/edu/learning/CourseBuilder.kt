@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.OptionStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import org.intellij.lang.annotations.Language
 import java.io.File
 import java.util.*
@@ -193,7 +193,7 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
     updateDate: Date = Date(0),
-    choiceOptions: Map<String, OptionStatus>,
+    choiceOptions: Map<String, ChoiceOptionStatus>,
     isMultipleChoice: Boolean = false,
     buildTask: TaskBuilder.() -> Unit = {}
   ) {

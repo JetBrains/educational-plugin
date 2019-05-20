@@ -4,7 +4,7 @@ import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.OptionStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 
 
@@ -17,7 +17,7 @@ class ChoiceTaskCheckerTest : EduTestCase() {
   fun `test single choice solved`() {
     courseWithFiles {
       lesson {
-        choiceTask(choiceOptions = mapOf("1" to OptionStatus.CORRECT, "2" to OptionStatus.INCORRECT)) {
+        choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)) {
           taskFile("text.txt")
         }
       }
@@ -29,7 +29,7 @@ class ChoiceTaskCheckerTest : EduTestCase() {
   fun `test single choice failed`() {
     courseWithFiles {
       lesson {
-        choiceTask(choiceOptions = mapOf("1" to OptionStatus.CORRECT, "2" to OptionStatus.INCORRECT)) {
+        choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)) {
           taskFile("text.txt")
         }
       }
@@ -43,7 +43,7 @@ class ChoiceTaskCheckerTest : EduTestCase() {
   fun `test multiple choice solved`() {
     courseWithFiles {
       lesson {
-        choiceTask(isMultipleChoice = true, choiceOptions = mapOf("1" to OptionStatus.CORRECT, "2" to OptionStatus.CORRECT)) {
+        choiceTask(isMultipleChoice = true, choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.CORRECT)) {
           taskFile("text.txt")
         }
       }
@@ -55,7 +55,7 @@ class ChoiceTaskCheckerTest : EduTestCase() {
   fun `test multiple choice failed`() {
     courseWithFiles {
       lesson {
-        choiceTask(isMultipleChoice = true, choiceOptions = mapOf("1" to OptionStatus.CORRECT, "2" to OptionStatus.CORRECT)) {
+        choiceTask(isMultipleChoice = true, choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.CORRECT)) {
           taskFile("text.txt")
         }
       }

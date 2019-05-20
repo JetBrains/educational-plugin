@@ -4,7 +4,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.OptionStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import junit.framework.TestCase
 
 class XmlFormatTest: EduTestCase() {
@@ -25,7 +25,7 @@ class XmlFormatTest: EduTestCase() {
   }
 
   fun `test course with choice task`() {
-    val expectedChoiceOptions = mapOf("1" to OptionStatus.CORRECT, "2" to OptionStatus.INCORRECT)
+    val expectedChoiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
     courseWithFiles {
       lesson {
         choiceTask(choiceOptions = expectedChoiceOptions)

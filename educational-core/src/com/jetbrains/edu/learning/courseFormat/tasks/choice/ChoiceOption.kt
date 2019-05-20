@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.courseFormat.tasks.choice
 
 class ChoiceOption {
   var text: String = ""
-  var status: OptionStatus = OptionStatus.UNKNOWN
+  var status: ChoiceOptionStatus = ChoiceOptionStatus.UNKNOWN
 
   //used for deserialization
   @Suppress("unused")
@@ -12,7 +12,7 @@ class ChoiceOption {
     this.text = text
   }
 
-  constructor(text: String, status: OptionStatus) {
+  constructor(text: String, status: ChoiceOptionStatus) {
     this.text = text
     this.status = status
   }
