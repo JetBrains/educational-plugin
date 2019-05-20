@@ -8,13 +8,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.courseDir
 import javax.swing.event.HyperlinkEvent
 
 
 class InvalidConfigNotification(project: Project, configFile: VirtualFile, cause: String) :
   Notification("Edu.InvalidConfig",
                "Invalid yaml",
-               "File '${FileUtil.getRelativePath(project.baseDir.path, configFile.path, VfsUtil.VFS_SEPARATOR_CHAR)}': $cause" +
+               "File '${FileUtil.getRelativePath(project.courseDir.path, configFile.path, VfsUtil.VFS_SEPARATOR_CHAR)}': $cause" +
                "<br><a href=\"\">Edit</a>",
                NotificationType.ERROR, GoToFileListener(project, configFile))
 
