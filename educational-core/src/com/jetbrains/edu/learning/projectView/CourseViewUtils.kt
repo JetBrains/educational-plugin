@@ -47,9 +47,9 @@ object CourseViewUtils {
     val dirName = dir.name
     val hasTaskFileNotInsideSourceDir = task.hasVisibleTaskFilesNotInsideSourceDir(project)
     if (dirName == task.sourceDir) return hasTaskFileNotInsideSourceDir
-      return task.taskFiles.values.any {
-        it.isVisible && VfsUtil.isAncestor(dir.virtualFile, it.getVirtualFile(project)?:return@any false, true)
-      }
+    return task.taskFiles.values.any {
+      it.isVisible && VfsUtil.isAncestor(dir.virtualFile, it.getVirtualFile(project)?:return@any false, true)
+    }
   }
 
   private fun Task.hasVisibleTaskFilesNotInsideSourceDir(project: Project): Boolean {

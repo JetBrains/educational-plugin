@@ -9,7 +9,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
@@ -39,15 +38,11 @@ public class CCTaskNode extends TaskNode {
     Object value = childNode.getValue();
     if (value instanceof PsiDirectory) {
       String name = ((PsiDirectory) value).getName();
-      if (EduNames.BUILD.equals(name) || EduNames.OUT.equals(name)) {
-        return null;
-      }
-
       if (name.equals(TaskExt.getSourceDir(myTask)) || TaskExt.getTestDirs(myTask).contains(name)) {
         return createChildDirectoryNode((PsiDirectory) value);
       }
     }
-    if (value instanceof PsiElement) {
+    else if (value instanceof PsiElement) {
       PsiElement psiElement = (PsiElement) value;
       PsiFile psiFile = psiElement.getContainingFile();
       VirtualFile virtualFile = psiFile.getVirtualFile();
