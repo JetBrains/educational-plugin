@@ -26,11 +26,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+import static com.jetbrains.edu.learning.EduUtils.addMnemonic;
+
 public class CCChangeCourseInfo extends DumbAwareAction {
-  private static final String ACTION_TEXT = "&Edit Course Information";
+  private static final String ACTION_TEXT = "Edit Course Information";
 
   public CCChangeCourseInfo() {
-    super(ACTION_TEXT, ACTION_TEXT, null);
+    super(addMnemonic(ACTION_TEXT), ACTION_TEXT, null);
   }
 
   @Override

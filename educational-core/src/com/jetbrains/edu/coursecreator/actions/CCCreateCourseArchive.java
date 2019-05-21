@@ -18,10 +18,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
+import static com.jetbrains.edu.learning.EduUtils.addMnemonic;
+
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCCreateCourseArchive extends DumbAwareAction {
 
-  public static final String GENERATE_COURSE_ARCHIVE = "&Generate Course Archive";
+  public static final String GENERATE_COURSE_ARCHIVE = "Generate Course Archive";
   public static final String LAST_ARCHIVE_LOCATION = "Edu.CourseCreator.LastArchiveLocation";
 
   private String myZipName;
@@ -36,7 +38,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
   }
 
   public CCCreateCourseArchive() {
-    super(GENERATE_COURSE_ARCHIVE, GENERATE_COURSE_ARCHIVE, null);
+    super(addMnemonic(GENERATE_COURSE_ARCHIVE), GENERATE_COURSE_ARCHIVE, null);
   }
 
   @Override

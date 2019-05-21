@@ -878,4 +878,15 @@ public class EduUtils {
     }
     notification.notify(project);
   }
+
+  public static String addMnemonic(String text) {
+    if (text.length() == 0) return text;
+    return addMnemonic(text, text.charAt(0));
+  }
+
+  public static String addMnemonic(String text, char ch) {
+    int index = text.indexOf(ch);
+    if (index == -1) return text;
+    return text.substring(0, index) + "&" + text.substring(index);
+  }
 }

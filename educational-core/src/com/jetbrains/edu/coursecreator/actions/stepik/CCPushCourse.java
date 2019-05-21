@@ -25,12 +25,15 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import org.jetbrains.annotations.NotNull;
 
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
+import static com.jetbrains.edu.learning.EduUtils.addMnemonic;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushCourse extends DumbAwareAction {
 
+  private static final String ACTION_TEXT = "Upload Course to Stepik";
+
   public CCPushCourse() {
-    super("&Upload Course to Stepik", "Upload Course to Stepik", null);
+    super(addMnemonic(ACTION_TEXT), ACTION_TEXT, null);
   }
 
   @Override
