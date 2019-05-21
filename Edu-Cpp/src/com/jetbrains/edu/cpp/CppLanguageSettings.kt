@@ -51,8 +51,6 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
       val details = if (environment != null) "with ${environment} " else ""
       ValidationMessage("Location should contain only ASCII characters, CMake ${details}might not work properly", type = WARNING)
     }
-    courseLocation.contains(" ") -> ValidationMessage(
-      "Location should not contain whitespace, CMake may not be built correctly", type = WARNING)
     else -> null
   }
 }
