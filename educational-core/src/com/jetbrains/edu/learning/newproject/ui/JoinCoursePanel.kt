@@ -65,7 +65,8 @@ class JoinCoursePanel(private val settings: CoursePanel.CourseDisplaySettings) :
   }
 
   fun updateErrorText(message: ValidationMessage?) {
-    myErrorLabel.text = if (message != null) message.beforeLink + message.linkText + message.afterLink else ""
+    // Use HTML tags to automatically wrap JLabel's text to available space
+    myErrorLabel.text = if (message != null) "<html>${message.beforeLink} ${message.linkText} ${message.afterLink}</html>" else ""
     myErrorLabel.isVisible = message != null
   }
 
