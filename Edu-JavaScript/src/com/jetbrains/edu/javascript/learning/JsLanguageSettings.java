@@ -50,7 +50,7 @@ public class JsLanguageSettings extends LanguageSettings<JsNewProjectSettings> {
 
   @Nullable
   @Override
-  public ErrorMessage validate(@Nullable Course course, @NotNull String courseLocation) {
+  public ErrorMessage validate(@Nullable Course course, @Nullable String courseLocation) {
     NodeJsInterpreter interpreter = myInterpreterField.getInterpreter();
     String message = NodeInterpreterUtil.validateAndGetErrorMessage(interpreter);
     return message != null ? new ErrorMessage(message) : null;
