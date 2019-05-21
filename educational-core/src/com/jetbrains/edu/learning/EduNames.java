@@ -44,8 +44,6 @@ public class EduNames {
 
   public static final String DEFAULT_ENVIRONMENT = "";
 
-  public static final String WARNING = "Warning";
-
   // Used as course type only
   public static final String PYCHARM = "PyCharm";
   public static final String ANDROID = "Android";

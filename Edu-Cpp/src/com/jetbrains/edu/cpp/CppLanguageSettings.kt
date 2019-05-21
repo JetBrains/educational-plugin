@@ -8,7 +8,6 @@ import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.CPP11
 import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.CPP14
 import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.values
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
@@ -50,8 +49,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
     SystemInfo.isWindows && !IOUtil.isAscii(courseLocation) -> {
       val environment = defaultToolchain?.toolSet?.name
       val details = if (environment != null) "with ${environment} " else ""
-      ValidationMessage("${EduNames.WARNING}: ", "Location should contain only ASCII characters, " +
-                                            "CMake ${details}might not work properly", type = WARNING)
+      ValidationMessage("Location should contain only ASCII characters, CMake ${details}might not work properly", type = WARNING)
     }
     courseLocation.contains(" ") -> ValidationMessage(
       "Location should not contain whitespace, CMake may not be built correctly", type = WARNING)
