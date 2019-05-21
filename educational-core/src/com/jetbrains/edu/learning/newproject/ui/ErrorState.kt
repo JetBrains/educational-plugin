@@ -107,7 +107,7 @@ data class ValidationMessage @JvmOverloads constructor(val beforeLink: String,
                                                        val linkText: String = "",
                                                        val afterLink: String = "",
                                                        val hyperlinkAddress: String? = null,
-                                                       val messageType: ValidationMessageType = ERROR)
+                                                       val type: ValidationMessageType = ERROR)
 
 enum class ValidationMessageType {
   WARNING,

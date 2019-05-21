@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -50,10 +51,10 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
       val environment = defaultToolchain?.toolSet?.name
       val details = if (environment != null) "with ${environment} " else ""
       ValidationMessage("${EduNames.WARNING}: ", "Location should contain only ASCII characters, " +
-                                            "CMake ${details}might not work properly")
+                                            "CMake ${details}might not work properly", type = WARNING)
     }
     courseLocation.contains(" ") -> ValidationMessage(
-      "Location should not contain whitespace, CMake may not be built correctly")
+      "Location should not contain whitespace, CMake may not be built correctly", type = WARNING)
     else -> null
   }
 }

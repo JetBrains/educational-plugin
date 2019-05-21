@@ -4,8 +4,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.io.File
@@ -61,7 +61,7 @@ class JoinCoursePanel(private val settings: CoursePanel.CourseDisplaySettings) :
       else -> myCoursePanel.validateSettings(course)
     }
     updateErrorText(message)
-    myValidationListener?.onInputDataValidated(message == null || message.beforeLink.startsWith(EduNames.WARNING))
+    myValidationListener?.onInputDataValidated(message == null || message.type == WARNING)
   }
 
   fun updateErrorText(message: ValidationMessage?) {
