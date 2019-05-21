@@ -252,7 +252,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     val displayName
       get(): String {
         return when (courseType) {
-          EduNames.PYCHARM -> if (environment == EduNames.DEFAULT_ENVIRONMENT) language.displayName else "${language.displayName} $environment"
+          EduNames.PYCHARM -> if (environment == EduNames.DEFAULT_ENVIRONMENT) language.displayName else "${language.displayName} ($environment)"
           else -> "$courseType ${language.displayName}"
         }
       }

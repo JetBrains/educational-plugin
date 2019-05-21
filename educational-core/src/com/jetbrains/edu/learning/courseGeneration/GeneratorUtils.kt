@@ -1,10 +1,15 @@
 package com.jetbrains.edu.learning.courseGeneration
 
+import com.intellij.ide.fileTemplates.FileTemplateManager
+import com.intellij.ide.fileTemplates.FileTemplateUtil
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeed
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.modifyModules
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VfsUtil
@@ -240,6 +245,50 @@ object GeneratorUtils {
   fun joinPaths(prefix: String?, suffix: String): String {
     return if (prefix.isNullOrEmpty()) suffix else "$prefix${VfsUtilCore.VFS_SEPARATOR_CHAR}$suffix"
   }
+
+  @JvmStatic
+  fun getInternalTemplateText(templateName: String, templateVariables: Map<String, Any>) =
+    FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName).getText(templateVariables)
+
+  @Throws(IOException::class)
+  fun evaluateExistingTemplate(child: VirtualFile, templateVariables: Map<String, Any>) {
+    val rawContent = VfsUtil.loadText(child)
+    val content = FileTemplateUtil.mergeTemplate(templateVariables, rawContent, false)
+    // BACKCOMPAT: 2018.3
+    @Suppress("DEPRECATION")
+    (invokeAndWaitIfNeed { runWriteAction { VfsUtil.saveText(child, content) } })
+  }
+
+  fun renameBaseModule(project: Project) {
+    // Hack!
+    // We rename all modules (really only root module because new project has only one root module)
+    // to have names which are expected by gradle importer.
+    //
+    // We do these hacky things to avoid the following situation:
+    // If project dir contains some symbols (' ', '/', '\', ':', '<', '>', '"', '?', '*', '|')  in its name (for example, `Awesome Course`)
+    // then after project creation we will get `Awesome Course` root module.
+    // But gradle importer won't find it because it expects `Awesome_Course` module
+    // and it'll create new root module.
+    // After project reopening we will get an exception because of two modules with same content.
+    //
+    // Note we don't create gradle project from the beginning
+    // because it is much slower and prevents showing project content at the beginning
+    project.modifyModules {
+      for (module in modules) {
+        val sanitizedName = sanitizeName(module.name)
+        if (sanitizedName != module.name) {
+          renameModule(module, sanitizedName)
+        }
+      }
+    }
+  }
+
+  private val INVALID_SYMBOLS = "[ /\\\\:<>\"?*|()]".toRegex()
+
+  /**
+   * Replaces ' ', '/', '\', ':', '<', '>', '"', '?', '*', '|', '(', ')' symbols with '_' as they are invalid in gradle module names
+   */
+  fun sanitizeName(name: String): String = name.replace(INVALID_SYMBOLS, "_")
 
   data class DefaultFileProperties(val name: String, val text: String)
 }

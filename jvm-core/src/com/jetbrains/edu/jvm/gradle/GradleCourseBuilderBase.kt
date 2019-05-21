@@ -17,8 +17,10 @@ import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.EduNames.PROJECT_NAME
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import org.jetbrains.plugins.gradle.util.GradleConstants.*
@@ -37,7 +39,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
   open fun templateVariables(project: Project): Map<String, Any> {
     return mapOf(GRADLE_VERSION to EduGradleUtils.gradleVersion(),
-                 "PROJECT_NAME" to EduGradleUtils.sanitizeName(project.name))
+                 PROJECT_NAME to GeneratorUtils.sanitizeName(project.name))
   }
 
   override fun refreshProject(project: Project, listener: EduCourseBuilder.ProjectRefreshListener?) {

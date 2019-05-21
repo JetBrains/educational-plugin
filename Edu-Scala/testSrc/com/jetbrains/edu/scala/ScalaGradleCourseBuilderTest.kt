@@ -5,11 +5,12 @@ import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
+import com.jetbrains.edu.scala.gradle.ScalaGradleCourseBuilder
 import org.jetbrains.plugins.scala.ScalaLanguage
 
-class ScalaCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
+class ScalaGradleCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
-  override val courseBuilder: EduCourseBuilder<JdkProjectSettings> = ScalaCourseBuilder()
+  override val courseBuilder: EduCourseBuilder<JdkProjectSettings> = ScalaGradleCourseBuilder()
   override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
 
   fun `test study course structure`() {

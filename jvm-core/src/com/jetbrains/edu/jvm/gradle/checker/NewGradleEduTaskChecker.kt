@@ -5,10 +5,9 @@ import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiManager
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
-import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
+import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
 open class NewGradleEduTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(task, project) {
@@ -19,8 +18,7 @@ open class NewGradleEduTaskChecker(task: EduTask, project: Project) : EduTaskChe
 
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
     return withGradleTestRunner(project, task) {
-      task.findTestDirs(project)
-        .mapNotNull { PsiManager.getInstance(project).findDirectory(it) }
+      task.getAllTestDirectories(project)
         .mapNotNull {
           ConfigurationContext(it).configuration?.apply {
             isActivateToolWindowBeforeRun = activateRunToolWindow

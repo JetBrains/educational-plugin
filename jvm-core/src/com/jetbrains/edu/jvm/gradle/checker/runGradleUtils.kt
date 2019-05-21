@@ -14,35 +14,30 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.*
 import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.sanitizeName
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
-
-const val ASSEMBLE_TASK_NAME = "assemble"
 const val TEST_TASK_NAME = "test"
-
-const val TESTS_ARG = "--tests"
 
 fun getGradleProjectName(task: Task) =
   if (task.lesson.section != null)
-    ":${EduGradleUtils.sanitizeName(task.lesson.section!!.name)}-${EduGradleUtils.sanitizeName(task.lesson.name)}-${EduGradleUtils.sanitizeName(task.dirName)}"
+    ":${sanitizeName(task.lesson.section!!.name)}-${sanitizeName(task.lesson.name)}-${sanitizeName(task.dirName)}"
   else
-    ":${EduGradleUtils.sanitizeName(task.lesson.name)}-${EduGradleUtils.sanitizeName(task.dirName)}"
+    ":${sanitizeName(task.lesson.name)}-${sanitizeName(task.dirName)}"
 
 class GradleCommandLine private constructor(
   private val cmd: GeneralCommandLine,
-  val taskName: String
+  private val taskName: String
 ) {
 
   fun launchAndCheck(): CheckResult {
@@ -61,12 +56,12 @@ class GradleCommandLine private constructor(
         handler.runProcess()
       }
     } catch (e: ExecutionException) {
-      LOG.info(CheckUtils.FAILED_TO_CHECK_MESSAGE, e)
+      LOG.info(FAILED_TO_CHECK_MESSAGE, e)
       return null
     }
 
     val stderr = output.stderr
-    if (!stderr.isEmpty() && output.stdout.isEmpty()) {
+    if (stderr.isNotEmpty() && output.stdout.isEmpty()) {
       return GradleOutput(false, listOf(stderr))
     }
 
@@ -132,7 +127,7 @@ class GradleCommandLine private constructor(
 }
 
 class GradleOutput(val isSuccess: Boolean, _messages: List<String>) {
-  val messages = _messages.map { CheckUtils.postProcessOutput(it) }
+  val messages = _messages.map { postProcessOutput(it) }
 
   val firstMessage: String get() = messages.firstOrNull { it.isNotBlank() } ?: "<no output>"
 }

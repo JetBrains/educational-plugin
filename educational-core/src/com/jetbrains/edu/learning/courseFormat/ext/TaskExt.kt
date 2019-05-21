@@ -7,6 +7,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiManager
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
@@ -35,6 +37,11 @@ fun Task.findTestDirs(taskDir: VirtualFile): List<VirtualFile> = testDirs.mapNot
 fun Task.findTestDirs(project: Project): List<VirtualFile> {
   val taskDir = getDir(project) ?: return emptyList()
   return findTestDirs(taskDir)
+}
+
+fun Task.getAllTestDirectories(project: Project): List<PsiDirectory> {
+  val testDirs = findTestDirs(project)
+  return testDirs.mapNotNull { PsiManager.getInstance(project).findDirectory(it) }
 }
 
 val Task.placeholderDependencies: List<AnswerPlaceholderDependency>

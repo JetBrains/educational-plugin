@@ -1,16 +1,13 @@
 package com.jetbrains.edu.jvm.gradle.generation
 
-import com.intellij.ide.fileTemplates.FileTemplateManager
-import com.intellij.ide.fileTemplates.FileTemplateUtil
-import com.intellij.openapi.application.invokeAndWaitIfNeed
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtilRt
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.evaluateExistingTemplate
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import org.gradle.util.GradleVersion
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
@@ -25,11 +22,6 @@ object EduGradleUtils {
   fun isConfiguredWithGradle(project: Project): Boolean {
     return File(project.basePath, GradleConstants.DEFAULT_SCRIPT_NAME).exists()
   }
-
-  @JvmStatic
-  fun getInternalTemplateText(templateName: String, templateVariables: Map<String, Any>) =
-    FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName).getText(templateVariables)
-
 
   @JvmStatic
   @Throws(IOException::class)
@@ -48,15 +40,6 @@ object EduGradleUtils {
         evaluateExistingTemplate(child, templateVariables)
       }
     }
-  }
-
-  @Throws(IOException::class)
-  private fun evaluateExistingTemplate(child: VirtualFile, templateVariables: Map<String, Any>) {
-    val rawContent = VfsUtil.loadText(child)
-    val content = FileTemplateUtil.mergeTemplate(templateVariables, rawContent, false)
-    // BACKCOMPAT: 2018.3
-    @Suppress("DEPRECATION")
-    invokeAndWaitIfNeed { runWriteAction { VfsUtil.saveText(child, content) } }
   }
 
   @JvmOverloads
@@ -88,10 +71,4 @@ object EduGradleUtils {
   @JvmStatic
   fun gradleVersion(): String = maxOf(GradleVersion.current(), GradleVersion.version(DEFAULT_GRADLE_VERSION)).version
 
-  private val INVALID_SYMBOLS = "[ /\\\\:<>\"?*|]".toRegex()
-
-  /**
-   * Replaces ' ', '/', '\', ':', '<', '>', '"', '?', '*', '|' symbols with '_' as they are invalid in gradle module names
-   */
-  fun sanitizeName(name: String): String = name.replace(INVALID_SYMBOLS, "_")
 }

@@ -12,12 +12,9 @@ import com.jetbrains.cidr.cpp.toolchains.CMake.readCMakeVersion
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduNames.PROJECT_NAME
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
@@ -108,7 +105,6 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   companion object {
     private const val EDU_MAIN_CMAKELISTS = "EduMainCMakeLists.txt"
     private const val EDU_CMAKELISTS = "EduCMakeLists.txt"
-    private const val PROJECT_NAME = "PROJECT_NAME"
     private const val CMAKE_MINIMUM_REQUIRED_LINE = "CMAKE_MINIMUM_REQUIRED_LINE"
     private const val CPP_STANDARD = "CPP_STANDARD"
   }

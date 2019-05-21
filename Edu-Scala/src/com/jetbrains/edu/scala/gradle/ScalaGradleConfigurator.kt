@@ -1,4 +1,4 @@
-package com.jetbrains.edu.scala
+package com.jetbrains.edu.scala.gradle
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
@@ -9,9 +9,9 @@ import icons.EducationalCoreIcons
 import org.jetbrains.plugins.scala.ScalaLanguage
 import javax.swing.Icon
 
-class ScalaConfigurator : GradleConfiguratorBase() {
+class ScalaGradleConfigurator : GradleConfiguratorBase() {
 
-  private val myCourseBuilder = ScalaCourseBuilder()
+  private val myCourseBuilder = ScalaGradleCourseBuilder()
 
   override fun getCourseBuilder() = myCourseBuilder
 
@@ -19,7 +19,7 @@ class ScalaConfigurator : GradleConfiguratorBase() {
 
   override fun isEnabled(): Boolean = !EduUtils.isAndroidStudio()
 
-  override fun getTaskCheckerProvider(): TaskCheckerProvider = ScalaTaskCheckerProvider()
+  override fun getTaskCheckerProvider(): TaskCheckerProvider = ScalaGradleTaskCheckerProvider()
 
   override fun getMockTemplate(): String = FileTemplateManager.getDefaultInstance().getInternalTemplate(MOCK_SCALA).text
 

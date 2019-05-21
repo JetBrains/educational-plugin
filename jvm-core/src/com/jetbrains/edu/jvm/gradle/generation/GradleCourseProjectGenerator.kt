@@ -5,7 +5,6 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.modifyModules
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkModificator
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
@@ -15,8 +14,8 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
-import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.sanitizeName
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 open class GradleCourseProjectGenerator(
@@ -25,30 +24,9 @@ open class GradleCourseProjectGenerator(
 ) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
 
   override fun createCourseStructure(project: Project, baseDir: VirtualFile, settings: JdkProjectSettings) {
-    // Hack!
-    // We rename all modules (really only root module because new project has only one root module)
-    // to have names which are expected by gradle importer.
-    //
-    // We do these hacky things to avoid the following situation:
-    // If project dir contains some symbols (' ', '/', '\', ':', '<', '>', '"', '?', '*', '|')  in its name (for example, `Awesome Course`)
-    // then after project creation we will get `Awesome Course` root module.
-    // But gradle importer won't find it because it expects `Awesome_Course` module
-    // and it'll create new root module.
-    // After project reopening we will get an exception because of two modules with same content.
-    //
-    // Note we don't create gradle project from the beginning
-    // because it is much slower and prevents showing project content at the beginning
-    project.modifyModules {
-      for (module in modules) {
-        val sanitizedName = sanitizeName(module.name)
-        if (sanitizedName != module.name) {
-          renameModule(module, sanitizedName)
-        }
-      }
-    }
+    GeneratorUtils.renameBaseModule(project)
 
-    PropertiesComponent.getInstance(project).setValue(
-      SHOW_UNLINKED_GRADLE_POPUP, false, true)
+    PropertiesComponent.getInstance(project).setValue(SHOW_UNLINKED_GRADLE_POPUP, false, true)
     super.createCourseStructure(project, baseDir, settings)
   }
 

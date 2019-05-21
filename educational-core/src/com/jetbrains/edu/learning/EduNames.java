@@ -41,6 +41,7 @@ public class EduNames {
 
   public static final String COURSE_META_FILE = "course.json";
   public static final String ADDITIONAL_MATERIALS = "Edu additional materials";
+  public static final String PROJECT_NAME = "PROJECT_NAME";
 
   public static final String DEFAULT_ENVIRONMENT = "";
 

@@ -7,9 +7,9 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_JAR
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_PROPERTIES
@@ -31,7 +31,7 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
     val pathSegments = path.split(VfsUtilCore.VFS_SEPARATOR_CHAR)
     if (SETTINGS_GRADLE == name) {
       try {
-        val settingsDefaultText = EduGradleUtils.getInternalTemplateText(courseBuilder.settingGradleTemplateName,
+        val settingsDefaultText = GeneratorUtils.getInternalTemplateText(courseBuilder.settingGradleTemplateName,
                                                                          courseBuilder.templateVariables(project))
         val ioFile = File(path)
         return if (ioFile.exists()) FileUtil.loadFile(ioFile) == settingsDefaultText else true

@@ -33,11 +33,11 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
 
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
     if (super.excludeFromArchive(project, file)) return true
-    return generateSequence(file, VirtualFile::getParent).any { it.name == "target" }
+    return generateSequence(file, VirtualFile::getParent).any { it.name == "target" || it.name == "project"}
   }
 
   companion object {
-    const val TEST_SCALA = "Test.scala"
+    const val TEST_SCALA = "TestSpec.scala"
     const val TASK_SCALA = "Task.scala"
     const val MOCK_SCALA = "Mock.scala"
   }

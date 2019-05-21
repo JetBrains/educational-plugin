@@ -4,7 +4,7 @@
   <depends>JUnit</depends>
 
   <extensions defaultExtensionNs="Educational">
-    <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.ScalaConfigurator"/>
+    <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator" environment="Gradle"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
