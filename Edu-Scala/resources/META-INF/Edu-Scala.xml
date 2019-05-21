@@ -7,5 +7,9 @@
     <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.ScalaConfigurator"/>
   </extensions>
 
+  <extensions defaultExtensionNs="Educational">
+    <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.sbt.ScalaSbtConfigurator" environment="sbt"/>
+  </extensions>
+
 </idea-plugin>
 
