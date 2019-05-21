@@ -56,15 +56,15 @@ class JoinCoursePanel(private val settings: CoursePanel.CourseDisplaySettings) :
 
   private fun doValidation(course: Course?) {
     val message = when {
-      locationString.isBlank() -> ErrorMessage("Enter course location")
-      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ErrorMessage("Can't create course at this location")
+      locationString.isBlank() -> ValidationMessage("Enter course location")
+      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage("Can't create course at this location")
       else -> myCoursePanel.validateSettings(course)
     }
     updateErrorText(message)
     myValidationListener?.onInputDataValidated(message == null || message.beforeLink.startsWith(EduNames.WARNING))
   }
 
-  fun updateErrorText(message: ErrorMessage?) {
+  fun updateErrorText(message: ValidationMessage?) {
     myErrorLabel.text = if (message != null) message.beforeLink + message.linkText + message.afterLink else ""
     myErrorLabel.isVisible = message != null
   }

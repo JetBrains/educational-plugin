@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.PyDetectedSdk
@@ -52,10 +52,10 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
     return pythonVersions
   }
 
-  override fun validate(course: Course?, courseLocation: String?): ErrorMessage? {
+  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     course ?: return null
-    val sdk = mySettings.sdk ?: return ErrorMessage("Please specify Python interpreter")
-    return (isSdkApplicable(course, sdk.languageLevel) as? Err)?.error?.let { ErrorMessage(it) }
+    val sdk = mySettings.sdk ?: return ValidationMessage("Please specify Python interpreter")
+    return (isSdkApplicable(course, sdk.languageLevel) as? Err)?.error?.let { ValidationMessage(it) }
   }
 
   private val Sdk.languageLevel: LanguageLevel

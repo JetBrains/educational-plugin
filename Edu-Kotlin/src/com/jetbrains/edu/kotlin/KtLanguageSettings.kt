@@ -5,17 +5,17 @@ import com.jetbrains.edu.learning.DEFAULT_KOTLIN_VERSION
 import com.jetbrains.edu.learning.KotlinVersion
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.kotlinVersion
-import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 
 class KtLanguageSettings : JdkLanguageSettings() {
   override fun getLanguageVersions() = listOf("1.2", "1.3")
 
-  override fun validate(course: Course?, courseLocation: String?): ErrorMessage? {
+  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     course ?: return null
     val courseKotlinVersion = course.kotlinVersion
     val kotlinVersion = kotlinVersion()
     if (kotlinVersion < courseKotlinVersion) {
-      return ErrorMessage("Kotlin ${courseKotlinVersion.version} required. Try updating Kotlin plugin.")
+      return ValidationMessage("Kotlin ${courseKotlinVersion.version} required. Try updating Kotlin plugin.")
     }
     return super.validate(course, courseLocation)
   }

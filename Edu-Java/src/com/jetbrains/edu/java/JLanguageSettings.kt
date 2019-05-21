@@ -9,7 +9,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.JdkBundle
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import java.io.File
 
 class JLanguageSettings : JdkLanguageSettings() {
@@ -33,22 +33,22 @@ class JLanguageSettings : JdkLanguageSettings() {
 
   override fun getLanguageVersions() = JavaSdkVersion.values().filter { it.isAtLeast(DEFAULT_JAVA) }.map { it.description }
 
-  override fun validate(course: Course?, courseLocation: String?): ErrorMessage? {
+  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     if (course == null) {
       return null
     }
     val courseJavaVersionDescription = course.languageVersion ?: DEFAULT_JAVA.description
     val courseJavaVersion = courseJavaVersionDescription.toJavaSdkVersion()
-                            ?: return ErrorMessage("Unsupported Java versions: $courseJavaVersionDescription")
+                            ?: return ValidationMessage("Unsupported Java versions: $courseJavaVersionDescription")
 
-    val providedJavaVersion = myJdkSettings.jdkItem?.jdk?.versionString ?: return ErrorMessage("No Java sdk")
+    val providedJavaVersion = myJdkSettings.jdkItem?.jdk?.versionString ?: return ValidationMessage("No Java sdk")
 
     val javaSdkVersion = JavaSdkVersion.fromVersionString(providedJavaVersion)
-                         ?: return ErrorMessage("Failed to determine Java version")
+                         ?: return ValidationMessage("Failed to determine Java version")
     if (javaSdkVersion.isAtLeast(courseJavaVersion)) {
       return null
     }
-    return ErrorMessage("Java version should be at least $courseJavaVersionDescription. ",
+    return ValidationMessage("Java version should be at least $courseJavaVersionDescription. ",
                         "Download JDK", "", "https://www.oracle.com/technetwork/java/javase/downloads/index.html")
   }
 

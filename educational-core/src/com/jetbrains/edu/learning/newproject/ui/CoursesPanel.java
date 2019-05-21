@@ -152,7 +152,7 @@ public class CoursesPanel extends JPanel {
     });
   }
 
-  private static void browseHyperlink(@Nullable ErrorMessage message) {
+  private static void browseHyperlink(@Nullable ValidationMessage message) {
     if (message == null) {
       return;
     }
@@ -253,7 +253,7 @@ public class CoursesPanel extends JPanel {
   private void doValidation(@Nullable Course course) {
     ErrorState languageError = ErrorState.NothingSelected.INSTANCE;
     if (course != null) {
-      ErrorMessage languageSettingsMessage = myCoursePanel.validateSettings(course);
+      ValidationMessage languageSettingsMessage = myCoursePanel.validateSettings(course);
       languageError = languageSettingsMessage == null
                       ? ErrorState.None.INSTANCE
                       : new ErrorState.LanguageSettingsError(languageSettingsMessage);
@@ -265,7 +265,7 @@ public class CoursesPanel extends JPanel {
 
   public void updateErrorInfo(@NotNull ErrorState errorState) {
     myErrorState = errorState;
-    ErrorMessage message = errorState.getMessage();
+    ValidationMessage message = errorState.getMessage();
     if (message != null) {
       myErrorLabel.setVisible(true);
       myErrorLabel.setHyperlinkText(message.getBeforeLink(), message.getLinkText(), message.getAfterLink());

@@ -137,8 +137,8 @@ public class CoursePanel extends JPanel {
   }
 
   @Nullable
-  public ErrorMessage validateSettings(@Nullable Course course) {
-    ErrorMessage errorMessage = myLanguageSettings.validate(course, getLocationString());
+  public ValidationMessage validateSettings(@Nullable Course course) {
+    ValidationMessage errorMessage = myLanguageSettings.validate(course, getLocationString());
     if (errorMessage != null) {
       myAdvancedSettings.setOn(true);
     }

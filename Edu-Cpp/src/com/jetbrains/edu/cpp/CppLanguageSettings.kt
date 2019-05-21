@@ -11,7 +11,7 @@ import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.values
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -44,15 +44,15 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
     return values().map { it.standard }
   }
 
-  override fun validate(course: Course?, courseLocation: String?): ErrorMessage? = when {
+  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? = when {
     courseLocation == null -> null
     SystemInfo.isWindows && !IOUtil.isAscii(courseLocation) -> {
       val environment = defaultToolchain?.toolSet?.name
       val details = if (environment != null) "with ${environment} " else ""
-      ErrorMessage("${EduNames.WARNING}: ", "Location should contain only ASCII characters, " +
+      ValidationMessage("${EduNames.WARNING}: ", "Location should contain only ASCII characters, " +
                                             "CMake ${details}might not work properly")
     }
-    courseLocation.contains(" ") -> ErrorMessage(
+    courseLocation.contains(" ") -> ValidationMessage(
       "Location should not contain whitespace, CMake may not be built correctly")
     else -> null
   }

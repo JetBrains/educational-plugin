@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.enablePlugins
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
-import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
@@ -149,11 +149,11 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
 
   private fun doValidation() {
     val errorMessage = when {
-      myTitleField.text.isNullOrBlank() -> ErrorMessage("Enter course title")
-      myAuthorField.text.isNullOrBlank() -> ErrorMessage("Enter course instructor")
-      myDescriptionTextArea.text.isNullOrBlank() -> ErrorMessage("Enter course description")
-      locationString.isBlank() -> ErrorMessage("Enter course location")
-      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ErrorMessage("Can't create course at this location")
+      myTitleField.text.isNullOrBlank() -> ValidationMessage("Enter course title")
+      myAuthorField.text.isNullOrBlank() -> ValidationMessage("Enter course instructor")
+      myDescriptionTextArea.text.isNullOrBlank() -> ValidationMessage("Enter course description")
+      locationString.isBlank() -> ValidationMessage("Enter course location")
+      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage("Can't create course at this location")
       myRequiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(myRequiredAndDisabledPlugins)
       else -> {
         val errorMessage = myLanguageSettings.validate(null, locationString)
