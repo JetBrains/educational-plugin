@@ -110,6 +110,58 @@
                     </option>
                     <option name="updateDate" value="0" />
                   </EduTask>
+                  <ChoiceTask>
+                    <option name="choiceVariants">
+                      <list>
+                        <option value="1995"/>
+                        <option value="2004"/>
+                        <option value="1987"/>
+                        <option value="2001"/>
+                      </list>
+                    </option>
+                    <option name="customPresentableName"/>
+                    <option name="descriptionFormat" value="HTML"/>
+                    <option name="descriptionText"
+                            value="&lt;html&gt;&#10; &lt;head&gt;&lt;/head&gt;&#10; &lt;body&gt;&#10;  In which year did JavaScript get its name?&#10; &lt;/body&gt;&#10;&lt;/html&gt;"/>
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link"/>
+                        <option name="type" value="STEPIK"/>
+                      </FeedbackLink>
+                    </option>
+                    <option name="id" value="209067"/>
+                    <option name="index" value="2"/>
+                    <option name="multipleChoice" value="false"/>
+                    <option name="name" value="Quiz"/>
+                    <option name="record" value="-1"/>
+                    <option name="selectedVariants">
+                      <list>
+                        <option value="0"/>
+                      </list>
+                    </option>
+                    <option name="status" value="Solved"/>
+                    <option name="stepikChangeStatus" value="Up to date"/>
+                    <option name="files">
+                      <map>
+                        <entry key="task.js">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list/>
+                              </option>
+                              <option name="highlightErrors" value="false"/>
+                              <option name="name" value="task.js"/>
+                              <option name="text" value="// you can experiment here, it won't be checked&#10;&#10;"/>
+                              <option name="trackChanges" value="true"/>
+                              <option name="trackLengths" value="true"/>
+                              <option name="visible" value="true"/>
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="updateDate" value="1502907702000"/>
+                  </ChoiceTask>
                 </list>
               </option>
             </Lesson>

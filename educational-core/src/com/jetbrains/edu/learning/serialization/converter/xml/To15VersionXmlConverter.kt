@@ -15,4 +15,18 @@ class To15VersionXmlConverter : BaseXmlConverter() {
       }
     }
   }
+
+  override fun convertTaskElement(task: Element) {
+    if (task.name != "ChoiceTask") {
+      return
+    }
+    val oldOptionsElement = getChildList(task, "choiceVariants")
+    println()
+    val newOptionElements = oldOptionsElement.map {
+      val newElement = Element("ChoiceOption")
+      addChildWithName(newElement, "text", it.getAttributeValue(VALUE))
+      newElement
+    }
+    addChildList(task, "choiceOptions", newOptionElements)
+  }
 }

@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.format
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.loadElement
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.serialization.SerializationUtils
