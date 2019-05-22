@@ -11,9 +11,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.configFileName
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.saveItem
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.loadItem
 import com.jetbrains.edu.coursecreator.yaml.format.getChangeApplierForItem
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
@@ -76,6 +76,10 @@ object YamlLoader {
     if (existingItem == null) {
       // tis code is called if item wasn't loaded because of broken config
       // and now if config fixed, we'll add item to a parent
+      if (deserializedItem is Course) {
+        StudyTaskManager.getInstance(project).course = YamlDeepLoader.loadCourse(project)
+        return
+      }
       val itemDir = configFile.parent
       deserializedItem.name = itemDir.name
       val parentItem = deserializedItem.getParentItem(project, itemDir.parent)
@@ -83,6 +87,8 @@ object YamlLoader {
       val deserializedParent = YamlDeserializer.deserializeItem(parentConfig) as ItemContainer
       if (deserializedParent.items.map { it.name }.contains(itemDir.name)) {
         parentItem.addItemAsNew(project, deserializedItem)
+        // new item is added at the end, so we should save parent item to update items order in config file
+        saveItem(parentItem)
       }
       return
     }
@@ -116,7 +122,7 @@ object YamlLoader {
              is Section -> findCourse(project)
              is Lesson -> {
                val section = findSection(project, parentDir)
-               return section ?: findCourse(project)
+               section ?: findCourse(project)
              }
              is Task -> findLesson(project, parentDir)
              else -> unexpectedItemError(StudyItem::class, this)
@@ -140,20 +146,22 @@ object YamlLoader {
     }
   }
 
-  private fun findCourse(project: Project): Course {
-    return StudyTaskManager.getInstance(project).course ?: error("Unable to find ${EduNames.COURSE}")
+  private fun findCourse(project: Project): Course? {
+    return StudyTaskManager.getInstance(project).course
   }
 
   private fun findSection(project: Project, sectionDir: VirtualFile): Section? {
-    return EduUtils.getSection(sectionDir, findCourse(project))
+    val course = findCourse(project) ?: return null
+    return EduUtils.getSection(sectionDir, course)
   }
 
   private fun findTask(project: Project, taskDir: VirtualFile): Task? {
-    return EduUtils.getTask(taskDir, findCourse(project))
+    val course = findCourse(project) ?: return null
+    return EduUtils.getTask(taskDir, course)
   }
 
   private fun findLesson(project: Project, lessonDir: VirtualFile): Lesson? {
-    val course = findCourse(project)
+    val course = findCourse(project) ?: return null
     return EduUtils.getLesson(lessonDir, course)
   }
 

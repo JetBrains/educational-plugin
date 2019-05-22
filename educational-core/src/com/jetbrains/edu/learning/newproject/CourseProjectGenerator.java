@@ -100,6 +100,7 @@ public abstract class CourseProjectGenerator<S> {
     EduUtils.openFirstTask(myCourse, project);
     if (CCUtils.isCourseCreator(project)) {
       YamlFormatSynchronizer.saveAll(project);
+      YamlFormatSynchronizer.startSynchronization(project);
     }
   }
 
