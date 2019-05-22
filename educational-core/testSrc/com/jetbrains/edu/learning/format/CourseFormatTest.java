@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.format;
 
+import com.intellij.openapi.util.Pair;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.CourseMode;
 import com.jetbrains.edu.learning.CourseTestUtilsKt;
 import com.jetbrains.edu.learning.EduNames;
@@ -7,10 +9,14 @@ import com.jetbrains.edu.learning.EduTestCase;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption;
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus;
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class CourseFormatTest extends EduTestCase {
 
@@ -133,6 +139,18 @@ public class CourseFormatTest extends EduTestCase {
     final TaskFile taskFile = task.getTaskFile("my_task.py");
     assertNotNull(taskFile);
     assertEquals("def foo():\n    write function body\n", taskFile.getText());
+  }
+
+  public void testChoiceTasks() throws IOException {
+    final Course course = getCourseFromJson();
+    Task task = course.getLessons().get(0).getTaskList().get(0);
+    assertTrue(task instanceof ChoiceTask);
+    ChoiceTask choiceTask = (ChoiceTask)task;
+    assertTrue(choiceTask.isMultipleChoice());
+    List<ChoiceOption> choiceOptions = choiceTask.getChoiceOptions();
+    Map<String, ChoiceOptionStatus> actualChoiceOptions =
+      ContainerUtil.newHashMap(ContainerUtil.map(choiceOptions, t -> t.getText()), ContainerUtil.map(choiceOptions, t -> t.getStatus()));
+    assertEquals(ContainerUtil.newHashMap(Pair.create("1", ChoiceOptionStatus.CORRECT), Pair.create("2", ChoiceOptionStatus.INCORRECT)), actualChoiceOptions);
   }
 
   private Course getCourseFromJson() throws IOException {

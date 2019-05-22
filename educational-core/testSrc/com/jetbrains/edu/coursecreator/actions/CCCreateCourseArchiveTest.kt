@@ -6,6 +6,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import junit.framework.TestCase
 import java.io.File
 import java.text.SimpleDateFormat
@@ -146,6 +147,20 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     val generatedJsonFile = generateJson()
     val expectedCourseJson = loadExpectedJson()
     TestCase.assertEquals(expectedCourseJson, generatedJsonFile)
+  }
+
+  fun `test course with choice tasks`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        choiceTask(isMultipleChoice = true, choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)) {
+          taskFile("task.txt")
+        }
+      }
+    }
+    course.description = "my summary"
+    val generatedJsonFile = generateJson()
+    val expectedCourseJson = loadExpectedJson()
+    assertEquals(expectedCourseJson, generatedJsonFile)
   }
 
   private fun loadExpectedJson(): String {

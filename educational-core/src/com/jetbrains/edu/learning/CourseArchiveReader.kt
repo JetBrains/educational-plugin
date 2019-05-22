@@ -13,6 +13,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.coursecreator.actions.mixins.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.converter.json.local.*
 import java.io.IOException
@@ -73,6 +74,7 @@ val courseMapper: ObjectMapper  // TODO: common mapper for archive creator and r
     mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
     mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
     mapper.addMixIn(Task::class.java, RemoteTaskMixin::class.java)
+    mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
     mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
     mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
     mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)

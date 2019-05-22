@@ -20,6 +20,8 @@ import com.jetbrains.edu.coursecreator.yaml.format.NotImplementedInMixin
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWORK_TYPE
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
@@ -135,6 +137,25 @@ abstract class LocalTaskMixin {
   fun getItemType(): String {
     throw NotImplementedInMixin()
   }
+}
+
+@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
+abstract class ChoiceTaskLocalMixin: LocalTaskMixin() {
+
+  @JsonProperty
+  private var isMultipleChoice: Boolean = false
+
+  @JsonProperty
+  private lateinit var choiceOptions: List<ChoiceOption>
+}
+
+@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
+abstract class ChoiceOptionLocalMixin {
+  @JsonProperty
+  private var text: String = ""
+
+  @JsonProperty
+  private var status: ChoiceOptionStatus = ChoiceOptionStatus.UNKNOWN
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization

@@ -24,6 +24,8 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -143,6 +145,8 @@ class CourseArchiveCreator(
         mapper.addMixIn(Section::class.java, LocalSectionMixin::class.java)
         mapper.addMixIn(Lesson::class.java, LocalLessonMixin::class.java)
         mapper.addMixIn(Task::class.java, LocalTaskMixin::class.java)
+        mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
+        mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionLocalMixin::class.java)
         commonSetup(mapper)
         return mapper
       }
