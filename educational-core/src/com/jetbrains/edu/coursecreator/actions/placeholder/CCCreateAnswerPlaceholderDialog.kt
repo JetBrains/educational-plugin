@@ -15,28 +15,32 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.awt.BorderLayout
+import java.awt.Dimension
+import javax.swing.JComponent
+import javax.swing.JLabel
+import javax.swing.JPanel
 
-import javax.swing.*
-
-open class CCCreateAnswerPlaceholderDialog(project: Project,
-                                           placeholderText: String,
-                                           isEdit: Boolean,
-                                           private val placeholder: AnswerPlaceholder) : DialogWrapper(project, true) {
+open class CCCreateAnswerPlaceholderDialog(
+  project: Project,
+  placeholderText: String,
+  isEdit: Boolean,
+  private val placeholder: AnswerPlaceholder
+) : DialogWrapper(project, true) {
   private val panel: CCAddAnswerPlaceholderPanel = CCAddAnswerPlaceholderPanel(placeholderText)
   // "30" is the same value of text field columns as Messages.InputDialog uses
-  val dependencyPathField = JBTextField(30)
-  val visibilityCheckBox get() = JBCheckBox("Visible", placeholder.placeholderDependency?.isVisible == true)
-  private val pathLabel = JLabel("sectionName#lessonName#taskName#[taskPath]#placeholderIndex")
-  private val isFirstTask = placeholder.taskFile.task.isFirstInCourse
+  val dependencyPathField: JBTextField = JBTextField(30)
+  private val visibilityCheckBox: JBCheckBox = JBCheckBox("Visible", placeholder.placeholderDependency?.isVisible == true)
+  private val pathLabel: JLabel = JLabel("[sectionName#]lessonName#taskName#filePath#placeholderIndex")
+  private val isFirstTask: Boolean = placeholder.taskFile.task.isFirstInCourse
   private val currentText: String get() = dependencyPathField.text ?: ""
-  private val taskText = StringUtil.notNullize(panel.getAnswerPlaceholderText()).trim { it <= ' ' }
+  private val taskText: String = StringUtil.notNullize(panel.getAnswerPlaceholderText()).trim { it <= ' ' }
 
   init {
     val title = (if (isEdit) "Edit" else "Add") + TITLE_SUFFIX
     this.title = title
     val buttonText = if (isEdit) "OK" else "Add"
     setOKButtonText(buttonText)
-    this.init()
+    super.init()
     initValidation()
   }
 
@@ -51,10 +55,15 @@ open class CCCreateAnswerPlaceholderDialog(project: Project,
         row { pathLabel() }
         row { visibilityCheckBox() }
       }
-      contentPanel.border = JBUI.Borders.emptyBottom(15)
+      contentPanel.border = JBUI.Borders.emptyBottom(5)
       val decorator = HideableDecorator(dependencyPanel, "Add Answer Placeholder Dependency", false)
       decorator.setContentComponent(contentPanel)
-      panel.add(dependencyPanel, BorderLayout.CENTER)
+      if (placeholder.placeholderDependency != null) {
+        decorator.setOn(true)
+        dependencyPathField.text = placeholder.placeholderDependency?.toString()
+        panel.preferredSize = Dimension(500, 240)
+      }
+      panel.add(dependencyPanel, BorderLayout.SOUTH)
     }
     return panel
   }
@@ -77,28 +86,26 @@ open class CCCreateAnswerPlaceholderDialog(project: Project,
     return panel.getPreferredFocusedComponent()
   }
 
-  open fun getTaskText() = taskText
+  open fun getTaskText(): String = taskText
 
-  private fun initialValue(placeholder: AnswerPlaceholder): String {
-    // TODO: come up with better initial value
-    return placeholder.placeholderDependency?.toString() ?: "lesson1#task1#path/task.txt#1"
-  }
-
-  companion object {
-    private val TITLE_SUFFIX = " Answer Placeholder"
-  }
-
-  fun getDependencyInfo() = if (!(currentText.isBlank() || isFirstTask)) DependencyInfo(currentText, visibilityCheckBox.isSelected)
-  else null
+  fun getDependencyInfo(): DependencyInfo? =
+    if (!(currentText.isBlank() || isFirstTask)) {
+      DependencyInfo(currentText, visibilityCheckBox.isSelected)
+    }
+    else null
 
   data class DependencyInfo(val dependencyPath: String, val isVisible: Boolean)
+
+  companion object {
+    private const val TITLE_SUFFIX = " Answer Placeholder"
+  }
 }
 
-  private val Task.isFirstInCourse: Boolean
-    get() {
-      if (index > 1) {
-        return false
-      }
-      val section = lesson.section ?: return lesson.index == 1
-      return section.index == 1 && lesson.index == 1
+private val Task.isFirstInCourse: Boolean
+  get() {
+    if (index > 1) {
+      return false
     }
+    val section = lesson.section ?: return lesson.index == 1
+    return section.index == 1 && lesson.index == 1
+  }
