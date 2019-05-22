@@ -3,6 +3,7 @@ package com.jetbrains.edu.cpp
 import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.cpp.cmake.projectWizard.CLionProjectWizardUtils.getCMakeMinimumRequiredLine
@@ -55,7 +56,8 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
     if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
-    GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME, getText(mainCMakeListsTemplate, baseDir.name))
+    GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME,
+                                   getText(mainCMakeListsTemplate, FileUtil.sanitizeFileName(baseDir.name)))
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings) {
