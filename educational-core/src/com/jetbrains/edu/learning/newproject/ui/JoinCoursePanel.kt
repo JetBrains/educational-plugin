@@ -65,7 +65,8 @@ class JoinCoursePanel(private val settings: CoursePanel.CourseDisplaySettings) :
   }
 
   fun updateErrorText(message: ValidationMessage?) {
-    // Use HTML tags to automatically wrap JLabel's text to available space
+    // myErrorLabel text may be too long and not fit on the JoinCoursePanel.
+    // For JLabel text we can use HTML tags to automatically wrap text to available space
     myErrorLabel.text = if (message != null) "<html>${message.beforeLink} ${message.linkText} ${message.afterLink}</html>" else ""
     myErrorLabel.isVisible = message != null
   }
