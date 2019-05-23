@@ -39,7 +39,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
         val parentDir = existingItem.getDir(project)
         val configFile = titledItem.findConfigFile(project, parentDir, *deserializedItem.childrenConfigFileNames) ?: continue
 
-        val deserializedChild = YamlDeserializer.deserializeItem(configFile)
+        val deserializedChild = YamlDeserializer.deserializeItem(configFile) ?: continue
         deserializedChild.name = titledItem.name
         deserializedChild.index = titledItem.index
         deserializedChild.deserializeChildrenIfNeeded(project, existingItem.course)

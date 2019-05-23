@@ -1,12 +1,16 @@
 package com.jetbrains.edu.coursecreator.yaml
 
+import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
+import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.codeStyle.NameUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.LESSON_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
@@ -17,6 +21,7 @@ import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.TASK_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
+import com.jetbrains.edu.coursecreator.yaml.YamlLoader.getEditor
 import com.jetbrains.edu.coursecreator.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -24,6 +29,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import org.yaml.snakeyaml.composer.ComposerException
+import org.yaml.snakeyaml.constructor.ConstructorException
+import org.yaml.snakeyaml.error.YAMLException
+import org.yaml.snakeyaml.parser.ParserException
+import org.yaml.snakeyaml.scanner.ScannerException
 
 /**
  * Deserialize [StudyItem] object from yaml config file without any additional modifications.
@@ -35,12 +45,18 @@ object YamlDeserializer {
   fun deserializeItem(configFile: VirtualFile): StudyItem {
     val configName = configFile.name
     val configFileText = configFile.document.text
-    return when (configName) {
-      COURSE_CONFIG -> deserialize(configFileText, Course::class.java)
-      SECTION_CONFIG -> deserialize(configFileText, Section::class.java)
-      LESSON_CONFIG -> deserializeLesson(configFileText)
-      TASK_CONFIG -> deserializeTask(configFileText)
-      else -> yamlIllegalStateError(unknownConfigMessage(configName))
+    return try {
+      when (configName) {
+        COURSE_CONFIG -> deserialize(configFileText, Course::class.java)
+        SECTION_CONFIG -> deserialize(configFileText, Section::class.java)
+        LESSON_CONFIG -> deserializeLesson(configFileText)
+        TASK_CONFIG -> deserializeTask(configFileText)
+        else -> yamlIllegalStateError(unknownConfigMessage(configName))
+      }
+    }
+    catch (e: Exception) {
+      processErrors(project, configFile, e)
+      return null
     }
   }
 
@@ -63,7 +79,7 @@ object YamlDeserializer {
    * For [Course] object the instance of a proper type is created inside [com.jetbrains.edu.coursecreator.yaml.format.CourseBuilder]
    */
   @VisibleForTesting
-  fun <T : ItemContainer> deserialize(configFileText: String, clazz: Class<T>): T = MAPPER.readValue(configFileText, clazz)
+  fun <T : ItemContainer> deserialize(configFileText: String, clazz: Class<T>): T? = MAPPER.readValue(configFileText, clazz)
 
   @VisibleForTesting
   fun deserializeLesson(configFileText: String): Lesson {
@@ -131,4 +147,87 @@ object YamlDeserializer {
 
   private val VirtualFile.document
     get() = FileDocumentManager.getInstance().getDocument(this) ?: error("Cannot find document for a file: ${name}")
+
+  private fun processErrors(project: Project, configFile: VirtualFile, e: Exception) {
+    @Suppress("DEPRECATION")
+    // suppress deprecation for MarkedYAMLException as it is actually thrown from com.fasterxml.jackson.dataformat.yaml.YAMLParser.nextToken
+    when (e) {
+      is MissingKotlinParameterException -> {
+        val parameterName = e.parameter.name
+        if (parameterName == null) {
+          showError(project, configFile)
+        }
+        else {
+          showError(project, configFile,
+                    "${NameUtil.nameToWordsLowerCase(parameterName).joinToString("_")} is empty")
+        }
+      }
+      is InvalidYamlFormatException -> showError(project, configFile, e.message.capitalize())
+      is IllegalStateException -> {
+        showError(project, configFile)
+      }
+      is MismatchedInputException -> {
+        showError(project, configFile)
+      }
+      is YAMLException -> {
+        val cause = e.cause
+        val message = when (cause) {
+          is ScannerException -> {
+            yamlParsingErrorNotificationMessage(cause.problem, cause.contextMark.line)
+          }
+          is ParserException -> {
+            yamlParsingErrorNotificationMessage(cause.problem, cause.contextMark.line)
+          }
+          is ConstructorException -> {
+            yamlParsingErrorNotificationMessage(cause.problem, cause.contextMark.line)
+          }
+          is ComposerException -> {
+            yamlParsingErrorNotificationMessage(cause.problem, cause.contextMark.line)
+          }
+          else -> {
+            cause?.message?.capitalize()
+          }
+        }
+        if (message != null) {
+          showError(project, configFile, message)
+        }
+        else {
+          showError(project, configFile)
+        }
+      }
+      is com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException -> {
+        val message = yamlParsingErrorNotificationMessage(e.problem, e.contextMark?.line)
+        if (message != null) {
+          showError(project, configFile, message)
+        }
+        else {
+          showError(project, configFile)
+        }
+      }
+      is JsonMappingException -> {
+        val causeException = e.cause
+        if (causeException?.message == null || causeException !is InvalidYamlFormatException) {
+          showError(project, configFile)
+        }
+        else {
+          showError(project, configFile, causeException.message)
+        }
+      }
+      else -> throw e
+    }
+  }
+
+  private fun yamlParsingErrorNotificationMessage(problem: String?, line: Int?) =
+    if (problem != null && line != null) "$problem at line ${line + 1}" else null
+
+  fun showError(project: Project, configFile: VirtualFile, cause: String = "invalid config") {
+    val editor = configFile.getEditor(project)
+    if (editor != null) {
+      editor.headerComponent = InvalidFormatPanel(cause)
+    }
+    else {
+      val notification = InvalidConfigNotification(project, configFile, cause)
+      notification.notify(project)
+    }
+  }
 }

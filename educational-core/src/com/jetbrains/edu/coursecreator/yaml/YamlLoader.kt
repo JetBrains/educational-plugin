@@ -8,7 +8,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.codeStyle.NameUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.saveItem
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.loadItem
@@ -26,42 +25,20 @@ import java.io.IOException
  */
 object YamlLoader {
 
-  fun loadItem(project: Project, configFile: VirtualFile, editor: Editor? = configFile.getEditor(project)) {
+  fun loadItem(project: Project, configFile: VirtualFile) {
+    val editor = configFile.getEditor(project)
     if (editor != null) {
       if (editor.headerComponent is InvalidFormatPanel) {
         editor.headerComponent = null
       }
     }
-
     try {
       doLoad(project, configFile)
     }
-    catch (e: MissingKotlinParameterException) {
-      val parameterName = e.parameter.name
-      if (parameterName == null) {
-        showError(project, e, configFile, editor)
-      }
-      else {
-        showError(project, e, configFile, editor,
-                  "${NameUtil.nameToWordsLowerCase(parameterName).joinToString("_")} is empty")
-      }
-    }
-    catch (e: MismatchedInputException) {
-      showError(project, e, configFile, editor)
-    }
-    catch (e: InvalidYamlFormatException) {
-      showError(project, e, configFile, editor, e.message.capitalize())
-    }
-    catch (e: IllegalStateException) {
-      showError(project, e, configFile, editor)
-    }
-    catch (e: IOException) {
-      val causeException = e.cause
-      if (causeException?.message == null || causeException !is InvalidYamlFormatException) {
-        showError(project, e, configFile, editor)
-      }
-      else {
-        showError(project, e, configFile, editor, causeException.message.capitalize())
+    catch (e: Exception) {
+      when (e) {
+        is YamlIllegalStateException -> YamlDeserializer.showError(project, configFile, e.message.capitalize())
+        else -> throw e
       }
     }
   }
@@ -69,7 +46,7 @@ object YamlLoader {
   @VisibleForTesting
   fun doLoad(project: Project, configFile: VirtualFile) {
     val existingItem = getStudyItemForConfig(project, configFile)
-    val deserializedItem = YamlDeserializer.deserializeItem(configFile)
+    val deserializedItem = YamlDeserializer.deserializeItem(configFile) ?: return
     deserializedItem.validateFiles(configFile)
 
     if (existingItem == null) {
@@ -165,25 +142,7 @@ object YamlLoader {
     return EduUtils.getLesson(lessonDir, course)
   }
 
-  private fun showError(project: Project,
-                        originalException: Throwable,
-                        configFile: VirtualFile,
-                        editor: Editor?,
-                        cause: String = "invalid config") {
-    if (editor != null) {
-      editor.headerComponent = InvalidFormatPanel(cause)
-    }
-    else {
-      val notification = InvalidConfigNotification(project, configFile, cause)
-      notification.notify(project)
-    }
-    // to make test failures more comprehensible
-    if (isUnitTestMode) {
-      throw originalException
-    }
-  }
-
-  private fun VirtualFile.getEditor(project: Project): Editor? {
+  fun VirtualFile.getEditor(project: Project): Editor? {
     val selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(this)
     return if (selectedEditor is TextEditor) selectedEditor.editor else null
   }

@@ -8,6 +8,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowAnchor
@@ -22,6 +23,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduProjectComponent
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
 
@@ -34,15 +36,15 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
     ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
     val course = loadStudyItem(courseConfig, Course::class.java)
     val courseDir = course.getDir(project)
-    val items = course.items.map {
+    val items = course.items.mapNotNull {
       val itemDir = courseDir.findChild(it.name) ?: throwNoMatchingDirError(it)
       val sectionConfig = itemDir.findChild(YamlFormatSettings.SECTION_CONFIG)
       if (sectionConfig != null) {
-        return@map loadSectionFromConfig(sectionConfig, course, it, itemDir, project)
+        return@mapNotNull loadSectionFromConfig(sectionConfig, course, it, itemDir, project)
       }
       else {
         val lessonConfig = itemDir.findChild(YamlFormatSettings.LESSON_CONFIG) ?: throwNoConfigFileError(it)
-        return@map loadLessonFromConfig(lessonConfig, project, course, null, it.name)
+        return@mapNotNull loadLessonFromConfig(lessonConfig, project, course, null, it.name)
       }
     }
 
@@ -77,7 +79,7 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
     val section = loadStudyItem(sectionConfig, Section::class.java)
     section.course = course
     section.name = it.name
-    val lessons = section.items.map {
+    val lessons = section.items.mapNotNull {
       val lessonDir = itemDir.findChild(it.name) ?: throwNoMatchingDirError(section)
       val lessonConfig = lessonDir.findChild(YamlFormatSettings.LESSON_CONFIG) ?: throwNoConfigFileError(it)
       val lesson = loadLessonFromConfig(lessonConfig, project, course, section, it.name)
@@ -102,21 +104,37 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
                                    project: Project,
                                    course: Course,
                                    section: Section?,
-                                   name: String): Lesson {
+                                   name: String): Lesson? {
     val lesson = deserializeLesson(VfsUtil.loadText(configFile))
     lesson.name = name
     lesson.course = course
     lesson.section = section
-    val tasks = lesson.taskList.map {
-      val taskDir = configFile.parent.findChild(it.name) ?: throwNoMatchingDirError(it)
-      val taskConfig = taskDir.findChild(YamlFormatSettings.TASK_CONFIG) ?: throwNoConfigFileError(it)
+    val tasks = mutableListOf<StudyItem>()
+    for (titledTask in lesson.taskList) {
+      val taskDir = configFile.parent.findChild(titledTask.name) ?: throwNoMatchingDirError(titledTask)
+      val taskConfig = taskDir.findChild(YamlFormatSettings.TASK_CONFIG) ?: throwNoConfigFileError(titledTask)
       val task = deserializeTask(VfsUtil.loadText(taskConfig))
-      task.name = it.name
+      task.name = titledTask.name
       task.lesson = lesson
       val taskDescriptionFile = findTaskDescriptionFile(task, project)
       task.descriptionFormat = taskDescriptionFile.toDescriptionFormat()
       task.descriptionText = VfsUtil.loadText(taskDescriptionFile)
-      task
+      if (task is EduTask) {
+        for (taskFile in task.taskFiles.values) {
+          val placeholders = taskFile.answerPlaceholders
+          if (placeholders.isEmpty()) {
+            continue
+          }
+          val file = taskDir.findFileByRelativePath(taskFile.name) ?: continue
+          val document = FileDocumentManager.getInstance().getDocument(file) ?: continue
+          for (answerPlaceholder in placeholders) {
+            val possibleAnswer = document.getText(
+              TextRange.create(answerPlaceholder.offset, answerPlaceholder.offset + answerPlaceholder.length))
+            answerPlaceholder.possibleAnswer = possibleAnswer
+          }
+        }
+      }
+      tasks.add(task)
     }
     for ((i, item) in tasks.withIndex()) {
       item.index = i + 1
