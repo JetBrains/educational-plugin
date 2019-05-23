@@ -148,7 +148,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
   }
 
   private fun doValidation() {
-    val errorMessage = when {
+    val validationMessage = when {
       myTitleField.text.isNullOrBlank() -> ValidationMessage("Enter course title")
       myAuthorField.text.isNullOrBlank() -> ValidationMessage("Enter course instructor")
       myDescriptionTextArea.text.isNullOrBlank() -> ValidationMessage("Enter course description")
@@ -156,20 +156,20 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage("Can't create course at this location")
       myRequiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(myRequiredAndDisabledPlugins)
       else -> {
-        val errorMessage = myLanguageSettings.validate(null, locationString)
-        if (errorMessage != null) {
+        val validationMessage = myLanguageSettings.validate(null, locationString)
+        if (validationMessage != null) {
           myAdvancedSettings.setOn(true)
-          errorMessage
+          validationMessage
         } else {
           null
         }
       }
     }
-    if (errorMessage != null) {
-      myErrorLabel.setHyperlinkText(errorMessage.beforeLink, errorMessage.linkText, errorMessage.afterLink)
+    if (validationMessage != null) {
+      myErrorLabel.setHyperlinkText(validationMessage.beforeLink, validationMessage.linkText, validationMessage.afterLink)
     }
-    myErrorLabel.isVisible = errorMessage != null
-    myValidationListener?.onInputDataValidated(errorMessage == null)
+    myErrorLabel.isVisible = validationMessage != null
+    myValidationListener?.onInputDataValidated(validationMessage == null)
   }
 
   private fun createLocationField(): LabeledComponent<TextFieldWithBrowseButton> {

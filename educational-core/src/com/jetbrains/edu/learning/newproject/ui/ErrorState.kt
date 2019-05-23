@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.ERROR
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -29,7 +30,7 @@ sealed class ErrorState(
 
   object NothingSelected : ErrorState(0, null, Color.BLACK, false)
   object None : ErrorState(1, null, Color.BLACK, true)
-  object NotLoggedIn : ErrorState(2, ValidationMessage("", "Log in", " to Stepik to see more courses"), warningTextForeground, true)
+  object NotLoggedIn : ErrorState(2, ValidationMessage("", "Log in", " to Stepik to see more courses", type = WARNING), warningTextForeground, true)
   abstract class LoginRequired(platformName: String) : ErrorState(3, ValidationMessage("", "Log in", " to $platformName to start this course"), errorTextForeground, false)
   object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)
   class CheckiOLoginRequired(courseName: String) : LoginRequired(courseName) // Name of CheckiO course equals corresponding CheckiO platform name
@@ -103,11 +104,13 @@ sealed class ErrorState(
   }
 }
 
-data class ValidationMessage @JvmOverloads constructor(val beforeLink: String,
-                                                       val linkText: String = "",
-                                                       val afterLink: String = "",
-                                                       val hyperlinkAddress: String? = null,
-                                                       val type: ValidationMessageType = ERROR)
+data class ValidationMessage @JvmOverloads constructor(
+  val beforeLink: String,
+  val linkText: String = "",
+  val afterLink: String = "",
+  val hyperlinkAddress: String? = null,
+  val type: ValidationMessageType = ERROR
+)
 
 enum class ValidationMessageType {
   WARNING,

@@ -46,11 +46,8 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? = when {
     courseLocation == null -> null
-    SystemInfo.isWindows && !IOUtil.isAscii(courseLocation) -> {
-      val environment = defaultToolchain?.toolSet?.name
-      val details = if (environment != null) "with ${environment} " else ""
-      ValidationMessage("Location should contain only ASCII characters, CMake ${details}might not work properly", type = WARNING)
-    }
+    SystemInfo.isWindows && !IOUtil.isAscii(courseLocation) ->
+      ValidationMessage("CMake might not work properly with non-ASCII symbols in location path", type = WARNING)
     else -> null
   }
 }

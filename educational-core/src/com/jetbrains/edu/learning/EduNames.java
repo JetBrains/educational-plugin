@@ -71,4 +71,5 @@ public class EduNames {
 
   private EduNames() {
   }
+
 }
