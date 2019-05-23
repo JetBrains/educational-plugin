@@ -196,6 +196,15 @@ object YamlFormatSynchronizer {
   }
 }
 
+val StudyItem.configFileName: String
+  get() = when (this) {
+    is Course -> COURSE_CONFIG
+    is Section -> SECTION_CONFIG
+    is Lesson -> LESSON_CONFIG
+    is Task -> TASK_CONFIG
+    else -> error("Unknown StudyItem type: ${javaClass.simpleName}")
+  }
+
 val StudyItem.remoteConfigFileName: String
   get() = when (this) {
     is Course -> REMOTE_COURSE_CONFIG
