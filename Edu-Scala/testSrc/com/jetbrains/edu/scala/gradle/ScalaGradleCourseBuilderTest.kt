@@ -1,11 +1,10 @@
-package com.jetbrains.edu.scala
+package com.jetbrains.edu.scala.gradle
 
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
-import com.jetbrains.edu.scala.gradle.ScalaGradleCourseBuilder
 import org.jetbrains.plugins.scala.ScalaLanguage
 
 class ScalaGradleCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
@@ -41,7 +40,7 @@ class ScalaGradleCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings
   }
 
   fun `test new course structure`() {
-    val course = newCourse(ScalaLanguage.INSTANCE)
+    val course = newCourse(ScalaLanguage.INSTANCE, environment = "Gradle")
     createCourseStructure(course)
 
     val expectedFileTree = fileTree {

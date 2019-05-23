@@ -1,0 +1,53 @@
+{
+  "summary" : "dd",
+  "title" : "Scala sbt Course",
+  "programming_language" : "Scala",
+  "language" : "en",
+  "course_type" : "PyCharm",
+  "items" : [
+    {
+      "title" : "lesson1",
+      "task_list" : [
+        {
+          "name" : "task1",
+          "files" : {
+            "src/Task.scala" : {
+              "name" : "src/Task.scala",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "class Task {\n  //put your task here\n}"
+            },
+            "test/TestSpec.scala" : {
+              "name" : "test/TestSpec.scala",
+              "placeholders" : [ ],
+              "is_visible" : false,
+              "text" : "import org.scalatest.FunSuite\n\nclass TestSpec extends FunSuite {\n  //TODO: implement your test here\n  test(\"First test\") {\n    assert(false, \"Tests not implemented for the task\")\n  }\n}\n"
+            },
+            "build.sbt" : {
+              "name" : "build.sbt",
+              "placeholders" : [ ],
+              "is_visible" : false,
+              "text" : "\nlazy val `task1` = (project in file(\".\"))\n  .settings(\n    scalaSource in Compile := baseDirectory.value / \"src\",\n    scalaSource in Test := baseDirectory.value / \"test\",\n    libraryDependencies += \"org.scalatest\" %% \"scalatest\" % \"3.0.5\"\n  )\n"
+            }
+          },
+          "description_text" : "<html>\nWrite your task text here.\n<div class=\"hint\">\n  Hints can be added anywhere in task text: type \"hint\" and press Tab.\n</div>\n</html>",
+          "description_format" : "HTML",
+          "feedback_link" : {
+            "link_type" : "STEPIK"
+          },
+          "task_type" : "edu"
+        }
+      ],
+      "type" : "lesson"
+    }
+  ],
+  "additional_files" : [
+    {
+      "name" : "build.sbt",
+      "placeholders" : [ ],
+      "is_visible" : true,
+      "text" : "import scala.collection.mutable.ListBuffer\n\nval list = ListBuffer[ProjectReference]()\n\nval subFolders = file(\".\").listFiles.filter(_.isDirectory).filter(isNotIgnored).foreach { f =>\n  f.listFiles.filter(_.isDirectory).filter(isTaskDir).foreach { folder =>\n    list += ProjectRef(folder, folder.getName.replace(\" \", \"-\"))\n  }\n}\n\nlazy val root = Project(id = \"Scala_sbt_Course\", base = file(\".\")).aggregate(list: _*)\n\ndef isTaskDir(dir: File): Boolean = new File(dir, \"src\").exists()\ndef isNotIgnored(dir: File): Boolean = !Seq(\".idea\", \".coursecreator\", \"project\", \"target\").contains(dir.getName)"
+    }
+  ],
+  "version" : 11
+}

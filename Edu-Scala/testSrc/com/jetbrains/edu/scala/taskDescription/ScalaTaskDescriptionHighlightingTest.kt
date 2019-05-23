@@ -8,6 +8,7 @@ import org.jetbrains.plugins.scala.ScalaLanguage
 class ScalaTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
 
   override val language: Language = ScalaLanguage.INSTANCE
+  override val environment: String = "Gradle"
   override val settings: Any get() = JdkProjectSettings.emptySettings()
 
   fun `test markdown description highlighting`() = doMarkdownTest("""

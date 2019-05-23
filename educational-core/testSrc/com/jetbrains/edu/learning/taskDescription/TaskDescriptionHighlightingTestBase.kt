@@ -10,6 +10,7 @@ import org.intellij.lang.annotations.Language
 abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
 
   protected abstract val language: com.intellij.lang.Language
+  open val environment: String = ""
   protected abstract val settings: Any
 
   override fun doRunTests() {
@@ -29,7 +30,7 @@ abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
     format: DescriptionFormat,
     @Language("HTML") expectedText: String
   ) {
-    val course = courseWithFiles(language = language, settings = settings) {
+    val course = courseWithFiles(language = language, environment = environment, settings = settings) {
       lesson("lesson1") {
         eduTask("task1", taskDescription.trimIndent(), format)
       }
