@@ -101,7 +101,11 @@ class HyperskillWidget : IconLikeCustomStatusBarWidget {
 
   companion object {
     private fun getWidgetIcon(user: HyperskillAccount?): Icon {
-      return if (user == null) IconUtil.desaturate(EducationalCoreIcons.Hyperskill) else EducationalCoreIcons.Hyperskill
+      return if (user == null) {
+        IconUtil.desaturate(EducationalCoreIcons.Hyperskill) ?: error("IconUtil.desaturate failed")
+      } else {
+        EducationalCoreIcons.Hyperskill
+      }
     }
     const val ID = "HyperskillAccountWidget"
   }

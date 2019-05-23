@@ -5,9 +5,9 @@ import com.intellij.ide.AppLifecycleListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.ActionCallback
-import com.intellij.openapi.util.Ref
 import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
+import com.jetbrains.edu.learning.AppLifecycleListenerAdapter
 import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -26,8 +26,8 @@ class NewCoursesNotifier(parentDisposable: Disposable, private val featuredCours
   private val invocationCounter: AtomicInteger = AtomicInteger()
 
   fun scheduleNotification() {
-    ApplicationManager.getApplication().messageBus.connect().subscribe(AppLifecycleListener.TOPIC, object : AppLifecycleListener {
-      override fun appFrameCreated(commandLineArgs: Array<String>?, willOpenProject: Ref<Boolean>) {
+    ApplicationManager.getApplication().messageBus.connect().subscribe(AppLifecycleListener.TOPIC, object : AppLifecycleListenerAdapter {
+      override fun appFrameCreated() {
         scheduleNotificationInternal()
       }
     })
