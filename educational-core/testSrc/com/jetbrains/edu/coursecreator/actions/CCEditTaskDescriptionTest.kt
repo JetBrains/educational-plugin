@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions
 
-import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -8,6 +7,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import junit.framework.TestCase
 
 
@@ -47,7 +47,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     findTask(0, 0).descriptionText = ""
     doOpenTaskDescription()
 
-    val defaultTaskDescriptionText = FileTemplateManager.getDefaultInstance().getInternalTemplate(EduNames.TASK_HTML).text
+    val defaultTaskDescriptionText = getInternalTemplateText(EduNames.TASK_HTML)
     assertEquals(defaultTaskDescriptionText, getCurrentlyOpenedText())
   }
 

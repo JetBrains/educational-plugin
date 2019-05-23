@@ -1,6 +1,5 @@
 package com.jetbrains.edu.java;
 
-import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.lang.java.JavaLanguage;
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase;
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase;
@@ -11,6 +10,8 @@ import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+
+import static com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText;
 
 public class JConfigurator extends GradleConfiguratorBase {
 
@@ -50,7 +51,7 @@ public class JConfigurator extends GradleConfiguratorBase {
 
   @Override
   public String getMockTemplate() {
-    return FileTemplateManager.getDefaultInstance().getInternalTemplate(MOCK_JAVA).getText();
+    return getInternalTemplateText(MOCK_JAVA);
   }
 
   @NotNull

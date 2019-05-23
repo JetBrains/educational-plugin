@@ -247,7 +247,8 @@ object GeneratorUtils {
   }
 
   @JvmStatic
-  fun getInternalTemplateText(templateName: String, templateVariables: Map<String, Any>) =
+  @JvmOverloads
+  fun getInternalTemplateText(templateName: String, templateVariables: Map<String, Any> = emptyMap()) =
     FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName).getText(templateVariables)
 
   @Throws(IOException::class)

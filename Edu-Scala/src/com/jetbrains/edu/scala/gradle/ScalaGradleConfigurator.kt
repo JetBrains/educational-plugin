@@ -1,10 +1,10 @@
 package com.jetbrains.edu.scala.gradle
 
-import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.stepik.fileName
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import icons.EducationalCoreIcons
 import org.jetbrains.plugins.scala.ScalaLanguage
 import javax.swing.Icon
@@ -21,7 +21,7 @@ class ScalaGradleConfigurator : GradleConfiguratorBase() {
 
   override fun getTaskCheckerProvider(): TaskCheckerProvider = ScalaGradleTaskCheckerProvider()
 
-  override fun getMockTemplate(): String = FileTemplateManager.getDefaultInstance().getInternalTemplate(MOCK_SCALA).text
+  override fun getMockTemplate(): String = getInternalTemplateText(MOCK_SCALA)
 
   override fun getMockFileName(text: String): String = fileName(ScalaLanguage.INSTANCE, text)
 

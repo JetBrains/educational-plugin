@@ -15,7 +15,6 @@
  */
 package com.jetbrains.edu.learning.stepik.builtInServer;
 
-import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -49,6 +48,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText;
 import static com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils.*;
 
 public class StepikRestService extends OAuthRestService {
@@ -106,7 +106,7 @@ public class StepikRestService extends OAuthRestService {
 
     Matcher errorCodeMatcher = OAUTH_ERROR_CODE_PATTERN.matcher(uri);
     if (errorCodeMatcher.matches()) {
-      String pageContent = FileTemplateManager.getDefaultInstance().getInternalTemplate("stepik.redirectPage.html").getText();
+      String pageContent = getInternalTemplateText("stepik.redirectPage.html");
       Responses.send(createResponse(pageContent), context.channel(), request);
       return null;
     }

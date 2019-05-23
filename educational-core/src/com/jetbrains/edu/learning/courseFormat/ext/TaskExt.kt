@@ -2,7 +2,6 @@
 
 package com.jetbrains.edu.learning.courseFormat.ext
 
-import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
@@ -13,6 +12,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import java.util.ArrayList
 import kotlin.collections.HashSet
 import kotlin.collections.component1
@@ -95,8 +95,7 @@ fun Task.saveStudentAnswersIfNeeded(project: Project) {
 fun Task.addDefaultTaskDescription() {
   val format = EduUtils.getDefaultTaskDescriptionFormat()
   val fileName = format.descriptionFileName
-  val template = FileTemplateManager.getDefaultInstance().getInternalTemplate(fileName)
-  descriptionText = template.text
+  descriptionText = GeneratorUtils.getInternalTemplateText(fileName)
   descriptionFormat = format
 }
 

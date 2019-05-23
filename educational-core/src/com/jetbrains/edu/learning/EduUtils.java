@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning;
 
 import com.intellij.ide.SaveAndSyncHandler;
-import com.intellij.ide.fileTemplates.FileTemplate;
-import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.notification.Notification;
@@ -657,16 +655,6 @@ public class EduUtils {
     }
 
     return null;
-  }
-
-  @Nullable
-  public static String getTextFromInternalTemplate(@NotNull String templateName) {
-    FileTemplate template = FileTemplateManager.getDefaultInstance().findInternalTemplate(templateName);
-    if (template == null) {
-      LOG.info("Failed to obtain internal template: " + templateName);
-      return null;
-    }
-    return template.getText();
   }
 
   public static void runUndoableAction(Project project, String name, UndoableAction action, UndoConfirmationPolicy confirmationPolicy) {

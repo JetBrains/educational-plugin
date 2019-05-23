@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
@@ -12,6 +11,7 @@ import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.AppIcon
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import io.netty.channel.ChannelHandlerContext
@@ -58,7 +58,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       val success = HyperskillConnector.login(code)
       if (success) {
         RestService.LOG.info("$myPlatformName: OAuth code is handled")
-        val pageContent = FileTemplateManager.getDefaultInstance().getInternalTemplate("hyperskill.redirectPage.html").text
+        val pageContent = getInternalTemplateText("hyperskill.redirectPage.html")
         createResponse(pageContent).send(context.channel(), request)
         return null
       }

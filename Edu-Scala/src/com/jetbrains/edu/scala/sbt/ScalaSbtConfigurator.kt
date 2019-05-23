@@ -1,6 +1,5 @@
 package com.jetbrains.edu.scala.sbt
 
-import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.JdkProjectSettings
@@ -8,6 +7,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
@@ -23,7 +23,7 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
 
   override fun getTaskCheckerProvider(): TaskCheckerProvider = TaskCheckerProvider { task, project -> ScalaSbtEduTaskChecker(task, project) }
 
-  override fun getMockTemplate(): String = FileTemplateManager.getDefaultInstance().getInternalTemplate(MOCK_SCALA).text
+  override fun getMockTemplate(): String = getInternalTemplateText(MOCK_SCALA)
 
   override fun getSourceDir(): String = EduNames.SRC
 

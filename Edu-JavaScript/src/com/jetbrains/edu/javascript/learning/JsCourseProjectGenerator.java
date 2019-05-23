@@ -1,7 +1,5 @@
 package com.jetbrains.edu.javascript.learning;
 
-import com.intellij.ide.fileTemplates.FileTemplate;
-import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable;
@@ -20,6 +18,8 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+
+import static com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText;
 
 public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjectSettings> {
   public static final Logger LOG = Logger.getInstance(JsCourseProjectGenerator.class);
@@ -51,8 +51,8 @@ public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjec
     String packageJson = "package.json";
     VirtualFile packageJsonFile = baseDir.findChild(packageJson);
     if (packageJsonFile == null && !myCourse.isStudy()) {
-      final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(packageJson);
-      packageJsonFile = GeneratorUtils.createChildFile(baseDir, packageJson, template.getText());
+      final String templateText = getInternalTemplateText(packageJson);
+      packageJsonFile = GeneratorUtils.createChildFile(baseDir, packageJson, templateText);
     }
 
     if (packageJsonFile != null && !OpenApiExtKt.isUnitTestMode()) {

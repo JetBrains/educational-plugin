@@ -1,8 +1,6 @@
 package com.jetbrains.edu.python.learning.newproject;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.ide.fileTemplates.FileTemplate;
-import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -42,8 +40,8 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
   protected void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {
     final String testHelper = EduNames.TEST_HELPER;
     if (baseDir.findChild(testHelper) != null) return;
-    final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate("test_helper");
-    GeneratorUtils.createChildFile(baseDir, testHelper, template.getText());
+    final String templateText = GeneratorUtils.getInternalTemplateText("test_helper");
+    GeneratorUtils.createChildFile(baseDir, testHelper, templateText);
   }
 
   @Override
