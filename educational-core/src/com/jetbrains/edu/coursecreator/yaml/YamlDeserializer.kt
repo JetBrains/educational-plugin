@@ -2,6 +2,8 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -45,12 +47,15 @@ object YamlDeserializer {
   inline fun <reified T : StudyItem> StudyItem.deserializeContent(project: Project, contentList: MutableList<T>): List<T> {
     val parentDir = getDir(project) ?: noItemDirError(name)
 
-    return contentList.map { titledItem ->
-      val configFile = titledItem.findConfigFile(parentDir, *childrenConfigFileNames)
-      val deserializeItem = deserializeItem(configFile) as T
+    val content = mutableListOf<T>()
+    for (titledItem in contentList) {
+      val configFile: VirtualFile = titledItem.findConfigFile(project, parentDir, *childrenConfigFileNames) ?: continue
+      val deserializeItem = deserializeItem(configFile) as? T ?: continue
       deserializeItem.name = titledItem.name
-      deserializeItem
+      content.add(deserializeItem)
     }
+
+    return content
   }
 
   /**
@@ -111,9 +116,17 @@ object YamlDeserializer {
       else -> error("Unexpected StudyItem: ${javaClass.simpleName}")
     }
 
-  fun StudyItem.findConfigFile(parentDir: VirtualFile, vararg configFileNames: String): VirtualFile {
-    val itemDir = parentDir.findChild(name) ?: noItemDirError(name)
-    return configFileNames.map { itemDir.findChild(it) }.firstOrNull { it != null } ?: noConfigFileError(itemDir.name)
+  fun StudyItem.findConfigFile(project: Project, parentDir: VirtualFile, vararg configFileNames: String): VirtualFile? {
+    val itemDir = parentDir.findChild(name)
+    val configFile = configFileNames.map { itemDir?.findChild(it) }.firstOrNull { it != null }
+    if (configFile != null) {
+      return configFile
+    }
+
+    val message = if (itemDir == null) "Cannot find directory for item: '$name'" else "Cannot find config file for item: '${name}'"
+    val notification = Notification("Edu.InvalidConfig", "Config file not found", message, NotificationType.ERROR)
+    notification.notify(project)
+    return null
   }
 
   private val VirtualFile.document

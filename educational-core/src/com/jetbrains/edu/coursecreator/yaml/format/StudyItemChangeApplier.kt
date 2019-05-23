@@ -24,7 +24,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
   private fun updateChildren(deserializedItem: T, existingItem: T) {
     val existingChildren = existingItem.items
     val preservedChildren = mutableListOf<StudyItem>()
-    deserializedItem.items.forEach { titledItem ->
+    for (titledItem in deserializedItem.items)  {
       val child = existingChildren.find { it.name == titledItem.name }
       if (child != null) {
         child.index = titledItem.index
@@ -34,7 +34,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
         // this code adding new child item if it was added in config and there's a dir
         // it is called from `YamlLoader.loadItem`
         val parentDir = existingItem.getDir(project)
-        val configFile = titledItem.findConfigFile(parentDir, *deserializedItem.childrenConfigFileNames)
+        val configFile = titledItem.findConfigFile(project, parentDir, *deserializedItem.childrenConfigFileNames) ?: continue
 
         val deserializedChild = YamlDeserializer.deserializeItem(configFile)
         deserializedChild.name = titledItem.name
