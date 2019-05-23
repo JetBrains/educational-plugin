@@ -47,6 +47,15 @@ class TestsOutputParserTest : TestCase() {
     assertEquals("$failedLine1\n$failedLine2", checkResult.message.trim())
   }
 
+  fun `test multiline failure`() {
+    val failedLine1 = "123"
+    val failedLine2 = "456"
+    val checkResult = getCheckResult(listOf("${CheckUtils.STUDY_PREFIX}$TEST_FAILED $failedLine1",
+                                            "${CheckUtils.STUDY_PREFIX}$failedLine2"), false)
+    assertEquals(CheckStatus.Failed, checkResult.status)
+    assertEquals("$failedLine1\n$failedLine2", checkResult.message.trim())
+  }
+
   fun `test success`() {
     val checkResult = getCheckResult(listOf("${CheckUtils.STUDY_PREFIX} $TEST_OK"), false)
     assertEquals(CheckStatus.Solved, checkResult.status)
