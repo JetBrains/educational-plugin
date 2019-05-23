@@ -70,6 +70,7 @@ object YamlLoader {
   fun doLoad(project: Project, configFile: VirtualFile) {
     val existingItem = getStudyItemForConfig(project, configFile)
     val deserializedItem = YamlDeserializer.deserializeItem(configFile)
+    deserializedItem.validateFiles(configFile)
 
     if (existingItem == null) {
       // tis code is called if item wasn't loaded because of broken config
@@ -185,5 +186,21 @@ object YamlLoader {
   private fun VirtualFile.getEditor(project: Project): Editor? {
     val selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(this)
     return if (selectedEditor is TextEditor) selectedEditor.editor else null
+  }
+}
+
+private fun StudyItem.validateFiles(configFile: VirtualFile) {
+  when (this) {
+    is ItemContainer -> {
+      items.forEach {
+        val itemTypeName = if (it is Task) "task" else "item"
+        configFile.parent.findChild(it.name) ?: yamlIllegalStateError(noItemMessage(itemTypeName, it.name))
+      }
+    }
+    is Task -> {
+      taskFiles.forEach { (name, _) ->
+        configFile.parent.findFileByRelativePath(name) ?: yamlIllegalStateError(noItemMessage("task file", name))
+      }
+    }
   }
 }
