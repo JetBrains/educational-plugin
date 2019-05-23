@@ -94,7 +94,11 @@ abstract class LoginWidget(val project: Project, topic: Topic<EduLogInListener>)
   abstract fun resetAccount()
 
   private fun getWidgetIcon(): Icon {
-    return if (account == null) IconUtil.desaturate(icon) else icon
+    return if (account == null) {
+      IconUtil.desaturate(icon) ?: error("IconUtil.desaturate failed")
+    } else {
+      icon
+    }
   }
 
   override fun getComponent(): JComponent = component
