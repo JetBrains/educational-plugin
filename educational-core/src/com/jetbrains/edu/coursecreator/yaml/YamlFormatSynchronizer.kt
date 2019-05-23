@@ -168,9 +168,13 @@ object YamlFormatSynchronizer {
     ApplicationManager.getApplication().invokeLater {
       runWriteAction {
         val file = dir.findOrCreateChildData(javaClass, configName)
-        file.putUserData(LOAD_FROM_CONFIG, false)
-        file.document?.setText(mapper.writeValueAsString(this))
-        file.putUserData(LOAD_FROM_CONFIG, true)
+        try {
+          file.putUserData(LOAD_FROM_CONFIG, false)
+          file.document?.setText(mapper.writeValueAsString(this))
+        }
+        finally {
+          file.putUserData(LOAD_FROM_CONFIG, true)
+        }
       }
     }
   }
