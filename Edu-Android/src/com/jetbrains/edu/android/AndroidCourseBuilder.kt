@@ -43,7 +43,6 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     val androidGradlePluginVersion = getLatestAndroidGradlePluginVersion()
     val kotlinVersion = kotlinVersion()
     return super.templateVariables(project) + mapOf(
-      GRADLE_VERSION to SdkConstants.GRADLE_LATEST_VERSION,
       "ANDROID_GRADLE_PLUGIN_VERSION" to androidGradlePluginVersion,
       "KOTLIN_VERSION" to kotlinVersion.version,
       "NEED_KOTLIN_EAP_REPOSITORY" to !kotlinVersion.isRelease
