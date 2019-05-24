@@ -15,9 +15,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.InputValidatorEx
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
 import com.intellij.psi.PsiDirectory
 import com.intellij.util.Function
@@ -353,6 +355,29 @@ object CCUtils {
       val sectionDir = lessonDir.parent ?: return null
       val section = course.getSection(sectionDir.name) ?: return null
       return section.getLesson(lessonDir.name)
+    }
+  }
+
+  @JvmStatic
+  @JvmOverloads
+  fun askToWrapTopLevelLessons(project: Project, course: EduCourse, yesText: String = "Wrap"): Boolean {
+    val result = Messages.showYesNoDialog(project,
+                                          "Top-level lessons will be wrapped with sections as it's not allowed to have both " +
+                                          "top-level lessons and sections",
+                                          "Wrap Lessons Into Sections", yesText, "Cancel", null)
+    if (result != Messages.YES) {
+      return false
+    }
+    wrapLessonsIntoSections(project, course)
+    return true
+  }
+
+  private fun wrapLessonsIntoSections(project: Project, course: Course) {
+    ApplicationManager.getApplication().invokeAndWait {
+      val lessons = course.lessons
+      for (lesson in lessons) {
+        wrapIntoSection(project, course, listOf(lesson), "Section. " + StringUtil.capitalize(lesson.name))
+      }
     }
   }
 }

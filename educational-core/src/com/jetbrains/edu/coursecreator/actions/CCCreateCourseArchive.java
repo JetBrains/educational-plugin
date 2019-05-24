@@ -13,11 +13,16 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCCreateCourseArchiveDialog;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.EduCourse;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
+import static com.jetbrains.edu.coursecreator.CCUtils.askToWrapTopLevelLessons;
 import static com.jetbrains.edu.learning.EduUtils.addMnemonic;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
@@ -52,6 +57,14 @@ public class CCCreateCourseArchive extends DumbAwareAction {
   public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
+    Course course = StudyTaskManager.getInstance(project).getCourse();
+    assert course != null;
+
+    if (CourseExt.getHasSections(course) && CourseExt.getHasTopLevelLessons(course)) {
+      if (!askToWrapTopLevelLessons(project, (EduCourse)course)) {
+        return;
+      }
+    }
 
     CCCreateCourseArchiveDialog dlg = new CCCreateCourseArchiveDialog(project, this);
     dlg.show();
