@@ -4,6 +4,7 @@ package com.jetbrains.edu.coursecreator.yaml.format
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
@@ -13,10 +14,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 
 private const val IS_CORRECT = "is_correct"
 private const val OPTIONS = "options"
+private const val IS_MULTIPLE_CHOICE = "is_multiple_choice"
 
+@JsonPropertyOrder(TaskYamlMixin.TYPE, IS_MULTIPLE_CHOICE, OPTIONS, TaskYamlMixin.FILES, TaskYamlMixin.FEEDBACK_LINK)
 abstract class ChoiceTaskYamlMixin : TaskYamlMixin() {
 
-  @JsonProperty
+  @JsonProperty(IS_MULTIPLE_CHOICE)
   private var isMultipleChoice: Boolean = false
 
   @JsonProperty(OPTIONS)

@@ -169,15 +169,15 @@ class YamlSerializationTest : EduTestCase() {
     }.findTask("lesson1", "task1")
     doTest(task, """
       |type: choice
-      |files:
-      |- name: Test.java
-      |  visible: true
       |is_multiple_choice: false
       |options:
       |- text: 1
       |  is_correct: true
       |- text: 2
       |  is_correct: false
+      |files:
+      |- name: Test.java
+      |  visible: true
       |""".trimMargin("|"))
   }
 
@@ -191,13 +191,13 @@ class YamlSerializationTest : EduTestCase() {
     }.findTask("lesson1", "task1")
     doTest(task, """
       |type: choice
-      |files:
-      |- name: Test.java
-      |  visible: true
       |is_multiple_choice: false
       |options:
       |- text: 1
       |- text: 2
+      |files:
+      |- name: Test.java
+      |  visible: true
       |""".trimMargin("|"))
   }
 

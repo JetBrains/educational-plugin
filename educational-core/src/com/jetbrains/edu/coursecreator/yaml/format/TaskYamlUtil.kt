@@ -20,16 +20,12 @@ import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.editor.EduEditor
 
-private const val TYPE = "type"
-private const val FILES = "files"
-private const val FEEDBACK_LINK = "feedback_link"
-
 /**
  * Mixin class is used to deserialize [Task] item.
  * Update [TaskChangeApplier] if new fields added to mixin
  */
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(TYPE, FILES, FEEDBACK_LINK)
+@JsonPropertyOrder(TaskYamlMixin.TYPE, TaskYamlMixin.FILES, TaskYamlMixin.FEEDBACK_LINK)
 abstract class TaskYamlMixin {
   @JsonProperty(TYPE)
   fun getItemType(): String {
@@ -50,6 +46,12 @@ abstract class TaskYamlMixin {
   @JsonDeserialize(converter = StringToFeedbackLinkConverter::class)
   @JsonProperty(value = FEEDBACK_LINK, access = JsonProperty.Access.READ_WRITE)
   lateinit var myFeedbackLink: FeedbackLink
+
+  companion object {
+    const val TYPE = "type"
+    const val FILES = "files"
+    const val FEEDBACK_LINK = "feedback_link"
+  }
 }
 
 private class FeedbackLinkToStringConverter : StdConverter<FeedbackLink?, String>() {
