@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 
+// Note, `CodeInsightTestFixture#type` can trigger completion (e.g. it inserts paired `"`)
 class FrameworkLessonNavigationTest : NavigationTestBase() {
 
   fun `test next`() {
@@ -20,7 +21,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       val task = course.findTask("lesson1", "task1")
       task.openTaskFileInEditor("fizz.kt", 0)
-      myFixture.type("\"Fizz\"")
+      myFixture.type("123")
       task.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
     }
@@ -29,7 +30,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       dir("lesson1") {
         dir("task") {
           file("fizz.kt", """
-            fun fizz() = "Fizz"
+            fun fizz() = 123
           """)
           file("buzz.kt", """
             fun buzz() = TODO()
@@ -46,13 +47,13 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
 
     withVirtualFileListener(course) {
       task.openTaskFileInEditor("fizz.kt", 0)
-      myFixture.type("\"Fizz\"")
+      myFixture.type("123")
       task.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("buzz.kt", 0)
-      myFixture.type("\"Buzz\"")
+      myFixture.type("456")
       task2.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
     }
@@ -61,7 +62,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       dir("lesson1") {
         dir("task") {
           file("fizzBuzz.kt", """
-            fun fizzBuzz() = "Fizz" + "Buzz"
+            fun fizzBuzz() = 123 + 456
           """)
         }
       }
@@ -75,7 +76,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       val task = course.findTask("lesson1", "task1")
       task.openTaskFileInEditor("fizz.kt", 0)
-      myFixture.type("\"Fizz\"")
+      myFixture.type("123")
       task.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
 
@@ -86,7 +87,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       dir("lesson1") {
         dir("task") {
           file("fizz.kt", """
-            fun fizz() = "Fizz"
+            fun fizz() = 123
           """)
         }
       }
@@ -118,9 +119,9 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       val task = course.findTask("lesson1", "task1")
       task.openTaskFileInEditor("fizz.kt", placeholderIndex = 0)
-      myFixture.type("\"Fizzz\"")
+      myFixture.type("12345678")
       task.openTaskFileInEditor("fizz.kt", placeholderIndex = 1)
-      myFixture.type("\"Buzz\"")
+      myFixture.type("90")
       task.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
 
@@ -131,8 +132,8 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       dir("lesson1") {
         dir("task") {
           file("fizz.kt", """
-            fun fizzz() = "Fizzz"
-            fun buzz() = "Buzz"
+            fun fizzz() = 12345678
+            fun buzz() = 90
           """)
         }
       }
@@ -146,7 +147,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       val task = course.findTask("lesson1", "task1")
       task.openTaskFileInEditor("fizz.kt", 0)
-      myFixture.type("\"Fizz\"")
+      myFixture.type("123")
       task.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
     }
@@ -212,7 +213,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     val task = course.findTask("lesson1", "task1")
     withVirtualFileListener(course) {
       task.openTaskFileInEditor("fizz.kt", 0)
-      myFixture.type("\"Fizz\"")
+      myFixture.type("123")
       myFixture.editor.caretModel.moveToOffset(0)
       myFixture.type("fun foo() {}\n")
       task.status = CheckStatus.Solved
@@ -226,7 +227,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
         dir("task") {
           file("fizz.kt", """
             fun foo() {}
-            fun fizz() = "Fizz"
+            fun fizz() = 123
           """)
         }
       }
@@ -239,13 +240,13 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     val task = course.findTask("lesson1", "task1")
     withVirtualFileListener(course) {
       task.openTaskFileInEditor("fizz.kt", 0)
-      myFixture.type("\"Fizz\"")
+      myFixture.type("123")
       task.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("buzz.kt", 0)
-      myFixture.type("\"Buzz\"")
+      myFixture.type("456")
       myFixture.editor.caretModel.moveToOffset(0)
       myFixture.type("fun bar() {}\n")
       myFixture.testAction(PreviousTaskAction())
@@ -257,11 +258,11 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       dir("lesson1") {
         dir("task") {
           file("fizz.kt", """
-            fun fizz() = "Fizz"
+            fun fizz() = 123
           """)
           file("buzz.kt", """
             fun bar() {}
-            fun buzz() = "Buzz"
+            fun buzz() = 456
           """)
         }
       }
