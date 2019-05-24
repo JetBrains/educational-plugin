@@ -92,10 +92,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
       return;
     }
     final Ref<Integer> countTasks = new Ref<>(0);
-    course.visitLessons((lesson) -> {
-      countTasks.set(countTasks.get() + lesson.getTaskList().size());
-      return;
-    });
+    course.visitLessons((lesson) -> countTasks.set(countTasks.get() + lesson.getTaskList().size()));
     if (countTasks.get() == 5) {
       FeedbackSenderKt.showNotification(false, course, project);
     }
@@ -120,7 +117,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
 
   private static boolean isActionApplicable(@Nullable Project project, @Nullable VirtualFile[] selectedFiles) {
     if (project == null || selectedFiles == null) return false;
-    if (selectedFiles.length == 0 || selectedFiles.length > 1) return false;
+    if (selectedFiles.length != 1) return false;
 
     if (!EduUtils.isStudyProject(project) || !CCUtils.isCourseCreator(project)) return false;
 

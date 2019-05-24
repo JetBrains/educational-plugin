@@ -1,16 +1,20 @@
 package com.jetbrains.edu.coursecreator.actions
 
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import javax.swing.Icon
 
 abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: Icon) :
@@ -56,6 +60,19 @@ abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: 
   override fun sortSiblings(course: Course, parentItem: StudyItem?) {
     if (parentItem is ItemContainer) {
       parentItem.sortItems()
+    }
+  }
+
+  override fun update(event: AnActionEvent) {
+    super.update(event)
+    val project = event.getData(CommonDataKeys.PROJECT) ?: return
+    val course = StudyTaskManager.getInstance(project).course ?: return
+    val selectedFiles = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return
+    if (selectedFiles.size != 1) return
+
+    val sourceDirectory = selectedFiles.first()
+    if (course.hasSections && getParentItem(course, sourceDirectory) is Course) {
+      event.presentation.isEnabledAndVisible = false
     }
   }
 
