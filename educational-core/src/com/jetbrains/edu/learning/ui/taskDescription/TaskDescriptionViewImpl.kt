@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -29,6 +30,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   private lateinit var checkPanel: CheckPanel
   private val taskTextTW : TaskDescriptionToolWindow = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JavaFxToolWindow() else SwingToolWindow()
   private val taskTextPanel : JComponent = taskTextTW.createTaskInfoPanel(project)
+  private val topPanel: JPanel = JPanel(BorderLayout())
   private lateinit var separator: JSeparator
   private lateinit var contentManager: ContentManager
 
@@ -39,6 +41,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       separator.isVisible = value != null
       checkPanel.isVisible = value != null
       updateCheckPanel(value)
+      updateTopPanel(value)
       taskTextTW.updateTaskSpecificPanel(value)
       updateAdditionalTaskTab(value)
       field = value
@@ -70,6 +73,16 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     taskTextTW.updateTaskSpecificPanel(currentTask)
   }
 
+  override fun updateTopPanel(task: Task?) {
+    topPanel.removeAll()
+    val course = StudyTaskManager.getInstance(project).course
+    if (course is HyperskillCourse) {
+      val panel = getTopPanelForProblem(project, course, task) ?: return
+      topPanel.add(panel, BorderLayout.CENTER)
+      topPanel.add(JSeparator(), BorderLayout.SOUTH)
+    }
+  }
+
   override fun updateTaskDescription(task: Task?) {
     setTaskText(task)
     updateTaskSpecificPanel()
@@ -89,6 +102,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val panel = JPanel(BorderLayout())
     panel.border = JBUI.Borders.empty(0, 15, 15, 0)
 
+    panel.add(topPanel, BorderLayout.NORTH)
     panel.add(taskTextPanel, BorderLayout.CENTER)
     taskTextPanel.border = JBUI.Borders.empty(0, 0, 10, 0)
 

@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -98,28 +99,30 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
     if (result.status != CheckStatus.Solved) {
       return resultLabel
     }
-    val panel = createResultPanel()
+    val panel = createResultPanel(task)
     panel.add(resultLabel, BorderLayout.CENTER)
     return panel
   }
 
-  private fun createResultPanel(): JPanel {
+  private fun createResultPanel(task: Task): JPanel {
     val panel = JPanel(BorderLayout())
-    val nextButton = createButtonToolbar(NextTaskAction.ACTION_ID)
-    nextButton.border = JBUI.Borders.empty(0, 12, 0, 0)
-    panel.add(nextButton, BorderLayout.WEST)
+    if (NavigationUtils.nextTask(task) != null) {
+      val nextButton = createButtonToolbar(NextTaskAction.ACTION_ID)
+      nextButton.border = JBUI.Borders.empty(0, 12, 0, 0)
+      panel.add(nextButton, BorderLayout.WEST)
+    }
     return panel
   }
 
-  private fun addResultPanel() {
-    checkFinishedPanel.add(createResultPanel())
+  private fun addResultPanel(task: Task) {
+    checkFinishedPanel.add(createResultPanel(task))
   }
 
   fun updateCheckPanel(task: Task) {
     checkButtonWrapper.removeAll()
     checkButtonWrapper.add(createButtonToolbar(CheckAction.createCheckAction(task)), BorderLayout.WEST)
     if (task is TheoryTask) {
-      addResultPanel()
+      addResultPanel(task)
     }
   }
 

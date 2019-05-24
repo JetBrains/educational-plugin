@@ -35,17 +35,23 @@ interface HyperskillService {
   fun topics(@Query("stage") stageId: Int): Call<TopicsList>
 
   @GET("api/steps/{id}")
-  fun step(@Path("id") stepId: Int): Call<StepsList>
+  fun step(@Path("id") stepId: Int): Call<HyperskillStepsList>
 
   @GET("api/submissions")
   fun submission(@Query("step") step: Int, @Query("page") page: Int): Call<SubmissionsList>
 
+  @GET("api/submissions/{id}")
+  fun submission(@Path("id") submissionId: Int): Call<SubmissionsList>
+
   @GET("api/projects/{id}")
   fun project(@Path("id") projectId: Int): Call<ProjectsList>
+
+  @GET("api/solutions")
+  fun solutions(@Query("step") step: Int): Call<SolutionsList>
 
   @POST("api/attempts")
   fun attempt(@Body attempt: Attempt): Call<AttemptsList>
 
   @POST("api/submissions")
-  fun submission(@Body submission: Submission): Call<Any>
+  fun submission(@Body submission: Submission): Call<SubmissionsList>
 }

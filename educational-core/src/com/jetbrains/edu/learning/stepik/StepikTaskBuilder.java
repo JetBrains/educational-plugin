@@ -145,9 +145,9 @@ public class StepikTaskBuilder {
         }
       }
       if (options.getExecutionMemoryLimit() != null && options.getExecutionTimeLimit() != null) {
-        taskDescription.append("<br>").append("<b>Memory limit</b>: ").append(options.getExecutionMemoryLimit()).append(" Mb")
+        taskDescription.append("<br>").append("<font color=\"gray\">Memory limit: ").append(options.getExecutionMemoryLimit()).append(" Mb</font>")
           .append("<br>")
-          .append("<b>Time limit</b>: ").append(options.getExecutionTimeLimit()).append("s").append("<br><br>");
+          .append("<font color=\"gray\">Time limit: ").append(options.getExecutionTimeLimit()).append("s</font>").append("<br><br>");
       }
 
       if (myLanguage.isKindOf(EduNames.PYTHON) && options.getSamples() != null) {
@@ -370,14 +370,17 @@ public class StepikTaskBuilder {
     return GeneratorUtils.joinPaths(myConfigurator.getSourceDir(), fileName);
   }
 
-  private static String getCodeTemplateForTask(@NotNull Language language,
-                                               @Nullable Map codeTemplates) {
-    final String languageString = StepikLanguages.langOfId(language.getID()).getLangName();
+  private String getCodeTemplateForTask(@NotNull Language language, @Nullable Map codeTemplates) {
+    final String languageString = getLanguageName(language);
     if (languageString != null && codeTemplates != null) {
       return (String)codeTemplates.get(languageString);
     }
 
     return null;
+  }
+
+  protected String getLanguageName(@NotNull Language language) {
+    return StepikLanguages.langOfId(language.getID()).getLangName();
   }
 
   private static void createTestFileFromSamples(@NotNull Task task,

@@ -1,3 +1,4 @@
+@file:JvmName("IdeDefaultCourseTypes")
 package com.jetbrains.edu.coursecreator
 
 import com.intellij.lang.Language

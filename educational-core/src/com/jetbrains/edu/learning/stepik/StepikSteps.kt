@@ -202,7 +202,7 @@ class ChoiceStepOption {
   val feedback = ""
 }
 
-class StepSource {
+open class StepSource {
   @JsonProperty(ID)
   var id: Int = 0
 

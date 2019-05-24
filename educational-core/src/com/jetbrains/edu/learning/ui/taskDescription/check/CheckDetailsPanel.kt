@@ -24,6 +24,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.stepik.hyperskill.HSPeekSolutionAction
+import com.jetbrains.edu.learning.stepik.hyperskill.canShowHyperskillSolution
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckMessagePanel.Companion.MAX_EXPECTED_ACTUAL_LENGTH
@@ -39,7 +41,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     val messagePanel = createMessagePanel(project, checkResult, linksPanel)
 
     // hack to hide empty border if there are no check details to show
-    isVisible = !messagePanel.isEmpty || !linksPanel.components.isEmpty()
+    isVisible = !messagePanel.isEmpty || linksPanel.components.isNotEmpty()
     border = JBUI.Borders.empty(20, 0, 0, 0)
     add(messagePanel, BorderLayout.CENTER)
     add(linksPanel, BorderLayout.SOUTH)
@@ -74,12 +76,13 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     val linksPanel = JPanel(BorderLayout())
     linksPanel.border = JBUI.Borders.emptyLeft(2)
 
-    if (task.course is HyperskillCourse && checkResult.status == CheckStatus.Failed) {
+    val course = task.course
+    if (course is HyperskillCourse && course.isTaskInProject(task) && checkResult.status == CheckStatus.Failed) {
       val showMoreInfo = LightColoredActionLink("Review Topics for the Stage...", SwitchTaskTabAction(project, 1))
       linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
     }
 
-    if (task.course !is CourseraCourse) {
+    if (course !is CourseraCourse) {
       val answerHintsPanel = createAnswerHintsPanel(project, task, checkResult)
       if (answerHintsPanel != null) {
         linksPanel.add(answerHintsPanel, BorderLayout.CENTER)
@@ -95,9 +98,9 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       panel
     }
 
-    if (EduUtils.isStudentProject(project) && task.canShowSolution()) {
+    if (EduUtils.isStudentProject(project) && (task.canShowSolution() || canShowHyperskillSolution(task))) {
       val peekSolution = LightColoredActionLink("Peek Solution...",
-                                                ActionManager.getInstance().getAction(CompareWithAnswerAction.ACTION_ID))
+                                                ActionManager.getInstance().getAction(getPeekSolutionAction(task)))
       answerHintsPanel.value.add(peekSolution)
     }
 
@@ -106,6 +109,14 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       answerHintsPanel.value.add(compareOutputs)
     }
     return if (answerHintsPanel.isInitialized()) answerHintsPanel.value else null
+  }
+
+  private fun getPeekSolutionAction(task: Task) : String {
+    val course = task.course
+    if (course is HyperskillCourse && !course.isTaskInProject(task)) {
+      return HSPeekSolutionAction.ACTION_ID
+    }
+    return CompareWithAnswerAction.ACTION_ID
   }
 
   class LightColoredActionLink(text: String, action: AnAction, icon: Icon? = null): ActionLink(text, icon, action) {

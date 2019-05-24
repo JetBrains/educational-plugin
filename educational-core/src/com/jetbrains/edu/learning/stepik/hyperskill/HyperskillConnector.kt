@@ -6,22 +6,16 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduLogInListener
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
-import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.createRetrofitBuilder
 import com.jetbrains.edu.learning.stepik.executeHandlingExceptions
@@ -32,6 +26,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.util.*
 
 object HyperskillConnector {
   private val LOG = Logger.getInstance(HyperskillConnector::class.java)
@@ -120,7 +115,7 @@ object HyperskillConnector {
     return response?.body()?.projects?.firstOrNull()
   }
 
-  private fun getStepSource(stepId: Int): StepSource? {
+  fun getStepSource(stepId: Int): HyperskillStepSource? {
     val response = service.step(stepId).executeHandlingExceptions()
     return response?.body()?.steps?.firstOrNull()
   }
@@ -157,12 +152,25 @@ object HyperskillConnector {
     val stepSources = course.stages.mapNotNull { getStepSource(it.stepId) }
 
     progressIndicator?.checkCanceled()
-    val tasks = StepikCourseLoader.getTasks(language, lesson, stepSources)
+    val tasks = getTasks(language, lesson, stepSources)
     for (task in tasks) {
       lesson.addTask(task)
     }
     course.additionalFiles = loadAttachment(attachmentLink)
     return lesson
+  }
+
+  fun getTasks(language: Language, lesson: Lesson, stepSources: List<HyperskillStepSource>): List<Task> {
+    val tasks = ArrayList<Task>()
+    for (step in stepSources) {
+      val builder = HyperskillTaskBuilder(language, lesson, step, step.id)
+      if (!builder.isSupported(step.block!!.name)) continue
+      val task = builder.createTask(step.block!!.name)
+      if (task != null) {
+        tasks.add(task)
+      }
+    }
+    return tasks
   }
 
   fun fillHyperskillCourse(hyperskillCourse: HyperskillCourse): Boolean {
@@ -222,44 +230,28 @@ object HyperskillConnector {
     return service.submission(stepId, page).executeHandlingExceptions()?.body()?.submissions?.firstOrNull()
   }
 
-  // Post requests:
-
-  fun postSolution(task: Task, project: Project, result: CheckResult) {
-    val taskDir = task.getTaskDir(project) ?: return LOG.error("Failed to find stage directory ${task.name}")
-
-    val attempt = postAttempt(task.id)
-    if (attempt == null) {
-      showFailedToPostNotification()
-      return LOG.error("Failed to post attempt for stage ${task.id}")
-    }
-
-    val files = ArrayList<SolutionFile>()
-    for (taskFile in task.taskFiles.values) {
-      val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
-      runReadAction {
-        val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: return@runReadAction
-        files.add(SolutionFile(taskFile.name, document.text))
-      }
-    }
-
-    postSubmission(attempt, files, task, "${result.message}\n${result.details}")
+  fun getSubmissionById(submissionId: Int): Submission? {
+    return service.submission(submissionId).executeHandlingExceptions()?.body()?.submissions?.firstOrNull()
   }
 
-  private fun postSubmission(attempt: Attempt, files: ArrayList<SolutionFile>, task: Task, feedback: String) {
-    val score = if (task.status == CheckStatus.Solved) "1" else "0"
-    val objectMapper = StepikConnector.createMapper(SimpleModule())
-    val serializedTask = objectMapper.writeValueAsString(TaskData(task))
-    val submission = Submission(score, attempt.id, files, serializedTask, feedback)
+  fun getSolution(stepId: Int): Solution? {
+    return service.solutions(stepId).executeHandlingExceptions()?.body()?.solutions?.firstOrNull()
+  }
+
+  // Post requests:
+
+  fun postSubmission(submission: Submission): Submission? {
     val response = service.submission(submission).executeHandlingExceptions()
     if (response == null || response.code() != HttpStatus.SC_CREATED) {
       showFailedToPostNotification()
-      LOG.error("Failed to make submission for stage ${task.id}")
+      LOG.error("Failed to make submission")
     }
+    return response?.body()?.submissions?.firstOrNull()
   }
 
-  private fun postAttempt(step: Int): Attempt? {
+  fun postAttempt(step: Int): Attempt? {
     val response = service.attempt(Attempt(step)).executeHandlingExceptions()
-    return response?.body()?.attempts?.firstOrNull() ?: return null
+    return response?.body()?.attempts?.firstOrNull()
   }
 
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {

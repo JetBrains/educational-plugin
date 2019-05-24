@@ -315,7 +315,7 @@ class Submission {
   var reply: Reply? = null
 
   @JsonProperty(ID)
-  var id: String? = null
+  var id: Int? = null
 
   @JsonProperty(STATUS)
   var status: String? = null

@@ -19,6 +19,13 @@ object ProgressUtil {
     return Pair(taskSolved, taskNum)
   }
 
+  @JvmStatic
+  fun countProgress(lesson: Lesson): Pair<Int, Int> {
+    val taskNum = lesson.taskListForProgress.size
+    val taskSolved = getSolvedTasks(lesson)
+    return Pair(taskSolved, taskNum)
+  }
+
   private fun getSolvedTasks(lesson: Lesson): Int {
     return lesson.taskListForProgress
       .filter { it.status == CheckStatus.Solved }

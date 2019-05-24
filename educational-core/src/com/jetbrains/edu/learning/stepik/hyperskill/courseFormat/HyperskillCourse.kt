@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseFormat
 
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillStage
@@ -20,6 +22,10 @@ class HyperskillCourse : Course {
     description = hyperskillProject.description + descriptionNote(hyperskillProject.id)
     language = languageID
   }
+
+  fun getProjectLesson(): FrameworkLesson? = lessons.firstOrNull() as? FrameworkLesson
+
+  fun isTaskInProject(task: Task): Boolean = task.lesson == getProjectLesson()
 
   private fun descriptionNote(projectId: Int): String =
     "<br/><br/>Learn more at <a href=\"https://hyperskill.org\">https://hyperskill.org/projects/$projectId</a>"

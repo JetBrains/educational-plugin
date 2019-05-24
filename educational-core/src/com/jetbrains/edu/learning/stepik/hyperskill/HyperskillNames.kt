@@ -10,6 +10,7 @@ import org.jetbrains.ide.BuiltInServerManager
 
 const val HYPERSKILL = "Hyperskill"
 const val HYPERSKILL_TYPE = HYPERSKILL
+const val HYPERSKILL_PROBLEMS = "Problems"
 const val HYPERSKILL_URL_PROPERTY = "Hyperskill URL"
 const val HYPERSKILL_DEFAULT_URL = "https://hyperskill.org/"
 const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects"
@@ -22,8 +23,9 @@ const val HYPERSKILL_PROJECT_NOT_SUPPORTED = "Selected project is not supported 
 
 val HYPERSKILL_LANGUAGES = mapOf("java" to "${EduNames.JAVA} 11", "kotlin" to EduNames.KOTLIN, "python" to EduNames.PYTHON)
 
-const val SUCCESS_MESSAGE = "<html>${CheckUtils.CONGRATULATIONS} " +
-                            "Continue on <a href=\"https://hyperskill.org/learning-path\">Hyperskill</a>.</html>"
+const val CONTINUE_ON_HYPERSKILL = "Continue on <a href=\"https://hyperskill.org/learning-path\">Hyperskill</a>."
+
+const val SUCCESS_MESSAGE = "<html>${CheckUtils.CONGRATULATIONS} $CONTINUE_ON_HYPERSKILL</html>"
 
 val HYPERSKILL_URL: String
   get() = PropertiesComponent.getInstance().getValue(HYPERSKILL_URL_PROPERTY, HYPERSKILL_DEFAULT_URL)

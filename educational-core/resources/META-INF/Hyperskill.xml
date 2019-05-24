@@ -1,5 +1,8 @@
 <idea-plugin>
 
+  <actions>
+    <action id="Hyperskill.PeekSolution" class="com.jetbrains.edu.learning.stepik.hyperskill.HSPeekSolutionAction"/>
+  </actions>
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService"/>
@@ -7,6 +10,7 @@
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCheckListener"/>
+    <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRemoteTaskChecker"/>
   </extensions>
   <actions>
     <action id="Educational.Educator.HyperskillChangeHost" class="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillChangeHost"/>

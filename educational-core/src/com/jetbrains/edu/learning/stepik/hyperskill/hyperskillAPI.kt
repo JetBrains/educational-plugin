@@ -2,6 +2,9 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
+import com.jetbrains.edu.learning.stepik.StepSource
+import com.jetbrains.edu.learning.stepik.api.REPLY
+import com.jetbrains.edu.learning.stepik.api.STEPS
 
 const val PROFILES = "profiles"
 const val STAGES = "stages"
@@ -18,6 +21,8 @@ const val USE_IDE = "use_ide"
 const val LANGUAGE = "language"
 const val THEORY_ID = "theory"
 const val STEP_ID = "step"
+const val TOPIC_THEORY = "topic_theory"
+const val SOLUTIONS = "solutions"
 
 class HyperskillAccount : OAuthAccount<HyperskillUserInfo>()
 
@@ -70,6 +75,35 @@ class HyperskillProject {
   var language: String = ""
 }
 
+class HyperskillTopic {
+  @JsonProperty(ID)
+  var id: Int = -1
+
+  @JsonProperty(TITLE)
+  var title: String = ""
+
+  @JsonProperty(THEORY_ID)
+  var theoryId: Int? = null
+}
+
+class HyperskillStepSource : StepSource() {
+  @JsonProperty(TITLE)
+  var title: String? = null
+
+  @JsonProperty(TOPIC_THEORY)
+  var topicTheory: Int? = null
+}
+
+class Solution {
+  @JsonProperty(ID)
+  var id: Int = 0
+
+  @JsonProperty(REPLY)
+  lateinit var reply: String
+}
+
+// lists
+
 class UsersList {
   @JsonProperty(PROFILES)
   lateinit var profiles: List<HyperskillUserInfo>
@@ -90,13 +124,12 @@ class ProjectsList {
   lateinit var projects: List<HyperskillProject>
 }
 
-class HyperskillTopic {
-  @JsonProperty(ID)
-  var id: Int = -1
+class HyperskillStepsList {
+  @JsonProperty(STEPS)
+  lateinit var steps: List<HyperskillStepSource>
+}
 
-  @JsonProperty(TITLE)
-  var title: String = ""
-
-  @JsonProperty(THEORY_ID)
-  var theoryId: Int? = null
+class SolutionsList {
+  @JsonProperty(SOLUTIONS)
+  lateinit var solutions: List<Solution>
 }

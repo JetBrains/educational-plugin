@@ -94,13 +94,18 @@ public class StepikCheckerConnector {
   @NotNull
   private static SubmissionData createCodeSubmissionData(int attemptId, String language, String answer) {
     final SubmissionData submissionData = new SubmissionData();
-    submissionData.submission = new Submission();
-    submissionData.submission.setAttempt(attemptId);
+    submissionData.submission = createCodeSubmission(attemptId, language, answer);
+    return submissionData;
+  }
+
+  public static Submission createCodeSubmission(int attemptId, String language, String answer) {
+    Submission submission = new Submission();
+    submission.setAttempt(attemptId);
     final Reply reply = new Reply();
     reply.setLanguage(language);
     reply.setCode(answer);
-    submissionData.submission.setReply(reply);
-    return submissionData;
+    submission.setReply(reply);
+    return submission;
   }
 
   private static boolean[] createChoiceTaskAnswerArray(@NotNull ChoiceTask task) {

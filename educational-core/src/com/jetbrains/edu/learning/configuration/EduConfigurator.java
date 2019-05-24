@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.EmptyIcon;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.IdeDefaultCourseTypes;
 import com.jetbrains.edu.coursecreator.ui.CCNewCoursePanel;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.EduCourseBuilder;
@@ -18,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
@@ -205,6 +207,11 @@ public interface EduConfigurator<Settings> {
     return EmptyIcon.ICON_16;
   }
 
+  /**
+   * Tab next to the task description.
+   *
+   * @see TaskDescriptionView
+   */
   @Nullable
   default Pair<JPanel, String> additionalTaskTab(@Nullable Task currentTask, Project project) {
     return null;

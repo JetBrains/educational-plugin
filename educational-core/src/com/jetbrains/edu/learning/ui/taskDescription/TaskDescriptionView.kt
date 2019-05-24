@@ -17,6 +17,7 @@ abstract class TaskDescriptionView {
   abstract fun init(toolWindow: ToolWindow)
 
   abstract fun updateTaskSpecificPanel()
+  abstract fun updateTopPanel(task: Task?)
   abstract fun updateTaskDescription(task: Task?)
   abstract fun updateTaskDescription()
   abstract fun updateAdditionalTaskTab()

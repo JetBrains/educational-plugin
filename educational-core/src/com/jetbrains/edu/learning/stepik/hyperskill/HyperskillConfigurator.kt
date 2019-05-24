@@ -24,6 +24,7 @@ interface HyperskillConfigurator<T> : EduConfigurator<T> {
 
     val course = currentTask.lesson.course
     if (course is HyperskillCourse) {
+      if (!course.isTaskInProject(currentTask)) return null
       val topicsPanel = JPanel(VerticalFlowLayout())
       topicsPanel.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
       topicsPanel.border = JBUI.Borders.empty(8, 16, 0, 0)

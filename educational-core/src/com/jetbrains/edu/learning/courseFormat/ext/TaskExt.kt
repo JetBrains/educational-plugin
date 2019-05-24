@@ -118,7 +118,7 @@ fun Task.taskDescriptionHintBlocks(): String {
         continue
       }
       for (hint in placeholder.hints) {
-        if (!hint.isEmpty()) {
+        if (hint.isNotEmpty()) {
           hints.add(hint)
         }
       }

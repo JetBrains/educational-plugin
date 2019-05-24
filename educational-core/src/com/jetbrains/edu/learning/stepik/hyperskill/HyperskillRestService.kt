@@ -2,17 +2,26 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.AppIcon
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
+import com.jetbrains.edu.learning.courseFormat.FeedbackLink
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
+import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector.getTasks
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*
@@ -30,7 +39,8 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val uri = request.uri()
     val codeMatcher = OAUTH_CODE_PATTERN.matcher(uri)
     val openCourseMatcher = OPEN_COURSE_PATTERN.matcher(uri)
-    return if (request.method() === HttpMethod.GET && (codeMatcher.matches() || openCourseMatcher.matches())) {
+    val openStepMatcher = OPEN_STEP_PATTERN.matcher(uri)
+    return if (request.method() === HttpMethod.GET && (codeMatcher.matches() || openCourseMatcher.matches() || openStepMatcher.matches())) {
       true
     }
     else super.isHostTrusted(request)
@@ -52,6 +62,11 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       }
     }
 
+    val openStepMatcher = OPEN_STEP_PATTERN.matcher(uri)
+    if (openStepMatcher.matches()) {
+      return openStep(urlDecoder, request, context)
+    }
+
     if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
       val code = getStringParameter("code", urlDecoder)!! // cannot be null because of pattern
 
@@ -67,6 +82,67 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
     sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
     return "Unknown command: $uri"
+  }
+
+  private fun openStep(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
+    val stepId = getIntParameter("step_id", urlDecoder)
+    val project = ProjectManager.getInstance().openProjects.firstOrNull() ?: error("Cannot find project")
+    val course = StudyTaskManager.getInstance(project).course
+    if (course !is HyperskillCourse) {
+      return sendErrorResponse(request, context, "Could not find opened hyperskill project")
+    }
+    val lesson = findOrCreateProblemsLesson(course, project)
+    val lessonDir = lesson.getLessonDir(project)
+                    ?: return sendErrorResponse(request, context, "Could not find Problems directory")
+    val stepSource = HyperskillConnector.getStepSource(stepId)
+                     ?: return sendErrorResponse(request, context, "Could not find get step source for the task")
+    val task = findOrCreateTask(course, lesson, stepSource, lessonDir, project)
+
+    runInEdt {
+      NavigationUtils.navigateToTask(project, task)
+      requestFocus()
+    }
+    sendOk(request, context)
+    return null
+  }
+
+  private fun findOrCreateTask(course: HyperskillCourse, lesson: Lesson, stepSource: HyperskillStepSource,
+                               lessonDir: VirtualFile, project: Project): com.jetbrains.edu.learning.courseFormat.tasks.Task {
+    var task = lesson.getTask(stepSource.id)
+    if (task == null) {
+      task = getTasks(course.languageById, lesson, listOf(stepSource)).first()
+      task.name = stepSource.title
+      task.feedbackLink = FeedbackLink(stepLink(task.id))
+      task.index = lesson.taskList.size + 1
+      task.descriptionText = "<b>${task.name}</b> ${openOnHyperskillLink(task.id)}" +
+                             "<br/><br/>${task.descriptionText}" +
+                             "<br/>${openTheoryLink(stepSource.topicTheory)}"
+      lesson.addTask(task)
+      task.init(course, lesson, false)
+
+      GeneratorUtils.createTask(task, lessonDir)
+
+      course.configurator?.courseBuilder?.refreshProject(project)
+    }
+    return task
+  }
+
+  private fun openTheoryLink(stepId: Int?) =
+    if (stepId != null) "<a href=\"${stepLink(stepId)}\">Show topic summary</a>" else ""
+
+  private fun openOnHyperskillLink(stepId: Int) = "<a class=\"right\" href=\"${stepLink(stepId)}\">Open on Hyperskill</a>"
+
+  private fun findOrCreateProblemsLesson(course: HyperskillCourse, project: Project): Lesson {
+    var lesson = course.getLesson(HYPERSKILL_PROBLEMS)
+    if (lesson == null) {
+      lesson = Lesson()
+      lesson.name = HYPERSKILL_PROBLEMS
+      lesson.index = 2
+      course.addLesson(lesson)
+      lesson.init(course, null, false)
+      GeneratorUtils.createLesson(lesson, course.getDir(project))
+    }
+    return lesson
   }
 
   private fun openProject(decoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
@@ -86,14 +162,16 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   }
 
   private fun focusOpenProject(courseId: Int, stageId: Int): Boolean {
-    val (project, course) = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillProject.id == courseId } ?: return false
+    val (project, course) = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillProject.id == courseId }
+                            ?: return false
     course.putUserData(HYPERSKILL_STAGE, stageId)
-    ApplicationManager.getApplication().invokeLater { openSelectedStage(course, project) }
+    runInEdt { openSelectedStage(course, project) }
     return true
   }
 
   private fun openRecentProject(courseId: Int, stageId: Int): Boolean {
-    val (_, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject.id == courseId } ?: return false
+    val (_, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject.id == courseId }
+                      ?: return false
     course?.putUserData(HYPERSKILL_STAGE, stageId)
     return true
   }
@@ -149,5 +227,6 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     private const val EDU_HYPERSKILL_SERVICE_NAME = "edu/hyperskill"
     private val OAUTH_CODE_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME/oauth\\?code=(\\w+)")
     private val OPEN_COURSE_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME\\?stage_id=.+&project_id=.+")
+    private val OPEN_STEP_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME\\?step_id=.+")
   }
 }
