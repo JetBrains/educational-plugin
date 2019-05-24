@@ -118,7 +118,7 @@ object PlaceholderPainter {
   @JvmStatic
   fun hidePlaceholders(taskFile: TaskFile) {
     for (placeholder in taskFile.answerPlaceholders) {
-      PlaceholderPainter.hidePlaceholder(placeholder)
+      hidePlaceholder(placeholder)
     }
   }
 
