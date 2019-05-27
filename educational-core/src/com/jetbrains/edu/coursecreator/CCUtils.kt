@@ -21,9 +21,9 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
-import com.intellij.psi.PsiDirectory
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
+import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
@@ -346,7 +346,7 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun lessonFromDir(course: Course, lessonDir: PsiDirectory, project: Project): Lesson? {
+  fun lessonFromDir(course: Course, lessonDir: VirtualFile, project: Project): Lesson? {
     val parentDir = lessonDir.parent
     if (parentDir != null && parentDir.name == project.courseDir.name) {
       return course.getLesson(lessonDir.name)
@@ -380,4 +380,25 @@ object CCUtils {
       }
     }
   }
+
+  @JvmStatic
+  fun pushAvailable(parent: ItemContainer, itemToPush: StudyItem, project: Project): Boolean {
+    for (task in parent.items) {
+      if (task === itemToPush) {
+        continue
+      }
+      if (task.id == 0 && task.index < itemToPush.index) {
+        showErrorNotification(project, "Failed to upload",
+                              "Previous siblings are not published yet. Use 'Update Course' action")
+        return false
+      }
+      if (task.id != 0 && task.index > itemToPush.index) {
+        showErrorNotification(project, "Failed to upload",
+                              "Next siblings are affected. Use 'Update Course' action")
+        return false
+      }
+    }
+    return true
+  }
+
 }

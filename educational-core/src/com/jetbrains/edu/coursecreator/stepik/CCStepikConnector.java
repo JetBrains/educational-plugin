@@ -116,7 +116,6 @@ public class CCStepikConnector {
    * This method should be used for courses with sections only
    */
   private static void postSections(@NotNull Project project, @NotNull EduCourse course) {
-    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     course.sortItems();
     final List<Section> sections = course.getSections();
     assert course.getLessons().isEmpty() : "postSections method should be used for courses with sections only";
@@ -126,14 +125,13 @@ public class CCStepikConnector {
       List<Lesson> lessons = section.getLessons();
 
       final int sectionId = postSectionInfo(project, section, course.getId());
-      postLessons(project, indicator, course, sectionId, lessons);
+      postLessons(project, course, sectionId, lessons);
     }
   }
 
   private static void postTopLevelLessons(@NotNull Project project, @NotNull EduCourse course) {
-    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     final int sectionId = postSectionForTopLevelLessons(project, course);
-    postLessons(project, indicator, course, sectionId, course.getLessons());
+    postLessons(project, course, sectionId, course.getLessons());
   }
 
   public static int postSectionForTopLevelLessons(@NotNull Project project, @NotNull EduCourse course) {
@@ -145,11 +143,11 @@ public class CCStepikConnector {
     return sectionId;
   }
 
-  public static boolean postSection(@NotNull Project project, @NotNull Section section, @Nullable ProgressIndicator indicator) {
+  public static boolean postSection(@NotNull Project project, @NotNull Section section) {
     EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     final int sectionId = postSectionInfo(project, section, course.getId());
-    postLessons(project, indicator, course, sectionId, section.getLessons());
+    postLessons(project, course, sectionId, section.getLessons());
     return sectionId != -1;
   }
 
@@ -167,8 +165,8 @@ public class CCStepikConnector {
     return postedSection.getId();
   }
 
-  private static void postLessons(@NotNull Project project, @Nullable ProgressIndicator indicator, @NotNull EduCourse course,
-                                  int sectionId, @NotNull List<Lesson> lessons) {
+  private static void postLessons(@NotNull Project project, @NotNull EduCourse course, int sectionId, @NotNull List<Lesson> lessons) {
+    ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     int position = 1;
     for (Lesson lesson : lessons) {
       updateProgress("Publishing lesson " + lesson.getIndex());

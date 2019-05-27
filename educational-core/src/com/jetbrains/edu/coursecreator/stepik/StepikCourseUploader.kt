@@ -81,7 +81,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     // post new section
     changedItems.newSections.forEach {
       it.position = it.index
-      success = postSection(project, it, null) && success
+      success = postSection(project, it) && success
     }
 
     // update section

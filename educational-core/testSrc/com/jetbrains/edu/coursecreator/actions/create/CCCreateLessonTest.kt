@@ -65,38 +65,11 @@ class CCCreateLessonTest : EduActionTestCase() {
     TestCase.assertEquals(3, course.getLesson("lesson3")!!.index)
   }
 
-  fun `test create lesson before section in course`() {
+  fun `test create lesson before lesson in course`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
-        }
-      }
-      section {
-        lesson {
-          eduTask {
-            taskFile("taskFile2.txt")
-          }
-        }
-      }
-    }
-    val lessonFile = findFile("lesson1")
-    withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2", 2)) {
-      testAction(dataContext(lessonFile), CCCreateLesson())
-    }
-    TestCase.assertEquals(3, course.items.size)
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, course.getLesson("lesson2")!!.index)
-    TestCase.assertEquals(3, course.getSection("section2")!!.index)
-  }
-
-  fun `test create lesson after section in course`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-      section {
-        lesson {
-          eduTask {
-            taskFile("taskFile1.txt")
-          }
         }
       }
       lesson {
@@ -106,13 +79,36 @@ class CCCreateLessonTest : EduActionTestCase() {
       }
     }
     val lessonFile = findFile("lesson1")
-    withMockCreateStudyItemUi(MockNewStudyItemUi("lesson01", 2)) {
+    withMockCreateStudyItemUi(MockNewStudyItemUi("lesson12", 2)) {
       testAction(dataContext(lessonFile), CCCreateLesson())
     }
     TestCase.assertEquals(3, course.items.size)
-    TestCase.assertEquals(1, course.getSection("section1")!!.index)
-    TestCase.assertEquals(2, course.getLesson("lesson01")!!.index)
-    TestCase.assertEquals(3, course.getLesson("lesson1")!!.index)
+    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
+    TestCase.assertEquals(2, course.getLesson("lesson12")!!.index)
+    TestCase.assertEquals(3, course.getLesson("lesson2")!!.index)
+  }
+
+  fun `test create lesson after lesson in course`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+      lesson {
+        eduTask {
+          taskFile("taskFile2.txt")
+        }
+      }
+    }
+    val lessonFile = findFile("lesson2")
+    withMockCreateStudyItemUi(MockNewStudyItemUi("lesson11", 2)) {
+      testAction(dataContext(lessonFile), CCCreateLesson())
+    }
+    TestCase.assertEquals(3, course.items.size)
+    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
+    TestCase.assertEquals(2, course.getLesson("lesson11")!!.index)
+    TestCase.assertEquals(3, course.getLesson("lesson2")!!.index)
   }
 
   fun `test create lesson between lessons in section`() {
@@ -147,6 +143,28 @@ class CCCreateLessonTest : EduActionTestCase() {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
+        }
+      }
+    }
+    val sourceVFile = findFile("lesson1/task1")
+    val action = CCCreateLesson()
+    val event = TestActionEvent(dataContext(sourceVFile), action)
+    action.beforeActionPerformedUpdate(event)
+    TestCase.assertFalse(event.presentation.isEnabledAndVisible)
+  }
+
+  fun `test create lesson not available on top level with section on top level`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+      section {
+        lesson(name = "lesson3") {
+          eduTask {
+            taskFile("taskFile2.txt")
+          }
         }
       }
     }

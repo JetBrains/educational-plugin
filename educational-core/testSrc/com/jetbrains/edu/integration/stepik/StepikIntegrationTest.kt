@@ -107,8 +107,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     lesson1.index = 2
     lesson2.index = 1
     localCourse.sortItems()
-    CCPushLesson.doPush(lesson1, project, localCourse)
-    CCPushLesson.doPush(lesson2, project, localCourse)
+    CCPushCourse.doPush(project, localCourse)
 
     checkTopLevelLessons(localCourse)
   }
@@ -153,8 +152,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     section1!!.index = 2
     section2!!.index = 1
     localCourse.sortItems()
-    CCPushSection.doPush(project, section1, localCourse)
-    CCPushSection.doPush(project, section2, localCourse)
+    CCPushCourse.doPush(project, localCourse)
 
     checkSections(localCourse)
   }

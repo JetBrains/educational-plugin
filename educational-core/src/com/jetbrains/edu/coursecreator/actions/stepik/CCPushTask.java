@@ -1,28 +1,21 @@
 package com.jetbrains.edu.coursecreator.actions.stepik;
 
-import com.intellij.ide.IdeView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Modal;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.EduCourse;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
@@ -36,25 +29,22 @@ public class CCPushTask extends DumbAwareAction {
   @Override
   public void update(@NotNull AnActionEvent e) {
     e.getPresentation().setEnabledAndVisible(false);
-    final IdeView view = e.getData(LangDataKeys.IDE_VIEW);
     final Project project = e.getData(CommonDataKeys.PROJECT);
-    if (view == null || project == null) {
+    VirtualFile[] selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
+    if (project == null || selectedFiles == null || selectedFiles.length != 1) {
       return;
     }
+    VirtualFile taskDir = selectedFiles[0];
+    if (!taskDir.isDirectory()) {
+      return;
+    }
+
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     if (!(course instanceof EduCourse) || !((EduCourse)course).isRemote()) {
       return;
     }
     if (!course.getCourseMode().equals(CCUtils.COURSE_MODE)) return;
-    final PsiDirectory[] directories = view.getDirectories();
-    if (directories.length != 1) {
-      return;
-    }
-    final PsiDirectory taskDir = directories[0];
-    if (taskDir == null) {
-      return;
-    }
-    final PsiDirectory lessonDir = taskDir.getParentDirectory();
+    final VirtualFile lessonDir = taskDir.getParent();
     if (lessonDir == null) {
       return;
     }
@@ -70,27 +60,20 @@ public class CCPushTask extends DumbAwareAction {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    final IdeView view = e.getData(LangDataKeys.IDE_VIEW);
     final Project project = e.getData(CommonDataKeys.PROJECT);
-    if (view == null || project == null) {
+    VirtualFile[] selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
+    if (project == null || selectedFiles == null || selectedFiles.length != 1) {
+      return;
+    }
+    VirtualFile taskDir = selectedFiles[0];
+    if (!taskDir.isDirectory()) {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) {
       return;
     }
-    final PsiDirectory[] directories = view.getDirectories();
-    if (directories.length != 1) {
-      return;
-    }
-
-    final PsiDirectory taskDir = directories[0];
-
-    if (taskDir == null) {
-      return;
-    }
-
-    final PsiDirectory lessonDir = taskDir.getParentDirectory();
+    final VirtualFile lessonDir = taskDir.getParent();
     if (lessonDir == null) return;
 
     Lesson lesson = CCUtils.lessonFromDir(course, lessonDir, project);
@@ -103,8 +86,7 @@ public class CCPushTask extends DumbAwareAction {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText("Uploading task to " + StepikNames.STEPIK_URL);
-        boolean toPost = task.getId() <= 0;
-        if (toPost) {
+        if (task.getId() <= 0) {
           postNewTask(project, task, lesson);
         }
         else {
@@ -116,62 +98,14 @@ public class CCPushTask extends DumbAwareAction {
   }
 
   private static void postNewTask(Project project, Task task, Lesson lesson) {
-    int position = stepikPosition(task, lesson);
-    boolean isPosted = postTask(project, task, lesson, position);
-    if (!isPosted) {
-      showErrorNotification(project, "Error uploading task", "Task " + task.getName() + "wasn't uploaded");
+    int position = task.getIndex();
+    if (!CCUtils.pushAvailable(lesson, task, project)) {
       return;
     }
-
-
-    // if task was added in the middle we have to update positions of underlying pushed tasks
-    boolean isLast = task.getIndex() == lesson.getTaskList().size();
-    if (!isLast) {
-      List<Task> postedTasks = getPostedTasks(lesson);
-      List<Task> underlyingTasks = postedTasks.subList(position, postedTasks.size());
-      updateTasksPositions(project, position + 1, underlyingTasks);
-    }
-
-    showNotification(project, "Task " + task.getName() + " uploaded",
-                     openOnStepikAction("/lesson/" + lesson.getId() + "/step/" + task.getIndex()));
+    postTask(project, task, lesson, position);
   }
 
-
-  private static List<Task> getPostedTasks(Lesson lesson) {
-    return lesson.getTaskList().stream().filter(t -> t.getId() > 0).collect(Collectors.toList());
-  }
-
-  private static void updateTask(Task task, Lesson lesson, Project project) {
-    int position = stepikPosition(task, lesson);
-    int positionOnServer = getTaskPosition(task.getId());
-
-    boolean isPosted = updateTask(task, project, position);
-    if (!isPosted) {
-      showErrorNotification(project, "Error updating task", "Task " + task.getName() + "wasn't updated");
-      return;
-    }
-
-
-    // if task position was changed we had to update affected tasks.
-    // Position was changed for tasks that are between current and previous task position
-    if (position != positionOnServer) {
-      List<Task> postedTasks = getPostedTasks(lesson);
-      boolean movedUp = position - positionOnServer < 0;
-      if (movedUp) {
-        List<Task> underlyingTasks = postedTasks.subList(position, positionOnServer);
-        updateTasksPositions(project, position + 1, underlyingTasks);
-      }
-      else {
-        List<Task> higherTasks = postedTasks.subList(positionOnServer - 1, position - 1);
-        updateTasksPositions(project, position - 1, higherTasks);
-      }
-    }
-
-    showNotification(project, "Task " + task.getName() + " updated",
-                     openOnStepikAction("/lesson/" + lesson.getId() + "/step/" + task.getIndex()));
-  }
-
-  private static boolean postTask(Project project, Task task, Lesson lesson, int position) {
+  private static void postTask(Project project, Task task, Lesson lesson, int position) {
     Task taskCopy = task.copy();
     taskCopy.setIndex(position);
     taskCopy.setLesson(lesson);
@@ -179,44 +113,26 @@ public class CCPushTask extends DumbAwareAction {
     if (isPosted) {
       task.setId(taskCopy.getId());
       task.setUpdateDate(taskCopy.getUpdateDate());
-      return true;
+      showNotification(project, "Task " + task.getName() + " uploaded",
+                       openOnStepikAction("/lesson/" + lesson.getId() + "/step/" + task.getIndex()));
     }
-
-    return false;
   }
 
-  private static boolean updateTask(Task task, Project project, int position) {
+  private static void updateTask(Task task, Lesson lesson, Project project) {
+    int position = task.getIndex();
+    int positionOnServer = getTaskPosition(task.getId());
+    if (position != positionOnServer) {
+      showErrorNotification(project, "Failed to update task",
+                            "It's impossible to update one task since it's position changed. Please, use 'Update course' action.");
+      return;
+    }
     Task taskCopy = task.copy();
     taskCopy.setIndex(position);
     taskCopy.setLesson(task.getLesson());
-    boolean updatedTask = CCStepikConnector.updateTask(project, taskCopy);
-    task.setUpdateDate(taskCopy.getUpdateDate());
-    return updatedTask;
-  }
-
-  private static void updateTasksPositions(@NotNull Project project, int initialPosition, List<Task> tasksToUpdate) {
-    int position = initialPosition;
-    for (Task task : tasksToUpdate) {
-      if (task.getId() == 0) continue;
-      updateTask(task, project, position++);
+    boolean updated = CCStepikConnector.updateTask(project, taskCopy);
+    if (updated) {
+      showNotification(project, "Task " + task.getName() + " updated",
+                       openOnStepikAction("/lesson/" + lesson.getId() + "/step/" + task.getIndex()));
     }
-  }
-
-  /**
-   * Calculates estimated task position on Stepik by counting pushed tasks only.
-   */
-  private static int stepikPosition(@NotNull Task taskToUpdate, @NotNull Lesson lesson) {
-    int position = 1;
-    for (Task task : lesson.getTaskList()) {
-      if (task.getName().equals(taskToUpdate.getName())) {
-        break;
-      }
-
-      if (task.getId() > 0) {
-        position++;
-      }
-    }
-
-    return position;
   }
 }

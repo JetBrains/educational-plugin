@@ -2,15 +2,14 @@ package com.jetbrains.edu.coursecreator.actions.stepik
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.CCUtils.pushAvailable
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
-import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.FAILED_TITLE
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.EduUtils
@@ -25,22 +24,20 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
-    val view = e.getData(LangDataKeys.IDE_VIEW)
     val project = e.getData(CommonDataKeys.PROJECT)
-    if (view == null || project == null) {
+    val selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)
+    if (project == null || selectedFiles == null || selectedFiles.size != 1) {
       return
     }
-    val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
-    if (course.courseMode != CCUtils.COURSE_MODE || !course.isRemote) return
-    val directories = view.directories
-    if (directories.isEmpty() || directories.size > 1) {
+    val sectionDir = selectedFiles[0]
+    if (!sectionDir.isDirectory) {
       return
     }
 
-    val sectionDir = directories[0]
-    if (sectionDir == null) {
-      return
-    }
+    val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
+    if (course.courseMode != CCUtils.COURSE_MODE || !course.isRemote) return
+    if (course.hasTopLevelLessons) return
+
     val section = course.getSection(sectionDir.name)
     if (section != null && course.id > 0) {
       e.presentation.isEnabledAndVisible = true
@@ -51,22 +48,14 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    val view = e.getData(LangDataKeys.IDE_VIEW)
     val project = e.getData(CommonDataKeys.PROJECT)
-    if (view == null || project == null) {
+    val selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)
+    if (project == null || selectedFiles == null || selectedFiles.size != 1) {
       return
     }
+    val sectionDir = selectedFiles[0]
+
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
-    val directories = view.directories
-    if (directories.isEmpty() || directories.size > 1) {
-      return
-    }
-
-    val sectionDir = directories[0]
-    if (sectionDir == null) {
-      return
-    }
-
     val section = course.getSection(sectionDir.name) ?: return
     doPush(project, section, course)
     YamlFormatSynchronizer.saveRemoteInfo(section)
@@ -82,14 +71,14 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
             updateSection(section, course, project)
           }
           else {
-            section.position = sectionPosition(course, section.name)
-            CCStepikConnector.postSection(project, section, indicator)
-            if (section.position < course.sections.size) {
-              updateSectionsPositions(project, course.sections.slice(IntRange(section.position, course.sections.size - 1)),
-                                      section.position + 1)
+            if (!pushAvailable(course, section, project)) return
+
+            section.position = section.index
+            val success = CCStepikConnector.postSection(project, section)
+            if (success) {
+              EduUtils.showNotification(project, "Section \"${section.name}\" posted",
+                                        CCStepikConnector.openOnStepikAction("/course/${course.id}"))
             }
-            EduUtils.showNotification(project, "Section \"${section.name}\" posted",
-                                      CCStepikConnector.openOnStepikAction("/course/${course.id}"))
           }
         }
       })
@@ -97,40 +86,18 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
 
     private fun updateSection(section: Section, course: EduCourse, project: Project) {
       val sectionFromServerPosition = StepikConnector.getSection(section.id)?.position ?: -1
-      section.position = sectionPosition(course, section.name)
+      section.position = section.index
       val positionChanged = sectionFromServerPosition != section.position
-      val updated = CCStepikConnector.updateSection(section, course, project)
-
-      if (positionChanged && section.position < course.sections.size) {
-        updateSectionsPositions(project, course.sections, 1 + if (course.hasTopLevelLessons) 1 else 0)
+      if (positionChanged) {
+        showErrorNotification(project, "Failed to update section",
+                              "It's impossible to update one section since it's position changed. Please, use 'Update course' action.")
+        return
       }
-
+      val updated = CCStepikConnector.updateSection(section, course, project)
       if (updated) {
         EduUtils.showNotification(project, "Section \"${section.name}\" updated",
                                   CCStepikConnector.openOnStepikAction("/course/${course.id}"))
       }
     }
-
-    private fun sectionPosition(course: EduCourse, sectionName: String): Int {
-      val position = 1 + if (course.hasTopLevelLessons) 1 else 0
-
-      val sectionsCount = course.sections
-        .takeWhile { it.name != sectionName }
-        .count { it.id > 0 }
-      return position + sectionsCount
-    }
-
-    private fun updateSectionsPositions(project: Project, sectionsToUpdate: List<Section>, initialPosition: Int) {
-      var position = initialPosition
-      for (section in sectionsToUpdate) {
-        if (section.id == 0) continue
-        section.position = position++
-        val updated = CCStepikConnector.updateSectionInfo(section)
-        if (!updated) {
-          showErrorNotification(project, FAILED_TITLE, "Failed to update section " + section.id)
-        }
-      }
-    }
   }
-
 }

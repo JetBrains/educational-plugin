@@ -52,17 +52,19 @@ class StepikCompareCourseTest : EduTestCase() {
 
   fun `test new section`() {
     val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
-      lesson {
-        eduTask { }
-        outputTask { }
-        theoryTask { }
+      section {
+        lesson {
+          eduTask { }
+          outputTask { }
+          theoryTask { }
+        }
       }
     }.asRemote()
 
 
     val courseFromServer = localCourse.copy() as EduCourse
     val newSection = addNewSection("section1", 2, localCourse, project.courseDir)
-    val expectedInfo = StepikChangesInfo(newSections = arrayListOf(newSection), isTopLevelSectionRemoved = true)
+    val expectedInfo = StepikChangesInfo(newSections = arrayListOf(newSection))
 
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
