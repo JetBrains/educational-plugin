@@ -44,6 +44,9 @@ public class CCShowChangedFiles extends DumbAwareAction {
     }
 
     EduCourse remoteCourse = StepikConnector.getCourseInfo(course.getId());
+    if (remoteCourse == null) {
+      return;
+    }
     StepikCourseLoader.loadCourseStructure(remoteCourse);
     remoteCourse.init(null, null, false);
 
@@ -62,7 +65,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
       appendChangeLine(course, builder);
     }
     if (changedItems.isCourseAdditionalFilesChanged()) {
-      builder.append("Additional Files Chaged").append("\n");
+      builder.append("Additional Files Changed").append("\n");
     }
     for (Section section : changedItems.getNewSections()) {
       appendChangeLine(section, builder, NEW);
@@ -97,14 +100,6 @@ public class CCShowChangedFiles extends DumbAwareAction {
       return "No changes";
     }
     return message;
-  }
-
-  /**
-   * Check if current item is recently added and isn't on Stepik. We have to do it as
-   * we don't have "New" StepikChangeStatus
-   */
-  private static boolean isNew(@NotNull StudyItem item) {
-    return item.getId() == 0;
   }
 
   private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder) {

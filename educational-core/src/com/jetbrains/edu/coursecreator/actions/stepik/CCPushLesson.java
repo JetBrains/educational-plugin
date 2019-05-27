@@ -156,15 +156,14 @@ public class CCPushLesson extends DumbAwareAction {
       else {
         sectionId = course.getSectionIds().get(0);
       }
-      Lesson updatedLesson = CCStepikConnector.updateLesson(project, lesson, true, sectionId);
-      int lessonId = updatedLesson == null ? -1 : updatedLesson.getId();
-      if (lessonId != -1) {
+      boolean success = CCStepikConnector.updateLesson(project, lesson, true, sectionId);
+      if (success) {
         boolean positionChanged = lesson.getIndex() != unit.getPosition();
         if (positionChanged) {
           List<Lesson> lessons = lesson.getSection() != null ? lesson.getSection().getLessons() : course.getLessons();
           updateLessonsPositions(project, 0, lessons);
         }
-        EduUtils.showNotification(project, "Lesson updated", CCStepikConnector.openOnStepikAction("/lesson/" + lessonId));
+        EduUtils.showNotification(project, "Lesson updated", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.getId()));
       }
     }
     else {

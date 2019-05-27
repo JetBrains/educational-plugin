@@ -145,13 +145,12 @@ public class CCStepikConnector {
     return sectionId;
   }
 
-  public static int postSection(@NotNull Project project, @NotNull Section section, @Nullable ProgressIndicator indicator) {
+  public static boolean postSection(@NotNull Project project, @NotNull Section section, @Nullable ProgressIndicator indicator) {
     EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     final int sectionId = postSectionInfo(project, section, course.getId());
     postLessons(project, indicator, course, sectionId, section.getLessons());
-
-    return sectionId;
+    return sectionId != -1;
   }
 
   public static int postSectionInfo(@NotNull Project project, @NotNull Section section, int courseId) {
@@ -168,11 +167,8 @@ public class CCStepikConnector {
     return postedSection.getId();
   }
 
-  private static void postLessons(@NotNull Project project,
-                                  @Nullable ProgressIndicator indicator,
-                                  @NotNull EduCourse course,
-                                  int sectionId,
-                                  @NotNull List<Lesson> lessons) {
+  private static void postLessons(@NotNull Project project, @Nullable ProgressIndicator indicator, @NotNull EduCourse course,
+                                  int sectionId, @NotNull List<Lesson> lessons) {
     int position = 1;
     for (Lesson lesson : lessons) {
       updateProgress("Publishing lesson " + lesson.getIndex());
@@ -185,19 +181,21 @@ public class CCStepikConnector {
     }
   }
 
-  public static void postLesson(@NotNull final Project project, @NotNull final Lesson lesson, int position, int sectionId) {
+  public static boolean postLesson(@NotNull final Project project, @NotNull final Lesson lesson, int position, int sectionId) {
     Lesson postedLesson = postLessonInfo(project, lesson, sectionId, position);
 
     if (postedLesson == null) {
-      return;
+      return false;
     }
+    boolean success = true;
     for (Task task : lesson.getTaskList()) {
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       if (indicator != null) {
         indicator.checkCanceled();
       }
-      postTask(project, task, postedLesson.getId());
+      success = postTask(project, task, postedLesson.getId()) && success;
     }
+    return success;
   }
 
   public static Lesson postLessonInfo(@NotNull Project project, @NotNull Lesson lesson, int sectionId, int position) {
@@ -274,12 +272,12 @@ public class CCStepikConnector {
     return true;
   }
 
-  public static int updateAdditionalMaterials(@NotNull Project project, int courseId) {
+  public static boolean updateAdditionalMaterials(@NotNull Project project, int courseId) {
     EduCourse courseInfo = StepikConnector.getCourseInfo(courseId);
     assert courseInfo != null;
     updateProgress("Publishing additional files");
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(courseInfo, project);
-    return StepikConnector.updateAttachment(additionalFiles, courseInfo);
+    return StepikConnector.updateAttachment(additionalFiles, courseInfo) == HttpStatus.SC_CREATED;
   }
 
   public static boolean updateSectionForTopLevelLessons(@NotNull EduCourse course) {
@@ -287,13 +285,13 @@ public class CCStepikConnector {
     section.setName(course.getName());
     section.setPosition(1);
     section.setId(course.getSectionIds().get(0));
-    return updateSectionInfo(section) != null;
+    return updateSectionInfo(section);
   }
 
   public static boolean updateSection(@NotNull Section section, @NotNull Course course, @NotNull Project project) {
     section.setCourseId(course.getId());
-    final Section updatedSection = updateSectionInfo(section);
-    if (updatedSection == null) {
+    boolean updated = updateSectionInfo(section);
+    if (!updated) {
       showErrorNotification(project, FAILED_TITLE, "Failed to update section " + section.getId());
       return false;
     }
@@ -309,22 +307,21 @@ public class CCStepikConnector {
     return true;
   }
 
-  public static Section updateSectionInfo(@NotNull Section section) {
+  public static boolean updateSectionInfo(@NotNull Section section) {
     section.units.clear();
-    return StepikConnector.updateSection(section);
+    return StepikConnector.updateSection(section) != null;
   }
 
-  public static Lesson updateLesson(@NotNull final Project project,
+  public static boolean updateLesson(@NotNull final Project project,
                                     @NotNull final Lesson lesson,
                                     boolean showNotification, int sectionId) {
     Lesson postedLesson = updateLessonInfo(project, lesson, showNotification, sectionId);
-
     if (postedLesson != null) {
-      updateLessonTasks(project, lesson, postedLesson);
-      return postedLesson;
+      updateLessonTasks(project, lesson, postedLesson.steps);
+      return true;
     }
 
-    return null;
+    return false;
   }
 
   public static Lesson updateLessonInfo(@NotNull final Project project,
@@ -352,16 +349,14 @@ public class CCStepikConnector {
     }
   }
 
-  private static void updateLessonTasks(@NotNull Project project,
-                                        @NotNull Lesson localLesson,
-                                        @NotNull Lesson remoteLesson) {
+  private static void updateLessonTasks(@NotNull Project project, @NotNull Lesson localLesson, @NotNull List<Integer> steps) {
     final Set<Integer> localTasksIds = localLesson.getTaskList()
       .stream()
       .map(task -> task.getId())
       .filter(id -> id > 0)
       .collect(Collectors.toSet());
 
-    final List<Integer> taskIdsToDelete = remoteLesson.steps.stream()
+    final List<Integer> taskIdsToDelete = steps.stream()
       .filter(id -> !localTasksIds.contains(id))
       .collect(Collectors.toList());
 

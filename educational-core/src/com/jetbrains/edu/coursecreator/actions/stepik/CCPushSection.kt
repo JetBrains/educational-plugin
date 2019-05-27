@@ -125,8 +125,8 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
       for (section in sectionsToUpdate) {
         if (section.id == 0) continue
         section.position = position++
-        val updatedSectionInfo = CCStepikConnector.updateSectionInfo(section)
-        if (updatedSectionInfo == null) {
+        val updated = CCStepikConnector.updateSectionInfo(section)
+        if (!updated) {
           showErrorNotification(project, FAILED_TITLE, "Failed to update section " + section.id)
         }
       }

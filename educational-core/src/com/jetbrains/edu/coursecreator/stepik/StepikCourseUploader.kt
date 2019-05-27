@@ -20,14 +20,19 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     val changeRetriever = StepikChangeRetriever(project, course, remoteCourse)
     val changedItems = changeRetriever.getChangedItems()
 
-    var pushed = processCourseElement(changedItems)
-    pushed = processTopLevelSection(changedItems) || pushed
-    pushed = processSections(changedItems) || pushed
-    pushed = processLessons(changedItems) || pushed
-    pushed = processTasks(changedItems) || pushed
+    if (changedItems.isEmpty()) {
+      EduUtils.showNotification(project, "Nothing to update", null)
+      return
+    }
 
-    if (!pushed) {
-      EduUtils.showNotification(project, "Nothing to upload", null)
+    var success = processCourse(changedItems)
+    success = processTopLevelSection(changedItems) && success
+    success = processSections(changedItems) && success
+    success = processLessons(changedItems) && success
+    success = processTasks(changedItems) && success
+
+    if (!success) {
+      EduUtils.showNotification(project, "Failed to update the course", null)
     }
     else {
       course.updateDate = remoteCourse.updateDate
@@ -35,109 +40,102 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     }
   }
 
-  private fun processCourseElement(changedItems: StepikChangesInfo): Boolean {
-    var pushed = false
+  private fun processCourse(changedItems: StepikChangesInfo): Boolean {
+    var success = true
     if (changedItems.isCourseInfoChanged) {
-      pushed = updateCourseInfo(project, course)
+      success = updateCourseInfo(project, course) && success
     }
     if (changedItems.isCourseAdditionalFilesChanged) {
-      updateAdditionalMaterials(project, course.id)
-      pushed = true
+      success = updateAdditionalMaterials(project, course.id) && success
     }
-    return pushed
+    return success
   }
 
   private fun processTopLevelSection(changedItems: StepikChangesInfo): Boolean {
-    var pushed = false
-    if (changedItems.isTopLevelSectionNameChanged) {
-      pushed = updateSectionForTopLevelLessons(course)
-    }
+    var success = true
+
     if (changedItems.isTopLevelSectionRemoved) {
       StepikConnector.deleteSection(course.sectionIds[0])
       course.sectionIds = emptyList()
-      pushed = true
     }
+
+    if (changedItems.isTopLevelSectionNameChanged) {
+      success = updateSectionForTopLevelLessons(course) && success
+    }
+
     if (changedItems.isTopLevelSectionAdded) {
-      postSectionForTopLevelLessons(project, course)
-      pushed = true
+      val sectionId = postSectionForTopLevelLessons(project, course)
+      success = sectionId != -1 && success
     }
-    return pushed
+    return success
   }
 
   private fun processSections(changedItems: StepikChangesInfo): Boolean {
-    var pushed = false
+    var success = true
 
     // delete old section
     changedItems.sectionsToDelete.forEach {
       StepikConnector.deleteSection(it.id)
-      pushed = true
     }
 
     // post new section
     changedItems.newSections.forEach {
       it.position = it.index
-      postSection(project, it, null)
-      pushed = true
+      success = postSection(project, it, null) && success
     }
 
     // update section
     for (localSection in changedItems.sectionInfosToUpdate) {
       localSection.position = localSection.index
-      updateSectionInfo(localSection)
-      pushed = true
+      success = updateSectionInfo(localSection) && success
     }
 
-    return pushed
+    return success
   }
 
   private fun processLessons(changedItems: StepikChangesInfo): Boolean {
-    var pushed = false
+    var success = true
 
     // delete old lesson
     changedItems.lessonsToDelete.forEach {
       StepikConnector.deleteLesson(it.id)
       StepikConnector.deleteUnit(it.unitId)
-      pushed = true
     }
 
     // post new lesson
     changedItems.newLessons.forEach {
       val section = it.section?.id ?: course.sectionIds.first()
-      postLesson(project, it, it.index, section)
-      pushed = true
+      success = postLesson(project, it, it.index, section) && success
     }
 
     // update lesson
     for (localLesson in changedItems.lessonsInfoToUpdate) {
       val section = localLesson.section?.id ?: course.sectionIds.first()
-      updateLessonInfo(project, localLesson, false, section)
-      pushed = true
+      val lesson = updateLessonInfo(project, localLesson, false, section)
+      success = lesson != null && success
     }
 
-    return pushed
+    return success
   }
 
   private fun processTasks(changedItems: StepikChangesInfo): Boolean {
-    var pushed = false
+    var success = true
 
     // delete old task
     changedItems.tasksToDelete.forEach {
       StepikConnector.deleteTask(it.id)
-      pushed = true
     }
 
     // post new task
     changedItems.newTasks.forEach {
-      postTask(project, it, it.lesson.id)
-      pushed = true
+      success = postTask(project, it, it.lesson.id) && success
     }
 
     // update tasks
     for (localTask in changedItems.tasksToUpdate) {
-      updateTask(project, localTask)
-      pushed = true
+      success = updateTask(project, localTask) && success
     }
 
-    return pushed
+    return success
   }
 }

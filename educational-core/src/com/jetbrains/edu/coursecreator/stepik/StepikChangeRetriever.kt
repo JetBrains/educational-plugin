@@ -27,7 +27,14 @@ data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
                              var lessonsToDelete: MutableList<Lesson> = ArrayList(),
                              var tasksToUpdate: MutableList<Task> = ArrayList(),
                              var newTasks: MutableList<Task> = ArrayList(),
-                             var tasksToDelete: MutableList<Task> = ArrayList())
+                             var tasksToDelete: MutableList<Task> = ArrayList()) {
+  fun isEmpty(): Boolean {
+    return !isCourseInfoChanged && !isCourseAdditionalFilesChanged && !isTopLevelSectionNameChanged && !isTopLevelSectionRemoved &&
+           !isTopLevelSectionAdded && sectionsToDelete.isEmpty() && newSections.isEmpty() && sectionInfosToUpdate.isEmpty() &&
+           newLessons.isEmpty() && lessonsInfoToUpdate.isEmpty() && lessonsToDelete.isEmpty() && tasksToUpdate.isEmpty() &&
+           newTasks.isEmpty() && tasksToDelete.isEmpty()
+  }
+}
 
 class StepikChangeRetriever(private val project: Project, private val course: EduCourse, private val remoteCourse: EduCourse) {
 
@@ -36,7 +43,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
       setTaskFileTextFromDocuments(course, project)
     }
     val stepikChanges = StepikChangesInfo()
-    processCourseElement(stepikChanges)
+    processCourse(stepikChanges)
     processTopLevelSection(stepikChanges)
     processSections(stepikChanges)
     processLessons(stepikChanges, course.lessons, remoteCourse.lessons)
@@ -44,7 +51,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
     return stepikChanges
   }
 
-  private fun processCourseElement(stepikChanges: StepikChangesInfo) {
+  private fun processCourse(stepikChanges: StepikChangesInfo) {
     stepikChanges.isCourseInfoChanged = courseInfoChanged()
     stepikChanges.isCourseAdditionalFilesChanged = additionalFilesChanged(course, remoteCourse, project)
   }
@@ -176,7 +183,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
     return offset == otherPlaceholder.offset
            && length == otherPlaceholder.length
            && index == otherPlaceholder.index
-           && possibleAnswer == otherPlaceholder.possibleAnswer
+           && placeholderText == otherPlaceholder.placeholderText
            && hints == otherPlaceholder.hints
            && (placeholderDependency?.isEqualTo(otherPlaceholder.placeholderDependency) ?: otherPlaceholder.placeholderDependency == null)
 
@@ -197,6 +204,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
     runInEdtAndWait {
       runReadAction {
         course.lessons
+          .plus(course.sections.flatMap { it.lessons })
           .flatMap { it.taskList }
           .flatMap { it.taskFiles.values }
           .forEach { it.setText(EduUtils.createStudentFile(project, it.getVirtualFile(project)!!, it.task)!!.text) }

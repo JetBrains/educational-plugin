@@ -11,7 +11,6 @@ import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotific
 import com.jetbrains.edu.learning.EduUtils.showNotification
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import org.apache.commons.httpclient.HttpStatus
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class UpdateAdditionalMaterials : DumbAwareAction("Update Additional Materials") {
@@ -24,8 +23,8 @@ class UpdateAdditionalMaterials : DumbAwareAction("Update Additional Materials")
     ProgressManager.getInstance().run(object : Task.Modal(project, "Updating Additional Materials", false) {
       override fun run(indicator: ProgressIndicator) {
         indicator.isIndeterminate = false
-        val responseCode = CCStepikConnector.updateAdditionalMaterials(project, course.id)
-        if (responseCode != HttpStatus.SC_CREATED) {
+        val success = CCStepikConnector.updateAdditionalMaterials(project, course.id)
+        if (!success) {
           showErrorNotification(project, FAILED_TITLE, "Failed to update additional materials")
         }
         else {
