@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CheckUtils {
-  public static final String STUDY_PREFIX = "#educational_plugin ";
+  public static final String STUDY_PREFIX = "#educational_plugin";
   public static final List<String> COMPILATION_ERRORS = CollectionsKt.listOf("Compilation failed", "Compilation error");
   public static final String COMPILATION_FAILED_MESSAGE = "Compilation failed";
   public static final String NOT_RUNNABLE_MESSAGE = "Solution isn't runnable";

@@ -32,7 +32,7 @@ object TestsOutputParser {
               break
             }
             builder.append("\n")
-            builder.append(failedTextLine.substringAfter(STUDY_PREFIX))
+            builder.append(failedTextLine.substringAfter("$STUDY_PREFIX "))
           }
           return CheckResult(CheckStatus.Failed, builder.toString().prettify(), needEscape = needEscapeResult)
         }
