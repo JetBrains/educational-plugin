@@ -5,7 +5,6 @@ import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.ConcurrencyUtil
-import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -25,8 +24,8 @@ object StepikCourseLoader {
   fun getCourseInfos(): List<EduCourse> {
     LOG.info("Loading courses started...")
     val startTime = System.currentTimeMillis()
-    val result = ContainerUtil.newArrayList<EduCourse>()
-    val tasks = ContainerUtil.newArrayList<Callable<List<EduCourse>>>()
+    val result = mutableListOf<EduCourse>()
+    val tasks = mutableListOf<Callable<List<EduCourse>>>()
     tasks.add(Callable { getCourseInfos(true) })
     tasks.add(Callable { getCourseInfos(false) })
     tasks.add(Callable { getFeaturedStepikCourses() })
@@ -149,7 +148,7 @@ object StepikCourseLoader {
   }
 
   private fun getOrderedListOfSections(allSections: List<Section>, remoteCourse: EduCourse): List<StudyItem> {
-    val loadItemTasks = ContainerUtil.newArrayList<Callable<StudyItem?>>()
+    val loadItemTasks = mutableListOf<Callable<StudyItem?>>()
     for ((index, section) in allSections.withIndex()) {
       loadItemTasks.add(Callable { loadItemTask(remoteCourse, section, index + 1) })
     }
