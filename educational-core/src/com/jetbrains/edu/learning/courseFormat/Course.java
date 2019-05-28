@@ -35,10 +35,6 @@ public abstract class Course extends LessonContainer {
   private String myProgrammingLanguage = EduNames.PYTHON; // language and optional version in form "Language Version" (as "Python 3.7")
   private String myLanguageCode = "en";
 
-  // flag for distinguishing courses imported from zip from Stepik courses
-  // we use it to set StepikChangeStatus for zip-courses during generation
-  // plan to use to change appearance of these courses in courses panel
-  private boolean myIsFromZip = false;
   @NotNull private String myEnvironment = EduNames.DEFAULT_ENVIRONMENT;
   protected String courseMode = EduNames.STUDY; //this field is used to distinguish study and course creator modes
 
@@ -108,14 +104,6 @@ public abstract class Course extends LessonContainer {
   @NotNull
   public List<StepikUserInfo> getAuthors() {
     return authors;
-  }
-
-  public boolean isFromZip() {
-    return myIsFromZip;
-  }
-
-  public void setFromZip(boolean fromZip) {
-    myIsFromZip = fromZip;
   }
 
   @NotNull

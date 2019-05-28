@@ -35,7 +35,6 @@ open class ImportLocalCourseAction(text: String = "Import Local Course") : DumbA
   }
 
   protected open fun initCourse(course: Course): Course {
-    course.isFromZip = true
     return course
   }
 

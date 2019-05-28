@@ -92,7 +92,7 @@ public class CoursesPanel extends JPanel {
     mySplitPane.setResizeWeight(0.5);
     myCoursesList = new JBList<>();
     myCoursesList.setEmptyText(NO_COURSES);
-    updateModel(myCourses, null, false);
+    updateModel(myCourses, null);
     myErrorLabel.setVisible(false);
 
     ColoredListCellRenderer<Course> renderer = getCourseRenderer();
@@ -223,7 +223,7 @@ public class CoursesPanel extends JPanel {
     Course selectedCourse = myCoursesList.getSelectedValue();
     List<Course> courses = CourseLoader.getCourseInfosUnderProgress(() -> CoursesProvider.loadAllCourses());
     myCourses = courses != null ? courses : Lists.newArrayList();
-    updateModel(myCourses, selectedCourse.getName(), selectedCourse.isFromZip());
+    updateModel(myCourses, selectedCourse);
     myErrorLabel.setVisible(false);
     notifyListeners(true);
   }
@@ -281,7 +281,7 @@ public class CoursesPanel extends JPanel {
     return ContainerUtil.sorted(courses, Comparator.comparing(Course::getVisibility).thenComparing(Course::getName));
   }
 
-  private void updateModel(List<Course> courses, @Nullable String courseToSelect, boolean isFromZip) {
+  private void updateModel(List<Course> courses, @Nullable Course courseToSelect) {
     DefaultListModel<Course> listModel = new DefaultListModel<>();
     courses = sortCourses(courses);
     for (Course course : courses) {
@@ -297,7 +297,7 @@ public class CoursesPanel extends JPanel {
       return;
     }
     myCourses.stream()
-        .filter(course -> course.getName().equals(courseToSelect) && course.isFromZip() == isFromZip)
+        .filter(course -> course.equals(courseToSelect))
         .findFirst()
         .ifPresent(newCourseToSelect -> myCoursesList.setSelectedValue(newCourseToSelect, true));
   }
@@ -320,9 +320,7 @@ public class CoursesPanel extends JPanel {
             filtered.add(course);
           }
         }
-        String courseName = selectedCourse != null ? selectedCourse.getName() : null;
-        boolean isFromZip = selectedCourse != null && selectedCourse.isFromZip();
-        updateModel(filtered, courseName, isFromZip);
+        updateModel(filtered, selectedCourse);
       }
     };
     myCoursePanel.bindSearchField(mySearchField);
@@ -461,10 +459,9 @@ public class CoursesPanel extends JPanel {
                                }
                                else {
                                  ImportLocalCourseAction.saveLastImportLocation(file);
-                                 course.setFromZip(true);
                                  EduUsagesCollector.courseArchiveImported();
                                  myCourses.add(course);
-                                 updateModel(myCourses, course.getName(), true);
+                                 updateModel(myCourses, course);
                                }
                              });
     }
@@ -475,7 +472,7 @@ public class CoursesPanel extends JPanel {
         return;
       }
       myCourses.add(course);
-      updateModel(myCourses, course.getName(), false);
+      updateModel(myCourses, course);
     }
   }
 }

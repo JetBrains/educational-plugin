@@ -383,16 +383,16 @@ object CCUtils {
 
   @JvmStatic
   fun pushAvailable(parent: ItemContainer, itemToPush: StudyItem, project: Project): Boolean {
-    for (task in parent.items) {
-      if (task === itemToPush) {
+    for (item in parent.items) {
+      if (item === itemToPush) {
         continue
       }
-      if (task.id == 0 && task.index < itemToPush.index) {
+      if (item.id == 0 && item.index < itemToPush.index) {
         showErrorNotification(project, "Failed to upload",
                               "Previous siblings are not published yet. Use 'Update Course' action")
         return false
       }
-      if (task.id != 0 && task.index > itemToPush.index) {
+      if (item.id != 0 && item.index > itemToPush.index) {
         showErrorNotification(project, "Failed to upload",
                               "Next siblings are affected. Use 'Update Course' action")
         return false

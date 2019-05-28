@@ -152,7 +152,7 @@ public abstract class CourseProjectGenerator<S> {
 
     RecentProjectsManager.getInstance().setLastProjectCreationLocation(PathUtil.toSystemIndependentName(location.getParent()));
 
-    @SuppressWarnings("unchecked") ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, baseDir, projectSettings);
+    ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, baseDir, projectSettings);
     EnumSet<PlatformProjectOpenProcessor.Option> options = EnumSet.of(PlatformProjectOpenProcessor.Option.FORCE_NEW_FRAME);
     baseDir.putUserData(COURSE_MODE_TO_CREATE, myCourse.getCourseMode());
     baseDir.putUserData(COURSE_TYPE_TO_CREATE, myCourse.getItemType());
@@ -189,8 +189,8 @@ public abstract class CourseProjectGenerator<S> {
         if (CCUtils.isCourseCreator(project)) {
           CCUtils.initializeCCPlaceholders(project,myCourse);
         }
-        if (myCourse instanceof EduCourse && ((EduCourse)myCourse).isRemote() && myCourse.isFromZip() && CCUtils.isCourseCreator(project)) {
-          checkIfAvailableOnRemote(project);
+        if (myCourse instanceof EduCourse && ((EduCourse)myCourse).isRemote() && CCUtils.isCourseCreator(project)) {
+          checkIfAvailableOnRemote();
         }
         createAdditionalFiles(project, baseDir);
         EduUsagesCollector.projectTypeCreated(myCourse.getCourseMode());
@@ -202,7 +202,7 @@ public abstract class CourseProjectGenerator<S> {
     }
   }
 
-  private void checkIfAvailableOnRemote(@NotNull Project project) {
+  private void checkIfAvailableOnRemote() {
     EduCourse courseFromStepik = StepikConnector.getCourseInfo(myCourse.getId(), null, true);
     if (courseFromStepik == null) {
       LOG.warn("Failed to get stepik course for imported from zip course with id: " + myCourse.getId());
