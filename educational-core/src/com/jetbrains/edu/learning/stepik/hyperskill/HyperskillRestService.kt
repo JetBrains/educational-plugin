@@ -37,23 +37,23 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   }
 
   @Throws(IOException::class)
-  override fun execute(decoder: QueryStringDecoder,
+  override fun execute(urlDecoder: QueryStringDecoder,
                        request: FullHttpRequest,
                        context: ChannelHandlerContext): String? {
-    val uri = decoder.uri()
+    val uri = urlDecoder.uri()
     val matcher = OPEN_COURSE_PATTERN.matcher(uri)
     if (matcher.matches()) {
       val account = HyperskillSettings.INSTANCE.account
       if (account == null) {
-        HyperskillConnector.doAuthorize(Runnable { openProject(decoder, request, context) })
+        HyperskillConnector.doAuthorize(Runnable { openProject(urlDecoder, request, context) })
       }
       else {
-        return openProject(decoder, request, context)
+        return openProject(urlDecoder, request, context)
       }
     }
 
     if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
-      val code = RestService.getStringParameter("code", decoder)!! // cannot be null because of pattern
+      val code = getStringParameter("code", urlDecoder)!! // cannot be null because of pattern
 
       val success = HyperskillConnector.login(code)
       if (success) {
@@ -65,21 +65,21 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       return sendErrorResponse(request, context, "Failed to login using provided code")
     }
 
-    RestService.sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
+    sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
     return "Unknown command: $uri"
   }
 
   private fun openProject(decoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
-    val stageId = RestService.getStringParameter("stage_id", decoder)?.toInt() ?: return "The stage_id parameter was not found"
-    val projectId = RestService.getStringParameter("project_id", decoder)?.toInt() ?: return "The project_id parameter was not found"
+    val stageId = getStringParameter("stage_id", decoder)?.toInt() ?: return "The stage_id parameter was not found"
+    val projectId = getStringParameter("project_id", decoder)?.toInt() ?: return "The project_id parameter was not found"
     LOG.info("Opening a stage $stageId from project $projectId")
 
     if (focusOpenProject(projectId, stageId) || openRecentProject(projectId, stageId) || createProject(projectId, stageId)) {
-      RestService.sendOk(request, context)
+      sendOk(request, context)
       LOG.info("Hyperskill project opened: $projectId")
       return null
     }
-    RestService.sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
+    sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
     val message = "A project wasn't found or created"
     LOG.info(message)
     return message
