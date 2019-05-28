@@ -176,7 +176,7 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
                                                             false)
     TestCase.assertTrue(created)
     VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
-    val generated = baseDir.findChild(CCUtils.GENERATED_FILES_FOLDER)
+    val generated = baseDir.findChild(GENERATED_FILES_FOLDER)
     TestCase.assertNotNull(generated)
     val archive = generated!!.findChild("course.zip")
     TestCase.assertNotNull(archive)
