@@ -4,6 +4,7 @@ import com.intellij.ui.ColorUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +25,6 @@ public class AnswerPlaceholder {
   private int myLength = -1;
   private int myIndex = -1;
   private MyInitialState myInitialState;
-  private boolean myUseLength = true; // if true -- taskText length used, else -- possible answer. Always true in student view
   @Nullable
   private AnswerPlaceholderDependency myPlaceholderDependency = null;
   private boolean myIsInitializedFromDependency = false;
@@ -145,19 +145,16 @@ public class AnswerPlaceholder {
     setInitialState(new MyInitialState(myOffset, getPlaceholderText().length()));
   }
 
-  public boolean getUseLength() {
-    return myUseLength;
-  }
-
   /**
    * @return length or possible answer length
    */
   public int getRealLength() {
-    return myUseLength ? getLength() : getPossibleAnswer().length();
-  }
-
-  public void setUseLength(boolean useLength) {
-    myUseLength = useLength;
+    if (myTaskFile == null) return getLength();
+    Course course = TaskFileExt.course(myTaskFile);
+    if (course == null) { // we're in show preview action in course creator mode
+      return getLength();
+    }
+    return course.isStudy() ? getLength() : getPossibleAnswer().length();
   }
 
   public int getOffset() {
@@ -193,8 +190,8 @@ public class AnswerPlaceholder {
     private int length = -1;
     private int offset = -1;
 
-    public MyInitialState() {
-    }
+    @SuppressWarnings("unused") // used for deserialization
+    public MyInitialState() { }
 
     public MyInitialState(int initialOffset, int length) {
       this.offset = initialOffset;

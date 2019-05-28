@@ -20,3 +20,5 @@ fun TaskFile.getVirtualFile(project: Project): VirtualFile? {
   val taskDir = task.getTaskDir(project) ?: return null
   return EduUtils.findTaskFileInDir(this, taskDir)
 }
+
+fun TaskFile.course() = task?.lesson?.course

@@ -52,7 +52,6 @@ private class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
     placeholder.length = placeholderText.length
     placeholder.placeholderText = placeholderText
     placeholder.hints = hints
-    placeholder.useLength = false
     placeholder.offset = offset
     placeholder.placeholderDependency = dependency
     //we don't have access to real possible answer here, so we need to preserve its length to set real text later

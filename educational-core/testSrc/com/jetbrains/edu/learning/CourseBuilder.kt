@@ -11,10 +11,13 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configurators.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import org.intellij.lang.annotations.Language
 import java.io.File
 import java.util.*
@@ -378,7 +381,6 @@ class TaskFileBuilder(val task: Task? = null) {
 
   fun placeholder(index: Int, possibleAnswer: String = "", dependency: String = "", isVisible: Boolean = true, hints: List<String> = emptyList()) {
     val answerPlaceholder = taskFile.answerPlaceholders[index]
-    answerPlaceholder.useLength = this.taskFile.task.course.courseMode == EduNames.STUDY
     answerPlaceholder.possibleAnswer = possibleAnswer
     answerPlaceholder.hints = hints
     val createdDependency = AnswerPlaceholderDependency.create(answerPlaceholder, dependency, isVisible)

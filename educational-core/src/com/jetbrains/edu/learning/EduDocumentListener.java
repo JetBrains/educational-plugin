@@ -9,7 +9,9 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,7 +28,7 @@ public class EduDocumentListener implements DocumentListener {
   }
 
   @Override
-  public void beforeDocumentChange(DocumentEvent e) {
+  public void beforeDocumentChange(@NotNull DocumentEvent e) {
     if (!myTaskFile.isTrackChanges()) {
       return;
     }
@@ -34,7 +36,7 @@ public class EduDocumentListener implements DocumentListener {
   }
 
   @Override
-  public void documentChanged(DocumentEvent e) {
+  public void documentChanged(@NotNull DocumentEvent e) {
     if (!myTaskFile.isTrackChanges()) {
       return;
     }
@@ -106,7 +108,8 @@ public class EduDocumentListener implements DocumentListener {
   protected void updatePlaceholder(@NotNull AnswerPlaceholder answerPlaceholder,
                                    @NotNull Document document, int start, int length) {
     answerPlaceholder.setOffset(start);
-    if (answerPlaceholder.getUseLength()) {
+    Course course = TaskFileExt.course(answerPlaceholder.getTaskFile());
+    if (course == null || course.isStudy()) {
       answerPlaceholder.setLength(length);
     } else {
       if (myTaskFile.isTrackLengths()) {

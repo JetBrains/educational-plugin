@@ -51,7 +51,6 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     answerPlaceholder.setTaskFile(taskFile);
     taskFile.sortAnswerPlaceholders();
     answerPlaceholder.setOffset(offset);
-    answerPlaceholder.setUseLength(false);
 
     String defaultPlaceholderText = "type here";
     CCCreateAnswerPlaceholderDialog dlg = createDialog(project, answerPlaceholder);

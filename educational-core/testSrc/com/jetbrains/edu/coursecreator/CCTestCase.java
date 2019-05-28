@@ -28,7 +28,6 @@ import com.intellij.testFramework.TestActionEvent;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.ui.docking.DockContainer;
 import com.intellij.ui.docking.DockManager;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -177,6 +176,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     Document document = FileDocumentManager.getInstance().getDocument(file);
     for (AnswerPlaceholder placeholder : getPlaceholders(document, false)) {
       taskFile.addAnswerPlaceholder(placeholder);
+      placeholder.setTaskFile(taskFile);
     }
     taskFile.sortAnswerPlaceholders();
     PlaceholderPainter.showPlaceholders(myFixture.getProject(), taskFile);
@@ -194,7 +194,6 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
       int pos = 0;
       while (openingMatcher.find(pos)) {
         AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
-        answerPlaceholder.setUseLength(useLength);
         String taskText = openingMatcher.group(2);
         if (taskText != null) {
           answerPlaceholder.setPlaceholderText(taskText);
@@ -204,7 +203,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
         if (possibleAnswer != null) {
           answerPlaceholder.setPossibleAnswer(possibleAnswer);
         }
-        final ArrayList<String> hints = ContainerUtil.newArrayList();
+        final ArrayList<String> hints = new ArrayList<>();
         String hint = openingMatcher.group(6);
         if (hint != null) {
           hints.add(hint);
@@ -220,19 +219,23 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
         if (!closingMatcher.find(openingMatcher.end())) {
           LOG.error("No matching closing tag found");
         }
+        int length;
         if (useLength) {
           answerPlaceholder.setPlaceholderText(String.valueOf(text.subSequence(openingMatcher.end(), closingMatcher.start())));
           answerPlaceholder.setLength(closingMatcher.start() - openingMatcher.end());
+          length = answerPlaceholder.getRealLength();
         } else {
           if (possibleAnswer == null) {
             answerPlaceholder.setPossibleAnswer(document.getText(TextRange.create(openingMatcher.end(), closingMatcher.start())));
           }
+          length = answerPlaceholder.getPossibleAnswerLength();
         }
         document.deleteString(closingMatcher.start(), closingMatcher.end());
         document.deleteString(openingMatcher.start(), openingMatcher.end());
         FileDocumentManager.getInstance().saveDocument(document);
         placeholders.add(answerPlaceholder);
-        pos = answerPlaceholder.getOffset() + answerPlaceholder.getRealLength();
+
+        pos = answerPlaceholder.getOffset() + length;
       }
       return placeholders;
     });

@@ -220,7 +220,6 @@ object CCUtils {
     try {
       for (placeholder in taskFile.answerPlaceholders) {
         replaceAnswerPlaceholder(document, placeholder)
-        placeholder.useLength = false
       }
 
       CommandProcessor.getInstance().executeCommand(project, {

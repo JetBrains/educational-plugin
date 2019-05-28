@@ -16,7 +16,8 @@ public class CCTestsUtil {
 
   public static boolean comparePlaceholders(AnswerPlaceholder p1, AnswerPlaceholder p2) {
     if (p1.getOffset() != p2.getOffset()) return false;
-    if (p1.getRealLength() != p2.getRealLength()) return false;
+    if (p1.getLength() != p2.getLength()) return false;
+    if (p1.getPossibleAnswerLength() != p2.getPossibleAnswerLength()) return false;
     if (p1.getPossibleAnswer() != null ? !p1.getPossibleAnswer().equals(p2.getPossibleAnswer()) : p2.getPossibleAnswer() != null) return false;
     if (p1.getPlaceholderText() != null ? !p1.getPlaceholderText().equals(p2.getPlaceholderText()) : p2.getPlaceholderText() != null) return false;
     if (!p1.getHints().equals(p2.getHints())) return false;

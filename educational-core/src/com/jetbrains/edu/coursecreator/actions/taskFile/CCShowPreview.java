@@ -41,7 +41,6 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -137,9 +136,6 @@ public class CCShowPreview extends DumbAwareAction {
     }
     final EditorEx createdEditor = (EditorEx)factory.createEditor(document, project, userFile, true);
     Disposer.register(project, () -> factory.releaseEditor(createdEditor));
-    for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
-      answerPlaceholder.setUseLength(true);
-    }
     PlaceholderPainter.showPlaceholders(project, taskFile, createdEditor);
     JPanel header = new JPanel();
     header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
