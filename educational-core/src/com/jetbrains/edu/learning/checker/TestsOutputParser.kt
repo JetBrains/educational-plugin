@@ -1,15 +1,12 @@
 package com.jetbrains.edu.learning.checker
 
-import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
+import com.jetbrains.edu.learning.checker.CheckUtils.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import java.util.regex.Pattern
 
 
 object TestsOutputParser {
-  const val CONGRATULATIONS = "Congratulations!"
-  const val TEST_OK = "test OK"
-  const val TEST_FAILED = "FAILED + "
-  const val CONGRATS_MESSAGE = "CONGRATS_MESSAGE "
+
   private val TEST_FAILED_PATTERN: Pattern = Pattern.compile("((.+) )?expected: ?(.*) but was: ?(.*)",
                                                              Pattern.MULTILINE or Pattern.DOTALL)
 

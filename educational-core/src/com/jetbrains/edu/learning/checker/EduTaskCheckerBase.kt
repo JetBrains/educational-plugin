@@ -100,7 +100,7 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
   }
 
   private fun SMTestProxy.SMRootTestProxy.toCheckResult(): CheckResult {
-    if (isPassed) return CheckResult(CheckStatus.Solved, TestsOutputParser.CONGRATULATIONS)
+    if (isPassed) return CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
 
     val failedChildren = collectChildren(object : Filter<SMTestProxy>() {
       override fun shouldAccept(test: SMTestProxy): Boolean = test.isLeaf && !test.isPassed

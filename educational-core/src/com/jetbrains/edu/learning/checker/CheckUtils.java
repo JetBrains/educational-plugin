@@ -31,6 +31,11 @@ import java.util.Map;
 
 public class CheckUtils {
   public static final String STUDY_PREFIX = "#educational_plugin";
+  public static final String CONGRATULATIONS = "Congratulations!";
+  public static final String TEST_OK = "test OK";
+  public static final String TEST_FAILED = "FAILED + ";
+  public static final String CONGRATS_MESSAGE = "CONGRATS_MESSAGE ";
+  
   public static final List<String> COMPILATION_ERRORS = CollectionsKt.listOf("Compilation failed", "Compilation error");
   public static final String COMPILATION_FAILED_MESSAGE = "Compilation failed";
   public static final String NOT_RUNNABLE_MESSAGE = "Solution isn't runnable";

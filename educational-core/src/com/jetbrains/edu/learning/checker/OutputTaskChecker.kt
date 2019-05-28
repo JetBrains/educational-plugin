@@ -76,7 +76,7 @@ open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<O
         outputString = "<no output>"
       }
       if (expectedOutput.dropLastLineBreak() == outputString.dropLastLineBreak()) {
-        return CheckResult(CheckStatus.Solved, TestsOutputParser.CONGRATULATIONS)
+        return CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
       }
       val diff = CheckResultDiff(expected = expectedOutput, actual = outputString)
       return CheckResult(CheckStatus.Failed, "Expected output:\n$expectedOutput \nActual output:\n$outputString", diff = diff)

@@ -1,7 +1,7 @@
 package com.jetbrains.edu.kotlin.checker
 
 import com.jetbrains.edu.learning.checker.CheckActionListener
-import com.jetbrains.edu.learning.checker.TestsOutputParser
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -70,7 +70,7 @@ class KtCheckersTest : KtCheckersTestBase() {
   fun testKotlinCourse() {
     CheckActionListener.expectedMessage { task ->
       when (task) {
-        is OutputTask, is EduTask -> TestsOutputParser.CONGRATULATIONS
+        is OutputTask, is EduTask -> CheckUtils.CONGRATULATIONS
         is TheoryTask -> ""
         else -> null
       }

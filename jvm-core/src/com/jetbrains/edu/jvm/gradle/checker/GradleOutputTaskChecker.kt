@@ -6,8 +6,11 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.checker.*
+import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.FAILED_TO_CHECK
+import com.jetbrains.edu.learning.checker.CheckResultDiff
+import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.learning.checker.OutputTaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
@@ -41,6 +44,6 @@ class GradleOutputTaskChecker(
       return CheckResult(CheckStatus.Failed, "Expected output:\n<$expectedOutput>\nActual output:\n<$output>", diff = diff)
     }
 
-    return CheckResult(CheckStatus.Solved, TestsOutputParser.CONGRATULATIONS)
+    return CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
   }
 }

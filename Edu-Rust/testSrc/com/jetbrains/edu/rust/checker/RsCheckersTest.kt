@@ -1,7 +1,7 @@
 package com.jetbrains.edu.rust.checker
 
 import com.jetbrains.edu.learning.checker.CheckActionListener
-import com.jetbrains.edu.learning.checker.TestsOutputParser
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -115,7 +115,7 @@ class RsCheckersTest : RsCheckersTestBase() {
   fun `test rust course`() {
     CheckActionListener.expectedMessage { task ->
       when (task) {
-        is OutputTask, is EduTask -> TestsOutputParser.CONGRATULATIONS
+        is OutputTask, is EduTask -> CheckUtils.CONGRATULATIONS
         else -> null
       }
     }

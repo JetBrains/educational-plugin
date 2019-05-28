@@ -7,7 +7,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import com.jetbrains.edu.learning.checker.*
+import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckResultDiff
+import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.learning.checker.OutputTaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
@@ -85,7 +88,7 @@ class RsOutputTaskChecker(project: Project, task: OutputTask) : OutputTaskChecke
         val diff = CheckResultDiff(expected = expected, actual = output)
         CheckResult(CheckStatus.Failed, "Expected output:\n<$expected>\nActual output:\n<$output>", diff = diff)
       } else {
-        CheckResult(CheckStatus.Solved, TestsOutputParser.CONGRATULATIONS)
+        CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
       }
     }
   }
