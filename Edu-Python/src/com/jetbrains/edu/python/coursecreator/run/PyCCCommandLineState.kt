@@ -8,9 +8,11 @@ import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.execution.ui.ConsoleView
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -35,6 +37,7 @@ class PyCCCommandLineState(
     val project = runConfiguration.project
     task = EduUtils.getTaskForFile(project, testsFile)!!
     taskDir = task.getTaskDir(project)!!
+    consoleBuilder = PyCCConsoleBuilder(runConfiguration, env.executor)
   }
 
   private val currentTaskFilePath: String?
@@ -74,6 +77,18 @@ class PyCCCommandLineState(
     else {
       FileUtil.join(taskDirPath, name)
     }
+  }
+
+  @Throws(ExecutionException::class)
+  override fun createAndAttachConsole(project: Project, processHandler: ProcessHandler, executor: Executor): ConsoleView {
+    val console = createConsole(executor)!!
+
+    // Filters are copied from PythonCommandLineState#createAndAttachConsole
+    console.addMessageFilter(createUrlFilter(processHandler))
+    addTracebackFilter(project, console, processHandler)
+
+    console.attachToProcess(processHandler)
+    return console
   }
 
   @Throws(ExecutionException::class)

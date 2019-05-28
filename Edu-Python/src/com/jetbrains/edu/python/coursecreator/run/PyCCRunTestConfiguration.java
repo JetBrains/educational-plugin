@@ -20,7 +20,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class PyCCRunTestConfiguration extends PythonRunConfiguration {
+public class PyCCRunTestConfiguration extends PythonRunConfiguration {
 
   public static final String PATH_ATTR = "studyTest";
   private Project myProject;
