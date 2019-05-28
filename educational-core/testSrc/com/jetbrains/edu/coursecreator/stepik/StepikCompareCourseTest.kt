@@ -298,7 +298,7 @@ class StepikCompareCourseTest : EduTestCase() {
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
-  fun `test change placeholder answer`() {
+  fun `test change placeholder text`() {
     val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
@@ -312,7 +312,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val courseFromServer = localCourse.copy() as EduCourse
     val changedTask = localCourse.lessons.single().taskList.single()
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
-    changedPlaceholder.possibleAnswer = "new answer"
+    changedPlaceholder.placeholderText = "new answer"
 
     val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
