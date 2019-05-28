@@ -24,17 +24,17 @@ import com.jetbrains.edu.learning.serialization.converter.TaskRoots
 import com.jetbrains.edu.learning.serialization.converter.json.*
 import com.jetbrains.edu.learning.serialization.converter.json.local.To10VersionLocalCourseConverter
 import com.jetbrains.edu.learning.serialization.converter.json.local.To9VersionLocalCourseConverter
-import com.jetbrains.edu.learning.stepik.StepOptions
+import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 
 private val LOG = Logger.getInstance(EduUtils::class.java)
 
-class JacksonStepOptionsDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<StepOptions>(vc) {
+class JacksonStepOptionsDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<PyCharmStepOptions>(vc) {
 
-  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): StepOptions {
+  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): PyCharmStepOptions {
     val objectMapper = StepikConnector.createMapper(SimpleModule())
     val node: JsonNode = jp.codec.readTree(jp)
     val migratedNode = migrate(node as ObjectNode, JSON_FORMAT_VERSION)
-    return objectMapper.treeToValue(migratedNode, StepOptions::class.java)
+    return objectMapper.treeToValue(migratedNode, PyCharmStepOptions::class.java)
   }
 
   companion object {

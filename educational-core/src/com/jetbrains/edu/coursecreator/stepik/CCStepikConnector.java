@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.*;
@@ -227,7 +226,7 @@ public class CCStepikConnector {
 
   public static boolean postTask(@NotNull final Project project, @NotNull final Task task, final int lessonId) {
     if (!checkIfAuthorized(project, "postTask")) return false;
-    if (task instanceof ChoiceTask || task instanceof CodeTask) return false;
+    if (task instanceof CodeTask) return false;
 
     final StepSource stepSource = StepikConnector.postTask(project, task, lessonId);
     if (stepSource == null) {

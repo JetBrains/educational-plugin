@@ -127,7 +127,7 @@ public class StepikTaskBuilder {
 
     task.setStatus(CheckStatus.Unchecked);
     final StringBuilder taskDescription = new StringBuilder(clearCodeBlockFromTags());
-    final StepOptions options = myStep.getOptions();
+    final PyCharmStepOptions options = ((PyCharmStepOptions)myStep.getOptions());
     if (options != null) {
       if (options.getSamples() != null) {
         taskDescription.append("<br>");
@@ -231,7 +231,7 @@ public class StepikTaskBuilder {
       LOG.error("Got a block with non-pycharm prefix: " + myStep.getName() + " for step: " + myStepId);
       return null;
     }
-    StepOptions stepOptions = myStep.getOptions();
+    PyCharmStepOptions stepOptions = ((PyCharmStepOptions)myStep.getOptions());
     String taskName = DEFAULT_EDU_TASK_NAME;
     if (stepOptions != null) {
       taskName = stepOptions.getTitle() != null ? stepOptions.getTitle() : DEFAULT_EDU_TASK_NAME;
@@ -264,7 +264,7 @@ public class StepikTaskBuilder {
 
   @NotNull
   private Task createPluginTask(@NotNull String name) {
-    final StepOptions options = myStep.getOptions();
+    final PyCharmStepOptions options = ((PyCharmStepOptions)myStep.getOptions());
     if (options == null) {
       LOG.error("No options in step source");
       return eduTask(name);
@@ -306,8 +306,8 @@ public class StepikTaskBuilder {
 
   private void createMockTaskFile(@NotNull Task task, @NotNull String comment, @Nullable String codeTemplate) {
     final StepOptions options = myStep.getOptions();
-    if (options != null) {
-      final List<TaskFile> taskFiles = options.getFiles();
+    if (options instanceof PyCharmStepOptions) {
+      final List<TaskFile> taskFiles = ((PyCharmStepOptions)options).getFiles();
       if (taskFiles != null && !taskFiles.isEmpty()) {
         for (TaskFile file : taskFiles) {
           task.addTaskFile(file);

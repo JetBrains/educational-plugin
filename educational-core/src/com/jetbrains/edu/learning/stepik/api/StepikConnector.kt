@@ -8,8 +8,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.stepik.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -26,7 +26,7 @@ object StepikConnector {
 
   init {
     val module = SimpleModule()
-    module.addDeserializer(StepOptions::class.java, JacksonStepOptionsDeserializer())
+    module.addDeserializer(PyCharmStepOptions::class.java, JacksonStepOptionsDeserializer())
     module.addDeserializer(Reply::class.java, StepikReplyDeserializer())
     objectMapper = createMapper(module)
     converterFactory = JacksonConverterFactory.create(objectMapper)

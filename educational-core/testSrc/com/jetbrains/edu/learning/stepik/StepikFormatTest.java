@@ -85,9 +85,10 @@ public class StepikFormatTest extends EduTestCase {
       final ObjectMapper mapper = StepikConnector.getObjectMapper();
 
       StepSource step = mapper.readValue(responseString, StepsList.class).steps.get(0);
-      assertEquals(EduNames.ADDITIONAL_MATERIALS, step.getBlock().getOptions().getTitle());
-      assertEquals("task_file.py", step.getBlock().getOptions().getFiles().get(0).getName());
-      assertEquals("test_helperq.py", step.getBlock().getOptions().getFiles().get(1).getName());
+      PyCharmStepOptions options = (PyCharmStepOptions)step.getBlock().getOptions();
+      assertEquals(EduNames.ADDITIONAL_MATERIALS, options.getTitle());
+      assertEquals("task_file.py", options.getFiles().get(0).getName());
+      assertEquals("test_helperq.py", options.getFiles().get(1).getName());
     }
   }
 
@@ -202,12 +203,12 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testOptionsTitle() throws IOException {
-    final StepOptions options = getStepOptions();
+    final PyCharmStepOptions options = (PyCharmStepOptions)getStepOptions();
     assertEquals("Our first program", options.getTitle());
   }
 
   public void testOptionsDescription() throws IOException {
-    final StepOptions options = getStepOptions();
+    final PyCharmStepOptions options = (PyCharmStepOptions)getStepOptions();
 
     assertEquals("\n" +
         "Traditionally the first program you write in any programming language is <code>\"Hello World!\"</code>.\n" +
@@ -221,12 +222,12 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testOptionsFeedbackLinks() throws IOException {
-    StepOptions stepOptions = getStepOptions();
+    PyCharmStepOptions stepOptions = (PyCharmStepOptions)getStepOptions();
     assertEquals(FeedbackLink.LinkType.CUSTOM, stepOptions.getMyFeedbackLink().getType());
   }
 
   public void testOptionsFiles() throws IOException {
-    final StepOptions options = getStepOptions();
+    final PyCharmStepOptions options = getStepOptions();
 
     final List<TaskFile> files = options.getFiles();
     assertEquals(2, files.size());
@@ -249,17 +250,17 @@ public class StepikFormatTest extends EduTestCase {
                  "    passed()\n", taskFile2.getText());
   }
 
-  private StepOptions getStepOptions() throws IOException {
+  private PyCharmStepOptions getStepOptions() throws IOException {
     String jsonText = loadJsonText();
     final ObjectMapper mapper = StepikConnector.getObjectMapper();
     final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
     final StepSource step = stepContainer.steps.get(0);
     final Step block = step.getBlock();
-    return block.getOptions();
+    return (PyCharmStepOptions)block.getOptions();
   }
 
   public void testOptionsPlaceholder() throws IOException {
-    final StepOptions options = getStepOptions();
+    final PyCharmStepOptions options = getStepOptions();
     final List<TaskFile> files = options.getFiles();
     final TaskFile taskFile = files.get(0);
 
@@ -273,7 +274,7 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testOptionsPlaceholderDependency() throws IOException {
-    final StepOptions options = getStepOptions();
+    final PyCharmStepOptions options = getStepOptions();
     final List<TaskFile> files = options.getFiles();
     final TaskFile taskFile = files.get(0);
 

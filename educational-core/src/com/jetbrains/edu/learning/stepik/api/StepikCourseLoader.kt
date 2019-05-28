@@ -208,7 +208,7 @@ object StepikCourseLoader {
 
       if (allStepSources.isNotEmpty()) {
         val options = allStepSources[0].block!!.options
-        if (options?.lessonType != null) {
+        if (options is PyCharmStepOptions && options.lessonType != null) {
           // TODO: find a better way to get framework lessons from stepik
           lesson = FrameworkLesson(lesson)
         }

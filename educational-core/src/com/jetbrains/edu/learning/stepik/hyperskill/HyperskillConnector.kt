@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.StepOptions
+import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.createRetrofitBuilder
@@ -44,7 +44,7 @@ object HyperskillConnector {
 
   init {
     val module = SimpleModule()
-    module.addDeserializer(StepOptions::class.java, JacksonStepOptionsDeserializer())
+    module.addDeserializer(PyCharmStepOptions::class.java, JacksonStepOptionsDeserializer())
     module.addDeserializer(Reply::class.java, StepikReplyDeserializer())
     objectMapper = StepikConnector.createMapper(module)
     converterFactory = JacksonConverterFactory.create(objectMapper)
