@@ -89,27 +89,6 @@ public class TaskFile {
     myTrackLengths = trackLengths;
   }
 
-  public static void copy(@NotNull final TaskFile source, @NotNull final TaskFile target) {
-    List<AnswerPlaceholder> sourceAnswerPlaceholders = source.getAnswerPlaceholders();
-    List<AnswerPlaceholder> answerPlaceholdersCopy = new ArrayList<>(sourceAnswerPlaceholders.size());
-    for (AnswerPlaceholder answerPlaceholder : sourceAnswerPlaceholders) {
-      AnswerPlaceholder answerPlaceholderCopy = new AnswerPlaceholder();
-      answerPlaceholderCopy.setPlaceholderText(answerPlaceholder.getPlaceholderText());
-      answerPlaceholderCopy.setOffset(answerPlaceholder.getOffset());
-      answerPlaceholderCopy.setLength(answerPlaceholder.getLength());
-      answerPlaceholderCopy.setPossibleAnswer(answerPlaceholder.getPossibleAnswer());
-      answerPlaceholderCopy.setIndex(answerPlaceholder.getIndex());
-      answerPlaceholderCopy.setHints(answerPlaceholder.getHints());
-      final AnswerPlaceholder.MyInitialState state = answerPlaceholder.getInitialState();
-      if (state != null) {
-        answerPlaceholderCopy.setInitialState(new AnswerPlaceholder.MyInitialState(state.getOffset(), state.getLength()));
-      }
-      answerPlaceholdersCopy.add(answerPlaceholderCopy);
-    }
-    target.setName(source.getName());
-    target.setAnswerPlaceholders(answerPlaceholdersCopy);
-  }
-
   public boolean isTrackChanges() {
     return myTrackChanges;
   }
