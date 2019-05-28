@@ -29,7 +29,9 @@ public class EducationalCoreIcons {
 
   public static final Icon Task = load("/icons/com/jetbrains/edu/eduTaskDefault.png"); // 16x16
   public static final Icon TaskSolved = load("/icons/com/jetbrains/edu/eduTaskDone.png"); // 16x16
+  public static final Icon TaskSolvedNoFrame = load("/icons/com/jetbrains/edu/eduTaskDoneNoFrame.png"); //11x11
   public static final Icon TaskFailed = load("/icons/com/jetbrains/edu/eduTaskFailed.png"); // 16x16
+  public static final Icon TaskFailedNoFrame = load("/icons/com/jetbrains/edu/eduTaskFailedNoFrame.png"); // 11x11
   public static final Icon IdeTask = load("/icons/com/jetbrains/edu/eduTaskIdeDefault.png"); // 16x16
   public static final Icon IdeTaskSolved = load("/icons/com/jetbrains/edu/eduTaskIdeDone.png"); // 16x16
   public static final Icon Lesson = load("/icons/com/jetbrains/edu/eduLessonDefault.png"); // 16x16

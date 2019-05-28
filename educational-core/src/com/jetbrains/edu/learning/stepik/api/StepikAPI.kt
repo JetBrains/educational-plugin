@@ -50,6 +50,7 @@ const val EDU_TASK = "edu_task"
 const val VERSION = "version"
 const val ATTACHMENTS = "attachments"
 const val ADDITIONAL_FILES = "additional_files"
+const val TIME = "time"
 
 // List wrappers for GET requests:
 
@@ -97,6 +98,9 @@ class ChoiceStepSourcesList {
 }
 
 class SubmissionsList {
+  @JsonProperty(META)
+  lateinit var meta: Map<Any, Any>
+
   @JsonProperty(SUBMISSIONS)
   lateinit var submissions: List<Submission>
 }
@@ -323,6 +327,12 @@ class Submission {
 
   @JsonProperty(HINT)
   var hint: String? = null
+
+  @JsonProperty(FEEDBACK)
+  var feedback: Feedback? = null
+
+  @JsonProperty(TIME)
+  var time: Date? = null
 
   constructor()
 

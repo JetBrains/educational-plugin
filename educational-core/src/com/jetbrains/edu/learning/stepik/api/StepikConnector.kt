@@ -130,19 +130,34 @@ abstract class StepikConnector {
     return stepSource?.block
   }
 
-  fun getSubmissions(isSolved: Boolean, stepId: Int): List<Submission>? {
-    val response = service.submissions(status = if (isSolved) "correct" else "wrong", step = stepId).executeHandlingExceptions()
-    return response?.body()?.submissions
+  fun getAllSubmissions(stepId: Int): MutableList<Submission> {
+    var currentPage = 1
+    val allSubmissions = mutableListOf<Submission>()
+    while (true) {
+      val submissionsList = getSubmissionsList(stepId, currentPage) ?: break
+      val submissions = submissionsList.submissions
+      allSubmissions.addAll(submissions)
+      if (submissions.isEmpty() || !submissionsList.meta.containsKey("has_next") || submissionsList.meta["has_next"] == false) {
+        SubmissionsManager.putToSubmissions(stepId, allSubmissions)
+        break
+      }
+      currentPage += 1
+    }
+    return allSubmissions
   }
 
-  fun getSubmissions(attemptId: Int, userId: Int): List<Submission>? {
+  fun getSubmission(attemptId: Int, userId: Int): Submission? {
     val response = service.submissions(attempt = attemptId, user = userId).executeHandlingExceptions()
-    return response?.body()?.submissions
+    val submissions = response?.body()?.submissions ?: return null
+    if (submissions.size != 1) {
+      LOG.warn("Got a submission wrapper with incorrect submissions number: " + submissions.size)
+    }
+    return submissions.firstOrNull()
   }
 
-  fun getLastSubmission(stepId: Int, isSolved: Boolean): Reply? {
-    val submissions = getSubmissions(isSolved, stepId)
-    return submissions?.firstOrNull()?.reply
+  fun getSubmissionsList(stepId: Int, page: Int = 1): SubmissionsList? {
+    val response = service.submissions(step = stepId, page = page).executeHandlingExceptions()
+    return response?.body()
   }
 
   fun getAttempts(stepId: Int, userId: Int): List<Attempt>? {
@@ -183,18 +198,21 @@ abstract class StepikConnector {
   }
 
   fun postSubmission(passed: Boolean, attempt: Attempt,
-                     files: ArrayList<SolutionFile>, task: Task): List<Submission>? {
+                     files: ArrayList<SolutionFile>, task: Task): Submission? {
     return postSubmission(SubmissionData(attempt.id, if (passed) "1" else "0", files, task))
   }
 
-  fun postSubmission(submissionData: SubmissionData): List<Submission>? {
+  fun postSubmission(submissionData: SubmissionData): Submission? {
     val response = service.submission(submissionData).executeHandlingExceptions()
-    val submissions = response?.body()?.submissions
-    if (response?.code() != HttpStatus.SC_CREATED) {
+    val submissions = response?.body()?.submissions ?: return null
+    if (response.code() != HttpStatus.SC_CREATED) {
       LOG.error("Failed to make submission $submissions")
       return null
     }
-    return submissions
+    if (submissions.size != 1) {
+      LOG.warn("Got a submission wrapper with incorrect submissions number: " + submissions.size)
+    }
+    return submissions.firstOrNull()
   }
 
   fun postAttempt(id: Int): Attempt? {
@@ -412,7 +430,7 @@ abstract class StepikConnector {
     val progressesMap = progresses.associate { it.id to it.isPassed }
     return ids.mapNotNull { progressesMap[it] }
   }
-  
+
   companion object {
     private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests
     private val LOG = Logger.getInstance(StepikConnector::class.java)

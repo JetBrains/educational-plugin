@@ -6,12 +6,12 @@ import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
-import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.EduConfiguratorBase
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
-class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
+class ScalaSbtConfigurator : EduConfiguratorBase<JdkProjectSettings>() {
 
   private val myCourseBuilder = ScalaSbtCourseBuilder()
 

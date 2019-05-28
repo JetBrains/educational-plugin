@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.configuration.EduConfiguratorBase.Companion.SUBMISSIONS_TAB_NAME
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -60,6 +61,11 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       val topicsContent = ContentFactory.SERVICE.getInstance().createContent(additionalTab.first, additionalTab.second, false)
       topicsContent.isCloseable = false
       contentManager.addContent(topicsContent, 1)
+    }
+    else {
+      val contents = contentManager.contents
+      val submissionsContent = contents.find { it.tabName == SUBMISSIONS_TAB_NAME }
+      if (submissionsContent != null) contentManager.removeContent(submissionsContent, true)
     }
 
     addYamlTab()

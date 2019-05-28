@@ -14,12 +14,12 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtils.putSelectedTaskFileFirst
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import java.util.*
 
 open class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare your solution with answer", AllIcons.Actions.Diff) {
   companion object {
@@ -60,13 +60,6 @@ open class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Com
 
   protected open fun getTaskFiles(task: Task) =
     task.taskFiles.values.filter { it.answerPlaceholders.isNotEmpty() }.toMutableList()
-
-  private fun putSelectedTaskFileFirst(taskFiles: MutableList<TaskFile>, selectedTaskFile: TaskFile) {
-    val selectedTaskFileIndex = taskFiles.indexOf(selectedTaskFile)
-    if (selectedTaskFileIndex > 0) {
-      Collections.swap(taskFiles, 0, selectedTaskFileIndex)
-    }
-  }
 
   protected open fun getSolution(taskFile: TaskFile): String? {
     val fullAnswer = StringBuilder(taskFile.text)

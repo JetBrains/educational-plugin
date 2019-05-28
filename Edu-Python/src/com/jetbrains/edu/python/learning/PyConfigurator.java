@@ -5,7 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
+import com.jetbrains.edu.learning.configuration.EduConfiguratorBase;
 import com.jetbrains.edu.python.learning.checker.PyTaskCheckerProvider;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import icons.PythonIcons;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
+public class PyConfigurator extends EduConfiguratorBase<PyNewProjectSettings> {
   public static final String TESTS_PY = "tests.py";
   public static final String TASK_PY = "task.py";
 
@@ -40,7 +40,7 @@ public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
   @Override
   public boolean excludeFromArchive(@NotNull Project project, @NotNull VirtualFile file) {
     String path = file.getPath();
-    return EduConfigurator.super.excludeFromArchive(project, file) || path.contains("__pycache__") || path.endsWith(".pyc");
+    return super.excludeFromArchive(project, file) || path.contains("__pycache__") || path.endsWith(".pyc");
   }
 
   @Override

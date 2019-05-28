@@ -23,7 +23,7 @@ class StepikRemoteTaskChecker : RemoteTaskChecker {
   override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {
     val user = EduSettings.getInstance().user ?: return CheckResult.LOGIN_NEEDED
     return when (task) {
-      is ChoiceTask -> StepikCheckerConnector.checkChoiceTask(task, user)
+      is ChoiceTask -> StepikCheckerConnector.checkChoiceTask(project, task, user)
       is CodeTask -> StepikCheckerConnector.checkCodeTask(project, task, user)
       else -> error("Can't check ${task.itemType} on Stepik")
     }

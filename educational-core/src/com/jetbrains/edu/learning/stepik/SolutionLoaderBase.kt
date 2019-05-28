@@ -16,6 +16,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.messages.Topic
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -309,8 +310,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       @JvmStatic
       fun from(status: String, task: Task, solutionList: List<SolutionFile>): TaskSolutions {
         val checkStatus = when (status) {
-          "wrong" -> CheckStatus.Failed
-          "correct" -> CheckStatus.Solved
+          EduNames.WRONG -> CheckStatus.Failed
+          EduNames.CORRECT -> CheckStatus.Solved
           else -> CheckStatus.Unchecked
         }
 

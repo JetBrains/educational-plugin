@@ -2,18 +2,22 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageCommenters;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.api.*;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +43,7 @@ public class StepikCheckerConnector {
     }
   }
 
-  public static CheckResult checkChoiceTask(@NotNull ChoiceTask task, @NotNull StepikUser user) {
+  public static CheckResult checkChoiceTask(Project project, @NotNull ChoiceTask task, @NotNull StepikUser user) {
     if (task.getSelectedVariants().isEmpty()) return new CheckResult(CheckStatus.Failed, "No variants selected");
     final Attempt attempt = getAttemptForStep(task.getId(), user.getId());
 
@@ -54,7 +58,7 @@ public class StepikCheckerConnector {
       if (!isActiveAttempt) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
       final SubmissionData submissionData = createChoiceSubmissionData(task, attemptId);
 
-      final CheckResult result = doCheck(submissionData, attemptId, user.getId());
+      final CheckResult result = doCheck(submissionData, project, attemptId, user.getId(), task);
       if (result.getStatus() == CheckStatus.Failed) {
         StepikConnector.getInstance().postAttempt(task.getId());
         StepSource step = StepikConnector.getInstance().getStep(task.getId());
@@ -130,7 +134,7 @@ public class StepikCheckerConnector {
         assert defaultLanguage != null : ("Default Stepik language not found for: " + courseLanguage.getDisplayName());
 
         final SubmissionData submissionData = createCodeSubmissionData(attemptId, defaultLanguage, answer);
-        return doCheck(submissionData, attemptId, user.getId());
+        return doCheck(submissionData, project, attemptId, user.getId(), task);
       }
     }
     else {
@@ -139,47 +143,48 @@ public class StepikCheckerConnector {
     return CheckResult.FAILED_TO_CHECK;
   }
 
-  private static CheckResult doCheck(@NotNull SubmissionData submission,
-                                     int attemptId, int userId) {
-    List<Submission> submissions = StepikConnector.getInstance().postSubmission(submission);
-    if (submissions != null) {
-      submissions = getCheckResults(submissions, attemptId, userId);
-      if (submissions.size() > 0) {
-        final String status = submissions.get(0).getStatus();
-        if (status == null) return CheckResult.FAILED_TO_CHECK;
-        final String hint = submissions.get(0).getHint();
-        final boolean isSolved = !status.equals("wrong");
-        String message = hint;
-        if (message == null || message.isEmpty() || message.contains(CODE_COMPLEXITY_NOTE)) {
-          message = StringUtil.capitalize(status) + " solution";
-        }
-        return new CheckResult(isSolved ? CheckStatus.Solved : CheckStatus.Failed, message);
+  private static CheckResult doCheck(@NotNull SubmissionData submissionData,
+                                     Project project, int attemptId, int userId, Task task) {
+    Submission submission = postSubmission(submissionData, attemptId, userId);
+    if (submission != null) {
+      if (task instanceof CodeTask) {
+        SubmissionsManager.addToSubmissions(task.getId(), submission);
+        ApplicationManager.getApplication().invokeLater(() -> TaskDescriptionView.getInstance(project).updateAdditionalTaskTab());
       }
-      else {
-        LOG.warn("Got a submission wrapper with incorrect submissions number: " + submissions.size());
+      final String status = submission.getStatus();
+      if (status == null) return CheckResult.FAILED_TO_CHECK;
+      final String hint = submission.getHint();
+      final boolean isSolved = !status.equals(EduNames.WRONG);
+      String message = hint;
+      if (message == null || message.isEmpty() || message.contains(CODE_COMPLEXITY_NOTE)) {
+        message = StringUtil.capitalize(status) + " solution";
       }
+      return new CheckResult(isSolved ? CheckStatus.Solved : CheckStatus.Failed, message);
     }
     else {
-      LOG.warn("Can't perform check: wrapper is null");
+      LOG.warn("Can't perform check: submission is null");
       return new CheckResult(CheckStatus.Unchecked, "Can't get check results for Stepik");
     }
-    return CheckResult.FAILED_TO_CHECK;
   }
 
-  private static List<Submission> getCheckResults(@NotNull List<Submission> submissions, int attemptId, int userId) {
+  private static Submission postSubmission(@NotNull SubmissionData submissionData, int attemptId, int userId) {
+    Submission submission = StepikConnector.getInstance().postSubmission(submissionData);
+    if (submission == null) {
+      return null;
+    }
     try {
-      String status = submissions.get(0).getStatus();
+      String status = submission.getStatus();
       while ("evaluation".equals(status)) {
         TimeUnit.MILLISECONDS.sleep(500);
-        submissions = StepikConnector.getInstance().getSubmissions(attemptId, userId);
-        if (submissions == null || submissions.size() != 1) break;
-        status = submissions.get(0).getStatus();
+        submission = StepikConnector.getInstance().getSubmission(attemptId, userId);
+        if (submission == null) break;
+        status = submission.getStatus();
       }
     }
     catch (InterruptedException e) {
       LOG.warn(e.getMessage());
     }
-    return submissions;
+    return submission;
   }
 
   private static int getAttemptId(@NotNull Task task) {

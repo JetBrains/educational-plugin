@@ -73,6 +73,10 @@ public class EduNames {
   // Single `ObjectiveC` id is used both for `ObjectiveC` and `C/C++`
   public static final String CPP = "ObjectiveC";
 
+  // Submissions status
+  public static final String CORRECT = "correct";
+  public static final String WRONG = "wrong";
+
   private EduNames() {
   }
 

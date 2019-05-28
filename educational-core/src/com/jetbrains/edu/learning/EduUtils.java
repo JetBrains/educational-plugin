@@ -876,6 +876,13 @@ public class EduUtils {
     return text.substring(0, index) + "&" + text.substring(index);
   }
 
+  public static void putSelectedTaskFileFirst(List<TaskFile> taskFiles, TaskFile selectedTaskFile) {
+    int selectedTaskFileIndex = taskFiles.indexOf(selectedTaskFile);
+    if (selectedTaskFileIndex > 0) {
+      Collections.swap(taskFiles, 0, selectedTaskFileIndex);
+    }
+  }
+
   @TestOnly
   public static <T> void waitAndDispatchInvocationEvents(@NotNull Future<T> future) {
     if (!OpenApiExtKt.isUnitTestMode()) {

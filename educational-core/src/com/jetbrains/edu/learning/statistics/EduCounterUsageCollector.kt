@@ -42,7 +42,7 @@ object EduCounterUsageCollector {
   }
 
   enum class AuthorizationPlace {
-    SETTINGS, WIDGET, START_COURSE_DIALOG
+    SETTINGS, WIDGET, START_COURSE_DIALOG, SUBMISSIONS_TAB
   }
 
   private fun authorization(event: AuthorizationEvent, platform: String, place: AuthorizationPlace) =

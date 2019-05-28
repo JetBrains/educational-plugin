@@ -50,15 +50,20 @@ interface StepikService {
   fun progresses(@Query("ids[]") vararg ids: String): Call<ProgressesList>
 
   @GET("api/submissions")
-  fun submissions(@Query("order") order: String = "desc",
-                  @Query("page") page: Int = 1,
+  fun submissions(@Query("step") step: Int,
                   @Query("status") status: String,
-                  @Query("step") step: Int): Call<SubmissionsList>
+                  @Query("page") page: Int = 1,
+                  @Query("order") order: String = "desc"): Call<SubmissionsList>
 
   @GET("api/submissions")
   fun submissions(@Query("order") order: String = "desc",
                   @Query("attempt") attempt: Int = 1,
                   @Query("user") user: Int): Call<SubmissionsList>
+
+  @GET("api/submissions")
+  fun submissions(@Query("step") step: Int,
+                  @Query("page") page: Int,
+                  @Query("order") order: String = "desc"): Call<SubmissionsList>
 
   @GET("api/attempts")
   fun attempts(@Query("step") stepId: Int, @Query("user") userId: Int): Call<AttemptsList>

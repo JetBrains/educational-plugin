@@ -87,21 +87,22 @@ public class StepikSolutionsLoader implements Disposable {
     }
     addFileOpenListener();
   }
-  public static void postSolution(@NotNull final Task task, boolean passed, @NotNull final Project project) {
+
+  public static Submission postSolution(@NotNull final Task task, boolean passed, @NotNull final Project project) {
     if (task.getId() <= 0) {
-      return;
+      return null;
     }
 
     final Attempt attempt = StepikConnector.getInstance().postAttempt(task.getId());
     if (attempt == null) {
       LOG.warn("Failed to post an attempt " + task.getId());
-      return;
+      return null;
     }
     final ArrayList<SolutionFile> files = new ArrayList<>();
     final VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
       LOG.error("Failed to find task directory " + task.getName());
-      return;
+      return null;
     }
     for (TaskFile taskFile : task.getTaskFiles().values()) {
       final String fileName = taskFile.getName();
@@ -124,8 +125,7 @@ public class StepikSolutionsLoader implements Disposable {
         });
       }
     }
-
-    StepikConnector.getInstance().postSubmission(passed, attempt, files, task);
+    return StepikConnector.getInstance().postSubmission(passed, attempt, files, task);
   }
 
   public void loadSolutionsInBackground() {
@@ -326,13 +326,13 @@ public class StepikSolutionsLoader implements Disposable {
     }
 
     if (task instanceof EduTask) {
-      Reply reply = StepikConnector.getInstance().getLastSubmission(stepId, false);
+      Reply reply = SubmissionsManager.getLastSubmission(stepId, false);
       if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
         return true;
       }
     }
     else {
-      String solution = getSolutionTextForStepikAssignment(task, false);
+      String solution = getSolutionTextForStepikAssignment(task, false); //loads all submissions inside
       if (solution != null) {
         return true;
       }
@@ -382,7 +382,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static TaskSolutions getEduTaskSolutions(@NotNull Task task, boolean isSolved) {
     String language = task.getCourse().getLanguageID();
-    Reply reply = StepikConnector.getInstance().getLastSubmission(task.getId(), isSolved);
+    Reply reply = SubmissionsManager.getLastSubmission(task.getId(), isSolved);
     if (reply == null || reply.getSolution() == null || reply.getSolution().isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449
       if (reply != null && reply.getSolution() == null) {
@@ -524,7 +524,7 @@ public class StepikSolutionsLoader implements Disposable {
     placeholder.setOffset(-1);
   }
 
-  static String removeAllTags(@NotNull String text) {
+  public static String removeAllTags(@NotNull String text) {
     String result = text.replaceAll(OPEN_PLACEHOLDER_TAG, "");
     result = result.replaceAll(CLOSE_PLACEHOLDER_TAG, "");
     return result;
@@ -533,8 +533,8 @@ public class StepikSolutionsLoader implements Disposable {
 
   @Nullable
   static String getSolutionTextForStepikAssignment(@NotNull Task task, boolean isSolved) {
-    final List<Submission> submissions = StepikConnector.getInstance().getSubmissions(isSolved, task.getId());
-    if (submissions == null) {
+    final List<Submission> submissions = SubmissionsManager.getSubmissions(task.getId(), isSolved);
+    if (submissions.isEmpty()) {
       return null;
     }
 
