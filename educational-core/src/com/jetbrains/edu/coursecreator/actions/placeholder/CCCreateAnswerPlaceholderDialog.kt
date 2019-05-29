@@ -28,7 +28,7 @@ open class CCCreateAnswerPlaceholderDialog(
 ) : DialogWrapper(project, true) {
   private val panel: CCAddAnswerPlaceholderPanel = CCAddAnswerPlaceholderPanel(placeholderText)
   // "30" is the same value of text field columns as Messages.InputDialog uses
-  val dependencyPathField: JBTextField = JBTextField(30)
+  private val dependencyPathField: JBTextField = JBTextField(30)
   private val visibilityCheckBox: JBCheckBox = JBCheckBox("Visible", placeholder.placeholderDependency?.isVisible == true)
   private val pathLabel: JLabel = JLabel("[sectionName#]lessonName#taskName#filePath#placeholderIndex")
   private val isFirstTask: Boolean = placeholder.taskFile.task.isFirstInCourse
@@ -36,8 +36,7 @@ open class CCCreateAnswerPlaceholderDialog(
   private val taskText: String = StringUtil.notNullize(panel.getAnswerPlaceholderText()).trim { it <= ' ' }
 
   init {
-    val title = (if (isEdit) "Edit" else "Add") + TITLE_SUFFIX
-    this.title = title
+    this.title = (if (isEdit) "Edit" else "Add") + TITLE_SUFFIX
     val buttonText = if (isEdit) "OK" else "Add"
     setOKButtonText(buttonText)
     super.init()
@@ -56,19 +55,19 @@ open class CCCreateAnswerPlaceholderDialog(
         row { visibilityCheckBox() }
       }
       contentPanel.border = JBUI.Borders.emptyBottom(5)
-      val decorator = HideableDecorator(dependencyPanel, "Add Answer Placeholder Dependency", false)
+      val decorator = HideableDecorator(dependencyPanel, "Add Answer Placeholder Dependency", true)
       decorator.setContentComponent(contentPanel)
       if (placeholder.placeholderDependency != null) {
         decorator.setOn(true)
         dependencyPathField.text = placeholder.placeholderDependency?.toString()
         panel.preferredSize = Dimension(500, 240)
       }
-      panel.add(dependencyPanel, BorderLayout.SOUTH)
+      panel.add(dependencyPanel, BorderLayout.NORTH)
     }
     return panel
   }
 
-  public override fun doValidate(): ValidationInfo? {
+  override fun doValidate(): ValidationInfo? {
     if (currentText.isEmpty()) {
       return null
     }
