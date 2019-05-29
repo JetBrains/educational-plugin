@@ -12,6 +12,8 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
@@ -276,6 +278,27 @@ open class StepikIntegrationTest : StepikTestCase() {
     val uploadedCourse = StudyTaskManager.getInstance(project).course as EduCourse
     val remoteCourse = getCourseFromStepik(uploadedCourse.id)
     assertEquals(expectedLanguage, remoteCourse.language)
+  }
+
+  fun `test course with choice task`() {
+    val expectedChoiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.CORRECT)
+    val localCourse = initCourse {
+      lesson {
+        choiceTask(isMultipleChoice = true, choiceOptions = expectedChoiceOptions) {
+          taskFile("text.txt")
+        }
+      }
+    }
+    val courseFromStepik = getCourseFromStepik(localCourse.id)
+    checkCourseUploaded(localCourse)
+    StepikCourseLoader.fillItems(courseFromStepik)
+
+    val task = (courseFromStepik.items[0] as Lesson).taskList[0]
+    assertInstanceOf(task, ChoiceTask::class.java)
+
+    val choiceTask = task as ChoiceTask
+    assertTrue(choiceTask.isMultipleChoice)
+    assertEquals(expectedChoiceOptions, choiceTask.choiceOptions.associateBy({ it.text }, { it.status }))
   }
 
   private fun setText(path: String, text: String) {

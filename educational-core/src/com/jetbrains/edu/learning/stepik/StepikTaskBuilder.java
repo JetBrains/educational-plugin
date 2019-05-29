@@ -183,26 +183,24 @@ public class StepikTaskBuilder {
     task.setUpdateDate(myStepSource.getUpdateDate());
     task.setDescriptionText(clearCodeBlockFromTags());
 
-    if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      ChoiceStepOptions choiceStepOptions = StepikConnector.getChoiceStepSource(myStepId);
-      if (choiceStepOptions != null) {
-        task.setMultipleChoice(choiceStepOptions.isMultipleChoice());
-        task.setChoiceOptions(ContainerUtil.map(choiceStepOptions.getOptions(),
-                                                option -> new ChoiceOption(option.getText(), option.isCorrect()
-                                                                                             ? ChoiceOptionStatus.CORRECT
-                                                                                             : ChoiceOptionStatus.INCORRECT)));
-      }
-      else {
-        final Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepId, myUserId);
-        if (attempt != null) {
-          final Dataset dataset = attempt.getDataset();
-          if (dataset != null && dataset.getOptions() != null) {
-            task.setChoiceOptions(ContainerUtil.map(dataset.getOptions(), s -> new ChoiceOption(s)));
-            task.setMultipleChoice(dataset.isMultipleChoice());
-          }
-          else {
-            LOG.warn("Dataset for step " + myStepId + " is null");
-          }
+    ChoiceStepOptions choiceStepOptions = StepikConnector.getChoiceStepSource(myStepId);
+    if (choiceStepOptions != null) {
+      task.setMultipleChoice(choiceStepOptions.isMultipleChoice());
+      task.setChoiceOptions(ContainerUtil.map(choiceStepOptions.getOptions(),
+                                              option -> new ChoiceOption(option.getText(), option.isCorrect()
+                                                                                           ? ChoiceOptionStatus.CORRECT
+                                                                                           : ChoiceOptionStatus.INCORRECT)));
+    }
+    else if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      final Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepId, myUserId);
+      if (attempt != null) {
+        final Dataset dataset = attempt.getDataset();
+        if (dataset != null && dataset.getOptions() != null) {
+          task.setChoiceOptions(ContainerUtil.map(dataset.getOptions(), s -> new ChoiceOption(s)));
+          task.setMultipleChoice(dataset.isMultipleChoice());
+        }
+        else {
+          LOG.warn("Dataset for step " + myStepId + " is null");
         }
       }
     }
