@@ -184,7 +184,6 @@ public class StepikTaskBuilder {
     task.setDescriptionText(clearCodeBlockFromTags());
 
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      //TODO: do it only in educator mode
       ChoiceStepOptions choiceStepOptions = StepikConnector.getChoiceStepSource(myStepId);
       if (choiceStepOptions != null) {
         task.setMultipleChoice(choiceStepOptions.isMultipleChoice());
