@@ -31,11 +31,8 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
     val file = taskDir.findFileByRelativePath(testFilePath) ?: return emptyList()
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return emptyList()
     val context = ConfigurationContext(psiFile)
-    val configuration = producer.findOrCreateConfigurationFromContext(context)?.configurationSettings?.apply {
-      isActivateToolWindowBeforeRun = activateRunToolWindow
-      isTemporary = true
-    }
-    return listOfNotNull(configuration)
+    val configurationFromContext = producer.findOrCreateConfigurationFromContext(context)
+    return listOfNotNull(configurationFromContext?.configurationSettings)
   }
 
   override fun check(indicator: ProgressIndicator): CheckResult {

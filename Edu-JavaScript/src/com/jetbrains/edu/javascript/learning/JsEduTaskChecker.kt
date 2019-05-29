@@ -18,13 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 class JsEduTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(task, project) {
 
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
-    return task.getAllTests(project).mapNotNull {
-      val configuration = ConfigurationContext(it).configuration?.apply {
-        isActivateToolWindowBeforeRun = activateRunToolWindow
-        isTemporary = true
-      }
-      configuration
-    }
+    return task.getAllTests(project).mapNotNull { ConfigurationContext(it).configuration }
   }
 
   private fun Task.getAllTests(project: Project): List<PsiFile> {

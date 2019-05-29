@@ -19,12 +19,7 @@ open class NewGradleEduTaskChecker(task: EduTask, project: Project) : EduTaskChe
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
     return withGradleTestRunner(project, task) {
       task.getAllTestDirectories(project)
-        .mapNotNull {
-          ConfigurationContext(it).configuration?.apply {
-            isActivateToolWindowBeforeRun = activateRunToolWindow
-            isTemporary = true
-          }
-        }
+        .mapNotNull { ConfigurationContext(it).configuration }
     }.orEmpty()
   }
 

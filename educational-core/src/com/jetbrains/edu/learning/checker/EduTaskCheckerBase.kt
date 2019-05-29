@@ -50,6 +50,10 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
     })
 
     val configurations = DumbService.getInstance(project).runReadActionInSmartMode(Computable { createTestConfigurations() })
+    configurations.forEach {
+      it.isActivateToolWindowBeforeRun = activateRunToolWindow
+      it.isTemporary = true
+    }
 
     if (configurations.isEmpty()) return NO_TESTS_RUN
 
