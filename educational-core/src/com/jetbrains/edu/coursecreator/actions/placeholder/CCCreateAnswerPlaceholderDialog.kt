@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.awt.BorderLayout
+import java.awt.Component
 import java.awt.Dimension
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -60,9 +61,11 @@ open class CCCreateAnswerPlaceholderDialog(
       if (placeholder.placeholderDependency != null) {
         decorator.setOn(true)
         dependencyPathField.text = placeholder.placeholderDependency?.toString()
-        panel.preferredSize = Dimension(500, 240)
       }
-      panel.add(dependencyPanel, BorderLayout.NORTH)
+
+      dependencyPanel.alignmentX = Component.LEFT_ALIGNMENT
+      dependencyPanel.maximumSize = Dimension(Int.MAX_VALUE, 0)
+      panel.add(dependencyPanel)
     }
     return panel
   }

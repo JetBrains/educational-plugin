@@ -5,7 +5,8 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import java.awt.BorderLayout
+import java.awt.Component
+import java.awt.Dimension
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
 import javax.swing.*
@@ -16,7 +17,7 @@ class CCAddAnswerPlaceholderPanel(placeholderText: String) : JPanel() {
   private val textArea: JTextArea = JTextArea(placeholderText, 3, 1)
 
   init {
-    layout = BorderLayout()
+    layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
 
     val label = JLabel(HELP_TEXT)
     label.foreground = JBColor.GRAY
@@ -37,7 +38,9 @@ class CCAddAnswerPlaceholderPanel(placeholderText: String) : JPanel() {
       row { scrollPane() }
       row { label() }
     }
-    add(panel, BorderLayout.NORTH)
+    panel.minimumSize = Dimension(370, 100)
+    panel.alignmentX = Component.LEFT_ALIGNMENT
+    add(panel)
   }
 
   fun getAnswerPlaceholderText(): String {
