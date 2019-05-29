@@ -154,6 +154,12 @@ object StepikConnector {
   }
 
   @JvmStatic
+  fun getChoiceStepSource(stepId: Int): ChoiceStepOptions? {
+    val stepSource = service.choiceStepSource(stepId).executeHandlingExceptions(true)?.body()?.steps?.firstOrNull()
+    return stepSource?.block?.source
+  }
+
+  @JvmStatic
   fun getSubmissions(isSolved: Boolean, stepId: Int): List<Submission>? {
     val response = service.submissions(status = if (isSolved) "correct" else "wrong", step = stepId).executeHandlingExceptions()
     return response?.body()?.submissions

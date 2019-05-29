@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.stepik.ChoiceStepSource
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import java.util.*
@@ -86,6 +87,11 @@ class StepsList {
 class StepSourcesList {
   @JsonProperty(STEP_SOURCES)
   lateinit var steps: List<StepSource>
+}
+
+class ChoiceStepSourcesList {
+  @JsonProperty(STEP_SOURCES)
+  lateinit var steps: List<ChoiceStepSource>
 }
 
 class SubmissionsList {

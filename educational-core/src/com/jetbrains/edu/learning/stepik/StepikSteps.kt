@@ -138,7 +138,7 @@ class PyCharmStepOptions : StepOptions {
 }
 
 class ChoiceStepOptions : StepOptions {
-  @JsonProperty("is_multiple_choice")
+  @JsonProperty(IS_MULTIPLE_CHOICE)
   var isMultipleChoice = false
 
   @JsonProperty("is_always_correct")
@@ -213,4 +213,14 @@ class StepSource {
     position = task.index
     block = Step(project, task)
   }
+}
+
+class ChoiceStepSource {
+  @JsonProperty(BLOCK)
+  var block: ChoiceStep? = null
+}
+
+class ChoiceStep {
+  @JsonProperty(SOURCE)
+  var source: ChoiceStepOptions? = null // used only in POST
 }

@@ -69,6 +69,8 @@ interface StepikService {
   @GET("api/attachments")
   fun attachments(@Query("course") courseId: Int): Call<AttachmentsList>
 
+  @GET("api/step-sources/{id}")
+  fun choiceStepSource(@Path("id") stepId: Int): Call<ChoiceStepSourcesList>
 
   // POST requests:
 
