@@ -223,10 +223,12 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
         if (useLength) {
           answerPlaceholder.setPlaceholderText(String.valueOf(text.subSequence(openingMatcher.end(), closingMatcher.start())));
           answerPlaceholder.setLength(closingMatcher.start() - openingMatcher.end());
-          length = answerPlaceholder.getRealLength();
+          length = answerPlaceholder.getLength();
         } else {
           if (possibleAnswer == null) {
-            answerPlaceholder.setPossibleAnswer(document.getText(TextRange.create(openingMatcher.end(), closingMatcher.start())));
+            possibleAnswer = document.getText(TextRange.create(openingMatcher.end(), closingMatcher.start()));
+            answerPlaceholder.setPossibleAnswer(possibleAnswer);
+            answerPlaceholder.setLength(possibleAnswer.length());
           }
           length = answerPlaceholder.getPossibleAnswerLength();
         }

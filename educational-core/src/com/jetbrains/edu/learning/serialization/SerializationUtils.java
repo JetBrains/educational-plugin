@@ -56,6 +56,7 @@ public class SerializationUtils {
                                                                                                 StepikCourse.class, CourseraCourse.class);
 
     public final static String COURSE_ELEMENT = "courseElement";
+    public final static String COURSE_MODE = "courseMode";
     public final static String MAIN_ELEMENT = "StudyTaskManager";
     public final static String REMOTE_COURSE = "RemoteCourse";
     public static final String SECTION = "Section";
@@ -73,6 +74,8 @@ public class SerializationUtils {
     public static final String STUDY_STATUS_MAP = "myStudyStatusMap";
     public static final String TASK_STATUS_MAP = "myTaskStatusMap";
     public static final String LENGTH = "length";
+    public static final String USE_LENGTH = "useLength";
+    public static final String TRACK_LENGTH = "trackLengths";
     public static final String ANSWER_PLACEHOLDERS = "answerPlaceholders";
     public static final String TASK_LIST = "taskList";
     public static final String TASK_FILES = "taskFiles";
@@ -224,6 +227,11 @@ public class SerializationUtils {
     public static Element convertTo15Version(@NotNull Project project,
                                              @NotNull Element element) throws StudyUnrecognizedFormatException {
       return new To15VersionXmlConverter().convert(project, element);
+    }
+
+    public static Element convertTo16Version(@NotNull Project project,
+                                             @NotNull Element element) throws StudyUnrecognizedFormatException {
+      return new To16VersionXmlConverter().convert(project, element);
     }
 
     @Nullable

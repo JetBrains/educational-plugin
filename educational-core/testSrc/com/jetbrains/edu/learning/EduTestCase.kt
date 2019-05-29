@@ -180,7 +180,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.openFileInEditor(file)
     if (placeholderIndex != null) {
       val placeholder = taskFile.answerPlaceholders[placeholderIndex]
-      myFixture.editor.selectionModel.setSelection(placeholder.offset, placeholder.offset + placeholder.realLength)
+      myFixture.editor.selectionModel.setSelection(placeholder.offset, placeholder.endOffset)
     }
   }
 

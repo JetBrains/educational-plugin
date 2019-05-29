@@ -21,7 +21,6 @@ import java.util.List;
 public class TaskFile {
   private String myName;
   private boolean myTrackChanges = true;
-  private boolean myTrackLengths = true;
   private boolean myHighlightErrors = false;
   private List<AnswerPlaceholder> myAnswerPlaceholders = new ArrayList<>();
   private boolean myVisible = true;
@@ -79,14 +78,6 @@ public class TaskFile {
   @Nullable
   public AnswerPlaceholder getAnswerPlaceholder(int offset) {
     return EduUtils.getAnswerPlaceholder(offset, getAnswerPlaceholders());
-  }
-
-  public boolean isTrackLengths() {
-    return myTrackLengths;
-  }
-
-  public void setTrackLengths(boolean trackLengths) {
-    myTrackLengths = trackLengths;
   }
 
   public boolean isTrackChanges() {

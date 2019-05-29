@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.itemNotFound
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.taskDirNotFoundError
-import com.jetbrains.edu.coursecreator.yaml.setPlaceholdersPossibleAnswer
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -79,24 +78,23 @@ class TaskChangeApplier<T : Task> : StudyItemChangeApplier<T>() {
     val project = existingItem.project ?: error("Cannot find project for a task: $existingItem")
     existingItem.feedbackLink = deserializedItem.feedbackLink
     hideOldPlaceholdersForOpenedFiles(project, existingItem)
-    existingItem.applyTaskFileChanges(project, deserializedItem)
+    existingItem.applyTaskFileChanges(deserializedItem)
     paintPlaceholdersForOpenedFiles(project, existingItem)
   }
 
-  private fun Task.applyTaskFileChanges(project: Project, deserializedItem: Task) {
+  private fun Task.applyTaskFileChanges(deserializedItem: Task) {
     for ((name, taskFile) in taskFiles) {
       val deserializedTaskFile = deserializedItem.taskFiles[name] ?: itemNotFound(name)
-      taskFile.applyPlaceholderChanges(project, deserializedTaskFile)
+      taskFile.applyPlaceholderChanges(deserializedTaskFile)
       taskFile.isVisible = deserializedTaskFile.isVisible
       // init new placeholders to correctly paint them
       taskFile.initTaskFile(this, false)
     }
   }
 
-  private fun TaskFile.applyPlaceholderChanges(project: Project, deserializedTaskFile: TaskFile) {
+  private fun TaskFile.applyPlaceholderChanges(deserializedTaskFile: TaskFile) {
     PlaceholderPainter.hidePlaceholders(this)
     answerPlaceholders = deserializedTaskFile.answerPlaceholders
-    setPlaceholdersPossibleAnswer(project)
   }
 
   private fun paintPlaceholdersForOpenedFiles(project: Project, task: Task) {

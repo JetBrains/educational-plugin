@@ -150,7 +150,7 @@ class DependencyResolveTest : EduTestCase() {
 
   private fun checkPlaceholder(expectedOffset: Int, expectedLength: Int, actualPlaceholder: AnswerPlaceholder) {
     val actualOffset = actualPlaceholder.offset
-    val actualLength = actualPlaceholder.realLength
+    val actualLength = actualPlaceholder.length
     assertTrue("Resolved to wrong placeholder. Expected offset=$expectedOffset, length=$expectedLength, " +
                         "but got offset=$actualOffset, length=$actualLength",
                         expectedOffset == actualOffset && expectedLength == expectedLength)

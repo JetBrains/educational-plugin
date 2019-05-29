@@ -1,0 +1,155 @@
+<component name="StudySettings">
+  <StudyTaskManager>
+    <option name="VERSION" value="15" />
+    <option name="myUserTests">
+      <map />
+    </option>
+    <option name="course">
+      <EduCourse>
+        <option name="authors">
+          <list>
+            <StepikUserInfo>
+              <option name="firstName" value="ekaterina.tuzova" />
+              <option name="id" value="-1" />
+              <option name="lastName" value="" />
+            </StepikUserInfo>
+          </list>
+        </option>
+        <option name="compatible" value="true" />
+        <option name="courseMode" value="Study" />
+        <option name="createDate" value="0" />
+        <option name="customPresentableName" />
+        <option name="description" value="111" />
+        <option name="environment" value="" />
+        <option name="id" value="0" />
+        <option name="index" value="-1" />
+        <option name="instructors">
+          <list />
+        </option>
+        <option name="language" value="kotlin" />
+        <option name="languageCode" value="en" />
+        <option name="name" value="Kotlin Course" />
+        <option name="public" value="false" />
+        <option name="sectionIds">
+          <list />
+        </option>
+        <option name="type" value="pycharm11 kotlin" />
+        <option name="updateDate" value="0" />
+        <option name="items">
+          <list>
+            <Lesson>
+              <option name="customPresentableName" />
+              <option name="id" value="0" />
+              <option name="index" value="1" />
+              <option name="name" value="lesson1" />
+              <option name="updateDate" value="0" />
+              <option name="unitId" value="0" />
+              <option name="items">
+                <list>
+                  <EduTask>
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;div class=&quot;hint&quot;&gt;&#10;  Hints can be added anywhere in task text: type &quot;hint&quot; and press Tab.&#10;&lt;/div&gt;&#10;&lt;/html&gt;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="id" value="0" />
+                    <option name="index" value="1" />
+                    <option name="name" value="task1" />
+                    <option name="record" value="-1" />
+                    <option name="status" value="Unchecked" />
+                    <option name="files">
+                      <map>
+                        <entry key="src/Task.kt">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list>
+                                  <AnswerPlaceholder>
+                                    <option name="hints">
+                                      <list />
+                                    </option>
+                                    <option name="index" value="0" />
+                                    <option name="initialState" />
+                                    <option name="initializedFromDependency" value="false" />
+                                    <option name="length" value="1" />
+                                    <option name="offset" value="13" />
+                                    <option name="placeholderDependency" />
+                                    <option name="placeholderText" value="1" />
+                                    <option name="possibleAnswer" value="solution" />
+                                    <option name="selected" value="false" />
+                                    <option name="status" value="Unchecked" />
+                                    <option name="studentAnswer" />
+                                  </AnswerPlaceholder>
+                                  <AnswerPlaceholder>
+                                    <option name="hints">
+                                      <list />
+                                    </option>
+                                    <option name="index" value="1" />
+                                    <option name="initialState" />
+                                    <option name="initializedFromDependency" value="false" />
+                                    <option name="length" value="1" />
+                                    <option name="offset" value="62" />
+                                    <option name="placeholderDependency" />
+                                    <option name="placeholderText" value="2" />
+                                    <option name="possibleAnswer" value="your solution here" />
+                                    <option name="selected" value="false" />
+                                    <option name="status" value="Unchecked" />
+                                    <option name="studentAnswer" />
+                                  </AnswerPlaceholder>
+                                  <AnswerPlaceholder>
+                                    <option name="hints">
+                                      <list />
+                                    </option>
+                                    <option name="index" value="2" />
+                                    <option name="initialState" />
+                                    <option name="initializedFromDependency" value="false" />
+                                    <option name="length" value="1" />
+                                    <option name="offset" value="130" />
+                                    <option name="placeholderDependency" />
+                                    <option name="placeholderText" value="3" />
+                                    <option name="possibleAnswer" value="here" />
+                                    <option name="selected" value="false" />
+                                    <option name="status" value="Unchecked" />
+                                    <option name="studentAnswer" />
+                                  </AnswerPlaceholder>
+                                </list>
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="src/Task.kt" />
+                              <option name="text" value="// type your solution here" />
+                              <option name="trackChanges" value="true" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                        <entry key="test/Tests.kt">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="false" />
+                              <option name="name" value="test/Tests.kt" />
+                              <option name="text" value="import org.junit.Assert&#10;import org.junit.Test&#10;&#10;class Test {&#10;    @Test fun testSolution() {&#10;        //TODO: implement your test here&#10;        Assert.assertTrue(&quot;Tests not implemented for the task&quot;, false)&#10;    }&#10;}" />
+                              <option name="trackChanges" value="true" />
+                              <option name="visible" value="false" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </EduTask>
+                </list>
+              </option>
+            </Lesson>
+          </list>
+        </option>
+      </EduCourse>
+    </option>
+  </StudyTaskManager>
+</component>

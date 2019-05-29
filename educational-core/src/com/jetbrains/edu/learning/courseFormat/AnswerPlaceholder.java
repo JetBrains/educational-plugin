@@ -4,7 +4,6 @@ import com.intellij.ui.ColorUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
-import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +21,10 @@ import java.util.List;
 public class AnswerPlaceholder {
 
   private int myOffset = -1;
+  /*
+   * length of text to surround with visual placeholder
+   * (placeholderText.length in student file; possibleAnswer.length in course creator file)
+   */
   private int myLength = -1;
   private int myIndex = -1;
   private MyInitialState myInitialState;
@@ -29,8 +32,8 @@ public class AnswerPlaceholder {
   private AnswerPlaceholderDependency myPlaceholderDependency = null;
   private boolean myIsInitializedFromDependency = false;
   private List<String> myHints = new ArrayList<>();
-  private String myPossibleAnswer = "";
-  private String myPlaceholderText;
+  private String myPossibleAnswer = "";  // could be empty in course creator file
+  private String myPlaceholderText;     //  could be empty in student file (including task file preview in course creator mode)
   private boolean mySelected = false;
   private CheckStatus myStatus = CheckStatus.Unchecked;
 
@@ -64,9 +67,6 @@ public class AnswerPlaceholder {
     myIndex = index;
   }
 
-  /**
-   * in actions {@link AnswerPlaceholder#getRealLength()} should be used
-   */
   public int getLength() {
     return myLength;
   }
@@ -145,18 +145,6 @@ public class AnswerPlaceholder {
     setInitialState(new MyInitialState(myOffset, getPlaceholderText().length()));
   }
 
-  /**
-   * @return length or possible answer length
-   */
-  public int getRealLength() {
-    if (myTaskFile == null) return getLength();
-    Course course = TaskFileExt.course(myTaskFile);
-    if (course == null) { // we're in show preview action in course creator mode
-      return getLength();
-    }
-    return course.isStudy() ? getLength() : getPossibleAnswer().length();
-  }
-
   public int getOffset() {
     return myOffset;
   }
@@ -216,8 +204,8 @@ public class AnswerPlaceholder {
   }
 
   boolean isValid(int textLength) {
-    int end = getOffset() + getRealLength();
-    return getOffset() >= 0 && getRealLength() >= 0 && end <= textLength;
+    int end = getEndOffset();
+    return getOffset() >= 0 && getLength() >= 0 && end <= textLength;
   }
 
   @Nullable
@@ -241,7 +229,7 @@ public class AnswerPlaceholder {
   }
 
   public int getEndOffset() {
-    return myOffset + getRealLength();
+    return myOffset + getLength();
   }
 
   @Override

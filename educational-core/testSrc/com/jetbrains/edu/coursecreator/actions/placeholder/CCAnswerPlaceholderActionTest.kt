@@ -5,10 +5,13 @@ import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCTestsUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler
 
 class CCAnswerPlaceholderActionTest : CCTestCase() {
@@ -28,6 +31,7 @@ class CCAnswerPlaceholderActionTest : CCTestCase() {
     val virtualFile = configureByTaskFile(name + CCTestsUtil.BEFORE_POSTFIX)
     myFixture.testAction(action)
     val taskFile = EduUtils.getTaskFile(project, virtualFile) ?: error("Failed to find task file for $virtualFile")
+    setPossibleAnswers(taskFile)
     checkByFile(taskFile, name + CCTestsUtil.AFTER_POSTFIX, false)
     checkPainters(taskFile)
     if (action is CCAddAnswerPlaceholder) {
@@ -37,6 +41,12 @@ class CCAnswerPlaceholderActionTest : CCTestCase() {
     }
     UndoManager.getInstance(project).undo(FileEditorManager.getInstance(project).getSelectedEditor(virtualFile))
     checkByFile(taskFile, name + CCTestsUtil.BEFORE_POSTFIX, false)
+  }
+
+  private fun setPossibleAnswers(taskFile: TaskFile) {
+    for (placeholder in taskFile.answerPlaceholders) {
+      placeholder.possibleAnswer = taskFile.getDocument(project)?.getText(TextRange.create(placeholder.offset, placeholder.endOffset))
+    }
   }
 
   override fun getBasePath(): String = super.getBasePath() + "/actions/addPlaceholder"

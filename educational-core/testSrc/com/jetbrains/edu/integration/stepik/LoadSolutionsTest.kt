@@ -145,13 +145,13 @@ class LoadSolutionsTest : StepikTestCase() {
     val educatorCourse = courseWithFiles {
       frameworkLesson("lesson1") {
         eduTask("task1") {
-          taskFile("fizz.kt", "fun fizz() = <p>TODO()</p>") {
-            placeholder(0, "\"Fizz\"")
+          taskFile("fizz.kt", "fun fizz() = <p>\"Fizz\"</p>") {
+            placeholder(0, placeholderText = "TODO()")
           }
         }
         eduTask("task2") {
-          taskFile("fizz.kt", "fun fizz() = <p>TODO()</p>") {
-            placeholder(0, "\"Fizz\"", dependency = "lesson1#task1#fizz.kt#1")
+          taskFile("fizz.kt", "fun fizz() = <p>\"Fizz\"</p>") {
+            placeholder(0, placeholderText = "TODO()", dependency = "lesson1#task1#fizz.kt#1")
           }
         }
       }
@@ -223,7 +223,7 @@ class LoadSolutionsTest : StepikTestCase() {
     val virtualFile = EduUtils.findTaskFileInDir(taskFile!!, getTaskDir(project)!!)
     val document = FileDocumentManager.getInstance().getDocument(virtualFile!!)
     for (answerPlaceholder in taskFile.answerPlaceholders) {
-      EduUtils.replaceAnswerPlaceholder(document!!, answerPlaceholder, answerPlaceholder.realLength, answerPlaceholder.possibleAnswer)
+      CCUtils.replaceAnswerPlaceholder(document!!, answerPlaceholder)
     }
 
     StepikSolutionsLoader.postSolution(this, true, project)

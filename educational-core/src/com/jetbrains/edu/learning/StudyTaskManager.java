@@ -174,9 +174,11 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
             state = convertTo14Version(myProject, state);
           case 14:
             state = convertTo15Version(myProject, state);
+          case 15:
+            state = convertTo16Version(myProject, state);
           // uncomment for future versions
-          //case 15:
-          //  state = convertTo16Version(myProject, state);
+          //case 16:
+          //  state = convertTo17Version(myProject, state);
         }
       }
       myCourse = deserialize(state);

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 
@@ -22,7 +21,7 @@ abstract class AnswerPlaceholderYamlMixin {
   private var myOffset: Int? = -1
 
   @JsonProperty(LENGTH)
-  private fun getRealLength(): Int {
+  private fun getLength(): Int {
     throw NotImplementedInMixin()
   }
 
@@ -49,13 +48,11 @@ private class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
   @Suppress("unused") // deserialization
   private fun build(): AnswerPlaceholder {
     val placeholder = AnswerPlaceholder()
-    placeholder.length = placeholderText.length
+    placeholder.length = length
     placeholder.placeholderText = placeholderText
     placeholder.hints = hints
     placeholder.offset = offset
     placeholder.placeholderDependency = dependency
-    //we don't have access to real possible answer here, so we need to preserve its length to set real text later
-    placeholder.possibleAnswer = StringUtil.repeatSymbol('_', length)
     return placeholder
   }
 }

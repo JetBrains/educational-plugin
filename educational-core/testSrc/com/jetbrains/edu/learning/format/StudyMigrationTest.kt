@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.format
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.loadElement
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.serialization.SerializationUtils
@@ -61,6 +60,8 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
   fun test13to14() = doTest(13)
   fun test13to14Android() = doTest(13)
   fun test14to15() = doTest(14)
+  fun test15to16() = doTest(15)
+  fun test15to16Student() = doTest(15)
 
   private fun doTest(version: Int) {
     val name = getTestName(true)
@@ -79,6 +80,7 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
       12 -> converted = SerializationUtils.Xml.convertTo13Version(project, element)
       13 -> converted = SerializationUtils.Xml.convertTo14Version(project, element)
       14 -> converted = SerializationUtils.Xml.convertTo15Version(project, element)
+      15 -> converted = SerializationUtils.Xml.convertTo16Version(project, element)
     }
     checkEquals(loadElement(after), converted)
   }

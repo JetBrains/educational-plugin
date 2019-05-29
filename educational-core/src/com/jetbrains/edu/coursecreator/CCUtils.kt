@@ -212,10 +212,9 @@ object CCUtils {
       return
     }
     val document = FileDocumentManager.getInstance().getDocument(file) ?: return
-    val listener = EduDocumentTransformListener(project, taskFile)
+    val listener = EduDocumentListener(project, taskFile, false)
     document.addDocumentListener(listener)
     taskFile.sortAnswerPlaceholders()
-    taskFile.isTrackLengths = false
 
     try {
       for (placeholder in taskFile.answerPlaceholders) {
@@ -227,19 +226,16 @@ object CCUtils {
       }, "Create answer document", "Create answer document")
     } finally {
       document.removeDocumentListener(listener)
-      taskFile.isTrackLengths = true
     }
   }
 
   fun replaceAnswerPlaceholder(document: Document, placeholder: AnswerPlaceholder) {
     val offset = placeholder.offset
-    val text = document.getText(TextRange.create(offset, offset + placeholder.length))
-    placeholder.placeholderText = text
+    placeholder.placeholderText = document.getText(TextRange.create(offset, offset + placeholder.length))
     placeholder.init()
-    val replacementText = placeholder.possibleAnswer
 
     runUndoTransparentWriteAction {
-      document.replaceString(offset, offset + placeholder.length, replacementText)
+      document.replaceString(offset, offset + placeholder.length, placeholder.possibleAnswer)
       FileDocumentManager.getInstance().saveDocumentAsIs(document)
     }
   }

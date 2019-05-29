@@ -1,17 +1,13 @@
 package com.jetbrains.edu.learning;
 
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.impl.event.DocumentEventImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,10 +17,12 @@ import org.jetbrains.annotations.NotNull;
 public class EduDocumentListener implements DocumentListener {
   protected final Project myProject;
   protected final TaskFile myTaskFile;
+  private final boolean updateYaml;
 
-  public EduDocumentListener(Project project, TaskFile taskFile) {
+  public EduDocumentListener(Project project, TaskFile taskFile, boolean updateYaml) {
     myProject = project;
     myTaskFile = taskFile;
+    this.updateYaml = updateYaml;
   }
 
   @Override
@@ -46,11 +44,8 @@ public class EduDocumentListener implements DocumentListener {
       return;
     }
 
-    DocumentEventImpl event = (DocumentEventImpl)e;
-    Document document = e.getDocument();
-
     int offset = e.getOffset();
-    int change = event.getNewLength() - event.getOldLength();
+    int change = e.getNewLength() - e.getOldLength();
 
     final CharSequence fragment = e.getNewFragment();
     CharSequence oldFragment = e.getOldFragment();
@@ -77,7 +72,7 @@ public class EduDocumentListener implements DocumentListener {
       int length = placeholderEnd - placeholderStart;
       assert length >= 0;
       assert placeholderStart >= 0;
-      updatePlaceholder(placeholder, document, placeholderStart, length);
+      updatePlaceholder(placeholder, placeholderStart, length);
     }
   }
 
@@ -105,17 +100,11 @@ public class EduDocumentListener implements DocumentListener {
     return Pair.create(start, end);
   }
 
-  protected void updatePlaceholder(@NotNull AnswerPlaceholder answerPlaceholder,
-                                   @NotNull Document document, int start, int length) {
+  protected void updatePlaceholder(@NotNull AnswerPlaceholder answerPlaceholder, int start, int length) {
     answerPlaceholder.setOffset(start);
-    Course course = TaskFileExt.course(answerPlaceholder.getTaskFile());
-    if (course == null || course.isStudy()) {
-      answerPlaceholder.setLength(length);
-    } else {
-      if (myTaskFile.isTrackLengths()) {
-        answerPlaceholder.setPossibleAnswer(document.getText(TextRange.create(start, start + length)));
-        YamlFormatSynchronizer.saveItem(myTaskFile.getTask());
-      }
+    answerPlaceholder.setLength(length);
+    if (updateYaml) {
+      YamlFormatSynchronizer.saveItem(myTaskFile.getTask());
     }
   }
 }

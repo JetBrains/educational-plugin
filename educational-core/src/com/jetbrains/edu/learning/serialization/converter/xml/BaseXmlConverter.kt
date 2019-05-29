@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.serialization.converter.xml
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMUtil
-import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.ITEMS
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException
@@ -19,14 +18,14 @@ abstract class BaseXmlConverter : XmlConverter {
     convertCourseElement(courseElement)
     for (item in getChildList(courseElement, ITEMS)) {
       when (item.name) {
-        SerializationUtils.Xml.SECTION -> {
+        SECTION -> {
           convertSectionElement(item)
           for (lesson in getChildList(item, ITEMS)) {
             convertLesson(lesson)
           }
         }
-        SerializationUtils.Xml.LESSON,
-        SerializationUtils.Xml.FRAMEWORK_LESSON,
+        LESSON,
+        FRAMEWORK_LESSON,
         CHECKIO_STATION -> convertLesson(item)
         else -> throw StudyUnrecognizedFormatException("Unknown item name `${item.name}` in\n${JDOMUtil.write(courseElement, "\n")}")
       }

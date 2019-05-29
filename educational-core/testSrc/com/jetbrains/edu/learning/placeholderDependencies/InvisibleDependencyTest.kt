@@ -23,7 +23,7 @@ class InvisibleDependencyTest : EduTestCase() {
           fun foo2(): String = <p>type Foo</p>
           fun bar(): String = <p>type Bar</p>
         """) {
-            placeholder(0, "\"Foo\"", "lesson1#task1#Task.kt#1", false)
+            placeholder(0, "\"Foo\"", dependency = "lesson1#task1#Task.kt#1", isVisible = false)
           }
         }
       }

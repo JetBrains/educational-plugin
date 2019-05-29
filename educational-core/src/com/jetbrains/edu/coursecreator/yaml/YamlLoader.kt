@@ -6,7 +6,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
@@ -15,8 +14,10 @@ import com.jetbrains.edu.coursecreator.yaml.format.getChangeApplierForItem
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.getDocument
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.io.IOException
 import kotlin.reflect.KClass
@@ -113,7 +114,7 @@ object YamlLoader {
 
   private fun showError(project: Project,
                         configFile: VirtualFile,
-                        editor: com.intellij.openapi.editor.Editor?,
+                        editor: Editor?,
                         cause: String = "invalid config") {
     if (editor != null) {
       editor.headerComponent = InvalidFormatPanel(cause)
@@ -139,13 +140,4 @@ object YamlLoader {
 
   private fun <T : StudyItem> unexpectedItemError(expected: KClass<T>, actual: Any): Nothing = error(
     "Expected ${expected.simpleName} class, but was: ${actual.javaClass.simpleName}")
-}
-
-fun TaskFile.setPlaceholdersPossibleAnswer(project: Project) {
-  val document = getDocument(project) ?: return
-  answerPlaceholders.forEach { answerPlaceholder ->
-    val possibleAnswer = document.getText(
-      TextRange.create(answerPlaceholder.offset, answerPlaceholder.offset + answerPlaceholder.realLength))
-    answerPlaceholder.possibleAnswer = possibleAnswer
-  }
 }

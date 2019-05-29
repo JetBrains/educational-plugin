@@ -59,10 +59,10 @@ object PlaceholderDependencyManager {
     val file = placeholderToReplace.taskFile.getVirtualFile(project) ?: return
     val document = FileDocumentManager.getInstance().getDocument(file) ?: return
     val startOffset = placeholderToReplace.offset
-    val endOffset = startOffset + placeholderToReplace.realLength
+    val endOffset = placeholderToReplace.endOffset
     // EduSingleFileEditor adds own EduDocumentListener on creation
     val hasListener = FileEditorManager.getInstance(project).getAllEditors(file).any { it is EduSingleFileEditor }
-    val eduDocumentListener = if (hasListener) null else EduDocumentListener(project, placeholderToReplace.taskFile)
+    val eduDocumentListener = if (hasListener) null else EduDocumentListener(project, placeholderToReplace.taskFile, true)
     if (eduDocumentListener != null) {
       document.addDocumentListener(eduDocumentListener)
     }
@@ -87,7 +87,7 @@ object PlaceholderDependencyManager {
     } else {
       val document = dependencyPlaceholder.taskFile.getDocument(project)!!
       val startOffset = dependencyPlaceholder.offset
-      val endOffset = startOffset + dependencyPlaceholder.realLength
+      val endOffset = dependencyPlaceholder.endOffset
       document.getText(TextRange.create(startOffset, endOffset))
     }
   }

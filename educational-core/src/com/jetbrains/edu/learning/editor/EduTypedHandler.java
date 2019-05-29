@@ -49,7 +49,7 @@ public class EduTypedHandler extends EditorWriteActionHandler {
       throw new ReadOnlyFragmentModificationException(null, null);
     }
     placeholder = taskFile.getAnswerPlaceholder(currentCaret.getOffset());
-    if (placeholder != null && placeholder.getRealLength() == 0) {
+    if (placeholder != null && placeholder.getLength() == 0) {
       throw new ReadOnlyFragmentModificationException(null, null);
     }
     else {
@@ -61,7 +61,7 @@ public class EduTypedHandler extends EditorWriteActionHandler {
   public static AnswerPlaceholder getAnswerPlaceholder(int start, int end, List<AnswerPlaceholder> placeholders) {
     for (AnswerPlaceholder placeholder : placeholders) {
       int placeholderStart = placeholder.getOffset();
-      int placeholderEnd = placeholderStart + placeholder.getRealLength();
+      int placeholderEnd = placeholder.getEndOffset();
       if (placeholderStart == start && placeholderEnd == end) continue;
       if (placeholderStart >= start && placeholderStart < end && placeholderEnd <= end &&
           placeholderEnd > start) {

@@ -336,7 +336,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
       placeholders.add(answerPlaceholder)
       text.delete(closingMatcher.start(), closingMatcher.end())
       text.delete(openingMatcher.start(), openingMatcher.end())
-      pos = answerPlaceholder.offset + answerPlaceholder.realLength
+      pos = answerPlaceholder.endOffset
     }
     return placeholders
   }
@@ -379,9 +379,11 @@ class TaskFileBuilder(val task: Task? = null) {
     }
   }
 
-  fun placeholder(index: Int, possibleAnswer: String = "", dependency: String = "", isVisible: Boolean = true, hints: List<String> = emptyList()) {
+  fun placeholder(index: Int, possibleAnswer: String = "", placeholderText: String = "",
+                  dependency: String = "", isVisible: Boolean = true, hints: List<String> = emptyList()) {
     val answerPlaceholder = taskFile.answerPlaceholders[index]
     answerPlaceholder.possibleAnswer = possibleAnswer
+    answerPlaceholder.placeholderText = placeholderText
     answerPlaceholder.hints = hints
     val createdDependency = AnswerPlaceholderDependency.create(answerPlaceholder, dependency, isVisible)
     if (createdDependency != null) {

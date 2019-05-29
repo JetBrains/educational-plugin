@@ -275,8 +275,8 @@ class YamlDeserializationTest : EduTestCase() {
     val task = YamlDeserializer.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
-    assertEquals(9, answerPlaceholder.length)
-    assertEquals(3, answerPlaceholder.possibleAnswer.length)
+    assertEquals(3, answerPlaceholder.length)
+    assertEquals("type here", answerPlaceholder.placeholderText)
     assertEquals("lesson1#task1#Test.java#1", answerPlaceholder.placeholderDependency.toString())
   }
 
@@ -293,8 +293,8 @@ class YamlDeserializationTest : EduTestCase() {
     val task = YamlDeserializer.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
-    assertEquals(9, answerPlaceholder.length)
-    assertEquals(3, answerPlaceholder.possibleAnswer.length)
+    assertEquals(3, answerPlaceholder.length)
+    assertEquals("type here", answerPlaceholder.placeholderText)
   }
 
   fun `test feedback link`() {

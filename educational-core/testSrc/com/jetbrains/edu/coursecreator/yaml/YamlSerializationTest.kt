@@ -23,8 +23,8 @@ class YamlSerializationTest : EduTestCase() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
-          taskFile("Test.java", "<p>type here\nand here</p>") {
-            placeholder(0, "42 is the answer", hints = listOf("hint 1", "hint 2"))
+          taskFile("Test.java", "<p>42 is the answer</p>") {
+            placeholder(0, placeholderText = "type here\nand here", hints = listOf("hint 1", "hint 2"))
           }
         }
       }
@@ -50,8 +50,8 @@ class YamlSerializationTest : EduTestCase() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
-          taskFile("Task.java", "<p>type here\nand here</p>") {
-            placeholder(0, "42 is the answer", hints = listOf("hint 1", "hint 2"))
+          taskFile("Task.java", "<p>42 is the answer</p>") {
+            placeholder(0, placeholderText = "type here\nand here", hints = listOf("hint 1", "hint 2"))
           }
           taskFile("Test.java", "my test", false)
         }
@@ -80,8 +80,8 @@ class YamlSerializationTest : EduTestCase() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
-          taskFile("Test.java", "<p>type here\nand here</p>") {
-            placeholder(0, "42 is the answer", hints = listOf("hint 1", "hint 2"))
+          taskFile("Test.java", "<p>42 is the answer</p>") {
+            placeholder(0, placeholderText = "type here\nand here", hints = listOf("hint 1", "hint 2"))
           }
           taskFile("Additional.java", "", false)
         }
@@ -111,15 +111,15 @@ class YamlSerializationTest : EduTestCase() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
-          taskFile("Test.java", "<p>test</p>") {
-            placeholder(0, "f()")
+          taskFile("Test.java", "<p>f()</p>") {
+            placeholder(0, "test")
           }
         }
       }
       lesson {
         eduTask {
-          taskFile("Test.java", "<p>type here</p>") {
-            placeholder(0, "f()", dependency = "lesson1#task1#Test.java#1")
+          taskFile("Test.java", "<p>f()</p>") {
+            placeholder(0, placeholderText = "type here", dependency = "lesson1#task1#Test.java#1")
           }
         }
       }

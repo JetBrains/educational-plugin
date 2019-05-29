@@ -537,7 +537,7 @@ public class EduUtils {
   public static AnswerPlaceholder getAnswerPlaceholder(int offset, List<AnswerPlaceholder> placeholders) {
     for (AnswerPlaceholder placeholder : placeholders) {
       int placeholderStart = placeholder.getOffset();
-      int placeholderEnd = placeholderStart + placeholder.getRealLength();
+      int placeholderEnd = placeholder.getEndOffset();
       if (placeholderStart <= offset && offset <= placeholderEnd) {
         return placeholder;
       }
@@ -560,8 +560,7 @@ public class EduUtils {
 
   public static Pair<Integer, Integer> getPlaceholderOffsets(@NotNull final AnswerPlaceholder answerPlaceholder) {
     int startOffset = answerPlaceholder.getOffset();
-    final int length = answerPlaceholder.getRealLength();
-    final int endOffset = startOffset + length;
+    final int endOffset = answerPlaceholder.getEndOffset();
     return Pair.create(startOffset, endOffset);
   }
 
@@ -639,13 +638,12 @@ public class EduUtils {
       if (studentDocument == null) {
         return null;
       }
-      EduDocumentListener listener = new EduDocumentTransformListener(project, taskFile);
+      EduDocumentListener listener = new EduDocumentListener(project, taskFile, false);
       studentDocument.addDocumentListener(listener);
-      taskFile.setTrackLengths(false);
       for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
-        replaceAnswerPlaceholder(studentDocument, placeholder, placeholder.getPossibleAnswer().length(), placeholder.getPlaceholderText());
+        placeholder.setPossibleAnswer(studentDocument.getText(TextRange.create(placeholder.getOffset(), placeholder.getEndOffset())));
+        replaceAnswerPlaceholder(studentDocument, placeholder);
       }
-      taskFile.setTrackLengths(true);
       studentDocument.removeDocumentListener(listener);
       taskFile.setText(studentDocument.getImmutableCharSequence().toString());
       return taskFile;
@@ -731,12 +729,9 @@ public class EduUtils {
   }
 
   public static void replaceAnswerPlaceholder(@NotNull final Document document,
-                                              @NotNull final AnswerPlaceholder answerPlaceholder,
-                                              int length,
-                                              String replacementText) {
-    final int offset = answerPlaceholder.getOffset();
+                                              @NotNull final AnswerPlaceholder answerPlaceholder) {
     CommandProcessor.getInstance().runUndoTransparentAction(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      document.replaceString(offset, offset + length, replacementText);
+      document.replaceString(answerPlaceholder.getOffset(), answerPlaceholder.getEndOffset(), answerPlaceholder.getPlaceholderText());
       FileDocumentManager.getInstance().saveDocument(document);
     }));
   }
@@ -765,9 +760,9 @@ public class EduUtils {
         fileWindows = taskDir.createChildData(taskFile, name);
         printWriter = new PrintWriter(new FileOutputStream(fileWindows.getPath()));
         for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
-          int length = answerPlaceholder.getRealLength();
           int start = answerPlaceholder.getOffset();
-          final String windowDescription = document.getText(new TextRange(start, start + length));
+          int end = answerPlaceholder.getEndOffset();
+          final String windowDescription = document.getText(new TextRange(start, end));
           printWriter.println("#educational_plugin_window = " + windowDescription);
         }
         ApplicationManager.getApplication().runWriteAction(() -> FileDocumentManager.getInstance().saveDocument(document));

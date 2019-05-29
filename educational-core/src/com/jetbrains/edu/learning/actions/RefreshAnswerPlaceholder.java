@@ -36,8 +36,7 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     }
     EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
     if (eduEditor != null) {
-      String replacementText = placeholder.getPlaceholderText();
-      EduUtils.replaceAnswerPlaceholder(eduEditor.getEditor().getDocument(), placeholder, placeholder.getRealLength(), replacementText);
+      EduUtils.replaceAnswerPlaceholder(eduEditor.getEditor().getDocument(), placeholder);
       placeholder.reset(false);
     }
   }

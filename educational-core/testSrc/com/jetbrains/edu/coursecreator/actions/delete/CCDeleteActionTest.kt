@@ -46,12 +46,12 @@ class CCDeleteActionTest : EduActionTestCase() {
         }
         eduTask("task2") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "Foo", "lesson1#task1#Task.kt#1")
+            placeholder(0, "Foo", dependency = "lesson1#task1#Task.kt#1")
           }
         }
         eduTask("task3") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "Foo", "lesson1#task2#Task.kt#1")
+            placeholder(0, "Foo", dependency = "lesson1#task2#Task.kt#1")
           }
         }
       }
@@ -117,19 +117,19 @@ class CCDeleteActionTest : EduActionTestCase() {
         }
         eduTask("task2") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "Foo", "lesson1#task1#Task.kt#1")
+            placeholder(0, "Foo", dependency = "lesson1#task1#Task.kt#1")
           }
         }
       }
       lesson("lesson2") {
         eduTask("task3") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "Foo", "lesson1#task2#Task.kt#1")
+            placeholder(0, "Foo", dependency = "lesson1#task2#Task.kt#1")
           }
         }
         eduTask("task4") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "Foo", "lesson2#task3#Task.kt#1")
+            placeholder(0, "Foo", dependency = "lesson2#task3#Task.kt#1")
           }
         }
       }
@@ -201,7 +201,7 @@ class CCDeleteActionTest : EduActionTestCase() {
           }
           eduTask("task2") {
             taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
-              placeholder(0, "Foo", "section1#lesson1#task1#Task.kt#1")
+              placeholder(0, "Foo", dependency = "section1#lesson1#task1#Task.kt#1")
             }
           }
         }
@@ -210,12 +210,12 @@ class CCDeleteActionTest : EduActionTestCase() {
         lesson("lesson2") {
           eduTask("task3") {
             taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
-              placeholder(0, "Foo", "section1#lesson1#task2#Task.kt#1")
+              placeholder(0, "Foo", dependency = "section1#lesson1#task2#Task.kt#1")
             }
           }
           eduTask("task4") {
             taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
-              placeholder(0, "Foo", "section2#lesson2#task3#Task.kt#1")
+              placeholder(0, "Foo", dependency = "section2#lesson2#task3#Task.kt#1")
             }
           }
         }
@@ -223,12 +223,12 @@ class CCDeleteActionTest : EduActionTestCase() {
       lesson("lesson3") {
         eduTask("task5") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "Foo", "section1#lesson1#task2#Task.kt#1")
+            placeholder(0, "Foo", dependency = "section1#lesson1#task2#Task.kt#1")
           }
         }
         eduTask("task6") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "Foo", "section2#lesson2#task3#Task.kt#1")
+            placeholder(0, "Foo", dependency = "section2#lesson2#task3#Task.kt#1")
           }
         }
       }

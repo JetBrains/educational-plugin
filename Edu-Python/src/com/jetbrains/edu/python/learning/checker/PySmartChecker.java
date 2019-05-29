@@ -52,13 +52,13 @@ class PySmartChecker {
         if (windowTaskFile == null) {
           return;
         }
-        EduDocumentListener listener = new EduDocumentListener(project, windowTaskFile);
+        EduDocumentListener listener = new EduDocumentListener(project, windowTaskFile, false);
         windowDocument.addDocumentListener(listener);
         int start = placeholder.getOffset();
-        int end = start + placeholder.getRealLength();
+        int end = placeholder.getEndOffset();
         final AnswerPlaceholder userAnswerPlaceholder = usersTaskFile.getAnswerPlaceholders().get(placeholder.getIndex());
         int userStart = userAnswerPlaceholder.getOffset();
-        int userEnd = userStart + userAnswerPlaceholder.getRealLength();
+        int userEnd = userAnswerPlaceholder.getEndOffset();
         String text = usersDocument.getText(new TextRange(userStart, userEnd));
         windowDocument.replaceString(start, end, text);
         ApplicationManager.getApplication().runWriteAction(() -> documentManager.saveDocument(windowDocument));
@@ -126,11 +126,11 @@ class PySmartChecker {
         if (answerTaskFile == null) {
           return null;
         }
-        EduDocumentListener listener = new EduDocumentListener(project, answerTaskFile);
+        EduDocumentListener listener = new EduDocumentListener(project, answerTaskFile, false);
         document.addDocumentListener(listener);
         for (AnswerPlaceholder answerPlaceholder : answerTaskFile.getAnswerPlaceholders()) {
           final int start = answerPlaceholder.getOffset();
-          final int end = start + answerPlaceholder.getRealLength();
+          final int end = answerPlaceholder.getEndOffset();
           final String text = answerPlaceholder.getPossibleAnswer();
           document.replaceString(start, end, text);
         }

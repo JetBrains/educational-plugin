@@ -171,7 +171,7 @@ class PlaceholderDependencyTest : PlaceholderDependencyTestBase() {
     val taskFile = answerPlaceholder.taskFile
     val document = taskFile.getDocument(project)!!
     val startOffset = answerPlaceholder.offset
-    val endOffset = startOffset + answerPlaceholder.realLength
+    val endOffset = answerPlaceholder.endOffset
     val actualContent = document.getText(TextRange.create(startOffset, endOffset))
 
     assertEquals("Placeholder content is incorrect", expectedContent, actualContent)

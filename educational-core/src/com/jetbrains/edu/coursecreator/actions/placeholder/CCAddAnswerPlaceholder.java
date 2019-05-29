@@ -58,15 +58,17 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
       return;
     }
     String answerPlaceholderText = dlg.getTaskText();
-    answerPlaceholder.setPossibleAnswer(model.hasSelection() ? model.getSelectedText() : defaultPlaceholderText);
+    String possibleAnswer = model.hasSelection() ? model.getSelectedText() : defaultPlaceholderText;
+    if (possibleAnswer == null) {
+      possibleAnswer = defaultPlaceholderText;
+    }
     answerPlaceholder.setPlaceholderText(answerPlaceholderText);
-    answerPlaceholder.setLength(answerPlaceholderText.length());
+    answerPlaceholder.setLength(possibleAnswer.length());
 
     if (!model.hasSelection()) {
       DocumentUtil.writeInRunUndoTransparentAction(() -> document.insertString(offset, defaultPlaceholderText));
     }
 
-    answerPlaceholder.setPossibleAnswer(model.hasSelection() ? model.getSelectedText() : defaultPlaceholderText);
     AddAction action = new AddAction(project, answerPlaceholder, taskFile, editor);
     EduUtils.runUndoableAction(project, "Add Answer Placeholder", action);
   }

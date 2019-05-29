@@ -13,7 +13,6 @@ import com.jetbrains.edu.coursecreator.yaml.InvalidYamlFormatException
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.taskDirNotFoundError
-import com.jetbrains.edu.coursecreator.yaml.setPlaceholdersPossibleAnswer
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -95,7 +94,6 @@ class LessonChangeApplier<T : Lesson>(val project: Project) : StudyItemChangeApp
     deserializedTask.name = titledTask.name
     deserializedTask.index = titledTask.index
     deserializedTask.init(course, this, true)
-    deserializedTask.taskFiles.values.forEach { it.setPlaceholdersPossibleAnswer(project) }
 
     addTask(deserializedTask.index - 1, deserializedTask)
     course.configurator?.courseBuilder?.refreshProject(project)
