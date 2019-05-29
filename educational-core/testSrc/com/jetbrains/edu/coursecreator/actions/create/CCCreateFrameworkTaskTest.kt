@@ -80,13 +80,16 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
           file("Task.kt", "fun foo(): String = \"Foo\"")
           file("build.gradle")
           file("task.html")
+          dir("tests") {
+            file("Tests.txt")
+          }
         }
       }
     }.assertEquals(root, myFixture)
 
     assertEquals(2, course.lessons[0].taskList.size)
     val createdTask = course.lessons[0].taskList[1]
-    assertEquals(2, createdTask.taskFiles.size)
+    assertEquals(3, createdTask.taskFiles.size)
     val prevTaskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"] ?: error("Can't find `Task.kt` file")
     val taskFile = createdTask.taskFiles["Task.kt"] ?: error("Can't find `Task.kt` file")
     assertEquals(prevTaskFile.name, taskFile.name)
@@ -174,6 +177,9 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
           file("Task.kt")
           file(imageName)
           file("task.html")
+          dir("tests") {
+            file("Tests.txt")
+          }
         }
       }
     }.assertEquals(root)
@@ -232,6 +238,9 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
             apply plugin: "java"
           """)
           file("task.html")
+          dir("tests") {
+            file("Tests.txt")
+          }
         }
       }
     }.assertEquals(root, myFixture)
