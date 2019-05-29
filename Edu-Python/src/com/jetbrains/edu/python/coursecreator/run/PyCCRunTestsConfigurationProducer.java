@@ -9,7 +9,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -30,10 +29,6 @@ public class PyCCRunTestsConfigurationProducer extends RunConfigurationProducer<
                                                   ConfigurationContext context,
                                                   Ref<PsiElement> sourceElement) {
     Project project = context.getProject();
-    if (!CCUtils.isCourseCreator(project)) {
-      return false;
-    }
-
     String testsPath = getTestPath(context);
     if (testsPath == null) {
       return false;
