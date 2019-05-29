@@ -35,28 +35,29 @@ const val PROGRESS = "progress"
 const val COST = "cost"
 
 class Step {
-  @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "name",
-                defaultImpl = PyCharmStepOptions::class)
-  @JsonSubTypes(JsonSubTypes.Type(PyCharmStepOptions::class, name = "pycharm"),
-                JsonSubTypes.Type(ChoiceStepOptions::class, name = "choice"))
-  @JsonProperty(OPTIONS)
-  var options: StepOptions? = null
-
   @JsonProperty(TEXT)
   var text: String = ""
 
   @JsonProperty(NAME)
   var name = ""
 
-  @JsonProperty(SOURCE)
-  var source: StepOptions? = null // used only in POST
+  @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "name",
+                defaultImpl = PyCharmStepOptions::class)
+  @JsonSubTypes(JsonSubTypes.Type(PyCharmStepOptions::class, name = "pycharm"),
+                JsonSubTypes.Type(ChoiceStepOptions::class, name = "choice"))
+  // this property is named differently in get and post queries so we need to define different
+  // names for getter (POST queries as data is serialized for query payload)
+  // and setter (GET queries as data is deserialized from response)
+  @get:JsonProperty(SOURCE, access = JsonProperty.Access.READ_ONLY)
+  @set:JsonProperty(OPTIONS, access = JsonProperty.Access.WRITE_ONLY)
+  var options: StepOptions? = null
 
   constructor()
 
   constructor(project: Project, task: Task) {
     text = task.descriptionText
     name = if (task is ChoiceTask) "choice" else "pycharm"
-    source = when (task) {
+    options = when (task) {
       is ChoiceTask -> ChoiceStepOptions(task)
       else -> PyCharmStepOptions(project, task)
     }
@@ -222,5 +223,5 @@ class ChoiceStepSource {
 
 class ChoiceStep {
   @JsonProperty(SOURCE)
-  var source: ChoiceStepOptions? = null // used only in POST
+  var source: ChoiceStepOptions? = null
 }
