@@ -5,7 +5,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCProjectComponent
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.configFileName
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer

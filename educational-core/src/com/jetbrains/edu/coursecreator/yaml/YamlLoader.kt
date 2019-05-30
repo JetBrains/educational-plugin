@@ -60,7 +60,7 @@ object YamlLoader {
       deserializedItem.name = itemDir.name
       val parentItem = deserializedItem.getParentItem(project, itemDir.parent)
       val parentConfig = parentItem.getDir(project).findChild(parentItem.configFileName) ?: return
-      val deserializedParent = YamlDeserializer.deserializeItem(parentConfig) as ItemContainer
+      val deserializedParent = YamlDeserializer.deserializeItem(parentConfig) as? ItemContainer ?: return
       if (deserializedParent.items.map { it.name }.contains(itemDir.name)) {
         parentItem.addItemAsNew(project, deserializedItem)
         // new item is added at the end, so we should save parent item to update items order in config file

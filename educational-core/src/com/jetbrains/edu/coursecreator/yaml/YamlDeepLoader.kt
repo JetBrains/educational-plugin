@@ -1,5 +1,7 @@
 package com.jetbrains.edu.coursecreator.yaml
 
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -16,10 +18,16 @@ object YamlDeepLoader {
   @JvmStatic
   fun loadCourse(project: Project): Course? {
     val projectDir = project.courseDir
-    val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error(
-      "Cannot load course. Config file '${YamlFormatSettings.COURSE_CONFIG}' not found.")
+    val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG)
+    if (courseConfig == null) {
+      val notification = Notification("Edu.InvalidConfig", "Invalid yaml",
+                                      "Cannot load course. Config file '${YamlFormatSettings.COURSE_CONFIG}' not found.",
+                                      NotificationType.ERROR)
+      notification.notify(project)
+      return null
+    }
 
-    val deserializedCourse = YamlDeserializer.deserialize(VfsUtil.loadText(courseConfig), Course::class.java)
+    val deserializedCourse = YamlDeserializer.deserializeItem(project, courseConfig) as? Course ?: return null
     deserializedCourse.courseMode = if (EduUtils.isStudentProject(project)) EduNames.STUDY else CCUtils.COURSE_MODE
 
     deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items)
@@ -63,11 +71,11 @@ object YamlDeepLoader {
   }
 
   private fun StudyItem.loadRemoteInfo(project: Project) {
-    val itemDir = getDir(project) ?: YamlDeserializer.noItemDirError(name)
+    val itemDir = getDir(project) ?: yamlIllegalStateError(noDirForItemMessage(name))
     val remoteConfigFile = itemDir.findChild(remoteConfigFileName)
     if (remoteConfigFile == null) {
       if (id > 0) {
-        YamlDeserializer.noConfigFileError(name, remoteConfigFileName)
+        yamlIllegalStateError(notFoundMessage("config file $remoteConfigFileName", "item: '$name'"))
       }
       else return
     }
@@ -86,15 +94,13 @@ object YamlDeepLoader {
     }
   }
 
-
   private fun Task.findTaskDescriptionFile(project: Project): VirtualFile {
-    val taskDir = getTaskDir(project) ?: YamlLoader.taskDirNotFoundError(name)
+    val taskDir = getTaskDir(project) ?: yamlIllegalStateError(noItemMessage("task", name))
     val file = taskDir.findChild(EduNames.TASK_HTML) ?: taskDir.findChild(EduNames.TASK_MD)
     return file ?: error("No task description file for $name")
   }
 
   private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {
-    return DescriptionFormat.values().firstOrNull { it.fileExtension == extension } ?: error("Invalid description format")
+    return DescriptionFormat.values().firstOrNull { it.fileExtension == extension } ?: yamlIllegalStateError("Invalid description format")
   }
-
 }

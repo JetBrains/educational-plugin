@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.configFileName
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson

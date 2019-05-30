@@ -8,7 +8,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowAnchor
@@ -23,7 +22,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduProjectComponent
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
 
@@ -119,21 +117,6 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
       val taskDescriptionFile = findTaskDescriptionFile(task, project)
       task.descriptionFormat = taskDescriptionFile.toDescriptionFormat()
       task.descriptionText = VfsUtil.loadText(taskDescriptionFile)
-      if (task is EduTask) {
-        for (taskFile in task.taskFiles.values) {
-          val placeholders = taskFile.answerPlaceholders
-          if (placeholders.isEmpty()) {
-            continue
-          }
-          val file = taskDir.findFileByRelativePath(taskFile.name) ?: continue
-          val document = FileDocumentManager.getInstance().getDocument(file) ?: continue
-          for (answerPlaceholder in placeholders) {
-            val possibleAnswer = document.getText(
-              TextRange.create(answerPlaceholder.offset, answerPlaceholder.offset + answerPlaceholder.length))
-            answerPlaceholder.possibleAnswer = possibleAnswer
-          }
-        }
-      }
       tasks.add(task)
     }
     for ((i, item) in tasks.withIndex()) {

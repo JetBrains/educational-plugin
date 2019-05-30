@@ -35,7 +35,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, Course::class.java)
+    val course = YamlDeserializer.deserialize(yamlContent, Course::class.java)!!
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -58,7 +58,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |content:
       |- lesson1
       |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, Course::class.java)
+    val course = YamlDeserializer.deserialize(yamlContent, Course::class.java)!!
     assertEquals(environment, course.environment)
   }
 
@@ -80,7 +80,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, CourseraCourse::class.java)
+    val course = YamlDeserializer.deserialize(yamlContent, CourseraCourse::class.java)!!
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -106,7 +106,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, CheckiOCourse::class.java)
+    val course = YamlDeserializer.deserialize(yamlContent, CheckiOCourse::class.java)!!
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -132,7 +132,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, StepikCourse::class.java)
+    val course = YamlDeserializer.deserialize(yamlContent, StepikCourse::class.java)!!
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -158,7 +158,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, HyperskillCourse::class.java)
+    val course = YamlDeserializer.deserialize(yamlContent, HyperskillCourse::class.java)!!
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -192,7 +192,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
     """.trimMargin("|")
-    val section = YamlDeserializer.deserialize(yamlContent, Section::class.java)
+    val section = YamlDeserializer.deserialize(yamlContent, Section::class.java)!!
     assertEquals(listOf(firstLesson, secondLesson), section.items.map { it.name })
   }
 
@@ -362,7 +362,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |
     |{}
     |""".trimMargin("|")
-    val section = YamlDeserializer.deserialize(yamlContent, Section::class.java)
+    val section = YamlDeserializer.deserialize(yamlContent, Section::class.java)!!
     assertTrue(section.lessons.isEmpty())
   }
 
@@ -374,7 +374,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |programming_language: Plain text
     |summary: test
     |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, Course::class.java)
+    val course = YamlDeserializer.deserialize(yamlContent, Course::class.java)!!
     assertTrue(course.items.isEmpty())
   }
 }
