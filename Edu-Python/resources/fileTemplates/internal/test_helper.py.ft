@@ -155,7 +155,10 @@ def failed(message="Please, reload the task and try again.", name=None):
     """ Reports failure """
     if not name:
         name = sys._getframe().f_back.f_code.co_name
-    print("#educational_plugin " + name + " FAILED + " + message)
+    full_message = name + " FAILED + " + message
+    lines = full_message.splitlines()
+    for line in lines:
+        print("#educational_plugin " + line)
 
 
 def passed(name=None):
