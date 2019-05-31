@@ -9,6 +9,7 @@ import com.jetbrains.edu.jvm.gradle.checker.GradleCommandLine
 import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import com.jetbrains.edu.jvm.gradle.checker.NewGradleEduTaskChecker
 import com.jetbrains.edu.jvm.gradle.checker.hasSeparateModule
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
@@ -33,7 +34,8 @@ class KtTaskCheckerProvider : GradleTaskCheckerProvider() {
 
       override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
         val testConfigurations = super.createTestConfigurations()
-        if (task.hasSeparateModule(project) || testConfigurations.size != 1) {
+        // Android Studio produces configurations that correctly work even in one module project
+        if (EduUtils.isAndroidStudio() || task.hasSeparateModule (project) || testConfigurations.size != 1) {
           return testConfigurations
         }
 
