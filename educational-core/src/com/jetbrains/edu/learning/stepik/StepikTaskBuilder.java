@@ -183,7 +183,10 @@ public class StepikTaskBuilder {
     task.setUpdateDate(myStepSource.getUpdateDate());
     task.setDescriptionText(clearCodeBlockFromTags());
 
-    ChoiceStepOptions choiceStepOptions = StepikConnector.getChoiceStepSource(myStepId);
+    ChoiceStepOptions choiceStepOptions = null;
+    if (!ApplicationManager.getApplication().isUnitTestMode() || myStepId > 0) {
+      choiceStepOptions = StepikConnector.getChoiceStepSource(myStepId);
+    }
     if (choiceStepOptions != null) {
       task.setMultipleChoice(choiceStepOptions.isMultipleChoice());
       task.setChoiceOptions(ContainerUtil.map(choiceStepOptions.getOptions(),
