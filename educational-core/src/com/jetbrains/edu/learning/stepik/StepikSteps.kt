@@ -29,10 +29,19 @@ const val SAMPLES = "samples"
 const val EXECUTION_MEMORY_LIMIT = "execution_memory_limit"
 const val EXECUTION_TIME_LIMIT = "execution_time_limit"
 const val CODE_TEMPLATES = "code_templates"
+const val IS_ALWAYS_CORRECT = "is_always_correct"
+const val SAMPLE_SIZE = "sample_size"
+const val PRESERVE_ORDER = "preserve_order"
+const val IS_HTML_ENABLED = "is_html_enabled"
+const val IS_OPTIONS_FEEDBACK = "is_options_feedback"
+const val FEEDBACK = "feedback"
+const val IS_CORRECT = "is_correct"
 const val FORMAT_VERSION = "format_version"
 const val BLOCK = "block"
 const val PROGRESS = "progress"
 const val COST = "cost"
+const val PYCHARM = "pycharm"
+const val CHOICE = "choice"
 
 class Step {
   @JsonProperty(TEXT)
@@ -43,8 +52,8 @@ class Step {
 
   @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "name",
                 defaultImpl = PyCharmStepOptions::class)
-  @JsonSubTypes(JsonSubTypes.Type(PyCharmStepOptions::class, name = "pycharm"),
-                JsonSubTypes.Type(ChoiceStepOptions::class, name = "choice"))
+  @JsonSubTypes(JsonSubTypes.Type(PyCharmStepOptions::class, name = PYCHARM),
+                JsonSubTypes.Type(ChoiceStepOptions::class, name = CHOICE))
   // this property is named differently in get and post queries so we need to define different
   // names for getter (POST queries as data is serialized for query payload)
   // and setter (GET queries as data is deserialized from response)
@@ -56,7 +65,7 @@ class Step {
 
   constructor(project: Project, task: Task) {
     text = task.descriptionText
-    name = if (task is ChoiceTask) "choice" else "pycharm"
+    name = if (task is ChoiceTask) CHOICE else PYCHARM
     options = when (task) {
       is ChoiceTask -> ChoiceStepOptions(task)
       else -> PyCharmStepOptions(project, task)
@@ -142,22 +151,22 @@ class ChoiceStepOptions : StepOptions {
   @JsonProperty(IS_MULTIPLE_CHOICE)
   var isMultipleChoice = false
 
-  @JsonProperty("is_always_correct")
+  @JsonProperty(IS_ALWAYS_CORRECT)
   val isAlwaysCorrect = false
 
-  @JsonProperty("sample_size")
+  @JsonProperty(SAMPLE_SIZE)
   var sampleSize = -1
 
-  @JsonProperty("preserve_order")
+  @JsonProperty(PRESERVE_ORDER)
   val preserveOrder = true
 
-  @JsonProperty("is_html_enabled")
+  @JsonProperty(IS_HTML_ENABLED)
   val isHtmlEnabled = true
 
-  @JsonProperty("is_options_feedback")
+  @JsonProperty(IS_OPTIONS_FEEDBACK)
   val isOptionsFeedback = false
 
-  @JsonProperty("options")
+  @JsonProperty(OPTIONS)
   var options = emptyList<ChoiceStepOption>()
 
   constructor()
@@ -175,13 +184,13 @@ class ChoiceStepOptions : StepOptions {
 }
 
 class ChoiceStepOption {
-  @JsonProperty("text")
+  @JsonProperty(TEXT)
   var text = ""
 
-  @JsonProperty("is_correct")
+  @JsonProperty(IS_CORRECT)
   var isCorrect = false
 
-  @JsonProperty("feedback")
+  @JsonProperty(FEEDBACK)
   val feedback = ""
 }
 
