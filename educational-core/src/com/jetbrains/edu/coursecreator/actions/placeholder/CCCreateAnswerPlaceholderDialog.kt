@@ -90,7 +90,7 @@ open class CCCreateAnswerPlaceholderDialog(
 
   open fun getTaskText(): String = taskText
 
-  fun getDependencyInfo(): DependencyInfo? =
+  open fun getDependencyInfo(): DependencyInfo? =
     if (!(currentText.isBlank() || isFirstTask)) {
       DependencyInfo(currentText, visibilityCheckBox.isSelected)
     }

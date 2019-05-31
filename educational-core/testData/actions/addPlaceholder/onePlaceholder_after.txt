@@ -1,1 +1,0 @@
-<placeholder taskText="type here">here</placeholder> will be added one placeholder

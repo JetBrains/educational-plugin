@@ -31,9 +31,8 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
     performEditPlaceholder(project, answerPlaceholder);
   }
 
-  public static void performEditPlaceholder(@NotNull Project project, @NotNull AnswerPlaceholder answerPlaceholder) {
-    CCCreateAnswerPlaceholderDialog dlg =
-      new CCCreateAnswerPlaceholderDialog(project, answerPlaceholder.getPlaceholderText(), true, answerPlaceholder);
+  public void performEditPlaceholder(@NotNull Project project, @NotNull AnswerPlaceholder answerPlaceholder) {
+    CCCreateAnswerPlaceholderDialog dlg = createDialog(project, answerPlaceholder);
 
     if (dlg.showAndGet()) {
       final String answerPlaceholderText = dlg.getTaskText();
@@ -45,6 +44,10 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
       }
       YamlFormatSynchronizer.saveItem(answerPlaceholder.getTaskFile().getTask());
     }
+  }
+
+  public CCCreateAnswerPlaceholderDialog createDialog(@NotNull Project project, @NotNull AnswerPlaceholder answerPlaceholder) {
+    return new CCCreateAnswerPlaceholderDialog(project, answerPlaceholder.getPlaceholderText(), true, answerPlaceholder);
   }
 
   @Override
