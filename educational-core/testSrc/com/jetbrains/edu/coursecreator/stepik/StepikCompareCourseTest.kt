@@ -448,6 +448,23 @@ class StepikCompareCourseTest : EduTestCase() {
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
+  fun `test choice task nothing changed`() {
+    val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
+    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        choiceTask(isMultipleChoice = false, choiceOptions = choiceOptions)
+      }
+    }.asRemote()
+    val courseFromServer = localCourse.copy() as EduCourse
+
+    val taskFromRemote = courseFromServer.lessons.single().taskList.single()
+    //choice tasks are being renamed when uploading to Stepik
+    taskFromRemote.name = "Quiz"
+
+    val expectedInfo = StepikChangesInfo()
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
+  }
+
   private fun checkChangedItems(localCourse: EduCourse, courseFromServer: EduCourse, expected: StepikChangesInfo) {
     val actual = StepikChangeRetriever(project, localCourse, courseFromServer).getChangedItems()
     assertEquals(expected, actual)
