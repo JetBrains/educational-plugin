@@ -10,6 +10,9 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 
 class StepikCompareCourseTest : EduTestCase() {
 
@@ -415,6 +418,33 @@ class StepikCompareCourseTest : EduTestCase() {
     changedTask.taskFiles.values.single().answerPlaceholders.single().hints = listOf("hint2")
 
     val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
+  }
+
+  fun `test change options in choice task`() {
+    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        choiceTask(isMultipleChoice = true, choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT,
+                                                                  "2" to ChoiceOptionStatus.INCORRECT))
+      }
+    }.asRemote()
+    val courseFromServer = localCourse.copy() as EduCourse
+    (localCourse.lessons.single().taskList.single() as ChoiceTask).choiceOptions = listOf(ChoiceOption("1", ChoiceOptionStatus.CORRECT),
+                                                                                          ChoiceOption("2", ChoiceOptionStatus.CORRECT))
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(courseFromServer.lessons.single().taskList.single()))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
+  }
+
+  fun `test change multiple choice in choice task`() {
+    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        choiceTask(isMultipleChoice = false, choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT,
+                                                                   "2" to ChoiceOptionStatus.INCORRECT))
+      }
+    }.asRemote()
+    val courseFromServer = localCourse.copy() as EduCourse
+    (localCourse.lessons.single().taskList.single() as ChoiceTask).isMultipleChoice = true
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(courseFromServer.lessons.single().taskList.single()))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 

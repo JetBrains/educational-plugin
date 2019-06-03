@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.isUnitTestMode
 
 @VisibleForTesting
@@ -108,7 +109,8 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
     for (localTask in localLesson.taskList) {
       if (remoteTasksIds.contains(localTask.id)) {
         val remoteTask = remoteTasks.singleOrNull { it.id == localTask.id } ?: continue
-        if (taskInfoChanged(localTask, remoteTask) || taskFilesChanged(localTask, remoteTask)) {
+        if (taskInfoChanged(localTask, remoteTask) || taskContentChanged(localTask, remoteTask) || taskFilesChanged(localTask,
+                                                                                                                    remoteTask)) {
           stepikChanges.tasksToUpdate.add(localTask)
         }
       }
@@ -153,6 +155,13 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
            task.feedbackLink.link != remoteTask.feedbackLink.link ||
            task.feedbackLink.type != remoteTask.feedbackLink.type ||
            task.lesson.id != remoteTask.lesson.id
+  }
+
+  private fun taskContentChanged(localTask: Task, remoteTask: Task): Boolean {
+    if (!(localTask is ChoiceTask && remoteTask is ChoiceTask)) {
+      return false
+    }
+    return localTask.isMultipleChoice != remoteTask.isMultipleChoice || localTask.choiceOptions != remoteTask.choiceOptions
   }
 
   private fun taskFilesChanged(task: Task, remoteTask: Task): Boolean {
