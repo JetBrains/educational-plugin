@@ -9,18 +9,14 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer
+import com.jetbrains.edu.coursecreator.yaml.*
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.noConfigFileError
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.noItemDirError
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_PROJECT_READY
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.isEduYamlProject
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.saveAll
-import com.jetbrains.edu.coursecreator.yaml.YamlLoader
 import com.jetbrains.edu.coursecreator.yaml.format.getRemoteChangeApplierForItem
-import com.jetbrains.edu.coursecreator.yaml.remoteConfigFileName
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -75,6 +71,9 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
   }
 
   private fun createYamlConfigFilesIfMissing() {
+    if (ApplicationManager.getApplication().isUnitTestMode && myProject.getUserData(YamlFormatSettings.YAML_TEST_PROJECT_READY) == false) {
+      return
+    }
     val courseDir = myProject.courseDir
     val courseConfig = courseDir.findChild(COURSE_CONFIG)
     if (courseConfig == null) {

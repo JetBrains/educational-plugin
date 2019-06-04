@@ -74,8 +74,8 @@ private class StringToFeedbackLinkConverter : StdConverter<String?, FeedbackLink
   }
 }
 
-class TaskChangeApplier<T : Task>(val project: Project) : StudyItemChangeApplier<T>() {
-  override fun applyChanges(existingItem: T, deserializedItem: T) {
+class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
+  override fun applyChanges(existingItem: Task, deserializedItem: Task) {
     val project = existingItem.project ?: error("Cannot find project for a task: $existingItem")
     existingItem.feedbackLink = deserializedItem.feedbackLink
     if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {

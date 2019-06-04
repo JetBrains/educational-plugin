@@ -166,8 +166,8 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
   }
 }
 
-class RemoteCourseChangeApplier<T : EduCourse> : RemoteInfoChangeApplierBase<T>() {
-  override fun applyChanges(existingItem: T, deserializedItem: T) {
+class RemoteCourseChangeApplier : RemoteInfoChangeApplierBase<EduCourse>() {
+  override fun applyChanges(existingItem: EduCourse, deserializedItem: EduCourse) {
     super.applyChanges(existingItem, deserializedItem)
     existingItem.sectionIds = deserializedItem.sectionIds
   }

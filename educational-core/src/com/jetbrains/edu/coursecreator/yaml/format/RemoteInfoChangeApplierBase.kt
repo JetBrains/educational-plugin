@@ -14,7 +14,7 @@ open class RemoteInfoChangeApplierBase<T : StudyItem> : StudyItemChangeApplier<T
 fun <T : StudyItem> getRemoteChangeApplierForItem(item: T): RemoteInfoChangeApplierBase<T> {
   @Suppress("UNCHECKED_CAST") //
   return when (item) {
-    is EduCourse -> RemoteCourseChangeApplier<EduCourse>()
+    is EduCourse -> RemoteCourseChangeApplier()
     is Lesson -> RemoteLessonChangeApplier()
     is RemoteStudyItem -> RemoteInfoChangeApplierBase<T>()
     else -> error("Unexpected item type: ${item.javaClass.simpleName}")

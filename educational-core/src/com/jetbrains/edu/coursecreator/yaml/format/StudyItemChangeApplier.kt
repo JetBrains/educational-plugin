@@ -48,7 +48,7 @@ fun <T : StudyItem> getChangeApplierForItem(project: Project, item: T): StudyIte
   return when (item) {
     is Course -> CourseChangeApplier(project)
     is Section, is Lesson -> ItemContainerChangeApplier(project)
-    is Task -> TaskChangeApplier<Task>(project)
+    is Task -> TaskChangeApplier(project)
     else -> error("Unexpected item type: ${item.javaClass.simpleName}")
   } as StudyItemChangeApplier<T>
 }
