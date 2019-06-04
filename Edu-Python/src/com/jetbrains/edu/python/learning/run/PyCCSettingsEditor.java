@@ -1,4 +1,4 @@
-package com.jetbrains.edu.python.coursecreator.run;
+package com.jetbrains.edu.python.learning.run;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;

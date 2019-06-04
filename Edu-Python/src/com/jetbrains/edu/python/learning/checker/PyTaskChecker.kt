@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.editor.ACTION_TEXT
 import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_END
 import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_START
-import com.jetbrains.edu.python.coursecreator.run.PyCCRunTestsConfigurationProducer
+import com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer
 
 open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(task, project) {
 
