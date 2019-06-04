@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.awt.BorderLayout
 import java.awt.Component
-import java.awt.Dimension
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -37,7 +36,7 @@ open class CCCreateAnswerPlaceholderDialog(
   private val taskText: String = StringUtil.notNullize(panel.getAnswerPlaceholderText()).trim { it <= ' ' }
 
   init {
-    this.title = (if (isEdit) "Edit" else "Add") + TITLE_SUFFIX
+    title = (if (isEdit) "Edit" else "Add") + TITLE_SUFFIX
     val buttonText = if (isEdit) "OK" else "Add"
     setOKButtonText(buttonText)
     super.init()
@@ -61,10 +60,11 @@ open class CCCreateAnswerPlaceholderDialog(
       if (placeholder.placeholderDependency != null) {
         decorator.setOn(true)
         dependencyPathField.text = placeholder.placeholderDependency?.toString()
+        dependencyPanel.minimumSize = JBUI.size(370, 0)
       }
 
       dependencyPanel.alignmentX = Component.LEFT_ALIGNMENT
-      dependencyPanel.maximumSize = Dimension(Int.MAX_VALUE, 0)
+      dependencyPanel.maximumSize = JBUI.size(Int.MAX_VALUE, 0)
       panel.add(dependencyPanel)
     }
     return panel

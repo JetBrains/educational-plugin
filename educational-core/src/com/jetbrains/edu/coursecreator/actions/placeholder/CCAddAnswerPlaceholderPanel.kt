@@ -6,7 +6,6 @@ import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import java.awt.Component
-import java.awt.Dimension
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
 import javax.swing.*
@@ -33,12 +32,13 @@ class CCAddAnswerPlaceholderPanel(placeholderText: String) : JPanel() {
 
     val scrollPane = JBScrollPane(textArea)
     scrollPane.border = null
+    scrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER
 
     panel = panel {
       row { scrollPane() }
       row { label() }
     }
-    panel.minimumSize = Dimension(370, 100)
+    panel.minimumSize = JBUI.size(370, 100)
     panel.alignmentX = Component.LEFT_ALIGNMENT
     add(panel)
   }
