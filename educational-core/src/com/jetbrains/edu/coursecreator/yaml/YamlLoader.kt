@@ -97,9 +97,7 @@ object YamlLoader {
         it.items = it.deserializeContent(project, it.items)
       }
     }
-    val mutableItemsList = items.toMutableList()
-    mutableItemsList.add(deserializedItem)
-    items = mutableItemsList
+    addItem(deserializedItem)
     init(course, this, false)
   }
 

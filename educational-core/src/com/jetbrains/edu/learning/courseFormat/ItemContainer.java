@@ -47,6 +47,10 @@ public abstract class ItemContainer extends StudyItem {
     this.items = items;
   }
 
+  public void addItem(StudyItem item) {
+    items.add(item);
+  }
+
   public void sortItems() {
     Collections.sort(items, EduUtils.INDEX_COMPARATOR);
   }
