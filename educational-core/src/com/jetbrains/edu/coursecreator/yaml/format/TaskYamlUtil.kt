@@ -17,7 +17,9 @@ import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.editor.EduEditor
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 
 /**
  * Mixin class is used to deserialize [Task] item.
@@ -73,10 +75,15 @@ private class StringToFeedbackLinkConverter : StdConverter<String?, FeedbackLink
   }
 }
 
-class TaskChangeApplier<T : Task> : StudyItemChangeApplier<T>() {
+class TaskChangeApplier<T : Task>(val project: Project) : StudyItemChangeApplier<T>() {
   override fun applyChanges(existingItem: T, deserializedItem: T) {
     val project = existingItem.project ?: error("Cannot find project for a task: $existingItem")
     existingItem.feedbackLink = deserializedItem.feedbackLink
+    if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {
+      existingItem.isMultipleChoice = deserializedItem.isMultipleChoice
+      existingItem.choiceOptions = deserializedItem.choiceOptions
+      TaskDescriptionView.getInstance(project).updateTaskDescription()
+    }
     hideOldPlaceholdersForOpenedFiles(project, existingItem)
     existingItem.applyTaskFileChanges(deserializedItem)
     paintPlaceholdersForOpenedFiles(project, existingItem)
