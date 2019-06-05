@@ -22,11 +22,11 @@ import javax.swing.JPanel
 
 open class CCCreateAnswerPlaceholderDialog(
   project: Project,
-  placeholderText: String,
   isEdit: Boolean,
   private val placeholder: AnswerPlaceholder
 ) : DialogWrapper(project, true) {
-  private val panel: CCAddAnswerPlaceholderPanel = CCAddAnswerPlaceholderPanel(placeholderText)
+
+  private val panel: CCAddAnswerPlaceholderPanel = CCAddAnswerPlaceholderPanel(placeholder.placeholderText ?: "type here")
   // "30" is the same value of text field columns as Messages.InputDialog uses
   private val dependencyPathField: JBTextField = JBTextField(30)
   private val visibilityCheckBox: JBCheckBox = JBCheckBox("Visible", placeholder.placeholderDependency?.isVisible == true)

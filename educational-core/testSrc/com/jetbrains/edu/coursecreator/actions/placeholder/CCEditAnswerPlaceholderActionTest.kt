@@ -25,8 +25,7 @@ class CCEditAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
 
   private class CCTestEditAnswerPlaceholder : CCEditAnswerPlaceholder() {
     override fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
-      val placeholderText = answerPlaceholder.placeholderText
-      return object : CCCreateAnswerPlaceholderDialog(project, placeholderText ?: "type here", false, answerPlaceholder) {
+      return object : CCCreateAnswerPlaceholderDialog(project, false, answerPlaceholder) {
         override fun showAndGet(): Boolean = true
         override fun getTaskText(): String = "type here"
         override fun getDependencyInfo(): DependencyInfo? = DependencyInfo("lesson1#task1#Task.kt#1", true)
