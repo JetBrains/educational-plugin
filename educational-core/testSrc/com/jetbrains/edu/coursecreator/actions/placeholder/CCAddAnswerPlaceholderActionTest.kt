@@ -1,13 +1,10 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import junit.framework.TestCase
 
-class CCAddAnswerPlaceholderActionTest : EduActionTestCase() {
+class CCAddAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
 
   fun `test add placeholder without selection without dependency`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
@@ -18,17 +15,8 @@ class CCAddAnswerPlaceholderActionTest : EduActionTestCase() {
       }
     }
 
-    myFixture.openFileInEditor(findFile("lesson1/task1/Task.kt"))
-    myFixture.testAction(CCTestAction(null))
-
-    val answerPlaceholders = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!.answerPlaceholders
-    TestCase.assertNotNull(answerPlaceholders)
-    TestCase.assertEquals(1, answerPlaceholders.size)
-    val placeholder = answerPlaceholders[0]
-    TestCase.assertEquals("type here", placeholder.placeholderText)
-    TestCase.assertEquals("type here", placeholder.possibleAnswer)
-    TestCase.assertEquals(0, placeholder.offset)
-    TestCase.assertNull(placeholder.placeholderDependency)
+    val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
+    doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile)
   }
 
   fun `test add placeholder with selection without dependency`() {
@@ -40,19 +28,8 @@ class CCAddAnswerPlaceholderActionTest : EduActionTestCase() {
       }
     }
 
-    myFixture.openFileInEditor(findFile("lesson1/task1/Task.kt"))
-    myFixture.editor.selectionModel.setSelection(20, 26)
-    myFixture.testAction(CCTestAction(null))
-
-    val answerPlaceholders = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!.answerPlaceholders
-    TestCase.assertNotNull(answerPlaceholders)
-    TestCase.assertEquals(1, answerPlaceholders.size)
-    val placeholder = answerPlaceholders[0]
-    TestCase.assertEquals("type here", placeholder.placeholderText)
-    TestCase.assertEquals("TODO()", placeholder.possibleAnswer)
-    TestCase.assertEquals(20, placeholder.offset)
-    TestCase.assertNull(placeholder.placeholderDependency)
-
+    val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
+    doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile, 20, 26)
   }
 
   fun `test placeholder intersection`() {
@@ -65,10 +42,10 @@ class CCAddAnswerPlaceholderActionTest : EduActionTestCase() {
     }
 
     myFixture.openFileInEditor(findFile("lesson1/task1/Task.kt"))
-    myFixture.testAction(CCTestAction(null))
+    myFixture.testAction(CCTestAddAnswerPlaceholder())
     myFixture.editor.selectionModel.setSelection(0, 6)
-    val presentation = myFixture.testAction(CCTestAction(null))
-    CCTestCase.assertTrue(presentation.isVisible && !presentation.isEnabled)
+    val presentation = myFixture.testAction(CCTestAddAnswerPlaceholder())
+    assertTrue(presentation.isVisible && !presentation.isEnabled)
   }
 
   fun `test add placeholder with dependency`() {
@@ -83,26 +60,33 @@ class CCAddAnswerPlaceholderActionTest : EduActionTestCase() {
       }
     }
 
-    myFixture.openFileInEditor(findFile("lesson1/task2/Task.kt"))
-    myFixture.editor.selectionModel.setSelection(20, 26)
-    myFixture.testAction(CCTestAction(CCCreateAnswerPlaceholderDialog.DependencyInfo("lesson1#task1#Task.kt#1", true)))
-
-    val answerPlaceholdersAdded = course.lessons[0].taskList[1].taskFiles["Task.kt"]!!.answerPlaceholders
-    TestCase.assertNotNull(answerPlaceholdersAdded)
-    TestCase.assertEquals(1, answerPlaceholdersAdded.size)
-    val placeholderAdded = answerPlaceholdersAdded[0]
-    TestCase.assertNotNull(placeholderAdded)
-    TestCase.assertEquals("type here", placeholderAdded.placeholderText)
-    TestCase.assertEquals("TODO()", placeholderAdded.possibleAnswer)
-    TestCase.assertEquals(20, placeholderAdded.offset)
-    val placeholderDependency = placeholderAdded.placeholderDependency!!
-    TestCase.assertEquals("lesson1", placeholderDependency.lessonName)
-    TestCase.assertEquals("task1", placeholderDependency.taskName)
-    TestCase.assertEquals("Task.kt", placeholderDependency.fileName)
-    TestCase.assertTrue(placeholderDependency.isVisible)
+    val taskFile = course.lessons[0].taskList[1].taskFiles["Task.kt"]!!
+    val firstTask = course.lessons[0].taskList[0]
+    doTest("lesson1/task2/Task.kt",
+           CCTestAddAnswerPlaceholder(CCCreateAnswerPlaceholderDialog.DependencyInfo("lesson1#task1#Task.kt#1", true)), taskFile, 20, 26,
+           firstTask)
   }
 
-  private class CCTestAction(val dependencyInfo: CCCreateAnswerPlaceholderDialog.DependencyInfo?) : CCAddAnswerPlaceholder() {
+  fun `test delete placeholder`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask("task1") {
+          taskFile("Task.kt", "fun <p>foo(): String = TODO()</p>")
+        }
+      }
+    }
+
+    val virtualFile = findFile("lesson1/task1/Task.kt")
+    myFixture.openFileInEditor(virtualFile)
+    myFixture.testAction(CCDeleteAnswerPlaceholder())
+    val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
+    val answerPlaceholders = taskFile.answerPlaceholders
+    assertNotNull(answerPlaceholders)
+    assertEquals(0, answerPlaceholders.size)
+    undoAddDependencyTest(virtualFile, 1, answerPlaceholders)
+  }
+
+  private class CCTestAddAnswerPlaceholder(val dependencyInfo: CCCreateAnswerPlaceholderDialog.DependencyInfo? = null) : CCAddAnswerPlaceholder() {
     override fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
       val placeholderText = answerPlaceholder.placeholderText
       return object : CCCreateAnswerPlaceholderDialog(project, placeholderText ?: "type here", false, answerPlaceholder) {

@@ -2,11 +2,9 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import junit.framework.TestCase
 
-class CCEditAnswerPlaceholderActionTest : EduActionTestCase() {
+class CCEditAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
   fun `test add placeholder with dependency`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
@@ -19,21 +17,13 @@ class CCEditAnswerPlaceholderActionTest : EduActionTestCase() {
       }
     }
 
-    myFixture.openFileInEditor(findFile("lesson1/task2/Task.kt"))
-    myFixture.testAction(CCTestAction())
+    val taskFile = course.lessons[0].taskList[1].taskFiles["Task.kt"]!!
+    val firstTask = course.lessons[0].taskList[0]!!
 
-    val placeholderEdited = course.lessons[0].taskList[1].taskFiles["Task.kt"]!!.answerPlaceholders!![0]
-    TestCase.assertNotNull(placeholderEdited)
-    TestCase.assertEquals("type here", placeholderEdited.placeholderText)
-    TestCase.assertEquals(20, placeholderEdited.offset)
-    val placeholderDependency = placeholderEdited.placeholderDependency!!
-    TestCase.assertEquals("lesson1", placeholderDependency.lessonName)
-    TestCase.assertEquals("task1", placeholderDependency.taskName)
-    TestCase.assertEquals("Task.kt", placeholderDependency.fileName)
-    TestCase.assertTrue(placeholderDependency.isVisible)
+    doTest("lesson1/task2/Task.kt", CCTestEditAnswerPlaceholder(), taskFile, 20, 20, firstTask)
   }
 
-  private class CCTestAction() : CCEditAnswerPlaceholder() {
+  private class CCTestEditAnswerPlaceholder : CCEditAnswerPlaceholder() {
     override fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
       val placeholderText = answerPlaceholder.placeholderText
       return object : CCCreateAnswerPlaceholderDialog(project, placeholderText ?: "type here", false, answerPlaceholder) {
