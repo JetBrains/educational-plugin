@@ -20,7 +20,7 @@ import com.jetbrains.edu.coursecreator.yaml.format.getRemoteChangeApplierForItem
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class CCProjectComponent(private val myProject: Project) : ProjectComponent {
@@ -62,7 +62,7 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
         registerListener()
       }
 
-      EduUsagesCollector.projectTypeOpened(CCUtils.COURSE_MODE)
+      EduCounterUsageCollector.eduProjectOpened(CCUtils.COURSE_MODE)
       startTaskDescriptionFilesSynchronization()
 
       YamlFormatSynchronizer.startSynchronization(myProject)

@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +40,6 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jetbrains.edu.learning.EduUtils.*;
-import static com.jetbrains.edu.learning.EduUtils.getTaskForFile;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class EduProjectComponent implements ProjectComponent {
@@ -77,7 +77,8 @@ public class EduProjectComponent implements ProjectComponent {
 
         setupProject(course);
         ApplicationManager.getApplication().invokeLater(
-          () -> ApplicationManager.getApplication().runWriteAction(() -> EduUsagesCollector.projectTypeOpened(course.getCourseMode())));
+          () -> ApplicationManager.getApplication()
+            .runWriteAction(() -> EduCounterUsageCollector.eduProjectOpened(course.getCourseMode())));
       }
     );
 

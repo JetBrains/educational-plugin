@@ -11,9 +11,21 @@ object EduCounterUsageCollector {
     UNRESOLVED_DEPENDENCY_NOTIFICATION
   }
 
+  @JvmStatic
   fun taskNavigation(place: TaskNavigationPlace) {
     FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "navigate.to.task", FeatureUsageData().addData("source", place.toString()))
   }
 
+  @JvmStatic
+  fun eduProjectCreated(mode: String) {
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "edu.project.created", FeatureUsageData().addData(MODE, mode))
+  }
+
+  @JvmStatic
+  fun eduProjectOpened(mode: String) {
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "edu.project.opened", FeatureUsageData().addData(MODE, mode))
+  }
+
   private const val GROUP_ID = "educational.counters"
+  private const val MODE = "mode"
 }

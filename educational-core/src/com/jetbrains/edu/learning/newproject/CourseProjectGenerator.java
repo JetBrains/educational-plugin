@@ -42,6 +42,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
@@ -193,7 +194,7 @@ public abstract class CourseProjectGenerator<S> {
           checkIfAvailableOnRemote();
         }
         createAdditionalFiles(project, baseDir);
-        EduUsagesCollector.projectTypeCreated(myCourse.getCourseMode());
+        EduCounterUsageCollector.eduProjectCreated(myCourse.getCourseMode());
 
         return null; // just to use correct overloading of `runProcessWithProgressSynchronously` method
       }, "Generating Course Structure", false, project);
