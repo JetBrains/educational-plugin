@@ -14,7 +14,7 @@ object EduCounterUsageCollector {
 
   @JvmStatic
   fun taskNavigation(place: TaskNavigationPlace) {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "navigate.to.task", FeatureUsageData().addData("source", place.toString()))
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "navigate.to.task", FeatureUsageData().addData(SOURCE, place.toString()))
   }
 
   @JvmStatic
@@ -44,6 +44,33 @@ object EduCounterUsageCollector {
     FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "link.clicked", FeatureUsageData().addData("linkType", linkType.toString()))
   }
 
+  private enum class AuthorizationEvent {
+    LOG_IN, LOG_OUT
+  }
+
+  enum class AuthorizationPlace {
+    SETTINGS, WIDGET, START_COURSE_DIALOG
+  }
+
+  private fun authorization(event: AuthorizationEvent, platform: String, place: AuthorizationPlace) {
+    val data = FeatureUsageData()
+    data.addData("event", event.toString())
+    data.addData("platform", platform)
+    data.addData(SOURCE, place.toString())
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "authorization", data)
+  }
+
+  @JvmStatic
+  fun loggedIn(platform: String, place: AuthorizationPlace) {
+    authorization(EduCounterUsageCollector.AuthorizationEvent.LOG_IN, platform, place)
+  }
+
+  @JvmStatic
+  fun loggedOut(platform: String, place: AuthorizationPlace) {
+    authorization(EduCounterUsageCollector.AuthorizationEvent.LOG_OUT, platform, place)
+  }
+
   private const val GROUP_ID = "educational.counters"
   private const val MODE = "mode"
+  private const val SOURCE = "source"
 }

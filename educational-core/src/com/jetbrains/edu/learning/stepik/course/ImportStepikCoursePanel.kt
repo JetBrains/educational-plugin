@@ -9,7 +9,9 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -72,6 +74,7 @@ class ImportStepikCoursePanel(private val parent : Disposable) {
       if (!EduSettings.isLoggedIn()) {
         addLoginListener()
         StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
+        EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
       }
     }
   }

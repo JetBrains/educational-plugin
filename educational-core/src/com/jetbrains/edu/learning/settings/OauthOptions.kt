@@ -7,6 +7,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.event.HyperlinkEvent
@@ -27,7 +28,7 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
 
   abstract fun getCurrentAccount(): T?
   abstract fun setCurrentAccount(lastSavedAccount: T?)
-  protected abstract fun createAuthorizeListener(): HyperlinkAdapter
+  protected abstract fun createAuthorizeListener(): LoginListener
 
   private fun initUI() {
     panel = JPanel(GridLayoutManager(1, 2))
@@ -113,7 +114,17 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
         lastSavedAccount = null
         setCurrentAccount(null)
         updateLoginLabels()
+        EduCounterUsageCollector.loggedOut(displayName, EduCounterUsageCollector.AuthorizationPlace.SETTINGS)
       }
+    }
+  }
+
+  abstract inner class LoginListener: HyperlinkAdapter() {
+    protected abstract fun authorize(e: HyperlinkEvent?)
+
+    override fun hyperlinkActivated(e: HyperlinkEvent?) {
+      authorize(e)
+      EduCounterUsageCollector.loggedIn(displayName, EduCounterUsageCollector.AuthorizationPlace.SETTINGS)
     }
   }
 }

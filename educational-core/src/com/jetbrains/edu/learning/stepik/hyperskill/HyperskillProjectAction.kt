@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -93,6 +94,7 @@ class HSHyperlinkListener(private val authorize: Boolean) : ActionListener, Noti
   private fun authorizeOrBrowse() {
     if (authorize) {
       HyperskillConnector.doAuthorize()
+      EduCounterUsageCollector.loggedIn(HYPERSKILL, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
     }
     else {
       BrowserUtil.browse(HYPERSKILL_PROJECTS_URL)

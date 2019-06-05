@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.LoginWidget
 import com.jetbrains.edu.learning.SynchronizationStep
 import com.jetbrains.edu.learning.actions.SyncStepikCourseAction
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
@@ -24,12 +23,10 @@ class StepikWidget(project: Project) : LoginWidget(project, EduSettings.SETTINGS
   override fun ID() = ID
 
   override fun authorize() {
-    EduUsagesCollector.loginFromWidget()
     StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
   }
 
   override fun resetAccount() {
-    EduUsagesCollector.logoutFromWidget()
     EduSettings.getInstance().user = null
   }
 

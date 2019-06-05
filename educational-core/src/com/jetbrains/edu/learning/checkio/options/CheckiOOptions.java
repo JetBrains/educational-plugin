@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.checkio.options;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.util.messages.MessageBus;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
@@ -39,10 +38,10 @@ public abstract class CheckiOOptions extends OauthOptions<CheckiOAccount> {
   }
 
   @NotNull
-  protected HyperlinkAdapter createAuthorizeListener() {
-    return new HyperlinkAdapter() {
+  protected LoginListener createAuthorizeListener() {
+    return new LoginListener() {
       @Override
-      protected void hyperlinkActivated(HyperlinkEvent event) {
+      protected void authorize(HyperlinkEvent event) {
         myOAuthConnector.doAuthorize(() -> {
           setLastSavedAccount(getCurrentAccount());
           updateLoginLabels();

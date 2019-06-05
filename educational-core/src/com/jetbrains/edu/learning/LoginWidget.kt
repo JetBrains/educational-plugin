@@ -14,6 +14,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.IconUtil
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 import java.awt.Point
 import java.awt.event.MouseEvent
@@ -80,8 +81,14 @@ abstract class LoginWidget(val project: Project, topic: Topic<EduLogInListener>)
               EduUsagesCollector.progressFromWidget()
               syncStep!!.syncAction.synchronizeCourse(project)
             }
-            loginText -> authorize()
-            logOutText -> resetAccount()
+            loginText -> {
+              authorize()
+              EduCounterUsageCollector.loggedIn(linkName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
+            }
+            logOutText -> {
+              resetAccount()
+              EduCounterUsageCollector.loggedOut(linkName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
+            }
           }
         }
       }

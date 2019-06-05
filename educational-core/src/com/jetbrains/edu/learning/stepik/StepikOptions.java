@@ -16,11 +16,9 @@
 package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.ui.HyperlinkAdapter;
 import com.jetbrains.edu.learning.EduLogInListener;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.settings.OauthOptions;
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,12 +42,11 @@ public class StepikOptions extends OauthOptions<StepikUser> {
   }
 
   @NotNull
-  protected HyperlinkAdapter createAuthorizeListener() {
-    return new HyperlinkAdapter() {
+  protected LoginListener createAuthorizeListener() {
+    return new LoginListener() {
 
       @Override
-      protected void hyperlinkActivated(HyperlinkEvent e) {
-        EduUsagesCollector.loginFromSettings();
+      protected void authorize(HyperlinkEvent e) {
         ApplicationManager.getApplication().getMessageBus().connect().subscribe(EduSettings.SETTINGS_CHANGED, new EduLogInListener() {
           @Override
           public void userLoggedIn() {
@@ -70,19 +67,6 @@ public class StepikOptions extends OauthOptions<StepikUser> {
           setLastSavedAccount(user);
           updateLoginLabels();
         }
-      }
-    };
-  }
-
-  @Override
-  @NotNull
-  protected HyperlinkAdapter createLogoutListener() {
-    return new HyperlinkAdapter() {
-      @Override
-      protected void hyperlinkActivated(HyperlinkEvent e) {
-        setCurrentAccount(null);
-        setLastSavedAccount(null);
-        updateLoginLabels();
       }
     };
   }

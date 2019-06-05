@@ -35,11 +35,14 @@ import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseLoading.CourseLoader;
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser;
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction;
 import com.jetbrains.edu.learning.stepik.course.StepikCourse;
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector;
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillNamesKt;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import kotlin.Unit;
 import kotlin.collections.SetsKt;
@@ -120,12 +123,18 @@ public class CoursesPanel extends JPanel {
       if (myErrorState == ErrorState.NotLoggedIn.INSTANCE || myErrorState == ErrorState.StepikLoginRequired.INSTANCE) {
         addLoginListener(this::updateCoursesList);
         StepikAuthorizer.doAuthorize(EduUtils::showOAuthDialog);
+        EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG);
       }
       else if (myErrorState instanceof ErrorState.CheckiOLoginRequired) {
-        addCheckiOLoginListener((CheckiOCourse)myCoursesList.getSelectedValue());
+        CheckiOCourse course = (CheckiOCourse)myCoursesList.getSelectedValue();
+        addCheckiOLoginListener(course);
+
+        //for Checkio course name matches platform name
+        EduCounterUsageCollector.loggedIn(course.getName(), EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG);
       }
       else if (myErrorState == ErrorState.HyperskillLoginRequired.INSTANCE) {
         addHyperskillLoginListener();
+        EduCounterUsageCollector.loggedIn(HyperskillNamesKt.HYPERSKILL, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG);
       }
       else if (myErrorState == ErrorState.JavaFXRequired.INSTANCE) {
         invokeSwitchBootJdk();

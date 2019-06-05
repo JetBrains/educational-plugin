@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.ui.HyperlinkAdapter
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.settings.OauthOptions
 import org.jetbrains.annotations.Nls
@@ -32,9 +31,9 @@ class HyperskillOptions : OauthOptions<HyperskillAccount>() {
     return HYPERSKILL
   }
 
-  override fun createAuthorizeListener(): HyperlinkAdapter {
-    return object : HyperlinkAdapter() {
-      override fun hyperlinkActivated(event: HyperlinkEvent) {
+  override fun createAuthorizeListener(): LoginListener {
+    return object : LoginListener() {
+      override fun authorize(e: HyperlinkEvent?) {
         HyperskillConnector.doAuthorize(Runnable {
           lastSavedAccount = getCurrentAccount()
           updateLoginLabels()
