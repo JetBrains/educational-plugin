@@ -31,13 +31,11 @@ import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jetbrains.edu.learning.EduUtils.*;
 
@@ -144,14 +142,10 @@ public class EduProjectComponent implements ProjectComponent {
 
   @VisibleForTesting
   public void moveHintsToTaskDescription(@NotNull Course course) {
-    AtomicBoolean hasPlaceholderHints = new AtomicBoolean(false);
     course.visitLessons(lesson -> {
       for (Task task : lesson.getTaskList()) {
         StringBuffer text = new StringBuffer(task.getDescriptionText());
         String hintBlocks = TaskExt.taskDescriptionHintBlocks(task);
-        if (!hintBlocks.isEmpty()) {
-          hasPlaceholderHints.set(true);
-        }
         text.append(hintBlocks);
         task.setDescriptionText(text.toString());
         VirtualFile file = TaskExt.getDescriptionFile(task, myProject);
@@ -173,10 +167,6 @@ public class EduProjectComponent implements ProjectComponent {
         }
       }
     });
-
-    if (hasPlaceholderHints.get()) {
-      EduUsagesCollector.projectWithPlaceholderHintsAll();
-    }
   }
 
   @Override
