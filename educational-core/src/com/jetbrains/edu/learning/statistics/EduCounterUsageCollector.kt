@@ -35,6 +35,15 @@ object EduCounterUsageCollector {
     FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "study.item.created", data)
   }
 
+  enum class LinkType {
+    IN_COURSE, STEPIK, EXTERNAL, PSI
+  }
+
+  @JvmStatic
+  fun linkClicked(linkType: LinkType) {
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "link.clicked", FeatureUsageData().addData("linkType", linkType.toString()))
+  }
+
   private const val GROUP_ID = "educational.counters"
   private const val MODE = "mode"
 }

@@ -27,6 +27,7 @@ import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jsoup.Jsoup;
@@ -107,6 +108,7 @@ public abstract class TaskDescriptionToolWindow {
         }
       }
     }));
+    EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.PSI);
   }
 
   private class StudyLafManagerListener implements LafManagerListener {

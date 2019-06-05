@@ -4,7 +4,7 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
 import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
 import com.sun.webkit.dom.ElementImpl
@@ -101,7 +101,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
           if (hrefAttribute != null) {
             val matcher = IN_COURSE_LINK.matcher(hrefAttribute)
             if (matcher.matches()) {
-              EduUsagesCollector.inCourseLinkClicked()
+              EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.IN_COURSE)
               var sectionName: String? = null
               val lessonName: String
               val taskName: String
@@ -121,7 +121,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
                 TaskDescriptionToolWindow.navigateToPsiElement(myProject, hrefAttribute)
               }
               else {
-                EduUsagesCollector.externalLinkClicked()
+                EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)
                 myEngine.isJavaScriptEnabled = true
                 myEngine.loadWorker.cancel()
                 var href: String? = getLink(target) ?: return
@@ -130,7 +130,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
                 }
                 BrowserUtil.browse(href)
                 if (href.startsWith(STEPIK_URL)) {
-                  EduUsagesCollector.stepikLinkClicked()
+                  EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.STEPIK)
                 }
               }
             }
