@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.saveStudentAnswersIfNeeded
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.util.*
 import javax.swing.tree.TreePath
@@ -206,7 +205,6 @@ object NavigationUtils {
       fileToActivate = getFirstTaskFile(taskDir, taskFiles.values)
     }
 
-    EduUsagesCollector.taskNavigation()
     ProjectView.getInstance(project).refresh()
     if (fileToActivate != null) {
       updateProjectView(project, fileToActivate)

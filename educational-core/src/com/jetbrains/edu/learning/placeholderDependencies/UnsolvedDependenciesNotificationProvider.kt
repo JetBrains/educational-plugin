@@ -12,6 +12,7 @@ import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.getUnsolvedTaskDependencies
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.TestOnly
 
 class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNotifications.Provider<UnsolvedDependenciesNotificationProvider.UnsolvedDependenciesNotificationPanel>(), DumbAware {
@@ -38,7 +39,10 @@ class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNot
     }
     val panel = UnsolvedDependenciesNotificationPanel()
     panel.setText(getText(taskDependencies.map { it.name }))
-    panel.createActionLabel("Solve '${taskDependencies[0].name}'") { NavigationUtils.navigateToTask(project, taskDependencies[0], task) }
+    panel.createActionLabel("Solve '${taskDependencies[0].name}'") {
+      NavigationUtils.navigateToTask(project, taskDependencies[0], task)
+      EduCounterUsageCollector.taskNavigation(EduCounterUsageCollector.TaskNavigationPlace.UNRESOLVED_DEPENDENCY_NOTIFICATION)
+    }
     return panel
   }
 

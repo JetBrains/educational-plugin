@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import javax.swing.event.HyperlinkEvent
 
 class CheckAllTasks : AnAction("Check All Tasks") {
@@ -71,6 +72,8 @@ class CheckAllTasks : AnAction("Check All Tasks") {
                                       override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
                                         notification.hideBalloon()
                                         NavigationUtils.navigateToTask(project, failedTasks[Integer.valueOf(e.description)])
+                                        EduCounterUsageCollector.taskNavigation(
+                                          EduCounterUsageCollector.TaskNavigationPlace.CHECK_ALL_NOTIFICATION)
                                       }
                                     })
 
@@ -79,6 +82,7 @@ class CheckAllTasks : AnAction("Check All Tasks") {
         override fun actionPerformed(e: AnActionEvent) {
           notification.hideBalloon()
           NavigationUtils.navigateToTask(project, failedTasks.first())
+          EduCounterUsageCollector.taskNavigation(EduCounterUsageCollector.TaskNavigationPlace.CHECK_ALL_NOTIFICATION)
         }
       })
     }
