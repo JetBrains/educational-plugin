@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import java.util.*
 
 class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare your solution with answer", AllIcons.Actions.Diff) {
@@ -44,7 +44,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
     }
 
     DiffManager.getInstance().showDiff(project, SimpleDiffRequestChain(requests), DiffDialogHints.FRAME)
-    EduUsagesCollector.solutionShown()
+    EduCounterUsageCollector.solutionPeeked()
   }
 
   private fun putSelectedTaskFileFirst(taskFiles: MutableList<TaskFile>, selectedTaskFile: TaskFile) {

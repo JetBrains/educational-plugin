@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckMessagePanel.Companion.MAX_EXPECTED_ACTUAL_LENGTH
@@ -118,7 +118,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
   private class ShowFullOutputAction(private val project: Project, private val text: String): DumbAwareAction(null) {
     override fun actionPerformed(e: AnActionEvent) {
       CheckDetailsView.getInstance(project).showOutput(text)
-      EduUsagesCollector.fullOutputShown()
+      EduCounterUsageCollector.fullOutputShown()
     }
   }
 
@@ -129,7 +129,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       if (tab != null) {
         window.contentManager.setSelectedContent(tab)
         if (index == 1) {
-          EduUsagesCollector.reviewStageTopics()
+          EduCounterUsageCollector.reviewStageTopics()
         }
       }
     }

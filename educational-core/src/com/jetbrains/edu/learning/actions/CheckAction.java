@@ -38,7 +38,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.coursera.CourseraCourse;
 import com.jetbrains.edu.learning.coursera.CourseraNames;
 import com.jetbrains.edu.learning.editor.EduEditor;
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +81,6 @@ public class CheckAction extends DumbAwareAction {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    EduUsagesCollector.taskChecked();
     Project project = e.getProject();
     if (project == null) {
       return;
@@ -104,6 +103,7 @@ public class CheckAction extends DumbAwareAction {
     if (task == null) {
       return;
     }
+    EduCounterUsageCollector.checkTask(task.getStatus());
     for (CheckListener listener : CheckListener.EP_NAME.getExtensionList()) {
       listener.beforeCheck(project, task);
     }

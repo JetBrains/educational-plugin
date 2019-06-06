@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.statistics
 
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 object EduCounterUsageCollector {
@@ -68,6 +69,37 @@ object EduCounterUsageCollector {
   @JvmStatic
   fun loggedOut(platform: String, place: AuthorizationPlace) {
     authorization(EduCounterUsageCollector.AuthorizationEvent.LOG_OUT, platform, place)
+  }
+
+  @JvmStatic
+  fun fullOutputShown() {
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "show.full.output")
+  }
+
+  @JvmStatic
+  fun solutionPeeked() {
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "peek.solution")
+  }
+
+  @JvmStatic
+  fun leaveFeedback() {
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "leave.feedback")
+  }
+
+  @JvmStatic
+  fun revertTask() {
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "revert.task")
+  }
+
+  fun reviewStageTopics() {
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "review.stage.topics")
+  }
+
+  @JvmStatic
+  fun checkTask(status: CheckStatus) {
+    val data = FeatureUsageData()
+    data.addData("status", status.toString())
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "check.task", data)
   }
 
   private const val GROUP_ID = "educational.counters"
