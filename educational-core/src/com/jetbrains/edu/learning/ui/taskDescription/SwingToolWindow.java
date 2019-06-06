@@ -25,6 +25,7 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -179,11 +180,13 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
 
           Object hintText = ((SimpleAttributeSet)sourceElement.getAttributes().getAttribute(HTML.Tag.A)).getAttribute(HTML.Attribute.VALUE);
           document.insertBeforeEnd(parent.getParentElement(), String.format(HINT_TEXT_PATTERN, hintText));
+          EduCounterUsageCollector.hintExpanded();
         }
         else {
           String leftPath = UIUtil.isRetina() ? "style/hint/swing/swing_icons/retina_right.png" : "style/hint/swing/swing_icons/right.png";
           changeArrowIcon(sourceElement, document, leftPath);
           document.removeElement(hintTextElement);
+          EduCounterUsageCollector.hintCollapsed();
         }
       }
       catch (BadLocationException | IOException e) {

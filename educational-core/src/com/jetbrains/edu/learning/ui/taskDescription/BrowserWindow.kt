@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
 import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
+import com.sun.webkit.dom.DocumentImpl
 import com.sun.webkit.dom.ElementImpl
 import javafx.application.Platform
 import javafx.concurrent.Worker
@@ -20,6 +21,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
 import org.w3c.dom.events.EventTarget
+import org.w3c.dom.html.HTMLDivElement
 import java.util.*
 import java.util.regex.Pattern
 
@@ -86,6 +88,10 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
       for (i in 0 until nodeList.length) {
         (nodeList.item(i) as EventTarget).addEventListener(EVENT_TYPE_CLICK, listener, false)
       }
+      val hints = (doc as DocumentImpl).getElementsByClassName("hint_header")
+      for (i in 0 until hints.length) {
+        (hints.item(i) as EventTarget).addEventListener(EVENT_TYPE_CLICK, listener, false)
+      }
     }
   }
 
@@ -96,6 +102,16 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
         if (domEventType == EVENT_TYPE_CLICK) {
           ev.preventDefault()
           val target = ev.target as Element
+          if (target is HTMLDivElement) {
+            val className = target.className
+            if (className == JavaFxToolWindow.HINT_HEADER) {
+              EduCounterUsageCollector.hintExpanded()
+            }
+            else if (className == JavaFxToolWindow.HINT_HEADER_EXPANDED) {
+              EduCounterUsageCollector.hintCollapsed()
+            }
+            return
+          }
           val hrefAttribute = getElementWithATag(target).getAttribute("href")
 
           if (hrefAttribute != null) {

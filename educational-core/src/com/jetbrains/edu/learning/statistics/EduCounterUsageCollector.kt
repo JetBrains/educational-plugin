@@ -55,7 +55,7 @@ object EduCounterUsageCollector {
 
   private fun authorization(event: AuthorizationEvent, platform: String, place: AuthorizationPlace) {
     val data = FeatureUsageData()
-    data.addData("event", event.toString())
+    data.addData(EVENT, event.toString())
     data.addData("platform", platform)
     data.addData(SOURCE, place.toString())
     FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "authorization", data)
@@ -102,7 +102,28 @@ object EduCounterUsageCollector {
     FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "check.task", data)
   }
 
+  private enum class HintEvent {
+    EXPANDED, COLLAPSED
+  }
+
+  private fun hintClicked(event: HintEvent) {
+    val data = FeatureUsageData()
+    data.addData(EVENT, event.toString())
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "hint", data)
+  }
+
+  @JvmStatic
+  fun hintExpanded() {
+    hintClicked(EduCounterUsageCollector.HintEvent.EXPANDED)
+  }
+
+  @JvmStatic
+  fun hintCollapsed() {
+    hintClicked(EduCounterUsageCollector.HintEvent.COLLAPSED)
+  }
+
   private const val GROUP_ID = "educational.counters"
   private const val MODE = "mode"
   private const val SOURCE = "source"
+  private const val EVENT = "event"
 }

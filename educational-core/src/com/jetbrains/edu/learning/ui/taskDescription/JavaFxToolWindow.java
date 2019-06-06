@@ -30,11 +30,13 @@ import javax.swing.*;
 
 public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   private BrowserWindow myBrowserWindow;
-  private static final String HINT_BLOCK_TEMPLATE = "<div class='hint_header'>Hint %s</div>" +
+  public static final String HINT_HEADER = "hint_header";
+  public static final String HINT_HEADER_EXPANDED = HINT_HEADER + " checked";
+  private static final String HINT_BLOCK_TEMPLATE = "<div class='" + HINT_HEADER + "'>Hint %s</div>" +
                                                     "  <div class='hint_content'>" +
                                                     " %s" +
                                                     "  </div>";
-  private static final String HINT_EXPANDED_BLOCK_TEMPLATE = "<div class='hint_header checked'>Hint %s</div>" +
+  private static final String HINT_EXPANDED_BLOCK_TEMPLATE = "<div class='" + HINT_HEADER_EXPANDED + "'>Hint %s</div>" +
                                                              "  <div class='hint_content'>" +
                                                              " %s" +
                                                              "  </div>";
