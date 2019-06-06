@@ -17,10 +17,10 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComponent;
-
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -98,6 +98,7 @@ public class StepikProjectComponent implements ProjectComponent {
       }
       try {
         StepikSolutionsLoader.getInstance(myProject).loadSolutionsInBackground();
+        EduCounterUsageCollector.synchronizeCourse(EduCounterUsageCollector.SynchronizeCoursePlace.PROJECT_REOPEN);
       }
       catch (Exception e) {
         LOG.warn(e.getMessage());

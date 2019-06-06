@@ -15,7 +15,6 @@ import com.intellij.util.IconUtil
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 import java.awt.Point
 import java.awt.event.MouseEvent
 import javax.swing.Icon
@@ -78,7 +77,6 @@ abstract class LoginWidget(val project: Project, topic: Topic<EduLogInListener>)
         return doFinalStep {
           when (selectedValue) {
             syncStepName -> {
-              EduUsagesCollector.progressFromWidget()
               syncStep!!.syncAction.synchronizeCourse(project)
             }
             loginText -> {

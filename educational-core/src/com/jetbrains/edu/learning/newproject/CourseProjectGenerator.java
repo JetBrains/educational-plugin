@@ -43,7 +43,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUser;
@@ -218,7 +217,7 @@ public abstract class CourseProjectGenerator<S> {
       if (alreadyEnrolled) {
         StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
         stepikSolutionsLoader.loadSolutionsInBackground();
-        EduUsagesCollector.progressOnGenerateCourse();
+        EduCounterUsageCollector.synchronizeCourse(EduCounterUsageCollector.SynchronizeCoursePlace.PROJECT_GENERATION);
       }
     }
   }

@@ -156,6 +156,17 @@ object EduCounterUsageCollector {
     postCourse(PostCourseEvent.UPLOAD)
   }
 
+  enum class SynchronizeCoursePlace {
+    WIDGET, PROJECT_GENERATION, PROJECT_REOPEN
+  }
+
+  @JvmStatic
+  fun synchronizeCourse(place: SynchronizeCoursePlace) {
+    val data = FeatureUsageData()
+    data.addData(SOURCE, place.toString())
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "synchronize.course", data)
+  }
+
   private const val GROUP_ID = "educational.counters"
   private const val MODE = "mode"
   private const val SOURCE = "source"

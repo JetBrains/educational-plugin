@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
@@ -51,6 +52,7 @@ public class SyncStepikCourseAction extends SyncCourseAction {
 
     StepikSolutionsLoader courseSynchronizer = StepikSolutionsLoader.getInstance(project);
     courseSynchronizer.loadSolutionsInBackground();
+    EduCounterUsageCollector.synchronizeCourse(EduCounterUsageCollector.SynchronizeCoursePlace.WIDGET);
   }
 
   @Override
