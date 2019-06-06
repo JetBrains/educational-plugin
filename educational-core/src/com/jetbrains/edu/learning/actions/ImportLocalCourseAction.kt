@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
 open class ImportLocalCourseAction(text: String = "Import Local Course") : DumbAwareAction(text) {
   override fun actionPerformed(e: AnActionEvent) {
@@ -27,7 +27,7 @@ open class ImportLocalCourseAction(text: String = "Import Local Course") : DumbA
         else -> {
           saveLastImportLocation(file)
           course = initCourse(course)
-          EduUsagesCollector.courseArchiveImported()
+          EduCounterUsageCollector.importCourseArchive()
           JoinCourseDialog(course).show()
         }
       }

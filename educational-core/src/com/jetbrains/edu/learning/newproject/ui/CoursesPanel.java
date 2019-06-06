@@ -36,7 +36,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseLoading.CourseLoader;
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction;
@@ -468,7 +467,7 @@ public class CoursesPanel extends JPanel {
                                }
                                else {
                                  ImportLocalCourseAction.saveLastImportLocation(file);
-                                 EduUsagesCollector.courseArchiveImported();
+                                 EduCounterUsageCollector.importCourseArchive();
                                  myCourses.add(course);
                                  updateModel(myCourses, course);
                                }

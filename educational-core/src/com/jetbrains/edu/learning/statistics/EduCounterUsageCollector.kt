@@ -167,6 +167,11 @@ object EduCounterUsageCollector {
     FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "synchronize.course", data)
   }
 
+  @JvmStatic
+  fun importCourseArchive() {
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "import.course", FeatureUsageData())
+  }
+
   private const val GROUP_ID = "educational.counters"
   private const val MODE = "mode"
   private const val SOURCE = "source"
