@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -74,7 +74,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
     boolean isSuccessful = createCourseArchive(project, myZipName, myLocationDir, true);
     if (isSuccessful) {
       PropertiesComponent.getInstance(project).setValue(LAST_ARCHIVE_LOCATION, myLocationDir);
-      EduUsagesCollector.createdCourseArchive();
+      EduCounterUsageCollector.createCourseArchive();
     }
     else {
       Messages.showErrorDialog("Can not create archive for current course", "Failed to Create Course Archive");

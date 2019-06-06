@@ -122,6 +122,40 @@ object EduCounterUsageCollector {
     hintClicked(EduCounterUsageCollector.HintEvent.COLLAPSED)
   }
 
+  fun createCoursePreview() {
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "create.course.preview", FeatureUsageData())
+  }
+
+  @JvmStatic
+  fun previewTaskFile() {
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "preview.task.file", FeatureUsageData())
+  }
+
+  @JvmStatic
+  fun createCourseArchive() {
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "create.course.archive", FeatureUsageData())
+  }
+
+  private enum class PostCourseEvent {
+    UPLOAD, UPDATE
+  }
+
+  private fun postCourse(event: PostCourseEvent) {
+    val data = FeatureUsageData()
+    data.addData(EVENT, event.toString())
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "post.course", data)
+  }
+
+  @JvmStatic
+  fun updateCourse() {
+    postCourse(PostCourseEvent.UPDATE)
+  }
+
+  @JvmStatic
+  fun uploadCourse() {
+    postCourse(PostCourseEvent.UPLOAD)
+  }
+
   private const val GROUP_ID = "educational.counters"
   private const val MODE = "mode"
   private const val SOURCE = "source"

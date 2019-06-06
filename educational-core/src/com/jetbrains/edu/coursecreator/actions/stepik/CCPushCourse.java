@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,7 +89,6 @@ public class CCPushCourse extends DumbAwareAction {
         }
       }
     });
-    EduUsagesCollector.courseUploaded();
   }
 
   public static boolean doPush(Project project, @NotNull EduCourse course) {
@@ -103,9 +102,11 @@ public class CCPushCourse extends DumbAwareAction {
       }
 
       new StepikCourseUploader(project, course).updateCourse();
+      EduCounterUsageCollector.updateCourse();
     }
     else {
       postCourse(project, course);
+      EduCounterUsageCollector.uploadCourse();
     }
     return false;
   }

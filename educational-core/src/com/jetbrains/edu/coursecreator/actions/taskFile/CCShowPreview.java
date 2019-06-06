@@ -44,7 +44,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -121,7 +121,7 @@ public class CCShowPreview extends DumbAwareAction {
         showPreviewDialog(project, studentTaskFile);
       }
     });
-    EduUsagesCollector.taskFilePreviewCreated();
+    EduCounterUsageCollector.previewTaskFile();
   }
 
   private static void showPreviewDialog(@NotNull Project project, @NotNull TaskFile taskFile) {
