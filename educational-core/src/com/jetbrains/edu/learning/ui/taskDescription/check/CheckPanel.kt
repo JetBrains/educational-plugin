@@ -97,12 +97,22 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
     if (result.status != CheckStatus.Solved) {
       return resultLabel
     }
+    val panel = createNextButtonPanel()
+    panel.add(resultLabel, BorderLayout.CENTER)
+    return panel
+  }
+
+  private fun createNextButtonPanel(): JPanel {
     val panel = JPanel(BorderLayout())
     val nextButton = createButtonToolbar(NextTaskAction.ACTION_ID)
     nextButton.border = JBUI.Borders.empty(0, 12, 0, 0)
     panel.add(nextButton, BorderLayout.WEST)
-    panel.add(resultLabel, BorderLayout.CENTER)
     return panel
+  }
+
+  fun addNextButtonPanel() {
+    val nextButtonPanel = createNextButtonPanel()
+    checkFinishedPanel.add(nextButtonPanel)
   }
 
   fun updateCheckButton(task: Task) {
