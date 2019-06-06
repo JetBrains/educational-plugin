@@ -111,8 +111,7 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
   }
 
   fun addNextButtonPanel() {
-    val nextButtonPanel = createNextButtonPanel()
-    checkFinishedPanel.add(nextButtonPanel)
+    checkFinishedPanel.add(createNextButtonPanel())
   }
 
   fun updateCheckButton(task: Task) {
