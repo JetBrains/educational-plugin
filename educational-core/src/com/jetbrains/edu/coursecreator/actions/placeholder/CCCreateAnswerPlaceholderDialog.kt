@@ -60,7 +60,6 @@ open class CCCreateAnswerPlaceholderDialog(
       if (placeholder.placeholderDependency != null) {
         decorator.setOn(true)
         dependencyPathField.text = placeholder.placeholderDependency?.toString()
-        dependencyPanel.minimumSize = JBUI.size(370, 0)
       }
 
       dependencyPanel.alignmentX = Component.LEFT_ALIGNMENT
