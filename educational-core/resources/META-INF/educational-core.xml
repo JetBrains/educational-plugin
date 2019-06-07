@@ -224,13 +224,10 @@
                     serviceImplementation="com.jetbrains.edu.learning.StudyTaskManager"/>
     <renameHandler implementation="com.jetbrains.edu.learning.handlers.EduRenameHandler"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
-    <statistics.projectUsagesCollector implementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
     <statistics.applicationUsagesCollector implementation="com.jetbrains.edu.learning.statistics.EduStateUsagesCollector"/>
     <statistics.counterUsagesCollector groupId="educational.counters" version="1"/>
-    <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.coursera.CourseraSettings"/>
-    <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduStatistics"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
