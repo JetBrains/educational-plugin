@@ -30,7 +30,7 @@ object EduCounterUsageCollector {
   }
 
   @JvmStatic
-  fun linkClicked(linkType: LinkType) = reportEvent("link.clicked", mapOf("linkType" to linkType.toLower()))
+  fun linkClicked(linkType: LinkType) = reportEvent("link.clicked", mapOf(TYPE to linkType.toLower()))
 
   private enum class AuthorizationEvent {
     LOG_IN, LOG_OUT
