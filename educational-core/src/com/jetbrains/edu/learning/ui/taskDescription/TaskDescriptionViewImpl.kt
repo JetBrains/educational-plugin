@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
@@ -63,10 +62,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   private fun updateCheckPanel(task: Task?) {
     if (task == null) return
     readyToCheck()
-    checkPanel.updateCheckButton(task)
-    if (task is TheoryTask) {
-      checkPanel.addNextButtonPanel()
-    }
+    checkPanel.updateCheckPanel(task)
     UIUtil.setBackgroundRecursively(checkPanel, getTaskDescriptionBackgroundColor())
   }
 
