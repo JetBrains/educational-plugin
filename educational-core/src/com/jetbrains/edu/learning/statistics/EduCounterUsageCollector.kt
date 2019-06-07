@@ -13,7 +13,7 @@ object EduCounterUsageCollector {
 
   @JvmStatic
   fun taskNavigation(place: TaskNavigationPlace) =
-    reportEvent("navigate.to.task", mapOf(SOURCE to place.toString()))
+    reportEvent("navigate.to.task", mapOf(SOURCE to place.toLower()))
 
   @JvmStatic
   fun eduProjectCreated(mode: String) = reportEvent("edu.project.created", mapOf(MODE to mode))
@@ -30,7 +30,7 @@ object EduCounterUsageCollector {
   }
 
   @JvmStatic
-  fun linkClicked(linkType: LinkType) = reportEvent("link.clicked", mapOf("linkType" to linkType.toString()))
+  fun linkClicked(linkType: LinkType) = reportEvent("link.clicked", mapOf("linkType" to linkType.toLower()))
 
   private enum class AuthorizationEvent {
     LOG_IN, LOG_OUT
@@ -41,7 +41,7 @@ object EduCounterUsageCollector {
   }
 
   private fun authorization(event: AuthorizationEvent, platform: String, place: AuthorizationPlace) =
-    reportEvent("authorization", mapOf(EVENT to event.toString(), "platform" to platform, SOURCE to place.toString()))
+    reportEvent("authorization", mapOf(EVENT to event.toLower(), "platform" to platform, SOURCE to place.toLower()))
 
   @JvmStatic
   fun loggedIn(platform: String, place: AuthorizationPlace) =
@@ -67,13 +67,13 @@ object EduCounterUsageCollector {
   fun reviewStageTopics() = reportEvent("review.stage.topics")
 
   @JvmStatic
-  fun checkTask(status: CheckStatus) = reportEvent("check.task", mapOf("status" to status.toString()))
+  fun checkTask(status: CheckStatus) = reportEvent("check.task", mapOf("status" to status.toLower()))
 
   private enum class HintEvent {
     EXPANDED, COLLAPSED
   }
 
-  private fun hintClicked(event: HintEvent) = reportEvent("hint", mapOf(EVENT to event.toString()))
+  private fun hintClicked(event: HintEvent) = reportEvent("hint", mapOf(EVENT to event.toLower()))
 
   @JvmStatic
   fun hintExpanded() = hintClicked(EduCounterUsageCollector.HintEvent.EXPANDED)
@@ -93,7 +93,7 @@ object EduCounterUsageCollector {
     UPLOAD, UPDATE
   }
 
-  private fun postCourse(event: PostCourseEvent) = reportEvent("post.course", mapOf(EVENT to event.toString()))
+  private fun postCourse(event: PostCourseEvent) = reportEvent("post.course", mapOf(EVENT to event.toLower()))
 
   @JvmStatic
   fun updateCourse() = postCourse(PostCourseEvent.UPDATE)
@@ -106,10 +106,12 @@ object EduCounterUsageCollector {
   }
 
   @JvmStatic
-  fun synchronizeCourse(place: SynchronizeCoursePlace) = reportEvent("synchronize.course", mapOf(SOURCE to place.toString()))
+  fun synchronizeCourse(place: SynchronizeCoursePlace) = reportEvent("synchronize.course", mapOf(SOURCE to place.toLower()))
 
   @JvmStatic
   fun importCourseArchive() = reportEvent("import.course")
+
+  private fun Enum<*>.toLower() = this.toString().toLowerCase()
 
   const val GROUP_ID = "educational.counters"
   private const val MODE = "mode"
