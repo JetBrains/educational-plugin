@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 
 class CCEditAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
   fun `test add placeholder with dependency`() {
@@ -12,15 +13,19 @@ class CCEditAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>")
         }
         eduTask("task2") {
-          taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>")
+          taskFile("Task.kt", "<p>fun foo()</p>: String = TODO()")
         }
       }
     }
 
     val taskFile = course.lessons[0].taskList[1].taskFiles["Task.kt"]!!
-    val firstTask = course.lessons[0].taskList[0]!!
-
-    doTest("lesson1/task2/Task.kt", CCTestEditAnswerPlaceholder(), taskFile, 20, 20, firstTask)
+    val taskFileExpected = copy(taskFile)
+    val placeholderExpected = taskFileExpected.answerPlaceholders[0]
+    placeholderExpected.placeholderText = defaultPlaceholderText
+    val placeholderDependency = AnswerPlaceholderDependency(placeholderExpected, null, "lesson1", "task1", "Task.kt", 1, true)
+    placeholderExpected.placeholderDependency = placeholderDependency
+    placeholderExpected.taskFile = taskFileExpected
+    doTest("lesson1/task2/Task.kt", CCTestEditAnswerPlaceholder(), taskFile, taskFileExpected)
   }
 
   private class CCTestEditAnswerPlaceholder : CCEditAnswerPlaceholder() {

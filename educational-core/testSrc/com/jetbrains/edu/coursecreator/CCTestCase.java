@@ -35,7 +35,6 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
-import org.junit.ComparisonFailure;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,30 +64,12 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     throw new AssertionError("No highlighter for placeholder: " + CCTestsUtil.getPlaceholderPresentation(placeholder));
   }
 
-  protected static void checkPainters(@NotNull TaskFile taskFile) {
+  public static void checkPainters(@NotNull TaskFile taskFile) {
     final Set<AnswerPlaceholder> paintedPlaceholders = PlaceholderPainter.getPaintedPlaceholder();
 
     for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
       if (!paintedPlaceholders.contains(answerPlaceholder)) {
         throw new AssertionError("No highlighter for placeholder: " + CCTestsUtil.getPlaceholderPresentation(answerPlaceholder));
-      }
-    }
-  }
-
-  public void checkByFile(TaskFile taskFile, String fileName, boolean useLength) {
-    Pair<Document, List<AnswerPlaceholder>> placeholders = getPlaceholders(fileName, useLength, true);
-    String message = "Placeholders don't match";
-    if (taskFile.getAnswerPlaceholders().size() != placeholders.second.size()) {
-      throw new ComparisonFailure(message,
-                                  CCTestsUtil.getPlaceholdersPresentation(taskFile.getAnswerPlaceholders()),
-                                  CCTestsUtil.getPlaceholdersPresentation(placeholders.second));
-    }
-    for (AnswerPlaceholder answerPlaceholder : placeholders.getSecond()) {
-      AnswerPlaceholder placeholder = taskFile.getAnswerPlaceholder(answerPlaceholder.getOffset());
-      if (!CCTestsUtil.comparePlaceholders(placeholder, answerPlaceholder)) {
-        throw new ComparisonFailure(message,
-                                    CCTestsUtil.getPlaceholdersPresentation(taskFile.getAnswerPlaceholders()),
-                                    CCTestsUtil.getPlaceholdersPresentation(placeholders.second));
       }
     }
   }

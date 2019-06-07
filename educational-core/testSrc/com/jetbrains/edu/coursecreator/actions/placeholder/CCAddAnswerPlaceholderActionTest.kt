@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 
 class CCAddAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
 
@@ -10,33 +11,53 @@ class CCAddAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("Task.kt", "fun foo(): String = TODO()")
+          taskFile("Task.kt", defaultTaskText)
         }
       }
     }
 
     val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
-    doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile)
+    val taskFileExpected = copy(taskFile)
+    val placeholderExpected = AnswerPlaceholder()
+    placeholderExpected.offset = 0
+    placeholderExpected.length = 9
+    placeholderExpected.index = 0
+    placeholderExpected.taskFile = taskFileExpected
+    placeholderExpected.possibleAnswer = defaultPlaceholderText
+    placeholderExpected.placeholderText = defaultPlaceholderText
+    taskFileExpected.answerPlaceholders.add(placeholderExpected)
+
+    doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile, taskFileExpected)
   }
 
   fun `test add placeholder with selection without dependency`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("Task.kt", "fun foo(): String = TODO()")
+          taskFile("Task.kt", defaultTaskText)
         }
       }
     }
 
     val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
-    doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile, 20, 26)
+    val taskFileExpected = copy(taskFile)
+    val placeholderExpected = AnswerPlaceholder()
+    placeholderExpected.offset = 10
+    placeholderExpected.length = 9
+    placeholderExpected.index = 0
+    placeholderExpected.taskFile = taskFileExpected
+    placeholderExpected.possibleAnswer = defaultTaskText.substring(10, 19)
+    placeholderExpected.placeholderText = defaultPlaceholderText
+    taskFileExpected.answerPlaceholders.add(placeholderExpected)
+
+    doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile, taskFileExpected)
   }
 
   fun `test placeholder intersection`() {
     courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("Task.kt", "fun foo(): String = TODO()")
+          taskFile("Task.kt", defaultTaskText)
         }
       }
     }
@@ -55,35 +76,27 @@ class CCAddAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
           taskFile("Task.kt", "fun <p>foo(): String = TODO()</p>")
         }
         eduTask("task2") {
-          taskFile("Task.kt", "fun foo(): String = TODO()")
+          taskFile("Task.kt", defaultTaskText)
         }
       }
     }
 
     val taskFile = course.lessons[0].taskList[1].taskFiles["Task.kt"]!!
-    val firstTask = course.lessons[0].taskList[0]
+    val taskFileExpected = copy(taskFile)
+    val placeholderExpected = AnswerPlaceholder()
+    placeholderExpected.offset = 0
+    placeholderExpected.length = 9
+    placeholderExpected.index = 0
+    placeholderExpected.taskFile = taskFileExpected
+    placeholderExpected.possibleAnswer = defaultPlaceholderText
+    placeholderExpected.placeholderText = defaultPlaceholderText
+    val placeholderDependency = AnswerPlaceholderDependency(placeholderExpected, null, "lesson1", "task1", "Task.kt", 1, true)
+    placeholderExpected.placeholderDependency = placeholderDependency
+    taskFileExpected.answerPlaceholders.add(placeholderExpected)
+
     doTest("lesson1/task2/Task.kt",
-           CCTestAddAnswerPlaceholder(CCCreateAnswerPlaceholderDialog.DependencyInfo("lesson1#task1#Task.kt#1", true)), taskFile, 20, 26,
-           firstTask)
-  }
-
-  fun `test delete placeholder`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-      lesson("lesson1") {
-        eduTask("task1") {
-          taskFile("Task.kt", "fun <p>foo(): String = TODO()</p>")
-        }
-      }
-    }
-
-    val virtualFile = findFile("lesson1/task1/Task.kt")
-    myFixture.openFileInEditor(virtualFile)
-    myFixture.testAction(CCDeleteAnswerPlaceholder())
-    val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
-    val answerPlaceholders = taskFile.answerPlaceholders
-    assertNotNull(answerPlaceholders)
-    assertEquals(0, answerPlaceholders.size)
-    undoAddDependencyTest(virtualFile, 1, answerPlaceholders)
+           CCTestAddAnswerPlaceholder(CCCreateAnswerPlaceholderDialog.DependencyInfo("lesson1#task1#Task.kt#1", true)), taskFile,
+           taskFileExpected)
   }
 
   private class CCTestAddAnswerPlaceholder(val dependencyInfo: CCCreateAnswerPlaceholderDialog.DependencyInfo? = null) : CCAddAnswerPlaceholder() {

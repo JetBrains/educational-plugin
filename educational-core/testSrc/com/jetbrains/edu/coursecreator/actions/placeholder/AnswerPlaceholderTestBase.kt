@@ -1,74 +1,91 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder
 
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.CCTestCase.checkPainters
 import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler
 
 abstract class AnswerPlaceholderTestBase : EduActionTestCase() {
-  fun doTest(name: String,
-             action: AnAction,
-             taskFile: TaskFile,
-             selectionStart: Int = 0,
-             selectionEnd: Int = 0,
-             task: Task? = null) {
+  val defaultPlaceholderText = "type here"
+  val defaultTaskText = "fun foo(): String = TODO()"
 
+  fun doTest(
+    name: String,
+    action: CCAnswerPlaceholderAction,
+    taskFile: TaskFile,
+    taskFileExpected: TaskFile
+  ) {
+
+    val taskFileUnchanged = TaskFile()
+    TaskFile.copy(taskFile, taskFileUnchanged)
+    taskFileUnchanged.setText(defaultTaskText)
+    taskFileUnchanged.task = taskFile.task
     val virtualFile = findFile(name)
+    val placeholderExpected = taskFileExpected.answerPlaceholders[0]
     myFixture.openFileInEditor(virtualFile)
-    if (selectionStart != 0 && selectionEnd != 0) {
-      myFixture.editor.selectionModel.setSelection(selectionStart, selectionEnd)
+    if (placeholderExpected.offset != 0 && placeholderExpected.endOffset != 9 && action !is CCEditAnswerPlaceholder) {
+      myFixture.editor.selectionModel.setSelection(placeholderExpected.offset, placeholderExpected.endOffset)
     }
     myFixture.testAction(action)
 
-    val answerPlaceholders = taskFile.answerPlaceholders
-    assertNotNull(answerPlaceholders)
-    assertEquals(1, answerPlaceholders.size)
-    val placeholder = answerPlaceholders[0]
-    assertEquals("type here", placeholder.placeholderText)
-    assertEquals(selectionStart, placeholder.offset)
-    when {
-      myFixture.editor.selectionModel.hasSelection() -> assertEquals(taskFile.text.subSequence(selectionStart, selectionEnd),
-                                                                     placeholder.possibleAnswer)
-      action is CCEditAnswerPlaceholder -> assertEquals("", placeholder.possibleAnswer)
-      else -> assertEquals("type here", placeholder.possibleAnswer)
-    }
-    if (task != null) {
-      val placeholderDependency = placeholder.placeholderDependency
-      assertNotNull(placeholderDependency!!)
-      assertEquals(task.lesson.name, placeholderDependency.lessonName)
-      assertEquals(task.name, placeholderDependency.taskName)
-      assertEquals("Task.kt", placeholderDependency.fileName)
-      assertTrue(placeholderDependency.isVisible)
-    }
-    else {
-      assertNull(placeholder.placeholderDependency)
-    }
+    checkPlaceholders(taskFileExpected, taskFile)
+    checkPainters(taskFile)
 
     if (action is CCAddAnswerPlaceholder) {
       val document = myFixture.getDocument(myFixture.file)
       val handler = EditorActionManager.getInstance().getReadonlyFragmentModificationHandler(document)
       assertInstanceOf(handler, AnswerPlaceholderDeleteHandler::class.java)
-      undoAddDependencyTest(virtualFile, 0, answerPlaceholders)
+
+      UndoManager.getInstance(project).undo(FileEditorManager.getInstance(project).getSelectedEditor(virtualFile))
+      assertEquals(taskFileUnchanged.name, taskFile.name)
+      assertEquals(taskFileUnchanged.text, taskFile.text)
+      assertEquals(taskFileUnchanged.answerPlaceholders.size, taskFile.answerPlaceholders.size)
+      assertEquals(taskFileUnchanged.task, taskFile.task)
+      checkPlaceholders(taskFileUnchanged, taskFile)
     }
-    else if (action is CCEditAnswerPlaceholder) {
-      undoEditDependencyTest(virtualFile, answerPlaceholders)
+
+  }
+
+  fun checkPlaceholders(taskFileExpected: TaskFile, taskFileActual: TaskFile) {
+    val placeholdersActual = taskFileActual.answerPlaceholders
+    val placeholdersExpected = taskFileExpected.answerPlaceholders
+    assertEquals(placeholdersExpected.size, placeholdersActual.size)
+    placeholdersExpected.forEachIndexed { i, placeholderExpected ->
+      run {
+        val placeholderActual = placeholdersActual[i]
+        assertNotNull(placeholderActual)
+        assertEquals(placeholderExpected.offset, placeholderActual.offset)
+        assertEquals(placeholderExpected.length, placeholderActual.length)
+        assertEquals(placeholderExpected.index, placeholderActual.index)
+        assertEquals(placeholderExpected.placeholderText, placeholderActual.placeholderText)
+        assertEquals(placeholderExpected.possibleAnswer, placeholderActual.possibleAnswer)
+        assertEquals(placeholderExpected.taskFile.text, placeholderActual.taskFile.text)
+        assertEquals(placeholderExpected.taskFile.name, placeholderActual.taskFile.name)
+
+        val expectedDependency = placeholderExpected.placeholderDependency
+        if (expectedDependency == null) {
+          assertNull(placeholderActual.placeholderDependency)
+        }
+        else {
+          val actualDependency = placeholderActual.placeholderDependency
+          assertNotNull(actualDependency!!)
+          assertEquals(expectedDependency.fileName, actualDependency.fileName)
+          assertEquals(expectedDependency.taskName, actualDependency.taskName)
+          assertEquals(expectedDependency.lessonName, actualDependency.lessonName)
+          assertEquals(expectedDependency.isVisible, actualDependency.isVisible)
+        }
+      }
     }
   }
 
-  fun undoAddDependencyTest(virtualFile: VirtualFile, expectedPlaceholders: Int, answerPlaceholders: List<AnswerPlaceholder>) {
-    UndoManager.getInstance(project).undo(FileEditorManager.getInstance(project).getSelectedEditor(virtualFile))
-    assertEquals(expectedPlaceholders, answerPlaceholders.size)
-  }
-
-  private fun undoEditDependencyTest(virtualFile: VirtualFile, answerPlaceholders: List<AnswerPlaceholder>) {
-    UndoManager.getInstance(project).undo(FileEditorManager.getInstance(project).getSelectedEditor(virtualFile))
-    assertEquals(1, answerPlaceholders.size)
-    assertEquals("TODO()", answerPlaceholders[0].possibleAnswer)
+  fun copy(taskFile: TaskFile): TaskFile {
+    val copy = TaskFile()
+    TaskFile.copy(taskFile, copy)
+    copy.setText(taskFile.text)
+    copy.task = taskFile.task
+    return copy
   }
 }
