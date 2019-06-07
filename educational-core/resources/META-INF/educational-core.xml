@@ -225,6 +225,7 @@
     <renameHandler implementation="com.jetbrains.edu.learning.handlers.EduRenameHandler"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
     <statistics.projectUsagesCollector implementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
+    <statistics.applicationUsagesCollector implementation="com.jetbrains.edu.learning.statistics.EduStateUsagesCollector"/>
     <statistics.counterUsagesCollector groupId="educational.counters" version="1"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
