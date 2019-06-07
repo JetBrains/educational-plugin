@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.statistics
 
-import com.intellij.internal.statistic.eventLog.FeatureUsageData
-import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
@@ -14,36 +12,25 @@ object EduCounterUsageCollector {
   }
 
   @JvmStatic
-  fun taskNavigation(place: TaskNavigationPlace) {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "navigate.to.task", FeatureUsageData().addData(SOURCE, place.toString()))
-  }
+  fun taskNavigation(place: TaskNavigationPlace) =
+    reportEvent("navigate.to.task", mapOf(SOURCE to place.toString()))
 
   @JvmStatic
-  fun eduProjectCreated(mode: String) {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "edu.project.created", FeatureUsageData().addData(MODE, mode))
-  }
+  fun eduProjectCreated(mode: String) = reportEvent("edu.project.created", mapOf(MODE to mode))
 
   @JvmStatic
-  fun eduProjectOpened(mode: String) {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "edu.project.opened", FeatureUsageData().addData(MODE, mode))
-  }
+  fun eduProjectOpened(mode: String) = reportEvent("edu.project.opened", mapOf(MODE to mode))
 
   @JvmStatic
-  fun studyItemCreated(item: StudyItem) {
-    val data = FeatureUsageData()
-    data.addData(MODE, item.course.courseMode)
-    data.addData("type", item.itemType)
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "study.item.created", data)
-  }
+  fun studyItemCreated(item: StudyItem) =
+    reportEvent("study.item.created", mapOf(MODE to item.course.courseMode, TYPE to item.itemType))
 
   enum class LinkType {
     IN_COURSE, STEPIK, EXTERNAL, PSI
   }
 
   @JvmStatic
-  fun linkClicked(linkType: LinkType) {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "link.clicked", FeatureUsageData().addData("linkType", linkType.toString()))
-  }
+  fun linkClicked(linkType: LinkType) = reportEvent("link.clicked", mapOf("linkType" to linkType.toString()))
 
   private enum class AuthorizationEvent {
     LOG_IN, LOG_OUT
@@ -53,127 +40,80 @@ object EduCounterUsageCollector {
     SETTINGS, WIDGET, START_COURSE_DIALOG
   }
 
-  private fun authorization(event: AuthorizationEvent, platform: String, place: AuthorizationPlace) {
-    val data = FeatureUsageData()
-    data.addData(EVENT, event.toString())
-    data.addData("platform", platform)
-    data.addData(SOURCE, place.toString())
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "authorization", data)
-  }
+  private fun authorization(event: AuthorizationEvent, platform: String, place: AuthorizationPlace) =
+    reportEvent("authorization", mapOf(EVENT to event.toString(), "platform" to platform, SOURCE to place.toString()))
 
   @JvmStatic
-  fun loggedIn(platform: String, place: AuthorizationPlace) {
+  fun loggedIn(platform: String, place: AuthorizationPlace) =
     authorization(EduCounterUsageCollector.AuthorizationEvent.LOG_IN, platform, place)
-  }
 
   @JvmStatic
-  fun loggedOut(platform: String, place: AuthorizationPlace) {
+  fun loggedOut(platform: String, place: AuthorizationPlace) =
     authorization(EduCounterUsageCollector.AuthorizationEvent.LOG_OUT, platform, place)
-  }
 
   @JvmStatic
-  fun fullOutputShown() {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "show.full.output")
-  }
+  fun fullOutputShown() = reportEvent("show.full.output")
 
   @JvmStatic
-  fun solutionPeeked() {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "peek.solution")
-  }
+  fun solutionPeeked() = reportEvent("peek.solution")
 
   @JvmStatic
-  fun leaveFeedback() {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "leave.feedback")
-  }
+  fun leaveFeedback() = reportEvent("leave.feedback")
 
   @JvmStatic
-  fun revertTask() {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "revert.task")
-  }
-
-  fun reviewStageTopics() {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "review.stage.topics")
-  }
+  fun revertTask() = reportEvent("revert.task")
 
   @JvmStatic
-  fun checkTask(status: CheckStatus) {
-    val data = FeatureUsageData()
-    data.addData("status", status.toString())
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "check.task", data)
-  }
+  fun reviewStageTopics() = reportEvent("review.stage.topics")
+
+  @JvmStatic
+  fun checkTask(status: CheckStatus) = reportEvent("check.task", mapOf("status" to status.toString()))
 
   private enum class HintEvent {
     EXPANDED, COLLAPSED
   }
 
-  private fun hintClicked(event: HintEvent) {
-    val data = FeatureUsageData()
-    data.addData(EVENT, event.toString())
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "hint", data)
-  }
+  private fun hintClicked(event: HintEvent) = reportEvent("hint", mapOf(EVENT to event.toString()))
 
   @JvmStatic
-  fun hintExpanded() {
-    hintClicked(EduCounterUsageCollector.HintEvent.EXPANDED)
-  }
+  fun hintExpanded() = hintClicked(EduCounterUsageCollector.HintEvent.EXPANDED)
 
   @JvmStatic
-  fun hintCollapsed() {
-    hintClicked(EduCounterUsageCollector.HintEvent.COLLAPSED)
-  }
+  fun hintCollapsed() = hintClicked(EduCounterUsageCollector.HintEvent.COLLAPSED)
 
-  fun createCoursePreview() {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "create.course.preview", FeatureUsageData())
-  }
+  fun createCoursePreview() = reportEvent("create.course.preview")
 
   @JvmStatic
-  fun previewTaskFile() {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "preview.task.file", FeatureUsageData())
-  }
+  fun previewTaskFile() = reportEvent("preview.task.file")
 
   @JvmStatic
-  fun createCourseArchive() {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "create.course.archive", FeatureUsageData())
-  }
+  fun createCourseArchive() = reportEvent("create.course.archive")
 
   private enum class PostCourseEvent {
     UPLOAD, UPDATE
   }
 
-  private fun postCourse(event: PostCourseEvent) {
-    val data = FeatureUsageData()
-    data.addData(EVENT, event.toString())
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "post.course", data)
-  }
+  private fun postCourse(event: PostCourseEvent) = reportEvent("post.course", mapOf(EVENT to event.toString()))
 
   @JvmStatic
-  fun updateCourse() {
-    postCourse(PostCourseEvent.UPDATE)
-  }
+  fun updateCourse() = postCourse(PostCourseEvent.UPDATE)
 
   @JvmStatic
-  fun uploadCourse() {
-    postCourse(PostCourseEvent.UPLOAD)
-  }
+  fun uploadCourse() = postCourse(PostCourseEvent.UPLOAD)
 
   enum class SynchronizeCoursePlace {
     WIDGET, PROJECT_GENERATION, PROJECT_REOPEN
   }
 
   @JvmStatic
-  fun synchronizeCourse(place: SynchronizeCoursePlace) {
-    val data = FeatureUsageData()
-    data.addData(SOURCE, place.toString())
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "synchronize.course", data)
-  }
+  fun synchronizeCourse(place: SynchronizeCoursePlace) = reportEvent("synchronize.course", mapOf(SOURCE to place.toString()))
 
   @JvmStatic
-  fun importCourseArchive() {
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "import.course", FeatureUsageData())
-  }
+  fun importCourseArchive() = reportEvent("import.course")
 
-  private const val GROUP_ID = "educational.counters"
+  const val GROUP_ID = "educational.counters"
   private const val MODE = "mode"
   private const val SOURCE = "source"
   private const val EVENT = "event"
+  private const val TYPE = "type"
 }
