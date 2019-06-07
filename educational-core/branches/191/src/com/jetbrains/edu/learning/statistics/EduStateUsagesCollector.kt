@@ -6,6 +6,11 @@ import com.intellij.internal.statistic.utils.getEnumUsage
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.EduSettings
 
+/**
+ * IMPORTANT: if you modify anything in this class, updated whitelist rules should be
+ * provided to analytics platform team.
+ * See `docs/statisticsRules.md` for more information
+ */
 class EduStateUsagesCollector : ApplicationUsagesCollector() {
   override fun getUsages(): MutableSet<UsageDescriptor> {
     val descriptors = HashSet<UsageDescriptor>()

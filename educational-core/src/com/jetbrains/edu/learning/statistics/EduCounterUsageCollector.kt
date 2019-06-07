@@ -3,6 +3,11 @@ package com.jetbrains.edu.learning.statistics
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
+/**
+ * IMPORTANT: if you modify anything in this class, updated whitelist rules should be
+ * provided to analytics platform team.
+ * See `docs/statisticsRules.md` for more information
+ */
 object EduCounterUsageCollector {
   enum class TaskNavigationPlace {
     CHECK_ALL_NOTIFICATION,

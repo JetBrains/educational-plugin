@@ -6,6 +6,11 @@ import com.intellij.internal.statistic.service.fus.collectors.ApplicationUsagesC
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.EduSettings
 
+/**
+ * IMPORTANT: if you modify anything in this class, updated whitelist rules should be
+ * provided to analytics platform team.
+ * See `docs/statisticsRules.md` for more information
+ */
 class EduStateUsagesCollector : ApplicationUsagesCollector() {
   private enum class TaskDescriptionPanel {
     SWING, JAVAFX
