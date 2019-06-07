@@ -83,7 +83,7 @@ object NavigationUtils {
     }
     else if (item is Section) {
       val sectionLessons = item.lessons
-      if (!sectionLessons.isEmpty()) {
+      if (sectionLessons.isNotEmpty()) {
         return sectionLessons[0]
       }
     }
@@ -115,7 +115,7 @@ object NavigationUtils {
     }
     else if (item is Section) {
       val sectionLessons = item.lessons
-      if (!sectionLessons.isEmpty()) {
+      if (sectionLessons.isNotEmpty()) {
         return sectionLessons[sectionLessons.size - 1]
       }
     }
