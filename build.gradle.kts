@@ -305,12 +305,7 @@ project(":jvm-core") {
       localPath = null
       version = ideaVersion
     }
-    if (environmentName.toInt() >= 192) {
-      setPlugins("junit", "properties", "gradle", "Groovy", "java")
-    }
-    else {
-      setPlugins("junit", "properties", "gradle", "Groovy")
-    }
+    setPlugins("junit", "properties", "gradle", "Groovy")
   }
 
   val testOutput = configurations.create("testOutput")
@@ -327,12 +322,7 @@ project(":Edu-Java") {
   intellij {
     localPath = null
     version = ideaVersion
-    if (environmentName.toInt() >= 192) {
-      setPlugins("junit", "properties", "gradle", "Groovy", "java")
-    }
-    else {
-      setPlugins("junit", "properties", "gradle", "Groovy")
-    }
+    setPlugins("junit", "properties", "gradle", "Groovy")
   }
 
   dependencies {
@@ -349,12 +339,7 @@ project(":Edu-Kotlin") {
       localPath = null
       version = ideaVersion
     }
-    if (environmentName.toInt() >= 192) {
-      setPlugins("Kotlin", "junit", "properties", "gradle", "Groovy", "java")
-    }
-    else {
-      setPlugins("Kotlin", "junit", "properties", "gradle", "Groovy")
-    }
+    setPlugins("Kotlin", "junit", "properties", "gradle", "Groovy")
   }
 
   dependencies {
@@ -369,12 +354,7 @@ project(":Edu-Scala") {
   intellij {
     localPath = null
     version = ideaVersion
-    if (environmentName.toInt() >= 192) {
-      setPlugins("org.intellij.scala:${prop("scalaPluginVersion")}", "junit", "properties", "gradle", "Groovy", "java")
-    }
-    else {
       setPlugins("org.intellij.scala:${prop("scalaPluginVersion")}", "junit", "properties", "gradle", "Groovy")
-    }
   }
 
   dependencies {
@@ -406,12 +386,7 @@ project(":Edu-Python") {
       localPath = null
       version = ideaVersion
     }
-    if (environmentName.toInt() >= 192) {
-      setPlugins("PythonCore:${prop("pythonPluginVersion")}", "java")
-    }
-    else {
-      setPlugins("PythonCore:${prop("pythonPluginVersion")}")
-    }
+    setPlugins("PythonCore:${prop("pythonPluginVersion")}")
   }
 
   dependencies {
