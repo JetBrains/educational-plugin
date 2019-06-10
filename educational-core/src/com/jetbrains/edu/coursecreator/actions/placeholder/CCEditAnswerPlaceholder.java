@@ -46,7 +46,7 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
     }
   }
 
-  public CCCreateAnswerPlaceholderDialog createDialog(@NotNull Project project, @NotNull AnswerPlaceholder answerPlaceholder) {
+  protected CCCreateAnswerPlaceholderDialog createDialog(@NotNull Project project, @NotNull AnswerPlaceholder answerPlaceholder) {
     return new CCCreateAnswerPlaceholderDialog(project, true, answerPlaceholder);
   }
 

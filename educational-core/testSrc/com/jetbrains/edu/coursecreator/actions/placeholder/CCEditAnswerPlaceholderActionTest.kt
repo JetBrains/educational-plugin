@@ -22,8 +22,8 @@ class CCEditAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
     val taskFileExpected = copy(taskFile)
     val placeholderExpected = taskFileExpected.answerPlaceholders[0]
     placeholderExpected.placeholderText = defaultPlaceholderText
-    val placeholderDependency = AnswerPlaceholderDependency(placeholderExpected, null, "lesson1", "task1", "Task.kt", 1, true)
-    placeholderExpected.placeholderDependency = placeholderDependency
+    placeholderExpected.placeholderDependency = AnswerPlaceholderDependency(placeholderExpected, null, "lesson1", "task1", "Task.kt", 1,
+                                                                            true)
     placeholderExpected.taskFile = taskFileExpected
     doTest("lesson1/task2/Task.kt", CCTestEditAnswerPlaceholder(), taskFile, taskFileExpected)
   }

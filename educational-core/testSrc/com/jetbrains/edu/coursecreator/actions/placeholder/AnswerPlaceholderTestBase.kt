@@ -18,16 +18,14 @@ abstract class AnswerPlaceholderTestBase : EduActionTestCase() {
     taskFile: TaskFile,
     taskFileExpected: TaskFile
   ) {
-
-    val taskFileUnchanged = TaskFile()
-    TaskFile.copy(taskFile, taskFileUnchanged)
-    taskFileUnchanged.setText(defaultTaskText)
-    taskFileUnchanged.task = taskFile.task
+    val taskFileUnchanged = copy(taskFile)
     val virtualFile = findFile(name)
-    val placeholderExpected = taskFileExpected.answerPlaceholders[0]
     myFixture.openFileInEditor(virtualFile)
-    if (placeholderExpected.offset != 0 && placeholderExpected.endOffset != 9 && action !is CCEditAnswerPlaceholder) {
-      myFixture.editor.selectionModel.setSelection(placeholderExpected.offset, placeholderExpected.endOffset)
+    if (taskFileExpected.answerPlaceholders.isNotEmpty()) {
+      val placeholderExpected = taskFileExpected.answerPlaceholders[0]
+      if (placeholderExpected.offset != 0 && placeholderExpected.endOffset != 9 && action !is CCEditAnswerPlaceholder) {
+        myFixture.editor.selectionModel.setSelection(placeholderExpected.offset, placeholderExpected.endOffset)
+      }
     }
     myFixture.testAction(action)
 
@@ -38,7 +36,9 @@ abstract class AnswerPlaceholderTestBase : EduActionTestCase() {
       val document = myFixture.getDocument(myFixture.file)
       val handler = EditorActionManager.getInstance().getReadonlyFragmentModificationHandler(document)
       assertInstanceOf(handler, AnswerPlaceholderDeleteHandler::class.java)
-
+    }
+    //TODO: CCEditAnswerPlaceholder is not an UndoableAction
+    if (action !is CCEditAnswerPlaceholder) {
       UndoManager.getInstance(project).undo(FileEditorManager.getInstance(project).getSelectedEditor(virtualFile))
       assertEquals(taskFileUnchanged.name, taskFile.name)
       assertEquals(taskFileUnchanged.text, taskFile.text)
@@ -46,10 +46,9 @@ abstract class AnswerPlaceholderTestBase : EduActionTestCase() {
       assertEquals(taskFileUnchanged.task, taskFile.task)
       checkPlaceholders(taskFileUnchanged, taskFile)
     }
-
   }
 
-  fun checkPlaceholders(taskFileExpected: TaskFile, taskFileActual: TaskFile) {
+  private fun checkPlaceholders(taskFileExpected: TaskFile, taskFileActual: TaskFile) {
     val placeholdersActual = taskFileActual.answerPlaceholders
     val placeholdersExpected = taskFileExpected.answerPlaceholders
     assertEquals(placeholdersExpected.size, placeholdersActual.size)
@@ -86,6 +85,11 @@ abstract class AnswerPlaceholderTestBase : EduActionTestCase() {
     TaskFile.copy(taskFile, copy)
     copy.setText(taskFile.text)
     copy.task = taskFile.task
+    taskFile.answerPlaceholders.forEachIndexed { i, taskFilePlaceholder ->
+      run {
+        copy.answerPlaceholders[i].taskFile = taskFilePlaceholder.taskFile
+      }
+    }
     return copy
   }
 }

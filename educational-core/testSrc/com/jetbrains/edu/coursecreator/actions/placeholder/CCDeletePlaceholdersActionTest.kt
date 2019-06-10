@@ -1,23 +1,34 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder
 
-import com.intellij.openapi.command.undo.UndoManager
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 
 class CCDeletePlaceholdersActionTest : AnswerPlaceholderTestBase() {
 
-  fun `test not available in student mode`() = doTest("Foo.kt", false, CCDeleteAllAnswerPlaceholdersAction(), EduNames.STUDY)
-  fun `test not available without placeholders`() = doTest("Bar.kt", false, CCDeleteAllAnswerPlaceholdersAction())
-  fun `test delete all placeholders`() = doTest("Foo.kt", true, CCDeleteAllAnswerPlaceholdersAction())
-  fun `test delete placeholder`() = doTest("Foo.kt", true, CCDeleteAnswerPlaceholder())
+  fun `test not available in student mode`() = doTestDeleteAll("Foo.kt", false, CCDeleteAllAnswerPlaceholdersAction(), EduNames.STUDY)
+  fun `test not available without placeholders`() = doTestDeleteAll("Bar.kt", false, CCDeleteAllAnswerPlaceholdersAction())
+  fun `test delete all placeholders`() = doTestDeleteAll("Foo.kt", true, CCDeleteAllAnswerPlaceholdersAction())
 
-  private fun doTest(taskFileName: String,
-                     shouldBeAvailable: Boolean,
-                     action: CCAnswerPlaceholderAction,
-                     courseMode: String = CCUtils.COURSE_MODE) {
+  fun `test delete placeholder`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask("task1") {
+          taskFile("Task.kt", "fun <p>foo(): String = TODO()</p>")
+        }
+      }
+    }
+    val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
+    val taskFileExpected = copy(taskFile)
+    taskFileExpected.answerPlaceholders = emptyList()
+
+    doTest("lesson1/task1/Task.kt", CCDeleteAnswerPlaceholder(), taskFile, taskFileExpected)
+  }
+
+  private fun doTestDeleteAll(taskFileName: String,
+                              shouldBeAvailable: Boolean,
+                              action: CCAnswerPlaceholderAction,
+                              courseMode: String = CCUtils.COURSE_MODE) {
     val course = courseWithFiles(courseMode = courseMode) {
       lesson("lesson1") {
         eduTask("task1") {
@@ -27,8 +38,6 @@ class CCDeletePlaceholdersActionTest : AnswerPlaceholderTestBase() {
       }
     }
     val taskFile = course.findTask("lesson1", "task1").getTaskFile(taskFileName) ?: error("Failed to find `$taskFileName` task file")
-    val taskFileCopy = copy(taskFile)
-    taskFileCopy.answerPlaceholders.forEach { it.taskFile = taskFileCopy }
     val file = taskFile.getVirtualFile(project) ?: error("Failed to find virtual files for `$taskFileName` task file")
 
     myFixture.configureFromExistingVirtualFile(file)
@@ -37,19 +46,8 @@ class CCDeletePlaceholdersActionTest : AnswerPlaceholderTestBase() {
 
     assertEquals(shouldBeAvailable, presentation.isEnabledAndVisible)
     if (shouldBeAvailable) {
-      val message = if (action is CCDeleteAllAnswerPlaceholdersAction) {
-        "${CCDeleteAllAnswerPlaceholdersAction::class.java.simpleName} should delete all placeholders"
-      }
-      else {
-        "${CCDeleteAnswerPlaceholder::class.java.simpleName} should delete placeholder"
-      }
-      assertTrue(message, taskFile.answerPlaceholders.isEmpty())
-    }
-
-    if (action is CCDeleteAnswerPlaceholder) {
-      CCTestCase.checkPainters(taskFile)
-      UndoManager.getInstance(project).undo(FileEditorManager.getInstance(project).getSelectedEditor(file))
-      checkPlaceholders(taskFileCopy, taskFile)
+      assertTrue("${CCDeleteAllAnswerPlaceholdersAction::class.java.simpleName} should delete all placeholdes",
+                 taskFile.answerPlaceholders.isEmpty())
     }
   }
 }
