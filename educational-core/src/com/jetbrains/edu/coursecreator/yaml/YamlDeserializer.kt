@@ -2,8 +2,8 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.LESSON_CONFIG
@@ -30,7 +30,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
  */
 object YamlDeserializer {
 
-  fun deserializeItem(configFileText: String, configName: String): StudyItem {
+  fun deserializeItem(configFile: VirtualFile): StudyItem {
+    val configName = configFile.name
+    val configFileText = configFile.document.text
     return when (configName) {
       COURSE_CONFIG -> deserialize(configFileText, Course::class.java)
       SECTION_CONFIG -> deserialize(configFileText, Section::class.java)
@@ -45,7 +47,7 @@ object YamlDeserializer {
 
     return contentList.map { titledItem ->
       val configFile = titledItem.findConfigFile(parentDir, *childrenConfigFileNames)
-      val deserializeItem = deserializeItem(VfsUtil.loadText(configFile), configFile.name) as T
+      val deserializeItem = deserializeItem(configFile) as T
       deserializeItem.name = titledItem.name
       deserializeItem
     }
@@ -85,7 +87,9 @@ object YamlDeserializer {
     return MAPPER.treeToValue(treeNode, clazz)
   }
 
-  fun deserializeRemoteItem(configFileText: String, configName: String): StudyItem {
+  fun deserializeRemoteItem(configFile: VirtualFile): StudyItem {
+    val configName = configFile.name
+    val configFileText = configFile.document.text
     return when (configName) {
       REMOTE_COURSE_CONFIG -> REMOTE_MAPPER.readValue(configFileText, EduCourse::class.java)
       REMOTE_LESSON_CONFIG -> REMOTE_MAPPER.readValue(configFileText, Lesson::class.java)
@@ -111,6 +115,9 @@ object YamlDeserializer {
     val itemDir = parentDir.findChild(name) ?: noItemDirError(name)
     return configFileNames.map { itemDir.findChild(it) }.firstOrNull { it != null } ?: noConfigFileError(itemDir.name)
   }
+
+  private val VirtualFile.document
+    get() = FileDocumentManager.getInstance().getDocument(this) ?: error("Cannot find document for a file: ${name}")
 
   fun noItemDirError(itemName: String): Nothing = error("Cannot find directory for item: '$itemName'")
 

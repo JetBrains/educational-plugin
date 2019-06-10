@@ -7,7 +7,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
@@ -72,7 +71,7 @@ object YamlLoader {
   @VisibleForTesting
   fun doLoad(project: Project, configFile: VirtualFile) {
     val existingItem = getStudyItemForConfig(project, configFile)
-    val deserializedItem = YamlDeserializer.deserializeItem(VfsUtil.loadText(configFile), configFile.name)
+    val deserializedItem = YamlDeserializer.deserializeItem(configFile)
 
     if (existingItem == null) {
       // tis code is called if item wasn't loaded because of broken config
@@ -81,7 +80,7 @@ object YamlLoader {
       deserializedItem.name = itemDir.name
       val parentItem = deserializedItem.getParentItem(project, itemDir.parent)
       val parentConfig = parentItem.getDir(project).findChild(parentItem.configFileName) ?: return
-      val deserializedParent = YamlDeserializer.deserializeItem(VfsUtil.loadText(parentConfig), parentConfig.name) as ItemContainer
+      val deserializedParent = YamlDeserializer.deserializeItem(parentConfig) as ItemContainer
       if (deserializedParent.items.map { it.name }.contains(itemDir.name)) {
         parentItem.addItemAsNew(project, deserializedItem)
       }

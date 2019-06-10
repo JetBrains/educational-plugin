@@ -1,6 +1,6 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.configFileName
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -58,7 +58,7 @@ class AddNewItemYamlTest : YamlTestCase() {
     task.taskFiles.remove("test2.txt")
 
     YamlFormatSynchronizer.saveItem(task)
-    FileDocumentManager.getInstance().saveAllDocuments()
+    UIUtil.dispatchAllInvocationEvents()
 
     val configFile = task.getDir(project)!!.findChild(task.configFileName)!!
     YamlLoader.loadItem(project, configFile)
@@ -165,7 +165,7 @@ class AddNewItemYamlTest : YamlTestCase() {
     itemContainer.removeLastItem()
 
     YamlFormatSynchronizer.saveItem(itemContainer)
-    FileDocumentManager.getInstance().saveAllDocuments()
+    UIUtil.dispatchAllInvocationEvents()
 
     YamlLoader.loadItem(project, lastChildConfig)
 

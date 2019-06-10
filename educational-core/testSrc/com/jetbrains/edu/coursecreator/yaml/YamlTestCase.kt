@@ -4,6 +4,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_PROJECT_READY
 import com.jetbrains.edu.learning.EduTestCase
 
@@ -25,5 +26,6 @@ abstract class YamlTestCase : EduTestCase() {
     project.putUserData(YAML_TEST_PROJECT_READY, true)
     YamlFormatSynchronizer.saveAll(project)
     FileDocumentManager.getInstance().saveAllDocuments()
+    UIUtil.dispatchAllInvocationEvents()
   }
 }

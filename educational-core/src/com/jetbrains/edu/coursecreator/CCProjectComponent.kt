@@ -105,7 +105,7 @@ private fun loadCourseRecursively(project: Project): Course {
   val projectDir = project.courseDir
   val courseConfig = projectDir.findChild(COURSE_CONFIG) ?: error("Cannot load course. Config file '${COURSE_CONFIG}' not found.")
 
-  val deserializedCourse = YamlDeserializer.deserializeItem(VfsUtil.loadText(courseConfig), courseConfig.name) as Course
+  val deserializedCourse = YamlDeserializer.deserializeItem(courseConfig) as Course
   deserializedCourse.courseMode = if (EduUtils.isStudentProject(project)) EduNames.STUDY else CCUtils.COURSE_MODE
 
   deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items)
@@ -158,7 +158,7 @@ private fun StudyItem.loadRemoteInfo(project: Project) {
     else return
   }
 
-  val courseWithRemoteInfo = YamlDeserializer.deserializeRemoteItem(VfsUtil.loadText(remoteConfigFile), remoteConfigFile.name)
+  val courseWithRemoteInfo = YamlDeserializer.deserializeRemoteItem(remoteConfigFile)
   getRemoteChangeApplierForItem(courseWithRemoteInfo).applyChanges(this, courseWithRemoteInfo)
 }
 

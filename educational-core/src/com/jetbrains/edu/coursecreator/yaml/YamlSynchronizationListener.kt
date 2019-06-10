@@ -19,7 +19,6 @@ class YamlSynchronizationListener(val project: Project) : DocumentListener {
     val loadFromConfig = configFile.getUserData(YamlFormatSynchronizer.LOAD_FROM_CONFIG) ?: true
     if (loadFromConfig) {
       runInEdt {
-        FileDocumentManager.getInstance().saveDocumentAsIs(eventDocument)
         YamlLoader.loadItem(project, configFile)
         ProjectView.getInstance(project).refresh()
       }

@@ -10,9 +10,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.application.runUndoTransparentWriteAction
-import com.intellij.openapi.command.undo.UndoManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -143,15 +141,7 @@ object YamlFormatSynchronizer {
     if (!YamlFormatSettings.shouldCreateConfigFiles(project)) {
       return
     }
-    val undoManager = UndoManager.getInstance(project)
-    if (undoManager.isUndoInProgress || undoManager.isRedoInProgress) {
-      ApplicationManager.getApplication().invokeLater {
-        item.saveConfigDocument(project, configFile, objectMapper)
-      }
-    }
-    else {
-      item.saveConfigDocument(project, configFile, objectMapper)
-    }
+    item.saveConfigDocument(project, configFile, objectMapper)
   }
 
   @JvmStatic
@@ -164,10 +154,10 @@ object YamlFormatSynchronizer {
 
   private fun StudyItem.saveConfigDocument(project: Project, configName: String, mapper: ObjectMapper) {
     val dir = getDir(project) ?: error("Failed to save ${javaClass.simpleName} '$name' to config file: directory not found")
-    runInEdt {
-      runUndoTransparentWriteAction {
-        val file = dir.findOrCreateChildData(javaClass, configName)
 
+    ApplicationManager.getApplication().invokeLater {
+      runWriteAction {
+        val file = dir.findOrCreateChildData(javaClass, configName)
         file.putUserData(LOAD_FROM_CONFIG, false)
         file.document?.setText(mapper.writeValueAsString(this))
         file.putUserData(LOAD_FROM_CONFIG, true)

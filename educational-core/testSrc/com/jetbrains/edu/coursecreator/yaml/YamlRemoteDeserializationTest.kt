@@ -1,9 +1,11 @@
 package com.jetbrains.edu.coursecreator.yaml
 
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.testFramework.LightVirtualFile
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_LESSON_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import java.util.*
@@ -18,7 +20,8 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |default_section: $id
     |""".trimMargin("|")
 
-    val course = YamlDeserializer.deserializeRemoteItem(yamlText, REMOTE_COURSE_CONFIG) as EduCourse
+    val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
+    val course = YamlDeserializer.deserializeRemoteItem(configFile) as EduCourse
     assertEquals(1, course.id)
     assertEquals(Date(0), course.updateDate)
     assertEquals(listOf(1), course.sectionIds)
@@ -31,7 +34,8 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |""".trimMargin("|")
 
-    val course = YamlDeserializer.deserializeRemoteItem(yamlText, REMOTE_COURSE_CONFIG) as EduCourse
+    val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
+    val course = YamlDeserializer.deserializeRemoteItem(configFile) as EduCourse
     assertEquals(1, course.id)
     assertEquals(Date(0), course.updateDate)
     assertTrue(course.sectionIds.isEmpty())
@@ -44,7 +48,8 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |""".trimMargin("|")
 
-    val section = YamlDeserializer.deserializeRemoteItem(yamlText, REMOTE_SECTION_CONFIG)
+    val configFile = createConfigFile(yamlText, REMOTE_SECTION_CONFIG)
+    val section = YamlDeserializer.deserializeRemoteItem(configFile)
     assertEquals(1, section.id)
     assertEquals(Date(0), section.updateDate)
   }
@@ -57,7 +62,8 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |unit: $id
     |""".trimMargin("|")
 
-    val lesson = YamlDeserializer.deserializeRemoteItem(yamlText, REMOTE_LESSON_CONFIG) as Lesson
+    val configFile = createConfigFile(yamlText, REMOTE_LESSON_CONFIG)
+    val lesson = YamlDeserializer.deserializeRemoteItem(configFile) as Lesson
     assertEquals(1, lesson.id)
     assertEquals(1, lesson.unitId)
     assertEquals(Date(0), lesson.updateDate)
@@ -70,8 +76,15 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |""".trimMargin("|")
 
-    val task = YamlDeserializer.deserializeRemoteItem(yamlText, REMOTE_TASK_CONFIG)
+    val configFile = createConfigFile(yamlText, REMOTE_LESSON_CONFIG)
+    val task = YamlDeserializer.deserializeRemoteItem(configFile)
     assertEquals(1, task.id)
     assertEquals(Date(0), task.updateDate)
+  }
+
+  private fun createConfigFile(yamlText: String, configName: String): LightVirtualFile {
+    val configFile = LightVirtualFile(configName)
+    runWriteAction { VfsUtil.saveText(configFile, yamlText) }
+    return configFile
   }
 }

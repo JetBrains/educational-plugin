@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.yaml.format
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.childrenConfigFileNames
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.findConfigFile
@@ -37,7 +36,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
         val parentDir = existingItem.getDir(project)
         val configFile = titledItem.findConfigFile(parentDir, *deserializedItem.childrenConfigFileNames)
 
-        val deserializedChild = YamlDeserializer.deserializeItem(VfsUtil.loadText(configFile), configFile.name)
+        val deserializedChild = YamlDeserializer.deserializeItem(configFile)
         deserializedChild.name = titledItem.name
         deserializedChild.index = titledItem.index
         deserializedChild.deserializeChildrenIfNeeded(project, existingItem.course)
