@@ -8,7 +8,6 @@ import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_PROJECT
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduTestCase
 
-// TODO: reuse this class in test classes after merge
 abstract class YamlTestCase : EduTestCase() {
   override fun setUp() {
     super.setUp()
