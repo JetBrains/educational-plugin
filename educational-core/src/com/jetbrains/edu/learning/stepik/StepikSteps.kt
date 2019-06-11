@@ -42,6 +42,8 @@ const val PROGRESS = "progress"
 const val COST = "cost"
 const val PYCHARM = "pycharm"
 const val CHOICE = "choice"
+const val FEEDBACK_CORRECT = "feedback_correct"
+const val FEEDBACK_WRONG = "feedback_wrong"
 
 class Step {
   @JsonProperty(TEXT)
@@ -49,6 +51,12 @@ class Step {
 
   @JsonProperty(NAME)
   var name = ""
+
+  @JsonProperty(FEEDBACK_CORRECT)
+  var feedbackCorrect: String = ""
+
+  @JsonProperty(FEEDBACK_WRONG)
+  var feedbackWrong: String = ""
 
   @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "name",
                 defaultImpl = PyCharmStepOptions::class)
@@ -66,6 +74,10 @@ class Step {
   constructor(project: Project, task: Task) {
     text = task.descriptionText
     name = if (task is ChoiceTask) CHOICE else PYCHARM
+    if (task is ChoiceTask) {
+      feedbackCorrect = task.messageCorrect
+      feedbackWrong = task.messageIncorrect
+    }
     options = when (task) {
       is ChoiceTask -> ChoiceStepOptions(task)
       else -> PyCharmStepOptions(project, task)
@@ -231,6 +243,12 @@ class ChoiceStepSource {
 }
 
 class ChoiceStep {
+  @JsonProperty(FEEDBACK_CORRECT)
+  var feedbackCorrect: String = ""
+
+  @JsonProperty(FEEDBACK_WRONG)
+  var feedbackWrong: String = ""
+
   @JsonProperty(SOURCE)
   var source: ChoiceStepOptions? = null
 }

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat.tasks.choice
 
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
@@ -8,6 +9,8 @@ class ChoiceTask : Task {
   var choiceOptions = listOf<ChoiceOption>()
   var isMultipleChoice: Boolean = false
   var selectedVariants = mutableListOf<Int>()
+  var messageCorrect: String = CheckUtils.CONGRATULATIONS
+  var messageIncorrect: String = "Incorrect solution"
 
   val canCheckLocally: Boolean
     get() {

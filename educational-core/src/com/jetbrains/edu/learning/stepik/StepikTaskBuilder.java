@@ -183,16 +183,25 @@ public class StepikTaskBuilder {
     task.setUpdateDate(myStepSource.getUpdateDate());
     task.setDescriptionText(clearCodeBlockFromTags());
 
-    ChoiceStepOptions choiceStepOptions = null;
+    ChoiceStep choiceStep = null;
     if (!ApplicationManager.getApplication().isUnitTestMode() || myStepId > 0) {
-      choiceStepOptions = StepikConnector.getChoiceStepSource(myStepId);
+      choiceStep = StepikConnector.getChoiceStepSource(myStepId);
     }
-    if (choiceStepOptions != null) {
-      task.setMultipleChoice(choiceStepOptions.isMultipleChoice());
-      task.setChoiceOptions(ContainerUtil.map(choiceStepOptions.getOptions(),
-                                              option -> new ChoiceOption(option.getText(), option.isCorrect()
-                                                                                           ? ChoiceOptionStatus.CORRECT
-                                                                                           : ChoiceOptionStatus.INCORRECT)));
+    if (choiceStep != null) {
+      ChoiceStepOptions choiceStepOptions = choiceStep.getSource();
+      if (choiceStepOptions != null) {
+        task.setMultipleChoice(choiceStepOptions.isMultipleChoice());
+        task.setChoiceOptions(ContainerUtil.map(choiceStepOptions.getOptions(),
+                                                option -> new ChoiceOption(option.getText(), option.isCorrect()
+                                                                                             ? ChoiceOptionStatus.CORRECT
+                                                                                             : ChoiceOptionStatus.INCORRECT)));
+      }
+      if (!choiceStep.getFeedbackCorrect().isEmpty()) {
+        task.setMessageCorrect(choiceStep.getFeedbackCorrect());
+      }
+      if (!choiceStep.getFeedbackWrong().isEmpty()) {
+        task.setMessageIncorrect(choiceStep.getFeedbackWrong());
+      }
     }
     else if (!ApplicationManager.getApplication().isUnitTestMode()) {
       final Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepId, myUserId);

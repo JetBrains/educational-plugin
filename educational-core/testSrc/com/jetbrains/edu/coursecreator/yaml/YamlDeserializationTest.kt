@@ -214,12 +214,16 @@ class YamlDeserializationTest : YamlTestCase() {
   }
 
   fun `test choice task`() {
+    val correct = "correct"
+    val incorrect = "incorrect"
     val yamlContent = """
       |type: choice
       |files:
       |- name: Test.java
       |  visible: true
       |is_multiple_choice: false
+      |message_correct: $correct
+      |message_incorrect: $incorrect
       |options:
       |- text: 1
       |  is_correct: true
@@ -230,6 +234,8 @@ class YamlDeserializationTest : YamlTestCase() {
     assertTrue(task is ChoiceTask)
     assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
     assertEquals(mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT), (task as ChoiceTask).choiceOptions.associateBy({ it.text }, { it.status }))
+    assertEquals(correct, task.messageCorrect)
+    assertEquals(incorrect, task.messageIncorrect)
   }
 
   fun `test choice task without answers`() {

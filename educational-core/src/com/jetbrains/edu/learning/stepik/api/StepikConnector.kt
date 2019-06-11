@@ -154,9 +154,9 @@ object StepikConnector {
   }
 
   @JvmStatic
-  fun getChoiceStepSource(stepId: Int): ChoiceStepOptions? {
+  fun getChoiceStepSource(stepId: Int): ChoiceStep? {
     val stepSource = service.choiceStepSource(stepId).executeHandlingExceptions(true)?.body()?.steps?.firstOrNull()
-    return stepSource?.block?.source
+    return stepSource?.block
   }
 
   @JvmStatic

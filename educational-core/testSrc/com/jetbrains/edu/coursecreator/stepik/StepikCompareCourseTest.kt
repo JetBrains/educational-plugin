@@ -448,6 +448,32 @@ class StepikCompareCourseTest : EduTestCase() {
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
+  fun `test choice task with changed correct message`() {
+    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        choiceTask(isMultipleChoice = false, choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT,
+                                                                   "2" to ChoiceOptionStatus.INCORRECT))
+      }
+    }.asRemote()
+    val courseFromServer = localCourse.copy() as EduCourse
+    (localCourse.lessons.single().taskList.single() as ChoiceTask).messageCorrect = "correct"
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(courseFromServer.lessons.single().taskList.single()))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
+  }
+
+  fun `test choice task with changed incorrect message`() {
+    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        choiceTask(isMultipleChoice = false, choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT,
+                                                                   "2" to ChoiceOptionStatus.INCORRECT))
+      }
+    }.asRemote()
+    val courseFromServer = localCourse.copy() as EduCourse
+    (localCourse.lessons.single().taskList.single() as ChoiceTask).messageIncorrect = "incorrect"
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(courseFromServer.lessons.single().taskList.single()))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
+  }
+
   fun `test choice task nothing changed`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
     val localCourse = course(courseMode = CCUtils.COURSE_MODE) {

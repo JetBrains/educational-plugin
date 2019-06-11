@@ -3,8 +3,8 @@ package com.jetbrains.edu.learning.checker
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 
 
@@ -36,7 +36,7 @@ class ChoiceTaskCheckerTest : EduTestCase() {
     }
     selectOptions(listOf(1))
     CheckActionListener.shouldFail()
-    CheckActionListener.expectedMessage { "Incorrect" }
+    CheckActionListener.expectedMessage { "Incorrect solution" }
     launchAction()
   }
 
@@ -62,7 +62,41 @@ class ChoiceTaskCheckerTest : EduTestCase() {
     }
     selectOptions(listOf(1))
     CheckActionListener.shouldFail()
-    CheckActionListener.expectedMessage { "Incorrect" }
+    CheckActionListener.expectedMessage { "Incorrect solution" }
+    launchAction()
+  }
+
+  fun `test custom correct message`() {
+    courseWithFiles {
+      lesson {
+        choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)) {
+          taskFile("text.txt")
+        }
+      }
+    }
+
+    val message = "You did such a good job!"
+    (findTask(0, 0) as ChoiceTask).messageCorrect = message
+
+    selectOptions(listOf(0))
+    CheckActionListener.expectedMessage { message }
+    launchAction()
+  }
+
+  fun `test custom incorrect message`() {
+    courseWithFiles {
+      lesson {
+        choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)) {
+          taskFile("text.txt")
+        }
+      }
+    }
+
+    val message = "Use formula of everything"
+    (findTask(0, 0) as ChoiceTask).messageIncorrect = message
+    selectOptions(listOf(1))
+    CheckActionListener.shouldFail()
+    CheckActionListener.expectedMessage { message }
     launchAction()
   }
 

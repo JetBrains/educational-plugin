@@ -168,6 +168,8 @@ class YamlSerializationTest : YamlTestCase() {
       |  is_correct: true
       |- text: 2
       |  is_correct: false
+      |message_correct: Congratulations!
+      |message_incorrect: Incorrect solution
       |files:
       |- name: Test.java
       |  visible: true
@@ -188,6 +190,8 @@ class YamlSerializationTest : YamlTestCase() {
       |options:
       |- text: 1
       |- text: 2
+      |message_correct: Congratulations!
+      |message_incorrect: Incorrect solution
       |files:
       |- name: Test.java
       |  visible: true

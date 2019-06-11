@@ -162,7 +162,10 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
     if (!(localTask is ChoiceTask && remoteTask is ChoiceTask)) {
       return false
     }
-    return localTask.isMultipleChoice != remoteTask.isMultipleChoice || localTask.choiceOptions != remoteTask.choiceOptions
+    return localTask.isMultipleChoice != remoteTask.isMultipleChoice
+           || localTask.choiceOptions != remoteTask.choiceOptions
+           || localTask.messageIncorrect != remoteTask.messageIncorrect
+           || localTask.messageCorrect != remoteTask.messageCorrect
   }
 
   private fun taskFilesChanged(task: Task, remoteTask: Task): Boolean {

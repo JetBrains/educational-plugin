@@ -282,15 +282,25 @@ open class StepikIntegrationTest : StepikTestCase() {
 
   fun `test course with choice task`() {
     val expectedChoiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.CORRECT)
-    val localCourse = initCourse {
+    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         choiceTask(isMultipleChoice = true, choiceOptions = expectedChoiceOptions) {
           taskFile("text.txt")
         }
       }
     }
-    val courseFromStepik = getCourseFromStepik(localCourse.id)
-    checkCourseUploaded(localCourse)
+
+    val sourceChoiceTask = findTask(0, 0) as ChoiceTask
+    val correct = "correct"
+    val incorrect = "incorrect"
+
+    sourceChoiceTask.messageCorrect = correct
+    sourceChoiceTask.messageIncorrect = incorrect
+
+    val sourceCourse = initCourse(localCourse)
+
+    val courseFromStepik = getCourseFromStepik(sourceCourse.id)
+    checkCourseUploaded(sourceCourse)
     StepikCourseLoader.fillItems(courseFromStepik)
 
     val task = (courseFromStepik.items[0] as Lesson).taskList[0]
@@ -299,6 +309,8 @@ open class StepikIntegrationTest : StepikTestCase() {
     val choiceTask = task as ChoiceTask
     assertTrue(choiceTask.isMultipleChoice)
     assertEquals(expectedChoiceOptions, choiceTask.choiceOptions.associateBy({ it.text }, { it.status }))
+    assertEquals(correct, choiceTask.messageCorrect)
+    assertEquals(incorrect, choiceTask.messageIncorrect)
   }
 
   private fun setText(path: String, text: String) {
@@ -340,6 +352,10 @@ open class StepikIntegrationTest : StepikTestCase() {
 
   private fun initCourse(builder: CourseBuilder.() -> Unit): EduCourse {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, buildCourse = builder)
+    return initCourse(course)
+  }
+
+  private fun initCourse(course: Course): EduCourse {
     CCPushCourse.doPush(project, course.asEduCourse())
     return StudyTaskManager.getInstance(project).course as EduCourse
   }

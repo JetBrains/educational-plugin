@@ -12,6 +12,7 @@ class ChoiceTaskChecker(task: ChoiceTask, project: Project) : TaskChecker<Choice
     val correctOptionIndices = task.choiceOptions.mapIndexedNotNull { index, value -> if (value.status == ChoiceOptionStatus.CORRECT) index else null }
     val allCorrectOptionsSelected = correctOptionIndices.size == task.selectedVariants.size
                                     && correctOptionIndices.containsAll(task.selectedVariants)
-    return if (allCorrectOptionsSelected) CheckResult.SOLVED else CheckResult(CheckStatus.Failed, "Incorrect")
+    return if (allCorrectOptionsSelected) CheckResult(CheckStatus.Solved, task.messageCorrect)
+    else CheckResult(CheckStatus.Failed, task.messageIncorrect)
   }
 }
