@@ -638,7 +638,7 @@ public class EduUtils {
       if (studentDocument == null) {
         return null;
       }
-      EduDocumentListener listener = new EduDocumentListener(project, taskFile, false);
+      EduDocumentListener listener = new EduDocumentListener(taskFile, false);
       studentDocument.addDocumentListener(listener);
       for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
         placeholder.setPossibleAnswer(studentDocument.getText(TextRange.create(placeholder.getOffset(), placeholder.getEndOffset())));

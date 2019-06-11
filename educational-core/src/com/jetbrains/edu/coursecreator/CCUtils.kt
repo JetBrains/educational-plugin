@@ -212,7 +212,7 @@ object CCUtils {
       return
     }
     val document = FileDocumentManager.getInstance().getDocument(file) ?: return
-    val listener = EduDocumentListener(project, taskFile, false)
+    val listener = EduDocumentListener(taskFile, false)
     document.addDocumentListener(listener)
     taskFile.sortAnswerPlaceholders()
 

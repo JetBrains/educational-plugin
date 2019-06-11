@@ -52,7 +52,7 @@ class PySmartChecker {
         if (windowTaskFile == null) {
           return;
         }
-        EduDocumentListener listener = new EduDocumentListener(project, windowTaskFile, false);
+        EduDocumentListener listener = new EduDocumentListener(windowTaskFile, false);
         windowDocument.addDocumentListener(listener);
         int start = placeholder.getOffset();
         int end = placeholder.getEndOffset();
@@ -126,7 +126,7 @@ class PySmartChecker {
         if (answerTaskFile == null) {
           return null;
         }
-        EduDocumentListener listener = new EduDocumentListener(project, answerTaskFile, false);
+        EduDocumentListener listener = new EduDocumentListener(answerTaskFile, false);
         document.addDocumentListener(listener);
         for (AnswerPlaceholder answerPlaceholder : answerTaskFile.getAnswerPlaceholders()) {
           final int start = answerPlaceholder.getOffset();

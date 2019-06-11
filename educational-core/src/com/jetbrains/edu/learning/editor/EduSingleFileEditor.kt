@@ -31,7 +31,7 @@ class EduSingleFileEditor(
   override val taskFile: TaskFile
 ) : PsiAwareTextEditorImpl(project, file, TextEditorProvider.getInstance()), EduEditor {
 
-  private val documentListener: EduDocumentListener = EduDocumentListener(project, taskFile, true)
+  private val documentListener: EduDocumentListener = EduDocumentListener(taskFile, true)
 
   init {
     editor.document.addDocumentListener(documentListener)

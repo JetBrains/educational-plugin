@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.editor.impl.event.DocumentEventImpl
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -14,23 +13,22 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
  * coordinates of all the placeholders in current task file
  */
 class EduDocumentListener(
-  protected val myProject: Project,
-  protected val myTaskFile: TaskFile,
+  private val taskFile: TaskFile,
   private val updateYaml: Boolean
 ) : DocumentListener {
 
   override fun beforeDocumentChange(e: DocumentEvent) {
-    if (!myTaskFile.isTrackChanges) {
+    if (!taskFile.isTrackChanges) {
       return
     }
-    myTaskFile.isHighlightErrors = true
+    taskFile.isHighlightErrors = true
   }
 
   override fun documentChanged(e: DocumentEvent) {
-    if (!myTaskFile.isTrackChanges) {
+    if (!taskFile.isTrackChanges) {
       return
     }
-    if (myTaskFile.answerPlaceholders.isEmpty()) return
+    if (taskFile.answerPlaceholders.isEmpty()) return
 
     if (e !is DocumentEventImpl) {
       return
@@ -42,7 +40,7 @@ class EduDocumentListener(
     val fragment = e.getNewFragment()
     val oldFragment = e.getOldFragment()
 
-    for (placeholder in myTaskFile.answerPlaceholders) {
+    for (placeholder in taskFile.answerPlaceholders) {
       var placeholderStart = placeholder.offset
       var placeholderEnd = placeholder.endOffset
 
@@ -92,11 +90,11 @@ class EduDocumentListener(
     return Pair.create(start, end)
   }
 
-  protected fun updatePlaceholder(answerPlaceholder: AnswerPlaceholder, start: Int, length: Int) {
+  private fun updatePlaceholder(answerPlaceholder: AnswerPlaceholder, start: Int, length: Int) {
     answerPlaceholder.offset = start
     answerPlaceholder.length = length
     if (updateYaml) {
-      YamlFormatSynchronizer.saveItem(myTaskFile.task)
+      YamlFormatSynchronizer.saveItem(taskFile.task)
     }
   }
 }

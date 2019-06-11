@@ -62,7 +62,7 @@ object PlaceholderDependencyManager {
     val endOffset = placeholderToReplace.endOffset
     // EduSingleFileEditor adds own EduDocumentListener on creation
     val hasListener = FileEditorManager.getInstance(project).getAllEditors(file).any { it is EduSingleFileEditor }
-    val eduDocumentListener = if (hasListener) null else EduDocumentListener(project, placeholderToReplace.taskFile, true)
+    val eduDocumentListener = if (hasListener) null else EduDocumentListener(placeholderToReplace.taskFile, true)
     if (eduDocumentListener != null) {
       document.addDocumentListener(eduDocumentListener)
     }
