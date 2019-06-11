@@ -7,7 +7,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 
-class NodesTest: CourseViewTestBase() {
+class NodesTest : CourseViewTestBase() {
 
   fun testOutsideScrDir() {
     courseWithFiles(language = FakeGradleBasedLanguage) {
@@ -297,6 +297,52 @@ class NodesTest: CourseViewTestBase() {
       |    additionalFile2.txt
       |    -DirectoryNode folder
       |     additionalFile3.txt
+    """.trimMargin("|"))
+  }
+
+
+  fun `test course with dir inside test`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+          taskFile("taskFile2.txt")
+          dir("tests") {
+            dir("package") {
+              taskFile("Tests.txt", visible = false)
+            }
+            taskFile("Tests.txt", visible = false)
+          }
+        }
+        eduTask {
+          taskFile("additionalFile1.txt")
+          taskFile("additionalFile2.txt")
+          dir("folder") {
+            taskFile("additionalFile3.txt")
+            taskFile("additionalFile4.txt", visible = false)
+          }
+        }
+      }
+    }
+    assertCourseView("""
+      |-Project
+      | -CCCourseNode Test Course (Course Creation)
+      |  -CCLessonNode lesson1
+      |   -CCTaskNode task1
+      |    CCStudentInvisibleFileNode task.html
+      |    taskFile1.txt
+      |    taskFile2.txt
+      |    -CCNode tests
+      |     -CCNode package
+      |      CCStudentInvisibleFileNode Tests.txt
+      |     CCStudentInvisibleFileNode Tests.txt
+      |   -CCTaskNode task2
+      |    additionalFile1.txt
+      |    additionalFile2.txt
+      |    -CCNode folder
+      |     additionalFile3.txt
+      |     CCStudentInvisibleFileNode additionalFile4.txt
+      |    CCStudentInvisibleFileNode task.html
     """.trimMargin("|"))
   }
 

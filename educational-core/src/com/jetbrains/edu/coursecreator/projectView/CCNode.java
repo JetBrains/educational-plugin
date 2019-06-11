@@ -38,6 +38,9 @@ public class CCNode extends DirectoryNode {
     final AbstractTreeNode node = super.modifyChildNode(childNode);
     if (node != null) return node;
     Object value = childNode.getValue();
+    if (value instanceof PsiDirectory) {
+      return new CCNode(myProject, ((PsiDirectory)value), myViewSettings, myTask);
+    }
     if (value instanceof PsiElement) {
       PsiFile psiFile = ((PsiElement) value).getContainingFile();
       VirtualFile virtualFile = psiFile.getVirtualFile();
