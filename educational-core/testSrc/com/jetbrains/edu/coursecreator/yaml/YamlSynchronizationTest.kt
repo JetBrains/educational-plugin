@@ -1,16 +1,11 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileTypes.FileTypeManager
-import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.CCProjectComponent
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.configFileName
-import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
@@ -18,20 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import junit.framework.TestCase
 
-class YamlSynchronizationTest : EduTestCase() {
-
-  override fun setUp() {
-    super.setUp()
-    // In this method course is set before course files are created so `CCProjectComponent.createYamlConfigFilesIfMissing` is called
-    // for course with no files. To hack this, I enable `yaml` afterwards, so this method does nothing
-    createCCCourseWithDescription()
-    Experiments.setFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT, true)
-
-    // we need to specify the file type for yaml files as otherwise they are recognised as binaries and aren't allowed to be edited
-    // we don't add dependency on yaml plugin because it's impossible to add for tests only and we don't want to have redundant dependency
-    // in production code
-    runWriteAction { FileTypeManager.getInstance().associateExtension(PlainTextFileType.INSTANCE, "yaml") }
-  }
+class YamlSynchronizationTest : YamlTestCase() {
 
   fun `test create config files`() {
     project.getComponent(CCProjectComponent::class.java).projectOpened()
@@ -39,8 +21,12 @@ class YamlSynchronizationTest : EduTestCase() {
     checkConfigsExistAndNotEmpty(StudyTaskManager.getInstance(project).course!!)
   }
 
-  fun `test invalid config file`() {
+  override fun createCourse() {
+    createCCCourseWithDescription()
+  }
 
+  fun `test invalid config file`() {
+    createCCCourseWithDescription()
     YamlFormatSynchronizer.saveAll(project)
     FileDocumentManager.getInstance().saveAllDocuments()
 
@@ -52,7 +38,7 @@ class YamlSynchronizationTest : EduTestCase() {
     runWriteAction { VfsUtil.saveText(taskConfig, "invalid text") }
 
     // load course from config
-    // TODO: remove try-catch after merge
+    // TODO: remove try-catch after error-handling is merged
     try {
       project.getComponent(CCProjectComponent::class.java).projectOpened()
     }
@@ -62,7 +48,8 @@ class YamlSynchronizationTest : EduTestCase() {
     // check loaded task is null
     val loadedSection = StudyTaskManager.getInstance(project).course?.sections?.first()
     val loadedLesson = loadedSection?.lessons?.first()
-    // TODO: uncomment after merge
+
+    // TODO: uncomment after error-handling is merged
     // val loadedTask = loadedLesson?.taskList?.firstOrNull()
     // assertNull(loadedTask)
 
