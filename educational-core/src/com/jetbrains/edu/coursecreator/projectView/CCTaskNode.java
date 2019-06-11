@@ -37,10 +37,7 @@ public class CCTaskNode extends TaskNode {
     }
     Object value = childNode.getValue();
     if (value instanceof PsiDirectory) {
-      String name = ((PsiDirectory) value).getName();
-      if (name.equals(TaskExt.getSourceDir(myTask)) || TaskExt.getTestDirs(myTask).contains(name)) {
-        return createChildDirectoryNode((PsiDirectory) value);
-      }
+      return createChildDirectoryNode((PsiDirectory) value);
     }
     else if (value instanceof PsiElement) {
       PsiElement psiElement = (PsiElement) value;
