@@ -2,9 +2,10 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.DocumentAdapter
-import com.intellij.ui.components.JBLabel
+import com.intellij.ui.HyperlinkLabel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.CoursesPanel.browseHyperlink
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.io.File
@@ -14,8 +15,8 @@ import javax.swing.event.DocumentEvent
 class JoinCoursePanel(private val settings: CoursePanel.CourseDisplaySettings) : JPanel(BorderLayout()) {
 
   private val myCoursePanel: CoursePanel = CoursePanel(true, true)
-  private val myErrorLabel: JBLabel = JBLabel()
-
+  private val myErrorLabel: HyperlinkLabel = HyperlinkLabel()
+  private var myValidationMessage: ValidationMessage? = null
   private var myValidationListener: ValidationListener? = null
 
   init {
@@ -24,7 +25,7 @@ class JoinCoursePanel(private val settings: CoursePanel.CourseDisplaySettings) :
 
     myErrorLabel.border = JBUI.Borders.emptyTop(8)
     myErrorLabel.foreground = EduColors.errorTextForeground
-
+    myErrorLabel.addHyperlinkListener { browseHyperlink(myValidationMessage) }
     add(myCoursePanel, BorderLayout.CENTER)
     add(myErrorLabel, BorderLayout.SOUTH)
 
@@ -59,6 +60,7 @@ class JoinCoursePanel(private val settings: CoursePanel.CourseDisplaySettings) :
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage("Can't create course at this location")
       else -> myCoursePanel.validateSettings(course)
     }
+    myValidationMessage = message
     updateErrorText(message)
     myValidationListener?.onInputDataValidated(message == null || message.type != ValidationMessageType.ERROR)
   }
@@ -66,7 +68,9 @@ class JoinCoursePanel(private val settings: CoursePanel.CourseDisplaySettings) :
   fun updateErrorText(message: ValidationMessage?) {
     // myErrorLabel text may be too long and not fit on the JoinCoursePanel.
     // For JLabel text we can use HTML tags to automatically wrap text to available space
-    myErrorLabel.text = if (message != null) "<html>${message.beforeLink} ${message.linkText} ${message.afterLink}</html>" else ""
+    if (message != null) {
+      myErrorLabel.setHyperlinkText(message.beforeLink, message.linkText, message.afterLink)
+    }
     myErrorLabel.isVisible = message != null
   }
 

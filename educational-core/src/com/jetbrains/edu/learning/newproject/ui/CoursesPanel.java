@@ -149,7 +149,7 @@ public class CoursesPanel extends JPanel {
     });
   }
 
-  private static void browseHyperlink(@Nullable ValidationMessage message) {
+  static void browseHyperlink(@Nullable ValidationMessage message) {
     if (message == null) {
       return;
     }
