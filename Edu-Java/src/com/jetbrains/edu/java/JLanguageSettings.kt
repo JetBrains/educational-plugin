@@ -41,15 +41,19 @@ class JLanguageSettings : JdkLanguageSettings() {
     val courseJavaVersion = courseJavaVersionDescription.toJavaSdkVersion()
                             ?: return ValidationMessage("Unsupported Java versions: $courseJavaVersionDescription")
 
-    val providedJavaVersion = myJdkSettings.jdkItem?.jdk?.versionString ?: return ValidationMessage("No Java sdk")
+    val jdkItem = myJdkSettings.jdkItem
+    if (jdkItem !is JdkComboBox.SuggestedJdkItem) {
+      val providedJavaVersion = jdkItem?.jdk?.versionString ?: return ValidationMessage("No Java sdk")
 
-    val javaSdkVersion = JavaSdkVersion.fromVersionString(providedJavaVersion)
-                         ?: return ValidationMessage("Failed to determine Java version")
-    if (javaSdkVersion.isAtLeast(courseJavaVersion)) {
-      return null
+      val javaSdkVersion = JavaSdkVersion.fromVersionString(providedJavaVersion)
+                           ?: return ValidationMessage("Failed to determine Java version")
+      if (javaSdkVersion.isAtLeast(courseJavaVersion)) {
+        return null
+      }
+      return ValidationMessage("Java version should be at least $courseJavaVersionDescription. ",
+                               "Download JDK", "", "https://www.oracle.com/technetwork/java/javase/downloads/index.html")
     }
-    return ValidationMessage("Java version should be at least $courseJavaVersionDescription. ",
-                        "Download JDK", "", "https://www.oracle.com/technetwork/java/javase/downloads/index.html")
+    return null
   }
 
   override fun preselectJdk(course: Course, jdkComboBox: JdkComboBox, sdksModel: ProjectSdksModel) {
