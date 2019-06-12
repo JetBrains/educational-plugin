@@ -12,8 +12,16 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 
 class HyperskillCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
-    val course = task.lesson.course
-    if (course !is HyperskillCourse || HyperskillSettings.INSTANCE.account == null) return
+    val course = task.lesson.course as? HyperskillCourse ?: return
+
+    if (HyperskillSettings.INSTANCE.account == null) {
+      val notification = Notification("hyperskill",
+                                      "Failed to post solution to the $HYPERSKILL",
+                                      "Please, log in to post solutions to the $HYPERSKILL",
+                                      NotificationType.WARNING)
+      notification.notify(project)
+      return
+    }
 
     HyperskillConnector.postSolution(task, project)
 
