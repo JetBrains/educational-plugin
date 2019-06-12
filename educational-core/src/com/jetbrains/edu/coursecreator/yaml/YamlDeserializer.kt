@@ -61,11 +61,9 @@ object YamlDeserializer {
   }
 
   inline fun <reified T : StudyItem> StudyItem.deserializeContent(project: Project, contentList: MutableList<T>): List<T> {
-    val parentDir = getDir(project) ?: yamlIllegalStateError(noDirForItemMessage(name))
-
     val content = mutableListOf<T>()
     for (titledItem in contentList) {
-      val configFile: VirtualFile = titledItem.findConfigFile(project, parentDir, *childrenConfigFileNames) ?: continue
+      val configFile: VirtualFile = getConfigFileForChild(project, titledItem.name) ?: continue
       val deserializeItem = deserializeItem(configFile) as? T ?: continue
       deserializeItem.name = titledItem.name
       content.add(deserializeItem)
@@ -124,7 +122,7 @@ object YamlDeserializer {
     return if (node == null || node.isNull) null else node.asText()
   }
 
-  val StudyItem.childrenConfigFileNames: Array<String>
+  private val StudyItem.childrenConfigFileNames: Array<String>
     get() = when (this) {
       is Course -> arrayOf(SECTION_CONFIG, LESSON_CONFIG)
       is Section -> arrayOf(LESSON_CONFIG)
@@ -132,14 +130,15 @@ object YamlDeserializer {
       else -> error("Unexpected StudyItem: ${javaClass.simpleName}")
     }
 
-  fun StudyItem.findConfigFile(project: Project, parentDir: VirtualFile, vararg configFileNames: String): VirtualFile? {
-    val itemDir = parentDir.findChild(name)
-    val configFile = configFileNames.map { itemDir?.findChild(it) }.firstOrNull { it != null }
+  fun StudyItem.getConfigFileForChild(project: Project, childName: String): VirtualFile? {
+    val dir = getDir(project) ?: yamlIllegalStateError(noDirForItemMessage(name))
+    val itemDir = dir.findChild(childName)
+    val configFile = childrenConfigFileNames.map { itemDir?.findChild(it) }.firstOrNull { it != null }
     if (configFile != null) {
       return configFile
     }
 
-    val message = if (itemDir == null) "Cannot find directory for item: '$name'" else "Cannot find config file for item: '${name}'"
+    val message = if (itemDir == null) "Cannot find directory for item: '$childName'" else "Cannot find config file for item: '${childName}'"
     val notification = Notification("Edu.InvalidConfig", "Config file not found", message, NotificationType.ERROR)
     notification.notify(project)
     return null
