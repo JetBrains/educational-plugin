@@ -53,7 +53,7 @@ class AddNewItemYamlTest : YamlTestCase() {
     task.taskFiles.remove("test2.txt")
 
     val configFile = task.getDir(project)!!.findChild(task.configFileName)!!
-    YamlLoader.loadItem(project, configFile, null)
+    YamlLoader.loadItem(project, configFile)
 
     assertEquals(2, task.taskFiles.size)
   }
@@ -67,7 +67,7 @@ class AddNewItemYamlTest : YamlTestCase() {
     FileDocumentManager.getInstance().saveAllDocuments()
 
     val configFile = task.getDir(project)!!.findChild(task.configFileName)!!
-    YamlLoader.loadItem(project, configFile, null)
+    YamlLoader.loadItem(project, configFile)
 
     assertEquals(1, task.taskFiles.size)
   }
@@ -132,7 +132,7 @@ class AddNewItemYamlTest : YamlTestCase() {
     itemContainer.removeLastItem()
 
     val configFile = itemContainer.getDir(project)!!.findChild(itemContainer.configFileName)!!
-    YamlLoader.loadItem(project, configFile, null)
+    YamlLoader.loadItem(project, configFile)
 
     assertEquals(expectedSize, itemContainer.items.size)
   }
@@ -151,7 +151,7 @@ class AddNewItemYamlTest : YamlTestCase() {
 
   private fun loadParent(parentItem: StudyItem) {
     val lessonConfigFile = parentItem.getDir(project)!!.findChild(parentItem.configFileName)!!
-    YamlLoader.loadItem(project, lessonConfigFile, null)
+    YamlLoader.loadItem(project, lessonConfigFile)
   }
 
 }
