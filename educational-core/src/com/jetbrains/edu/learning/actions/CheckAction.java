@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.actions;
 
 import com.intellij.ide.projectView.ProjectView;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.impl.NotificationSettings;
+import com.intellij.notification.impl.NotificationsConfigurationImpl;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -62,7 +65,7 @@ public class CheckAction extends DumbAwareAction {
   protected final Ref<Boolean> myCheckInProgress = new Ref<>(false);
 
   public CheckAction() {
-    super(CHECK_TASK,"Check current task", null);
+    super(CHECK_TASK, "Check current task", null);
   }
 
   private CheckAction(String text, String description) {
@@ -199,6 +202,7 @@ public class CheckAction extends DumbAwareAction {
     private final Task myTask;
     @Nullable private final TaskChecker myChecker;
     private CheckResult myResult;
+    private String TEST_RESULTS_DISPLAY_ID = "Test Results: Run";
 
     public StudyCheckTask(@NotNull Project project, @NotNull Task task) {
       super(project, "Checking Task", true);
@@ -222,7 +226,9 @@ public class CheckAction extends DumbAwareAction {
       TaskDescriptionView.getInstance(myProject).checkStarted();
 
       long start = System.currentTimeMillis();
+      NotificationSettings notificationSettings = turnOffTestRunnerNotifications();
       CheckResult localCheckResult = myChecker == null ? CheckResult.NO_LOCAL_CHECK : myChecker.check(indicator);
+      ApplicationManager.getApplication().invokeLater(() -> NotificationsConfigurationImpl.getInstanceImpl().changeSettings(notificationSettings));
       long end = System.currentTimeMillis();
       LOG.info(String.format("Checking of %s task took %d ms", myTask.getName(), end - start));
       if (localCheckResult.getStatus() == CheckStatus.Failed) {
@@ -272,6 +278,13 @@ public class CheckAction extends DumbAwareAction {
       }
       myCheckInProgress.set(false);
       TaskDescriptionView.getInstance(myProject).readyToCheck();
+    }
+
+    private NotificationSettings turnOffTestRunnerNotifications() {
+      NotificationsConfigurationImpl notificationsConfiguration = NotificationsConfigurationImpl.getInstanceImpl();
+      NotificationSettings testRunnerSettings = NotificationsConfigurationImpl.getSettings(TEST_RESULTS_DISPLAY_ID);
+      notificationsConfiguration.changeSettings(TEST_RESULTS_DISPLAY_ID, NotificationDisplayType.NONE, false, false);
+      return testRunnerSettings;
     }
   }
 }

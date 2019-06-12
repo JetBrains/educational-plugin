@@ -21,6 +21,7 @@ class InitializationComponent : BaseComponent {
         EditorFactory.getInstance().addEditorFactoryListener(EduEditorFactoryListener(), ApplicationManager.getApplication())
 
         if (isUnitTestMode) return
+
         if (PropertiesComponent.getInstance().isValueSet(CONFLICTING_PLUGINS_DISABLED)) {
             newCoursesNotifier.scheduleNotification()
             return
