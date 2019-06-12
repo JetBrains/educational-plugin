@@ -21,7 +21,14 @@ class YamlSynchronizationTest : YamlTestCase() {
   }
 
   override fun createCourse() {
-    createCCCourseWithDescription()
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      section {
+        lesson {
+          eduTask()
+        }
+      }
+    }
+    course.description = "test"
   }
 
   fun `test invalid config file`() {
@@ -50,18 +57,6 @@ class YamlSynchronizationTest : YamlTestCase() {
     val loadedTaskConfig = taskDir?.findChild(YamlFormatSettings.TASK_CONFIG)!!
     val loadedTaskConfigDocument = FileDocumentManager.getInstance().getDocument(loadedTaskConfig)!!
     assertEquals("invalid text", loadedTaskConfigDocument.text)
-  }
-
-  private fun createCCCourseWithDescription(): Course {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-      section {
-        lesson {
-          eduTask()
-        }
-      }
-    }
-    course.description = "test"
-    return course
   }
 
   private fun checkConfigsExistAndNotEmpty(course: Course) {

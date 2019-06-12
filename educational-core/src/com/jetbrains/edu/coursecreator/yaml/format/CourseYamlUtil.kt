@@ -178,7 +178,6 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
   override fun applyChanges(existingItem: Course, deserializedItem: Course) {
     super.applyChanges(existingItem, deserializedItem)
     existingItem.name = deserializedItem.name
-    // TODO: handle changing course type
     existingItem.description = deserializedItem.description
     existingItem.languageCode = deserializedItem.languageCode
     existingItem.environment = deserializedItem.environment

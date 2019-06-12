@@ -6,8 +6,10 @@ import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.getConfigFileForChi
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.deserializeChildrenIfNeeded
 import com.jetbrains.edu.coursecreator.yaml.loadingError
 import com.jetbrains.edu.coursecreator.yaml.unexpectedItemTypeMessage
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.coursera.CourseraCourse
 
 /**
  * Specific instance of this class applies changes from deserialized item, see [com.jetbrains.edu.coursecreator.yaml.YamlDeserializer],
@@ -19,7 +21,21 @@ abstract class StudyItemChangeApplier<T : StudyItem> {
 
 open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) : StudyItemChangeApplier<T>() {
   override fun applyChanges(existingItem: T, deserializedItem: T) {
+    if (existingItem.itemType != deserializedItem.itemType) {
+      changeType(project, existingItem, deserializedItem)
+      return
+    }
     updateChildren(deserializedItem, existingItem)
+  }
+
+  private fun <T : ItemContainer> changeType(project: Project, existingItem: T, deserializedItem: T) {
+    if (deserializedItem !is EduCourse && deserializedItem !is CourseraCourse) {
+      loadingError("Expected ${existingItem::class.simpleName} class, but was: ${deserializedItem.javaClass.simpleName}")
+    }
+
+    deserializedItem.items = existingItem.items
+    deserializedItem.init(null, null, false)
+    StudyTaskManager.getInstance(project).course = deserializedItem as Course
   }
 
   private fun updateChildren(deserializedItem: T, existingItem: T) {

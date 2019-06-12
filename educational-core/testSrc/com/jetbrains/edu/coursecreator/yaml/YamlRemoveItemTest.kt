@@ -1,10 +1,6 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.configFileName
-import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 
 class YamlRemoveItemTest : YamlTestCase() {
@@ -100,15 +96,5 @@ class YamlRemoveItemTest : YamlTestCase() {
 
     assertEquals(1, task.taskFiles.size)
     assertEquals("task1.txt", task.taskFiles.keys.single())
-  }
-
-  private fun loadItemFromConfig(item: StudyItem, newConfigText: String) {
-    createConfigFiles()
-    val configFile = item.getDir(project)!!.findChild(item.configFileName)!!
-    val document = FileDocumentManager.getInstance().getDocument(configFile)!!
-    runWriteAction {
-      document.setText(newConfigText)
-    }
-    YamlLoader.doLoad(project, configFile)
   }
 }

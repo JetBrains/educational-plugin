@@ -65,15 +65,14 @@ object YamlLoader {
       }
       return
     }
-    if (existingItem.itemType != deserializedItem.itemType) {
-      loadingError("Expected ${existingItem::class.simpleName} class, but was: ${deserializedItem.javaClass.simpleName}")
-    }
+
     existingItem.applyChanges(project, deserializedItem)
   }
 
-  private fun ItemContainer.addItemAsNew(project: Project, deserializedItem: StudyItem) {
+  fun ItemContainer.addItemAsNew(project: Project, deserializedItem: StudyItem) {
     deserializedItem.deserializeChildrenIfNeeded(project, course)
     addItem(deserializedItem)
+    sortItems()
     init(course, this, false)
   }
 

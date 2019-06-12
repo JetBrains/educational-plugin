@@ -7,7 +7,9 @@ import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_PROJECT_READY
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_THROW_EXCEPTION
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.configFileName
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 abstract class YamlTestCase : EduTestCase() {
   override fun setUp() {
@@ -29,5 +31,17 @@ abstract class YamlTestCase : EduTestCase() {
     YamlFormatSynchronizer.saveAll(project)
     FileDocumentManager.getInstance().saveAllDocuments()
     UIUtil.dispatchAllInvocationEvents()
+  }
+
+  protected fun loadItemFromConfig(item: StudyItem, newConfigText: String) {
+    createConfigFiles()
+    val configFile = item.getDir(project)!!.findChild(item.configFileName)!!
+    val document = FileDocumentManager.getInstance().getDocument(configFile)!!
+    runWriteAction {
+      document.setText(newConfigText)
+    }
+
+    UIUtil.dispatchAllInvocationEvents()
+    YamlLoader.loadItem(project, configFile)
   }
 }

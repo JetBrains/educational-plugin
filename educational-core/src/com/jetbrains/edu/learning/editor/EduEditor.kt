@@ -5,7 +5,7 @@ import com.intellij.openapi.fileEditor.TextEditor
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 
 interface EduEditor : TextEditor {
-  val taskFile: TaskFile
+  var taskFile: TaskFile
 
   fun startLoading()
   fun stopLoading()

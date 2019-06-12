@@ -28,7 +28,7 @@ import javax.swing.SwingConstants
 class EduSingleFileEditor(
   project: Project,
   file: VirtualFile,
-  override val taskFile: TaskFile
+  override var taskFile: TaskFile
 ) : PsiAwareTextEditorImpl(project, file, TextEditorProvider.getInstance()), EduEditor {
 
   private val documentListener: EduDocumentListener = EduDocumentListener(taskFile, true)

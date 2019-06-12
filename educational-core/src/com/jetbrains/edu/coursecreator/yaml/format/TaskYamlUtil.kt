@@ -10,11 +10,14 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
+import com.jetbrains.edu.coursecreator.yaml.YamlLoader.addItemAsNew
 import com.jetbrains.edu.coursecreator.yaml.noDirForItemMessage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getEduEditors
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -78,6 +81,10 @@ private class StringToFeedbackLinkConverter : StdConverter<String?, FeedbackLink
 class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
   override fun applyChanges(existingItem: Task, deserializedItem: Task) {
     val project = existingItem.project ?: error("Project not found for ${existingItem.name}")
+    if (existingItem.itemType != deserializedItem.itemType) {
+      changeType(project, existingItem, deserializedItem)
+      return
+    }
     existingItem.feedbackLink = deserializedItem.feedbackLink
     if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {
       existingItem.isMultipleChoice = deserializedItem.isMultipleChoice
@@ -89,6 +96,19 @@ class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
     hideOldPlaceholdersForOpenedFiles(project, existingItem)
     existingItem.applyTaskFileChanges(deserializedItem)
     paintPlaceholdersForOpenedFiles(project, existingItem)
+  }
+
+  private fun changeType(project: Project, existingItem: StudyItem, deserializedItem: Task) {
+    deserializedItem.name = existingItem.name
+    deserializedItem.index = existingItem.index
+
+    val parentItem = (existingItem as Task).lesson
+    parentItem.removeItem(existingItem)
+    parentItem.addItemAsNew(project, deserializedItem)
+
+    deserializedItem.taskFiles.values.forEach { taskFile ->
+      taskFile.getEduEditors(project).forEach { it.taskFile = taskFile }
+    }
   }
 
   private fun Task.applyTaskFileChanges(deserializedItem: Task) {
