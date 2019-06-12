@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.configFileName
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.loadItem
 import com.jetbrains.edu.coursecreator.yaml.format.getChangeApplierForItem
 import com.jetbrains.edu.learning.EduNames
@@ -76,7 +77,9 @@ object YamlLoader {
       val itemDir = configFile.parent
       deserializedItem.name = itemDir.name
       val parentItem = deserializedItem.getParentItem(project, itemDir.parent)
-      if (parentItem.items.map { it.name }.contains(itemDir.name)) {
+      val parentConfig = parentItem.getDir(project).findChild(parentItem.configFileName) ?: return
+      val deserializedParent = YamlDeserializer.deserializeItem(VfsUtil.loadText(parentConfig), parentConfig.name) as ItemContainer
+      if (deserializedParent.items.map { it.name }.contains(itemDir.name)) {
         parentItem.addItemAsNew(project, deserializedItem)
       }
       return

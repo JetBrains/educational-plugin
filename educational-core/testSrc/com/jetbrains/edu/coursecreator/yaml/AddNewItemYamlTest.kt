@@ -6,7 +6,6 @@ import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.configFileNam
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 class AddNewItemYamlTest : YamlTestCase() {
 
@@ -74,7 +73,12 @@ class AddNewItemYamlTest : YamlTestCase() {
 
   fun `test new task added`() {
     val course = StudyTaskManager.getInstance(project).course!!
-    doAddedTest(course.lessons.first())
+    doChildrenAddedTest(course.lessons.first())
+  }
+
+  fun `test missing task added to parent`() {
+    val course = StudyTaskManager.getInstance(project).course!!
+    doToParentAddedTest(course.lessons.first())
   }
 
   fun `test new unexpected task isn't added`() {
@@ -84,13 +88,18 @@ class AddNewItemYamlTest : YamlTestCase() {
 
   fun `test new lesson added`() {
     val course = StudyTaskManager.getInstance(project).course!!
-    doAddedTest(course)
+    doChildrenAddedTest(course)
+  }
+
+  fun `test missing lesson added to parent`() {
+    val course = StudyTaskManager.getInstance(project).course!!
+    doToParentAddedTest(course)
   }
 
   fun `test new lesson content added`() {
     val course = StudyTaskManager.getInstance(project).course!!
     val section = course.sections.first()
-    doAddedTest(section)
+    doChildrenAddedTest(section)
     val lesson = section.items.last() as Lesson
     assertEquals(1, lesson.taskList.size)
   }
@@ -102,7 +111,7 @@ class AddNewItemYamlTest : YamlTestCase() {
 
   fun `test new section added`() {
     val course = StudyTaskManager.getInstance(project).course!!
-    doAddedTest(course)
+    doChildrenAddedTest(course)
   }
 
   fun `test missing section added`() {
@@ -112,7 +121,7 @@ class AddNewItemYamlTest : YamlTestCase() {
 
   fun `test new section content added`() {
     val course = StudyTaskManager.getInstance(project).course!!
-    doAddedTest(course)
+    doChildrenAddedTest(course)
   }
 
   fun `test new unexpected section isn't added`() {
@@ -127,12 +136,29 @@ class AddNewItemYamlTest : YamlTestCase() {
     items = itemsCopy
   }
 
-  private fun doAddedTest(itemContainer: ItemContainer) {
+  /**
+   * Checks the case when user added child in parent config
+   */
+  private fun doChildrenAddedTest(itemContainer: ItemContainer) {
     val expectedSize = itemContainer.items.size
     itemContainer.removeLastItem()
 
     val configFile = itemContainer.getDir(project)!!.findChild(itemContainer.configFileName)!!
     YamlLoader.loadItem(project, configFile)
+
+    assertEquals(expectedSize, itemContainer.items.size)
+  }
+
+  /**
+   * Checks the case when user fixed broken config and so child can be added to its parent
+   */
+  private fun doToParentAddedTest(itemContainer: ItemContainer) {
+    val expectedSize = itemContainer.items.size
+    val lastChild = itemContainer.items.last()
+    val lastChildConfig = lastChild.getDir(project).findChild(lastChild.configFileName)!!
+    itemContainer.removeLastItem()
+
+    YamlLoader.loadItem(project, lastChildConfig)
 
     assertEquals(expectedSize, itemContainer.items.size)
   }
