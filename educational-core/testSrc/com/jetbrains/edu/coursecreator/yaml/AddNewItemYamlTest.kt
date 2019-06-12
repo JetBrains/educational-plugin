@@ -165,19 +165,15 @@ class AddNewItemYamlTest : YamlTestCase() {
 
   private fun doNotAddedTest(itemContainer: ItemContainer) {
     val expectedSize = itemContainer.items.size - 1
+    val lastChild = itemContainer.items.last()
+    val lastChildConfig = lastChild.getDir(project).findChild(lastChild.configFileName)!!
     itemContainer.removeLastItem()
 
     YamlFormatSynchronizer.saveItem(itemContainer)
     FileDocumentManager.getInstance().saveAllDocuments()
 
-    loadParent(itemContainer)
+    YamlLoader.loadItem(project, lastChildConfig)
 
     assertEquals(expectedSize, itemContainer.items.size)
   }
-
-  private fun loadParent(parentItem: StudyItem) {
-    val lessonConfigFile = parentItem.getDir(project)!!.findChild(parentItem.configFileName)!!
-    YamlLoader.loadItem(project, lessonConfigFile)
-  }
-
 }
