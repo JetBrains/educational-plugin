@@ -8,4 +8,7 @@
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCheckListener"/>
   </extensions>
+  <actions>
+    <action id="Educational.Educator.HyperskillChangeHost" class="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillChangeHost"/>
+  </actions>
 </idea-plugin>
