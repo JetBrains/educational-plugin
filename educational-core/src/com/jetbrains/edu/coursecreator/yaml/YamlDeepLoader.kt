@@ -46,6 +46,8 @@ object YamlDeepLoader {
           // set parent to correctly obtain dirs in deserializeContent method
           deserializedItem.course = deserializedCourse
           deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.taskList)
+
+          deserializedItem.removeNonExistingTaskFiles(project)
         }
       }
     }
@@ -57,6 +59,21 @@ object YamlDeepLoader {
     deserializedCourse.loadRemoteInfoRecursively(project)
     deserializedCourse.setDescriptionInfo(project)
     return deserializedCourse
+  }
+
+  /**
+   * If project was opened with a config file containing task file that doesn't have the corresponding dir,
+   * we remove it from task object but keep in the config file.
+   */
+  private fun Lesson.removeNonExistingTaskFiles(project: Project) {
+    taskList.forEach { task ->
+      // set parent to get dir
+      task.lesson = this
+      val taskDir = task.getDir(project)
+      val invalidTaskFilesNames = task.taskFiles
+        .filter { (name, _) -> taskDir?.findFileByRelativePath(name) == null }.map { it.key }
+      invalidTaskFilesNames.forEach { task.taskFiles.remove(it) }
+    }
   }
 
   private fun Course.loadRemoteInfoRecursively(project: Project) {
