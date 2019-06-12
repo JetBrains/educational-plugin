@@ -12,4 +12,4 @@ fun unexpectedItemTypeMessage(itemType: String) = "Unexpected item type $itemTyp
 
 fun notFoundMessage(notFoundObjectName: String, itemName: String) = "Cannot find $notFoundObjectName for $itemName"
 
-fun noItemMessage(itemTypeName: String, itemName: String) = "Cannot find directory for a $itemTypeName '$itemName'"
+fun noItemDirMessage(itemTypeName: String, itemName: String) = "Cannot find directory for a $itemTypeName '$itemName'"

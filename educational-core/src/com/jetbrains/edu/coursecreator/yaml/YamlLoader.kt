@@ -135,12 +135,12 @@ private fun StudyItem.validateFiles(configFile: VirtualFile) {
     is ItemContainer -> {
       items.forEach {
         val itemTypeName = if (it is Task) "task" else "item"
-        configFile.parent.findChild(it.name) ?: yamlIllegalStateError(noItemMessage(itemTypeName, it.name))
+        configFile.parent.findChild(it.name) ?: yamlIllegalStateError(noItemDirMessage(itemTypeName, it.name))
       }
     }
     is Task -> {
       taskFiles.forEach { (name, _) ->
-        configFile.parent.findFileByRelativePath(name) ?: yamlIllegalStateError(noItemMessage("task file", name))
+        configFile.parent.findFileByRelativePath(name) ?: yamlIllegalStateError(noItemDirMessage("task file", name))
       }
     }
   }
