@@ -88,11 +88,11 @@ class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
       TaskDescriptionView.getInstance(project).updateTaskDescription()
     }
     hideOldPlaceholdersForOpenedFiles(project, existingItem)
-    existingItem.applyTaskFileChanges(project, deserializedItem)
+    existingItem.applyTaskFileChanges(deserializedItem)
     paintPlaceholdersForOpenedFiles(project, existingItem)
   }
 
-  private fun Task.applyTaskFileChanges(project: Project, deserializedItem: Task) {
+  private fun Task.applyTaskFileChanges(deserializedItem: Task) {
     val orderedTaskFiles = LinkedHashMap<String, TaskFile>()
     for ((name, deserializedTaskFile) in deserializedItem.taskFiles) {
       val existingTaskFile = taskFiles[name]
@@ -102,8 +102,6 @@ class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
         existingTaskFile
       }
       else {
-        val taskDir = getDir(project)
-        taskDir?.findFileByRelativePath(name) ?: continue
         deserializedTaskFile
       }
       orderedTaskFiles[name] = taskFile
