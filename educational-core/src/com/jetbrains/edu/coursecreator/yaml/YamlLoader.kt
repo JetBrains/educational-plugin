@@ -94,13 +94,14 @@ object YamlLoader {
   }
 
   private fun StudyItem.getParentItem(project: Project, parentDir: VirtualFile): ItemContainer {
+    val course = StudyTaskManager.getInstance(project).course
     return when (this) {
-             is Section -> findCourse(project)
+             is Section -> course
              is Lesson -> {
-               val section = findSection(project, parentDir)
-               section ?: findCourse(project)
+               val section = course?.let { EduUtils.getSection(parentDir, course) }
+               section ?: course
              }
-             is Task -> findLesson(project, parentDir)
+             is Task -> course?.let { EduUtils.getLesson(parentDir, course) }
              else -> yamlIllegalStateError(
                "Unexpected item type. Expected: 'Section', 'Lesson' or 'Task'. Was '${itemType}'")
            } ?: yamlIllegalStateError(notFoundMessage("parent", "for item '${name}'"))
@@ -113,33 +114,14 @@ object YamlLoader {
   private fun getStudyItemForConfig(project: Project, configFile: VirtualFile): StudyItem? {
     val name = configFile.name
     val itemDir = configFile.parent ?: yamlIllegalStateError(notFoundMessage("containing item dir", name))
-
+    val course = StudyTaskManager.getInstance(project).course ?: return null
     return when (name) {
-      YamlFormatSettings.COURSE_CONFIG -> findCourse(project)
-      YamlFormatSettings.SECTION_CONFIG -> findSection(project, itemDir)
-      YamlFormatSettings.LESSON_CONFIG -> findLesson(project, itemDir)
-      YamlFormatSettings.TASK_CONFIG -> findTask(project, itemDir)
+      YamlFormatSettings.COURSE_CONFIG -> course
+      YamlFormatSettings.SECTION_CONFIG -> EduUtils.getSection(itemDir, course)
+      YamlFormatSettings.LESSON_CONFIG -> EduUtils.getLesson(itemDir, course)
+      YamlFormatSettings.TASK_CONFIG -> EduUtils.getTask(itemDir, course)
       else -> yamlIllegalStateError(unknownConfigMessage(name))
     }
-  }
-
-  private fun findCourse(project: Project): Course? {
-    return StudyTaskManager.getInstance(project).course
-  }
-
-  private fun findSection(project: Project, sectionDir: VirtualFile): Section? {
-    val course = findCourse(project) ?: return null
-    return EduUtils.getSection(sectionDir, course)
-  }
-
-  private fun findTask(project: Project, taskDir: VirtualFile): Task? {
-    val course = findCourse(project) ?: return null
-    return EduUtils.getTask(taskDir, course)
-  }
-
-  private fun findLesson(project: Project, lessonDir: VirtualFile): Lesson? {
-    val course = findCourse(project) ?: return null
-    return EduUtils.getLesson(lessonDir, course)
   }
 
   fun VirtualFile.getEditor(project: Project): Editor? {
