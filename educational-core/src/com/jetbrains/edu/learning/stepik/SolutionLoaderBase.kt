@@ -13,6 +13,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.messages.Topic
@@ -20,6 +21,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.editor.EduEditor
@@ -177,7 +179,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   private fun updateTask(project: Project, task: Task): Boolean {
     val taskSolutions = loadSolution(task)
     ProgressManager.checkCanceled()
-    if (!taskSolutions.hasIncompatibleSolutions && !taskSolutions.solutions.isEmpty()) {
+    if (!taskSolutions.hasIncompatibleSolutions && taskSolutions.solutions.isNotEmpty()) {
       applySolutions(project, task, taskSolutions)
     }
     return taskSolutions.hasIncompatibleSolutions
@@ -218,7 +220,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       return TaskSolutions.EMPTY
     }
 
-    return TaskSolutions.from(lastSubmission.status ?: "", updatedTaskData.task, reply.solution.orEmpty())
+    return TaskSolutions.from(lastSubmission.status ?: "", updatedTaskData.task, reply.solution.orEmpty(), task.course)
   }
 
   override fun dispose() {
@@ -305,7 +307,9 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       val INCOMPATIBLE = TaskSolutions(CheckStatus.Unchecked, hasIncompatibleSolutions = true)
 
       @JvmStatic
-      fun from(status: String, task: Task, solutionList: List<SolutionFile>): TaskSolutions {
+      fun from(status: String, task: Task, solutionList: List<SolutionFile>, course: Course): TaskSolutions {
+        val configurator = course.configurator ?: return EMPTY
+
         val checkStatus = when (status) {
           "wrong" -> CheckStatus.Failed
           "correct" -> CheckStatus.Solved
@@ -315,6 +319,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
         val solutions = mutableMapOf<String, Pair<String, List<AnswerPlaceholder>>>()
         for (file in solutionList) {
           val taskFile = task.getTaskFile(file.name) ?: continue
+          if (configurator.testDirs.any { FileUtil.isAncestor(it, file.name, true) } || configurator.testFileName == file.name)
+            continue
           solutions[file.name] = file.text to taskFile.answerPlaceholders
         }
 

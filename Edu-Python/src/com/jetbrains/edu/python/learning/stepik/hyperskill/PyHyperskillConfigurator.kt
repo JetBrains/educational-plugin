@@ -11,4 +11,5 @@ open class PyHyperskillConfigurator : HyperskillConfigurator<PyNewProjectSetting
   override fun getCourseBuilder() = PyHyperskillCourseBuilder()
   override fun getTaskCheckerProvider() = PyHyperskillTaskCheckerProvider()
   override fun isEnabled(): Boolean = !PlatformUtils.isPyCharm() && !PlatformUtils.isCLion() && !EduUtils.isAndroidStudio()
+  override fun getTestDirs(): MutableList<String> = mutableListOf("hstest")
 }
