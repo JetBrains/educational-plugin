@@ -54,6 +54,7 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
+import kotlin.Unit;
 import org.apache.commons.codec.binary.Base64;
 import org.intellij.markdown.IElementType;
 import org.intellij.markdown.ast.ASTNode;
@@ -634,18 +635,14 @@ public class EduUtils {
       }
       FileDocumentManager.getInstance().saveDocument(document);
       final LightVirtualFile studentFile = new LightVirtualFile("student_task", PlainTextFileType.INSTANCE, document.getText());
-      Document studentDocument = FileDocumentManager.getInstance().getDocument(studentFile);
-      if (studentDocument == null) {
-        return null;
-      }
-      EduDocumentListener listener = new EduDocumentListener(taskFile, false);
-      studentDocument.addDocumentListener(listener);
-      for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
-        placeholder.setPossibleAnswer(studentDocument.getText(TextRange.create(placeholder.getOffset(), placeholder.getEndOffset())));
-        replaceAnswerPlaceholder(studentDocument, placeholder);
-      }
-      studentDocument.removeDocumentListener(listener);
-      taskFile.setText(studentDocument.getImmutableCharSequence().toString());
+      EduDocumentListener.runWithListener(project, taskFile, false, studentFile, (studentDocument) -> {
+        for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
+          placeholder.setPossibleAnswer(studentDocument.getText(TextRange.create(placeholder.getOffset(), placeholder.getEndOffset())));
+          replaceAnswerPlaceholder(studentDocument, placeholder);
+        }
+        taskFile.setText(studentDocument.getImmutableCharSequence().toString());
+        return Unit.INSTANCE;
+      });
       return taskFile;
     }
     catch (IOException e) {

@@ -197,35 +197,22 @@ object CCUtils {
   }
 
   fun initializeTaskPlaceholders(task: Task, project: Project) {
-    val taskDir = task.getTaskDir(project) ?: return
     for (entry in task.taskFiles.entries) {
       // BACKCOMPAT: 2018.3
       @Suppress("DEPRECATION")
-      invokeAndWaitIfNeed { runWriteAction { initializeTaskFilePlaceholders(project, taskDir, entry.value) } }
+      invokeAndWaitIfNeed { runWriteAction { initializeTaskFilePlaceholders(project, entry.value) } }
     }
   }
 
-  private fun initializeTaskFilePlaceholders(project: Project, userFileDir: VirtualFile, taskFile: TaskFile) {
-    val file = EduUtils.findTaskFileInDir(taskFile, userFileDir)
-    if (file == null) {
-      LOG.warn("Failed to find file $file")
-      return
-    }
-    val document = FileDocumentManager.getInstance().getDocument(file) ?: return
-    val listener = EduDocumentListener(taskFile, false)
-    document.addDocumentListener(listener)
-    taskFile.sortAnswerPlaceholders()
-
-    try {
+  private fun initializeTaskFilePlaceholders(project: Project, taskFile: TaskFile) {
+    EduDocumentListener.runWithListener(project, taskFile, false) { document ->
+      taskFile.sortAnswerPlaceholders()
       for (placeholder in taskFile.answerPlaceholders) {
         replaceAnswerPlaceholder(document, placeholder)
       }
-
       CommandProcessor.getInstance().executeCommand(project, {
         runWriteAction { FileDocumentManager.getInstance().saveDocumentAsIs(document) }
       }, "Create answer document", "Create answer document")
-    } finally {
-      document.removeDocumentListener(listener)
     }
   }
 

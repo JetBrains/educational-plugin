@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -52,17 +53,18 @@ class PySmartChecker {
         if (windowTaskFile == null) {
           return;
         }
-        EduDocumentListener listener = new EduDocumentListener(windowTaskFile, false);
-        windowDocument.addDocumentListener(listener);
-        int start = placeholder.getOffset();
-        int end = placeholder.getEndOffset();
         final AnswerPlaceholder userAnswerPlaceholder = usersTaskFile.getAnswerPlaceholders().get(placeholder.getIndex());
-        int userStart = userAnswerPlaceholder.getOffset();
-        int userEnd = userAnswerPlaceholder.getEndOffset();
-        String text = usersDocument.getText(new TextRange(userStart, userEnd));
-        windowDocument.replaceString(start, end, text);
-        ApplicationManager.getApplication().runWriteAction(() -> documentManager.saveDocument(windowDocument));
-        windowDocument.removeDocumentListener(listener);
+
+        EduDocumentListener.runWithListener(project, windowTaskFile, false, windowCopy, document -> {
+          int start = placeholder.getOffset();
+          int end = placeholder.getEndOffset();
+          int userStart = userAnswerPlaceholder.getOffset();
+          int userEnd = userAnswerPlaceholder.getEndOffset();
+          String text = usersDocument.getText(new TextRange(userStart, userEnd));
+          document.replaceString(start, end, text);
+          ApplicationManager.getApplication().runWriteAction(() -> documentManager.saveDocument(document));
+          return Unit.INSTANCE;
+        });
 
         fileWindows = EduUtils.flushWindows(windowTaskFile, windowCopy);
         Process smartTestProcess = testRunner.createCheckProcess(project, windowCopy.getPath());
@@ -119,25 +121,23 @@ class PySmartChecker {
                                                         @NotNull final TaskFile source) {
     try {
       VirtualFile answerFile = file.copy(taskDir, taskDir, file.getNameWithoutExtension() + EduNames.ANSWERS_POSTFIX + "." + file.getExtension());
-      final FileDocumentManager documentManager = FileDocumentManager.getInstance();
-      final Document document = documentManager.getDocument(answerFile);
-      if (document != null) {
-        TaskFile answerTaskFile = source.getTask().copy().getTaskFile(EduUtils.pathRelativeToTask(project, file));
-        if (answerTaskFile == null) {
-          return null;
-        }
-        EduDocumentListener listener = new EduDocumentListener(answerTaskFile, false);
-        document.addDocumentListener(listener);
+      TaskFile answerTaskFile = source.getTask().copy().getTaskFile(EduUtils.pathRelativeToTask(project, file));
+      if (answerTaskFile == null) {
+        return null;
+      }
+
+      EduDocumentListener.runWithListener(project, answerTaskFile, false, answerFile, (document -> {
         for (AnswerPlaceholder answerPlaceholder : answerTaskFile.getAnswerPlaceholders()) {
           final int start = answerPlaceholder.getOffset();
           final int end = answerPlaceholder.getEndOffset();
           final String text = answerPlaceholder.getPossibleAnswer();
           document.replaceString(start, end, text);
         }
+        final FileDocumentManager documentManager = FileDocumentManager.getInstance();
         ApplicationManager.getApplication().runWriteAction(() -> documentManager.saveDocument(document));
-        document.removeDocumentListener(listener);
-        return Pair.create(answerFile, answerTaskFile);
-      }
+        return Unit.INSTANCE;
+      }));
+      return Pair.create(answerFile, answerTaskFile);
     }
     catch (IOException e) {
       LOG.error(e);

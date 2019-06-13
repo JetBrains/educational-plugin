@@ -1,12 +1,19 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.editor.impl.event.DocumentEventImpl
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.editor.EduSingleFileEditor
 
 /**
  * Listens changes in study files and updates
@@ -95,6 +102,35 @@ class EduDocumentListener(
     answerPlaceholder.length = length
     if (updateYaml) {
       YamlFormatSynchronizer.saveItem(taskFile.task)
+    }
+  }
+
+  companion object {
+    @JvmOverloads
+    @JvmStatic
+    fun runWithListener(
+      project: Project,
+      taskFile: TaskFile,
+      updateYaml: Boolean,
+      file: VirtualFile? = taskFile.getVirtualFile(project),
+      action: (Document) -> Unit
+    ) {
+      if (file == null) return
+      val document = FileDocumentManager.getInstance().getDocument(file) ?: return
+      // EduSingleFileEditor adds own EduDocumentListener on creation
+      val hasListener = FileEditorManager.getInstance(project).getAllEditors(file).any { it is EduSingleFileEditor }
+      val eduDocumentListener = if (!hasListener) EduDocumentListener(taskFile, updateYaml) else null
+      if (eduDocumentListener != null) {
+        document.addDocumentListener(eduDocumentListener)
+      }
+      try {
+        action(document)
+      }
+      finally {
+        if (eduDocumentListener != null) {
+          document.removeDocumentListener(eduDocumentListener)
+        }
+      }
     }
   }
 }
