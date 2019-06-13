@@ -191,6 +191,7 @@
     <action id="Educational.WatchTutorial" class="com.jetbrains.edu.learning.actions.LearnMoreAction">
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
     </action>
+    <action id="Educational.SolveAllTasksBefore" class="com.jetbrains.edu.coursecreator.actions.CCSolveAllTasksBeforeAction"/>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">

@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import javax.swing.Icon
 
 val Course.configurator: EduConfigurator<*>? get() {
@@ -54,3 +55,9 @@ fun Course.getDecoratedLogo(icon: Icon?): Icon? {
 val Course.hasSections: Boolean get() = sections.isNotEmpty()
 
 val Course.hasTopLevelLessons: Boolean get() = lessons.isNotEmpty()
+
+val Course.allTasks: List<Task> get() {
+  val allTasks = mutableListOf<Task>()
+  course.visitTasks { allTasks += it }
+  return allTasks
+}
