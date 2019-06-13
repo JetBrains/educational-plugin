@@ -44,6 +44,7 @@ object CourseViewUtils {
   }
 
   private fun isShowDirInView(project: Project, task: Task, dir: PsiDirectory): Boolean {
+    if (dir.children.isEmpty()) return true
     val dirName = dir.name
     val hasTaskFileNotInsideSourceDir = task.hasVisibleTaskFilesNotInsideSourceDir(project)
     if (dirName == task.sourceDir) return hasTaskFileNotInsideSourceDir
