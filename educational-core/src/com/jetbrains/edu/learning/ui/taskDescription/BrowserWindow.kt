@@ -88,7 +88,9 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
       for (i in 0 until nodeList.length) {
         (nodeList.item(i) as EventTarget).addEventListener(EVENT_TYPE_CLICK, listener, false)
       }
-      val hints = (doc as DocumentImpl).getElementsByClassName("hint_header")
+      // listener is added only for collapsed hints so as not to have stats for educator
+      // in educator projects expanded is default state for hints
+      val hints = (doc as DocumentImpl).getElementsByClassName(JavaFxToolWindow.HINT_HEADER)
       for (i in 0 until hints.length) {
         (hints.item(i) as EventTarget).addEventListener(EVENT_TYPE_CLICK, listener, false)
       }
