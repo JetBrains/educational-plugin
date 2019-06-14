@@ -42,6 +42,8 @@ val studioSandbox = "${project.buildDir.absolutePath}/studio-sandbox"
 val webStormSandbox = "${project.buildDir.absolutePath}/webstorm-sandbox"
 val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 
+val isAtLeast192 = environmentName.toInt() >= 192
+
 plugins {
   idea
   kotlin("jvm") version "1.3.11"
@@ -190,6 +192,9 @@ project(":") {
     val pluginsList = mutableListOf("PythonCore:${prop("pythonPluginVersion")}", "org.rust.lang:${prop("rustPluginVersion")}")
     if (isJvmCenteredIDE) {
       pluginsList += listOf("junit", "Kotlin", "org.intellij.scala:${prop("scalaPluginVersion")}")
+      if (isAtLeast192) {
+        pluginsList += "java"
+      }
     }
     if (baseIDE == "idea") {
       pluginsList += listOf("NodeJS:${prop("nodeJsPluginVersion")}", "JavaScriptLanguage")
@@ -286,6 +291,13 @@ project(":") {
 
 project(":educational-core") {
 
+  intellij {
+    // Temporary fix to launch tests
+    if (isAtLeast192 && isJvmCenteredIDE) {
+      setPlugins("java")
+    }
+  }
+
   task<Download>("downloadColorFile") {
     overwrite(false)
     src("https://raw.githubusercontent.com/ozh/github-colors/master/colors.json")
@@ -305,7 +317,11 @@ project(":jvm-core") {
       localPath = null
       version = ideaVersion
     }
-    setPlugins("junit", "properties", "gradle", "Groovy")
+    if (isAtLeast192) {
+      setPlugins("junit", "properties", "gradle", "Groovy", "java")
+    } else {
+      setPlugins("junit", "properties", "gradle", "Groovy")
+    }
   }
 
   val testOutput = configurations.create("testOutput")
@@ -322,7 +338,11 @@ project(":Edu-Java") {
   intellij {
     localPath = null
     version = ideaVersion
-    setPlugins("junit", "properties", "gradle", "Groovy")
+    if (isAtLeast192) {
+      setPlugins("junit", "properties", "gradle", "Groovy", "java")
+    } else {
+      setPlugins("junit", "properties", "gradle", "Groovy")
+    }
   }
 
   dependencies {
@@ -339,7 +359,11 @@ project(":Edu-Kotlin") {
       localPath = null
       version = ideaVersion
     }
-    setPlugins("Kotlin", "junit", "properties", "gradle", "Groovy")
+    if (isAtLeast192) {
+      setPlugins("Kotlin", "junit", "properties", "gradle", "Groovy", "java")
+    } else {
+      setPlugins("Kotlin", "junit", "properties", "gradle", "Groovy")
+    }
   }
 
   dependencies {
@@ -354,7 +378,11 @@ project(":Edu-Scala") {
   intellij {
     localPath = null
     version = ideaVersion
+    if (isAtLeast192) {
+      setPlugins("org.intellij.scala:${prop("scalaPluginVersion")}", "junit", "properties", "gradle", "Groovy", "java")
+    } else {
       setPlugins("org.intellij.scala:${prop("scalaPluginVersion")}", "junit", "properties", "gradle", "Groovy")
+    }
   }
 
   dependencies {
@@ -368,6 +396,7 @@ project(":Edu-Scala") {
 project(":Edu-Android") {
   intellij {
     localPath = studioPath
+    // TODO: add `java` plugin for 192 platform when AS 3.6 will be based on 192
     setPlugins("android", "junit", "properties", "gradle", "Groovy", "IntelliLang", "smali", "Kotlin")
   }
 
@@ -386,7 +415,11 @@ project(":Edu-Python") {
       localPath = null
       version = ideaVersion
     }
-    setPlugins("PythonCore:${prop("pythonPluginVersion")}")
+    if (isAtLeast192) {
+      setPlugins("PythonCore:${prop("pythonPluginVersion")}", "java")
+    } else {
+      setPlugins("PythonCore:${prop("pythonPluginVersion")}")
+    }
   }
 
   dependencies {
@@ -399,7 +432,11 @@ project(":Edu-JavaScript") {
   intellij {
     localPath = null
     version = ideaVersion
-    setPlugins("NodeJS:${prop("nodeJsPluginVersion")}", "JavaScriptLanguage", "CSS", "JavaScriptDebugger")
+    if (isAtLeast192) {
+      setPlugins("NodeJS:${prop("nodeJsPluginVersion")}", "JavaScriptLanguage", "CSS", "JavaScriptDebugger", "java")
+    } else {
+      setPlugins("NodeJS:${prop("nodeJsPluginVersion")}", "JavaScriptLanguage", "CSS", "JavaScriptDebugger")
+    }
   }
   dependencies {
     compile(project(":educational-core"))
@@ -409,7 +446,11 @@ project(":Edu-JavaScript") {
 
 project(":Edu-Rust") {
   intellij {
-    setPlugins("org.rust.lang:${prop("rustPluginVersion")}")
+    if (isAtLeast192 && isJvmCenteredIDE) {
+      setPlugins("org.rust.lang:${prop("rustPluginVersion")}", "java")
+    } else {
+      setPlugins("org.rust.lang:${prop("rustPluginVersion")}")
+    }
   }
 
   dependencies {
