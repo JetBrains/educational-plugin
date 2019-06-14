@@ -216,8 +216,12 @@ public abstract class Course extends LessonContainer {
   }
 
   public Course copy() {
+    return copyAs(getClass());
+  }
+
+  public <T extends Course> T copyAs(Class<T> clazz) {
     Element element = XmlSerializer.serialize(this);
-    Course copy = XmlSerializer.deserialize(element, getClass());
+    T copy = XmlSerializer.deserialize(element, clazz);
     copy.init(null, null, true);
     return copy;
   }

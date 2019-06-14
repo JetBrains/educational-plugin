@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.course
 
-import com.intellij.util.xmlb.XmlSerializer
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -13,12 +12,9 @@ import com.jetbrains.edu.learning.stepik.StepikNames
  */
 class StepikCourse : EduCourse() {
   override fun courseCompatibility(courseInfo: EduCourse) = CourseCompatibility.COMPATIBLE
+  override fun getItemType(): String = StepikNames.STEPIK_TYPE
 }
 
 fun stepikCourseFromRemote(remoteCourse: EduCourse): StepikCourse? {
-  val element = XmlSerializer.serialize(remoteCourse)
-  val stepikCourse = XmlSerializer.deserialize(element, StepikCourse::class.java)
-  stepikCourse.init(null, null, true)
-  stepikCourse.type = StepikNames.STEPIK_TYPE
-  return stepikCourse
+  return remoteCourse.copyAs(StepikCourse::class.java)
 }
