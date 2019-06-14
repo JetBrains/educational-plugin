@@ -81,6 +81,8 @@ class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
     if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {
       existingItem.isMultipleChoice = deserializedItem.isMultipleChoice
       existingItem.choiceOptions = deserializedItem.choiceOptions
+      existingItem.messageCorrect = deserializedItem.messageCorrect
+      existingItem.messageIncorrect = deserializedItem.messageIncorrect
       TaskDescriptionView.getInstance(project).updateTaskDescription()
     }
     hideOldPlaceholdersForOpenedFiles(project, existingItem)
