@@ -30,6 +30,7 @@ import com.intellij.ui.docking.DockContainer;
 import com.intellij.ui.docking.DockManager;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.UtilsKt;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -103,7 +104,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
 
     DockManager dockManager = DockManager.getInstance(myFixture.getProject());
     myOldDockContainers = dockManager.getContainers();
-    myManager = new FileEditorManagerImpl(myFixture.getProject(), dockManager);
+    myManager = UtilsKt.createFileEditorManager(myFixture.getProject());
     // Copied from TestEditorManagerImpl's constructor
     myManager.registerExtraEditorDataProvider(new TextEditorPsiDataProvider(), null);
     myOldManager = ((ComponentManagerImpl)myFixture.getProject()).registerComponentInstance(FileEditorManager.class, myManager);

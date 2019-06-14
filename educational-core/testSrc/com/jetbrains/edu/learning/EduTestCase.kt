@@ -63,7 +63,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
 
     val dockManager = DockManager.getInstance(myFixture.project)
     myOldDockContainers = dockManager.containers
-    myManager = FileEditorManagerImpl(myFixture.project, dockManager)
+    myManager = createFileEditorManager(myFixture.project)
     // Copied from TestEditorManagerImpl's constructor
     myManager.registerExtraEditorDataProvider(TextEditorPsiDataProvider(), null)
     myOldManager = (myFixture.project as ComponentManagerImpl).registerComponentInstance<FileEditorManager>(FileEditorManager::class.java, myManager)

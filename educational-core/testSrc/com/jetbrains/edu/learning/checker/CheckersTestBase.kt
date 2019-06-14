@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.createFileEditorManager
 import org.junit.Assert
 import org.junit.ComparisonFailure
 import java.io.File
@@ -147,7 +148,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
 
         val dockManager = DockManager.getInstance(myProject)
         myOldDockContainers = dockManager.containers
-        myManager = FileEditorManagerImpl(myProject, dockManager)
+        myManager = createFileEditorManager(myProject)
         myOldManager = (myProject as ComponentManagerImpl).registerComponentInstance<FileEditorManager>(FileEditorManager::class.java, myManager)
         (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
     }
