@@ -39,6 +39,7 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
+    assertNull(course.languageVersion)
     assertNotNull(course.description)
     assertEquals(EduNames.DEFAULT_ENVIRONMENT, course.environment)
     assertTrue(course is EduCourse)
@@ -162,6 +163,25 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
+  }
+
+  fun `test course with language version`() {
+    val name = "Test Course"
+    val language = "Russian"
+    val programmingLanguage = "Plain text"
+    val programmingLanguageVersion = "1.42"
+    val yamlContent = """
+      |title: $name
+      |language: $language
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |programming_language: $programmingLanguage
+      |programming_language_version: $programmingLanguageVersion
+      |""".trimMargin("|")
+    val course = YamlDeserializer.deserialize(yamlContent, Course::class.java)
+    assertEquals(programmingLanguage, course.languageById.displayName)
+    assertEquals(programmingLanguageVersion, course.languageVersion)
   }
 
   fun `test section`() {

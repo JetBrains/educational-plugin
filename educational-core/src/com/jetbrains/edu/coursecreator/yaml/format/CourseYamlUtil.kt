@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
@@ -34,6 +35,7 @@ private const val SUMMARY = "summary"
 private const val PROGRAMMING_LANGUAGE = "programming_language"
 private const val CONTENT = "content"
 private const val ENVIRONMENT = "environment"
+private const val PROGRAMMING_LANGUAGE_VERSION = "programming_language_version"
 
 private const val TOP_LEVEL_LESSONS_SECTION = "default_section"
 
@@ -42,7 +44,7 @@ private const val TOP_LEVEL_LESSONS_SECTION = "default_section"
  * Update [CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
-@JsonPropertyOrder(TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, ENVIRONMENT, CONTENT)
+@JsonPropertyOrder(TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT)
 @JsonDeserialize(builder = CourseBuilder::class)
 abstract class CourseYamlMixin {
   @JsonSerialize(converter = CourseTypeSerializationConverter::class)
@@ -60,6 +62,11 @@ abstract class CourseYamlMixin {
   @JsonSerialize(converter = ProgrammingLanguageConverter::class)
   @JsonProperty(PROGRAMMING_LANGUAGE)
   private lateinit var myProgrammingLanguage: String
+
+  @JsonProperty(PROGRAMMING_LANGUAGE_VERSION)
+  fun getLanguageVersion(): String? {
+    throw NotImplementedInMixin()
+  }
 
   @JsonSerialize(converter = LanguageConverter::class)
   @JsonProperty(LANGUAGE)
@@ -118,6 +125,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
                             @JsonProperty(TITLE) val title: String,
                             @JsonProperty(SUMMARY) val summary: String,
                             @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
+                            @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
                             @JsonProperty(LANGUAGE) val language: String,
                             @JsonProperty(ENVIRONMENT) val yamlEnvironment: String?,
                             @JsonProperty(CONTENT) val content: List<String?> = emptyList()) {
@@ -136,8 +144,18 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       description = summary
       val languageName = Language.getRegisteredLanguages().find { it.displayName == programmingLanguage }
                          ?: formatError("Unknown programming language '$programmingLanguage'")
-      language = languageName.id
       environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
+      language = languageName.id
+
+      val languageSettings = configurator?.courseBuilder?.languageSettings ?: formatError("Unsupported language $languageName")
+      if (programmingLanguageVersion != null) {
+        if (!languageSettings.languageVersions.contains(programmingLanguageVersion)) {
+          formatError("Unsupported ${languageName.displayName} version: $programmingLanguageVersion")
+        }
+        else {
+          language = "$language $programmingLanguageVersion"
+        }
+      }
       val items = content.mapIndexed { index, title ->
         if (title == null) {
           throw InvalidYamlFormatException("Unnamed item")
@@ -160,9 +178,14 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.name = deserializedItem.name
     // TODO: handle changing course type
     existingItem.description = deserializedItem.description
-    existingItem.language = deserializedItem.language
     existingItem.languageCode = deserializedItem.languageCode
     existingItem.environment = deserializedItem.environment
+    if (deserializedItem.languageVersion != null) {
+      existingItem.language = "${existingItem.language} ${deserializedItem.languageVersion}"
+    }
+    else {
+      existingItem.language = deserializedItem.language
+    }
   }
 }
 

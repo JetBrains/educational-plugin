@@ -28,6 +28,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.checker.CheckActionListener
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -39,6 +40,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import java.io.IOException
 
@@ -56,7 +58,14 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     project.putUserData(YamlFormatSettings.YAML_TEST_PROJECT_READY, false)
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE)
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE, HYPERSKILL)
-    registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE, CourseraNames.COURSE_TYPE)
+    registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE,
+                         CheckiONames.CHECKIO_TYPE)
+    registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE,
+                         StepikNames.STEPIK_TYPE)
+    registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE,
+                         environment = EduNames.ANDROID)
+    registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE,
+                         CourseraNames.COURSE_TYPE)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
     createCourse()
@@ -249,12 +258,14 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     disposable: Disposable,
     configuratorClass: Class<*>,
     language: Language,
-    courseType: String = EduNames.PYCHARM
+    courseType: String = EduNames.PYCHARM,
+    environment: String = EduNames.DEFAULT_ENVIRONMENT
   ) {
     val extension = EducationalExtensionPoint<EduConfigurator<out Any>>()
     extension.language = language.id
     extension.implementationClass = configuratorClass.name
     extension.courseType = courseType
+    extension.environment = environment
     PlatformTestUtil.registerExtension(ExtensionPointName.create(EduConfigurator.EP_NAME), extension, disposable)
   }
 }

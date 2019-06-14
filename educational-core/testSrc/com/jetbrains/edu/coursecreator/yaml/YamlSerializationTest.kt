@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.yaml
 
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
@@ -332,6 +333,21 @@ class YamlSerializationTest : YamlTestCase() {
       |title: Test Course
       |language: English
       |programming_language: Plain text
+      |
+    """.trimMargin("|"))
+  }
+
+  fun `test course with lang version`() {
+    val course = course {}
+    course.languageCode = "ru"
+    course.description = "sum"
+    course.language = "${PlainTextLanguage.INSTANCE.id} 1.42"
+    doTest(course, """
+      |title: Test Course
+      |language: Russian
+      |summary: sum
+      |programming_language: Plain text
+      |programming_language_version: 1.42
       |
     """.trimMargin("|"))
   }
