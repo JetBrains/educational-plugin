@@ -6,6 +6,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.showSelectTaskDialog
 import com.jetbrains.edu.learning.EduDocumentListener
@@ -24,7 +25,9 @@ class CCSolveAllTasksBeforeAction : DumbAwareAction("Solve All Tasks Before", "S
     e.presentation.isEnabledAndVisible = false
     val project = e.project ?: return
     if (StudyTaskManager.getInstance(project).course !is EduCourse) return
-    e.presentation.isEnabledAndVisible = !CCUtils.isCourseCreator(project) && CCPluginToggleAction.isCourseCreatorFeaturesEnabled
+    e.presentation.isEnabledAndVisible = !CCUtils.isCourseCreator(project) &&
+                                         CCPluginToggleAction.isCourseCreatorFeaturesEnabled &&
+                                         Registry.`is`(REGISTRY_KEY, false)
   }
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -66,5 +69,9 @@ class CCSolveAllTasksBeforeAction : DumbAwareAction("Solve All Tasks Before", "S
         }
       }
     }
+  }
+
+  companion object {
+    const val REGISTRY_KEY = "edu.course.creator.solve.all"
   }
 }

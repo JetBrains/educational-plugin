@@ -273,6 +273,10 @@
     </experimentalFeature>
     <defaultLiveTemplatesProvider implementation="com.jetbrains.edu.coursecreator.HintTemplateProvider"/>
     <liveTemplateContext implementation="com.jetbrains.edu.coursecreator.HintTemplateContentType"/>
+
+    <registryKey key="edu.course.creator.solve.all"
+                 description="Enables `Solve All Tasks Before` action"
+                 defaultValue="false"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

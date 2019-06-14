@@ -1,10 +1,12 @@
 package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.ui.SelectTaskUi
 import com.jetbrains.edu.coursecreator.ui.withMockSelectTaskUi
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.FileTreeBuilder
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
@@ -44,15 +46,7 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
       }
     }
 
-    withMockSelectTaskUi(object : SelectTaskUi {
-      override fun selectTask(project: Project, course: EduCourse): Task? {
-        return course.findTask("lesson2", "task4")
-      }
-    }) {
-      myFixture.testAction(CCSolveAllTasksBeforeAction())
-    }
-
-    fileTree {
+    doTest("lesson2", "task4") {
       dir("lesson1") {
         dir("task1") {
           file("Foo.kt", "fn foo() = 123")
@@ -70,7 +64,7 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
           file("Qqq.kt", "fn qqq() = TODO()")
         }
       }
-    }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+    }
   }
 
   fun `test solve all tasks before action with framework lessons`() {
@@ -108,15 +102,7 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
       }
     }
 
-    withMockSelectTaskUi(object : SelectTaskUi {
-      override fun selectTask(project: Project, course: EduCourse): Task? {
-        return course.findTask("lesson1", "task3")
-      }
-    }) {
-      myFixture.testAction(CCSolveAllTasksBeforeAction())
-    }
-
-    fileTree {
+    doTest("lesson1", "task3") {
       dir("lesson1") {
         dir("task") {
           file("Foo.kt", "fn foo() = 123")
@@ -124,6 +110,25 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
           file("Baz.kt", "fn baz() = 123 + TODO()")
         }
       }
-    }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+    }
+  }
+
+  private fun doTest(lessonName: String, taskName: String, expectedFileTree: FileTreeBuilder.() -> Unit) {
+    withMockSelectTaskUi(object : SelectTaskUi {
+      override fun selectTask(project: Project, course: EduCourse): Task? {
+        return course.findTask(lessonName, taskName)
+      }
+    }) {
+      val registryValue = Registry.get(CCSolveAllTasksBeforeAction.REGISTRY_KEY)
+      val oldValue = registryValue.asBoolean()
+      registryValue.setValue(true)
+      try {
+        myFixture.testAction(CCSolveAllTasksBeforeAction())
+      } finally {
+        registryValue.setValue(oldValue)
+      }
+    }
+
+    fileTree(expectedFileTree).assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 }
