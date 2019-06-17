@@ -23,7 +23,7 @@ class HyperskillCheckListener : CheckListener {
       return
     }
 
-    HyperskillConnector.postSolution(task, project)
+    HyperskillConnector.postSolution(task, project, result)
 
     showChooseNewProjectNotification(course, project)
   }

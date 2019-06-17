@@ -14,6 +14,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -223,7 +224,7 @@ object HyperskillConnector {
 
   // Post requests:
 
-  fun postSolution(task: Task, project: Project) {
+  fun postSolution(task: Task, project: Project, result: CheckResult) {
     val taskDir = task.getTaskDir(project) ?: return LOG.error("Failed to find stage directory ${task.name}")
 
     val attempt = postAttempt(task.id)
@@ -241,14 +242,15 @@ object HyperskillConnector {
       }
     }
 
-    postSubmission(attempt, files, task)
+    postSubmission(attempt, files, task, "${result.message}\n${result.details}")
   }
 
-  private fun postSubmission(attempt: Attempt, files: ArrayList<SolutionFile>, task: Task) {
+  private fun postSubmission(attempt: Attempt, files: ArrayList<SolutionFile>, task: Task, feedback: String) {
     val score = if (task.status == CheckStatus.Solved) "1" else "0"
     val objectMapper = StepikConnector.createMapper(SimpleModule())
     val serializedTask = objectMapper.writeValueAsString(TaskData(task))
-    val response = service.submission(Submission(score, attempt.id, files, serializedTask)).executeHandlingExceptions()
+    val submission = Submission(score, attempt.id, files, serializedTask, feedback)
+    val response = service.submission(submission).executeHandlingExceptions()
     if (response == null || response.code() != HttpStatus.SC_CREATED) {
       showFailedToPostNotification()
       LOG.error("Failed to make submission for stage ${task.id}")

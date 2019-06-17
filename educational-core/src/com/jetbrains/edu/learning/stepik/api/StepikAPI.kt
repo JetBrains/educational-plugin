@@ -40,6 +40,8 @@ const val OPTIONS = "options"
 const val DATASET = "dataset"
 const val REPLY = "reply"
 const val HINT = "hint"
+const val FEEDBACK = "feedback"
+const val MESSAGE = "message"
 const val CHOICES = "choices"
 const val SCORE = "score"
 const val SOLUTION = "solution"
@@ -294,6 +296,17 @@ class StepikUnit {
   var updateDate: Date = Date()
 }
 
+class Feedback {
+  @JsonProperty(MESSAGE)
+  var message: String? = null
+
+  constructor()
+
+  constructor(feedback: String) {
+    message = feedback
+  }
+}
+
 class Submission {
   @JsonProperty(ATTEMPT)
   var attempt: Int = 0
@@ -310,11 +323,17 @@ class Submission {
   @JsonProperty(HINT)
   var hint: String? = null
 
+  @JsonProperty(FEEDBACK)
+  var feedback: Feedback? = null
+
   constructor()
 
-  constructor(score: String, attemptId: Int, files: ArrayList<SolutionFile>, serializedTask: String) {
+  constructor(score: String, attemptId: Int, files: ArrayList<SolutionFile>, serializedTask: String, feedback: String? = null) {
     reply = Reply(files, score, serializedTask)
     this.attempt = attemptId
+    if (feedback != null) {
+      this.feedback = Feedback(feedback)
+    }
   }
 }
 
