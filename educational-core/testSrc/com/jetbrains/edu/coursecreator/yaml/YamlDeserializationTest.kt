@@ -35,7 +35,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, Course::class.java)!!
+    val course = deserializeNotNull(yamlContent, Course::class.java)
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -58,7 +58,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |content:
       |- lesson1
       |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, Course::class.java)!!
+    val course = deserializeNotNull(yamlContent, Course::class.java)
     assertEquals(environment, course.environment)
   }
 
@@ -80,7 +80,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, CourseraCourse::class.java)!!
+    val course = deserializeNotNull(yamlContent, CourseraCourse::class.java)
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -353,7 +353,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |
     |{}
     |""".trimMargin("|")
-    val lesson = YamlDeserializer.deserializeLesson(yamlContent)
+    val lesson = deserializeNotNull(yamlContent, Lesson::class.java)
     assertTrue(lesson.taskList.isEmpty())
   }
 
@@ -362,7 +362,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |
     |{}
     |""".trimMargin("|")
-    val section = YamlDeserializer.deserialize(yamlContent, Section::class.java)!!
+    val section = deserializeNotNull(yamlContent, Section::class.java)
     assertTrue(section.lessons.isEmpty())
   }
 
@@ -374,7 +374,10 @@ class YamlDeserializationTest : YamlTestCase() {
     |programming_language: Plain text
     |summary: test
     |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, Course::class.java)!!
+    val course = deserializeNotNull(yamlContent, Course::class.java)
     assertTrue(course.items.isEmpty())
   }
+
+  private fun <T : ItemContainer> deserializeNotNull(yamlContent: String, clazz: Class<T>) = YamlDeserializer.deserialize(yamlContent,
+                                                                                                                          clazz)!!
 }
