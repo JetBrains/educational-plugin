@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtilRt;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduTestCase;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -107,7 +106,7 @@ public class StepikFormatTest extends EduTestCase {
     answerPlaceholder.setLength(10);
     answerPlaceholder.setPlaceholderText("type here");
     answerPlaceholder.setPossibleAnswer("answer1");
-    answerPlaceholder.setHints(ContainerUtil.list("hint 1", "hint 2"));
+    answerPlaceholder.setHints(Arrays.asList("hint 1", "hint 2"));
     final ObjectMapper mapper = StepikConnector.getObjectMapper();
     final String placeholderSerialization = mapper.writeValueAsString(answerPlaceholder);
     String expected  = loadJsonText();
@@ -203,13 +202,16 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testOptionsTitle() throws IOException {
-    final PyCharmStepOptions options = (PyCharmStepOptions)getStepOptions();
+    final PyCharmStepOptions options = getStepOptions();
     assertEquals("Our first program", options.getTitle());
   }
 
   public void testOptionsDescription() throws IOException {
-    final PyCharmStepOptions options = (PyCharmStepOptions)getStepOptions();
-
+    String jsonText = loadJsonText();
+    final ObjectMapper mapper = StepikConnector.getObjectMapper();
+    final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
+    final StepSource step = stepContainer.steps.get(0);
+    final Step block = step.getBlock();
     assertEquals("\n" +
         "Traditionally the first program you write in any programming language is <code>\"Hello World!\"</code>.\n" +
         "<br><br>\n" +
@@ -218,11 +220,11 @@ public class StepikFormatTest extends EduTestCase {
         "Hint: To run a script сhoose 'Run &lt;name&gt;' on the context menu. <br>\n" +
         "For more information visit <a href=\"https://www.jetbrains.com/help/pycharm/running-and-rerunning-applications.html\">our help</a>.\n" +
         "\n" +
-        "<br>\n", options.getDescriptionText());
+        "<br>\n", block.getText());
   }
 
   public void testOptionsFeedbackLinks() throws IOException {
-    PyCharmStepOptions stepOptions = (PyCharmStepOptions)getStepOptions();
+    PyCharmStepOptions stepOptions = getStepOptions();
     assertEquals(FeedbackLink.LinkType.CUSTOM, stepOptions.getMyFeedbackLink().getType());
   }
 

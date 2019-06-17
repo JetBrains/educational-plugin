@@ -100,9 +100,6 @@ class PyCharmStepOptions : StepOptions {
   @JsonProperty(TITLE)
   var title: String? = null
 
-  @JsonProperty(SerializationUtils.Json.DESCRIPTION_TEXT)
-  var descriptionText: String? = null
-
   @JsonProperty(SerializationUtils.Json.DESCRIPTION_FORMAT)
   var descriptionFormat: DescriptionFormat? = null
 
@@ -131,7 +128,6 @@ class PyCharmStepOptions : StepOptions {
 
   constructor(project: Project, task: Task) {
     title = task.name
-    descriptionText = task.descriptionText
     descriptionFormat = task.descriptionFormat
 
     setTaskFiles(project, task)

@@ -263,12 +263,7 @@ public class StepikTaskBuilder {
     task.setUpdateDate(myStepSource.getUpdateDate());
 
     if (stepOptions != null) {
-      if (stepOptions.getDescriptionText() != null) {
-        task.setDescriptionText(stepOptions.getDescriptionText());
-      }
-      else {
-        task.setDescriptionText(myStep.getText());
-      }
+      task.setDescriptionText(myStep.getText());
       if (stepOptions.getDescriptionFormat() != null) {
         task.setDescriptionFormat(stepOptions.getDescriptionFormat());
       }
