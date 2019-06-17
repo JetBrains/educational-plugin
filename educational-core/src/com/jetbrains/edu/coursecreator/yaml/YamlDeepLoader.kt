@@ -1,7 +1,5 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -18,14 +16,7 @@ object YamlDeepLoader {
   @JvmStatic
   fun loadCourse(project: Project): Course? {
     val projectDir = project.courseDir
-    val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG)
-    if (courseConfig == null) {
-      val notification = Notification("Edu.InvalidConfig", "Invalid yaml",
-                                      "Cannot load course. Config file '${YamlFormatSettings.COURSE_CONFIG}' not found.",
-                                      NotificationType.ERROR)
-      notification.notify(project)
-      return null
-    }
+    val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error("Course yaml config cannot be null")
 
     val deserializedCourse = YamlDeserializer.deserializeItem(project, courseConfig) as? Course ?: return null
     deserializedCourse.courseMode = if (EduUtils.isStudentProject(project)) EduNames.STUDY else CCUtils.COURSE_MODE
