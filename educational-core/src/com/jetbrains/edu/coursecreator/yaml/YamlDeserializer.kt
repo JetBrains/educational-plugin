@@ -131,7 +131,7 @@ object YamlDeserializer {
     }
 
   fun StudyItem.getConfigFileForChild(project: Project, childName: String): VirtualFile? {
-    val dir = getDir(project) ?: yamlIllegalStateError(noDirForItemMessage(name))
+    val dir = getDir(project) ?: error(noDirForItemMessage(name))
     val itemDir = dir.findChild(childName)
     val configFile = childrenConfigFileNames.map { itemDir?.findChild(it) }.firstOrNull { it != null }
     if (configFile != null) {

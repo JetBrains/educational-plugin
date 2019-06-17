@@ -79,7 +79,7 @@ object YamlDeepLoader {
   }
 
   private fun StudyItem.loadRemoteInfo(project: Project) {
-    val itemDir = getDir(project) ?: yamlIllegalStateError(noDirForItemMessage(name))
+    val itemDir = getDir(project) ?: error(noDirForItemMessage(name))
     val remoteConfigFile = itemDir.findChild(remoteConfigFileName)
     if (remoteConfigFile == null) {
       if (id > 0) {
@@ -103,7 +103,7 @@ object YamlDeepLoader {
   }
 
   private fun Task.findTaskDescriptionFile(project: Project): VirtualFile {
-    val taskDir = getTaskDir(project) ?: yamlIllegalStateError(noItemDirMessage("task", name))
+    val taskDir = getTaskDir(project) ?: error(noItemDirMessage("task", name))
     val file = taskDir.findChild(EduNames.TASK_HTML) ?: taskDir.findChild(EduNames.TASK_MD)
     return file ?: error("No task description file for $name")
   }

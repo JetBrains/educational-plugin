@@ -113,7 +113,7 @@ object YamlLoader {
 
   private fun getStudyItemForConfig(project: Project, configFile: VirtualFile): StudyItem? {
     val name = configFile.name
-    val itemDir = configFile.parent ?: yamlIllegalStateError(notFoundMessage("containing item dir", name))
+    val itemDir = configFile.parent ?: error(notFoundMessage("containing item dir", name))
     val course = StudyTaskManager.getInstance(project).course ?: return null
     return when (name) {
       YamlFormatSettings.COURSE_CONFIG -> course

@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.yaml.noDirForItemMessage
 import com.jetbrains.edu.coursecreator.yaml.notFoundMessage
-import com.jetbrains.edu.coursecreator.yaml.yamlIllegalStateError
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -78,7 +77,7 @@ private class StringToFeedbackLinkConverter : StdConverter<String?, FeedbackLink
 
 class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
   override fun applyChanges(existingItem: Task, deserializedItem: Task) {
-    val project = existingItem.project ?: yamlIllegalStateError(notFoundMessage("project", existingItem.name))
+    val project = existingItem.project ?: error(notFoundMessage("project", existingItem.name))
     existingItem.feedbackLink = deserializedItem.feedbackLink
     if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {
       existingItem.isMultipleChoice = deserializedItem.isMultipleChoice
@@ -124,7 +123,7 @@ class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
   }
 
   private fun getOpenedEduEditors(project: Project, task: Task): List<EduEditor> {
-    val taskDir = task.getDir(project) ?: yamlIllegalStateError(noDirForItemMessage(task.name, "task"))
+    val taskDir = task.getDir(project) ?: error(noDirForItemMessage(task.name, "task"))
     return FileEditorManager.getInstance(project).openFiles
       .filter { VfsUtil.isAncestor(taskDir, it, true) }
       .map { FileEditorManager.getInstance(project).getSelectedEditor(it) }
