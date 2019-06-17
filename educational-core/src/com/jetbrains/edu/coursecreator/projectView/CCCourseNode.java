@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.projectView;
 
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
+import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
@@ -10,9 +11,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.ui.JBColor;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.projectView.CourseNode;
 import com.jetbrains.edu.learning.projectView.LessonNode;
 import com.jetbrains.edu.learning.projectView.SectionNode;
@@ -52,6 +55,16 @@ public class CCCourseNode extends CourseNode {
         return null;
       }
       return new CCStudentInvisibleFileNode(myProject, ((PsiFileNode)childNode).getValue(), getSettings());
+    }
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(myCourse);
+    if (configurator == null) {
+      return null;
+    }
+    if (childNode instanceof PsiDirectoryNode) {
+      PsiDirectory psiDirectory = ((PsiDirectoryNode)childNode).getValue();
+      if (!configurator.excludeFromArchive(myProject, psiDirectory.getVirtualFile())) {
+        return new CCNode(myProject, psiDirectory, myViewSettings, null);
+      }
     }
     return null;
   }

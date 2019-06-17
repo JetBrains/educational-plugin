@@ -22,7 +22,7 @@ object CourseViewUtils {
   fun modifyTaskChildNode(
     project: Project,
     childNode: AbstractTreeNode<*>,
-    task: Task,
+    task: Task?,
     directoryNodeFactory: (PsiDirectory) -> AbstractTreeNode<*>
   ): AbstractTreeNode<*>? {
     val value = childNode.value
@@ -30,13 +30,13 @@ object CourseViewUtils {
       is PsiDirectory -> {
         val dirName = value.name
         if (dirName == EduNames.BUILD || dirName == EduNames.OUT) return null
-        if (isShowDirInView(project, task, value)) directoryNodeFactory(value) else null
+        if (task != null && isShowDirInView(project, task, value)) directoryNodeFactory(value) else null
       }
       is PsiElement -> {
         val psiFile = value.containingFile ?: return null
         val virtualFile = psiFile.virtualFile ?: return null
         val path = EduUtils.pathRelativeToTask(project, virtualFile)
-        val visibleFile = task.getTaskFile(path)
+        val visibleFile = task?.getTaskFile(path)
         if (visibleFile?.isVisible == true) childNode else null
       }
       else -> null

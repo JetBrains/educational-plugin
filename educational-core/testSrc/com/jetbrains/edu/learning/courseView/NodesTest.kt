@@ -346,4 +346,67 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin("|"))
   }
 
+  fun `test directory inside lesson in educator mode`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("file1.txt")
+          taskFile("file2.txt")
+        }
+        eduTask {
+          taskFile("file1.txt")
+          taskFile("file2.txt")
+        }
+      }
+    }
+    runWriteAction {
+      findFile("lesson1").createChildDirectory(NodesTest::class.java, "non-task")
+    }
+    assertCourseView("""
+      |-Project
+      | -CCCourseNode Test Course (Course Creation)
+      |  -CCLessonNode lesson1
+      |   -CCTaskNode task1
+      |    file1.txt
+      |    file2.txt
+      |    CCStudentInvisibleFileNode task.html
+      |   -CCTaskNode task2
+      |    file1.txt
+      |    file2.txt
+      |    CCStudentInvisibleFileNode task.html
+      |   CCNode non-task
+    """.trimMargin("|"))
+  }
+
+  fun `test directory inside course in educator mode`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("file1.txt")
+          taskFile("file2.txt")
+        }
+        eduTask {
+          taskFile("file1.txt")
+          taskFile("file2.txt")
+        }
+      }
+    }
+    runWriteAction {
+      LightPlatformTestCase.getSourceRoot().createChildDirectory(NodesTest::class.java, "non-lesson")
+    }
+    assertCourseView("""
+      |-Project
+      | -CCCourseNode Test Course (Course Creation)
+      |  -CCLessonNode lesson1
+      |   -CCTaskNode task1
+      |    file1.txt
+      |    file2.txt
+      |    CCStudentInvisibleFileNode task.html
+      |   -CCTaskNode task2
+      |    file1.txt
+      |    file2.txt
+      |    CCStudentInvisibleFileNode task.html
+      |  CCNode non-lesson
+    """.trimMargin("|"))
+  }
 }

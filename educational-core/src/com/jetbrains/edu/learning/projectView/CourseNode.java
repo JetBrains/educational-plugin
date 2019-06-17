@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CourseNode extends EduNode {
+  protected final ViewSettings myViewSettings;
   protected final Course myCourse;
 
   public CourseNode(@NotNull Project project,
@@ -23,6 +24,7 @@ public class CourseNode extends EduNode {
                     ViewSettings viewSettings,
                     @NotNull Course course) {
     super(project, value, viewSettings);
+    myViewSettings = viewSettings;
     myCourse = course;
   }
 

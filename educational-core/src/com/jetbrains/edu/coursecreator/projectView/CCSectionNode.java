@@ -30,6 +30,6 @@ public class CCSectionNode extends SectionNode {
     if (node != null) {
       return node;
     }
-    return CCCourseViewUtil.produceConfigNodeOrNull(myProject, myViewSettings, child);
+    return CCCourseViewUtil.modifyNodeInEducatorMode(myProject, myViewSettings, child);
   }
 }

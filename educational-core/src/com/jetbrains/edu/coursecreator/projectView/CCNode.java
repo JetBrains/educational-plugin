@@ -23,7 +23,7 @@ public class CCNode extends DirectoryNode {
   public CCNode(@NotNull Project project,
                 PsiDirectory value,
                 ViewSettings viewSettings,
-                @NotNull Task task) {
+                @Nullable Task task) {
     super(project, value, viewSettings, task);
   }
 

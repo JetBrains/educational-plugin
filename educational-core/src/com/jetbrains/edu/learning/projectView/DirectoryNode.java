@@ -19,13 +19,13 @@ public class DirectoryNode extends EduNode {
   @NotNull
   protected final Project myProject;
   protected final ViewSettings myViewSettings;
-  @NotNull
+  @Nullable
   protected final Task myTask;
 
   public DirectoryNode(@NotNull Project project,
                        PsiDirectory value,
                        ViewSettings viewSettings,
-                       @NotNull Task task) {
+                       @Nullable Task task) {
     super(project, value, viewSettings);
     myProject = project;
     myViewSettings = viewSettings;

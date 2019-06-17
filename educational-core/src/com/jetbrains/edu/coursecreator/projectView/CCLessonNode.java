@@ -26,7 +26,7 @@ public class CCLessonNode extends LessonNode {
     if (node != null) {
       return node;
     }
-    return CCCourseViewUtil.produceConfigNodeOrNull(myProject, myViewSettings, childNode);
+    return CCCourseViewUtil.modifyNodeInEducatorMode(myProject, myViewSettings, childNode);
   }
 
   @NotNull
