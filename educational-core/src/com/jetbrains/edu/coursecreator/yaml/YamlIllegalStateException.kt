@@ -4,10 +4,10 @@ class YamlIllegalStateException(override val message: String) : IllegalStateExce
 
 fun yamlIllegalStateError(message: String): Nothing = throw YamlIllegalStateException(message)
 
-fun noDirForItemMessage(name: String, itemTypeName: String = "item") = "Cannot find directory for $itemTypeName: '$name'"
+fun noDirForItemMessage(name: String, itemTypeName: String = "item") = "Directory for $itemTypeName not found: '$name'"
 
 fun unknownConfigMessage(configName: String) = "Unknown config file '$configName'"
 
 fun unexpectedItemTypeMessage(itemType: String) = "Unexpected item type $itemType"
 
-fun notFoundMessage(notFoundObjectName: String, itemName: String) = "Cannot find $notFoundObjectName for $itemName"
+fun notFoundMessage(notFoundObjectName: String, itemName: String) = "${notFoundObjectName.capitalize()} not found for $itemName"

@@ -11,7 +11,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.yaml.noDirForItemMessage
-import com.jetbrains.edu.coursecreator.yaml.notFoundMessage
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -77,7 +76,7 @@ private class StringToFeedbackLinkConverter : StdConverter<String?, FeedbackLink
 
 class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
   override fun applyChanges(existingItem: Task, deserializedItem: Task) {
-    val project = existingItem.project ?: error(notFoundMessage("project", existingItem.name))
+    val project = existingItem.project ?: error("Project not found for ${existingItem.name} when applying changes from yaml config")
     existingItem.feedbackLink = deserializedItem.feedbackLink
     if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {
       existingItem.isMultipleChoice = deserializedItem.isMultipleChoice

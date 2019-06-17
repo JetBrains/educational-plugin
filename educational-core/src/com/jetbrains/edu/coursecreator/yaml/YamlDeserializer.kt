@@ -138,7 +138,7 @@ object YamlDeserializer {
       return configFile
     }
 
-    val message = if (itemDir == null) "Cannot find directory for item: '$childName'" else "Cannot find config file for item: '${childName}'"
+    val message = if (itemDir == null) "Directory for item: '$childName' not found" else "Config file for item: '${childName}' not found"
     val notification = Notification("Edu.InvalidConfig", "Config file not found", message, NotificationType.ERROR)
     notification.notify(project)
     return null
