@@ -21,9 +21,6 @@ class HyperskillChangeHost : DumbAwareAction(ACTION_TEXT), RightAlignedToolbarAc
   }
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = false
-    if (!Experiments.isFeatureEnabled(EduExperimentalFeatures.HYPERSKILL)) return
-    e.presentation.isEnabledAndVisible = true
+    e.presentation.isEnabledAndVisible = Experiments.isFeatureEnabled(EduExperimentalFeatures.HYPERSKILL)
   }
-
 }
