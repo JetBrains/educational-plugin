@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
@@ -18,6 +19,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isUnitTestMode
 import java.io.IOException
 import kotlin.reflect.KClass
 
@@ -40,34 +42,35 @@ object YamlLoader {
     catch (e: MissingKotlinParameterException) {
       val parameterName = e.parameter.name
       if (parameterName == null) {
-        showError(project, configFile, editor)
+        showError(project, e, configFile, editor)
       }
       else {
-        showError(project, configFile, editor,
+        showError(project, e, configFile, editor,
                   "${NameUtil.nameToWordsLowerCase(parameterName).joinToString("_")} is empty")
       }
     }
     catch (e: MismatchedInputException) {
-      showError(project, configFile, editor)
+      showError(project, e, configFile, editor)
     }
     catch (e: InvalidYamlFormatException) {
-      showError(project, configFile, editor, e.message.capitalize())
+      showError(project, e, configFile, editor, e.message.capitalize())
     }
     catch (e: IllegalStateException) {
-      showError(project, configFile, editor)
+      showError(project, e, configFile, editor)
     }
     catch (e: IOException) {
       val causeException = e.cause
       if (causeException?.message == null || causeException !is InvalidYamlFormatException) {
-        showError(project, configFile, editor)
+        showError(project, e, configFile, editor)
       }
       else {
-        showError(project, configFile, editor, causeException.message.capitalize())
+        showError(project, e, configFile, editor, causeException.message.capitalize())
       }
     }
   }
 
-  private fun doLoad(project: Project, configFile: VirtualFile) {
+  @VisibleForTesting
+  fun doLoad(project: Project, configFile: VirtualFile) {
     val existingItem = getStudyItemForConfig(project, configFile)
     val deserializedItem = YamlDeserializer.deserializeItem(VfsUtil.loadText(configFile), configFile.name)
 
@@ -90,18 +93,23 @@ object YamlLoader {
     existingItem.applyChanges(project, deserializedItem)
   }
 
-  fun ItemContainer.addItemAsNew(project: Project, deserializedItem: StudyItem) {
-    if (deserializedItem is ItemContainer) {
-      deserializedItem.init(course, this, false)
-      deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.items)
-      // set parent to deserialize content correctly
-      deserializedItem.items.forEach { it.init(course, deserializedItem, false) }
-      deserializedItem.items.filterIsInstance(ItemContainer::class.java).forEach {
-        it.items = it.deserializeContent(project, it.items)
-      }
-    }
+  private fun ItemContainer.addItemAsNew(project: Project, deserializedItem: StudyItem) {
+    deserializedItem.deserializeChildrenIfNeeded(project, course)
     addItem(deserializedItem)
     init(course, this, false)
+  }
+
+  fun StudyItem.deserializeChildrenIfNeeded(project: Project, course: Course) {
+    if (this !is ItemContainer) {
+      return
+    }
+    init(course, this, false)
+    items = deserializeContent(project, items)
+    // set parent to deserialize content correctly
+    items.forEach { it.init(course, this, false) }
+    items.filterIsInstance(ItemContainer::class.java).forEach {
+      it.items = it.deserializeContent(project, it.items)
+    }
   }
 
   private fun StudyItem.getParentItem(project: Project, parentDir: VirtualFile): ItemContainer {
@@ -151,6 +159,7 @@ object YamlLoader {
   }
 
   private fun showError(project: Project,
+                        originalException: Throwable,
                         configFile: VirtualFile,
                         editor: Editor?,
                         cause: String = "invalid config") {
@@ -160,6 +169,10 @@ object YamlLoader {
     else {
       val notification = InvalidConfigNotification(project, configFile, cause)
       notification.notify(project)
+    }
+    // to make test failures more comprehensible
+    if (isUnitTestMode) {
+      throw originalException
     }
   }
 

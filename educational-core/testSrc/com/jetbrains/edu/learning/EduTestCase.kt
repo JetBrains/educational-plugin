@@ -175,7 +175,9 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   protected fun findTaskFile(lessonIndex: Int, taskIndex: Int, taskFile: String): TaskFile =
     getCourse().lessons[lessonIndex].taskList[taskIndex].taskFiles[taskFile]!!
 
-  protected fun findTask(lessonIndex: Int, taskIndex: Int): Task = getCourse().lessons[lessonIndex].taskList[taskIndex]
+  protected fun findTask(lessonIndex: Int, taskIndex: Int): Task = findLesson(lessonIndex).taskList[taskIndex]
+
+  protected fun findLesson(lessonIndex: Int): Lesson = getCourse().lessons[lessonIndex]
 
   protected fun findFileInTask(lessonIndex: Int, taskIndex: Int, taskFilePath: String): VirtualFile {
     return findTask(lessonIndex, taskIndex).getTaskFile(taskFilePath)?.getVirtualFile(project)!!

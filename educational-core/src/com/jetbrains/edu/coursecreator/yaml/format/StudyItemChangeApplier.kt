@@ -5,7 +5,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.childrenConfigFileNames
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.findConfigFile
-import com.jetbrains.edu.coursecreator.yaml.YamlLoader.addItemAsNew
+import com.jetbrains.edu.coursecreator.yaml.YamlLoader.deserializeChildrenIfNeeded
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
@@ -23,10 +23,13 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
   }
 
   private fun updateChildren(deserializedItem: T, existingItem: T) {
+    val existingChildren = existingItem.items
+    val preservedChildren = mutableListOf<StudyItem>()
     deserializedItem.items.forEach { titledItem ->
-      val child = existingItem.getItem(titledItem.name)
+      val child = existingChildren.find { it.name == titledItem.name }
       if (child != null) {
         child.index = titledItem.index
+        preservedChildren.add(child)
       }
       else {
         // this code adding new child item if it was added in config and there's a dir
@@ -37,9 +40,13 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
         val deserializedChild = YamlDeserializer.deserializeItem(VfsUtil.loadText(configFile), configFile.name)
         deserializedChild.name = titledItem.name
         deserializedChild.index = titledItem.index
-        existingItem.addItemAsNew(project, deserializedChild)
+        deserializedChild.deserializeChildrenIfNeeded(project, existingItem.course)
+        preservedChildren.add(deserializedChild)
       }
     }
+    // update items so as removed items are no longer in the course
+    existingItem.items = preservedChildren
+    existingItem.init(existingItem.course, existingItem.parent, false)
   }
 }
 

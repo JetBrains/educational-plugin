@@ -15,11 +15,6 @@ class AddNewItemYamlTest : YamlTestCase() {
     createConfigFiles()
   }
 
-  private fun createConfigFiles() {
-    YamlFormatSynchronizer.saveAll(project)
-    FileDocumentManager.getInstance().saveAllDocuments()
-  }
-
   override fun createCourse() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {

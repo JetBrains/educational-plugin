@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_PROJECT_READY
@@ -21,5 +22,10 @@ abstract class YamlTestCase : EduTestCase() {
     // we don't add dependency on yaml plugin because it's impossible to add for tests only and we don't want to have redundant dependency
     // in production code
     runWriteAction { FileTypeManager.getInstance().associateExtension(PlainTextFileType.INSTANCE, "yaml") }
+  }
+
+  protected fun createConfigFiles() {
+    YamlFormatSynchronizer.saveAll(project)
+    FileDocumentManager.getInstance().saveAllDocuments()
   }
 }
