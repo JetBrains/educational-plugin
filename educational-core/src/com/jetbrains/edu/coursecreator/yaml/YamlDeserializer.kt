@@ -42,7 +42,7 @@ import org.yaml.snakeyaml.scanner.ScannerException
  */
 object YamlDeserializer {
 
-  fun deserializeItem(configFile: VirtualFile): StudyItem {
+  fun deserializeItem(project: Project, configFile: VirtualFile): StudyItem? {
     val configName = configFile.name
     val configFileText = configFile.document.text
     return try {
@@ -51,7 +51,7 @@ object YamlDeserializer {
         SECTION_CONFIG -> deserialize(configFileText, Section::class.java)
         LESSON_CONFIG -> deserializeLesson(configFileText)
         TASK_CONFIG -> deserializeTask(configFileText)
-        else -> yamlIllegalStateError(unknownConfigMessage(configName))
+        else -> loadingError(unknownConfigMessage(configFile.name))
       }
     }
     catch (e: Exception) {
@@ -64,7 +64,7 @@ object YamlDeserializer {
     val content = mutableListOf<T>()
     for (titledItem in contentList) {
       val configFile: VirtualFile = getConfigFileForChild(project, titledItem.name) ?: continue
-      val deserializeItem = deserializeItem(configFile) as? T ?: continue
+      val deserializeItem = deserializeItem(project, configFile) as? T ?: continue
       deserializeItem.name = titledItem.name
       content.add(deserializeItem)
     }
@@ -114,7 +114,7 @@ object YamlDeserializer {
       REMOTE_LESSON_CONFIG -> REMOTE_MAPPER.readValue(configFileText, Lesson::class.java)
       REMOTE_SECTION_CONFIG,
       REMOTE_TASK_CONFIG -> REMOTE_MAPPER.readValue(configFileText, RemoteStudyItem::class.java)
-      else -> yamlIllegalStateError(unknownConfigMessage(configName))
+      else -> loadingError(unknownConfigMessage(configName))
     }
   }
 
