@@ -47,7 +47,7 @@ object YamlLoader {
   fun doLoad(project: Project, configFile: VirtualFile) {
     val existingItem = getStudyItemForConfig(project, configFile)
     val deserializedItem = YamlDeserializer.deserializeItem(configFile) ?: return
-    deserializedItem.validateFiles(configFile)
+    deserializedItem.ensureChildrenExist(configFile.parent)
 
     if (existingItem == null) {
       // tis code is called if item wasn't loaded because of broken config
@@ -130,17 +130,17 @@ object YamlLoader {
   }
 }
 
-private fun StudyItem.validateFiles(configFile: VirtualFile) {
+private fun StudyItem.ensureChildrenExist(itemDir: VirtualFile) {
   when (this) {
     is ItemContainer -> {
       items.forEach {
         val itemTypeName = if (it is Task) "task" else "item"
-        configFile.parent.findChild(it.name) ?: yamlIllegalStateError(noItemDirMessage(itemTypeName, it.name))
+        itemDir.findChild(it.name) ?: yamlIllegalStateError(noItemDirMessage(itemTypeName, it.name))
       }
     }
     is Task -> {
       taskFiles.forEach { (name, _) ->
-        configFile.parent.findFileByRelativePath(name) ?: yamlIllegalStateError(noItemDirMessage("task file", name))
+        itemDir.findFileByRelativePath(name) ?: yamlIllegalStateError(noItemDirMessage("task file", name))
       }
     }
   }
