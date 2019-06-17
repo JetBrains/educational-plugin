@@ -12,6 +12,7 @@ import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.saveItem
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.loadItem
 import com.jetbrains.edu.coursecreator.yaml.format.getChangeApplierForItem
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
@@ -134,13 +135,13 @@ private fun StudyItem.ensureChildrenExist(itemDir: VirtualFile) {
   when (this) {
     is ItemContainer -> {
       items.forEach {
-        val itemTypeName = if (it is Task) "task" else "item"
-        itemDir.findChild(it.name) ?: yamlIllegalStateError(noItemDirMessage(itemTypeName, it.name))
+        val itemTypeName = if (it is Task) EduNames.TASK else EduNames.ITEM
+        itemDir.findChild(it.name) ?: yamlIllegalStateError(noDirForItemMessage(itemTypeName, it.name))
       }
     }
     is Task -> {
       taskFiles.forEach { (name, _) ->
-        itemDir.findFileByRelativePath(name) ?: yamlIllegalStateError(noItemDirMessage("task file", name))
+        itemDir.findFileByRelativePath(name) ?: yamlIllegalStateError("No physical file for file `$name`")
       }
     }
   }

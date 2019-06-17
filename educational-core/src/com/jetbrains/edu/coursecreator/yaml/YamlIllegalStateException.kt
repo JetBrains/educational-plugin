@@ -11,5 +11,3 @@ fun unknownConfigMessage(configName: String) = "Unknown config file '$configName
 fun unexpectedItemTypeMessage(itemType: String) = "Unexpected item type $itemType"
 
 fun notFoundMessage(notFoundObjectName: String, itemName: String) = "Cannot find $notFoundObjectName for $itemName"
-
-fun noItemDirMessage(itemTypeName: String, itemName: String) = "Cannot find directory for a $itemTypeName '$itemName'"
