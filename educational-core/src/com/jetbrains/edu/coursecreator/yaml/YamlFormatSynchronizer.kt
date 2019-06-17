@@ -35,6 +35,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.isUnitTestMode
 
 object YamlFormatSynchronizer {
   val LOAD_FROM_CONFIG = Key<Boolean>("Edu.loadItem")
@@ -152,7 +153,7 @@ object YamlFormatSynchronizer {
 
   @JvmStatic
   fun startSynchronization(project: Project) {
-    if (YamlFormatSettings.isDisabled()) {
+    if (YamlFormatSettings.isDisabled() || isUnitTestMode) {
       return
     }
     EditorFactory.getInstance().eventMulticaster.addDocumentListener(YamlSynchronizationListener(project), project)
