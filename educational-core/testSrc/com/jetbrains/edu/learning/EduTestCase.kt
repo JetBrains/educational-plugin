@@ -27,6 +27,7 @@ import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -67,6 +68,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     myManager.registerExtraEditorDataProvider(TextEditorPsiDataProvider(), null)
     myOldManager = (myFixture.project as ComponentManagerImpl).registerComponentInstance<FileEditorManager>(FileEditorManager::class.java, myManager)
     (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
+    CheckActionListener.reset()
   }
 
   override fun tearDown() {
