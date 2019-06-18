@@ -1,6 +1,5 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <depends>com.intellij.modules.lang</depends>
-  <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <project-components>
     <component>
@@ -12,10 +11,6 @@
     <component>
       <implementation-class>com.jetbrains.edu.learning.stepik.StepikProjectComponent</implementation-class>
     </component>
-    <component>
-      <implementation-class>com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProjectComponent</implementation-class>
-    </component>
-
   </project-components>
 
   <application-components>
@@ -52,7 +47,6 @@
 
   <actions>
     <action id="Educational.StartCourseraAssignment" class="com.jetbrains.edu.learning.coursera.StartCourseraAssignment"/>
-    <action id="Educational.HyperskillProjectAction" class="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProjectAction"/>
     <action id="Educational.ImportCourseraAssignment" class="com.jetbrains.edu.learning.coursera.ImportCourseraAssignment"/>
     <action id="Educational.ImportLocalCourse" class="com.jetbrains.edu.learning.actions.ImportLocalCourseAction"/>
     <action id="Educational.StartStepikCourse" class="com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction"/>
@@ -182,7 +176,6 @@
     <group id="Educational.LearnAndTeachFileMenu" class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup" popup="true">
       <reference id="Educational.BrowseCourses"/>
       <reference id="Educational.StartCourseraAssignment"/>
-      <reference id="Educational.HyperskillProjectAction"/>
       <reference id="Educational.ImportLocalCourse"/>
       <reference id="Educational.StartStepikCourse"/>
       <reference id="Educational.Educator.NewCourse"/>
@@ -196,7 +189,6 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.StepikWidgetProvider"/>
-    <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillWidgetProvider" />
     <projectService serviceInterface="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView"
                     serviceImplementation="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionViewImpl"
                     testServiceImplementation="com.jetbrains.edu.learning.ui.taskDescription.MockTaskDescriptionView"/>
@@ -207,8 +199,6 @@
                     serviceImplementation="com.jetbrains.edu.learning.EduDocumentationManager" overrides="true"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.framework.FrameworkLessonManager"
                     serviceImplementation="com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl"/>
-    <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSolutionLoader"
-                    serviceInterface="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSolutionLoader"/>
     <projectConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
                          id="Educational" displayName="Education"/>
 
@@ -268,9 +258,6 @@
     <experimentalFeature id="edu.course.creator.split.editor" percentOfUsers="100" internalFeature="true">
       <description>Enables previous task view for framework lessons</description>
     </experimentalFeature>
-    <experimentalFeature id="edu.course.hyperskill" percentOfUsers="100" internalFeature="true">
-      <description>Enables project-based learning with Hyperskill</description>
-    </experimentalFeature>
     <defaultLiveTemplatesProvider implementation="com.jetbrains.edu.coursecreator.HintTemplateProvider"/>
     <liveTemplateContext implementation="com.jetbrains.edu.coursecreator.HintTemplateContentType"/>
 
@@ -291,4 +278,6 @@
     <!--educator-->
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
   </extensions>
+
+  <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
 </idea-plugin>

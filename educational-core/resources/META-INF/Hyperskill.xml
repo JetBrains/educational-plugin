@@ -1,18 +1,33 @@
 <idea-plugin>
 
-  <actions>
-    <action id="Hyperskill.PeekSolution" class="com.jetbrains.edu.learning.stepik.hyperskill.HSPeekSolutionAction"/>
-  </actions>
+  <project-components>
+    <component>
+      <implementation-class>com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProjectComponent</implementation-class>
+    </component>
+  </project-components>
+
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService"/>
+    <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillWidgetProvider" />
+    <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSolutionLoader"
+                    serviceInterface="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSolutionLoader"/>
+    <experimentalFeature id="edu.course.hyperskill" percentOfUsers="100" internalFeature="true">
+      <description>Enables action to push Hyperskill lesson to Stepik</description>
+    </experimentalFeature>
   </extensions>
+
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCheckListener"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRemoteTaskChecker"/>
   </extensions>
+
   <actions>
+    <action id="Hyperskill.PeekSolution" class="com.jetbrains.edu.learning.stepik.hyperskill.HSPeekSolutionAction"/>
     <action id="Educational.Educator.HyperskillChangeHost" class="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillChangeHost"/>
+    <action id="Educational.HyperskillProjectAction" class="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProjectAction">
+      <add-to-group group-id="Educational.LearnAndTeachFileMenu" relative-to-action="Educational.StartCourseraAssignment" anchor="after"/>
+    </action>
   </actions>
 </idea-plugin>
