@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -139,8 +137,9 @@ object YamlDeserializer {
     }
 
     val message = if (itemDir == null) "Directory for item: '$childName' not found" else "Config file for item: '${childName}' not found"
-    val notification = Notification("Edu.InvalidConfig", "Config file not found", message, NotificationType.ERROR)
-    notification.notify(project)
+    val parentConfig = dir.findChild(configFileName) ?: error("Config file for currently loading item ${name} not found")
+    showError(project, parentConfig, message)
+
     return null
   }
 
