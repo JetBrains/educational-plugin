@@ -94,8 +94,14 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val lesson = findOrCreateProblemsLesson(course, project)
     val lessonDir = lesson.getLessonDir(project)
                     ?: return sendErrorResponse(request, context, "Could not find Problems directory")
-    val stepSource = HyperskillConnector.getStepSource(stepId)
-                     ?: return sendErrorResponse(request, context, "Could not find get step source for the task")
+
+    val stepSource = ProgressManager.getInstance().run(
+      object : Task.WithResult<HyperskillStepSource?, Exception>(null, "Loading hyperskill problem", true) {
+        override fun compute(indicator: ProgressIndicator): HyperskillStepSource? {
+          return HyperskillConnector.getStepSource(stepId)
+        }
+      }) ?: return sendErrorResponse(request, context, "Could not find get step source for the task")
+
     val task = findOrCreateTask(course, lesson, stepSource, lessonDir, project)
 
     runInEdt {

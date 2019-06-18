@@ -24,12 +24,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.messages.MessageBusConnection;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
@@ -44,7 +42,6 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.update.UpdateNotification;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 
 import java.io.IOException;
 import java.util.*;
@@ -145,7 +142,7 @@ public class StepikSolutionsLoader implements Disposable {
     });
   }
 
-  public void removeSolvedTaskSelection(){
+  private void removeSolvedTaskSelection(){
     ApplicationManager.getApplication().invokeLater(() -> {
       Task currentTask = EduUtils.getCurrentTask(myProject);
       if (currentTask == null) {
@@ -606,11 +603,6 @@ public class StepikSolutionsLoader implements Disposable {
   public void dispose() {
     myBusConnection.disconnect();
     cancelUnfinishedTasks();
-  }
-
-  @TestOnly
-  public void doLoadSolution(Task task, boolean isSolved) {
-    loadSolution(myProject, task, isSolved);
   }
 
   private static void updateUI(@NotNull Project project, @NotNull Task task) {
