@@ -6,7 +6,7 @@ import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.python.learning.pycharm.PyTaskCheckerProvider;
+import com.jetbrains.edu.python.learning.checker.PyTaskCheckerProvider;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import icons.PythonIcons;
 import org.jetbrains.annotations.NotNull;

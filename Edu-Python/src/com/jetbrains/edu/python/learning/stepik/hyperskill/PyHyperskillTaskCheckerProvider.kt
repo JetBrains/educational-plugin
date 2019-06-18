@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.SUCCESS_MESSAGE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.python.learning.checker.PyTaskChecker
-import com.jetbrains.edu.python.learning.pycharm.PyTaskCheckerProvider
+import com.jetbrains.edu.python.learning.checker.PyTaskCheckerProvider
 
 class PyHyperskillTaskCheckerProvider : PyTaskCheckerProvider() {
 
