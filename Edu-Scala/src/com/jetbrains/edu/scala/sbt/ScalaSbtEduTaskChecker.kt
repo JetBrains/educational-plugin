@@ -9,8 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
 class ScalaSbtEduTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(task, project) {
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
-    return task.getAllTestDirectories(project)
-      .mapNotNull { ConfigurationContext(it).configuration }
+    return task.getAllTestDirectories(project).mapNotNull { ConfigurationContext(it).configuration }
   }
 }
 
