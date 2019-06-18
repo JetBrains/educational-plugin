@@ -12,15 +12,22 @@ import com.jetbrains.edu.learning.courseDir
 import javax.swing.event.HyperlinkEvent
 
 
-const val NOTIFICATION_ID = "Education: invalid config file"
+private const val NOTIFICATION_ID = "Education: invalid config file"
+
+private const val NOTIFICATION_TITLE = "Invalid yaml"
 
 class InvalidConfigNotification(project: Project, configFile: VirtualFile, cause: String) :
-  Notification("Edu.InvalidConfig",
-               "Invalid yaml",
-               "File '${FileUtil.getRelativePath(project.courseDir.path, configFile.path,
-                                                 VfsUtil.VFS_SEPARATOR_CHAR)}': ${cause.decapitalize()}" +
-               "<br><a href=\"\">Edit</a>",
-               NotificationType.ERROR, GoToFileListener(project, configFile))
+  Notification(NOTIFICATION_ID,
+               NOTIFICATION_TITLE,
+               messageWithEditLink(project, configFile, cause),
+               NotificationType.ERROR,
+               GoToFileListener(project, configFile))
+
+private fun messageWithEditLink(project: Project, configFile: VirtualFile, cause: String) =
+  "File '${pathToConfig(project, configFile)}':<br /> ${cause.decapitalize()} <br /><a href=\"\">Edit</a>"
+
+private fun pathToConfig(project: Project, configFile: VirtualFile) =
+  FileUtil.getRelativePath(project.courseDir.path, configFile.path, VfsUtil.VFS_SEPARATOR_CHAR)
 
 private class GoToFileListener(val project: Project, val file: VirtualFile) : NotificationListener {
   override fun hyperlinkUpdate(notification: Notification, event: HyperlinkEvent) {
