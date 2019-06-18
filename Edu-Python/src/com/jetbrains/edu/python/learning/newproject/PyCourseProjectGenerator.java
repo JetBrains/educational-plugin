@@ -11,12 +11,12 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
-import com.jetbrains.edu.python.learning.PyCourseBuilder;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.sdk.PyDetectedSdk;
@@ -32,7 +32,7 @@ import java.util.List;
 public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjectSettings> {
   private static final Logger LOG = Logger.getInstance(PyCourseProjectGenerator.class);
 
-  public PyCourseProjectGenerator(@NotNull PyCourseBuilder builder, @NotNull Course course) {
+  public PyCourseProjectGenerator(@NotNull EduCourseBuilder<PyNewProjectSettings> builder, @NotNull Course course) {
     super(builder, course);
   }
 

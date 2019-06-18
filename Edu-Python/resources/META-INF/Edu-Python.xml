@@ -24,6 +24,8 @@
     <configurator implementationClass="com.jetbrains.edu.python.learning.pycharm.PyConfigurator" language="Python"/>
     <configurator implementationClass="com.jetbrains.edu.python.learning.PyConfigurator" language="Python" courseType="Stepik"/>
     <configurator implementationClass="com.jetbrains.edu.python.learning.pycharm.PyConfigurator" language="Python" courseType="Stepik"/>
+    <configurator implementationClass="com.jetbrains.edu.python.learning.PyNewConfigurator" language="Python" environment="unittest"/>
+    <configurator implementationClass="com.jetbrains.edu.python.learning.pycharm.PyNewConfigurator" language="Python" environment="unittest"/>
     <coursesProvider implementation="com.jetbrains.edu.python.learning.PyBundledCoursesProvider"/>
   </extensions>
 
