@@ -12,10 +12,12 @@ import com.fasterxml.jackson.databind.BeanDescription
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
+import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.coursecreator.yaml.format.NotImplementedInMixin
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
@@ -25,10 +27,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWORK_TYPE
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
+import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
+import java.util.*
 
 private const val VERSION = "version"
 private const val TITLE = "title"
+private const val AUTHORS = "authors"
 private const val LANGUAGE = "language"
 private const val SUMMARY = "summary"
 private const val PROGRAMMING_LANGUAGE = "programming_language"
@@ -56,11 +61,17 @@ private const val ADDITIONAL_FILES = "additional_files"
 private const val ENVIRONMENT = "environment"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
-@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS)
+@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS)
 @JsonSerialize(using = CourseSerializer::class)
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
   private lateinit var myName: String
+
+  @JsonProperty(AUTHORS)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  @JsonSerialize(contentConverter = StepikUserInfoToString::class)
+  @JsonDeserialize(contentConverter = StepikUserInfoFromString::class)
+  private var authors: MutableList<StepikUserInfo> = ArrayList()
 
   @JsonProperty(SUMMARY)
   private lateinit var description: String
@@ -86,6 +97,19 @@ abstract class LocalEduCourseMixin {
   @JsonProperty(ADDITIONAL_FILES)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   private lateinit var additionalFiles: List<TaskFile>
+}
+
+private class StepikUserInfoToString : StdConverter<StepikUserInfo, String?>() {
+  override fun convert(value: StepikUserInfo?): String? = value?.name
+}
+
+private class StepikUserInfoFromString : StdConverter<String?, StepikUserInfo?>() {
+  override fun convert(value: String?): StepikUserInfo? {
+    if (value == null) {
+      return null
+    }
+    return StepikUserInfo(value)
+  }
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization

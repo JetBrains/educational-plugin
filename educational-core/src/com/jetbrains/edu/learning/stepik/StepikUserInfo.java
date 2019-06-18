@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StepikUserInfo {
   @JsonProperty("id")
   private int id = -1;
@@ -14,12 +17,19 @@ public class StepikUserInfo {
   @JsonProperty("last_name")
   private String myLastName;
 
+  @SuppressWarnings("unused") //needed for deserialization
   private StepikUserInfo() {
     myFirstName = "";
     myLastName = "";
   }
-  public static StepikUserInfo createEmptyUser() {
-    return new StepikUserInfo();
+
+  public StepikUserInfo(String fullName) {
+    this();
+    final List<String> firstLast = StringUtil.split(fullName, " ");
+    setFirstName(firstLast.remove(0));
+    if (firstLast.size() > 0) {
+      setLastName(StringUtil.join(firstLast, " "));
+    }
   }
 
   public int getId() {
@@ -48,7 +58,12 @@ public class StepikUserInfo {
 
   @NotNull
   public String getName() {
-    return StringUtil.join(new String[]{myFirstName, myLastName}, " ");
+    List<String> names = new ArrayList<>();
+    names.add(myFirstName);
+    if (!myLastName.isEmpty()) {
+      names.add(myLastName);
+    }
+    return StringUtil.join(names, " ");
   }
 
   @Override

@@ -28,6 +28,21 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     TestCase.assertEquals(expectedCourseJson, generatedJsonFile)
   }
 
+  fun `test local course with author`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+    }
+    course.description = "my summary"
+    course.setAuthorsAsString(arrayOf("EduTools Dev", "EduTools QA", "EduTools"))
+    val generatedJsonFile = generateJson()
+    val expectedCourseJson = loadExpectedJson()
+    assertEquals(expectedCourseJson, generatedJsonFile)
+  }
+
   fun `test framework lesson archive`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       frameworkLesson("my lesson") {

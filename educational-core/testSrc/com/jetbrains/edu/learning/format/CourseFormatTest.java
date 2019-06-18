@@ -153,6 +153,12 @@ public class CourseFormatTest extends EduTestCase {
     assertEquals(ContainerUtil.newHashMap(Pair.create("1", ChoiceOptionStatus.CORRECT), Pair.create("2", ChoiceOptionStatus.INCORRECT)), actualChoiceOptions);
   }
 
+  public void testCourseWithAuthors() throws IOException {
+    final Course course = getCourseFromJson();
+    assertEquals(ContainerUtil.newArrayList("EduTools Dev", "EduTools QA", "EduTools"),
+                 ContainerUtil.map(course.getAuthors(), info -> info.getName()));
+  }
+
   private Course getCourseFromJson() throws IOException {
     final String fileName = getTestFile();
     return CourseTestUtilsKt.createCourseFromJson(getTestDataPath() + fileName, CourseMode.STUDENT);

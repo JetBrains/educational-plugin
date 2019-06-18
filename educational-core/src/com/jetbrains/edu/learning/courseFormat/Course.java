@@ -123,15 +123,7 @@ public abstract class Course extends LessonContainer {
   public void setAuthorsAsString(String[] authors) {
     this.authors = new ArrayList<>();
     for (String name : authors) {
-      final List<String> firstLast = StringUtil.split(name, " ");
-      if (!firstLast.isEmpty()) {
-        final StepikUserInfo user = StepikUserInfo.createEmptyUser();
-        user.setFirstName(firstLast.remove(0));
-        if (firstLast.size() > 0) {
-          user.setLastName(StringUtil.join(firstLast, " "));
-        }
-        this.authors.add(user);
-      }
+      this.authors.add(new StepikUserInfo(name));
     }
   }
 
