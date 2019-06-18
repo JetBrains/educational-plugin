@@ -5,6 +5,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.ProjectViewTestUtil
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import javax.swing.JTree
 
@@ -12,6 +13,7 @@ abstract class CourseViewTestBase : EduActionTestCase() {
 
   override fun setUp() {
     super.setUp()
+    CheckActionListener.reset()
     ProjectViewTestUtil.setupImpl(project, true)
   }
 
