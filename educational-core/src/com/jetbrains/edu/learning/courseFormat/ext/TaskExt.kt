@@ -5,15 +5,18 @@ package com.jetbrains.edu.learning.courseFormat.ext
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.util.PsiUtilCore
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import java.util.ArrayList
+import java.util.*
 import kotlin.collections.HashSet
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -42,6 +45,19 @@ fun Task.findTestDirs(project: Project): List<VirtualFile> {
 fun Task.getAllTestDirectories(project: Project): List<PsiDirectory> {
   val testDirs = findTestDirs(project)
   return testDirs.mapNotNull { PsiManager.getInstance(project).findDirectory(it) }
+}
+
+fun Task.getAllTestFiles(project: Project): List<PsiFile> {
+  val testFiles = mutableListOf<VirtualFile>()
+  findTestDirs(project).forEach { testDir ->
+    VfsUtilCore.processFilesRecursively(testDir) {
+      if (EduUtils.isTestsFile(project, it)) {
+        testFiles.add(it)
+      }
+      true
+    }
+  }
+  return PsiUtilCore.toPsiFiles(PsiManager.getInstance(project), testFiles)
 }
 
 val Task.placeholderDependencies: List<AnswerPlaceholderDependency>

@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.python.learning.PyConfigurator.TASK_PY
+import com.jetbrains.edu.python.learning.checker.PyNewTaskCheckerProvider
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import icons.PythonIcons
 import javax.swing.Icon
@@ -26,7 +27,7 @@ open class PyNewConfigurator : EduConfigurator<PyNewProjectSettings> {
   }
 
   override fun isEnabled(): Boolean = !(PlatformUtils.isPyCharm() || PlatformUtils.isCLion())
-  override fun getTaskCheckerProvider(): TaskCheckerProvider = TODO()
+  override fun getTaskCheckerProvider(): TaskCheckerProvider = PyNewTaskCheckerProvider()
   override fun getLogo(): Icon = PythonIcons.Python.Python
 
   companion object {
