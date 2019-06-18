@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -22,7 +23,9 @@ class HyperskillCheckListener : CheckListener {
         notification.notify(project)
         return
       }
-      HyperskillCheckConnector.postSolution(task, project, result)
+      ApplicationManager.getApplication().executeOnPooledThread {
+        HyperskillCheckConnector.postSolution(task, project, result)
+      }
       showChooseNewProjectNotification(course, project)
     }
   }
