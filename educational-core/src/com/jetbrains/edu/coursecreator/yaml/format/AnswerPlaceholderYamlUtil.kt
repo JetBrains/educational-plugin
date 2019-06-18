@@ -10,11 +10,10 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 private const val OFFSET = "offset"
 private const val LENGTH = "length"
 private const val PLACEHOLDER_TEXT = "placeholder_text"
-private const val HINTS = "hints"
 private const val DEPENDENCY = "dependency"
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, HINTS, DEPENDENCY)
+@JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY)
 @JsonDeserialize(builder = AnswerPlaceholderBuilder::class)
 abstract class AnswerPlaceholderYamlMixin {
   @JsonProperty(OFFSET)
@@ -30,11 +29,6 @@ abstract class AnswerPlaceholderYamlMixin {
     throw NotImplementedInMixin()
   }
 
-  @JsonProperty(HINTS)
-  fun getHints(): List<String> {
-    throw NotImplementedInMixin()
-  }
-
   @JsonProperty(DEPENDENCY)
   private var myPlaceholderDependency: AnswerPlaceholderDependency? = null
 }
@@ -43,14 +37,12 @@ abstract class AnswerPlaceholderYamlMixin {
 private class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
                                        @JsonProperty(LENGTH) val length: Int,
                                        @JsonProperty(PLACEHOLDER_TEXT) val placeholderText: String,
-                                       @JsonProperty(HINTS) val hints: List<String> = mutableListOf(),
                                        @JsonProperty(DEPENDENCY) val dependency: AnswerPlaceholderDependency?) {
   @Suppress("unused") // deserialization
   private fun build(): AnswerPlaceholder {
     val placeholder = AnswerPlaceholder()
     placeholder.length = length
     placeholder.placeholderText = placeholderText
-    placeholder.hints = hints
     placeholder.offset = offset
     placeholder.placeholderDependency = dependency
     return placeholder

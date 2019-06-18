@@ -18,7 +18,7 @@ class YamlSerializationTest : YamlTestCase() {
       lesson {
         eduTask {
           taskFile("Test.java", "<p>42 is the answer</p>") {
-            placeholder(0, placeholderText = "type here\nand here", hints = listOf("hint 1", "hint 2"))
+            placeholder(0, placeholderText = "type here\nand here")
           }
         }
       }
@@ -34,9 +34,6 @@ class YamlSerializationTest : YamlTestCase() {
     |    placeholder_text: |-
     |      type here
     |      and here
-    |    hints:
-    |    - hint 1
-    |    - hint 2
     |""".trimMargin("|"))
   }
 
@@ -45,7 +42,7 @@ class YamlSerializationTest : YamlTestCase() {
       lesson {
         eduTask {
           taskFile("Task.java", "<p>42 is the answer</p>") {
-            placeholder(0, placeholderText = "type here\nand here", hints = listOf("hint 1", "hint 2"))
+            placeholder(0, placeholderText = "type here\nand here")
           }
           taskFile("Test.java", "my test", false)
         }
@@ -62,9 +59,6 @@ class YamlSerializationTest : YamlTestCase() {
     |    placeholder_text: |-
     |      type here
     |      and here
-    |    hints:
-    |    - hint 1
-    |    - hint 2
     |- name: Test.java
     |  visible: false
     |""".trimMargin("|"))
@@ -75,7 +69,7 @@ class YamlSerializationTest : YamlTestCase() {
       lesson {
         eduTask {
           taskFile("Test.java", "<p>42 is the answer</p>") {
-            placeholder(0, placeholderText = "type here\nand here", hints = listOf("hint 1", "hint 2"))
+            placeholder(0, placeholderText = "type here\nand here")
           }
           taskFile("Additional.java", "", false)
         }
@@ -92,9 +86,6 @@ class YamlSerializationTest : YamlTestCase() {
     |    placeholder_text: |-
     |      type here
     |      and here
-    |    hints:
-    |    - hint 1
-    |    - hint 2
     |- name: Additional.java
     |  visible: false
     |""".trimMargin("|"))
