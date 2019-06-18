@@ -26,6 +26,9 @@ public class StepikUserInfo {
   public StepikUserInfo(String fullName) {
     this();
     final List<String> firstLast = StringUtil.split(fullName, " ");
+    if (firstLast.isEmpty()) {
+      return;
+    }
     setFirstName(firstLast.remove(0));
     if (firstLast.size() > 0) {
       setLastName(StringUtil.join(firstLast, " "));

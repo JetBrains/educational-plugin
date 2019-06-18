@@ -30,9 +30,11 @@ public class CCCreateCourseArchive extends DumbAwareAction {
 
   public static final String GENERATE_COURSE_ARCHIVE = "Generate Course Archive";
   public static final String LAST_ARCHIVE_LOCATION = "Edu.CourseCreator.LastArchiveLocation";
+  public static final String AUTHOR_NAME = "Edu.Author.Name";
 
   private String myZipName;
   private String myLocationDir;
+  private String myAuthorName;
 
   public void setZipName(String zipName) {
     myZipName = zipName;
@@ -40,6 +42,10 @@ public class CCCreateCourseArchive extends DumbAwareAction {
 
   public void setLocationDir(String locationDir) {
     myLocationDir = locationDir;
+  }
+
+  public void setAuthorName(String authorName) {
+    myAuthorName = authorName;
   }
 
   public CCCreateCourseArchive() {
@@ -71,9 +77,11 @@ public class CCCreateCourseArchive extends DumbAwareAction {
     if (dlg.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
       return;
     }
+    course.setAuthorsAsString(new String[]{myAuthorName});
     boolean isSuccessful = createCourseArchive(project, myZipName, myLocationDir, true);
     if (isSuccessful) {
       PropertiesComponent.getInstance(project).setValue(LAST_ARCHIVE_LOCATION, myLocationDir);
+      PropertiesComponent.getInstance(project).setValue(AUTHOR_NAME, myAuthorName);
       EduCounterUsageCollector.createCourseArchive();
     }
     else {

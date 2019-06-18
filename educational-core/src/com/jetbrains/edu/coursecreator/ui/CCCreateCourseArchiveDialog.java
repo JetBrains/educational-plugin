@@ -2,9 +2,9 @@ package com.jetbrains.edu.coursecreator.ui;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,6 +39,7 @@ public class CCCreateCourseArchiveDialog extends DialogWrapper {
   protected void doOKAction() {
     myAction.setZipName(myPanel.getZipName());
     myAction.setLocationDir(myPanel.getLocationPath());
+    myAction.setAuthorName(myPanel.getAuthorName());
     super.doOKAction();
   }
 }
