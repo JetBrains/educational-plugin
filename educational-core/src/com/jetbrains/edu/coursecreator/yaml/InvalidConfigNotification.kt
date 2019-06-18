@@ -12,6 +12,8 @@ import com.jetbrains.edu.learning.courseDir
 import javax.swing.event.HyperlinkEvent
 
 
+const val NOTIFICATION_ID = "Education: invalid config file"
+
 class InvalidConfigNotification(project: Project, configFile: VirtualFile, cause: String) :
   Notification("Edu.InvalidConfig",
                "Invalid yaml",
