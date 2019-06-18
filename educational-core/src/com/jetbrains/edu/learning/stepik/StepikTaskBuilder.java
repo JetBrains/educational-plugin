@@ -145,9 +145,9 @@ public class StepikTaskBuilder {
         }
       }
       if (options.getExecutionMemoryLimit() != null && options.getExecutionTimeLimit() != null) {
-        taskDescription.append("<br>").append("<font color=\"gray\">Memory limit: ").append(options.getExecutionMemoryLimit()).append(" Mb</font>")
-          .append("<br>")
-          .append("<font color=\"gray\">Time limit: ").append(options.getExecutionTimeLimit()).append("s</font>").append("<br><br>");
+        taskDescription.append("<br>").append("<font color=\"gray\">Memory limit: ").append(options.getExecutionMemoryLimit())
+          .append(" Mb</font>").append("<br>").append("<font color=\"gray\">Time limit: ").append(options.getExecutionTimeLimit())
+          .append("s</font>").append("<br><br>");
       }
 
       if (myLanguage.isKindOf(EduNames.PYTHON) && options.getSamples() != null) {
@@ -263,7 +263,13 @@ public class StepikTaskBuilder {
     task.setUpdateDate(myStepSource.getUpdateDate());
 
     if (stepOptions != null) {
-      task.setDescriptionText(myStep.getText());
+      if (!myStep.getText().isEmpty()) {
+        task.setDescriptionText(myStep.getText());
+      }
+      else if (stepOptions.getDescriptionText() != null) {
+        task.setDescriptionText(stepOptions.getDescriptionText());
+      }
+
       if (stepOptions.getDescriptionFormat() != null) {
         task.setDescriptionFormat(stepOptions.getDescriptionFormat());
       }

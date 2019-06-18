@@ -100,6 +100,9 @@ class PyCharmStepOptions : StepOptions {
   @JsonProperty(TITLE)
   var title: String? = null
 
+  @JsonProperty(SerializationUtils.Json.DESCRIPTION_TEXT)
+  var descriptionText: String? = null
+
   @JsonProperty(SerializationUtils.Json.DESCRIPTION_FORMAT)
   var descriptionFormat: DescriptionFormat? = null
 
