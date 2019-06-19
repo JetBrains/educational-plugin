@@ -5,10 +5,8 @@
 
   <extensions defaultExtensionNs="Educational">
     <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator" environment="Gradle"/>
-  </extensions>
-
-  <extensions defaultExtensionNs="Educational">
     <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.sbt.ScalaSbtConfigurator" environment="sbt"/>
+    <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator" courseType="Stepik"/>
   </extensions>
 
 </idea-plugin>

@@ -22,6 +22,8 @@
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.python.learning.PyConfigurator" language="Python"/>
     <configurator implementationClass="com.jetbrains.edu.python.learning.pycharm.PyConfigurator" language="Python"/>
+    <configurator implementationClass="com.jetbrains.edu.python.learning.PyConfigurator" language="Python" courseType="Stepik"/>
+    <configurator implementationClass="com.jetbrains.edu.python.learning.pycharm.PyConfigurator" language="Python" courseType="Stepik"/>
     <coursesProvider implementation="com.jetbrains.edu.python.learning.PyBundledCoursesProvider"/>
   </extensions>
 

@@ -6,6 +6,7 @@
 
   <extensions defaultExtensionNs="Educational">
     <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>
+    <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator" courseType="Stepik"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
