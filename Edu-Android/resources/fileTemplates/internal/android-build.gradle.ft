@@ -31,11 +31,11 @@ allprojects {
                   def message = result.exception?.message ?: "Wrong answer"
                   def lines = message.readLines()
                   println "#educational_plugin FAILED + " + lines[0]
-                  lines[1..-1].forEach { line ->
+                  lines.subList(1, lines.size()).forEach { line ->
                     println "#educational_plugin" + line
                   }
                   // we need this to separate output of different tests
-                  println
+                  println()
                 }
               }
             }

@@ -44,7 +44,8 @@ class GradleCommandLine private constructor(
     val output = launch() ?: return CheckResult.FAILED_TO_CHECK
     if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.firstMessage, output.messages.joinToString("\n"))
 
-    return TestsOutputParser().getCheckResult(output.messages)
+    // TODO: do not use `TestsOutputParser` here
+    return TestsOutputParser().getCheckResult(output.messages.map { STUDY_PREFIX + it })
   }
 
   fun launch(): GradleOutput? {
@@ -108,7 +109,7 @@ class GradleCommandLine private constructor(
 
   companion object {
 
-    private val LOG: Logger = Logger.getInstance(GradleCommandLine::class.java  )
+    private val LOG: Logger = Logger.getInstance(GradleCommandLine::class.java)
 
     fun create(project: Project, command: String, vararg additionalParams: String): GradleCommandLine? {
       val basePath = project.basePath ?: return null
