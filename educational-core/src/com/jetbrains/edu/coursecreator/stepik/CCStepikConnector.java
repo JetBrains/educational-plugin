@@ -53,7 +53,9 @@ public class CCStepikConnector {
       @Override
       public void run(@NotNull final ProgressIndicator indicator) {
         indicator.setIndeterminate(false);
-        postCourse(project, course);
+        if (checkIfAuthorized(project, "post course")) {
+          postCourse(project, course);
+        }
       }
     });
   }
@@ -61,7 +63,8 @@ public class CCStepikConnector {
   public static void postCourse(@NotNull final Project project, @NotNull EduCourse course) {
     final StepikUser user = EduSettings.getInstance().getUser();
     if (user == null) {
-      showStepikNotification(project, "post course");
+      // we check that user isn't null before `postCourse` call
+      LOG.warn("User is null when posting the course");
       return;
     }
     updateProgress("Uploading course to " + StepikNames.STEPIK_URL);
@@ -426,7 +429,7 @@ public class CCStepikConnector {
     }
   }
 
-  private static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
+  public static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
     if (!EduSettings.isLoggedIn()) {
       showStepikNotification(project, failedActionName);
       return false;

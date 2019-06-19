@@ -13,6 +13,7 @@ import com.intellij.openapi.progress.Task.Modal;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -92,6 +93,10 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   public static boolean doPush(Project project, @NotNull EduCourse course) {
+    if (!CCStepikConnector.checkIfAuthorized(project, course.isRemote() ? "update course" : "post course")) {
+      return false;
+    }
+
     if (course.isRemote()) {
       if (StepikConnector.getCourseInfo(course.getId(), null, true) == null) {
         String message = "Cannot find course on Stepik. <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
