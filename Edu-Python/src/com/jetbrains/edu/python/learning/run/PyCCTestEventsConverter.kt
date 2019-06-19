@@ -6,6 +6,7 @@ import com.intellij.execution.testframework.sm.ServiceMessageBuilder
 import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter
 import com.intellij.execution.testframework.sm.runner.events.TreeNodeEvent
 import com.intellij.openapi.util.Key
+import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.checker.TestsOutputParser.TestMessage
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor
@@ -49,10 +50,15 @@ class PyCCTestEventsConverter(
 
     if (!isStarted) {
       messages += createTestSuiteStartedMessage()
-      isStarted = false
+      isStarted = true
     }
     parser.processMessage(text, processor)
-    if ("Process finished" in text) {
+    if (PROCESS_FINISHED in text) {
+      if (nextId == 2) {
+        // `nextId == 2` means that converter didn't receive any test result
+        val failedMessage = TestMessage.Failed(ROOT_SUITE_NAME, CheckResult.NO_TESTS_RUN.message)
+        messages += createTestFailedMessage(ROOT_SUIT_ID.toInt(), failedMessage)
+      }
       messages += createTestSuiteFinishedMessage()
     }
 
@@ -63,12 +69,12 @@ class PyCCTestEventsConverter(
   }
 
   private fun createTestSuiteStartedMessage(): ServiceMessageBuilder =
-    ServiceMessageBuilder.testSuiteStarted("tests")
+    ServiceMessageBuilder.testSuiteStarted(ROOT_SUITE_NAME)
       .addAttribute(NODE_ID, ROOT_SUIT_ID)
       .addAttribute(PARENT_NODE_ID, TreeNodeEvent.ROOT_NODE_ID)
 
   private fun createTestSuiteFinishedMessage(): ServiceMessageBuilder =
-    ServiceMessageBuilder.testSuiteFinished("tests")
+    ServiceMessageBuilder.testSuiteFinished(ROOT_SUITE_NAME)
       .addAttribute(NODE_ID, ROOT_SUIT_ID)
 
   private fun createTestStartedMessage(nodeId: Int, name: String): ServiceMessageBuilder =
@@ -93,17 +99,18 @@ class PyCCTestEventsConverter(
   }
 
   private fun createTestStdOutMessage(text: String): ServiceMessageBuilder =
-    ServiceMessageBuilder.testStdOut(ROOT_SUIT_ID)
+    ServiceMessageBuilder.testStdOut(ROOT_SUITE_NAME)
       .addAttribute(NODE_ID, ROOT_SUIT_ID)
       .addAttribute(OUT, text)
 
   private fun createTestStdErrMessage(text: String): ServiceMessageBuilder =
-    ServiceMessageBuilder.testStdErr(ROOT_SUIT_ID)
+    ServiceMessageBuilder.testStdErr(ROOT_SUITE_NAME)
       .addAttribute(NODE_ID, ROOT_SUIT_ID)
       .addAttribute(OUT, text)
 
   companion object {
     private const val ROOT_SUIT_ID: String = "1"
+    private const val ROOT_SUITE_NAME: String = "tests"
 
     private const val NODE_ID: String = "nodeId"
     private const val PARENT_NODE_ID: String = "parentNodeId"
@@ -112,5 +119,6 @@ class PyCCTestEventsConverter(
     private const val ACTUAL: String = "actual"
     private const val EXPECTED: String = "expected"
 
+    private const val PROCESS_FINISHED = "Process finished"
   }
 }

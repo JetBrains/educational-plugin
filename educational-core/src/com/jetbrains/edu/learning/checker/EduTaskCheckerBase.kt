@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
+import com.jetbrains.edu.learning.checker.CheckResult.Companion.NO_TESTS_RUN
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import java.util.concurrent.CountDownLatch
@@ -152,8 +153,4 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
    * Returns message that will be shown to a user in Check Result panel
    */
   protected open val SMTestProxy.comparisonMessage: String get() = errorMessage
-
-  companion object {
-    private val NO_TESTS_RUN = CheckResult(CheckStatus.Unchecked, "No tests have run")
-  }
 }
