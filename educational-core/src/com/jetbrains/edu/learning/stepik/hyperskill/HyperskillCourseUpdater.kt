@@ -28,7 +28,7 @@ object HyperskillCourseUpdater {
 
   @JvmStatic
   fun updateCourse(project: Project, course: HyperskillCourse) {
-    ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.Backgroundable(project, "Updating Course") {
+    ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.Backgroundable(project, "Checking for Course Updates") {
 
       override fun run(indicator: ProgressIndicator) {
         val projectId = course.hyperskillProject.id
