@@ -25,8 +25,9 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.enablePlugins
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.awt.Component
@@ -218,6 +219,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     else {
       EduConfiguratorManager.allExtensions()
         .filter { it.instance.isCourseCreatorEnabled }
+        .filter { it.courseType != StepikNames.STEPIK_TYPE }
         .mapNotNull { extension -> obtainCourseData(extension.language, extension.environment, extension.courseType) }
     }
     courseData
