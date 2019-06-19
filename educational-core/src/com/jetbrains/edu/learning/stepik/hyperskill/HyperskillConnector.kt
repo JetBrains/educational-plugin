@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
-import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
@@ -11,6 +10,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduLogInListener
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -142,7 +142,7 @@ object HyperskillConnector {
     }
   }
 
-  fun getLesson(course: HyperskillCourse, attachmentLink: String, language: Language): Lesson? {
+  fun getLesson(course: HyperskillCourse, attachmentLink: String): Lesson? {
     val progressIndicator = ProgressManager.getInstance().progressIndicator
 
     val lesson = FrameworkLesson()
@@ -152,7 +152,7 @@ object HyperskillConnector {
     val stepSources = course.stages.mapNotNull { getStepSource(it.stepId) }
 
     progressIndicator?.checkCanceled()
-    val tasks = getTasks(language, lesson, stepSources)
+    val tasks = getTasks(course, lesson, stepSources)
     for (task in tasks) {
       lesson.addTask(task)
     }
@@ -160,10 +160,10 @@ object HyperskillConnector {
     return lesson
   }
 
-  fun getTasks(language: Language, lesson: Lesson, stepSources: List<HyperskillStepSource>): List<Task> {
+  fun getTasks(course: Course, lesson: Lesson, stepSources: List<HyperskillStepSource>): List<Task> {
     val tasks = ArrayList<Task>()
     for (step in stepSources) {
-      val builder = HyperskillTaskBuilder(language, lesson, step, step.id)
+      val builder = HyperskillTaskBuilder(course, lesson, step, step.id)
       if (!builder.isSupported(step.block!!.name)) continue
       val task = builder.createTask(step.block!!.name)
       if (task != null) {
@@ -177,7 +177,6 @@ object HyperskillConnector {
     return try {
       ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.WithResult<Boolean, Exception>(null, "Loading hyperskill project", true) {
         override fun compute(indicator: ProgressIndicator): Boolean {
-          val language = hyperskillCourse.languageById
           val hyperskillAccount = HyperskillSettings.INSTANCE.account
           if (hyperskillAccount == null) {
             LOG.error("User is not logged in to the Hyperskill")
@@ -195,7 +194,7 @@ object HyperskillConnector {
             hyperskillCourse.stages = stages
           }
           val stages = hyperskillCourse.stages
-          val lesson = getLesson(hyperskillCourse, hyperskillProject.ideFiles, language)
+          val lesson = getLesson(hyperskillCourse, hyperskillProject.ideFiles)
           if (lesson == null) {
             LOG.warn("Project doesn't contain framework lesson")
             return false

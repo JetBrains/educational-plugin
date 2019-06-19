@@ -36,8 +36,7 @@ object HyperskillCourseUpdater {
         val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language] ?: return
         val remoteCourse = HyperskillCourse(hyperskillProject, languageId)
         remoteCourse.stages = HyperskillConnector.getStages(projectId) ?: return
-        val language = remoteCourse.languageById ?: return
-        val remoteLesson = HyperskillConnector.getLesson(remoteCourse, hyperskillProject.ideFiles, language) ?: return
+        val remoteLesson = HyperskillConnector.getLesson(remoteCourse, hyperskillProject.ideFiles) ?: return
         remoteCourse.addLesson(remoteLesson)
         remoteCourse.init(null, null, false)
 

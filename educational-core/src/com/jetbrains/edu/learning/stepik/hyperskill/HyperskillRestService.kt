@@ -116,7 +116,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
                                lessonDir: VirtualFile, project: Project): com.jetbrains.edu.learning.courseFormat.tasks.Task {
     var task = lesson.getTask(stepSource.id)
     if (task == null) {
-      task = getTasks(course.languageById, lesson, listOf(stepSource)).first()
+      task = getTasks(course, lesson, listOf(stepSource)).first()
       task.name = stepSource.title
       task.feedbackLink = FeedbackLink(stepLink(task.id))
       task.index = lesson.taskList.size + 1

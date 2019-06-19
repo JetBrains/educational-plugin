@@ -86,6 +86,7 @@ public class CCStepikConnector {
     courseOnRemote.setItems(Lists.newArrayList(items));
     courseOnRemote.setAuthors(course.getAuthors());
     courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
+    courseOnRemote.setEnvironment(course.getEnvironment());
     courseOnRemote.setLanguage(course.getLanguage());
 
     if (!ApplicationManager.getApplication().isInternal() && !isTestAccount(currentUser)) {

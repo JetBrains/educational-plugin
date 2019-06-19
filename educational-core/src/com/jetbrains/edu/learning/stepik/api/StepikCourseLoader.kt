@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.api
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.ConcurrencyUtil
@@ -213,7 +212,7 @@ object StepikCourseLoader {
           lesson = FrameworkLesson(lesson)
         }
       }
-      val tasks = getTasks(remoteCourse.languageById!!, lesson, allStepSources)
+      val tasks = getTasks(remoteCourse, lesson, allStepSources)
       for (task in tasks) {
         lesson.addTask(task)
       }
@@ -247,11 +246,11 @@ object StepikCourseLoader {
     return units.sortedBy { unit -> unit.section }.mapNotNull { idToLesson[it.lesson] }
   }
 
-  fun getTasks(language: Language, lesson: Lesson, allStepSources: List<StepSource>): List<Task> {
+  private fun getTasks(course: Course, lesson: Lesson, allStepSources: List<StepSource>): List<Task> {
     val user = EduSettings.getInstance().user
     val tasks = ArrayList<Task>()
     for (step in allStepSources) {
-      val builder = StepikTaskBuilder(language, lesson, step, step.id, user?.id ?: -1)
+      val builder = StepikTaskBuilder(course, lesson, step, step.id, user?.id ?: -1)
       if (!builder.isSupported(step.block!!.name)) continue
       val task = builder.createTask(step.block!!.name)
       if (task != null) {

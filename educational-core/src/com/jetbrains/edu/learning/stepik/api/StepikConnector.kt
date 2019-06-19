@@ -120,7 +120,7 @@ object StepikConnector {
   @JvmStatic
   fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean? = null, optional: Boolean = false): EduCourse? {
     val response = service.courses(courseId, isIdeaCompatible).executeHandlingExceptions(optional)
-    return response?.body()?.courses?.firstOrNull()?.apply { setCourseLanguage(this) }
+    return response?.body()?.courses?.firstOrNull()?.apply { setCourseLanguageEnvironment(this) }
   }
 
   @JvmStatic

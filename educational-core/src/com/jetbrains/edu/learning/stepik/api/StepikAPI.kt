@@ -156,6 +156,7 @@ class CourseData(course: Course) {
 
   init {
     this.course.name = course.name
+    this.course.environment = course.environment
     this.course.language = course.language
     this.course.description = course.description
     this.course.authors = course.authors

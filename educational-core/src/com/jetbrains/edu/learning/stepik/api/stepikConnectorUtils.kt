@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.featuredCourses
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.setCourseLanguage
+import com.jetbrains.edu.learning.stepik.setCourseLanguageEnvironment
 import java.io.BufferedReader
 import java.io.IOException
 import java.net.URL
@@ -22,7 +22,7 @@ private val LOG = Logger.getInstance(StepikConnector::class.java.name)
 
 fun getAvailableCourses(coursesList: CoursesList): List<EduCourse> {
   coursesList.courses.forEach { info ->
-    setCourseLanguage(info)
+    setCourseLanguageEnvironment(info)
   }
   val availableCourses = coursesList.courses.filter {
     !StringUtil.isEmptyOrSpaces(it.type)

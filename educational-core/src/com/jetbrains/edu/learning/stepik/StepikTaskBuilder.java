@@ -12,10 +12,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus;
@@ -94,7 +91,7 @@ public class StepikTaskBuilder {
   private static final String DEFAULT_EDU_TASK_NAME = "Edu Task";
   private static final String UNKNOWN_TASK_NAME = "Unknown Task";
 
-  public StepikTaskBuilder(@NotNull Language language,
+  public StepikTaskBuilder(@NotNull Course course,
                            @NotNull Lesson lesson,
                            @NotNull StepSource stepSource,
                            int stepId, int userId) {
@@ -102,9 +99,9 @@ public class StepikTaskBuilder {
     myStep = stepSource.getBlock();
     myStepId = stepId;
     myUserId = userId;
-    myLanguage = language;
+    myLanguage = course.getLanguageById();
     myLesson = lesson;
-    myConfigurator = EduConfiguratorManager.findConfigurator(EduNames.PYCHARM, EduNames.DEFAULT_ENVIRONMENT, myLanguage);
+    myConfigurator = EduConfiguratorManager.findConfigurator(course.getItemType(), course.getEnvironment(), myLanguage);
     if (myConfigurator == null) {
       LOG.warn("Cannot get configurator for a language: " + myLanguage);
     }

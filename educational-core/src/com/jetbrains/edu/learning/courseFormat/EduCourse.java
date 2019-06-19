@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.courseFormat;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Transient;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -14,10 +15,11 @@ import java.util.List;
 
 public class EduCourse extends Course {
   private static final Logger LOG = Logger.getInstance(Course.class);
+  public static final String ENVIRONMENT_SEPARATOR = "#";
 
   // Fields from stepik:
   private boolean isCompatible = true;
-  //course type in format "pycharm<version> <language>"
+  //course type in format "pycharm<version> <language> <version>$ENVIRONMENT_SEPARATOR<environment>"
   protected String myType =
     String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
   // in CC mode is used to store top-level lessons section id
@@ -75,16 +77,19 @@ public class EduCourse extends Course {
   }
 
   private void updateType(String language) {
-    final int separator = myType.indexOf(" ");
-    final String version;
-    if (separator == -1) {
-      version = String.valueOf(EduVersions.JSON_FORMAT_VERSION);
-    }
-    else {
-      version = myType.substring(StepikNames.PYCHARM_PREFIX.length(), separator);
+    final int languageSeparator = myType.indexOf(" ");
+    String formatVersion = String.valueOf(EduVersions.JSON_FORMAT_VERSION);
+    if (languageSeparator != -1) {
+      formatVersion = myType.substring(StepikNames.PYCHARM_PREFIX.length(), languageSeparator);
     }
 
-    setType(String.format("%s%s %s", StepikNames.PYCHARM_PREFIX, version, language));
+    String environment = getEnvironment();
+    if (!environment.equals(EduNames.DEFAULT_ENVIRONMENT)) {
+      setType(String.format("%s%s %s%s%s", StepikNames.PYCHARM_PREFIX, formatVersion, language, ENVIRONMENT_SEPARATOR, environment));
+    }
+    else {
+      setType(String.format("%s%s %s", StepikNames.PYCHARM_PREFIX, formatVersion, language));
+    }
   }
 
   public void setType(String type) {

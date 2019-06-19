@@ -25,7 +25,6 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -41,11 +40,18 @@ val featuredCourses = getCoursesIds(PROMOTED_COURSES_LINK)
 val inProgressCourses = getCoursesIds(IN_PROGRESS_COURSES_LINK)
 val featuredStepikCourses = getCourseIdsWithLanguage(FEATURED_STEPIK_COURSES_LINK)
 
-fun setCourseLanguage(info: EduCourse) {
+fun setCourseLanguageEnvironment(info: EduCourse) {
   val courseFormat = info.type
-  val separatorIndex = courseFormat.indexOf(" ")
-  if (separatorIndex != -1) {
-    info.language = courseFormat.substring(separatorIndex + 1)
+  val languageIndex = courseFormat.indexOf(" ")
+  if (languageIndex != -1) {
+    val environmentIndex = courseFormat.indexOf(EduCourse.ENVIRONMENT_SEPARATOR, languageIndex + 1)
+    if (environmentIndex != -1) {
+      info.language = courseFormat.substring(languageIndex + 1, environmentIndex)
+      info.environment = courseFormat.substring(environmentIndex + 1)
+    }
+    else {
+      info.language = courseFormat.substring(languageIndex + 1)
+    }
   }
   else {
     LOG.info(String.format("Language for course `%s` with `%s` type can't be set because it isn't \"pycharm\" course",
