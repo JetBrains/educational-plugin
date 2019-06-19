@@ -70,7 +70,7 @@ fun updateCourseIfNeeded(project: Project, course: EduCourse) {
   }
 
   ProgressManager.getInstance().run(
-    object : com.intellij.openapi.progress.Task.Backgroundable(project, "Updating Course") {
+    object : com.intellij.openapi.progress.Task.Backgroundable(project, "Checking for Course Updates") {
       override fun run(indicator: ProgressIndicator) {
         if (!course.isUpToDate()) {
           showUpdateAvailableNotification(project) {
