@@ -45,7 +45,7 @@ class StepikTaskBuilderTest : EduTestCase() {
     val course = EduCourse()
     course.language = language.id
     val lesson = Lesson()
-    val task = StepikTaskBuilder(language, lesson, stepSource, -1, -1).createTask(stepSource.block?.name!!) ?: error("")
+    val task = StepikTaskBuilder(course, lesson, stepSource, -1, -1).createTask(stepSource.block?.name!!) ?: error("")
 
     assertInstanceOf(task, T::class.java)
 
