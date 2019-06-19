@@ -76,7 +76,7 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
         }
     }
 
-    override fun initNewTask(lesson: Lesson, task: Task, info: NewStudyItemInfo) {
+    override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
         if (task.taskFiles.isNotEmpty()) return
         val params = mapOf("PACKAGE_NAME" to info.name.toPackageName())
         for (templateInfo in defaultTaskFiles()) {

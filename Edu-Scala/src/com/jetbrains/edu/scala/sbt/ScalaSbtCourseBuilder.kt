@@ -31,8 +31,8 @@ class ScalaSbtCourseBuilder : EduCourseBuilder<JdkProjectSettings> {
     return ScalaSbtCourseProjectGenerator(this, course)
   }
 
-  override fun initNewTask(lesson: Lesson, task: Task, info: NewStudyItemInfo) {
-    super.initNewTask(lesson, task, info)
+  override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
+    super.initNewTask(project, lesson, task, info)
     val templateInfo = TemplateFileInfo(TASK_BUILD_SBT, BUILD_SBT, false)
     val taskFile = templateInfo.toTaskFile(mapOf("TASK_NAME" to info.name.replace(" ", "-"))) ?: return
     task.addTaskFile(taskFile)

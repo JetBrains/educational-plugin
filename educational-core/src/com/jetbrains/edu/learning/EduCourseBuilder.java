@@ -123,7 +123,7 @@ public interface EduCourseBuilder<Settings> {
    *
    * @param task initializing task
    */
-  default void initNewTask(@NotNull final Lesson lesson, @NotNull final Task task, @NotNull NewStudyItemInfo info) {
+  default void initNewTask(@NotNull Project project, @NotNull final Lesson lesson, @NotNull final Task task, @NotNull NewStudyItemInfo info) {
     if (task.getTaskFiles().isEmpty()) {
       String sourceDir = TaskExt.getSourceDir(task);
       TaskFile taskFile = new TaskFile();

@@ -95,7 +95,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
       val prevTask = parentItem.getTaskList().getOrNull(info.index - 2)
       val prevTaskDir = prevTask?.getTaskDir(project)
       if (prevTask == null || prevTaskDir == null) {
-        initTask(course, parentItem, newTask, info)
+        initTask(project, course, parentItem, newTask, info)
         return newTask
       }
       FileDocumentManager.getInstance().saveAllDocuments()
@@ -133,14 +133,14 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
         }
       newTask.init(course, parentItem, false)
     } else {
-      initTask(course, parentItem, newTask, info)
+      initTask(project, course, parentItem, newTask, info)
     }
     return newTask
   }
 
-  private fun initTask(course: Course, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
+  private fun initTask(project: Project, course: Course, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     if (!course.isStudy) {
-      course.configurator?.courseBuilder?.initNewTask(lesson, task, info)
+      course.configurator?.courseBuilder?.initNewTask(project, lesson, task, info)
     }
   }
 

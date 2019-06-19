@@ -1,10 +1,10 @@
 package com.jetbrains.edu.android
 
-import com.android.SdkConstants
+import com.android.ide.common.repository.GradleCoordinate
 import com.android.tools.idea.gradle.project.sync.GradleSyncInvoker
 import com.android.tools.idea.gradle.project.sync.GradleSyncListener
 import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
-import com.android.tools.idea.sdk.IdeSdks
+import com.android.tools.idea.templates.RepositoryUrlManager
 import com.google.wireless.android.sdk.stats.GradleSyncStats
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ModalityState
@@ -28,10 +28,8 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.kotlinVersion
 import com.jetbrains.edu.learning.projectView.CourseViewPane
-import java.io.File
 
 class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
@@ -64,30 +62,35 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
   override fun createInitialLesson(project: Project, course: Course): Lesson? = null
 
-  override fun initNewTask(lesson: Lesson, task: Task, info: NewStudyItemInfo) {
+  override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     val packageName = info.getUserData(PACKAGE_NAME) ?: return
     val minAndroidSdk = info.getUserData(MIN_ANDROID_SDK) ?: return
     val compileAndroidSdk = info.getUserData(COMPILE_ANDROID_SDK) ?: return
-
-    // TODO: setup android sdk on CI
-    val sdkLocation = if (isUnitTestMode) File("/") else IdeSdks.getInstance().androidSdkPath ?: return
 
     val attributes = mapOf(
       "PACKAGE_NAME" to packageName,
       "MIN_ANDROID_SDK" to minAndroidSdk.toString(),
       "COMPILE_ANDROID_SDK" to compileAndroidSdk.toString(),
       "TARGET_ANDROID_SDK" to compileAndroidSdk.toString(),
-      "SUPPORT_LIB_VERSION" to getLibraryRevision(GoogleMavenArtifactId.ANDROIDX_APP_COMPAT_V7, sdkLocation, "$compileAndroidSdk.0.0") {
-        it.toString().startsWith("$compileAndroidSdk.")
-      },
-      "ESPRESSO_CORE_VERSION" to getLibraryRevision(GoogleMavenArtifactId.ESPRESSO_CORE, sdkLocation, "3.0.2"),
-      "TEST_RUNNER_VERSION" to getLibraryRevision(GoogleMavenArtifactId.TEST_RUNNER, sdkLocation, "1.0.2")
+      "ANDROIDX_CORE_VERSION" to getLibraryVersion(project, "androidx.core", "core-ktx", "1.0.2"),
+      "ANDROIDX_APP_COMPAT_VERSION" to getLibraryVersion(project, GoogleMavenArtifactId.ANDROIDX_APP_COMPAT_V7, "1.0.2"),
+      "ANDROIDX_TEST_RUNNER_VERSION" to getLibraryVersion(project, "androidx.test.ext", "junit", "1.1.1"),
+      "ANDROIDX_ESPRESSO_CORE_VERSION" to getLibraryVersion(project, GoogleMavenArtifactId.ANDROIDX_ESPRESSO_CORE, "3.2.0")
     )
 
     for (templateInfo in defaultAndroidCourseFiles(packageName)) {
       val taskFile = templateInfo.toTaskFile(attributes) ?: continue
       task.addTaskFile(taskFile)
     }
+  }
+
+  private fun getLibraryVersion(project: Project, mavenArtifactId: GoogleMavenArtifactId, defaultVersion: String): String {
+    return getLibraryVersion(project, mavenArtifactId.mavenGroupId, mavenArtifactId.mavenArtifactId, defaultVersion)
+  }
+
+  private fun getLibraryVersion(project: Project, groupId: String, artifactId: String, defaultVersion: String): String {
+    val gradleCoordinate = GradleCoordinate(groupId, artifactId, "+")
+    return RepositoryUrlManager.get().resolveDynamicCoordinateVersion(gradleCoordinate, project) ?: return defaultVersion
   }
 
   override fun refreshProject(project: Project, listener: EduCourseBuilder.ProjectRefreshListener?) {
