@@ -11,6 +11,10 @@
     <configurationType implementation="com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer"/>
 
+    <experimentalFeature id="edu.course.python.unittest" percentOfUsers="100" internalFeature="true">
+      <description>Enables support of Python test frameworks</description>
+    </experimentalFeature>
+
   </extensions>
 
   <extensions defaultExtensionNs="Pythonid">
