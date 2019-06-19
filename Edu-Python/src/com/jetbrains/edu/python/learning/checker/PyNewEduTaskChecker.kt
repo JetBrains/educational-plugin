@@ -3,7 +3,9 @@ package com.jetbrains.edu.python.learning.checker
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestFiles
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.python.run.PythonRunConfiguration
@@ -17,4 +19,7 @@ class PyNewEduTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(
       .mapNotNull { ConfigurationContext(it).configuration }
       .filter { it.configuration !is PythonRunConfiguration }
   }
+
+  override fun checkIfFailedToRunTests(stderr: String): CheckResult =
+    if ("SyntaxError" in stderr) CheckResult(CheckStatus.Failed, "The file contains syntax errors") else CheckResult.SOLVED
 }

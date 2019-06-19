@@ -4,10 +4,7 @@ import com.intellij.execution.ExecutionListener
 import com.intellij.execution.ExecutionManager
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.execution.process.AnsiEscapeDecoder
-import com.intellij.execution.process.ProcessAdapter
-import com.intellij.execution.process.ProcessEvent
-import com.intellij.execution.process.ProcessOutputTypes
+import com.intellij.execution.process.*
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.execution.runners.ProgramRunner
@@ -21,6 +18,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.NO_TESTS_RUN
@@ -59,6 +57,7 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
     if (configurations.isEmpty()) return NO_TESTS_RUN
 
     val latch = CountDownLatch(configurations.size)
+    val stderr = StringBuilder()
     runInEdt {
       val environments = mutableListOf<ExecutionEnvironment>()
       connection.subscribe(ExecutionManager.EXECUTION_TOPIC, object : ExecutionListener {
@@ -74,6 +73,13 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
         environments.add(env)
         runner?.execute(env) { descriptor ->
           descriptor.processHandler?.addProcessListener(object : ProcessAdapter() {
+            override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+              val text = event.text
+              if (text != null && ProcessOutputType.isStderr(outputType)) {
+                stderr.append(text)
+              }
+            }
+
             override fun processTerminated(event: ProcessEvent) {
               latch.countDown()
             }
@@ -91,9 +97,9 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
     invokeAndWaitIfNeed {}
 
     if (testRoots.all { it.children.isEmpty() }) {
-      val compilationResult = checkIfFailedToRunTests()
-      if (!compilationResult.isSolved) {
-        return compilationResult
+      val result = checkIfFailedToRunTests(stderr.toString())
+      if (!result.isSolved) {
+        return result
       }
     }
 
@@ -133,11 +139,11 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
   }
 
   /**
-   * Launches additional task if tests cannot be run (e.g. because of compilation error).
+   * Launches additional task if tests cannot be run (e.g. because of compilation error or syntax error).
    * Main purpose is to get proper error message for such cases.
    * If test framework support already provides correct message, you don't need to override this method
    */
-  protected open fun checkIfFailedToRunTests(): CheckResult = CheckResult.SOLVED
+  protected open fun checkIfFailedToRunTests(stderr: String): CheckResult = CheckResult.SOLVED
 
   /**
    * Creates and return list of run configurations to run task tests.
