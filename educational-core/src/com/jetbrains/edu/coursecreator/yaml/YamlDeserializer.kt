@@ -161,9 +161,6 @@ object YamlDeserializer {
         }
       }
       is InvalidYamlFormatException -> showError(project, configFile, e.message.capitalize())
-      is IllegalStateException -> {
-        showError(project, configFile)
-      }
       is MismatchedInputException -> {
         showError(project, configFile)
       }
