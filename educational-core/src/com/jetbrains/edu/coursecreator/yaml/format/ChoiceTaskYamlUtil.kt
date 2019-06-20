@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
-import com.jetbrains.edu.coursecreator.yaml.InvalidYamlFormatException
+import com.jetbrains.edu.coursecreator.yaml.formatError
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 
@@ -51,7 +51,7 @@ private class FromChoiceOptionStatusConverter : StdConverter<ChoiceOptionStatus,
     return when (value) {
       ChoiceOptionStatus.CORRECT -> true
       ChoiceOptionStatus.INCORRECT -> false
-      else -> throw InvalidYamlFormatException("Unknown option status not allowed")
+      else -> formatError("Unknown option status not allowed")
     }
   }
 }
