@@ -27,11 +27,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import org.yaml.snakeyaml.composer.ComposerException
-import org.yaml.snakeyaml.constructor.ConstructorException
-import org.yaml.snakeyaml.error.YAMLException
-import org.yaml.snakeyaml.parser.ParserException
-import org.yaml.snakeyaml.scanner.ScannerException
+import com.jetbrains.edu.learning.isUnitTestMode
+import org.jetbrains.annotations.TestOnly
 
 /**
  * Deserialize [StudyItem] object from yaml config file without any additional modifications.
@@ -138,7 +135,7 @@ object YamlDeserializer {
 
     val message = if (itemDir == null) "Directory for item: '$childName' not found" else "Config file for item: '${childName}' not found"
     val parentConfig = dir.findChild(configFileName) ?: error("Config file for currently loading item ${name} not found")
-    showError(project, parentConfig, message)
+    showError(project, null, parentConfig, message)
 
     return null
   }
@@ -153,59 +150,34 @@ object YamlDeserializer {
       is MissingKotlinParameterException -> {
         val parameterName = e.parameter.name
         if (parameterName == null) {
-          showError(project, configFile)
+          showError(project, e, configFile)
         }
         else {
-          showError(project, configFile,
+          showError(project, e,
+                    configFile,
                     "${NameUtil.nameToWordsLowerCase(parameterName).joinToString("_")} is empty")
         }
       }
-      is InvalidYamlFormatException -> showError(project, configFile, e.message.capitalize())
+      is InvalidYamlFormatException -> showError(project, e, configFile, e.message.capitalize())
       is MismatchedInputException -> {
-        showError(project, configFile)
-      }
-      is YAMLException -> {
-        val cause = e.cause
-        val message = when (cause) {
-          is ScannerException -> {
-            yamlParsingErrorNotificationMessage(cause.problem, cause.contextMark.line)
-          }
-          is ParserException -> {
-            yamlParsingErrorNotificationMessage(cause.problem, cause.contextMark.line)
-          }
-          is ConstructorException -> {
-            yamlParsingErrorNotificationMessage(cause.problem, cause.contextMark.line)
-          }
-          is ComposerException -> {
-            yamlParsingErrorNotificationMessage(cause.problem, cause.contextMark.line)
-          }
-          else -> {
-            cause?.message?.capitalize()
-          }
-        }
-        if (message != null) {
-          showError(project, configFile, message)
-        }
-        else {
-          showError(project, configFile)
-        }
+        showError(project, e, configFile)
       }
       is com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException -> {
         val message = yamlParsingErrorNotificationMessage(e.problem, e.contextMark?.line)
         if (message != null) {
-          showError(project, configFile, message)
+          showError(project, e, configFile, message)
         }
         else {
-          showError(project, configFile)
+          showError(project, e, configFile)
         }
       }
       is JsonMappingException -> {
         val causeException = e.cause
         if (causeException?.message == null || causeException !is InvalidYamlFormatException) {
-          showError(project, configFile)
+          showError(project, e, configFile)
         }
         else {
-          showError(project, configFile, causeException.message)
+          showError(project, e, configFile, causeException.message)
         }
       }
       else -> throw e
@@ -215,7 +187,17 @@ object YamlDeserializer {
   private fun yamlParsingErrorNotificationMessage(problem: String?, line: Int?) =
     if (problem != null && line != null) "$problem at line ${line + 1}" else null
 
-  fun showError(project: Project, configFile: VirtualFile, cause: String = "invalid config") {
+  fun showError(project: Project,
+                originalException: Exception?,
+                configFile: VirtualFile,
+                cause: String = "invalid config") {
+    // to make test failures more comprehensible
+    if (isUnitTestMode) {
+      if (originalException != null) {
+        throw ProcessedException(cause, originalException)
+      }
+    }
+
     val editor = configFile.getEditor(project)
     if (editor != null) {
       editor.headerComponent = InvalidFormatPanel(cause)
@@ -225,4 +207,7 @@ object YamlDeserializer {
       notification.notify(project)
     }
   }
+
+  @TestOnly
+  class ProcessedException(message: String, originalException: Exception?) : Exception(message, originalException)
 }
