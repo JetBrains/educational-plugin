@@ -38,7 +38,7 @@ object YamlLoader {
     }
     catch (e: Exception) {
       when (e) {
-        is YamlLoadingException -> YamlDeserializer.showError(project, e, configFile, e.message.capitalize())
+        is YamlLoadingException -> YamlDeserializer.showError(project, e, configFile, e.message)
         else -> throw e
       }
     }

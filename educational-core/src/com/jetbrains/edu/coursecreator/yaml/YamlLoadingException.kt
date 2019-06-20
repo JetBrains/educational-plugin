@@ -10,4 +10,4 @@ fun unknownConfigMessage(configName: String) = "Unknown config file '$configName
 
 fun unexpectedItemTypeMessage(itemType: String) = "Unexpected item type $itemType"
 
-fun notFoundMessage(notFoundObjectName: String, itemName: String) = "${notFoundObjectName.capitalize()} not found for $itemName"
+fun notFoundMessage(notFoundObjectName: String, itemName: String) = "${notFoundObjectName} not found for $itemName"

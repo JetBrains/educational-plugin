@@ -158,7 +158,7 @@ object YamlDeserializer {
                     "${NameUtil.nameToWordsLowerCase(parameterName).joinToString("_")} is empty")
         }
       }
-      is InvalidYamlFormatException -> showError(project, e, configFile, e.message.capitalize())
+      is InvalidYamlFormatException -> showError(project, e, configFile, e.message)
       is MismatchedInputException -> {
         showError(project, e, configFile)
       }
