@@ -16,7 +16,6 @@ class PyCCTestEventsConverter(
 ) : OutputToGeneralTestEventsConverter(testFrameworkName, consoleProperties) {
 
   private val parser = TestsOutputParser()
-  private val messages = mutableListOf<ServiceMessageBuilder>()
 
   // `0` and `1` are the ids of root node and root suit node respectively
   // See `TreeNodeEvent.ROOT_NODE_ID` and `ROOT_SUIT_ID` constants
@@ -24,6 +23,7 @@ class PyCCTestEventsConverter(
   private var isStarted = false
 
   override fun processServiceMessages(text: String, outputType: Key<*>, visitor: ServiceMessageVisitor): Boolean {
+    val messages = mutableListOf<ServiceMessageBuilder>()
     val processor: (TestMessage) -> Unit = { message ->
       when (message) {
         is TestMessage.TextLine -> {
@@ -59,7 +59,6 @@ class PyCCTestEventsConverter(
     for (message in messages) {
       super.processServiceMessages(message.toString(), outputType, visitor)
     }
-    messages.clear()
     return true
   }
 
