@@ -1,10 +1,9 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.isUnitTestMode
 
 object YamlFormatSettings {
   const val COURSE_CONFIG = "course-info.yaml"
@@ -17,10 +16,10 @@ object YamlFormatSettings {
   const val REMOTE_LESSON_CONFIG = "lesson-remote-info.yaml"
   const val REMOTE_TASK_CONFIG = "task-remote-info.yaml"
 
-  fun isDisabled() = !Experiments.isFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT)
-
-  fun Project.isEduYamlProject() = !isDisabled() && courseDir.findChild(COURSE_CONFIG) != null
+  fun Project.isEduYamlProject() = courseDir.findChild(COURSE_CONFIG) != null
 
   // it is here because it's used in test and main code
   val YAML_TEST_PROJECT_READY = Key<Boolean>("EDU.yaml_test_project_ready")
+
+  fun shouldCreateConfigFiles(project: Project): Boolean = !isUnitTestMode || project.getUserData(YAML_TEST_PROJECT_READY) == true
 }

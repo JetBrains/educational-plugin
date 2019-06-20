@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.DumbAwareAction
@@ -19,7 +18,6 @@ import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduProjectComponent
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -149,7 +147,7 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
       "Failed to load ${clazz.simpleName} from ${courseConfig.path}")
 
   override fun update(e: AnActionEvent) {
-    super.update(e)
-    e.presentation.isEnabled = Experiments.isFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT)
+    val project = e.project ?: return
+    e.presentation.isEnabledAndVisible = CCUtils.isCourseCreator(project)
   }
 }

@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning
 
 import com.intellij.idea.IdeaTestApplication
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.io.FileUtil
@@ -49,7 +48,6 @@ abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
     val tempDir = File(FileUtil.getTempDirectory())
     tempDir.mkdirs()
 
-    Experiments.setFeatureEnabled(EduExperimentalFeatures.YAML_FORMAT, false)
     rootDir = VfsUtil.findFileByIoFile(tempDir, true) ?: error("Can't find ${tempDir.absolutePath}")
   }
 

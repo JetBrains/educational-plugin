@@ -135,11 +135,14 @@ object YamlFormatSynchronizer {
 
   private fun doSaveItem(item: StudyItem, configFile: String, objectMapper: ObjectMapper) {
     val course = item.course
-    if (YamlFormatSettings.isDisabled() || course.isStudy) {
+    if (course.isStudy) {
       return
     }
 
     val project = course.project ?: error("Failed to find project for course")
+    if (!YamlFormatSettings.shouldCreateConfigFiles(project)) {
+      return
+    }
     val undoManager = UndoManager.getInstance(project)
     if (undoManager.isUndoInProgress || undoManager.isRedoInProgress) {
       ApplicationManager.getApplication().invokeLater {
@@ -153,7 +156,7 @@ object YamlFormatSynchronizer {
 
   @JvmStatic
   fun startSynchronization(project: Project) {
-    if (YamlFormatSettings.isDisabled() || isUnitTestMode) {
+    if (isUnitTestMode) {
       return
     }
     EditorFactory.getInstance().eventMulticaster.addDocumentListener(YamlSynchronizationListener(project), project)
