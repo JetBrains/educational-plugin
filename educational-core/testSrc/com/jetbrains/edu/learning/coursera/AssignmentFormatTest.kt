@@ -7,9 +7,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
 class AssignmentFormatTest : EduTestCase() {
   fun `test assignment creation from zip`() {
-    val zipPath = "$testDataPath/week2.zip"
-    val courseraCourse = StartCourseraAssignment.getCourseraCourse(zipPath) ?: error("Failed to import Coursera course from $zipPath")
-
+    val courseraCourse = getCourseraCourse()
     UsefulTestCase.assertInstanceOf(courseraCourse, CourseraCourse::class.java)
     GeneratorUtils.initializeCourse(project, courseraCourse)
 
@@ -28,6 +26,23 @@ class AssignmentFormatTest : EduTestCase() {
 
     assertFalse(findTaskFile(0, 0, CourseraTaskChecker.PART_ID).isVisible)
     assertEquals(1, findTaskFile(0, 0, pathWithPlaceholders).answerPlaceholders.size)
+  }
+
+  private fun getCourseraCourse(): CourseraCourse {
+    val zipPath = "$testDataPath/${getTestName(true).trim()}.zip"
+    return StartCourseraAssignment.getCourseraCourse(zipPath) ?: error("Failed to import Coursera course from $zipPath")
+  }
+
+  fun `test coursera course`() {
+    val course = getCourseraCourse()
+    UsefulTestCase.assertInstanceOf(course, CourseraCourse::class.java)
+    assertFalse(course.submitManually)
+  }
+
+  fun `test coursera course submit manually`() {
+    val course = getCourseraCourse()
+    UsefulTestCase.assertInstanceOf(course, CourseraCourse::class.java)
+    assertTrue(course.submitManually)
   }
 
   override fun getTestDataPath(): String {

@@ -76,8 +76,16 @@ public class CheckAction extends DumbAwareAction {
     if (task instanceof TheoryTask) {
       return new CheckAction(RUN_TASK, RUN_DESCRIPTION);
     }
-    if (task != null && task.getCourse() instanceof CourseraCourse) {
-      return new CheckAction(CourseraNames.SUBMIT_TO_COURSERA, CourseraNames.SUBMIT_TO_COURSERA);
+    if (task != null) {
+      Course course = task.getCourse();
+      if (course instanceof CourseraCourse) {
+        if (((CourseraCourse)course).getSubmitManually()) {
+          return new CheckAction(CourseraNames.RUN_TESTS, CourseraNames.RUN_TESTS);
+        }
+        else {
+          return new CheckAction(CourseraNames.SUBMIT_TO_COURSERA, CourseraNames.SUBMIT_TO_COURSERA);
+        }
+      }
     }
     return new CheckAction(CHECK_TASK, CHECK_DESCRIPTION);
   }

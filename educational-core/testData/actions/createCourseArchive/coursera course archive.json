@@ -1,0 +1,39 @@
+{
+  "summary" : "my summary",
+  "title" : "Test Course",
+  "programming_language" : "TEXT",
+  "language" : "en",
+  "course_type" : "Coursera",
+  "items" : [
+    {
+      "title" : "lesson1",
+      "task_list" : [
+        {
+          "name" : "task1",
+          "files" : {
+            "Task.kt" : {
+              "name" : "Task.kt",
+              "placeholders" : [
+                {
+                  "offset" : 20,
+                  "length" : 6,
+                  "placeholder_text" : "TODO()"
+                }
+              ],
+              "is_visible" : true,
+              "text" : "fun foo(): String = TODO()"
+            }
+          },
+          "description_text" : "solve task",
+          "description_format" : "HTML",
+          "feedback_link" : {
+            "link_type" : "STEPIK"
+          },
+          "task_type" : "edu"
+        }
+      ],
+      "type" : "lesson"
+    }
+  ],
+  "version" : 11
+}

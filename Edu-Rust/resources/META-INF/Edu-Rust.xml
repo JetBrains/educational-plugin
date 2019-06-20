@@ -2,6 +2,5 @@
   <depends>com.intellij.modules.lang</depends>
   <extensions defaultExtensionNs="Educational">
     <configurator language="Rust" implementationClass="com.jetbrains.edu.rust.RsConfigurator"/>
-    <configurator language="Rust" implementationClass="com.jetbrains.edu.rust.RsConfigurator" courseType="Stepik"/>
   </extensions>
 </idea-plugin>

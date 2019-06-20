@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.enablePlugins
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
@@ -203,7 +204,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     else {
       EduConfiguratorManager.allExtensions()
         .filter { it.instance.isCourseCreatorEnabled }
-        .filter { it.courseType != StepikNames.STEPIK_TYPE }
+        .filter { it.courseType != StepikNames.STEPIK_TYPE && it.courseType != CourseraNames.COURSE_TYPE }
         .mapNotNull { extension -> obtainCourseData(extension.language, extension.environment, extension.courseType) }
     }
     courseData

@@ -7,6 +7,7 @@ import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.coursera.CourseraCourse
 import junit.framework.TestCase
 import java.io.File
 import java.text.SimpleDateFormat
@@ -22,6 +23,40 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
         }
       }
     }
+    course.description = "my summary"
+    val generatedJsonFile = generateJson()
+    val expectedCourseJson = loadExpectedJson()
+    TestCase.assertEquals(expectedCourseJson, generatedJsonFile)
+  }
+
+  fun `test coursera course archive`() {
+    val course = courseWithFiles(courseProducer = ::CourseraCourse, courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask("task1") {
+          taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Foo\"")
+          }
+        }
+      }
+    } as CourseraCourse
+    course.submitManually = false
+    course.description = "my summary"
+    val generatedJsonFile = generateJson()
+    val expectedCourseJson = loadExpectedJson()
+    TestCase.assertEquals(expectedCourseJson, generatedJsonFile)
+  }
+
+  fun `test coursera course archive submit manually`() {
+    val course = courseWithFiles(courseProducer = ::CourseraCourse, courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask("task1") {
+          taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Foo\"")
+          }
+        }
+      }
+    } as CourseraCourse
+    course.submitManually = true
     course.description = "my summary"
     val generatedJsonFile = generateJson()
     val expectedCourseJson = loadExpectedJson()

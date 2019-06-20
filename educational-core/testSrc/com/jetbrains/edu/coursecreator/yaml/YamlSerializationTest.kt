@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.coursera.CourseraCourse
 import org.junit.Test
 
 
@@ -339,6 +340,40 @@ class YamlSerializationTest : YamlTestCase() {
       |summary: sum
       |programming_language: Plain text
       |programming_language_version: 1.42
+      |
+    """.trimMargin("|"))
+  }
+
+  fun `test coursera course`() {
+    val course = course(courseProducer = ::CourseraCourse) {}
+    course.languageCode = "ru"
+    course.description = "sum"
+    course.language = "${PlainTextLanguage.INSTANCE.id} 1.42"
+    doTest(course, """
+      |title: Test Course
+      |language: Russian
+      |summary: sum
+      |programming_language: Plain text
+      |programming_language_version: 1.42
+      |type: Coursera
+      |
+    """.trimMargin("|"))
+  }
+
+  fun `test coursera course manual submit`() {
+    val course = course(courseProducer = ::CourseraCourse) {} as CourseraCourse
+    course.languageCode = "ru"
+    course.description = "sum"
+    course.submitManually = true
+    course.language = "${PlainTextLanguage.INSTANCE.id} 1.42"
+    doTest(course, """
+      |title: Test Course
+      |language: Russian
+      |summary: sum
+      |programming_language: Plain text
+      |programming_language_version: 1.42
+      |submit_manually: true
+      |type: Coursera
       |
     """.trimMargin("|"))
   }

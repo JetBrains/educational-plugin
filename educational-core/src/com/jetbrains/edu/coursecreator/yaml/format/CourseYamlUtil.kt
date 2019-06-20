@@ -40,6 +40,7 @@ private const val ENVIRONMENT = "environment"
 private const val PROGRAMMING_LANGUAGE_VERSION = "programming_language_version"
 
 private const val TOP_LEVEL_LESSONS_SECTION = "default_section"
+private const val SUBMIT_MANUALLY = "submit_manually"
 
 /**
  * Mixin class is used to deserialize [Course] item.
@@ -81,6 +82,12 @@ abstract class CourseYamlMixin {
   @JsonSerialize(contentConverter = StudyItemConverter::class)
   @JsonProperty(CONTENT)
   private lateinit var items: List<StudyItem>
+}
+
+abstract class CourseraCourseYamlMixin : CourseYamlMixin() {
+  @JsonProperty(SUBMIT_MANUALLY)
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  var submitManually = false
 }
 
 private class ProgrammingLanguageConverter : StdConverter<String, String>() {
@@ -129,11 +136,16 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
                             @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
                             @JsonProperty(LANGUAGE) val language: String,
                             @JsonProperty(ENVIRONMENT) val yamlEnvironment: String?,
-                            @JsonProperty(CONTENT) val content: List<String?> = emptyList()) {
+                            @JsonProperty(CONTENT) val content: List<String?> = emptyList(),
+                            @JsonProperty(SUBMIT_MANUALLY) val courseraSubmitManually: Boolean?) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
     val course = when (courseType) {
-      CourseraNames.COURSE_TYPE -> CourseraCourse()
+      CourseraNames.COURSE_TYPE -> {
+        CourseraCourse().apply {
+          submitManually = courseraSubmitManually ?: false
+        }
+      }
       CHECKIO_TYPE -> CheckiOCourse()
       HYPERSKILL_TYPE -> HyperskillCourse()
       STEPIK_TYPE -> StepikCourse()
@@ -186,6 +198,9 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     }
     else {
       existingItem.language = deserializedItem.language
+    }
+    if (deserializedItem is CourseraCourse && existingItem is CourseraCourse) {
+      existingItem.submitManually = deserializedItem.submitManually
     }
   }
 }

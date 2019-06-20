@@ -28,7 +28,7 @@ hs_err_pid*
 !.idea/inspectionProfiles/*
 !.idea/codeStyles/*
 !.idea/vcs.xml
-!educational-core/testData/coursera/week2.zip
+!educational-core/testData/coursera/*
 .idea/
 build/
 .gradle/

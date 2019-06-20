@@ -2,6 +2,7 @@
 
 package com.jetbrains.edu.coursecreator.actions.mixins
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
@@ -24,6 +25,8 @@ import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWORK_TYPE
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
@@ -59,6 +62,7 @@ private const val DEPENDENCY = "dependency"
 private const val COURSE_TYPE = "course_type"
 private const val ADDITIONAL_FILES = "additional_files"
 private const val ENVIRONMENT = "environment"
+private const val SUBMIT_MANUALLY = "submit_manually"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS)
@@ -97,6 +101,13 @@ abstract class LocalEduCourseMixin {
   @JsonProperty(ADDITIONAL_FILES)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   private lateinit var additionalFiles: List<TaskFile>
+}
+
+@JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)
+abstract class CourseraCourseMixin : LocalEduCourseMixin() {
+  @JsonProperty(SUBMIT_MANUALLY)
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  var submitManually = false
 }
 
 private class StepikUserInfoToString : StdConverter<StepikUserInfo, String?>() {
@@ -164,7 +175,7 @@ abstract class LocalTaskMixin {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-abstract class ChoiceTaskLocalMixin: LocalTaskMixin() {
+abstract class ChoiceTaskLocalMixin : LocalTaskMixin() {
 
   @JsonProperty
   private var isMultipleChoice: Boolean = false
@@ -199,7 +210,7 @@ abstract class TaskFileMixin {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, POSSIBLE_ANSWER, PLACEHOLDER_TEXT)
+@JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, PLACEHOLDER_TEXT)
 abstract class AnswerPlaceholderMixin {
   @JsonProperty(OFFSET)
   private var myOffset: Int = -1
@@ -211,11 +222,15 @@ abstract class AnswerPlaceholderMixin {
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private lateinit var myPlaceholderDependency: AnswerPlaceholderDependency
 
-  @JsonProperty(POSSIBLE_ANSWER)
-  private lateinit var myPossibleAnswer: String
-
   @JsonProperty(PLACEHOLDER_TEXT)
   private lateinit var myPlaceholderText: String
+}
+
+@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
+@JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, POSSIBLE_ANSWER, PLACEHOLDER_TEXT)
+abstract class AnswerPlaceholderWithAnswerMixin : AnswerPlaceholderMixin() {
+  @JsonProperty(POSSIBLE_ANSWER)
+  private lateinit var myPossibleAnswer: String
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
@@ -250,10 +265,10 @@ abstract class FeedbackLinkMixin {
   private var myLink: String? = null
 }
 
-class CourseSerializer : JsonSerializer<EduCourse>() {
-  override fun serialize(course: EduCourse, generator: JsonGenerator, provider: SerializerProvider) {
+class CourseSerializer : JsonSerializer<Course>() {
+  override fun serialize(course: Course, generator: JsonGenerator, provider: SerializerProvider) {
     generator.writeStartObject()
-    val serializer = getJsonSerializer(provider, EduCourse::class.java)
+    val serializer = getJsonSerializer(provider, course.javaClass)
     serializer.unwrappingSerializer(null).serialize(course, generator, provider)
     generator.writeObjectField(VERSION, JSON_FORMAT_VERSION)
     generator.writeEndObject()
@@ -264,6 +279,24 @@ private fun getJsonSerializer(provider: SerializerProvider, itemClass: Class<out
   val javaType = provider.constructType(itemClass)
   val beanDesc: BeanDescription = provider.config.introspect(javaType)
   return BeanSerializerFactory.instance.findBeanSerializer(provider, javaType, beanDesc)
+}
+
+class CourseDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Course>(vc) {
+  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext?): Course? {
+    val node: ObjectNode = jp.codec.readTree(jp) as ObjectNode
+    return deserializeCourse(node, jp.codec)
+  }
+
+  private fun deserializeCourse(jsonObject: ObjectNode, codec: ObjectCodec): Course? {
+    if (jsonObject.has(COURSE_TYPE)) {
+      val courseType = jsonObject.get(COURSE_TYPE).asText()
+      return when (courseType) {
+        CourseraNames.COURSE_TYPE -> codec.treeToValue(jsonObject, CourseraCourse::class.java)
+        else -> codec.treeToValue(jsonObject, EduCourse::class.java)
+      }
+    }
+    return codec.treeToValue(jsonObject, EduCourse::class.java)
+  }
 }
 
 class StudyItemDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<StudyItem>(vc) {

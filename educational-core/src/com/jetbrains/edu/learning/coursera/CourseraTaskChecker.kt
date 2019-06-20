@@ -38,6 +38,11 @@ class CourseraTaskChecker : RemoteTaskChecker {
 
 
   override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {
+    val course = task.course as CourseraCourse
+    if (course.submitManually) {
+      val link = getLinkToSubmission(task)
+      return CheckResult(CheckStatus.Unchecked, SUBMIT_MANUALLY.format(link), needEscape = false)
+    }
     val courseraSettings = CourseraSettings.getInstance()
     var askedForCredentials = false
     if (!courseraSettings.haveFullCredentials()) {
@@ -153,6 +158,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
     private const val ON_DEMAND_SUBMIT = "https://www.coursera.org/api/onDemandProgrammingScriptSubmissions.v1"
     private const val NEED_CREDENTIALS = "${CourseraNames.COURSERA} Credentials"
     private const val SUCCESS = "<html>Submission successful, please <a href=\"%s\">check the status on Coursera</a></html>"
+    private const val SUBMIT_MANUALLY = "<html>Local tests passed, please <a href=\"%s\">submit to the Coursera</a></html>"
     private const val TIMEOUT_SECONDS = 10
 
     @VisibleForTesting

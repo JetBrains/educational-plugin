@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import junit.framework.TestCase
 
 
 class YamlDeserializationTest : YamlTestCase() {
@@ -85,6 +86,7 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
+    TestCase.assertFalse(course.submitManually)
     assertNotNull(course.description)
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
   }
@@ -390,6 +392,29 @@ class YamlDeserializationTest : YamlTestCase() {
     |""".trimMargin("|")
     val course = deserializeNotNull(yamlContent, Course::class.java)
     assertTrue(course.items.isEmpty())
+  }
+
+  fun `test coursera manual submit`() {
+    val name = "Test Course"
+    val language = "Russian"
+    val programmingLanguage = "Plain text"
+    val firstLesson = "the first lesson"
+    val secondLesson = "the second lesson"
+    val yamlContent = """
+      |type: ${CourseraNames.COURSE_TYPE}
+      |submit_manually: true
+      |title: $name
+      |language: $language
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |programming_language: $programmingLanguage
+      |content:
+      |- $firstLesson
+      |- $secondLesson
+      |""".trimMargin("|")
+    val course = deserializeNotNull(yamlContent, CourseraCourse::class.java)
+    TestCase.assertTrue(course.submitManually)
   }
 
   private fun <T : ItemContainer> deserializeNotNull(yamlContent: String, clazz: Class<T>) =

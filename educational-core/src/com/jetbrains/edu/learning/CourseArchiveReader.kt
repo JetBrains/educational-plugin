@@ -14,6 +14,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.converter.json.local.*
 import java.io.IOException
@@ -22,7 +23,7 @@ import java.util.*
 
 private val LOG = Logger.getInstance(EduUtils::class.java.name)
 
-fun readCourseJson(jsonText: String): EduCourse? {
+fun readCourseJson(jsonText: String): Course? {
   return try {
     var courseNode = courseMapper.readTree(jsonText) as ObjectNode
     courseNode = migrate(courseNode)
@@ -68,8 +69,10 @@ val courseMapper: ObjectMapper  // TODO: common mapper for archive creator and r
     val mapper = ObjectMapper(factory)
     val module = SimpleModule()
     module.addDeserializer(StudyItem::class.java, StudyItemDeserializer())  // TODO: use JsonSubTypes
+    module.addDeserializer(Course::class.java, CourseDeserializer())
     mapper.registerModule(module)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    mapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
     mapper.addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
     mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
     mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
@@ -77,7 +80,7 @@ val courseMapper: ObjectMapper  // TODO: common mapper for archive creator and r
     mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
     mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
     mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
-    mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
+    mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
     mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
     mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
     mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)

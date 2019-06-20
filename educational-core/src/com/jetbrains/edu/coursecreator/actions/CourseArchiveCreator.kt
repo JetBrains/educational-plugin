@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.coursera.CourseraCourse
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -120,7 +121,7 @@ class CourseArchiveCreator(
   }
 
   private fun generateJson(parentDir: VirtualFile, course: Course): File {
-    val mapper = if (course.id == 0) localCourseMapper else remoteCourseMapper
+    val mapper = if (course.id == 0) course.localMapper else course.remoteMapper
 
     val jsonFile = File(File(parentDir.path), COURSE_META_FILE)
     mapper.writer(printer).writeValue(jsonFile, course)
@@ -137,21 +138,22 @@ class CourseArchiveCreator(
         return prettyPrinter
       }
 
-    private val localCourseMapper: ObjectMapper
+    private val Course.localMapper: ObjectMapper
       get() {
         val factory = JsonFactory()
         val mapper = ObjectMapper(factory)
+        mapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
         mapper.addMixIn(EduCourse::class.java, LocalEduCourseMixin::class.java)
         mapper.addMixIn(Section::class.java, LocalSectionMixin::class.java)
         mapper.addMixIn(Lesson::class.java, LocalLessonMixin::class.java)
         mapper.addMixIn(Task::class.java, LocalTaskMixin::class.java)
         mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
         mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionLocalMixin::class.java)
-        commonSetup(mapper)
+        commonSetup(mapper, course)
         return mapper
       }
 
-    private val remoteCourseMapper: ObjectMapper
+    private val Course.remoteMapper: ObjectMapper
       get() {
         val factory = JsonFactory()
         val mapper = ObjectMapper(factory)
@@ -159,17 +161,22 @@ class CourseArchiveCreator(
         mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
         mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
         mapper.addMixIn(Task::class.java, RemoteTaskMixin::class.java)
-        commonSetup(mapper)
+        commonSetup(mapper, course)
         val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)
         dateFormat.timeZone = TimeZone.getTimeZone("UTC")
         mapper.dateFormat = dateFormat
         return mapper
       }
 
-    private fun commonSetup(mapper: ObjectMapper) {
+    private fun commonSetup(mapper: ObjectMapper, course: Course) {
+      if (course is CourseraCourse) {
+        mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
+      }
+      else {
+        mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
+      }
       mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
       mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
-      mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
       mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
       mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
       mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)

@@ -35,6 +35,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.isUnitTestMode
 
 object YamlFormatSynchronizer {
@@ -73,6 +74,7 @@ object YamlFormatSynchronizer {
   }
 
   private fun addMixIns(mapper: ObjectMapper) {
+    mapper.addMixIn(CourseraCourse::class.java, CourseraCourseYamlMixin::class.java)
     mapper.addMixIn(Course::class.java, CourseYamlMixin::class.java)
     mapper.addMixIn(Section::class.java, SectionYamlMixin::class.java)
     mapper.addMixIn(Lesson::class.java, LessonYamlMixin::class.java)
