@@ -83,7 +83,7 @@ object YamlDeepLoader {
     val remoteConfigFile = itemDir.findChild(remoteConfigFileName)
     if (remoteConfigFile == null) {
       if (id > 0) {
-        loadingError(notFoundMessage("config file $remoteConfigFileName", "item: '$name'"))
+        loadingError(notFoundMessage("config file $remoteConfigFileName", "item '$name'"))
       }
       else return
     }

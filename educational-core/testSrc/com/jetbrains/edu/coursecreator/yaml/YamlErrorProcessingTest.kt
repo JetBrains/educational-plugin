@@ -21,7 +21,8 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |content:
             |- the first lesson
             |- the second lesson
-            |""".trimMargin("|"), YamlFormatSettings.COURSE_CONFIG, "title is empty", MissingKotlinParameterException::class.java)
+            |""".trimMargin("|"), YamlFormatSettings.COURSE_CONFIG,
+           "title is empty", MissingKotlinParameterException::class.java)
   }
 
   fun `test invalid field value`() {
@@ -35,7 +36,8 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |content:
             |- the first lesson
             |- the second lesson
-            |""".trimMargin("|"), YamlFormatSettings.COURSE_CONFIG, "Unknown language: 'wrong'", JsonMappingException::class.java)
+            |""".trimMargin("|"), YamlFormatSettings.COURSE_CONFIG,
+           "Unknown language 'wrong'", JsonMappingException::class.java)
   }
 
   fun `test unexpected symbol`() {
@@ -50,7 +52,8 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |content:e
             |- the first lesson
             |- the second lesson
-            |""".trimMargin("|"), YamlFormatSettings.COURSE_CONFIG, "could not find expected ':' at line 7",
+            |""".trimMargin("|"), YamlFormatSettings.COURSE_CONFIG,
+           "could not find expected ':' at line 7",
            com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException::class.java)
   }
 
@@ -64,7 +67,8 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |programming_language: Plain text
             |content:
             |- the first lesson
-            |""".trimMargin("|"), YamlFormatSettings.COURSE_CONFIG, "invalid config", MismatchedInputException::class.java)
+            |""".trimMargin("|"), YamlFormatSettings.COURSE_CONFIG,
+           "invalid config", MismatchedInputException::class.java)
   }
 
   fun `test wrong type of placeholder offset`() {
@@ -76,7 +80,8 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |  - offset: a
     |    length: 3
     |    placeholder_text: type here
-    |""".trimMargin("|"), YamlFormatSettings.TASK_CONFIG, "invalid config", InvalidFormatException::class.java)
+    |""".trimMargin("|"), YamlFormatSettings.TASK_CONFIG,
+           "invalid config", InvalidFormatException::class.java)
   }
 
   fun `test unexpected item type`() {
@@ -91,7 +96,8 @@ class YamlErrorProcessingTest : YamlTestCase() {
       |  is_correct: true
       |- text: 2
       |  is_correct: false
-      |""".trimMargin("|"), YamlFormatSettings.TASK_CONFIG, "Unsupported task type: e", InvalidYamlFormatException::class.java)
+      |""".trimMargin("|"), YamlFormatSettings.TASK_CONFIG,
+           "Unsupported task type 'e'", InvalidYamlFormatException::class.java)
   }
 
   private fun <T : Exception> doTest(yamlContent: String,

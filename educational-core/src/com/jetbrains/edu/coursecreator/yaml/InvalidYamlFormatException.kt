@@ -5,8 +5,8 @@ class InvalidYamlFormatException(override val message: String) : IllegalStateExc
 
 fun formatError(message: String): Nothing = throw InvalidYamlFormatException(message)
 
-fun unsupportedItemTypeMessage(itemType: String, itemName: String = "item") = "Unsupported $itemName type: $itemType"
+fun unsupportedItemTypeMessage(itemType: String, itemName: String = "item") = "Unsupported $itemName type '$itemType'"
 
 fun unnamedItemAtMessage(position: Int) = "Unnamed item at position $position"
 
-fun unknownFieldValueMessage(fieldName: String, value: String) = "Unknown $fieldName: '$value'"
+fun unknownFieldValueMessage(fieldName: String, value: String) = "Unknown $fieldName '$value'"

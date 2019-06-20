@@ -133,7 +133,7 @@ object YamlDeserializer {
       return configFile
     }
 
-    val message = if (itemDir == null) "Directory for item: '$childName' not found" else "Config file for item: '${childName}' not found"
+    val message = if (itemDir == null) "Directory for item '$childName' not found" else "Config file for item '${childName}' not found"
     val parentConfig = dir.findChild(configFileName) ?: error("Config file for currently loading item ${name} not found")
     showError(project, null, parentConfig, message)
 
