@@ -1,29 +1,20 @@
 package com.jetbrains.edu.coursecreator.actions;
 
 import com.intellij.ide.IdeView;
-import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComboBox;
-import com.intellij.openapi.ui.DialogBuilder;
-import com.intellij.profile.codeInspection.ProjectInspectionProfileManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.ui.CCCourseInfoPanel;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
-import com.jetbrains.edu.learning.LanguageSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
 
 import static com.jetbrains.edu.learning.EduUtils.addMnemonic;
 
@@ -67,63 +58,13 @@ public class CCChangeCourseInfo extends DumbAwareAction {
       return;
     }
 
-    CCCourseInfoPanel panel =
-      new CCCourseInfoPanel(course.getName(), Course.getAuthorsString(course.getAuthors()), course.getDescription());
-    setupLanguageLevels(course, panel);
-    DialogBuilder builder = createChangeInfoDialog(project, panel);
-    panel.setValidationListener(builder::setOkActionEnabled);
-    if (builder.showAndGet()) {
-      course.setAuthorsAsString(panel.getAuthors());
-      course.setName(panel.getName());
-      course.setDescription(panel.getDescription());
-      setVersion(course, panel);
-      ProjectView.getInstance(project).refresh();
-      ProjectInspectionProfileManager.getInstance(project).fireProfileChanged();
-      YamlFormatSynchronizer.saveItem(course);
-    }
-  }
-
-  private static void setVersion(@NotNull final Course course, @NotNull final CCCourseInfoPanel panel) {
-    String version = panel.getLanguageVersion();
-    if (version == null) {
+    String configFileName = YamlFormatSynchronizer.getConfigFileName(course);
+    VirtualFile configFile = course.getDir(project).findChild(configFileName);
+    if (configFile == null) {
+      Logger.getInstance(CCChangeCourseInfo.class).error("Failed to find course config file");
       return;
     }
-    course.setLanguage(course.getLanguageID() + " " + version);
-  }
 
-  private static void setupLanguageLevels(@NotNull final Course course, @NotNull final CCCourseInfoPanel panel) {
-    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
-    if (configurator == null) {
-      return;
-    }
-    LanguageSettings<?> languageSettings = configurator.getCourseBuilder().getLanguageSettings();
-    List<String> languageVersions = languageSettings.getLanguageVersions();
-    if (languageVersions.size() < 2) {
-      return;
-    }
-    JLabel languageLevelLabel = panel.getLanguageLevelLabel();
-    languageLevelLabel.setText(course.getLanguageById().getDisplayName() + ":");
-    languageLevelLabel.setVisible(true);
-    ComboBox<String> languageLevelCombobox = panel.getLanguageLevelCombobox();
-    for (String version : languageVersions) {
-      languageLevelCombobox.addItem(version);
-    }
-    languageLevelCombobox.setVisible(true);
-    final String version = course.getLanguageVersion();
-    if (version != null) {
-      languageLevelCombobox.setSelectedItem(version);
-    }
-  }
-
-  private static DialogBuilder createChangeInfoDialog(Project project, @NotNull CCCourseInfoPanel panel) {
-    DialogBuilder builder = new DialogBuilder(project);
-
-    builder.setTitle(ACTION_TEXT);
-    JPanel changeInfoPanel = panel.getMainPanel();
-    changeInfoPanel.setPreferredSize(new Dimension(450, 300));
-    changeInfoPanel.setMinimumSize(new Dimension(450, 300));
-    builder.setCenterPanel(changeInfoPanel);
-
-    return builder;
+    FileEditorManager.getInstance(project).openFile(configFile, true);
   }
 }
