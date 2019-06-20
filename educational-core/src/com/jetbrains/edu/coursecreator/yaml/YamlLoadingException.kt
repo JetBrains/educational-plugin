@@ -1,8 +1,8 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-class YamlIllegalStateException(override val message: String) : IllegalStateException(message)
+class YamlLoadingException(override val message: String) : IllegalStateException(message)
 
-fun yamlIllegalStateError(message: String): Nothing = throw YamlIllegalStateException(message)
+fun loadingError(message: String): Nothing = throw YamlLoadingException(message)
 
 fun noDirForItemMessage(name: String, itemTypeName: String = "item") = "Directory for $itemTypeName not found: '$name'"
 

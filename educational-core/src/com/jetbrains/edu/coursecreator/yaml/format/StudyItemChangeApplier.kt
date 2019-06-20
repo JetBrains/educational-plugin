@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.getConfigFileForChild
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.addItemAsNew
+import com.jetbrains.edu.coursecreator.yaml.loadingError
 import com.jetbrains.edu.coursecreator.yaml.unexpectedItemTypeMessage
 import com.jetbrains.edu.coursecreator.yaml.yamlIllegalStateError
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.deserializeChildrenIfNeeded
@@ -56,6 +57,6 @@ fun <T : StudyItem> getChangeApplierForItem(project: Project, item: T): StudyIte
     is Course -> CourseChangeApplier(project)
     is Section, is Lesson -> ItemContainerChangeApplier(project)
     is Task -> TaskChangeApplier(project)
-    else -> yamlIllegalStateError(unexpectedItemTypeMessage(item.javaClass.simpleName))
+    else -> loadingError(unexpectedItemTypeMessage(item.javaClass.simpleName))
   } as StudyItemChangeApplier<T>
 }

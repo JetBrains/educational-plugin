@@ -38,7 +38,7 @@ object YamlLoader {
     }
     catch (e: Exception) {
       when (e) {
-        is YamlIllegalStateException -> YamlDeserializer.showError(project, e, configFile, e.message.capitalize())
+        is YamlLoadingException -> YamlDeserializer.showError(project, e, configFile, e.message.capitalize())
         else -> throw e
       }
     }
@@ -70,7 +70,7 @@ object YamlLoader {
       return
     }
     if (existingItem.itemType != deserializedItem.itemType) {
-      yamlIllegalStateError("Expected ${existingItem::class.simpleName} class, but was: ${deserializedItem.javaClass.simpleName}")
+      loadingError("Expected ${existingItem::class.simpleName} class, but was: ${deserializedItem.javaClass.simpleName}")
     }
     existingItem.applyChanges(project, deserializedItem)
   }
@@ -103,9 +103,9 @@ object YamlLoader {
                section ?: course
              }
              is Task -> course?.let { EduUtils.getLesson(parentDir, course) }
-             else -> yamlIllegalStateError(
+             else -> loadingError(
                "Unexpected item type. Expected: 'Section', 'Lesson' or 'Task'. Was '${itemType}'")
-           } ?: yamlIllegalStateError(notFoundMessage("parent", "for item '${name}'"))
+           } ?: loadingError(notFoundMessage("parent", "for item '${name}'"))
   }
 
   private fun <T : StudyItem> T.applyChanges(project: Project, deserializedItem: T) {
@@ -121,7 +121,7 @@ object YamlLoader {
       YamlFormatSettings.SECTION_CONFIG -> EduUtils.getSection(itemDir, course)
       YamlFormatSettings.LESSON_CONFIG -> EduUtils.getLesson(itemDir, course)
       YamlFormatSettings.TASK_CONFIG -> EduUtils.getTask(itemDir, course)
-      else -> yamlIllegalStateError(unknownConfigMessage(name))
+      else -> loadingError(unknownConfigMessage(name))
     }
   }
 
@@ -136,12 +136,12 @@ private fun StudyItem.ensureChildrenExist(itemDir: VirtualFile) {
     is ItemContainer -> {
       items.forEach {
         val itemTypeName = if (it is Task) EduNames.TASK else EduNames.ITEM
-        itemDir.findChild(it.name) ?: yamlIllegalStateError(noDirForItemMessage(itemTypeName, it.name))
+        itemDir.findChild(it.name) ?: loadingError(noDirForItemMessage(itemTypeName, it.name))
       }
     }
     is Task -> {
       taskFiles.forEach { (name, _) ->
-        itemDir.findFileByRelativePath(name) ?: yamlIllegalStateError("No physical file for file `$name`")
+        itemDir.findFileByRelativePath(name) ?: loadingError("No physical file for file `$name`")
       }
     }
   }

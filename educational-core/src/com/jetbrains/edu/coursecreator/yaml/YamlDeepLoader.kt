@@ -83,7 +83,7 @@ object YamlDeepLoader {
     val remoteConfigFile = itemDir.findChild(remoteConfigFileName)
     if (remoteConfigFile == null) {
       if (id > 0) {
-        yamlIllegalStateError(notFoundMessage("config file $remoteConfigFileName", "item: '$name'"))
+        loadingError(notFoundMessage("config file $remoteConfigFileName", "item: '$name'"))
       }
       else return
     }
@@ -109,6 +109,6 @@ object YamlDeepLoader {
   }
 
   private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {
-    return DescriptionFormat.values().firstOrNull { it.fileExtension == extension } ?: yamlIllegalStateError("Invalid description format")
+    return DescriptionFormat.values().firstOrNull { it.fileExtension == extension } ?: loadingError("Invalid description format")
   }
 }
