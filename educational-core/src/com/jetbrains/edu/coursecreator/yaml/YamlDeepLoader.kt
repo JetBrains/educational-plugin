@@ -103,7 +103,7 @@ object YamlDeepLoader {
   }
 
   private fun Task.findTaskDescriptionFile(project: Project): VirtualFile {
-    val taskDir = getTaskDir(project) ?: error(noDirForItemMessage("task", name))
+    val taskDir = getTaskDir(project) ?: error(noDirForItemMessage(EduNames.TASK, name))
     val file = taskDir.findChild(EduNames.TASK_HTML) ?: taskDir.findChild(EduNames.TASK_MD)
     return file ?: error("No task description file for $name")
   }

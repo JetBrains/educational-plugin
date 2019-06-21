@@ -21,6 +21,7 @@ import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.getEditor
 import com.jetbrains.edu.coursecreator.yaml.format.RemoteStudyItem
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
@@ -96,7 +97,7 @@ object YamlDeserializer {
       "output" -> OutputTask::class.java
       "theory" -> TheoryTask::class.java
       "choice" -> ChoiceTask::class.java
-      else -> formatError(unsupportedItemTypeMessage(type, "task"))
+      else -> formatError(unsupportedItemTypeMessage(type, EduNames.TASK))
     }
     return MAPPER.treeToValue(treeNode, clazz)
   }
