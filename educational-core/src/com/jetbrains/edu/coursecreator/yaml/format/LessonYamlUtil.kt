@@ -7,7 +7,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.jetbrains.edu.coursecreator.yaml.InvalidYamlFormatException
+import com.jetbrains.edu.coursecreator.yaml.formatError
+import com.jetbrains.edu.coursecreator.yaml.unnamedItemAtMessage
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
@@ -33,7 +34,7 @@ open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?> = emp
     val lesson = createLesson()
     val taskList = content.mapIndexed { index: Int, title: String? ->
       if (title == null) {
-        throw InvalidYamlFormatException("Unnamed item")
+        formatError(unnamedItemAtMessage(index + 1))
       }
       val task = TaskWithType(title)
       task.index = index + 1

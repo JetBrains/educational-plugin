@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.configFileName
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.saveItem
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.loadItem
 import com.jetbrains.edu.coursecreator.yaml.format.getChangeApplierForItem
@@ -20,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import java.io.IOException
-import kotlin.reflect.KClass
 
 /**
  *  Get fully-initialized [StudyItem] object from yaml config file.
@@ -93,7 +91,7 @@ object YamlLoader {
       return
     }
     if (existingItem.itemType != deserializedItem.itemType) {
-      unexpectedItemError(existingItem::class, deserializedItem)
+      yamlIllegalStateError("Expected ${existingItem::class.simpleName} class, but was: ${deserializedItem.javaClass.simpleName}")
     }
     existingItem.applyChanges(project, deserializedItem)
   }
@@ -125,8 +123,9 @@ object YamlLoader {
                section ?: findCourse(project)
              }
              is Task -> findLesson(project, parentDir)
-             else -> unexpectedItemError(StudyItem::class, this)
-           } ?: itemNotFound(parentDir.name)
+             else -> yamlIllegalStateError(
+               "Unexpected item type. Expected: 'Section', 'Lesson' or 'Task'. Was '${itemType}'")
+           } ?: yamlIllegalStateError(notFoundMessage("parent", "for item '${name}'"))
   }
 
   private fun <T : StudyItem> T.applyChanges(project: Project, deserializedItem: T) {
@@ -135,14 +134,14 @@ object YamlLoader {
 
   private fun getStudyItemForConfig(project: Project, configFile: VirtualFile): StudyItem? {
     val name = configFile.name
-    val itemDir = configFile.parent ?: error("Cannot find containing item dir for config: $name. Config file is a root directory.")
+    val itemDir = configFile.parent ?: yamlIllegalStateError(notFoundMessage("containing item dir", name))
 
     return when (name) {
       YamlFormatSettings.COURSE_CONFIG -> findCourse(project)
       YamlFormatSettings.SECTION_CONFIG -> findSection(project, itemDir)
       YamlFormatSettings.LESSON_CONFIG -> findLesson(project, itemDir)
       YamlFormatSettings.TASK_CONFIG -> findTask(project, itemDir)
-      else -> unknownConfigError(name)
+      else -> yamlIllegalStateError(unknownConfigMessage(name))
     }
   }
 
@@ -187,13 +186,4 @@ object YamlLoader {
     val selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(this)
     return if (selectedEditor is TextEditor) selectedEditor.editor else null
   }
-
-  private fun unknownConfigError(name: String): Nothing = error("Unknown config file: $name")
-
-  fun taskDirNotFoundError(itemName: String): Nothing = error("Cannot find directory for a task: $itemName")
-
-  private fun itemNotFound(itemName: String?): Nothing = error("Item not found: '$itemName'")
-
-  private fun <T : StudyItem> unexpectedItemError(expected: KClass<T>, actual: Any): Nothing = error(
-    "Expected ${expected.simpleName} class, but was: ${actual.javaClass.simpleName}")
 }

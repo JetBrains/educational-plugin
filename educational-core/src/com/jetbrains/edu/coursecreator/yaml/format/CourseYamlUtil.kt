@@ -11,8 +11,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.yaml.InvalidYamlFormatException
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.formatError
+import com.jetbrains.edu.coursecreator.yaml.formatError
+import com.jetbrains.edu.coursecreator.yaml.unknownFieldValueMessage
+import com.jetbrains.edu.coursecreator.yaml.unnamedItemAtMessage
+import com.jetbrains.edu.coursecreator.yaml.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE
@@ -84,8 +86,7 @@ abstract class CourseYamlMixin {
 private class ProgrammingLanguageConverter : StdConverter<String, String>() {
   override fun convert(languageId: String): String {
     val languageWithoutVersion = languageId.split(" ").first()
-    return Language.findLanguageByID(languageWithoutVersion)?.displayName
-           ?: throw InvalidYamlFormatException("Cannot save programming language: $languageId")
+    return Language.findLanguageByID(languageWithoutVersion)?.displayName ?: formatError("Cannot save programming language: $languageId")
   }
 }
 
@@ -137,13 +138,13 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       HYPERSKILL_TYPE -> HyperskillCourse()
       STEPIK_TYPE -> StepikCourse()
       null -> EduCourse()
-      else -> formatError("Unsupported course type: $courseType")
+      else -> formatError(unsupportedItemTypeMessage(courseType, "course"))
     }
     course.apply {
       name = title
       description = summary
       val languageName = Language.getRegisteredLanguages().find { it.displayName == programmingLanguage }
-                         ?: formatError("Unknown programming language '$programmingLanguage'")
+                         ?: formatError(unknownFieldValueMessage("programming language", programmingLanguage))
       environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
       language = languageName.id
 
@@ -158,7 +159,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       }
       val items = content.mapIndexed { index, title ->
         if (title == null) {
-          throw InvalidYamlFormatException("Unnamed item")
+          formatError(unnamedItemAtMessage(index + 1))
         }
         val titledStudyItem = TitledStudyItem(title)
         titledStudyItem.index = index + 1
@@ -166,7 +167,8 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       }
       setItems(items)
     }
-    val locale = Locale.getISOLanguages().find { Locale(it).displayLanguage == language } ?: formatError("Unknown language '$language'")
+    val locale = Locale.getISOLanguages().find { Locale(it).displayLanguage == language } ?: formatError(
+      unknownFieldValueMessage("language", language))
     course.languageCode = Locale(locale).language
     return course
   }

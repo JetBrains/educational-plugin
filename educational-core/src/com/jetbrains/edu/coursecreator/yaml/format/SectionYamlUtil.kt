@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.jetbrains.edu.coursecreator.yaml.InvalidYamlFormatException
+import com.jetbrains.edu.coursecreator.yaml.formatError
+import com.jetbrains.edu.coursecreator.yaml.unnamedItemAtMessage
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
@@ -31,7 +32,7 @@ private class SectionBuilder(@JsonProperty(CONTENT) val content: List<String?> =
     val section = Section()
     val items = content.mapIndexed { index: Int, title: String? ->
       if (title == null) {
-        throw InvalidYamlFormatException("Unnamed item")
+        throw formatError(unnamedItemAtMessage(index + 1))
       }
       val titledStudyItem = TitledStudyItem(title)
       titledStudyItem.index = index + 1

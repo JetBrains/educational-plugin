@@ -40,12 +40,12 @@ object YamlDeserializer {
       SECTION_CONFIG -> deserialize(configFileText, Section::class.java)
       LESSON_CONFIG -> deserializeLesson(configFileText)
       TASK_CONFIG -> deserializeTask(configFileText)
-      else -> unexpectedConfigFileError(configName)
+      else -> yamlIllegalStateError(unknownConfigMessage(configName))
     }
   }
 
   inline fun <reified T : StudyItem> StudyItem.deserializeContent(project: Project, contentList: MutableList<T>): List<T> {
-    val parentDir = getDir(project) ?: noItemDirError(name)
+    val parentDir = getDir(project) ?: yamlIllegalStateError(noDirForItemMessage(name))
 
     val content = mutableListOf<T>()
     for (titledItem in contentList) {
@@ -72,7 +72,7 @@ object YamlDeserializer {
     val clazz = when (type) {
       "framework" -> FrameworkLesson::class.java
       null -> Lesson::class.java
-      else -> formatError("Unsupported lesson type '$type'")
+      else -> formatError(unsupportedItemTypeMessage(type, "lesson"))
     }
     return MAPPER.treeToValue(treeNode, clazz)
   }
@@ -87,7 +87,7 @@ object YamlDeserializer {
       "output" -> OutputTask::class.java
       "theory" -> TheoryTask::class.java
       "choice" -> ChoiceTask::class.java
-      else -> formatError("Unsupported task type '$type'")
+      else -> formatError(unsupportedItemTypeMessage(type, "task"))
     }
     return MAPPER.treeToValue(treeNode, clazz)
   }
@@ -100,7 +100,7 @@ object YamlDeserializer {
       REMOTE_LESSON_CONFIG -> REMOTE_MAPPER.readValue(configFileText, Lesson::class.java)
       REMOTE_SECTION_CONFIG,
       REMOTE_TASK_CONFIG -> REMOTE_MAPPER.readValue(configFileText, RemoteStudyItem::class.java)
-      else -> unexpectedConfigFileError(configName)
+      else -> yamlIllegalStateError(unknownConfigMessage(configName))
     }
   }
 
@@ -131,13 +131,4 @@ object YamlDeserializer {
 
   private val VirtualFile.document
     get() = FileDocumentManager.getInstance().getDocument(this) ?: error("Cannot find document for a file: ${name}")
-
-  fun noItemDirError(itemName: String): Nothing = error("Cannot find directory for item: '$itemName'")
-
-  fun noConfigFileError(itemName: String, configFileName: String = ""): Nothing = error(
-    "Cannot find config file $configFileName for item: '$itemName'")
-
-  fun formatError(message: String): Nothing = throw InvalidYamlFormatException(message)
-
-  private fun unexpectedConfigFileError(configName: String): Nothing = error("Unexpected config file: $configName")
 }

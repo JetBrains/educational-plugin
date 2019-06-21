@@ -1,5 +1,7 @@
 package com.jetbrains.edu.coursecreator.yaml.format
 
+import com.jetbrains.edu.coursecreator.yaml.unexpectedItemTypeMessage
+import com.jetbrains.edu.coursecreator.yaml.yamlIllegalStateError
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -17,6 +19,6 @@ fun <T : StudyItem> getRemoteChangeApplierForItem(item: T): RemoteInfoChangeAppl
     is EduCourse -> RemoteCourseChangeApplier()
     is Lesson -> RemoteLessonChangeApplier()
     is RemoteStudyItem -> RemoteInfoChangeApplierBase<T>()
-    else -> error("Unexpected item type: ${item.javaClass.simpleName}")
+    else -> yamlIllegalStateError(unexpectedItemTypeMessage(item.javaClass.simpleName))
   } as RemoteInfoChangeApplierBase<T>
 }
