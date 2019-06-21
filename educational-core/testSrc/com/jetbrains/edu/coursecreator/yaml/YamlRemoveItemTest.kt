@@ -1,7 +1,7 @@
 package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.configFileName
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -105,8 +105,9 @@ class YamlRemoveItemTest : YamlTestCase() {
   private fun loadItemFromConfig(item: StudyItem, newConfigText: String) {
     createConfigFiles()
     val configFile = item.getDir(project)!!.findChild(item.configFileName)!!
+    val document = FileDocumentManager.getInstance().getDocument(configFile)!!
     runWriteAction {
-      VfsUtil.saveText(configFile, newConfigText)
+      document.setText(newConfigText)
     }
     YamlLoader.doLoad(project, configFile)
   }
