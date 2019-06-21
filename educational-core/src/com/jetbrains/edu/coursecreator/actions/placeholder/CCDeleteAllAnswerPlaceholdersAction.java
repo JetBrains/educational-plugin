@@ -40,13 +40,11 @@ public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderActi
   }
 
   private static class ClearPlaceholders extends TaskFileUndoableAction {
-    private final Project myProject;
     private final List<AnswerPlaceholder> myPlaceholders;
     private final TaskFile myTaskFile;
 
     public ClearPlaceholders(@NotNull Project project, @NotNull TaskFile taskFile, @NotNull Editor editor) {
-      super(taskFile, editor);
-      myProject = project;
+      super(project, taskFile, editor);
       myTaskFile = taskFile;
       myPlaceholders = new ArrayList<>(taskFile.getAnswerPlaceholders());
     }
@@ -54,7 +52,7 @@ public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderActi
     @Override
     public void performUndo() {
       myTaskFile.getAnswerPlaceholders().addAll(myPlaceholders);
-      PlaceholderPainter.showPlaceholders(myProject, myTaskFile);
+      PlaceholderPainter.showPlaceholders(getProject(), myTaskFile);
     }
 
     @Override

@@ -75,12 +75,10 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
   static class AddAction extends TaskFileUndoableAction {
     private final AnswerPlaceholder myPlaceholder;
-    private final Project myProject;
 
     public AddAction(@NotNull Project project, @NotNull AnswerPlaceholder placeholder,
                      @NotNull TaskFile taskFile, @NotNull Editor editor) {
-      super(taskFile, editor);
-      myProject = project;
+      super(project, taskFile, editor);
       myPlaceholder = placeholder;
     }
 
@@ -96,7 +94,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     @Override
     public void performRedo(){
       getTaskFile().addAnswerPlaceholder(myPlaceholder);
-      PlaceholderPainter.showPlaceholder(myProject, myPlaceholder);
+      PlaceholderPainter.showPlaceholder(getProject(), myPlaceholder);
     }
   }
 
