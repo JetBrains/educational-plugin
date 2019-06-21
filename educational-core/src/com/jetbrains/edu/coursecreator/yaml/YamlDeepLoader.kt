@@ -88,7 +88,7 @@ object YamlDeepLoader {
       else return
     }
 
-    val courseWithRemoteInfo = YamlDeserializer.deserializeRemoteItem(VfsUtil.loadText(remoteConfigFile), remoteConfigFile.name)
+    val courseWithRemoteInfo = YamlDeserializer.deserializeRemoteItem(remoteConfigFile)
     getRemoteChangeApplierForItem(courseWithRemoteInfo).applyChanges(this, courseWithRemoteInfo)
   }
 

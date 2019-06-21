@@ -3,11 +3,9 @@ package com.jetbrains.edu.coursecreator.yaml.format
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.getConfigFileForChild
-import com.jetbrains.edu.coursecreator.yaml.YamlLoader.addItemAsNew
+import com.jetbrains.edu.coursecreator.yaml.YamlLoader.deserializeChildrenIfNeeded
 import com.jetbrains.edu.coursecreator.yaml.loadingError
 import com.jetbrains.edu.coursecreator.yaml.unexpectedItemTypeMessage
-import com.jetbrains.edu.coursecreator.yaml.yamlIllegalStateError
-import com.jetbrains.edu.coursecreator.yaml.YamlLoader.deserializeChildrenIfNeeded
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
@@ -38,7 +36,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
         // it is called from `YamlLoader.loadItem`
         val configFile = existingItem.getConfigFileForChild(project, titledItem.name) ?: continue
 
-        val deserializedChild = YamlDeserializer.deserializeItem(configFile) ?: continue
+        val deserializedChild = YamlDeserializer.deserializeItem(project, configFile) ?: continue
         deserializedChild.name = titledItem.name
         deserializedChild.index = titledItem.index
         deserializedChild.deserializeChildrenIfNeeded(project, existingItem.course)

@@ -179,7 +179,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |programming_language: $programmingLanguage
       |programming_language_version: $programmingLanguageVersion
       |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, Course::class.java)
+    val course = deserializeNotNull(yamlContent, Course::class.java)
     assertEquals(programmingLanguage, course.languageById.displayName)
     assertEquals(programmingLanguageVersion, course.languageVersion)
   }

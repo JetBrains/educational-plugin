@@ -29,7 +29,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.isUnitTestMode
-import org.jetbrains.annotations.TestOnly
 
 /**
  * Deserialize [StudyItem] object from yaml config file without any additional modifications.
@@ -209,6 +208,6 @@ object YamlDeserializer {
     }
   }
 
-  @TestOnly
+  @VisibleForTesting
   class ProcessedException(message: String, originalException: Exception?) : Exception(message, originalException)
 }
