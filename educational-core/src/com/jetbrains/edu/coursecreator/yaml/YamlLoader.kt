@@ -141,7 +141,7 @@ private fun StudyItem.ensureChildrenExist(itemDir: VirtualFile) {
     }
     is Task -> {
       taskFiles.forEach { (name, _) ->
-        itemDir.findFileByRelativePath(name) ?: loadingError("No physical file for file `$name`")
+        itemDir.findFileByRelativePath(name) ?: loadingError("No file for `$name`")
       }
     }
   }
