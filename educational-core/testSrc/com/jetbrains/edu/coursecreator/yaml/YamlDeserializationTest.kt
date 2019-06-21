@@ -253,7 +253,8 @@ class YamlDeserializationTest : YamlTestCase() {
     val task = YamlDeserializer.deserializeTask(yamlContent)
     assertTrue(task is ChoiceTask)
     assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
-    assertEquals(mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT), (task as ChoiceTask).choiceOptions.associateBy({ it.text }, { it.status }))
+    assertEquals(mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT),
+                 (task as ChoiceTask).choiceOptions.associateBy({ it.text }, { it.status }))
     assertEquals(correct, task.messageCorrect)
     assertEquals(incorrect, task.messageIncorrect)
   }
@@ -272,7 +273,8 @@ class YamlDeserializationTest : YamlTestCase() {
     val task = YamlDeserializer.deserializeTask(yamlContent)
     assertTrue(task is ChoiceTask)
     assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
-    assertEquals(mapOf("1" to ChoiceOptionStatus.UNKNOWN, "2" to ChoiceOptionStatus.UNKNOWN), (task as ChoiceTask).choiceOptions.associateBy({ it.text }, { it.status }))
+    assertEquals(mapOf("1" to ChoiceOptionStatus.UNKNOWN, "2" to ChoiceOptionStatus.UNKNOWN),
+                 (task as ChoiceTask).choiceOptions.associateBy({ it.text }, { it.status }))
   }
 
   fun `test edu task`() {
@@ -378,6 +380,6 @@ class YamlDeserializationTest : YamlTestCase() {
     assertTrue(course.items.isEmpty())
   }
 
-  private fun <T : ItemContainer> deserializeNotNull(yamlContent: String, clazz: Class<T>) = YamlDeserializer.deserialize(yamlContent,
-                                                                                                                          clazz)!!
+  private fun <T : ItemContainer> deserializeNotNull(yamlContent: String, clazz: Class<T>) =
+    YamlDeserializer.deserialize(yamlContent, clazz)!!
 }
