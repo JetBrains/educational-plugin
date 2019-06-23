@@ -35,21 +35,14 @@ class YamlSynchronizationTest : YamlTestCase() {
     val document = FileDocumentManager.getInstance().getDocument(taskConfig)!!
     runWriteAction { document.setText("invalid text") }
 
-    // load course from config
-    // TODO: remove try-catch after error-handling is merged
-    try {
-      project.getComponent(CCProjectComponent::class.java).projectOpened()
-    }
-    catch (e: Exception) {
-    }
+    project.getComponent(CCProjectComponent::class.java).projectOpened()
 
     // check loaded task is null
     val loadedSection = StudyTaskManager.getInstance(project).course?.sections?.first()
     val loadedLesson = loadedSection?.lessons?.first()
 
-    // TODO: uncomment after error-handling is merged
-    // val loadedTask = loadedLesson?.taskList?.firstOrNull()
-    // assertNull(loadedTask)
+    val loadedTask = loadedLesson?.taskList?.firstOrNull()
+    assertNull(loadedTask)
 
     // check that config file wasn't overwritten
     val taskDir = loadedLesson!!.getDir(project)?.findChild("task1")
