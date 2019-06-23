@@ -20,6 +20,7 @@ object YamlFormatSettings {
 
   // it is here because it's used in test and main code
   val YAML_TEST_PROJECT_READY = Key<Boolean>("EDU.yaml_test_project_ready")
+  val YAML_TEST_THROW_EXCEPTION = Key<Boolean>("EDU.yaml_test_throw_exception")
 
   fun shouldCreateConfigFiles(project: Project): Boolean = !isUnitTestMode || project.getUserData(YAML_TEST_PROJECT_READY) == true
 }

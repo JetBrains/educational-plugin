@@ -192,7 +192,7 @@ object YamlDeserializer {
                 configFile: VirtualFile,
                 cause: String = "invalid config") {
     // to make test failures more comprehensible
-    if (isUnitTestMode) {
+    if (isUnitTestMode && project.getUserData(YamlFormatSettings.YAML_TEST_THROW_EXCEPTION) == true) {
       if (originalException != null) {
         throw ProcessedException(cause, originalException)
       }
