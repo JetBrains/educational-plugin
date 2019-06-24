@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -230,6 +231,17 @@ class YamlDeserializationTest : YamlTestCase() {
     |""".trimMargin("|")
     val task = YamlDeserializer.deserializeTask(yamlContent)
     assertTrue(task is OutputTask)
+    assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
+  }
+
+  fun `test ide task`() {
+    val yamlContent = """
+    |type: ide
+    |files:
+    |- name: Test.java
+    |""".trimMargin("|")
+    val task = YamlDeserializer.deserializeTask(yamlContent)
+    assertTrue(task is IdeTask)
     assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
   }
 
