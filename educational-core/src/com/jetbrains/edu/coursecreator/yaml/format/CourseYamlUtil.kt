@@ -138,7 +138,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       HYPERSKILL_TYPE -> HyperskillCourse()
       STEPIK_TYPE -> StepikCourse()
       null -> EduCourse()
-      else -> formatError(unsupportedItemTypeMessage(courseType, "course"))
+      else -> formatError(unsupportedItemTypeMessage(courseType, EduNames.COURSE))
     }
     course.apply {
       name = title
