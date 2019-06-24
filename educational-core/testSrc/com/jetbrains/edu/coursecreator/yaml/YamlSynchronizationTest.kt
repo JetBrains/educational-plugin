@@ -25,6 +25,7 @@ class YamlSynchronizationTest : YamlTestCase() {
   }
 
   fun `test invalid config file`() {
+    project.putUserData(YamlFormatSettings.YAML_TEST_THROW_EXCEPTION, false)
     createConfigFiles()
 
     // make task config invalid

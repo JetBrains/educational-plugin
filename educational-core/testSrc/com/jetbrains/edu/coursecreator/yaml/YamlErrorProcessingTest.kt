@@ -7,14 +7,8 @@ import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightVirtualFile
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_THROW_EXCEPTION
 
 class YamlErrorProcessingTest : YamlTestCase() {
-
-  override fun setUp() {
-    super.setUp()
-    project.putUserData(YAML_TEST_THROW_EXCEPTION, true)
-  }
 
   fun `test empty field`() {
     doTest("""
