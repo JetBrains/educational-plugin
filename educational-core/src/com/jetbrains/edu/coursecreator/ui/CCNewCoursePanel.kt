@@ -58,8 +58,8 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
 
   init {
     layout = BorderLayout()
-    preferredSize = JBUI.size(700, 300)
-    minimumSize = JBUI.size(700, 300)
+    preferredSize = JBUI.size(700, 320)
+    minimumSize = JBUI.size(700, 320)
 
     myDescriptionTextArea.rows = 10
     myDescriptionTextArea.lineWrap = true
