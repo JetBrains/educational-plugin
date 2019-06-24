@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.rd.util.first
 
 open class YamlUndoTest : YamlTestCase() {
 
@@ -21,14 +20,15 @@ open class YamlUndoTest : YamlTestCase() {
     super.setUp()
     // as we don't create config file in CCProjectComponent, we have to create them manually
     createConfigFiles()
-    // TODO: enable listeners after merge with liana's test changes
   }
+
+  private val TASK_FILE_NAME = "Test.java"
 
   override fun createCourse() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
-          taskFile("Test.java", "42 is the <p>TODO()</p>. 43 is not") {
+          taskFile(TASK_FILE_NAME, "42 is the <p>TODO()</p>. 43 is not") {
             placeholder(0, possibleAnswer = "right answer")
           }
         }
@@ -85,7 +85,7 @@ open class YamlUndoTest : YamlTestCase() {
   private fun getCourseElements(): Triple<Task, TaskFile, AnswerPlaceholder> {
     val course = StudyTaskManager.getInstance(project).course!!
     val task = course.lessons.first().taskList.first()
-    val taskFile = task.getFile("Test.java")!!
+    val taskFile = task.getFile(TASK_FILE_NAME)!!
     val placeholder = taskFile.answerPlaceholders.first()
     return Triple(task, taskFile, placeholder)
   }
@@ -101,7 +101,7 @@ open class YamlUndoTest : YamlTestCase() {
     val taskConfig = taskDir.findChild(YamlFormatSettings.TASK_CONFIG)!!
     val document = FileDocumentManager.getInstance().getDocument(taskConfig)!!
     val deserializedTask = YamlDeserializer.deserializeTask(document.text)
-    val deserializedPlaceholder = deserializedTask.taskFiles.first().value.answerPlaceholders.first()
+    val deserializedPlaceholder = deserializedTask.getFile(TASK_FILE_NAME)!!.answerPlaceholders.first()
     assertEquals(expectedStartOffset, deserializedPlaceholder.offset)
     assertEquals(expectedEndOffset, deserializedPlaceholder.endOffset)
   }
