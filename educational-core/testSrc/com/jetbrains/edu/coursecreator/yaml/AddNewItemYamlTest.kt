@@ -125,9 +125,7 @@ class AddNewItemYamlTest : YamlTestCase() {
   }
 
   private fun ItemContainer.removeLastItem() {
-    val itemsCopy = items.toMutableList()
-    itemsCopy.removeAt(items.lastIndex)
-    items = itemsCopy
+    removeItem(items.last())
   }
 
   /**
