@@ -32,8 +32,27 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
 
     override fun refreshProject(project: Project) {
         val course = StudyTaskManager.getInstance(project).course ?: return
-        val cargoProjects = project.cargoProjects
+        if (project.isSingleWorkspaceProject) {
+            refreshWorkspace(project)
+        } else {
+            refreshTaskPackages(project, course)
+        }
+    }
 
+    // If there is `Cargo.toml` in root of project, we assume that all task packages are in single workspace.
+    // In this case it's enough just to refresh all current cargo projects (actually, single one)
+    // or delegate project discovering to IntelliJ Rust plugin when there isn't any cargo project yet
+    private fun refreshWorkspace(project: Project) {
+        val cargoProjects = project.cargoProjects
+        if (!cargoProjects.hasAtLeastOneValidProject) {
+            cargoProjects.discoverAndRefresh()
+        } else {
+            cargoProjects.refreshAllProjects()
+        }
+    }
+
+    private fun refreshTaskPackages(project: Project, course: Course) {
+        val cargoProjects = project.cargoProjects
         val cargoProjectMap = HashMap<VirtualFile, CargoProject>()
         val toAttach = mutableListOf<Path>()
         val toDetach = mutableListOf<CargoProject>()
@@ -59,12 +78,10 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
             }
         }
 
-
         toDetach.forEach { cargoProjects.detachCargoProject(it) }
         // TODO: find out way not to refresh all projects on each `CargoProjectsService.attachCargoProject` call.
-        // Now it leads to O(n^2) cargo invocations
+        //  Now it leads to O(n^2) cargo invocations
         toAttach.forEach { cargoProjects.attachCargoProject(it) }
-
         cargoProjects.refreshAllProjects()
     }
 
