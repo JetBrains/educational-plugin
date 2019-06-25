@@ -283,6 +283,6 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     extension.implementationClass = configuratorClass.name
     extension.courseType = courseType
     extension.environment = environment
-    PlatformTestUtil.registerExtension(ExtensionPointName.create(EduConfigurator.EP_NAME), extension, disposable)
+    PlatformTestUtil.registerExtension(ExtensionPointName.create(EducationalExtensionPoint.EP_NAME), extension, disposable)
   }
 }

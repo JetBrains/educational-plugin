@@ -38,7 +38,7 @@ object EduConfiguratorManager {
    */
   @JvmStatic
   fun allExtensions(): List<EducationalExtensionPoint<EduConfigurator<out Any>>> =
-    Extensions.getExtensions<EducationalExtensionPoint<EduConfigurator<out Any>>>(EduConfigurator.EP_NAME, null)
+    Extensions.getExtensions<EducationalExtensionPoint<EduConfigurator<out Any>>>(EducationalExtensionPoint.EP_NAME, null)
       .filter { it.instance.isEnabled }
 
   /**
@@ -46,7 +46,7 @@ object EduConfiguratorManager {
    */
   @JvmStatic
   val supportedEduLanguages: List<String> by lazy {
-    allExtensions().filter { it.courseType == EduNames.PYCHARM }.map { it.language }.toList()
+    allExtensions().filter { it.courseType == EduNames.PYCHARM }.map { it.language }
   }
 
   private fun compatibleCourseType(extension: EducationalExtensionPoint<EduConfigurator<out Any>>, courseType: String): Boolean {

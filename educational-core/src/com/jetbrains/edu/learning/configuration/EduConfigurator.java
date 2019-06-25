@@ -46,10 +46,9 @@ import java.util.List;
  * @param <Settings> container type holds course project settings state
  *
  * @see EduConfiguratorManager
+ * @see EducationalExtensionPoint
  */
 public interface EduConfigurator<Settings> {
-  String EP_NAME = "Educational.configurator";
-
   Logger LOG = Logger.getInstance(EduConfigurator.class);
 
   @NotNull
