@@ -29,8 +29,7 @@ open class PyNewConfigurator : EduConfigurator<PyNewProjectSettings> {
     return super.excludeFromArchive(project, file) || path.contains("__pycache__") || path.endsWith(".pyc")
   }
 
-  override fun isEnabled(): Boolean = (Experiments.isFeatureEnabled(EduExperimentalFeatures.PYTHON_UNITTEST) || isUnitTestMode) &&
-                                      !(PlatformUtils.isPyCharm() || PlatformUtils.isCLion())
+  override fun isEnabled(): Boolean = !(PlatformUtils.isPyCharm() || PlatformUtils.isCLion())
   override fun getTaskCheckerProvider(): TaskCheckerProvider = PyNewTaskCheckerProvider()
   override fun getLogo(): Icon = PythonIcons.Python.Python
 
