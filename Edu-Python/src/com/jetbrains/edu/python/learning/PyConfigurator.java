@@ -64,4 +64,9 @@ public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
   public Icon getLogo() {
     return PythonIcons.Python.Python;
   }
+
+  @Override
+  public boolean isCourseCreatorEnabled() {
+    return false;
+  }
 }
