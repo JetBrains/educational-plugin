@@ -107,7 +107,10 @@ class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
     parentItem.addItemAsNew(project, deserializedItem)
 
     deserializedItem.taskFiles.values.forEach { taskFile ->
-      taskFile.getEduEditors(project).forEach { it.taskFile = taskFile }
+      taskFile.getEduEditors(project).forEach {
+        PlaceholderPainter.hidePlaceholders(it.taskFile)
+        it.taskFile = taskFile
+      }
     }
   }
 

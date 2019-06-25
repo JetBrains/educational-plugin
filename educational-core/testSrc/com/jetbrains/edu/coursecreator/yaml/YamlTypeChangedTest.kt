@@ -3,9 +3,11 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_PROJECT_READY
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_THROW_EXCEPTION
+import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
@@ -27,7 +29,9 @@ class YamlTypeChangedTest : YamlTestCase() {
     courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
-          taskFile("test1.txt")
+          taskFile("test1.txt", text = "// <p>my</p> task file text") {
+            placeholder(0, "TODO")
+          }
         }
         choiceTask("choice", choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.CORRECT)) {
           taskFile("test1.txt")
@@ -38,6 +42,20 @@ class YamlTypeChangedTest : YamlTestCase() {
 
   fun `test edu to choice task`() {
     testTaskTypeChanged(ChoiceTask().itemType, ChoiceTask::class.java)
+  }
+
+  // EDU-1907
+  fun `test placeholders repainted`() {
+    // imitating opening task file and placeholders painting
+    val taskFile = findTaskFile(0, 0, "test1.txt")
+    myFixture.openFileInEditor(taskFile.getVirtualFile(project)!!)
+    PlaceholderPainter.showPlaceholders(project, taskFile)
+
+    // change task type and remove placeholders
+    testTaskTypeChanged(ChoiceTask().itemType, ChoiceTask::class.java)
+
+    // check that old placeholders not painted anymore
+    assertEquals(0, PlaceholderPainter.getPaintedPlaceholder().size)
   }
 
   fun `test choice to edu task`() {
