@@ -23,9 +23,9 @@ open class PyNewCourseBuilder : EduCourseBuilder<PyNewProjectSettings> {
   override fun getTestTemplateName(): String = TEST_FILE_NAME
   override fun getLanguageSettings(): LanguageSettings<PyNewProjectSettings> = PyLanguageSettings()
 
-  override fun initNewTask(lesson: Lesson, task: Task, info: NewStudyItemInfo) {
+  override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     if (task.taskFiles.isEmpty()) {
-      super.initNewTask(lesson, task, info)
+      super.initNewTask(project, lesson, task, info)
       task.addTaskFile(PyNames.INIT_DOT_PY)
       val testInitPy = TaskFile("$TEST_FOLDER/${PyNames.INIT_DOT_PY}", "")
       testInitPy.isVisible = false
