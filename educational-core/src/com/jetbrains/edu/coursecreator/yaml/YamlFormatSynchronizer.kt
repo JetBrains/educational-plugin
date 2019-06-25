@@ -156,7 +156,7 @@ object YamlFormatSynchronizer {
     EditorFactory.getInstance().eventMulticaster.addDocumentListener(YamlSynchronizationListener(project), project)
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
-        if (isConfigFile(file)) {
+        if (isLocalConfigFile(file)) {
           // load item to show editor notification if config file is invalid
           YamlLoader.loadItem(project, file)
         }
@@ -197,8 +197,14 @@ object YamlFormatSynchronizer {
   @JvmStatic
   fun isConfigFile(file: VirtualFile): Boolean {
     val name = file.name
-    return COURSE_CONFIG == name || SECTION_CONFIG == name || LESSON_CONFIG == name || TASK_CONFIG == name ||
+    return isLocalConfigFile(file) ||
            REMOTE_COURSE_CONFIG == name || REMOTE_SECTION_CONFIG == name || REMOTE_LESSON_CONFIG == name || REMOTE_TASK_CONFIG == name
+  }
+
+  @JvmStatic
+  fun isLocalConfigFile(file: VirtualFile): Boolean {
+    val name = file.name
+    return COURSE_CONFIG == name || SECTION_CONFIG == name || LESSON_CONFIG == name || TASK_CONFIG == name
   }
 }
 

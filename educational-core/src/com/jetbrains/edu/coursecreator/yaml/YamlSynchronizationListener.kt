@@ -7,13 +7,13 @@ import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.LightVirtualFile
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.isConfigFile
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.isLocalConfigFile
 
 class YamlSynchronizationListener(val project: Project) : DocumentListener {
   override fun documentChanged(event: DocumentEvent) {
     val eventDocument = event.document
     val configFile = FileDocumentManager.getInstance().getFile(eventDocument) ?: return
-    if ((configFile is LightVirtualFile) || !isConfigFile(configFile)) {
+    if ((configFile is LightVirtualFile) || !isLocalConfigFile(configFile)) {
       return
     }
     val loadFromConfig = configFile.getUserData(YamlFormatSynchronizer.LOAD_FROM_CONFIG) ?: true
