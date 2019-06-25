@@ -7,6 +7,8 @@ import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -60,6 +62,10 @@ class YamlTypeChangedTest : YamlTestCase() {
 
   fun `test choice to edu task`() {
     testTaskTypeChanged(EduTask().itemType, EduTask::class.java)
+  }
+
+  fun `test lesson to framework lesson`() {
+    testLessonTypeChanged("framework", FrameworkLesson::class.java)
   }
 
   fun `test edu to coursera course`() {
@@ -126,5 +132,20 @@ class YamlTypeChangedTest : YamlTestCase() {
     assertInstanceOf(loadedTask, expectedClass)
     assertEquals(1, loadedTask.index)
     assertEquals(1, loadedTask.taskFiles.size)
+  }
+
+  private fun <T : Lesson> testLessonTypeChanged(type: String, expectedClass: Class<T>) {
+    val lesson = findLesson(0)
+    loadItemFromConfig(lesson, """
+      |type: $type
+      |content:
+      | - task1
+      | - choice
+      |""".trimMargin("|"))
+
+    val loadedLesson = findLesson(0)
+    assertInstanceOf(loadedLesson, expectedClass)
+    assertEquals(1, loadedLesson.index)
+    assertEquals(2, loadedLesson.items.size)
   }
 }

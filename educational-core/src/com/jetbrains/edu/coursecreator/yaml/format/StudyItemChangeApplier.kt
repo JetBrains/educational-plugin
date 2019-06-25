@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.yaml.format
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.getConfigFileForChild
+import com.jetbrains.edu.coursecreator.yaml.YamlLoader.addItemAsNew
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.deserializeChildrenIfNeeded
 import com.jetbrains.edu.coursecreator.yaml.loadingError
 import com.jetbrains.edu.coursecreator.yaml.unexpectedItemTypeMessage
@@ -30,19 +31,31 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
   }
 
   private fun <T : ItemContainer> changeType(project: Project, existingItem: T, deserializedItem: T) {
-    if (deserializedItem !is EduCourse && deserializedItem !is CourseraCourse) {
-      loadingError("Expected ${existingItem::class.simpleName} class, but was: ${deserializedItem.javaClass.simpleName}")
+    if (deserializedItem is EduCourse || deserializedItem is CourseraCourse) {
+      deserializedItem.items = existingItem.items
+      deserializedItem.init(null, null, false)
+      StudyTaskManager.getInstance(project).course = deserializedItem as Course
+      return
     }
 
-    deserializedItem.items = existingItem.items
-    deserializedItem.init(null, null, false)
-    StudyTaskManager.getInstance(project).course = deserializedItem as Course
+    if (deserializedItem is Lesson) {
+      deserializedItem.name = existingItem.name
+      deserializedItem.index = existingItem.index
+      deserializedItem.items = existingItem.items
+
+      val parentItem = existingItem.parent as ItemContainer
+      parentItem.removeItem(existingItem)
+      parentItem.addItemAsNew(project, deserializedItem)
+      return
+    }
+
+    loadingError("Expected ${existingItem::class.simpleName} class, but was: ${deserializedItem.javaClass.simpleName}")
   }
 
   private fun updateChildren(deserializedItem: T, existingItem: T) {
     val existingChildren = existingItem.items
     val preservedChildren = mutableListOf<StudyItem>()
-    for (titledItem in deserializedItem.items)  {
+    for (titledItem in deserializedItem.items) {
       val child = existingChildren.find { it.name == titledItem.name }
       if (child != null) {
         child.index = titledItem.index
