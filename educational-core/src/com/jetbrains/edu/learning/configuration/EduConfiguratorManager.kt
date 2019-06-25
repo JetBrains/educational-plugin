@@ -12,7 +12,11 @@ object EduConfiguratorManager {
    * Returns any enabled [EduConfigurator] for given language, courseType and environment
    */
   @JvmStatic
-  fun findConfigurator(courseType: String, environment: String, language: Language): EduConfigurator<out Any>? {
+  fun findConfigurator(courseType: String, environment: String, language: Language): EduConfigurator<out Any>? =
+    findExtension(courseType, environment, language)?.instance
+
+  @JvmStatic
+  fun findExtension(courseType: String, environment: String, language: Language): EducationalExtensionPoint<EduConfigurator<out Any>>? {
     var configurator =
       allExtensions().find { extension ->
         extension.language == language.id &&
@@ -26,7 +30,7 @@ object EduConfiguratorManager {
         extension.environment == environment
       }
     }
-    return configurator?.instance
+    return configurator
   }
 
   /**

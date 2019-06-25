@@ -22,6 +22,9 @@ public class EducationalExtensionPoint<T> extends AbstractExtensionPointBean {
   @Attribute("environment")
   public String environment = "";
 
+  @Attribute("displayName")
+  public String displayName = null;
+
   private final AtomicNotNullLazyValue<T> myInstanceHolder = new AtomicNotNullLazyValue<T>() {
     @NotNull
     @Override

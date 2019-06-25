@@ -17,7 +17,9 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.getDefaultCourseType
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
+import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
@@ -205,7 +207,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       EduConfiguratorManager.allExtensions()
         .filter { it.instance.isCourseCreatorEnabled }
         .filter { it.courseType != StepikNames.STEPIK_TYPE && it.courseType != CourseraNames.COURSE_TYPE }
-        .mapNotNull { extension -> obtainCourseData(extension.language, extension.environment, extension.courseType) }
+        .mapNotNull { extension -> obtainCourseData(extension) }
     }
     courseData
       .sortedBy { it.displayName }
@@ -218,13 +220,33 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
   }
 
   private fun obtainCourseData(languageId: String, environment: String, courseType: String): CourseData? {
-    val language = Language.findLanguageByID(languageId)
-    if (language == null) {
-      LOG.info("Language with id $languageId not found")
-      return null
+    val language = getLanguageById(languageId) ?: return null
+    val extension = EduConfiguratorManager.findExtension(courseType, environment, language) ?: return null
+    return obtainCourseData(extension, language)
+  }
+
+  private fun obtainCourseData(
+    extension: EducationalExtensionPoint<EduConfigurator<*>>,
+    language: Language? = getLanguageById(extension.language)
+  ): CourseData? {
+    if (language == null) return null
+    val environment = extension.environment
+    val courseType = extension.courseType
+    val displayName = extension.displayName ?: run {
+      when (courseType) {
+        EduNames.PYCHARM -> if (environment == EduNames.DEFAULT_ENVIRONMENT) language.displayName else "${language.displayName} ($environment)"
+        else -> "$courseType ${language.displayName}"
+      }
     }
-    return CourseData(language, courseType, environment,
-                      EduConfiguratorManager.findConfigurator(courseType, environment, language)?.logo)
+
+    return CourseData(language, courseType, environment, displayName, extension.instance.logo)
+  }
+
+  private fun getLanguageById(languageId: String): Language? {
+    return Language.findLanguageByID(languageId) ?: run {
+      LOG.info("Language with id $languageId not found")
+      null
+    }
   }
 
   companion object {
@@ -235,15 +257,13 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     fun onInputDataValidated(isInputDataComplete: Boolean)
   }
 
-  data class CourseData(val language: Language, val courseType: String, val environment: String, val icon: Icon?) {
-    val displayName
-      get(): String {
-        return when (courseType) {
-          EduNames.PYCHARM -> if (environment == EduNames.DEFAULT_ENVIRONMENT) language.displayName else "${language.displayName} ($environment)"
-          else -> "$courseType ${language.displayName}"
-        }
-      }
-  }
+  data class CourseData(
+    val language: Language,
+    val courseType: String,
+    val environment: String,
+    val displayName: String,
+    val icon: Icon?
+  )
 
   private class CourseTitleDocument : PlainDocument() {
     override fun insertString(offs: Int, str: String?, a: AttributeSet?) {
