@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -22,9 +23,9 @@ class RsEduTaskChecker(project: Project, task: EduTask) : TaskChecker<EduTask>(t
 
     override fun check(indicator: ProgressIndicator): CheckResult {
         val taskDir = task.getTaskDir(project) ?: return CheckResult.FAILED_TO_CHECK
-        val cargoProject = project.cargoProjects.findProjectForFile(taskDir) ?: return CheckResult.FAILED_TO_CHECK
+        val pkg = runReadAction { project.cargoProjects.findPackageForFile(taskDir) } ?: return CheckResult.FAILED_TO_CHECK
         val cargo = project.rustSettings.toolchain?.rawCargo() ?: return CheckResult.FAILED_TO_CHECK
-        val cmd = CargoCommandLine.forProject(cargoProject, "test", listOf(
+        val cmd = CargoCommandLine.forPackage(pkg, "test", listOf(
             "--", "-Z", "unstable-options", "--format=json"
         ))
         val processOutput = cargo.toGeneralCommandLine(cmd).execute(project)
