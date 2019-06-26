@@ -255,6 +255,19 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(lessonCustomName, lesson.customPresentableName)
   }
 
+  fun `test lesson with explicit type`() {
+    val firstTask = "Introduction Task"
+    val secondTask = "Advanced Task"
+    val yamlContent = """
+      |type: lesson
+      |content:
+      |- $firstTask
+      |- $secondTask
+    """.trimMargin("|")
+    val lesson = YamlDeserializer.deserializeLesson(yamlContent)
+    assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
+  }
+
   fun `test framework lesson`() {
     val firstTask = "Introduction Task"
     val secondTask = "Advanced Task"

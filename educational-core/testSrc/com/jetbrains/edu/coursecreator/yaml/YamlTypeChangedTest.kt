@@ -68,6 +68,10 @@ class YamlTypeChangedTest : YamlTestCase() {
     testLessonTypeChanged("framework", FrameworkLesson::class.java)
   }
 
+  fun `test framework to lesson`() {
+    testLessonTypeChanged("lesson", Lesson::class.java)
+  }
+
   fun `test edu to coursera course`() {
     testCourseTypeChanged(CourseraNames.COURSE_TYPE, CourseraCourse::class.java)
   }

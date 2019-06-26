@@ -83,9 +83,9 @@ object YamlDeserializer {
     val treeNode = MAPPER.readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
     val type = asText(treeNode.get("type"))
     val clazz = when (type) {
-      "framework" -> FrameworkLesson::class.java
-      null -> Lesson::class.java
-      else -> formatError(unsupportedItemTypeMessage(type, "lesson"))
+      FrameworkLesson().itemType -> FrameworkLesson::class.java
+      Lesson().itemType, null -> Lesson::class.java
+      else -> formatError(unsupportedItemTypeMessage(type, EduNames.LESSON))
     }
     return MAPPER.treeToValue(treeNode, clazz)
   }
