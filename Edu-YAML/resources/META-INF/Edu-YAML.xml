@@ -1,0 +1,8 @@
+<idea-plugin>
+  <depends>com.intellij.modules.lang</depends>
+  <depends>org.jetbrains.plugins.yaml</depends>
+
+  <extensions defaultExtensionNs="JavaScript">
+    <JsonSchema.ProviderFactory implementation="com.jetbrains.edu.yaml.EduYamlSchemaProviderFactory"/>
+  </extensions>
+</idea-plugin>

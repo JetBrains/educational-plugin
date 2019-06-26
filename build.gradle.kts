@@ -189,7 +189,7 @@ project(":") {
       untilBuild(prop("customUntilBuild"))
     }
 
-    val pluginsList = mutableListOf("PythonCore:${prop("pythonPluginVersion")}", "org.rust.lang:${prop("rustPluginVersion")}")
+    val pluginsList = mutableListOf("PythonCore:${prop("pythonPluginVersion")}", "org.rust.lang:${prop("rustPluginVersion")}", "yaml")
     if (isJvmCenteredIDE) {
       pluginsList += listOf("junit", "Kotlin", "org.intellij.scala:${prop("scalaPluginVersion")}")
       if (isAtLeast192) {
@@ -214,6 +214,7 @@ project(":") {
     compile(project(":Edu-JavaScript"))
     compile(project(":Edu-Rust"))
     compile(project(":Edu-Cpp"))
+    compile(project(":Edu-YAML"))
   }
 
   val downloadJavaFx = task<Download>("downloadJavaFx") {
@@ -333,6 +334,24 @@ project(":jvm-core") {
     testOutput(sourceSets.getByName("test").output.classesDirs)
   }
 }
+
+project(":Edu-YAML") {
+  intellij {
+    // remove java dependency added for tests
+    if (isJvmCenteredIDE && isAtLeast192) {
+      setPlugins("java", "yaml")
+    }
+    else {
+      setPlugins("yaml")
+    }
+  }
+
+  dependencies {
+    compile(project(":educational-core"))
+    testCompile(project(":educational-core", "testOutput"))
+  }
+}
+
 
 project(":Edu-Java") {
   intellij {
