@@ -32,12 +32,12 @@ import java.util.*
 
 private const val TYPE = "type"
 private const val TITLE = "title"
-private const val LANGUAGE = "language"
+const val LANGUAGE = "language"
 private const val SUMMARY = "summary"
-private const val PROGRAMMING_LANGUAGE = "programming_language"
+const val PROGRAMMING_LANGUAGE = "programming_language"
 private const val CONTENT = "content"
-private const val ENVIRONMENT = "environment"
-private const val PROGRAMMING_LANGUAGE_VERSION = "programming_language_version"
+const val ENVIRONMENT = "environment"
+const val PROGRAMMING_LANGUAGE_VERSION = "programming_language_version"
 
 private const val TOP_LEVEL_LESSONS_SECTION = "default_section"
 private const val SUBMIT_MANUALLY = "submit_manually"
@@ -47,7 +47,7 @@ private const val SUBMIT_MANUALLY = "submit_manually"
  * Update [CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
-@JsonPropertyOrder(TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT)
+@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT)
 @JsonDeserialize(builder = CourseBuilder::class)
 abstract class CourseYamlMixin {
   @JsonSerialize(converter = CourseTypeSerializationConverter::class)

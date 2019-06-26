@@ -48,4 +48,8 @@ object EduConfiguratorManager {
   private fun compatibleCourseType(extension: EducationalExtensionPoint<EduConfigurator<out Any>>, courseType: String): Boolean {
     return (courseType == CourseraNames.COURSE_TYPE || courseType == StepikNames.STEPIK_TYPE) && extension.courseType == EduNames.PYCHARM
   }
+
+  @JvmStatic
+  fun supportedEnvironments(language: Language): List<String> =
+    allExtensions().filter { it.language == language.id && it.courseType == EduNames.PYCHARM }.map { it.environment }.distinct()
 }

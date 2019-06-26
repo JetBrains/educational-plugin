@@ -5,4 +5,9 @@
   <extensions defaultExtensionNs="JavaScript">
     <JsonSchema.ProviderFactory implementation="com.jetbrains.edu.yaml.EduYamlSchemaProviderFactory"/>
   </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <completion.contributor implementationClass="com.jetbrains.edu.yaml.EduYamlCompletionContributor"
+                            language="yaml" order="first"/>
+  </extensions>
 </idea-plugin>
