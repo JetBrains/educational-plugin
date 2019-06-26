@@ -38,7 +38,7 @@ class CCAddAnswerPlaceholderPanel(placeholderText: String) : JPanel() {
       row { scrollPane() }
       row { label() }
     }
-    panel.minimumSize = JBUI.size(390, 100)
+    panel.minimumSize = JBUI.size(430, 100)
     panel.alignmentX = Component.LEFT_ALIGNMENT
     add(panel)
   }
