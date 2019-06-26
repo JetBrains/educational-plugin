@@ -10,6 +10,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -45,6 +46,7 @@ import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 public class StudyTaskManager implements PersistentStateComponent<Element>, DumbAware {
   public static final Topic<CourseSetListener> COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener.class);
   private static final Logger LOG = Logger.getInstance(StudyTaskManager.class);
+  private static final Key<Boolean> STUDY_XML_DELETED = new Key<>("study-xml-deleted");
 
   @Transient
   private Course myCourse;
@@ -108,7 +110,10 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   @Nullable
   @Override
   public Element getState() {
-    if (myCourse == null) {
+    if (myCourse == null || !myCourse.isStudy()) {
+      if (myProject != null) {
+        myProject.putUserData(STUDY_XML_DELETED, Boolean.TRUE);
+      }
       return null;
     }
 
@@ -137,6 +142,12 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
 
   @Override
   public void loadState(@NotNull Element state) {
+    // after `study-project.xml` is deleted this method is called the second time to reinit component,
+    // so we want to do nothing in this case
+    if (myProject != null && myProject.getUserData(STUDY_XML_DELETED) == Boolean.TRUE) {
+      return;
+    }
+
     try {
       int version = getVersion(state);
       if (version == -1) {

@@ -22,6 +22,7 @@ object YamlFormatSettings {
   const val REMOTE_LESSON_CONFIG = "lesson-remote-info.yaml"
   const val REMOTE_TASK_CONFIG = "task-remote-info.yaml"
 
+  @JvmStatic
   fun Project.isEduYamlProject() = courseDir.findChild(COURSE_CONFIG) != null
 
   // it is here because it's used in test and main code
