@@ -85,10 +85,13 @@ class TaskDescriptionTest : EduTestCase() {
     task.descriptionText = taskText
     val oldActiveKeymap = KeymapManager.getInstance().activeKeymap
     val keymapManager = KeymapManager.getInstance() as KeymapManagerImpl
-    keymapManager.activeKeymap = keymapManager.getKeymap(keymapName)
-    val taskDescription = task.getTaskDescription(task.getTaskDir(project))
-    assertEquals(taskTextWithShortcuts, taskDescription!!.getBody())
-    keymapManager.activeKeymap = oldActiveKeymap
+    try {
+      keymapManager.activeKeymap = keymapManager.getKeymap(keymapName)!!
+      val taskDescription = task.getTaskDescription(task.getTaskDir(project))
+      assertEquals(taskTextWithShortcuts, taskDescription!!.getBody())
+    } finally {
+      keymapManager.activeKeymap = oldActiveKeymap
+    }
   }
 
   @Throws(IOException::class)
