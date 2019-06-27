@@ -100,6 +100,12 @@ class YamlErrorProcessingTest : YamlTestCase() {
            "Unsupported task type 'e'", InvalidYamlFormatException::class.java)
   }
 
+  fun `test task without type`() {
+    doTest("""
+    """.trimIndent(), YamlFormatSettings.TASK_CONFIG,
+           "Task type not specified", InvalidYamlFormatException::class.java)
+  }
+
   private fun <T : Exception> doTest(yamlContent: String,
                                      configName: String,
                                      expectedErrorMessage: String,

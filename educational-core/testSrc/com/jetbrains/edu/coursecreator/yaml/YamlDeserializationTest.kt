@@ -48,6 +48,20 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
   }
 
+  fun `test course with no content`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |programming_language: Plain text
+      |""".trimMargin("|")
+    val course = deserializeNotNull(yamlContent, Course::class.java)
+    assertTrue(course is EduCourse)
+    assertEmpty(course.items)
+  }
+
   fun `test course with environment`() {
     val environment = EduNames.ANDROID
     val yamlContent = """
@@ -430,13 +444,28 @@ class YamlDeserializationTest : YamlTestCase() {
     assertTrue("$testFileName expected to be invisible", !testFile.isVisible)
   }
 
+  fun `test empty edu task`() {
+    val yamlContent = """
+    |type: edu
+    |""".trimMargin("|")
+    val task = YamlDeserializer.deserializeTask(yamlContent)
+    assertEmpty(task.taskFiles.values)
+  }
+
   fun `test empty lesson`() {
     val yamlContent = """
     |
     |{}
     |""".trimMargin("|")
-    val lesson = deserializeNotNull(yamlContent, Lesson::class.java)
+    val lesson = YamlDeserializer.deserializeLesson(yamlContent)
     assertTrue(lesson.taskList.isEmpty())
+  }
+
+  fun `test empty lesson with empty config`() {
+    val yamlContent = """
+    |""".trimMargin("|")
+    val lesson = YamlDeserializer.deserializeLesson(yamlContent)
+    assertEmpty(lesson.taskList)
   }
 
   fun `test empty section`() {
@@ -444,8 +473,15 @@ class YamlDeserializationTest : YamlTestCase() {
     |
     |{}
     |""".trimMargin("|")
-    val section = deserializeNotNull(yamlContent, Section::class.java)
+    val section = YamlDeserializer.deserializeSection(yamlContent)
     assertTrue(section.lessons.isEmpty())
+  }
+
+  fun `test empty section with empty config`() {
+    val yamlContent = """
+    |""".trimMargin("|")
+    val section = YamlDeserializer.deserializeSection(yamlContent)
+    assertEmpty(section.lessons)
   }
 
   fun `test empty course`() {

@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -40,7 +41,7 @@ object YamlDeserializer {
     return try {
       when (configName) {
         COURSE_CONFIG -> deserialize(configFileText, Course::class.java)
-        SECTION_CONFIG -> deserialize(configFileText, Section::class.java)
+        SECTION_CONFIG -> deserializeSection(configFileText)
         LESSON_CONFIG -> deserializeLesson(configFileText)
         TASK_CONFIG -> deserializeTask(configFileText)
         else -> loadingError(unknownConfigMessage(configFile.name))
@@ -72,8 +73,14 @@ object YamlDeserializer {
   fun <T : ItemContainer> deserialize(configFileText: String, clazz: Class<T>): T? = MAPPER.readValue(configFileText, clazz)
 
   @VisibleForTesting
+  fun deserializeSection(configFileText: String): Section {
+    val jsonNode = MAPPER.readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+    return MAPPER.treeToValue(jsonNode, Section::class.java)
+  }
+
+  @VisibleForTesting
   fun deserializeLesson(configFileText: String): Lesson {
-    val treeNode = MAPPER.readTree(configFileText)
+    val treeNode = MAPPER.readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
     val type = asText(treeNode.get("type"))
     val clazz = when (type) {
       "framework" -> FrameworkLesson::class.java
@@ -85,7 +92,7 @@ object YamlDeserializer {
 
   @VisibleForTesting
   fun deserializeTask(configFileText: String): Task {
-    val treeNode = MAPPER.readTree(configFileText)
+    val treeNode = MAPPER.readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
     val type = asText(treeNode.get("type")) ?: formatError("Task type not specified")
 
     val clazz = when (type) {
