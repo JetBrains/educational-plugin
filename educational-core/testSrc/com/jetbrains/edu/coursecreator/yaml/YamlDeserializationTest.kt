@@ -315,6 +315,72 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals("lesson1#task1#Test.java#1", answerPlaceholder.placeholderDependency.toString())
   }
 
+  fun `test empty placeholder`() {
+    val yamlContent = """
+    |type: edu
+    |files:
+    |- name: Test.java
+    |  placeholders:
+    |  - offset: 0
+    |    length: 3
+    |    placeholder_text: ""
+    |    dependency:
+    |      lesson: lesson1
+    |      task: task1
+    |      file: Test.java
+    |      placeholder: 1
+    |      is_visible: true
+    |""".trimMargin("|")
+    val task = YamlDeserializer.deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
+    assertEquals("", answerPlaceholder.placeholderText)
+  }
+
+  fun `test placeholder starts with spaces`() {
+    val yamlContent = """
+    |type: edu
+    |files:
+    |- name: Test.java
+    |  placeholders:
+    |  - offset: 0
+    |    length: 3
+    |    placeholder_text: '   type here'
+    |    dependency:
+    |      lesson: lesson1
+    |      task: task1
+    |      file: Test.java
+    |      placeholder: 1
+    |      is_visible: true
+    |""".trimMargin("|")
+    val task = YamlDeserializer.deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
+    assertEquals("   type here", answerPlaceholder.placeholderText)
+  }
+
+  fun `test placeholder ends with spaces`() {
+    val yamlContent = """
+    |type: edu
+    |files:
+    |- name: Test.java
+    |  placeholders:
+    |  - offset: 0
+    |    length: 3
+    |    placeholder_text: 'type here   '
+    |    dependency:
+    |      lesson: lesson1
+    |      task: task1
+    |      file: Test.java
+    |      placeholder: 1
+    |      is_visible: true
+    |""".trimMargin("|")
+    val task = YamlDeserializer.deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
+    assertEquals("type here   ", answerPlaceholder.placeholderText)
+  }
+
   fun `test edu task without dependency`() {
     val yamlContent = """
     |type: edu

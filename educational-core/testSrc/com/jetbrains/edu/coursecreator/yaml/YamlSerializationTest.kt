@@ -8,12 +8,10 @@ import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
-import org.junit.Test
 
 
 class YamlSerializationTest : YamlTestCase() {
 
-  @Test
   fun `test edu task`() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
@@ -35,6 +33,72 @@ class YamlSerializationTest : YamlTestCase() {
     |    placeholder_text: |-
     |      type here
     |      and here
+    |""".trimMargin("|"))
+  }
+
+  fun `test empty placeholder`() {
+    val task = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("Test.java", "<p>42 is the answer</p>") {
+            placeholder(0, placeholderText = "")
+          }
+        }
+      }
+    }.findTask("lesson1", "task1")
+    doTest(task, """
+    |type: edu
+    |files:
+    |- name: Test.java
+    |  visible: true
+    |  placeholders:
+    |  - offset: 0
+    |    length: 16
+    |    placeholder_text: ""
+    |""".trimMargin("|"))
+  }
+
+  fun `test placeholder starts with spaces`() {
+    val task = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("Test.java", "<p>42 is the answer</p>") {
+            placeholder(0, placeholderText = "   type here")
+          }
+        }
+      }
+    }.findTask("lesson1", "task1")
+    doTest(task, """
+    |type: edu
+    |files:
+    |- name: Test.java
+    |  visible: true
+    |  placeholders:
+    |  - offset: 0
+    |    length: 16
+    |    placeholder_text: '   type here'
+    |""".trimMargin("|"))
+  }
+
+  fun `test placeholder ends with spaces`() {
+    val task = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("Test.java", "<p>42 is the answer</p>") {
+            placeholder(0, placeholderText = "type here   ")
+          }
+        }
+      }
+    }.findTask("lesson1", "task1")
+    doTest(task, """
+    |type: edu
+    |files:
+    |- name: Test.java
+    |  visible: true
+    |  placeholders:
+    |  - offset: 0
+    |    length: 16
+    |    placeholder_text: 'type here   '
     |""".trimMargin("|"))
   }
 
@@ -92,7 +156,6 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin("|"))
   }
 
-  @Test
   fun `test edu task with dependency`() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
@@ -128,7 +191,6 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin("|"))
   }
 
-  @Test
   fun `test output task`() {
     val task = course {
       lesson {
@@ -191,7 +253,6 @@ class YamlSerializationTest : YamlTestCase() {
       |""".trimMargin("|"))
   }
 
-  @Test
   fun `test course`() {
     val course = course {
       lesson("the first lesson")
@@ -213,7 +274,6 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin("|"))
   }
 
-  @Test
   fun `test lesson`() {
     val lesson = course {
       lesson {
@@ -229,7 +289,6 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin("|"))
   }
 
-  @Test
   fun `test framework lesson`() {
     val lesson = course {
       frameworkLesson {
@@ -246,7 +305,6 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin("|"))
   }
 
-  @Test
   fun `test section`() {
     val section = course {
       section {
