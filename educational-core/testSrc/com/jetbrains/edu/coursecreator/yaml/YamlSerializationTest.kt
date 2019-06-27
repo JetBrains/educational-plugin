@@ -408,12 +408,12 @@ class YamlSerializationTest : YamlTestCase() {
     course.description = "sum"
     course.language = "${PlainTextLanguage.INSTANCE.id} 1.42"
     doTest(course, """
+      |type: Coursera
       |title: Test Course
       |language: Russian
       |summary: sum
       |programming_language: Plain text
       |programming_language_version: 1.42
-      |type: Coursera
       |
     """.trimMargin("|"))
   }
@@ -425,13 +425,13 @@ class YamlSerializationTest : YamlTestCase() {
     course.submitManually = true
     course.language = "${PlainTextLanguage.INSTANCE.id} 1.42"
     doTest(course, """
+      |type: Coursera
       |title: Test Course
       |language: Russian
       |summary: sum
       |programming_language: Plain text
       |programming_language_version: 1.42
       |submit_manually: true
-      |type: Coursera
       |
     """.trimMargin("|"))
   }
