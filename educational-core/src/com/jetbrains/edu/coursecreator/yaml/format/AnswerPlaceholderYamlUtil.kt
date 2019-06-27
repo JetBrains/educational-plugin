@@ -43,7 +43,7 @@ abstract class AnswerPlaceholderYamlMixin {
 }
 
 // TODO: This could be removed updating jackson-dataformats to 2.10. see https://github.com/FasterXML/jackson-dataformats-text/issues/50
-class EmptyTextSerializer : JsonSerializer<String>() {
+private class EmptyTextSerializer : JsonSerializer<String>() {
   override fun serialize(placeholderText: String, generator: JsonGenerator, provider: SerializerProvider) {
     if (StringUtil.isEmpty(placeholderText)) {
       val yamlGenerator = generator as YAMLGenerator
