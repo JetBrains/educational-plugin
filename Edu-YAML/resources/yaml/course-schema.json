@@ -62,7 +62,6 @@
     "title",
     "language",
     "programming_language",
-    "content",
     "summary"
   ],
   "additionalProperties": false
