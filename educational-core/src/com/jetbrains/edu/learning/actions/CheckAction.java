@@ -273,19 +273,28 @@ public class CheckAction extends DumbAwareAction {
           listener.afterCheck(myProject, myTask, myResult);
         }
       });
-      if (myChecker != null) {
-        myChecker.clearState();
-      }
-      myCheckInProgress.set(false);
+      finishChecking();
     }
 
     @Override
     public void onCancel() {
+      finishChecking();
+      TaskDescriptionView.getInstance(myProject).readyToCheck();
+    }
+
+    @Override
+    public void onThrowable(@NotNull Throwable error) {
+      super.onThrowable(error);
+      myResult = CheckResult.FAILED_TO_CHECK;
+      TaskDescriptionView.getInstance(myProject).checkFinished(myTask, myResult);
+      finishChecking();
+    }
+
+    private void finishChecking() {
       if (myChecker != null) {
         myChecker.clearState();
       }
       myCheckInProgress.set(false);
-      TaskDescriptionView.getInstance(myProject).readyToCheck();
     }
 
     private NotificationSettings turnOffTestRunnerNotifications() {
