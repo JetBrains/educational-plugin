@@ -11,6 +11,7 @@ class CCDeletePlaceholdersActionTest : CCAnswerPlaceholderTestBase() {
   fun `test delete all placeholders`() = doTestDeleteAll("Foo.kt", true, CCDeleteAllAnswerPlaceholdersAction())
 
   fun `test delete placeholder`() {
+    val taskFileName = "Task.kt"
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
@@ -18,7 +19,7 @@ class CCDeletePlaceholdersActionTest : CCAnswerPlaceholderTestBase() {
         }
       }
     }
-    val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
+    val taskFile = course.findTask("lesson1", "task1").getTaskFile(taskFileName) ?: error("Failed to find `$taskFileName` task file")
     val taskFileExpected = copy(taskFile)
     taskFileExpected.answerPlaceholders = emptyList()
 
