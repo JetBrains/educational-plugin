@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 
-class PlaceholderDependencyTest : PlaceholderDependencyTestBase() {
+class PlaceholderDependencyTest : NotificationsTestBase() {
 
   fun `test placeholder replaced with solution`() {
     courseWithFiles {

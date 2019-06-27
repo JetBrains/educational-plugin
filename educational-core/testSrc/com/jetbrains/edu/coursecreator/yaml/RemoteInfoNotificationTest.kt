@@ -3,12 +3,11 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.ui.EditorNotificationsImpl
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.placeholderDependencies.NotificationsTestBase
 
-class RemoteInfoNotificationTest : EduTestCase() {
+class RemoteInfoNotificationTest : NotificationsTestBase() {
 
   fun `test course remote notification`() {
     courseWithFiles(courseMode = CCUtils.COURSE_MODE) {}
@@ -101,14 +100,14 @@ class RemoteInfoNotificationTest : EduTestCase() {
   }
 
   private fun checkEditorNotification(virtualFile: VirtualFile) {
-    EditorNotificationsImpl.completeAsyncTasks()
+    completeEditorNotificationAsyncTasks()
     val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile)!!
     val notificationPanel = fileEditor.getUserData(GeneratedRemoteInfoNotificationProvider.KEY)
     assertNotNull("Notification not shown", notificationPanel)
   }
 
   private fun checkNoEditorNotification(virtualFile: VirtualFile) {
-    EditorNotificationsImpl.completeAsyncTasks()
+    completeEditorNotificationAsyncTasks()
     val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile)!!
     val notificationPanel = fileEditor.getUserData(GeneratedRemoteInfoNotificationProvider.KEY)
     assertNull("Notification is shown", notificationPanel)
