@@ -28,7 +28,7 @@ public class CCCreateAnswerPlaceholderDialog extends DialogWrapper {
 
   @NotNull
   public String getTaskText() {
-    return StringUtil.notNullize(myPanel.getAnswerPlaceholderText()).trim();
+    return StringUtil.notNullize(myPanel.getAnswerPlaceholderText());
   }
 
   @Nullable
