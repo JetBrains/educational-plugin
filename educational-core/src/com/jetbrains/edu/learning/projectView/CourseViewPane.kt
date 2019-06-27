@@ -104,11 +104,12 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
     progressBar = JProgressBar()
 
-    progressBar.ui = object : DarculaProgressBarUI() {
+    @Suppress("UsePropertyAccessSyntax") // for compatibility with JDK11
+    progressBar.setUI(object : DarculaProgressBarUI() {
       override fun getRemainderColor(): Color {
         return JBColor(Gray._237, Color(76, 77, 79))
       }
-    }
+    })
     progressBar.foreground = ColorProgressBar.GREEN
     progressBar.isIndeterminate = false
     progressBar.putClientProperty("ProgressBar.flatEnds", java.lang.Boolean.TRUE)
