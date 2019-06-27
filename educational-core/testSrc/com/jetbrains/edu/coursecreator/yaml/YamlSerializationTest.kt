@@ -346,7 +346,7 @@ class YamlSerializationTest : YamlTestCase() {
       }
     }.items[0]
 
-    section.customPresentableName  = "custom section name"
+    section.customPresentableName = "custom section name"
     doTest(section, """
       |custom_name: custom section name
       |content:
@@ -457,7 +457,7 @@ class YamlSerializationTest : YamlTestCase() {
     course.description = "sum"
     course.language = "${PlainTextLanguage.INSTANCE.id} 1.42"
     doTest(course, """
-      |type: Coursera
+      |type: coursera
       |title: Test Course
       |language: Russian
       |summary: sum
@@ -474,7 +474,7 @@ class YamlSerializationTest : YamlTestCase() {
     course.submitManually = true
     course.language = "${PlainTextLanguage.INSTANCE.id} 1.42"
     doTest(course, """
-      |type: Coursera
+      |type: coursera
       |title: Test Course
       |language: Russian
       |summary: sum

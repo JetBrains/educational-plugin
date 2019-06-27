@@ -8,8 +8,8 @@
       "description": "Course type",
       "type": "string",
       "enum": [
-        "Edu",
-        "Coursera"
+        "edu",
+        "coursera"
       ]
     },
     "title": {

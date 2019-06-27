@@ -105,7 +105,7 @@ private class LanguageConverter : StdConverter<String, String>() {
 
 private class CourseTypeSerializationConverter : StdConverter<String, String?>() {
   override fun convert(courseType: String): String? {
-    return if (courseType == PYCHARM) null else courseType
+    return if (courseType == PYCHARM) null else courseType.decapitalize()
   }
 }
 
@@ -142,7 +142,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
                             @JsonProperty(SUBMIT_MANUALLY) val courseraSubmitManually: Boolean?) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
-    val course = when (courseType) {
+    val course = when (courseType?.capitalize()) {
       CourseraNames.COURSE_TYPE -> {
         CourseraCourse().apply {
           submitManually = courseraSubmitManually ?: false
