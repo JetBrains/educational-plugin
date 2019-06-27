@@ -5,7 +5,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 
-class CCAddAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
+class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
 
   fun `test add placeholder without selection without dependency`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
@@ -42,15 +42,16 @@ class CCAddAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
     val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
     val taskFileExpected = copy(taskFile)
     val placeholderExpected = AnswerPlaceholder()
-    placeholderExpected.offset = 10
-    placeholderExpected.length = 9
+    val selection = Selection(10, 19)
+    placeholderExpected.offset = selection.start
+    placeholderExpected.length = selection.length
     placeholderExpected.index = 0
     placeholderExpected.taskFile = taskFileExpected
-    placeholderExpected.possibleAnswer = defaultTaskText.substring(10, 19)
+    placeholderExpected.possibleAnswer = defaultTaskText.substring(selection.start, selection.end)
     placeholderExpected.placeholderText = defaultPlaceholderText
     taskFileExpected.answerPlaceholders.add(placeholderExpected)
 
-    doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile, taskFileExpected)
+    doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile, taskFileExpected, selection)
   }
 
   fun `test placeholder intersection`() {
@@ -103,9 +104,13 @@ class CCAddAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
     override fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
       return object : CCCreateAnswerPlaceholderDialog(project, false, answerPlaceholder) {
         override fun showAndGet(): Boolean = true
-        override fun getTaskText(): String = "type here"
+        override fun getPlaceholderText(): String = "type here"
         override fun getDependencyInfo(): DependencyInfo? = dependencyInfo
       }
     }
+  }
+
+  data class Selection(val start: Int, val end: Int) {
+    val length = end - start
   }
 }

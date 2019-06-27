@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperPeer
 import com.intellij.openapi.ui.ValidationInfo
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.HideableDecorator
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBCheckBox
@@ -33,7 +32,6 @@ open class CCCreateAnswerPlaceholderDialog(
   private val pathLabel: JLabel = JLabel("[sectionName#]lessonName#taskName#filePath#placeholderIndex")
   private val isFirstTask: Boolean = placeholder.taskFile.task.isFirstInCourse
   private val currentText: String get() = dependencyPathField.text ?: ""
-  private val taskText: String = StringUtil.notNullize(panel.getAnswerPlaceholderText()).trim { it <= ' ' }
 
   init {
     title = (if (isEdit) "Edit" else "Add") + TITLE_SUFFIX
@@ -87,7 +85,7 @@ open class CCCreateAnswerPlaceholderDialog(
     return panel.getPreferredFocusedComponent()
   }
 
-  open fun getTaskText(): String = taskText
+  open fun getPlaceholderText(): String = panel.getAnswerPlaceholderText().trim()
 
   open fun getDependencyInfo(): DependencyInfo? =
     if (!(currentText.isBlank() || isFirstTask)) {

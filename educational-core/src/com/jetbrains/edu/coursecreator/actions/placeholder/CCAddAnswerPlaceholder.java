@@ -58,7 +58,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     if (!dlg.showAndGet()) {
       return;
     }
-    String answerPlaceholderText = dlg.getTaskText();
+    String answerPlaceholderText = dlg.getPlaceholderText();
     String possibleAnswer = model.hasSelection() ? model.getSelectedText() : defaultPlaceholderText;
     if (possibleAnswer == null) {
       possibleAnswer = defaultPlaceholderText;

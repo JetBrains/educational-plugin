@@ -8,24 +8,24 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler
 
-abstract class AnswerPlaceholderTestBase : EduActionTestCase() {
-  val defaultPlaceholderText = "type here"
-  val defaultTaskText = "fun foo(): String = TODO()"
+abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
+  companion object {
+    const val defaultPlaceholderText = "type here"
+    const val defaultTaskText = "fun foo(): String = TODO()"
+  }
 
   fun doTest(
     name: String,
     action: CCAnswerPlaceholderAction,
     taskFile: TaskFile,
-    taskFileExpected: TaskFile
+    taskFileExpected: TaskFile,
+    selection: CCAddAnswerPlaceholderActionTest.Selection? = null
   ) {
     val taskFileUnchanged = copy(taskFile)
     val virtualFile = findFile(name)
     myFixture.openFileInEditor(virtualFile)
-    if (taskFileExpected.answerPlaceholders.isNotEmpty()) {
-      val placeholderExpected = taskFileExpected.answerPlaceholders[0]
-      if (placeholderExpected.offset != 0 && placeholderExpected.endOffset != 9 && action !is CCEditAnswerPlaceholder) {
-        myFixture.editor.selectionModel.setSelection(placeholderExpected.offset, placeholderExpected.endOffset)
-      }
+    if (selection != null) {
+      myFixture.editor.selectionModel.setSelection(selection.start, selection.end)
     }
     myFixture.testAction(action)
 

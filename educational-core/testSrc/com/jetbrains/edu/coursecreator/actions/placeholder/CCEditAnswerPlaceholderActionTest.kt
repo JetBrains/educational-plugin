@@ -5,7 +5,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 
-class CCEditAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
+class CCEditAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
   fun `test add placeholder with dependency`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
@@ -32,7 +32,7 @@ class CCEditAnswerPlaceholderActionTest : AnswerPlaceholderTestBase() {
     override fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
       return object : CCCreateAnswerPlaceholderDialog(project, false, answerPlaceholder) {
         override fun showAndGet(): Boolean = true
-        override fun getTaskText(): String = "type here"
+        override fun getPlaceholderText(): String = "type here"
         override fun getDependencyInfo(): DependencyInfo? = DependencyInfo("lesson1#task1#Task.kt#1", true)
       }
     }
