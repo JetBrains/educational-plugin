@@ -21,5 +21,9 @@ class PyNewEduTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(
   }
 
   override fun checkIfFailedToRunTests(stderr: String): CheckResult =
-    if ("SyntaxError" in stderr) CheckResult(CheckStatus.Failed, "The file contains syntax errors") else CheckResult.SOLVED
+    if (SYNTAX_ERRORS.any { it in stderr }) CheckResult(CheckStatus.Failed, "The file contains syntax errors") else CheckResult.SOLVED
+
+  companion object {
+    private val SYNTAX_ERRORS = listOf("SyntaxError", "IndentationError", "TabError")
+  }
 }
