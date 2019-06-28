@@ -2,6 +2,7 @@
 
 package com.jetbrains.edu.coursecreator.yaml.format
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -29,7 +30,7 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
  * Update [TaskChangeApplier] if new fields added to mixin
  */
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(TaskYamlMixin.TYPE, TaskYamlMixin.FILES, TaskYamlMixin.FEEDBACK_LINK)
+@JsonPropertyOrder(TaskYamlMixin.TYPE, TaskYamlMixin.CUSTOM_NAME, TaskYamlMixin.FILES, TaskYamlMixin.FEEDBACK_LINK)
 abstract class TaskYamlMixin {
   @JsonProperty(TYPE)
   fun getItemType(): String {
@@ -51,10 +52,15 @@ abstract class TaskYamlMixin {
   @JsonProperty(value = FEEDBACK_LINK, access = JsonProperty.Access.READ_WRITE)
   lateinit var myFeedbackLink: FeedbackLink
 
+  @JsonProperty(CUSTOM_NAME)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private var myCustomPresentableName: String? = null
+
   companion object {
     const val TYPE = "type"
     const val FILES = "files"
     const val FEEDBACK_LINK = "feedback_link"
+    const val CUSTOM_NAME = "custom_name"
   }
 }
 
@@ -86,6 +92,7 @@ class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
       return
     }
     existingItem.feedbackLink = deserializedItem.feedbackLink
+    existingItem.customPresentableName = deserializedItem.customPresentableName
     if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {
       existingItem.isMultipleChoice = deserializedItem.isMultipleChoice
       existingItem.choiceOptions = deserializedItem.choiceOptions

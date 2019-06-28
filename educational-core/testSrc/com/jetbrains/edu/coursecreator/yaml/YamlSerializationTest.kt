@@ -289,6 +289,23 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin("|"))
   }
 
+  fun `test lesson with custom presentable name`() {
+    val lesson = course {
+      lesson {
+        eduTask("Introduction Task")
+        eduTask("Advanced Task")
+      }
+    }.items[0]
+    lesson.customPresentableName = "my new lesson"
+    doTest(lesson, """
+      |custom_name: ${lesson.customPresentableName}
+      |content:
+      |- Introduction Task
+      |- Advanced Task
+      |
+    """.trimMargin("|"))
+  }
+
   fun `test framework lesson`() {
     val lesson = course {
       frameworkLesson {
@@ -321,6 +338,24 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin("|"))
   }
 
+  fun `test section with custom name`() {
+    val section = course {
+      section {
+        lesson("Introduction Lesson")
+        lesson("Advanced Lesson")
+      }
+    }.items[0]
+
+    section.customPresentableName  = "custom section name"
+    doTest(section, """
+      |custom_name: custom section name
+      |content:
+      |- Introduction Lesson
+      |- Advanced Lesson
+      |
+    """.trimMargin("|"))
+  }
+
   fun `test feedback link`() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
@@ -332,6 +367,20 @@ class YamlSerializationTest : YamlTestCase() {
     doTest(task, """
     |type: edu
     |feedback_link: example.com
+    |""".trimMargin("|"))
+  }
+
+  fun `test with custom presentable name`() {
+    val task = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask { }
+      }
+    }.findTask("lesson1", "task1")
+    val taskCustomName = "task custom name"
+    task.customPresentableName = taskCustomName
+    doTest(task, """
+    |type: edu
+    |custom_name: $taskCustomName
     |""".trimMargin("|"))
   }
 

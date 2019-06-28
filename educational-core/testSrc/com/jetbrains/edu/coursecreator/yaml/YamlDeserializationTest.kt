@@ -213,6 +213,21 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(listOf(firstLesson, secondLesson), section.items.map { it.name })
   }
 
+  fun `test section with custom presentable name`() {
+    val firstLesson = "Introduction Lesson"
+    val secondLesson = "Advanced Lesson"
+    val customSectionName = "custom section name"
+    val yamlContent = """
+      |custom_name: $customSectionName
+      |content:
+      |- $firstLesson
+      |- $secondLesson
+    """.trimMargin("|")
+    val section = YamlDeserializer.deserialize(yamlContent, Section::class.java)!!
+    assertEquals(listOf(firstLesson, secondLesson), section.items.map { it.name })
+    assertEquals(customSectionName, section.customPresentableName)
+  }
+
   fun `test lesson`() {
     val firstTask = "Introduction Task"
     val secondTask = "Advanced Task"
@@ -223,6 +238,21 @@ class YamlDeserializationTest : YamlTestCase() {
     """.trimMargin("|")
     val lesson = YamlDeserializer.deserializeLesson(yamlContent)
     assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
+  }
+
+  fun `test lesson with custom presentable name`() {
+    val firstTask = "Introduction Task"
+    val secondTask = "Advanced Task"
+    val lessonCustomName = "my best lesson"
+    val yamlContent = """
+      |custom_name: $lessonCustomName
+      |content:
+      |- $firstTask
+      |- $secondTask
+    """.trimMargin("|")
+    val lesson = YamlDeserializer.deserializeLesson(yamlContent)
+    assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
+    assertEquals(lessonCustomName, lesson.customPresentableName)
   }
 
   fun `test framework lesson`() {
@@ -327,6 +357,29 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(3, answerPlaceholder.length)
     assertEquals("type here", answerPlaceholder.placeholderText)
     assertEquals("lesson1#task1#Test.java#1", answerPlaceholder.placeholderDependency.toString())
+  }
+
+  fun `test with custom presentable name`() {
+    val customName = "custom name"
+    val yamlContent = """
+    |type: edu
+    |custom_name: $customName
+    |files:
+    |- name: Test.java
+    |  placeholders:
+    |  - offset: 0
+    |    length: 3
+    |    placeholder_text: type here
+    |    dependency:
+    |      lesson: lesson1
+    |      task: task1
+    |      file: Test.java
+    |      placeholder: 1
+    |      is_visible: true
+    |""".trimMargin("|")
+    val task = YamlDeserializer.deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    assertEquals(customName, task.customPresentableName)
   }
 
   fun `test empty placeholder`() {

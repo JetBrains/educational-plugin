@@ -14,7 +14,7 @@ class GeneratedRemoteInfoNotificationProvider(val project: Project) :
   EditorNotifications.Provider<GeneratedRemoteInfoNotificationProvider.GeneratedRemoteInfoNotificationPanel>(), DumbAware {
 
   companion object {
-    private val KEY: Key<GeneratedRemoteInfoNotificationPanel> = Key.create("Edu.generatedRemoteInfo")
+    val KEY: Key<GeneratedRemoteInfoNotificationPanel> = Key.create("Edu.generatedRemoteInfo")
     private const val NOTIFICATION_TEXT: String = "This is a generated file. Not intended for manual editing."
   }
 

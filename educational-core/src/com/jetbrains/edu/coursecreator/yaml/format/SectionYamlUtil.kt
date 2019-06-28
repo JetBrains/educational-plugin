@@ -2,7 +2,9 @@
 
 package com.jetbrains.edu.coursecreator.yaml.format
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -12,21 +14,28 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 private const val CONTENT = "content"
+private const val CUSTOM_NAME = "custom_name"
 
 /**
  * Mixin class is used to deserialize [Section] item.
  * Update [ItemContainerChangeApplier] if new fields added to mixin
  */
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@JsonPropertyOrder(CUSTOM_NAME, CONTENT)
 @JsonDeserialize(builder = SectionBuilder::class)
 abstract class SectionYamlMixin {
+  @JsonProperty(CUSTOM_NAME)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private var myCustomPresentableName: String? = null
+
   @JsonProperty(CONTENT)
   @JsonSerialize(contentConverter = StudyItemConverter::class)
   private lateinit var items: List<StudyItem>
 }
 
 @JsonPOJOBuilder(withPrefix = "")
-private class SectionBuilder(@JsonProperty(CONTENT) val content: List<String?> = emptyList()) {
+private class SectionBuilder(@JsonProperty(CONTENT) val content: List<String?> = emptyList(),
+                             @JsonProperty(CUSTOM_NAME) val customName: String? = null) {
   @Suppress("unused") //used for deserialization
   private fun build(): Section {
     val section = Section()
@@ -39,6 +48,7 @@ private class SectionBuilder(@JsonProperty(CONTENT) val content: List<String?> =
       titledStudyItem
     }
     section.items = items
+    section.customPresentableName = customName
     return section
   }
 }

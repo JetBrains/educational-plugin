@@ -25,6 +25,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
       changeType(project, existingItem, deserializedItem)
       return
     }
+    existingItem.customPresentableName = deserializedItem.customPresentableName
     updateChildren(deserializedItem, existingItem)
   }
 
