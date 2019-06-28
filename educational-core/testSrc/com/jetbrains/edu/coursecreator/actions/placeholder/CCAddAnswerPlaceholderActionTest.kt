@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 
 class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
 
@@ -18,14 +19,7 @@ class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
 
     val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
     val taskFileExpected = copy(taskFile)
-    val placeholderExpected = AnswerPlaceholder()
-    placeholderExpected.offset = 0
-    placeholderExpected.length = 9
-    placeholderExpected.index = 0
-    placeholderExpected.taskFile = taskFileExpected
-    placeholderExpected.possibleAnswer = defaultPlaceholderText
-    placeholderExpected.placeholderText = defaultPlaceholderText
-    taskFileExpected.answerPlaceholders.add(placeholderExpected)
+    taskFileExpected.createExpectedPlaceholder()
 
     doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile, taskFileExpected)
   }
@@ -41,15 +35,8 @@ class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
 
     val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
     val taskFileExpected = copy(taskFile)
-    val placeholderExpected = AnswerPlaceholder()
     val selection = Selection(10, 19)
-    placeholderExpected.offset = selection.start
-    placeholderExpected.length = selection.length
-    placeholderExpected.index = 0
-    placeholderExpected.taskFile = taskFileExpected
-    placeholderExpected.possibleAnswer = defaultTaskText.substring(selection.start, selection.end)
-    placeholderExpected.placeholderText = defaultPlaceholderText
-    taskFileExpected.answerPlaceholders.add(placeholderExpected)
+    taskFileExpected.createExpectedPlaceholder(selection)
 
     doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile, taskFileExpected, selection)
   }
@@ -84,17 +71,9 @@ class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
 
     val taskFile = course.lessons[0].taskList[1].taskFiles["Task.kt"]!!
     val taskFileExpected = copy(taskFile)
-    val placeholderExpected = AnswerPlaceholder()
-    placeholderExpected.offset = 0
-    placeholderExpected.length = 9
-    placeholderExpected.index = 0
-    placeholderExpected.taskFile = taskFileExpected
-    placeholderExpected.possibleAnswer = defaultPlaceholderText
-    placeholderExpected.placeholderText = defaultPlaceholderText
+    val placeholderExpected = taskFileExpected.createExpectedPlaceholder()
     val placeholderDependency = AnswerPlaceholderDependency(placeholderExpected, null, "lesson1", "task1", "Task.kt", 1, true)
     placeholderExpected.placeholderDependency = placeholderDependency
-    taskFileExpected.answerPlaceholders.add(placeholderExpected)
-
     doTest("lesson1/task2/Task.kt",
            CCTestAddAnswerPlaceholder(CCCreateAnswerPlaceholderDialog.DependencyInfo("lesson1#task1#Task.kt#1", true)), taskFile,
            taskFileExpected)
@@ -112,5 +91,18 @@ class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
 
   data class Selection(val start: Int, val end: Int) {
     val length = end - start
+  }
+
+  private fun TaskFile.createExpectedPlaceholder(selection: Selection? = null): AnswerPlaceholder {
+    val placeholderExpected = AnswerPlaceholder()
+    placeholderExpected.offset = selection?.start ?: 0
+    placeholderExpected.length = selection?.length ?: 9
+    placeholderExpected.index = 0
+    placeholderExpected.taskFile = this
+    placeholderExpected.possibleAnswer = if (selection == null) defaultPlaceholderText
+    else defaultTaskText.substring(selection.start, selection.end)
+    placeholderExpected.placeholderText = defaultPlaceholderText
+    this.answerPlaceholders.add(placeholderExpected)
+    return placeholderExpected
   }
 }
