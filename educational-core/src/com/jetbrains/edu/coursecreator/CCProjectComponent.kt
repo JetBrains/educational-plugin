@@ -57,8 +57,6 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
 
       EduCounterUsageCollector.eduProjectOpened(CCUtils.COURSE_MODE)
       startTaskDescriptionFilesSynchronization()
-
-      YamlFormatSynchronizer.startSynchronization(myProject)
     }
   }
 

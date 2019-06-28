@@ -210,6 +210,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
       StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
         YamlFormatSynchronizer.saveAll(myProject);
         FileDocumentManager.getInstance().saveAllDocuments();
+        YamlFormatSynchronizer.startSynchronization(myProject);
       });
     }
   }
