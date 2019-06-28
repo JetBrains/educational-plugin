@@ -550,18 +550,6 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEmpty(section.lessons)
   }
 
-  fun `test empty course`() {
-    val yamlContent = """
-    |
-    |title: Test Course
-    |language: English
-    |programming_language: Plain text
-    |summary: test
-    |""".trimMargin("|")
-    val course = deserializeNotNull(yamlContent, Course::class.java)
-    assertTrue(course.items.isEmpty())
-  }
-
   fun `test coursera manual submit`() {
     val name = "Test Course"
     val language = "Russian"
