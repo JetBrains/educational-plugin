@@ -60,6 +60,7 @@ object YamlLoader {
       val deserializedParent = YamlDeserializer.deserializeItem(project, parentConfig) as? ItemContainer ?: return
       if (deserializedParent.items.map { it.name }.contains(itemDir.name)) {
         parentItem.addItemAsNew(project, deserializedItem)
+        reopenEditors(project)
         // new item is added at the end, so we should save parent item to update items order in config file
         saveItem(parentItem)
       }
@@ -67,6 +68,26 @@ object YamlLoader {
     }
 
     existingItem.applyChanges(project, deserializedItem)
+  }
+
+  /**
+   * For items that are added as new we have to reopen editors, because `EduEditor` wasn't created
+   * for files that aren't task files.
+   */
+  private fun reopenEditors(project: Project) {
+    val selectedEditor = FileEditorManager.getInstance(project).selectedEditor
+    val files = FileEditorManager.getInstance(project).openFiles
+      .filter { EduUtils.getTaskFile(project, it) != null }
+    for (virtualFile in files) {
+      FileEditorManager.getInstance(project).closeFile(virtualFile)
+      FileEditorManager.getInstance(project).openFile(virtualFile, false)
+    }
+
+    // restore selection
+    val file = selectedEditor?.file
+    if (file != null) {
+      FileEditorManager.getInstance(project).openFile(file, true)
+    }
   }
 
   fun ItemContainer.addItemAsNew(project: Project, deserializedItem: StudyItem) {
