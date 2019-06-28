@@ -10,3 +10,5 @@ fun unsupportedItemTypeMessage(itemType: String, itemName: String = "item") = "U
 fun unnamedItemAtMessage(position: Int) = "Unnamed item at position $position"
 
 fun unknownFieldValueMessage(fieldName: String, value: String) = "Unknown $fieldName '$value'"
+
+fun negativeParamNotAllowedMessage(paramName: String) = "Answer placeholders with negative $paramName not allowed"

@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.intellij.openapi.util.text.StringUtil
+import com.jetbrains.edu.coursecreator.yaml.formatError
+import com.jetbrains.edu.coursecreator.yaml.negativeParamNotAllowedMessage
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 
@@ -66,6 +68,13 @@ private class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
   @Suppress("unused") // deserialization
   private fun build(): AnswerPlaceholder {
     val placeholder = AnswerPlaceholder()
+    if (length < 0) {
+      formatError(negativeParamNotAllowedMessage(LENGTH))
+    }
+
+    if (offset < 0) {
+      formatError(negativeParamNotAllowedMessage(OFFSET))
+    }
     placeholder.length = length
     placeholder.placeholderText = placeholderText
     placeholder.offset = offset

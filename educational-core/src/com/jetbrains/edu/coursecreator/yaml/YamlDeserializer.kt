@@ -182,7 +182,7 @@ object YamlDeserializer {
           showError(project, e, configFile)
         }
         else {
-          showError(project, e, configFile, causeException.message)
+          showError(project, causeException, configFile, causeException.message)
         }
       }
       else -> throw e

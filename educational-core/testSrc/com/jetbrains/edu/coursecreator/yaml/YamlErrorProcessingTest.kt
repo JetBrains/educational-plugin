@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
@@ -37,7 +36,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |- the first lesson
             |- the second lesson
             |""".trimMargin("|"), YamlFormatSettings.COURSE_CONFIG,
-           "Unknown language 'wrong'", JsonMappingException::class.java)
+           "Unknown language 'wrong'", InvalidYamlFormatException::class.java)
   }
 
   fun `test unexpected symbol`() {
@@ -104,6 +103,34 @@ class YamlErrorProcessingTest : YamlTestCase() {
     doTest("""
     """.trimIndent(), YamlFormatSettings.TASK_CONFIG,
            "Task type not specified", InvalidYamlFormatException::class.java)
+  }
+
+  fun `test negtive placeholder length`() {
+    doTest("""
+    |type: edu
+    |files:
+    |- name: Test.java
+    |  visible: true
+    |  placeholders:
+    |  - offset: 2
+    |    length: -1
+    |    placeholder_text: type here
+    |""".trimMargin("|"), YamlFormatSettings.TASK_CONFIG,
+           "Answer placeholders with negative length not allowed", InvalidYamlFormatException::class.java)
+  }
+
+  fun `test negative placeholder offset`() {
+    doTest("""
+    |type: edu
+    |files:
+    |- name: Test.java
+    |  visible: true
+    |  placeholders:
+    |  - offset: -1
+    |    length: 1
+    |    placeholder_text: type here
+    |""".trimMargin("|"), YamlFormatSettings.TASK_CONFIG,
+           "Answer placeholders with negative offset not allowed", InvalidYamlFormatException::class.java)
   }
 
   private fun <T : Exception> doTest(yamlContent: String,
