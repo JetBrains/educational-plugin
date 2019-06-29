@@ -2,14 +2,20 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.isUnitTestMode
 
 object YamlFormatSettings {
-  const val COURSE_CONFIG = "course-info.yaml"
-  const val SECTION_CONFIG = "section-info.yaml"
-  const val LESSON_CONFIG = "lesson-info.yaml"
-  const val TASK_CONFIG = "task-info.yaml"
+  val COURSE_CONFIG = getLocalConfigFileName(EduNames.COURSE)
+  val SECTION_CONFIG = getLocalConfigFileName(EduNames.SECTION)
+  val LESSON_CONFIG = getLocalConfigFileName(EduNames.LESSON)
+  val TASK_CONFIG = getLocalConfigFileName(EduNames.TASK)
+
+  /**
+   * @param itemKind Course/Section/Lesson/Task
+   */
+  fun getLocalConfigFileName(itemKind: String): String = "$itemKind-info.yaml"
 
   const val REMOTE_COURSE_CONFIG = "course-remote-info.yaml"
   const val REMOTE_SECTION_CONFIG = "section-remote-info.yaml"

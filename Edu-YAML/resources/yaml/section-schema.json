@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "com.jetbrains.edu.section",
+  "title": "Section Configuration",
+  "description": "Configuration file containing information about section",
+  "properties": {
+    "custom_name": {
+      "description": "Custom name for the section if it differs from its folder name",
+      "type": "string"
+    },
+    "content": {
+      "description": "Folder names of lessons included in the section",
+      "type": [
+        "array"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

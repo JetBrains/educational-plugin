@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "com.jetbrains.edu",
+  "$id": "com.jetbrains.edu.course",
   "title": "Course Configuration",
-  "description": "Configuration file containing basic information about course",
+  "description": "Configuration file containing information about course",
   "properties": {
     "type": {
       "description": "Course type",
