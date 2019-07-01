@@ -86,6 +86,7 @@ abstract class CourseYamlMixin {
   private lateinit var items: List<StudyItem>
 }
 
+@Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
 abstract class CourseraCourseYamlMixin : CourseYamlMixin() {
   @JsonProperty(SUBMIT_MANUALLY)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
