@@ -50,9 +50,10 @@ public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderActi
     }
 
     @Override
-    public void performUndo() {
+    public boolean performUndo() {
       myTaskFile.getAnswerPlaceholders().addAll(myPlaceholders);
       PlaceholderPainter.showPlaceholders(getProject(), myTaskFile);
+      return true;
     }
 
     @Override

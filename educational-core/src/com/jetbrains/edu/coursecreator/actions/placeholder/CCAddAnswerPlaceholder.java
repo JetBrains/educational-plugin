@@ -83,12 +83,15 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     }
 
     @Override
-    public void performUndo() {
+    public boolean performUndo() {
       final List<AnswerPlaceholder> answerPlaceholders = getTaskFile().getAnswerPlaceholders();
       if (answerPlaceholders.contains(myPlaceholder)) {
         answerPlaceholders.remove(myPlaceholder);
         PlaceholderPainter.hidePlaceholder(myPlaceholder);
+        return true;
       }
+
+      return false;
     }
 
     @Override

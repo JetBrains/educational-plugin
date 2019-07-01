@@ -14,11 +14,12 @@ abstract class TaskFileUndoableAction(protected val project: Project, protected 
   }
 
   override fun undo() {
-    performUndo()
-    updateConfigFiles()
+    if (performUndo()) {
+      updateConfigFiles()
+    }
   }
 
-  abstract fun performUndo()
+  abstract fun performUndo(): Boolean
 
   abstract fun performRedo()
 
