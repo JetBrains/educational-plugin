@@ -306,6 +306,26 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin("|"))
   }
 
+  fun `test use dir name for lesson with custom name`() {
+    val course = course {
+      section {
+        lesson {
+          eduTask("Introduction Task")
+          eduTask("Advanced Task")
+        }
+      }
+    }
+    val section = course.sections.first()
+    val lesson = section.lessons.first()
+    lesson.customPresentableName = "my new lesson"
+
+    doTest(section, """
+      |content:
+      |- ${lesson.name}
+      |
+    """.trimMargin("|"))
+  }
+
   fun `test framework lesson`() {
     val lesson = course {
       frameworkLesson {
