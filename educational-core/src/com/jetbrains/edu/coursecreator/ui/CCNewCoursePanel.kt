@@ -173,7 +173,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
   }
 
   private fun onCourseDataSelected(courseData: CourseData) {
-    val courseName = "${courseData.displayName.capitalize()} Course"
+    val courseName = "${courseData.displayName.capitalize().replace(File.separatorChar, '_')} Course"
     val file = FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), courseName, "")
     if (!myTitleField.isChangedByUser) {
       myTitleField.setTextManually(file.name)
