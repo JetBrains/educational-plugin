@@ -8,7 +8,7 @@
       "description": "Course type",
       "type": "string",
       "enum": [
-        "PyCharm",
+        "Edu",
         "Coursera"
       ]
     },
