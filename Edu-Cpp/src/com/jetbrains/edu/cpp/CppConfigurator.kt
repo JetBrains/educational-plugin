@@ -8,6 +8,8 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
+import icons.CMakeIcons
+import javax.swing.Icon
 
 class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
 
@@ -16,13 +18,15 @@ class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
 
   override fun getTaskCheckerProvider(): TaskCheckerProvider = taskCheckerProvider
 
-  override fun getTestFileName(): String = TESTS_CPP
+  override fun getTestFileName(): String = TEST_CPP
 
   override fun getMockFileName(text: String): String = TASK_CPP
 
   override fun getCourseBuilder(): EduCourseBuilder<CppProjectSettings> = builder
 
   override fun getSourceDir(): String = EduNames.SRC
+
+  override fun getTestDirs(): List<String> = listOf(EduNames.TEST)
 
   override fun getMockTemplate(): String = getInternalTemplateText(MOCK_CPP)
 
@@ -32,9 +36,11 @@ class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
     return super.excludeFromArchive(project, file) || file.path.contains("cmake-build-debug")
   }
 
+  override fun getLogo(): Icon = CMakeIcons.CMake
+
   companion object {
-    private const val TASK_CPP = "task.cpp"
-    private const val TESTS_CPP = "tests.cpp"
+    const val TASK_CPP = "task.cpp"
+    const val TEST_CPP = "test.cpp"
     private const val MOCK_CPP = "Mock.cpp"
   }
 }
