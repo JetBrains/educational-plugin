@@ -2,6 +2,7 @@ package com.jetbrains.edu.cpp
 
 import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.ide.fileTemplates.FileTemplateManager
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
@@ -23,7 +24,10 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   CourseProjectGenerator<CppProjectSettings>(builder, course) {
 
-  private val cmakeMinimumRequired = getCMakeMinimumRequiredLine(readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
+  private var cmakeMinimumRequired: String? = null
+  private var cmakeMinimumRequiredFuture = ApplicationManager.getApplication().executeOnPooledThread {
+    cmakeMinimumRequired = getCMakeMinimumRequiredLine(readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
+  }
   private val taskCMakeListsTemplate = getTemplate(EDU_CMAKELISTS)
   private val mainCMakeListsTemplate = getTemplate(EDU_MAIN_CMAKELISTS)
 
@@ -86,6 +90,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   }
 
   private fun getText(templateName: FileTemplate, cppProjectName: String, cppStandard: String? = null): String {
+    cmakeMinimumRequiredFuture.get()
     val params = mapOf(PROJECT_NAME to cppProjectName,
                        CMAKE_MINIMUM_REQUIRED_LINE to cmakeMinimumRequired,
                        CPP_STANDARD to cppStandard).filterValues { it != null }

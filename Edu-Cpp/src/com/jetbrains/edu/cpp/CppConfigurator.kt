@@ -26,10 +26,10 @@ class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
 
   override fun getMockTemplate(): String = getInternalTemplateText(MOCK_CPP)
 
-  override fun isCourseCreatorEnabled(): Boolean = false
+  override fun isCourseCreatorEnabled(): Boolean = true
 
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
-    return super.excludeFromArchive(project, file) ||  file.path.contains("cmake-build-debug")
+    return super.excludeFromArchive(project, file) || file.path.contains("cmake-build-debug")
   }
 
   companion object {
