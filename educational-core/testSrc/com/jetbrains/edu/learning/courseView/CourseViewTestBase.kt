@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.courseView
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.ProjectViewTestUtil
 import com.intellij.util.ui.tree.TreeUtil
@@ -29,5 +30,12 @@ abstract class CourseViewTestBase : EduActionTestCase() {
 
   protected fun waitWhileBusy(tree: JTree) {
     PlatformTestUtil.waitWhileBusy(tree)
+  }
+
+  protected fun createPane(): CourseViewPane {
+    val pane = CourseViewPane(project)
+    pane.createComponent()
+    Disposer.register(project, pane)
+    return pane
   }
 }

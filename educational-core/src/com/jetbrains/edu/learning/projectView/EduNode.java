@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
+import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,9 +24,14 @@ public abstract class EduNode extends PsiDirectoryNode {
     super(project, value, viewSettings);
   }
 
-  protected static void updatePresentation(PresentationData data, String name, JBColor color, Icon icon, @Nullable String additionalInfo) {
+  protected static void updatePresentation(StudyItem item, PresentationData data) {
     data.clearText();
-    data.addText(name, new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, color));
+
+    String name = item.getPresentableName();
+    Icon icon = CourseViewUtils.getIcon(item);
+    String additionalInfo = CourseViewUtils.getAdditionalInformation(item);
+
+    data.addText(name, new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, JBColor.BLACK));
     if (additionalInfo != null) {
       data.addText(" (" + additionalInfo + ")", SimpleTextAttributes.GRAYED_ATTRIBUTES);
     }

@@ -104,15 +104,6 @@ public class Lesson extends ItemContainer {
     return null;
   }
 
-  public CheckStatus getStatus() {
-    for (Task task : getTaskList()) {
-      if (task.getStatus() != CheckStatus.Solved) {
-        return CheckStatus.Unchecked;
-      }
-    }
-    return CheckStatus.Solved;
-  }
-
   @Transient
   public boolean isPublic() {
     return is_public;

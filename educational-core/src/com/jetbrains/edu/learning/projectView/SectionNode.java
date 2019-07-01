@@ -5,15 +5,11 @@ import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.SimpleTextAttributes;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.*;
-import icons.EducationalCoreIcons;
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.Section;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 
 public class SectionNode extends EduNode {
@@ -29,20 +25,8 @@ public class SectionNode extends EduNode {
   }
 
   @Override
-  public void update(PresentationData data) {
-    boolean allSolved = isSolved();
-    Icon icon = allSolved ? EducationalCoreIcons.SectionSolved : EducationalCoreIcons.Section;
-    final SimpleTextAttributes textAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, JBColor.BLACK);
-    data.addText(mySection.getPresentableName(), textAttributes);
-    data.setIcon(icon);
-  }
-
-  private boolean isSolved() {
-    final Course course = StudyTaskManager.getInstance(myProject).getCourse();
-    if (course != null) {
-      return mySection.getLessons().stream().noneMatch(it -> it.getStatus() != CheckStatus.Solved);
-    }
-    return true;
+  public void updateImpl(@NotNull PresentationData data) {
+    updatePresentation(mySection, data);
   }
 
   @Nullable

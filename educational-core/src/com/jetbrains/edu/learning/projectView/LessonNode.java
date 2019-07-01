@@ -5,15 +5,10 @@ import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.ui.JBColor;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 public class LessonNode extends EduNode {
   @NotNull protected final Project myProject;
@@ -32,10 +27,7 @@ public class LessonNode extends EduNode {
 
   @Override
   protected void updateImpl(@NotNull PresentationData data) {
-    CheckStatus status = myLesson.getStatus();
-    boolean isSolved = status == CheckStatus.Solved;
-    Icon icon = !isSolved ? EducationalCoreIcons.Lesson : EducationalCoreIcons.LessonSolved;
-    updatePresentation(data, myLesson.getPresentableName(), JBColor.BLACK, icon, null);
+    updatePresentation(myLesson, data);
   }
 
   @Override

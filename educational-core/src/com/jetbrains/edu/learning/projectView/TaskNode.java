@@ -6,13 +6,10 @@ import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.ui.JBColor;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 public class TaskNode extends EduNode {
   @NotNull protected final Task myTask;
@@ -31,9 +28,8 @@ public class TaskNode extends EduNode {
   }
 
   @Override
-  protected void updateImpl(PresentationData data) {
-    Icon icon = myTask.getIcon();
-    updatePresentation(data, myTask.getPresentableName(), JBColor.BLACK, icon, null);
+  public void updateImpl(@NotNull PresentationData data) {
+    updatePresentation(myTask, data);
   }
 
   @Override

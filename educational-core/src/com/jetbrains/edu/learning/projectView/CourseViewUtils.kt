@@ -11,10 +11,13 @@ import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import icons.EducationalCoreIcons
+import javax.swing.Icon
 
 object CourseViewUtils {
 
@@ -95,4 +98,49 @@ object CourseViewUtils {
       fragments.joinToString(separator = "", prefix = "$className ") { it.text }
     }
   }
+
+  @JvmStatic
+  val StudyItem.additionalInformation: String?
+    get() {
+      if (course.isStudy) {
+        return null
+      }
+      if (this is Course) {
+        return "Course Creation"
+      }
+
+      return if (presentableName != name) name else null
+    }
+
+  @JvmStatic
+  val StudyItem.icon: Icon
+    get() {
+      return when (this) {
+        is Course -> {
+          EducationalCoreIcons.CourseTree
+        }
+        is Section -> {
+          if (isSolved) EducationalCoreIcons.SectionSolved else EducationalCoreIcons.Section
+        }
+        is Lesson -> {
+          if (isSolved) EducationalCoreIcons.LessonSolved else EducationalCoreIcons.Lesson
+        }
+        is Task -> {
+          if (isSolved) EducationalCoreIcons.TaskSolved else EducationalCoreIcons.Task
+        }
+        else -> error("Unexpected item type: ${this.javaClass.simpleName}")
+      }
+    }
+
+  private val StudyItem.isSolved: Boolean
+    get() {
+      return when (this) {
+        is Section -> lessons.all { it.isSolved() }
+        is Lesson -> isSolved()
+        is Task -> status == CheckStatus.Solved
+        else -> false
+      }
+    }
+
+  private fun Lesson.isSolved() = taskList.all { it.status == CheckStatus.Solved }
 }

@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.ui.JBColor;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -19,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.projectView.CourseNode;
 import com.jetbrains.edu.learning.projectView.LessonNode;
 import com.jetbrains.edu.learning.projectView.SectionNode;
-import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,6 +81,6 @@ public class CCCourseNode extends CourseNode {
 
   @Override
   protected void updateImpl(PresentationData data) {
-    updatePresentation(data, myCourse.getName(), JBColor.black, EducationalCoreIcons.CourseTree, "Course Creation");
+    updatePresentation(myCourse, data);
   }
 }
