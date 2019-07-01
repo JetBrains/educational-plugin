@@ -48,6 +48,7 @@ public class EduNames {
 
   // Used as course type only
   public static final String PYCHARM = "PyCharm";
+  public static final String EDU = "Edu";
   public static final String ANDROID = "Android";
 
   public static final String STUDY = "Study";

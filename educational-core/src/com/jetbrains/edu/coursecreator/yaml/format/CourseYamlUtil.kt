@@ -16,6 +16,8 @@ import com.jetbrains.edu.coursecreator.yaml.unknownFieldValueMessage
 import com.jetbrains.edu.coursecreator.yaml.unnamedItemAtMessage
 import com.jetbrains.edu.coursecreator.yaml.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduNames.EDU
+import com.jetbrains.edu.learning.EduNames.PYCHARM
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -103,7 +105,7 @@ private class LanguageConverter : StdConverter<String, String>() {
 
 private class CourseTypeSerializationConverter : StdConverter<String, String?>() {
   override fun convert(courseType: String): String? {
-    return if (courseType == EduNames.PYCHARM) null else courseType
+    return if (courseType == PYCHARM) null else courseType
   }
 }
 
@@ -149,6 +151,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       CHECKIO_TYPE -> CheckiOCourse()
       HYPERSKILL_TYPE -> HyperskillCourse()
       STEPIK_TYPE -> StepikCourse()
+      EDU -> EduCourse()
       null -> EduCourse()
       else -> formatError(unsupportedItemTypeMessage(courseType, EduNames.COURSE))
     }
