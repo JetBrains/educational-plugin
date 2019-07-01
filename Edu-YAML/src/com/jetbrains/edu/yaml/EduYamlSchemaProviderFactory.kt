@@ -15,7 +15,8 @@ import com.jetbrains.jsonSchema.impl.JsonSchemaVersion
 class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
   override fun getProviders(project: Project): List<JsonSchemaFileProvider> {
     return listOf(StudyItemConfigSchemaProvider(project, EduNames.COURSE),
-                  StudyItemConfigSchemaProvider(project, EduNames.SECTION))
+                  StudyItemConfigSchemaProvider(project, EduNames.SECTION),
+                  StudyItemConfigSchemaProvider(project, EduNames.LESSON))
   }
 
   private class StudyItemConfigSchemaProvider(private val project: Project, private val itemKind: String) : JsonSchemaFileProvider {

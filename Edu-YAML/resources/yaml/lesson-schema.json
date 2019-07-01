@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "com.jetbrains.edu.lesson",
+  "title": "Lesson Configuration",
+  "description": "Configuration file containing information about lesson",
+  "properties": {
+    "type": {
+      "description": "Lesson type",
+      "type": "string",
+      "enum": ["lesson", "framework"]
+    },
+    "custom_name": {
+      "description": "Custom name for the lesson if it differs from its folder name",
+      "type": "string"
+    },
+    "content": {
+      "description": "Folder names of tasks included in the section",
+      "type": [
+        "array"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
