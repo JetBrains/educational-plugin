@@ -1,0 +1,217 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "com.jetbrains.edu.task",
+  "title": "Task Configuration",
+  "description": "Configuration file containing information about task",
+  "if": {
+    "properties": {
+      "type": {
+        "const": "choice"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "type": {
+        "description": "Task type",
+        "type": "string",
+        "enum": [
+          "edu",
+          "theory",
+          "output",
+          "ide",
+          "code",
+          "choice"
+        ]
+      },
+      "custom_name": {
+        "description": "Custom name for the lesson if it differs from its folder name",
+        "type": "string"
+      },
+      "files": {
+        "description": "Files included in the task",
+        "type": [
+          "array"
+        ],
+        "items": {
+          "$ref": "#/definitions/file"
+        }
+      },
+      "feedback_link": {
+        "type": "string",
+        "description": "Custom link for students to leave their feedback about the task (ex. Google Forms link)"
+      },
+      "is_multiple_choice": {
+        "type": "boolean",
+        "default": false,
+        "description": "If choice task allows multiple correct answers"
+      },
+      "options": {
+        "description": "Options ",
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/option"
+        }
+      },
+      "message_correct": {
+        "type": "string",
+        "description": "Custom message to be shown to student in case of correct solution (ex. Great job!)"
+      },
+      "message_incorrect": {
+        "type": "string",
+        "description": "Custom message to be shown to student in case of incorrect solution (ex. Review how to define a function to solve this task)"
+      }
+    },
+    "additionalProperties": false,
+    "required": [
+      "type",
+      "is_multiple_choice"
+    ]
+  },
+  "else": {
+    "properties": {
+      "type": {
+        "description": "Task type",
+        "type": "string",
+        "enum": [
+          "edu",
+          "theory",
+          "output",
+          "ide",
+          "code"
+        ]
+      },
+      "custom_name": {
+        "description": "Custom name for the lesson if it differs from its folder name",
+        "type": "string"
+      },
+      "files": {
+        "description": "Files included in the task",
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/file"
+        }
+      },
+      "feedback_link": {
+        "type": "string",
+        "description": "Custom link for students to leave their feedback about the task (ex. Google Forms link)"
+      }
+    },
+    "additionalProperties": false,
+    "required": [
+      "type"
+    ]
+  },
+  "definitions": {
+    "option": {
+      "properties": {
+        "text": {
+          "type": [
+            "string",
+            "number",
+            "boolean"
+          ],
+          "description": "The text of the option"
+        },
+        "is_correct": {
+          "type": "boolean",
+          "description": "If the option is a part of the correct answer"
+        }
+      },
+      "required": [
+        "text",
+        "is_correct"
+      ],
+      "additionalProperties": false
+    },
+    "dependency": {
+      "properties": {
+        "section": {
+          "type": "string",
+          "description": "Section folder name if placeholder dependency is inside a section"
+        },
+        "lesson": {
+          "type": "string",
+          "description": "Lesson folder name"
+        },
+        "task": {
+          "type": "string",
+          "description": "Task folder name"
+        },
+        "file": {
+          "type": "string",
+          "description": "File path relative to the directory of the task"
+        },
+        "placeholder": {
+          "type": "number",
+          "description": "Placeholder index starting from 0",
+          "minimum": 0
+        },
+        "is_visible": {
+          "type": "boolean",
+          "default": true,
+          "description": "If placeholder is drawn in place of dependency"
+        }
+      },
+      "required": [
+        "lesson",
+        "task",
+        "file",
+        "placeholder"
+      ],
+      "additionalProperties": false
+    },
+    "placeholder": {
+      "properties": {
+        "offset": {
+          "type": "number",
+          "description": "Placeholder start offset",
+          "minimum": 0
+        },
+        "length": {
+          "type": "number",
+          "description": "Placeholder length",
+          "minimum": 0
+        },
+        "placeholder_text": {
+          "type": "string",
+          "description": "Text which will be shown to student in place of the placeholder"
+        },
+        "dependency": {
+          "$ref": "#/definitions/dependency"
+        }
+      },
+      "required": [
+        "offset",
+        "length",
+        "placeholder_text"
+      ],
+      "additionalProperties": false
+    },
+    "file": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "File path relative to the directory of the task"
+        },
+        "visible": {
+          "type": "boolean",
+          "description": "If the file is shown to student or not"
+        },
+        "placeholders": {
+          "description": "Answer placeholders",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/placeholder"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "visible"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

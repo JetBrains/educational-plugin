@@ -16,7 +16,8 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
   override fun getProviders(project: Project): List<JsonSchemaFileProvider> {
     return listOf(StudyItemConfigSchemaProvider(project, EduNames.COURSE),
                   StudyItemConfigSchemaProvider(project, EduNames.SECTION),
-                  StudyItemConfigSchemaProvider(project, EduNames.LESSON))
+                  StudyItemConfigSchemaProvider(project, EduNames.LESSON),
+                  StudyItemConfigSchemaProvider(project, EduNames.TASK))
   }
 
   private class StudyItemConfigSchemaProvider(private val project: Project, private val itemKind: String) : JsonSchemaFileProvider {

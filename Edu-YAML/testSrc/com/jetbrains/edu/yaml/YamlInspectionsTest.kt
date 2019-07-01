@@ -2,6 +2,7 @@ package com.jetbrains.edu.yaml
 
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import org.jetbrains.yaml.schema.YamlJsonSchemaHighlightingInspection
 
 
@@ -56,6 +57,73 @@ class YamlInspectionsTest : YamlCodeInsightTest() {
       |content:
       |- task1
     """.trimMargin("|"))
+  }
+
+  fun `test edu task with wrong properties on each level`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("Test.java", "<p>f()</p>") {
+            placeholder(0, "test")
+          }
+        }
+      }
+      lesson {
+        eduTask {
+          taskFile("Test.java", "<p>f()</p>") {
+            placeholder(0, placeholderText = "type here", dependency = "lesson1#task1#Test.java#1")
+          }
+        }
+      }
+    }
+
+    testHighlighting(findTask(1, 0), """
+    |type: edu
+    |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+    |files:
+    |- name: Test.java
+    |  visible: true
+    |  placeholders:
+    |  - offset: 0
+    |    length: 3
+    |    <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+    |    placeholder_text: type here
+    |    dependency:
+    |      lesson: lesson1
+    |      task: task1
+    |      file: Test.java
+    |      <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+    |      placeholder: 1
+    |      is_visible: true
+    |""".trimMargin("|"))
+  }
+
+  fun `test choice task with wrong properties on each level`() {
+    courseWithFiles(CCUtils.COURSE_MODE) {
+      lesson {
+        choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)) {
+          taskFile("Test.java", "")
+        }
+      }
+    }
+
+    testHighlighting(findTask(0, 0), """
+      |type: choice
+      |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+      |is_multiple_choice: false
+      |options:
+      |- text: 1
+      |  is_correct: true
+      |- text: 2
+      |  is_correct: false
+      |  <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+      |message_correct: Congratulations!
+      |message_incorrect: Incorrect solution
+      |files:
+      |- name: Test.java
+      |  <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+      |  visible: true
+      |""".trimMargin("|"))
   }
 
   private fun testHighlighting(item: StudyItem, configText: String) {
