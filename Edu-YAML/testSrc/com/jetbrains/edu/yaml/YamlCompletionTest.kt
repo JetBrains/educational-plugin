@@ -25,7 +25,7 @@ class YamlCompletionTest : YamlCodeInsightTest() {
 
     openConfigFileWithText(getCourse(), """
       |title: Test Course
-      |type: Coursera
+      |type: coursera
       |language: Russian
       |summary: sum
       |programming_language: <caret>Plain text
@@ -49,7 +49,7 @@ class YamlCompletionTest : YamlCodeInsightTest() {
 
     openConfigFileWithText(getCourse(), """
       |title: Test Course
-      |type: Coursera
+      |type: coursera
       |language: Russian
       |summary: sum
       |programming_language: Plain text
@@ -72,7 +72,7 @@ class YamlCompletionTest : YamlCodeInsightTest() {
 
     openConfigFileWithText(getCourse(), """
       |title: Test Course
-      |type: Coursera
+      |type: coursera
       |language: <caret>Russian
       |summary: sum
       |programming_language: Plain text
@@ -95,7 +95,7 @@ class YamlCompletionTest : YamlCodeInsightTest() {
 
     openConfigFileWithText(getCourse(), """
       |title: Test Course
-      |type: Coursera
+      |type: coursera
       |language: Russian
       |summary: sum
       |programming_language: Plain text
@@ -114,7 +114,7 @@ class YamlCompletionTest : YamlCodeInsightTest() {
   fun `test no completion in non-config file`() {
     myFixture.configureByText("random.yaml", """
       |title: Test Course
-      |type: Coursera
+      |type: coursera
       |language: <caret>Russian
       |summary: sum
       |programming_language: Plain text

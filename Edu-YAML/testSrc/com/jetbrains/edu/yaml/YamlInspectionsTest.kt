@@ -13,7 +13,7 @@ class YamlInspectionsTest : YamlCodeInsightTest() {
 
     openConfigFileWithText(getCourse(), """
       |title: Test Course
-      |type: Coursera
+      |type: coursera
       |language: Russian
       |summary: sum
       |programming_language: Plain text
