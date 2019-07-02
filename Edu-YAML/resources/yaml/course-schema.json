@@ -55,7 +55,8 @@
       "description": "Folder names of lessons or sections included in the course",
       "type": [
         "array"
-      ]
+      ],
+      "uniqueItems": true
     }
   },
   "required": [

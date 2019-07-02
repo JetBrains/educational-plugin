@@ -10,9 +10,8 @@
     },
     "content": {
       "description": "Folder names of lessons included in the section",
-      "type": [
-        "array"
-      ]
+      "type": "array",
+      "uniqueItems": true
     }
   },
   "additionalProperties": false

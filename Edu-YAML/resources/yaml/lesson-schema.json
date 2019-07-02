@@ -15,9 +15,9 @@
     },
     "content": {
       "description": "Folder names of tasks included in the section",
-      "type": [
-        "array"
-      ]
+      "type": "array",
+      "uniqueItems": true
+
     }
   },
   "additionalProperties": false
