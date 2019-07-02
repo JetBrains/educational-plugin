@@ -152,7 +152,7 @@ private fun StudyItem.ensureChildrenExist(itemDir: VirtualFile) {
     is ItemContainer -> {
       items.forEach {
         val itemTypeName = if (it is Task) EduNames.TASK else EduNames.ITEM
-        itemDir.findChild(it.name) ?: loadingError(noDirForItemMessage(itemTypeName, it.name))
+        itemDir.findChild(it.name) ?: loadingError(noDirForItemMessage(it.name, itemTypeName))
       }
     }
     is Task -> {
