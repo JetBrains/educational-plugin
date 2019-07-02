@@ -133,6 +133,16 @@ class YamlErrorProcessingTest : YamlTestCase() {
            "Answer placeholders with negative offset not allowed", InvalidYamlFormatException::class.java)
   }
 
+  fun `test task file without name`() {
+    doTest("""
+    |type: edu
+    |files:
+    |- name:
+    |  visible: true
+    |""".trimMargin("|"), YamlFormatSettings.TASK_CONFIG,
+           "File without a name not allowed", InvalidYamlFormatException::class.java)
+  }
+
   private fun <T : Exception> doTest(yamlContent: String,
                                      configName: String,
                                      expectedErrorMessage: String,
