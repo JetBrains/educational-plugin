@@ -31,24 +31,35 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   private val taskCMakeListsTemplate = getTemplate(EDU_CMAKELISTS)
   private val mainCMakeListsTemplate = getTemplate(EDU_MAIN_CMAKELISTS)
 
-  override fun createProject(locationString: String, projectSettings: CppProjectSettings): Project? {
-    for (item in myCourse.items) {
-      if (item is Lesson) {
-        changeItemNameAndCustomPresentableName(item, EduNames.LESSON)
-        item.visitTasks { task ->
-          addCMakeListsForTask(null, item, task, projectSettings.languageStandard)
-          changeItemNameAndCustomPresentableName(task, EduNames.TASK)
-        }
+  override fun beforeProjectGenerated(): Boolean {
+    if (!super.beforeProjectGenerated()) {
+      return false
+    }
+
+    fun recursiveRename(item: StudyItem) {
+      changeItemNameAndCustomPresentableName(item)
+      if (item is ItemContainer) {
+        item.items.forEach { recursiveRename(it) }
       }
-      else if (item is Section) {
-        changeItemNameAndCustomPresentableName(item, EduNames.SECTION)
-        item.visitLessons { lesson ->
-          changeItemNameAndCustomPresentableName(lesson, EduNames.LESSON)
-          lesson.visitTasks { task ->
-            addCMakeListsForTask(item, lesson, task, projectSettings.languageStandard)
-            changeItemNameAndCustomPresentableName(task, EduNames.TASK)
-          }
+    }
+    myCourse.items.forEach(::recursiveRename)
+
+    return true
+  }
+
+  override fun createProject(locationString: String, projectSettings: CppProjectSettings): Project? {
+    val updateLesson = { section: Section?, lesson: Lesson ->
+      lesson.visitTasks { task ->
+        addCMakeListsForTask(section, lesson, task, projectSettings.languageStandard)
+      }
+    }
+
+    myCourse.items.forEach { item ->
+      when (item) {
+        is Section -> {
+          item.visitLessons { updateLesson(item, it) }
         }
+        is Lesson -> updateLesson(null, item)
       }
     }
 
@@ -69,14 +80,21 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     }
   }
 
-  private fun changeItemNameAndCustomPresentableName(item: StudyItem, prefix: String) {
+  private fun changeItemNameAndCustomPresentableName(item: StudyItem) {
     // We support courses which section/lesson/task names can be in Russian,
     // which may cause problems when creating a project with non-ascii paths.
     // For example, CMake + MinGW and CLion + CMake + Cygwin does not work correctly with non-ascii symbols in project paths.
     // Therefore, we generate folder names on the disk using ascii symbols (item.name)
     // and in the course (item.customPresentableName) we show the names in the same form as in the remote course
     item.customPresentableName = item.name
-    item.name = "${prefix}${item.index}"
+    item.name = generateDefaultName(item)
+  }
+
+  private fun generateDefaultName(item: StudyItem) = when (item) {
+    is Section -> "${EduNames.SECTION}${item.index}"
+    is Lesson -> "${EduNames.LESSON}${item.index}"
+    is Task -> "${EduNames.TASK}${item.index}"
+    else -> "NonCommonStudyItem"
   }
 
   private fun addCMakeListsForTask(section: Section?, lesson: Lesson, task: Task, standard: String) {
@@ -87,6 +105,14 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
       isVisible = false
     }
     task.addTaskFile(cMakeFile)
+  }
+
+  private fun getCMakeProjectUniqueName(section: Section?, lesson: Lesson, task: Task): String {
+    val sectionPart = section?.let { generateDefaultName(it) } ?: "global"
+    val lessonPart = generateDefaultName(lesson)
+    val taskPart = generateDefaultName(task)
+
+    return "$sectionPart-$lessonPart-$taskPart"
   }
 
   private fun getText(templateName: FileTemplate, cppProjectName: String, cppStandard: String? = null): String {
@@ -106,11 +132,5 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     private const val EDU_CMAKELISTS = "EduCMakeLists.txt"
     private const val CMAKE_MINIMUM_REQUIRED_LINE = "CMAKE_MINIMUM_REQUIRED_LINE"
     private const val CPP_STANDARD = "CPP_STANDARD"
-
-    fun getCMakeProjectUniqueName(section: Section?, lesson: Lesson, task: Task): String {
-      val projectName = "${EduNames.LESSON}${lesson.index}-${EduNames.TASK}${task.index}"
-      if (section == null) return projectName
-      return "${EduNames.SECTION}${section.index}-$projectName"
-    }
   }
 }
