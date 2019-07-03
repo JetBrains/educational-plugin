@@ -123,9 +123,10 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     val targetState = HashMap(targetTask.allFiles).apply { nextUserChanges.apply(this) }
 
     // There are special rules for hyperskill courses for now
-    // All user changes from current task should be propagated to next task as is
-    val changes = if (taskIndexDelta == 1 && lesson.course is HyperskillCourse) {
-      calculateHypeskillChanges(lesson, targetState, currentState, targetTask, showDialogIfConflict)
+    // All user changes from the current task should be propagated to next task as is
+    val course = lesson.course
+    val changes = if (taskIndexDelta == 1 && course is HyperskillCourse && !course.hyperskillProject.isTemplateBased) {
+      calculatePropagationChanges(lesson, targetTask, currentState, targetState, showDialogIfConflict)
     } else {
       calculateChanges(currentState, targetState)
     }
@@ -133,11 +134,17 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     changes.apply(project, taskDir, targetTask)
   }
 
-  private fun calculateHypeskillChanges(
+  /**
+   * Returns [Change]s to propagate user changes from [currentState] to [targetTask].
+   *
+   * In case, when it's impossible due to simultaneous incompatible user changes in [currentState] and [targetState],
+   * it asks user to choose what change he wants to apply.
+   */
+  private fun calculatePropagationChanges(
     lesson: FrameworkLesson,
-    targetState: Map<String, String>,
-    currentState: Map<String, String>,
     targetTask: Task,
+    currentState: Map<String, String>,
+    targetState: Map<String, String>,
     showDialogIfConflict: Boolean
   ): UserChanges {
     val (currentTaskFilesState, currentTestFilesState) = currentState.split(lesson)
@@ -210,6 +217,9 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
   }
 
+  /**
+   * Returns [Change]s to convert [currentState] to [targetState]
+   */
   private fun calculateChanges(
     currentState: Map<String, String>,
     targetState: Map<String, String>

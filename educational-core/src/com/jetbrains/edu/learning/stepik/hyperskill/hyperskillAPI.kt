@@ -23,6 +23,7 @@ const val THEORY_ID = "theory"
 const val STEP_ID = "step"
 const val TOPIC_THEORY = "topic_theory"
 const val SOLUTIONS = "solutions"
+const val IS_TEMPLATE_BASED = "is_template_based"
 
 class HyperskillAccount : OAuthAccount<HyperskillUserInfo>()
 
@@ -73,6 +74,9 @@ class HyperskillProject {
 
   @JsonProperty(LANGUAGE)
   var language: String = ""
+
+  @JsonProperty(IS_TEMPLATE_BASED)
+  var isTemplateBased: Boolean = false
 }
 
 class HyperskillTopic {
