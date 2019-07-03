@@ -30,6 +30,7 @@ public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjec
 
   @Override
   protected void afterProjectGenerated(@NotNull Project project, @NotNull JsNewProjectSettings projectSettings) {
+    super.afterProjectGenerated(project, projectSettings);
     NodeJsInterpreter interpreter = projectSettings.getSelectedInterpreter();
     NodeJsInterpreterManager.getInstance(project).setInterpreterRef(interpreter.toRef());
     ModalityState modalityState = ModalityState.current();
