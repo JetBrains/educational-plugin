@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <!--suppress CheckTagEmptyBody, HtmlExtraClosingTag, HtmlUnknownTarget -->
+  <link rel="stylesheet" type="text/css" href="${yaml-base-css}"></link>
+  <!--suppress CheckTagEmptyBody, HtmlExtraClosingTag, HtmlUnknownTarget -->
+  <link rel="stylesheet" type="text/css" href="${base-css}"></link>
+  <style>
+    ${typography_color_style}
+  </style>
+</head>
+<body>
+<h3>Course</h3>
+<div class="description"><span class="config">course-info.yaml</span> depicts the structure of a course:</div>
+
+<table class="yaml-format-table">
+  <tbody>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>title</td>
+    <td>Title of the course</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>language</td>
+    <td>Languages used for course materials</td>
+    <td>Any of supported languages</td>
+  </tr>
+  <tr>
+    <td>summary</td>
+    <td>Summary describing what the course is about</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>programming_language</td>
+    <td>Programming language of the course</td>
+    <td>Any of supported programming languages</td>
+  </tr>
+  <tr>
+    <td>programming_language_version</td>
+    <td>Optional version of programming language</td>
+    <td>Version of programming language</td>
+  </tr>
+  <tr>
+    <td>environment</td>
+    <td>Additional information about the course environment</td>
+    <td>
+      For example, Kotlin courses are supported for Android environment
+    </td>
+  </tr>
+  <tr>
+    <td>content</td>
+    <td>Folder names of lessons or sections included in the course</td>
+    <td>List of folder names</td>
+  </tr>
+  </tbody>
+</table>
+
+
+<h3>Section</h3>
+<div class="description"><span class="config">section-info.yaml</span> depicts the structure of a section:</div>
+
+<table class="yaml-format-table">
+  <tbody>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>custom_name</td>
+    <td>Custom name for the section if it differs from its folder name</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>content</td>
+    <td>Folder names of the lessons included in the section</td>
+    <td>List of folder names</td>
+  </tr>
+  </tbody>
+</table>
+
+<h3>Lesson</h3>
+<div class="description"><span class="config">lesson-info.yaml</span> manages the parameters of lessons:
+</div>
+
+
+<table class="yaml-format-table">
+  <tbody>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>Lesson type</td>
+    <td><span class="enum">lesson</span><br>
+      <span class="enum">framework</span>
+    </td>
+  </tr>
+  <tr>
+    <td>custom_name</td>
+    <td>Custom name for the lesson if it differs from its directory name</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>content</td>
+    <td>Directory names of tasks included in the section</td>
+    <td>List of directory names</td>
+  </tr>
+  </tbody>
+</table>
+
+<h3>Task</h3>
+<div class="description"><span class="config">task-info.yaml</span> manages the parameters of a task:
+</div>
+
+<table class="yaml-format-table">
+  <tbody>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>Task type</td>
+    <td><span class="enum">edu</span>
+      <span class="enum">theory</span>
+      <span class="enum">output</span>
+      <span class="enum">ide</span>
+      <span class="enum">code</span>
+      <span class="enum">choice</span>
+    </td>
+  </tr>
+  <tr>
+    <td>custom_name</td>
+    <td>Custom name for the task if it differs from its directory name</td>
+    <td>string</td>
+  </tr>
+  <tr>
+    <td>files</td>
+    <td>Files included in the task</td>
+    <td>List of files included in the task</td>
+  </tr>
+  <tr>
+    <td>feedback_link</td>
+    <td>Custom link for students to leave their feedback about the task</td>
+    <td>E.g., Google Forms link</td>
+  </tr>
+
+  <tr>
+    <td>is_multiple_choice</td>
+    <td>If <span class="enum">choice</span> task allows multiple correct answers</td>
+    <td><span class="enum">true</span> <span class="enum">false</span></td>
+  </tr>
+  <tr>
+    <td>message_correct</td>
+    <td><span class="enum">choice</span> Custom message to be shown to a student in case of correct solution</td>
+    <td>E.g., “Great job!” or “Fantastic!”</td>
+  </tr>
+  <tr>
+    <td>message_incorrect</td>
+    <td>
+      <span class="enum">choice</span> Custom message to be shown to a student in case of incorrect solution
+    </td>
+    <td>E.g., “Review how to define a function to solve this task”</td>
+  </tr>
+  <tr>
+    <td>options</td>
+    <td><span class="enum">choice</span> task answer variants</td>
+    <td>List of options</td>
+  </tr>
+  </tbody>
+</table>
+
+
+</body>
+</html>

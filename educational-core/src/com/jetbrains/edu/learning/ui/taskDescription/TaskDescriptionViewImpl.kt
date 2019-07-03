@@ -11,6 +11,7 @@ import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.content.ContentManager
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.coursecreator.yaml.addTabToTaskDescription
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -59,6 +60,15 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       val topicsContent = ContentFactory.SERVICE.getInstance().createContent(additionalTab.first, additionalTab.second, false)
       topicsContent.isCloseable = false
       contentManager.addContent(topicsContent, 1)
+    }
+
+    addYamlTab()
+  }
+
+  private fun addYamlTab() {
+    val course = StudyTaskManager.getInstance(project).course ?: return
+    if (!course.isStudy) {
+      addTabToTaskDescription(project)
     }
   }
 
