@@ -63,7 +63,7 @@ object CourseViewUtils {
       if (!it.isVisible) return@any false
       val virtualFile = it.getVirtualFile(project)
       if (virtualFile == null) {
-        Logger.getInstance(Task::class.java).error("VirtualFile for ${it.name} not found")
+        Logger.getInstance(Task::class.java).warn("VirtualFile for ${it.name} not found")
         return@any false
       }
 
