@@ -6,13 +6,12 @@ import com.intellij.openapi.util.JDOMUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.CourseSetListener
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import junit.framework.TestCase
 
-class YamlMigrationTest : EduTestCase() {
+class YamlMigrationTest : YamlTestCase() {
   fun `test course doesn't serialize into xml`() {
     StudyTaskManager.getInstance(project).course = EduCourse()
     StudyTaskManager.getInstance(project).course!!.courseMode = CCUtils.COURSE_MODE
@@ -26,6 +25,7 @@ class YamlMigrationTest : EduTestCase() {
       }
     }
     createStudyXml()
+    createConfigFiles()
 
     val serializedCourse = StudyTaskManager.getInstance(project).serialize()
     StudyTaskManager.getInstance(project).loadState(serializedCourse)
@@ -39,6 +39,20 @@ class YamlMigrationTest : EduTestCase() {
 
     StudyTaskManager.getInstance(project).loadState(JDOMUtil.load("<component name=\"StudySettings\"></component>"))
     connection.disconnect()
+  }
+
+  fun `test configs created after migration`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask()
+      }
+    }
+    createStudyXml()
+
+    val serializedCourse = StudyTaskManager.getInstance(project).serialize()
+    StudyTaskManager.getInstance(project).loadState(serializedCourse)
+    UIUtil.dispatchAllInvocationEvents()
+    checkConfigsExistAndNotEmpty(project, StudyTaskManager.getInstance(project).course!!)
   }
 
   private fun createStudyXml() {

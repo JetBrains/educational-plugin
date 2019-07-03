@@ -3,18 +3,14 @@ package com.jetbrains.edu.coursecreator
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.coursecreator.yaml.YamlDeepLoader
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.saveAll
 import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
@@ -63,16 +59,6 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
       startTaskDescriptionFilesSynchronization()
 
       YamlFormatSynchronizer.startSynchronization(myProject)
-      createYamlConfigFilesIfMissing()
-    }
-  }
-
-  private fun createYamlConfigFilesIfMissing() {
-    val courseDir = myProject.courseDir
-    val courseConfig = courseDir.findChild(COURSE_CONFIG)
-    if (courseConfig == null) {
-      saveAll(myProject)
-      FileDocumentManager.getInstance().saveAllDocuments()
     }
   }
 

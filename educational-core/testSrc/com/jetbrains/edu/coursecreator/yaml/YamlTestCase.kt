@@ -4,11 +4,16 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
+import com.intellij.openapi.project.Project
+import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_PROJECT_READY
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_THROW_EXCEPTION
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.configFileName
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ItemContainer
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 abstract class YamlTestCase : EduTestCase() {
@@ -45,3 +50,27 @@ abstract class YamlTestCase : EduTestCase() {
     YamlLoader.loadItem(project, configFile)
   }
 }
+
+fun checkConfigsExistAndNotEmpty(project: Project, course: Course) {
+  course.items.forEach { courseItem ->
+    checkConfig(project, courseItem)
+
+    // checking sections/top-level lessons
+    (courseItem as ItemContainer).items.forEach {
+      checkConfig(project, it)
+      if (it is Lesson) {
+        it.items.forEach { task -> checkConfig(project, task) }
+      }
+    }
+  }
+}
+
+private fun checkConfig(project: Project, item: StudyItem) {
+  val itemDir = item.getDir(project)
+  val configFileName = item.configFileName
+  val configFile = itemDir.findChild(configFileName)!!
+  val configText = FileDocumentManager.getInstance().getDocument(configFile)!!.text
+  UsefulTestCase.assertNotNull("Config file shouldn't be null", configFile)
+  UsefulTestCase.assertTrue("Config file should not be empty: ${configFile.name}", configText.isNotEmpty())
+}
+

@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.isUnitTestMode
 
 object YamlFormatSettings {
+  @JvmStatic
   val COURSE_CONFIG = getLocalConfigFileName(EduNames.COURSE)
   val SECTION_CONFIG = getLocalConfigFileName(EduNames.SECTION)
   val LESSON_CONFIG = getLocalConfigFileName(EduNames.LESSON)

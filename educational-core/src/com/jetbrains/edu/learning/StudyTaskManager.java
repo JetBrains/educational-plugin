@@ -7,10 +7,10 @@ import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -19,6 +19,8 @@ import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings;
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
@@ -46,7 +48,6 @@ import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 public class StudyTaskManager implements PersistentStateComponent<Element>, DumbAware {
   public static final Topic<CourseSetListener> COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener.class);
   private static final Logger LOG = Logger.getInstance(StudyTaskManager.class);
-  private static final Key<Boolean> STUDY_XML_DELETED = new Key<>("study-xml-deleted");
 
   @Transient
   private Course myCourse;
@@ -111,9 +112,6 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   @Override
   public Element getState() {
     if (myCourse == null || !myCourse.isStudy()) {
-      if (myProject != null) {
-        myProject.putUserData(STUDY_XML_DELETED, Boolean.TRUE);
-      }
       return null;
     }
 
@@ -142,9 +140,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
 
   @Override
   public void loadState(@NotNull Element state) {
-    // after `study-project.xml` is deleted this method is called the second time to reinit component,
-    // so we want to do nothing in this case
-    if (myProject != null && myProject.getUserData(STUDY_XML_DELETED) == Boolean.TRUE) {
+    if (myProject != null && YamlFormatSettings.isEduYamlProject(myProject)) {
       return;
     }
 
@@ -196,10 +192,25 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
       VERSION = EduVersions.XML_FORMAT_VERSION;
       if (myCourse != null) {
         myCourse.init(null, null, true);
+        createConfigFilesIfMissing();
       }
     }
     catch (StudyUnrecognizedFormatException e) {
       LOG.error("Unexpected course format:\n", new XMLOutputter().outputString(state));
+    }
+  }
+
+  private void createConfigFilesIfMissing() {
+    if (myProject == null) {
+      return;
+    }
+    VirtualFile courseDir = OpenApiExtKt.getCourseDir(myProject);
+    VirtualFile courseConfig = courseDir.findChild(YamlFormatSettings.getCOURSE_CONFIG());
+    if (courseConfig == null) {
+      StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
+        YamlFormatSynchronizer.saveAll(myProject);
+        FileDocumentManager.getInstance().saveAllDocuments();
+      });
     }
   }
 
