@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -12,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.AppIcon
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
@@ -20,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector.getTasks
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -40,7 +44,9 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val codeMatcher = OAUTH_CODE_PATTERN.matcher(uri)
     val openCourseMatcher = OPEN_COURSE_PATTERN.matcher(uri)
     val openStepMatcher = OPEN_STEP_PATTERN.matcher(uri)
-    return if (request.method() === HttpMethod.GET && (codeMatcher.matches() || openCourseMatcher.matches() || openStepMatcher.matches())) {
+    val pluginInfo = PLUGIN_INFO.matcher(uri)
+    return if (request.method() === HttpMethod.GET && (codeMatcher.matches() || openCourseMatcher.matches() || openStepMatcher.matches() ||
+                                                       pluginInfo.matches())) {
       true
     }
     else super.isHostTrusted(request)
@@ -51,6 +57,11 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
                        request: FullHttpRequest,
                        context: ChannelHandlerContext): String? {
     val uri = urlDecoder.uri()
+    if (PLUGIN_INFO.matcher(uri).matches()) {
+      createResponse(ObjectMapper().writeValueAsString(PluginInfo(getIdeVersion(), pluginVersion(EduNames.PLUGIN_ID))))
+        .send(context.channel(), request)
+      return null
+    }
     val matcher = OPEN_COURSE_PATTERN.matcher(uri)
     if (matcher.matches()) {
       val account = HyperskillSettings.INSTANCE.account
@@ -234,5 +245,13 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     private val OAUTH_CODE_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME/oauth\\?code=(\\w+)")
     private val OPEN_COURSE_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME\\?stage_id=.+&project_id=.+")
     private val OPEN_STEP_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME\\?step_id=.+")
+    private val PLUGIN_INFO = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME/info")
   }
+
+  private fun getIdeVersion(): String {
+    val appInfo = ApplicationInfoImpl.getShadowInstance()
+    return appInfo.versionName + " " + appInfo.fullVersion
+  }
+
+  data class PluginInfo(val version: String?, val edutools: String?)
 }
