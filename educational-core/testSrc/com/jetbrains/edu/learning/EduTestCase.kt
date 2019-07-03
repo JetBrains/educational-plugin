@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 import com.google.common.collect.Lists
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.impl.ComponentManagerImpl
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -37,6 +38,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -196,6 +198,21 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
       val placeholder = taskFile.answerPlaceholders[placeholderIndex]
       myFixture.editor.selectionModel.setSelection(placeholder.offset, placeholder.endOffset)
     }
+  }
+
+  protected fun Task.createTaskFileAndOpenInEditor(taskFilePath: String, text: String = "") {
+    val taskDir = getTaskDir(project) ?: error("Can't find task dir")
+    val file = GeneratorUtils.createChildFile(taskDir, taskFilePath, text) ?: error("Failed to create `$taskFilePath` in $taskDir")
+    myFixture.openFileInEditor(file)
+  }
+
+  protected fun Task.removeTaskFile(taskFilePath: String) {
+    require(getTaskFile(taskFilePath) != null) {
+      "Can't find `$taskFilePath` task file in ${name} task"
+    }
+    val taskDir = getTaskDir(project) ?: error("Can't find task dir")
+    val file = taskDir.findFileByRelativePath(taskFilePath) ?: error("Can't find `$taskFilePath` in `$taskDir`")
+    runWriteAction { file.delete(this) }
   }
 
   // TODO: set up more items which are enabled in real course project

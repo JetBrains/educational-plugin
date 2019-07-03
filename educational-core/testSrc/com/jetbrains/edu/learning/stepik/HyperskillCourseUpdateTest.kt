@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseUpdater
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.util.*
 
@@ -309,6 +310,7 @@ class HyperskillCourseUpdateTest : EduTestCase() {
       }
       additionalFile("build.gradle", "apply plugin: \"java\"")
     } as HyperskillCourse
+    course.hyperskillProject = HyperskillProject()
   }
 }
 
