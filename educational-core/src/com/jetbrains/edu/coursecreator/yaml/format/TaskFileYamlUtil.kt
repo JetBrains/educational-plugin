@@ -32,7 +32,7 @@ abstract class TaskFileYamlMixin {
 
 @JsonPOJOBuilder(withPrefix = "")
 open class TaskFileBuilder(@JsonProperty(NAME) val name: String?,
-                           @JsonProperty(PLACEHOLDERS) val placeholders: List<AnswerPlaceholder> = emptyList(),
+                           @JsonProperty(PLACEHOLDERS) val placeholders: List<AnswerPlaceholder> = mutableListOf(),
                            @JsonProperty(VISIBLE) val visible: Boolean = true) {
   @Suppress("unused") //used for deserialization
   private fun build(): TaskFile {
