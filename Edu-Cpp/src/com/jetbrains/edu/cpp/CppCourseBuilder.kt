@@ -1,7 +1,6 @@
 package com.jetbrains.edu.cpp
 
 import com.intellij.ide.fileTemplates.FileTemplate
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.cpp.cmake.projectWizard.CLionProjectWizardUtils.getCMakeMinimumRequiredLine
@@ -29,24 +28,16 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
 
   override fun getLanguageSettings(): LanguageSettings<CppProjectSettings> = CppLanguageSettings()
 
-  override fun createInitialLesson(project: Project, course: Course): Lesson? {
-    val lesson = super.createInitialLesson(project, course)
-    lesson?.visitTasks {
-      addCMakeListToTask(null, lesson, it, null)
-    }
-    return lesson
-  }
-
   override fun createTaskContent(project: Project, task: Task, parentDirectory: VirtualFile): VirtualFile? {
-    val lesson = task.lesson
-    val section = lesson.section
-    addCMakeListToTask(section, lesson, task, null)
-
+    addCMakeList(task, languageSettings.settings.languageStandard)
     return super.createTaskContent(project, task, parentDirectory)
   }
 
-  fun addCMakeListToTask(section: Section?, lesson: Lesson, task: Task, cppStandard: String?) {
+  fun addCMakeList(task: Task, cppStandard: String?): TaskFile {
+    val lesson = task.lesson
+    val section = lesson.section
     val cMakeListFile = TaskFile()
+
     cMakeListFile.apply {
       name = CMakeListsFileType.FILE_NAME
       isVisible = false
@@ -57,6 +48,8 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
       ))
     }
     task.addTaskFile(cMakeListFile)
+
+    return cMakeListFile
   }
 
   private fun generateCMakeProjectUniqueName(section: Section?, lesson: Lesson, task: Task): String {
@@ -75,11 +68,11 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
   }
 
   private val cMakeMinimumRequiredLine: String by lazy {
-    var value = ""
-    ApplicationManager.getApplication().executeOnPooledThread {
-      value = getCMakeMinimumRequiredLine(readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
-    }.get()
-    value
+    getCMakeMinimumRequiredLine(readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
+  }
+
+  fun initCMakeMinimumRequiredLine() {
+    cMakeMinimumRequiredLine
   }
 
   private val taskCMakeListsTemplate = getTemplate(EDU_TASK_CMAKE_LIST)

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.cpp
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
@@ -7,10 +8,14 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ItemContainer
+import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import java.io.IOException
 
 class CppCourseProjectGenerator(private val builder: CppCourseBuilder, course: Course) :
   CourseProjectGenerator<CppProjectSettings>(builder, course) {
@@ -22,33 +27,15 @@ class CppCourseProjectGenerator(private val builder: CppCourseBuilder, course: C
       return false
     }
 
-    fun recursiveRename(item: StudyItem) {
+    fun deepRename(item: StudyItem) {
       changeItemNameAndCustomPresentableName(item)
       if (item is ItemContainer) {
-        item.items.forEach { recursiveRename(it) }
+        item.items.forEach { deepRename(it) }
       }
     }
-    myCourse.items.forEach(::recursiveRename)
+    myCourse.items.forEach(::deepRename)
 
     return true
-  }
-
-  override fun createCourseStructure(project: Project, baseDir: VirtualFile, settings: CppProjectSettings) {
-    val updateLesson = { section: Section?, lesson: Lesson ->
-      lesson.visitTasks { task ->
-        builder.addCMakeListToTask(section, lesson, task, settings.languageStandard)
-      }
-    }
-
-    myCourse.items.forEach { item ->
-      when (item) {
-        is Section -> {
-          item.visitLessons { updateLesson(item, it) }
-        }
-        is Lesson -> updateLesson(null, item)
-      }
-    }
-    super.createCourseStructure(project, baseDir, settings)
   }
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
@@ -57,7 +44,28 @@ class CppCourseProjectGenerator(private val builder: CppCourseBuilder, course: C
                                    builder.generateCMakeListText(mainCMakeListsTemplate, FileUtil.sanitizeFileName(baseDir.name)))
   }
 
+  override fun createCourseStructure(project: Project, baseDir: VirtualFile, settings: CppProjectSettings) {
+    ProgressManager.getInstance().runProcessWithProgressSynchronously<Any, IOException>(
+      { builder.initCMakeMinimumRequiredLine() },
+      "Getting CMake Minimum Required Version",
+      false,
+      project)
+    super.createCourseStructure(project, baseDir, settings)
+  }
+
   override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings) {
+    fun updateTasks(item: StudyItem) {
+      when (item) {
+        is ItemContainer -> item.items.forEach { updateTasks(it) }
+        is Task -> {
+          val cMakeFile = builder.addCMakeList(item, projectSettings.languageStandard)
+          GeneratorUtils.createChildFile(item.getTaskDir(project) ?: return, cMakeFile.name, cMakeFile.text)
+        }
+      }
+    }
+
+    myCourse.items.forEach(::updateTasks)
+
     super.afterProjectGenerated(project, projectSettings)
 
     if (!isUnitTestMode) {
