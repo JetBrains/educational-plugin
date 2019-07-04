@@ -12,8 +12,14 @@
   </style>
 </head>
 <body>
+<br>
+YAML format was introduced to make course configuration easier and transparent.
+Now it's possible to change the course structure by editing <span class="config">*.yaml</span> files.
+Here's a description of the format for each course item.
+<br> <br>
+
 <h3>Course</h3>
-<div class="description"><span class="config">course-info.yaml</span> depicts the structure of a course:</div>
+<div class="description"><span class="config">course-info.yaml</span> describes the structure of a course:</div>
 
 <table class="yaml-format-table">
   <tbody>
@@ -30,7 +36,12 @@
   <tr>
     <td>language</td>
     <td>Languages used for course materials</td>
-    <td>Any of supported languages</td>
+    <td>Any of supported languages, e.g. <span class="enum">English</span>,
+      <span class="enum">German</span>,
+      <span class="enum">French</span>,
+      <span class="enum">Spanish</span>,
+      <span class="enum">Russian</span>, etc.
+    </td>
   </tr>
   <tr>
     <td>summary</td>
@@ -40,12 +51,18 @@
   <tr>
     <td>programming_language</td>
     <td>Programming language of the course</td>
-    <td>Any of supported programming languages</td>
+    <td>Any of supported programming languages, e.g.
+      <span class="enum">Java</span>,
+      <span class="enum">Kotlin</span>,
+      <span class="enum">Scala</span>,
+      <span class="enum">JavaScript</span>,
+      <span class="enum">Rust</span>,
+    </td>
   </tr>
   <tr>
     <td>programming_language_version</td>
     <td>Optional version of programming language</td>
-    <td>Version of programming language</td>
+    <td>Number or String</td>
   </tr>
   <tr>
     <td>environment</td>
@@ -56,15 +73,15 @@
   </tr>
   <tr>
     <td>content</td>
-    <td>Folder names of lessons or sections included in the course</td>
-    <td>List of folder names</td>
+    <td>Directory names of lessons or sections included in the course</td>
+    <td>List of directory names</td>
   </tr>
   </tbody>
 </table>
 
 
 <h3>Section</h3>
-<div class="description"><span class="config">section-info.yaml</span> depicts the structure of a section:</div>
+<div class="description"><span class="config">section-info.yaml</span> describes the structure of a section:</div>
 
 <table class="yaml-format-table">
   <tbody>
@@ -75,19 +92,19 @@
   </tr>
   <tr>
     <td>custom_name</td>
-    <td>Custom name for the section if it differs from its folder name</td>
+    <td>Custom name for the section if it differs from its directory name</td>
     <td>String</td>
   </tr>
   <tr>
     <td>content</td>
-    <td>Folder names of the lessons included in the section</td>
-    <td>List of folder names</td>
+    <td>directory names of the lessons included in the section</td>
+    <td>List of directory names</td>
   </tr>
   </tbody>
 </table>
 
 <h3>Lesson</h3>
-<div class="description"><span class="config">lesson-info.yaml</span> manages the parameters of lessons:
+<div class="description"><span class="config">lesson-info.yaml</span> describes the structure of a lesson:
 </div>
 
 
@@ -119,7 +136,7 @@
 </table>
 
 <h3>Task</h3>
-<div class="description"><span class="config">task-info.yaml</span> manages the parameters of a task:
+<div class="description"><span class="config">task-info.yaml</span> describes the structure of a task:
 </div>
 
 <table class="yaml-format-table">
@@ -143,12 +160,12 @@
   <tr>
     <td>custom_name</td>
     <td>Custom name for the task if it differs from its directory name</td>
-    <td>string</td>
+    <td>String</td>
   </tr>
   <tr>
     <td>files</td>
     <td>Files included in the task</td>
-    <td>List of files included in the task</td>
+    <td>List of <span class="enum">files</span> in format described below</td>
   </tr>
   <tr>
     <td>feedback_link</td>
@@ -177,6 +194,107 @@
     <td>options</td>
     <td><span class="enum">choice</span> task answer variants</td>
     <td>List of options</td>
+  </tr>
+  </tbody>
+</table>
+
+
+<h4 id="file-format"><span class="enum">file</span> format</h4>
+<table class="yaml-format-table">
+  <tbody>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>name</td>
+    <td>File path relative to the directory of the task</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>visible</td>
+    <td>If the file is shown to student or not</td>
+    <td><span class="enum">true</span> <span class="enum">false</span></td>
+  </tr>
+  <tr>
+    <td>placeholders</td>
+    <td>Answer placeholders</td>
+    <td>List of <span class="enum">placeholders</span> in format described below</td>
+  </tr>
+  </tbody>
+</table>
+
+<h4 id="placeholder-format"><span class="enum">placeholder</span> structure</h4>
+<table class="yaml-format-table">
+  <tbody>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>offset</td>
+    <td>Placeholder start offset</td>
+    <td>Number</td>
+  </tr>
+  <tr>
+    <td>length</td>
+    <td>Placeholder length</td>
+    <td>Number</td>
+  </tr>
+  <tr>
+    <td>placeholder_text</td>
+    <td>Text which will be shown to student in place of the placeholder</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>dependency</td>
+    <td>Dependency on another placeholder</td>
+    <td><span class="enum">placeholder dependency</span> in format described below</td>
+  </tr>
+  </tbody>
+</table>
+
+<h4 id="placeholder-dependency"><span class="enum">placeholder dependency</span> structure</h4>
+<table class="yaml-format-table">
+  <tbody>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>section</td>
+    <td>Section folder name if placeholder dependency is inside a section</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>lesson</td>
+    <td>Lesson directory name</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>task</td>
+    <td>Task directory name</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>file</td>
+    <td>File path relative to the directory of the task</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>placeholder</td>
+    <td>Placeholder index starting from 0</td>
+    <td>Number</td>
+  </tr>
+  <tr>
+    <td>is_visible</td>
+    <td>If placeholder is drawn in place of dependency</td>
+    <td><span class="enum">true</span> or <span class="enum">false</span><br>
+      Default: <span class="enum">true</span>
+    </td>
   </tr>
   </tbody>
 </table>
