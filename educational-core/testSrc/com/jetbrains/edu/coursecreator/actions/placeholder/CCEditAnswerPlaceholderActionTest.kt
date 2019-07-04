@@ -21,7 +21,7 @@ class CCEditAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
     val taskFile = course.lessons[0].taskList[1].taskFiles["Task.kt"]!!
     val taskFileExpected = copy(taskFile)
     val placeholderExpected = taskFileExpected.answerPlaceholders[0]
-    placeholderExpected.placeholderText = defaultPlaceholderText
+    placeholderExpected.placeholderText = DEFAULT_PLACEHOLDER_TEXT
     placeholderExpected.placeholderDependency = AnswerPlaceholderDependency.create(placeholderExpected, "lesson1#task1#Task.kt#1", true)
     placeholderExpected.taskFile = taskFileExpected
     doTest("lesson1/task2/Task.kt", CCTestEditAnswerPlaceholder(), taskFile, taskFileExpected)
@@ -31,7 +31,7 @@ class CCEditAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
     override fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
       return object : CCCreateAnswerPlaceholderDialog(project, false, answerPlaceholder) {
         override fun showAndGet(): Boolean = true
-        override fun getPlaceholderText(): String = "type here"
+        override fun getPlaceholderText(): String = DEFAULT_PLACEHOLDER_TEXT
         override fun getDependencyInfo(): DependencyInfo? = DependencyInfo("lesson1#task1#Task.kt#1", true)
       }
     }

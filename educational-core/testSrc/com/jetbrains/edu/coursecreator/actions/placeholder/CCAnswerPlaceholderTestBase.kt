@@ -10,8 +10,8 @@ import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler
 
 abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
   companion object {
-    const val defaultPlaceholderText = "type here"
-    const val defaultTaskText = "fun foo(): String = TODO()"
+    const val DEFAULT_PLACEHOLDER_TEXT = "type here"
+    const val DEFAULT_TASK_TEXT = "fun foo(): String = TODO()"
   }
 
   fun doTest(

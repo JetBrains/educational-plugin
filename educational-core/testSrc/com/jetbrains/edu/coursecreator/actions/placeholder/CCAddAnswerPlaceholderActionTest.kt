@@ -12,14 +12,14 @@ class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("Task.kt", defaultTaskText)
+          taskFile("Task.kt", DEFAULT_TASK_TEXT)
         }
       }
     }
 
     val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
     val taskFileExpected = copy(taskFile)
-    taskFileExpected.createExpectedPlaceholder()
+    taskFileExpected.createExpectedPlaceholder(0, DEFAULT_PLACEHOLDER_TEXT)
 
     doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile, taskFileExpected)
   }
@@ -28,7 +28,7 @@ class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("Task.kt", defaultTaskText)
+          taskFile("Task.kt", DEFAULT_TASK_TEXT)
         }
       }
     }
@@ -36,7 +36,7 @@ class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
     val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
     val taskFileExpected = copy(taskFile)
     val selection = Selection(10, 19)
-    taskFileExpected.createExpectedPlaceholder(selection)
+    taskFileExpected.createExpectedPlaceholder(10, DEFAULT_TASK_TEXT.substring(10, 19))
 
     doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile, taskFileExpected, selection)
   }
@@ -45,7 +45,7 @@ class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
     courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("Task.kt", defaultTaskText)
+          taskFile("Task.kt", DEFAULT_TASK_TEXT)
         }
       }
     }
@@ -64,14 +64,14 @@ class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
           taskFile("Task.kt", "fun <p>foo(): String = TODO()</p>")
         }
         eduTask("task2") {
-          taskFile("Task.kt", defaultTaskText)
+          taskFile("Task.kt", DEFAULT_TASK_TEXT)
         }
       }
     }
 
     val taskFile = course.lessons[0].taskList[1].taskFiles["Task.kt"]!!
     val taskFileExpected = copy(taskFile)
-    val placeholderExpected = taskFileExpected.createExpectedPlaceholder()
+    val placeholderExpected = taskFileExpected.createExpectedPlaceholder(0, DEFAULT_PLACEHOLDER_TEXT)
     val placeholderDependency = AnswerPlaceholderDependency(placeholderExpected, null, "lesson1", "task1", "Task.kt", 1, true)
     placeholderExpected.placeholderDependency = placeholderDependency
     doTest("lesson1/task2/Task.kt",
@@ -83,7 +83,7 @@ class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
     override fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
       return object : CCCreateAnswerPlaceholderDialog(project, false, answerPlaceholder) {
         override fun showAndGet(): Boolean = true
-        override fun getPlaceholderText(): String = "type here"
+        override fun getPlaceholderText(): String = DEFAULT_PLACEHOLDER_TEXT
         override fun getDependencyInfo(): DependencyInfo? = dependencyInfo
       }
     }
@@ -93,16 +93,16 @@ class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
     val length = end - start
   }
 
-  private fun TaskFile.createExpectedPlaceholder(selection: Selection? = null): AnswerPlaceholder {
+  private fun TaskFile.createExpectedPlaceholder(offset: Int, text: String, index: Int = 0): AnswerPlaceholder {
+
     val placeholderExpected = AnswerPlaceholder()
-    placeholderExpected.offset = selection?.start ?: 0
-    placeholderExpected.length = selection?.length ?: 9
-    placeholderExpected.index = 0
+    placeholderExpected.offset = offset
+    placeholderExpected.length = text.length
+    placeholderExpected.index = index
     placeholderExpected.taskFile = this
-    placeholderExpected.possibleAnswer = if (selection == null) defaultPlaceholderText
-    else defaultTaskText.substring(selection.start, selection.end)
-    placeholderExpected.placeholderText = defaultPlaceholderText
-    this.answerPlaceholders.add(placeholderExpected)
+    placeholderExpected.possibleAnswer = text
+    placeholderExpected.placeholderText = DEFAULT_PLACEHOLDER_TEXT
+    answerPlaceholders.add(placeholderExpected)
     return placeholderExpected
   }
 }
