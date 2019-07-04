@@ -4,6 +4,9 @@ import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
@@ -21,6 +24,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
+import com.jetbrains.edu.coursecreator.yaml.YamlInfoTaskDescriptionTabKt;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
@@ -31,6 +35,7 @@ import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.event.HyperlinkEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -211,6 +216,19 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
         YamlFormatSynchronizer.saveAll(myProject);
         FileDocumentManager.getInstance().saveAllDocuments();
         YamlFormatSynchronizer.startSynchronization(myProject);
+        Notification notification = new Notification("Education: yaml info",
+                                                     "YAML format introduced",
+                                                     "<i>*.yaml</i> files can be used to modify course structure. <a href=\"#\">More info</a> ",
+                                                     NotificationType.INFORMATION,
+                                                     new NotificationListener() {
+                                                       @Override
+                                                       public void hyperlinkUpdate(@NotNull Notification notification,
+                                                                                   @NotNull HyperlinkEvent event) {
+                                                         YamlInfoTaskDescriptionTabKt.showYamlTab(myProject);
+                                                       }
+                                                     });
+
+        notification.notify(myProject);
       });
     }
   }
