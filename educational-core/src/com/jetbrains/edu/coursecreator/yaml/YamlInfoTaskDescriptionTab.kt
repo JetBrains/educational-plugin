@@ -68,3 +68,9 @@ private val Project.taskDescriptionTWContentManager: ContentManager?
     val toolWindow = ToolWindowManager.getInstance(this).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
     return toolWindow.contentManager
   }
+
+fun showYamlTab(project: Project) {
+  val contentManager = project.taskDescriptionTWContentManager ?: return
+  val yamlTab = contentManager.findContent(NAME) ?: return
+  contentManager.setSelectedContent(yamlTab)
+}
