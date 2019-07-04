@@ -205,7 +205,7 @@ object YamlDeserializer {
 
     val editor = configFile.getEditor(project)
     if (editor != null) {
-      editor.headerComponent = InvalidFormatPanel(cause)
+      editor.headerComponent = InvalidFormatPanel(project, cause)
     }
     else {
       val notification = InvalidConfigNotification(project, configFile, cause)
