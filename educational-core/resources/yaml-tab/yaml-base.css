@@ -16,10 +16,6 @@
     vertical-align: top;
 }
 
-.yaml-format-table tbody tr:hover td {
-    color: #009;
-}
-
 .description {
     font-size: inherit;
     margin-left: 10px;
