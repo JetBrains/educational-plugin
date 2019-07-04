@@ -2,14 +2,17 @@ package com.jetbrains.edu.cpp
 
 import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.cpp.cmake.projectWizard.CLionProjectWizardUtils.getCMakeMinimumRequiredLine
+import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cidr.cpp.toolchains.CMake.readCMakeVersion
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -31,6 +34,10 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
   override fun createTaskContent(project: Project, task: Task, parentDirectory: VirtualFile): VirtualFile? {
     addCMakeList(task, languageSettings.settings.languageStandard)
     return super.createTaskContent(project, task, parentDirectory)
+  }
+
+  override fun refreshProject(project: Project) {
+    CMakeWorkspace.getInstance(project).selectProjectDir(VfsUtil.virtualToIoFile(project.courseDir))
   }
 
   fun addCMakeList(task: Task, cppStandard: String?): TaskFile {

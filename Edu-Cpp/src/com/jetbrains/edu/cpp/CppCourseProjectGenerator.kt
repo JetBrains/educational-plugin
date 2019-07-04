@@ -3,17 +3,13 @@ package com.jetbrains.edu.cpp
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cmake.CMakeListsFileType
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import java.io.IOException
 
@@ -67,10 +63,6 @@ class CppCourseProjectGenerator(private val builder: CppCourseBuilder, course: C
     myCourse.items.forEach(::updateTasks)
 
     super.afterProjectGenerated(project, projectSettings)
-
-    if (!isUnitTestMode) {
-      CMakeWorkspace.getInstance(project).selectProjectDir(VfsUtil.virtualToIoFile(project.courseDir))
-    }
   }
 
   private fun changeItemNameAndCustomPresentableName(item: StudyItem) {
