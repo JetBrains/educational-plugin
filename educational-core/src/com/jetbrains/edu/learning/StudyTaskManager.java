@@ -5,8 +5,9 @@ import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
@@ -35,7 +36,6 @@ import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.event.HyperlinkEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -217,16 +217,16 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
         FileDocumentManager.getInstance().saveAllDocuments();
         YamlFormatSynchronizer.startSynchronization(myProject);
         Notification notification = new Notification("Education: yaml info",
-                                                     "YAML format introduced",
-                                                     "<i>*.yaml</i> files can be used to modify course structure. <a href=\"#\">More info</a> ",
-                                                     NotificationType.INFORMATION,
-                                                     new NotificationListener() {
-                                                       @Override
-                                                       public void hyperlinkUpdate(@NotNull Notification notification,
-                                                                                   @NotNull HyperlinkEvent event) {
-                                                         YamlInfoTaskDescriptionTabKt.showYamlTab(myProject);
-                                                       }
-                                                     });
+                                                     "New YAML Format for Educators",
+                                                     "Modify course by editing <i>*.yaml</i> files",
+                                                     NotificationType.INFORMATION);
+        notification.addAction(new AnAction("Learn More") {
+          @Override
+          public void actionPerformed(@NotNull AnActionEvent e) {
+            YamlInfoTaskDescriptionTabKt.showYamlTab(myProject);
+            notification.hideBalloon();
+          }
+        });
 
         notification.notify(myProject);
       });
