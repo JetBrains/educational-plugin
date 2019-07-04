@@ -16,7 +16,7 @@ import java.io.IOException
 class CppCourseProjectGenerator(private val builder: CppCourseBuilder, course: Course) :
   CourseProjectGenerator<CppProjectSettings>(builder, course) {
 
-  private val mainCMakeListsTemplate = getTemplate(builder.getMainCMakeListTemplateName())
+  private val mainCMakeListsTemplate = getTemplate(CppCourseBuilder.EDU_MAIN_CMAKE_LIST)
 
   override fun beforeProjectGenerated(): Boolean {
     if (!super.beforeProjectGenerated()) {
@@ -37,12 +37,12 @@ class CppCourseProjectGenerator(private val builder: CppCourseBuilder, course: C
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
     if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
     GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME,
-                                   builder.generateCMakeListText(mainCMakeListsTemplate, FileUtil.sanitizeFileName(baseDir.name)))
+                                   generateCMakeListText(mainCMakeListsTemplate, FileUtil.sanitizeFileName(baseDir.name)))
   }
 
   override fun createCourseStructure(project: Project, baseDir: VirtualFile, settings: CppProjectSettings) {
     ProgressManager.getInstance().runProcessWithProgressSynchronously<Any, IOException>(
-      { builder.initCMakeMinimumRequiredLine() },
+      { builder.initCMakeMinimumRequired() },
       "Getting CMake Minimum Required Version",
       false,
       project)
@@ -54,7 +54,7 @@ class CppCourseProjectGenerator(private val builder: CppCourseBuilder, course: C
       when (item) {
         is ItemContainer -> item.items.forEach { updateTasks(it) }
         is Task -> {
-          val cMakeFile = builder.addCMakeList(item, projectSettings.languageStandard)
+          val cMakeFile = addCMakeList(item, projectSettings.languageStandard)
           GeneratorUtils.createChildFile(item.getTaskDir(project) ?: return, cMakeFile.name, cMakeFile.text)
         }
       }
