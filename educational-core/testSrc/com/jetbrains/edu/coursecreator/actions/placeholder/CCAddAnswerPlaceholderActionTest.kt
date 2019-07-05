@@ -100,7 +100,6 @@ class CCAddAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
     placeholderExpected.length = text.length
     placeholderExpected.index = index
     placeholderExpected.taskFile = this
-    placeholderExpected.possibleAnswer = text
     placeholderExpected.placeholderText = DEFAULT_PLACEHOLDER_TEXT
     answerPlaceholders.add(placeholderExpected)
     return placeholderExpected

@@ -62,7 +62,6 @@ abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
         assertEquals(placeholderExpected.length, placeholderActual.length)
         assertEquals(placeholderExpected.index, placeholderActual.index)
         assertEquals(placeholderExpected.placeholderText, placeholderActual.placeholderText)
-        assertEquals(placeholderExpected.possibleAnswer, placeholderActual.possibleAnswer)
         assertEquals(placeholderExpected.taskFile.text, placeholderActual.taskFile.text)
         assertEquals(placeholderExpected.taskFile.name, placeholderActual.taskFile.name)
 
@@ -90,7 +89,6 @@ abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
       answerPlaceholderCopy.placeholderText = answerPlaceholder.placeholderText
       answerPlaceholderCopy.offset = answerPlaceholder.offset
       answerPlaceholderCopy.length = answerPlaceholder.length
-      answerPlaceholderCopy.possibleAnswer = answerPlaceholder.possibleAnswer
       answerPlaceholderCopy.index = answerPlaceholder.index
       answerPlaceholderCopy.hints = answerPlaceholder.hints
       val state = answerPlaceholder.initialState
