@@ -41,6 +41,6 @@ class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
   companion object {
     const val TASK_CPP = "task.cpp"
     const val TEST_CPP = "test.cpp"
-    private const val MOCK_CPP = "Mock.cpp"
+    private const val MOCK_CPP = "mock.cpp"
   }
 }

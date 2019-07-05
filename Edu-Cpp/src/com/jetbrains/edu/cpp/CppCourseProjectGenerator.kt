@@ -11,12 +11,11 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import java.io.IOException
 
-class CppCourseProjectGenerator(private val builder: CppCourseBuilder, course: Course) :
+class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   CourseProjectGenerator<CppProjectSettings>(builder, course) {
-
-  private val mainCMakeListsTemplate = getTemplate(CppCourseBuilder.EDU_MAIN_CMAKE_LIST)
 
   override fun beforeProjectGenerated(): Boolean {
     if (!super.beforeProjectGenerated()) {
@@ -37,12 +36,16 @@ class CppCourseProjectGenerator(private val builder: CppCourseBuilder, course: C
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
     if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
     GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME,
-                                   generateCMakeListText(mainCMakeListsTemplate, FileUtil.sanitizeFileName(baseDir.name)))
+                                   generateCMakeListText(when (myCourse) {
+                                                           is StepikCourse -> TemplateManager.stepikMainCMakeList
+                                                           else -> TemplateManager.eduMainCMakeList
+                                                         },
+                                                         FileUtil.sanitizeFileName(baseDir.name)))
   }
 
   override fun createCourseStructure(project: Project, baseDir: VirtualFile, settings: CppProjectSettings) {
     ProgressManager.getInstance().runProcessWithProgressSynchronously<Any, IOException>(
-      { builder.initCMakeMinimumRequired() },
+      { TemplateManager.initCMakeMinimumRequired() },
       "Getting CMake Minimum Required Version",
       false,
       project)
