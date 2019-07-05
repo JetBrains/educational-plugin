@@ -5,8 +5,10 @@ import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.jetbrains.edu.coursecreator.CCTestCase.checkPainters
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler
+import java.util.*
 
 abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
   companion object {
@@ -79,16 +81,34 @@ abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
     }
   }
 
-  fun copy(taskFile: TaskFile): TaskFile {
-    val copy = TaskFile()
-    TaskFile.copy(taskFile, copy)
-    copy.setText(taskFile.text)
-    copy.task = taskFile.task
-    taskFile.answerPlaceholders.forEachIndexed { i, taskFilePlaceholder ->
+  fun copy(source: TaskFile): TaskFile {
+    val target = TaskFile()
+    val sourceAnswerPlaceholders = source.answerPlaceholders
+    val answerPlaceholdersCopy = ArrayList<AnswerPlaceholder>(sourceAnswerPlaceholders.size)
+    for (answerPlaceholder in sourceAnswerPlaceholders) {
+      val answerPlaceholderCopy = AnswerPlaceholder()
+      answerPlaceholderCopy.placeholderText = answerPlaceholder.placeholderText
+      answerPlaceholderCopy.offset = answerPlaceholder.offset
+      answerPlaceholderCopy.length = answerPlaceholder.length
+      answerPlaceholderCopy.possibleAnswer = answerPlaceholder.possibleAnswer
+      answerPlaceholderCopy.index = answerPlaceholder.index
+      answerPlaceholderCopy.hints = answerPlaceholder.hints
+      val state = answerPlaceholder.initialState
+      if (state != null) {
+        answerPlaceholderCopy.initialState = AnswerPlaceholder.MyInitialState(state.offset, state.length)
+      }
+      answerPlaceholdersCopy.add(answerPlaceholderCopy)
+    }
+    target.name = source.name
+    target.answerPlaceholders = answerPlaceholdersCopy
+
+    target.setText(source.text)
+    target.task = source.task
+    source.answerPlaceholders.forEachIndexed { i, taskFilePlaceholder ->
       run {
-        copy.answerPlaceholders[i].taskFile = taskFilePlaceholder.taskFile
+        target.answerPlaceholders[i].taskFile = taskFilePlaceholder.taskFile
       }
     }
-    return copy
+    return target
   }
 }
