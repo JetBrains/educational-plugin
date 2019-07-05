@@ -85,12 +85,6 @@ allprojects {
     } else {
       version = baseVersion
     }
-
-    tasks {
-      buildSearchableOptions {
-        enabled = findProperty("enableBuildSearchableOptions") != "false"
-      }
-    }
   }
 
   tasks {
@@ -164,6 +158,7 @@ subprojects {
   tasks {
     runIde { enabled = false }
     prepareSandbox { enabled = false }
+    buildSearchableOptions { enabled = false }
   }
 }
 
@@ -245,8 +240,13 @@ project(":") {
     }
   }
 
-  tasks.withType<PrepareSandboxTask> {
-    finalizedBy(removeIncompatiblePlugins)
+  tasks {
+    withType<PrepareSandboxTask> {
+      finalizedBy(removeIncompatiblePlugins)
+    }
+    buildSearchableOptions {
+      enabled = findProperty("enableBuildSearchableOptions") != "false"
+    }
   }
 
   task("configurePyCharm") {
