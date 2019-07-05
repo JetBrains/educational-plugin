@@ -15,3 +15,5 @@ set(TEST
 add_executable(${PROJECT_NAME}
         ${SOURCE}
         ${TEST})
+
+target_link_libraries(${PROJECT_NAME} gtest_main)
