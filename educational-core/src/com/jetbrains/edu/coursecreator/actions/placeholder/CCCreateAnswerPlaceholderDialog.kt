@@ -26,8 +26,7 @@ open class CCCreateAnswerPlaceholderDialog(
 ) : DialogWrapper(project, true) {
 
   private val panel: CCAddAnswerPlaceholderPanel = CCAddAnswerPlaceholderPanel(placeholder.placeholderText ?: "type here")
-  // "30" is the same value of text field columns as Messages.InputDialog uses
-  private val dependencyPathField: JBTextField = JBTextField(30)
+  private val dependencyPathField: JBTextField = JBTextField(50)
   private val visibilityCheckBox: JBCheckBox = JBCheckBox("Visible", placeholder.placeholderDependency?.isVisible == true)
   private val pathLabel: JLabel = JLabel("[sectionName#]lessonName#taskName#filePath#placeholderIndex")
   private val isFirstTask: Boolean = placeholder.taskFile.task.isFirstInCourse
@@ -61,7 +60,7 @@ open class CCCreateAnswerPlaceholderDialog(
       }
 
       dependencyPanel.alignmentX = Component.LEFT_ALIGNMENT
-      dependencyPanel.maximumSize = JBUI.size(Int.MAX_VALUE, 0)
+      contentPanel.maximumSize = JBUI.size(Int.MAX_VALUE, 0)
       panel.add(dependencyPanel)
     }
     return panel
