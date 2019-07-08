@@ -16,6 +16,9 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
+import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.fileTypes.PlainTextFileType
+import com.intellij.openapi.fileTypes.UnknownFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
@@ -172,6 +175,10 @@ object YamlFormatSynchronizer {
         val file = dir.findOrCreateChildData(javaClass, configName)
         try {
           file.putUserData(LOAD_FROM_CONFIG, false)
+          if (FileTypeManager.getInstance().getFileTypeByFile(file) == UnknownFileType.INSTANCE) {
+            FileTypeManager.getInstance().associateExtension(PlainTextFileType.INSTANCE,
+                                                             file.extension ?: error("Failed to get extension for file ${file.name}"))
+          }
           file.document?.setText(mapper.writeValueAsString(this))
         }
         finally {
