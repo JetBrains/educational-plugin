@@ -1,6 +1,5 @@
 package com.jetbrains.edu.cpp
 
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -11,23 +10,22 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
-import java.io.IOException
 
 class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   CourseProjectGenerator<CppProjectSettings>(builder, course) {
+
+  private fun deepRename(item: StudyItem) {
+    changeItemNameAndCustomPresentableName(item)
+    if (item is ItemContainer) {
+      item.items.forEach { deepRename(it) }
+    }
+  }
 
   override fun beforeProjectGenerated(): Boolean {
     if (!super.beforeProjectGenerated()) {
       return false
     }
 
-    fun deepRename(item: StudyItem) {
-      changeItemNameAndCustomPresentableName(item)
-      if (item is ItemContainer) {
-        item.items.forEach { deepRename(it) }
-      }
-    }
     myCourse.items.forEach(::deepRename)
 
     return true
@@ -35,35 +33,25 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
     if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
+
+    val mainCMakeTemplateName = getParametersByCourse(myCourse).mainCMakeList
+    val mainCMakeTemplateVariables = getCMakeTemplateVariables(FileUtil.sanitizeFileName(baseDir.name))
     GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME,
-                                   generateCMakeListText(when (myCourse) {
-                                                           is StepikCourse -> TemplateManager.stepikMainCMakeList
-                                                           else -> TemplateManager.eduMainCMakeList
-                                                         },
-                                                         FileUtil.sanitizeFileName(baseDir.name)))
+                                   GeneratorUtils.getInternalTemplateText(mainCMakeTemplateName, mainCMakeTemplateVariables))
   }
 
-  override fun createCourseStructure(project: Project, baseDir: VirtualFile, settings: CppProjectSettings) {
-    ProgressManager.getInstance().runProcessWithProgressSynchronously<Any, IOException>(
-      { TemplateManager.initCMakeMinimumRequired() },
-      "Getting CMake Minimum Required Version",
-      false,
-      project)
-    super.createCourseStructure(project, baseDir, settings)
+  private fun updateTasks(item: StudyItem, project: Project, projectSettings: CppProjectSettings) {
+    when (item) {
+      is ItemContainer -> item.items.forEach { updateTasks(it, project, projectSettings) }
+      is Task -> {
+        val cMakeFile = addCMakeList(item, projectSettings.languageStandard)
+        GeneratorUtils.createChildFile(item.getTaskDir(project) ?: return, cMakeFile.name, cMakeFile.text)
+      }
+    }
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings) {
-    fun updateTasks(item: StudyItem) {
-      when (item) {
-        is ItemContainer -> item.items.forEach { updateTasks(it) }
-        is Task -> {
-          val cMakeFile = addCMakeList(item, projectSettings.languageStandard)
-          GeneratorUtils.createChildFile(item.getTaskDir(project) ?: return, cMakeFile.name, cMakeFile.text)
-        }
-      }
-    }
-
-    myCourse.items.forEach(::updateTasks)
+    myCourse.items.forEach { updateTasks(it, project, projectSettings) }
 
     super.afterProjectGenerated(project, projectSettings)
   }
@@ -75,6 +63,6 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     // Therefore, we generate folder names on the disk using ascii symbols (item.name)
     // and in the course (item.customPresentableName) we show the names in the same form as in the remote course
     item.customPresentableName = item.name
-    item.name = generateDefaultName(item)
+    item.name = getDefaultName(item)
   }
 }

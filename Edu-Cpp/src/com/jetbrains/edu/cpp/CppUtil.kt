@@ -1,7 +1,8 @@
 package com.jetbrains.edu.cpp
 
-import com.intellij.ide.fileTemplates.FileTemplate
-import com.intellij.ide.fileTemplates.FileTemplateManager
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task.*
 import com.jetbrains.cidr.cpp.cmake.projectWizard.CLionProjectWizardUtils
 import com.jetbrains.cidr.cpp.toolchains.CMake
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
@@ -12,87 +13,69 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
-fun generateDefaultName(item: StudyItem) = when (item) {
+fun getDefaultName(item: StudyItem) = when (item) {
   is Section -> "${EduNames.SECTION}${item.index}"
   is Lesson -> "${EduNames.LESSON}${item.index}"
   is Task -> "${EduNames.TASK}${item.index}"
   else -> "NonCommonStudyItem${item.index}"
 }
 
-fun addCMakeList(task: Task, cppStandard: String?): TaskFile {
-  val lesson = task.lesson
-  val section = lesson.section
-  val cMakeListFile = TaskFile()
+fun addCMakeList(task: Task, cppStandard: String): TaskFile {
+  val text = GeneratorUtils.getInternalTemplateText(getParametersByCourse(task.course).taskCMakeList,
+                                                    getCMakeTemplateVariables(getCMakeProjectUniqueName(task), cppStandard))
 
-  cMakeListFile.apply {
-    name = CMakeListsFileType.FILE_NAME
-    isVisible = false
-    setText(generateCMakeListText(
-      when (task.course) {
-        is StepikCourse -> TemplateManager.stepikTaskCMakeList
-        else -> TemplateManager.eduTaskCMakeList
-      },
-      generateCMakeProjectUniqueName(section, lesson, task),
-      cppStandard
-    ))
-  }
-  task.addTaskFile(cMakeListFile)
+  val taskFile = TaskFile(CMakeListsFileType.FILE_NAME, text)
+  taskFile.isVisible = false
 
-  return cMakeListFile
+  task.addTaskFile(taskFile)
+
+  return taskFile
 }
 
-private fun generateCMakeProjectUniqueName(section: Section?, lesson: Lesson, task: Task): String {
-  val sectionPart = section?.let { generateDefaultName(it) } ?: "global"
-  val lessonPart = generateDefaultName(lesson)
-  val taskPart = generateDefaultName(task)
+private fun getCMakeProjectUniqueName(task: Task): String {
+  val lesson = task.lesson
+  val section = lesson.section
+
+  val sectionPart = section?.let { getDefaultName(it) } ?: "global"
+  val lessonPart = getDefaultName(lesson)
+  val taskPart = getDefaultName(task)
 
   return "$sectionPart-$lessonPart-$taskPart"
 }
 
-fun generateCMakeListText(templateName: FileTemplate, cppProjectName: String, cppStandard: String? = null): String {
-  val params = mapOf(EduNames.PROJECT_NAME to cppProjectName,
-                     TemplateManager.CMAKE_MINIMUM_REQUIRED_LINE to TemplateManager.cMakeMinimumRequired,
-                     TemplateManager.CPP_STANDARD to cppStandard).filterValues { it != null }
-  return templateName.getText(params)
-}
+private const val CMAKE_MINIMUM_REQUIRED_LINE = "CMAKE_MINIMUM_REQUIRED_LINE"
+private const val CPP_STANDARD_LINE = "CPP_STANDARD"
 
-object TemplateManager {
-  private fun getTemplate(templateName: String): FileTemplate {
-    return FileTemplateManager.getDefaultInstance().findInternalTemplate(templateName)
-  }
-
-  private const val EDU_MAIN_CMAKE_LIST = "EduMainCMakeList.txt"
-  private const val STEPIK_MAIN_CMAKE_LIST = "StepikMainCMakeList.txt"
-
-  val eduMainCMakeList: FileTemplate by lazy {
-    getTemplate(EDU_MAIN_CMAKE_LIST)
-  }
-
-  val stepikMainCMakeList: FileTemplate by lazy {
-    getTemplate(STEPIK_MAIN_CMAKE_LIST)
-  }
-
-  private const val EDU_TASK_CMAKE_LIST = "EduTaskCMakeList.txt"
-  private const val STEPIK_TASK_CMAKE_LIST = "StepikTaskCMakeList.txt"
-
-  val eduTaskCMakeList: FileTemplate by lazy {
-    getTemplate(EDU_TASK_CMAKE_LIST)
-  }
-
-  val stepikTaskCMakeList: FileTemplate by lazy {
-    getTemplate(STEPIK_TASK_CMAKE_LIST)
-  }
-
-  const val CMAKE_MINIMUM_REQUIRED_LINE = "CMAKE_MINIMUM_REQUIRED_LINE"
-  const val CPP_STANDARD = "CPP_STANDARD"
-
-  val cMakeMinimumRequired: String by lazy {
+private val cMakeMinimumRequired: String by lazy {
+  val cMakeVersionExtractor = {
     CLionProjectWizardUtils.getCMakeMinimumRequiredLine(CMake.readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
   }
 
-  fun initCMakeMinimumRequired() {
-    cMakeMinimumRequired
+  val progressManager = ProgressManager.getInstance()
+
+  if (progressManager.hasProgressIndicator()) {
+    progressManager.runProcess<String>({ cMakeVersionExtractor() }, null)
   }
+  else {
+    progressManager.run(object : WithResult<String, Nothing>(null, "Getting CMake Minimum Required Version", false) {
+      override fun compute(indicator: ProgressIndicator) = cMakeVersionExtractor()
+    })
+  }
+}
+
+/**
+ *  [cMakeProjectName] — name of the CMake project that will be specified there
+ *  [cppStandard] — if not null, used as version of language that will be specified in CMake, else will be omitted at all.
+ *    Don't specify this parameter if only it doesn't used in template.
+ */
+fun getCMakeTemplateVariables(cMakeProjectName: String, cppStandard: String? = null): Map<String, Any> {
+  val values = mutableMapOf(CMAKE_MINIMUM_REQUIRED_LINE to cMakeMinimumRequired,
+                            EduNames.PROJECT_NAME to cMakeProjectName)
+  if (cppStandard != null) {
+    values[CPP_STANDARD_LINE] = cppStandard
+  }
+
+  return values
 }
