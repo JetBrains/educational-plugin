@@ -59,6 +59,21 @@ subprojects {
     }
 
     mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
+    test {
+        outputs.upToDateWhen { false }
+        afterTest { TestDescriptor test, TestResult result ->
+            if (result.resultType == TestResult.ResultType.FAILURE) {
+                def message = result.exception?.message ?: "Wrong answer"
+                def lines = message.readLines()
+                println "#educational_plugin FAILED + " + lines[0]
+                lines.subList(1, lines.size()).forEach { line ->
+                  println "#educational_plugin" + line
+                }
+                // we need this to separate output of different tests
+                println()
+            }
+        }
+    }
 
     def runOutput = new ByteArrayOutputStream()
     tasks.run.setStandardOutput(runOutput)
