@@ -27,7 +27,11 @@ import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
+
+const val ASSEMBLE_TASK_NAME = "assemble"
 const val TEST_TASK_NAME = "test"
+
+const val TESTS_ARG = "--tests"
 
 fun getGradleProjectName(task: Task) =
   if (task.lesson.section != null)
