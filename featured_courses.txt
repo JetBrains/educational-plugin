@@ -9,3 +9,4 @@
 3432 # JavaScript for Beginners
 54532 # Beam Kata - Python
 54530 # Beam Kata - Java
+55498 # Scala Tutorial
