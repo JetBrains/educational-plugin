@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.settings.OauthOptions
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import org.jetbrains.annotations.Nls
 import javax.swing.event.HyperlinkEvent

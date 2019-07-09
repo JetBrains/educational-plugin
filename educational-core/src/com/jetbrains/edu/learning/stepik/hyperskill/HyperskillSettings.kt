@@ -7,6 +7,8 @@ import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.authUtils.deserializeAccount
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillUserInfo
 import org.jdom.Element
 
 private const val serviceName = "HyperskillSettings"

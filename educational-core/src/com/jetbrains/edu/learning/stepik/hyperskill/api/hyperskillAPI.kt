@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.authUtils.OAuthAccount

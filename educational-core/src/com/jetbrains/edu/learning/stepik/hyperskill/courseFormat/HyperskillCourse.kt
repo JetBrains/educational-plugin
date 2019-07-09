@@ -4,9 +4,9 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProject
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillStage
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillTopic
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import java.util.concurrent.ConcurrentHashMap
 
 class HyperskillCourse : Course {

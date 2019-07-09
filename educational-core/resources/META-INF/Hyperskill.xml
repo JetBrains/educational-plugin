@@ -13,8 +13,8 @@
 
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService"/>
     <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillWidgetProvider" />
-    <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSolutionLoader"
-                    serviceInterface="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSolutionLoader"/>
+    <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader"/>
+
     <experimentalFeature id="edu.course.hyperskill" percentOfUsers="100" internalFeature="true">
       <description>Enables action to push Hyperskill lesson to Stepik</description>
     </experimentalFeature>

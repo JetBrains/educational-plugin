@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.ServiceManager
@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.stepik.api.Submission
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.openSelectedStage
 
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 

@@ -1,9 +1,12 @@
 @file:Suppress("unused")
 
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.jetbrains.edu.learning.authUtils.TokenInfo
-import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.stepik.api.Attempt
+import com.jetbrains.edu.learning.stepik.api.AttemptsList
+import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.SubmissionsList
 import retrofit2.Call
 import retrofit2.http.*
 
