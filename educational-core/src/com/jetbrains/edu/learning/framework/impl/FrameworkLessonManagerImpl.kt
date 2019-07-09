@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
@@ -37,7 +38,9 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       "Only solutions of framework tasks can be saved"
     }
 
-    val changes = calculateChanges(task.allFiles, externalState)
+    val taskFiles = task.allFiles.split(task.course).first
+    val externalTaskFiles = externalState.split(task.course).first
+    val changes = calculateChanges(taskFiles, externalTaskFiles)
     val currentRecord = task.record
     task.record = try {
       storage.updateUserChanges(currentRecord, changes)
@@ -126,7 +129,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     // All user changes from the current task should be propagated to next task as is
     val course = lesson.course
     val changes = if (taskIndexDelta == 1 && course is HyperskillCourse && !course.hyperskillProject.isTemplateBased) {
-      calculatePropagationChanges(lesson, targetTask, currentState, targetState, showDialogIfConflict)
+      calculatePropagationChanges(targetTask, currentState, targetState, showDialogIfConflict)
     } else {
       calculateChanges(currentState, targetState)
     }
@@ -141,19 +144,18 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
    * it asks user to choose what change he wants to apply.
    */
   private fun calculatePropagationChanges(
-    lesson: FrameworkLesson,
     targetTask: Task,
     currentState: Map<String, String>,
     targetState: Map<String, String>,
     showDialogIfConflict: Boolean
   ): UserChanges {
-    val (currentTaskFilesState, currentTestFilesState) = currentState.split(lesson)
-    val (targetTaskFiles, targetTestFiles) = targetState.split(lesson)
+    val (currentTaskFilesState, currentTestFilesState) = currentState.split(targetTask.course)
+    val (targetTaskFiles, targetTestFiles) = targetState.split(targetTask.course)
 
     // Creates [Change]s to propagates all current changes of task files to target task.
     // Technically, we won't change text of task files, just add/remove user created/removed task files to/from target task
     fun calculateCurrentTaskChanges(): UserChanges {
-      val toRemove = HashMap<String, String>(targetTaskFiles)
+      val toRemove = HashMap(targetTaskFiles)
       val taskFileChanges = mutableListOf<Change>()
 
       for ((path, text) in currentTaskFilesState) {
@@ -241,9 +243,9 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
   private val Task.allFiles: Map<String, String> get() = taskFiles.mapValues { it.value.text }
 
-  private fun Map<String, String>.split(lesson: FrameworkLesson): Pair<Map<String, String>, Map<String, String>> {
-    val testDirs = lesson.course.testDirs
-    val defaultTestName = lesson.course.configurator?.testFileName ?: ""
+  private fun Map<String, String>.split(course: Course): Pair<Map<String, String>, Map<String, String>> {
+    val testDirs = course.testDirs
+    val defaultTestName = course.configurator?.testFileName ?: ""
     val taskFiles = HashMap<String, String>()
     val testFiles = HashMap<String, String>()
 

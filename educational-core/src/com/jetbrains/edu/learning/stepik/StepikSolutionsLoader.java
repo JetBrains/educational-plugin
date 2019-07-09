@@ -574,25 +574,26 @@ public class StepikSolutionsLoader implements Disposable {
     }
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
       FrameworkLessonManager frameworkLessonManager = FrameworkLessonManager.getInstance(project);
-      for (TaskFile taskFile : task.getTaskFiles().values()) {
-        Lesson lesson = task.getLesson();
-        if (lesson instanceof FrameworkLesson && ((FrameworkLesson)lesson).currentTask() != task) {
-          frameworkLessonManager.saveExternalChanges(task, solutionsMap);
-        } else {
+      Lesson lesson = task.getLesson();
+      if (lesson instanceof FrameworkLesson && ((FrameworkLesson)lesson).currentTask() != task) {
+        frameworkLessonManager.saveExternalChanges(task, solutionsMap);
+      } else {
+        for (TaskFile taskFile : task.getTaskFiles().values()) {
+          final String solutionText = solutionsMap.get(taskFile.getName());
+          if (solutionText == null) continue;
           VirtualFile vFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
-          if (vFile != null) {
-            try {
-              final String solutionText = solutionsMap.get(taskFile.getName());
-              if (solutionText != null) {
-                taskFile.setTrackChanges(false);
-                VfsUtil.saveText(vFile, solutionText);
-                SaveAndSyncHandler.getInstance().refreshOpenFiles();
-                taskFile.setTrackChanges(true);
-              }
-            }
-            catch (IOException e) {
-              LOG.warn(e.getMessage());
-            }
+          if (vFile == null) continue;
+          if (EduUtils.isTestsFile(project, vFile)) continue;
+          try {
+            taskFile.setTrackChanges(false);
+            VfsUtil.saveText(vFile, solutionText);
+            SaveAndSyncHandler.getInstance().refreshOpenFiles();
+          }
+          catch (IOException e) {
+            LOG.warn(e.getMessage());
+          }
+          finally {
+            taskFile.setTrackChanges(true);
           }
         }
       }

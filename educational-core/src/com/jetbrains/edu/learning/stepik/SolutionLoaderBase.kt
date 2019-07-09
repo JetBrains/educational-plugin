@@ -276,6 +276,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
           for (taskFile in task.taskFiles.values) {
             val (solutionText, placeholders) = taskSolutions.solutions[taskFile.name] ?: continue
             val vFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
+            if (EduUtils.isTestsFile(project, vFile)) continue
             updatePlaceholders(taskFile, placeholders)
             try {
               taskFile.isTrackChanges = false
@@ -283,10 +284,12 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
                 VfsUtil.saveText(vFile, solutionText)
               }
               SaveAndSyncHandler.getInstance().refreshOpenFiles()
-              taskFile.isTrackChanges = true
             }
             catch (e: IOException) {
               LOG.warn(e)
+            }
+            finally {
+              taskFile.isTrackChanges = true
             }
           }
         }
