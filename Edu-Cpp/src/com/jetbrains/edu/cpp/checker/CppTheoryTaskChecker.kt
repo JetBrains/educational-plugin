@@ -1,55 +1,43 @@
 package com.jetbrains.edu.cpp.checker
 
 import com.intellij.execution.ProgramRunnerUtil
-import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.RunManager
 import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.ide.DataManager
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.cidr.execution.CidrTargetRunConfigurationProducer
-import com.jetbrains.cidr.execution.CidrTargetRunLineMarkerProvider
-import com.jetbrains.cidr.lang.psi.OCFunctionDeclaration
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TheoryTaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 
 class CppTheoryTaskChecker(task: TheoryTask, project: Project) : TheoryTaskChecker(task, project) {
-
   override fun check(indicator: ProgressIndicator): CheckResult {
-    val configuration = getConfiguration(project) ?:
-                        return CheckResult(CheckStatus.Unchecked, "No <code>main</code> to run", needEscape = false)
+    val taskProjectName = generateCMakeProjectUniqueName(task)
+    val configuration = RunManager.getInstance(project).allSettings.firstOrNull { it.name == taskProjectName }
+                        ?: return CheckResult(CheckStatus.Unchecked, "No <code>target</code> to run", needEscape = false)
+
     runInEdt {
       ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
     }
     return CheckResult(CheckStatus.Solved, "")
   }
 
-  private fun getConfiguration(project: Project): RunnerAndConfigurationSettings? {
-    return runReadAction {
-      val editor = EduUtils.getSelectedEditor(project) ?: return@runReadAction null
-      val dataContext = DataManager.getInstance().getDataContext(editor.component)
-      val psiFile = dataContext.getData(CommonDataKeys.PSI_FILE) ?: return@runReadAction null
-      val functions = PsiTreeUtil.findChildrenOfType(psiFile, OCFunctionDeclaration::class.java)
-      val mainFunction = functions.find { CidrTargetRunLineMarkerProvider.isInEntryPointBody(it) } ?: return@runReadAction null
-      val fromContext = CidrTargetRunConfigurationProducer.getInstance(project)
-        ?.findOrCreateConfigurationFromContext(ConfigurationContext(mainFunction))
-      if (fromContext == null) {
-        LOG.warn("Failed to create configuration from main function")
-        return@runReadAction null
-      }
-      return@runReadAction fromContext.configurationSettings
-    }
-  }
+  private fun generateCMakeProjectUniqueName(task: Task): String {
+    val lesson: Lesson = task.lesson
+    val section: Section? = lesson.section
 
-  companion object {
-    private val LOG: Logger = Logger.getInstance(CppTheoryTaskChecker::class.java)
+    val taskPart = "${EduNames.TASK}${task.index}"
+    val lessonPart = "${EduNames.LESSON}${lesson.index}"
+    if (section == null) {
+      return "$lessonPart-$taskPart"
+    }
+
+    val sectionPart = "${EduNames.SECTION}${section.index}"
+    return "$sectionPart-$lessonPart-$taskPart"
   }
 }
