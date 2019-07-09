@@ -1,10 +1,11 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -19,6 +20,7 @@ import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.createRetrofitBuilder
 import com.jetbrains.edu.learning.stepik.executeHandlingExceptions
+import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import org.apache.http.HttpStatus
@@ -28,14 +30,11 @@ import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.*
 
-object HyperskillConnector {
-  private val LOG = Logger.getInstance(HyperskillConnector::class.java)
+abstract class HyperskillConnector {
 
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
-  val hyperskillAuthorizationTopic = com.intellij.util.messages.Topic.create<EduLogInListener>("Edu.hyperskillLoggedIn",
-                                                                                               EduLogInListener::class.java)
+
   private val converterFactory: JacksonConverterFactory
-  @JvmStatic
   val objectMapper: ObjectMapper
 
   init {
@@ -46,9 +45,11 @@ object HyperskillConnector {
     converterFactory = JacksonConverterFactory.create(objectMapper)
   }
 
+  protected abstract val baseUrl: String
+
   private val authorizationService: HyperskillService
     get() {
-      val retrofit = createRetrofitBuilder(HYPERSKILL_URL)
+      val retrofit = createRetrofitBuilder(baseUrl)
         .addConverterFactory(converterFactory)
         .build()
 
@@ -63,7 +64,7 @@ object HyperskillConnector {
       account.refreshTokens()
     }
 
-    val retrofit = createRetrofitBuilder(HYPERSKILL_URL, account?.tokenInfo?.accessToken)
+    val retrofit = createRetrofitBuilder(baseUrl, account?.tokenInfo?.accessToken)
       .addConverterFactory(converterFactory)
       .build()
 
@@ -85,7 +86,7 @@ object HyperskillConnector {
     val currentUser = getCurrentUser(account) ?: return false
     account.userInfo = currentUser
     HyperskillSettings.INSTANCE.account = account
-    ApplicationManager.getApplication().messageBus.syncPublisher<EduLogInListener>(hyperskillAuthorizationTopic).userLoggedIn()
+    ApplicationManager.getApplication().messageBus.syncPublisher(AUTHORIZATION_TOPIC).userLoggedIn()
     return true
   }
 
@@ -256,7 +257,7 @@ object HyperskillConnector {
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
     authorizationBusConnection.disconnect()
     authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
-    authorizationBusConnection.subscribe(hyperskillAuthorizationTopic, object : EduLogInListener {
+    authorizationBusConnection.subscribe(AUTHORIZATION_TOPIC, object : EduLogInListener {
       override fun userLoggedOut() { }
 
       override fun userLoggedIn() {
@@ -266,4 +267,15 @@ object HyperskillConnector {
       }
     })
   }
+
+  companion object {
+    private val LOG = Logger.getInstance(HyperskillConnector::class.java)
+
+    @JvmStatic
+    val AUTHORIZATION_TOPIC = com.intellij.util.messages.Topic.create("Edu.hyperskillLoggedIn", EduLogInListener::class.java)
+
+    @JvmStatic
+    fun getInstance(): HyperskillConnector = service()
+  }
+
 }

@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.checker.CheckUtils
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector.login
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import org.jetbrains.ide.BuiltInServerManager
 
 const val HYPERSKILL = "Hyperskill"
@@ -43,7 +43,7 @@ else {
 
 private fun createCustomServer(): CustomAuthorizationServer {
   return CustomAuthorizationServer.create(HYPERSKILL, "/api/edu/hyperskill/oauth")
-  { code, _ -> if (login(code)) null else "Failed to login to $HYPERSKILL" }
+  { code, _ -> if (HyperskillConnector.getInstance().login(code)) null else "Failed to login to $HYPERSKILL" }
 }
 
 private fun getCustomServer(): CustomAuthorizationServer {

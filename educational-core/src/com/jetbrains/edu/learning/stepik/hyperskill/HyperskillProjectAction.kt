@@ -15,6 +15,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -35,12 +36,12 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
       val hyperskillProject = ProgressManager.getInstance().run(
         object : Task.WithResult<HyperskillProject?, Exception>(null, "Loading Selected Project", false) {
           override fun compute(indicator: ProgressIndicator): HyperskillProject? {
-            val currentUser = HyperskillConnector.getCurrentUser(account)
+            val currentUser = HyperskillConnector.getInstance().getCurrentUser(account)
             if (currentUser != null) {
               account.userInfo = currentUser
             }
             val projectId = account.userInfo.hyperskillProjectId ?: return null
-            return HyperskillConnector.getProject(projectId)
+            return HyperskillConnector.getInstance().getProject(projectId)
           }
         })
       if (hyperskillProject == null) {
@@ -93,7 +94,7 @@ class HSHyperlinkListener(private val authorize: Boolean) : ActionListener, Noti
 
   private fun authorizeOrBrowse() {
     if (authorize) {
-      HyperskillConnector.doAuthorize()
+      HyperskillConnector.getInstance().doAuthorize()
       EduCounterUsageCollector.loggedIn(HYPERSKILL, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
     }
     else {

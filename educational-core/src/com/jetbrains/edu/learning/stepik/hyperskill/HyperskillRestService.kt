@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTem
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector.getTasks
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*
@@ -66,7 +66,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     if (matcher.matches()) {
       val account = HyperskillSettings.INSTANCE.account
       if (account == null) {
-        HyperskillConnector.doAuthorize(Runnable { openProject(urlDecoder, request, context) })
+        HyperskillConnector.getInstance().doAuthorize(Runnable { openProject(urlDecoder, request, context) })
       }
       else {
         return openProject(urlDecoder, request, context)
@@ -81,7 +81,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
       val code = getStringParameter("code", urlDecoder)!! // cannot be null because of pattern
 
-      val success = HyperskillConnector.login(code)
+      val success = HyperskillConnector.getInstance().login(code)
       if (success) {
         RestService.LOG.info("$myPlatformName: OAuth code is handled")
         val pageContent = getInternalTemplateText("hyperskill.redirectPage.html")
@@ -109,7 +109,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val stepSource = ProgressManager.getInstance().run(
       object : Task.WithResult<HyperskillStepSource?, Exception>(null, "Loading hyperskill problem", true) {
         override fun compute(indicator: ProgressIndicator): HyperskillStepSource? {
-          return HyperskillConnector.getStepSource(stepId)
+          return HyperskillConnector.getInstance().getStepSource(stepId)
         }
       }) ?: return sendErrorResponse(request, context, "Could not find get step source for the task")
 
@@ -127,7 +127,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
                                lessonDir: VirtualFile, project: Project): com.jetbrains.edu.learning.courseFormat.tasks.Task {
     var task = lesson.getTask(stepSource.id)
     if (task == null) {
-      task = getTasks(course, lesson, listOf(stepSource)).first()
+      task = HyperskillConnector.getInstance().getTasks(course, lesson, listOf(stepSource)).first()
       task.name = stepSource.title
       task.feedbackLink = FeedbackLink(stepLink(task.id))
       task.index = lesson.taskList.size + 1
@@ -200,7 +200,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       val hyperskillCourse = ProgressManager.getInstance().run(object : Task.WithResult<HyperskillCourse?, Exception>
                                                                         (null, "Loading project", true) {
         override fun compute(indicator: ProgressIndicator): HyperskillCourse? {
-          val hyperskillProject = HyperskillConnector.getProject(projectId) ?: return null
+          val hyperskillProject = HyperskillConnector.getInstance().getProject(projectId) ?: return null
 
           if (!hyperskillProject.useIde) {
             LOG.warn("Project in not supported yet $projectId")
@@ -216,7 +216,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
             return null
           }
           val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
-          val stages = HyperskillConnector.getStages(projectId) ?: return null
+          val stages = HyperskillConnector.getInstance().getStages(projectId) ?: return null
           hyperskillCourse.stages = stages
           return hyperskillCourse
         }

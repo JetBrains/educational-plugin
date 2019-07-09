@@ -40,8 +40,8 @@ import com.jetbrains.edu.learning.stepik.StepikAuthorizer;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction;
 import com.jetbrains.edu.learning.stepik.course.StepikCourse;
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector;
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillNamesKt;
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import kotlin.Unit;
 import kotlin.collections.SetsKt;
@@ -192,7 +192,7 @@ public class CoursesPanel extends JPanel {
   }
 
   private void addHyperskillLoginListener() {
-    HyperskillConnector.INSTANCE.doAuthorize(
+    HyperskillConnector.getInstance().doAuthorize(
       () -> myErrorLabel.setVisible(false),
       () -> notifyListeners(true)
     );

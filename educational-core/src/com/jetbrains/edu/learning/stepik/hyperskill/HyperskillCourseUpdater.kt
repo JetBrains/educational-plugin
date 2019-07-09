@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import java.io.IOException
@@ -32,11 +33,12 @@ object HyperskillCourseUpdater {
 
       override fun run(indicator: ProgressIndicator) {
         val projectId = course.hyperskillProject.id
-        val hyperskillProject = HyperskillConnector.getProject(projectId) ?: return
+        val connector = HyperskillConnector.getInstance()
+        val hyperskillProject = connector.getProject(projectId) ?: return
         val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language] ?: return
         val remoteCourse = HyperskillCourse(hyperskillProject, languageId)
-        remoteCourse.stages = HyperskillConnector.getStages(projectId) ?: return
-        val remoteLesson = HyperskillConnector.getLesson(remoteCourse, hyperskillProject.ideFiles) ?: return
+        remoteCourse.stages = connector.getStages(projectId) ?: return
+        val remoteLesson = connector.getLesson(remoteCourse, hyperskillProject.ideFiles) ?: return
         remoteCourse.addLesson(remoteLesson)
         remoteCourse.init(null, null, false)
 

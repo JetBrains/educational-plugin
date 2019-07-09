@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
@@ -28,7 +29,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     }.flatMap { it.taskList.asSequence() }.toList()
   }
 
-  override fun loadLastSubmission(stepId: Int): Submission? = HyperskillConnector.getSubmission(stepId)
+  override fun loadLastSubmission(stepId: Int): Submission? = HyperskillConnector.getInstance().getSubmission(stepId)
 
   override fun loadSolution(task: Task): TaskSolutions {
     task.course.putUserData(IS_HYPERSKILL_SOLUTION_LOADING_STARTED, true)

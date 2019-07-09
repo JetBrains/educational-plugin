@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckDetailsPanel
 import java.awt.BorderLayout
@@ -68,7 +69,7 @@ class HSPeekSolutionAction : CompareWithAnswerAction() {
     return ProgressManager.getInstance().run(
       object : com.intellij.openapi.progress.Task.WithResult<String?, Exception>(null, "Loading solution", true) {
         override fun compute(indicator: ProgressIndicator): String? {
-          return HyperskillConnector.getSolution(task.id)?.reply
+          return HyperskillConnector.getInstance().getSolution(task.id)?.reply
         }
       })
   }

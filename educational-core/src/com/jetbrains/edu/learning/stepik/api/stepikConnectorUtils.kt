@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.featuredCourses
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.setCourseLanguageEnvironment
 import java.io.BufferedReader
 import java.io.IOException
@@ -75,7 +75,7 @@ fun loadAttachment(attachmentLink: String) : List<TaskFile> {
     val conn = attachmentUrl.openConnection()
 
     val additionalInfoText = conn.getInputStream().bufferedReader().use(BufferedReader::readText)
-    val additionalInfo = HyperskillConnector.objectMapper.readValue(additionalInfoText, AdditionalInfo::class.java)
+    val additionalInfo = HyperskillConnector.getInstance().objectMapper.readValue(additionalInfoText, AdditionalInfo::class.java)
     additionalInfo.additionalFiles
   }
   catch (e: IOException) {

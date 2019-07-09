@@ -14,16 +14,14 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
 import com.jetbrains.edu.learning.stepik.api.*
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector.getSubmissionById
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector.postAttempt
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector.postSubmission
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import java.util.concurrent.TimeUnit
 
 object HyperskillCheckConnector {
   private val LOG = Logger.getInstance(HyperskillCheckConnector::class.java)
 
   fun postSolution(task: Task, project: Project, result: CheckResult) {
-    val attempt = postAttempt(task.id)
+    val attempt = HyperskillConnector.getInstance().postAttempt(task.id)
     if (attempt == null) {
       showFailedToPostNotification()
       return LOG.error("Failed to post attempt for stage ${task.id}")
@@ -44,7 +42,7 @@ object HyperskillCheckConnector {
     }
 
     val submission = createEduSubmission(task, attempt, files, feedback)
-    postSubmission(submission)
+    HyperskillConnector.getInstance().postSubmission(submission)
   }
 
   private fun createEduSubmission(task: Task, attempt: Attempt, files: ArrayList<SolutionFile>, feedback: String): Submission {
@@ -55,7 +53,8 @@ object HyperskillCheckConnector {
   }
 
   fun checkCodeTask(project: Project, task: Task): CheckResult {
-    val attempt = postAttempt(task.id) ?: return CheckResult.FAILED_TO_CHECK
+    val connector = HyperskillConnector.getInstance()
+    val attempt = connector.postAttempt(task.id) ?: return CheckResult.FAILED_TO_CHECK
     val course = task.lesson.course
     val courseLanguage = course.languageById
     val editor = EduUtils.getSelectedEditor(project)
@@ -66,13 +65,13 @@ object HyperskillCheckConnector {
                             ?: return CheckResult(CheckStatus.Unchecked, "Language not found for: " + courseLanguage.displayName)
 
       val codeSubmission = StepikCheckerConnector.createCodeSubmission(attempt.id, defaultLanguage, answer)
-      var submission : Submission? = postSubmission(codeSubmission) ?: return CheckResult.FAILED_TO_CHECK
+      var submission : Submission? = connector.postSubmission(codeSubmission) ?: return CheckResult.FAILED_TO_CHECK
       if (submission == null) return CheckResult.FAILED_TO_CHECK
 
       val submissionId = submission.id ?: return CheckResult.FAILED_TO_CHECK
       while (submission != null && "evaluation" == submission.status) {
         TimeUnit.MILLISECONDS.sleep(500)
-        submission = getSubmissionById(submissionId)
+        submission = connector.getSubmissionById(submissionId)
       }
       if (submission == null) return CheckResult.FAILED_TO_CHECK
       val status = submission.status ?: return CheckResult.FAILED_TO_CHECK

@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSolutionLoader.Companion.IS_HYPERSKILL_SOLUTION_LOADING_STARTED
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class HyperskillProjectComponent(private val project: Project) : ProjectComponent, SolutionLoaderBase.SolutionLoadingListener {
@@ -19,7 +20,7 @@ class HyperskillProjectComponent(private val project: Project) : ProjectComponen
 
       val course = StudyTaskManager.getInstance(project).course as? HyperskillCourse ?: return@runWhenProjectIsInitialized
       if (course.taskToTopics.isEmpty()) {
-        HyperskillConnector.fillTopics(course, project)
+        HyperskillConnector.getInstance().fillTopics(course, project)
       }
       val isSolutionLoadingStarted = IS_HYPERSKILL_SOLUTION_LOADING_STARTED.getRequired(course)
       if (HyperskillSettings.INSTANCE.account != null && !isSolutionLoadingStarted) {
