@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "submissions": [
+    {
+      "attempt": 503037,
+      "can_download_test_set": false,
+      "eta": 0,
+      "feedback": "",
+      "hint": "",
+      "id": 1457792,
+      "next_test_available_at": null,
+      "reply": {
+        "choices": null,
+        "score": null,
+        "solution": [
+          {
+            "name": "src/Task.kt",
+            "text": "fun userFoo() {}"
+          },
+          {
+            "name": "src/Baz.kt",
+            "text": "fun userBaz() {}"
+          },
+          {
+            "name": "test/Tests2.kt",
+            "text": "fun userTests2() {}"
+          }
+        ],
+        "language": null,
+        "code": null,
+        "edu_task": "{\"task\":{\"name\":\"task2\",\"stepic_id\":2,\"status\":\"Unchecked\",\"files\":{\"src/Task.kt\":{\"name\":\"src/Task.kt\",\"placeholders\":[],\"is_visible\":true,\"text\":\"fun userFoo() {}\"},\"src/Baz.kt\":{\"name\":\"src/Baz.kt\",\"placeholders\":[],\"is_visible\":true,\"text\":\"fun userBaz() {}\"},\"test/Tests2.kt\":{\"name\":\"test/Tests2.kt\",\"placeholders\":[],\"is_visible\":true,\"text\":\"fun userTests2() {}\"}},\"task_type\":\"edu\"}}",
+        "version": 11
+      },
+      "status": "correct",
+      "step": 2,
+      "time": "2019-07-04T12:43:01Z"
+    }
+  ]
+}

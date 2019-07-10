@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.update.UpdateNotification
 import java.io.IOException
@@ -141,11 +142,15 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   private fun waitAllTasks(tasks: Collection<Future<*>>) {
     for (task in tasks) {
-      try {
-        task.get()
-      }
-      catch (e: Exception) {
-        LOG.warn(e)
+      if (isUnitTestMode) {
+        EduUtils.waitAndDispatchInvocationEvents(task)
+      } else {
+        try {
+          task.get()
+        }
+        catch (e: Exception) {
+          LOG.warn(e)
+        }
       }
     }
   }

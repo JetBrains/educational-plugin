@@ -63,18 +63,13 @@ import org.intellij.markdown.html.GeneratingProvider;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.markdown.parser.LinkMap;
 import org.intellij.markdown.parser.MarkdownParser;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.SystemIndependent;
+import org.jetbrains.annotations.*;
 
 import javax.imageio.ImageIO;
 import java.io.*;
 import java.net.URI;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class EduUtils {
 
@@ -868,5 +863,24 @@ public class EduUtils {
     int index = text.indexOf(ch);
     if (index == -1) return text;
     return text.substring(0, index) + "&" + text.substring(index);
+  }
+
+  @TestOnly
+  public static <T> void waitAndDispatchInvocationEvents(@NotNull Future<T> future) {
+    if (!OpenApiExtKt.isUnitTestMode()) {
+      LOG.error("`waitAndDispatchInvocationEvents` should be invoked only in unit tests");
+    }
+    while (true) {
+      try {
+        UIUtil.dispatchAllInvocationEvents();
+        future.get(10, TimeUnit.MILLISECONDS);
+        return;
+      }
+      catch (InterruptedException | ExecutionException e) {
+        throw new RuntimeException(e);
+      }
+      catch (TimeoutException ignored) {
+      }
+    }
   }
 }
