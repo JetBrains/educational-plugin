@@ -130,13 +130,15 @@ allprojects {
     compile("com.squareup.retrofit2:retrofit:2.4.0")
     compile("com.squareup.retrofit2:converter-jackson:2.3.0")
     compile("com.squareup.retrofit2:converter-gson:2.4.0")
-    compile("com.squareup.okhttp3:logging-interceptor:3.13.0")
+    compile("com.squareup.okhttp3:logging-interceptor:3.14.0")
 
     compileOnly(fileTree("${rootProject.buildDir}/javafx/jre/lib/ext"))
 
     compile("org.jetbrains:kotlin-css-jvm:1.0.0-pre.58-kotlin-1.3.0") {
       excludeKotlinDeps()
     }
+
+    testCompile("com.squareup.okhttp3:mockwebserver:3.14.0")
   }
 }
 

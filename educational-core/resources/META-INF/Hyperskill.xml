@@ -9,7 +9,8 @@
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings"/>
     <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector"
-                        serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnectorImpl"/>
+                        serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnectorImpl"
+                        testServiceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector"/>
 
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService"/>
     <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillWidgetProvider" />
