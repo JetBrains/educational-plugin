@@ -14,10 +14,12 @@ class FrameworkLessonNode private constructor(
   lesson: FrameworkLesson
 ) : LessonNode(project, value, viewSettings, lesson) {
 
-  override fun getLesson(): FrameworkLesson = super.getLesson() as FrameworkLesson
+  override fun getItem(): FrameworkLesson {
+    return super.getItem() as FrameworkLesson
+  }
 
   override fun modifyChildNode(child: AbstractTreeNode<*>): AbstractTreeNode<*>? {
-    val task = lesson.currentTask()
+    val task = item.currentTask()
     return CourseViewUtils.modifyTaskChildNode(myProject, child, task) { dir -> DirectoryNode(myProject, dir, settings, task) }
   }
 

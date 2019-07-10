@@ -39,7 +39,7 @@ public class CCNode extends DirectoryNode {
     if (node != null) return node;
     Object value = childNode.getValue();
     if (value instanceof PsiDirectory) {
-      return new CCNode(myProject, ((PsiDirectory)value), myViewSettings, myTask);
+      return new CCNode(myProject, ((PsiDirectory)value), myViewSettings, getItem());
     }
     if (value instanceof PsiElement) {
       PsiFile psiFile = ((PsiElement) value).getContainingFile();
@@ -69,6 +69,6 @@ public class CCNode extends DirectoryNode {
 
   @Override
   public PsiDirectoryNode createChildDirectoryNode(PsiDirectory value) {
-    return new CCNode(myProject, value, myViewSettings, myTask);
+    return new CCNode(myProject, value, myViewSettings, getItem());
   }
 }

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.projectView;
 
-import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
@@ -54,7 +53,7 @@ public class CCCourseNode extends CourseNode {
       }
       return new CCStudentInvisibleFileNode(myProject, ((PsiFileNode)childNode).getValue(), getSettings());
     }
-    EduConfigurator<?> configurator = CourseExt.getConfigurator(myCourse);
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(getItem());
     if (configurator == null) {
       return null;
     }
@@ -77,10 +76,5 @@ public class CCCourseNode extends CourseNode {
   @Override
   protected SectionNode createSectionNode(@NotNull PsiDirectory directory, @NotNull Section section) {
     return new CCSectionNode(myProject, getSettings(), section, directory);
-  }
-
-  @Override
-  protected void updateImpl(PresentationData data) {
-    updatePresentation(myCourse, data);
   }
 }

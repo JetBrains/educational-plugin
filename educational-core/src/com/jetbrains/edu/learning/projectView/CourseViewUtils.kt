@@ -102,14 +102,19 @@ object CourseViewUtils {
   @JvmStatic
   val StudyItem.additionalInformation: String?
     get() {
-      if (course.isStudy) {
-        return null
-      }
       if (this is Course) {
-        return "Course Creation"
+        return if (course.isStudy) {
+          val progress = ProgressUtil.countProgress(this)
+          val tasksSolved = progress.first
+          val tasksTotal = progress.second
+          " $tasksSolved/$tasksTotal"
+        }
+        else {
+          "(Course Creation)"
+        }
       }
 
-      return if (presentableName != name) name else null
+      return if (!course.isStudy && presentableName != name) "($name)" else null
     }
 
   @JvmStatic

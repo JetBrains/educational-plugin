@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.projectView;
 
-import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
@@ -12,21 +11,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
-public class SectionNode extends EduNode {
+public class SectionNode extends EduNode<Section> {
   @NotNull protected final Project myProject;
   @NotNull protected final ViewSettings myViewSettings;
-  private final Section mySection;
 
   public SectionNode(@NotNull Project project, @NotNull ViewSettings viewSettings, @NotNull Section section, @Nullable PsiDirectory psiDirectory) {
-    super(project, psiDirectory, viewSettings);
+    super(project, psiDirectory, viewSettings, section);
     myProject = project;
     myViewSettings = viewSettings;
-    mySection = section;
-  }
-
-  @Override
-  public void updateImpl(@NotNull PresentationData data) {
-    updatePresentation(mySection, data);
   }
 
   @Nullable
@@ -35,7 +27,7 @@ public class SectionNode extends EduNode {
     Object value = child.getValue();
     if (value instanceof PsiDirectory) {
       PsiDirectory directory = (PsiDirectory)value;
-      final Lesson lesson = mySection.getLesson(directory.getName());
+      final Lesson lesson = getItem().getLesson(directory.getName());
       if (lesson != null) {
         return createLessonNode(directory, lesson);
       }
@@ -54,10 +46,14 @@ public class SectionNode extends EduNode {
 
   @Override
   public int getWeight() {
-    return mySection.getIndex();
+    return getItem().getIndex();
   }
 
-  public Section getSection() {
-    return mySection;
+  @NotNull
+  @Override
+  public Section getItem() {
+    Section item = super.getItem();
+    assert item != null;
+    return item;
   }
 }

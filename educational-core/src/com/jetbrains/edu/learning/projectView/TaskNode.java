@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.projectView;
 
-import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -11,25 +10,18 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TaskNode extends EduNode {
-  @NotNull protected final Task myTask;
+public class TaskNode extends EduNode<Task> {
 
   public TaskNode(@NotNull Project project,
                   PsiDirectory value,
                   ViewSettings viewSettings,
                   @NotNull Task task) {
-    super(project, value, viewSettings);
-    myTask = task;
+    super(project, value, viewSettings, task);
   }
 
   @Override
   public int getWeight() {
-    return myTask.getIndex();
-  }
-
-  @Override
-  public void updateImpl(@NotNull PresentationData data) {
-    updatePresentation(myTask, data);
+    return getItem().getIndex();
   }
 
   @Override
@@ -44,21 +36,24 @@ public class TaskNode extends EduNode {
 
   @Override
   public void navigate(boolean requestFocus) {
-    NavigationUtils.navigateToTask(myProject, myTask);
+    NavigationUtils.navigateToTask(myProject, getItem());
   }
 
   @Override
   @Nullable
   public AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode childNode) {
-    return CourseViewUtils.modifyTaskChildNode(myProject, childNode, myTask, this::createChildDirectoryNode);
+    return CourseViewUtils.modifyTaskChildNode(myProject, childNode, getItem(), this::createChildDirectoryNode);
   }
 
   public PsiDirectoryNode createChildDirectoryNode(PsiDirectory value) {
-    return new DirectoryNode(myProject, value, getSettings(), myTask);
+    return new DirectoryNode(myProject, value, getSettings(), getItem());
   }
 
+  @Override
   @NotNull
-  public Task getTask() {
-    return myTask;
+  public Task getItem() {
+    Task item = super.getItem();
+    assert item != null;
+    return item;
   }
 }

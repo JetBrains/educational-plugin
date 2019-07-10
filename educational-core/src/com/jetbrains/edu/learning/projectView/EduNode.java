@@ -17,25 +17,36 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public abstract class EduNode extends PsiDirectoryNode {
+public abstract class EduNode<T extends StudyItem> extends PsiDirectoryNode {
+  @Nullable private final T myItem;
+
   public EduNode(@NotNull final Project project,
                  PsiDirectory value,
-                 ViewSettings viewSettings) {
+                 ViewSettings viewSettings,
+                 @Nullable T item) {
     super(project, value, viewSettings);
+    myItem = item;
+    myName = value.getName();
   }
 
-  protected static void updatePresentation(StudyItem item, PresentationData data) {
+  @Override
+  protected void updateImpl(@NotNull PresentationData data) {
     data.clearText();
-
-    String name = item.getPresentableName();
-    Icon icon = CourseViewUtils.getIcon(item);
-    String additionalInfo = CourseViewUtils.getAdditionalInformation(item);
-
-    data.addText(name, new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, JBColor.BLACK));
-    if (additionalInfo != null) {
-      data.addText(" (" + additionalInfo + ")", SimpleTextAttributes.GRAYED_ATTRIBUTES);
+    if (myItem != null) {
+      String name = myItem.getPresentableName();
+      Icon icon = CourseViewUtils.getIcon(myItem);
+      data.addText(name, new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, JBColor.BLACK));
+      String additionalInfo = CourseViewUtils.getAdditionalInformation(myItem);
+      if (additionalInfo != null) {
+        data.addText(" " + additionalInfo, SimpleTextAttributes.GRAYED_ATTRIBUTES);
+      }
+      data.setIcon(icon);
     }
-    data.setIcon(icon);
+  }
+
+  @Nullable
+  protected T getItem() {
+    return myItem;
   }
 
   @Override

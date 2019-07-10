@@ -9,6 +9,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.projectView.CourseViewUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * represents a file which is invisible for student in student mode
@@ -34,7 +35,7 @@ public class CCStudentInvisibleFileNode extends PsiFileNode {
   }
 
   @Override
-  protected void updateImpl(PresentationData data) {
+  protected void updateImpl(@NotNull PresentationData data) {
     super.updateImpl(data);
     data.clearText();
     data.addText(myName, SimpleTextAttributes.GRAY_ATTRIBUTES);

@@ -81,6 +81,6 @@ public class CCTaskNode extends TaskNode {
 
   @Override
   public PsiDirectoryNode createChildDirectoryNode(PsiDirectory value) {
-    return new CCNode(myProject, value, getSettings(), myTask);
+    return new CCNode(myProject, value, getSettings(), getItem());
   }
 }

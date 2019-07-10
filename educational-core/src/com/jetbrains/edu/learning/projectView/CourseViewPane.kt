@@ -187,9 +187,9 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     if (CCUtils.isCourseCreator(myProject)) {
       val userObject = selectedNode?.userObject
       val studyItem = when (userObject) {
-        is CCTaskNode -> userObject.task
-        is CCLessonNode -> userObject.lesson
-        is CCSectionNode -> userObject.section
+        is CCTaskNode -> userObject.item
+        is CCLessonNode -> userObject.item
+        is CCSectionNode -> userObject.item
         else -> null
       }
       if (studyItem != null) {

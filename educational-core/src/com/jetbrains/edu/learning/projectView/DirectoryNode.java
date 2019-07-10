@@ -14,22 +14,19 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DirectoryNode extends EduNode {
+public class DirectoryNode extends EduNode<Task> {
 
   @NotNull
   protected final Project myProject;
   protected final ViewSettings myViewSettings;
-  @Nullable
-  protected final Task myTask;
 
   public DirectoryNode(@NotNull Project project,
                        PsiDirectory value,
                        ViewSettings viewSettings,
                        @Nullable Task task) {
-    super(project, value, viewSettings);
+    super(project, value, viewSettings, task);
     myProject = project;
     myViewSettings = viewSettings;
-    myTask = task;
   }
 
   @Override
@@ -40,32 +37,26 @@ public class DirectoryNode extends EduNode {
   @Nullable
   @Override
   public AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode childNode) {
-    return CourseViewUtils.modifyTaskChildNode(myProject, childNode, myTask, this::createChildDirectoryNode);
+    return CourseViewUtils.modifyTaskChildNode(myProject, childNode, getItem(), this::createChildDirectoryNode);
   }
 
   public PsiDirectoryNode createChildDirectoryNode(PsiDirectory value) {
-    return new DirectoryNode(myProject, value, myViewSettings, myTask);
+    return new DirectoryNode(myProject, value, myViewSettings, getItem());
   }
 
   @Override
-  protected void updateImpl(PresentationData data) {
-    Project project = getProject();
-    if (project != null) {
-      PsiDirectory dir = getValue();
-      VirtualFile directoryFile = dir.getVirtualFile();
-      String name = directoryFile.getName();
-
-      Course course = StudyTaskManager.getInstance(myProject).getCourse();
-      if (course == null) {
-        return;
-      }
-
-      if (name.equals(CourseExt.getSourceDir(course)) || CourseExt.getTestDirs(course).contains(name)) {
-        data.setPresentableText(name);
-        return;
-      }
+  protected void updateImpl(@NotNull PresentationData data) {
+    Course course = StudyTaskManager.getInstance(myProject).getCourse();
+    if (course == null) {
+      return;
     }
 
-    super.updateImpl(data);
+    PsiDirectory dir = getValue();
+    VirtualFile directoryFile = dir.getVirtualFile();
+    String name = directoryFile.getName();
+
+    if (name.equals(CourseExt.getSourceDir(course)) || CourseExt.getTestDirs(course).contains(name)) {
+      data.setPresentableText(name);
+    }
   }
 }
