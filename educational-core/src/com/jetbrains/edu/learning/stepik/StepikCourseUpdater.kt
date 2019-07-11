@@ -73,7 +73,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
 
   private fun processNewLessons(courseFromServer: Course) {
     val newLessons = courseFromServer.lessons.filter { course.getLesson(it.id) == null }
-    if (!newLessons.isEmpty()) {
+    if (newLessons.isNotEmpty()) {
       createNewLessons(newLessons, project.courseDir)
     }
   }
@@ -81,7 +81,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   private fun processDeletedLessons(courseFromServer: Course) {
     val lessonsFromServerId = courseFromServer.lessons.map { it.id }
     val lessonsToDelete = course.lessons.filter { it.id !in lessonsFromServerId }
-    if (!lessonsToDelete.isEmpty()) {
+    if (lessonsToDelete.isNotEmpty()) {
       runInEdt {
         runWriteAction {
           for (lesson in lessonsToDelete) {
@@ -106,7 +106,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
       val taskIdsToUpdate = taskIdsToUpdate(lessonFromServer, currentLesson!!)
       val tasksToDelete = tasksToDelete(lessonFromServer, currentLesson)
 
-      if (!tasksToDelete.isEmpty()) {
+      if (tasksToDelete.isNotEmpty()) {
         runInEdt {
           runWriteAction {
             tasksToDelete.forEach {
@@ -146,7 +146,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
                                  sectionIds: List<Int>): List<Section> {
     val newSections = courseFromServer.sections.filter { section -> section.id !in sectionIds }
 
-    if (!newSections.isEmpty()) {
+    if (newSections.isNotEmpty()) {
       createNewSections(project, newSections)
     }
     return newSections
@@ -155,7 +155,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   private fun processDeletedSections(courseFromServer: EduCourse) {
     val sectionsFromServerIds = courseFromServer.sections.map { it.id }
     val sectionsToDelete = course.sections.filter { it.id !in sectionsFromServerIds }
-    if (!sectionsToDelete.isEmpty()) {
+    if (sectionsToDelete.isNotEmpty()) {
       runInEdt {
         runWriteAction {
           for (section in sectionsToDelete) {
@@ -176,7 +176,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     for (sectionFromServer in sectionsFromServer) {
       sectionFromServer.lessons.withIndex().forEach { (index, lesson) -> lesson.index = index + 1 }
 
-      if (!course.lessons.isEmpty()) {
+      if (course.lessons.isNotEmpty()) {
         val isTopLevelLessonsSection = sectionFromServer.id == course.sectionIds[0]
         if (isTopLevelLessonsSection) {
           return
@@ -187,7 +187,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
       val currentLessons = currentSection!!.lessons.map { it.id }
 
       val newLessons = sectionFromServer.lessons.filter { it.id !in currentLessons }
-      val sectionContentChanged = !newLessons.isEmpty()
+      val sectionContentChanged = newLessons.isNotEmpty()
       if (sectionContentChanged) {
         val currentSectionDir = constructDir(sectionFromServer, currentSection)
         createNewLessons(newLessons, currentSectionDir)
@@ -215,7 +215,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     course.description = courseFromServer.description
   }
 
-  private fun lessonContentChanged(taskIdsToUpdate: List<Int>) = !taskIdsToUpdate.isEmpty()
+  private fun lessonContentChanged(taskIdsToUpdate: List<Int>) = taskIdsToUpdate.isNotEmpty()
 
   private fun updateTasks(taskIdsToUpdate: List<Int>,
                           lessonFromServer: Lesson,
@@ -408,7 +408,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   // In case it was renamed on stepik, its lessons  won't be parsed as top-level
   // so we need to copy them manually
   private fun addTopLevelLessons(courseFromServer: Course?) {
-    if (!courseFromServer!!.sections.isEmpty() && !course.sectionIds.isEmpty()) {
+    if (courseFromServer!!.sections.isNotEmpty() && course.sectionIds.isNotEmpty()) {
       if (courseFromServer.sections[0].id == course.sectionIds[0]) {
         courseFromServer.addLessons(courseFromServer.sections[0].lessons)
       }
