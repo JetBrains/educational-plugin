@@ -206,7 +206,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   }
 
   private void createConfigFilesIfMissing() {
-    if (myProject == null) {
+    if (myProject == null || myCourse.isStudy()) {
       return;
     }
     VirtualFile courseDir = OpenApiExtKt.getCourseDir(myProject);
