@@ -85,12 +85,6 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     task.addTaskFile(cMakeFile)
   }
 
-  private fun getCMakeProjectUniqueName(section: Section?, lesson: Lesson, task: Task): String {
-    val projectName = "${EduNames.LESSON}${lesson.index}-${EduNames.TASK}${task.index}"
-    if (section == null) return projectName
-    return "${EduNames.SECTION}${section.index}-$projectName"
-  }
-
   private fun getText(templateName: FileTemplate, cppProjectName: String, cppStandard: String? = null): String {
     val params = mapOf(PROJECT_NAME to cppProjectName,
                        CMAKE_MINIMUM_REQUIRED_LINE to cmakeMinimumRequired,
@@ -107,5 +101,11 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     private const val EDU_CMAKELISTS = "EduCMakeLists.txt"
     private const val CMAKE_MINIMUM_REQUIRED_LINE = "CMAKE_MINIMUM_REQUIRED_LINE"
     private const val CPP_STANDARD = "CPP_STANDARD"
+
+    fun getCMakeProjectUniqueName(section: Section?, lesson: Lesson, task: Task): String {
+      val projectName = "${EduNames.LESSON}${lesson.index}-${EduNames.TASK}${task.index}"
+      if (section == null) return projectName
+      return "${EduNames.SECTION}${section.index}-$projectName"
+    }
   }
 }
