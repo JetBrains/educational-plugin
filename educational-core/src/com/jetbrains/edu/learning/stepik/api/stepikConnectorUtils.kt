@@ -52,10 +52,13 @@ fun postTheory(task: Task, project: Project) {
 }
 
 private fun markStepAsViewed(lessonId: Int, stepId: Int) {
+  if (lessonId == 0 || stepId == 0) {
+    return
+  }
   val unit = StepikConnector.getLessonUnit(lessonId)
   val assignmentsIds = unit?.assignments
   if (assignmentsIds == null || assignmentsIds.isEmpty()) {
-    LOG.warn("No assignment ids in unit " + unit?.id!!)
+    LOG.warn("No assignment ids in unit ${unit?.id}")
     return
   }
   val assignments = StepikMultipleRequestsConnector.getAssignments(assignmentsIds)
