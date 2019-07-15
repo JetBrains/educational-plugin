@@ -7,15 +7,16 @@ import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
-import com.jetbrains.edu.learning.EduUtils.isStudyProject
+import com.jetbrains.edu.learning.EduUtils.isEduProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import java.io.File
 
+@Suppress("ComponentNotRegistered") // jvm-core.xml
 class GradleProjectComponent(private val project: Project) : ProjectComponent {
 
   override fun projectOpened() {
-    if (project.isDisposed || !isStudyProject(project)) {
+    if (project.isDisposed || !isEduProject(project)) {
       return
     }
 
