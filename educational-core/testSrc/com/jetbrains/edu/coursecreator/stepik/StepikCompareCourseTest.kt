@@ -6,10 +6,7 @@ import com.jetbrains.edu.integration.stepik.addNewSection
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -95,12 +92,15 @@ class StepikCompareCourseTest : EduTestCase() {
         outputTask { }
         theoryTask { }
       }
+      lesson {
+        eduTask { }
+      }
     }.asRemote()
 
 
     val courseFromServer = localCourse.copy() as EduCourse
-    localCourse.lessons.single().index = 2
-    val expectedInfo = StepikChangesInfo(lessonsInfoToUpdate = arrayListOf(localCourse.lessons.single()))
+    localCourse.items = mutableListOf<StudyItem>(localCourse.lessons[1], localCourse.lessons[0])
+    val expectedInfo = StepikChangesInfo(lessonsInfoToUpdate = localCourse.lessons)
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
@@ -132,12 +132,13 @@ class StepikCompareCourseTest : EduTestCase() {
           theoryTask { }
         }
       }
+      section { }
     }.asRemote()
 
 
     val courseFromServer = localCourse.copy() as EduCourse
-    localCourse.sections.single().index = 2
-    val expectedInfo = StepikChangesInfo(sectionInfosToUpdate = arrayListOf(localCourse.sections.single()))
+    localCourse.items = mutableListOf<StudyItem>(localCourse.sections[1], localCourse.sections[0])
+    val expectedInfo = StepikChangesInfo(sectionInfosToUpdate = localCourse.sections)
 
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
@@ -189,10 +190,10 @@ class StepikCompareCourseTest : EduTestCase() {
     }.asRemote()
 
     val courseFromServer = localCourse.copy() as EduCourse
-    val changedTask = localCourse.lessons.single().taskList[0]
-    changedTask.index = 2
+    val lesson = localCourse.lessons.single()
+    lesson.items = listOf<StudyItem>(lesson.taskList[2], lesson.taskList[1], lesson.taskList[0])
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(lesson.taskList[0], lesson.taskList[2]))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
@@ -341,26 +342,6 @@ class StepikCompareCourseTest : EduTestCase() {
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
-  fun `test change placeholder index`() {
-    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
-      lesson("lesson1") {
-        eduTask {
-          taskFile("Task.txt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "Foo")
-          }
-        }
-      }
-    }.asRemote()
-
-    val courseFromServer = localCourse.copy() as EduCourse
-    val changedTask = localCourse.lessons.single().taskList.single()
-    val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
-    changedPlaceholder.index = 2
-
-    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
-    checkChangedItems(localCourse, courseFromServer, expectedInfo)
-  }
-
   fun `test add placeholder dependency`() {
     val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
@@ -493,6 +474,25 @@ class StepikCompareCourseTest : EduTestCase() {
 
   private fun checkChangedItems(localCourse: EduCourse, courseFromServer: EduCourse, expected: StepikChangesInfo) {
     val actual = StepikChangeRetriever(project, localCourse, courseFromServer).getChangedItems()
-    assertEquals(expected, actual)
+    assertEquals(expected.isCourseAdditionalFilesChanged, actual.isCourseAdditionalFilesChanged)
+    assertEquals(expected.isCourseInfoChanged, actual.isCourseInfoChanged)
+    assertTrue(expected.newSections.sameContentWith(actual.newSections))
+    assertTrue(expected.sectionsToDelete.sameContentWith(actual.sectionsToDelete))
+    assertTrue(expected.sectionInfosToUpdate.sameContentWith(actual.sectionInfosToUpdate))
+    assertTrue(expected.newLessons.sameContentWith(actual.newLessons))
+    assertTrue(expected.lessonsToDelete.sameContentWith(actual.lessonsToDelete))
+    assertTrue(expected.lessonsInfoToUpdate.sameContentWith(actual.lessonsInfoToUpdate))
+    assertTrue(expected.newTasks.sameContentWith(actual.newTasks))
+    assertTrue(expected.tasksToDelete.sameContentWith(actual.tasksToDelete))
+    assertTrue(expected.tasksToUpdate.sameContentWith(actual.tasksToUpdate))
+    assertEquals(expected.isTopLevelSectionAdded, actual.isTopLevelSectionAdded)
+    assertEquals(expected.isTopLevelSectionNameChanged, actual.isTopLevelSectionNameChanged)
+    assertEquals(expected.isTopLevelSectionRemoved, actual.isTopLevelSectionRemoved)
   }
+}
+
+infix fun <T : StudyItem> Collection<T>.sameContentWith(collection: Collection<T>): Boolean {
+  if (collection.size != this.size) return false
+  val pairList = collection.zip(this)
+  return pairList.all { (elt1, elt2) -> elt1.name == elt2.name}
 }

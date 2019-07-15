@@ -43,7 +43,7 @@ class CourseArchiveCreator(
     val course = StudyTaskManager.getInstance(project).course ?: return false
     jsonFolder.refresh(false, true)
     val courseCopy = course.copy()
-    loadActualTexts(courseCopy)
+    loadActualTexts(project, courseCopy)
     courseCopy.sortItems()
     courseCopy.additionalFiles = CCUtils.collectAdditionalFiles(courseCopy, project)
     return try {
@@ -56,52 +56,6 @@ class CourseArchiveCreator(
     catch (e: IOException) {
       LOG.error("Failed to create course archive", e)
       false
-    }
-  }
-
-  private fun loadActualTexts(courseCopy: Course) {
-    courseCopy.visitLessons { lesson ->
-      val lessonDir = lesson.getLessonDir(project)
-      if (lessonDir == null) return@visitLessons
-      for (task in lesson.taskList) {
-        val taskDir = task.getTaskDir(project) ?: continue
-        convertToStudentTaskFiles(task, taskDir)
-        addDescriptions(task)
-      }
-    }
-  }
-
-  private fun convertToStudentTaskFiles(task: Task, taskDir: VirtualFile) {
-    val studentTaskFiles = LinkedHashMap<String, TaskFile>()
-    for ((key, value) in task.taskFiles) {
-      val answerFile = EduUtils.findTaskFileInDir(value, taskDir) ?: continue
-      val studentFile = EduUtils.createStudentFile(project, answerFile, task)
-      if (studentFile != null) {
-        studentTaskFiles[key] = studentFile
-      }
-    }
-    task.taskFiles = studentTaskFiles
-  }
-
-  private fun addDescriptions(task: Task) {
-    val descriptionFile = task.getDescriptionFile(project)
-
-    if (descriptionFile != null) {
-      try {
-        task.descriptionText = VfsUtilCore.loadText(descriptionFile)
-        val extension = descriptionFile.extension
-        val descriptionFormat = DescriptionFormat.values().firstOrNull { format -> format.fileExtension == extension }
-        if (descriptionFormat != null) {
-          task.descriptionFormat = descriptionFormat
-        }
-      }
-      catch (e: IOException) {
-        LOG.warn("Failed to load text " + descriptionFile.name)
-      }
-
-    }
-    else {
-      LOG.warn(String.format("Can't find description file for task `%s`", task.name))
     }
   }
 
@@ -181,6 +135,53 @@ class CourseArchiveCreator(
       mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
       mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
       mapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
+    }
+
+    @JvmStatic
+    fun loadActualTexts(project: Project, course: Course) {
+      course.visitLessons { lesson ->
+        val lessonDir = lesson.getLessonDir(project)
+        if (lessonDir == null) return@visitLessons
+        for (task in lesson.taskList) {
+          val taskDir = task.getTaskDir(project) ?: continue
+          convertToStudentTaskFiles(project, task, taskDir)
+          addDescriptions(project, task)
+        }
+      }
+    }
+
+    private fun convertToStudentTaskFiles(project: Project, task: Task, taskDir: VirtualFile) {
+      val studentTaskFiles = LinkedHashMap<String, TaskFile>()
+      for ((key, value) in task.taskFiles) {
+        val answerFile = EduUtils.findTaskFileInDir(value, taskDir) ?: continue
+        val studentFile = EduUtils.createStudentFile(project, answerFile, task)
+        if (studentFile != null) {
+          studentTaskFiles[key] = studentFile
+        }
+      }
+      task.taskFiles = studentTaskFiles
+    }
+
+    private fun addDescriptions(project: Project, task: Task) {
+      val descriptionFile = task.getDescriptionFile(project)
+
+      if (descriptionFile != null) {
+        try {
+          task.descriptionText = VfsUtilCore.loadText(descriptionFile)
+          val extension = descriptionFile.extension
+          val descriptionFormat = DescriptionFormat.values().firstOrNull { format -> format.fileExtension == extension }
+          if (descriptionFormat != null) {
+            task.descriptionFormat = descriptionFormat
+          }
+        }
+        catch (e: IOException) {
+          LOG.warn("Failed to load text " + descriptionFile.name)
+        }
+
+      }
+      else {
+        LOG.warn(String.format("Can't find description file for task `%s`", task.name))
+      }
     }
   }
 }

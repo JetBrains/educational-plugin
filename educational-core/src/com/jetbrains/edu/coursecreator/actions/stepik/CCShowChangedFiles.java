@@ -4,6 +4,9 @@ import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -43,15 +46,21 @@ public class CCShowChangedFiles extends DumbAwareAction {
       return;
     }
 
-    EduCourse remoteCourse = StepikConnector.getCourseInfo(course.getId());
-    if (remoteCourse == null) {
-      return;
-    }
-    StepikCourseLoader.loadCourseStructure(remoteCourse);
-    remoteCourse.init(null, null, false);
+    ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Modal(project, "Computing Changes", false) {
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        EduCourse remoteCourse = StepikConnector.getCourseInfo(course.getId());
+        if (remoteCourse == null) {
+          return;
+        }
+        StepikCourseLoader.loadCourseStructure(remoteCourse);
+        remoteCourse.init(null, null, false);
 
-    String message = buildChangeMessage((EduCourse)course, remoteCourse, project);
-    Messages.showInfoMessage(message, course.getName() + " Comparing to Stepik");
+        String message = buildChangeMessage((EduCourse)course, remoteCourse, project);
+        ApplicationManager.getApplication().invokeLater(
+          () -> Messages.showInfoMessage(message, course.getName() + " Comparing to Stepik"));
+      }
+    });
   }
 
   @VisibleForTesting

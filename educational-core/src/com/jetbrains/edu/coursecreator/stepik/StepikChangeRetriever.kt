@@ -5,9 +5,8 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -37,11 +36,12 @@ data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
   }
 }
 
-class StepikChangeRetriever(private val project: Project, private val course: EduCourse, private val remoteCourse: EduCourse) {
+class StepikChangeRetriever(private val project: Project, course: EduCourse, private val remoteCourse: EduCourse) {
+  val course: EduCourse = course.copyAs(EduCourse::class.java)
 
   fun getChangedItems(): StepikChangesInfo {
     if (!isUnitTestMode) {
-      setTaskFileTextFromDocuments(course, project)
+      setTaskFileTextFromDocuments(project)
     }
     val stepikChanges = StepikChangesInfo()
     processCourse(stepikChanges)
@@ -183,44 +183,44 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
   private fun TaskFile.isEqualTo(otherTaskFile: TaskFile): Boolean {
     if (this === otherTaskFile) return true
 
-    return name == otherTaskFile.name
-           && text == otherTaskFile.text
-           && isVisible == otherTaskFile.isVisible
-           && answerPlaceholders.size == otherTaskFile.answerPlaceholders.size
-           && answerPlaceholders.zip(otherTaskFile.answerPlaceholders).all { it.first.isEqualTo(it.second) }
+    val answerPlaceholdersEqual = answerPlaceholders.size == otherTaskFile.answerPlaceholders.size &&
+                                  answerPlaceholders.zip(otherTaskFile.answerPlaceholders).all { it.first.isEqualTo(it.second) }
+
+    return name == otherTaskFile.name &&
+           text == otherTaskFile.text &&
+           isVisible == otherTaskFile.isVisible &&
+           answerPlaceholdersEqual
   }
 
   private fun AnswerPlaceholder.isEqualTo(otherPlaceholder: AnswerPlaceholder): Boolean {
     if (this === otherPlaceholder) return true
 
-    return offset == otherPlaceholder.offset
-           && length == otherPlaceholder.length
-           && index == otherPlaceholder.index
-           && placeholderText == otherPlaceholder.placeholderText
-           && hints == otherPlaceholder.hints
-           && (placeholderDependency?.isEqualTo(otherPlaceholder.placeholderDependency) ?: otherPlaceholder.placeholderDependency == null)
+    val placeholderDependencyEqual = placeholderDependency?.isEqualTo(otherPlaceholder.placeholderDependency) ?:
+                                     (otherPlaceholder.placeholderDependency == null)
 
+    return offset == otherPlaceholder.offset &&
+           length == otherPlaceholder.length &&
+           index == otherPlaceholder.index &&
+           placeholderText == otherPlaceholder.placeholderText &&
+           hints == otherPlaceholder.hints &&
+           placeholderDependencyEqual
   }
 
   private fun AnswerPlaceholderDependency.isEqualTo(otherDependency: AnswerPlaceholderDependency?): Boolean {
     if (this === otherDependency) return true
     if (otherDependency == null) return false
 
-    return isVisible == otherDependency.isVisible
-           && fileName == otherDependency.fileName
-           && lessonName == otherDependency.lessonName
-           && placeholderIndex == otherDependency.placeholderIndex
-           && sectionName == otherDependency.sectionName
+    return isVisible == otherDependency.isVisible &&
+           fileName == otherDependency.fileName &&
+           lessonName == otherDependency.lessonName &&
+           placeholderIndex == otherDependency.placeholderIndex &&
+           sectionName == otherDependency.sectionName
   }
 
-  private fun setTaskFileTextFromDocuments(course: EduCourse, project: Project) {
+  private fun setTaskFileTextFromDocuments(project: Project) {
     runInEdtAndWait {
       runReadAction {
-        course.lessons
-          .plus(course.sections.flatMap { it.lessons })
-          .flatMap { it.taskList }
-          .flatMap { it.taskFiles.values }
-          .forEach { it.setText(EduUtils.createStudentFile(project, it.getVirtualFile(project)!!, it.task)!!.text) }
+        CourseArchiveCreator.loadActualTexts(project, course)
       }
     }
   }
