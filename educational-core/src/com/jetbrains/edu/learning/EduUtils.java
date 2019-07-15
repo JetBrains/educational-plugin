@@ -351,7 +351,7 @@ public class EduUtils {
     return null;
   }
 
-  public static boolean isStudyProject(@NotNull Project project) {
+  public static boolean isEduProject(@NotNull Project project) {
     return StudyTaskManager.getInstance(project).getCourse() != null || getCourseModeForNewlyCreatedProject(project) != null;
   }
 

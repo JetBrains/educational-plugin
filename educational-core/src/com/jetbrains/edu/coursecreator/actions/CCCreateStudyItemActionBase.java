@@ -18,7 +18,6 @@ import com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection;
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel;
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -119,7 +118,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     if (project == null || selectedFiles == null) return false;
     if (selectedFiles.length != 1) return false;
 
-    if (!EduUtils.isStudyProject(project) || !CCUtils.isCourseCreator(project)) return false;
+    if (!CCUtils.isCourseCreator(project)) return false;
 
     final VirtualFile selectedFile = selectedFiles[0];
     return selectedFile != null;

@@ -20,7 +20,7 @@ abstract class CheckDetailsView {
   companion object {
     @JvmStatic
     fun getInstance(project: Project): CheckDetailsView {
-      if (!EduUtils.isStudyProject(project)) {
+      if (!EduUtils.isEduProject(project)) {
         error("Attempt to get CheckDetailsViewImpl for non-edu project")
       }
       return ServiceManager.getService(project, CheckDetailsView::class.java)

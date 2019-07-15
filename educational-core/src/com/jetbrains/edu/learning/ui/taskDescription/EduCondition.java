@@ -8,6 +8,6 @@ import com.jetbrains.edu.learning.EduUtils;
 public class EduCondition implements Condition<Project>, DumbAware {
   @Override
   public boolean value(Project project) {
-    return EduUtils.isStudyProject(project);
+    return EduUtils.isEduProject(project);
   }
 }

@@ -24,9 +24,10 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static com.jetbrains.edu.learning.EduUtils.isStudyProject;
+import static com.jetbrains.edu.learning.EduUtils.isEduProject;
 import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class StepikProjectComponent implements ProjectComponent {
   private static final Logger LOG = Logger.getInstance(StepikProjectComponent.class.getName());
 
@@ -39,7 +40,7 @@ public class StepikProjectComponent implements ProjectComponent {
 
   @Override
   public void projectOpened() {
-    if (myProject.isDisposed() || !isStudyProject(myProject)) {
+    if (myProject.isDisposed() || !isEduProject(myProject)) {
       return;
     }
 

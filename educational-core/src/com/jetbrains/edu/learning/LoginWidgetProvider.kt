@@ -6,11 +6,10 @@ import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetProvider
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import kotlin.test.assertNotNull
 
 abstract class LoginWidgetProvider : StatusBarWidgetProvider {
   override fun getWidget(project: Project): StatusBarWidget? {
-    if (EduUtils.isStudyProject(project)) {
+    if (EduUtils.isEduProject(project)) {
       val baseDir = project.courseDir
       val course = StudyTaskManager.getInstance(project).course
 

@@ -64,6 +64,6 @@ class SwitchTaskPanelAction : DumbAwareAction() {
   override fun update(e: AnActionEvent) {
     val place = e.place
     val project = e.project
-    e.presentation.isEnabled = project != null && EduUtils.isStudyProject(project) || ACTION_SEARCH == place
+    e.presentation.isEnabled = project != null && EduUtils.isEduProject(project) || ACTION_SEARCH == place
   }
 }

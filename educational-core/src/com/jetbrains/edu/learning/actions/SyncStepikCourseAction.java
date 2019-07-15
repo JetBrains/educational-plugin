@@ -16,10 +16,10 @@ import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
 
-@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class SyncStepikCourseAction extends SyncCourseAction {
 
   public SyncStepikCourseAction() {
@@ -56,12 +56,12 @@ public class SyncStepikCourseAction extends SyncCourseAction {
   }
 
   @Override
-  public boolean isAvailable(@NotNull Project project) {
+  public boolean isAvailable(@Nullable Project project) {
     if (project == null) {
       return false;
     }
 
-    if (!EduUtils.isStudyProject(project)) {
+    if (!EduUtils.isEduProject(project)) {
       return false;
     }
 

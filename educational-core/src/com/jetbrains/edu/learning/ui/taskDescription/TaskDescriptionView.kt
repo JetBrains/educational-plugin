@@ -31,7 +31,7 @@ abstract class TaskDescriptionView {
 
     @JvmStatic
     fun getInstance(project: Project): TaskDescriptionView {
-      if (!EduUtils.isStudyProject(project)) {
+      if (!EduUtils.isEduProject(project)) {
         error("Attempt to get TaskDescriptionView for non-edu project")
       }
       return ServiceManager.getService(project, TaskDescriptionView::class.java)

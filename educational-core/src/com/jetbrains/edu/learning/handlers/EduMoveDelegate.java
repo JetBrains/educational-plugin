@@ -51,6 +51,6 @@ public class EduMoveDelegate extends MoveHandlerDelegate{
                            DataContext dataContext,
                            @Nullable PsiReference reference,
                            Editor editor) {
-    return EduUtils.isStudyProject(project);
+    return EduUtils.isEduProject(project);
   }
 }

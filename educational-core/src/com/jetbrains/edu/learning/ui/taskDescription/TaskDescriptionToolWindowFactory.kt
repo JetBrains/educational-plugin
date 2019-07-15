@@ -32,7 +32,7 @@ import javax.swing.event.ChangeListener
 class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
 
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-    if (!EduUtils.isStudyProject(project)) {
+    if (!EduUtils.isEduProject(project)) {
       return
     }
     toolWindow.icon = EducationalCoreIcons.CourseToolWindow

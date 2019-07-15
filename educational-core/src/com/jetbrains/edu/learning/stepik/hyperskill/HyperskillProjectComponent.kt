@@ -3,18 +3,19 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
-import com.jetbrains.edu.learning.EduUtils.isStudyProject
+import com.jetbrains.edu.learning.EduUtils.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader.Companion.IS_HYPERSKILL_SOLUTION_LOADING_STARTED
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader.Companion.IS_HYPERSKILL_SOLUTION_LOADING_STARTED
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
+@Suppress("ComponentNotRegistered") // Hyperskill.xml
 class HyperskillProjectComponent(private val project: Project) : ProjectComponent, SolutionLoaderBase.SolutionLoadingListener {
   override fun projectOpened() {
-    if (project.isDisposed || !isStudyProject(project)) return
+    if (project.isDisposed || !isStudentProject(project)) return
 
     StartupManager.getInstance(project).runWhenProjectIsInitialized {
       project.messageBus.connect().subscribe(HyperskillSolutionLoader.SOLUTION_TOPIC, this)

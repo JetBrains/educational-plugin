@@ -52,7 +52,7 @@ public class EduProjectComponent implements ProjectComponent {
 
   @Override
   public void projectOpened() {
-    if (myProject.isDisposed() || !isStudyProject(myProject)) {
+    if (myProject.isDisposed() || !isEduProject(myProject)) {
       return;
     }
 
