@@ -5,6 +5,7 @@ import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.jvm.stepik.hyperskill.HyperskillGradleCourseProjectGenerator
 import com.jetbrains.edu.jvm.stepik.hyperskill.HyperskillGradleTaskCheckerProvider
+import com.jetbrains.edu.kotlin.KtConfigurator
 import com.jetbrains.edu.kotlin.KtCourseBuilder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
@@ -16,4 +17,5 @@ class KtHyperskillConfigurator : GradleConfiguratorBase(), HyperskillConfigurato
       }
   }
   override fun getTaskCheckerProvider() = HyperskillGradleTaskCheckerProvider()
+  override fun getMockFileName(text: String): String = KtConfigurator.TASK_KT
 }

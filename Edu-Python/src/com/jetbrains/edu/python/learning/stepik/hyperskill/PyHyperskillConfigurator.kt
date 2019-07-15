@@ -4,6 +4,7 @@ import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.python.learning.PyConfigurator
+import com.jetbrains.edu.python.learning.PyConfigurator.TASK_PY
 import com.jetbrains.python.newProject.PyNewProjectSettings
 
 open class PyHyperskillConfigurator : HyperskillConfigurator<PyNewProjectSettings> {
@@ -12,4 +13,5 @@ open class PyHyperskillConfigurator : HyperskillConfigurator<PyNewProjectSetting
   override fun getTaskCheckerProvider() = PyHyperskillTaskCheckerProvider()
   override fun isEnabled(): Boolean = !PlatformUtils.isPyCharm() && !PlatformUtils.isCLion() && !EduUtils.isAndroidStudio()
   override fun getTestDirs(): MutableList<String> = mutableListOf("hstest")
+  override fun getMockFileName(text: String) = TASK_PY
 }
