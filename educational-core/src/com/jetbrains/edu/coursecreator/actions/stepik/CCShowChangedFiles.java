@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
+import com.intellij.openapi.progress.Task.Modal;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.helper.StringUtil;
 
@@ -46,7 +47,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
       return;
     }
 
-    ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Modal(project, "Computing Changes", false) {
+    ProgressManager.getInstance().run(new Modal(project, "Computing Changes", false) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         EduCourse remoteCourse = StepikConnector.getCourseInfo(course.getId());
