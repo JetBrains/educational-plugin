@@ -5,9 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.courseFormat.visitors.TaskVisitor;
-import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,10 +48,6 @@ public class Lesson extends ItemContainer {
    */
   public List<Task> getTaskList() {
     return items.stream().filter(Task.class::isInstance).map(Task.class::cast).collect(Collectors.toList());
-  }
-
-  public List<Task> getTaskListForProgress() {
-    return CollectionsKt.filter(getTaskList(), task -> !(task instanceof TheoryTask));
   }
 
   @NotNull
