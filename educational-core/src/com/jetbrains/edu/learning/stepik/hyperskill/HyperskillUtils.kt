@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -45,7 +46,7 @@ fun openSelectedStage(course: Course, project: Project) {
 }
 
 fun getTopPanelForProblem(project: Project, course: HyperskillCourse, task: Task?): JPanel? {
-  if (task == null || course.isTaskInProject(task)) {
+  if (task == null || course.isTaskInProject(task) || CCUtils.isCourseCreator(project)) {
     return null
   }
   val panel = JPanel(BorderLayout())

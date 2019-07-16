@@ -18,7 +18,6 @@ import javax.swing.JPanel
 interface HyperskillConfigurator<T> : EduConfigurator<T> {
 
   override fun getTestFileName() = ""
-  override fun isCourseCreatorEnabled() = false
 
   override fun additionalTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
     if (currentTask == null) return null
