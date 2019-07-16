@@ -3,7 +3,7 @@
  com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionHtml-->
 <html>
 <head>
-  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   <script type="text/javascript" src="${jquery}"></script>
   <script type="text/javascript" src="${toggle_hint_script}"></script>
   <script type="text/x-mathjax-config">
