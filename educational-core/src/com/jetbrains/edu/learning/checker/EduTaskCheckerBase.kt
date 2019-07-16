@@ -68,7 +68,7 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
       })
       for (configuration in configurations) {
         val runner = ProgramRunner.getRunner(DefaultRunExecutor.EXECUTOR_ID, configuration.configuration)
-        val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configuration).build()
+        val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configuration).activeTarget().build()
         environments.add(env)
         runner?.execute(env) { descriptor ->
           descriptor.processHandler?.addProcessListener(object : ProcessAdapter() {
