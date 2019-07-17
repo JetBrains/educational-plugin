@@ -11,14 +11,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.checker.TestsOutputParser;
 import com.jetbrains.edu.learning.EduDocumentListener;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.checker.TestsOutputParser;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +55,7 @@ class PySmartChecker {
         }
         final AnswerPlaceholder userAnswerPlaceholder = usersTaskFile.getAnswerPlaceholders().get(placeholder.getIndex());
 
-        EduDocumentListener.runWithListener(project, windowTaskFile, false, windowCopy, document -> {
+        EduDocumentListener.runWithListener(project, windowTaskFile, windowCopy, document -> {
           int start = placeholder.getOffset();
           int end = placeholder.getEndOffset();
           int userStart = userAnswerPlaceholder.getOffset();
@@ -126,7 +126,7 @@ class PySmartChecker {
         return null;
       }
 
-      EduDocumentListener.runWithListener(project, answerTaskFile, false, answerFile, (document -> {
+      EduDocumentListener.runWithListener(project, answerTaskFile, answerFile, (document -> {
         for (AnswerPlaceholder answerPlaceholder : answerTaskFile.getAnswerPlaceholders()) {
           final int start = answerPlaceholder.getOffset();
           final int end = answerPlaceholder.getEndOffset();

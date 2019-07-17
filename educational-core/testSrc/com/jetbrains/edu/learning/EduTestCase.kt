@@ -68,16 +68,23 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
                          CourseraNames.COURSE_TYPE)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
-    createCourse()
 
     val dockManager = DockManager.getInstance(myFixture.project)
     myOldDockContainers = dockManager.containers
     myManager = createFileEditorManager(myFixture.project)
     // Copied from TestEditorManagerImpl's constructor
     myManager.registerExtraEditorDataProvider(TextEditorPsiDataProvider(), null)
-    myOldManager = (myFixture.project as ComponentManagerImpl).registerComponentInstance<FileEditorManager>(FileEditorManager::class.java, myManager)
+    myOldManager = (myFixture.project as ComponentManagerImpl).registerComponentInstance(FileEditorManager::class.java, myManager)
     (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
     CheckActionListener.reset()
+    val connection = project.messageBus.connect(testRootDisposable)
+    connection.subscribe(StudyTaskManager.COURSE_SET, object : CourseSetListener {
+      override fun courseSet(course: Course) {
+        EduDocumentListener.setGlobalListener(project, testRootDisposable)
+        connection.disconnect()
+      }
+    })
+    createCourse()
   }
 
   override fun tearDown() {
@@ -135,9 +142,13 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     taskFile.setText(VfsUtilCore.loadText(file))
 
     FileEditorManager.getInstance(myFixture.project).openFile(file, true)
-    val document = FileDocumentManager.getInstance().getDocument(file)
-    for (placeholder in CCTestCase.getPlaceholders(document, true)) {
-      taskFile.addAnswerPlaceholder(placeholder)
+    try {
+      val document = FileDocumentManager.getInstance().getDocument(file)
+      for (placeholder in CCTestCase.getPlaceholders(document, true)) {
+        taskFile.addAnswerPlaceholder(placeholder)
+      }
+    } finally {
+      FileEditorManager.getInstance(myFixture.project).closeFile(file)
     }
     taskFile.sortAnswerPlaceholders()
   }

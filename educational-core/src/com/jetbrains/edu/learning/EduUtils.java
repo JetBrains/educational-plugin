@@ -630,7 +630,7 @@ public class EduUtils {
       }
       FileDocumentManager.getInstance().saveDocument(document);
       final LightVirtualFile studentFile = new LightVirtualFile("student_task", PlainTextFileType.INSTANCE, document.getText());
-      EduDocumentListener.runWithListener(project, taskFile, false, studentFile, (studentDocument) -> {
+      EduDocumentListener.runWithListener(project, taskFile, studentFile, (studentDocument) -> {
         for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
           placeholder.setPossibleAnswer(studentDocument.getText(TextRange.create(placeholder.getOffset(), placeholder.getEndOffset())));
           replaceAnswerPlaceholder(studentDocument, placeholder);

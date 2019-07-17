@@ -1,11 +1,11 @@
 package com.jetbrains.edu.learning.placeholderDependencies
 
 import com.intellij.openapi.application.runUndoTransparentWriteAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
@@ -18,6 +18,9 @@ import com.jetbrains.edu.learning.courseFormat.ext.placeholderDependencies
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 object PlaceholderDependencyManager {
+
+  private val LOG = Logger.getInstance(PlaceholderDependencyManager::class.java)
+
   @JvmStatic
   fun updateDependentPlaceholders(project: Project, task: Task) {
     if (CCUtils.isCourseCreator(project)) {
@@ -50,18 +53,21 @@ object PlaceholderDependencyManager {
       val replacementText = getReplacementText(project, dependency)
       val placeholderToReplace = dependency.answerPlaceholder
       runUndoTransparentWriteAction {
-        replaceWithListener(project, placeholderToReplace, replacementText)
+        replacePlaceholderText(project, placeholderToReplace, replacementText)
       }
     }
   }
 
-  private fun replaceWithListener(project: Project, placeholderToReplace: AnswerPlaceholder, replacementText: String) {
-    EduDocumentListener.runWithListener(project, placeholderToReplace.taskFile, true) { document ->
-      val startOffset = placeholderToReplace.offset
-      val endOffset = placeholderToReplace.endOffset
-      document.replaceString(startOffset, endOffset, replacementText)
-      placeholderToReplace.isInitializedFromDependency = true
+  private fun replacePlaceholderText(project: Project, placeholderToReplace: AnswerPlaceholder, replacementText: String) {
+    val document = placeholderToReplace.taskFile.getDocument(project)
+    if (document == null) {
+      LOG.error("Failed to find document for `${placeholderToReplace.taskFile.name}`")
+      return
     }
+    val startOffset = placeholderToReplace.offset
+    val endOffset = placeholderToReplace.endOffset
+    document.replaceString(startOffset, endOffset, replacementText)
+    placeholderToReplace.isInitializedFromDependency = true
   }
 
   private fun getReplacementText(project: Project, dependency: AnswerPlaceholderDependency): String {

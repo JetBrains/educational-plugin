@@ -1,30 +1,36 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.editor.impl.event.DocumentEventImpl
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.editor.EduSingleFileEditor
 
 /**
  * Listens changes in study files and updates
  * coordinates of all the placeholders in current task file
  */
-class EduDocumentListener(
-  private val taskFile: TaskFile,
-  private val updateYaml: Boolean
+class EduDocumentListener private constructor(
+  private val project: Project,
+  /**
+   * If [taskFile] is `null` than listener should determine affected task file by [DocumentEvent],
+   * otherwise, it should track changes only in single [Document] related to [taskFile]
+   */
+  private val taskFile: TaskFile?
 ) : DocumentListener {
 
+  private val updateYaml: Boolean = taskFile == null
+
   override fun beforeDocumentChange(e: DocumentEvent) {
+    val taskFile = (taskFile ?: e.taskFile) ?: return
     if (!taskFile.isTrackChanges) {
       return
     }
@@ -32,6 +38,7 @@ class EduDocumentListener(
   }
 
   override fun documentChanged(e: DocumentEvent) {
+    val taskFile = (taskFile ?: e.taskFile) ?: return
     if (!taskFile.isTrackChanges) {
       return
     }
@@ -101,35 +108,40 @@ class EduDocumentListener(
     answerPlaceholder.offset = start
     answerPlaceholder.length = length
     if (updateYaml) {
-      YamlFormatSynchronizer.saveItem(taskFile.task)
+      YamlFormatSynchronizer.saveItem(answerPlaceholder.taskFile.task)
     }
+  }
+
+  private val DocumentEvent.taskFile: TaskFile? get() {
+    val file = FileDocumentManager.getInstance().getFile(document) ?: return null
+    return EduUtils.getTaskFile(project, file)
   }
 
   companion object {
     @JvmOverloads
     @JvmStatic
-    fun runWithListener(
-      project: Project,
-      taskFile: TaskFile,
-      updateYaml: Boolean,
-      file: VirtualFile? = taskFile.getVirtualFile(project),
-      action: (Document) -> Unit
-    ) {
-      if (file == null) return
-      val document = FileDocumentManager.getInstance().getDocument(file) ?: return
-      // EduSingleFileEditor adds own EduDocumentListener on creation
-      val hasListener = FileEditorManager.getInstance(project).getAllEditors(file).any { it is EduSingleFileEditor }
-      val eduDocumentListener = if (!hasListener) EduDocumentListener(taskFile, updateYaml) else null
-      if (eduDocumentListener != null) {
-        document.addDocumentListener(eduDocumentListener)
+    fun setGlobalListener(project: Project, disposable: Disposable = project) {
+      EditorFactory.getInstance().eventMulticaster.addDocumentListener(EduDocumentListener(project, null), disposable)
+    }
+
+    /**
+     * Should be used only when current course doesn't contain task file related to given [file].
+     * For example, when changes are performed on non-physical file.
+     */
+    @JvmStatic
+    fun runWithListener(project: Project, taskFile: TaskFile, file: VirtualFile, action: (Document) -> Unit) {
+      require(EduUtils.getTaskFile(project, file) == null) {
+        "Changes in `${taskFile.name}` should be tracked by global listener"
       }
+      val document = FileDocumentManager.getInstance().getDocument(file) ?: return
+
+      val listener = EduDocumentListener(project, taskFile)
+      document.addDocumentListener(listener)
       try {
         action(document)
       }
       finally {
-        if (eduDocumentListener != null) {
-          document.removeDocumentListener(eduDocumentListener)
-        }
+        document.removeDocumentListener(listener)
       }
     }
   }

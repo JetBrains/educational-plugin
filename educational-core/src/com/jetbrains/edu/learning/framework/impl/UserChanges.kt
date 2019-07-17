@@ -133,11 +133,18 @@ sealed class Change {
         return
       }
 
-      val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
-      if (document == null) {
-        LOG.warn("Can't get document for `$file`")
-      } else {
-        runUndoTransparentWriteAction { document.setText(text) }
+      val taskFile = task.getTaskFile(path) ?: return
+      taskFile.isTrackChanges = false
+      try {
+        val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
+        if (document == null) {
+          LOG.warn("Can't get document for `$file`")
+        }
+        else {
+          runUndoTransparentWriteAction { document.setText(text) }
+        }
+      } finally {
+        taskFile.isTrackChanges = true
       }
     }
 

@@ -56,7 +56,8 @@ public class EduProjectComponent implements ProjectComponent {
       return;
     }
 
-    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+    if (!OpenApiExtKt.isUnitTestMode()) {
+      EduDocumentListener.setGlobalListener(myProject);
       ToolWindowManager.getInstance(myProject).invokeLater(() -> selectProjectView());
     }
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(

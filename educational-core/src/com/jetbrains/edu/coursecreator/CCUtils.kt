@@ -25,9 +25,13 @@ import com.intellij.util.Function
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
@@ -205,15 +209,14 @@ object CCUtils {
   }
 
   private fun initializeTaskFilePlaceholders(project: Project, taskFile: TaskFile) {
-    EduDocumentListener.runWithListener(project, taskFile, false) { document ->
-      taskFile.sortAnswerPlaceholders()
-      for (placeholder in taskFile.answerPlaceholders) {
-        replaceAnswerPlaceholder(document, placeholder)
-      }
-      CommandProcessor.getInstance().executeCommand(project, {
-        runWriteAction { FileDocumentManager.getInstance().saveDocumentAsIs(document) }
-      }, "Create answer document", "Create answer document")
+    val document = taskFile.getDocument(project) ?: return
+    taskFile.sortAnswerPlaceholders()
+    for (placeholder in taskFile.answerPlaceholders) {
+      replaceAnswerPlaceholder(document, placeholder)
     }
+    CommandProcessor.getInstance().executeCommand(project, {
+      runWriteAction { FileDocumentManager.getInstance().saveDocumentAsIs(document) }
+    }, "Create answer document", "Create answer document")
   }
 
   fun replaceAnswerPlaceholder(document: Document, placeholder: AnswerPlaceholder) {

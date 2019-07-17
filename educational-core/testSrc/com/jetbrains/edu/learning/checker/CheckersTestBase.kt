@@ -28,6 +28,7 @@ import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -151,6 +152,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
         myManager = createFileEditorManager(myProject)
         myOldManager = (myProject as ComponentManagerImpl).registerComponentInstance(FileEditorManager::class.java, myManager)
         (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
+        EduDocumentListener.setGlobalListener(myProject, testRootDisposable)
     }
 
     override fun tearDown() {

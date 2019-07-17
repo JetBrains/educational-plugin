@@ -28,6 +28,8 @@ import com.intellij.testFramework.TestActionEvent;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.ui.docking.DockContainer;
 import com.intellij.ui.docking.DockManager;
+import com.intellij.util.messages.MessageBusConnection;
+import com.jetbrains.edu.learning.EduDocumentListener;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.UtilsKt;
@@ -90,6 +92,11 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     myManager.registerExtraEditorDataProvider(new TextEditorPsiDataProvider(), null);
     myOldManager = ((ComponentManagerImpl)myFixture.getProject()).registerComponentInstance(FileEditorManager.class, myManager);
     ((FileEditorProviderManagerImpl)FileEditorProviderManager.getInstance()).clearSelectedProviders();
+    MessageBusConnection connection = getProject().getMessageBus().connect(getTestRootDisposable());
+    connection.subscribe(StudyTaskManager.COURSE_SET, course -> {
+      EduDocumentListener.setGlobalListener(getProject(), getTestRootDisposable());
+      connection.disconnect();
+    });
 
     Course course = new EduCourse();
     course.setName("test course");

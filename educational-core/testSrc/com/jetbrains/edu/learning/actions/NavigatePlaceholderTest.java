@@ -2,10 +2,10 @@ package com.jetbrains.edu.learning.actions;
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.jetbrains.edu.learning.EduTestCase;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ public class NavigatePlaceholderTest extends EduTestCase {
     final int caretOffset = myFixture.getCaretOffset();
     myFixture.testAction(new NextPlaceholderAction());
     assertNotEquals(caretOffset, myFixture.getCaretOffset());
-    assertEquals(44, myFixture.getCaretOffset());
+    assertEquals(37, myFixture.getCaretOffset());
   }
 
   public void testPreviousPlaceholder() {
@@ -63,7 +63,7 @@ public class NavigatePlaceholderTest extends EduTestCase {
     final int caretOffset = myFixture.getCaretOffset();
     myFixture.testAction(new NextPlaceholderAction());
     assertNotEquals(caretOffset, myFixture.getCaretOffset());
-    assertEquals(19, myFixture.getCaretOffset());
+    assertEquals(12, myFixture.getCaretOffset());
   }
 
   public void testNotInPlaceholderPrevious() {
@@ -95,13 +95,12 @@ public class NavigatePlaceholderTest extends EduTestCase {
     Course course = new EduCourse();
     course.setName("Edu test course");
     course.setLanguage(PlainTextLanguage.INSTANCE.getID());
-    StudyTaskManager.getInstance(myFixture.getProject()).setCourse(course);
 
     Lesson lesson1 = createLesson(1, 2);
     Lesson lesson2 = createLesson(2, 3);
     course.addLesson(lesson1);
     course.addLesson(lesson2);
-    course.init(null, null, false);
+    GeneratorUtils.initializeCourse(getProject(), course);
   }
 
   @NotNull

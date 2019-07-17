@@ -10,7 +10,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
@@ -31,10 +30,7 @@ class EduSingleFileEditor(
   override var taskFile: TaskFile
 ) : PsiAwareTextEditorImpl(project, file, TextEditorProvider.getInstance()), EduEditor {
 
-  private val documentListener: EduDocumentListener = EduDocumentListener(taskFile, true)
-
   init {
-    editor.document.addDocumentListener(documentListener)
     validateTaskFile()
   }
 
@@ -80,11 +76,6 @@ class EduSingleFileEditor(
   override fun selectNotify() {
     super.selectNotify()
     PlaceholderDependencyManager.updateDependentPlaceholders(myProject, taskFile.task)
-  }
-
-  override fun dispose() {
-    editor.document.removeDocumentListener(documentListener)
-    super.dispose()
   }
 
   companion object {
