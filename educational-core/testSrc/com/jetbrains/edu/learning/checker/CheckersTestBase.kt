@@ -60,7 +60,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
 
         val exceptions = arrayListOf<AssertionError>()
         for (lesson in myCourse.lessons) {
-            for (task in lesson.getTaskList()) {
+            for (task in lesson.taskList) {
                 try {
                     val taskFile = task.taskFiles.values.first()
                     val virtualFile = taskFile.getVirtualFile(myProject)
@@ -149,7 +149,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
         val dockManager = DockManager.getInstance(myProject)
         myOldDockContainers = dockManager.containers
         myManager = createFileEditorManager(myProject)
-        myOldManager = (myProject as ComponentManagerImpl).registerComponentInstance<FileEditorManager>(FileEditorManager::class.java, myManager)
+        myOldManager = (myProject as ComponentManagerImpl).registerComponentInstance(FileEditorManager::class.java, myManager)
         (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
     }
 

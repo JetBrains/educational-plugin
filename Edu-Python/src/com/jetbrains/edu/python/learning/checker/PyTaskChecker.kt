@@ -5,7 +5,6 @@ import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runUndoTransparentWriteAction
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
@@ -61,9 +60,5 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
       }
       CheckUtils.navigateToFailedPlaceholder(EduState(EduUtils.getSelectedEduEditor(project)), task, taskDir, project)
     }
-  }
-
-  companion object {
-    private val LOG = Logger.getInstance(PyTaskChecker::class.java)
   }
 }

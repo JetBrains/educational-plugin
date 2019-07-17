@@ -6,6 +6,7 @@ import com.jetbrains.edu.rust.RsCourseBuilder
 import com.jetbrains.edu.rust.RsProjectSettings
 import org.rust.cargo.toolchain.RustToolchain
 
+// This test runs only when Rust toolchain is found.
 abstract class RsCheckersTestBase : CheckersTestBase<RsProjectSettings>() {
 
   private val toolchain = RustToolchain.suggest()
