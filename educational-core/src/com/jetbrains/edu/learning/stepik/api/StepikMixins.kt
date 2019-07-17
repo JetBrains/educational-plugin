@@ -54,6 +54,7 @@ const val FILES = "files"
 const val CHOICE_VARIANTS = "choice_variants"
 const val IS_MULTICHOICE = "is_multichoice"
 const val SELECTED_VARIANTS = "selected_variants"
+const val CUSTOM_NAME = "custom_name"
 private const val TASK_TYPE = "task_type"
 
 abstract class StepikEduCourseMixin {

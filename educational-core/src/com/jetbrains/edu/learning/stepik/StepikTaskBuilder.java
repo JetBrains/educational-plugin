@@ -260,6 +260,7 @@ public class StepikTaskBuilder {
     task.setUpdateDate(myStepSource.getUpdateDate());
 
     if (stepOptions != null) {
+      task.setCustomPresentableName(stepOptions.getCustomPresentableName());
       if (!myStep.getText().isEmpty()) {
         task.setDescriptionText(myStep.getText());
       }

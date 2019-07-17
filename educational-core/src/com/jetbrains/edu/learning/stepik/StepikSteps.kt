@@ -133,6 +133,9 @@ open class PyCharmStepOptions : StepOptions {
   @JsonProperty(FORMAT_VERSION)
   var formatVersion = JSON_FORMAT_VERSION
 
+  @JsonProperty(CUSTOM_NAME)
+  var customPresentableName: String? = null
+
   constructor()
 
   constructor(project: Project, task: Task) {
@@ -144,6 +147,7 @@ open class PyCharmStepOptions : StepOptions {
     taskType = task.itemType
     lessonType = if (task.lesson is FrameworkLesson) FRAMEWORK else null
     myFeedbackLink = task.feedbackLink
+    customPresentableName = task.presentableName
   }
 
   private fun setTaskFiles(project: Project, task: Task) {
@@ -200,11 +204,15 @@ class ChoiceStepOptions : StepOptions {
   @JsonProperty(OPTIONS)
   var options = emptyList<ChoiceStepOption>()
 
+  @JsonProperty(CUSTOM_NAME)
+  var customPresentableName: String? = null
+
   constructor()
 
   constructor(task: ChoiceTask) {
     isMultipleChoice = task.isMultipleChoice
     sampleSize = task.choiceOptions.size
+    customPresentableName = task.presentableName
     options = task.choiceOptions.map {
       val option = ChoiceStepOption()
       option.text = it.text
