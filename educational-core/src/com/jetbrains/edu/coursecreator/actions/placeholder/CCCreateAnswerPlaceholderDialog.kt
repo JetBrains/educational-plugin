@@ -10,6 +10,7 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderPanel.Companion.PLACEHOLDER_PANEL_WIDTH
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -26,7 +27,7 @@ open class CCCreateAnswerPlaceholderDialog(
 ) : DialogWrapper(project, true) {
 
   private val panel: CCAddAnswerPlaceholderPanel = CCAddAnswerPlaceholderPanel(placeholder.placeholderText ?: "type here")
-  private val dependencyPathField: JBTextField = JBTextField(50)
+  private val dependencyPathField: JBTextField = JBTextField(0)
   private val visibilityCheckBox: JBCheckBox = JBCheckBox("Visible", placeholder.placeholderDependency?.isVisible == true)
   private val pathLabel: JLabel = JLabel("[sectionName#]lessonName#taskName#filePath#placeholderIndex")
   private val isFirstTask: Boolean = placeholder.taskFile.task.isFirstInCourse
@@ -57,11 +58,14 @@ open class CCCreateAnswerPlaceholderDialog(
       if (placeholder.placeholderDependency != null) {
         decorator.setOn(true)
         dependencyPathField.text = placeholder.placeholderDependency?.toString()
+        panel.preferredSize = JBUI.size(PLACEHOLDER_PANEL_WIDTH, 230)
       }
 
       dependencyPanel.alignmentX = Component.LEFT_ALIGNMENT
       contentPanel.maximumSize = JBUI.size(Int.MAX_VALUE, 0)
-      panel.add(dependencyPanel)
+      dependencyPathField.minimumSize = JBUI.size(PLACEHOLDER_PANEL_WIDTH, 0)
+      panel.add(dependencyPanel, BorderLayout.SOUTH)
+      panel.minimumSize = JBUI.size(PLACEHOLDER_PANEL_WIDTH, 130)
     }
     return panel
   }
