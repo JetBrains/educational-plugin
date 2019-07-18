@@ -57,6 +57,21 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
           }
         """)
       }
+      // handle case when task module contains `(` or `)`
+      eduTask("compilationError()") {
+        kotlinTaskFile("src/Task.kt", "fun foo(): Int = aaa")
+        kotlinTaskFile("test/Tests.kt", """
+          import org.junit.Assert
+          import org.junit.Test
+
+          class Test {
+              @Test
+              fun testSolution() {
+                  Assert.assertTrue("foo() should return 42", foo() == 42)
+              }
+          }
+        """)
+      }
       eduTask("testFail") {
         kotlinTaskFile("src/Task.kt", """
           fun foo(): Int = 43
@@ -166,7 +181,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals(CheckStatus.Failed, checkResult.status)
       val (messageMatcher, diffMatcher) = when (task.name) {
-        "kotlinCompilationError", "javaCompilationError" ->
+        "kotlinCompilationError", "javaCompilationError", "compilationError()" ->
           equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE) to nullValue()
         "testFail" ->
           equalTo("foo() should return 42") to nullValue()

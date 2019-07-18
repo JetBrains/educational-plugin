@@ -1,5 +1,6 @@
+// Should be the same as `com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.sanitizeName`
 static String sanitizeName(String name) {
-    return name.replaceAll("[ /\\\\:<>\"?*|]", "_")
+    return name.replaceAll("[ /\\\\:<>\"?*|()]", "_")
 }
 
 rootProject.name = '${PROJECT_NAME}'

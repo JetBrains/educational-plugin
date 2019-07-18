@@ -56,7 +56,7 @@ class KtCheckersTest : KtCheckersTestBase() {
         """)
         taskFile("test/output.txt", "OK")
       }
-      outputTask("OutputTask:With;Special&Symbols?") {
+      outputTask("OutputTask:With;Special&Symbols?()") {
         kotlinTaskFile("src/Task.kt", """
           fun main(args: Array<String>) {
               println("OK")

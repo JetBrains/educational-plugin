@@ -286,6 +286,7 @@ object GeneratorUtils {
 
   private val INVALID_SYMBOLS = "[ /\\\\:<>\"?*|()]".toRegex()
 
+  // Should be the same as `sanitizeName` in `resources/fileTemplates/internal/settings.gradle.ft`
   /**
    * Replaces ' ', '/', '\', ':', '<', '>', '"', '?', '*', '|', '(', ')' symbols with '_' as they are invalid in gradle module names
    */
