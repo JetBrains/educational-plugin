@@ -10,11 +10,14 @@ class To16VersionXmlConverter : BaseXmlConverter() {
   override fun convertTaskElement(task: Element) {
     val taskFiles = getChildMap<String, Element>(task, FILES)
     for (taskFile in taskFiles.values) {
-      taskFile.removeContent(getChildWithName(taskFile, TRACK_LENGTH))
+      taskFile.removeContent(getChildWithName(taskFile, TRACK_LENGTH, true))
 
-      val answerPlaceholders = getChildList(taskFile, ANSWER_PLACEHOLDERS)
+      val answerPlaceholders = getChildList(taskFile, ANSWER_PLACEHOLDERS, true)
+      if (answerPlaceholders == null) {
+        return
+      }
       for (placeholder in answerPlaceholders) {
-        placeholder.removeContent(getChildWithName(placeholder, USE_LENGTH))
+        placeholder.removeContent(getChildWithName(placeholder, USE_LENGTH, true))
 
         if (!convertPlaceholdersLength) continue
         val length = getChildWithName(placeholder, LENGTH)

@@ -63,6 +63,9 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
   fun test15to16() = doTest(15)
   fun test15to16Student() = doTest(15)
 
+  // EDU-2239 test files without useLength, placeholders fields due to 12to13 migration
+  fun test15to16TestFiles() = doTest(15)
+
   private fun doTest(version: Int) {
     val name = getTestName(true)
     val before = Paths.get(testDataPath).resolve("$name.xml")
