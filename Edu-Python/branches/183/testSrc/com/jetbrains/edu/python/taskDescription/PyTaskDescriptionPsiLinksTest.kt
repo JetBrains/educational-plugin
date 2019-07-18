@@ -11,57 +11,57 @@ class PyTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
   fun `test navigate to class`() = doTest("bar.Bar", """
       class <caret>Bar:
           def bar(self):
-              print "Bar"
+              pass
   """) {
     python("foo.py", """
         class Foo:
             def foo(self):
-                print "Foo"
+                pass
     """)
     python("bar.py", """
         class Bar:
             def bar(self):
-                print "Bar"
+                pass
     """)
   }
 
   fun `test navigate to method`() = doTest("foo.Foo#foo", """
       class Foo:
           def <caret>foo(self):
-              print "Foo"
+              pass
   """) {
     python("foo.py", """
         class Foo:
             def foo(self):
-                print "Foo"
+                pass
     """)
     python("bar.py", """
         class Bar:
             def bar(self):
-                print "Bar"
+                pass
     """)
   }
 
   fun `test navigate to function`() = doTest("baz", """
       class Bar:
           def bar(self):
-              print "Bar"
+              pass
 
       def <caret>baz():
-          print "baz"
+          pass
   """) {
     python("foo.py", """
         class Foo:
             def foo(self):
-                print "Foo"
+                pass
     """)
     python("bar.py", """
         class Bar:
             def bar(self):
-                print "Bar"
+                pass
 
         def baz():
-            print "baz"
+            pass
     """)
   }
 }
