@@ -63,6 +63,7 @@ private const val COURSE_TYPE = "course_type"
 private const val ADDITIONAL_FILES = "additional_files"
 private const val ENVIRONMENT = "environment"
 private const val SUBMIT_MANUALLY = "submit_manually"
+private const val CUSTOM_NAME = "custom_name"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS)
@@ -167,6 +168,10 @@ abstract class LocalTaskMixin {
 
   @JsonProperty(FEEDBACK_LINK)
   private lateinit var myFeedbackLink: FeedbackLink
+
+  @JsonProperty(CUSTOM_NAME)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private var myCustomPresentableName: String? = null
 
   @JsonProperty(TASK_TYPE)
   fun getItemType(): String {

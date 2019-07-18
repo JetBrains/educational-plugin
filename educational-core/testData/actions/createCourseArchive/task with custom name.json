@@ -1,0 +1,34 @@
+{
+  "summary" : "my summary",
+  "title" : "Test Course",
+  "programming_language" : "TEXT",
+  "language" : "en",
+  "course_type" : "PyCharm",
+  "items" : [
+    {
+      "title" : "lesson1",
+      "task_list" : [
+        {
+          "name" : "task1",
+          "custom_name" : "custom name",
+          "files" : {
+            "taskFile1.txt" : {
+              "name" : "taskFile1.txt",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : ""
+            }
+          },
+          "description_text" : "solve task",
+          "description_format" : "HTML",
+          "feedback_link" : {
+            "link_type" : "STEPIK"
+          },
+          "task_type" : "edu"
+        }
+      ],
+      "type" : "lesson"
+    }
+  ],
+  "version" : 11
+}

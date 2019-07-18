@@ -213,6 +213,23 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     assertEquals(expectedCourseJson, generatedJsonFile)
   }
 
+  fun `test task with custom name`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+    }
+    course.description = "my summary"
+    val task = course.lessons.first().taskList.first()
+    task.customPresentableName = "custom name"
+
+    val generatedJsonFile = generateJson()
+    val expectedCourseJson = loadExpectedJson()
+    assertEquals(expectedCourseJson, generatedJsonFile)
+  }
+
   private fun loadExpectedJson(): String {
     val fileName = getTestFile()
     return FileUtil.loadFile(File(testDataPath, fileName))
