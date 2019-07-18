@@ -9,10 +9,6 @@
       "type": "string",
       "enum": ["lesson", "framework"]
     },
-    "custom_name": {
-      "description": "Custom name for the lesson if it differs from its folder name",
-      "type": "string"
-    },
     "content": {
       "description": "Folder names of tasks included in the section",
       "type": "array",

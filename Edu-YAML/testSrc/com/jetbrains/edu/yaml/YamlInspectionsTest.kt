@@ -36,7 +36,6 @@ class YamlInspectionsTest : YamlCodeInsightTest() {
     }
 
     testHighlighting(getCourse().items[0], """
-      |custom_name: "my awesome : section"
       |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
       |content:
       |- lesson1
@@ -51,7 +50,6 @@ class YamlInspectionsTest : YamlCodeInsightTest() {
     }
 
     testHighlighting(getCourse().items[0], """
-      |custom_name: "my awesome : lesson"
       |type: framework
       |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
       |content:
