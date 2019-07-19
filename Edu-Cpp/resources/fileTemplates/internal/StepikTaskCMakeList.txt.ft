@@ -4,4 +4,4 @@ project(${PROJECT_NAME})
 set(CMAKE_CXX_STANDARD ${CPP_STANDARD})
 
 add_executable(${PROJECT_NAME}
-        src/task.cpp)
+    src/task.cpp)

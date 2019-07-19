@@ -36,16 +36,15 @@ private val cMakeMinimumRequired: String by lazy {
 }
 
 /**
- *  [cMakeProjectName] — name of the CMake project that will be specified there
- *  [cppStandard] — if not null, used as version of language that will be specified in CMake, else will be omitted at all.
- *    Don't specify this parameter if only it doesn't used in template.
+ * By default, adds only CMake minimum required line.
+ * When some parameter is not null it will be used how parameter, otherwise parameter will be ignored at all.
+ * Omits parameters if only they aren't used in the template!
  */
-fun getCMakeTemplateVariables(cMakeProjectName: String, cppStandard: String? = null): Map<String, Any> {
-  val values = mutableMapOf(CMAKE_MINIMUM_REQUIRED_LINE to cMakeMinimumRequired,
-                            EduNames.PROJECT_NAME to cMakeProjectName)
-  if (cppStandard != null) {
-    values[CPP_STANDARD_LINE] = cppStandard
-  }
+fun getCMakeTemplateVariables(cMakeProjectName: String? = null, cppStandard: String? = null): Map<String, Any> {
+  val values = mutableMapOf(CMAKE_MINIMUM_REQUIRED_LINE to cMakeMinimumRequired)
+
+  if (cMakeProjectName != null) values[EduNames.PROJECT_NAME] = cMakeProjectName
+  if (cppStandard != null) values[CPP_STANDARD_LINE] = cppStandard
 
   return values
 }
@@ -62,7 +61,7 @@ fun addCMakeList(task: Task, cppStandard: String): TaskFile {
   return taskFile
 }
 
-private fun getCMakeProjectUniqueName(task: Task): String {
+fun getCMakeProjectUniqueName(task: Task): String {
   val lesson = task.lesson
   val section = lesson.section
 

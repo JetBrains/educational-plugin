@@ -9,10 +9,15 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
+  private val EDU_MAIN_CPP = "main.cpp"
+
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CppProjectSettings>? =
     CppCourseProjectGenerator(this, course)
 
@@ -24,6 +29,8 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
   override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     super.initNewTask(project, lesson, task, info)
     addCMakeList(task, languageSettings.settings.languageStandard)
+    task.addTaskFile(TaskFile("${task.sourceDir}/${EDU_MAIN_CPP}",
+                              GeneratorUtils.getInternalTemplateText(EDU_MAIN_CPP)))
   }
 
   override fun refreshProject(project: Project) {

@@ -1,0 +1,7 @@
+\#include<iostream>
+
+int main() {
+    // Check your program here.
+    std::cout << "Hello edu!" << std::endl;
+    return 0;
+}

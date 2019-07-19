@@ -63,11 +63,12 @@ function(get_dirs_with_cmakelists root_dir return_dirs)
     set(${return_dirs} ${dir_list} PARENT_SCOPE)
 endfunction()
 
-set(CMAKE_BUILD_PREFIX "cmake-build-")
+set(GTEST_DIR_PREFIX "googletest")
 
 get_dirs_with_cmakelists(${CMAKE_CURRENT_SOURCE_DIR} dirs)
 foreach (dir ${dirs})
-    string(FIND "${dir}" "${CMAKE_BUILD_PREFIX}" out)
+    # Ignore CMakeList.txt files from "googletest*" dirs
+    string(FIND "${dir}" "${GTEST_DIR_PREFIX}" out)
     if ("${out}" EQUAL -1)
         add_subdirectory(${dir})
     endif ()

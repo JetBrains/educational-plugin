@@ -12,8 +12,15 @@ set(TEST
         test/test.cpp)
 
 
-add_executable(${PROJECT_NAME}
+# Customize student-run target.
+add_executable(${PROJECT_NAME}-src
+        ${SOURCE}
+        src/main.cpp)
+
+
+# Customize test target.
+add_executable(${PROJECT_NAME}-test
         ${SOURCE}
         ${TEST})
 
-target_link_libraries(${PROJECT_NAME} gtest_main)
+target_link_libraries(${PROJECT_NAME}-test gtest_main)

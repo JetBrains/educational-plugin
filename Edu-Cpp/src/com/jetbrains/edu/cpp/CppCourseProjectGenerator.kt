@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.stepik.course.StepikCourse
 
 class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   CourseProjectGenerator<CppProjectSettings>(builder, course) {
@@ -38,6 +39,12 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     val mainCMakeTemplateVariables = getCMakeTemplateVariables(FileUtil.sanitizeFileName(baseDir.name))
     GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME,
                                    GeneratorUtils.getInternalTemplateText(mainCMakeTemplateName, mainCMakeTemplateVariables))
+
+    if (myCourse !is StepikCourse) {
+      GeneratorUtils.createChildFile(baseDir, "${CMakeListsFileType.FILE_NAME}.in",
+                                     GeneratorUtils.getInternalTemplateText(getCppParameters(myCourse).initCMakeList,
+                                                                            getCMakeTemplateVariables()))
+    }
   }
 
   private fun updateTasks(item: StudyItem, project: Project, projectSettings: CppProjectSettings) {

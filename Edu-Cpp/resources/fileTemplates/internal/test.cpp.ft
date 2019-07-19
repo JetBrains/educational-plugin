@@ -1,3 +1,10 @@
 \#include <gtest/gtest.h>
 
-// Add tests here
+// Headers of objects that student should realize:
+char *example();
+
+
+// Tests:
+TEST(TEST_SUITE_NAME, TEST_NAME) {
+    ASSERT_EQ(example(), "expected answer");
+}
