@@ -38,10 +38,12 @@ import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
 public class StepikTaskBuilder {
   private static final Logger LOG = Logger.getInstance(StepikTaskBuilder.class);
   private final StepSource myStepSource;
+  private final String myCourseType;
+  private final String myCourseEnvironment;
+  private final Language myLanguage;
   private Step myStep;
   private int myStepId;
   private int myUserId;
-  private final Course myCourse;
   private final Lesson myLesson;
   private final Map<String, Function<String, Task>> stepikTaskTypes = ImmutableMap.<String, Function<String, Task>>builder()
     .put("code", this::codeTask)
@@ -98,7 +100,9 @@ public class StepikTaskBuilder {
     myStepId = stepId;
     myUserId = userId;
     myLesson = lesson;
-    myCourse = course;
+    myCourseType = course.getItemType();
+    myLanguage = course.getLanguageById();
+    myCourseEnvironment = course.getEnvironment();
   }
 
   @Nullable
@@ -141,7 +145,7 @@ public class StepikTaskBuilder {
           .append("s</font>").append("<br><br>");
       }
 
-      if (myCourse.getLanguageById().isKindOf(EduNames.PYTHON) && options.getSamples() != null) {
+      if (myLanguage.isKindOf(EduNames.PYTHON) && options.getSamples() != null) {
         createTestFileFromSamples(task, options.getSamples());
       }
       final String templateForTask = getCodeTemplateForTask(options.getCodeTemplates());
@@ -320,9 +324,8 @@ public class StepikTaskBuilder {
   }
 
   private void createMockTaskFile(@NotNull Task task, @NotNull String comment, @Nullable String codeTemplate) {
-    final Language language = myCourse.getLanguageById();
     final EduConfigurator<?> configurator =
-      EduConfiguratorManager.findConfigurator(myCourse.getItemType(), myCourse.getEnvironment(), language);
+      EduConfiguratorManager.findConfigurator(myCourseType, myCourseEnvironment, myLanguage);
 
     final StepOptions options = myStep.getOptions();
     if (options instanceof PyCharmStepOptions) {
@@ -337,7 +340,7 @@ public class StepikTaskBuilder {
     StringBuilder editorTextBuilder = new StringBuilder();
 
     if (codeTemplate == null) {
-      Commenter commenter = LanguageCommenters.INSTANCE.forLanguage(language);
+      Commenter commenter = LanguageCommenters.INSTANCE.forLanguage(myLanguage);
       if (commenter != null) {
         String commentPrefix = commenter.getLineCommentPrefix();
         if (commentPrefix != null) {
@@ -373,8 +376,7 @@ public class StepikTaskBuilder {
   }
 
   private String getCodeTemplateForTask(@Nullable Map codeTemplates) {
-    final Language language = myCourse.getLanguageById();
-    final String languageString = getLanguageName(language);
+    final String languageString = getLanguageName(myLanguage);
     if (languageString != null && codeTemplates != null) {
       return (String)codeTemplates.get(languageString);
     }
