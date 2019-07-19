@@ -41,10 +41,8 @@ public class StepikTaskBuilder {
   private Step myStep;
   private int myStepId;
   private int myUserId;
-  private final Language myLanguage;
+  private final Course myCourse;
   private final Lesson myLesson;
-  @Nullable
-  private final EduConfigurator<?> myConfigurator;
   private final Map<String, Function<String, Task>> stepikTaskTypes = ImmutableMap.<String, Function<String, Task>>builder()
     .put("code", this::codeTask)
     .put("choice", this::choiceTask)
@@ -99,12 +97,8 @@ public class StepikTaskBuilder {
     myStep = stepSource.getBlock();
     myStepId = stepId;
     myUserId = userId;
-    myLanguage = course.getLanguageById();
     myLesson = lesson;
-    myConfigurator = EduConfiguratorManager.findConfigurator(course.getItemType(), course.getEnvironment(), myLanguage);
-    if (myConfigurator == null) {
-      LOG.warn("Cannot get configurator for a language: " + myLanguage);
-    }
+    myCourse = course;
   }
 
   @Nullable
@@ -147,10 +141,10 @@ public class StepikTaskBuilder {
           .append("s</font>").append("<br><br>");
       }
 
-      if (myLanguage.isKindOf(EduNames.PYTHON) && options.getSamples() != null) {
+      if (myCourse.getLanguageById().isKindOf(EduNames.PYTHON) && options.getSamples() != null) {
         createTestFileFromSamples(task, options.getSamples());
       }
-      final String templateForTask = getCodeTemplateForTask(myLanguage, options.getCodeTemplates());
+      final String templateForTask = getCodeTemplateForTask(options.getCodeTemplates());
       createMockTaskFile(task, "write your answer here \n", templateForTask);
     }
 
@@ -326,6 +320,10 @@ public class StepikTaskBuilder {
   }
 
   private void createMockTaskFile(@NotNull Task task, @NotNull String comment, @Nullable String codeTemplate) {
+    final Language language = myCourse.getLanguageById();
+    final EduConfigurator<?> configurator =
+      EduConfiguratorManager.findConfigurator(myCourse.getItemType(), myCourse.getEnvironment(), language);
+
     final StepOptions options = myStep.getOptions();
     if (options instanceof PyCharmStepOptions) {
       final List<TaskFile> taskFiles = ((PyCharmStepOptions)options).getFiles();
@@ -339,7 +337,7 @@ public class StepikTaskBuilder {
     StringBuilder editorTextBuilder = new StringBuilder();
 
     if (codeTemplate == null) {
-      Commenter commenter = LanguageCommenters.INSTANCE.forLanguage(myLanguage);
+      Commenter commenter = LanguageCommenters.INSTANCE.forLanguage(language);
       if (commenter != null) {
         String commentPrefix = commenter.getLineCommentPrefix();
         if (commentPrefix != null) {
@@ -347,8 +345,8 @@ public class StepikTaskBuilder {
         }
       }
 
-      if (myConfigurator != null) {
-        editorTextBuilder.append("\n").append(myConfigurator.getMockTemplate());
+      if (configurator != null) {
+        editorTextBuilder.append("\n").append(configurator.getMockTemplate());
       }
     }
     else {
@@ -356,7 +354,7 @@ public class StepikTaskBuilder {
     }
 
     String editorText = editorTextBuilder.toString();
-    String taskFilePath = getTaskFilePath(editorText);
+    String taskFilePath = getTaskFilePath(editorText, configurator);
     if (taskFilePath == null) return;
 
     final TaskFile taskFile = new TaskFile();
@@ -366,15 +364,16 @@ public class StepikTaskBuilder {
   }
 
   @Nullable
-  private String getTaskFilePath(String editorText) {
-    if (myConfigurator == null) return null;
+  private String getTaskFilePath(String editorText, EduConfigurator<?> configurator) {
+    if (configurator == null) return null;
 
-    String fileName = myConfigurator.getMockFileName(editorText);
+    String fileName = configurator.getMockFileName(editorText);
     if (fileName == null) return null;
-    return GeneratorUtils.joinPaths(myConfigurator.getSourceDir(), fileName);
+    return GeneratorUtils.joinPaths(configurator.getSourceDir(), fileName);
   }
 
-  private String getCodeTemplateForTask(@NotNull Language language, @Nullable Map codeTemplates) {
+  private String getCodeTemplateForTask(@Nullable Map codeTemplates) {
+    final Language language = myCourse.getLanguageById();
     final String languageString = getLanguageName(language);
     if (languageString != null && codeTemplates != null) {
       return (String)codeTemplates.get(languageString);
