@@ -60,7 +60,7 @@ public class CCStepikConnector {
     });
   }
 
-  public static void postCourse(@NotNull final Project project, @NotNull EduCourse course) {
+  private static void postCourse(@NotNull final Project project, @NotNull EduCourse course) {
     final StepikUser user = EduSettings.getInstance().getUser();
     if (user == null) {
       // we check that user isn't null before `postCourse` call

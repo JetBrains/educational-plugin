@@ -77,11 +77,7 @@ public class EduCourse extends Course {
   }
 
   private void updateType(String language) {
-    final int languageSeparator = myType.indexOf(" ");
-    String formatVersion = String.valueOf(EduVersions.JSON_FORMAT_VERSION);
-    if (languageSeparator != -1) {
-      formatVersion = myType.substring(StepikNames.PYCHARM_PREFIX.length(), languageSeparator);
-    }
+    int formatVersion = getFormatVersion();
 
     String environment = getEnvironment();
     if (!environment.equals(EduNames.DEFAULT_ENVIRONMENT)) {
@@ -90,6 +86,19 @@ public class EduCourse extends Course {
     else {
       setType(String.format("%s%s %s", StepikNames.PYCHARM_PREFIX, formatVersion, language));
     }
+  }
+
+  public int getFormatVersion() {
+    final int languageSeparator = myType.indexOf(" ");
+    if (languageSeparator != -1) {
+      String formatVersion = myType.substring(StepikNames.PYCHARM_PREFIX.length(), languageSeparator);
+      try {
+        return Integer.parseInt(formatVersion);
+      } catch(NumberFormatException | NullPointerException e) {
+        return EduVersions.JSON_FORMAT_VERSION;
+      }
+    }
+    return EduVersions.JSON_FORMAT_VERSION;
   }
 
   public void setType(String type) {

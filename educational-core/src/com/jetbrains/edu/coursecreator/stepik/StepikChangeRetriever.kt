@@ -121,7 +121,8 @@ class StepikChangeRetriever(private val project: Project, course: EduCourse, pri
     return course.name != remoteCourse.name ||
            course.description != remoteCourse.description ||
            course.humanLanguage != remoteCourse.humanLanguage ||
-           course.languageID != remoteCourse.languageID
+           course.languageID != remoteCourse.languageID ||
+           course.formatVersion != remoteCourse.formatVersion
   }
 
   private fun additionalFilesChanged(course: EduCourse, remoteCourse: EduCourse, project: Project): Boolean {
