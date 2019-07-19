@@ -45,8 +45,8 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
 
   private fun createCourse(lessonId: String) {
     val course = HyperskillCourse()
-    val lesson = StepikConnector.getLesson(Integer.valueOf(lessonId)) ?: return
-    val allStepSources = StepikConnector.getStepSources(lesson.steps)
+    val lesson = StepikConnector.getInstance().getLesson(Integer.valueOf(lessonId)) ?: return
+    val allStepSources = StepikConnector.getInstance().getStepSources(lesson.steps)
     val tasks = StepikCourseLoader.getTasks(course, lesson, allStepSources)
     for (task in tasks) {
       lesson.addTask(task)

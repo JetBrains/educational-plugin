@@ -112,7 +112,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
       boolean success = updateLesson(project, lesson, true, -1);
       if (success) {
         final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
-        StepikConnector.updateLessonAttachment(additionalFiles, lesson.getId());
+        StepikConnector.getInstance().updateLessonAttachment(additionalFiles, lesson.getId());
         showNotification(project, "Hyperskill lesson updated", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.getId()));
       }
       else {
@@ -122,7 +122,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
     else {
       CCStepikConnector.postLesson(project, lesson, lesson.getIndex(), -1);
       final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
-      StepikConnector.postAttachment(additionalFiles, null, lesson.getId());
+      StepikConnector.getInstance().postAttachment(additionalFiles, null, lesson.getId());
       showNotification(project, "Lesson uploaded", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.getId()));
     }
   }

@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.fillItems
 import java.util.*
 
@@ -26,7 +26,7 @@ fun EduCourse.isUpToDate(): Boolean {
     return true
   }
 
-  val courseInfo = getCourseInfo(id) ?: return true
+  val courseInfo = StepikConnector.getInstance().getCourseInfo(id) ?: return true
   courseInfo.language = language
   return isUpToDate(courseInfo)
 }

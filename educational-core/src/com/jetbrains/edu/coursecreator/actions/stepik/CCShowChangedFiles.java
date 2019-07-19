@@ -50,7 +50,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
     ProgressManager.getInstance().run(new Modal(project, "Computing Changes", false) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        EduCourse remoteCourse = StepikConnector.getCourseInfo(course.getId());
+        EduCourse remoteCourse = StepikConnector.getInstance().getCourseInfo(course.getId());
         if (remoteCourse == null) {
           return;
         }

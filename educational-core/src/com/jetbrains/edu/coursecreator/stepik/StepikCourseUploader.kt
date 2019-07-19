@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 class StepikCourseUploader(val project: Project, val course: EduCourse) {
 
   fun updateCourse() {
-    val remoteCourse = StepikConnector.getCourseInfo(course.id) ?: return
+    val remoteCourse = StepikConnector.getInstance().getCourseInfo(course.id) ?: return
     StepikCourseLoader.loadCourseStructure(remoteCourse)
     remoteCourse.init(null, null, false)
     pushChanges(remoteCourse)
@@ -55,7 +55,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     var success = true
 
     if (changedItems.isTopLevelSectionRemoved) {
-      StepikConnector.deleteSection(course.sectionIds[0])
+      StepikConnector.getInstance().deleteSection(course.sectionIds[0])
       course.sectionIds = emptyList()
     }
 
@@ -75,7 +75,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
 
     // delete old section
     changedItems.sectionsToDelete.forEach {
-      StepikConnector.deleteSection(it.id)
+      StepikConnector.getInstance().deleteSection(it.id)
     }
 
     // post new section
@@ -98,8 +98,8 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
 
     // delete old lesson
     changedItems.lessonsToDelete.forEach {
-      StepikConnector.deleteLesson(it.id)
-      StepikConnector.deleteUnit(it.unitId)
+      StepikConnector.getInstance().deleteLesson(it.id)
+      StepikConnector.getInstance().deleteUnit(it.unitId)
     }
 
     // post new lesson
@@ -123,7 +123,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
 
     // delete old task
     changedItems.tasksToDelete.forEach {
-      StepikConnector.deleteTask(it.id)
+      StepikConnector.getInstance().deleteTask(it.id)
     }
 
     // post new task

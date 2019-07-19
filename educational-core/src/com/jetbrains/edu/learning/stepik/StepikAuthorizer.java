@@ -55,7 +55,7 @@ public class StepikAuthorizer {
   }
 
   private static String codeHandler(@NotNull String code, @NotNull String redirectUri) {
-    final boolean success = StepikConnector.login(code, redirectUri);
+    final boolean success = StepikConnector.getInstance().login(code, redirectUri);
     return success ? null : "Couldn't get user info";
   }
 

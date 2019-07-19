@@ -39,7 +39,7 @@ class StepikTaskBuilderTest : EduTestCase() {
   private inline fun <reified T : Task> doTest(language: Language) {
     val response = loadResponse()
 
-    val mapper = StepikConnector.objectMapper
+    val mapper = StepikConnector.getInstance().objectMapper
     val stepSource = mapper.readValue(response, StepsList::class.java).steps[0]
 
     val course = EduCourse()

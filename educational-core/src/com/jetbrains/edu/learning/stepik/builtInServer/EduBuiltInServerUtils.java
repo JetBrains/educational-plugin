@@ -176,7 +176,7 @@ public class EduBuiltInServerUtils {
     ApplicationManager.getApplication().invokeLater(() -> ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
       execCancelable(() -> {
-        EduCourse course = StepikConnector.getCourseInfo(courseId, true);
+        EduCourse course = StepikConnector.getInstance().getCourseInfo(courseId, true);
         showDialog(course, stepId);
         return null;
       });

@@ -55,16 +55,16 @@ private fun markStepAsViewed(lessonId: Int, stepId: Int) {
   if (lessonId == 0 || stepId == 0) {
     return
   }
-  val unit = StepikConnector.getLessonUnit(lessonId)
+  val unit = StepikConnector.getInstance().getLessonUnit(lessonId)
   val assignmentsIds = unit?.assignments
   if (assignmentsIds == null || assignmentsIds.isEmpty()) {
     LOG.warn("No assignment ids in unit ${unit?.id}")
     return
   }
-  val assignments = StepikConnector.getAssignments(assignmentsIds)
+  val assignments = StepikConnector.getInstance().getAssignments(assignmentsIds)
   assignments
     .filter { it.step == stepId }
-    .forEach { StepikConnector.postView(it.id, stepId) }
+    .forEach { StepikConnector.getInstance().postView(it.id, stepId) }
 }
 
 fun loadAttachment(course: Course, lesson: Lesson?) : List<TaskFile> {

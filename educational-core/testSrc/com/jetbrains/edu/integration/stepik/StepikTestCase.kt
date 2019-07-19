@@ -66,7 +66,7 @@ abstract class StepikTestCase : EduTestCase() {
   private fun login(tokenInfo: TokenInfo): StepikUser {
     val user = StepikUser(tokenInfo)
 
-    val currentUser = StepikConnector.getCurrentUserInfo(user)
+    val currentUser = StepikConnector.getInstance().getCurrentUserInfo(user)
     if (currentUser != null) {
       user.userInfo = currentUser
     }
@@ -111,7 +111,7 @@ abstract class StepikTestCase : EduTestCase() {
   }
 
   fun checkCourseUploaded(course: EduCourse) {
-    val uploadedCourse = StepikConnector.getCourseInfo(course.id, true)
+    val uploadedCourse = StepikConnector.getInstance().getCourseInfo(course.id, true)
     assertNotNull("Uploaded course not found among courses available to instructor", uploadedCourse)
     println("Course with id ${(uploadedCourse as EduCourse).id} was uploaded successfully")
   }
@@ -150,7 +150,7 @@ abstract class StepikTestCase : EduTestCase() {
     val responseString = if (responseEntity != null) EntityUtils.toString(responseEntity) else ""
     EntityUtils.consume(responseEntity)
     if (statusLine.statusCode == HttpStatus.SC_OK) {
-      return StepikConnector.objectMapper.readValue(responseString, TokenInfo::class.java)
+      return StepikConnector.getInstance().objectMapper.readValue(responseString, TokenInfo::class.java)
     }
     else {
       LOG.warn("Failed to get tokens: " + statusLine.statusCode + statusLine.reasonPhrase)

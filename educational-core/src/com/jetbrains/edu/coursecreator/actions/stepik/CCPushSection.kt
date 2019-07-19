@@ -85,7 +85,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
     }
 
     private fun updateSection(section: Section, course: EduCourse, project: Project) {
-      val sectionFromServerPosition = StepikConnector.getSection(section.id)?.position ?: -1
+      val sectionFromServerPosition = StepikConnector.getInstance().getSection(section.id)?.position ?: -1
       section.position = section.index
       val positionChanged = sectionFromServerPosition != section.position
       if (positionChanged) {

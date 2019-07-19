@@ -261,7 +261,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     CCPushCourse.doPush(project, localCourse.asEduCourse())
 
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
-    val section = StepikConnector.getSection(courseFromStepik.sectionIds[0])!!
+    val section = StepikConnector.getInstance().getSection(courseFromStepik.sectionIds[0])!!
     val lessonsFromUnits = StepikCourseLoader.getLessonsFromUnits(courseFromStepik, section.units, false)
 
     val taskFromStepik = lessonsFromUnits[0].getTask("task1") ?: error("Can't find `task1`")
@@ -339,7 +339,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     assertEquals("Course with top-level lessons should have only one section", 1, localCourse.sectionIds.size)
 
     assertEquals("Top-level lessons section id mismatch", localCourse.sectionIds[0], courseFromStepik.sectionIds[0])
-    val section = StepikConnector.getSection(courseFromStepik.sectionIds[0])!!
+    val section = StepikConnector.getInstance().getSection(courseFromStepik.sectionIds[0])!!
     assertEquals("Section name mismatch", localCourse.name, section.name)
 
     val lessonsFromUnits = StepikCourseLoader.getLessonsFromUnits(courseFromStepik, section.units, false)
@@ -361,7 +361,7 @@ open class StepikIntegrationTest : StepikTestCase() {
   }
 
   private fun getCourseFromStepik(courseId: Int): EduCourse =
-    StepikConnector.getCourseInfo(courseId, true) ?: error(
+    StepikConnector.getInstance().getCourseInfo(courseId, true) ?: error(
       "Uploaded course `$courseId` not found among courses available to instructor")
 }
 

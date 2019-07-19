@@ -32,7 +32,7 @@ class CourseUpdateTest : StepikTestCase() {
     CCPushCourse.doPush(project, courseToPost.asEduCourse())
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
-    val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
+    val courseFromStepik = StepikConnector.getInstance().getCourseInfo(localCourse.id, true)
     checkTopLevelLessons(courseFromStepik, localCourse)
   }
 
@@ -57,7 +57,7 @@ class CourseUpdateTest : StepikTestCase() {
     addNewLesson("lesson3", 3, localCourse, localCourse)
     CCPushCourse.doPush(project, localCourse)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
+    val courseFromStepik = StepikConnector.getInstance().getCourseInfo(localCourse.id, true)
     checkTopLevelLessons(courseFromStepik, localCourse)
   }
 
@@ -86,7 +86,7 @@ class CourseUpdateTest : StepikTestCase() {
     localCourse.sortItems()
     CCPushCourse.doPush(project, localCourse)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
+    val courseFromStepik = StepikConnector.getInstance().getCourseInfo(localCourse.id, true)
     checkTopLevelLessons(courseFromStepik, localCourse)
   }
 
@@ -124,7 +124,7 @@ class CourseUpdateTest : StepikTestCase() {
     localCourse.sortItems()
     CCPushCourse.doPush(project, localCourse)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
+    val courseFromStepik = StepikConnector.getInstance().getCourseInfo(localCourse.id, true)
     checkSections(courseFromStepik, localCourse)
   }
 
@@ -154,7 +154,7 @@ class CourseUpdateTest : StepikTestCase() {
     addNewLesson("lesson3", 3, localCourse, section!!)
     CCPushCourse.doPush(project, localCourse)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
+    val courseFromStepik = StepikConnector.getInstance().getCourseInfo(localCourse.id, true)
     checkSections(courseFromStepik, localCourse)
   }
 
@@ -188,7 +188,7 @@ class CourseUpdateTest : StepikTestCase() {
     localCourse.sortItems()
     CCPushCourse.doPush(project, localCourse)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
+    val courseFromStepik = StepikConnector.getInstance().getCourseInfo(localCourse.id, true)
     checkSections(courseFromStepik, localCourse)
   }
 
@@ -213,7 +213,7 @@ class CourseUpdateTest : StepikTestCase() {
     localCourse.init(null, null, false)
     CCPushCourse.doPush(project, localCourse)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
+    val courseFromStepik = StepikConnector.getInstance().getCourseInfo(localCourse.id, true)
     checkSections(courseFromStepik, localCourse)
   }
 
@@ -236,7 +236,7 @@ class CourseUpdateTest : StepikTestCase() {
     localCourse.init(null, null, false)
     CCPushCourse.doPush(project, localCourse)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
+    val courseFromStepik = StepikConnector.getInstance().getCourseInfo(localCourse.id, true)
     checkSections(courseFromStepik, localCourse)
   }
 
@@ -260,7 +260,7 @@ class CourseUpdateTest : StepikTestCase() {
     localCourse.init(null, null, false)
     CCPushCourse.doPush(project, localCourse)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
+    val courseFromStepik = StepikConnector.getInstance().getCourseInfo(localCourse.id, true)
     checkSections(courseFromStepik, localCourse)
   }
 
@@ -281,7 +281,7 @@ class CourseUpdateTest : StepikTestCase() {
     CCUtils.wrapIntoSection(project, localCourse!!, localCourse.lessons, "section1")
     CCPushCourse.doPush(project, localCourse.asEduCourse())
 
-    val courseFromStepik = StepikConnector.getCourseInfo(localCourse.id, true)
+    val courseFromStepik = StepikConnector.getInstance().getCourseInfo(localCourse.id, true)
     checkSections(courseFromStepik, localCourse)
   }
 
@@ -354,7 +354,7 @@ class CourseUpdateTest : StepikTestCase() {
     TestCase.assertTrue("Course with top-level lessons should have only one section, but has: ${localCourse.sectionIds.size}",
                         localCourse.sectionIds.size == 1)
     TestCase.assertTrue("Top-level lessons section id mismatch", localCourse.sectionIds[0] == (courseFromStepik as EduCourse).sectionIds[0])
-    val section = StepikConnector.getSection(courseFromStepik.sectionIds[0])!!
+    val section = StepikConnector.getInstance().getSection(courseFromStepik.sectionIds[0])!!
     TestCase.assertTrue("Section name mismatch. Expected: ${localCourse.name}.\n Actual: ${section.name}",
                         section.name == localCourse.name)
 

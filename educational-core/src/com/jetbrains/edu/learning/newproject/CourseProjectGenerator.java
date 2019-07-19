@@ -82,9 +82,9 @@ public abstract class CourseProjectGenerator<S> {
 
         final StepikUser user = EduSettings.getInstance().getUser();
         if (user != null) {
-          alreadyEnrolled = StepikConnector.isEnrolledToCourse(remoteCourse.getId(), user);
+          alreadyEnrolled = StepikConnector.getInstance().isEnrolledToCourse(remoteCourse.getId(), user);
           if (!alreadyEnrolled) {
-            StepikConnector.enrollToCourse(remoteCourse.getId(), user);
+            StepikConnector.getInstance().enrollToCourse(remoteCourse.getId(), user);
           }
         }
         StepikCourseLoader.loadCourseStructure(remoteCourse);
@@ -204,7 +204,7 @@ public abstract class CourseProjectGenerator<S> {
   }
 
   private void checkIfAvailableOnRemote() {
-    EduCourse courseFromStepik = StepikConnector.getCourseInfo(myCourse.getId(), null, true);
+    EduCourse courseFromStepik = StepikConnector.getInstance().getCourseInfo(myCourse.getId(), null, true);
     if (courseFromStepik == null) {
       LOG.warn("Failed to get stepik course for imported from zip course with id: " + myCourse.getId());
       LOG.info("Converting course to local. Course id: " + myCourse.getId());

@@ -113,7 +113,7 @@ class CCPushLesson : DumbAwareAction("Update Lesson on Stepik", "Update Lesson o
     // public for tests
     fun doPush(lesson: Lesson, project: Project, course: EduCourse) {
       if (lesson.id > 0) {
-        val unit = StepikConnector.getUnit(lesson.unitId)
+        val unit = StepikConnector.getInstance().getUnit(lesson.unitId)
         if (unit == null) {
           LOG.error("Failed to get unit for unit id " + lesson.unitId)
           return

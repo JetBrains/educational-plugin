@@ -92,7 +92,7 @@ public class StepikSolutionsLoader implements Disposable {
       return;
     }
 
-    final Attempt attempt = StepikConnector.postAttempt(task.getId());
+    final Attempt attempt = StepikConnector.getInstance().postAttempt(task.getId());
     if (attempt == null) {
       LOG.warn("Failed to post an attempt " + task.getId());
       return;
@@ -125,7 +125,7 @@ public class StepikSolutionsLoader implements Disposable {
       }
     }
 
-    StepikConnector.postSubmission(passed, attempt, files, task);
+    StepikConnector.getInstance().postSubmission(passed, attempt, files, task);
   }
 
   public void loadSolutionsInBackground() {
@@ -259,7 +259,7 @@ public class StepikSolutionsLoader implements Disposable {
     Task[] allTasks = allLessons.flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
 
     List<String> progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + task.getId()).collect(Collectors.toList());
-    List<Boolean> taskStatuses = StepikConnector.INSTANCE.taskStatuses(progresses);
+    List<Boolean> taskStatuses = StepikConnector.getInstance().taskStatuses(progresses);
     if (taskStatuses == null) return tasksToUpdate;
     for (int j = 0; j < allTasks.length; j++) {
       Boolean isSolved = taskStatuses.get(j);
@@ -326,7 +326,7 @@ public class StepikSolutionsLoader implements Disposable {
     }
 
     if (task instanceof EduTask) {
-      Reply reply = StepikConnector.getLastSubmission(stepId, false);
+      Reply reply = StepikConnector.getInstance().getLastSubmission(stepId, false);
       if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
         return true;
       }
@@ -382,7 +382,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static TaskSolutions getEduTaskSolutions(@NotNull Task task, boolean isSolved) {
     String language = task.getCourse().getLanguageID();
-    Reply reply = StepikConnector.getLastSubmission(task.getId(), isSolved);
+    Reply reply = StepikConnector.getInstance().getLastSubmission(task.getId(), isSolved);
     if (reply == null || reply.getSolution() == null || reply.getSolution().isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449
       if (reply != null && reply.getSolution() == null) {
@@ -407,7 +407,7 @@ public class StepikSolutionsLoader implements Disposable {
 
     final SimpleModule module = new SimpleModule();
     module.addDeserializer(Task.class, new JacksonSubmissionDeserializer(reply.getVersion(), language));
-    final ObjectMapper objectMapper = StepikConnector.getObjectMapper().copy();
+    final ObjectMapper objectMapper = StepikConnector.getInstance().getObjectMapper().copy();
     objectMapper.registerModule(module);
     TaskData updatedTaskData;
     try {
@@ -533,7 +533,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   @Nullable
   static String getSolutionTextForStepikAssignment(@NotNull Task task, boolean isSolved) {
-    final List<Submission> submissions = StepikConnector.getSubmissions(isSolved, task.getId());
+    final List<Submission> submissions = StepikConnector.getInstance().getSubmissions(isSolved, task.getId());
     if (submissions == null) {
       return null;
     }

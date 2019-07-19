@@ -42,7 +42,7 @@ object StepikCourseLoader {
   }
 
   private fun setAuthors(result: List<EduCourse>) {
-    val allUsers = StepikConnector.getUsers(result)
+    val allUsers = StepikConnector.getInstance().getUsers(result)
     val usersById = allUsers.associateBy { it.id }
 
     for (course in result) {
@@ -58,7 +58,7 @@ object StepikCourseLoader {
     val indicator = ProgressManager.getInstance().progressIndicator
     while (true) {
       if (indicator != null && indicator.isCanceled) break
-      val coursesList = StepikConnector.getCourses(isPublic, currentPage, enrolled) ?: break
+      val coursesList = StepikConnector.getInstance().getCourses(isPublic, currentPage, enrolled) ?: break
 
       val availableCourses = getAvailableCourses(coursesList)
       result.addAll(availableCourses)
@@ -82,7 +82,7 @@ object StepikCourseLoader {
 
   private fun getListedStepikCourses(courseIds: List<Int>, languageMap: Map<Int, String>? = null): List<StepikCourse> {
     return courseIds.mapNotNull { courseId ->
-      val info = StepikConnector.getCourseInfo(courseId, false) ?: return@mapNotNull null
+      val info = StepikConnector.getInstance().getCourseInfo(courseId, false) ?: return@mapNotNull null
       if (languageMap != null) {
         info.language = languageMap[courseId]
       }
@@ -100,7 +100,7 @@ object StepikCourseLoader {
   @JvmStatic
   fun fillItems(remoteCourse: EduCourse) {
     val sectionIds = remoteCourse.sectionIds
-    val allSections = StepikConnector.getSections(sectionIds)
+    val allSections = StepikConnector.getInstance().getSections(sectionIds)
 
     val realSections = allSections.filter { it.name != StepikNames.PYCHARM_ADDITIONAL }  // compatibility with old courses
     if (hasVisibleSections(realSections, remoteCourse.name)) {
@@ -142,7 +142,7 @@ object StepikCourseLoader {
   }
 
   fun getUnitsIds(remoteCourse: EduCourse): List<Int> {
-    val sections = StepikConnector.getSections(remoteCourse.sectionIds)
+    val sections = StepikConnector.getInstance().getSections(remoteCourse.sectionIds)
     return sections.flatMap { section -> section.units }.distinct()
   }
 
@@ -203,7 +203,7 @@ object StepikCourseLoader {
         progressIndicator.text = "Loading lesson $readableIndex of $lessonCount"
         progressIndicator.fraction = readableIndex.toDouble() / lessonCount
       }
-      val allStepSources = StepikConnector.getStepSources(lesson.steps)
+      val allStepSources = StepikConnector.getInstance().getStepSources(lesson.steps)
 
       if (allStepSources.isNotEmpty()) {
         val options = allStepSources[0].block!!.options
@@ -223,9 +223,9 @@ object StepikCourseLoader {
   }
 
   fun getLessonsFromUnitIds(unitIds: List<Int>): List<Lesson> {
-    val units = StepikConnector.getUnits(unitIds)
+    val units = StepikConnector.getInstance().getUnits(unitIds)
     val lessonIds = units.map { unit -> unit.lesson }
-    val lessons = StepikConnector.getLessons(lessonIds)
+    val lessons = StepikConnector.getInstance().getLessons(lessonIds)
 
     for ((i, lesson) in lessons.withIndex()) {
       val unit = units[i]

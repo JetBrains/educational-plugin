@@ -68,7 +68,7 @@ public class CCStepikConnector {
       return;
     }
     updateProgress("Uploading course to " + StepikNames.STEPIK_URL);
-    final StepikUserInfo currentUser = StepikConnector.getCurrentUserInfo(user);
+    final StepikUserInfo currentUser = StepikConnector.getInstance().getCurrentUserInfo(user);
     if (currentUser != null) {
       final List<StepikUserInfo> courseAuthors = course.getAuthors();
       for (final StepikUserInfo courseAuthor : courseAuthors) {
@@ -78,7 +78,7 @@ public class CCStepikConnector {
       course.setAuthors(Collections.singletonList(currentUser));
     }
 
-    final EduCourse courseOnRemote = StepikConnector.postCourse(course);
+    final EduCourse courseOnRemote = StepikConnector.getInstance().postCourse(course);
     if (courseOnRemote == null) {
       final String message = FAILED_TITLE + "course " + course.getName();
       LOG.error(message);
@@ -112,7 +112,7 @@ public class CCStepikConnector {
   public static void postAdditionalFiles(@NotNull EduCourse course, @NotNull final Project project, int id) {
     updateProgress("Publishing additional files");
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
-    StepikConnector.postAttachment(additionalFiles, id);
+    StepikConnector.getInstance().postAttachment(additionalFiles, id);
   }
 
   /**
@@ -158,7 +158,7 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "post section")) return -1;
 
     section.setCourseId(courseId);
-    final Section postedSection = StepikConnector.postSection(section);
+    final Section postedSection = StepikConnector.getInstance().postSection(section);
     if (postedSection == null) {
       showErrorNotification(project, FAILED_TITLE, "Failed to post section " + section.getId());
       return -1;
@@ -203,7 +203,7 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "postLesson")) return null;
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    final Lesson postedLesson = StepikConnector.postLesson(lesson);
+    final Lesson postedLesson = StepikConnector.getInstance().postLesson(lesson);
     if (postedLesson == null) {
       final String message = FAILED_TITLE + "lesson " + lesson.getId();
       showErrorNotification(project, FAILED_TITLE, message);
@@ -222,7 +222,7 @@ public class CCStepikConnector {
   public static int postUnit(int lessonId, int position, int sectionId, @NotNull Project project) {
     if (!checkIfAuthorized(project, "postUnit")) return lessonId;
 
-    final StepikUnit unit = StepikConnector.postUnit(lessonId, position, sectionId);
+    final StepikUnit unit = StepikConnector.getInstance().postUnit(lessonId, position, sectionId);
     if (unit == null) {
       showErrorNotification(project, FAILED_TITLE, "Failed to post unit");
       return -1;
@@ -234,7 +234,7 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "postTask")) return false;
     if (task instanceof CodeTask) return false;
 
-    final StepSource stepSource = StepikConnector.postTask(project, task, lessonId);
+    final StepSource stepSource = StepikConnector.getInstance().postTask(project, task, lessonId);
     if (stepSource == null) {
       final String message = FAILED_TITLE + "task in lesson " + lessonId;
       LOG.error(message);
@@ -252,7 +252,7 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "update course")) return false;
     // Course info parameters such as isPublic() and isCompatible can be changed from Stepik site only
     // so we get actual info here
-    EduCourse courseInfo = StepikConnector.getCourseInfo(course.getId());
+    EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
     if (courseInfo != null) {
       course.setPublic(courseInfo.isPublic());
       course.setCompatible(courseInfo.isCompatible());
@@ -260,7 +260,7 @@ public class CCStepikConnector {
     else {
       LOG.warn("Failed to get current course info");
     }
-    int responseCode = StepikConnector.updateCourse(course);
+    int responseCode = StepikConnector.getInstance().updateCourse(course);
 
     if (responseCode == HttpStatus.SC_FORBIDDEN) {
       showNoRightsToUpdateNotification(project, course);
@@ -276,11 +276,11 @@ public class CCStepikConnector {
   }
 
   public static boolean updateAdditionalMaterials(@NotNull Project project, int courseId) {
-    EduCourse courseInfo = StepikConnector.getCourseInfo(courseId);
+    EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(courseId);
     assert courseInfo != null;
     updateProgress("Publishing additional files");
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(courseInfo, project);
-    return StepikConnector.updateCourseAttachment(additionalFiles, courseInfo) == HttpStatus.SC_CREATED;
+    return StepikConnector.getInstance().updateCourseAttachment(additionalFiles, courseInfo) == HttpStatus.SC_CREATED;
   }
 
   public static boolean updateSectionForTopLevelLessons(@NotNull EduCourse course) {
@@ -312,7 +312,7 @@ public class CCStepikConnector {
 
   public static boolean updateSectionInfo(@NotNull Section section) {
     section.units.clear();
-    return StepikConnector.updateSection(section) != null;
+    return StepikConnector.getInstance().updateSection(section) != null;
   }
 
   public static boolean updateLesson(@NotNull final Project project,
@@ -333,7 +333,7 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "update lesson")) return null;
     // TODO: support case when lesson was removed from Stepik
 
-    final Lesson updatedLesson = StepikConnector.updateLesson(lesson);
+    final Lesson updatedLesson = StepikConnector.getInstance().updateLesson(lesson);
     if (updatedLesson == null && showNotification) {
       showErrorNotification(project, FAILED_TITLE, "Failed to update lesson " + lesson.getId());
       return null;
@@ -348,7 +348,7 @@ public class CCStepikConnector {
   public static void updateUnit(int unitId, int lessonId, int position, int sectionId, @NotNull Project project) {
     if (!checkIfAuthorized(project, "updateUnit")) return;
 
-    final StepikUnit unit = StepikConnector.updateUnit(unitId, lessonId, position, sectionId);
+    final StepikUnit unit = StepikConnector.getInstance().updateUnit(unitId, lessonId, position, sectionId);
     if (unit == null) {
       showErrorNotification(project, FAILED_TITLE, "Failed to update unit");
     }
@@ -367,7 +367,7 @@ public class CCStepikConnector {
 
     // Remove all tasks from Stepik which are not in our lessons now
     for (Integer step : taskIdsToDelete) {
-      StepikConnector.deleteTask(step);
+      StepikConnector.getInstance().deleteTask(step);
     }
 
     for (Task task : localLesson.getTaskList()) {
@@ -387,11 +387,11 @@ public class CCStepikConnector {
     if (taskDir == null) return false;
     final Course course = task.getLesson().getCourse();
 
-    final int responseCode = StepikConnector.updateTask(project, task);
+    final int responseCode = StepikConnector.getInstance().updateTask(project, task);
 
     switch (responseCode) {
       case HttpStatus.SC_OK:
-        StepSource step = StepikConnector.getStep(task.getId());
+        StepSource step = StepikConnector.getInstance().getStep(task.getId());
         if (step != null) {
           task.setUpdateDate(step.getUpdateDate());
         }
@@ -415,7 +415,7 @@ public class CCStepikConnector {
   // GET methods:
 
   public static int getTaskPosition(final int taskId) {
-    StepSource step = StepikConnector.getStep(taskId);
+    StepSource step = StepikConnector.getInstance().getStep(taskId);
     return step != null ? step.getPosition() : -1;
   }
 
@@ -426,7 +426,7 @@ public class CCStepikConnector {
   }
 
   private static void addJetBrainsUserAsAdmin(@NotNull String groupId) {
-    final int responseCode = StepikConnector.postMember(JETBRAINS_USER_ID, groupId);
+    final int responseCode = StepikConnector.getInstance().postMember(JETBRAINS_USER_ID, groupId);
     if (responseCode != HttpStatus.SC_CREATED) {
       LOG.warn("Failed to add JetBrains as admin ");
     }

@@ -6,8 +6,7 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepikLanguages
-import com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo
-import com.jetbrains.edu.learning.stepik.api.StepikConnector.getStepSources
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import java.io.IOException
 import java.net.MalformedURLException
@@ -45,7 +44,7 @@ object StepikCourseConnector {
     }
 
     if (courseId != -1) {
-      val info = getCourseInfo(courseId) ?: return null
+      val info = StepikConnector.getInstance().getCourseInfo (courseId) ?: return null
 
       // do not convert idea_compatible courses to StepikCourse
       return if (info.isCompatible) info else stepikCourseFromRemote(info)
@@ -76,7 +75,7 @@ object StepikCourseConnector {
     val unitsIds = StepikCourseLoader.getUnitsIds(remoteCourse)
     val lessons = StepikCourseLoader.getLessonsFromUnitIds(unitsIds)
     for (lesson in lessons) {
-      val allStepSources = getStepSources(lesson.steps)
+      val allStepSources = StepikConnector.getInstance().getStepSources(lesson.steps)
 
       for (stepSource in allStepSources) {
         val step = stepSource.block

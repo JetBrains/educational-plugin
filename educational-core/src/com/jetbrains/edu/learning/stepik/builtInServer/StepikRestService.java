@@ -115,7 +115,7 @@ public class StepikRestService extends OAuthRestService {
     if (codeMatcher.matches()) {
       String code = getStringParameter("code", urlDecoder);
       if (code != null) {
-        final boolean success = StepikConnector.login(code, StepikAuthorizer.getOAuthRedirectUrl());
+        final boolean success = StepikConnector.getInstance().login(code, StepikAuthorizer.getOAuthRedirectUrl());
         final StepikUser user = EduSettings.getInstance().getUser();
         if (success && user != null) {
           EduSettings.getInstance().setUser(user);
@@ -168,12 +168,13 @@ public class StepikRestService extends OAuthRestService {
       return log("Unrecognized the Unit id");
     }
 
-    StepikUnit unit = StepikConnector.getUnit(unitId);
+    StepikConnector stepikConnector = StepikConnector.getInstance();
+    StepikUnit unit = stepikConnector.getUnit(unitId);
     if (unit == null || unit.getId() == null || unit.getId() == 0) {
       return log("Unrecognized the Unit id");
     }
 
-    Section section = StepikConnector.getSection(unit.getSection());
+    Section section = stepikConnector.getSection(unit.getSection());
     if (section == null) {
       return log("No section found with id " + unit.getSection());
     }
@@ -181,7 +182,7 @@ public class StepikRestService extends OAuthRestService {
     if (courseId == 0) {
       return log("Unrecognized the course id");
     }
-    Lesson lesson = StepikConnector.getLesson(lessonId);
+    Lesson lesson = stepikConnector.getLesson(lessonId);
     if (lesson == null) {
       return log("No lesson found with id " + lessonId);
     }

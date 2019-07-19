@@ -213,7 +213,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
     val module = SimpleModule()
     module.addDeserializer(Task::class.java, JacksonSubmissionDeserializer(reply.version, language))
-    val objectMapper = StepikConnector.objectMapper.copy()
+    val objectMapper = StepikConnector.getInstance().objectMapper.copy()
     objectMapper.registerModule(module)
     val updatedTaskData = try {
       objectMapper.readValue(serializedTask, TaskData::class.java)

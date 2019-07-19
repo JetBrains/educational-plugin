@@ -45,7 +45,7 @@ class LoadSolutionsTest : StepikTestCase() {
     val waitTime: Long = 10000
     val endTime = startTime + waitTime
     while (System.currentTimeMillis() < endTime) {
-      val taskStatuses = StepikConnector.taskStatuses(progresses)!!
+      val taskStatuses = StepikConnector.getInstance().taskStatuses(progresses)!!
       assertEquals("Unexpected number of tasks", 1, taskStatuses.size)
 
       if (taskStatuses.firstOrNull() == true) {
@@ -73,7 +73,7 @@ class LoadSolutionsTest : StepikTestCase() {
 
     val course = StudyTaskManager.getInstance(project).course!! as EduCourse
     val task = firstTask(StudyTaskManager.getInstance(project).course)
-    val remoteCourse = StepikConnector.getCourseInfo(course.id, true) as EduCourse
+    val remoteCourse = StepikConnector.getInstance().getCourseInfo(course.id, true) as EduCourse
     StepikCourseLoader.loadCourseStructure(remoteCourse)
 
     val tasksToUpdate = StepikSolutionsLoader.getInstance(project).tasksToUpdate(remoteCourse as Course)
@@ -200,7 +200,7 @@ class LoadSolutionsTest : StepikTestCase() {
   private fun createStudentCourseFromStepik(courseId: Int): EduCourse {
     require(courseId > 0)
     cleanupCourseFiles()
-    val studentCourse = StepikConnector.getCourseInfo(courseId, true) as EduCourse
+    val studentCourse = StepikConnector.getInstance().getCourseInfo(courseId, true) as EduCourse
     StepikCourseLoader.loadCourseStructure(studentCourse)
     studentCourse.createCourseFiles(project)
     return studentCourse

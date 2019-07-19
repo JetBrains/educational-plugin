@@ -180,7 +180,7 @@ public class StepikTaskBuilder {
 
     ChoiceStep choiceStep = null;
     if (!ApplicationManager.getApplication().isUnitTestMode() || myStepId > 0) {
-      choiceStep = StepikConnector.getChoiceStepSource(myStepId);
+      choiceStep = StepikConnector.getInstance().getChoiceStepSource(myStepId);
     }
     if (choiceStep != null) {
       ChoiceStepOptions choiceStepOptions = choiceStep.getSource();

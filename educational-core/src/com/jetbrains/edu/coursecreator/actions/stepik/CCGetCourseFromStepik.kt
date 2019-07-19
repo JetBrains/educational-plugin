@@ -28,7 +28,7 @@ class CCGetCourseFromStepik : DumbAwareAction("Get Course From Stepik", "Get Cou
   }
 
   private fun createCourse(courseId: String) {
-    val info = StepikConnector.getCourseInfo(Integer.valueOf(courseId))
+    val info = StepikConnector.getInstance().getCourseInfo(Integer.valueOf(courseId))
     if (info == null) {
       showError(courseId)
       return
