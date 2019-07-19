@@ -61,7 +61,7 @@ private fun markStepAsViewed(lessonId: Int, stepId: Int) {
     LOG.warn("No assignment ids in unit ${unit?.id}")
     return
   }
-  val assignments = StepikMultipleRequestsConnector.getAssignments(assignmentsIds)
+  val assignments = StepikConnector.getAssignments(assignmentsIds)
   assignments
     .filter { it.step == stepId }
     .forEach { StepikConnector.postView(it.id, stepId) }

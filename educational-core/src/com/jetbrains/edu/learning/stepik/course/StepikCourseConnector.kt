@@ -7,8 +7,8 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepikLanguages
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo
+import com.jetbrains.edu.learning.stepik.api.StepikConnector.getStepSources
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
-import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector.getStepSources
 import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL

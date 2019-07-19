@@ -42,7 +42,7 @@ object StepikCourseLoader {
   }
 
   private fun setAuthors(result: List<EduCourse>) {
-    val allUsers = StepikMultipleRequestsConnector.getUsers(result)
+    val allUsers = StepikConnector.getUsers(result)
     val usersById = allUsers.associateBy { it.id }
 
     for (course in result) {
@@ -100,7 +100,7 @@ object StepikCourseLoader {
   @JvmStatic
   fun fillItems(remoteCourse: EduCourse) {
     val sectionIds = remoteCourse.sectionIds
-    val allSections = StepikMultipleRequestsConnector.getSections(sectionIds)
+    val allSections = StepikConnector.getSections(sectionIds)
 
     val realSections = allSections.filter { it.name != StepikNames.PYCHARM_ADDITIONAL }  // compatibility with old courses
     if (hasVisibleSections(realSections, remoteCourse.name)) {
@@ -142,7 +142,7 @@ object StepikCourseLoader {
   }
 
   fun getUnitsIds(remoteCourse: EduCourse): List<Int> {
-    val sections = StepikMultipleRequestsConnector.getSections(remoteCourse.sectionIds)
+    val sections = StepikConnector.getSections(remoteCourse.sectionIds)
     return sections.flatMap { section -> section.units }.distinct()
   }
 
@@ -203,7 +203,7 @@ object StepikCourseLoader {
         progressIndicator.text = "Loading lesson $readableIndex of $lessonCount"
         progressIndicator.fraction = readableIndex.toDouble() / lessonCount
       }
-      val allStepSources = StepikMultipleRequestsConnector.getStepSources(lesson.steps)
+      val allStepSources = StepikConnector.getStepSources(lesson.steps)
 
       if (allStepSources.isNotEmpty()) {
         val options = allStepSources[0].block!!.options
@@ -223,9 +223,9 @@ object StepikCourseLoader {
   }
 
   fun getLessonsFromUnitIds(unitIds: List<Int>): List<Lesson> {
-    val units = StepikMultipleRequestsConnector.getUnits(unitIds)
+    val units = StepikConnector.getUnits(unitIds)
     val lessonIds = units.map { unit -> unit.lesson }
-    val lessons = StepikMultipleRequestsConnector.getLessons(lessonIds)
+    val lessons = StepikConnector.getLessons(lessonIds)
 
     for ((i, lesson) in lessons.withIndex()) {
       val unit = units[i]

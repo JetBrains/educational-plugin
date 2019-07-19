@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.PROGRESS_ID_PREFIX
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
-import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector
 import java.util.concurrent.TimeUnit
 
 class LoadSolutionsTest : StepikTestCase() {
@@ -46,7 +45,7 @@ class LoadSolutionsTest : StepikTestCase() {
     val waitTime: Long = 10000
     val endTime = startTime + waitTime
     while (System.currentTimeMillis() < endTime) {
-      val taskStatuses = StepikMultipleRequestsConnector.taskStatuses(progresses)!!
+      val taskStatuses = StepikConnector.taskStatuses(progresses)!!
       assertEquals("Unexpected number of tasks", 1, taskStatuses.size)
 
       if (taskStatuses.firstOrNull() == true) {

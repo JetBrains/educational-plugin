@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
-import com.jetbrains.edu.learning.stepik.api.StepikMultipleRequestsConnector
 import com.jetbrains.edu.learning.stepik.api.loadAttachment
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import icons.EducationalCoreIcons
@@ -47,7 +46,7 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
   private fun createCourse(lessonId: String) {
     val course = HyperskillCourse()
     val lesson = StepikConnector.getLesson(Integer.valueOf(lessonId)) ?: return
-    val allStepSources = StepikMultipleRequestsConnector.getStepSources(lesson.steps)
+    val allStepSources = StepikConnector.getStepSources(lesson.steps)
     val tasks = StepikCourseLoader.getTasks(course, lesson, allStepSources)
     for (task in tasks) {
       lesson.addTask(task)

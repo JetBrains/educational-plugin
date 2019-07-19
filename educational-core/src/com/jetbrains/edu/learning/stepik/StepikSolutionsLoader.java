@@ -259,7 +259,7 @@ public class StepikSolutionsLoader implements Disposable {
     Task[] allTasks = allLessons.flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
 
     List<String> progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + task.getId()).collect(Collectors.toList());
-    List<Boolean> taskStatuses = StepikMultipleRequestsConnector.INSTANCE.taskStatuses(progresses);
+    List<Boolean> taskStatuses = StepikConnector.INSTANCE.taskStatuses(progresses);
     if (taskStatuses == null) return tasksToUpdate;
     for (int j = 0; j < allTasks.length; j++) {
       Boolean isSolved = taskStatuses.get(j);

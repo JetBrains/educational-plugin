@@ -19,6 +19,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.*
 
 object StepikConnector {
+  private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests
   private val LOG = Logger.getInstance(StepikConnector::class.java)
   private val converterFactory: JacksonConverterFactory
   @JvmStatic
@@ -59,7 +60,7 @@ object StepikConnector {
       .build()
       .create(StepikOAuthService::class.java)
 
-  internal val service: StepikService
+  private val service: StepikService
     get() = service(EduSettings.getInstance().user)
 
   private fun service(account: StepikUser?): StepikService {
@@ -382,5 +383,101 @@ object StepikConnector {
   @JvmStatic
   fun deleteTask(taskId: Int) {
     service.deleteStepSource(taskId).executeHandlingExceptions(true)
+  }
+
+  // Multiple requests:
+
+  @JvmStatic
+  fun getUsers(result: List<EduCourse>): MutableList<StepikUserInfo> {
+    val instructorIds = result.flatMap { it.instructors }.distinct().chunked(MAX_REQUEST_PARAMS)
+    val allUsers = mutableListOf<StepikUserInfo>()
+    instructorIds
+      .mapNotNull {
+        val response = service.users(*it.toIntArray()).executeHandlingExceptions()
+        response?.body()?.users
+      }
+      .forEach { allUsers.addAll(it) }
+    return allUsers
+  }
+
+  @JvmStatic
+  fun getSections(sectionIds: List<Int>): List<Section> {
+    val sectionIdsChunks = sectionIds.distinct().chunked(MAX_REQUEST_PARAMS)
+    val allSections = mutableListOf<Section>()
+    sectionIdsChunks
+      .mapNotNull {
+        val response = service.sections(*it.toIntArray()).executeHandlingExceptions()
+        response?.body()?.sections
+      }
+      .forEach { allSections.addAll(it) }
+    return allSections
+  }
+
+  @JvmStatic
+  fun getLessons(lessonIds: List<Int>): List<Lesson> {
+    val lessonsIdsChunks = lessonIds.distinct().chunked(MAX_REQUEST_PARAMS)
+    val allLessons = mutableListOf<Lesson>()
+    lessonsIdsChunks
+      .mapNotNull {
+        val response = service.lessons(*it.toIntArray()).executeHandlingExceptions()
+        response?.body()?.lessons
+      }
+      .forEach { allLessons.addAll(it) }
+    return allLessons
+  }
+
+  @JvmStatic
+  fun getUnits(unitIds: List<Int>): List<StepikUnit> {
+    val unitsIdsChunks = unitIds.distinct().chunked(MAX_REQUEST_PARAMS)
+    val allUnits = mutableListOf<StepikUnit>()
+    unitsIdsChunks
+      .mapNotNull {
+        val response = service.units(*it.toIntArray()).executeHandlingExceptions()
+        response?.body()?.units
+      }
+      .forEach { allUnits.addAll(it) }
+    return allUnits
+  }
+
+  @JvmStatic
+  fun getAssignments(ids: List<Int>): List<Assignment> {
+    val idsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
+    val assignments = mutableListOf<Assignment>()
+    idsChunks
+      .mapNotNull {
+        val response = service.assignments(*it.toIntArray()).executeHandlingExceptions()
+        response?.body()?.assignments
+      }
+      .forEach { assignments.addAll(it) }
+
+    return assignments
+  }
+
+  @JvmStatic
+  fun getStepSources(stepIds: List<Int>): List<StepSource> {
+    val stepsIdsChunks = stepIds.distinct().chunked(MAX_REQUEST_PARAMS)
+    val steps = mutableListOf<StepSource>()
+    stepsIdsChunks
+      .mapNotNull {
+        val response = service.steps(*it.toIntArray()).executeHandlingExceptions()
+        response?.body()?.steps
+      }
+      .forEach { steps.addAll(it) }
+    return steps
+  }
+
+  @JvmStatic
+  fun taskStatuses(ids: List<String>): List<Boolean>? {
+    val idsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
+    val progresses = mutableListOf<Progress>()
+    idsChunks
+      .mapNotNull {
+        val response = service.progresses(*it.toTypedArray()).executeHandlingExceptions()
+        response?.body()?.progresses
+      }
+      .forEach { progresses.addAll(it) }
+
+    val progressesMap = progresses.associate { it.id to it.isPassed }
+    return ids.mapNotNull { progressesMap[it] }
   }
 }
