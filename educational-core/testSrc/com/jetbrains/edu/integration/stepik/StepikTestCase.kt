@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikUser
+import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import org.apache.commons.codec.binary.Base64
 import org.apache.http.Consts
@@ -36,6 +37,8 @@ abstract class StepikTestCase : EduTestCase() {
 
   override fun setUp() {
     super.setUp()
+    val mockStepikConnector = StepikConnector.getInstance() as MockStepikConnector
+    mockStepikConnector.baseUrl = StepikNames.STEPIK_URL
     httpClient = HttpClients.createDefault()
     login()
     httpClient = HttpClients.custom()

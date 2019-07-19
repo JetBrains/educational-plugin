@@ -188,7 +188,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.api.StepikConnector"
-                        serviceImplementation="com.jetbrains.edu.learning.stepik.api.StepikConnectorImpl"/>
+                        serviceImplementation="com.jetbrains.edu.learning.stepik.api.StepikConnectorImpl"
+                        testServiceImplementation="com.jetbrains.edu.learning.stepik.api.MockStepikConnector"/>
 
     <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.StepikWidgetProvider"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView"

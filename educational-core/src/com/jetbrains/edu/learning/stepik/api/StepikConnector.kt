@@ -34,7 +34,8 @@ abstract class StepikConnector {
 
   protected abstract val baseUrl: String
 
-  private val authorizationService: StepikOAuthService = createRetrofitBuilder(baseUrl)
+  private val authorizationService: StepikOAuthService
+    get() = createRetrofitBuilder(baseUrl)
       .addConverterFactory(converterFactory)
       .build()
       .create(StepikOAuthService::class.java)
