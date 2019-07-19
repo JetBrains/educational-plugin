@@ -640,8 +640,8 @@ public class EduUtils {
       });
       return taskFile;
     }
-    catch (IOException e) {
-      LOG.error("Failed to convert answer file to student one");
+    catch (IOException | IndexOutOfBoundsException e) {
+      LOG.error("Failed to convert answer file to student one: " + answerFile.getPath());
     }
 
     return null;
