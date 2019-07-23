@@ -13,7 +13,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtil
@@ -47,12 +46,26 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
 
     private lateinit var myTestDir: File
 
-    private val MY_TEST_JDK_NAME = "Test JDK"
+    private lateinit var checkerFixture: EduCheckerFixture<Settings>
+
+    override fun runBare() {
+        // Usually, fixture objects are initialized in `setUp` method.
+        // But in our case, it's necessary to skip test if environment cannot be set up.
+        // The most convenient place to locate the corresponding code is `EduCheckerFixture` itself.
+        // So, `checkerFixture` should be initialized before `shouldRunTest`.
+        // That's why it's created here
+        checkerFixture = createCheckerFixture()
+        super.runBare()
+    }
 
     override fun shouldRunTest(): Boolean {
-        // We temporarily disable checkers tests on teamcity linux agents
-        // because they don't work on these agents and we can't find out a reason :((
-        return super.shouldRunTest() && (!SystemInfo.isLinux || System.getenv("TEAMCITY_VERSION") == null)
+        val skipTestReason = checkerFixture.getSkipTestReason()
+        return if (skipTestReason != null) {
+            System.err.println("SKIP `$name`: $skipTestReason")
+            false
+        } else {
+            super.shouldRunTest()
+        }
     }
 
     protected open fun doTest() {
@@ -93,7 +106,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
             get() = "\n" + causes.joinToString("\n") { it.message ?: "" }
     }
 
-    protected abstract val projectSettings: Settings
+    protected abstract fun createCheckerFixture(): EduCheckerFixture<Settings>
     protected abstract fun createCourse(): Course
 
     private fun projectName() = getTestName(true)
@@ -115,7 +128,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
     private fun createEduProject() {
         myCourse = createCourse()
 
-        val settings = projectSettings
+        val settings = checkerFixture.projectSettings
 
         val generator = myCourse.configurator?.courseBuilder?.getCourseProjectGenerator(myCourse)
                          ?: error("Failed to get `CourseProjectGenerator`")
@@ -129,13 +142,12 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
         CheckActionListener.reset()
 
         myApplication = IdeaTestApplication.getInstance()
-
-        setUpEnvironment()
-
         myTestDir = File(FileUtil.getTempDirectory())
         myTestDir.mkdirs()
 
         VfsUtil.markDirtyAndRefresh(false, true, true, VfsUtil.findFileByIoFile(myTestDir, true)!!)
+
+        checkerFixture.setUp()
 
         val prevDialog = Messages.setTestDialog(TestDialog.NO)
         try {
@@ -156,12 +168,10 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
 
     override fun tearDown() {
         try {
+            checkerFixture.tearDown()
             FileUtilRt.delete(myTestDir)
-
             LightPlatformTestCase.doTearDown(myProject, myApplication)
             InjectedLanguageManagerImpl.checkInjectorsAreDisposed(myProject)
-
-            tearDownEnvironment()
 
             DockManager.getInstance(myProject).containers
                     .filterNot { myOldDockContainers.contains(it) }
@@ -179,7 +189,4 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
             super.tearDown()
         }
     }
-
-    protected open fun setUpEnvironment() {}
-    protected open fun tearDownEnvironment() {}
 }
