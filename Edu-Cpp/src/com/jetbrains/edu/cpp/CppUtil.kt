@@ -27,7 +27,7 @@ private val cMakeMinimumRequired: String by lazy {
   val progressManager = ProgressManager.getInstance()
 
   if (progressManager.hasProgressIndicator()) {
-    progressManager.runProcess<String>({ cMakeVersionExtractor() }, null)
+    progressManager.runProcess(cMakeVersionExtractor, null)
   }
   else {
     progressManager.run(object : WithResult<String, Nothing>(null, "Getting CMake Minimum Required Version", false) {
@@ -37,24 +37,29 @@ private val cMakeMinimumRequired: String by lazy {
 }
 
 /**
- * By default, adds only CMake minimum required line.
- * When some parameter is not null it will be used how parameter, otherwise parameter will be ignored at all.
- * Omits parameters if only they aren't used in the template!
+ * [cMakeProjectName] - name of the CMake project that will be specified.
+ * [cppStandard] - standard of language that will be specified in CMake.
+ * [gtestVersion] - 'google test' framework version that will be loaded.
+ *
+ * NOTE: if some parameter is `null` it will be ignored and not be added to result map.
+ * Use `null` value for the parameter only if it isn't used in the template.
  */
-fun getCMakeTemplateVariables(cMakeProjectName: String? = null,
-                              cppStandard: String? = null,
-                              gtestVersion: String? = null): Map<String, Any> {
-  val values = mutableMapOf(CMAKE_MINIMUM_REQUIRED_LINE to cMakeMinimumRequired)
+fun getCMakeTemplateVariables(
+  cMakeProjectName: String? = null,
+  cppStandard: String? = null,
+  gtestVersion: String? = null
+): Map<String, Any> {
+  val result = mutableMapOf(CMAKE_MINIMUM_REQUIRED_LINE to cMakeMinimumRequired)
 
-  if (cMakeProjectName != null) values[EduNames.PROJECT_NAME] = cMakeProjectName
-  if (cppStandard != null) values[CPP_STANDARD_LINE] = cppStandard
-  if (gtestVersion != null) values[GTEST_VERSION] = gtestVersion
+  cMakeProjectName?.let { result[EduNames.PROJECT_NAME] = it }
+  cppStandard?.let { result[CPP_STANDARD_LINE] = it }
+  gtestVersion?.let { result[GTEST_VERSION] = it }
 
-  return values
+  return result
 }
 
 fun addCMakeList(task: Task, cppStandard: String): TaskFile {
-  val text = GeneratorUtils.getInternalTemplateText(getCppParameters(task.course).taskCMakeList,
+  val text = GeneratorUtils.getInternalTemplateText(getCppCMakeTemplateNames(task.course).taskCMakeList,
                                                     getCMakeTemplateVariables(getCMakeProjectUniqueName(task), cppStandard))
 
   val taskFile = TaskFile(CMakeListsFileType.FILE_NAME, text)

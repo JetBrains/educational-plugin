@@ -1,10 +1,11 @@
 \#include <gtest/gtest.h>
+\#include <string>
 
 // Headers of objects that student should realize:
-const char *task();
+std::string task();
 
 
 // Tests:
-TEST(TEST_SUITE_NAME, TEST_NAME) {
-    ASSERT_STREQ(task(), "expected answer");
+TEST(TestSuiteName, TestName) {
+    ASSERT_EQ(task(), "Expected answer");
 }

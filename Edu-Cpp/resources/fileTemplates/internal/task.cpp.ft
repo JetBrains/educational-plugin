@@ -1,5 +1,6 @@
-// Add task here
+\#include <string>
 
-const char *task() {
+// todo: replace this with an actual task
+std::string task() {
     return "Student answer";
 }

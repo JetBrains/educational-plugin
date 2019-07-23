@@ -1,0 +1,7 @@
+\#include <iostream>
+
+int main() {
+    // You could test your solution here. This file will not be checked.
+    std::cout << "Hello edu!" << std::endl;
+    return 0;
+}

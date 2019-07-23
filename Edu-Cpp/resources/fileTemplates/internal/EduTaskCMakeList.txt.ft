@@ -11,14 +11,14 @@ set(SOURCE
 set(TEST
         test/test.cpp)
 
-set(MAIN
-        src/main.cpp)
+set(RUN
+        src/run.cpp)
 
 
 # Customize student-run target.
 add_executable(${PROJECT_NAME}-src
         ${SOURCE}
-        ${MAIN})
+        ${RUN})
 
 
 # Customize test target.
