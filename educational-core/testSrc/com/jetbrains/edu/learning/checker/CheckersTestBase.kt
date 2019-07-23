@@ -138,9 +138,6 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
 
     override fun setUp() {
         super.setUp()
-
-        CheckActionListener.reset()
-
         myApplication = IdeaTestApplication.getInstance()
         myTestDir = File(FileUtil.getTempDirectory())
         myTestDir.mkdirs()
@@ -164,6 +161,9 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
         myProject.registerComponent(FileEditorManager::class.java, myManager, testRootDisposable)
         (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
         EduDocumentListener.setGlobalListener(myProject, testRootDisposable)
+
+        CheckListener.EP_NAME.getPoint(null).registerExtension(CheckActionListener(), testRootDisposable)
+        CheckActionListener.reset()
     }
 
     override fun tearDown() {
