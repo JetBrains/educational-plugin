@@ -42,7 +42,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
 
     if (myCourse !is StepikCourse) {
       val initCMakeText = GeneratorUtils.getInternalTemplateText(getCppParameters(myCourse).initCMakeList,
-                                                                 getCMakeTemplateVariables())
+                                                                 getCMakeTemplateVariables(gtestVersion = CppConfigurator.GTEST_VERSION))
 
       GeneratorUtils.createChildFile(baseDir, "${CMakeListsFileType.FILE_NAME}.in", initCMakeText)
     }

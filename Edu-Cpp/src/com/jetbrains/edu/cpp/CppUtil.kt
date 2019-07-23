@@ -2,7 +2,7 @@ package com.jetbrains.edu.cpp
 
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task.*
+import com.intellij.openapi.progress.Task.WithResult
 import com.jetbrains.cidr.cpp.cmake.projectWizard.CLionProjectWizardUtils
 import com.jetbrains.cidr.cpp.toolchains.CMake
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
 private const val CMAKE_MINIMUM_REQUIRED_LINE = "CMAKE_MINIMUM_REQUIRED_LINE"
 private const val CPP_STANDARD_LINE = "CPP_STANDARD"
+private const val GTEST_VERSION = "GTEST_VERSION"
 
 private val cMakeMinimumRequired: String by lazy {
   val cMakeVersionExtractor = {
@@ -40,11 +41,14 @@ private val cMakeMinimumRequired: String by lazy {
  * When some parameter is not null it will be used how parameter, otherwise parameter will be ignored at all.
  * Omits parameters if only they aren't used in the template!
  */
-fun getCMakeTemplateVariables(cMakeProjectName: String? = null, cppStandard: String? = null): Map<String, Any> {
+fun getCMakeTemplateVariables(cMakeProjectName: String? = null,
+                              cppStandard: String? = null,
+                              gtestVersion: String? = null): Map<String, Any> {
   val values = mutableMapOf(CMAKE_MINIMUM_REQUIRED_LINE to cMakeMinimumRequired)
 
   if (cMakeProjectName != null) values[EduNames.PROJECT_NAME] = cMakeProjectName
   if (cppStandard != null) values[CPP_STANDARD_LINE] = cppStandard
+  if (gtestVersion != null) values[GTEST_VERSION] = gtestVersion
 
   return values
 }

@@ -39,6 +39,8 @@ class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
   override fun getLogo(): Icon = CMakeIcons.CMake
 
   companion object {
+    const val GTEST_VERSION = "release-1.8.1"
+
     const val TASK_CPP = "task.cpp"
     const val TEST_CPP = "test.cpp"
     private const val MOCK_CPP = "mock.cpp"
