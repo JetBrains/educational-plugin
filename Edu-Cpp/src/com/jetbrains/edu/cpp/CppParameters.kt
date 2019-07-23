@@ -9,5 +9,5 @@ data class CppParameters(val mainCMakeList: String, val taskCMakeList: String, v
 
 fun getCppParameters(course: Course): CppParameters = when (course) {
   is StepikCourse -> CppParameters("StepikMainCMakeList.txt", "StepikTaskCMakeList.txt")
-  else -> CppParameters("EduMainCMakeList.txt", "EduTaskCMakeList.txt")
+  else -> CppParameters("EduMainCMakeList.txt", "EduTaskCMakeList.txt", "EduInitCMakeList.txt")
 }
