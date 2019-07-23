@@ -34,7 +34,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
     if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
 
-    val mainCMakeTemplateName = getParametersByCourse(myCourse).mainCMakeList
+    val mainCMakeTemplateName = getCppParameters(myCourse).mainCMakeList
     val mainCMakeTemplateVariables = getCMakeTemplateVariables(FileUtil.sanitizeFileName(baseDir.name))
     GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME,
                                    GeneratorUtils.getInternalTemplateText(mainCMakeTemplateName, mainCMakeTemplateVariables))
