@@ -2,5 +2,6 @@
   <depends>com.intellij.modules.lang</depends>
   <extensions defaultExtensionNs="Educational">
     <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppConfigurator"/>
+    <configurator language="OCLight" implementationClass="com.jetbrains.edu.cpp.CppConfigurator"/>
   </extensions>
 </idea-plugin>
