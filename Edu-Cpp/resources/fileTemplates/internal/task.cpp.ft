@@ -1,1 +1,5 @@
 // Add task here
+
+const char *task() {
+    return "Student answer";
+}
