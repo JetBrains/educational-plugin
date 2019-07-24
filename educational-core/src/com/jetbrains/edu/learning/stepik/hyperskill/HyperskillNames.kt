@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
@@ -32,7 +33,7 @@ val HYPERSKILL_URL: String
 
 val AUTHORISATION_CODE_URL: String
   get() = "${HYPERSKILL_URL}oauth2/authorize/?" +
-          "client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URI&grant_type=code&scope=read+write&response_type=code"
+          "client_id=$CLIENT_ID&redirect_uri=${URLUtil.encodeURIComponent(REDIRECT_URI)}&grant_type=code&scope=read+write&response_type=code"
 
 val REDIRECT_URI: String = if (EduUtils.isAndroidStudio()) {
   getCustomServer().handlingUri

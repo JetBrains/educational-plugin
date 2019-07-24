@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.util.io.URLUtil;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
@@ -20,7 +21,7 @@ public class StepikAuthorizer {
   public static String createOAuthLink(String authRedirectUrl) {
     return "https://stepik.org/oauth2/authorize/" +
            "?client_id=" + StepikNames.CLIENT_ID +
-           "&redirect_uri=" + authRedirectUrl +
+           "&redirect_uri=" + URLUtil.encodeURIComponent(authRedirectUrl) +
            "&response_type=code";
   }
 
