@@ -13,8 +13,9 @@ fun <T, Self : ObjectPattern<T, Self>> ObjectPattern<T, Self>.with(name: String,
   })
 }
 
-fun <T : PsiElement, Self : PsiElementPattern<T, Self>> PsiElementPattern<T, Self>.inFileWithName(fileName: String): Self {
-  return inVirtualFile(VirtualFilePattern().withName(fileName))
+fun <T : PsiElement, Self : PsiElementPattern<T, Self>> PsiElementPattern<T, Self>.inFileWithName(vararg fileNames: String): Self {
+  val namePattern = VirtualFilePattern().with("withNames") { file, _ -> file.name in fileNames }
+  return inVirtualFile(namePattern)
 }
 
 fun keyValueWithName(keyText: String): PsiElementPattern.Capture<YAMLKeyValue> {

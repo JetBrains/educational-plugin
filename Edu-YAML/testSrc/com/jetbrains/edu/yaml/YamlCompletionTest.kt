@@ -1,8 +1,10 @@
 package com.jetbrains.edu.yaml
 
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.yaml.skipYamlCompletionTests
@@ -243,6 +245,83 @@ class YamlCompletionTest : YamlCodeInsightTest() {
       |  visible: true
       |- name: taskfile2.txt
       |  visible: true      
+    """.trimMargin("|"))
+  }
+
+  fun `test course content completion`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {}
+    }
+
+    runWriteAction {
+      project.courseDir.createChildDirectory(this, "section2")
+    }
+
+    doSingleCompletion(course, """
+      |title: Test Course
+      |type: coursera
+      |language: Russian
+      |summary: sum
+      |programming_language: Plain text
+      |programming_language_version: 1.42
+      |environment: Android
+      |content:
+      |- lesson1
+      |- sec<caret>
+    """.trimMargin("|"), """
+      |title: Test Course
+      |type: coursera
+      |language: Russian
+      |summary: sum
+      |programming_language: Plain text
+      |programming_language_version: 1.42
+      |environment: Android
+      |content:
+      |- lesson1
+      |- section2
+    """.trimMargin("|"))
+  }
+
+  fun `test course content completion 2`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+    }
+
+    val lesson = course.getLesson("lesson1")!!
+    val lessonDir = lesson.getLessonDir(project)!!
+    runWriteAction { lessonDir.createChildDirectory(this, "task2") }
+
+    doSingleCompletion(lesson, """
+      |content:
+      |- task1
+      |- tas<caret>
+    """.trimMargin("|"), """
+      |content:
+      |- task1
+      |- task2
+    """.trimMargin("|"))
+  }
+
+  fun `test section content completion`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      section("section1") {
+        lesson("lesson1") {}
+        lesson("lesson2") {}
+      }
+    }
+
+    val section = course.getSection("section1")!!
+
+    doSingleCompletion(section, """
+      |content:
+      |- lesson1
+      |- less<caret>
+    """.trimMargin("|"), """
+      |content:
+      |- lesson1
+      |- lesson2
     """.trimMargin("|"))
   }
 
