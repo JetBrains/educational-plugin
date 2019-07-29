@@ -11,10 +11,7 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -204,6 +201,24 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     task(choiceTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
     choiceTask.choiceOptions = choiceOptions.map { ChoiceOption(it.key, it.value) }
     choiceTask.isMultipleChoice = isMultipleChoice
+  }
+
+  fun videoTask(
+    name: String? = null,
+    taskDescription: String? = null,
+    taskDescriptionFormat: DescriptionFormat? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
+    thumbnail: String = "",
+    sources: Map<String, String>,
+    currentTime: Int = 0,
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) {
+    val videoTask = VideoTask()
+    task(videoTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+    videoTask.currentTime = currentTime
+    videoTask.thumbnail = thumbnail
+    videoTask.sources = sources.map { VideoSource(it.key, it.value) }
   }
 }
 

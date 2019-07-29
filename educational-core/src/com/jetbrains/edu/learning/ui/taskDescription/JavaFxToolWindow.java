@@ -48,6 +48,7 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
     super();
   }
 
+  @NotNull
   @Override
   public JComponent createTaskInfoPanel(@NotNull Project project) {
     myProject = project;
@@ -55,7 +56,8 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
     return myBrowserWindow.getPanel();
   }
 
-  public JComponent createTaskSpecificPanel(Task task) {
+  @NotNull
+  public JComponent createTaskSpecificPanel(@Nullable Task task) {
     taskSpecificPanel = new JFXPanel();
     return taskSpecificPanel;
   }
@@ -69,6 +71,7 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
     });
   }
 
+  @NotNull
   @Override
   protected String wrapHint(@NotNull Element hintElement, @NotNull String displayedHintNumber) {
     Course course = StudyTaskManager.getInstance(myProject).getCourse();
@@ -92,8 +95,8 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   }
 
   @Override
-  public void setText(@NotNull String text) {
-    String wrappedText = wrapHints(text);
-    myBrowserWindow.loadContent(wrappedText);
+  public void setText(@NotNull String text, @Nullable Task task) {
+    myBrowserWindow.loadContent(wrapHints(text), task);
   }
+
 }

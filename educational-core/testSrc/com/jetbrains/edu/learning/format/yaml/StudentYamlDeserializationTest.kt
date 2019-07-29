@@ -6,6 +6,8 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.VideoSource
+import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
@@ -90,6 +92,45 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CheckStatus.Solved, task.status)
     assertEquals(1, task.record)
     assertEquals(mutableListOf(1), (task as ChoiceTask).selectedVariants)
+  }
+
+  fun `test video task sources`() {
+    val thumbnail = "https://stepikvideo.blob.core.windows.net/thumbnail/29279.jpg"
+    val firstSource = VideoSource("https://stepikvideo.blob.core.windows.net/video/29279/1080/f3d83.mp4", "1080")
+    val secondSource = VideoSource("https://stepikvideo.blob.core.windows.net/video/29279/720/8c1aa1.mp4", "720")
+
+    val yamlContent = """
+    |type: video
+    |thumbnail: ${thumbnail}
+    |sources:
+    |- src: ${firstSource.src}
+    |  res: ${firstSource.res}
+    |  type: ${firstSource.type}
+    |  label: ${firstSource.label}
+    |- src: ${secondSource.src}
+    |  res: ${secondSource.res}
+    |  type: ${secondSource.type}
+    |  label: ${secondSource.label}
+    |currentTime: 0
+    |status: Solved
+    |record: 1
+    |""".trimMargin("|")
+
+    val task = deserializeTask(yamlContent)
+    assertTrue(task is VideoTask)
+    assertEquals(CheckStatus.Solved, task.status)
+    assertEquals(1, task.record)
+    assertEquals(2, (task as VideoTask).sources.size)
+    assertEquals(firstSource.src, task.sources[0].src)
+    assertEquals(firstSource.res, task.sources[0].res)
+    assertEquals(firstSource.label, task.sources[0].label)
+    assertEquals(firstSource.type, task.sources[0].type)
+    assertEquals(secondSource.src, task.sources[1].src)
+    assertEquals(secondSource.res, task.sources[1].res)
+    assertEquals(secondSource.label, task.sources[1].label)
+    assertEquals(secondSource.type, task.sources[1].type)
+    assertEquals(thumbnail, task.thumbnail)
+    assertEquals(0, task.currentTime)
   }
 
   fun `test task record`() {

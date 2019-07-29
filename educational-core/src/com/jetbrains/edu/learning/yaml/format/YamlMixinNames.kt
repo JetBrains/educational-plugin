@@ -39,6 +39,15 @@ object YamlMixinNames {
   const val FEEDBACK_INCORRECT = "message_incorrect"
   const val SELECTED_OPTIONS = "selected_options"
 
+  // video task
+  const val THUMBNAIL = "thumbnail"
+  const val SOURCES = "sources"
+  const val CURRENT_TIME = "currentTime"
+  const val SRC = "src"
+  const val RES = "res"
+  const val VIDEO_TYPE = "type"
+  const val LABEL = "label"
+
   // checkio missions
   const val CODE = "code"
   const val SECONDS_FROM_CHANGE = "seconds_from_change"

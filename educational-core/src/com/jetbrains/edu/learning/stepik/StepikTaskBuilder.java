@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.stepik.api.Attempt;
 import com.jetbrains.edu.learning.stepik.api.Dataset;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
+import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.VideoTaskResourcesManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +30,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.safety.Whitelist;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -51,7 +54,7 @@ public class StepikTaskBuilder {
     .put("text", this::theoryTask)
     .put("string", this::theoryTask)
     .put("pycharm", (name) -> pycharmTask())
-    .put("video", this::unsupportedTask)
+    .put("video", this::videoTask)
     .put("number", this::unsupportedTask)
     .put("sorting", this::unsupportedTask)
     .put("matching", this::unsupportedTask)
@@ -224,6 +227,38 @@ public class StepikTaskBuilder {
     task.setUpdateDate(myStepSource.getUpdateDate());
     task.setDescriptionText(clearCodeBlockFromTags());
 
+    createMockTaskFile(task, "you can experiment here, it won’t be checked\n");
+    return task;
+  }
+
+  private VideoTask videoTask(@NotNull String name) {
+    VideoTask task = new VideoTask(name);
+    task.setId(myStepId);
+    task.setIndex(myStepSource.getPosition());
+    task.setUpdateDate(myStepSource.getUpdateDate());
+    String descriptionText = "View this video on <a href=\"" + StepikUtils.getStepikLink(task, myLesson) + "\">Stepik</a>.";
+    Step block = myStepSource.getBlock();
+    if (block != null) {
+      Video video = block.getVideo();
+      if (video != null) {
+        task.setThumbnail(video.getThumbnail());
+        List<UrlsMap> urlsMapList = video.getListUrls();
+        List<VideoSource> sources = new ArrayList<>();
+        if (urlsMapList != null) {
+          urlsMapList.forEach(urlsMap -> sources.add(new VideoSource(urlsMap.getUrl(), urlsMap.getQuality())));
+        }
+        task.setSources(Collections.unmodifiableList(sources));
+        descriptionText = new VideoTaskResourcesManager(task, myLesson).getText();
+      }
+      else {
+        LOG.warn("Video for step " + myStepId + " is null");
+      }
+    }
+    else {
+      LOG.warn("Block for step " + myStepId + " is null");
+    }
+
+    task.setDescriptionText(descriptionText);
     createMockTaskFile(task, "you can experiment here, it won’t be checked\n");
     return task;
   }

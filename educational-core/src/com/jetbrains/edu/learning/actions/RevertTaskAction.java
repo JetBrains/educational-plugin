@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
@@ -53,6 +54,10 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
         revertTaskFile(taskFile, project);
       }
     });
+    if (currentTask instanceof VideoTask) {
+      ((VideoTask)currentTask).setCurrentTime(0);
+      TaskDescriptionView.getInstance(project).updateTaskDescription();
+    }
     PlaceholderDependencyManager.updateDependentPlaceholders(project, currentTask);
     validateEditors(project);
     String message =

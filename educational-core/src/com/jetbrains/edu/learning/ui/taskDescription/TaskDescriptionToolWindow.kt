@@ -25,10 +25,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.NavigatablePsiElement
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import javax.swing.JComponent
+
 
 abstract class TaskDescriptionToolWindow {
   init {
@@ -37,7 +39,7 @@ abstract class TaskDescriptionToolWindow {
 
   abstract fun createTaskInfoPanel(project: Project): JComponent
 
-  abstract fun createTaskSpecificPanel(currentTask: Task): JComponent
+  abstract fun createTaskSpecificPanel(currentTask: Task?): JComponent
 
   open fun updateTaskSpecificPanel(task: Task?) {}
 
@@ -60,11 +62,11 @@ abstract class TaskDescriptionToolWindow {
 
   protected abstract fun wrapHint(hintText: Element, displayedHintNumber: String): String
 
-  protected fun setTaskText(project: Project, task: Task?) {
-    setText(getTaskDescriptionWithCodeHighlighting(project, task))
+  fun setTaskText(project: Project, task: Task?) {
+    setText(getTaskDescriptionWithCodeHighlighting(project, task), task)
   }
 
-  abstract fun setText(text: String)
+  abstract fun setText(text: String, task: Task?)
 
   protected abstract fun updateLaf()
 
@@ -75,20 +77,24 @@ abstract class TaskDescriptionToolWindow {
   }
 
   companion object {
-    val EMPTY_TASK_TEXT = "Please, open any task to see task description"
-    val PSI_ELEMENT_PROTOCOL = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL
+    private const val EMPTY_TASK_TEXT = "Please, open any task to see task description"
+    const val PSI_ELEMENT_PROTOCOL = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL
 
     @VisibleForTesting
     fun getTaskDescriptionWithCodeHighlighting(project: Project, task: Task?): String {
       if (task != null) {
         val taskText = EduUtils.getTaskTextFromTask(task.getTaskDir(project), task)
         if (taskText != null) {
+          if (task is VideoTask) {
+            return taskText
+          }
           return EduCodeHighlighter.highlightCodeFragments(project, taskText, task.course.languageById!!)
         }
       }
       return EMPTY_TASK_TEXT
     }
 
+    @JvmStatic
     fun navigateToPsiElement(project: Project, url: String) {
       val qualifiedName = url.replace(PSI_ELEMENT_PROTOCOL, "")
 

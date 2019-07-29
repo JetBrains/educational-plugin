@@ -37,6 +37,8 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.VideoSource
+import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
@@ -127,6 +129,8 @@ object YamlFormatSynchronizer {
     addMixIn(CheckiOStation::class.java, CheckiOStationYamlMixin::class.java)
     addMixIn(Task::class.java, StudentTaskYamlMixin::class.java)
     addMixIn(ChoiceTask::class.java, StudentChoiceTaskYamlMixin::class.java)
+    addMixIn(VideoTask::class.java, VideoTaskYamlMixin::class.java)
+    addMixIn(VideoSource::class.java, VideoSourceYamlMixin::class.java)
     addMixIn(CheckiOMission::class.java, CheckiOMissionYamlMixin::class.java)
     addMixIn(TaskFile::class.java, StudentTaskFileYamlMixin::class.java)
     addMixIn(AnswerPlaceholder::class.java, StudentAnswerPlaceholderYamlMixin::class.java)

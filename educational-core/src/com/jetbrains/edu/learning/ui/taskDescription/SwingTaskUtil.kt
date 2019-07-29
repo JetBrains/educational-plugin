@@ -5,8 +5,8 @@ package com.jetbrains.edu.learning.ui.taskDescription
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import java.awt.event.ItemEvent
 import java.awt.event.ItemListener
 import javax.swing.*

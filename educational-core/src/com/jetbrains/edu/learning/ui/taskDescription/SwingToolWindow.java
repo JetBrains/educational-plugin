@@ -25,6 +25,7 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,6 +66,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
     super();
   }
 
+  @NotNull
   @Override
   public JComponent createTaskInfoPanel(@NotNull Project project) {
     myProject = project;
@@ -80,6 +82,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
     return panel;
   }
 
+  @NotNull
   public JComponent createTaskSpecificPanel(Task currentTask) {
     myTaskSpecificPanel = new JPanel(new BorderLayout());
     return myTaskSpecificPanel;
@@ -97,11 +100,18 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
     }
   }
 
-  public void setText(@NotNull String text) {
-    String wrappedText = wrapHints(text);
-    myTaskTextPane.setText(JavaFxTaskUtil.htmlWithResources(myProject, wrappedText));
+  public void setText(@NotNull String text, @Nullable Task task) {
+    String htmlText;
+    if (task instanceof VideoTask) {
+      htmlText = text;
+    }
+    else {
+      htmlText = JavaFxTaskUtil.htmlWithResources(myProject, wrapHints(text));
+    }
+    myTaskTextPane.setText(htmlText);
   }
 
+  @NotNull
   @Override
   protected String wrapHint(@NotNull org.jsoup.nodes.Element hintElement, @NotNull String displayedHintNumber) {
     String bulbIcon = getIconFullPath("style/hint/swing/swing_icons/retina_bulb.png", "/style/hint/swing/swing_icons/bulb.png");

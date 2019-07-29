@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
@@ -114,6 +115,7 @@ object YamlDeserializer {
       "edu" -> EduTask::class.java
       "output" -> OutputTask::class.java
       "theory" -> TheoryTask::class.java
+      "video" -> VideoTask::class.java
       "choice" -> ChoiceTask::class.java
       "ide" -> IdeTask::class.java
       // for student mode

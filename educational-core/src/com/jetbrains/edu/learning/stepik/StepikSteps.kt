@@ -48,6 +48,11 @@ const val PYCHARM = "pycharm"
 const val CHOICE = "choice"
 const val FEEDBACK_CORRECT = "feedback_correct"
 const val FEEDBACK_WRONG = "feedback_wrong"
+const val VIDEO = "video"
+const val THUMBNAIL = "thumbnail"
+const val URLS = "urls"
+const val QUALITY = "quality"
+const val URL = "url"
 
 class Step {
   @JsonProperty(TEXT)
@@ -55,6 +60,9 @@ class Step {
 
   @JsonProperty(NAME)
   var name = ""
+
+  @JsonProperty(VIDEO)
+  var video: Video? = null
 
   @JsonProperty(FEEDBACK_CORRECT)
   var feedbackCorrect: String = ""
@@ -280,4 +288,23 @@ class ChoiceStep {
 
   @JsonProperty(SOURCE)
   var source: ChoiceStepOptions? = null
+}
+
+class Video {
+  @JsonProperty(ID)
+  var id: String = ""
+
+  @JsonProperty(THUMBNAIL)
+  var thumbnail: String = ""
+
+  @JsonProperty(URLS)
+  var listUrls: List<UrlsMap>? = null
+}
+
+class UrlsMap {
+  @JsonProperty(QUALITY)
+  var quality: String = ""
+
+  @JsonProperty(URL)
+  var url: String = ""
 }

@@ -18,9 +18,11 @@ import com.intellij.openapi.wm.impl.content.ToolWindowContentUi
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription
+import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
+import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
 import icons.EducationalCoreIcons
 import java.awt.MouseInfo
@@ -66,8 +68,9 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
       fontSizeSlider.addChangeListener(ChangeListener {
         val fontFactor = FontSize.values()[fontSizeSlider.value.toReverseIndex()]
         PropertiesComponent.getInstance().setValue(StyleManager.FONT_FACTOR_PROPERTY, fontFactor.size, FontPreferences.DEFAULT_FONT_SIZE)
-        TaskDescriptionView.updateAllTabs(project, taskDescription)
-
+        if (!(EduUtils.getCurrentTask(project) is VideoTask && EduSettings.getInstance().shouldUseJavaFx())) {
+          TaskDescriptionView.updateAllTabs(project, taskDescription)
+        }
       })
       val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(fontSizeSlider, fontSizeSlider).createPopup()
       val location = MouseInfo.getPointerInfo().location

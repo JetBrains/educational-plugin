@@ -59,7 +59,7 @@ class StyleManager {
   }
 }
 
-internal fun resourceUrl(name: String): String {
+fun resourceUrl(name: String): String {
   val resource = object {}.javaClass.getResource(name)?.toExternalForm()
   return if (resource != null) {
     resource
