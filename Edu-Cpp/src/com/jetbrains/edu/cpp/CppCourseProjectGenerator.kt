@@ -50,24 +50,26 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     }
   }
 
-  private fun updateTasks(item: StudyItem, project: Project, projectSettings: CppProjectSettings) {
+  private fun addCMakeListToTasks(item: StudyItem, project: Project, projectSettings: CppProjectSettings) {
     when (item) {
-      is ItemContainer -> item.items.forEach { updateTasks(it, project, projectSettings) }
+      is ItemContainer -> item.items.forEach { addCMakeListToTasks(it, project, projectSettings) }
       is Task -> {
-        val cMakeFile = addCMakeList(item, projectSettings.languageStandard)
+        val cMakeFile = addCMakeList(item, getCMakeProjectUniqueName(item), projectSettings.languageStandard)
         GeneratorUtils.createChildFile(item.getTaskDir(project) ?: return, cMakeFile.name, cMakeFile.text)
       }
     }
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings) {
-    myCourse.items.forEach { updateTasks(it, project, projectSettings) }
+    if (myCourse is StepikCourse) {
+      myCourse.items.forEach { addCMakeListToTasks(it, project, projectSettings) }
+    }
 
     super.afterProjectGenerated(project, projectSettings)
   }
 
   private fun changeItemNameAndCustomPresentableName(item: StudyItem) {
-    // We support courses which section/lesson/task names can be in Russian,
+    // We support courses, which section/lesson/task names can be in Russian,
     // which may cause problems when creating a project with non-ascii paths.
     // For example, CMake + MinGW and CLion + CMake + Cygwin does not work correctly with non-ascii symbols in project paths.
     // Therefore, we generate folder names on the disk using ascii symbols (item.name)

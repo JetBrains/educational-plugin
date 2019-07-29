@@ -16,6 +16,11 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
+  private var taskGlobalIndex: Int = 1
+    get() = field++
+
+  private val EDU_MAIN_CPP = "main.cpp"
+
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CppProjectSettings>? =
     CppCourseProjectGenerator(this, course)
 
@@ -26,7 +31,7 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
 
   override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     super.initNewTask(project, lesson, task, info)
-    addCMakeList(task, languageSettings.settings.languageStandard)
+    addCMakeList(task, "Project$taskGlobalIndex", languageSettings.settings.languageStandard)
 
     val mainName = GeneratorUtils.joinPaths(task.sourceDir, EDU_MAIN_CPP)
     val mainText = GeneratorUtils.getInternalTemplateText(EDU_MAIN_CPP)

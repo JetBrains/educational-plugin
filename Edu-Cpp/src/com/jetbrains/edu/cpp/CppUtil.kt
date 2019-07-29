@@ -58,9 +58,9 @@ fun getCMakeTemplateVariables(
   return result
 }
 
-fun addCMakeList(task: Task, cppStandard: String): TaskFile {
-  val text = GeneratorUtils.getInternalTemplateText(getCppCMakeTemplateNames(task.course).taskCMakeList,
-                                                    getCMakeTemplateVariables(getCMakeProjectUniqueName(task), cppStandard))
+fun addCMakeList(task: Task, projectName: String, cppStandard: String): TaskFile {
+  val text = GeneratorUtils.getInternalTemplateText(getCppParameters(task.course).taskCMakeList,
+                                                    getCMakeTemplateVariables(projectName, cppStandard))
 
   val taskFile = TaskFile(CMakeListsFileType.FILE_NAME, text)
   taskFile.isVisible = false
