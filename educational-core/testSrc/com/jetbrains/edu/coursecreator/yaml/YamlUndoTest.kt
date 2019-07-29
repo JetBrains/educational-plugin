@@ -19,7 +19,7 @@ open class YamlUndoTest : YamlTestCase() {
   override fun setUp() {
     super.setUp()
     // as we don't create config file in CCProjectComponent, we have to create them manually
-    createConfigFiles()
+    createConfigFiles(project)
   }
 
   private val TASK_FILE_NAME = "Test.java"

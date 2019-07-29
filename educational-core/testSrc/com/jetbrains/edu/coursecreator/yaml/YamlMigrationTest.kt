@@ -25,7 +25,7 @@ class YamlMigrationTest : YamlTestCase() {
       }
     }
     createStudyXml()
-    createConfigFiles()
+    createConfigFiles(project)
 
     val serializedCourse = StudyTaskManager.getInstance(project).serialize()
     StudyTaskManager.getInstance(project).loadState(serializedCourse)

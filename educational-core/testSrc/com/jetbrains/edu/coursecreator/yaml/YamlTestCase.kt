@@ -31,15 +31,8 @@ abstract class YamlTestCase : EduTestCase() {
     runWriteAction { FileTypeManager.getInstance().associateExtension(PlainTextFileType.INSTANCE, "yaml") }
   }
 
-  protected fun createConfigFiles() {
-    project.putUserData(YAML_TEST_PROJECT_READY, true)
-    YamlFormatSynchronizer.saveAll(project)
-    FileDocumentManager.getInstance().saveAllDocuments()
-    UIUtil.dispatchAllInvocationEvents()
-  }
-
   protected fun loadItemFromConfig(item: StudyItem, newConfigText: String) {
-    createConfigFiles()
+    createConfigFiles(project)
     val configFile = item.getDir(project)!!.findChild(item.configFileName)!!
     val document = FileDocumentManager.getInstance().getDocument(configFile)!!
     runWriteAction {

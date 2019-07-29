@@ -21,7 +21,7 @@ class YamlSynchronizationTest : YamlTestCase() {
 
   fun `test invalid config file`() {
     project.putUserData(YamlFormatSettings.YAML_TEST_THROW_EXCEPTION, false)
-    createConfigFiles()
+    createConfigFiles(project)
 
     // make task config invalid
     val section = StudyTaskManager.getInstance(project).course!!.sections.first()

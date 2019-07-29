@@ -13,7 +13,7 @@ class AddNewItemYamlTest : YamlTestCase() {
   override fun setUp() {
     super.setUp()
     // as we don't create config file in CCProjectComponent, we have to create them manually
-    createConfigFiles()
+    createConfigFiles(project)
   }
 
   override fun createCourse() {
