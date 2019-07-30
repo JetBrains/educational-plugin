@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.ProgramRunnerUtil
+import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
@@ -14,7 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<TheoryTask>(task, project) {
 
   override fun check(indicator: ProgressIndicator): CheckResult {
-    val configuration = createDefaultRunConfiguration(project)
+    val configuration = createTestConfiguration()
     if (configuration == null) {
       return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     }
@@ -26,4 +27,6 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
     }
     return CheckResult(CheckStatus.Solved, "")
   }
+
+  protected open fun createTestConfiguration(): RunnerAndConfigurationSettings? = createDefaultRunConfiguration(project)
 }
