@@ -1,6 +1,7 @@
 package com.jetbrains.edu.cpp
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
@@ -16,9 +17,6 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
-  private var taskGlobalIndex: Int = 1
-    get() = field++
-
   private val EDU_MAIN_CPP = "main.cpp"
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CppProjectSettings>? =
@@ -31,7 +29,9 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
 
   override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     super.initNewTask(project, lesson, task, info)
-    addCMakeList(task, "Project$taskGlobalIndex", languageSettings.settings.languageStandard)
+
+    val cMakeProjectName = getCMakeProjectUniqueName(task) { FileUtil.sanitizeFileName(it.name, true) }
+    addCMakeList(task, cMakeProjectName, languageSettings.settings.languageStandard)
 
     val mainName = GeneratorUtils.joinPaths(task.sourceDir, EDU_MAIN_CPP)
     val mainText = GeneratorUtils.getInternalTemplateText(EDU_MAIN_CPP)

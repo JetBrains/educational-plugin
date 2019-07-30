@@ -70,13 +70,13 @@ fun addCMakeList(task: Task, projectName: String, cppStandard: String): TaskFile
   return taskFile
 }
 
-fun getCMakeProjectUniqueName(task: Task): String {
+fun getCMakeProjectUniqueName(task: Task, nameExtractor: (StudyItem) -> String = ::getDefaultName): String {
   val lesson = task.lesson
   val section = lesson.section
 
-  val sectionPart = section?.let { getDefaultName(it) } ?: "global"
-  val lessonPart = getDefaultName(lesson)
-  val taskPart = getDefaultName(task)
+  val sectionPart = section?.let { nameExtractor(it) } ?: "global"
+  val lessonPart = nameExtractor(lesson)
+  val taskPart = nameExtractor(task)
 
   return "$sectionPart-$lessonPart-$taskPart"
 }
