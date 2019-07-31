@@ -60,7 +60,7 @@ object YamlFormatSynchronizer {
     mapper
   }
 
-  private fun createMapper(): ObjectMapper {
+  fun createMapper(): ObjectMapper {
     val yamlFactory = YAMLFactory()
     yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
     yamlFactory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
@@ -77,7 +77,7 @@ object YamlFormatSynchronizer {
     return mapper
   }
 
-  private fun addMixIns(mapper: ObjectMapper) {
+  fun addMixIns(mapper: ObjectMapper) {
     mapper.addMixIn(CourseraCourse::class.java, CourseraCourseYamlMixin::class.java)
     mapper.addMixIn(Course::class.java, CourseYamlMixin::class.java)
     mapper.addMixIn(Section::class.java, SectionYamlMixin::class.java)
