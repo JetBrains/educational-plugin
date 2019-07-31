@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
@@ -36,15 +37,15 @@ import com.jetbrains.edu.learning.isUnitTestMode
  */
 object YamlDeserializer {
 
-  fun deserializeItem(project: Project, configFile: VirtualFile): StudyItem? {
+  fun deserializeItem(project: Project, configFile: VirtualFile, mapper: ObjectMapper = MAPPER): StudyItem? {
     val configName = configFile.name
     val configFileText = configFile.document.text
     return try {
       when (configName) {
-        COURSE_CONFIG -> deserialize(configFileText, Course::class.java)
-        SECTION_CONFIG -> deserializeSection(configFileText)
-        LESSON_CONFIG -> deserializeLesson(configFileText)
-        TASK_CONFIG -> deserializeTask(configFileText)
+        COURSE_CONFIG -> mapper.deserialize(configFileText, Course::class.java)
+        SECTION_CONFIG -> mapper.deserializeSection(configFileText)
+        LESSON_CONFIG -> mapper.deserializeLesson(configFileText)
+        TASK_CONFIG -> mapper.deserializeTask(configFileText)
         else -> loadingError(unknownConfigMessage(configFile.name))
       }
     }
@@ -54,11 +55,13 @@ object YamlDeserializer {
     }
   }
 
-  inline fun <reified T : StudyItem> StudyItem.deserializeContent(project: Project, contentList: MutableList<T>): List<T> {
+  inline fun <reified T : StudyItem> StudyItem.deserializeContent(project: Project,
+                                                                  contentList: MutableList<T>,
+                                                                  mapper: ObjectMapper = MAPPER): List<T> {
     val content = mutableListOf<T>()
     for (titledItem in contentList) {
       val configFile: VirtualFile = getConfigFileForChild(project, titledItem.name) ?: continue
-      val deserializeItem = deserializeItem(project, configFile) as? T ?: continue
+      val deserializeItem = deserializeItem(project, configFile, mapper) as? T ?: continue
       deserializeItem.name = titledItem.name
       content.add(deserializeItem)
     }
@@ -71,29 +74,29 @@ object YamlDeserializer {
    * For [Course] object the instance of a proper type is created inside [com.jetbrains.edu.coursecreator.yaml.format.CourseBuilder]
    */
   @VisibleForTesting
-  fun <T : ItemContainer> deserialize(configFileText: String, clazz: Class<T>): T? = MAPPER.readValue(configFileText, clazz)
+  fun <T : ItemContainer> ObjectMapper.deserialize(configFileText: String, clazz: Class<T>): T? = readValue(configFileText, clazz)
 
   @VisibleForTesting
-  fun deserializeSection(configFileText: String): Section {
-    val jsonNode = MAPPER.readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
-    return MAPPER.treeToValue(jsonNode, Section::class.java)
+  fun ObjectMapper.deserializeSection(configFileText: String): Section {
+    val jsonNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+    return treeToValue(jsonNode, Section::class.java)
   }
 
   @VisibleForTesting
-  fun deserializeLesson(configFileText: String): Lesson {
-    val treeNode = MAPPER.readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+  fun ObjectMapper.deserializeLesson(configFileText: String): Lesson {
+    val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
     val type = asText(treeNode.get("type"))
     val clazz = when (type) {
       FrameworkLesson().itemType -> FrameworkLesson::class.java
       Lesson().itemType, null -> Lesson::class.java
       else -> formatError(unsupportedItemTypeMessage(type, EduNames.LESSON))
     }
-    return MAPPER.treeToValue(treeNode, clazz)
+    return treeToValue(treeNode, clazz)
   }
 
   @VisibleForTesting
-  fun deserializeTask(configFileText: String): Task {
-    val treeNode = MAPPER.readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+  fun ObjectMapper.deserializeTask(configFileText: String): Task {
+    val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
     val type = asText(treeNode.get("type")) ?: formatError("Task type not specified")
 
     val clazz = when (type) {
@@ -102,9 +105,11 @@ object YamlDeserializer {
       "theory" -> TheoryTask::class.java
       "choice" -> ChoiceTask::class.java
       "ide" -> IdeTask::class.java
+      // for student mode
+      "code" -> CodeTask::class.java
       else -> formatError(unsupportedItemTypeMessage(type, EduNames.TASK))
     }
-    return MAPPER.treeToValue(treeNode, clazz)
+    return treeToValue(treeNode, clazz)
   }
 
   fun deserializeRemoteItem(configFile: VirtualFile): StudyItem {

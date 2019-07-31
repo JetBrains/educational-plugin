@@ -44,7 +44,7 @@ import java.util.*
 object YamlFormatSynchronizer {
   val LOAD_FROM_CONFIG = Key<Boolean>("Edu.loadItem")
 
-  @VisibleForTesting
+  @JvmStatic
   val MAPPER: ObjectMapper by lazy {
     val mapper = createMapper()
     addMixIns(mapper)
@@ -98,23 +98,35 @@ object YamlFormatSynchronizer {
   }
 
   @JvmStatic
-  fun saveAll(project: Project) {
+  fun saveAll(project: Project, mapper: ObjectMapper = MAPPER) {
     val course = StudyTaskManager.getInstance(project).course ?: error("Attempt to create config files for project without course")
-    saveItem(course)
-    course.visitSections { section -> saveItem(section) }
+    saveItem(course, mapper)
+    course.visitSections { section -> saveItem(section, mapper) }
     course.visitLessons { lesson ->
       lesson.visitTasks { task ->
-        saveItem(task)
+        saveItem(task, mapper)
       }
-      saveItem(lesson)
+      saveItem(lesson, mapper)
     }
 
     saveRemoteInfo(course)
   }
 
   @JvmStatic
+  fun saveItem(item: StudyItem, mapper: ObjectMapper = MAPPER, configName: String = item.configFileName) {
+    val course = item.course
+
+    val project = course.project ?: error("Failed to find project for course")
+    if (!YamlFormatSettings.shouldCreateConfigFiles(project)) {
+      return
+    }
+    item.saveConfigDocument(project, configName, mapper)
+  }
+
+  // for compatibility with Java
+  @JvmStatic
   fun saveItem(item: StudyItem) {
-    doSaveItem(item, item.configFileName, MAPPER)
+    saveItem(item, MAPPER)
   }
 
   @JvmStatic
@@ -134,21 +146,8 @@ object YamlFormatSynchronizer {
   private fun saveItemRemoteInfo(item: StudyItem) {
     // we don't want to create remote info files in local courses
     if (item.id > 0) {
-      doSaveItem(item, item.remoteConfigFileName, REMOTE_MAPPER)
+      saveItem(item, REMOTE_MAPPER, item.remoteConfigFileName)
     }
-  }
-
-  private fun doSaveItem(item: StudyItem, configFile: String, objectMapper: ObjectMapper) {
-    val course = item.course
-    if (course.isStudy) {
-      return
-    }
-
-    val project = course.project ?: error("Failed to find project for course")
-    if (!YamlFormatSettings.shouldCreateConfigFiles(project)) {
-      return
-    }
-    item.saveConfigDocument(project, configFile, objectMapper)
   }
 
   @JvmStatic

@@ -18,6 +18,7 @@ import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduProjectComponent
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -103,7 +104,7 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
                                    course: Course,
                                    section: Section?,
                                    name: String): Lesson? {
-    val lesson = deserializeLesson(VfsUtil.loadText(configFile))
+    val lesson = MAPPER.deserializeLesson(VfsUtil.loadText(configFile))
     lesson.name = name
     lesson.course = course
     lesson.section = section
@@ -111,7 +112,7 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
     for (titledTask in lesson.taskList) {
       val taskDir = configFile.parent.findChild(titledTask.name) ?: throwNoMatchingDirError(titledTask)
       val taskConfig = taskDir.findChild(YamlFormatSettings.TASK_CONFIG) ?: throwNoConfigFileError(titledTask)
-      val task = deserializeTask(VfsUtil.loadText(taskConfig))
+      val task = MAPPER.deserializeTask(VfsUtil.loadText(taskConfig))
       task.name = titledTask.name
       task.lesson = lesson
       val taskDescriptionFile = findTaskDescriptionFile(task, project)

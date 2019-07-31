@@ -3,13 +3,14 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.coursecreator.yaml.format.getRemoteChangeApplierForItem
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.yaml.EduYamlUtil
 
 object YamlDeepLoader {
   @JvmStatic
@@ -18,9 +19,9 @@ object YamlDeepLoader {
     val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error("Course yaml config cannot be null")
 
     val deserializedCourse = YamlDeserializer.deserializeItem(project, courseConfig) as? Course ?: return null
-    deserializedCourse.courseMode = CCUtils.COURSE_MODE
+    val mapper = if (deserializedCourse.isStudy) EduYamlUtil.EDU_MAPPER else MAPPER
 
-    deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items)
+    deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items, mapper)
     deserializedCourse.items.forEach { deserializedItem ->
       when (deserializedItem) {
         is Section -> {

@@ -8,6 +8,8 @@ import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeTask
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -100,7 +102,7 @@ open class YamlUndoTest : YamlTestCase() {
 
     val taskConfig = taskDir.findChild(YamlFormatSettings.TASK_CONFIG)!!
     val document = FileDocumentManager.getInstance().getDocument(taskConfig)!!
-    val deserializedTask = YamlDeserializer.deserializeTask(document.text)
+    val deserializedTask = MAPPER.deserializeTask(document.text)
     val deserializedPlaceholder = deserializedTask.getFile(TASK_FILE_NAME)!!.answerPlaceholders.first()
     assertEquals(expectedStartOffset, deserializedPlaceholder.offset)
     assertEquals(expectedEndOffset, deserializedPlaceholder.endOffset)

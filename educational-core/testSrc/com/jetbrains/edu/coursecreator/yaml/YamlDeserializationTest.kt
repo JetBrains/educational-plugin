@@ -1,7 +1,12 @@
 package com.jetbrains.edu.coursecreator.yaml
 
+import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserialize
+import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeLesson
+import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeSection
+import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeTask
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
@@ -129,7 +134,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, CheckiOCourse::class.java)!!
+    val course = MAPPER.deserialize(yamlContent, CheckiOCourse::class.java)!!
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -155,7 +160,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, StepikCourse::class.java)!!
+    val course = MAPPER.deserialize(yamlContent, StepikCourse::class.java)!!
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -181,7 +186,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = YamlDeserializer.deserialize(yamlContent, HyperskillCourse::class.java)!!
+    val course = MAPPER.deserialize(yamlContent, HyperskillCourse::class.java)!!
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -215,7 +220,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
     """.trimMargin("|")
-    val section = YamlDeserializer.deserialize(yamlContent, Section::class.java)!!
+    val section = MAPPER.deserialize(yamlContent, Section::class.java)!!
     assertEquals(listOf(firstLesson, secondLesson), section.items.map { it.name })
   }
 
@@ -229,7 +234,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
     """.trimMargin("|")
-    val section = YamlDeserializer.deserialize(yamlContent, Section::class.java)!!
+    val section = MAPPER.deserialize(yamlContent, Section::class.java)!!
     assertEquals(listOf(firstLesson, secondLesson), section.items.map { it.name })
     assertEquals(customSectionName, section.customPresentableName)
   }
@@ -242,7 +247,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstTask
       |- $secondTask
     """.trimMargin("|")
-    val lesson = YamlDeserializer.deserializeLesson(yamlContent)
+    val lesson = MAPPER.deserializeLesson(yamlContent)
     assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
   }
 
@@ -256,7 +261,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstTask
       |- $secondTask
     """.trimMargin("|")
-    val lesson = YamlDeserializer.deserializeLesson(yamlContent)
+    val lesson = MAPPER.deserializeLesson(yamlContent)
     assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
     assertEquals(lessonCustomName, lesson.customPresentableName)
   }
@@ -270,7 +275,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstTask
       |- $secondTask
     """.trimMargin("|")
-    val lesson = YamlDeserializer.deserializeLesson(yamlContent)
+    val lesson = MAPPER.deserializeLesson(yamlContent)
     assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
   }
 
@@ -283,7 +288,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstTask
       |- $secondTask
     """.trimMargin("|")
-    val lesson = YamlDeserializer.deserializeLesson(yamlContent)
+    val lesson = MAPPER.deserializeLesson(yamlContent)
     assertTrue(lesson is FrameworkLesson)
     assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
   }
@@ -294,7 +299,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |files:
     |- name: Test.java
     |""".trimMargin("|")
-    val task = YamlDeserializer.deserializeTask(yamlContent)
+    val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is OutputTask)
     assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
   }
@@ -305,7 +310,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |files:
     |- name: Test.java
     |""".trimMargin("|")
-    val task = YamlDeserializer.deserializeTask(yamlContent)
+    val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is IdeTask)
     assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
   }
@@ -327,7 +332,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- text: 2
       |  is_correct: false
       |""".trimMargin("|")
-    val task = YamlDeserializer.deserializeTask(yamlContent)
+    val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is ChoiceTask)
     assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
     assertEquals(mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT),
@@ -347,7 +352,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- text: 1
       |- text: 2
       |""".trimMargin("|")
-    val task = YamlDeserializer.deserializeTask(yamlContent)
+    val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is ChoiceTask)
     assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
     assertEquals(mapOf("1" to ChoiceOptionStatus.UNKNOWN, "2" to ChoiceOptionStatus.UNKNOWN),
@@ -370,7 +375,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |      placeholder: 1
     |      is_visible: true
     |""".trimMargin("|")
-    val task = YamlDeserializer.deserializeTask(yamlContent)
+    val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
     assertEquals(3, answerPlaceholder.length)
@@ -396,7 +401,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |      placeholder: 1
     |      is_visible: true
     |""".trimMargin("|")
-    val task = YamlDeserializer.deserializeTask(yamlContent)
+    val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     assertEquals(customName, task.customPresentableName)
   }
@@ -417,7 +422,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |      placeholder: 1
     |      is_visible: true
     |""".trimMargin("|")
-    val task = YamlDeserializer.deserializeTask(yamlContent)
+    val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
     assertEquals("", answerPlaceholder.placeholderText)
@@ -439,7 +444,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |      placeholder: 1
     |      is_visible: true
     |""".trimMargin("|")
-    val task = YamlDeserializer.deserializeTask(yamlContent)
+    val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
     assertEquals("   type here", answerPlaceholder.placeholderText)
@@ -461,7 +466,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |      placeholder: 1
     |      is_visible: true
     |""".trimMargin("|")
-    val task = YamlDeserializer.deserializeTask(yamlContent)
+    val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
     assertEquals("type here   ", answerPlaceholder.placeholderText)
@@ -477,7 +482,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |    length: 3
     |    placeholder_text: type here
     |""".trimMargin("|")
-    val task = YamlDeserializer.deserializeTask(yamlContent)
+    val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
     assertEquals(3, answerPlaceholder.length)
@@ -491,7 +496,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |files:
     |- name: Test.java
     |""".trimMargin("|")
-    val task = YamlDeserializer.deserializeTask(yamlContent)
+    val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     assertEquals("http://example.com", task.feedbackLink.link)
     assertEquals(FeedbackLink.LinkType.CUSTOM, task.feedbackLink.type)
@@ -508,7 +513,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |- name: $testFileName
     |  visible: false
     |""".trimMargin("|")
-    val task = YamlDeserializer.deserializeTask(yamlContent)
+    val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     val taskFile = task.taskFiles[taskFileName]!!
     assertTrue("$taskFileName expected to be visible", taskFile.isVisible)
@@ -520,7 +525,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val yamlContent = """
     |type: edu
     |""".trimMargin("|")
-    val task = YamlDeserializer.deserializeTask(yamlContent)
+    val task = MAPPER.deserializeTask(yamlContent)
     assertEmpty(task.taskFiles.values)
   }
 
@@ -529,14 +534,14 @@ class YamlDeserializationTest : YamlTestCase() {
     |
     |{}
     |""".trimMargin("|")
-    val lesson = YamlDeserializer.deserializeLesson(yamlContent)
+    val lesson = MAPPER.deserializeLesson(yamlContent)
     assertTrue(lesson.taskList.isEmpty())
   }
 
   fun `test empty lesson with empty config`() {
     val yamlContent = """
     |""".trimMargin("|")
-    val lesson = YamlDeserializer.deserializeLesson(yamlContent)
+    val lesson = MAPPER.deserializeLesson(yamlContent)
     assertEmpty(lesson.taskList)
   }
 
@@ -545,14 +550,14 @@ class YamlDeserializationTest : YamlTestCase() {
     |
     |{}
     |""".trimMargin("|")
-    val section = YamlDeserializer.deserializeSection(yamlContent)
+    val section = MAPPER.deserializeSection(yamlContent)
     assertTrue(section.lessons.isEmpty())
   }
 
   fun `test empty section with empty config`() {
     val yamlContent = """
     |""".trimMargin("|")
-    val section = YamlDeserializer.deserializeSection(yamlContent)
+    val section = MAPPER.deserializeSection(yamlContent)
     assertEmpty(section.lessons)
   }
 
@@ -605,5 +610,5 @@ class YamlDeserializationTest : YamlTestCase() {
   }
 
   private fun <T : ItemContainer> deserializeNotNull(yamlContent: String, clazz: Class<T>) =
-    YamlDeserializer.deserialize(yamlContent, clazz)!!
+    MAPPER.deserialize(yamlContent, clazz)!!
 }
