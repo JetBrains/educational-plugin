@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.yaml
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.yaml.YamlDeepLoader
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.addMixIns
 import com.jetbrains.edu.coursecreator.yaml.format.TaskYamlMixin
@@ -42,7 +41,4 @@ object EduYamlUtil {
   fun saveItem(item: StudyItem) {
     YamlFormatSynchronizer.saveItem(item, EDU_MAPPER)
   }
-
-  @JvmStatic
-  fun loadCourse(project: Project) = YamlDeepLoader.loadCourse(project, EDU_MAPPER)
 }
