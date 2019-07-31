@@ -33,7 +33,7 @@ open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<O
     val executor = DefaultRunExecutor.getRunExecutorInstance()
     val runner = ProgramRunner.getRunner(executor.id, configuration.configuration)
     configuration.isActivateToolWindowBeforeRun = false
-    val env = ExecutionEnvironmentBuilder.create(executor, configuration).build()
+    val env = ExecutionEnvironmentBuilder.create(executor, configuration).activeTarget().build()
     var processNotStarted = false
     val connection = project.messageBus.connect()
     val latch = CountDownLatch(1)
