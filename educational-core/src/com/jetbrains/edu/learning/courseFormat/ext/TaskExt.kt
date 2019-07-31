@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.yaml.EduYamlUtil
 import java.util.*
 import kotlin.collections.HashSet
 import kotlin.collections.component1
@@ -106,6 +107,7 @@ fun Task.saveStudentAnswersIfNeeded(project: Project) {
       placeholder.studentAnswer = document.getText(TextRange.create(startOffset, endOffset))
     }
   }
+  EduYamlUtil.saveItem(this)
 }
 
 fun Task.addDefaultTaskDescription() {

@@ -112,6 +112,7 @@ object YamlFormatSynchronizer {
     saveRemoteInfo(course)
   }
 
+  @JvmOverloads
   @JvmStatic
   fun saveItem(item: StudyItem, mapper: ObjectMapper = MAPPER, configName: String = item.configFileName) {
     val course = item.course
@@ -121,12 +122,6 @@ object YamlFormatSynchronizer {
       return
     }
     item.saveConfigDocument(project, configName, mapper)
-  }
-
-  // for compatibility with Java
-  @JvmStatic
-  fun saveItem(item: StudyItem) {
-    saveItem(item, MAPPER)
   }
 
   @JvmStatic

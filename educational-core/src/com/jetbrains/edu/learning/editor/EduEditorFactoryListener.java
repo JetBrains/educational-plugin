@@ -4,7 +4,10 @@ package com.jetbrains.edu.learning.editor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.openapi.editor.event.*;
+import com.intellij.openapi.editor.event.EditorFactoryEvent;
+import com.intellij.openapi.editor.event.EditorFactoryListener;
+import com.intellij.openapi.editor.event.EditorMouseEvent;
+import com.intellij.openapi.editor.event.EditorMouseListener;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -28,6 +31,7 @@ import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyM
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
 import com.jetbrains.edu.learning.stepik.api.StepikConnectorUtils;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
+import com.jetbrains.edu.learning.yaml.EduYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -53,6 +57,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       final Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(answerPlaceholder);
       editor.getSelectionModel().setSelection(offsets.getFirst(), offsets.getSecond());
       answerPlaceholder.setSelected(true);
+      EduYamlUtil.saveItem(myTaskFile.getTask());
     }
   }
 

@@ -13,6 +13,8 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,6 +34,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
+import com.jetbrains.edu.learning.yaml.EduYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -88,6 +91,19 @@ public class EduProjectComponent implements ProjectComponent {
         TaskDescriptionView.updateAllTabs(myProject, TaskDescriptionView.getInstance(myProject));
       }
     });
+
+    // we need opened project to get project for a course using `CourseExt.getProject`,
+    // that's why can't use `ProjectComponent#projectClosed`
+    myBusConnection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
+      @Override
+      public void projectClosing(@NotNull Project project) {
+        Course course = StudyTaskManager.getInstance(project).getCourse();
+        if (course != null && !OpenApiExtKt.isUnitTestMode()) {
+          EduYamlUtil.saveAll(project);
+        }
+      }
+    });
+
   }
 
   private void setupProject(@NotNull Course course) {

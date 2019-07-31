@@ -44,6 +44,7 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel;
+import com.jetbrains.edu.learning.yaml.EduYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -234,6 +235,7 @@ public class CheckAction extends DumbAwareAction {
       final String details = myResult.getDetails();
       if (myTask.getCourse().isStudy()) {
         myTask.setStatus(status);
+        EduYamlUtil.saveItem(myTask);
       }
       if (status == CheckStatus.Failed) {
         if (myChecker != null) {

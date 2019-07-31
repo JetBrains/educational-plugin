@@ -90,7 +90,7 @@ private class ChangeFilesPropertyUndoableAction(
   private inline fun doAction(changeState: (State) -> Unit) {
     states.forEach(changeState)
     ProjectView.getInstance(project).refresh()
-    affectedTasks.forEach(YamlFormatSynchronizer::saveItem)
+    affectedTasks.forEach { saveItem(it) }
   }
 
   override fun isGlobal(): Boolean = true

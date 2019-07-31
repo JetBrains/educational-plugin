@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.yaml.EduYamlUtil
 
 @Suppress("ComponentNotRegistered")
 class CCSolveAllTasksBeforeAction : DumbAwareAction("Solve All Tasks Before", "Solves all tasks in course before selected one", null) {
@@ -48,6 +49,7 @@ class CCSolveAllTasksBeforeAction : DumbAwareAction("Solve All Tasks Before", "S
       if (lesson is FrameworkLesson && fromTask.index < lesson.currentTaskIndex) continue
       fillAnswers(project, fromTask)
       fromTask.status = CheckStatus.Solved
+      EduYamlUtil.saveItem(selectedTask)
       NavigationUtils.navigateToTask(project, targetTask, fromTask, false)
     }
   }

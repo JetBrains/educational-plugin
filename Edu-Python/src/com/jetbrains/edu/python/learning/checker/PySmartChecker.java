@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.yaml.EduYamlUtil;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,6 +75,7 @@ class PySmartChecker {
         if (course != null) {
           final CheckStatus status = new TestsOutputParser().getCheckResult(output.getStdoutLines()).getStatus();
           userAnswerPlaceholder.setStatus(status);
+          EduYamlUtil.saveItem(usersTaskFile.getTask());
         }
       }
     }

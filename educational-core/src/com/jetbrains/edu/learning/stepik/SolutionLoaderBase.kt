@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.update.UpdateNotification
+import com.jetbrains.edu.learning.yaml.EduYamlUtil
 import java.io.IOException
 import java.util.concurrent.Future
 
@@ -262,6 +263,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
         if (project.isDisposed) return@invokeAndWaitIfNeeded
         val taskDir = task.getTaskDir(project) ?: return@invokeAndWaitIfNeeded
         task.status = taskSolutions.checkStatus
+        EduYamlUtil.saveItem(task)
         val solutionsMap = taskSolutions.solutions.mapValues { it.value.first }
         val lesson = task.lesson
         if (lesson is FrameworkLesson && lesson.currentTask() != task) {

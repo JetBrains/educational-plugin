@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
+import com.jetbrains.edu.learning.yaml.EduYamlUtil;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,6 +84,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     }
     resetDocument(document, taskFile);
     task.setStatus(CheckStatus.Unchecked);
+    EduYamlUtil.saveItem(task);
     resetAnswerPlaceholders(taskFile);
 
     WolfTheProblemSolver.getInstance(project).clearProblems(virtualFile);
