@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -31,13 +32,17 @@ import com.jetbrains.edu.coursecreator.yaml.YamlInfoTaskDescriptionTabKt;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
+import com.jetbrains.edu.learning.yaml.EduYamlUtil;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -118,11 +123,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   @Nullable
   @Override
   public Element getState() {
-    if (myCourse == null || !myCourse.isStudy()) {
-      return null;
-    }
-
-    return serialize();
+    return null;
   }
 
   @VisibleForTesting
@@ -208,30 +209,54 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   }
 
   private void createConfigFilesIfMissing() {
-    if (myProject == null || myCourse.isStudy()) {
+    if (myProject == null) {
       return;
     }
     VirtualFile courseDir = OpenApiExtKt.getCourseDir(myProject);
     VirtualFile courseConfig = courseDir.findChild(YamlFormatSettings.COURSE_CONFIG);
     if (courseConfig == null) {
       StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
-        YamlFormatSynchronizer.saveAll(myProject);
+        ObjectMapper mapper = myCourse.isStudy() ? EduYamlUtil.getEDU_MAPPER() : YamlFormatSynchronizer.getMAPPER();
+        YamlFormatSynchronizer.saveAll(myProject, mapper);
         FileDocumentManager.getInstance().saveAllDocuments();
-        YamlFormatSynchronizer.startSynchronization(myProject);
-        Notification notification = new Notification("Education: yaml info",
-                                                     "New YAML Format for Educators",
-                                                     "Modify course by editing <i>*.yaml</i> files",
-                                                     NotificationType.INFORMATION);
-        notification.addAction(new AnAction("Learn More") {
-          @Override
-          public void actionPerformed(@NotNull AnActionEvent e) {
-            YamlInfoTaskDescriptionTabKt.showYamlTab(myProject);
-            notification.hideBalloon();
-          }
-        });
+        if (myCourse.isStudy()) {
+          createDescriptionFiles(myProject);
+        }
+        else {
+          YamlFormatSynchronizer.startSynchronization(myProject);
+          Notification notification = new Notification("Education: yaml info",
+                                                       "New YAML Format for Educators",
+                                                       "Modify course by editing <i>*.yaml</i> files",
+                                                       NotificationType.INFORMATION);
+          notification.addAction(new AnAction("Learn More") {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent e) {
+              YamlInfoTaskDescriptionTabKt.showYamlTab(myProject);
+              notification.hideBalloon();
+            }
+          });
 
-        notification.notify(myProject);
+          notification.notify(myProject);
+        }
       });
+    }
+  }
+
+  private void createDescriptionFiles(@NotNull Project project) {
+    List<Task> tasks = CourseExt.getAllTasks(myCourse);
+    for (Task task : tasks) {
+      VirtualFile taskDir = task.getTaskDir(project);
+      if (taskDir == null) {
+        LOG.warn("Cannot find directory for a task: " + task.getName());
+        continue;
+      }
+
+      try {
+        GeneratorUtils.createDescriptionFile(taskDir, task);
+      }
+      catch (IOException e) {
+        LOG.warn("Cannot create task description file: " + e.getMessage());
+      }
     }
   }
 
