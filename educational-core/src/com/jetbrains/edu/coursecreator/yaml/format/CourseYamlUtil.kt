@@ -24,6 +24,7 @@ import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TITLE
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TOP_LEVEL_LESSONS_SECTION
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.UPDATE_DATE
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.formatError
 import com.jetbrains.edu.coursecreator.yaml.unknownFieldValueMessage
 import com.jetbrains.edu.coursecreator.yaml.unnamedItemAtMessage
@@ -60,6 +61,10 @@ abstract class CourseYamlMixin {
   fun getItemType(): String {
     throw NotImplementedInMixin()
   }
+
+  @JsonSerialize(converter = CourseModeSerializationConverter::class)
+  @JsonProperty(MODE)
+  lateinit var courseMode: String
 
   @JsonProperty(TITLE)
   private lateinit var myName: String
@@ -117,6 +122,12 @@ private class CourseTypeSerializationConverter : StdConverter<String, String?>()
   }
 }
 
+private class CourseModeSerializationConverter : StdConverter<String, String?>() {
+  override fun convert(courseMode: String): String? {
+    return if (courseMode == EduNames.STUDY) EduNames.STUDY else null
+  }
+}
+
 /**
  * Mixin class is used to deserialize remote information of [EduCourse] item stored on Stepik.
  */
@@ -140,6 +151,7 @@ private class TopLevelLessonsSectionDeserializer : StdConverter<Int, List<Int>>(
 
 @JsonPOJOBuilder(withPrefix = "")
 private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
+                            @JsonProperty(MODE) val mode: String?,
                             @JsonProperty(TITLE) val title: String,
                             @JsonProperty(SUMMARY) val summary: String,
                             @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
@@ -177,6 +189,8 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       if (languages.isEmpty()) {
         formatError("Unsupported language $programmingLanguage")
       }
+      language = languageName.id
+      courseMode = mode ?: CCUtils.COURSE_MODE
 
       if (languages.size > 1) {
         error("Multiple configurators for language with name: $programmingLanguage")

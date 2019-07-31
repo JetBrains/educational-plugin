@@ -255,7 +255,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test course`() {
-    val course = course {
+    val course = course(courseMode = CCUtils.COURSE_MODE) {
       lesson("the first lesson")
       lesson("the second lesson")
     }
@@ -461,7 +461,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test empty course`() {
-    val course = course {}
+    val course = course(courseMode = CCUtils.COURSE_MODE) {}
 
     doTest(course, """
       |title: Test Course
@@ -472,7 +472,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test course with lang version`() {
-    val course = course {}
+    val course = course(courseMode = CCUtils.COURSE_MODE) {}
     course.languageCode = "ru"
     course.description = "sum"
     course.language = "${PlainTextLanguage.INSTANCE.id} 1.42"
@@ -487,7 +487,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test coursera course`() {
-    val course = course(courseProducer = ::CourseraCourse) {}
+    val course = course(courseMode = CCUtils.COURSE_MODE, courseProducer = ::CourseraCourse) {}
     course.languageCode = "ru"
     course.description = "sum"
     course.language = "${PlainTextLanguage.INSTANCE.id} 1.42"
@@ -503,7 +503,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test coursera course manual submit`() {
-    val course = course(courseProducer = ::CourseraCourse) {} as CourseraCourse
+    val course = course(courseMode = CCUtils.COURSE_MODE, courseProducer = ::CourseraCourse) {} as CourseraCourse
     course.languageCode = "ru"
     course.description = "sum"
     course.submitManually = true
@@ -544,6 +544,18 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin("|"))
 
     Locale.setDefault(defaultLocale)
+  }
+
+  fun `test student course`() {
+    val course = course {}
+
+    doTest(course, """
+      |title: Test Course
+      |language: English
+      |programming_language: Plain text
+      |mode: Study
+      |
+    """.trimMargin("|"))
   }
 
   private fun doTest(item: StudyItem, expected: String) {
