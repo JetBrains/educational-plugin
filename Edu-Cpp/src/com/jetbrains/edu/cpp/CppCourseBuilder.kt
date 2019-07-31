@@ -5,6 +5,9 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
+import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseDir
@@ -36,6 +39,14 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     val mainName = GeneratorUtils.joinPaths(task.sourceDir, EDU_MAIN_CPP)
     val mainText = GeneratorUtils.getInternalTemplateText(EDU_MAIN_CPP)
     task.addTaskFile(TaskFile(mainName, mainText))
+  }
+
+  override fun showNewStudyItemUi(
+    project: Project,
+    model: NewStudyItemUiModel,
+    additionalPanels: MutableList<AdditionalPanel>
+  ): NewStudyItemInfo? {
+    return showNewStudyItemDialog(project, model, additionalPanels, ::CppNewTaskDialog)
   }
 
   override fun refreshProject(project: Project) {
