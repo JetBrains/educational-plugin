@@ -58,6 +58,7 @@ class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
         dir("test") {
           file("test.js")
         }
+        file("task.html")
       }
       file("package.json")
     }.assertEquals(rootDir)

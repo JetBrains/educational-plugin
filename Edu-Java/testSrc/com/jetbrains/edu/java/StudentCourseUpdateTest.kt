@@ -22,6 +22,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       dir("lesson2") {
@@ -32,6 +33,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -51,6 +53,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       dir("lesson1") {
@@ -61,6 +64,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -81,6 +85,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             dir("test") {
               file("Tests.java")
             }
+            file("task.html")
           }
         }
         dir("lesson1") {
@@ -91,6 +96,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             dir("test") {
               file("Tests.java")
             }
+            file("task.html")
           }
         }
       }
@@ -112,6 +118,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -130,6 +137,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
         dir("task2") {
           dir("src") {
@@ -138,6 +146,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -157,6 +166,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
         dir("Theory") {
           dir("src") {
@@ -165,6 +175,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -184,6 +195,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
         dir("Theory") {
           dir("src") {
@@ -192,6 +204,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -213,6 +226,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             dir("test") {
               file("Tests.java")
             }
+            file("task.html")
           }
           dir("task2") {
             dir("src") {
@@ -221,6 +235,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             dir("test") {
               file("Tests.java")
             }
+            file("task.html")
           }
         }
       }
@@ -242,6 +257,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -261,6 +277,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -280,6 +297,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -299,6 +317,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -318,6 +337,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -338,6 +358,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             dir("test") {
               file("Tests.java")
             }
+            file("task.html")
           }
         }
       }
@@ -359,6 +380,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       dir("section1") {
@@ -370,6 +392,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             dir("test") {
               file("Tests.java")
             }
+            file("task.html")
           }
         }
       }
@@ -391,6 +414,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             dir("test") {
               file("Tests.java")
             }
+            file("task.html")
           }
         }
       }
@@ -403,6 +427,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             dir("test") {
               file("Tests.java")
             }
+            file("task.html")
           }
         }
       }
@@ -423,6 +448,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       dir("section1") {
@@ -434,6 +460,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             dir("test") {
               file("Tests.java")
             }
+            file("task.html")
           }
         }
         dir("lesson2") {
@@ -444,6 +471,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             dir("test") {
               file("Tests.java")
             }
+            file("task.html")
           }
         }
 
@@ -465,6 +493,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       dir("section1_renamed") {
@@ -476,6 +505,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             dir("test") {
               file("Tests.java")
             }
+            file("task.html")
           }
         }
       }
@@ -496,6 +526,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       dir("section1") {
@@ -507,6 +538,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             dir("test") {
               file("Tests.java")
             }
+            file("task.html")
           }
         }
       }
@@ -527,6 +559,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -546,6 +579,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -566,6 +600,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             dir("test") {
               file("Tests.java")
             }
+            file("task.html")
           }
         }
       }

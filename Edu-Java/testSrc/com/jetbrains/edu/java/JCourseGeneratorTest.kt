@@ -20,6 +20,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
         dir("task2") {
           dir("src") {
@@ -28,6 +29,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       dir("lesson2") {
@@ -38,6 +40,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")

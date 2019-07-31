@@ -51,17 +51,21 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
         dir("task1") {
           file("Foo.kt", "fn foo() = 123")
           file("Bar.kt", "fn bar(a: Int) = a + 10")
+          file("task.html")
         }
         dir("task2") {
           file("Baz.kt", "fn baz() = true")
+          file("task.html")
         }
       }
       dir("lesson2") {
         dir("task3") {
           file("Foo.kt", "fn foo() = 123 + 789")
+          file("task.html")
         }
         dir("task4") {
           file("Qqq.kt", "fn qqq() = TODO()")
+          file("task.html")
         }
       }
     }
@@ -108,6 +112,7 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
           file("Foo.kt", "fn foo() = 123")
           file("Bar.kt", "fn bar(a: Int) = a + 10")
           file("Baz.kt", "fn baz() = 123 + TODO()")
+          file("task.html")
         }
       }
     }

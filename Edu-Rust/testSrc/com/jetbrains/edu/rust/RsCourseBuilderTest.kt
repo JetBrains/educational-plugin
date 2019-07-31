@@ -47,6 +47,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
         dir("tests") {
           file("tests.rs")
         }
+        file("task.html")
         file("Cargo.toml")
       }
     }.assertEquals(rootDir)

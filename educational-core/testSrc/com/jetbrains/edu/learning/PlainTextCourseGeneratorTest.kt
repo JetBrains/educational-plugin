@@ -27,14 +27,17 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
       dir("lesson1") {
         dir("task1") {
           file("Fizz.kt")
+          file("task.html")
         }
         dir("task2") {
           file("Buzz.kt")
+          file("task.html")
         }
       }
       dir("lesson2") {
         dir("task1") {
           file("FizzBuzz.kt")
+          file("task.html")
         }
       }
     }
@@ -61,11 +64,13 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
       dir("lesson1") {
         dir("task") {
           file("Fizz.kt")
+          file("task.html")
         }
       }
       dir("lesson2") {
         dir("task1") {
           file("FizzBuzz.kt")
+          file("task.html")
         }
       }
     }
@@ -132,15 +137,18 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
         dir("lesson1") {
           dir("task1") {
             file("Fizz.kt")
+            file("task.html")
           }
           dir("task2") {
             file("Buzz.kt")
+            file("task.html")
           }
         }
       }
       dir("lesson1") {
         dir("task1") {
           file("FizzBuzz.kt")
+          file("task.html")
         }
       }
     }
@@ -313,14 +321,17 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
       dir("lesson1") {
         dir("task1") {
           file("Fizz.kt", code = "fun foo(): String = TODO()")
+          file("task.html")
         }
         dir("task2") {
           file("Buzz.kt", code = "fun bar(): String = TODO()")
+          file("task.html")
         }
       }
       dir("lesson2") {
         dir("task1") {
           file("FizzBuzz.kt", code = "fun fooBar(): String = \"\" + \"\"")
+          file("task.html")
         }
       }
     }
@@ -431,19 +442,36 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
     if (SystemInfo.isWindows) {
       checkFileTree {
         dir("lesson name") {
-          dir("task 1")
-          dir("task 2")
-          dir("task 3")
-          dir("task 4")
+          dir("task 1") {
+            file("task.html")
+          }
+          dir("task 2") {
+            file("task.html")
+          }
+          dir("task 3") {
+            file("task.html")
+          }
+          dir("task 4") {
+            file("task.html")
+          }
         }
       }
-    } else {
+    }
+    else {
       checkFileTree {
         dir("lesson name") {
-          dir("task?1")
-          dir("task 2")
-          dir("task;3")
-          dir("task&4")
+          dir("task?1") {
+            file("task.html")
+          }
+          dir("task 2") {
+            file("task.html")
+          }
+          dir("task;3") {
+            file("task.html")
+          }
+          dir("task&4") {
+            file("task.html")
+          }
         }
       }
     }

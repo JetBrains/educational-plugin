@@ -23,6 +23,7 @@ class ScalaGradleCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings
           dir("test") {
             file("Test.scala")
           }
+          file("task.html")
         }
         dir("my task 2") {
           dir("src") {
@@ -31,6 +32,7 @@ class ScalaGradleCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings
           dir("test") {
             file("Test.scala")
           }
+          file("task.html")
         }
       }
       file("build.gradle")

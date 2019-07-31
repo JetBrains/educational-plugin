@@ -20,6 +20,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("tests.kt")
           }
+          file("task.html")
         }
         dir("Java to Kotlin conversion") {
           dir("src") {
@@ -29,6 +30,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("tests.kt")
           }
+          file("task.html")
         }
       }
       dir("Conventions") {
@@ -39,6 +41,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("tests.kt")
           }
+          file("task.html")
         }
       }
       dir("util") {

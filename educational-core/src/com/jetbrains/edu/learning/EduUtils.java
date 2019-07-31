@@ -299,8 +299,8 @@ public class EduUtils {
     if (task == null || task.getLesson() == null) {
       return null;
     }
-    String text = task.getTaskDescription(taskDirectory) != null ? task.getTaskDescription(taskDirectory)
-                                                                 : getTaskTextByTaskName(task, taskDirectory);
+    String textFromFile = getTaskTextByTaskName(task, taskDirectory);
+    String text = textFromFile != null ? textFromFile : task.getTaskDescription(taskDirectory);
     if (task.getLesson() instanceof FrameworkLesson) {
       text = "<h2>" + task.getUIName() + " #" + task.getIndex() + ": " + task.getName() + "<h2/> " + text;
     }

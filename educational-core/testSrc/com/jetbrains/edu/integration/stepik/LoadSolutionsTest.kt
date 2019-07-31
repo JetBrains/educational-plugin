@@ -121,6 +121,7 @@ class LoadSolutionsTest : StepikTestCase() {
             // comment from task 1
             fun fizz() {}
           """)
+          file("task.html")
         }
       }
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
@@ -135,6 +136,7 @@ class LoadSolutionsTest : StepikTestCase() {
             // comment from task 2
             fun fizz() {}
           """)
+          file("task.html")
         }
       }
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
@@ -179,6 +181,7 @@ class LoadSolutionsTest : StepikTestCase() {
             // comment from task 1
             fun fizz() = "Fizz"
           """)
+          file("task.html")
         }
       }
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
@@ -192,6 +195,7 @@ class LoadSolutionsTest : StepikTestCase() {
           file("fizz.kt", """
             fun fizz() = "Fizz"
           """)
+          file("task.html")
         }
       }
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)

@@ -34,6 +34,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
               fun tests2() {}
             """)
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -73,6 +74,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
               fun tests1() {}
             """)
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -122,6 +124,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
               fun tests2() {}
             """)
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -155,6 +158,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
               fun tests2() {}
             """)
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -191,6 +195,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
               fun tests1() {}
             """)
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -224,6 +229,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
               fun tests2() {}
             """)
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -258,6 +264,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
               fun tests1() {}
             """)
           }
+          file("task.html")
         }
       }
       file("build.gradle")
