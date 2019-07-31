@@ -60,12 +60,16 @@ private class EmptyTextSerializer : JsonSerializer<String>() {
 
 
 @JsonPOJOBuilder(withPrefix = "")
-private class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
-                                       @JsonProperty(LENGTH) val length: Int,
-                                       @JsonProperty(PLACEHOLDER_TEXT) val placeholderText: String,
-                                       @JsonProperty(DEPENDENCY) val dependency: AnswerPlaceholderDependency?) {
+open class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
+                                    @JsonProperty(LENGTH) val length: Int,
+                                    @JsonProperty(PLACEHOLDER_TEXT) val placeholderText: String,
+                                    @JsonProperty(DEPENDENCY) val dependency: AnswerPlaceholderDependency?) {
   @Suppress("unused") // deserialization
   private fun build(): AnswerPlaceholder {
+    return createPlaceholder()
+  }
+
+  protected open fun createPlaceholder(): AnswerPlaceholder {
     val placeholder = AnswerPlaceholder()
     if (length < 0) {
       formatError(negativeParamNotAllowedMessage(LENGTH))
@@ -81,3 +85,5 @@ private class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
     return placeholder
   }
 }
+
+
