@@ -20,8 +20,6 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
-  private val EDU_MAIN_CPP = "main.cpp"
-
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CppProjectSettings>? =
     CppCourseProjectGenerator(this, course)
 
@@ -36,8 +34,8 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     val cMakeProjectName = getCMakeProjectUniqueName(task) { FileUtil.sanitizeFileName(it.name, true) }
     addCMakeList(task, cMakeProjectName, languageSettings.settings.languageStandard)
 
-    val mainName = GeneratorUtils.joinPaths(task.sourceDir, EDU_MAIN_CPP)
-    val mainText = GeneratorUtils.getInternalTemplateText(EDU_MAIN_CPP)
+    val mainName = GeneratorUtils.joinPaths(task.sourceDir, EDU_RUN_CPP)
+    val mainText = GeneratorUtils.getInternalTemplateText(EDU_RUN_CPP)
     task.addTaskFile(TaskFile(mainName, mainText))
   }
 
@@ -55,6 +53,6 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
   }
 
   companion object {
-    private const val EDU_MAIN_CPP = "run.cpp"
+    private const val EDU_RUN_CPP = "run.cpp"
   }
 }
