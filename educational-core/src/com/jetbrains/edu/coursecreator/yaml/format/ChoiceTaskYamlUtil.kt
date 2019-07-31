@@ -20,6 +20,8 @@ import com.jetbrains.edu.coursecreator.yaml.formatError
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 
+private const val IS_CORRECT = "is_correct"
+
 @JsonPropertyOrder(TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, FILES, FEEDBACK_LINK)
 abstract class ChoiceTaskYamlMixin : TaskYamlMixin() {
 
@@ -34,6 +36,13 @@ abstract class ChoiceTaskYamlMixin : TaskYamlMixin() {
 
   @JsonProperty(FEEDBACK_INCORRECT)
   var messageIncorrect: String = ""
+
+  companion object {
+    const val OPTIONS = "options"
+    const val IS_MULTIPLE_CHOICE = "is_multiple_choice"
+    const val FEEDBACK_CORRECT = "message_correct"
+    const val FEEDBACK_INCORRECT = "message_incorrect"
+  }
 }
 
 abstract class ChoiceOptionYamlMixin {
