@@ -38,6 +38,10 @@ open class TaskFileBuilder(@JsonProperty(NAME) val name: String?,
     if (name == null) {
       formatError("File without a name not allowed")
     }
+    return createTaskFile()
+  }
+
+  protected open fun createTaskFile(): TaskFile {
     val taskFile = TaskFile()
     taskFile.name = name
     taskFile.answerPlaceholders = placeholders
