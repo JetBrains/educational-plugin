@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.ExecutionListener
 import com.intellij.execution.ExecutionManager
+import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
@@ -28,7 +29,7 @@ open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<O
   }
 
   override fun check(indicator: ProgressIndicator): CheckResult {
-    val configuration = createDefaultRunConfiguration(project) ?: return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
+    val configuration = createTestConfiguration() ?: return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     val executor = DefaultRunExecutor.getRunExecutorInstance()
     val runner = ProgramRunner.getRunner(executor.id, configuration.configuration)
     configuration.isActivateToolWindowBeforeRun = false
@@ -87,5 +88,7 @@ open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<O
     }
   }
 
-  private fun String.dropLastLineBreak() : String = if (this.endsWith('\n')) this.dropLast(1) else this
+  protected open fun createTestConfiguration(): RunnerAndConfigurationSettings? = createDefaultRunConfiguration(project)
+
+  private fun String.dropLastLineBreak(): String = if (this.endsWith('\n')) this.dropLast(1) else this
 }
