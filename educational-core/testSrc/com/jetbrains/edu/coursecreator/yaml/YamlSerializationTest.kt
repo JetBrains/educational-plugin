@@ -298,6 +298,7 @@ class YamlSerializationTest : YamlTestCase() {
       }
     }.items[0]
     lesson.customPresentableName = "my new lesson"
+    @Suppress("DEPRECATION") // using `customPresentableName` here is ok
     doTest(lesson, """
       |custom_name: ${lesson.customPresentableName}
       |content:
