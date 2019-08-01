@@ -11,5 +11,10 @@
                             language="yaml" order="first, before YamlJsonSchema"/>
     <psi.referenceContributor language="yaml"
                               implementation="com.jetbrains.edu.yaml.EduYamlReferenceContributor"/>
+
+    <localInspection language="yaml" groupPath="EduTools" groupName="Yaml configs"
+                     displayName="Task file not found"
+                     enabledByDefault="true" level="ERROR"
+                     implementationClass="com.jetbrains.edu.yaml.inspections.TaskFileNotFoundInspection"/>
   </extensions>
 </idea-plugin>

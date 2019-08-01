@@ -14,6 +14,8 @@ import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.LESSON_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.TASK_CONFIG
+import com.jetbrains.edu.coursecreator.yaml.format.NAME
+import com.jetbrains.edu.coursecreator.yaml.format.TaskYamlMixin
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import org.jetbrains.yaml.psi.YAMLScalar
@@ -32,17 +34,13 @@ class EduYamlReferenceContributor : PsiReferenceContributor() {
   }
 }
 
-private abstract class EduPsiReferenceProvider : PsiReferenceProvider() {
+abstract class EduPsiReferenceProvider : PsiReferenceProvider() {
   abstract val pattern: ElementPattern<out PsiElement>
 }
 
-private class EduYamlTaskFilePathReferenceProvider : EduPsiReferenceProvider() {
+class EduYamlTaskFilePathReferenceProvider : EduPsiReferenceProvider() {
 
-  override val pattern: PsiElementPattern.Capture<YAMLScalar> = psiElement<YAMLScalar>()
-    .inFileWithName(TASK_CONFIG)
-    .withParent(
-      keyValueWithName("name").inside(keyValueWithName("files"))
-    )
+  override val pattern: PsiElementPattern.Capture<YAMLScalar> = PSI_PATTERN
 
   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<FileReference> {
     val scalar = element as? YAMLScalar ?: return emptyArray()
@@ -67,8 +65,16 @@ private class EduYamlTaskFilePathReferenceProvider : EduPsiReferenceProvider() {
 
     private fun YAMLScalar.collectFilePaths(): List<String> {
       val sequence = parentOfType<YAMLSequence>() ?: return emptyList()
-      return sequence.items.mapNotNull { item -> item.keysValues.find { it.keyText == "name" }?.valueText }
+      return sequence.items.mapNotNull { item -> item.keysValues.find { it.keyText == NAME }?.valueText }
     }
+  }
+
+  companion object {
+    val PSI_PATTERN: PsiElementPattern.Capture<YAMLScalar> = psiElement<YAMLScalar>()
+      .inFileWithName(TASK_CONFIG)
+      .withParent(
+        keyValueWithName(NAME).inside(keyValueWithName(TaskYamlMixin.FILES))
+      )
   }
 }
 
@@ -77,6 +83,7 @@ private class ItemContainerContentReferenceProvider : EduPsiReferenceProvider() 
   override val pattern: PsiElementPattern.Capture<YAMLScalar> = psiElement<YAMLScalar>()
     .inFileWithName(COURSE_CONFIG, SECTION_CONFIG, LESSON_CONFIG)
     .withParent(
+      // TODO: use constant from yaml mixins
       psiElement<YAMLSequenceItem>().inside(keyValueWithName("content"))
     )
 

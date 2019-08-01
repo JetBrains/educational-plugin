@@ -8,9 +8,9 @@ import com.jetbrains.edu.coursecreator.yaml.formatError
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 
-private const val NAME = "name"
+const val NAME = "name"
 private const val PLACEHOLDERS = "placeholders"
-private const val VISIBLE = "visible"
+const val VISIBLE = "visible"
 
 /**
  * Mixin class is used to deserialize [TaskFile] item.

@@ -108,6 +108,26 @@ public abstract class Task extends StudyItem {
     myTaskFiles.put(taskFile.getName(), taskFile);
   }
 
+  public void addTaskFile(@NotNull final TaskFile taskFile, int position) {
+    taskFile.setTask(this);
+    if (position < 0 || position > myTaskFiles.size()) {
+      throw new IndexOutOfBoundsException();
+    }
+    Map<String, TaskFile> newTaskFileMap = new LinkedHashMap<>(myTaskFiles.size() + 1);
+    int currentIndex = 0;
+    for (Map.Entry<String, TaskFile> entry : myTaskFiles.entrySet()) {
+      if (currentIndex == position) {
+        newTaskFileMap.put(taskFile.getName(), taskFile);
+      }
+      newTaskFileMap.put(entry.getKey(), entry.getValue());
+      currentIndex++;
+    }
+    if (currentIndex == position) {
+      newTaskFileMap.put(taskFile.getName(), taskFile);
+    }
+    myTaskFiles = newTaskFileMap;
+  }
+
   @Nullable
   public TaskFile getFile(@NotNull final String fileName) {
     return myTaskFiles.get(fileName);
