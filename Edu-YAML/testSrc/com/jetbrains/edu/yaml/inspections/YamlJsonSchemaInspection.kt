@@ -1,12 +1,10 @@
-package com.jetbrains.edu.yaml
+package com.jetbrains.edu.yaml.inspections
 
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import org.jetbrains.yaml.schema.YamlJsonSchemaHighlightingInspection
 
-
-class YamlInspectionsTest : YamlCodeInsightTest() {
+class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlightingInspection::class) {
 
   fun `test course with one wrong property`() {
     courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
@@ -122,11 +120,5 @@ class YamlInspectionsTest : YamlCodeInsightTest() {
       |  <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
       |  visible: true
       |""".trimMargin("|"))
-  }
-
-  private fun testHighlighting(item: StudyItem, configText: String) {
-    openConfigFileWithText(item, configText)
-    myFixture.enableInspections(YamlJsonSchemaHighlightingInspection::class.java)
-    myFixture.checkHighlighting()
   }
 }
