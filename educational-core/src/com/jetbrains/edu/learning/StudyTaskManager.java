@@ -212,7 +212,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
       return;
     }
     VirtualFile courseDir = OpenApiExtKt.getCourseDir(myProject);
-    VirtualFile courseConfig = courseDir.findChild(YamlFormatSettings.getCOURSE_CONFIG());
+    VirtualFile courseConfig = courseDir.findChild(YamlFormatSettings.COURSE_CONFIG);
     if (courseConfig == null) {
       StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
         YamlFormatSynchronizer.saveAll(myProject);
