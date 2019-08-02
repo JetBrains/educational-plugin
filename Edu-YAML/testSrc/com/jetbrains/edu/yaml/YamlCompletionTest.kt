@@ -1,5 +1,6 @@
 package com.jetbrains.edu.yaml
 
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -248,6 +249,35 @@ class YamlCompletionTest : YamlCodeInsightTest() {
     """.trimMargin("|"))
   }
 
+  fun `test task file extend completion`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask("task1") {
+          taskFile("src/taskfile1.txt")
+        }
+      }
+    }
+    val task = course.findTask("lesson1", "task1")
+    val taskDir = task.getTaskDir(project)!!
+    GeneratorUtils.createChildFile(taskDir, "src/task.txt", "")
+
+    doSingleCompletion(task, """
+      |type: edu
+      |files:
+      |- name: src/taskfile1.txt
+      |  visible: true
+      |- name: src/tas<caret>
+      |  visible: true      
+    """.trimMargin("|"), """
+      |type: edu
+      |files:
+      |- name: src/taskfile1.txt
+      |  visible: true
+      |- name: src/task.txt
+      |  visible: true      
+    """.trimMargin("|"), invocationCount = 2)
+  }
+
   fun `test course content completion`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {}
@@ -282,7 +312,7 @@ class YamlCompletionTest : YamlCodeInsightTest() {
     """.trimMargin("|"))
   }
 
-  fun `test course content completion 2`() {
+  fun `test lesson content completion`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {}
@@ -325,9 +355,31 @@ class YamlCompletionTest : YamlCodeInsightTest() {
     """.trimMargin("|"))
   }
 
-  private fun doSingleCompletion(item: StudyItem, before: String, after: String) {
+  fun `test lesson content extend completion`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+    }
+
+    val lesson = course.getLesson("lesson1")!!
+    val lessonDir = lesson.getLessonDir(project)!!
+    runWriteAction { lessonDir.createChildDirectory(this, "task2") }
+
+    doSingleCompletion(lesson, """
+      |content:
+      |- task1
+      |- tas<caret>
+    """.trimMargin("|"), """
+      |content:
+      |- task1
+      |- task2
+    """.trimMargin("|"), invocationCount = 2)
+  }
+
+  private fun doSingleCompletion(item: StudyItem, before: String, after: String, invocationCount: Int = 1) {
     openConfigFileWithText(item, before)
-    val variants = myFixture.completeBasic()
+    val variants = myFixture.complete(CompletionType.BASIC, invocationCount)
     if (variants != null) {
       if (variants.size == 1) {
         myFixture.type('\n')

@@ -63,6 +63,8 @@ private class EduYamlTaskFilePathReferenceProvider : EduPsiReferenceProvider() {
       }
     }
 
+    override fun supportsExtendedCompletion(): Boolean = false
+
     private fun YAMLScalar.collectFilePaths(): List<String> {
       val sequence = parentOfType<YAMLSequence>() ?: return emptyList()
       return sequence.items.mapNotNull { item -> item.keysValues.find { it.keyText == "name" }?.valueText }
@@ -101,6 +103,8 @@ private class ItemContainerContentReferenceProvider : EduPsiReferenceProvider() 
         itemPath !in contentPaths
       }
     }
+
+    override fun supportsExtendedCompletion(): Boolean = false
 
     private fun YAMLScalar.collectContentPaths(): List<String> {
       val sequence = parentOfType<YAMLSequence>() ?: return emptyList()
