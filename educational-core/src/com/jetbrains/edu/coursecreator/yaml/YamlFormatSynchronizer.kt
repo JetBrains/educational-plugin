@@ -34,7 +34,6 @@ import com.jetbrains.edu.coursecreator.yaml.format.*
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -83,7 +82,6 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(Lesson::class.java, LessonYamlMixin::class.java)
     mapper.addMixIn(FrameworkLesson::class.java, FrameworkLessonYamlUtil::class.java)
     mapper.addMixIn(Task::class.java, TaskYamlMixin::class.java)
-    mapper.addMixIn(EduTask::class.java, EduTaskYamlMixin::class.java)
     mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskYamlMixin::class.java)
     mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionYamlMixin::class.java)
     mapper.addMixIn(TaskFile::class.java, TaskFileYamlMixin::class.java)
