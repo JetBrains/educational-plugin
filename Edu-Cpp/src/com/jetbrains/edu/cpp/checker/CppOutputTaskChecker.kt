@@ -2,7 +2,6 @@ package com.jetbrains.edu.cpp.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -22,26 +21,26 @@ class CppOutputTaskChecker(task: OutputTask, project: Project) : OutputTaskCheck
   override fun createTestConfiguration(): RunnerAndConfigurationSettings? {
     return runReadAction {
       val tasksDir = task.getDir(project)?.let { task.findSourceDir(it) } ?: return@runReadAction null
-      val configurations = mutableListOf<ConfigurationFromContext>()
+      var result: RunnerAndConfigurationSettings? = null
 
       VfsUtilCore.processFilesRecursively(tasksDir) {
         if (it == null || it.isDirectory) return@processFilesRecursively true
 
         val mainFunction = findMainFunction(it) ?: return@processFilesRecursively true
 
-        val config = CidrTargetRunConfigurationProducer.getInstance(project)
-          ?.findOrCreateConfigurationFromContext(ConfigurationContext(mainFunction))
-        if (config == null) {
-          LOG.warn("Failed to create configuration from main function in the file '${it.name}'")
+        val context = ConfigurationContext(mainFunction)
+        val configuration = CidrTargetRunConfigurationProducer.getInstance(project)?.findOrCreateConfigurationFromContext(context)
+        if (configuration == null) {
+          LOG.warn("Failed to create a configuration from main function in the file '${it.name}'")
           return@processFilesRecursively true
         }
 
-        configurations += config
+        result = configuration.configurationSettings
 
-        true
+        false
       }
 
-      configurations.firstOrNull()?.configurationSettings
+      result
     }
   }
 
