@@ -80,5 +80,4 @@ public class Section extends LessonContainer {
   public String getItemType() {
     return "section";
   }
-
 }

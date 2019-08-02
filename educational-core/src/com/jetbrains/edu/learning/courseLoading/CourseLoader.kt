@@ -18,7 +18,7 @@ object CourseLoader {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<Course>, RuntimeException>(
         {
           ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-          val courses = execCancelable<List<Course>>(Callable<List<Course>>(loadCourses))
+          val courses = execCancelable(Callable<List<Course>>(loadCourses))
           if (courses == null) return@runProcessWithProgressSynchronously emptyList()
           courses
         }, "Getting Available Courses", true, null)

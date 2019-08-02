@@ -174,8 +174,8 @@ private class CourseBuilder(
 
       // for C++ there are two languages with the same display name, and we have to filter out the one we have configurator for
       val languages = Language.getRegisteredLanguages()
-                        .filter { it.displayName == programmingLanguage }
-                        .filter { EduConfiguratorManager.findConfigurator(itemType, environment, it) != null }
+        .filter { it.displayName == programmingLanguage }
+        .filter { EduConfiguratorManager.findConfigurator(itemType, environment, it) != null }
       if (languages.isEmpty()) {
         formatError("Unsupported language $programmingLanguage")
       }

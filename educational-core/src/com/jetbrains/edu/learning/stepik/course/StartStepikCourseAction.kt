@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
 
   override fun actionPerformed(e: AnActionEvent) {
-        doImport()
+    doImport()
   }
 
   private fun doImport() {
@@ -100,7 +100,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
   }
 
   private fun showFailedToAddCourseNotification(courseLink: String) {
-    Messages.showErrorDialog("Cannot find course on Stepik, please check if link is correct: ${courseLink}", "Failed to Load Stepik Course")
+    Messages.showErrorDialog("Cannot find course on Stepik, please check if link is correct: $courseLink", "Failed to Load Stepik Course")
   }
 
   private fun getLanguagesUnderProgress(course: StepikCourse): List<Language> {

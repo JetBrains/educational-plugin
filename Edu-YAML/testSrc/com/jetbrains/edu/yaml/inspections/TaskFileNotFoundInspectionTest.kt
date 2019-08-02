@@ -1,7 +1,6 @@
 package com.jetbrains.edu.yaml.inspections
 
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundInspection::class) {

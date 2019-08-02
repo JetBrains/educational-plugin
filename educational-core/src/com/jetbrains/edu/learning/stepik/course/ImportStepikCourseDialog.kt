@@ -5,30 +5,30 @@ import com.intellij.openapi.ui.ValidationInfo
 import javax.swing.JComponent
 
 class ImportStepikCourseDialog : DialogWrapper(false) {
-    private var coursePanel: ImportStepikCoursePanel = ImportStepikCoursePanel(myDisposable)
+  private var coursePanel: ImportStepikCoursePanel = ImportStepikCoursePanel(myDisposable)
 
-    override fun createCenterPanel(): JComponent? = coursePanel.panel
+  override fun createCenterPanel(): JComponent? = coursePanel.panel
 
-    public override fun doValidate(): ValidationInfo? {
-        val isValid = coursePanel.validate()
-        if (!isValid) {
-            return ValidationInfo("Course link is invalid")
-        }
-
-        return null
+  public override fun doValidate(): ValidationInfo? {
+    val isValid = coursePanel.validate()
+    if (!isValid) {
+      return ValidationInfo("Course link is invalid")
     }
 
-    override fun getPreferredFocusedComponent(): JComponent? = coursePanel.preferredFocusedComponent
+    return null
+  }
 
-    init {
-        title = "Import Stepik Course"
-        init()
-        coursePanel.setValidationListener (object : ImportStepikCoursePanel.ValidationListener {
-          override fun onLoggedIn(isLoggedIn: Boolean) {
-            isOKActionEnabled = isLoggedIn
-          }
-        })
-    }
+  override fun getPreferredFocusedComponent(): JComponent? = coursePanel.preferredFocusedComponent
 
-    fun courseLink(): String = coursePanel.courseLink
+  init {
+    title = "Import Stepik Course"
+    init()
+    coursePanel.setValidationListener(object : ImportStepikCoursePanel.ValidationListener {
+      override fun onLoggedIn(isLoggedIn: Boolean) {
+        isOKActionEnabled = isLoggedIn
+      }
+    })
+  }
+
+  fun courseLink(): String = coursePanel.courseLink
 }

@@ -25,7 +25,7 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class CheckPanel(val project: Project): JPanel(BorderLayout()) {
+class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   private val checkFinishedPanel: JPanel = JPanel(BorderLayout())
   private val checkActionsPanel: JPanel = JPanel(BorderLayout())
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())

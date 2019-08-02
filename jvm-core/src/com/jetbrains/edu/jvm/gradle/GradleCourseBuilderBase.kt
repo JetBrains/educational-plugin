@@ -14,7 +14,6 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames.PROJECT_NAME

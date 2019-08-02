@@ -18,7 +18,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.jetbrains.edu.coursecreator.CCTestCase
@@ -44,7 +44,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import java.io.IOException
 
-abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
+abstract class EduTestCase : BasePlatformTestCase() {
   private lateinit var myManager: FileEditorManagerImpl
   private lateinit var myOldDockContainers: Set<DockContainer>
 
@@ -88,8 +88,8 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   override fun tearDown() {
     try {
       DockManager.getInstance(myFixture.project).containers
-          .filterNot { myOldDockContainers.contains(it) }
-          .forEach { Disposer.dispose(it) }
+        .filterNot { myOldDockContainers.contains(it) }
+        .forEach { Disposer.dispose(it) }
 
 //      project.registerComponent(FileEditorManager::class.java, myOldManager)
       myManager.closeAllFiles()
@@ -114,13 +114,14 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     val lesson = Lesson()
     lesson.name = "lesson$index"
     (1..taskCount)
-        .map { createTask(index, it) }
-        .forEach { lesson.addTask(it) }
+      .map { createTask(index, it) }
+      .forEach { lesson.addTask(it) }
     lesson.index = index
     return lesson
   }
 
-  @Throws(IOException::class) private fun createTask(lessonIndex: Int, taskIndex: Int): Task {
+  @Throws(IOException::class)
+  private fun createTask(lessonIndex: Int, taskIndex: Int): Task {
     val task = EduTask()
     task.name = "task$taskIndex"
     task.index = taskIndex
@@ -145,7 +146,8 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
       for (placeholder in CCTestCase.getPlaceholders(document, true)) {
         taskFile.addAnswerPlaceholder(placeholder)
       }
-    } finally {
+    }
+    finally {
       FileEditorManager.getInstance(myFixture.project).closeFile(file)
     }
     taskFile.sortAnswerPlaceholders()
@@ -223,7 +225,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
 
   protected fun Task.removeTaskFile(taskFilePath: String) {
     require(getTaskFile(taskFilePath) != null) {
-      "Can't find `$taskFilePath` task file in ${name} task"
+      "Can't find `$taskFilePath` task file in $name task"
     }
     val taskDir = getTaskDir(project) ?: error("Can't find task dir")
     val file = taskDir.findFileByRelativePath(taskFilePath) ?: error("Can't find `$taskFilePath` in `$taskDir`")
@@ -239,7 +241,8 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     virtualFileManager.addVirtualFileListener(listener)
     try {
       action()
-    } finally {
+    }
+    finally {
       virtualFileManager.removeVirtualFileListener(listener)
     }
   }

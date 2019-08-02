@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.LoginWidgetProvider
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 

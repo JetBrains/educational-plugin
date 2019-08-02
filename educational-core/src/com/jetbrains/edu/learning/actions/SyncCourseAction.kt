@@ -3,10 +3,6 @@ package com.jetbrains.edu.learning.actions
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.Icon
 
 abstract class SyncCourseAction(text: String?, description: String?, icon: Icon?) : AnAction(text, description, icon) {
