@@ -60,7 +60,7 @@ class LoadSolutionsTest : StepikTestCase() {
   }
 
   fun `test tasks to update`() {
-    StudyTaskManager.getInstance(project).course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt", "no placeholders")
@@ -75,6 +75,8 @@ class LoadSolutionsTest : StepikTestCase() {
     val task = firstTask(StudyTaskManager.getInstance(project).course)
     val remoteCourse = StepikConnector.getInstance().getCourseInfo(course.id, true) as EduCourse
     StepikCourseLoader.loadCourseStructure(remoteCourse)
+    remoteCourse.init(null, null, false)
+    StudyTaskManager.getInstance(project).course = remoteCourse
 
     val tasksToUpdate = StepikSolutionsLoader.getInstance(project).tasksToUpdate(remoteCourse as Course)
     assertEquals("Unexpected number of tasks", 1, tasksToUpdate.size)
