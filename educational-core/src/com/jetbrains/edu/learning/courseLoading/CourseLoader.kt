@@ -13,7 +13,8 @@ object CourseLoader {
    * @return null if process was canceled, otherwise not null list of courses
    */
   @JvmStatic
-  fun getCourseInfosUnderProgress(loadCourses: () -> MutableList<Course>): List<Course>? {
+  fun getCourseInfosUnderProgress(progressTitle: String = "Getting Available Courses",
+                                  loadCourses: () -> MutableList<Course>): List<Course>? {
     try {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<Course>, RuntimeException>(
         {
@@ -21,7 +22,7 @@ object CourseLoader {
           val courses = execCancelable(Callable<List<Course>>(loadCourses))
           if (courses == null) return@runProcessWithProgressSynchronously emptyList()
           courses
-        }, "Getting Available Courses", true, null)
+        }, progressTitle, true, null)
     }
     catch (e: ProcessCanceledException) {
       return null

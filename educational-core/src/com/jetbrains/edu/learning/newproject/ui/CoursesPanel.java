@@ -229,7 +229,10 @@ public class CoursesPanel extends JPanel {
 
   private void updateCoursesList() {
     Course selectedCourse = myCoursesList.getSelectedValue();
-    List<Course> courses = CourseLoader.getCourseInfosUnderProgress(() -> CoursesProvider.loadAllCourses());
+    List<Course> courses = CourseLoader.getCourseInfosUnderProgress(
+      "Getting Available Courses",
+      () -> CoursesProvider.loadAllCourses()
+    );
     myCourses = courses != null ? courses : Lists.newArrayList();
     updateModel(myCourses, selectedCourse);
     myErrorLabel.setVisible(false);
