@@ -14,6 +14,7 @@ internal class StyleResourcesManager(taskText: String = "") {
     "base_css" to loadText("/style/browser.css"),
     "mathJax" to "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
     resourcePair("stepik_link", "/style/stepikLink.css"),
+    resourcePair("codeforces_task", "/style/codeforces_task.css"),
     *panelSpecificHintFiles()
   ).plus(VideoTaskResourcesManager().videoResources)
 
@@ -62,6 +63,37 @@ internal class StyleResourcesManager(taskText: String = "") {
       "::-webkit-scrollbar-corner" {
         backgroundColor = styleManager.bodyBackground
       }
+
+      codeforcesCssAdjustment(styleManager)
     }.toString()
   }
+
+  private fun codeforcesCssAdjustment(styleManager: StyleManager): CSSBuilder =
+    CSSBuilder().apply {
+      ".compact-problemset .problem-statement" {
+        fontSize = styleManager.bodyFontSize.rem.times(1.4)
+      }
+
+      // Commented because otherwise all other font-sizes don't work ¯\_(ツ)_/¯
+//      ".problem-statement" {
+//        fontSize = styleManager.bodyFontSize.rem.times(1.4)
+//      }
+
+      ".problem-statement .header .title" {
+        fontSize = styleManager.bodyFontSize.pct.times(150)
+      }
+
+      ".problem-statement .section-title" {
+        fontSize = styleManager.bodyFontSize.pct.times(115)
+      }
+
+      // TODO remove next 2 items if inplace tests will be implemented
+      ".problem-statement .sample-tests" {
+        fontSize = styleManager.bodyFontSize.em.times(0.9)
+      }
+
+      ".problem-statement .sample-tests .title" {
+        fontSize = styleManager.bodyFontSize.em.times(1.3)
+      }
+    }
 }

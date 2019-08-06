@@ -28,6 +28,7 @@
   <link rel="stylesheet" type="text/css" href="${hint_laf_specific}"></link>
   <link rel="stylesheet" type="text/css" href="${stepik_link}"></link>
   <link rel="stylesheet" href="${video-js.css}"></link>
+  <link rel="stylesheet" type="text/css" href="${codeforces_task}"></link>
 
   <style>
     ${typography_color_style}

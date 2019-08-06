@@ -50,6 +50,7 @@
     <action id="Educational.ImportCourseraAssignment" class="com.jetbrains.edu.learning.coursera.ImportCourseraAssignment"/>
     <action id="Educational.ImportLocalCourse" class="com.jetbrains.edu.learning.actions.ImportLocalCourseAction"/>
     <action id="Educational.StartStepikCourse" class="com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction"/>
+    <action id="Educational.StartCodeforcesContest" class="com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction"/>
     <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
     <action id="Educational.PrevPlaceholder" class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
             text="Previous Answer Placeholder"
@@ -67,7 +68,7 @@
     <action id="Educational.RefreshTask" class="com.jetbrains.edu.learning.actions.RevertTaskAction"
             text="Reset Task"
             description="Revert current task to the initial state"/>
-    <action id="Educational.LeaveFeedback" class="com.jetbrains.edu.learning.actions.LeaveFeedbackAction"/>
+    <action id="Educational.GoToTaskUrlAction" class="com.jetbrains.edu.learning.actions.GoToTaskUrlAction"/>
     <action id="Educational.CompareWithAnswer" class="com.jetbrains.edu.learning.actions.CompareWithAnswerAction"
             text="Compare with Answer"
             description="Compare your solution with answer"/>
@@ -179,6 +180,7 @@
       <reference id="Educational.ImportLocalCourse"/>
       <reference id="Educational.StartStepikCourse"/>
       <reference id="Educational.Educator.NewCourse"/>
+      <reference id="Educational.StartCodeforcesContest"/>
       <add-to-group group-id="FileOpenGroup" relative-to-action="OpenFile" anchor="after"/>
     </group>
     <action id="Educational.WatchTutorial" class="com.jetbrains.edu.learning.actions.LearnMoreAction">
@@ -188,6 +190,8 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector"/>
+
     <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.api.StepikConnector"
                         serviceImplementation="com.jetbrains.edu.learning.stepik.api.StepikConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.stepik.api.MockStepikConnector"/>
@@ -281,6 +285,7 @@
     <coursesProvider implementation="com.jetbrains.edu.learning.stepik.StepikCoursesProvider"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.checker.StepikRemoteTaskChecker"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.coursera.CourseraTaskChecker"/>
+    <remoteTaskChecker implementation="com.jetbrains.edu.learning.codeforces.checker.CodeforcesRemoteTaskChecker"/>
     <!--educator-->
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
   </extensions>

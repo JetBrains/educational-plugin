@@ -18,7 +18,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.jetbrains.edu.coursecreator.CCTestCase
@@ -27,6 +27,7 @@ import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
@@ -44,7 +45,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import java.io.IOException
 
-abstract class EduTestCase : BasePlatformTestCase() {
+abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   private lateinit var myManager: FileEditorManagerImpl
   private lateinit var myOldDockContainers: Set<DockContainer>
 
@@ -63,6 +64,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
                          environment = EduNames.ANDROID)
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE,
                          CourseraNames.COURSE_TYPE)
+    registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE,
+                         CodeforcesNames.CODEFORCES_COURSE_TYPE)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
     registerAdditionalResourceBundleProviders(testRootDisposable)

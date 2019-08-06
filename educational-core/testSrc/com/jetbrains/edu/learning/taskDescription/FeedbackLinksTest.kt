@@ -1,11 +1,11 @@
 package com.jetbrains.edu.learning.taskDescription
 
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.actions.LeaveFeedbackAction
+import com.jetbrains.edu.learning.actions.GoToTaskUrlAction
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 
@@ -13,7 +13,7 @@ class FeedbackLinksTest : EduTestCase() {
 
   fun testStepikLink() {
     val task = getRemoteEduTask()
-    assertEquals("Incorrect link", "https://release.stepik.org/lesson/0/step/1", LeaveFeedbackAction.getLink(task))
+    assertEquals("Incorrect link", "https://release.stepik.org/lesson/0/step/1", GoToTaskUrlAction.getLink(task))
   }
 
   fun testNoneLink() {
@@ -22,8 +22,8 @@ class FeedbackLinksTest : EduTestCase() {
     feedbackLink.type = FeedbackLink.LinkType.NONE
     task.feedbackLink = feedbackLink
     try {
-      println("link = ${LeaveFeedbackAction.getLink(task)}")
-     fail("Exception expected to be thrown")
+      println("link = ${GoToTaskUrlAction.getLink(task)}")
+      fail("Exception expected to be thrown")
     }
     catch (e: IllegalStateException) {
       //exception thrown
@@ -36,7 +36,7 @@ class FeedbackLinksTest : EduTestCase() {
     feedbackLink.type = FeedbackLink.LinkType.CUSTOM
     feedbackLink.link = "https://www.jetbrains.com/"
     task.feedbackLink = feedbackLink
-    assertEquals("Incorrect link", "https://www.jetbrains.com/", LeaveFeedbackAction.getLink(task))
+    assertEquals("Incorrect link", "https://www.jetbrains.com/", GoToTaskUrlAction.getLink(task))
   }
 
   private fun getRemoteEduTask(): Task {
@@ -49,6 +49,6 @@ class FeedbackLinksTest : EduTestCase() {
     remoteCourse.items = course.items
     remoteCourse.init(null, null, false)
 
-    return (remoteCourse.items[0] as Lesson).getTaskList()[0]
+    return (remoteCourse.items[0] as Lesson).taskList[0]
   }
 }

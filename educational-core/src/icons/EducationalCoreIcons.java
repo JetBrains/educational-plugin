@@ -24,6 +24,9 @@ public class EducationalCoreIcons {
   public static final Icon JB_ACADEMY_ENABLED = load("/icons/com/jetbrains/edu/learning/JB_academy_enabled.svg");
   public static final Icon JB_ACADEMY_DISABLED = load("/icons/com/jetbrains/edu/learning/JB_academy_disabled.svg");
 
+  public static final Icon Codeforces = load("/icons/com/jetbrains/edu/learning/codeforces.svg");
+  public static final Icon CodeforcesGrayed = load("/icons/com/jetbrains/edu/learning/codeforcesGrayed.svg");
+
   public static final Icon Student = load("/icons/com/jetbrains/edu/Learner.svg"); // 180x180
   public static final Icon StudentHover = load("/icons/com/jetbrains/edu/LearnerActive.svg"); // 180x180
   public static final Icon Teacher = load("/icons/com/jetbrains/edu/Teacher.svg"); // 180x180

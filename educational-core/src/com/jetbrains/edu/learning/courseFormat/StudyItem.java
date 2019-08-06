@@ -77,7 +77,7 @@ public abstract class StudyItem extends UserDataHolderBase {
   }
 
   /**
-   * @return id on remote resource (Stepik, CheckIO)
+   * @return id on remote resource (Stepik, CheckIO, Codeforces)
    */
   public int getId() {
     return myId;

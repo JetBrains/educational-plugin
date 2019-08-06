@@ -6,17 +6,20 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.GO_TO_CODEFORCES_ACTION
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
+import com.jetbrains.edu.learning.courseFormat.FeedbackLink.LinkType.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.getStepikLink
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import icons.EducationalCoreIcons
 
-private const val ACTION_TEXT = "Leave a comment"
+private const val LEAVE_A_COMMENT_ACTION = "Leave a comment"
 
-class LeaveFeedbackAction : DumbAwareAction(ACTION_TEXT, ACTION_TEXT, EducationalCoreIcons.CommentTask), RightAlignedToolbarAction {
+class GoToTaskUrlAction : DumbAwareAction(LEAVE_A_COMMENT_ACTION, LEAVE_A_COMMENT_ACTION, EducationalCoreIcons.CommentTask),
+                          RightAlignedToolbarAction {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = EduUtils.getCurrentTask(project) ?: return
@@ -26,33 +29,38 @@ class LeaveFeedbackAction : DumbAwareAction(ACTION_TEXT, ACTION_TEXT, Educationa
   }
 
   override fun update(e: AnActionEvent) {
-    val presentation = e.presentation
-    presentation.isEnabledAndVisible = false
+    templatePresentation.isEnabledAndVisible = false
+
     val project = e.project ?: return
     if (!EduUtils.isStudentProject(project)) {
       return
     }
+
     val task = EduUtils.getCurrentTask(project) ?: return
+    if (task is CodeforcesTask) {
+      templatePresentation.text = GO_TO_CODEFORCES_ACTION
+      templatePresentation.icon = EducationalCoreIcons.CodeforcesGrayed
+    }
     val feedbackLink = task.feedbackLink
     val course = task.course
-    presentation.isEnabledAndVisible = when (feedbackLink.type) {
-      FeedbackLink.LinkType.NONE -> false
-      FeedbackLink.LinkType.CUSTOM -> feedbackLink.link != null
-      FeedbackLink.LinkType.STEPIK -> (course is EduCourse && course.isRemote) || course is HyperskillCourse
+    templatePresentation.isEnabledAndVisible = when (feedbackLink.type) {
+      NONE -> false
+      CUSTOM -> feedbackLink.link != null
+      STEPIK -> (course is EduCourse && course.isRemote) || course is HyperskillCourse
     }
   }
 
   companion object {
-    const val ACTION_ID = "Educational.LeaveFeedback"
+    const val ACTION_ID: String = "Educational.GoToTaskUrlAction"
 
     @JvmStatic
     @VisibleForTesting
     fun getLink(task: Task): String {
       val feedbackLink = task.feedbackLink
       return when (feedbackLink.type) {
-        FeedbackLink.LinkType.NONE -> error("LeaveFeedbackAction should be disabled for NONE links")
-        FeedbackLink.LinkType.CUSTOM -> feedbackLink.link ?: error("Custom link doesn't contain an actual link")
-        FeedbackLink.LinkType.STEPIK -> getStepikLink(task, task.lesson)
+        NONE -> error("GoToTaskUrlAction should be disabled for NONE links")
+        CUSTOM -> feedbackLink.link ?: error("Custom link doesn't contain an actual link")
+        STEPIK -> getStepikLink(task, task.lesson)
       }
     }
   }

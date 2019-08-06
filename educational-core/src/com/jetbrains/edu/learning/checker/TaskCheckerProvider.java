@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checker;
 
 import com.intellij.openapi.project.Project;
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +55,9 @@ public interface TaskCheckerProvider {
         }
         else if (task instanceof IdeTask) {
             return getIdeTaskChecker((IdeTask) task, project);
+        }
+        else if (task instanceof CodeforcesTask) {
+            return null;
         }
         else {
             throw new IllegalStateException("Unknown task type: " + task.getItemType());

@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.configuration
 import com.intellij.lang.Language
 import com.intellij.openapi.extensions.Extensions
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.stepik.StepikNames
 
@@ -49,8 +50,12 @@ object EduConfiguratorManager {
     allExtensions().filter { it.courseType == EduNames.PYCHARM }.map { it.language }
   }
 
+  private val compatibleCourseTypes: List<String> = listOf(CourseraNames.COURSE_TYPE,
+                                                           StepikNames.STEPIK_TYPE,
+                                                           CodeforcesNames.CODEFORCES_COURSE_TYPE)
+
   private fun compatibleCourseType(extension: EducationalExtensionPoint<EduConfigurator<out Any>>, courseType: String): Boolean {
-    return (courseType == CourseraNames.COURSE_TYPE || courseType == StepikNames.STEPIK_TYPE) && extension.courseType == EduNames.PYCHARM
+    return extension.courseType == EduNames.PYCHARM && courseType in compatibleCourseTypes
   }
 
   @JvmStatic

@@ -4,6 +4,8 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -76,6 +78,58 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertInstanceOf(lesson, FrameworkLesson::class.java)
     assertEquals(1, (lesson as FrameworkLesson).currentTaskIndex)
 
+  }
+
+  fun `test codeforces task`() {
+    val status = CheckStatus.Unchecked
+    val feedbackUrl = "https://codeforces.com/contest/1218/problem/A?locale=en"
+    val yamlContent = """
+    |type: ${CodeforcesNames.CODEFORCES_TASK_TYPE}
+    |feedback_link: $feedbackUrl
+    |status: $status
+    |""".trimMargin()
+
+    val task = deserializeTask(yamlContent)
+    assertNotNull(task)
+    assertInstanceOf(task, CodeforcesTask::class.java)
+    assertEquals(status, task.status)
+    assertEquals(feedbackUrl, task.feedbackLink.link)
+  }
+
+  fun `test codeforces task with files`() {
+    val taskFileName = "src/Task.kt"
+    val taskSolution = "Task solution"
+    val testFileName = "test/Tests.kt"
+    val testSolution = "Test solution"
+    val status = CheckStatus.Unchecked
+    val feedbackUrl = "https://codeforces.com/contest/1228/problem/F?locale=ru"
+
+    val yamlContent = """
+    |type: ${CodeforcesNames.CODEFORCES_TASK_TYPE}
+    |files:
+    |- name: $taskFileName
+    |  visible: true
+    |  text: $taskSolution
+    |- name: $testFileName
+    |  visible: true
+    |  text: $testSolution
+    |feedback_link: $feedbackUrl
+    |status: $status
+    |""".trimMargin()
+    val task = deserializeTask(yamlContent)
+    assertNotNull(task)
+    assertInstanceOf(task, CodeforcesTask::class.java)
+
+    val taskFile = task.taskFiles[taskFileName]!!
+    assertEquals(true, taskFile.isVisible)
+    assertEquals(taskSolution, taskFile.text)
+
+    val testFile = task.taskFiles[testFileName]!!
+    assertEquals(true, testFile.isVisible)
+    assertEquals(testSolution.trimMargin(), testFile.text)
+
+    assertEquals(feedbackUrl, task.feedbackLink.link)
+    assertEquals(status, task.status)
   }
 
   fun `test task status`() {

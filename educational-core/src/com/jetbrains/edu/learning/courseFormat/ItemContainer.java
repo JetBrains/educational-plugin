@@ -4,6 +4,7 @@ import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask;
@@ -31,7 +32,8 @@ public abstract class ItemContainer extends StudyItem {
     CodeTask.class,
     OutputTask.class,
     IdeTask.class,
-    VideoTask.class
+    VideoTask.class,
+    CodeforcesTask.class
   })
   protected List<StudyItem> items = new ArrayList<>();
 

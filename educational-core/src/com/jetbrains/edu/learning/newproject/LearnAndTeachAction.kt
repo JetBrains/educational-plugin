@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.wm.impl.welcomeScreen.WelcomePopupAction
+import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.NewHyperskillCourseAction
@@ -25,7 +26,8 @@ class LearnAndTeachAction : WelcomePopupAction() {
                  ImportLocalCourseAction(),
                  StartStepikCourseAction(),
                  CCNewCourseAction(),
-                 NewHyperskillCourseAction())
+                 NewHyperskillCourseAction(),
+                 StartCodeforcesContestAction())
   }
 
   override fun getTextForEmpty(): String {

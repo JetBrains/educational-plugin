@@ -13,11 +13,12 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.ui.EduColors
+import org.apache.commons.lang.math.NumberUtils.isDigits
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.*
 
-class ImportStepikCoursePanel(private val parent : Disposable) {
+class ImportStepikCoursePanel(private val parent: Disposable) {
   private val courseLinkTextField = JTextField()
   val panel: JPanel
   private val helpLabel = JLabel("https://stepik.org/course/*")
@@ -86,6 +87,7 @@ class ImportStepikCoursePanel(private val parent : Disposable) {
         busConnection.disconnect()
         ApplicationManager.getApplication().invokeLater({ doValidation() }, ModalityState.any())
       }
+
       override fun userLoggedOut() {}
     })
   }
@@ -100,19 +102,16 @@ class ImportStepikCoursePanel(private val parent : Disposable) {
     validationListener?.onLoggedIn(isLoggedIn)
   }
 
-  fun validate(): Boolean {
-    val text = courseLinkTextField.text
-    return !text.isEmpty() && (isDigit(text) || isValidStepikLink(text))
+  private fun setPanelSize(dimension: Dimension, isMinimumSizeEqualsPreferred: Boolean = true) {
+    panel.preferredSize = JBUI.size(dimension)
+    if (isMinimumSizeEqualsPreferred) {
+      panel.minimumSize = panel.preferredSize
+    }
   }
 
-  private fun isDigit(text: String): Boolean {
-    for (i in 0 until text.length) {
-      if (!Character.isDigit(text[i])) {
-        return false
-      }
-    }
-
-    return true
+  fun validate(): Boolean {
+    val text = courseLinkTextField.text
+    return text.isNotEmpty() && (isDigits(text) || isValidStepikLink(text))
   }
 
   private fun isValidStepikLink(text: String): Boolean {

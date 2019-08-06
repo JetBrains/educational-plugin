@@ -96,3 +96,9 @@ fun <T> Call<T>.executeHandlingExceptions(optional: Boolean = false): Response<T
   }
   return null
 }
+
+fun <T> Response<T>.checkStatusCode(): Response<T>? {
+  if (isSuccessful) return this
+  LOG.error("Response is returned with ${this.code()} status code")
+  return null
+}

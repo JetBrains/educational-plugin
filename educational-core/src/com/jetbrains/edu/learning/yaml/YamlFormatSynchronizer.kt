@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -135,13 +136,17 @@ object YamlFormatSynchronizer {
 
   private fun ObjectMapper.addStudentMixIns() {
     addMixIn(Course::class.java, StudentCourseYamlMixin::class.java)
+
     addMixIn(CheckiOStation::class.java, CheckiOStationYamlMixin::class.java)
     addMixIn(FrameworkLesson::class.java, StudentFrameworkLessonYamlMixin::class.java)
+
     addMixIn(Task::class.java, StudentTaskYamlMixin::class.java)
     addMixIn(ChoiceTask::class.java, StudentChoiceTaskYamlMixin::class.java)
     addMixIn(VideoTask::class.java, VideoTaskYamlMixin::class.java)
     addMixIn(VideoSource::class.java, VideoSourceYamlMixin::class.java)
     addMixIn(CheckiOMission::class.java, CheckiOMissionYamlMixin::class.java)
+    addMixIn(CodeforcesTask::class.java, CodeforcesTaskYamlMixin::class.java)
+
     addMixIn(TaskFile::class.java, StudentTaskFileYamlMixin::class.java)
     addMixIn(AnswerPlaceholder::class.java, StudentAnswerPlaceholderYamlMixin::class.java)
     addMixIn(AnswerPlaceholder.MyInitialState::class.java, InitialStateMixin::class.java)

@@ -25,4 +25,12 @@ class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: Defau
   override fun setError(error: ErrorState) {
     panel.updateErrorInfo(error)
   }
+
+  fun setCoursesComparator(comparator: Comparator<Course>) {
+    panel.setCoursesComparator(comparator)
+  }
+
+  fun setEmptyText(text: String) {
+    panel.setEmptyText(text)
+  }
 }

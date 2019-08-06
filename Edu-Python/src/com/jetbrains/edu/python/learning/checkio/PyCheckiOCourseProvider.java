@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
+import static com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION;
+
 public class PyCheckiOCourseProvider implements CoursesProvider {
   @NotNull
   @Override
@@ -19,6 +21,6 @@ public class PyCheckiOCourseProvider implements CoursesProvider {
     if (EduUtils.isAndroidStudio()) {
       return Collections.emptyList();
     }
-    return Collections.singletonList(new CheckiOCourse(PyCheckiONames.PY_CHECKIO, EduNames.PYTHON + " " + PyLanguageSettingsBase.PYTHON_3));
+    return Collections.singletonList(new CheckiOCourse(PyCheckiONames.PY_CHECKIO, EduNames.PYTHON + " " + PYTHON_3_VERSION));
   }
 }

@@ -8,6 +8,8 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.ui.ComboboxWithBrowseButton
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduNames.PYTHON_2_VERSION
+import com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.Ok
@@ -42,7 +44,7 @@ abstract class PyLanguageSettingsBase : LanguageSettings<PyNewProjectSettings>()
   override fun getSettings(): PyNewProjectSettings = mySettings
 
   override fun getLanguageVersions(): List<String> {
-    val pythonVersions = mutableListOf(ALL_VERSIONS, PYTHON_3, PYTHON_2)
+    val pythonVersions = mutableListOf(ALL_VERSIONS, PYTHON_3_VERSION, PYTHON_2_VERSION)
     pythonVersions.addAll(LanguageLevel.values().map { it.toString() }.reversed())
     return pythonVersions
   }
@@ -76,8 +78,8 @@ abstract class PyLanguageSettingsBase : LanguageSettings<PyNewProjectSettings>()
 
       return when (courseLanguageVersion) {
         null, ALL_VERSIONS -> OK
-        PYTHON_2 -> if (isPython2Sdk) OK else NoApplicablePythonError(2)
-        PYTHON_3 -> if (!isPython2Sdk) OK else NoApplicablePythonError(3)
+        PYTHON_2_VERSION -> if (isPython2Sdk) OK else NoApplicablePythonError(2)
+        PYTHON_3_VERSION -> if (!isPython2Sdk) OK else NoApplicablePythonError(3)
         else -> {
           val courseLanguageLevel = LanguageLevel.fromPythonVersion(courseLanguageVersion)
           when {
@@ -122,8 +124,5 @@ abstract class PyLanguageSettingsBase : LanguageSettings<PyNewProjectSettings>()
     }
 
     private const val ALL_VERSIONS = "All versions"
-
-    const val PYTHON_3 = "3.x"
-    const val PYTHON_2 = "2.x"
   }
 }

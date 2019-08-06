@@ -113,8 +113,9 @@ public class CoursePanel extends JPanel {
 
   public LanguageSettings<?> bindCourse(@NotNull Course course, @Nullable CourseDisplaySettings settings) {
     myCourseDescriptionPanel.setVisible(true);
-    updateCourseDescriptionPanel(course, settings == null ? CourseDisplaySettings.DEFAULT : settings);
-    updateAdvancedSettings(course);
+    CourseDisplaySettings exactSettings = settings == null ? CourseDisplaySettings.DEFAULT : settings;
+    updateCourseDescriptionPanel(course, exactSettings);
+    updateAdvancedSettings(course, exactSettings.showLanguageSettings);
     return myLanguageSettings;
   }
 
@@ -214,7 +215,7 @@ public class CoursePanel extends JPanel {
     }
   }
 
-  private void updateAdvancedSettings(@NotNull Course course) {
+  private void updateAdvancedSettings(@NotNull Course course, boolean showLanguageSettings) {
     EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
     if (configurator == null) {
       return;
@@ -228,8 +229,11 @@ public class CoursePanel extends JPanel {
     if (myLocationField != null) {
       settingsComponents.add(myLocationField);
     }
-    List<LabeledComponent<JComponent>> components = myLanguageSettings.getLanguageSettingsComponents(course, context);
-    settingsComponents.addAll(components);
+
+    if (showLanguageSettings) {
+      List<LabeledComponent<JComponent>> components = myLanguageSettings.getLanguageSettingsComponents(course, context);
+      settingsComponents.addAll(components);
+    }
 
     if (settingsComponents.isEmpty()) {
       myAdvancedSettings.setVisible(false);
@@ -316,10 +320,16 @@ public class CoursePanel extends JPanel {
 
     public final boolean showTagsPanel;
     public final boolean showInstructorField;
+    public final boolean showLanguageSettings;
 
     public CourseDisplaySettings(boolean showTagsPanel, boolean showInstructorField) {
+      this(showTagsPanel, showInstructorField, true);
+    }
+
+    public CourseDisplaySettings(boolean showTagsPanel, boolean showInstructorField, boolean showLanguageSettings) {
       this.showTagsPanel = showTagsPanel;
       this.showInstructorField = showInstructorField;
+      this.showLanguageSettings = showLanguageSettings;
     }
   }
 }

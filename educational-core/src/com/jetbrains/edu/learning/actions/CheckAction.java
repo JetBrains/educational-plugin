@@ -32,6 +32,8 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager;
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames;
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -82,6 +84,8 @@ public class CheckAction extends DumbAwareAction {
         else {
           return new CheckAction(CourseraNames.SUBMIT_TO_COURSERA, CourseraNames.SUBMIT_TO_COURSERA);
         }
+      } else if (course instanceof CodeforcesCourse) {
+        return new CheckAction(CodeforcesNames.SUBMIT_TO_CODEFORCES, CodeforcesNames.SUBMIT_TO_CODEFORCES);
       }
     }
     return new CheckAction(CHECK_TASK, CHECK_DESCRIPTION);

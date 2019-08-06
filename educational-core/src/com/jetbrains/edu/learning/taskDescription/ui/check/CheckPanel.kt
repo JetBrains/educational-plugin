@@ -12,7 +12,7 @@ import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.actions.LeaveFeedbackAction
+import com.jetbrains.edu.learning.actions.GoToTaskUrlAction
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -42,7 +42,7 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   private fun createRightActionsToolbar(): JPanel {
     val actionsPanel = JPanel(HorizontalLayout(10))
     actionsPanel.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
-    actionsPanel.add(createSingleActionToolbar(LeaveFeedbackAction.ACTION_ID))
+    actionsPanel.add(createSingleActionToolbar(GoToTaskUrlAction.ACTION_ID))
     return actionsPanel
   }
 

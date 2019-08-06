@@ -16,6 +16,8 @@ import com.jetbrains.edu.learning.EduNames.EDU
 import com.jetbrains.edu.learning.EduNames.PYCHARM
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -162,6 +164,7 @@ private class CourseBuilder(
       CHECKIO_TYPE -> CheckiOCourse()
       HYPERSKILL_TYPE -> HyperskillCourse()
       STEPIK_TYPE -> StepikCourse()
+      CODEFORCES_COURSE_TYPE -> CodeforcesCourse()
       EDU -> EduCourse()
       null -> EduCourse()
       else -> formatError(unsupportedItemTypeMessage(courseType, EduNames.COURSE))

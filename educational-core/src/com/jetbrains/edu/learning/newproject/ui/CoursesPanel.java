@@ -70,6 +70,7 @@ public class CoursesPanel extends JPanel {
   private JBList<Course> myCoursesList;
   private CoursePanel myCoursePanel;
   private List<Course> myCourses;
+  private Comparator<Course> myCoursesComparator;
   private List<CourseValidationListener> myListeners = new ArrayList<>();
   private MessageBusConnection myBusConnection;
   private @Nullable ActionGroup myCustomToolbarActions;
@@ -81,6 +82,7 @@ public class CoursesPanel extends JPanel {
                       @Nullable DefaultActionGroup customToolbarActions,
                       Function<Boolean, Unit> enableCourseViewAsEducator) {
     myCourses = courses;
+    myCoursesComparator = Comparator.comparing(Course::getVisibility).thenComparing(Course::getName);
     setLayout(new BorderLayout());
     add(myMainPanel, BorderLayout.CENTER);
     myCustomToolbarActions = customToolbarActions;
@@ -288,8 +290,17 @@ public class CoursesPanel extends JPanel {
     myErrorLabel.setForeground(errorState.getForegroundColor());
   }
 
-  private static List<Course> sortCourses(List<Course> courses) {
-    return ContainerUtil.sorted(courses, Comparator.comparing(Course::getVisibility).thenComparing(Course::getName));
+  protected void setCoursesComparator(@NotNull Comparator<Course> comparator) {
+    myCoursesComparator = comparator;
+    updateModel(myCourses, null);
+  }
+
+  protected void setEmptyText(@NotNull String text) {
+    myCoursesList.setEmptyText(text);
+  }
+
+  private List<Course> sortCourses(List<Course> courses) {
+    return ContainerUtil.sorted(courses, myCoursesComparator);
   }
 
   private void updateModel(List<Course> courses, @Nullable Course courseToSelect) {
