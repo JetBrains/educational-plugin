@@ -1,16 +1,16 @@
-package com.jetbrains.edu.java
+package com.jetbrains.edu.learning.update
 
-import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.configurators.PlainTextCourseBuilder
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater
 import junit.framework.TestCase
 import java.util.*
 
-class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
-  override val courseBuilder: EduCourseBuilder<JdkProjectSettings> = JCourseBuilder()
-  override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
+class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
+  override val courseBuilder: EduCourseBuilder<Unit> = PlainTextCourseBuilder()
+  override val defaultSettings: Unit = Unit
 
   fun `test lesson added`() {
     val expectedFileTree = fileTree {
@@ -36,8 +36,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_added")
@@ -67,8 +65,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lessons_rearranged")
@@ -100,8 +96,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lessons_rearranged_in_section")
@@ -121,8 +115,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_renamed")
@@ -149,8 +141,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_added")
@@ -178,8 +168,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/theory_task_added")
@@ -207,8 +195,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/theory_task_text_changed")
@@ -239,8 +225,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_in_section_added")
@@ -260,8 +244,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_renamed")
@@ -280,8 +262,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_text_changed")
@@ -300,8 +280,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_file_renamed")
@@ -320,8 +298,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_file_text_changed")
@@ -340,8 +316,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/theory_task_file_changed")
@@ -362,8 +336,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_file_in_section_text_changed")
@@ -396,8 +368,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/section_added")
@@ -431,8 +401,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/sections_rearranged")
@@ -474,10 +442,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("task.html")
           }
         }
-
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_added_into_section")
@@ -509,8 +474,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/section_renamed")
@@ -542,8 +505,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_in_section_renamed")
@@ -562,8 +523,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_removed")
@@ -582,8 +541,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_removed")
@@ -604,8 +561,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/section_removed")
