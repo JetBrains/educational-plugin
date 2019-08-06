@@ -84,7 +84,6 @@ class YamlRemoveItemTest : YamlTestCase() {
         }
       }
     }
-    createConfigFiles()
 
     val task = findTask(0, 0)
     loadItemFromConfig(task, """
