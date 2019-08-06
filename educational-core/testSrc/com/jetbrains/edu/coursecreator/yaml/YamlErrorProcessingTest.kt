@@ -1,11 +1,15 @@
 package com.jetbrains.edu.coursecreator.yaml
 
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import com.intellij.lang.Language
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightVirtualFile
+import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
+import com.jetbrains.edu.learning.courseFormat.Course
 
 class YamlErrorProcessingTest : YamlTestCase() {
 
@@ -141,6 +145,37 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |  visible: true
     |""".trimMargin("|"), YamlFormatSettings.TASK_CONFIG,
            "File without a name not allowed", InvalidYamlFormatException::class.java)
+  }
+
+  fun `test language without configurator`() {
+    val name = "Test Course"
+    val language = "Russian"
+    val programmingLanguage = "HTML"
+    val firstLesson = "the first lesson"
+    val secondLesson = "the second lesson"
+
+    // check language is registered
+    assertNotNull(Language.getRegisteredLanguages().find {it.displayName == programmingLanguage})
+
+    // check exception as there's no configurator for this language
+    assertException(object : AbstractExceptionCase<InvalidDefinitionException>() {
+      override fun tryClosure() {
+        val yamlContent = """
+      |title: $name
+      |language: $language
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |programming_language: $programmingLanguage
+      |content:
+      |- $firstLesson
+      |- $secondLesson
+      |""".trimMargin("|")
+        YamlDeserializer.deserialize(yamlContent, Course::class.java)
+      }
+
+      override fun getExpectedExceptionClass(): Class<InvalidDefinitionException> = InvalidDefinitionException::class.java
+    })
   }
 
   private fun <T : Exception> doTest(yamlContent: String,

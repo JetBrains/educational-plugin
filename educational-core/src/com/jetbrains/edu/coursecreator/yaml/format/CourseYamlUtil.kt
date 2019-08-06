@@ -32,6 +32,7 @@ import com.jetbrains.edu.learning.EduNames.EDU
 import com.jetbrains.edu.learning.EduNames.PYCHARM
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -159,15 +160,27 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
     course.apply {
       name = title
       description = summary
-      val languageName = Language.getRegisteredLanguages().find { it.displayName == programmingLanguage }
-                         ?: formatError(unknownFieldValueMessage("programming language", programmingLanguage))
-      environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
-      language = languageName.id
 
-      val languageSettings = configurator?.courseBuilder?.languageSettings ?: formatError("Unsupported language $languageName")
+      // for C++ there are two languages with the same display name, and we have to filter out the one we have configurator for
+      val languages = Language.getRegisteredLanguages()
+                        .filter { it.displayName == programmingLanguage }
+                        .filter { EduConfiguratorManager.findConfigurator(itemType, environment, it) != null }
+      if (languages.isEmpty()) {
+        formatError("Unsupported language $programmingLanguage")
+      }
+
+      if (languages.size > 1) {
+        error("Multiple configurators for language with name: $programmingLanguage")
+      }
+
+      environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
+      language = languages.first().id
+
+      val languageSettings = configurator?.courseBuilder?.languageSettings
+                             ?: formatError("Unsupported language $programmingLanguage")
       if (programmingLanguageVersion != null) {
         if (!languageSettings.languageVersions.contains(programmingLanguageVersion)) {
-          formatError("Unsupported ${languageName.displayName} version: $programmingLanguageVersion")
+          formatError("Unsupported $programmingLanguage version: $programmingLanguageVersion")
         }
         else {
           language = "$language $programmingLanguageVersion"
