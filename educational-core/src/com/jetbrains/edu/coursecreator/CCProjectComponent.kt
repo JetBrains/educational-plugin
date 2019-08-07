@@ -6,9 +6,6 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
-import com.jetbrains.edu.coursecreator.yaml.YamlDeepLoader
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.isEduYamlProject
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -28,12 +25,6 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
   }
 
   override fun projectOpened() {
-    // it is also false for newly created courses as config files isn't created yet.
-    // it's ok as we don't need to load course from config
-    if (myProject.isEduYamlProject()) {
-      StudyTaskManager.getInstance(myProject).course = YamlDeepLoader.loadCourse(myProject)
-      YamlFormatSynchronizer.startSynchronization(myProject)
-    }
 
     if (StudyTaskManager.getInstance(myProject).course != null) {
       initCCProject()

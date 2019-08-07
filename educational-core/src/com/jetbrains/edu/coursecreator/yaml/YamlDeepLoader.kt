@@ -7,7 +7,6 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.coursecreator.yaml.format.getRemoteChangeApplierForItem
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -19,7 +18,7 @@ object YamlDeepLoader {
     val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error("Course yaml config cannot be null")
 
     val deserializedCourse = YamlDeserializer.deserializeItem(project, courseConfig) as? Course ?: return null
-    deserializedCourse.courseMode = if (EduUtils.isStudentProject(project)) EduNames.STUDY else CCUtils.COURSE_MODE
+    deserializedCourse.courseMode = CCUtils.COURSE_MODE
 
     deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items)
     deserializedCourse.items.forEach { deserializedItem ->

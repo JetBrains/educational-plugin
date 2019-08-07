@@ -15,6 +15,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -23,6 +24,7 @@ import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
+import com.jetbrains.edu.coursecreator.yaml.YamlDeepLoader;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings;
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.yaml.YamlInfoTaskDescriptionTabKt;
@@ -288,6 +290,12 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   }
 
   public static StudyTaskManager getInstance(@NotNull final Project project) {
-    return ServiceManager.getService(project, StudyTaskManager.class);
+    StudyTaskManager manager = ServiceManager.getService(project, StudyTaskManager.class);
+    if (manager != null && manager.getCourse() == null && YamlFormatSettings.isEduYamlProject(project)) {
+      Course course = ApplicationManager.getApplication().runReadAction((Computable<Course>)() -> YamlDeepLoader.loadCourse(project));
+      manager.setCourse(course);
+      YamlFormatSynchronizer.startSynchronization(project);
+    }
+    return manager;
   }
 }
