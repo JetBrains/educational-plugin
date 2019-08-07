@@ -1,242 +1,181 @@
-package com.jetbrains.edu.coursecreator.actions;
+package com.jetbrains.edu.coursecreator.actions
 
-import com.intellij.ide.projectView.ProjectView;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Function;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection;
-import com.jetbrains.edu.coursecreator.ui.AdditionalPanel;
-import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel;
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
-import com.jetbrains.edu.learning.statistics.FeedbackSenderKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.projectView.ProjectView
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.Function
+import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection
+import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
+import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.isFeedbackAsked
+import com.jetbrains.edu.learning.statistics.showNotification
+import java.util.*
+import javax.swing.Icon
 
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
+abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
+  protected val itemType: StudyItemType,
+  icon: Icon
+) : DumbAwareAction(
+  StringUtil.toTitleCase(itemType.presentableName),
+  "Create New " + StringUtil.toTitleCase(itemType.presentableName),
+  icon
+) {
 
-public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extends DumbAwareAction {
-  protected static final Logger LOG = Logger.getInstance(CCCreateStudyItemActionBase.class);
+  override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project ?: return
+    val selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return
+    if (!isActionApplicable(project, selectedFiles)) return
 
-  private final StudyItemType myItemType;
+    val course = StudyTaskManager.getInstance(project).course ?: return
 
-  public CCCreateStudyItemActionBase(@NotNull StudyItemType itemType, Icon icon) {
-    super(StringUtil.toTitleCase(itemType.getPresentableName()), "Create New " + StringUtil.toTitleCase(itemType.getPresentableName()),
-          icon);
-    myItemType = itemType;
-  }
-
-  @Override
-  public void actionPerformed(AnActionEvent e) {
-    final Project project = e.getProject();
-    final VirtualFile[] selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
-    if (!isActionApplicable(project, selectedFiles)) return;
-
-    final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) return;
-
-    VirtualFile itemFile = createItem(project, selectedFiles[0], course);
+    val itemFile = createItem(project, selectedFiles[0], course)
     if (itemFile != null) {
-      ProjectView.getInstance(project).select(itemFile, itemFile, true);
+      ProjectView.getInstance(project).select(itemFile, itemFile, true)
     }
-    askFeedback(course, project);
-    if (StudyItemType.LESSON.equals(myItemType)) {
-      suggestWrapLessonsIntoSection(project, course, selectedFiles[0]);
+    askFeedback(course, project)
+    if (StudyItemType.LESSON == itemType) {
+      suggestWrapLessonsIntoSection(project, course, selectedFiles[0])
     }
   }
 
-  private void suggestWrapLessonsIntoSection(@NotNull final Project project,
-                                             @NotNull final Course course,
-                                             @NotNull final VirtualFile sourceDirectory) {
-    StudyItem parentItem = getParentItem(course, sourceDirectory);
+  private fun suggestWrapLessonsIntoSection(project: Project, course: Course, sourceDirectory: VirtualFile) {
+    val parentItem = getParentItem(course, sourceDirectory)
     if (parentItem != course) {
-      return;
+      return
     }
-    final List<Lesson> lessonsToWrap = course.getLessons();
-    if (lessonsToWrap.size() != 20) {
-      return;
+    val lessonsToWrap = course.lessons
+    if (lessonsToWrap.size != 20) {
+      return
     }
-    Notification notification = new Notification("WrapLessons", "Wrap Lessons With Section",
-                                                 "Lessons can be wrapped with section", NotificationType.INFORMATION);
-    notification.addAction(new DumbAwareAction("Wrap lessons") {
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent e) {
-        CCWrapWithSection.wrapLessonsIntoSection(project, course, lessonsToWrap);
-        notification.expire();
+    val notification = Notification("WrapLessons", "Wrap Lessons With Section",
+                                    "Lessons can be wrapped with section", NotificationType.INFORMATION)
+    notification.addAction(object : DumbAwareAction("Wrap lessons") {
+      override fun actionPerformed(e: AnActionEvent) {
+        CCWrapWithSection.wrapLessonsIntoSection(project, course, lessonsToWrap)
+        notification.expire()
       }
-    });
-    notification.notify(project);
+    })
+    notification.notify(project)
   }
 
-  private static void askFeedback(@NotNull final Course course, @NotNull final Project project) {
-    if (FeedbackSenderKt.isFeedbackAsked()) {
-      return;
-    }
-    final Ref<Integer> countTasks = new Ref<>(0);
-    course.visitLessons((lesson) -> countTasks.set(countTasks.get() + lesson.getTaskList().size()));
-    if (countTasks.get() == 5) {
-      FeedbackSenderKt.showNotification(false, course, project);
-    }
+  override fun update(event: AnActionEvent) {
+    val presentation = event.presentation
+    presentation.isEnabledAndVisible = false
+    val project = event.getData(CommonDataKeys.PROJECT) ?: return
+    val selectedFiles = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return
+    if (!isActionApplicable(project, selectedFiles)) return
+
+    val course = StudyTaskManager.getInstance(project).course ?: return
+
+    val sourceDirectory = selectedFiles[0]
+    if (!isAddedAsLast(sourceDirectory, project, course) && getThresholdItem(course, sourceDirectory) == null) return
+    if (CommonDataKeys.PSI_FILE.getData(event.dataContext) != null) return
+    presentation.isEnabledAndVisible = true
   }
 
-  @Override
-  public void update(@NotNull AnActionEvent event) {
-    final Presentation presentation = event.getPresentation();
-    presentation.setEnabledAndVisible(false);
-    final Project project = event.getData(CommonDataKeys.PROJECT);
-    final VirtualFile[] selectedFiles = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
-    if (!isActionApplicable(project, selectedFiles)) return;
-
-    final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) return;
-
-    VirtualFile sourceDirectory = selectedFiles[0];
-    if (!isAddedAsLast(sourceDirectory, project, course) && getThresholdItem(course, sourceDirectory) == null) return;
-    if (CommonDataKeys.PSI_FILE.getData(event.getDataContext()) != null) return;
-    presentation.setEnabledAndVisible(true);
+  protected fun getParentDir(project: Project, course: Course, directory: VirtualFile): VirtualFile? {
+    return if (isAddedAsLast(directory, project, course)) directory else directory.parent
   }
 
-  private static boolean isActionApplicable(@Nullable Project project, @Nullable VirtualFile[] selectedFiles) {
-    if (project == null || selectedFiles == null) return false;
-    if (selectedFiles.length != 1) return false;
-
-    if (!CCUtils.isCourseCreator(project)) return false;
-
-    final VirtualFile selectedFile = selectedFiles[0];
-    return selectedFile != null;
-  }
-
-  @Nullable
-  protected VirtualFile getParentDir(@NotNull Project project, @NotNull Course course, @NotNull VirtualFile directory) {
-    if (isAddedAsLast(directory, project, course)) {
-      return directory;
-    }
-    return directory.getParent();
-  }
-
-  @Nullable
-  public VirtualFile createItem(@NotNull final Project project, @NotNull final VirtualFile sourceDirectory,
-                                @NotNull final Course course) {
-    StudyItem parentItem = getParentItem(course, sourceDirectory);
-    final Item item =
-      getItem(sourceDirectory, project, course, parentItem);
+  fun createItem(project: Project, sourceDirectory: VirtualFile, course: Course): VirtualFile? {
+    val parentItem = getParentItem(course, sourceDirectory)
+    val item = getItem(sourceDirectory, project, course, parentItem)
     if (item == null) {
-      LOG.info("Failed to create study item");
-      return null;
+      LOG.info("Failed to create study item")
+      return null
     }
-    final VirtualFile parentDir = getParentDir(project, course, sourceDirectory);
+    val parentDir = getParentDir(project, course, sourceDirectory)
     if (parentDir == null) {
-      LOG.info("Failed to get parent directory");
-      return null;
+      LOG.info("Failed to get parent directory")
+      return null
     }
-    CCUtils.updateHigherElements(parentDir.getChildren(), getStudyOrderable(item, course), item.getIndex() - 1, 1);
-    addItem(course, item);
-    sortSiblings(course, parentItem);
-    VirtualFile virtualFile = createItemDir(project, item, parentDir, course);
-    YamlFormatSynchronizer.saveItem(item);
-    YamlFormatSynchronizer.saveItem(item.getParent());
-    EduCounterUsageCollector.studyItemCreated(item);
-    return virtualFile;
+    CCUtils.updateHigherElements(parentDir.children, getStudyOrderable(item, course), item.index - 1, 1)
+    addItem(course, item)
+    sortSiblings(course, parentItem)
+    val virtualFile = createItemDir(project, item, parentDir, course)
+    YamlFormatSynchronizer.saveItem(item)
+    YamlFormatSynchronizer.saveItem(item.parent)
+    EduCounterUsageCollector.studyItemCreated(item)
+    return virtualFile
   }
 
-  protected abstract void addItem(@NotNull final Course course, @NotNull final Item item);
+  protected abstract fun addItem(course: Course, item: Item)
+  protected abstract fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem>
+  protected abstract fun createItemDir(project: Project, item: Item, parentDirectory: VirtualFile, course: Course): VirtualFile?
 
-  protected abstract Function<VirtualFile, ? extends StudyItem> getStudyOrderable(@NotNull final StudyItem item,
-                                                                                  @NotNull Course course);
-
-  protected abstract VirtualFile createItemDir(@NotNull final Project project, @NotNull final Item item,
-                                               @NotNull final VirtualFile parentDirectory, @NotNull final Course course);
-
-  @Nullable
-  protected Item getItem(@NotNull final VirtualFile sourceDirectory,
-                         @NotNull final Project project,
-                         @NotNull final Course course,
-                         @Nullable StudyItem parentItem) {
-    int index;
-    String suggestedName;
-    List<AdditionalPanel> additionalPanels = new ArrayList<>();
+  protected fun getItem(sourceDirectory: VirtualFile, project: Project, course: Course, parentItem: StudyItem?): Item? {
+    val index: Int
+    val suggestedName: String
+    val additionalPanels = ArrayList<AdditionalPanel>()
     if (isAddedAsLast(sourceDirectory, project, course)) {
-      index = getSiblingsSize(course, parentItem) + 1;
-      suggestedName = getItemType().getPresentableName() + index;
+      index = getSiblingsSize(course, parentItem) + 1
+      suggestedName = itemType.presentableName + index
     }
     else {
-      StudyItem thresholdItem = getThresholdItem(course, sourceDirectory);
-      if (thresholdItem == null) {
-        return null;
-      }
-
-      index = thresholdItem.getIndex();
-      String itemName = getItemType().getPresentableName();
-      suggestedName = itemName + (index + 1);
-      additionalPanels.add(new CCItemPositionPanel(thresholdItem.getName()));
+      val thresholdItem = getThresholdItem(course, sourceDirectory) ?: return null
+      index = thresholdItem.index
+      val itemName = itemType.presentableName
+      suggestedName = itemName + (index + 1)
+      additionalPanels.add(CCItemPositionPanel(thresholdItem.name))
     }
     if (parentItem == null) {
-      return null;
+      return null
     }
-    VirtualFile parentItemDir = parentItem.getDir(project);
-    if (parentItemDir == null) {
-      return null;
-    }
-    NewStudyItemUiModel model = new NewStudyItemUiModel(parentItem, parentItemDir, getItemType(), suggestedName, index);
-    NewStudyItemInfo info = showCreateStudyItemDialog(project, course, model, additionalPanels);
-    if (info == null) {
-      return null;
-    }
-    return createAndInitItem(project, course, parentItem, info);
+    val parentItemDir = parentItem.getDir(project) ?: return null
+    val model = NewStudyItemUiModel(parentItem, parentItemDir, itemType, suggestedName, index)
+    val info = showCreateStudyItemDialog(project, course, model, additionalPanels) ?: return null
+    return createAndInitItem(project, course, parentItem, info)
   }
 
-  @Nullable
-  protected NewStudyItemInfo showCreateStudyItemDialog(@NotNull Project project,
-                                                       @NotNull Course course,
-                                                       @NotNull NewStudyItemUiModel model,
-                                                       @NotNull List<AdditionalPanel> additionalPanels) {
-    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
-    if (configurator == null) {
-      return null;
+  protected open fun showCreateStudyItemDialog(
+    project: Project,
+    course: Course,
+    model: NewStudyItemUiModel,
+    additionalPanels: List<AdditionalPanel>
+  ): NewStudyItemInfo? {
+    val configurator = course.configurator ?: return null
+    return configurator.courseBuilder.showNewStudyItemUi(project, model, additionalPanels)
+  }
+
+  protected abstract fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int
+  protected abstract fun getParentItem(course: Course, directory: VirtualFile): StudyItem?
+  protected abstract fun getThresholdItem(course: Course, sourceDirectory: VirtualFile): StudyItem?
+  protected abstract fun isAddedAsLast(sourceDirectory: VirtualFile, project: Project, course: Course): Boolean
+  protected abstract fun sortSiblings(course: Course, parentItem: StudyItem?)
+
+  abstract fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, info: NewStudyItemInfo): Item?
+
+  companion object {
+    protected val LOG: Logger = Logger.getInstance(CCCreateStudyItemActionBase::class.java)
+
+    private fun askFeedback(course: Course, project: Project) {
+      if (isFeedbackAsked()) {
+        return
+      }
+      var countTasks = 0
+      course.visitLessons { lesson -> countTasks += lesson.taskList.size }
+      if (countTasks == 5) {
+        showNotification(false, course, project)
+      }
     }
-    return configurator.getCourseBuilder().showNewStudyItemUi(project, model, additionalPanels);
+
+    private fun isActionApplicable(project: Project, selectedFiles: Array<VirtualFile>): Boolean {
+      if (selectedFiles.size != 1) return false
+      return CCUtils.isCourseCreator(project)
+    }
   }
-
-  protected abstract int getSiblingsSize(@NotNull final Course course, @Nullable final StudyItem parentItem);
-
-  @NotNull
-  protected StudyItemType getItemType() {
-    return myItemType;
-  }
-
-  @Nullable
-  protected abstract StudyItem getParentItem(@NotNull final Course course, @NotNull final VirtualFile directory);
-
-  @Nullable
-  protected abstract StudyItem getThresholdItem(@NotNull final Course course, @NotNull final VirtualFile sourceDirectory);
-
-  protected abstract boolean isAddedAsLast(@NotNull final VirtualFile sourceDirectory,
-                                           @NotNull final Project project,
-                                           @NotNull final Course course);
-
-  protected abstract void sortSiblings(@NotNull final Course course, @Nullable final StudyItem parentItem);
-
-
-  public abstract Item createAndInitItem(@NotNull Project project,
-                                         @NotNull final Course course,
-                                         @Nullable final StudyItem parentItem,
-                                         @NotNull NewStudyItemInfo info);
 }
