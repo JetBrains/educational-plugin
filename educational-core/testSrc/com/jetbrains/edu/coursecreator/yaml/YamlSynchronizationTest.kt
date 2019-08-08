@@ -30,7 +30,7 @@ class YamlSynchronizationTest : YamlTestCase() {
     val taskConfig = task.getDir(project)?.findChild(YamlFormatSettings.TASK_CONFIG)!!
     val document = FileDocumentManager.getInstance().getDocument(taskConfig)!!
     runWriteAction { document.setText("invalid text") }
-
+    StudyTaskManager.getInstance(project).course = null
     project.getComponent(CCProjectComponent::class.java).projectOpened()
 
     // check loaded task is null
