@@ -5,6 +5,8 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.DataKey
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -42,7 +44,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
 
     val course = StudyTaskManager.getInstance(project).course ?: return
 
-    val itemFile = createItem(project, selectedFiles[0], course)
+    val itemFile = createItem(project, selectedFiles[0], course, e.dataContext)
     if (itemFile != null) {
       ProjectView.getInstance(project).select(itemFile, itemFile, true)
     }
@@ -91,9 +93,14 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     return if (isAddedAsLast(directory, project, course)) directory else directory.parent
   }
 
-  fun createItem(project: Project, sourceDirectory: VirtualFile, course: Course): VirtualFile? {
+  fun createItem(
+    project: Project,
+    sourceDirectory: VirtualFile,
+    course: Course,
+    dataContext: DataContext
+  ): VirtualFile? {
     val parentItem = getParentItem(course, sourceDirectory)
-    val item = getItem(sourceDirectory, project, course, parentItem)
+    val item = getItem(project, course, sourceDirectory, parentItem, dataContext)
     if (item == null) {
       LOG.info("Failed to create study item")
       return null
@@ -117,20 +124,31 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   protected abstract fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem>
   protected abstract fun createItemDir(project: Project, item: Item, parentDirectory: VirtualFile, course: Course): VirtualFile?
 
-  protected fun getItem(sourceDirectory: VirtualFile, project: Project, course: Course, parentItem: StudyItem?): Item? {
+  protected fun getItem(
+    project: Project,
+    course: Course,
+    sourceDirectory: VirtualFile,
+    parentItem: StudyItem?,
+    dataContext: DataContext
+  ): Item? {
     val index: Int
     val suggestedName: String
     val additionalPanels = ArrayList<AdditionalPanel>()
     if (isAddedAsLast(sourceDirectory, project, course)) {
-      index = getSiblingsSize(course, parentItem) + 1
-      suggestedName = itemType.presentableName + index
+      index = ITEM_INDEX.getData(dataContext) ?: getSiblingsSize(course, parentItem) + 1
+      suggestedName = SUGGESTED_NAME.getData(dataContext) ?: itemType.presentableName + index
     }
     else {
       val thresholdItem = getThresholdItem(course, sourceDirectory) ?: return null
-      index = thresholdItem.index
+      val defaultIndex = ITEM_INDEX.getData(dataContext)
+      index = defaultIndex ?: thresholdItem.index
       val itemName = itemType.presentableName
-      suggestedName = itemName + (index + 1)
-      additionalPanels.add(CCItemPositionPanel(thresholdItem.name))
+      suggestedName = SUGGESTED_NAME.getData(dataContext) ?: itemName + (index + 1)
+      // If item index is specified by additional params
+      // we don't want to ask user about it
+      if (defaultIndex == null) {
+        additionalPanels.add(CCItemPositionPanel(thresholdItem.name))
+      }
     }
     if (parentItem == null) {
       return null
@@ -161,6 +179,11 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
 
   companion object {
     protected val LOG: Logger = Logger.getInstance(CCCreateStudyItemActionBase::class.java)
+
+    @JvmStatic
+    val SUGGESTED_NAME: DataKey<String> = DataKey.create("SUGGESTED_NAME")
+    @JvmStatic
+    val ITEM_INDEX: DataKey<Int> = DataKey.create("ITEM_INDEX")
 
     private fun askFeedback(course: Course, project: Project) {
       if (isFeedbackAsked()) {

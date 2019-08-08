@@ -78,14 +78,9 @@ class EduYamlTaskFilePathReferenceProvider : EduPsiReferenceProvider() {
   }
 }
 
-private class ItemContainerContentReferenceProvider : EduPsiReferenceProvider() {
+class ItemContainerContentReferenceProvider : EduPsiReferenceProvider() {
 
-  override val pattern: PsiElementPattern.Capture<YAMLScalar> = psiElement<YAMLScalar>()
-    .inFileWithName(COURSE_CONFIG, SECTION_CONFIG, LESSON_CONFIG)
-    .withParent(
-      // TODO: use constant from yaml mixins
-      psiElement<YAMLSequenceItem>().inside(keyValueWithName("content"))
-    )
+  override val pattern: PsiElementPattern.Capture<YAMLScalar> = PSI_PATTERN
 
   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<FileReference> {
     val scalar = element as? YAMLScalar ?: return emptyArray()
@@ -118,7 +113,15 @@ private class ItemContainerContentReferenceProvider : EduPsiReferenceProvider() 
       return sequence.items.mapNotNull { (it.value as? YAMLScalar)?.textValue }
     }
   }
-}
+
+  companion object {
+    val PSI_PATTERN: PsiElementPattern.Capture<YAMLScalar> = psiElement<YAMLScalar>()
+      .inFileWithName(COURSE_CONFIG, SECTION_CONFIG, LESSON_CONFIG)
+      .withParent(
+        // TODO: use constant from yaml mixins
+        psiElement<YAMLSequenceItem>().inside(keyValueWithName("content"))
+      )
+  }}
 
 private fun Project.excludeFromArchive(virtualFile: VirtualFile): Boolean {
   val course = StudyTaskManager.getInstance(this).course ?: return true

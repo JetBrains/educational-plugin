@@ -1,19 +1,17 @@
 package com.jetbrains.edu.yaml.inspections
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.LocalQuickFixOnPsiElement
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
-import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader
 import com.jetbrains.edu.coursecreator.yaml.format.VISIBLE
 import com.jetbrains.edu.learning.EduUtils
@@ -24,39 +22,18 @@ import com.jetbrains.edu.yaml.parentOfType
 import org.jetbrains.yaml.psi.YAMLMapping
 import org.jetbrains.yaml.psi.YAMLScalar
 import org.jetbrains.yaml.psi.YAMLSequenceItem
-import org.jetbrains.yaml.psi.YamlPsiElementVisitor
 import java.io.IOException
 
-class TaskFileNotFoundInspection : LocalInspectionTool() {
+class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
 
-  override fun processFile(file: PsiFile, manager: InspectionManager): List<ProblemDescriptor> {
-    if (!file.project.isEduYamlProject() || file.name != YamlFormatSettings.TASK_CONFIG) return emptyList()
-    return super.processFile(file, manager)
-  }
+  override val pattern: PsiElementPattern.Capture<YAMLScalar> get() = EduYamlTaskFilePathReferenceProvider.PSI_PATTERN
+  override val supportedConfigs: List<String> = listOf(YamlFormatSettings.TASK_CONFIG)
 
-  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-    return object : YamlPsiElementVisitor() {
-      override fun visitScalar(scalar: YAMLScalar) {
-        if (!EduYamlTaskFilePathReferenceProvider.PSI_PATTERN.accepts(scalar)) return
-        for (reference in scalar.references) {
-          if (reference is FileReference && !reference.isSoft && reference.isLast && reference.multiResolve(false).isEmpty()) {
-            val fix = if (isValidFilePath(scalar.textValue)) CreateTaskFileFix(scalar) else null
-            // TODO: shouldn't be reported if path is invalid
-            holder.registerProblem(scalar, "Cannot find '${scalar.textValue}' file",
-                                   ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, *listOfNotNull(fix).toTypedArray())
-          }
-        }
-      }
-    }
-  }
-
-  private fun isValidFilePath(path: String): Boolean {
-    val segments = path.split(VfsUtil.VFS_SEPARATOR_CHAR)
-    for (segment in segments) {
-      // TODO: Maybe we want to check it for all OS?
-      if (!PathUtil.isValidFileName(segment)) return false
-    }
-    return true
+  override fun registerProblem(holder: ProblemsHolder, element: YAMLScalar) {
+    val fix = if (isValidFilePath(element.textValue)) CreateTaskFileFix(element) else null
+    // TODO: shouldn't be reported if path is invalid
+    holder.registerProblem(element, "Cannot find '${element.textValue}' file",
+                           ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, *listOfNotNull(fix).toTypedArray())
   }
 
   private class CreateTaskFileFix(element: YAMLScalar) : LocalQuickFixOnPsiElement(element) {

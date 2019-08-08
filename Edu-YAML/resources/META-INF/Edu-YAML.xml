@@ -16,5 +16,10 @@
                      displayName="Task file not found"
                      enabledByDefault="true" level="ERROR"
                      implementationClass="com.jetbrains.edu.yaml.inspections.TaskFileNotFoundInspection"/>
+
+    <localInspection language="yaml" groupPath="EduTools" groupName="Yaml configs"
+                     displayName="Task, lesson or section not found"
+                     enabledByDefault="true" level="ERROR"
+                     implementationClass="com.jetbrains.edu.yaml.inspections.StudyItemNotFoundInspection"/>
   </extensions>
 </idea-plugin>
