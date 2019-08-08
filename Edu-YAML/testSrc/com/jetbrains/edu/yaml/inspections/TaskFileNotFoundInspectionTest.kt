@@ -97,7 +97,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
       }
     }
     val task = course.findTask("lesson1", "task1")
-    checkFixIsUnavailable(task, "Create file", """
+    testQuickFixIsUnavailable(task, "Create file", """
       |type: edu
       |files:
       |- name: <error descr="Cannot find 'src\taskfile1.txt' file">src\taskfile1.txt</error>
@@ -114,7 +114,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
       }
     }
     val task = course.findTask("lesson1", "task1")
-    checkFixIsUnavailable(task, "Create file", """
+    testQuickFixIsUnavailable(task, "Create file", """
       |type: edu
       |files:
       |- name: <error descr="Cannot find 'src//taskfile1.txt' file">src//taskfile1.txt</error>
@@ -129,13 +129,6 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     val taskDir = task.getTaskDir(project)!!
     for ((path, _) in expectedTaskFiles) {
       assertNotNull("Failed to find `$path` file", taskDir.findFileByRelativePath(path))
-    }
-  }
-
-  private fun checkFixIsUnavailable(task: Task, quickFixName: String, text: String) {
-    testHighlighting(task, text)
-    check(myFixture.filterAvailableIntentions(quickFixName).isEmpty()) {
-      "Fix `$quickFixName` should not be possible to apply."
     }
   }
 }

@@ -19,6 +19,13 @@ abstract class YamlInspectionsTestBase(private val inspectionClass: KClass<out L
     myFixture.checkResult(configTextAfter)
   }
 
+  protected fun testQuickFixIsUnavailable(item: StudyItem, fixName: String, text: String) {
+    testHighlighting(item, text)
+    check(myFixture.filterAvailableIntentions(fixName).isEmpty()) {
+      "Fix `$fixName` should not be possible to apply."
+    }
+  }
+
   protected fun testHighlighting(item: StudyItem, configText: String) {
     openConfigFileWithText(item, configText)
     myFixture.checkHighlighting()
