@@ -8,7 +8,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <completion.contributor implementationClass="com.jetbrains.edu.yaml.EduYamlCompletionContributor"
-                            language="yaml" order="first"/>
+                            language="yaml" order="first, before YamlJsonSchema"/>
     <psi.referenceContributor language="yaml"
                               implementation="com.jetbrains.edu.yaml.EduYamlReferenceContributor"/>
   </extensions>
