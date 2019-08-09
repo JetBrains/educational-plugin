@@ -16,12 +16,13 @@ import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.createRetrofitBuilder
+import com.jetbrains.edu.learning.executeHandlingExceptions
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.api.*
-import com.jetbrains.edu.learning.stepik.createRetrofitBuilder
-import com.jetbrains.edu.learning.stepik.executeHandlingExceptions
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepikUserAgent
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import okhttp3.ConnectionPool
 import org.apache.http.HttpStatus
@@ -51,7 +52,7 @@ abstract class HyperskillConnector {
 
   private val authorizationService: HyperskillService
     get() {
-      val retrofit = createRetrofitBuilder(baseUrl, connectionPool)
+      val retrofit = createRetrofitBuilder(baseUrl, connectionPool, stepikUserAgent)
         .addConverterFactory(converterFactory)
         .build()
 
@@ -66,7 +67,7 @@ abstract class HyperskillConnector {
       account.refreshTokens()
     }
 
-    val retrofit = createRetrofitBuilder(baseUrl, connectionPool, account?.tokenInfo?.accessToken)
+    val retrofit = createRetrofitBuilder(baseUrl, connectionPool, accessToken = account?.tokenInfo?.accessToken)
       .addConverterFactory(converterFactory)
       .build()
 

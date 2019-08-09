@@ -1,12 +1,11 @@
-package com.jetbrains.edu.learning.stepik
+package com.jetbrains.edu.learning
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.PlatformUtils
 import com.intellij.util.net.HttpConfigurable
 import com.intellij.util.net.ssl.CertificateManager
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.pluginVersion
+import com.jetbrains.edu.learning.stepik.StepikNames
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
@@ -22,15 +21,21 @@ import java.net.Proxy
 import java.net.URI
 import java.util.concurrent.TimeUnit
 
-private val LOG = Logger.getInstance("com.jetbrains.edu.learning.stepik.RetrofitExt")
+private val LOG = Logger.getInstance("com.jetbrains.edu.learning.RetrofitExt")
 
-fun createRetrofitBuilder(baseUrl: String, connectionPool: ConnectionPool, accessToken: String? = null): Retrofit.Builder {
+fun createRetrofitBuilder(baseUrl: String,
+                          connectionPool: ConnectionPool,
+                          userAgent: String = "unknown",
+                          accessToken: String? = null): Retrofit.Builder {
   return Retrofit.Builder()
-    .client(createOkHttpClient(baseUrl, connectionPool, accessToken))
+    .client(createOkHttpClient(baseUrl, connectionPool, userAgent, accessToken))
     .baseUrl(baseUrl)
 }
 
-private fun createOkHttpClient(baseUrl: String, connectionPool: ConnectionPool, accessToken: String?): OkHttpClient {
+private fun createOkHttpClient(baseUrl: String,
+                               connectionPool: ConnectionPool,
+                               userAgent: String = "unknown",
+                               accessToken: String?): OkHttpClient {
   val dispatcher = Dispatcher()
   dispatcher.maxRequests = 10
 
@@ -44,7 +49,7 @@ private fun createOkHttpClient(baseUrl: String, connectionPool: ConnectionPool, 
     .addInterceptor { chain ->
       val builder = chain.request().newBuilder().addHeader("User-Agent", userAgent)
       if (accessToken != null) {
-        builder.addHeader("Authorization", "Bearer ${accessToken}")
+        builder.addHeader("Authorization", "Bearer $accessToken")
       }
       val newRequest = builder.build()
       chain.proceed(newRequest)
@@ -65,12 +70,13 @@ private fun createOkHttpClient(baseUrl: String, connectionPool: ConnectionPool, 
   return builder.build()
 }
 
-private val userAgent: String get() {
-  val version = pluginVersion(EduNames.PLUGIN_ID) ?: "unknown"
+val stepikUserAgent: String
+  get() {
+    val version = pluginVersion(EduNames.PLUGIN_ID) ?: "unknown"
 
-  return String.format("%s/version(%s)/%s/%s", StepikNames.PLUGIN_NAME, version, System.getProperty("os.name"),
-                       PlatformUtils.getPlatformPrefix())
-}
+    return String.format("%s/version(%s)/%s/%s", StepikNames.PLUGIN_NAME, version, System.getProperty("os.name"),
+                         PlatformUtils.getPlatformPrefix())
+  }
 
 fun <T> Call<T>.executeHandlingExceptions(optional: Boolean = false): Response<T>? {
   try {

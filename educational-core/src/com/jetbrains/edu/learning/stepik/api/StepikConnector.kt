@@ -11,7 +11,10 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.createRetrofitBuilder
+import com.jetbrains.edu.learning.executeHandlingExceptions
 import com.jetbrains.edu.learning.stepik.*
+import com.jetbrains.edu.learning.stepikUserAgent
 import okhttp3.ConnectionPool
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -37,7 +40,7 @@ abstract class StepikConnector {
   protected abstract val baseUrl: String
 
   private val authorizationService: StepikOAuthService
-    get() = createRetrofitBuilder(baseUrl, connectionPool)
+    get() = createRetrofitBuilder(baseUrl, connectionPool, stepikUserAgent)
       .addConverterFactory(converterFactory)
       .build()
       .create(StepikOAuthService::class.java)
@@ -50,7 +53,7 @@ abstract class StepikConnector {
       account.refreshTokens()
     }
 
-    return createRetrofitBuilder(baseUrl, connectionPool, account?.tokenInfo?.accessToken)
+    return createRetrofitBuilder(baseUrl, connectionPool, stepikUserAgent, account?.tokenInfo?.accessToken)
       .addConverterFactory(converterFactory)
       .build()
       .create(StepikService::class.java)
@@ -70,7 +73,8 @@ abstract class StepikConnector {
 
   fun login(code: String, redirectUri: String): Boolean {
     val response = authorizationService.getTokens(
-      StepikNames.CLIENT_ID, StepikNames.CLIENT_SECRET, redirectUri, code, "authorization_code").executeHandlingExceptions()
+      StepikNames.CLIENT_ID, StepikNames.CLIENT_SECRET, redirectUri, code, "authorization_code"
+    ).executeHandlingExceptions()
     val tokenInfo = response?.body() ?: return false
     val stepikUser = StepikUser(tokenInfo)
     val stepikUserInfo = getCurrentUserInfo(stepikUser) ?: return false
