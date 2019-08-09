@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.taskDescription
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.KeymapUtil
@@ -24,6 +25,14 @@ class TaskDescriptionTest : EduTestCase() {
     private val goToActionShortcut: String = getKeystrokeText(KeyEvent.VK_A, InputEvent.CTRL_MASK + InputEvent.SHIFT_MASK)
 
     private fun getKeystrokeText(keyChar: Int, modifiers: Int) = KeymapUtil.getKeystrokeText(KeyStroke.getKeyStroke(keyChar, modifiers))
+  }
+
+  fun testIDEName() {
+    configureByTaskFile(1, 1, "taskFile1.txt")
+    val task = findTask(0, 0)
+    task.descriptionText = "This is %IDE_NAME%"
+    val taskDescription = task.getTaskDescription(task.getTaskDir(project))
+    assertEquals("This is ${ApplicationNamesInfo.getInstance().fullProductName}", taskDescription!!.getBody())
   }
 
   fun testSimpleImg() {

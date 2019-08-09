@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.courseFormat.tasks;
 
+import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
@@ -159,6 +161,7 @@ public abstract class Task extends StudyItem {
       return taskText;
     }
     if (taskDir != null) {
+      taskText = StringUtil.replace(taskText, "%IDE_NAME%", ApplicationNamesInfo.getInstance().getFullProductName());
       StringBuffer text = new StringBuffer(taskText);
       EduUtils.replaceActionIDsWithShortcuts(text);
       text.append(TaskExt.taskDescriptionHintBlocks(this));
