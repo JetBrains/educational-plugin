@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -158,9 +159,7 @@ object YamlDeserializer {
           showError(project, e, configFile)
         }
         else {
-          showError(project, e,
-                    configFile,
-                    "${NameUtil.nameToWordsLowerCase(parameterName).joinToString("_")} is empty")
+          showError(project, e, configFile, "${NameUtil.nameToWordsLowerCase(parameterName).joinToString("_")} is empty")
         }
       }
       is InvalidYamlFormatException -> showError(project, e, configFile, e.message)
@@ -202,14 +201,15 @@ object YamlDeserializer {
         throw ProcessedException(cause, originalException)
       }
     }
-
-    val editor = configFile.getEditor(project)
-    if (editor != null) {
-      editor.headerComponent = InvalidFormatPanel(project, cause)
-    }
-    else {
-      val notification = InvalidConfigNotification(project, configFile, cause)
-      notification.notify(project)
+    runInEdt {
+      val editor = configFile.getEditor(project)
+      if (editor != null) {
+        editor.headerComponent = InvalidFormatPanel(project, cause)
+      }
+      else {
+        val notification = InvalidConfigNotification(project, configFile, cause)
+        notification.notify(project)
+      }
     }
   }
 
