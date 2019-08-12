@@ -291,7 +291,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
 
   public static StudyTaskManager getInstance(@NotNull final Project project) {
     StudyTaskManager manager = ServiceManager.getService(project, StudyTaskManager.class);
-    if (manager != null && manager.getCourse() == null && YamlFormatSettings.isEduYamlProject(project)) {
+    if (!project.isDefault() && manager != null && manager.getCourse() == null && YamlFormatSettings.isEduYamlProject(project)) {
       Course course = ApplicationManager.getApplication().runReadAction((Computable<Course>)() -> YamlDeepLoader.loadCourse(project));
       manager.setCourse(course);
       YamlFormatSynchronizer.startSynchronization(project);
