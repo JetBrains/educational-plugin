@@ -12,7 +12,9 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
@@ -20,8 +22,10 @@ import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.fileTypes.UnknownFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.LESSON_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
@@ -30,7 +34,10 @@ import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_SECTION_CO
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.TASK_CONFIG
+import com.jetbrains.edu.coursecreator.yaml.YamlLoader.getEditor
 import com.jetbrains.edu.coursecreator.yaml.format.*
+import com.jetbrains.edu.coursecreator.yaml.YamlSynchronizationListener
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.project
@@ -39,6 +46,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.isUnitTestMode
+import java.awt.BorderLayout
+import javax.swing.JLabel
+import javax.swing.JPanel
 import java.util.*
 
 object YamlFormatSynchronizer {
@@ -154,11 +164,29 @@ object YamlFormatSynchronizer {
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
         if (isLocalConfigFile(file)) {
+          if (EduUtils.isStudentProject(project)) {
+            val editor = file.getEditor(project) ?: error("Can't find editor for a file: ${file.name}")
+            showNoEditingNotification(editor)
+            (editor as EditorEx).isViewer = !ApplicationManager.getApplication().isInternal
+            return
+          }
+
           // load item to show editor notification if config file is invalid
           YamlLoader.loadItem(project, file)
         }
       }
     })
+  }
+
+  private fun showNoEditingNotification(editor: Editor) {
+    val label = JLabel("This is a course configuration file. Not intended for manual editing.")
+    label.border = JBUI.Borders.empty(5, 10, 5, 0)
+
+    val panel = JPanel(BorderLayout())
+    panel.add(label, BorderLayout.CENTER)
+    panel.background = MessageType.WARNING.popupBackground
+
+    editor.headerComponent = panel
   }
 
   private fun StudyItem.saveConfigDocument(project: Project, configName: String, mapper: ObjectMapper) {

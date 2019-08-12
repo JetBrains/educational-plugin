@@ -219,11 +219,11 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
         ObjectMapper mapper = myCourse.isStudy() ? EduYamlUtil.getEDU_MAPPER() : YamlFormatSynchronizer.getMAPPER();
         YamlFormatSynchronizer.saveAll(myProject, mapper);
         FileDocumentManager.getInstance().saveAllDocuments();
+        YamlFormatSynchronizer.startSynchronization(myProject);
         if (myCourse.isStudy()) {
           createDescriptionFiles(myProject);
         }
         else {
-          YamlFormatSynchronizer.startSynchronization(myProject);
           Notification notification = new Notification("Education: yaml info",
                                                        "New YAML Format for Educators",
                                                        "Modify course by editing <i>*.yaml</i> files",

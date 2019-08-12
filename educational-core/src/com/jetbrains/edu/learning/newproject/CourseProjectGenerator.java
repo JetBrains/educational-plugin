@@ -103,9 +103,7 @@ public abstract class CourseProjectGenerator<S> {
     boolean courseCreator = CCUtils.isCourseCreator(project);
     ObjectMapper mapper = courseCreator ? YamlFormatSynchronizer.getMAPPER() : EduYamlUtil.getEDU_MAPPER();
     YamlFormatSynchronizer.saveAll(project, mapper);
-    if (courseCreator) {
-      YamlFormatSynchronizer.startSynchronization(project);
-    }
+    YamlFormatSynchronizer.startSynchronization(project);
   }
 
   /**

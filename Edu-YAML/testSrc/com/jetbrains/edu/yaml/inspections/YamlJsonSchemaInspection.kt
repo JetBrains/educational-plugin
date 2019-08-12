@@ -95,7 +95,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
   }
 
   fun `test choice task with wrong properties on each level`() {
-    courseWithFiles(CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)) {
           taskFile("Test.java", "")
