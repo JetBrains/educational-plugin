@@ -72,6 +72,7 @@ object YamlFormatSynchronizer {
     mapper
   }
 
+  @VisibleForTesting
   @JvmStatic
   val EDU_MAPPER: ObjectMapper by lazy {
     val mapper = createMapper()
@@ -130,7 +131,7 @@ object YamlFormatSynchronizer {
   @JvmStatic
   fun saveAll(project: Project) {
     val course = StudyTaskManager.getInstance(project).course ?: error("Attempt to create config files for project without course")
-    val mapper = if (course.isStudy) EDU_MAPPER else MAPPER
+    val mapper = course.mapper
     saveItem(course, mapper)
     course.visitSections { section -> saveItem(section, mapper) }
     course.visitLessons { lesson ->
@@ -145,7 +146,7 @@ object YamlFormatSynchronizer {
 
   @JvmOverloads
   @JvmStatic
-  fun saveItem(item: StudyItem, mapper: ObjectMapper = MAPPER, configName: String = item.configFileName) {
+  fun saveItem(item: StudyItem, mapper: ObjectMapper = item.course.mapper, configName: String = item.configFileName) {
     val course = item.course
 
     val project = course.project ?: error("Failed to find project for course")
@@ -260,6 +261,9 @@ object YamlFormatSynchronizer {
     val name = file.name
     return COURSE_CONFIG == name || SECTION_CONFIG == name || LESSON_CONFIG == name || TASK_CONFIG == name
   }
+
+  val Course.mapper: ObjectMapper
+    get() = if (isStudy) EDU_MAPPER else MAPPER
 }
 
 val StudyItem.configFileName: String

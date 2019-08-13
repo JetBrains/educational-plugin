@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
 
 object YamlDeepLoader {
@@ -21,7 +21,7 @@ object YamlDeepLoader {
     val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error("Course yaml config cannot be null")
 
     val deserializedCourse = YamlDeserializer.deserializeItem(project, courseConfig) as? Course ?: return null
-    val mapper = if (deserializedCourse.isStudy) YamlFormatSynchronizer.EDU_MAPPER else MAPPER
+    val mapper = deserializedCourse.mapper
 
     deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items, mapper)
     deserializedCourse.items.forEach { deserializedItem ->
@@ -29,16 +29,16 @@ object YamlDeepLoader {
         is Section -> {
           // set parent to correctly obtain dirs in deserializeContent method
           deserializedItem.course = deserializedCourse
-          deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.items)
+          deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.items, mapper)
           deserializedItem.lessons.forEach {
             it.section = deserializedItem
-            it.items = it.deserializeContent(project, it.taskList)
+            it.items = it.deserializeContent(project, it.taskList, mapper)
           }
         }
         is Lesson -> {
           // set parent to correctly obtain dirs in deserializeContent method
           deserializedItem.course = deserializedCourse
-          deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.taskList)
+          deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.taskList, mapper)
 
           deserializedItem.removeNonExistingTaskFiles(project)
         }
