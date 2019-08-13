@@ -14,8 +14,9 @@ import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.LESSON_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.TASK_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.format.NAME
-import com.jetbrains.edu.coursecreator.yaml.format.TaskYamlMixin
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.CONTENT
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.FILES
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.NAME
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import org.jetbrains.yaml.psi.YAMLScalar
@@ -73,7 +74,7 @@ class EduYamlTaskFilePathReferenceProvider : EduPsiReferenceProvider() {
     val PSI_PATTERN: PsiElementPattern.Capture<YAMLScalar> = psiElement<YAMLScalar>()
       .inFileWithName(TASK_CONFIG)
       .withParent(
-        keyValueWithName(NAME).inside(keyValueWithName(TaskYamlMixin.FILES))
+        keyValueWithName(NAME).inside(keyValueWithName(FILES))
       )
   }
 }
@@ -118,8 +119,7 @@ class ItemContainerContentReferenceProvider : EduPsiReferenceProvider() {
     val PSI_PATTERN: PsiElementPattern.Capture<YAMLScalar> = psiElement<YAMLScalar>()
       .inFileWithName(COURSE_CONFIG, SECTION_CONFIG, LESSON_CONFIG)
       .withParent(
-        // TODO: use constant from yaml mixins
-        psiElement<YAMLSequenceItem>().inside(keyValueWithName("content"))
+        psiElement<YAMLSequenceItem>().inside(keyValueWithName(CONTENT))
       )
   }}
 

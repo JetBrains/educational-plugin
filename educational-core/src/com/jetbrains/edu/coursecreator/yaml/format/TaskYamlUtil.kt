@@ -12,6 +12,10 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.addItemAsNew
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.CUSTOM_NAME
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.FEEDBACK_LINK
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.FILES
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.coursecreator.yaml.noDirForItemMessage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.PlaceholderPainter
@@ -30,7 +34,7 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
  * Update [TaskChangeApplier] if new fields added to mixin
  */
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(TaskYamlMixin.TYPE, TaskYamlMixin.CUSTOM_NAME, TaskYamlMixin.FILES, TaskYamlMixin.FEEDBACK_LINK)
+@JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK)
 abstract class TaskYamlMixin {
   @JsonProperty(TYPE)
   fun getItemType(): String {
@@ -55,13 +59,6 @@ abstract class TaskYamlMixin {
   @JsonProperty(CUSTOM_NAME)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private var myCustomPresentableName: String? = null
-
-  companion object {
-    const val TYPE = "type"
-    const val FILES = "files"
-    const val FEEDBACK_LINK = "feedback_link"
-    const val CUSTOM_NAME = "custom_name"
-  }
 }
 
 private class FeedbackLinkToStringConverter : StdConverter<FeedbackLink?, String>() {

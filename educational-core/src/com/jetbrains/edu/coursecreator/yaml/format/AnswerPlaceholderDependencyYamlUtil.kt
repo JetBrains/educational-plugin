@@ -5,28 +5,34 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.FILE
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.IS_VISIBLE
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.LESSON
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.PLACEHOLDER
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.SECTION
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TASK
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder("section", "lesson", "task", "file", "placeholder", "is_visible")
+@JsonPropertyOrder(SECTION, LESSON, TASK, FILE, PLACEHOLDER, IS_VISIBLE)
 abstract class AnswerPlaceholderDependencyYamlMixin {
-  @JsonProperty("section")
+  @JsonProperty(SECTION)
   private var mySectionName: String? = null
 
-  @JsonProperty("lesson")
+  @JsonProperty(LESSON)
   private lateinit var myLessonName: String
 
-  @JsonProperty("task")
+  @JsonProperty(TASK)
   private lateinit var myTaskName: String
 
-  @JsonProperty("file")
+  @JsonProperty(FILE)
   private lateinit var myFileName: String
 
-  @JsonProperty("placeholder")
+  @JsonProperty(PLACEHOLDER)
   @JsonSerialize(converter = InternalIndexToUserVisibleConverter::class)
   @JsonDeserialize(converter = UserVisibleIndexToInternalConverter::class)
   private var myPlaceholderIndex: Int = -1
 
-  @JsonProperty("is_visible")
+  @JsonProperty(IS_VISIBLE)
   private var myIsVisible = true
 }
 

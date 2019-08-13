@@ -12,19 +12,19 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedClass
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition
 import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter
 import com.fasterxml.jackson.databind.util.Annotations
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.CONTENT
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.FRAMEWORK_TYPE
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-
-private const val TYPE_PROPERTY_NAME = "type"
-private const val TYPE_PROPERTY_VALUE = "framework"
-private const val CONTENT = "content"
+import com.jetbrains.edu.learning.courseFormat.Lesson
 
 @JsonDeserialize(builder = FrameworkLessonBuilder::class)
-@JsonAppend(props = [JsonAppend.Prop(LessonTypePropertyWriter::class, name = TYPE_PROPERTY_NAME, type = String::class)], prepend = true)
+@JsonAppend(props = [JsonAppend.Prop(LessonTypePropertyWriter::class, name = TYPE, type = String::class)], prepend = true)
 abstract class FrameworkLessonYamlUtil : LessonYamlMixin()
 
 @JsonPOJOBuilder(withPrefix = "")
 private class FrameworkLessonBuilder(@JsonProperty(CONTENT) content: List<String?>) : LessonBuilder(content) {
-  override fun createLesson() = FrameworkLesson()
+  override fun createLesson(): Lesson = FrameworkLesson()
 }
 
 private class LessonTypePropertyWriter : VirtualBeanPropertyWriter {
@@ -44,6 +44,6 @@ private class LessonTypePropertyWriter : VirtualBeanPropertyWriter {
   }
 
   override fun value(bean: Any, gen: JsonGenerator, prov: SerializerProvider): Any {
-    return TYPE_PROPERTY_VALUE
+    return FRAMEWORK_TYPE
   }
 }

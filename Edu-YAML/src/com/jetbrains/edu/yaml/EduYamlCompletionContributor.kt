@@ -8,10 +8,10 @@ import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings
-import com.jetbrains.edu.coursecreator.yaml.format.ENVIRONMENT
-import com.jetbrains.edu.coursecreator.yaml.format.LANGUAGE
-import com.jetbrains.edu.coursecreator.yaml.format.PROGRAMMING_LANGUAGE
-import com.jetbrains.edu.coursecreator.yaml.format.PROGRAMMING_LANGUAGE_VERSION
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.ENVIRONMENT
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.LANGUAGE
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE_VERSION
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import org.jetbrains.yaml.YAMLUtil

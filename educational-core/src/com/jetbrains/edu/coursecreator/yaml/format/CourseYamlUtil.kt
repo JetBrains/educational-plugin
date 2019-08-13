@@ -11,6 +11,18 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.CONTENT
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.ENVIRONMENT
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.ID
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.LANGUAGE
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE_VERSION
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.SUBMIT_MANUALLY
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.SUMMARY
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TITLE
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TOP_LEVEL_LESSONS_SECTION
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TYPE
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.UPDATE_DATE
 import com.jetbrains.edu.coursecreator.yaml.formatError
 import com.jetbrains.edu.coursecreator.yaml.unknownFieldValueMessage
 import com.jetbrains.edu.coursecreator.yaml.unnamedItemAtMessage
@@ -31,18 +43,6 @@ import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.util.*
-
-private const val TYPE = "type"
-private const val TITLE = "title"
-const val LANGUAGE = "language"
-private const val SUMMARY = "summary"
-const val PROGRAMMING_LANGUAGE = "programming_language"
-private const val CONTENT = "content"
-const val ENVIRONMENT = "environment"
-const val PROGRAMMING_LANGUAGE_VERSION = "programming_language_version"
-
-private const val TOP_LEVEL_LESSONS_SECTION = "default_section"
-private const val SUBMIT_MANUALLY = "submit_manually"
 
 /**
  * Mixin class is used to deserialize [Course] item.

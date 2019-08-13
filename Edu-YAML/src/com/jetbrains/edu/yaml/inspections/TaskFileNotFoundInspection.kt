@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader
-import com.jetbrains.edu.coursecreator.yaml.format.VISIBLE
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.VISIBLE
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
