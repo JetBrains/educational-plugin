@@ -1,8 +1,6 @@
-package com.jetbrains.edu.coursecreator.yaml.format
+package com.jetbrains.edu.learning.yaml.format
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.getConfigFileForChild
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.addItemAsNew
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.deserializeChildrenIfNeeded
 import com.jetbrains.edu.coursecreator.yaml.loadingError
@@ -12,9 +10,11 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.yaml.YamlDeserializer
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.getConfigFileForChild
 
 /**
- * Specific instance of this class applies changes from deserialized item, see [com.jetbrains.edu.coursecreator.yaml.YamlDeserializer],
+ * Specific instance of this class applies changes from deserialized item, see [com.jetbrains.edu.learning.yaml.YamlDeserializer],
  * to already existing course item.
  */
 abstract class StudyItemChangeApplier<T : StudyItem> {

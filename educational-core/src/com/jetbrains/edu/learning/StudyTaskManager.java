@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -25,9 +24,6 @@ import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.coursecreator.yaml.YamlDeepLoader;
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings;
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.yaml.YamlInfoTaskDescriptionTabKt;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -36,7 +32,9 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
-import com.jetbrains.edu.learning.yaml.EduYamlUtil;
+import com.jetbrains.edu.learning.yaml.YamlDeepLoader;
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings;
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
@@ -216,8 +214,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     VirtualFile courseConfig = courseDir.findChild(YamlFormatSettings.COURSE_CONFIG);
     if (courseConfig == null) {
       StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
-        ObjectMapper mapper = myCourse.isStudy() ? EduYamlUtil.getEDU_MAPPER() : YamlFormatSynchronizer.getMAPPER();
-        YamlFormatSynchronizer.saveAll(myProject, mapper);
+        YamlFormatSynchronizer.saveAll(myProject);
         FileDocumentManager.getInstance().saveAllDocuments();
         YamlFormatSynchronizer.startSynchronization(myProject);
         if (myCourse.isStudy()) {

@@ -1,8 +1,6 @@
 package com.jetbrains.edu.coursecreator.yaml
 
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_PROJECT_READY
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.YAML_TEST_THROW_EXCEPTION
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
@@ -20,6 +18,8 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.YAML_TEST_PROJECT_READY
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.YAML_TEST_THROW_EXCEPTION
 
 class YamlTypeChangedTest : YamlTestCase() {
 

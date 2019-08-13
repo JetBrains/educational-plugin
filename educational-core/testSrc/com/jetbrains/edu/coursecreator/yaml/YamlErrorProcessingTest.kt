@@ -10,6 +10,8 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.yaml.YamlDeserializer
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 
 class YamlErrorProcessingTest : YamlTestCase() {
 

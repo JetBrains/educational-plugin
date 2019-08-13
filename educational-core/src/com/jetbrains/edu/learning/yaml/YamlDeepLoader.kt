@@ -1,16 +1,18 @@
-package com.jetbrains.edu.coursecreator.yaml
+package com.jetbrains.edu.learning.yaml
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.MAPPER
-import com.jetbrains.edu.coursecreator.yaml.format.getRemoteChangeApplierForItem
+import com.jetbrains.edu.coursecreator.yaml.loadingError
+import com.jetbrains.edu.coursecreator.yaml.noDirForItemMessage
+import com.jetbrains.edu.coursecreator.yaml.notFoundMessage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.yaml.EduYamlUtil
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
+import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
 
 object YamlDeepLoader {
   @JvmStatic
@@ -19,7 +21,7 @@ object YamlDeepLoader {
     val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error("Course yaml config cannot be null")
 
     val deserializedCourse = YamlDeserializer.deserializeItem(project, courseConfig) as? Course ?: return null
-    val mapper = if (deserializedCourse.isStudy) EduYamlUtil.EDU_MAPPER else MAPPER
+    val mapper = if (deserializedCourse.isStudy) YamlFormatSynchronizer.EDU_MAPPER else MAPPER
 
     deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items, mapper)
     deserializedCourse.items.forEach { deserializedItem ->
@@ -83,7 +85,8 @@ object YamlDeepLoader {
     val remoteConfigFile = itemDir.findChild(remoteConfigFileName)
     if (remoteConfigFile == null) {
       if (id > 0) {
-        loadingError(notFoundMessage("config file $remoteConfigFileName", "item '$name'"))
+        loadingError(
+          notFoundMessage("config file $remoteConfigFileName", "item '$name'"))
       }
       else return
     }
@@ -109,6 +112,7 @@ object YamlDeepLoader {
   }
 
   private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {
-    return DescriptionFormat.values().firstOrNull { it.fileExtension == extension } ?: loadingError("Invalid description format")
+    return DescriptionFormat.values().firstOrNull { it.fileExtension == extension } ?: loadingError(
+      "Invalid description format")
   }
 }

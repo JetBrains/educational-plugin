@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.isRemoteConfigFile
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isRemoteConfigFile
 
 class GeneratedRemoteInfoNotificationProvider(val project: Project) :
   EditorNotifications.Provider<GeneratedRemoteInfoNotificationProvider.GeneratedRemoteInfoNotificationPanel>(), DumbAware {

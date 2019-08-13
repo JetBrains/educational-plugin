@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.configuration.PlainTextCourseBuilder
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 
 class YamlGeneratorTest : CourseGenerationTestBase<Unit>() {
   override val courseBuilder: EduCourseBuilder<Unit> = PlainTextCourseBuilder()

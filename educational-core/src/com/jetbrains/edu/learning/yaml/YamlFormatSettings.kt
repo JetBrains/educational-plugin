@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.yaml
+package com.jetbrains.edu.learning.yaml
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key

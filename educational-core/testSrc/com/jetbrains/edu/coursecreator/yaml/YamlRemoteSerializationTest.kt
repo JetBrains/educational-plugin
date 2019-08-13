@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
 
 class YamlRemoteSerializationTest : YamlTestCase() {

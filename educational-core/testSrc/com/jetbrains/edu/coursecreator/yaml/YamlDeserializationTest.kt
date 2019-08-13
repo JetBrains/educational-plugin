@@ -1,12 +1,5 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserialize
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeLesson
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeSection
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeTask
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
-import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
@@ -22,6 +15,14 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserialize
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeSection
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
+import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
+import junit.framework.TestCase
 import java.util.*
 
 

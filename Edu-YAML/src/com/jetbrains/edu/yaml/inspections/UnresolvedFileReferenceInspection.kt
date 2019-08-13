@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
 import com.intellij.util.PathUtil
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.isEduYamlProject
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import org.jetbrains.yaml.psi.YAMLScalar
 import org.jetbrains.yaml.psi.YamlPsiElementVisitor
 

@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.intellij.openapi.util.text.StringUtil
-import com.jetbrains.edu.coursecreator.yaml.format.NotImplementedInMixin
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import java.util.*
 
 const val IS_IDEA_COMPATIBLE = "is_idea_compatible"

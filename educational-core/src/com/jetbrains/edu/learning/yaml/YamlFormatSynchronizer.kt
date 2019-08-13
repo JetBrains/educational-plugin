@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.yaml
+package com.jetbrains.edu.learning.yaml
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -26,16 +26,8 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.LESSON_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_LESSON_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.SECTION_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.TASK_CONFIG
+import com.jetbrains.edu.coursecreator.yaml.YamlLoader
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.getEditor
-import com.jetbrains.edu.coursecreator.yaml.format.*
 import com.jetbrains.edu.coursecreator.yaml.YamlSynchronizationListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -46,6 +38,16 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_LESSON_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.format.*
+import com.jetbrains.edu.learning.yaml.format.student.*
 import java.awt.BorderLayout
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -70,7 +72,16 @@ object YamlFormatSynchronizer {
     mapper
   }
 
-  fun createMapper(): ObjectMapper {
+  @JvmStatic
+  val EDU_MAPPER: ObjectMapper by lazy {
+    val mapper = createMapper()
+    addMixIns(mapper)
+    mapper.addStudentMixIns()
+
+    mapper
+  }
+
+  private fun createMapper(): ObjectMapper {
     val yamlFactory = YAMLFactory()
     yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
     yamlFactory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
@@ -107,9 +118,19 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(StudyItem::class.java, RemoteStudyItemYamlMixin::class.java)
   }
 
+  private fun ObjectMapper.addStudentMixIns() {
+    addMixIn(Task::class.java, TaskYamlMixin::class.java)
+    addMixIn(EduTask::class.java, StudentTaskYamlMixin::class.java)
+    addMixIn(ChoiceTask::class.java, StudentChoiceTaskYamlMixin::class.java)
+    addMixIn(TaskFile::class.java, StudentTaskFileYamlMixin::class.java)
+    addMixIn(AnswerPlaceholder::class.java, StudentAnswerPlaceholderYamlMixin::class.java)
+    addMixIn(AnswerPlaceholder.MyInitialState::class.java, InitialStateMixin::class.java)
+  }
+
   @JvmStatic
-  fun saveAll(project: Project, mapper: ObjectMapper = MAPPER) {
+  fun saveAll(project: Project) {
     val course = StudyTaskManager.getInstance(project).course ?: error("Attempt to create config files for project without course")
+    val mapper = if (course.isStudy) EDU_MAPPER else MAPPER
     saveItem(course, mapper)
     course.visitSections { section -> saveItem(section, mapper) }
     course.visitLessons { lesson ->

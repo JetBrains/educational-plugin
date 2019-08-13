@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
 import com.fasterxml.jackson.databind.util.StdConverter
-import com.jetbrains.edu.coursecreator.yaml.format.NotImplementedInMixin
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
@@ -33,6 +32,7 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWOR
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
+import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import java.util.*
 
 private const val VERSION = "version"

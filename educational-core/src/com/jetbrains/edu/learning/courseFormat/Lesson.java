@@ -6,6 +6,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.visitors.TaskVisitor;
+import com.jetbrains.edu.learning.yaml.YamlDeserializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
  *  - Extend Lesson class
  *  - Go to {@link ItemContainer#items} and update elementTypes in AbstractCollection annotation. Needed for proper xml serialization
  *  - Handle xml migration in {@link com.jetbrains.edu.learning.serialization.converter.xml.BaseXmlConverter#convert}
- *  - Handle yaml deserialization {@link com.jetbrains.edu.coursecreator.yaml.YamlDeserializer#deserializeLesson(String)}
+ *  - Handle yaml deserialization {@link YamlDeserializer#deserializeLesson(String)}
  */
 public class Lesson extends ItemContainer {
   @Transient public List<Integer> steps;

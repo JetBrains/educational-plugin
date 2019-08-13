@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.*
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.PlaceholderPainter
@@ -14,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.fileInfo
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) {
 

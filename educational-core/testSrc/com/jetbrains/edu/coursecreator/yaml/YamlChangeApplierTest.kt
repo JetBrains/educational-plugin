@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 
 
 class YamlChangeApplierTest : YamlTestCase() {

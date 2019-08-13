@@ -34,13 +34,13 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
-import com.jetbrains.edu.learning.yaml.EduYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Collections;
 
 import static com.jetbrains.edu.learning.EduUtils.*;
+import static com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveAll;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class EduProjectComponent implements ProjectComponent {
@@ -99,7 +99,7 @@ public class EduProjectComponent implements ProjectComponent {
       public void projectClosing(@NotNull Project project) {
         Course course = StudyTaskManager.getInstance(project).getCourse();
         if (course != null && !OpenApiExtKt.isUnitTestMode()) {
-          EduYamlUtil.saveAll(project);
+          saveAll(project);
         }
       }
     });

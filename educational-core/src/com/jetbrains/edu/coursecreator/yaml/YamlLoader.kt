@@ -6,15 +6,16 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeContent
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.saveItem
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.loadItem
-import com.jetbrains.edu.coursecreator.yaml.format.getChangeApplierForItem
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.yaml.*
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import com.jetbrains.edu.learning.yaml.format.getChangeApplierForItem
 
 /**
  *  Get fully-initialized [StudyItem] object from yaml config file.

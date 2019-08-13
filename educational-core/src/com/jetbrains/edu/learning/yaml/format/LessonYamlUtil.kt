@@ -1,6 +1,6 @@
 @file:JvmName("LessonYamlUtil")
 
-package com.jetbrains.edu.coursecreator.yaml.format
+package com.jetbrains.edu.learning.yaml.format
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty

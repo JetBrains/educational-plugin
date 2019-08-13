@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
 import com.jetbrains.edu.learning.stepik.api.StepikJacksonDeserializersKt;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
+import com.jetbrains.edu.learning.yaml.YamlDeserializer;
 import icons.EducationalCoreIcons;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,7 @@ import java.util.*;
  * - Update {@link StepikJacksonDeserializersKt#doDeserializeTask} to handle json serialization
  * - Update {@link TaskCheckerProvider#getTaskChecker} and provide default checker for new task
  * - Update {@link StepikTaskBuilder#pluginTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder#stepikTaskTypes} otherwise
- * - Handle yaml deserialization in {@link com.jetbrains.edu.coursecreator.yaml.YamlDeserializer#deserializeTask(String)}
+ * - Handle yaml deserialization in {@link YamlDeserializer#deserializeTask(String)}
  */
 public abstract class Task extends StudyItem {
   protected CheckStatus myStatus = CheckStatus.Unchecked;

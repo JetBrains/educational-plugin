@@ -1,14 +1,14 @@
 package com.jetbrains.edu.learning.format.yaml
 
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserialize
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.yaml.EduYamlUtil.EDU_MAPPER
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserialize
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.EDU_MAPPER
 
 class EduYamlDeserializationTest : EduTestCase() {
 

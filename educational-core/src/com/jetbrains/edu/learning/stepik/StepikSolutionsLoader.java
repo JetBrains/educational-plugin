@@ -40,7 +40,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.api.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.update.UpdateNotification;
-import com.jetbrains.edu.learning.yaml.EduYamlUtil;
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -271,7 +271,7 @@ public class StepikSolutionsLoader implements Disposable {
       }
       if (toUpdate) {
         task.setStatus(checkStatus(isSolved));
-        EduYamlUtil.saveItem(task);
+        YamlFormatSynchronizer.saveItem(task);
         tasksToUpdate.add(task);
       }
     }
@@ -368,7 +368,7 @@ public class StepikSolutionsLoader implements Disposable {
     String solution = getSolutionTextForStepikAssignment(task, isSolved);
     if (solution != null && taskFileName != null) {
       task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
-      EduYamlUtil.saveItem(task);
+      YamlFormatSynchronizer.saveItem(task);
       return new TaskSolutions(Collections.singletonMap(taskFileName, solution));
     }
     return TaskSolutions.EMPTY;
@@ -434,7 +434,7 @@ public class StepikSolutionsLoader implements Disposable {
       }
     }
 
-    EduYamlUtil.saveItem(task);
+    YamlFormatSynchronizer.saveItem(task);
     return new TaskSolutions(taskFileToText);
   }
 

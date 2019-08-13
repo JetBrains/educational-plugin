@@ -1,17 +1,17 @@
-package com.jetbrains.edu.learning.yaml
+package com.jetbrains.edu.learning.yaml.format.student
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.jetbrains.edu.coursecreator.yaml.format.AnswerPlaceholderBuilder
-import com.jetbrains.edu.coursecreator.yaml.format.AnswerPlaceholderYamlMixin
-import com.jetbrains.edu.coursecreator.yaml.format.AnswerPlaceholderYamlMixin.Companion.DEPENDENCY
-import com.jetbrains.edu.coursecreator.yaml.format.AnswerPlaceholderYamlMixin.Companion.LENGTH
-import com.jetbrains.edu.coursecreator.yaml.format.AnswerPlaceholderYamlMixin.Companion.OFFSET
-import com.jetbrains.edu.coursecreator.yaml.format.AnswerPlaceholderYamlMixin.Companion.PLACEHOLDER_TEXT
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderBuilder
+import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin
+import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin.Companion.DEPENDENCY
+import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin.Companion.LENGTH
+import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin.Companion.OFFSET
+import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin.Companion.PLACEHOLDER_TEXT
 
 private const val INITIAL_STATE = "initial_state"
 private const val INIT_FROM_DEPENDENCY = "initialized_from_dependency"
@@ -24,7 +24,7 @@ private const val STUDENT_ANSWER = "student_answer"
 @JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY,
                    INITIAL_STATE, INIT_FROM_DEPENDENCY, POSSIBLE_ANSWER, SELECTED, STATUS, STUDENT_ANSWER, LENGTH, OFFSET)
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-class EduAnswerPlaceholderYamlMixin : AnswerPlaceholderYamlMixin() {
+class StudentAnswerPlaceholderYamlMixin : AnswerPlaceholderYamlMixin() {
 
   @JsonProperty(INITIAL_STATE)
   var myInitialState: AnswerPlaceholder.MyInitialState? = null

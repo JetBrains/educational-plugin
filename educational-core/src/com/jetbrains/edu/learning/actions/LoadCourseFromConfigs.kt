@@ -14,17 +14,17 @@ import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.coursecreator.CCProjectComponent
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeLesson
-import com.jetbrains.edu.coursecreator.yaml.YamlDeserializer.deserializeTask
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduProjectComponent
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {

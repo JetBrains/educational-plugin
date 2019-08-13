@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.yaml.format
+package com.jetbrains.edu.learning.yaml.format
 
 import com.jetbrains.edu.coursecreator.yaml.loadingError
 import com.jetbrains.edu.coursecreator.yaml.unexpectedItemTypeMessage

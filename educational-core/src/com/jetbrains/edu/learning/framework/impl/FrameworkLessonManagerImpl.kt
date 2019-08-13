@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.yaml.EduYamlUtil
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 
 class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLessonManager {
@@ -49,7 +49,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       LOG.error("Failed to save solution for task `${task.name}`", e)
       currentRecord
     }
-    EduYamlUtil.saveItem(task)
+    YamlFormatSynchronizer.saveItem(task)
   }
 
   override fun updateUserChanges(task: Task, newInitialState: Map<String, String>) {
@@ -116,7 +116,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
 
     currentTask.record = newCurrentRecord
-    EduYamlUtil.saveItem(currentTask)
+    YamlFormatSynchronizer.saveItem(currentTask)
 
     val nextUserChanges = try {
       storage.getUserChanges(targetRecord)

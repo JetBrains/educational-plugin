@@ -5,6 +5,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.jetbrains.edu.coursecreator.CCProjectComponent
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 
 class YamlSynchronizationTest : YamlTestCase() {
 

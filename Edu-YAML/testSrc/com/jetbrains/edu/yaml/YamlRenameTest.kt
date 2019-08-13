@@ -3,10 +3,10 @@ package com.jetbrains.edu.yaml
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.configFileName
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.configFileName
 
 class YamlRenameTest : YamlCodeInsightTest() {
 

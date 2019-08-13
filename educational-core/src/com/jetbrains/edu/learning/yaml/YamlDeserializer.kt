@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.yaml
+package com.jetbrains.edu.learning.yaml
 
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.JsonNode
@@ -12,23 +12,24 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.LESSON_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_LESSON_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.SECTION_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.TASK_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.MAPPER
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
+import com.jetbrains.edu.coursecreator.yaml.*
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.getEditor
-import com.jetbrains.edu.coursecreator.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_LESSON_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
+import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
 
 /**
  * Deserialize [StudyItem] object from yaml config file without any additional modifications.
@@ -71,7 +72,7 @@ object YamlDeserializer {
 
   /**
    * Creates [ItemContainer] object from yaml config file.
-   * For [Course] object the instance of a proper type is created inside [com.jetbrains.edu.coursecreator.yaml.format.CourseBuilder]
+   * For [Course] object the instance of a proper type is created inside [com.jetbrains.edu.learning.yaml.format.CourseBuilder]
    */
   @VisibleForTesting
   fun <T : ItemContainer> ObjectMapper.deserialize(configFileText: String, clazz: Class<T>): T? = readValue(configFileText, clazz)

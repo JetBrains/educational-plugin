@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.yaml
+package com.jetbrains.edu.learning.yaml
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
@@ -6,6 +6,7 @@ import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.ui.components.labels.LinkListener
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.coursecreator.yaml.showYamlTab
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JLabel

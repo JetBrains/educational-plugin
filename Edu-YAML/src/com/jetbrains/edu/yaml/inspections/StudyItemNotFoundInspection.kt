@@ -17,12 +17,12 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.StudyItemType.*
 import com.jetbrains.edu.coursecreator.actions.sections.CCCreateSection
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.COURSE_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.LESSON_CONFIG
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.yaml.ItemContainerContentReferenceProvider
 import com.jetbrains.edu.yaml.parentOfType
 import org.jetbrains.yaml.psi.YAMLScalar

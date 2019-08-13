@@ -15,7 +15,6 @@
  */
 package com.jetbrains.edu.learning.newproject;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.RecentProjectsManager;
 import com.intellij.ide.util.PropertiesComponent;
@@ -35,7 +34,6 @@ import com.intellij.platform.PlatformProjectOpenProcessor;
 import com.intellij.projectImport.ProjectOpenedCallback;
 import com.intellij.util.PathUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
@@ -49,7 +47,7 @@ import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
-import com.jetbrains.edu.learning.yaml.EduYamlUtil;
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,9 +98,7 @@ public abstract class CourseProjectGenerator<S> {
   protected void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
     loadSolutions(project, myCourse);
     EduUtils.openFirstTask(myCourse, project);
-    boolean courseCreator = CCUtils.isCourseCreator(project);
-    ObjectMapper mapper = courseCreator ? YamlFormatSynchronizer.getMAPPER() : EduYamlUtil.getEDU_MAPPER();
-    YamlFormatSynchronizer.saveAll(project, mapper);
+    YamlFormatSynchronizer.saveAll(project);
     YamlFormatSynchronizer.startSynchronization(project);
   }
 
