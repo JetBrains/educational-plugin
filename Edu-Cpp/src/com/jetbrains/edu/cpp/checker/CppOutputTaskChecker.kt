@@ -20,27 +20,24 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 class CppOutputTaskChecker(task: OutputTask, project: Project) : OutputTaskChecker(task, project) {
   override fun createTestConfiguration(): RunnerAndConfigurationSettings? {
     return runReadAction {
-      val tasksDir = task.getDir(project)?.let { task.findSourceDir(it) } ?: return@runReadAction null
-      var result: RunnerAndConfigurationSettings? = null
+      val mainFunction = task.taskFiles
+        .mapNotNull { (_, taskFile) -> taskFile.getVirtualFile(project) }
+        .mapNotNull { file -> findMainFunction(file) }
+        .firstOrNull()
 
-      VfsUtilCore.processFilesRecursively(tasksDir) {
-        if (it == null || it.isDirectory) return@processFilesRecursively true
-
-        val mainFunction = findMainFunction(it) ?: return@processFilesRecursively true
-
-        val context = ConfigurationContext(mainFunction)
-        val configuration = CidrTargetRunConfigurationProducer.getInstance(project)?.findOrCreateConfigurationFromContext(context)
-        if (configuration == null) {
-          LOG.warn("Failed to create a configuration from main function in the file '${it.name}'")
-          return@processFilesRecursively true
-        }
-
-        result = configuration.configurationSettings
-
-        false
+      if (mainFunction == null) {
+        return@runReadAction null
       }
 
-      result
+      val context = ConfigurationContext(mainFunction)
+
+      val configuration = CidrTargetRunConfigurationProducer.getInstance(project)?.findOrCreateConfigurationFromContext(context)
+      if (configuration == null) {
+        LOG.warn("Failed to create a configuration from main function in the file '${mainFunction.containingFile.name}'")
+        return@runReadAction null
+      }
+
+      return@runReadAction configuration.configurationSettings
     }
   }
 
