@@ -92,6 +92,9 @@
       <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>
     </action>
     <!--educator actions-->
+    <action id="Educational.Educator.InsertShortcut" class="com.jetbrains.edu.coursecreator.actions.InsertShortcutAction">
+      <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+    </action>
     <action id="Educational.LoadFromConfigs" class="com.jetbrains.edu.learning.actions.LoadCourseFromConfigs"/>
     <action id="Educational.Educator.NewCourse" class="com.jetbrains.edu.coursecreator.actions.CCNewCourseAction"/>
     <action id="Educational.CCEditTaskDescription" class="com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription"/>

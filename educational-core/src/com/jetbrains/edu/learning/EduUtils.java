@@ -79,7 +79,7 @@ public class EduUtils {
   }
 
   public static final Comparator<StudyItem> INDEX_COMPARATOR = Comparator.comparingInt(StudyItem::getIndex);
-  private static final String SHORTCUT_ENTITY = "&shortcut:";
+  public static final String SHORTCUT_ENTITY = "&shortcut:";
   private static final Logger LOG = Logger.getInstance(EduUtils.class.getName());
 
   public static void closeSilently(@Nullable final Closeable stream) {
