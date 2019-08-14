@@ -21,7 +21,13 @@ class CppOutputTaskChecker(task: OutputTask, project: Project) : OutputTaskCheck
   override fun createTestConfiguration(): RunnerAndConfigurationSettings? {
     return runReadAction {
       val mainFunction = task.taskFiles
-        .mapNotNull { (_, taskFile) -> taskFile.getVirtualFile(project) }
+        .mapNotNull { (_, taskFile) ->
+          val file = taskFile.getVirtualFile(project)
+          if (file == null) {
+            LOG.warn("Cannot get a virtual file from the task file '${taskFile.name}'")
+          }
+          file
+        }
         .mapNotNull { file -> findMainFunction(file) }
         .firstOrNull()
 
