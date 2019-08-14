@@ -18,4 +18,11 @@ abstract class YamlCompletionTestBase : YamlCodeInsightTest() {
     }
     myFixture.checkResult(after)
   }
+
+  protected fun checkNoCompletion(item: StudyItem, text: String) {
+    openConfigFileWithText(item, text)
+    val variants = myFixture.completeBasic()
+    checkNotNull(variants) { "Expected zero completions, but one completion was auto inserted" }
+    assertEquals("Expected zero completions", 0, variants.size)
+  }
 }

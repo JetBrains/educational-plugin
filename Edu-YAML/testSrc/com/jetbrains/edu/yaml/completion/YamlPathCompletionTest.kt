@@ -93,7 +93,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     """.trimMargin("|"))
   }
 
-  fun `test do not suggest excluded from archive files while completion`() {
+  fun `test do not suggest excluded from archive files while completion 1`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
@@ -119,6 +119,28 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
       |  visible: true
       |- name: taskfile2.txt
       |  visible: true      
+    """.trimMargin("|"))
+  }
+
+  fun `test do not suggest excluded from archive files while completion 2`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask("task1") {
+          taskFile("src/taskfile1.txt")
+        }
+      }
+    }
+    val task = course.findTask("lesson1", "task1")
+    val taskDir = task.getTaskDir(project)!!
+    GeneratorUtils.createChildFile(taskDir, ".hidden_dir/hidden_file", "")
+
+    checkNoCompletion(task, """
+      |type: edu
+      |files:
+      |- name: src/taskfile1.txt
+      |  visible: true
+      |- name: .hidden<caret>
+      |  visible: false      
     """.trimMargin("|"))
   }
 

@@ -52,10 +52,10 @@ class EduYamlTaskFilePathReferenceProvider : EduPsiReferenceProvider() {
   private class TaskFileReferenceSet(private val taskDir: VirtualFile, element: YAMLScalar) : FileReferenceSet(element) {
     override fun getReferenceCompletionFilter(): Condition<PsiFileSystemItem> {
       return Condition { item ->
-        if (item.isDirectory) return@Condition true
         val virtualFile = item.virtualFile
-        // Do not suggest files that cannot be in course
-        if (element.project.excludeFromArchive(virtualFile)) return@Condition false
+        // Do not suggest files & directories that cannot be in course
+        if (excludeFromArchive(element.project, virtualFile)) return@Condition false
+        if (item.isDirectory) return@Condition true
         val filePaths = (element as YAMLScalar).collectFilePaths()
         val itemPath = VfsUtil.getRelativePath(virtualFile, taskDir) ?: return@Condition false
         itemPath !in filePaths
@@ -99,7 +99,7 @@ class ItemContainerContentReferenceProvider : EduPsiReferenceProvider() {
 
         val virtualFile = item.virtualFile
         // Do not suggest files that cannot be in course
-        if (item.project.excludeFromArchive(virtualFile)) return@Condition false
+        if (excludeFromArchive(item.project, virtualFile)) return@Condition false
 
         val contentPaths = (element as YAMLScalar).collectContentPaths()
         val itemPath = VfsUtil.getRelativePath(virtualFile, itemContainerDir) ?: return@Condition false
@@ -123,8 +123,8 @@ class ItemContainerContentReferenceProvider : EduPsiReferenceProvider() {
       )
   }}
 
-private fun Project.excludeFromArchive(virtualFile: VirtualFile): Boolean {
-  val course = StudyTaskManager.getInstance(this).course ?: return true
+private fun excludeFromArchive(project: Project, virtualFile: VirtualFile): Boolean {
+  val course = StudyTaskManager.getInstance(project).course ?: return true
   val configurator = course.configurator ?: return true
-  return configurator.excludeFromArchive(this, virtualFile)
+  return configurator.excludeFromArchive(project, virtualFile)
 }
