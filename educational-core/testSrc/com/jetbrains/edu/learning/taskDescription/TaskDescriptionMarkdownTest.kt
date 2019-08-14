@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.taskDescription
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import junit.framework.TestCase
@@ -41,7 +42,7 @@ class TaskDescriptionMarkdownTest : EduTestCase() {
 
   private fun doTest(descriptionText: String, expectedText: String) {
     val first = taskWithFile(descriptionText)
-    val actualText = first.getTaskDescription(first.getTaskDir(project))
+    val actualText = EduUtils.getTaskTextFromTask(first.getTaskDir(project), first)
 
     TestCase.assertEquals("Task description text mismatch. Expected: ${expectedText} Actual: ${actualText}",
                         expectedText, actualText)

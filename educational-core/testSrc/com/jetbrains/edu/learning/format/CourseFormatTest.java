@@ -1,11 +1,9 @@
 package com.jetbrains.edu.learning.format;
 
 import com.intellij.openapi.util.Pair;
+import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.edu.learning.CourseMode;
-import com.jetbrains.edu.learning.CourseTestUtilsKt;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduTestCase;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -55,7 +53,12 @@ public class CourseFormatTest extends EduTestCase {
 
   public void testDescription() throws IOException {
     EduTask eduTask = getFirstEduTask();
-    assertEquals("First task description", eduTask.getTaskDescription(false, null));
+    assertEquals("First task description", EduUtils.getTaskTextFromTask(eduTask.getTaskDir(getProject()), eduTask));
+  }
+
+  public void testDescriptionWithPlaceholderHints() throws IOException {
+    EduTask eduTask = getFirstEduTask();
+    assertEquals("First task description\n<div class='hint'>my first hint</div>\n\n", EduUtils.getTaskTextFromTask(eduTask.getTaskDir(getProject()), eduTask));
   }
 
   public void testFeedbackLinks() throws IOException {
@@ -69,6 +72,8 @@ public class CourseFormatTest extends EduTestCase {
   @NotNull
   private EduTask getFirstEduTask() throws IOException {
     final Course course = getCourseFromJson();
+    course.init(null, null, false);
+    CourseBuilderKt.createCourseFiles(course, getProject(), LightPlatformTestCase.getSourceRoot(), new Object());
     final List<Lesson> lessons = course.getLessons();
     assertFalse("No lessons found", lessons.isEmpty());
     final Lesson lesson = lessons.get(0);

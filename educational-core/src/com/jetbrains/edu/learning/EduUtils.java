@@ -7,6 +7,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -21,7 +22,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
-import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.progress.ProgressManager;
@@ -30,6 +30,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiDirectory;
@@ -46,6 +47,7 @@ import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -300,11 +302,16 @@ public class EduUtils {
       return null;
     }
     String textFromFile = getTaskTextByTaskName(task, taskDirectory);
-    String text = textFromFile != null ? textFromFile : task.getTaskDescription(taskDirectory);
-    if (task.getLesson() instanceof FrameworkLesson) {
-      text = "<h2>" + task.getUIName() + " #" + task.getIndex() + ": " + task.getName() + "<h2/> " + text;
+    String text = textFromFile != null ? textFromFile: task.getTaskDescription();
+    if (text == null) {
+      LOG.warn("Cannot find task description file for a task: " + task.getName());
+      return null;
     }
-    return text;
+    text = StringUtil.replace(text, "%IDE_NAME%", ApplicationNamesInfo.getInstance().getFullProductName());
+    StringBuffer textBuffer = new StringBuffer(text);
+    replaceActionIDsWithShortcuts(textBuffer);
+    textBuffer.append(TaskExt.taskDescriptionHintBlocks(task));
+    return textBuffer.toString();
   }
 
   @Nullable
@@ -324,7 +331,8 @@ public class EduUtils {
     VirtualFile taskTextFile = taskDirectory.findChild(taskTextFileName);
 
     if (taskTextFile != null) {
-      return String.valueOf(LoadTextUtil.loadText(taskTextFile));
+      Document document = FileDocumentManager.getInstance().getDocument(taskTextFile);
+      return document == null ? null : document.getText();
     }
 
     return null;

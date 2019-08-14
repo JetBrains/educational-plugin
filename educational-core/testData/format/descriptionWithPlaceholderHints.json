@@ -18,7 +18,9 @@
                 {
                   "offset": 15,
                   "length": 19,
-                  "hints": [],
+                  "hints": [
+                    "my first hint"
+                  ],
                   "possible_answer": "pass",
                   "placeholder_text": "write function body"
                 }
