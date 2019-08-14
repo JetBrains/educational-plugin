@@ -6,13 +6,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundInspection::class) {
 
-  override fun runTest() {
-    // tests fail in AS because of Feature Usage Statistics exception
-    if (!EduUtils.isAndroidStudio()) {
-      super.runTest()
-    }
-  }
-
   fun `test create task file`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {

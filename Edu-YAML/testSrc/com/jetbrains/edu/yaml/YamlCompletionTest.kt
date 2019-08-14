@@ -13,14 +13,9 @@ import kotlin.test.assertNotEquals
 
 class YamlCompletionTest : YamlCodeInsightTest() {
 
-  // can't use existing shouldRunTest method because ApplicationInfo isn't initialized when it's called
-  // and we can't check ide type
-  override fun runTest() {
-    // BACKCOMPAT: 2019.1 tests fail in Studio 191 and IJ 183
-    @Suppress("ConstantConditionIf")
-    if (!skipYamlCompletionTests) {
-      super.runTest()
-    }
+  override fun shouldRunTest(): Boolean {
+    // BACKCOMPAT: 2018.3 tests fail in 2018.3 because of bug in completion provider
+    return !skipYamlCompletionTests && super.shouldRunTest()
   }
 
   fun `test completion for course programming language`() {

@@ -68,6 +68,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
                          CourseraNames.COURSE_TYPE)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
+    registerAdditionalResourceBundleProviders(testRootDisposable)
 
     val dockManager = DockManager.getInstance(myFixture.project)
     myOldDockContainers = dockManager.containers
@@ -294,6 +295,8 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     extension.implementationClass = configuratorClass.name
     extension.courseType = courseType
     extension.environment = environment
+    // BACKCOMPAT: 2018.3
+    @Suppress("DEPRECATION")
     PlatformTestUtil.registerExtension(ExtensionPointName.create(EducationalExtensionPoint.EP_NAME), extension, disposable)
   }
 }
