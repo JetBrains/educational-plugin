@@ -8,15 +8,15 @@ import com.jetbrains.edu.learning.yaml.format.ChoiceTaskYamlMixin.Companion.FEED
 import com.jetbrains.edu.learning.yaml.format.ChoiceTaskYamlMixin.Companion.FEEDBACK_INCORRECT
 import com.jetbrains.edu.learning.yaml.format.ChoiceTaskYamlMixin.Companion.IS_MULTIPLE_CHOICE
 import com.jetbrains.edu.learning.yaml.format.ChoiceTaskYamlMixin.Companion.OPTIONS
+import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin
 import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin.Companion.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin.Companion.FILES
-import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin.Companion.TYPE
 
 private const val SELECTED_VARIANTS = "selected_variants"
 private const val STATUS = "status"
 private const val RECORD = "record"
 
-@JsonPropertyOrder(TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, FILES, FEEDBACK_LINK,
+@JsonPropertyOrder(TaskYamlMixin.TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, FILES, FEEDBACK_LINK,
                    SELECTED_VARIANTS, STATUS, RECORD)
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 class StudentChoiceTaskYamlMixin: ChoiceTaskYamlMixin() {

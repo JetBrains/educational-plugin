@@ -7,14 +7,13 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.yaml.format.TaskFileBuilder
 import com.jetbrains.edu.learning.yaml.format.TaskFileYamlMixin
-import com.jetbrains.edu.learning.yaml.format.TaskFileYamlMixin.Companion.NAME
 import com.jetbrains.edu.learning.yaml.format.TaskFileYamlMixin.Companion.PLACEHOLDERS
 import com.jetbrains.edu.learning.yaml.format.TaskFileYamlMixin.Companion.VISIBLE
 
 private const val TEXT = "text"
 
 @JsonDeserialize(builder = StudentTaskFileBuilder::class)
-@JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS,
+@JsonPropertyOrder(TaskFileYamlMixin.NAME, VISIBLE, PLACEHOLDERS,
                    TEXT)
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
