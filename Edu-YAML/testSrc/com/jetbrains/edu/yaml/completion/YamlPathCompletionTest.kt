@@ -173,6 +173,29 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     """.trimMargin("|"), invocationCount = 2)
   }
 
+  fun `test directories completion in task config`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+    }
+    val task = course.findTask("lesson1", "task1")
+    val taskDir = task.getTaskDir(project)!!
+    GeneratorUtils.createChildFile(taskDir, "src/task.txt", "")
+
+    doSingleCompletion(task, """
+      |type: edu
+      |files:
+      |- name: sr<caret>
+      |  visible: true      
+    """.trimMargin("|"), """
+      |type: edu
+      |files:
+      |- name: src/
+      |  visible: true      
+    """.trimMargin("|"))
+  }
+
   fun `test course content completion`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {}

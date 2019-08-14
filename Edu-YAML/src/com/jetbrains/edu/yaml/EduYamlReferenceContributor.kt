@@ -1,7 +1,9 @@
 package com.jetbrains.edu.yaml
 
+import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.patterns.ElementPattern
@@ -67,6 +69,19 @@ class EduYamlTaskFilePathReferenceProvider : EduPsiReferenceProvider() {
     private fun YAMLScalar.collectFilePaths(): List<String> {
       val sequence = parentOfType<YAMLSequence>() ?: return emptyList()
       return sequence.items.mapNotNull { item -> item.keysValues.find { it.keyText == NAME }?.valueText }
+    }
+
+    override fun createFileReference(range: TextRange?, index: Int, text: String?): FileReference? {
+      return super.createFileReference(range, index, text)?.let(::TaskFileReference)
+    }
+  }
+
+  private class TaskFileReference(fileReference: FileReference) : FileReference(fileReference) {
+    override fun createLookupItem(candidate: PsiElement): Any? {
+      return if (candidate is PsiDirectory) {
+        LookupElementBuilder.createWithSmartPointer("${candidate.name}/", candidate)
+          .withIcon(candidate.getIcon(0))
+      } else null
     }
   }
 
