@@ -8,9 +8,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserialize
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.EDU_MAPPER
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.STUDENT_MAPPER
 
-class EduYamlDeserializationTest : EduTestCase() {
+class StudentYamlDeserializationTest : EduTestCase() {
 
   fun `test course mode`() {
     val yamlContent = """
@@ -22,7 +22,7 @@ class EduYamlDeserializationTest : EduTestCase() {
       |  Why not?"
       |programming_language: Plain text
       |""".trimMargin("|")
-    val course = EDU_MAPPER.deserialize(yamlContent, Course::class.java)
+    val course = STUDENT_MAPPER.deserialize(yamlContent, Course::class.java)
     assertNotNull(course)
     assertEquals(EduNames.STUDY, course!!.courseMode)
   }
@@ -234,5 +234,5 @@ class EduYamlDeserializationTest : EduTestCase() {
     assertEquals("student answer", placeholder.studentAnswer)
   }
 
-  private fun deserializeTask(yamlContent: String) = EDU_MAPPER.deserializeTask(yamlContent)
+  private fun deserializeTask(yamlContent: String) = STUDENT_MAPPER.deserializeTask(yamlContent)
 }

@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-class EduYamlSerializationTest : EduTestCase()  {
+class StudentYamlSerializationTest : EduTestCase()  {
 
   fun `test task`() {
     val task = courseWithFiles {
@@ -105,7 +105,7 @@ class EduYamlSerializationTest : EduTestCase()  {
   }
 
   private fun doTest(item: StudyItem, expected: String) {
-    val actual = YamlFormatSynchronizer.EDU_MAPPER.writeValueAsString(item)
+    val actual = YamlFormatSynchronizer.STUDENT_MAPPER.writeValueAsString(item)
     assertEquals(expected, actual)
   }
 }

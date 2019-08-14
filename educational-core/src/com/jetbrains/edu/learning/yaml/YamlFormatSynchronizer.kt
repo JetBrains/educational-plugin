@@ -74,7 +74,7 @@ object YamlFormatSynchronizer {
 
   @VisibleForTesting
   @JvmStatic
-  val EDU_MAPPER: ObjectMapper by lazy {
+  val STUDENT_MAPPER: ObjectMapper by lazy {
     val mapper = createMapper()
     addMixIns(mapper)
     mapper.addStudentMixIns()
@@ -263,7 +263,7 @@ object YamlFormatSynchronizer {
   }
 
   val Course.mapper: ObjectMapper
-    get() = if (isStudy) EDU_MAPPER else MAPPER
+    get() = if (isStudy) STUDENT_MAPPER else MAPPER
 }
 
 val StudyItem.configFileName: String
