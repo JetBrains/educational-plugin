@@ -2,7 +2,6 @@ package com.jetbrains.edu.android
 
 import com.android.sdklib.SdkVersionInfo
 import com.android.tools.idea.npw.FormFactor
-import com.android.tools.idea.npw.model.NewProjectModel
 import com.android.tools.idea.npw.platform.AndroidVersionsInfo
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTextField
@@ -25,7 +24,7 @@ class AndroidNewTaskDialog(
 
   private val packageNameField: JBTextField = JBTextField().apply {
     val userName = System.getProperty("user.name")
-    val packageSuffix = if (userName != null) NewProjectModel.toPackagePart(userName) else null
+    val packageSuffix = if (userName != null) convertNameToPackage(userName) else null
     text = if (packageSuffix.isNullOrEmpty()) {
       "com.example.android.course"
     } else {
@@ -45,7 +44,7 @@ class AndroidNewTaskDialog(
   override fun createAdditionalFields(builder: LayoutBuilder) {
     val androidVersionsInfo = AndroidVersionsInfo()
     androidVersionsInfo.loadLocalVersions()
-    androidVersionsInfo.loadRemoteTargetVersions(FormFactor.MOBILE, FormFactor.MOBILE.minOfflineApiLevel) { items ->
+    androidVersionsInfo.loadRemoteVersions(FormFactor.MOBILE, FormFactor.MOBILE.minOfflineApiLevel) { items ->
       val nonPreviewItems = items.filter { it.androidTarget?.version?.isPreview != true }
       val maxSdkVersion = nonPreviewItems.map { it.minApiLevel }.max() ?: SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
       compileSdkVersion = maxOf(maxSdkVersion, compileSdkVersion)
