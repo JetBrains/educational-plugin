@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 
 object HyperskillCourseUpdater {
@@ -145,6 +146,7 @@ object HyperskillCourseUpdater {
         task.descriptionText = remoteTask.descriptionText
         task.descriptionFormat = remoteTask.descriptionFormat
         task.updateDate = remoteTask.updateDate
+        YamlFormatSynchronizer.saveItem(task)
       }
 
       val courseDir = project.courseDir
