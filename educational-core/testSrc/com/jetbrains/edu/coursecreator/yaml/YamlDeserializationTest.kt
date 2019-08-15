@@ -1,9 +1,13 @@
 package com.jetbrains.edu.coursecreator.yaml
 
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
+import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.FeedbackLink
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
@@ -12,17 +16,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserialize
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeSection
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
-import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
-import junit.framework.TestCase
 import java.util.*
 
 
@@ -47,7 +46,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = deserializeNotNull(yamlContent, Course::class.java)
+    val course = deserializeNotNull(yamlContent)
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -68,7 +67,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |  Why not?"
       |programming_language: Plain text
       |""".trimMargin("|")
-    val course = deserializeNotNull(yamlContent, Course::class.java)
+    val course = deserializeNotNull(yamlContent)
     assertTrue(course is EduCourse)
     assertFalse(course.solutionsHidden)
     assertEmpty(course.items)
@@ -86,7 +85,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |content:
       |- lesson1
       |""".trimMargin("|")
-    val course = deserializeNotNull(yamlContent, Course::class.java)
+    val course = deserializeNotNull(yamlContent)
     assertEquals(environment, course.environment)
   }
 
@@ -108,7 +107,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = deserializeNotNull(yamlContent, CourseraCourse::class.java)
+    val course = deserializeNotNull(yamlContent) as CourseraCourse
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -135,7 +134,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = MAPPER.deserialize(yamlContent, CheckiOCourse::class.java)!!
+    val course = MAPPER.deserializeCourse(yamlContent)!!
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -161,7 +160,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = MAPPER.deserialize(yamlContent, StepikCourse::class.java)!!
+    val course = MAPPER.deserializeCourse(yamlContent)!!
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -187,7 +186,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = MAPPER.deserialize(yamlContent, HyperskillCourse::class.java)!!
+    val course = MAPPER.deserializeCourse(yamlContent)!!
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -208,7 +207,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |programming_language: $programmingLanguage
       |programming_language_version: $programmingLanguageVersion
       |""".trimMargin("|")
-    val course = deserializeNotNull(yamlContent, Course::class.java)
+    val course = deserializeNotNull(yamlContent)
     assertEquals(programmingLanguage, course.languageById.displayName)
     assertEquals(programmingLanguageVersion, course.languageVersion)
   }
@@ -221,7 +220,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
     """.trimMargin("|")
-    val section = MAPPER.deserialize(yamlContent, Section::class.java)!!
+    val section = MAPPER.deserializeSection(yamlContent)
     assertEquals(listOf(firstLesson, secondLesson), section.items.map { it.name })
   }
 
@@ -235,7 +234,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
     """.trimMargin("|")
-    val section = MAPPER.deserialize(yamlContent, Section::class.java)!!
+    val section = MAPPER.deserializeSection(yamlContent)
     assertEquals(listOf(firstLesson, secondLesson), section.items.map { it.name })
     assertEquals(customSectionName, section.customPresentableName)
   }
@@ -581,7 +580,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-    val course = deserializeNotNull(yamlContent, CourseraCourse::class.java)
+    val course = deserializeNotNull(yamlContent) as CourseraCourse
     assertTrue(course.submitManually)
   }
 
@@ -604,12 +603,11 @@ class YamlDeserializationTest : YamlTestCase() {
       override fun getExpectedExceptionClass(): Class<InvalidDefinitionException> = InvalidDefinitionException::class.java
 
       override fun tryClosure() {
-        deserializeNotNull(yamlContent, Course::class.java)
+        deserializeNotNull(yamlContent)
       }
     })
     Locale.setDefault(defaultLocale)
   }
 
-  private fun <T : ItemContainer> deserializeNotNull(yamlContent: String, clazz: Class<T>) =
-    MAPPER.deserialize(yamlContent, clazz)!!
+  private fun deserializeNotNull(yamlContent: String) : Course = MAPPER.deserializeCourse(yamlContent)!!
 }

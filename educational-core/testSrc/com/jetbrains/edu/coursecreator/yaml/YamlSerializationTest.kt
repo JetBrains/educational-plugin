@@ -547,18 +547,6 @@ class YamlSerializationTest : YamlTestCase() {
     Locale.setDefault(defaultLocale)
   }
 
-  fun `test student course`() {
-    val course = course {}
-
-    doTest(course, """
-      |title: Test Course
-      |language: English
-      |programming_language: Plain text
-      |mode: Study
-      |
-    """.trimMargin("|"))
-  }
-
   private fun doTest(item: StudyItem, expected: String) {
     val actual = YamlFormatSynchronizer.MAPPER.writeValueAsString(item)
     assertEquals(expected, actual)

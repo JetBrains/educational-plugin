@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.format.yaml
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
@@ -8,6 +9,19 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class StudentYamlSerializationTest : EduTestCase()  {
+
+  fun `test student course`() {
+    val course = course {}
+
+    doTest(course, """
+      |title: Test Course
+      |language: English
+      |programming_language: Plain text
+      |mode: Study
+      |
+    """.trimMargin("|"))
+  }
+
 
   fun `test task`() {
     val task = courseWithFiles {

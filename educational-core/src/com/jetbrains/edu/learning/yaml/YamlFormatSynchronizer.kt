@@ -120,8 +120,8 @@ object YamlFormatSynchronizer {
   }
 
   private fun ObjectMapper.addStudentMixIns() {
-    addMixIn(Task::class.java, TaskYamlMixin::class.java)
-    addMixIn(EduTask::class.java, StudentTaskYamlMixin::class.java)
+    addMixIn(Course::class.java, StudentCourseYamlMixin::class.java)
+    addMixIn(Task::class.java, StudentTaskYamlMixin::class.java)
     addMixIn(ChoiceTask::class.java, StudentChoiceTaskYamlMixin::class.java)
     addMixIn(TaskFile::class.java, StudentTaskFileYamlMixin::class.java)
     addMixIn(AnswerPlaceholder::class.java, StudentAnswerPlaceholderYamlMixin::class.java)

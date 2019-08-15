@@ -3,10 +3,9 @@ package com.jetbrains.edu.learning.format.yaml
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserialize
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.STUDENT_MAPPER
 
@@ -22,7 +21,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |  Why not?"
       |programming_language: Plain text
       |""".trimMargin("|")
-    val course = STUDENT_MAPPER.deserialize(yamlContent, Course::class.java)
+    val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
     assertNotNull(course)
     assertEquals(EduNames.STUDY, course!!.courseMode)
   }

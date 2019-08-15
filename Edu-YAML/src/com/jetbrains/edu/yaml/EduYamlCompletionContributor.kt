@@ -14,6 +14,7 @@ import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.PROGRAMMING_LA
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE_VERSION
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl

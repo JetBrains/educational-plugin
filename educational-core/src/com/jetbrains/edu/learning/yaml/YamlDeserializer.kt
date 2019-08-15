@@ -12,6 +12,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.*
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.getEditor
 import com.jetbrains.edu.learning.EduNames
@@ -43,7 +44,7 @@ object YamlDeserializer {
     val configFileText = configFile.document.text
     return try {
       when (configName) {
-        COURSE_CONFIG -> mapper.deserialize(configFileText, Course::class.java)
+        COURSE_CONFIG -> mapper.deserializeCourse(configFileText)
         SECTION_CONFIG -> mapper.deserializeSection(configFileText)
         LESSON_CONFIG -> mapper.deserializeLesson(configFileText)
         TASK_CONFIG -> mapper.deserializeTask(configFileText)
@@ -75,7 +76,13 @@ object YamlDeserializer {
    * For [Course] object the instance of a proper type is created inside [com.jetbrains.edu.learning.yaml.format.CourseBuilder]
    */
   @VisibleForTesting
-  fun <T : ItemContainer> ObjectMapper.deserialize(configFileText: String, clazz: Class<T>): T? = readValue(configFileText, clazz)
+  fun ObjectMapper.deserializeCourse(configFileText: String): Course? {
+    val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+    val courseMode = asText(treeNode.get("mode"))
+    val course = treeToValue(treeNode, Course::class.java)
+    course.courseMode = if (courseMode != null) EduNames.STUDY else CCUtils.COURSE_MODE
+    return course
+  }
 
   @VisibleForTesting
   fun ObjectMapper.deserializeSection(configFileText: String): Section {
@@ -222,3 +229,4 @@ object YamlDeserializer {
   @VisibleForTesting
   class ProcessedException(message: String, originalException: Exception?) : Exception(message, originalException)
 }
+

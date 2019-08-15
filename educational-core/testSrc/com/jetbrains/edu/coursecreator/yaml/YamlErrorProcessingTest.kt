@@ -9,9 +9,10 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 
 class YamlErrorProcessingTest : YamlTestCase() {
 
@@ -173,7 +174,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin("|")
-        YamlDeserializer.deserialize(yamlContent, Course::class.java)
+        MAPPER.deserializeCourse(yamlContent)
       }
 
       override fun getExpectedExceptionClass(): Class<InvalidDefinitionException> = InvalidDefinitionException::class.java

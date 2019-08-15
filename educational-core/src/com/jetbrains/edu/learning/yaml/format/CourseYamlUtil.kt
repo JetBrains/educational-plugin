@@ -62,10 +62,6 @@ abstract class CourseYamlMixin {
     throw NotImplementedInMixin()
   }
 
-  @JsonSerialize(converter = CourseModeSerializationConverter::class)
-  @JsonProperty(MODE)
-  lateinit var courseMode: String
-
   @JsonProperty(TITLE)
   private lateinit var myName: String
 
@@ -122,12 +118,6 @@ private class CourseTypeSerializationConverter : StdConverter<String, String?>()
   }
 }
 
-private class CourseModeSerializationConverter : StdConverter<String, String?>() {
-  override fun convert(courseMode: String): String? {
-    return if (courseMode == EduNames.STUDY) EduNames.STUDY else null
-  }
-}
-
 /**
  * Mixin class is used to deserialize remote information of [EduCourse] item stored on Stepik.
  */
@@ -151,7 +141,6 @@ private class TopLevelLessonsSectionDeserializer : StdConverter<Int, List<Int>>(
 
 @JsonPOJOBuilder(withPrefix = "")
 private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
-                            @JsonProperty(MODE) val mode: String?,
                             @JsonProperty(TITLE) val title: String,
                             @JsonProperty(SUMMARY) val summary: String,
                             @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
@@ -190,7 +179,6 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
         formatError("Unsupported language $programmingLanguage")
       }
       language = languageName.id
-      courseMode = mode ?: CCUtils.COURSE_MODE
 
       if (languages.size > 1) {
         error("Multiple configurators for language with name: $programmingLanguage")
