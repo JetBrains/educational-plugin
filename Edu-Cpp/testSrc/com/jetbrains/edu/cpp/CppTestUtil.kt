@@ -1,8 +1,7 @@
 package com.jetbrains.edu.cpp
 
 fun getExpectedTaskCMakeText(expectedProjectName: String) = """
-    |cmake_minimum_required(VERSION 3.14)
-    |
+    |${cMakeMinimumRequired}
     |project(${expectedProjectName})
     |
     |set(CMAKE_CXX_STANDARD 14)

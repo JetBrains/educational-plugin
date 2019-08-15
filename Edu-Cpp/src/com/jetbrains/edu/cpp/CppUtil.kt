@@ -19,7 +19,7 @@ private const val CMAKE_MINIMUM_REQUIRED_LINE = "CMAKE_MINIMUM_REQUIRED_LINE"
 private const val CPP_STANDARD_LINE = "CPP_STANDARD"
 private const val GTEST_VERSION = "GTEST_VERSION"
 
-private val cMakeMinimumRequired: String by lazy {
+val cMakeMinimumRequired: String by lazy {
   val cMakeVersionExtractor = {
     CLionProjectWizardUtils.getCMakeMinimumRequiredLine(CMake.readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
   }
