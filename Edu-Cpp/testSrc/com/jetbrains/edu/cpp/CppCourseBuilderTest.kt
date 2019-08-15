@@ -12,39 +12,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
   override val courseBuilder = CppCourseBuilder()
   override val defaultSettings = CppProjectSettings()
 
-  private fun getExpectedTaskCMakeText(expectedProjectName: String) = """
-    |cmake_minimum_required(VERSION 3.14)
-    |
-    |project(${expectedProjectName})
-    |
-    |set(CMAKE_CXX_STANDARD 14)
-    |
-    |# Files for the task.
-    |set(SOURCE
-    |        src/task.cpp)
-    |
-    |# Files for testing.
-    |set(TEST
-    |        test/test.cpp)
-    |
-    |set(RUN
-    |        src/run.cpp)
-    |
-    |
-    |# Customize student-run target.
-    |add_executable(${expectedProjectName}-src
-    |        ${'$'}{SOURCE}
-    |        ${'$'}{RUN})
-    |
-    |
-    |# Customize test target.
-    |add_executable(${expectedProjectName}-test
-    |        ${'$'}{SOURCE}
-    |        ${'$'}{TEST})
-    |
-    |target_link_libraries(${expectedProjectName}-test gtest_main)
-  """.trimMargin("|")
-
   fun `test create new cc edu course`() {
     val course = course(
       language = OCLanguage.getInstance(),
@@ -211,6 +178,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         }
         theoryTask("theory") {
           taskFile("src/task.cpp")
+          taskFile("CMakeLists.txt")
         }
       }
 
