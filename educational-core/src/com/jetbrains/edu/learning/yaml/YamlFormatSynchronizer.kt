@@ -26,6 +26,7 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.getEditor
 import com.jetbrains.edu.coursecreator.yaml.YamlSynchronizationListener
@@ -184,7 +185,9 @@ object YamlFormatSynchronizer {
     if (isUnitTestMode) {
       return
     }
-    EditorFactory.getInstance().eventMulticaster.addDocumentListener(YamlSynchronizationListener(project), project)
+    if (CCUtils.isCourseCreator(project)) {
+      EditorFactory.getInstance().eventMulticaster.addDocumentListener(YamlSynchronizationListener(project), project)
+    }
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
         if (isLocalConfigFile(file)) {
