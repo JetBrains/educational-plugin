@@ -27,7 +27,9 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
       return false
     }
 
-    myCourse.items.forEach(::deepRename)
+    if (myCourse is StepikCourse) {
+      myCourse.items.forEach(::deepRename)
+    }
 
     return true
   }
