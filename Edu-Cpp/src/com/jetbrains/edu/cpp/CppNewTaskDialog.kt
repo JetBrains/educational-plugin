@@ -11,24 +11,12 @@ class CppNewTaskDialog(
   model: NewStudyItemUiModel,
   additionalPanels: List<AdditionalPanel>
 ) : CCCreateStudyItemDialogBase(project, model, additionalPanels) {
-  private val namePattern: Regex = "[- a-zA-Z0-9_]*".toRegex()
+  private val namePattern: Regex = "[a-zA-Z0-9_]+".toRegex()
 
   init {
     init()
   }
 
-  // We use this hak to add *warnings* validator on the private field [CCCreateStudyItemDialogBase.nameField]
-  override fun performCustomNameValidation(name: String): String? = if (name.matches(namePattern)) null else "PANIC"
-
-  override fun doValidateAll(): List<ValidationInfo> {
-    val validationInfos = ArrayList(super.doValidateAll())
-
-    val validationInfo = validationInfos.find { it.message == "PANIC" }
-    validationInfos.remove(validationInfo)
-    validationInfo?.let {
-      validationInfos += ValidationInfo("Name should contain only latin letters, digits, '-' and '_' to omit problems with CMake",
-                                        it.component).asWarning().withOKEnabled()
-    }
-    return validationInfos
-  }
+  override fun performCustomNameValidation(name: String): String? =
+    if (name.matches(namePattern)) null else "Name should contain only latin letters, digits or '_' symbols."
 }
