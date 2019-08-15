@@ -4,7 +4,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.DocumentEvent
-import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.editor.impl.event.DocumentEventImpl
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -19,17 +18,18 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
  * coordinates of all the placeholders in current task file
  */
 class EduDocumentListener private constructor(
-  private val project: Project,
+  project: Project,
   /**
    * If [taskFile] is `null` than listener should determine affected task file by [DocumentEvent],
    * otherwise, it should track changes only in single [Document] related to [taskFile]
    */
   private val taskFile: TaskFile?
-) : DocumentListener {
+) : EduDocumentListenerBase(project) {
 
   private val updateYaml: Boolean = taskFile == null
 
   override fun beforeDocumentChange(e: DocumentEvent) {
+    if (taskFile == null && !e.isInProjectContent()) return
     val taskFile = (taskFile ?: e.taskFile) ?: return
     if (!taskFile.isTrackChanges) {
       return
@@ -38,6 +38,7 @@ class EduDocumentListener private constructor(
   }
 
   override fun documentChanged(e: DocumentEvent) {
+    if (taskFile == null && !e.isInProjectContent()) return
     val taskFile = (taskFile ?: e.taskFile) ?: return
     if (!taskFile.isTrackChanges) {
       return

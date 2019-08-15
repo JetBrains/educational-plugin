@@ -3,16 +3,16 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.editor.event.DocumentEvent
-import com.intellij.openapi.editor.event.DocumentListener
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.LightVirtualFile
 import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer.isLocalConfigFile
+import com.jetbrains.edu.learning.EduDocumentListenerBase
 
-class YamlSynchronizationListener(val project: Project) : DocumentListener {
+class YamlSynchronizationListener(project: Project) : EduDocumentListenerBase(project) {
   override fun documentChanged(event: DocumentEvent) {
+    if (!event.isInProjectContent()) return
     val eventDocument = event.document
-    val configFile = FileDocumentManager.getInstance().getFile(eventDocument) ?: return
+    val configFile = fileDocumentManager.getFile(eventDocument) ?: return
     if ((configFile is LightVirtualFile) || !isLocalConfigFile(configFile)) {
       return
     }
