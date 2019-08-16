@@ -11,12 +11,10 @@ class CppNewStudyItemDialog(
   model: NewStudyItemUiModel,
   additionalPanels: List<AdditionalPanel>
 ) : CCCreateStudyItemDialogBase(project, model, additionalPanels) {
-  private val namePattern: Regex = "[a-zA-Z0-9_]+".toRegex()
 
   init {
     init()
   }
 
-  override fun performCustomNameValidation(name: String): String? =
-    if (name.matches(namePattern)) null else "Name should contain only latin letters, digits or '_' symbols."
+  override fun performCustomNameValidation(name: String): String? = validateStudyItemName(name)
 }
