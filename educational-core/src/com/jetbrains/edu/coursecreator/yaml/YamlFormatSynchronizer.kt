@@ -39,6 +39,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.isUnitTestMode
+import java.util.*
 
 object YamlFormatSynchronizer {
   val LOAD_FROM_CONFIG = Key<Boolean>("Edu.loadItem")
@@ -67,6 +68,7 @@ object YamlFormatSynchronizer {
 
     val mapper = ObjectMapper(yamlFactory)
     mapper.registerKotlinModule()
+    mapper.setLocale(Locale.ENGLISH)
     mapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
     mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
