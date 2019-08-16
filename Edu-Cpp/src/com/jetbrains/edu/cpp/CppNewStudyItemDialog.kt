@@ -6,7 +6,7 @@ import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialogBase
 
-class CppNewTaskDialog(
+class CppNewStudyItemDialog(
   project: Project,
   model: NewStudyItemUiModel,
   additionalPanels: List<AdditionalPanel>

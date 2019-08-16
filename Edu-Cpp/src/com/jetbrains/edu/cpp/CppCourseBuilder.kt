@@ -44,7 +44,7 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     model: NewStudyItemUiModel,
     additionalPanels: MutableList<AdditionalPanel>
   ): NewStudyItemInfo? {
-    return showNewStudyItemDialog(project, model, additionalPanels, ::CppNewTaskDialog)
+    return showNewStudyItemDialog(project, model, additionalPanels, ::CppNewStudyItemDialog)
   }
 
   override fun refreshProject(project: Project) {
