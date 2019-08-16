@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.actions
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -23,8 +24,9 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFa
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
@@ -75,7 +77,7 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
                                     it: StudyItem,
                                     itemDir: VirtualFile,
                                     project: Project): Section {
-    val section = loadStudyItem(sectionConfig, Section::class.java)
+    val section = loadStudyItem(sectionConfig, Section::class.java, course.mapper)
     section.course = course
     section.name = it.name
     val lessons = section.items.mapNotNull {
@@ -104,7 +106,7 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
                                    course: Course,
                                    section: Section?,
                                    name: String): Lesson? {
-    val lesson = MAPPER.deserializeLesson(VfsUtil.loadText(configFile))
+    val lesson = course.mapper.deserializeLesson(VfsUtil.loadText(configFile))
     lesson.name = name
     lesson.course = course
     lesson.section = section
@@ -112,7 +114,7 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
     for (titledTask in lesson.taskList) {
       val taskDir = configFile.parent.findChild(titledTask.name) ?: throwNoMatchingDirError(titledTask)
       val taskConfig = taskDir.findChild(YamlFormatSettings.TASK_CONFIG) ?: throwNoConfigFileError(titledTask)
-      val task = MAPPER.deserializeTask(VfsUtil.loadText(taskConfig))
+      val task = course.mapper.deserializeTask(VfsUtil.loadText(taskConfig))
       task.name = titledTask.name
       task.lesson = lesson
       val taskDescriptionFile = findTaskDescriptionFile(task, project)
@@ -144,12 +146,12 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
   private fun getTaskDescriptionToolWindow(project: Project) =
     ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
 
-  private fun <T : StudyItem> loadStudyItem(courseConfig: VirtualFile, clazz: Class<T>): T =
-    YamlFormatSynchronizer.MAPPER.readValue(VfsUtil.loadText(courseConfig), clazz) ?: error(
+  private fun <T : StudyItem> loadStudyItem(courseConfig: VirtualFile, clazz: Class<T>, mapper: ObjectMapper = MAPPER): T =
+    mapper.readValue(VfsUtil.loadText(courseConfig), clazz) ?: error(
       "Failed to load ${clazz.simpleName} from ${courseConfig.path}")
 
   override fun update(e: AnActionEvent) {
     val project = e.project ?: return
-    e.presentation.isEnabledAndVisible = CCUtils.isCourseCreator(project)
+    e.presentation.isEnabledAndVisible = project.isEduYamlProject()
   }
 }
