@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.handlers.EduRenameHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
@@ -66,14 +67,15 @@ public abstract class CCRenameHandler implements EduRenameHandler {
   protected abstract void rename(@NotNull Project project, @NotNull Course course, @NotNull PsiFileSystemItem item);
 
 
-  protected static void processRename(@NotNull final StudyItem item,
-                                      @NotNull String namePrefix,
-                                      @NotNull Course course,
-                                      @NotNull final Project project,
-                                      @NotNull VirtualFile directory) {
+  protected void processRename(@NotNull final StudyItem item,
+                               @NotNull String namePrefix,
+                               @NotNull Course course,
+                               @NotNull final Project project,
+                               @NotNull VirtualFile directory) {
     String name = item.getName();
     String text = "Rename " + StringUtil.toTitleCase(namePrefix);
-    String newName = Messages.showInputDialog(project, text + " '" + name + "' to", text, null, name, new CCUtils.PathInputValidator(directory.getParent(), name));
+    String newName = Messages
+      .showInputDialog(project, text + " '" + name + "' to", text, null, name, new ItemNameValidator(directory.getParent(), name));
     if (newName != null) {
       item.setName(newName);
       ApplicationManager.getApplication().runWriteAction(() -> {
@@ -88,6 +90,26 @@ public abstract class CCRenameHandler implements EduRenameHandler {
       if (configurator != null) {
         configurator.getCourseBuilder().refreshProject(project);
       }
+    }
+  }
+
+  @Nullable
+  protected String performCustomNameValidation(@NotNull String name) {
+    return null;
+  }
+
+  private class ItemNameValidator extends CCUtils.PathInputValidator {
+
+    public ItemNameValidator(@Nullable VirtualFile myParentDir, @Nullable String myName) {
+      super(myParentDir, myName);
+    }
+
+    @Override
+    public boolean checkInput(@NotNull String inputString) {
+      if (super.checkInput(inputString)) {
+        setMyErrorText(performCustomNameValidation(inputString));
+      }
+      return getMyErrorText() == null;
     }
   }
 

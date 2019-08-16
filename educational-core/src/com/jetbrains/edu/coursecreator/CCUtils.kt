@@ -225,12 +225,12 @@ object CCUtils {
     }
   }
 
-  class PathInputValidator @JvmOverloads constructor(
+  open class PathInputValidator @JvmOverloads constructor(
     private val myParentDir: VirtualFile?,
     private val myName: String? = null
   ) : InputValidatorEx {
 
-    private var myErrorText: String? = null
+    protected var myErrorText: String? = null
 
     override fun checkInput(inputString: String): Boolean {
       if (myParentDir == null) {
