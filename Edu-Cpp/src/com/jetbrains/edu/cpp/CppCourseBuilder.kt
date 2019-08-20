@@ -60,19 +60,34 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
 
     val projectCommand = cMakeCommands.first { it.name == "project" }
     val newProjectName = getCMakeProjectUniqueName(newTask) { FileUtil.sanitizeFileName(it.name, true) }
-    replaceFirstArgument(psiFile, projectCommand, newProjectName)
+    replaceFirstArgument(psiFile, projectCommand, false) { it }
 
     val targets = cMakeCommands.filter { it.name == "add_executable" }
     targets.forEachIndexed { index, cMakeCommand ->
-      replaceFirstArgument(psiFile, cMakeCommand, "$newProjectName-target${index + 1}", true)
+      replaceFirstArgument(psiFile, cMakeCommand, true) { targetName ->
+        val suffix = when {
+          targetName.endsWith("-src") -> "src"
+          targetName.endsWith("-test") -> "test"
+          else -> "target${index + 1}"
+        }
+        "$newProjectName-$suffix"
+      }
     }
 
     newTask.taskFiles[CMakeListsFileType.FILE_NAME]?.setText(psiFile.text)
   }
 
-  private fun replaceFirstArgument(psiFile: PsiFile, command: CMakeCommand, replaceTo: String, needReplaceOccurrences: Boolean = false) {
+  private fun replaceFirstArgument(
+    psiFile: PsiFile,
+    command: CMakeCommand,
+    needReplaceOccurrences: Boolean,
+    newNameGenerator: (String) -> String
+  ) {
     val cMakeCommandArguments = command.cMakeCommandArguments ?: return
     val argument = cMakeCommandArguments.cMakeArgumentList.firstOrNull() ?: return
+    val argumentName = argument.name ?: return
+
+    val replaceTo = newNameGenerator(argumentName)
 
     if (needReplaceOccurrences) {
       PsiTreeUtil.findChildrenOfType(psiFile, CMakeArgument::class.java)
