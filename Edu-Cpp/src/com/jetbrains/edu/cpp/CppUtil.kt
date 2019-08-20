@@ -16,7 +16,7 @@ private const val CMAKE_MINIMUM_REQUIRED_LINE = "CMAKE_MINIMUM_REQUIRED_LINE"
 private const val CPP_STANDARD_LINE = "CPP_STANDARD"
 private const val GTEST_VERSION = "GTEST_VERSION"
 
-private val STUDY_ITEM_NAME_PATTERN = "[a-zA-Z0-9_]+".toRegex()
+private val STUDY_ITEM_NAME_PATTERN = "[a-zA-Z0-9_ ]+".toRegex()
 
 val cMakeMinimumRequired: String by lazy {
   val cMakeVersionExtractor = {
@@ -89,4 +89,4 @@ fun getDefaultName(item: StudyItem) = when (item) {
 }
 
 fun validateStudyItemName(name: String): String? =
-  if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else "Name should contain only latin letters, digits or '_' symbols."
+  if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else "Name should contain only latin letters, digits, spaces or '_' symbols."
