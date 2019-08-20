@@ -16,7 +16,7 @@ set(RUN
 
 
 # Customize student-run target.
-add_executable(${PROJECT_NAME}-src
+add_executable(${PROJECT_NAME}-run
         ${SOURCE}
         ${RUN})
 
