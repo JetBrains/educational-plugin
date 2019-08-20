@@ -8,10 +8,7 @@ import com.jetbrains.cidr.cpp.toolchains.CMake
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
@@ -85,6 +82,7 @@ fun getCMakeProjectUniqueName(task: Task, nameExtractor: (StudyItem) -> String =
 
 fun getDefaultName(item: StudyItem) = when (item) {
   is Section -> "${EduNames.SECTION}${item.index}"
+  is FrameworkLesson -> "${EduNames.FRAMEWORK_LESSON}${item.index}"
   is Lesson -> "${EduNames.LESSON}${item.index}"
   is Task -> "${EduNames.TASK}${item.index}"
   else -> "NonCommonStudyItem${item.index}"
