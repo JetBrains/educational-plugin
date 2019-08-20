@@ -1,9 +1,16 @@
 package com.jetbrains.edu.cpp
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiUtilBase
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
+import com.jetbrains.cmake.CMakeListsFileType
+import com.jetbrains.cmake.psi.CMakeArgument
+import com.jetbrains.cmake.psi.CMakeCommand
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
@@ -14,6 +21,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -39,6 +47,43 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     task.addTaskFile(TaskFile(mainName, mainText))
   }
 
+  override fun afterFrameworkTaskCopy(project: Project, sourceTask: Task, newTask: Task) {
+    val sourceCMake = sourceTask.taskFiles[CMakeListsFileType.FILE_NAME] ?: return
+    val virtualFile = sourceCMake.getVirtualFile(project)
+    if (virtualFile == null) {
+      LOG.warn("Cannot get a virtual file from the '${CMakeListsFileType.FILE_NAME}' task file")
+      return
+    }
+
+    val psiFile = PsiUtilBase.getPsiFile(project, virtualFile).copy() as PsiFile
+    val cMakeCommands = PsiTreeUtil.findChildrenOfType(psiFile, CMakeCommand::class.java)
+
+    val projectCommand = cMakeCommands.first { it.name == "project" }
+    val newProjectName = getCMakeProjectUniqueName(newTask) { FileUtil.sanitizeFileName(it.name, true) }
+    replaceFirstArgument(psiFile, projectCommand, newProjectName)
+
+    val targets = cMakeCommands.filter { it.name == "add_executable" }
+    targets.forEachIndexed { index, cMakeCommand ->
+      replaceFirstArgument(psiFile, cMakeCommand, "$newProjectName-target${index + 1}", true)
+    }
+
+    newTask.taskFiles[CMakeListsFileType.FILE_NAME]?.setText(psiFile.text)
+  }
+
+  private fun replaceFirstArgument(psiFile: PsiFile, command: CMakeCommand, replaceTo: String, needReplaceOccurrences: Boolean = false) {
+    val cMakeCommandArguments = command.cMakeCommandArguments ?: return
+    val argument = cMakeCommandArguments.cMakeArgumentList.firstOrNull() ?: return
+
+    if (needReplaceOccurrences) {
+      PsiTreeUtil.findChildrenOfType(psiFile, CMakeArgument::class.java)
+        .filter { it.name == argument.name }
+        .forEach { it.setName(replaceTo) }
+    }
+    else {
+      argument.setName(replaceTo)
+    }
+  }
+
   override fun showNewStudyItemUi(
     project: Project,
     model: NewStudyItemUiModel,
@@ -53,6 +98,8 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
   }
 
   companion object {
+    private val LOG: Logger = Logger.getInstance(CppCourseBuilder::class.java)
+
     private const val EDU_RUN_CPP = "run.cpp"
   }
 }

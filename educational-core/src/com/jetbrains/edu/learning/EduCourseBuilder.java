@@ -145,6 +145,13 @@ public interface EduCourseBuilder<Settings> {
     }
   }
 
+  /**
+   * Fix problems with task files after copy them on framework task creation.
+   * By default, we think that no problems so method do nothing.
+   */
+  default void afterFrameworkTaskCopy(@NotNull Project project, @NotNull Task oldTask,  @NotNull Task newTask) {
+  }
+
   @Nullable
   default TaskFile createDefaultTestFile(@NotNull Task task) {
     List<String> testDirs = TaskExt.getTestDirs(task);

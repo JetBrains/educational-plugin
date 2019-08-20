@@ -112,6 +112,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
         }
       }
       newTask.taskFiles = newTaskFiles
+      afterFrameworkTaskCopy(course, project, prevTask, newTask)
 
       if (!needCopyTests) {
         val defaultTestFile = course.configurator?.courseBuilder?.createDefaultTestFile(newTask)
@@ -141,6 +142,12 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
   private fun initTask(project: Project, course: Course, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     if (!course.isStudy) {
       course.configurator?.courseBuilder?.initNewTask(project, lesson, task, info)
+    }
+  }
+
+  private fun afterFrameworkTaskCopy(course: Course, project: Project, oldTask: Task, newTask: Task) {
+    if (!course.isStudy) {
+      course.configurator?.courseBuilder?.afterFrameworkTaskCopy(project, oldTask, newTask)
     }
   }
 
