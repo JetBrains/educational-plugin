@@ -4,14 +4,12 @@ import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
 class RunFileNotificationProvider : EditorNotifications.Provider<EditorNotificationPanel>() {
   override fun getKey(): Key<EditorNotificationPanel> = KEY
@@ -37,11 +35,6 @@ class RunFileNotificationProvider : EditorNotifications.Provider<EditorNotificat
 
     if (EduUtils.getTaskFile(project, file) == null) {
       // not a task file at all
-      return false
-    }
-
-    if (VfsUtilCore.loadText(file) != GeneratorUtils.getInternalTemplateText(CppCourseBuilder.EDU_RUN_CPP)) {
-      // file was changed
       return false
     }
 
