@@ -118,6 +118,6 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     private const val RUN_SUFFIX = "run"
     private const val TEST_SUFFIX = "test"
 
-    private const val EDU_RUN_CPP = "run.cpp"
+    const val EDU_RUN_CPP = "run.cpp"
   }
 }
