@@ -112,7 +112,6 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
           file("Foo.kt", "fn foo() = 123")
           file("Bar.kt", "fn bar(a: Int) = a + 10")
           file("Baz.kt", "fn baz() = 123 + TODO()")
-          file("task.html")
         }
       }
     }

@@ -15,6 +15,7 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -105,7 +106,10 @@ object GeneratorUtils {
       }
     }
 
-    createDescriptionFile(taskDir, task)
+    val course = task.course
+    if (CCUtils.COURSE_MODE == course.courseMode || task.lesson !is FrameworkLesson) {
+      createDescriptionFile(taskDir, task)
+    }
   }
 
   @Throws(IOException::class)

@@ -35,7 +35,6 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           file("buzz.kt", """
             fun buzz() = TODO()
           """)
-          file("task.html")
         }
       }
     }
@@ -65,7 +64,6 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           file("fizzBuzz.kt", """
             fun fizzBuzz() = 123 + 456
           """)
-          file("task.html")
         }
       }
     }
@@ -91,7 +89,6 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           file("fizz.kt", """
             fun fizz() = 123
           """)
-          file("task.html")
         }
       }
     }
@@ -138,7 +135,6 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
             fun fizzz() = 12345678
             fun buzz() = 90
           """)
-          file("task.html")
         }
       }
     }
@@ -181,7 +177,6 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           file("fizzBuzz.kt", """
             fun fizzBuzz() = TODO() + TODO()
           """)
-          file("task.html")
         }
       }
     }.assertEquals(rootDir, myFixture)
@@ -196,7 +191,6 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           file("fizz.kt", """
             fun fizz() = TODO()
           """)
-          file("task.html")
         }
       }
     }.assertEquals(rootDir, myFixture)
@@ -235,7 +229,6 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
             fun foo() {}
             fun fizz() = 123
           """)
-          file("task.html")
         }
       }
     }
@@ -271,7 +264,6 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
             fun bar() {}
             fun buzz() = 456
           """)
-          file("task.html")
         }
       }
     }
@@ -301,7 +293,6 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           file("foo.kt", """
             fun foo() {}
           """)
-          file("task.html")
         }
       }
     }
@@ -327,7 +318,6 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           file("buzz.kt", """
             fun buzz() = TODO()
           """)
-          file("task.html")
         }
       }
     }
