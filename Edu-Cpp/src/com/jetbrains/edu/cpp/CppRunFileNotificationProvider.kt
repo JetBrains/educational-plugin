@@ -11,7 +11,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
 
-class RunFileNotificationProvider : EditorNotifications.Provider<EditorNotificationPanel>() {
+class CppRunFileNotificationProvider : EditorNotifications.Provider<EditorNotificationPanel>() {
   override fun getKey(): Key<EditorNotificationPanel> = KEY
 
   override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor, project: Project): EditorNotificationPanel? =
