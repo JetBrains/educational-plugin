@@ -79,7 +79,7 @@ abstract class HyperskillConnector {
   }
 
   fun login(code: String): Boolean {
-    val response = authorizationService.getTokens(CLIENT_ID, REDIRECT_URI, code, "authorization_code").executeHandlingExceptions()
+    val response = authorizationService.getTokens(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, code, "authorization_code").executeHandlingExceptions()
     val tokenInfo = response?.body() ?: return false
     val account = HyperskillAccount()
     account.tokenInfo = tokenInfo
@@ -92,7 +92,7 @@ abstract class HyperskillConnector {
 
   private fun HyperskillAccount.refreshTokens() {
     val refreshToken = tokenInfo.refreshToken
-    val response = authorizationService.refreshTokens("refresh_token", CLIENT_ID, refreshToken).executeHandlingExceptions()
+    val response = authorizationService.refreshTokens("refresh_token", CLIENT_ID, CLIENT_SECRET, refreshToken).executeHandlingExceptions()
     val tokens = response?.body()
     if (tokens != null) {
       updateTokens(tokens)

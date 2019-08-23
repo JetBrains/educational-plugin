@@ -58,7 +58,8 @@ abstract class StepikConnector {
 
   private fun StepikUser.refreshTokens() {
     val refreshToken = tokenInfo.refreshToken
-    val response = authorizationService.refreshTokens("refresh_token", StepikNames.CLIENT_ID, refreshToken).executeHandlingExceptions()
+    val response = authorizationService
+      .refreshTokens("refresh_token", StepikNames.CLIENT_ID, StepikNames.CLIENT_SECRET, refreshToken).executeHandlingExceptions()
     val tokens = response?.body()
     if (tokens != null) {
       updateTokens(tokens)
@@ -67,7 +68,7 @@ abstract class StepikConnector {
 
   fun login(code: String, redirectUri: String): Boolean {
     val response = authorizationService.getTokens(
-      StepikNames.CLIENT_ID, redirectUri, code, "authorization_code").executeHandlingExceptions()
+      StepikNames.CLIENT_ID, StepikNames.CLIENT_SECRET, redirectUri, code, "authorization_code").executeHandlingExceptions()
     val tokenInfo = response?.body() ?: return false
     val stepikUser = StepikUser(tokenInfo)
     val stepikUserInfo = getCurrentUserInfo(stepikUser) ?: return false

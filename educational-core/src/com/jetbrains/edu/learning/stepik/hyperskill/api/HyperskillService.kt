@@ -14,18 +14,20 @@ import retrofit2.http.*
 interface HyperskillService {
 
   @POST("oauth2/token/")
-  fun getTokens(
-    @Query("client_id") clientId: String,
-    @Query("redirect_uri") redirectUri: String,
-    @Query("code") code: String,
-    @Query("grant_type") grantType: String
-  ): Call<TokenInfo>
+  @FormUrlEncoded
+  fun getTokens(@Field("client_id") clientId: String,
+                @Field("client_secret") clientSecret: String,
+                @Field("redirect_uri") redirectUri: String,
+                @Field("code") code: String,
+                @Field("grant_type") grantType: String): Call<TokenInfo>
 
   @POST("oauth2/token/")
+  @FormUrlEncoded
   fun refreshTokens(
-    @Query("grant_type") grantType: String,
-    @Query("client_id") clientId: String,
-    @Query("refresh_token") refreshToken: String
+    @Field("grant_type") grantType: String,
+    @Field("client_id") clientId: String,
+    @Field("client_secret") clientSecret: String,
+    @Field("refresh_token") refreshToken: String
   ): Call<TokenInfo>
 
   @GET("api/profiles/current")
