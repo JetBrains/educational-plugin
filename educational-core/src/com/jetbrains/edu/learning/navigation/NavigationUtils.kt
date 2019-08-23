@@ -12,7 +12,9 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.saveStudentAnswersIfNeeded
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -174,6 +176,7 @@ object NavigationUtils {
     if (lesson is FrameworkLesson && lesson.course.isStudy && fromTask != null && fromTask.lesson == lesson) {
       fromTask.saveStudentAnswersIfNeeded(project)
       prepareFilesForTargetTask(project, lesson, fromTask, task, showDialogIfConflict)
+      project.course?.configurator?.courseBuilder?.refreshProject(project)
     }
 
     val taskDir = task.getTaskDir(project) ?: return
