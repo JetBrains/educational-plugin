@@ -52,6 +52,11 @@ class CppRunFileNotificationProvider : EditorNotifications.Provider<EditorNotifi
     return true
   }
 
+  // It's needed to support old ide versions
+  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
+    throw UnsupportedOperationException()
+  }
+
   companion object {
     val KEY = Key.create<EditorNotificationPanel>("RunFileNotificationProvider")
 
