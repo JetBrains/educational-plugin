@@ -3,6 +3,7 @@ package com.jetbrains.edu.cpp
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessProjectForFile
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -15,7 +16,8 @@ import com.jetbrains.edu.learning.course
 class CppRunFileNotificationProvider : EditorNotifications.Provider<EditorNotificationPanel>() {
   override fun getKey(): Key<EditorNotificationPanel> = KEY
 
-  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor, project: Project): EditorNotificationPanel? =
+  // since EDU 191 should overload [EditorNotifications.Provider.createNotificationPanel(VirtualFile, FileEditor, Project)]
+  private fun createNotificationPanelByProject(file: VirtualFile, project: Project): EditorNotificationPanel? =
     if (needSetNotification(file, project))
       EditorNotificationPanel().also {
         it.setText("This file is intended for the student.")
@@ -27,6 +29,9 @@ class CppRunFileNotificationProvider : EditorNotifications.Provider<EditorNotifi
     else
       null
 
+  // BACKCOMPAT: 2018.3 overload the super method with given project only in next versions
+  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? =
+    guessProjectForFile(file)?.let { createNotificationPanelByProject(file, it) }
 
   private fun needSetNotification(file: VirtualFile, project: Project): Boolean {
     if (PropertiesComponent.getInstance().isTrueValue(HIDE_NOTIFICATIONS_KAY)) {
@@ -50,11 +55,6 @@ class CppRunFileNotificationProvider : EditorNotifications.Provider<EditorNotifi
     }
 
     return true
-  }
-
-  // It's needed to support old ide versions
-  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
-    throw UnsupportedOperationException()
   }
 
   companion object {
