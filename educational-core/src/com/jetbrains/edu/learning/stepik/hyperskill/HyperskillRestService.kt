@@ -3,9 +3,9 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -229,7 +229,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val location = nameToLocation(hyperskillCourse)
 
     var project: Project? = null
-    invokeAndWaitIfNeeded {
+    ApplicationManager.getApplication().invokeAndWait {
       TransactionGuard.getInstance().submitTransactionAndWait {
         project = projectGenerator.doCreateCourseProject(location, configurator.courseBuilder.languageSettings.settings)
       }
