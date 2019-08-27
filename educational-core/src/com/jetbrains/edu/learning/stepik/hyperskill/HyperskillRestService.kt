@@ -3,26 +3,28 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.AppIcon
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.newproject.ui.CoursePanel.nameToLocation
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -30,7 +32,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*
-import org.jetbrains.ide.RestService
 import org.jetbrains.io.send
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
@@ -66,17 +67,25 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val matcher = OPEN_COURSE_PATTERN.matcher(uri)
     if (matcher.matches()) {
       val account = HyperskillSettings.INSTANCE.account
-      if (account == null) {
+      return if (account == null) {
         HyperskillConnector.getInstance().doAuthorize(Runnable { openProject(urlDecoder, request, context) })
+        null
       }
       else {
-        return openProject(urlDecoder, request, context)
+        openProject(urlDecoder, request, context)
       }
     }
 
     val openStepMatcher = OPEN_STEP_PATTERN.matcher(uri)
     if (openStepMatcher.matches()) {
-      return openStep(urlDecoder, request, context)
+      val account = HyperskillSettings.INSTANCE.account
+      return if (account == null) {
+        HyperskillConnector.getInstance().doAuthorize(Runnable { openStep(urlDecoder, request, context) })
+        null
+      }
+      else {
+        openStep(urlDecoder, request, context)
+      }
     }
 
     if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
@@ -84,7 +93,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
       val success = HyperskillConnector.getInstance().login(code)
       if (success) {
-        RestService.LOG.info("$myPlatformName: OAuth code is handled")
+        LOG.info("$myPlatformName: OAuth code is handled")
         val pageContent = getInternalTemplateText("hyperskill.redirectPage.html")
         createResponse(pageContent).send(context.channel(), request)
         return null
@@ -98,11 +107,12 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
   private fun openStep(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val stepId = getIntParameter("step_id", urlDecoder)
-    val project = ProjectManager.getInstance().openProjects.firstOrNull() ?: error("Cannot find project")
-    val course = StudyTaskManager.getInstance(project).course
-    if (course !is HyperskillCourse) {
-      return sendErrorResponse(request, context, "Could not find opened hyperskill project")
-    }
+    val (project, course) = openOrCreateProject() ?: return sendErrorResponse(request, context,
+                                                                              "Failed to create or open hyperskill project")
+    runInEdt { requestFocus() }
+
+    if (course !is HyperskillCourse) return sendErrorResponse(request, context, "Failed to create or open hyperskill project")
+
     val lesson = findOrCreateProblemsLesson(course, project)
     val lessonDir = lesson.getLessonDir(project)
                     ?: return sendErrorResponse(request, context, "Could not find Problems directory")
@@ -122,6 +132,14 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     }
     sendOk(request, context)
     return null
+  }
+
+  private fun openOrCreateProject(): Pair<Project, Course>? {
+    var projectCourse = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse }
+    if (projectCourse != null) return projectCourse
+    projectCourse = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse }
+    if (projectCourse != null) return projectCourse
+    return createProject()
   }
 
   private fun findOrCreateTask(course: HyperskillCourse, lesson: Lesson, stepSource: HyperskillStepSource,
@@ -194,35 +212,62 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     return true
   }
 
+  private fun createProject(): Pair<Project, Course>? {
+    val account = HyperskillSettings.INSTANCE.account
+    if (account == null) return null
+    val projectId = account.userInfo.hyperskillProjectId ?: return null
+
+    val hyperskillCourse = getHyperskillCourseUnderProgress(projectId) ?: return null
+    val project: Project = createProjectFromCourse(hyperskillCourse) ?: return null
+
+    return Pair(project, hyperskillCourse)
+  }
+
+  private fun createProjectFromCourse(hyperskillCourse: HyperskillCourse): Project? {
+    val configurator = hyperskillCourse.configurator ?: return null
+    val projectGenerator = configurator.courseBuilder.getCourseProjectGenerator(hyperskillCourse) ?: return null
+    val location = nameToLocation(hyperskillCourse)
+
+    var project: Project? = null
+    invokeAndWaitIfNeeded {
+      TransactionGuard.getInstance().submitTransactionAndWait {
+        project = projectGenerator.doCreateCourseProject(location, configurator.courseBuilder.languageSettings.settings)
+      }
+    }
+    return project
+  }
+
+  private fun getHyperskillCourseUnderProgress(projectId: Int): HyperskillCourse? {
+    return ProgressManager.getInstance().run(object : Task.WithResult<HyperskillCourse?, Exception>
+                                                      (null, "Loading project", true) {
+      override fun compute(indicator: ProgressIndicator): HyperskillCourse? {
+        val hyperskillProject = HyperskillConnector.getInstance().getProject(projectId) ?: return null
+
+        if (!hyperskillProject.useIde) {
+          LOG.warn("Project in not supported yet $projectId")
+          Notification(HYPERSKILL, HYPERSKILL, HYPERSKILL_PROJECT_NOT_SUPPORTED, NotificationType.WARNING,
+                       HSHyperlinkListener(false)).notify(project)
+          return null
+        }
+        val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language]
+        if (languageId == null) {
+          LOG.warn("Language in not supported yet ${hyperskillProject.language}")
+          Notification(HYPERSKILL, HYPERSKILL, "Unsupported language ${hyperskillProject.language}",
+                       NotificationType.WARNING).notify(project)
+          return null
+        }
+        val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
+        val stages = HyperskillConnector.getInstance().getStages(projectId) ?: return null
+        hyperskillCourse.stages = stages
+        return hyperskillCourse
+      }
+    })
+  }
+
   private fun createProject(projectId: Int, stageId: Int): Boolean {
+    val hyperskillCourse = getHyperskillCourseUnderProgress(projectId) ?: return false
     runInEdt {
       requestFocus()
-
-      val hyperskillCourse = ProgressManager.getInstance().run(object : Task.WithResult<HyperskillCourse?, Exception>
-                                                                        (null, "Loading project", true) {
-        override fun compute(indicator: ProgressIndicator): HyperskillCourse? {
-          val hyperskillProject = HyperskillConnector.getInstance().getProject(projectId) ?: return null
-
-          if (!hyperskillProject.useIde) {
-            LOG.warn("Project in not supported yet $projectId")
-            Notification(HYPERSKILL, HYPERSKILL, HYPERSKILL_PROJECT_NOT_SUPPORTED, NotificationType.WARNING,
-                         HSHyperlinkListener(false)).notify(project)
-            return null
-          }
-          val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language]
-          if (languageId == null) {
-            LOG.warn("Language in not supported yet ${hyperskillProject.language}")
-            Notification(HYPERSKILL, HYPERSKILL, "Unsupported language ${hyperskillProject.language}",
-                         NotificationType.WARNING).notify(project)
-            return null
-          }
-          val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
-          val stages = HyperskillConnector.getInstance().getStages(projectId) ?: return null
-          hyperskillCourse.stages = stages
-          return hyperskillCourse
-        }
-      }) ?: return@runInEdt
-
       hyperskillCourse.putUserData(HYPERSKILL_STAGE, stageId)
       HyperskillJoinCourseDialog(hyperskillCourse).show()
     }
