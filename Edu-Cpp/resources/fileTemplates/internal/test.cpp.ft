@@ -1,11 +1,11 @@
 \#include <gtest/gtest.h>
-\#include <string>
 
-// Headers of objects that student should realize:
-std::string task();
+// Headers of objects that student should implement:
+int sum(int a, int b);
 
 
 // Tests:
-TEST(TestSuiteName, TestName) {
-    ASSERT_EQ(task(), "Expected answer");
+// todo: replace this with an actual test
+TEST(SumTest, Simple) {
+    ASSERT_EQ(sum(1, 2), 3);
 }

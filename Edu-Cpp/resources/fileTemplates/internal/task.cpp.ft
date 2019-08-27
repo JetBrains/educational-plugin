@@ -1,6 +1,4 @@
-\#include <string>
-
 // todo: replace this with an actual task
-std::string task() {
-    return "Student answer";
+int sum(int a, int b) {
+    return a + b;
 }
