@@ -1,6 +1,9 @@
 import unittest
 
+from ..task import sum
 
+
+# todo: replace this with an actual test
 class TestCase(unittest.TestCase):
-    def test(self):
-        self.assertEqual(1, 0, msg="Implement tests")
+    def test_add(self):
+        self.assertEqual(sum(1, 2), 3, msg="adds 1 + 2 to equal 3")
