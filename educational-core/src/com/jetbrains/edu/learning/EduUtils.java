@@ -308,6 +308,9 @@ public class EduUtils {
       return null;
     }
     text = StringUtil.replace(text, "%IDE_NAME%", ApplicationNamesInfo.getInstance().getFullProductName());
+    if (task.getLesson() instanceof FrameworkLesson) {
+      text = "<h2>" + task.getUIName() + " #" + task.getIndex() + ": " + task.getName() + "<h2/> " + text;
+    }
     StringBuffer textBuffer = new StringBuffer(text);
     replaceActionIDsWithShortcuts(textBuffer);
     textBuffer.append(TaskExt.taskDescriptionHintBlocks(task));
