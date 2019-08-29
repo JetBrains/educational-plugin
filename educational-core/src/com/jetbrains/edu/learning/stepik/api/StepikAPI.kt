@@ -324,17 +324,11 @@ class Submission {
   @JsonProperty(HINT)
   var hint: String? = null
 
-  @JsonProperty(FEEDBACK)
-  var feedback: Feedback? = null
-
   constructor()
 
   constructor(score: String, attemptId: Int, files: ArrayList<SolutionFile>, serializedTask: String, feedback: String? = null) {
-    reply = Reply(files, score, serializedTask)
+    reply = Reply(files, score, serializedTask, feedback)
     this.attempt = attemptId
-    if (feedback != null) {
-      this.feedback = Feedback(feedback)
-    }
   }
 }
 
@@ -360,12 +354,18 @@ class Reply {
   @JsonProperty(VERSION)
   var version = JSON_FORMAT_VERSION
 
+  @JsonProperty(FEEDBACK)
+  var feedback: Feedback? = null
+
   constructor()
 
-  constructor(files: List<SolutionFile>, score: String, serializedTask: String) {
+  constructor(files: List<SolutionFile>, score: String, serializedTask: String, feedback: String? = null) {
     this.score = score
     solution = files
     eduTask = serializedTask
+    if (feedback != null) {
+      this.feedback = Feedback(feedback)
+    }
   }
 }
 
