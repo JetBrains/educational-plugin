@@ -59,6 +59,7 @@ class CCCreateCoursePreviewDialog(
           val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)
           val settings = myPanel.projectSettings
           myConfigurator.courseBuilder.getCourseProjectGenerator(course)?.doCreateCourseProject(location.absolutePath, settings)
+          RecentProjectsManager.getInstance().removePath(location.absolutePath)
           EduCounterUsageCollector.createCoursePreview()
         }
         catch (e: IOException) {
