@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
 import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
+import com.sun.javafx.application.PlatformImpl
 import com.sun.webkit.dom.DocumentImpl
 import com.sun.webkit.dom.ElementImpl
 import javafx.application.Platform
@@ -35,7 +36,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
     get() = myWebComponent.engine
 
   init {
-    Platform.runLater {
+    PlatformImpl.startup {
       Platform.setImplicitExit(false)
       myPane = StackPane()
       myWebComponent = WebView()
