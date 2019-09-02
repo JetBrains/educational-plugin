@@ -31,7 +31,7 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
   override fun actionPerformed(e: AnActionEvent) {
     val account = HyperskillSettings.INSTANCE.account
     if (account == null) {
-      showBalloon(e, "Please, <a href=\"\">login to Hyperskill</a> and select project.", true)
+      showBalloon(e, "Please <a href=\"\">login to Hyperskill</a> and select a project.", true)
     }
     else {
       val hyperskillProject = ProgressManager.getInstance().run(
@@ -46,7 +46,7 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
           }
         })
       if (hyperskillProject == null) {
-        showBalloon(e, "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select project</a> ", false)
+        showBalloon(e, "Please <a href=\"$HYPERSKILL_PROJECTS_URL\">select a project</a> ", false)
       }
       else if (!hyperskillProject.useIde) {
         showBalloon(e, HYPERSKILL_PROJECT_NOT_SUPPORTED, false)
