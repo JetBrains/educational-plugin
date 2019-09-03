@@ -19,7 +19,6 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
@@ -290,13 +289,13 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     courseType: String = EduNames.PYCHARM,
     environment: String = EduNames.DEFAULT_ENVIRONMENT
   ) {
-    val extension = EducationalExtensionPoint<EduConfigurator<out Any>>()
+    val extension = EducationalExtensionPoint<EduConfigurator<*>>()
     extension.language = language.id
     extension.implementationClass = configuratorClass.name
     extension.courseType = courseType
     extension.environment = environment
-    // BACKCOMPAT: 2018.3
-    @Suppress("DEPRECATION")
-    PlatformTestUtil.registerExtension(ExtensionPointName.create(EducationalExtensionPoint.EP_NAME), extension, disposable)
+    ExtensionPointName.create<EducationalExtensionPoint<*>>(EducationalExtensionPoint.EP_NAME)
+      .getPoint(null)
+      .registerExtension(extension, disposable)
   }
 }

@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.stepik
 import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.Lists
 import com.intellij.ide.projectView.ProjectView
-import com.intellij.openapi.application.invokeAndWaitIfNeed
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
@@ -248,9 +248,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   private fun removeExistingDir(studentTask: Task,
                                 lessonDir: VirtualFile?) {
     val taskDir = getTaskDir(studentTask.name, lessonDir)
-    // BACKCOMPAT: 2018.3
-    @Suppress("DEPRECATION")
-    invokeAndWaitIfNeed { runWriteAction { taskDir?.delete(studentTask) } }
+    invokeAndWaitIfNeeded { runWriteAction { taskDir?.delete(studentTask) } }
   }
 
   @Throws(IOException::class)
@@ -316,9 +314,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   }
 
   private fun rename(dirToRename: VirtualFile, s: String) {
-    // BACKCOMPAT: 2018.3
-    @Suppress("DEPRECATION")
-    invokeAndWaitIfNeed {
+    invokeAndWaitIfNeeded {
       runWriteAction {
         try {
           dirToRename.rename(this, s)
@@ -379,9 +375,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     val directoryMap = if (item is Lesson) oldLessonDirectories else oldSectionDirectories
 
     val id = (item as? Lesson)?.id ?: (item as? Section)?.id
-    // BACKCOMPAT: 2018.3
-    @Suppress("DEPRECATION")
-    invokeAndWaitIfNeed {
+    invokeAndWaitIfNeeded {
       runWriteAction {
         try {
           itemDir.rename(item, "old_${itemDir.name}")

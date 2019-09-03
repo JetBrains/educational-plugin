@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.intellij.openapi.application.invokeAndWaitIfNeed
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -174,9 +174,7 @@ abstract class StepikConnector {
 
   fun postTask(project: Project, task: Task, lessonId: Int): StepSource? {
     var stepSourceData: StepSourceData? = null
-    // BACKCOMPAT: 2018.3
-    @Suppress("DEPRECATION")
-    invokeAndWaitIfNeed {
+    invokeAndWaitIfNeeded {
       FileDocumentManager.getInstance().saveAllDocuments()
       stepSourceData = StepSourceData(project, task, lessonId)
     }
@@ -275,9 +273,7 @@ abstract class StepikConnector {
   }
 
   fun updateTask(project: Project, task: Task): Int {
-    // BACKCOMPAT: 2018.3
-    @Suppress("DEPRECATION")
-    invokeAndWaitIfNeed {
+    invokeAndWaitIfNeeded {
       FileDocumentManager.getInstance().saveAllDocuments()
     }
     val stepSourceData = StepSourceData(project, task, task.lesson.id)

@@ -6,6 +6,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
 import kotlinx.css.Color
@@ -21,9 +22,7 @@ class StyleManager {
   val codeFont = typographyManager.codeFont
 
   val bodyColor = bodyColor()
-  // BACKCOMPAT: 2018.3
-  @Suppress("DEPRECATION")
-  val linkColor = JBColor.link().asCssColor()
+  val linkColor = JBUI.CurrentTheme.Link.linkColor().asCssColor()
   val bodyBackground = JBColor.background().asCssColor()
   val codeBackground = if (EduSettings.getInstance().shouldUseJavaFx()) bodyBackground
   else ColorUtil.dimmer(UIUtil.getPanelBackground()).asCssColor()

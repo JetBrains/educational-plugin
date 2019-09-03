@@ -2,7 +2,8 @@ package com.jetbrains.edu.python.learning.run;
 
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.actions.RunConfigurationProducer;
+import com.intellij.execution.actions.LazyRunConfigurationProducer;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -17,12 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.edu.python.learning.PyConfigurator.TESTS_PY;
 
-public class PyCCRunTestsConfigurationProducer extends RunConfigurationProducer<PyCCRunTestConfiguration> {
-  // BACKCOMPAT: 2018.3
-  @SuppressWarnings("deprecation")
-  protected PyCCRunTestsConfigurationProducer() {
-    super(PyCCRunTestsConfigurationType.getInstance());
-  }
+public class PyCCRunTestsConfigurationProducer extends LazyRunConfigurationProducer<PyCCRunTestConfiguration> {
 
   @Override
   protected boolean setupConfigurationFromContext(PyCCRunTestConfiguration configuration,
@@ -47,6 +43,12 @@ public class PyCCRunTestsConfigurationProducer extends RunConfigurationProducer<
     configuration.setName(generatedName);
     configuration.setScriptName(testsFile.getPath());
     return true;
+  }
+
+  @NotNull
+  @Override
+  public ConfigurationFactory getConfigurationFactory() {
+    return PyCCRunTestsConfigurationType.getInstance().getConfigurationFactories()[0];
   }
 
   @Nullable

@@ -16,9 +16,7 @@ class CheckResult @JvmOverloads constructor(
 
   val isSolved: Boolean get() = status == CheckStatus.Solved
 
-  // BACKCOMPAT: 2018.3
-  @Suppress("DEPRECATION")
-  private val String.escaped: String get() = if (needEscape) StringUtil.escapeXml(this) else this
+  private val String.escaped: String get() = if (needEscape) StringUtil.escapeXmlEntities(this) else this
 
   companion object {
     @JvmField val NO_LOCAL_CHECK = CheckResult(CheckStatus.Unchecked, "Local check isn't available")

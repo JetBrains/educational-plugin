@@ -2,10 +2,7 @@ package com.jetbrains.edu.coursecreator
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.invokeAndWaitIfNeed
-import com.intellij.openapi.application.runUndoTransparentWriteAction
-import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.application.*
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
@@ -202,9 +199,7 @@ object CCUtils {
 
   fun initializeTaskPlaceholders(task: Task, project: Project) {
     for (entry in task.taskFiles.entries) {
-      // BACKCOMPAT: 2018.3
-      @Suppress("DEPRECATION")
-      invokeAndWaitIfNeed { runWriteAction { initializeTaskFilePlaceholders(project, entry.value) } }
+      invokeAndWaitIfNeeded { runWriteAction { initializeTaskFilePlaceholders(project, entry.value) } }
     }
   }
 

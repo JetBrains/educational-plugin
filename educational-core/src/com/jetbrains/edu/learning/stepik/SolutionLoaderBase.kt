@@ -66,10 +66,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     var finishedTaskCount = 0
     val futures = HashMap<Int, Future<Boolean>>(tasks.size)
     for (task in tasksToUpdate) {
-      // BACKCOMPAT: 2018.3
-      @Suppress("DEPRECATION")
-      invokeAndWaitIfNeed {
-        if (project.isDisposed) return@invokeAndWaitIfNeed
+      invokeAndWaitIfNeeded {
+        if (project.isDisposed) return@invokeAndWaitIfNeeded
         for (editor in getOpenTaskEditors(project, task)) {
           editor.startLoading()
         }
@@ -87,10 +85,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
               progressIndicator.text = "Loading solution $finishedTaskCount of ${tasksToUpdate.size}"
             }
           }
-          // BACKCOMPAT: 2018.3
-          @Suppress("DEPRECATION")
-          invokeAndWaitIfNeed {
-            if (project.isDisposed) return@invokeAndWaitIfNeed
+          invokeAndWaitIfNeeded {
+            if (project.isDisposed) return@invokeAndWaitIfNeeded
             for (editor in getOpenTaskEditors(project, task)) {
               editor.stopLoading()
               editor.validateTaskFile()
@@ -261,11 +257,9 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
 
     private fun applySolutions(project: Project, task: Task, taskSolutions: TaskSolutions) {
-      // BACKCOMPAT: 2018.3
-      @Suppress("DEPRECATION")
-      invokeAndWaitIfNeed {
-        if (project.isDisposed) return@invokeAndWaitIfNeed
-        val taskDir = task.getTaskDir(project) ?: return@invokeAndWaitIfNeed
+      invokeAndWaitIfNeeded {
+        if (project.isDisposed) return@invokeAndWaitIfNeeded
+        val taskDir = task.getTaskDir(project) ?: return@invokeAndWaitIfNeeded
         task.status = taskSolutions.checkStatus
         val solutionsMap = taskSolutions.solutions.mapValues { it.value.first }
         val lesson = task.lesson

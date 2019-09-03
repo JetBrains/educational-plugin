@@ -4,7 +4,6 @@ package com.jetbrains.edu.learning
 
 import com.intellij.featureStatistics.FeatureStatisticsBundleProvider
 import com.intellij.openapi.Disposable
-import com.intellij.testFramework.PlatformTestUtil
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 
@@ -30,6 +29,5 @@ fun registerAdditionalResourceBundleProviders(disposable: Disposable) {
   }
 
   val provider = providerClass.newInstance() as FeatureStatisticsBundleProvider
-  // BACKCOMPAT: 2018.3
-  PlatformTestUtil.registerExtension(FeatureStatisticsBundleProvider.EP_NAME, provider, disposable)
+  FeatureStatisticsBundleProvider.EP_NAME.getPoint(null).registerExtension(provider, disposable)
 }

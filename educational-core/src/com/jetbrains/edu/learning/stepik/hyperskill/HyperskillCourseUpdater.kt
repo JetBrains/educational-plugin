@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.application.invokeAndWaitIfNeed
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
@@ -69,9 +69,7 @@ object HyperskillCourseUpdater {
   private fun needUpdateCourseAdditionalFiles(project: Project, remoteFiles: List<TaskFile>): Boolean {
     val courseDir = project.courseDir
     for (remoteFile in remoteFiles) {
-      // BACKCOMPAT: 2018.3
-      @Suppress("DEPRECATION")
-      val needToUpdate = invokeAndWaitIfNeed {
+      val needToUpdate = invokeAndWaitIfNeeded {
         runWriteAction {
           if (project.isDisposed) return@runWriteAction false
           val file = courseDir.findFileByRelativePath(remoteFile.name) ?: return@runWriteAction true
@@ -122,10 +120,8 @@ object HyperskillCourseUpdater {
       task.init(currentCourse, lesson, false)
     }
 
-    // BACKCOMPAT: 2018.3
-    @Suppress("DEPRECATION")
-    invokeAndWaitIfNeed {
-      if (project.isDisposed) return@invokeAndWaitIfNeed
+    invokeAndWaitIfNeeded {
+      if (project.isDisposed) return@invokeAndWaitIfNeeded
       val flm = FrameworkLessonManager.getInstance(project)
 
       for ((task, remoteTask) in lesson.taskList.zip(remoteLesson.taskList)) {

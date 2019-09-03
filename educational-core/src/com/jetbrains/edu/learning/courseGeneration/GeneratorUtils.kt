@@ -5,6 +5,7 @@ import com.intellij.ide.fileTemplates.FileTemplateUtil
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeed
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
@@ -255,9 +256,7 @@ object GeneratorUtils {
   fun evaluateExistingTemplate(child: VirtualFile, templateVariables: Map<String, Any>) {
     val rawContent = VfsUtil.loadText(child)
     val content = FileTemplateUtil.mergeTemplate(templateVariables, rawContent, false)
-    // BACKCOMPAT: 2018.3
-    @Suppress("DEPRECATION")
-    (invokeAndWaitIfNeed { runWriteAction { VfsUtil.saveText(child, content) } })
+    invokeAndWaitIfNeeded { runWriteAction { VfsUtil.saveText(child, content) } }
   }
 
   fun renameBaseModule(project: Project) {
