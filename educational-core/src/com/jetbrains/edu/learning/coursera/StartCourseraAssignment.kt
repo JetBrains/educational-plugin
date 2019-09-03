@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
+import com.intellij.util.ConcurrencyUtil
 import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -18,6 +19,8 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.net.URL
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 
 class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
   override fun actionPerformed(e: AnActionEvent) {
@@ -32,23 +35,34 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
   private object CourseraAssignmentsProvider : CoursesProvider {
     private const val LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/coursera-assignmnets.txt"
     private val LOG = Logger.getInstance(StartCourseraAssignment::class.java)
+    private val THREAD_NUMBER = Runtime.getRuntime().availableProcessors()
+    private val EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER)
 
     override fun loadCourses(): List<Course> {
       val courses = mutableListOf<Course>()
-      for (link in getCourseLinks()) {
-        val tempFile = FileUtil.createTempFile("coursera-zip", null)
-        DownloadUtil.downloadAtomically(null, link, tempFile)
-        val courseraCourse = getCourseraCourse(tempFile.absolutePath)
-        if (courseraCourse == null) {
-          LOG.error("Failed to get local course from $link")
-          continue
-        }
-        if (courseraCourse.configurator == null) {
-          continue
-        }
+      val tasks = mutableListOf<Callable<Course?>>()
 
-        courses.add(courseraCourse)
+      for (link in getCourseLinks()) {
+        tasks.add(Callable {
+          val tempFile = FileUtil.createTempFile("coursera-zip", null)
+          DownloadUtil.downloadAtomically(null, link, tempFile)
+          val courseraCourse = getCourseraCourse(tempFile.absolutePath)
+          if (courseraCourse == null) {
+            LOG.error("Failed to get local course from $link")
+            return@Callable null
+          }
+          if (courseraCourse.configurator == null) {
+            return@Callable null
+          }
+          return@Callable courseraCourse
+        })
       }
+
+      ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)
+        .filterNot { it.isCancelled }
+        .mapNotNull { it.get() }
+        .forEach { courses.add(it) }
+
       return courses
     }
 
