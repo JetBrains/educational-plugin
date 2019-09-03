@@ -1,5 +1,7 @@
 package com.jetbrains.edu.coursecreator.yaml
 
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
+import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
@@ -16,6 +18,7 @@ import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import junit.framework.TestCase
+import java.util.*
 
 
 class YamlDeserializationTest : YamlTestCase() {
@@ -571,6 +574,31 @@ class YamlDeserializationTest : YamlTestCase() {
       |""".trimMargin("|")
     val course = deserializeNotNull(yamlContent, CourseraCourse::class.java)
     TestCase.assertTrue(course.submitManually)
+  }
+
+  fun `test non-english locale`() {
+    val defaultLocale = Locale.getDefault()
+    Locale.setDefault(Locale.KOREAN)
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |programming_language: Plain text
+      |content:
+      |- the first lesson
+      |- the second lesson
+      |""".trimMargin("|")
+
+    assertNoException(object: AbstractExceptionCase<InvalidDefinitionException>() {
+      override fun getExpectedExceptionClass(): Class<InvalidDefinitionException> = InvalidDefinitionException::class.java
+
+      override fun tryClosure() {
+        deserializeNotNull(yamlContent, Course::class.java)
+      }
+    })
+    Locale.setDefault(defaultLocale)
   }
 
   private fun <T : ItemContainer> deserializeNotNull(yamlContent: String, clazz: Class<T>) =

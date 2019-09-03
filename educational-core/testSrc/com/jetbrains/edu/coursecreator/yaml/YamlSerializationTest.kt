@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
+import java.util.*
 
 
 class YamlSerializationTest : YamlTestCase() {
@@ -503,6 +504,32 @@ class YamlSerializationTest : YamlTestCase() {
       |submit_manually: true
       |
     """.trimMargin("|"))
+  }
+
+  fun `test course with non-english locale`() {
+    val defaultLocale = Locale.getDefault()
+    Locale.setDefault(Locale.KOREAN)
+
+    val course = course {
+      lesson("the first lesson")
+      lesson("the second lesson")
+    }
+    course.languageCode = "ru"
+    course.description = "This is a course about string theory.\nWhy not?"
+    doTest(course, """
+      |title: Test Course
+      |language: Russian
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?
+      |programming_language: Plain text
+      |content:
+      |- the first lesson
+      |- the second lesson
+      |
+    """.trimMargin("|"))
+
+    Locale.setDefault(defaultLocale)
   }
 
   private fun doTest(item: StudyItem, expected: String) {

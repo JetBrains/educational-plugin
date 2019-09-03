@@ -101,7 +101,7 @@ private class ProgrammingLanguageConverter : StdConverter<String, String>() {
 }
 
 private class LanguageConverter : StdConverter<String, String>() {
-  override fun convert(languageCode: String): String = Locale(languageCode).displayName
+  override fun convert(languageCode: String): String = displayLanguageByCode(languageCode)
 }
 
 private class CourseTypeSerializationConverter : StdConverter<String, String?>() {
@@ -183,12 +183,15 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       }
       setItems(items)
     }
-    val locale = Locale.getISOLanguages().find { Locale(it).displayLanguage == language } ?: formatError(
-      unknownFieldValueMessage("language", language))
+
+    val locale = Locale.getISOLanguages().find { displayLanguageByCode(it) == language }
+                 ?: formatError(unknownFieldValueMessage("language", language))
     course.languageCode = Locale(locale).language
     return course
   }
 }
+
+private fun displayLanguageByCode(languageCode: String) = Locale(languageCode).getDisplayLanguage(Locale.ENGLISH)
 
 class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>(project) {
   override fun applyChanges(existingItem: Course, deserializedItem: Course) {
