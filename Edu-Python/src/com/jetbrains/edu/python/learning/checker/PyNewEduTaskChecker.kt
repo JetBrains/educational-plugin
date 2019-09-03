@@ -4,6 +4,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestFiles
@@ -21,7 +22,7 @@ class PyNewEduTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(
   }
 
   override fun checkIfFailedToRunTests(stderr: String): CheckResult =
-    if (SYNTAX_ERRORS.any { it in stderr }) CheckResult(CheckStatus.Failed, "The file contains syntax errors") else CheckResult.SOLVED
+    if (SYNTAX_ERRORS.any { it in stderr }) CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE, stderr) else CheckResult.SOLVED
 
   companion object {
     private val SYNTAX_ERRORS = listOf("SyntaxError", "IndentationError", "TabError")

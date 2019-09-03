@@ -15,15 +15,7 @@ class CheckDetailsViewImpl(val project: Project) : CheckDetailsView() {
     printToConsole("Output", message, ConsoleViewContentType.NORMAL_OUTPUT)
   }
 
-  override fun showCompilationResults(message: String) {
-    printErrorToConsole("Compilation Results", message)
-  }
-
-  override fun showFailedToCheckMessage(message: String) {
-    printErrorToConsole("Failed to Check", message)
-  }
-
-  private fun printErrorToConsole(title: String, message: String) = printToConsole(title, message, ConsoleViewContentType.ERROR_OUTPUT)
+  override fun showBuildResults(title: String, message: String) = printToConsole(title, message, ConsoleViewContentType.ERROR_OUTPUT)
 
   private fun getToolWindow(): ToolWindow {
     return ToolWindowManager.getInstance(project).getToolWindow(CheckDetailsToolWindowFactory.ID)

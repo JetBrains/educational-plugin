@@ -36,10 +36,12 @@ public class CheckUtils {
   public static final String CONGRATS_MESSAGE = "CONGRATS_MESSAGE ";
   
   public static final List<String> COMPILATION_ERRORS = CollectionsKt.listOf("Compilation failed", "Compilation error");
-  public static final String COMPILATION_FAILED_MESSAGE = "Compilation failed";
+  public static final String COMPILATION_FAILED_MESSAGE = "Compilation Failed";
   public static final String NOT_RUNNABLE_MESSAGE = "Solution isn't runnable";
   public static final String LOGIN_NEEDED_MESSAGE = "Please, login to Stepik to check the task";
   public static final String FAILED_TO_CHECK_MESSAGE = "Failed to launch checking";
+  public static final String SYNTAX_ERROR_MESSAGE = "Syntax Error";
+  public static final List<String> ERRORS = CollectionsKt.listOf(COMPILATION_FAILED_MESSAGE, FAILED_TO_CHECK_MESSAGE, SYNTAX_ERROR_MESSAGE);
 
   private CheckUtils() {
   }
