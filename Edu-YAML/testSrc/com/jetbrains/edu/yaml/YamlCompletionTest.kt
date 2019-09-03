@@ -8,15 +8,9 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.yaml.skipYamlCompletionTests
 import kotlin.test.assertNotEquals
 
 class YamlCompletionTest : YamlCodeInsightTest() {
-
-  override fun shouldRunTest(): Boolean {
-    // BACKCOMPAT: 2018.3 tests fail in 2018.3 because of bug in completion provider
-    return !skipYamlCompletionTests && super.shouldRunTest()
-  }
 
   fun `test completion for course programming language`() {
     courseWithFiles(courseMode = CCUtils.COURSE_MODE) {

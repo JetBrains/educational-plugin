@@ -6,6 +6,7 @@ import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.progress.ProgressManager
@@ -25,6 +26,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.sanitizeName
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
+import org.jetbrains.plugins.gradle.settings.GradleSettings
+import org.jetbrains.plugins.gradle.settings.TestRunner
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
 
@@ -193,4 +196,20 @@ fun Task.hasSeparateModule(project: Project): Boolean {
   val taskModule = ModuleUtil.findModuleForFile(taskDir, project) ?: error("Module for task $name not found")
   val courseModule = ModuleUtil.findModuleForFile(project.courseDir, project)
   return taskModule != courseModule
+}
+
+inline fun <T> withGradleTestRunner(project: Project, task: Task, action: () -> T): T? {
+  val taskDir = task.getTaskDir(project) ?: return null
+  val module = ModuleUtil.findModuleForFile(taskDir, project) ?: return null
+  val path = ExternalSystemApiUtil.getExternalRootProjectPath(module) ?: return null
+  val settings = GradleSettings.getInstance(project).getLinkedProjectSettings(path) ?: return null
+
+  val oldValue = settings.testRunner
+  settings.testRunner = TestRunner.GRADLE
+
+  return try {
+    action()
+  } finally {
+    settings.testRunner = oldValue
+  }
 }
