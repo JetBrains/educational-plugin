@@ -3,11 +3,11 @@ package com.jetbrains.edu.learning.coursera
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
-import com.intellij.util.ConcurrencyUtil
 import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -20,7 +20,7 @@ import java.io.InputStreamReader
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.Callable
-import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
 class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
   override fun actionPerformed(e: AnActionEvent) {
@@ -35,18 +35,15 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
   private object CourseraAssignmentsProvider : CoursesProvider {
     private const val LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/coursera-assignmnets.txt"
     private val LOG = Logger.getInstance(StartCourseraAssignment::class.java)
-    private val THREAD_NUMBER = Runtime.getRuntime().availableProcessors()
-    private val EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER)
 
     override fun loadCourses(): List<Course> {
-      val courses = mutableListOf<Course>()
-      val tasks = mutableListOf<Callable<Course?>>()
+      val tasks = mutableListOf<Future<Course?>>()
 
       for (link in getCourseLinks()) {
-        tasks.add(Callable {
+        tasks.add(ApplicationManager.getApplication().executeOnPooledThread(Callable {
           val tempFile = FileUtil.createTempFile("coursera-zip", null)
           DownloadUtil.downloadAtomically(null, link, tempFile)
-          val courseraCourse = getCourseraCourse(tempFile.absolutePath)
+          val courseraCourse : Course? = getCourseraCourse(tempFile.absolutePath)
           if (courseraCourse == null) {
             LOG.error("Failed to get local course from $link")
             return@Callable null
@@ -55,15 +52,10 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
             return@Callable null
           }
           return@Callable courseraCourse
-        })
+        }))
       }
 
-      ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)
-        .filterNot { it.isCancelled }
-        .mapNotNull { it.get() }
-        .forEach { courses.add(it) }
-
-      return courses
+      return tasks.mapNotNull { it.get() }
     }
 
     private fun getCourseLinks(): List<String> {
