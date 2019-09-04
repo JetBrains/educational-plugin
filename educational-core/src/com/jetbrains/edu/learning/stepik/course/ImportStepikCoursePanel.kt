@@ -93,6 +93,10 @@ class ImportStepikCoursePanel(private val parent : Disposable) {
   private fun doValidation() {
     val isLoggedIn = EduSettings.isLoggedIn()
     errorLabel.isVisible = !isLoggedIn
+    if (isLoggedIn) {
+      // If user is logged - make panel smaller without `Log In` message
+      setPanelSize(Dimension(400, 50))
+    }
     validationListener?.onLoggedIn(isLoggedIn)
   }
 
