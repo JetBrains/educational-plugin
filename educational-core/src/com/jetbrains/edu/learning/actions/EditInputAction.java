@@ -177,7 +177,7 @@ public class EditInputAction extends DumbAwareAction {
     }
 
     @Override
-    public void onClosed(LightweightWindowEvent event) {
+    public void onClosed(@NotNull LightweightWindowEvent event) {
       for (final UserTest userTest : myStudyTaskManager.getUserTests(myTask)) {
         ApplicationManager.getApplication().runWriteAction(() -> {
           if (userTest.isEditable()) {
@@ -210,7 +210,7 @@ public class EditInputAction extends DumbAwareAction {
     }
 
     @Override
-    public void actionPerformed(final AnActionEvent e) {
+    public void actionPerformed(@NotNull final AnActionEvent e) {
       tabbedPane.removeTab(myTabInfo);
       UserTest userTest = myEditableTabs.get(myTabInfo);
       File testInputFile = new File(userTest.getInput());

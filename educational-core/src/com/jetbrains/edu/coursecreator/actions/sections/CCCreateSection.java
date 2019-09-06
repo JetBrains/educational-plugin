@@ -26,6 +26,7 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
     course.addSection(section);
   }
 
+  @NotNull
   @Override
   protected Function<VirtualFile, ? extends StudyItem> getStudyOrderable(@NotNull final StudyItem item,
                                                                          @NotNull Course course) {
