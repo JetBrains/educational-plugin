@@ -151,7 +151,7 @@ public class EditInputAction extends DumbAwareAction {
 
   private TabInfo addTestTab(int nameIndex, final TestContentPanel contentPanel, @NotNull final Task currentTask, boolean toBeClosable) {
     TabInfo testTab = toBeClosable ? createClosableTab(contentPanel, currentTask) : new TabInfo(contentPanel);
-    return testTab.setText(EduNames.TEST_TAB_NAME + String.valueOf(nameIndex));
+    return testTab.setText(EduNames.TEST_TAB_NAME + nameIndex);
   }
 
   private TabInfo createClosableTab(TestContentPanel contentPanel, Task currentTask) {
