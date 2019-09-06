@@ -17,7 +17,7 @@ private const val MODE = "mode"
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
 @JsonPropertyOrder(CourseYamlMixin.TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT,
                    MODE)
-class StudentCourseYamlMixin : CourseYamlMixin() {
+abstract class StudentCourseYamlMixin : CourseYamlMixin() {
   @JsonProperty(MODE)
-  var courseMode: String = EduNames.STUDY
+  private var courseMode: String = EduNames.STUDY
 }

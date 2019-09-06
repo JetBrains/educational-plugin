@@ -37,7 +37,7 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK)
 abstract class TaskYamlMixin {
   @JsonProperty(TYPE)
-  fun getItemType(): String {
+  private fun getItemType(): String {
     throw NotImplementedInMixin()
   }
 
@@ -54,7 +54,7 @@ abstract class TaskYamlMixin {
   @JsonSerialize(converter = FeedbackLinkToStringConverter::class)
   @JsonDeserialize(converter = StringToFeedbackLinkConverter::class)
   @JsonProperty(value = FEEDBACK_LINK, access = JsonProperty.Access.READ_WRITE)
-  lateinit var myFeedbackLink: FeedbackLink
+  protected open lateinit var myFeedbackLink: FeedbackLink
 
   @JsonProperty(CUSTOM_NAME)
   @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -89,6 +89,7 @@ class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
       return
     }
     existingItem.feedbackLink = deserializedItem.feedbackLink
+    @Suppress("DEPRECATION") // it's ok as we just copy value of deprecated field
     existingItem.customPresentableName = deserializedItem.customPresentableName
     if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {
       existingItem.isMultipleChoice = deserializedItem.isMultipleChoice

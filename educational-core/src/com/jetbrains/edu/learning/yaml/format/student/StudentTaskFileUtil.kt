@@ -16,12 +16,12 @@ private const val TEXT = "text"
 @JsonPropertyOrder(TaskFileYamlMixin.NAME, VISIBLE, PLACEHOLDERS,
                    TEXT)
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
+abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
   @JsonProperty(TEXT)
   private lateinit var myText: String
 }
 
-class StudentTaskFileBuilder(
+private class StudentTaskFileBuilder(
   val text: String?,
   name: String?,
   placeholders: List<AnswerPlaceholder> = mutableListOf(),

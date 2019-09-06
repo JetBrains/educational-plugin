@@ -36,10 +36,10 @@ abstract class AnswerPlaceholderDependencyYamlMixin {
   private var myIsVisible = true
 }
 
-class InternalIndexToUserVisibleConverter : StdConverter<Int, Int>() {
+private class InternalIndexToUserVisibleConverter : StdConverter<Int, Int>() {
   override fun convert(index: Int) = index + 1
 }
 
-class UserVisibleIndexToInternalConverter : StdConverter<Int, Int>() {
+private class UserVisibleIndexToInternalConverter : StdConverter<Int, Int>() {
   override fun convert(index: Int) = index - 1
 }

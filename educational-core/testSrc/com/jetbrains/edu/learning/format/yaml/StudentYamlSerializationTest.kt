@@ -74,7 +74,6 @@ class StudentYamlSerializationTest : EduTestCase()  {
     doTest(checkiOMission, """
     |type: checkio
     |status: Unchecked
-    |record: -1
     |code: code
     |seconds_from_change: 0
     |

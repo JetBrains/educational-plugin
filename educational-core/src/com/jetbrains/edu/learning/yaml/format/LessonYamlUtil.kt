@@ -54,7 +54,7 @@ open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?> = emp
     return lesson
   }
 
-  open fun createLesson(): Lesson = Lesson()
+  protected open fun createLesson(): Lesson = Lesson()
 }
 
 /**

@@ -13,13 +13,13 @@ import com.jetbrains.edu.learning.yaml.format.student.StudentTaskYamlMixin.Compa
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonPropertyOrder(TaskYamlMixin.TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK,
                    STATUS, RECORD)
-open class StudentTaskYamlMixin : TaskYamlMixin() {
+abstract class StudentTaskYamlMixin : TaskYamlMixin() {
 
   @JsonProperty(STATUS)
   private lateinit var myStatus: CheckStatus
 
   @JsonProperty(RECORD)
-  private var myRecord: Int = -1
+  protected open var myRecord: Int = -1
 
   companion object {
     const val STATUS = "status"

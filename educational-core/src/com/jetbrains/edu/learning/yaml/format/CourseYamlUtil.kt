@@ -83,7 +83,7 @@ abstract class CourseYamlMixin {
 
   @JsonProperty(ENVIRONMENT)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
-  lateinit var myEnvironment: String
+  private lateinit var myEnvironment: String
 
   @JsonSerialize(contentConverter = StudyItemConverter::class)
   @JsonProperty(CONTENT)
@@ -98,7 +98,7 @@ abstract class CourseYamlMixin {
 abstract class CourseraCourseYamlMixin : CourseYamlMixin() {
   @JsonProperty(SUBMIT_MANUALLY)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-  var submitManually = false
+  private var submitManually = false
 }
 
 private class ProgrammingLanguageConverter : StdConverter<String, String>() {

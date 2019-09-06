@@ -23,33 +23,33 @@ private const val STUDENT_ANSWER = "student_answer"
 @JsonPropertyOrder(AnswerPlaceholderYamlMixin.OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY,
                    INITIAL_STATE, INIT_FROM_DEPENDENCY, POSSIBLE_ANSWER, SELECTED, STATUS, STUDENT_ANSWER, LENGTH, AnswerPlaceholderYamlMixin.OFFSET)
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-class StudentAnswerPlaceholderYamlMixin : AnswerPlaceholderYamlMixin() {
+abstract class StudentAnswerPlaceholderYamlMixin : AnswerPlaceholderYamlMixin() {
 
   @JsonProperty(INITIAL_STATE)
-  var myInitialState: AnswerPlaceholder.MyInitialState? = null
+  private var myInitialState: AnswerPlaceholder.MyInitialState? = null
 
   @JsonProperty(INIT_FROM_DEPENDENCY)
-  var myIsInitializedFromDependency = false
+  private var myIsInitializedFromDependency = false
 
   @JsonProperty(POSSIBLE_ANSWER)
-  var myPossibleAnswer = ""
+  private var myPossibleAnswer = ""
 
   @JsonProperty(SELECTED)
-  var mySelected = false
+  private var mySelected = false
 
   @JsonProperty(STATUS)
-  var myStatus = CheckStatus.Unchecked
+  private var myStatus = CheckStatus.Unchecked
 
   @JsonProperty(STUDENT_ANSWER)
-  var myStudentAnswer: String? = null
+  private var myStudentAnswer: String? = null
 }
 
 class InitialStateMixin {
   @JsonProperty(LENGTH)
-  var length = -1
+  private var length = -1
 
   @JsonProperty(AnswerPlaceholderYamlMixin.OFFSET)
-  var offset = -1
+  private var offset = -1
 }
 
 class EduAnswerPlaceholderBuilder(

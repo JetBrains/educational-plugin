@@ -32,10 +32,10 @@ abstract class ChoiceTaskYamlMixin : TaskYamlMixin() {
   private lateinit var choiceOptions: List<ChoiceOption>
 
   @JsonProperty(FEEDBACK_CORRECT)
-  var messageCorrect: String = ""
+  private var messageCorrect: String = ""
 
   @JsonProperty(FEEDBACK_INCORRECT)
-  var messageIncorrect: String = ""
+  private var messageIncorrect: String = ""
 
   companion object {
     const val OPTIONS = "options"
