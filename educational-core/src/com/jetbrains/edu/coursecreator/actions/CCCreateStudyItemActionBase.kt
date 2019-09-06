@@ -89,11 +89,11 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     presentation.isEnabledAndVisible = true
   }
 
-  protected fun getParentDir(project: Project, course: Course, directory: VirtualFile): VirtualFile? {
+  private fun getParentDir(project: Project, course: Course, directory: VirtualFile): VirtualFile? {
     return if (isAddedAsLast(directory, project, course)) directory else directory.parent
   }
 
-  fun createItem(
+  private fun createItem(
     project: Project,
     sourceDirectory: VirtualFile,
     course: Course,
