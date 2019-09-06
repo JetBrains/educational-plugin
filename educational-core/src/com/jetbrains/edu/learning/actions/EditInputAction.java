@@ -206,7 +206,7 @@ public class EditInputAction extends DumbAwareAction {
       e.getPresentation().setIcon(AllIcons.Actions.Close);
       e.getPresentation().setHoveredIcon(AllIcons.Actions.CloseHovered);
       e.getPresentation().setVisible(UISettings.getInstance().getShowCloseButton());
-      e.getPresentation().setText("Delete test");
+      e.getPresentation().setText("Delete Test");
     }
 
     @Override
