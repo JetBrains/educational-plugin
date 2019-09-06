@@ -28,9 +28,7 @@ class StudentTaskFileBuilder(
   visible: Boolean = true
 ) : TaskFileBuilder(name, placeholders, visible) {
   override fun createTaskFile(): TaskFile {
-    val taskFile = super.createTaskFile()
-    taskFile.setText(text)
-    return taskFile
+    return super.createTaskFile().also { it.setText(text) }
   }
 }
 
