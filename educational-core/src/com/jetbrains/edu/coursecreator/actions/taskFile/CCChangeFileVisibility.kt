@@ -9,8 +9,8 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
-class CCMakeVisibleToStudent : CCChangeFileVisibility("Make Visible to Student", true)
-class CCHideFromStudent : CCChangeFileVisibility("Hide from Student", false)
+class CCMakeVisibleToLearner : CCChangeFileVisibility("Make Visible to Learner", true)
+class CCHideFromLearner : CCChangeFileVisibility("Hide from Learner", false)
 
 abstract class CCChangeFileVisibility(val name: String, val requiredVisibility: Boolean) : CCChangeFilePropertyActionBase(name) {
 

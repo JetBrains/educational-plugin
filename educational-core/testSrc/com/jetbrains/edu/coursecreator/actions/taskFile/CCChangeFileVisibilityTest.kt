@@ -81,8 +81,8 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
       dataContext(selectedFiles.toTypedArray())
     }
 
-    val hide = CCHideFromStudent()
-    val show = CCMakeVisibleToStudent()
+    val hide = CCHideFromLearner()
+    val show = CCMakeVisibleToLearner()
     checkAction(hide, show, dataContext, affectedCourseFiles, shouldActionBeEnabled, shouldOppositeActionBeEnabled)
     affectedCourseFiles.forEach { it.isVisible = !it.isVisible}
     checkAction(show, hide, dataContext, affectedCourseFiles, shouldActionBeEnabled, shouldOppositeActionBeEnabled)

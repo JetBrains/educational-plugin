@@ -119,8 +119,8 @@
 
     <group id="Educational.Educator.ProjectView" popup="true" text="Course Creator"
            class="com.jetbrains.edu.coursecreator.actions.CCProjectViewActionGroup">
-      <action id="Educational.Educator.ShowToStudent" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCMakeVisibleToStudent"/>
-      <action id="Educational.Educator.HideFromStudent" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCHideFromStudent"/>
+      <action id="Educational.Educator.ShowToStudent" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCMakeVisibleToLearner"/>
+      <action id="Educational.Educator.HideFromStudent" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCHideFromLearner"/>
       <action id="Educational.Educator.ShowPreview" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCShowPreview">
         <add-to-group group-id="EditorTabPopupMenu"/>
       </action>
