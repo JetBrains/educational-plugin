@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 
 @JsonDeserialize(builder = FrameworkLessonBuilder::class)
 @JsonAppend(props = [JsonAppend.Prop(LessonTypePropertyWriter::class, name = TYPE, type = String::class)], prepend = true)
-abstract class FrameworkLessonYamlUtil : LessonYamlMixin()
+abstract class FrameworkLessonYamlMixin : LessonYamlMixin()
 
 @JsonPOJOBuilder(withPrefix = "")
 private class FrameworkLessonBuilder(@JsonProperty(CONTENT) content: List<String?>) : LessonBuilder(content) {

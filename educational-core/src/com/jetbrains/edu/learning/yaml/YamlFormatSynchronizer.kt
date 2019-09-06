@@ -106,7 +106,7 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(Course::class.java, CourseYamlMixin::class.java)
     mapper.addMixIn(Section::class.java, SectionYamlMixin::class.java)
     mapper.addMixIn(Lesson::class.java, LessonYamlMixin::class.java)
-    mapper.addMixIn(FrameworkLesson::class.java, FrameworkLessonYamlUtil::class.java)
+    mapper.addMixIn(FrameworkLesson::class.java, FrameworkLessonYamlMixin::class.java)
     mapper.addMixIn(Task::class.java, TaskYamlMixin::class.java)
     mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskYamlMixin::class.java)
     mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionYamlMixin::class.java)
