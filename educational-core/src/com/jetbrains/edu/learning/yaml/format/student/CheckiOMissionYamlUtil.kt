@@ -13,7 +13,7 @@ private const val SECONDS_FROM_CHANGE = "seconds_from_change"
 @JsonPropertyOrder(TaskYamlMixin.TYPE, TaskYamlMixin.CUSTOM_NAME, TaskYamlMixin.FILES,
                    StudentTaskYamlMixin.STATUS,
                    CODE, SECONDS_FROM_CHANGE)
-abstract class CheckiOMissionMixin : StudentTaskYamlMixin() {
+abstract class CheckiOMissionYamlMixin : StudentTaskYamlMixin() {
   @JsonIgnore
   override lateinit var myFeedbackLink: FeedbackLink
 
