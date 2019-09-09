@@ -27,6 +27,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val name = "Test Course"
     val language = "Russian"
     val programmingLanguage = "Plain text"
+    val hideSolution = true
     val firstLesson = "the first lesson"
     val secondLesson = "the second lesson"
     val yamlContent = """
@@ -36,6 +37,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |  This is a course about string theory.
       |  Why not?"
       |programming_language: $programmingLanguage
+      |hide_solution: $hideSolution
       |content:
       |- $firstLesson
       |- $secondLesson
@@ -44,6 +46,7 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
+    TestCase.assertEquals(hideSolution, course.hideSolution)
     assertNull(course.languageVersion)
     assertNotNull(course.description)
     assertEquals(EduNames.DEFAULT_ENVIRONMENT, course.environment)
@@ -62,6 +65,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |""".trimMargin("|")
     val course = deserializeNotNull(yamlContent, Course::class.java)
     assertTrue(course is EduCourse)
+    TestCase.assertFalse(course.hideSolution)
     assertEmpty(course.items)
   }
 

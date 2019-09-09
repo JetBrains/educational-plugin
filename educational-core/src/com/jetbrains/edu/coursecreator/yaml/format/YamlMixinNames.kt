@@ -12,6 +12,7 @@ object YamlMixinNames {
   const val LANGUAGE = "language"
   const val SUMMARY = "summary"
   const val PROGRAMMING_LANGUAGE = "programming_language"
+  const val HIDE_SOLUTION = "hide_solution"
 
   const val ENVIRONMENT = "environment"
   const val PROGRAMMING_LANGUAGE_VERSION = "programming_language_version"

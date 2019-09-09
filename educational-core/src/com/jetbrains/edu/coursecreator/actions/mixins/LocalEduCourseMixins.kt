@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.coursecreator.yaml.format.NotImplementedInMixin
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
@@ -66,7 +67,8 @@ private const val SUBMIT_MANUALLY = "submit_manually"
 private const val CUSTOM_NAME = "custom_name"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
-@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS)
+@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS,
+                   YamlMixinNames.HIDE_SOLUTION)
 @JsonSerialize(using = CourseSerializer::class)
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
@@ -102,6 +104,10 @@ abstract class LocalEduCourseMixin {
   @JsonProperty(ADDITIONAL_FILES)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   private lateinit var additionalFiles: List<TaskFile>
+
+  @JsonProperty(YamlMixinNames.HIDE_SOLUTION)
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  private var hideSolution: Boolean = false
 }
 
 @JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)

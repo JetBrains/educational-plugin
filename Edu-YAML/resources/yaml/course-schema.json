@@ -44,6 +44,10 @@
         "string"
       ]
     },
+    "hide_solution": {
+      "description": "Student's possibility to peek and compare solutions",
+      "type": "boolean"
+    },
     "environment": {
       "description": "Additional information about course environment. For example, Kotlin courses are supported for Android environment",
       "type": [
