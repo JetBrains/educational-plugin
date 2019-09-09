@@ -21,6 +21,7 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 
 class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
   override fun actionPerformed(e: AnActionEvent) {
@@ -43,7 +44,7 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
         tasks.add(ApplicationManager.getApplication().executeOnPooledThread(Callable {
           val tempFile = FileUtil.createTempFile("coursera-zip", null)
           DownloadUtil.downloadAtomically(null, link, tempFile)
-          val courseraCourse : Course? = getCourseraCourse(tempFile.absolutePath)
+          val courseraCourse: Course? = getCourseraCourse(tempFile.absolutePath)
           if (courseraCourse == null) {
             LOG.error("Failed to get local course from $link")
             return@Callable null
@@ -55,7 +56,7 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
         }))
       }
 
-      return tasks.mapNotNull { it.get() }
+      return tasks.mapNotNull { it.get(60, TimeUnit.SECONDS) }
     }
 
     private fun getCourseLinks(): List<String> {
