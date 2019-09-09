@@ -3,10 +3,12 @@ package com.jetbrains.edu.learning.format.yaml
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.STUDENT_MAPPER
 
@@ -27,9 +29,23 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(EduNames.STUDY, course!!.courseMode)
   }
 
+  fun `test checkio station`() {
+    val firstTask = "Introduction Task"
+    val secondTask = "Advanced Task"
+    val yamlContent = """
+      |type: checkiO
+      |content:
+      |- $firstTask
+      |- $secondTask
+    """.trimMargin("|")
+    val lesson = STUDENT_MAPPER.deserializeLesson(yamlContent)
+    assertTrue(lesson is CheckiOStation)
+    assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
+  }
+
   fun `test checkio mission`() {
     val yamlContent = """
-    |type: checkio
+    |type: checkiO
     |status: Unchecked
     |record: -1
     |code: code

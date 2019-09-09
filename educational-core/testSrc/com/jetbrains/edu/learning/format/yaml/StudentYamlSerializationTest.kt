@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.format.yaml
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -23,6 +24,22 @@ class StudentYamlSerializationTest : EduTestCase()  {
     """.trimMargin("|"))
   }
 
+  fun `test checkio station`() {
+    val station = CheckiOStation()
+    station.name = "station"
+
+    val mission = CheckiOMission()
+    mission.name = "mission"
+
+    station.addMission(mission)
+
+    doTest(station, """
+      |type: checkiO
+      |content:
+      |- mission
+      |
+    """.trimMargin("|"))
+  }
 
   fun `test task`() {
     val task = courseWithFiles {
@@ -72,7 +89,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
     checkiOMission.code = "code"
 
     doTest(checkiOMission, """
-    |type: checkio
+    |type: checkiO
     |status: Unchecked
     |code: code
     |seconds_from_change: 0

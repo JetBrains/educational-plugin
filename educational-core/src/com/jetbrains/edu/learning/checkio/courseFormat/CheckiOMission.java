@@ -76,7 +76,7 @@ public class CheckiOMission extends EduTask {
 
   @Override
   public String getItemType() {
-    return "checkio";
+    return "checkiO";
   }
 
   @Override

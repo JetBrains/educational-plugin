@@ -27,6 +27,11 @@ public class CheckiOStation extends Lesson {
   }
 
   @Override
+  public String getItemType() {
+    return "checkiO";
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;

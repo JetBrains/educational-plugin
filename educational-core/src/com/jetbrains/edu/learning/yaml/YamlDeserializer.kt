@@ -17,6 +17,7 @@ import com.jetbrains.edu.coursecreator.yaml.*
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.getEditor
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -97,6 +98,7 @@ object YamlDeserializer {
     val type = asText(treeNode.get("type"))
     val clazz = when (type) {
       FrameworkLesson().itemType -> FrameworkLesson::class.java
+      CheckiOStation().itemType -> CheckiOStation::class.java // for student projects only
       Lesson().itemType, null -> Lesson::class.java
       else -> formatError(unsupportedItemTypeMessage(type, EduNames.LESSON))
     }
@@ -116,7 +118,7 @@ object YamlDeserializer {
       "ide" -> IdeTask::class.java
       // for student mode
       "code" -> CodeTask::class.java
-      "checkio" -> CheckiOMission::class.java
+      "checkiO" -> CheckiOMission::class.java
       else -> formatError(unsupportedItemTypeMessage(type, EduNames.TASK))
     }
     return treeToValue(treeNode, clazz)

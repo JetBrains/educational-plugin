@@ -33,6 +33,7 @@ import com.jetbrains.edu.coursecreator.yaml.YamlSynchronizationListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -123,6 +124,7 @@ object YamlFormatSynchronizer {
 
   private fun ObjectMapper.addStudentMixIns() {
     addMixIn(Course::class.java, StudentCourseYamlMixin::class.java)
+    addMixIn(CheckiOStation::class.java, CheckiOStationYamlMixin::class.java)
     addMixIn(Task::class.java, StudentTaskYamlMixin::class.java)
     addMixIn(ChoiceTask::class.java, StudentChoiceTaskYamlMixin::class.java)
     addMixIn(CheckiOMission::class.java, CheckiOMissionYamlMixin::class.java)
