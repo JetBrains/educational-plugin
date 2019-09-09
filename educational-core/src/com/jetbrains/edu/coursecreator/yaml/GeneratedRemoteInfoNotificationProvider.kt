@@ -7,7 +7,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isRemoteConfigFile
 
 class GeneratedRemoteInfoNotificationProvider(val project: Project) :
@@ -21,7 +20,7 @@ class GeneratedRemoteInfoNotificationProvider(val project: Project) :
   override fun getKey() = KEY
 
   override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): GeneratedRemoteInfoNotificationPanel? {
-    if (CCUtils.isCourseCreator(project) && isRemoteConfigFile(file)) {
+    if (isRemoteConfigFile(file)) {
       val panel = GeneratedRemoteInfoNotificationPanel()
       panel.setText(NOTIFICATION_TEXT)
       return panel
