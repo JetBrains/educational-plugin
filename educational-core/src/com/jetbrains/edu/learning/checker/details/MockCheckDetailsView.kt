@@ -6,7 +6,7 @@ class MockCheckDetailsView : CheckDetailsView() {
   override fun showOutput(message: String) {
   }
 
-  override fun showBuildResults(title: String, message: String) {
+  override fun showCheckResultDetails(title: String, message: String) {
   }
 
   override fun showJavaFXResult(title: String, panel: JFXPanel) {

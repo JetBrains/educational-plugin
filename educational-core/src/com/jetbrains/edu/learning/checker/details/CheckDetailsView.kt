@@ -9,7 +9,7 @@ abstract class CheckDetailsView {
 
   abstract fun showOutput(message: String)
 
-  abstract fun showBuildResults(title: String, message: String)
+  abstract fun showCheckResultDetails(title: String, message: String)
 
   abstract fun showJavaFXResult(title: String, panel: JFXPanel)
 

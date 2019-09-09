@@ -51,7 +51,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     val messagePanel = CheckMessagePanel.create(checkResult)
     val details = checkResult.details
     if (details != null && checkResult.message in CheckUtils.ERRORS) {
-      CheckDetailsView.getInstance(project).showBuildResults(checkResult.message, details)
+      CheckDetailsView.getInstance(project).showCheckResultDetails(checkResult.message, details)
     }
 
     val expectedActualTextLength = if (checkResult.diff != null) {
