@@ -160,6 +160,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
     course.apply {
       name = title
       description = summary
+      environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
 
       // for C++ there are two languages with the same display name, and we have to filter out the one we have configurator for
       val languages = Language.getRegisteredLanguages()
@@ -173,7 +174,6 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
         error("Multiple configurators for language with name: $programmingLanguage")
       }
 
-      environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
       language = languages.first().id
 
       val languageSettings = configurator?.courseBuilder?.languageSettings
