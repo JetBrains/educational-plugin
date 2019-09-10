@@ -29,7 +29,7 @@ class InsertShortcutActionTest : EduActionTestCase() {
     myFixture.openFileInEditor(taskDescriptionFile)
 
     testAction(createDataContext(taskDescriptionFile), object : InsertShortcutAction() {
-      override fun createAndShowBalloon(listWithSearchField: ListWithSearchField, project: Project): JBPopup? {
+      override fun createAndShowBalloon(listWithSearchField: ListWithSearchField, project: Project): JBPopup {
         val balloon = super.createAndShowBalloon(listWithSearchField, project)
         val actionList = listWithSearchField.list
         actionList.selectedIndex = 0
