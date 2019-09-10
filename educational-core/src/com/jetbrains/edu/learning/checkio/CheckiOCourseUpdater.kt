@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.checkio.notifications.CheckiONotification
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 
 class CheckiOCourseUpdater(
@@ -36,6 +37,7 @@ class CheckiOCourseUpdater(
     runInEdt {
       synchronize()
       ProjectView.getInstance(project).refresh()
+      YamlFormatSynchronizer.saveAll(project)
     }
   }
 
