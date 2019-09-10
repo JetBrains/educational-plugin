@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.loadCourseStructure
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 import java.net.URISyntaxException
 import java.util.*
@@ -49,6 +50,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
       ProjectView.getInstance(project).refresh()
       showNotification(project, "Course updated", null)
       course.configurator?.courseBuilder?.refreshProject(project)
+      YamlFormatSynchronizer.saveAll(project)
     }
   }
 
