@@ -20,8 +20,8 @@ private const val STATUS = "status"
 private const val STUDENT_ANSWER = "student_answer"
 
 @JsonDeserialize(builder = EduAnswerPlaceholderBuilder::class)
-@JsonPropertyOrder(AnswerPlaceholderYamlMixin.OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY,
-                   INITIAL_STATE, INIT_FROM_DEPENDENCY, POSSIBLE_ANSWER, SELECTED, STATUS, STUDENT_ANSWER, LENGTH, AnswerPlaceholderYamlMixin.OFFSET)
+@JsonPropertyOrder(AnswerPlaceholderYamlMixin.OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY, INITIAL_STATE, INIT_FROM_DEPENDENCY,
+                   POSSIBLE_ANSWER, SELECTED, STATUS, STUDENT_ANSWER, LENGTH, AnswerPlaceholderYamlMixin.OFFSET)
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 abstract class StudentAnswerPlaceholderYamlMixin : AnswerPlaceholderYamlMixin() {
 

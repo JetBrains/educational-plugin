@@ -13,8 +13,7 @@ import com.jetbrains.edu.learning.yaml.format.TaskFileYamlMixin.Companion.VISIBL
 private const val TEXT = "text"
 
 @JsonDeserialize(builder = StudentTaskFileBuilder::class)
-@JsonPropertyOrder(TaskFileYamlMixin.NAME, VISIBLE, PLACEHOLDERS,
-                   TEXT)
+@JsonPropertyOrder(TaskFileYamlMixin.NAME, VISIBLE, PLACEHOLDERS, TEXT)
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
   @JsonProperty(TEXT)

@@ -10,9 +10,8 @@ private const val CODE = "code"
 private const val SECONDS_FROM_CHANGE = "seconds_from_change"
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(TaskYamlMixin.TYPE, TaskYamlMixin.CUSTOM_NAME, TaskYamlMixin.FILES,
-                   StudentTaskYamlMixin.STATUS,
-                   CODE, SECONDS_FROM_CHANGE)
+@JsonPropertyOrder(TaskYamlMixin.TYPE, TaskYamlMixin.CUSTOM_NAME, TaskYamlMixin.FILES, StudentTaskYamlMixin.STATUS, CODE,
+                   SECONDS_FROM_CHANGE)
 abstract class CheckiOMissionYamlMixin : StudentTaskYamlMixin() {
   @JsonIgnore
   override lateinit var myFeedbackLink: FeedbackLink

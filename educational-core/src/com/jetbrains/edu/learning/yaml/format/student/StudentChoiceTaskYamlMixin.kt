@@ -16,10 +16,10 @@ private const val SELECTED_OPTIONS = "selected_options"
 private const val STATUS = "status"
 private const val RECORD = "record"
 
-@JsonPropertyOrder(TaskYamlMixin.TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, FILES, FEEDBACK_LINK,
-                   OPTIONS, STATUS, RECORD)
+@JsonPropertyOrder(TaskYamlMixin.TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, FILES, FEEDBACK_LINK, OPTIONS,
+                   STATUS, RECORD)
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-abstract class StudentChoiceTaskYamlMixin: ChoiceTaskYamlMixin() {
+abstract class StudentChoiceTaskYamlMixin : ChoiceTaskYamlMixin() {
   @JsonProperty(SELECTED_OPTIONS)
   private var selectedVariants = mutableListOf<Int>()
 

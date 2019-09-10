@@ -11,8 +11,7 @@ import com.jetbrains.edu.learning.yaml.format.student.StudentTaskYamlMixin.Compa
 import com.jetbrains.edu.learning.yaml.format.student.StudentTaskYamlMixin.Companion.STATUS
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(TaskYamlMixin.TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK,
-                   STATUS, RECORD)
+@JsonPropertyOrder(TaskYamlMixin.TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, STATUS, RECORD)
 abstract class StudentTaskYamlMixin : TaskYamlMixin() {
 
   @JsonProperty(STATUS)
