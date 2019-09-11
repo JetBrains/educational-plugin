@@ -230,8 +230,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   protected inline fun withVirtualFileListener(course: Course, action: () -> Unit) {
     val virtualFileManager = VirtualFileManager.getInstance()
 
-    val listener = if (course.isStudy) UserCreatedFileListener(project)
-    else CCVirtualFileListener(project)
+    val listener = if (course.isStudy) UserCreatedFileListener(project) else CCVirtualFileListener(project)
     virtualFileManager.addVirtualFileListener(listener)
     try {
       action()

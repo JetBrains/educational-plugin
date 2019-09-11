@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.TestActionEvent
@@ -11,14 +12,14 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane
 
 abstract class EduActionTestCase : EduTestCase() {
 
-  protected fun dataContext(files: Array<VirtualFile>): DataContext {
+  protected fun dataContext(files: Array<VirtualFile>): MapDataContext {
     return MapDataContext().apply {
       put(CommonDataKeys.PROJECT, project)
       put(CommonDataKeys.VIRTUAL_FILE_ARRAY, files)
     }
   }
 
-  protected fun dataContext(file: VirtualFile): DataContext {
+  protected fun dataContext(file: VirtualFile): MapDataContext {
     val psiManager = PsiManager.getInstance(project)
     val psiFile = psiManager.findDirectory(file) ?: psiManager.findFile(file)
     val studyItem = findStudyItem(file)
@@ -31,6 +32,17 @@ abstract class EduActionTestCase : EduTestCase() {
       if (studyItem != null) {
         put(CourseViewPane.STUDY_ITEM, studyItem)
       }
+    }
+  }
+
+  protected fun dataContext(element: PsiElement): MapDataContext {
+    val file = element.containingFile.virtualFile
+    return MapDataContext().apply {
+      put(CommonDataKeys.PROJECT, project)
+      put(CommonDataKeys.VIRTUAL_FILE, file)
+      put(CommonDataKeys.VIRTUAL_FILE_ARRAY, arrayOf(file))
+      put(CommonDataKeys.PSI_ELEMENT, element)
+      put(PlatformDataKeys.DELETE_ELEMENT_PROVIDER, CCStudyItemDeleteProvider())
     }
   }
 
