@@ -24,6 +24,9 @@ public class TaskFile {
   private boolean myHighlightErrors = false;
   private List<AnswerPlaceholder> myAnswerPlaceholders = new ArrayList<>();
   private boolean myVisible = true;
+  // Should be used only in student mode
+  // TODO: add to student yaml
+  private boolean myLearnerCreated = false;
 
   private String myText = "";
 
@@ -112,6 +115,14 @@ public class TaskFile {
     myVisible = visible;
   }
 
+  public boolean isLearnerCreated() {
+    return myLearnerCreated;
+  }
+
+  public void setLearnerCreated(boolean learnerCreated) {
+    myLearnerCreated = learnerCreated;
+  }
+
   @NotNull
   public String getText() {
     return myText;
@@ -145,4 +156,6 @@ public class TaskFile {
     }
     return true;
   }
+
+
 }

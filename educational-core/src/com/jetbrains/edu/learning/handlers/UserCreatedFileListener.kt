@@ -13,4 +13,9 @@ class UserCreatedFileListener(project: Project) : EduVirtualFileListener(project
     val (task, pathInTask) = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return
     task.taskFiles.remove(pathInTask)
   }
+
+  override fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {
+    super.taskFileCreated(taskFile, file)
+    taskFile.isLearnerCreated = true
+  }
 }
