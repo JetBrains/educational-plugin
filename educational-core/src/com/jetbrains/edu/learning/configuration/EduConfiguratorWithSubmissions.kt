@@ -35,6 +35,7 @@ import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckDetailsPanel
 import com.jetbrains.edu.learning.ui.taskDescription.createTextPane
+import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
 import icons.EducationalCoreIcons
 import java.awt.BorderLayout
 import java.awt.Component.LEFT_ALIGNMENT
@@ -48,8 +49,9 @@ import javax.swing.JSeparator
 import javax.swing.JTextPane
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
+import kotlin.math.roundToInt
 
-abstract class EduConfiguratorBase<Settings> : EduConfigurator<Settings> {
+abstract class EduConfiguratorWithSubmissions<Settings> : EduConfigurator<Settings> {
   
   override fun additionalTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
     if (currentTask !is EduTask && currentTask !is CodeTask && currentTask !is ChoiceTask) return null
@@ -63,7 +65,7 @@ abstract class EduConfiguratorBase<Settings> : EduConfigurator<Settings> {
     if (EduSettings.isLoggedIn()) {
       val submissions = getSubmissionsFromMemory(currentTask.id) ?: return null
       when {
-        submissions.isEmpty() -> descriptionText.append("You have no submissions yet")
+        submissions.isEmpty() -> descriptionText.append("<a ${StyleManager().textStyleHeader}>You have no submissions yet")
         currentTask is ChoiceTask -> addViewOnStepikLink(descriptionText, currentTask, textPane)
         else -> {
           addSubmissionsToText(submissions, descriptionText)
@@ -83,14 +85,15 @@ abstract class EduConfiguratorBase<Settings> : EduConfigurator<Settings> {
                                   currentTask: ChoiceTask,
                                   textPane: JTextPane) {
     descriptionText.append(
-      "<a style=color:${ColorUtil.toHex(hyperlinkColor())} " +
+      "<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(hyperlinkColor())} " +
       "href=https://stepik.org/submissions/${currentTask.id}?unit=${currentTask.lesson.unitId}\">View submissions</a>" +
-      " for Quiz tasks on Stepik.org")
+      "<a ${StyleManager().textStyleHeader}> for Quiz tasks on Stepik.org")
     textPane.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
   }
 
   private fun addLoginLink(descriptionText: StringBuilder, textPane: JTextPane) {
-    descriptionText.append("<a style=color:${ColorUtil.toHex(hyperlinkColor())} href=>Log in to Stepik.org</a> to view submissions")
+    descriptionText.append("<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(hyperlinkColor())}" +
+                           " href=>Log in to Stepik.org</a><a ${StyleManager().textStyleHeader}> to view submissions")
     textPane.addHyperlinkListener(HyperlinkListener { e ->
       if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
         StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
@@ -146,9 +149,10 @@ abstract class EduConfiguratorBase<Settings> : EduConfigurator<Settings> {
 
   private fun submissionLink(submission: Submission): String? {
     val time = submission.time ?: return null
+    val pictureSize = (StyleManager().bodyFontSize * 0.75).roundToInt()
     val text = formatDate(time)
-    return "<a><img src=${getImageUrl(submission.status)} hspace=6 width=10 height=10/></a>" +
-           "<a style=color:${getLinkColor(submission)} href=${submission.id}> ${text}</a>"
+    return "<a><img src=${getImageUrl(submission.status)} hspace=6 width=${pictureSize} height=${pictureSize}/></a>" +
+           "<a ${StyleManager().textStyleHeader};color:${getLinkColor(submission)} href=${submission.id}> ${text}</a>"
   }
 
   private fun getImageUrl(status: String?): URL? {

@@ -85,7 +85,7 @@ public class EduProjectComponent implements ProjectComponent {
     myBusConnection.subscribe(EditorColorsManager.TOPIC, new EditorColorsListener() {
       @Override
       public void globalSchemeChange(EditorColorsScheme scheme) {
-        TaskDescriptionView.getInstance(myProject).updateTaskDescription();
+        TaskDescriptionView.updateAllTabs(myProject, TaskDescriptionView.getInstance(myProject));
       }
     });
   }

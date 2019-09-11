@@ -6,12 +6,12 @@ import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
-import com.jetbrains.edu.learning.configuration.EduConfiguratorBase
+import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 
-open class JsConfigurator : EduConfiguratorBase<JsNewProjectSettings>() {
+open class JsConfigurator : EduConfiguratorWithSubmissions<JsNewProjectSettings>() {
   private val courseBuilder = JsCourseBuilder()
 
   override fun getCourseBuilder(): EduCourseBuilder<JsNewProjectSettings> = courseBuilder

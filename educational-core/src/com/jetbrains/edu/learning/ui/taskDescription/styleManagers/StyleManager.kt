@@ -27,6 +27,8 @@ class StyleManager {
   val codeBackground = if (EduSettings.getInstance().shouldUseJavaFx()) bodyBackground
   else ColorUtil.dimmer(UIUtil.getPanelBackground()).asCssColor()
 
+  val textStyleHeader = "style=font-size:${bodyFontSize}"
+
   val scrollBarStylesheets = getScrollBarStylesheetsUrls()
   val baseStylesheet = resourceUrl("/style/browser.css")
   val buttonStylesheets = listOfNotNull(baseStylesheet,

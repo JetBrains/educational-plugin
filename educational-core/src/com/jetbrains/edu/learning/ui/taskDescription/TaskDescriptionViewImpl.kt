@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.configuration.EduConfiguratorBase.Companion.SUBMISSIONS_TAB_NAME
+import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions.Companion.SUBMISSIONS_TAB_NAME
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task

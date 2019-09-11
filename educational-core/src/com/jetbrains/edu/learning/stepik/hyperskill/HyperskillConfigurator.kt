@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckDetailsPanel
 import com.jetbrains.edu.learning.ui.taskDescription.createTextPane
+import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
 import javax.swing.JPanel
 
 interface HyperskillConfigurator<T> : EduConfigurator<T> {
@@ -31,7 +32,7 @@ interface HyperskillConfigurator<T> : EduConfigurator<T> {
       val textPane = createTextPane()
       textPane.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
       val topics = course.taskToTopics[currentTask.index - 1]
-      var descriptionText = "<h3>Topics for current stage :</h3>"
+      var descriptionText = "<h3 ${StyleManager().textStyleHeader}>Topics for current stage :</h3>"
       if (topics != null) {
         for (topic in topics) {
           descriptionText += topicLink(topic)
@@ -39,7 +40,7 @@ interface HyperskillConfigurator<T> : EduConfigurator<T> {
         }
       }
       else {
-        descriptionText += "No topics found for current stage."
+        descriptionText += "<a ${StyleManager().textStyleHeader}>No topics found for current stage."
       }
       textPane.text = descriptionText
       topicsPanel.add(textPane)
@@ -54,7 +55,7 @@ interface HyperskillConfigurator<T> : EduConfigurator<T> {
   }
 
   private fun topicLink(topic: HyperskillTopic): String =
-    "<a style=\"color:${linkColor()}\" href=\"https://hyperskill.org/learn/step/${topic.theoryId}/\">${topic.title}</a>"
+    "<a ${StyleManager().textStyleHeader};color:${linkColor()} href=\"https://hyperskill.org/learn/step/${topic.theoryId}/\">${topic.title}</a>"
 
   private fun linkColor(): String = if (UIUtil.isUnderDarcula()) "#6894C6" else "#5C84C9"
 }

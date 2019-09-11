@@ -40,7 +40,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     (toolWindow as ToolWindowImpl).component.putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
     toolWindow.initTitleActions()
     taskDescriptionToolWindow.init(toolWindow)
-    (toolWindow as ToolWindowEx).setAdditionalGearActions(DefaultActionGroup(AdjustFontSize(taskDescriptionToolWindow)))
+    (toolWindow as ToolWindowEx).setAdditionalGearActions(DefaultActionGroup(AdjustFontSize(taskDescriptionToolWindow, project)))
   }
 
   private fun ToolWindow.initTitleActions() {
@@ -55,7 +55,8 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
    */
   private fun Int.toReverseIndex() = FontSize.values().size - 1 - this
 
-  private inner class AdjustFontSize(private val taskDescription: TaskDescriptionView) : DumbAwareAction("Adjust font size...") {
+  private inner class AdjustFontSize(private val taskDescription: TaskDescriptionView, private val project: Project) : DumbAwareAction(
+    "Adjust font size...") {
     override fun actionPerformed(e: AnActionEvent) {
       val fontSizeSlider = JSlider(SwingConstants.HORIZONTAL, 0, FontSize.values().size - 1, getInitialIndex())
       fontSizeSlider.minorTickSpacing = 1
@@ -66,7 +67,8 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
       fontSizeSlider.addChangeListener(ChangeListener {
         val fontFactor = FontSize.values()[fontSizeSlider.value.toReverseIndex()]
         PropertiesComponent.getInstance().setValue(StyleManager.FONT_FACTOR_PROPERTY, fontFactor.size, FontPreferences.DEFAULT_FONT_SIZE)
-        taskDescription.updateTaskDescription()
+        TaskDescriptionView.updateAllTabs(project, taskDescription)
+
       })
       val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(fontSizeSlider, fontSizeSlider).createPopup()
       val location = MouseInfo.getPointerInfo().location
@@ -87,5 +89,6 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
 
   companion object {
     const val STUDY_TOOL_WINDOW = "Task"
+
   }
 }

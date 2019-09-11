@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.labels.ActionLink
+import com.intellij.ui.content.Content
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
@@ -132,14 +133,19 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
 
   class SwitchTaskTabAction(private val project: Project, private val index: Int): DumbAwareAction(null) {
     override fun actionPerformed(e: AnActionEvent) {
-      val window = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
-      val tab = window.contentManager.getContent(index)
-      if (tab != null) {
-        window.contentManager.setSelectedContent(tab)
-        if (index == 1) {
-          EduCounterUsageCollector.reviewStageTopics()
-        }
+      val tab = selectTab(project, index)
+      if (tab != null && index == 1) {
+        EduCounterUsageCollector.reviewStageTopics()
       }
+    }
+  }
+
+  companion object {
+    fun selectTab(project: Project, index: Int): Content? {
+      val window = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
+      val tab = window.contentManager.getContent(index) ?: return null
+      window.contentManager.setSelectedContent(tab)
+      return tab
     }
   }
 

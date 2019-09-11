@@ -3,11 +3,13 @@ package com.jetbrains.edu.learning.ui.taskDescription
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.ui.taskDescription.check.CheckDetailsPanel
 import java.awt.Color
 
 abstract class TaskDescriptionView {
@@ -40,6 +42,19 @@ abstract class TaskDescriptionView {
     @JvmStatic
     fun getTaskDescriptionBackgroundColor(): Color {
       return UIUtil.getListBackground()
+    }
+
+    @JvmStatic
+    fun updateAllTabs(project: Project, taskDescription: TaskDescriptionView) {
+      val contentManager = ToolWindowManager.getInstance(project).getToolWindow(
+        TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW).contentManager
+      val content = contentManager.selectedContent ?: return
+      //index is needed to keep current tab opened. On updating tabs we are creating new content,
+      // that's why we can't remember current content and set it to contentManager
+      val index = contentManager.getIndexOfContent(content)
+      taskDescription.updateTaskDescription()
+      taskDescription.updateAdditionalTaskTab()
+      CheckDetailsPanel.selectTab(project, index)
     }
   }
 }

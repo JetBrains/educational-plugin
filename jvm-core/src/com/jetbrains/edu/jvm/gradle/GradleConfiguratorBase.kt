@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.configuration.EduConfiguratorBase
+import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.gradle.GradleConstants.SETTINGS_GRADLE
 import java.io.File
 import java.io.IOException
 
-abstract class GradleConfiguratorBase : EduConfiguratorBase<JdkProjectSettings>() {
+abstract class GradleConfiguratorBase : EduConfiguratorWithSubmissions<JdkProjectSettings>() {
 
   abstract override fun getCourseBuilder(): GradleCourseBuilderBase
 
