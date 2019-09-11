@@ -106,7 +106,9 @@ open class InsertShortcutAction : AnAction("Insert Shortcut", "Inserts shortcut 
         val actionId = child.toString()
         if (getActiveKeymapShortcuts(actionId).shortcuts.isNotEmpty()) {
           val action = ActionManager.getInstance().getAction(actionId) ?: error("Action $actionId has shortcut, but can't be found")
-          allActions.add(action)
+          if (action.templateText != null) {
+            allActions.add(action)
+          }
         }
       }
     }
