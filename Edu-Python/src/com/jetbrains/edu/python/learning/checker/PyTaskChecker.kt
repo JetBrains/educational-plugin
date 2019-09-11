@@ -3,11 +3,20 @@ package com.jetbrains.edu.python.learning.checker
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.RunConfigurationProducer
+import com.intellij.execution.executors.DefaultRunExecutor
+import com.intellij.execution.process.ProcessAdapter
+import com.intellij.execution.process.ProcessEvent
+import com.intellij.execution.process.ProcessOutputTypes
+import com.intellij.execution.runners.ExecutionEnvironmentBuilder
+import com.intellij.execution.runners.ProgramRunner
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiManager
+import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -20,7 +29,11 @@ import com.jetbrains.edu.learning.editor.ACTION_TEXT
 import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_END
 import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_START
 import com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer
+import java.util.concurrent.CountDownLatch
 
+/**
+ * Checker for legacy test_helper.py
+ */
 open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(task, project) {
 
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
@@ -40,6 +53,51 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
                          BROKEN_SOLUTION_ERROR_TEXT_START + ACTION_TEXT + BROKEN_SOLUTION_ERROR_TEXT_END)
     }
     return super.check(indicator)
+  }
+
+  /* We can reach this method only if we have syntax error */
+  override fun checkIfFailedToRunTests(stderr: String): CheckResult = CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE,
+                                                                                  stderr)
+
+  override fun isSyntaxErrorHidden(result: CheckResult, stderr: StringBuilder): Boolean {
+    if (result.message != "The file contains syntax errors") return false
+    val error = getSyntaxError() ?: return false
+    stderr.append(error)
+    return true
+  }
+
+  private fun getSyntaxError(): String? {
+    val configuration = CheckUtils.createDefaultRunConfiguration(project) ?: return null
+    val executor = DefaultRunExecutor.getRunExecutorInstance()
+    val runner = ProgramRunner.getRunner(executor.id, configuration.configuration)
+    configuration.isActivateToolWindowBeforeRun = false
+    val env = ExecutionEnvironmentBuilder.create(executor, configuration).build()
+    val latch = CountDownLatch(1)
+    val errorOutput = StringBuilder()
+    try {
+      runInEdt {
+        runner?.execute(env) { descriptor ->
+          descriptor.processHandler?.addProcessListener(object : ProcessAdapter() {
+            override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+              if (outputType == ProcessOutputTypes.STDERR) {
+                errorOutput.append(event.text)
+              }
+            }
+
+            override fun processTerminated(event: ProcessEvent) {
+              latch.countDown()
+            }
+          })
+        }
+      }
+
+      latch.await()
+    }
+    catch (e: Exception) {
+      LOG.error(e)
+    }
+
+    return errorOutput.toString().nullize()
   }
 
   override fun onTaskFailed(message: String, details: String?) {
