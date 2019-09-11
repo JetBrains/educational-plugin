@@ -8,16 +8,16 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.refactoring.rename.RenameHandler;
-import com.jetbrains.edu.learning.handlers.EduMoveDelegate;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.handlers.EduMoveDelegate;
+import com.jetbrains.edu.learning.handlers.EduRenameHandler;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JMoveRenameHandler extends EduMoveDelegate implements RenameHandler {
+public class JMoveRenameHandler extends EduMoveDelegate implements EduRenameHandler {
   @Override
   public boolean canMove(DataContext dataContext) {
     return canRenameOrMove(CommonDataKeys.PROJECT.getData(dataContext), CommonDataKeys.PSI_ELEMENT.getData(dataContext));

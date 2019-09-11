@@ -865,6 +865,26 @@ public class EduUtils {
     notification.notify(project);
   }
 
+  @Nullable
+  public static StudyItem getStudyItem(@NotNull Project project, @NotNull VirtualFile dir) {
+    Course course = OpenApiExtKt.getCourse(project);
+    if (course == null) return null;
+
+    VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
+    if (courseDir.equals(dir)) return course;
+
+    Section section = getSection(dir, course);
+    if (section != null) return section;
+
+    Lesson lesson = getLesson(dir, course);
+    if (lesson != null) return lesson;
+
+    Task task = getTask(dir, course);
+    if (task != null) return task;
+
+    return null;
+  }
+
   public static String addMnemonic(String text) {
     if (text.length() == 0) return text;
     return addMnemonic(text, text.charAt(0));

@@ -194,6 +194,10 @@
                         serviceImplementation="com.jetbrains.edu.learning.stepik.api.StepikConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.stepik.api.MockStepikConnector"/>
 
+    <applicationService serviceInterface="com.intellij.refactoring.rename.RenameHandlerRegistry"
+                        serviceImplementation="com.jetbrains.edu.learning.handlers.EduRenameHandlerRegistry"
+                        overrides="true"/>
+
     <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.StepikWidgetProvider"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView"
                     serviceImplementation="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionViewImpl"
@@ -219,7 +223,7 @@
     <highlightErrorFilter implementation="com.jetbrains.edu.learning.editor.EduHighlightErrorFilter"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.StudyTaskManager"
                     serviceImplementation="com.jetbrains.edu.learning.StudyTaskManager"/>
-    <renameHandler implementation="com.jetbrains.edu.learning.handlers.EduRenameHandler"/>
+    <renameHandler implementation="com.jetbrains.edu.learning.handlers.EduCourseItemRenameHandler"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
     <statistics.applicationUsagesCollector implementation="com.jetbrains.edu.learning.statistics.EduStateUsagesCollector"/>
     <statistics.counterUsagesCollector groupId="educational.counters" version="1"/>
