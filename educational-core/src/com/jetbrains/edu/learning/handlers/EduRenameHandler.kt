@@ -1,33 +1,28 @@
-package com.jetbrains.edu.learning.handlers;
+package com.jetbrains.edu.learning.handlers
 
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.refactoring.rename.RenameHandler;
-import com.jetbrains.edu.learning.EduUtils;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.refactoring.rename.RenameHandler
+import com.jetbrains.edu.learning.EduUtils
 
-public class EduRenameHandler implements RenameHandler {
-  @Override
-  public boolean isAvailableOnDataContext(@NotNull DataContext dataContext) {
-    return EduUtils.renameAndMoveForbidden(dataContext);
+class EduRenameHandler : RenameHandler {
+  override fun isAvailableOnDataContext(dataContext: DataContext): Boolean {
+    return EduUtils.renameAndMoveForbidden(dataContext)
   }
 
-  @Override
-  public boolean isRenaming(@NotNull DataContext dataContext) {
-    return isAvailableOnDataContext(dataContext);
+  override fun isRenaming(dataContext: DataContext): Boolean {
+    return isAvailableOnDataContext(dataContext)
   }
 
-  @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
-    Messages.showInfoMessage("This rename operation can break the course", "Invalid Rename Operation");
+  override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext) {
+    Messages.showInfoMessage("This rename operation can break the course", "Invalid Rename Operation")
   }
 
-  @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
-    invoke(project, null, null, dataContext);
+  override fun invoke(project: Project, elements: Array<PsiElement>, dataContext: DataContext) {
+    invoke(project, null, null, dataContext)
   }
 }
