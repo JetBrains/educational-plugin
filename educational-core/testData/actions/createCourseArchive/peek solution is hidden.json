@@ -4,7 +4,7 @@
   "programming_language" : "TEXT",
   "language" : "en",
   "course_type" : "PyCharm",
-  "solutions_hidden": true,
+  "solutions_hidden" : true,
   "items" : [
     {
       "title" : "lesson1",
