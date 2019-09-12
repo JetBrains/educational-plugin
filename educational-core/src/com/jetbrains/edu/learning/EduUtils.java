@@ -5,7 +5,9 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.command.CommandProcessor;
@@ -33,9 +35,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.TimeoutUtil;
@@ -245,55 +244,6 @@ public class EduUtils {
       return eduEditor.getEditor();
     }
     return null;
-  }
-
-  public static boolean isRenameAndMoveForbidden(@NotNull final Project project,
-                                                 @NotNull final Course course,
-                                                 @NotNull final PsiElement element) {
-    VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
-    if (element instanceof PsiFile) {
-      VirtualFile virtualFile = ((PsiFile)element).getVirtualFile();
-      if (courseDir.equals(virtualFile.getParent())) {
-        return false;
-      }
-      TaskFile file = getTaskFile(project, virtualFile);
-      if (file != null) {
-        return false;
-      }
-      return !isTestsFile(project, virtualFile) && !isTaskDescriptionFile(virtualFile.getName());
-    }
-    if (element instanceof PsiDirectory) {
-      VirtualFile virtualFile = ((PsiDirectory)element).getVirtualFile();
-      VirtualFile parent = virtualFile.getParent();
-      if (parent == null) {
-        return true;
-      }
-      if (courseDir.equals(parent)) {
-        return false;
-      }
-      Lesson lesson = getLesson(parent, course);
-      if (lesson != null) {
-        Task task = lesson.getTask(virtualFile.getName());
-        if (task != null) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
-  public static boolean renameAndMoveForbidden(DataContext dataContext) {
-    Project project = CommonDataKeys.PROJECT.getData(dataContext);
-    PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
-    if (element == null || project == null) {
-      return false;
-    }
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null || !course.isStudy()) {
-      return false;
-    }
-
-    return !isRenameAndMoveForbidden(project, course, element);
   }
 
   @Nullable
