@@ -10,25 +10,21 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.handlers.EduMoveDelegate
 import com.jetbrains.edu.learning.handlers.EduRenameHandler
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.handlers.isRenameAndMoveForbidden
 
 class JMoveRenameHandler : EduMoveDelegate(), EduRenameHandler {
   override fun canMove(dataContext: DataContext?): Boolean {
-    return canRenameOrMove(CommonDataKeys.PROJECT.getData(dataContext!!), CommonDataKeys.PSI_ELEMENT.getData(dataContext))
+    return isAvailable(CommonDataKeys.PROJECT.getData(dataContext!!), CommonDataKeys.PSI_ELEMENT.getData(dataContext))
   }
 
   override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?): Boolean {
-    return if (elements.size == 1) {
-      canRenameOrMove(elements[0].project, elements[0])
-    }
-    else false
+    return if (elements.size == 1) isAvailable(elements[0].project, elements[0]) else false
   }
 
   override fun isAvailableOnDataContext(dataContext: DataContext): Boolean {
-    return canRenameOrMove(CommonDataKeys.PROJECT.getData(dataContext), CommonDataKeys.PSI_ELEMENT.getData(dataContext))
+    return isAvailable(CommonDataKeys.PROJECT.getData(dataContext), CommonDataKeys.PSI_ELEMENT.getData(dataContext))
   }
 
   override fun isRenaming(dataContext: DataContext): Boolean {
@@ -43,32 +39,19 @@ class JMoveRenameHandler : EduMoveDelegate(), EduRenameHandler {
     invoke(project, null, null, dataContext)
   }
 
-  private fun canRenameOrMove(project: Project?, element: PsiElement?): Boolean {
-    if (element == null || project == null) {
-      return false
-    }
-    val course = StudyTaskManager.getInstance(project)!!.course
-    if (!EduUtils.isStudentProject(project)) {
-      return false
-    }
-
-    assert(course != null)
-    val elementToMove = getElementToMove(element, course!!)
-    return !EduUtils.isRenameAndMoveForbidden(project, course, elementToMove)
+  private fun isAvailable(project: Project?, element: PsiElement?): Boolean {
+    if (element == null || project == null) return false
+    if (!EduUtils.isStudentProject(project)) return false
+    val course = StudyTaskManager.getInstance(project).course ?: error("Project ${project.name} should have course instance")
+    val adjustedElement = adjustElement(element) ?: return false
+    return isRenameAndMoveForbidden(project, course, adjustedElement)
   }
 
-  private fun getElementToMove(element: PsiElement, course: Course): PsiElement {
-    // prevent class renaming in hyperskill? courses
-    if (course is HyperskillCourse && element is PsiClass) {
-      val fileName = element.getContainingFile().name
-      val dotIndex = fileName.lastIndexOf('.')
-      val fileNameWithoutExtension = if (dotIndex >= 0) fileName.substring(0, dotIndex) else fileName
-      val className = element.name
-      if (fileNameWithoutExtension == className) {
-        return element.getContainingFile()
-      }
-    }
-
-    return element
+  private fun adjustElement(element: PsiElement): PsiElement? {
+    val psiClass = element as? PsiClass ?: return null
+    val containingFile = psiClass.containingFile
+    val virtualFile = containingFile.virtualFile ?: return null
+    val taskFile = EduUtils.getTaskFile(element.project, virtualFile) ?: return null
+    return if (!taskFile.isLearnerCreated && virtualFile.nameWithoutExtension == psiClass.name) containingFile else null
   }
 }
