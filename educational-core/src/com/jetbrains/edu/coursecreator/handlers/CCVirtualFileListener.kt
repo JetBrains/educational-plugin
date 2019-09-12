@@ -86,33 +86,6 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     }
   }
 
-  override fun beforePropertyChange(event: VirtualFilePropertyEvent) {
-    if (event.propertyName != VirtualFile.PROP_NAME) return
-    val newName = event.newValue as? String ?: return
-    val (task, oldPath) = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return
-    val newPath = oldPath.replaceAfterLast(VfsUtilCore.VFS_SEPARATOR_CHAR, newName, newName)
-
-    val taskFiles = task.taskFiles
-
-    fun rename(oldPath: String, newPath: String) {
-      val taskFile = taskFiles.remove(oldPath) ?: return
-      taskFile.name = newPath
-      task.addTaskFile(taskFile)
-    }
-
-    if (event.file.isDirectory) {
-      val changedPaths = taskFiles.keys.filter { it.startsWith(oldPath) }
-      for (oldObjectPath in changedPaths) {
-        val newObjectPath = oldObjectPath.replaceFirst(oldPath, newPath)
-        rename(oldObjectPath, newObjectPath)
-      }
-    } else {
-      rename(oldPath, newPath)
-    }
-
-    YamlFormatSynchronizer.saveItem(task)
-  }
-
   override fun fileInTaskCreated(fileInfo: FileInfo.FileInTask, createFile: VirtualFile) {
     super.fileInTaskCreated(fileInfo, createFile)
     YamlFormatSynchronizer.saveItem(fileInfo.task)

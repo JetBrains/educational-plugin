@@ -1,9 +1,8 @@
 package com.jetbrains.edu.learning.handlers
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileEvent
-import com.intellij.openapi.vfs.VirtualFileListener
+import com.intellij.openapi.vfs.*
+import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.fileInfo
@@ -37,6 +36,33 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
       val taskFile = task.addTaskFile(pathInTask)
       taskFileCreated(taskFile, createFile)
     }
+  }
+
+  override fun beforePropertyChange(event: VirtualFilePropertyEvent) {
+    if (event.propertyName != VirtualFile.PROP_NAME) return
+    val newName = event.newValue as? String ?: return
+    val (task, oldPath) = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return
+    val newPath = oldPath.replaceAfterLast(VfsUtilCore.VFS_SEPARATOR_CHAR, newName, newName)
+
+    val taskFiles = task.taskFiles
+
+    fun rename(oldPath: String, newPath: String) {
+      val taskFile = taskFiles.remove(oldPath) ?: return
+      taskFile.name = newPath
+      task.addTaskFile(taskFile)
+    }
+
+    if (event.file.isDirectory) {
+      val changedPaths = taskFiles.keys.filter { it.startsWith(oldPath) }
+      for (oldObjectPath in changedPaths) {
+        val newObjectPath = oldObjectPath.replaceFirst(oldPath, newPath)
+        rename(oldObjectPath, newObjectPath)
+      }
+    } else {
+      rename(oldPath, newPath)
+    }
+
+    YamlFormatSynchronizer.saveItem(task)
   }
 
   protected open fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {}
