@@ -3,8 +3,6 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
-import junit.framework.Assert
-import junit.framework.TestCase
 
 
 class YamlChangeApplierTest : YamlTestCase() {
@@ -17,7 +15,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     val course = courseWithFiles(courseProducer = ::CourseraCourse, courseMode = CCUtils.COURSE_MODE) {
       lesson { }
     } as CourseraCourse
-    TestCase.assertFalse(course.submitManually)
+    assertFalse(course.submitManually)
 
     val yamlContent = """
       |type: ${CourseraNames.COURSE_TYPE}
@@ -33,7 +31,7 @@ class YamlChangeApplierTest : YamlTestCase() {
       |""".trimMargin("|")
 
     loadItemFromConfig(course, yamlContent)
-    TestCase.assertTrue(course.submitManually)
+    assertTrue(course.submitManually)
   }
 
   fun `test add lesson custom presentable name`() {
@@ -68,7 +66,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     """.trimMargin("|")
 
     loadItemFromConfig(lesson, yamlContent)
-    Assert.assertNull(lesson.customPresentableName)
+    assertNull(lesson.customPresentableName)
   }
 
   fun `test add section custom presentable name`() {
@@ -103,7 +101,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     """.trimMargin("|")
 
     loadItemFromConfig(section, yamlContent)
-    Assert.assertNull(section.customPresentableName)
+    assertNull(section.customPresentableName)
   }
 
   fun `test add task custom presentable name`() {
@@ -147,6 +145,24 @@ class YamlChangeApplierTest : YamlTestCase() {
     """.trimMargin("|")
 
     loadItemFromConfig(task, yamlContent)
-    Assert.assertNull(task.customPresentableName)
+    assertNull(task.customPresentableName)
+  }
+
+  fun `test hide solutions from the learner`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson { }
+    }
+    assertFalse(course.solutionsHidden)
+
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: My awesome summary
+      |programming_language: Plain text
+      |solutions_hidden: true
+    """.trimMargin("|")
+
+    loadItemFromConfig(course, yamlContent)
+    assertTrue(course.solutionsHidden)
   }
 }

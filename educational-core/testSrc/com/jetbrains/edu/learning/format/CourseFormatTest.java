@@ -164,6 +164,11 @@ public class CourseFormatTest extends EduTestCase {
                  ContainerUtil.map(course.getAuthors(), info -> info.getName()));
   }
 
+  public void testSolutionsHidden() throws IOException {
+    final Course course = getCourseFromJson();
+    assertTrue(course.getSolutionsHidden());
+  }
+
   private Course getCourseFromJson() throws IOException {
     final String fileName = getTestFile();
     return CourseTestUtilsKt.createCourseFromJson(getTestDataPath() + fileName, CourseMode.STUDENT);
