@@ -36,7 +36,7 @@
       },
       "feedback_link": {
         "type": "string",
-        "description": "Custom link for students to leave their feedback about the task (ex. Google Forms link)"
+        "description": "Custom link for Learners to leave their feedback about the task (ex. Google Forms link)"
       },
       "is_multiple_choice": {
         "type": "boolean",
@@ -52,11 +52,11 @@
       },
       "message_correct": {
         "type": "string",
-        "description": "Custom message to be shown to student in case of correct solution (ex. Great job!)"
+        "description": "Custom message to be shown to Learner in case of correct solution (ex. Great job!)"
       },
       "message_incorrect": {
         "type": "string",
-        "description": "Custom message to be shown to student in case of incorrect solution (ex. Review how to define a function to solve this task)"
+        "description": "Custom message to be shown to Learner in case of incorrect solution (ex. Review how to define a function to solve this task)"
       }
     },
     "additionalProperties": false,
@@ -90,7 +90,7 @@
       },
       "feedback_link": {
         "type": "string",
-        "description": "Custom link for students to leave their feedback about the task (ex. Google Forms link)"
+        "description": "Custom link for Learners to leave their feedback about the task (ex. Google Forms link)"
       }
     },
     "additionalProperties": false,
@@ -171,7 +171,7 @@
         },
         "placeholder_text": {
           "type": "string",
-          "description": "Text which will be shown to student in place of the placeholder"
+          "description": "Text which will be shown to Learner in place of the placeholder"
         },
         "dependency": {
           "$ref": "#/definitions/dependency"
@@ -193,7 +193,7 @@
         },
         "visible": {
           "type": "boolean",
-          "description": "If the file is shown to student or not"
+          "description": "If the file is shown to Learner or not"
         },
         "placeholders": {
           "description": "Answer placeholders",
