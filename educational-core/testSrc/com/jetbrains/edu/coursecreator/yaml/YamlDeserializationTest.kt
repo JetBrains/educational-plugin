@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import junit.framework.TestCase
 import java.util.*
 
 
@@ -27,7 +26,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val name = "Test Course"
     val language = "Russian"
     val programmingLanguage = "Plain text"
-    val hideSolution = true
+    val solutionsHidden = true
     val firstLesson = "the first lesson"
     val secondLesson = "the second lesson"
     val yamlContent = """
@@ -37,7 +36,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |  This is a course about string theory.
       |  Why not?"
       |programming_language: $programmingLanguage
-      |hide_solution: $hideSolution
+      |solutions_hidden: $solutionsHidden
       |content:
       |- $firstLesson
       |- $secondLesson
@@ -46,7 +45,7 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
-    TestCase.assertEquals(hideSolution, course.hideSolution)
+    assertEquals(solutionsHidden, course.solutionsHidden)
     assertNull(course.languageVersion)
     assertNotNull(course.description)
     assertEquals(EduNames.DEFAULT_ENVIRONMENT, course.environment)
@@ -65,7 +64,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |""".trimMargin("|")
     val course = deserializeNotNull(yamlContent, Course::class.java)
     assertTrue(course is EduCourse)
-    TestCase.assertFalse(course.hideSolution)
+    assertFalse(course.solutionsHidden)
     assertEmpty(course.items)
   }
 
@@ -107,7 +106,7 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
-    TestCase.assertFalse(course.submitManually)
+    assertFalse(course.submitManually)
     assertNotNull(course.description)
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
   }
@@ -577,7 +576,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $secondLesson
       |""".trimMargin("|")
     val course = deserializeNotNull(yamlContent, CourseraCourse::class.java)
-    TestCase.assertTrue(course.submitManually)
+    assertTrue(course.submitManually)
   }
 
   fun `test non-english locale`() {

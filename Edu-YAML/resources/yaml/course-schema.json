@@ -44,8 +44,8 @@
         "string"
       ]
     },
-    "hide_solution": {
-      "description": "Student's possibility to peek and compare solutions",
+    "solutions_hidden": {
+      "description": "If Peek Solution button is hidden in lessons for the Learner",
       "type": "boolean"
     },
     "environment": {

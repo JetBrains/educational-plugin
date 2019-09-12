@@ -424,13 +424,13 @@ class YamlSerializationTest : YamlTestCase() {
 
   fun `test course with hidden solutions`() {
     val course = course {
-      course.hideSolution = true
+      course.solutionsHidden = true
     }
     doTest(course, """
       |title: Test Course
       |language: English
       |programming_language: Plain text
-      |hide_solution: true
+      |solutions_hidden: true
       |
     """.trimMargin("|"))
   }

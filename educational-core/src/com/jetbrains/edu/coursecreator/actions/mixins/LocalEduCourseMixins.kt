@@ -67,8 +67,8 @@ private const val SUBMIT_MANUALLY = "submit_manually"
 private const val CUSTOM_NAME = "custom_name"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
-@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS,
-                   YamlMixinNames.HIDE_SOLUTION)
+@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE,
+                   YamlMixinNames.SOLUTIONS_HIDDEN, ITEMS)
 @JsonSerialize(using = CourseSerializer::class)
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
@@ -105,9 +105,9 @@ abstract class LocalEduCourseMixin {
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   private lateinit var additionalFiles: List<TaskFile>
 
-  @JsonProperty(YamlMixinNames.HIDE_SOLUTION)
+  @JsonProperty(YamlMixinNames.SOLUTIONS_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-  private var hideSolution: Boolean = false
+  private var solutionsHidden: Boolean = false
 }
 
 @JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)

@@ -238,7 +238,7 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
         }
       }
     }
-    course.hideSolution = true
+    course.solutionsHidden = true
     course.description = "my summary"
     val generatedJsonFile = generateJson()
     val expectedCourseJson = loadExpectedJson()

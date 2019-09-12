@@ -13,11 +13,11 @@ import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.ENVIRONMENT
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.HIDE_SOLUTION
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.ID
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.LANGUAGE
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE_VERSION
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.SUBMIT_MANUALLY
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.SUMMARY
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TITLE
@@ -51,8 +51,8 @@ import java.util.*
  * Update [CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
-@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT,
-                   HIDE_SOLUTION)
+@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN,
+                   CONTENT)
 @JsonDeserialize(builder = CourseBuilder::class)
 abstract class CourseYamlMixin {
   @JsonSerialize(converter = CourseTypeSerializationConverter::class)
@@ -88,9 +88,9 @@ abstract class CourseYamlMixin {
   @JsonProperty(CONTENT)
   private lateinit var items: List<StudyItem>
 
-  @JsonProperty(HIDE_SOLUTION)
+  @JsonProperty(SOLUTIONS_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-  private var hideSolution: Boolean = false
+  private var solutionsHidden: Boolean = false
 }
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
@@ -148,7 +148,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
                             @JsonProperty(ENVIRONMENT) val yamlEnvironment: String?,
                             @JsonProperty(CONTENT) val content: List<String?> = emptyList(),
                             @JsonProperty(SUBMIT_MANUALLY) val courseraSubmitManually: Boolean?,
-                            @JsonProperty(HIDE_SOLUTION) val hidePeekSolution: Boolean?) {
+                            @JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
     val course = when (courseType?.capitalize()) {
@@ -168,7 +168,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       name = title
       description = summary
       environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
-      hideSolution = hidePeekSolution ?: false
+      solutionsHidden = areSolutionsHidden ?: false
 
       // for C++ there are two languages with the same display name, and we have to filter out the one we have configurator for
       val languages = Language.getRegisteredLanguages()
@@ -221,7 +221,7 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.description = deserializedItem.description
     existingItem.languageCode = deserializedItem.languageCode
     existingItem.environment = deserializedItem.environment
-    existingItem.hideSolution = deserializedItem.hideSolution
+    existingItem.solutionsHidden = deserializedItem.solutionsHidden
     if (deserializedItem.languageVersion != null) {
       existingItem.language = "${existingItem.language} ${deserializedItem.languageVersion}"
     }

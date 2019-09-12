@@ -38,7 +38,7 @@ public abstract class Course extends LessonContainer {
   @NotNull private String myEnvironment = EduNames.DEFAULT_ENVIRONMENT;
   protected String courseMode = EduNames.STUDY; //this field is used to distinguish study and course creator modes
 
-  @NotNull private Boolean hideSolution = false;
+  private boolean solutionsHidden;
 
   protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
   protected CourseCompatibility myCompatibility = CourseCompatibility.COMPATIBLE;
@@ -176,13 +176,12 @@ public abstract class Course extends LessonContainer {
     myProgrammingLanguage = language;
   }
 
-  @NotNull
-  public Boolean getHideSolution() {
-    return hideSolution;
+  public boolean getSolutionsHidden() {
+    return solutionsHidden;
   }
 
-  public void setHideSolution(@NotNull Boolean showPeekSolution) {
-    this.hideSolution = showPeekSolution;
+  public void setSolutionsHidden(boolean solutionsHidden) {
+    this.solutionsHidden = solutionsHidden;
   }
 
   public String getLanguageID() {

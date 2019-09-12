@@ -4,6 +4,7 @@
   "programming_language" : "TEXT",
   "language" : "en",
   "course_type" : "PyCharm",
+  "solutions_hidden": true,
   "items" : [
     {
       "title" : "lesson1",
@@ -29,6 +30,5 @@
       "type" : "lesson"
     }
   ],
-  "hide_solution" : true,
   "version" : 11
 }
