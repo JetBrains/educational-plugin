@@ -30,9 +30,9 @@ import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
+import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
-import com.jetbrains.edu.learning.configurators.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -55,7 +55,6 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     // In this method course is set before course files are created so `CCProjectComponent.createYamlConfigFilesIfMissing` is called
     // for course with no files. This flag is checked in this method and it does nothing if the flag is false
     project.putUserData(YamlFormatSettings.YAML_TEST_PROJECT_READY, false)
-    registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE)
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE, HYPERSKILL)
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE,
                          CheckiONames.CHECKIO_TYPE)

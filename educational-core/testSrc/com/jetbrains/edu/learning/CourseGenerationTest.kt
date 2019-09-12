@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.jetbrains.edu.learning.configurators.PlainTextCourseBuilder
+import com.jetbrains.edu.learning.configuration.PlainTextCourseBuilder
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat

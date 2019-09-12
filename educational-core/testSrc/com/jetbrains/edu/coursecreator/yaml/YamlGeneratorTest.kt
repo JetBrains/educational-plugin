@@ -11,7 +11,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.configurators.PlainTextCourseBuilder
+import com.jetbrains.edu.learning.configuration.PlainTextCourseBuilder
 import com.jetbrains.edu.learning.course
 
 class YamlGeneratorTest : CourseGenerationTestBase<Unit>() {

@@ -269,6 +269,9 @@
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
+    <!-- Only for development purposes -->
+    <configurator language="TEXT" implementationClass="com.jetbrains.edu.learning.configuration.PlainTextConfigurator"/>
+
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
     <optionsProvider instance="com.jetbrains.edu.learning.coursera.CourseraOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.twitter.TwitterAction"/>
