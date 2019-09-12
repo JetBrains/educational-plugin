@@ -1,82 +1,74 @@
-package com.jetbrains.edu.java;
+package com.jetbrains.edu.java
 
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.handlers.EduMoveDelegate;
-import com.jetbrains.edu.learning.handlers.EduRenameHandler;
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.handlers.EduMoveDelegate
+import com.jetbrains.edu.learning.handlers.EduRenameHandler
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
-public class JMoveRenameHandler extends EduMoveDelegate implements EduRenameHandler {
-  @Override
-  public boolean canMove(DataContext dataContext) {
-    return canRenameOrMove(CommonDataKeys.PROJECT.getData(dataContext), CommonDataKeys.PSI_ELEMENT.getData(dataContext));
+class JMoveRenameHandler : EduMoveDelegate(), EduRenameHandler {
+  override fun canMove(dataContext: DataContext?): Boolean {
+    return canRenameOrMove(CommonDataKeys.PROJECT.getData(dataContext!!), CommonDataKeys.PSI_ELEMENT.getData(dataContext))
   }
 
-  @Override
-  public boolean canMove(PsiElement[] elements, @Nullable PsiElement targetContainer) {
-    if (elements.length == 1) {
-      return canRenameOrMove(elements[0].getProject(), elements[0]);
+  override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?): Boolean {
+    return if (elements.size == 1) {
+      canRenameOrMove(elements[0].project, elements[0])
     }
-    return false;
+    else false
   }
 
-  @Override
-  public boolean isAvailableOnDataContext(@NotNull DataContext dataContext) {
-    return canRenameOrMove(CommonDataKeys.PROJECT.getData(dataContext), CommonDataKeys.PSI_ELEMENT.getData(dataContext));
+  override fun isAvailableOnDataContext(dataContext: DataContext): Boolean {
+    return canRenameOrMove(CommonDataKeys.PROJECT.getData(dataContext), CommonDataKeys.PSI_ELEMENT.getData(dataContext))
   }
 
-  @Override
-  public boolean isRenaming(@NotNull DataContext dataContext) {
-    return isAvailableOnDataContext(dataContext);
+  override fun isRenaming(dataContext: DataContext): Boolean {
+    return isAvailableOnDataContext(dataContext)
   }
 
-  @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile, DataContext dataContext) {
-    Messages.showInfoMessage("This rename operation can break the course", "Invalid Rename Operation");
+  override fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?, dataContext: DataContext) {
+    Messages.showInfoMessage("This rename operation can break the course", "Invalid Rename Operation")
   }
 
-  @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] psiElements, DataContext dataContext) {
-    invoke(project, null, null, dataContext);
+  override fun invoke(project: Project, psiElements: Array<PsiElement>, dataContext: DataContext) {
+    invoke(project, null, null, dataContext)
   }
 
-  private static boolean canRenameOrMove(@Nullable Project project, @Nullable PsiElement element) {
+  private fun canRenameOrMove(project: Project?, element: PsiElement?): Boolean {
     if (element == null || project == null) {
-      return false;
+      return false
     }
-    Course course = StudyTaskManager.getInstance(project).getCourse();
+    val course = StudyTaskManager.getInstance(project)!!.course
     if (!EduUtils.isStudentProject(project)) {
-      return false;
+      return false
     }
 
-    assert course != null;
-    PsiElement elementToMove = getElementToMove(element, course);
-    return !EduUtils.isRenameAndMoveForbidden(project, course, elementToMove);
+    assert(course != null)
+    val elementToMove = getElementToMove(element, course!!)
+    return !EduUtils.isRenameAndMoveForbidden(project, course, elementToMove)
   }
 
-  private static PsiElement getElementToMove(@NotNull PsiElement element, @NotNull Course course) {
+  private fun getElementToMove(element: PsiElement, course: Course): PsiElement {
     // prevent class renaming in hyperskill? courses
-    if (course instanceof HyperskillCourse && element instanceof PsiClass) {
-      String fileName = element.getContainingFile().getName();
-      int dotIndex = fileName.lastIndexOf('.');
-      String fileNameWithoutExtension = dotIndex >= 0 ? fileName.substring(0, dotIndex) : fileName;
-      String className = ((PsiClass) element).getName();
-      if (fileNameWithoutExtension.equals(className)) {
-        return element.getContainingFile();
+    if (course is HyperskillCourse && element is PsiClass) {
+      val fileName = element.getContainingFile().name
+      val dotIndex = fileName.lastIndexOf('.')
+      val fileNameWithoutExtension = if (dotIndex >= 0) fileName.substring(0, dotIndex) else fileName
+      val className = element.name
+      if (fileNameWithoutExtension == className) {
+        return element.getContainingFile()
       }
     }
 
-    return element;
+    return element
   }
 }
