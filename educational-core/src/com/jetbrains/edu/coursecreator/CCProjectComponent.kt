@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
+import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog.Companion.PREVIEW_FOLDER_PREFIX
 import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -63,7 +64,7 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
     if (myTaskFileLifeListener != null) {
       VirtualFileManager.getInstance().removeVirtualFileListener(myTaskFileLifeListener!!)
     }
-    else if (myProject.name.startsWith("course_preview")) {
+    else if (myProject.name.startsWith(PREVIEW_FOLDER_PREFIX)) {
       RecentProjectsManager.getInstance().removePath(myProject.basePath)
     }
   }

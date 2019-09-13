@@ -84,6 +84,6 @@ class CCCreateCoursePreviewDialog(
     private const val WIDTH: Int = 370
     private const val HEIGHT: Int = 330
 
-    private const val PREVIEW_FOLDER_PREFIX: String = "course_preview"
+    const val PREVIEW_FOLDER_PREFIX: String = "course_preview"
   }
 }
