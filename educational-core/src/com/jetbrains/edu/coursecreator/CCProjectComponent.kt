@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator
 
+import com.intellij.ide.RecentProjectsManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.editor.EditorFactory
@@ -61,6 +62,9 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
   override fun projectClosed() {
     if (myTaskFileLifeListener != null) {
       VirtualFileManager.getInstance().removeVirtualFileListener(myTaskFileLifeListener!!)
+    }
+    else if (myProject.name.startsWith("course_preview")) {
+      RecentProjectsManager.getInstance().removePath(myProject.basePath)
     }
   }
 }
