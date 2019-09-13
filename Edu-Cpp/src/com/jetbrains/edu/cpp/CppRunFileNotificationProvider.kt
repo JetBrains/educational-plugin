@@ -16,8 +16,7 @@ import com.jetbrains.edu.learning.course
 class CppRunFileNotificationProvider : EditorNotifications.Provider<EditorNotificationPanel>() {
   override fun getKey(): Key<EditorNotificationPanel> = KEY
 
-  // since EDU 191 should overload [EditorNotifications.Provider.createNotificationPanel(VirtualFile, FileEditor, Project)]
-  private fun createNotificationPanelByProject(file: VirtualFile, project: Project): EditorNotificationPanel? =
+  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor, project: Project): EditorNotificationPanel? =
     if (needSetNotification(file, project))
       EditorNotificationPanel().also {
         it.setText("This file is intended for the student.")
@@ -28,10 +27,6 @@ class CppRunFileNotificationProvider : EditorNotifications.Provider<EditorNotifi
       }
     else
       null
-
-  // BACKCOMPAT: 2018.3 overload the super method with given project only in next versions
-  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? =
-    guessProjectForFile(file)?.let { createNotificationPanelByProject(file, it) }
 
   private fun needSetNotification(file: VirtualFile, project: Project): Boolean {
     if (PropertiesComponent.getInstance().isTrueValue(HIDE_NOTIFICATIONS_KEY)) {
