@@ -22,7 +22,7 @@ class CppRunFileNotificationProvider : EditorNotifications.Provider<EditorNotifi
       EditorNotificationPanel().also {
         it.setText("This file is intended for the student.")
         it.createActionLabel("Hide") {
-          PropertiesComponent.getInstance().setValue(HIDE_NOTIFICATIONS_KAY, true)
+          PropertiesComponent.getInstance().setValue(HIDE_NOTIFICATIONS_KEY, true)
           EditorNotifications.updateAll()
         }
       }
@@ -34,7 +34,7 @@ class CppRunFileNotificationProvider : EditorNotifications.Provider<EditorNotifi
     guessProjectForFile(file)?.let { createNotificationPanelByProject(file, it) }
 
   private fun needSetNotification(file: VirtualFile, project: Project): Boolean {
-    if (PropertiesComponent.getInstance().isTrueValue(HIDE_NOTIFICATIONS_KAY)) {
+    if (PropertiesComponent.getInstance().isTrueValue(HIDE_NOTIFICATIONS_KEY)) {
       return false
     }
 
@@ -58,8 +58,8 @@ class CppRunFileNotificationProvider : EditorNotifications.Provider<EditorNotifi
   }
 
   companion object {
-    val KEY = Key.create<EditorNotificationPanel>("RunFileNotificationProvider")
+    private val KEY: Key<EditorNotificationPanel> = Key.create("RunFileNotificationProvider")
 
-    const val HIDE_NOTIFICATIONS_KAY = "Edu.Cpp.CppRunFileNotificationProvider.hideNotifications"
+    private const val HIDE_NOTIFICATIONS_KEY = "Edu.Cpp.CppRunFileNotificationProvider.hideNotifications"
   }
 }
