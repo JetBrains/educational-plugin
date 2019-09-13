@@ -45,7 +45,7 @@
       ]
     },
     "solutions_hidden": {
-      "description": "If Peek Solution button is hidden in lessons for the Learner",
+      "description": "If solutions are available for learners to peek and compare with their answers",
       "type": "boolean"
     },
     "environment": {
