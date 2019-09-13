@@ -29,23 +29,21 @@ class CppRunFileNotificationProvider : EditorNotifications.Provider<EditorNotifi
       null
 
   private fun needSetNotification(file: VirtualFile, project: Project): Boolean {
+    if (!EduUtils.isEduProject(project)) {
+      return false
+    }
+
     if (PropertiesComponent.getInstance().isTrueValue(HIDE_NOTIFICATIONS_KEY)) {
       return false
     }
 
     val course = project.course ?: return false
     if (course.courseMode != CCUtils.COURSE_MODE) {
-      // not a CCMode course
       return false
     }
 
     if (!FileUtil.namesEqual(file.name, CppCourseBuilder.EDU_RUN_CPP)) {
       // not a 'run.cpp' file
-      return false
-    }
-
-    if (EduUtils.getTaskFile(project, file) == null) {
-      // not a task file at all
       return false
     }
 
