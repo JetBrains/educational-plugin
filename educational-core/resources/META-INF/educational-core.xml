@@ -230,6 +230,7 @@
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
 
     <!--for educators-->
+    <xml.xmlSuppressionProvider implementation="com.jetbrains.edu.coursecreator.taskDescription.ShortcutInTaskDescriptionSuppressionProvider"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCSectionMoveHandlerDelegate"
                              order="first"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCLessonMoveHandlerDelegate"
