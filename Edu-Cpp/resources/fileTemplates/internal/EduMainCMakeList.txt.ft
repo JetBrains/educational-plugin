@@ -38,6 +38,14 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
         EXCLUDE_FROM_ALL)
 
 #-----------------------------------------------------------------------------------
+# Add test runner link
+#-----------------------------------------------------------------------------------
+
+add_library(test_runner run.cpp)
+target_link_libraries(test_runner gtest)
+
+
+#-----------------------------------------------------------------------------------
 # The function returns a list of subdirectories containing the CMakeLists.txt files.
 #
 # Parameters:
