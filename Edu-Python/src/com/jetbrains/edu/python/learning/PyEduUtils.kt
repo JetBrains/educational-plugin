@@ -2,14 +2,13 @@ package com.jetbrains.edu.python.learning
 
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.runReadActionInSmartMode
 import com.jetbrains.extensions.python.toPsi
 
 fun Task.getCurrentTaskVirtualFile(project: Project): VirtualFile? {
@@ -35,10 +34,10 @@ fun Task.getCurrentTaskFilePath(project: Project): String? {
 }
 
 fun createRunConfiguration(project: Project, taskFile: VirtualFile?): RunnerAndConfigurationSettings? {
-  return ApplicationManager.getApplication().runReadAction(Computable {
-    val psiFile = taskFile?.toPsi(project)?.containingFile ?: return@Computable null
+  return runReadActionInSmartMode(project) {
+    val psiFile = taskFile?.toPsi(project)?.containingFile ?: return@runReadActionInSmartMode null
     ConfigurationContext(psiFile).configuration
-  })
+  }
 }
 
 private val VirtualFile.systemDependentPath: String get() = FileUtil.toSystemDependentName(path)

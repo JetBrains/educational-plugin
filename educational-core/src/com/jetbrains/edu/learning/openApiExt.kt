@@ -1,8 +1,10 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.Course
 
@@ -19,3 +21,7 @@ val Project.courseDir: VirtualFile get() {
 }
 
 val Project.course: Course? get() = StudyTaskManager.getInstance(this).course
+
+inline fun <T> runReadActionInSmartMode(project: Project, crossinline runnable: () -> T): T {
+  return DumbService.getInstance(project).runReadActionInSmartMode(Computable { runnable() })
+}
