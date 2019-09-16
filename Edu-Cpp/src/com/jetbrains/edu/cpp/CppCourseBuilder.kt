@@ -61,11 +61,12 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     val targets = cMakeCommands.filter { it.name == "add_executable" }
     targets.forEachIndexed { index, cMakeCommand ->
       replaceFirstArgument(psiFile, cMakeCommand, true) { targetName ->
-        val suffix = when {
-          targetName.endsWith("-${RUN_SUFFIX}") -> RUN_SUFFIX
-          targetName.endsWith("-${TEST_SUFFIX}") -> TEST_SUFFIX
-          else -> "target${index + 1}"
-        }
+        val suffix =
+          if (targetName.endsWith("-${TEST_SUFFIX}"))
+            TEST_SUFFIX
+          else
+            "target${index + 1}"
+
         "$newProjectName-$suffix"
       }
     }
@@ -111,7 +112,6 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
   companion object {
     private val LOG: Logger = Logger.getInstance(CppCourseBuilder::class.java)
 
-    private const val RUN_SUFFIX = "run"
     private const val TEST_SUFFIX = "test"
   }
 }
