@@ -15,9 +15,9 @@ import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 
 class KtNewGradleTaskChecker(task: EduTask, project: Project) : NewGradleEduTaskChecker(task, project) {
 
-  override fun checkIfFailedToRunTests(stderr: String): CheckResult {
+  override fun computePossibleErrorResult(stderr: String): CheckResult {
     return if (task.hasSeparateModule(project)) {
-      super.checkIfFailedToRunTests(stderr)
+      super.computePossibleErrorResult(stderr)
     } else  {
       GradleCommandLine.create(project, "testClasses")?.launchAndCheck() ?: CheckResult.FAILED_TO_CHECK
     }

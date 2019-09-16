@@ -21,7 +21,7 @@ class PyNewEduTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(
       .filter { it.configuration !is PythonRunConfiguration }
   }
 
-  override fun checkIfFailedToRunTests(stderr: String): CheckResult =
+  override fun computePossibleErrorResult(stderr: String): CheckResult =
     if (SYNTAX_ERRORS.any { it in stderr }) CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE, stderr) else CheckResult.SOLVED
 
   companion object {

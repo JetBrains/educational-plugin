@@ -12,6 +12,7 @@ import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.execution.runners.ProgramRunner
+import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runUndoTransparentWriteAction
@@ -61,10 +62,12 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
   }
 
   /* We can reach this method only if we have syntax error */
-  override fun checkIfFailedToRunTests(stderr: String): CheckResult = CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE,
-                                                                                  stderr)
+  override fun computePossibleErrorResult(stderr: String): CheckResult = CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE,
+                                                                                     stderr)
 
-  override fun isTestsFailedToRun(result: CheckResult, stderr: StringBuilder): Boolean {
+  override fun isTestsFailedToRun(testRoots: List<SMTestProxy.SMRootTestProxy>, stderr: StringBuilder): Boolean {
+    if (super.isTestsFailedToRun(testRoots, stderr)) return true
+    val result = testRoots.first().toCheckResult()
     if (result.message != "The file contains syntax errors") return false
     val error = getSyntaxError() ?: return false
     stderr.append(error)

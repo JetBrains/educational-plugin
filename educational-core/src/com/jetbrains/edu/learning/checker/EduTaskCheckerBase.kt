@@ -94,8 +94,8 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
     // We need to invoke all current pending EDT actions to get proper states of test roots.
     invokeAndWaitIfNeeded {}
 
-    if (testRoots.all { it.children.isEmpty() } || isTestsFailedToRun(testRoots.first().toCheckResult(), stderr)) {
-      val result = checkIfFailedToRunTests(stderr.toString())
+    if (isTestsFailedToRun(testRoots, stderr)) {
+      val result = computePossibleErrorResult(stderr.toString())
       if (!result.isSolved) {
         return result
       }
@@ -108,7 +108,7 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
     return firstFailure ?: testResults.first()
   }
 
-  private fun SMTestProxy.SMRootTestProxy.toCheckResult(): CheckResult {
+  fun SMTestProxy.SMRootTestProxy.toCheckResult(): CheckResult {
     if (isPassed) return CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
 
     val failedChildren = collectChildren(object : Filter<SMTestProxy>() {
@@ -141,12 +141,13 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
    * Main purpose is to get proper error message for such cases.
    * If test framework support already provides correct message, you don't need to override this method
    */
-  protected open fun checkIfFailedToRunTests(stderr: String): CheckResult = CheckResult.SOLVED
+  protected open fun computePossibleErrorResult(stderr: String): CheckResult = CheckResult.SOLVED
 
   /**
    * Check if the error is hidden in the test results, and, if so, append text with the error to stderr
    */
-  protected open fun isTestsFailedToRun(result: CheckResult, stderr: StringBuilder): Boolean = false
+  protected open fun isTestsFailedToRun(testRoots: List<SMTestProxy.SMRootTestProxy>,
+                                        stderr: StringBuilder): Boolean = testRoots.all { it.children.isEmpty() }
 
   /**
    * Creates and return list of run configurations to run task tests.
