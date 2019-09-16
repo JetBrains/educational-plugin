@@ -11,16 +11,6 @@ set(SOURCE
 set(TEST
         test/test.cpp)
 
-# Files for student run.
-set(RUN
-        src/run.cpp)
-
-
-# Customize student-run target.
-add_executable(${PROJECT_NAME}-run
-        ${SOURCE}
-        ${RUN})
-
 
 # Customize test target.
 add_executable(${PROJECT_NAME}-test

@@ -1,9 +1,0 @@
-\#include <iostream>
-
-int sum(int a, int b);
-
-int main() {
-    // You could test your solution here. This file will not be checked.
-    std::cout << "1 + 2 = " << sum(1, 2) << std::endl;
-    return 0;
-}
