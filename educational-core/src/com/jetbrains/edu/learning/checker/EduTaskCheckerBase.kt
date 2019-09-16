@@ -94,7 +94,7 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
     // We need to invoke all current pending EDT actions to get proper states of test roots.
     invokeAndWaitIfNeeded {}
 
-    if (testRoots.all { it.children.isEmpty() } || isSyntaxErrorHidden(testRoots.first().toCheckResult(), stderr)) {
+    if (testRoots.all { it.children.isEmpty() } || isTestsFailedToRun(testRoots.first().toCheckResult(), stderr)) {
       val result = checkIfFailedToRunTests(stderr.toString())
       if (!result.isSolved) {
         return result
@@ -144,9 +144,9 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
   protected open fun checkIfFailedToRunTests(stderr: String): CheckResult = CheckResult.SOLVED
 
   /**
-   * Check if the syntax error is hidden in the test results, and, if so, append text with the error to stderr
+   * Check if the error is hidden in the test results, and, if so, append text with the error to stderr
    */
-  protected open fun isSyntaxErrorHidden(result: CheckResult, stderr: StringBuilder): Boolean = false
+  protected open fun isTestsFailedToRun(result: CheckResult, stderr: StringBuilder): Boolean = false
 
   /**
    * Creates and return list of run configurations to run task tests.

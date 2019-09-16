@@ -64,7 +64,7 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
   override fun checkIfFailedToRunTests(stderr: String): CheckResult = CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE,
                                                                                   stderr)
 
-  override fun isSyntaxErrorHidden(result: CheckResult, stderr: StringBuilder): Boolean {
+  override fun isTestsFailedToRun(result: CheckResult, stderr: StringBuilder): Boolean {
     if (result.message != "The file contains syntax errors") return false
     val error = getSyntaxError() ?: return false
     stderr.append(error)
