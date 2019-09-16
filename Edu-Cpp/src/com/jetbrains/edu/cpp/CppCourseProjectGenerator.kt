@@ -45,8 +45,10 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     if (myCourse !is StepikCourse) {
       val initCMakeText = GeneratorUtils.getInternalTemplateText(getCppCMakeTemplateNames(myCourse).testCMakeList,
                                                                  getCMakeTemplateVariables(gtestVersion = CppConfigurator.GTEST_VERSION))
+      GeneratorUtils.createChildFile(baseDir, INIT_CMAKE_FILE_NAME, initCMakeText)
 
-      GeneratorUtils.createChildFile(baseDir, "${CMakeListsFileType.FILE_NAME}.in", initCMakeText)
+      val runTestsText = GeneratorUtils.getInternalTemplateText(getCppCMakeTemplateNames(myCourse).runTestsCpp)
+      GeneratorUtils.createChildFile(baseDir, RUN_TEST_FILE_NAME, runTestsText)
     }
   }
 
@@ -76,5 +78,10 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     // and in the course (item.customPresentableName) we show the names in the same form as in the remote course
     item.customPresentableName = item.name
     item.name = getDefaultName(item)
+  }
+
+  companion object {
+    private const val INIT_CMAKE_FILE_NAME = "${CMakeListsFileType.FILE_NAME}.in"
+    private const val RUN_TEST_FILE_NAME = "run.cpp"
   }
 }

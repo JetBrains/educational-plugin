@@ -8,8 +8,16 @@ import com.jetbrains.edu.learning.stepik.course.StepikCourse
  * [taskCMakeList] - configures the task project.
  * [testCMakeList] - specializes settings for loading a test framework, for Course Creator project only.
  */
-data class CppCMakeTemplateNames(val mainCMakeList: String, val taskCMakeList: String, val testCMakeList: String = "")
+data class CppCMakeTemplateNames(
+  val mainCMakeList: String,
+  val taskCMakeList: String,
+  val testCMakeList: String = "",
+  val runTestsCpp: String = ""
+)
 
 fun getCppCMakeTemplateNames(course: Course): CppCMakeTemplateNames =
-  if (course is StepikCourse) CppCMakeTemplateNames("StepikMainCMakeList.txt", "StepikTaskCMakeList.txt")
-  else CppCMakeTemplateNames("EduMainCMakeList.txt", "EduTaskCMakeList.txt", "EduTestCMakeList.txt.in")
+  if (course is StepikCourse)
+    CppCMakeTemplateNames("StepikMainCMakeList.txt", "StepikTaskCMakeList.txt")
+  else
+    CppCMakeTemplateNames("EduMainCMakeList.txt", "EduTaskCMakeList.txt",
+                          "EduTestCMakeList.txt.in", "runTests.cpp")
