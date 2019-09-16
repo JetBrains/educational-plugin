@@ -1,5 +1,7 @@
 package com.jetbrains.edu.python.learning.checker
 
+import com.intellij.execution.ExecutionListener
+import com.intellij.execution.ExecutionManager
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.RunConfigurationProducer
@@ -7,6 +9,7 @@ import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessOutputTypes
+import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.openapi.application.ApplicationManager
@@ -28,6 +31,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.editor.ACTION_TEXT
 import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_END
 import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_START
+import com.jetbrains.edu.python.learning.createRunConfiguration
+import com.jetbrains.edu.python.learning.getCurrentTaskVirtualFile
 import com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer
 import java.util.concurrent.CountDownLatch
 
@@ -67,7 +72,8 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
   }
 
   private fun getSyntaxError(): String? {
-    val configuration = CheckUtils.createDefaultRunConfiguration(project) ?: return null
+    val connection = project.messageBus.connect()
+    val configuration = createRunConfiguration(project, task.getCurrentTaskVirtualFile(project)) ?: return null
     val executor = DefaultRunExecutor.getRunExecutorInstance()
     val runner = ProgramRunner.getRunner(executor.id, configuration.configuration)
     configuration.isActivateToolWindowBeforeRun = false
@@ -76,6 +82,13 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
     val errorOutput = StringBuilder()
     try {
       runInEdt {
+        connection.subscribe(ExecutionManager.EXECUTION_TOPIC, object : ExecutionListener {
+          override fun processNotStarted(executorId: String, e: ExecutionEnvironment) {
+            if (executorId == executor.id && e == env) {
+              latch.countDown()
+            }
+          }
+        })
         runner?.execute(env) { descriptor ->
           descriptor.processHandler?.addProcessListener(object : ProcessAdapter() {
             override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
