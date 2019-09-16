@@ -41,10 +41,6 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
 
     val cMakeProjectName = getCMakeProjectUniqueName(task) { FileUtil.sanitizeFileName(it.name, true) }
     addCMakeList(task, cMakeProjectName, languageSettings.settings.languageStandard)
-
-    val mainName = GeneratorUtils.joinPaths(task.sourceDir, EDU_RUN_CPP)
-    val mainText = GeneratorUtils.getInternalTemplateText(EDU_RUN_CPP)
-    task.addTaskFile(TaskFile(mainName, mainText))
   }
 
   override fun afterFrameworkTaskCopy(project: Project, sourceTask: Task, newTask: Task) {
@@ -117,7 +113,5 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
 
     private const val RUN_SUFFIX = "run"
     private const val TEST_SUFFIX = "test"
-
-    const val EDU_RUN_CPP = "run.cpp"
   }
 }
