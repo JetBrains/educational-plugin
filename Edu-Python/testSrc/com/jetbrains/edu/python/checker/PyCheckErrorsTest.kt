@@ -24,6 +24,11 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
           pythonTaskFile("hello_world.py", """print("Hello, world! My name is type your name")""")
           pythonTaskFile("tests.py", """print("")""")
         }
+        eduTask("SyntaxError") {
+          pythonTaskFile("hello_world.py", """This is not Python code""")
+          pythonTaskFile("tests.py", """from test_helper import run_common_tests, failed, passed, get_answer_placeholders
+            |run_common_tests()""".trimMargin())
+        }
         outputTask("OutputTestsFailed") {
           pythonTaskFile("hello_world.py", """print("Hello, World")""")
           taskFile("output.txt") {
@@ -36,10 +41,11 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
 
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
-      assertEquals(CheckStatus.Failed, checkResult.status)
+      assertEquals(checkResult.status, CheckStatus.Failed)
       val (messageMatcher, diffMatcher) = when (task.name) {
         "EduTestsFailed" -> CoreMatchers.containsString("error happened") to nullValue()
         "EduNoTestsRun" -> CoreMatchers.containsString("No tests have run") to nullValue()
+        "SyntaxError" -> CoreMatchers.containsString("Syntax Error") to nullValue()
         "OutputTestsFailed" ->
           CoreMatchers.equalTo("Expected output:\n" +
                                "Hello, World!\n" +
@@ -51,6 +57,19 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
       }
       Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.message, messageMatcher)
       Assert.assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, diffMatcher)
+    }
+    doTest()
+  }
+
+  fun `test syntax error`() {
+    CheckActionListener.setCheckResultVerifier { task, checkResult ->
+      if (task.name != "SyntaxError") return@setCheckResultVerifier
+
+      assertEquals(checkResult.status, CheckStatus.Failed)
+      assertEquals(checkResult.message, "Syntax Error")
+
+      val detailsMatcher = CoreMatchers.containsString("SyntaxError: invalid syntax")
+      Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.details, detailsMatcher)
     }
     doTest()
   }
