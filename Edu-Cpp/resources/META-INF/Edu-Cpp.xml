@@ -8,7 +8,5 @@
     <renameHandler implementation="com.jetbrains.edu.cpp.CppTaskRenameHandler" order="first"/>
     <renameHandler implementation="com.jetbrains.edu.cpp.CppLessonRenameHandler" order="first"/>
     <renameHandler implementation="com.jetbrains.edu.cpp.CppSectionRenameHandler" order="first"/>
-
-    <editorNotificationProvider implementation="com.jetbrains.edu.cpp.CppRunFileNotificationProvider"/>
   </extensions>
 </idea-plugin>
