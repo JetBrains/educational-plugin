@@ -34,6 +34,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -98,7 +99,7 @@ public class EduProjectComponent implements ProjectComponent {
       @Override
       public void projectClosing(@NotNull Project project) {
         Course course = StudyTaskManager.getInstance(project).getCourse();
-        if (course != null && !OpenApiExtKt.isUnitTestMode()) {
+        if (course != null && !OpenApiExtKt.isUnitTestMode() && !YamlFormatSettings.disableYaml(course)) {
           saveAll(project);
         }
       }
