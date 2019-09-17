@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.ui.taskDescription.check.CheckDetailsPanel
+import com.jetbrains.edu.learning.ui.taskDescription.LightColoredActionLink
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -51,8 +51,8 @@ fun getTopPanelForProblem(project: Project, course: HyperskillCourse, task: Task
   }
   val panel = JPanel(BorderLayout())
   panel.background = UIUtil.getListBackground()
-  panel.add(CheckDetailsPanel.LightColoredActionLink("Return to project \"${course.hyperskillProject.title}\"",
-                                                     OpenProjectAction(project, course), AllIcons.Actions.Back), BorderLayout.WEST)
+  panel.add(LightColoredActionLink("Return to project \"${course.hyperskillProject.title}\"",
+                                   OpenProjectAction(project, course), AllIcons.Actions.Back), BorderLayout.WEST)
   panel.border = JBUI.Borders.empty(0, 0, 10, 0)
   return panel
 }

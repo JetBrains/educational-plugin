@@ -44,7 +44,7 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel() {
       scrollPane
     }
     layout = BorderLayout()
-    add(CheckDetailsPanel.LightColoredActionLink(
+    add(LightColoredActionLink(
       "Back to the task description",
       CheckDetailsPanel.SwitchTaskTabAction(project, 0),
       AllIcons.Actions.Back), BorderLayout.NORTH)

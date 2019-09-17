@@ -1,18 +1,13 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.BrowserHyperlinkListener
-import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
-import com.jetbrains.edu.learning.ui.taskDescription.check.CheckDetailsPanel
-import com.jetbrains.edu.learning.ui.taskDescription.createTextPane
+import com.jetbrains.edu.learning.ui.taskDescription.AdditionalTabPanel
 import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
 import javax.swing.JPanel
 
@@ -26,11 +21,9 @@ interface HyperskillConfigurator<T> : EduConfigurator<T> {
     val course = currentTask.lesson.course
     if (course is HyperskillCourse && course.isStudy) {
       if (!course.isTaskInProject(currentTask)) return null
-      val topicsPanel = JPanel(VerticalFlowLayout())
-      topicsPanel.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
-      topicsPanel.border = JBUI.Borders.empty(8, 16, 0, 0)
-      val textPane = createTextPane()
-      textPane.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
+      val topicsPanel = AdditionalTabPanel(project)
+      topicsPanel.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
+
       val topics = course.taskToTopics[currentTask.index - 1]
       var descriptionText = "<h3 ${StyleManager().textStyleHeader}>Topics for current stage :</h3>"
       if (topics != null) {
@@ -42,12 +35,7 @@ interface HyperskillConfigurator<T> : EduConfigurator<T> {
       else {
         descriptionText += "<a ${StyleManager().textStyleHeader}>No topics found for current stage."
       }
-      textPane.text = descriptionText
-      topicsPanel.add(textPane)
-      topicsPanel.add(CheckDetailsPanel.LightColoredActionLink(
-        "Back to the stage description",
-        CheckDetailsPanel.SwitchTaskTabAction(project, 0),
-        AllIcons.Actions.Back))
+      topicsPanel.setText(descriptionText)
 
       return Pair(topicsPanel, "Topics")
     }

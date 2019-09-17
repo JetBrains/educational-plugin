@@ -5,13 +5,10 @@ import com.intellij.diff.DiffDialogHints
 import com.intellij.diff.DiffManager
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.ui.JBColor
-import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.content.Content
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtils
@@ -28,12 +25,12 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.HSPeekSolutionAction
 import com.jetbrains.edu.learning.stepik.hyperskill.canShowHyperskillSolution
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.ui.taskDescription.LightColoredActionLink
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckMessagePanel.Companion.MAX_EXPECTED_ACTUAL_LENGTH
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckMessagePanel.Companion.MAX_MESSAGE_LENGTH
 import java.awt.BorderLayout
 import javax.swing.BoxLayout
-import javax.swing.Icon
 import javax.swing.JPanel
 
 class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) : JPanel(BorderLayout()) {
@@ -115,13 +112,6 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       return HSPeekSolutionAction.ACTION_ID
     }
     return CompareWithAnswerAction.ACTION_ID
-  }
-
-  class LightColoredActionLink(text: String, action: AnAction, icon: Icon? = null): ActionLink(text, icon, action) {
-    init {
-      setNormalColor(JBColor(0x6894C6, 0x5C84C9))
-      border = JBUI.Borders.empty(16, 0, 0, 16)
-    }
   }
 
   private class ShowFullOutputAction(private val project: Project, private val text: String): DumbAwareAction(null) {
