@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.components.impl.ComponentManagerImpl;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
@@ -46,12 +45,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.jetbrains.edu.learning.UtilsKt.registerComponent;
+
 // TODO: merge it with EduTestCase
 public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase {
   private static final Logger LOG = Logger.getInstance(CCTestCase.class);
 
   private FileEditorManagerImpl myManager;
-  private FileEditorManager myOldManager;
   private Set<DockContainer> myOldDockContainers;
 
   public static void checkPainters(@NotNull AnswerPlaceholder placeholder) {
@@ -90,7 +90,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     myManager = UtilsKt.createFileEditorManager(myFixture.getProject());
     // Copied from TestEditorManagerImpl's constructor
     myManager.registerExtraEditorDataProvider(new TextEditorPsiDataProvider(), null);
-    myOldManager = ((ComponentManagerImpl)myFixture.getProject()).registerComponentInstance(FileEditorManager.class, myManager);
+    registerComponent(getProject(), FileEditorManager.class, myManager, getTestRootDisposable());
     ((FileEditorProviderManagerImpl)FileEditorProviderManager.getInstance()).clearSelectedProviders();
     MessageBusConnection connection = getProject().getMessageBus().connect(getTestRootDisposable());
     connection.subscribe(StudyTaskManager.COURSE_SET, course -> {
@@ -137,7 +137,6 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
         .filter(container -> !myOldDockContainers.contains(container))
         .forEach(container -> Disposer.dispose(container));
 
-      ((ComponentManagerImpl)myFixture.getProject()).registerComponentInstance(FileEditorManager.class, myOldManager);
       myManager.closeAllFiles();
       for (VirtualFile file : EditorHistoryManager.getInstance(myFixture.getProject()).getFiles()) {
         EditorHistoryManager.getInstance(myFixture.getProject()).removeFile(file);

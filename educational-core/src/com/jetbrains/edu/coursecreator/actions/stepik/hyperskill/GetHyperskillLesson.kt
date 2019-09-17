@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.loadAttachment
@@ -28,7 +29,7 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = CCPluginToggleAction.isCourseCreatorFeaturesEnabled
-                                         && Experiments.isFeatureEnabled(EduExperimentalFeatures.HYPERSKILL)
+                                         && isFeatureEnabled(EduExperimentalFeatures.HYPERSKILL)
   }
 
   override fun actionPerformed(e: AnActionEvent) {

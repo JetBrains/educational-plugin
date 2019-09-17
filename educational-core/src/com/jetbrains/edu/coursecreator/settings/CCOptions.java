@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.settings;
 
-import com.intellij.openapi.application.Experiments;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.components.JBCheckBox;
@@ -12,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static com.jetbrains.edu.learning.ExperimentsKt.isFeatureEnabled;
 
 public class CCOptions implements OptionsProvider {
   private JRadioButton myHtmlRadioButton;
@@ -35,7 +36,7 @@ public class CCOptions implements OptionsProvider {
       IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(
         () -> IdeFocusManager.getGlobalInstance().requestFocus(myMarkdownRadioButton, true));
     }
-    if (Experiments.isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR)) {
+    if (isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR)) {
       LabeledComponent<JBCheckBox> showSplitEditorComponent =
         LabeledComponent.create(myShowSplitEditorCheckBox, "Show previous task file in framework lessons", BorderLayout.WEST);
       myCustomOptions.add(showSplitEditorComponent);

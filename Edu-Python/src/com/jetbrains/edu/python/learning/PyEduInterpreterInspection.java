@@ -71,7 +71,7 @@ public class PyEduInterpreterInspection extends PyInspection {
 
         final Module module = ModuleUtilCore.findModuleForPsiElement(node);
         if (module != null) {
-          final Sdk sdk = PythonSdkType.findPythonSdk(module);
+          final Sdk sdk = CompatUtils.findPythonSdk(module);
           if (sdk == null) return;
           final PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(sdk);
           if (flavor == null) return;

@@ -3,10 +3,10 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
-import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.isFeatureEnabled
 
 private const val ACTION_TEXT = "Change Hyperskill url"
 
@@ -21,6 +21,6 @@ class HyperskillChangeHost : DumbAwareAction(ACTION_TEXT), RightAlignedToolbarAc
   }
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = Experiments.isFeatureEnabled(EduExperimentalFeatures.HYPERSKILL)
+    e.presentation.isEnabledAndVisible = isFeatureEnabled(EduExperimentalFeatures.HYPERSKILL)
   }
 }

@@ -194,6 +194,7 @@ project(":") {
       }
     }
     if (baseIDE == "idea") {
+      // BACKCOMPAT: 2019.1 - use bundled nodeJS plugin
       pluginsList += listOf("NodeJS:${prop("nodeJsPluginVersion")}", "JavaScriptLanguage")
     }
 
@@ -454,8 +455,10 @@ project(":Edu-JavaScript") {
     localPath = null
     version = ideaVersion
     if (isAtLeast192) {
+      // BACKCOMPAT: 2019.1 - use bundled nodeJS plugin
       setPlugins("NodeJS:${prop("nodeJsPluginVersion")}", "JavaScriptLanguage", "CSS", "JavaScriptDebugger", "java")
     } else {
+      // BACKCOMPAT: 2019.1 - use bundled nodeJS plugin
       setPlugins("NodeJS:${prop("nodeJsPluginVersion")}", "JavaScriptLanguage", "CSS", "JavaScriptDebugger")
     }
   }

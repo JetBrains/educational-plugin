@@ -4,7 +4,6 @@ import com.google.common.collect.Lists
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.components.impl.ComponentManagerImpl
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -46,7 +45,6 @@ import java.io.IOException
 
 abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   private lateinit var myManager: FileEditorManagerImpl
-  private lateinit var myOldManager: FileEditorManager
   private lateinit var myOldDockContainers: Set<DockContainer>
 
   @Throws(Exception::class)
@@ -73,7 +71,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     myManager = createFileEditorManager(myFixture.project)
     // Copied from TestEditorManagerImpl's constructor
     myManager.registerExtraEditorDataProvider(TextEditorPsiDataProvider(), null)
-    myOldManager = (myFixture.project as ComponentManagerImpl).registerComponentInstance(FileEditorManager::class.java, myManager)
+    project.registerComponent(FileEditorManager::class.java, myManager, testRootDisposable)
     (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
     CheckActionListener.reset()
     val connection = project.messageBus.connect(testRootDisposable)
@@ -92,7 +90,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
           .filterNot { myOldDockContainers.contains(it) }
           .forEach { Disposer.dispose(it) }
 
-      (myFixture.project as ComponentManagerImpl).registerComponentInstance(FileEditorManager::class.java, myOldManager)
+//      project.registerComponent(FileEditorManager::class.java, myOldManager)
       myManager.closeAllFiles()
 
       EditorHistoryManager.getInstance(myFixture.project).files.forEach {

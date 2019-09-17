@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.editor
 
-import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.*
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
@@ -12,6 +11,7 @@ import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
+import com.jetbrains.edu.learning.isFeatureEnabled
 import org.jdom.Element
 
 class EduFileEditorProvider : FileEditorProvider, DumbAware {
@@ -29,7 +29,7 @@ class EduFileEditorProvider : FileEditorProvider, DumbAware {
     val taskFile = EduUtils.getTaskFile(project, file) ?: error("Can't find task file for `$file`")
     val task = taskFile.task
     if (task.isFrameworkTask && CCUtils.isCourseCreator(project) &&
-        Experiments.isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR) &&
+        isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR) &&
         CCSettings.getInstance().showSplitEditor()) {
       val prevTaskFile = task.lesson.taskList.getOrNull(task.index - 2)?.getTaskFile(taskFile.name)
       val taskDir = prevTaskFile?.task?.getTaskDir(project)

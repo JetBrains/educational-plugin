@@ -15,7 +15,6 @@
  */
 package com.jetbrains.edu.learning.stepik.builtInServer
 
-import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
@@ -75,9 +74,7 @@ object EduBuiltInServerUtils {
 
   @JvmStatic
   fun openRecentProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? {
-    val recentProjectsManager = RecentProjectsManagerBase.getInstanceEx()
-
-    val state = recentProjectsManager.state ?: return null
+    val state = recentProjectsManagerInstance.state ?: return null
 
     val recentPaths = state.recentPaths
     val parser = SAXBuilder()

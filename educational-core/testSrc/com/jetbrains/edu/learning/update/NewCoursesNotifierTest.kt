@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.update
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.ActionCallback
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.EduSettings
@@ -82,8 +81,8 @@ class NewCoursesNotifierTest : EduTestCase() {
                      bundledCourses: List<EduCourse> = emptyList(),
                      courseProducer: (Int) -> List<EduCourse>) {
     val newCoursesNotifier = NewCoursesNotifier(testRootDisposable) { listOf(0, 1, 2) }
-    PlatformTestUtil.registerExtension(CoursesProvider.EP_NAME, TestCoursesProvider(courseProducer), testRootDisposable)
-    PlatformTestUtil.registerExtension(CoursesProvider.EP_NAME, TestBundledCoursesProvider(bundledCourses), testRootDisposable)
+    CoursesProvider.EP_NAME.getPoint(null).registerExtension(TestCoursesProvider(courseProducer), testRootDisposable)
+    CoursesProvider.EP_NAME.getPoint(null).registerExtension(TestBundledCoursesProvider(bundledCourses), testRootDisposable)
 
     val actionCallback = ActionCallback()
     try {

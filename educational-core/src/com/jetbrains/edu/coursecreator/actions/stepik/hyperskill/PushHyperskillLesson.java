@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.actions.stepik.hyperskill;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.application.Experiments;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -32,6 +31,7 @@ import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showStepi
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.updateLesson;
 import static com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL;
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
+import static com.jetbrains.edu.learning.ExperimentsKt.isFeatureEnabled;
 
 @SuppressWarnings("ComponentNotRegistered") // Hyperskill.xml
 public class PushHyperskillLesson extends DumbAwareAction {
@@ -44,7 +44,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
   @Override
   public void update(@NotNull AnActionEvent e) {
     e.getPresentation().setEnabledAndVisible(false);
-    if (!Experiments.isFeatureEnabled(HYPERSKILL) || ! CCPluginToggleAction.isCourseCreatorFeaturesEnabled()) return;
+    if (!isFeatureEnabled(HYPERSKILL) || ! CCPluginToggleAction.isCourseCreatorFeaturesEnabled()) return;
 
     final Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;

@@ -4,7 +4,6 @@ import com.intellij.idea.IdeaTestApplication
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.components.impl.ComponentManagerImpl
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager
@@ -33,13 +32,13 @@ import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.createFileEditorManager
+import com.jetbrains.edu.learning.registerComponent
 import org.junit.Assert
 import org.junit.ComparisonFailure
 import java.io.File
 
 abstract class CheckersTestBase<Settings> : UsefulTestCase() {
     private lateinit var myManager: FileEditorManagerImpl
-    private lateinit var myOldManager: FileEditorManager
     private lateinit var myOldDockContainers: Set<DockContainer>
 
     private lateinit var myCourse: Course
@@ -150,7 +149,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
         val dockManager = DockManager.getInstance(myProject)
         myOldDockContainers = dockManager.containers
         myManager = createFileEditorManager(myProject)
-        myOldManager = (myProject as ComponentManagerImpl).registerComponentInstance(FileEditorManager::class.java, myManager)
+        myProject.registerComponent(FileEditorManager::class.java, myManager, testRootDisposable)
         (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
         EduDocumentListener.setGlobalListener(myProject, testRootDisposable)
     }
@@ -168,7 +167,6 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
                     .filterNot { myOldDockContainers.contains(it) }
                     .forEach { Disposer.dispose(it) }
 
-            (myProject as ComponentManagerImpl).registerComponentInstance(FileEditorManager::class.java, myOldManager)
             myManager.closeAllFiles()
 
             EditorHistoryManager.getInstance(myProject).files.forEach {
