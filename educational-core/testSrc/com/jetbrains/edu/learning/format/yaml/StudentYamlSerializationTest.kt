@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.format.yaml
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -64,6 +65,20 @@ class StudentYamlSerializationTest : EduTestCase()  {
     |status: Solved
     |record: 1
     |""".trimMargin("|"))
+  }
+
+  fun `test checkio mission`() {
+    val checkiOMission = CheckiOMission()
+    checkiOMission.code = "code"
+
+    doTest(checkiOMission, """
+    |type: checkio
+    |status: Unchecked
+    |record: -1
+    |code: code
+    |seconds_from_change: 0
+    |
+    """.trimMargin("|"))
   }
 
   fun `test task with task files`() {

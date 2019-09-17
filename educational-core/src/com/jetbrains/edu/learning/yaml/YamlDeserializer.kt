@@ -16,6 +16,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.*
 import com.jetbrains.edu.coursecreator.yaml.YamlLoader.getEditor
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -115,6 +116,7 @@ object YamlDeserializer {
       "ide" -> IdeTask::class.java
       // for student mode
       "code" -> CodeTask::class.java
+      "checkio" -> CheckiOMission::class.java
       else -> formatError(unsupportedItemTypeMessage(type, EduNames.TASK))
     }
     return treeToValue(treeNode, clazz)

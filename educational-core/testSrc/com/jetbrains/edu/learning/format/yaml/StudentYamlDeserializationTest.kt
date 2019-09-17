@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.format.yaml
 
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -24,6 +25,22 @@ class StudentYamlDeserializationTest : EduTestCase() {
     val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
     assertNotNull(course)
     assertEquals(EduNames.STUDY, course!!.courseMode)
+  }
+
+  fun `test checkio mission`() {
+    val yamlContent = """
+    |type: checkio
+    |status: Unchecked
+    |record: -1
+    |code: code
+    |seconds_from_change: 1
+    |
+    """.trimMargin("|")
+    val task = STUDENT_MAPPER.deserializeTask(yamlContent)
+    assertNotNull(task)
+    assertInstanceOf(task, CheckiOMission::class.java)
+    assertEquals("code", (task as CheckiOMission).code)
+    assertEquals(1, task.secondsFromLastChangeOnServer)
   }
 
   fun `test task status`() {

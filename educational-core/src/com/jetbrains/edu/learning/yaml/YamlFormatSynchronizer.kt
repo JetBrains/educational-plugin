@@ -31,6 +31,7 @@ import com.jetbrains.edu.coursecreator.yaml.YamlLoader.getEditor
 import com.jetbrains.edu.coursecreator.yaml.YamlSynchronizationListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -123,6 +124,7 @@ object YamlFormatSynchronizer {
     addMixIn(Course::class.java, StudentCourseYamlMixin::class.java)
     addMixIn(Task::class.java, StudentTaskYamlMixin::class.java)
     addMixIn(ChoiceTask::class.java, StudentChoiceTaskYamlMixin::class.java)
+    addMixIn(CheckiOMission::class.java, CheckiOMissionMixin::class.java)
     addMixIn(TaskFile::class.java, StudentTaskFileYamlMixin::class.java)
     addMixIn(AnswerPlaceholder::class.java, StudentAnswerPlaceholderYamlMixin::class.java)
     addMixIn(AnswerPlaceholder.MyInitialState::class.java, InitialStateMixin::class.java)

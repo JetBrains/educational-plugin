@@ -10,7 +10,7 @@ import java.util.Collection;
 
 public class CheckiOMission extends EduTask {
   @NotNull
-  @Transient
+  @Transient // used to get missions from server
   private CheckiOStation myStation;
 
   @NotNull
@@ -72,6 +72,11 @@ public class CheckiOMission extends EduTask {
   @Override
   public boolean isToSubmitToStepik() {
     return false;
+  }
+
+  @Override
+  public String getItemType() {
+    return "checkio";
   }
 
   @Override

@@ -7,19 +7,23 @@ import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin
 import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin.Companion.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin.Companion.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin.Companion.FILES
-
-private const val STATUS = "status"
-private const val RECORD = "record"
+import com.jetbrains.edu.learning.yaml.format.student.StudentTaskYamlMixin.Companion.RECORD
+import com.jetbrains.edu.learning.yaml.format.student.StudentTaskYamlMixin.Companion.STATUS
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonPropertyOrder(TaskYamlMixin.TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK,
                    STATUS, RECORD)
-class StudentTaskYamlMixin : TaskYamlMixin() {
+open class StudentTaskYamlMixin : TaskYamlMixin() {
 
   @JsonProperty(STATUS)
   private lateinit var myStatus: CheckStatus
 
   @JsonProperty(RECORD)
   private var myRecord: Int = -1
+
+  companion object {
+    const val STATUS = "status"
+    const val RECORD = "record"
+  }
 }
 
