@@ -13,186 +13,149 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jetbrains.edu.learning.stepik.builtInServer;
+package com.jetbrains.edu.learning.stepik.builtInServer
 
-import com.intellij.ide.RecentProjectsManagerBase;
-import com.intellij.ide.impl.ProjectUtil;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.TransactionGuard;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.util.xmlb.XmlSerializationException;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.EduCourse;
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog;
-import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import kotlin.Pair;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.RecentProjectsManagerBase
+import com.intellij.ide.impl.ProjectUtil
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.TransactionGuard
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.ui.Messages
+import com.intellij.util.xmlb.XmlSerializationException
+import com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH
+import com.jetbrains.edu.learning.EduUtils.execCancelable
+import com.jetbrains.edu.learning.EduUtils.navigateToStep
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
+import com.jetbrains.edu.learning.stepik.StepikProjectComponent.STEP_ID
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import org.jdom.Element
+import org.jdom.JDOMException
+import org.jdom.input.SAXBuilder
+import java.io.File
+import java.io.IOException
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Predicate;
+object EduBuiltInServerUtils {
 
-import static com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH;
-import static com.jetbrains.edu.learning.EduUtils.execCancelable;
-import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
-import static com.jetbrains.edu.learning.stepik.StepikProjectComponent.STEP_ID;
-
-public class EduBuiltInServerUtils {
-
-  public static boolean focusOpenEduProject(int courseId, int stepId) {
-    final Pair<Project, Course> projectAndCourse = focusOpenProject(
-      course -> course instanceof EduCourse && ((EduCourse)course).isRemote() && course.getId() == courseId);
-    if (projectAndCourse != null) {
-      ApplicationManager.getApplication().invokeLater(() -> navigateToStep(projectAndCourse.getFirst(), projectAndCourse.getSecond(), stepId));
-      return true;
-    }
-    return false;
+  @JvmStatic
+  fun focusOpenEduProject(courseId: Int, stepId: Int): Boolean {
+    val (project, course) = focusOpenProject { it is EduCourse && it.isRemote && it.getId() == courseId } ?: return false
+    ApplicationManager.getApplication().invokeLater { navigateToStep(project, course, stepId) }
+    return true
   }
 
-  @Nullable
-  public static Pair<Project, Course> focusOpenProject(Predicate<Course> coursePredicate) {
-    Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
-    for (Project project : openProjects) {
-      if (!project.isDefault()) {
-        StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
-        if (studyTaskManager != null) {
-          Course course = studyTaskManager.getCourse();
-          if (course == null) {
-            return null;
-          }
-          Course selectedCourse = coursePredicate.test(course) ? course : null;
-          if (selectedCourse != null) {
-            ApplicationManager.getApplication().invokeLater(() -> requestFocus(project));
-            return new Pair<>(project, course);
-          }
-        }
+  @JvmStatic
+  fun focusOpenProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? {
+    val openProjects = ProjectManager.getInstance().openProjects
+    for (project in openProjects) {
+      if (project.isDefault) continue
+      val course = project.course ?: continue
+      if (!coursePredicate(course)) continue
+      ApplicationManager.getApplication().invokeLater { project.requestFocus() }
+      return project to course
+    }
+    return null
+  }
+
+  private fun openProject(projectPath: String): Project? {
+    var project: Project? = null
+    ApplicationManager.getApplication().invokeAndWait {
+      TransactionGuard.getInstance().submitTransactionAndWait { project = ProjectUtil.openProject(projectPath, null, true) }
+      project?.requestFocus()
+    }
+    return project
+  }
+
+  private fun Project.requestFocus() = ProjectUtil.focusProjectWindow(this, true)
+
+  @JvmStatic
+  fun openRecentProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? {
+    val recentProjectsManager = RecentProjectsManagerBase.getInstanceEx()
+
+    val state = recentProjectsManager.state ?: return null
+
+    val recentPaths = state.recentPaths
+    val parser = SAXBuilder()
+
+    for (projectPath in recentPaths) {
+      val component = readComponent(parser, projectPath) ?: continue
+      val course = getCourse(component) ?: continue
+      if (coursePredicate(course)) {
+        val project = openProject(projectPath) ?: continue
+        val realProjectCourse = project.course ?: continue
+        return project to realProjectCourse
       }
     }
-    return null;
+    return null
   }
 
-  @Nullable
-  private static Project openProject(@NotNull String projectPath) {
-    final Project[] project = {null};
-    ApplicationManager.getApplication().invokeAndWait(() -> {
-      TransactionGuard.getInstance().submitTransactionAndWait(() ->
-        project[0] = ProjectUtil.openProject(projectPath, null, true));
-      requestFocus(project[0]);
-    });
-    return project[0];
+  @JvmStatic
+  fun openRecentEduCourse(courseId: Int, stepId: Int): Boolean {
+    val course = openRecentProject { it is EduCourse && it.isRemote && it.getId() == courseId }?.second ?: return false
+    course.putUserData(STEP_ID, stepId)
+    return true
   }
 
-  public static void requestFocus(@NotNull Project project) {
-    ProjectUtil.focusProjectWindow(project, true);
-  }
-
-  @Nullable
-  public static Pair<Project, Course> openRecentProject(Predicate<Course> coursePredicate) {
-    RecentProjectsManagerBase recentProjectsManager = RecentProjectsManagerBase.getInstanceEx();
-    if (recentProjectsManager == null) {
-      return null;
-    }
-
-    RecentProjectsManagerBase.State state = recentProjectsManager.getState();
-    if (state == null) {
-      return null;
-    }
-
-    List<String> recentPaths = state.recentPaths;
-    SAXBuilder parser = new SAXBuilder();
-
-    for (String projectPath : recentPaths) {
-      Element component = readComponent(parser, projectPath);
-      if (component == null) {
-        continue;
-      }
-      final Course course = getCourse(component);
-      if (coursePredicate.test(course)) {
-        Project project = openProject(projectPath);
-        Course realProjectCourse = null;
-        if (project != null) {
-          StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
-          if (taskManager != null) {
-            realProjectCourse = taskManager.getCourse();
-          }
-          return new Pair<>(project, realProjectCourse);
-        }
-      }
-    }
-    return null;
-  }
-
-  public static boolean openRecentEduCourse(int courseId, int stepId) {
-    final Pair<Project, Course> projectAndCourse =
-      openRecentProject(course -> course instanceof EduCourse && ((EduCourse)course).isRemote() && course.getId() == courseId);
-    if (projectAndCourse != null) {
-      Course course = projectAndCourse.getSecond();
-      if (course != null) {
-        course.putUserData(STEP_ID, stepId);
-      }
-      return true;
-    }
-    return false;
-  }
-
-
-  @Nullable
-  private static Element readComponent(@NotNull SAXBuilder parser, @NotNull String projectPath) {
-    Element component = null;
+  private fun readComponent(parser: SAXBuilder, projectPath: String): Element? {
+    var component: Element? = null
     try {
-      String studyProjectXML = projectPath + STUDY_PROJECT_XML_PATH;
-      Document xmlDoc = parser.build(new File(studyProjectXML));
-      Element root = xmlDoc.getRootElement();
-      component = root.getChild("component");
+      val studyProjectXML = projectPath + STUDY_PROJECT_XML_PATH
+      val xmlDoc = parser.build(File(studyProjectXML))
+      val root = xmlDoc.rootElement
+      component = root.getChild("component")
     }
-    catch (JDOMException | IOException ignored) {
+    catch (ignored: JDOMException) {
+    }
+    catch (ignored: IOException) {
     }
 
-    return component;
+    return component
   }
 
-  private static Course getCourse(@NotNull Element component) {
+  private fun getCourse(component: Element): Course? {
     try {
-      final StudyTaskManager studyTaskManager = new StudyTaskManager();
-      studyTaskManager.loadState(component);
-      return studyTaskManager.getCourse();
+      val studyTaskManager = StudyTaskManager()
+      studyTaskManager.loadState(component)
+      return studyTaskManager.course
     }
-    catch (IllegalStateException | XmlSerializationException ignored) {
+    catch (ignored: IllegalStateException) {
     }
-    return null;
+    catch (ignored: XmlSerializationException) {
+    }
+
+    return null
   }
 
-  public static boolean createEduCourse(int courseId, int stepId) {
-    ApplicationManager.getApplication().invokeLater(() -> ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-      execCancelable(() -> {
-        EduCourse course = StepikConnector.getInstance().getCourseInfo(courseId, true);
-        showDialog(course, stepId);
-        return null;
-      });
-    }, "Getting Course", true, null));
+  @JvmStatic
+  fun createEduCourse(courseId: Int, stepId: Int): Boolean {
+    ApplicationManager.getApplication().invokeLater {
+      ProgressManager.getInstance().runProcessWithProgressSynchronously({
+        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+        execCancelable<Any> {
+          val course = StepikConnector.getInstance().getCourseInfo(courseId, true)
+          showDialog(course, stepId)
+          null
+        }
+      }, "Getting Course", true, null)
+    }
 
-    return true;
+    return true
   }
 
-  private static void showDialog(@Nullable Course course, int stepId) {
-    ApplicationManager.getApplication().invokeLater(() -> {
+  private fun showDialog(course: Course?, stepId: Int) {
+    ApplicationManager.getApplication().invokeLater {
       if (course != null) {
-        course.putUserData(STEP_ID, stepId);
-        new JoinCourseDialog(course).show();
-      } else {
-        Messages.showErrorDialog("Can not get course info from Stepik", "Failed to Create Course");
+        course.putUserData(STEP_ID, stepId)
+        JoinCourseDialog(course).show()
       }
-    });
+      else {
+        Messages.showErrorDialog("Can not get course info from Stepik", "Failed to Create Course")
+      }
+    }
   }
 }
