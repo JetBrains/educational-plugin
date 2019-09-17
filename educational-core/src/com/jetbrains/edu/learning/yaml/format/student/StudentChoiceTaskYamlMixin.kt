@@ -12,15 +12,15 @@ import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin
 import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin.Companion.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin.Companion.FILES
 
-private const val SELECTED_VARIANTS = "selected_variants"
+private const val SELECTED_OPTIONS = "selected_options"
 private const val STATUS = "status"
 private const val RECORD = "record"
 
 @JsonPropertyOrder(TaskYamlMixin.TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, FILES, FEEDBACK_LINK,
-                   SELECTED_VARIANTS, STATUS, RECORD)
+                   OPTIONS, STATUS, RECORD)
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 class StudentChoiceTaskYamlMixin: ChoiceTaskYamlMixin() {
-  @JsonProperty(SELECTED_VARIANTS)
+  @JsonProperty(SELECTED_OPTIONS)
   var selectedVariants = mutableListOf<Int>()
 
   @JsonProperty(STATUS)

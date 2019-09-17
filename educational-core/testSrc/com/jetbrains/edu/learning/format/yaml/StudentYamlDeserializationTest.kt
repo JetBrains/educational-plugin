@@ -66,7 +66,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |message_incorrect: Incorrect solution
     |status: Solved
     |record: 1
-    |selected_variants:
+    |selected_options:
     |- 1
     |""".trimMargin("|")
     val task = deserializeTask(yamlContent)

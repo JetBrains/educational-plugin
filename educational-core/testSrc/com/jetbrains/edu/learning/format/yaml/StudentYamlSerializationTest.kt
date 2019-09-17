@@ -60,10 +60,10 @@ class StudentYamlSerializationTest : EduTestCase()  {
     |  is_correct: false
     |message_correct: Congratulations!
     |message_incorrect: Incorrect solution
-    |selected_variants:
-    |- 1
     |status: Solved
     |record: 1
+    |selected_options:
+    |- 1
     |""".trimMargin("|"))
   }
 
