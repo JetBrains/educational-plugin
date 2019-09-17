@@ -32,7 +32,8 @@ class YamlMigrationTest : YamlTestCase() {
     val connection = project.messageBus.connect()
     connection.subscribe(StudyTaskManager.COURSE_SET, object : CourseSetListener {
       override fun courseSet(course: Course) {
-        TestCase.fail("Course is loaded in yaml project ")
+        connection.disconnect()
+        fail("Course is loaded in yaml project ")
       }
     })
 
