@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.ide.RecentProjectsManager
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -58,7 +59,12 @@ class CCCreateCoursePreviewDialog(
         try {
           val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)
           val settings = myPanel.projectSettings
-          myConfigurator.courseBuilder.getCourseProjectGenerator(course)?.doCreateCourseProject(location.absolutePath, settings)
+          val previewProject = myConfigurator.courseBuilder.getCourseProjectGenerator(course)?.doCreateCourseProject(location.absolutePath, settings)
+          if (previewProject == null) {
+            showErrorMessage()
+            return
+          }
+          PropertiesComponent.getInstance(previewProject).setValue(PREVIEW_FOLDER_PREFIX, true)
           RecentProjectsManager.getInstance().removePath(location.absolutePath)
           EduCounterUsageCollector.createCoursePreview()
         }
