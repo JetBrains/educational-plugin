@@ -37,11 +37,4 @@
     </component>
   </project-components>
 
-  <application-components>
-    <component>
-      <implementation-class>com.jetbrains.edu.python.learning.PyInitialConfigurator</implementation-class>
-      <headless-implementation-class/>
-    </component>
-  </application-components>
-
 </idea-plugin>
