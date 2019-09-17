@@ -7,6 +7,7 @@ import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.JdkBundle
+import com.jetbrains.edu.java.messages.EduJavaBundle
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
@@ -46,7 +47,7 @@ class JLanguageSettings : JdkLanguageSettings() {
       val providedJavaVersion = jdkItem?.jdk?.versionString ?: return ValidationMessage("No Java sdk")
 
       val javaSdkVersion = JavaSdkVersion.fromVersionString(providedJavaVersion)
-                           ?: return ValidationMessage("Failed to determine Java version")
+                           ?: return ValidationMessage(EduJavaBundle.message("failed.to.get.java.version"))
       if (javaSdkVersion.isAtLeast(courseJavaVersion)) {
         return null
       }

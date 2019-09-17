@@ -5,9 +5,8 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.io.IOUtil
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
-import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.CPP11
-import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.CPP14
-import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.values
+import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.*
+import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
@@ -47,7 +46,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? = when {
     courseLocation == null -> null
     SystemInfo.isWindows && !IOUtil.isAscii(courseLocation) ->
-      ValidationMessage("CMake might not work properly with non-ASCII symbols in location path", type = WARNING)
+      ValidationMessage(EduCppBundle.message("non.ascii.warning"), type = WARNING)
     else -> null
   }
 }

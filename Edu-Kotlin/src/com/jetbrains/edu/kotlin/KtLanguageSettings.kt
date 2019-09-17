@@ -1,6 +1,7 @@
 package com.jetbrains.edu.kotlin
 
 import com.jetbrains.edu.jvm.JdkLanguageSettings
+import com.jetbrains.edu.kotlin.messages.EduKtBundle
 import com.jetbrains.edu.learning.DEFAULT_KOTLIN_VERSION
 import com.jetbrains.edu.learning.KotlinVersion
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -15,7 +16,7 @@ class KtLanguageSettings : JdkLanguageSettings() {
     val courseKotlinVersion = course.kotlinVersion
     val kotlinVersion = kotlinVersion()
     if (kotlinVersion < courseKotlinVersion) {
-      return ValidationMessage("Kotlin ${courseKotlinVersion.version} required. Try updating Kotlin plugin.")
+      return ValidationMessage(EduKtBundle.message("update.kotlin.plugin", courseKotlinVersion.version))
     }
     return super.validate(course, courseLocation)
   }

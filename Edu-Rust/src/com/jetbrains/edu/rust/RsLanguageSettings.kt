@@ -8,6 +8,7 @@ import com.intellij.ui.DocumentAdapter
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.rust.messages.EduRustBundle
 import org.rust.cargo.toolchain.RustToolchain
 import java.awt.BorderLayout
 import java.nio.file.Paths
@@ -26,7 +27,7 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
             rustToolchain = toolchain
         }
         toolchainLocation.addBrowseFolderListener(
-          "Select directory with `rustup` binary", null, null,
+          EduRustBundle.message("select.rustup.binary"), null, null,
           FileChooserDescriptorFactory.createSingleFolderDescriptor(),
           TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT
         )

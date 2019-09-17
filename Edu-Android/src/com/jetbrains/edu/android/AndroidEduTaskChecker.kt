@@ -12,6 +12,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.jetbrains.edu.android.messages.EduAndroidBundle
 import com.jetbrains.edu.jvm.gradle.checker.GradleCommandLine
 import com.jetbrains.edu.jvm.gradle.checker.GradleEduTaskChecker
 import com.jetbrains.edu.jvm.gradle.checker.getGradleProjectName
@@ -33,11 +34,11 @@ class AndroidChecker(task: EduTask, project: Project) : GradleEduTaskChecker(tas
     val taskModuleName = getGradleProjectName(task)
     val assembleTask = "$taskModuleName:assemble"
 
-    indicator.text = "Building task..."
+    indicator.text = EduAndroidBundle.message("building.task")
     val assembleResult = GradleCommandLine.create(project, assembleTask)?.launchAndCheck() ?: CheckResult.FAILED_TO_CHECK
     if (assembleResult.status != CheckStatus.Solved) return assembleResult
 
-    indicator.text = "Running unit tests..."
+    indicator.text = EduAndroidBundle.message("running.unit.tests")
     val unitTestTask = "$taskModuleName:testDebugUnitTest"
     val unitTestResult = GradleCommandLine.create(project, unitTestTask)?.launchAndCheck() ?: CheckResult.FAILED_TO_CHECK
     if (unitTestResult.status != CheckStatus.Solved) return unitTestResult
@@ -45,7 +46,7 @@ class AndroidChecker(task: EduTask, project: Project) : GradleEduTaskChecker(tas
     val hasInstrumentedTests = task.taskFiles.any { (path, _) -> path.startsWith("src/androidTest") && !path.endsWith("AndroidEduTestRunner.kt") }
     if (!hasInstrumentedTests) return unitTestResult
 
-    indicator.text = "Launching emulator..."
+    indicator.text = EduAndroidBundle.message("launching.emulator")
     ApplicationManager.getApplication().invokeAndWait {
       deviceLaunching = launchEmulator()
     }
@@ -57,7 +58,7 @@ class AndroidChecker(task: EduTask, project: Project) : GradleEduTaskChecker(tas
     }
     if (!emulatorLaunched) return CheckResult.FAILED_TO_CHECK
 
-    indicator.text = "Running instrumented tests..."
+    indicator.text = EduAndroidBundle.message("running.instrumented.tests")
     val instrumentedTestTask = "$taskModuleName:connectedDebugAndroidTest"
     return GradleCommandLine.create(project, instrumentedTestTask)?.launchAndCheck() ?: CheckResult.FAILED_TO_CHECK
   }

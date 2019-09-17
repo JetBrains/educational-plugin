@@ -4,6 +4,7 @@ import com.intellij.javascript.nodejs.interpreter.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.LabeledComponent;
+import com.jetbrains.edu.javascript.learning.messages.EduJsBundle;
 import com.jetbrains.edu.learning.LanguageSettings;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage;
@@ -45,7 +46,7 @@ public class JsLanguageSettings extends LanguageSettings<JsNewProjectSettings> {
   @NotNull
   @Override
   public List<LabeledComponent<JComponent>> getLanguageSettingsComponents(@NotNull Course course) {
-    return Collections.singletonList(LabeledComponent.create(myInterpreterField, "Interpreter", BorderLayout.WEST));
+    return Collections.singletonList(LabeledComponent.create(myInterpreterField, EduJsBundle.message("node.interpreter"), BorderLayout.WEST));
   }
 
   @Nullable
