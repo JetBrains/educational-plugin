@@ -8,11 +8,13 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.courseFormat.Course
 import java.io.File
 
+// TODO: use [HeavyPlatformTestCase] as base class
 abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
 
   abstract val courseBuilder: EduCourseBuilder<Settings>
@@ -56,6 +58,9 @@ abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
       ApplicationManager.getApplication().runWriteAction { rootDir.delete(this) }
 
       LightPlatformTestCase.doTearDown(project, application)
+      // BACKCOMPAT: 2019.2
+      @Suppress("DEPRECATION")
+      PlatformTestCase.closeAndDisposeProjectAndCheckThatNoOpenProjects(project)
     } finally {
       super.tearDown()
     }

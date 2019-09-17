@@ -179,7 +179,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
 
   fun testErrors() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
-      assertEquals(CheckStatus.Failed, checkResult.status)
+      assertEquals("${task.name} should be failed", CheckStatus.Failed, checkResult.status)
       val (messageMatcher, diffMatcher) = when (task.name) {
         "kotlinCompilationError", "javaCompilationError", "compilationError()" ->
           equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE) to nullValue()

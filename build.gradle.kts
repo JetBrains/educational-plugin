@@ -43,6 +43,7 @@ val webStormSandbox = "${project.buildDir.absolutePath}/webstorm-sandbox"
 val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 
 val isAtLeast192 = environmentName.toInt() >= 192
+val isAtLeast193 = environmentName.toInt() >= 193
 
 plugins {
   idea
@@ -186,7 +187,12 @@ project(":") {
       untilBuild(prop("customUntilBuild"))
     }
 
-    val pluginsList = mutableListOf("PythonCore:${prop("pythonPluginVersion")}", "org.rust.lang:${prop("rustPluginVersion")}", "yaml")
+    val pluginsList = mutableListOf(
+      "PythonCore:${prop("pythonPluginVersion")}",
+      "org.rust.lang:${prop("rustPluginVersion")}",
+      "org.toml.lang:${prop("tomlPluginVersion")}",
+      "yaml"
+    )
     if (isJvmCenteredIDE) {
       pluginsList += listOf("junit", "Kotlin", "org.intellij.scala:${prop("scalaPluginVersion")}")
       if (isAtLeast192) {
@@ -321,11 +327,19 @@ project(":jvm-core") {
       localPath = null
       version = ideaVersion
     }
+    val plugins = mutableListOf(
+      "junit",
+      "properties",
+      "gradle",
+      "Groovy"
+    )
     if (isAtLeast192) {
-      setPlugins("junit", "properties", "gradle", "Groovy", "java")
-    } else {
-      setPlugins("junit", "properties", "gradle", "Groovy")
+      plugins += "java"
     }
+    if (isAtLeast193) {
+      plugins += "Gradle-Java"
+    }
+    setPlugins(*plugins.toTypedArray())
   }
 
   val testOutput = configurations.create("testOutput")
@@ -360,11 +374,19 @@ project(":Edu-Java") {
   intellij {
     localPath = null
     version = ideaVersion
+    val plugins = mutableListOf(
+      "junit",
+      "properties",
+      "gradle",
+      "Groovy"
+    )
     if (isAtLeast192) {
-      setPlugins("junit", "properties", "gradle", "Groovy", "java")
-    } else {
-      setPlugins("junit", "properties", "gradle", "Groovy")
+      plugins += "java"
     }
+    if (isAtLeast193) {
+      plugins += "Gradle-Java"
+    }
+    setPlugins(*plugins.toTypedArray())
   }
 
   dependencies {
@@ -381,11 +403,20 @@ project(":Edu-Kotlin") {
       localPath = null
       version = ideaVersion
     }
+    val plugins = mutableListOf(
+      "Kotlin",
+      "junit",
+      "properties",
+      "gradle",
+      "Groovy"
+    )
     if (isAtLeast192) {
-      setPlugins("Kotlin", "junit", "properties", "gradle", "Groovy", "java")
-    } else {
-      setPlugins("Kotlin", "junit", "properties", "gradle", "Groovy")
+      plugins += "java"
     }
+    if (isAtLeast193) {
+      plugins += "Gradle-Java"
+    }
+    setPlugins(*plugins.toTypedArray())
   }
 
   dependencies {
@@ -400,11 +431,20 @@ project(":Edu-Scala") {
   intellij {
     localPath = null
     version = ideaVersion
+    val plugins = mutableListOf(
+      "org.intellij.scala:${prop("scalaPluginVersion")}",
+      "junit",
+      "properties",
+      "gradle",
+      "Groovy"
+    )
     if (isAtLeast192) {
-      setPlugins("org.intellij.scala:${prop("scalaPluginVersion")}", "junit", "properties", "gradle", "Groovy", "java")
-    } else {
-      setPlugins("org.intellij.scala:${prop("scalaPluginVersion")}", "junit", "properties", "gradle", "Groovy")
+      plugins += "java"
     }
+    if (isAtLeast193) {
+      plugins += "Gradle-Java"
+    }
+    setPlugins(*plugins.toTypedArray())
   }
 
   dependencies {
@@ -471,9 +511,9 @@ project(":Edu-JavaScript") {
 project(":Edu-Rust") {
   intellij {
     if (isAtLeast192 && isJvmCenteredIDE) {
-      setPlugins("org.rust.lang:${prop("rustPluginVersion")}", "java")
+      setPlugins("org.rust.lang:${prop("rustPluginVersion")}", "org.toml.lang:${prop("tomlPluginVersion")}", "java")
     } else {
-      setPlugins("org.rust.lang:${prop("rustPluginVersion")}")
+      setPlugins("org.rust.lang:${prop("rustPluginVersion")}", "org.toml.lang:${prop("tomlPluginVersion")}")
     }
   }
 
