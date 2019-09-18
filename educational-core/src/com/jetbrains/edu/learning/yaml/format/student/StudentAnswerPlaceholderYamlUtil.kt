@@ -3,14 +3,15 @@ package com.jetbrains.edu.learning.yaml.format.student
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.DEPENDENCY
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.LENGTH
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.OFFSET
+import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.PLACEHOLDER_TEXT
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderBuilder
 import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin
-import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin.Companion.DEPENDENCY
-import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin.Companion.LENGTH
-import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin.Companion.PLACEHOLDER_TEXT
 
 private const val INITIAL_STATE = "initial_state"
 private const val INIT_FROM_DEPENDENCY = "initialized_from_dependency"
@@ -20,8 +21,8 @@ private const val STATUS = "status"
 private const val STUDENT_ANSWER = "student_answer"
 
 @JsonDeserialize(builder = EduAnswerPlaceholderBuilder::class)
-@JsonPropertyOrder(AnswerPlaceholderYamlMixin.OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY, INITIAL_STATE, INIT_FROM_DEPENDENCY,
-                   POSSIBLE_ANSWER, SELECTED, STATUS, STUDENT_ANSWER, LENGTH, AnswerPlaceholderYamlMixin.OFFSET)
+@JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY, INITIAL_STATE, INIT_FROM_DEPENDENCY, POSSIBLE_ANSWER, SELECTED, STATUS,
+                   STUDENT_ANSWER, LENGTH, OFFSET)
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 abstract class StudentAnswerPlaceholderYamlMixin : AnswerPlaceholderYamlMixin() {
 
@@ -48,7 +49,7 @@ class InitialStateMixin {
   @JsonProperty(LENGTH)
   private var length = -1
 
-  @JsonProperty(AnswerPlaceholderYamlMixin.OFFSET)
+  @JsonProperty(OFFSET)
   private var offset = -1
 }
 

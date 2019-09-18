@@ -23,12 +23,13 @@ object YamlMixinNames {
 
   // lesson
   const val UNIT = "unit"
-  const val FRAMEWORK_TYPE = "framework"
 
   // task
   const val FILES = "files"
   const val FEEDBACK_LINK = "feedback_link"
-  
+  const val STATUS = "status"
+  const val RECORD = "record"
+
   // choice task
   const val IS_CORRECT = "is_correct"
   const val OPTIONS = "options"
