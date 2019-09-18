@@ -24,7 +24,6 @@ import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TITLE
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TOP_LEVEL_LESSONS_SECTION
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.UPDATE_DATE
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.formatError
 import com.jetbrains.edu.coursecreator.yaml.unknownFieldValueMessage
 import com.jetbrains.edu.coursecreator.yaml.unnamedItemAtMessage
@@ -178,7 +177,6 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
       if (languages.isEmpty()) {
         formatError("Unsupported language $programmingLanguage")
       }
-      language = languageName.id
 
       if (languages.size > 1) {
         error("Multiple configurators for language with name: $programmingLanguage")
