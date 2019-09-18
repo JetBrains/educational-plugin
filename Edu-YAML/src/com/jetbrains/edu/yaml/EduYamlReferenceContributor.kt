@@ -18,8 +18,9 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
-import com.jetbrains.edu.learning.yaml.format.TaskFileYamlMixin.Companion.NAME
-import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin.Companion.FILES
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME
 import org.jetbrains.yaml.psi.YAMLScalar
 import org.jetbrains.yaml.psi.YAMLSequence
 import org.jetbrains.yaml.psi.YAMLSequenceItem

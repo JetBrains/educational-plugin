@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.yaml
+package com.jetbrains.edu.learning.yaml.format
 
 object YamlMixinNames {
 
@@ -12,6 +12,7 @@ object YamlMixinNames {
   const val LANGUAGE = "language"
   const val SUMMARY = "summary"
   const val PROGRAMMING_LANGUAGE = "programming_language"
+  const val SOLUTIONS_HIDDEN = "solutions_hidden"
 
   const val ENVIRONMENT = "environment"
   const val PROGRAMMING_LANGUAGE_VERSION = "programming_language_version"
@@ -22,12 +23,13 @@ object YamlMixinNames {
 
   // lesson
   const val UNIT = "unit"
-  const val FRAMEWORK_TYPE = "framework"
 
   // task
   const val FILES = "files"
   const val FEEDBACK_LINK = "feedback_link"
-  
+  const val STATUS = "status"
+  const val RECORD = "record"
+
   // choice task
   const val IS_CORRECT = "is_correct"
   const val OPTIONS = "options"
@@ -45,7 +47,7 @@ object YamlMixinNames {
   const val LENGTH = "length"
   const val PLACEHOLDER_TEXT = "placeholder_text"
   const val DEPENDENCY = "dependency"
-  
+
   // placeholder dependency
   const val SECTION = "section"
   const val LESSON = "lesson"

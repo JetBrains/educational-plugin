@@ -3,8 +3,8 @@ package com.jetbrains.edu.learning.yaml.format
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.ID
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.UPDATE_DATE
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
 import java.util.*
 
 /**

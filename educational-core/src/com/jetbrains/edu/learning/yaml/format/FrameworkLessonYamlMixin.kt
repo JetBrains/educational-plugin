@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TYPE
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.CONTENT
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.CUSTOM_NAME
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
 @JsonDeserialize(builder = FrameworkLessonBuilder::class)
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, CONTENT)

@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
 import com.fasterxml.jackson.databind.util.StdConverter
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
@@ -33,6 +32,7 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYP
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
 import java.util.*
 
 private const val VERSION = "version"
@@ -67,8 +67,7 @@ private const val SUBMIT_MANUALLY = "submit_manually"
 private const val CUSTOM_NAME = "custom_name"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
-@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE,
-                   YamlMixinNames.SOLUTIONS_HIDDEN, ITEMS)
+@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, SOLUTIONS_HIDDEN, ITEMS)
 @JsonSerialize(using = CourseSerializer::class)
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
@@ -105,7 +104,7 @@ abstract class LocalEduCourseMixin {
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   private lateinit var additionalFiles: List<TaskFile>
 
-  @JsonProperty(YamlMixinNames.SOLUTIONS_HIDDEN)
+  @JsonProperty(SOLUTIONS_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private var solutionsHidden: Boolean = false
 }

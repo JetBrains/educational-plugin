@@ -3,13 +3,13 @@ package com.jetbrains.edu.learning.yaml.format.student
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.NAME
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.PLACEHOLDERS
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.VISIBLE
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.yaml.format.TaskFileBuilder
 import com.jetbrains.edu.learning.yaml.format.TaskFileYamlMixin
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDERS
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 
 private const val TEXT = "text"
 

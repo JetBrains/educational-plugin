@@ -2,10 +2,10 @@ package com.jetbrains.edu.learning.handlers
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.*
-import com.jetbrains.edu.coursecreator.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.fileInfo
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 abstract class EduVirtualFileListener(protected val project: Project) : VirtualFileListener {
 

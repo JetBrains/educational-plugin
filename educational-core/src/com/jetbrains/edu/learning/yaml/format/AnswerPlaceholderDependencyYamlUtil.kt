@@ -5,12 +5,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.FILE
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.IS_VISIBLE
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.LESSON
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.PLACEHOLDER
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.SECTION
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.TASK
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILE
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_VISIBLE
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDER
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SECTION
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonPropertyOrder(SECTION, LESSON, TASK, FILE, PLACEHOLDER, IS_VISIBLE)

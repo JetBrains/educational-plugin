@@ -3,15 +3,15 @@ package com.jetbrains.edu.learning.yaml.format.student
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.DEPENDENCY
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.LENGTH
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.OFFSET
-import com.jetbrains.edu.coursecreator.yaml.format.YamlMixinNames.PLACEHOLDER_TEXT
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderBuilder
 import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.DEPENDENCY
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LENGTH
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OFFSET
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDER_TEXT
 
 private const val INITIAL_STATE = "initial_state"
 private const val INIT_FROM_DEPENDENCY = "initialized_from_dependency"
