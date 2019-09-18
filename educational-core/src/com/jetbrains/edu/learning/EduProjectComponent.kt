@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning
 
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.ide.AppLifecycleListener
+import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
@@ -18,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduUtils.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -78,6 +81,20 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
         val course = StudyTaskManager.getInstance(project).course
         if (course != null && !isUnitTestMode && !YamlFormatSettings.disableYaml(course)) {
           saveAll(project)
+        }
+      }
+    })
+
+    connection.subscribe(AppLifecycleListener.TOPIC, object : AppLifecycleListenerAdapter {
+      override fun appWillBeClosed(isRestart: Boolean) {
+        val projects = ProjectManager.getInstance().openProjects
+        for (project in projects) {
+          if (PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.PREVIEW_FOLDER_PREFIX)) {
+            // force closing project -> IDE will not try to reopen course preview in the next session
+            ProjectManager.getInstance().closeProject(project)
+            RecentProjectsManager.getInstance().removePath(project.basePath)
+            RecentProjectsManager.getInstance().updateLastProjectPath()
+          }
         }
       }
     })
@@ -159,6 +176,13 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
           }
         }
       }
+    }
+  }
+
+  override fun projectClosed() {
+    if (PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.PREVIEW_FOLDER_PREFIX)) {
+      RecentProjectsManager.getInstance().removePath(project.basePath)
+      RecentProjectsManager.getInstance().updateLastProjectPath()
     }
   }
 
