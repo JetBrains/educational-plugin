@@ -230,7 +230,7 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     assertEquals(expectedCourseJson, generatedJsonFile)
   }
 
-  fun `test peek solution is hidden`() {
+  fun `test peek solution is hidden for course`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
@@ -240,6 +240,17 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     }
     course.solutionsHidden = true
     course.description = "my summary"
+    val generatedJsonFile = generateJson()
+    val expectedCourseJson = loadExpectedJson()
+    assertEquals(expectedCourseJson, generatedJsonFile)
+  }
+
+  fun `test peek solution is hidden for task`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask(solutionHidden = true)
+      }
+    }
     val generatedJsonFile = generateJson()
     val expectedCourseJson = loadExpectedJson()
     assertEquals(expectedCourseJson, generatedJsonFile)

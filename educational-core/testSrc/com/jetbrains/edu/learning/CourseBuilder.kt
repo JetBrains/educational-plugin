@@ -31,6 +31,7 @@ fun course(
   language: com.intellij.lang.Language = PlainTextLanguage.INSTANCE,
   environment: String = "",
   courseMode: String = EduNames.STUDY,
+  solutionsHidden: Boolean = false,
   courseProducer: () -> Course = ::EduCourse,
   buildCourse: CourseBuilder.() -> Unit
 ): Course {
@@ -41,6 +42,7 @@ fun course(
   val course = builder.course
   course.language = language.id
   course.environment = environment
+  course.solutionsHidden = solutionsHidden
   return course
 }
 
@@ -160,6 +162,7 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
     updateDate: Date = Date(0),
+    solutionHidden: Boolean? = null,
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     // we want to know task files order in tests
@@ -171,6 +174,7 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     taskBuilder.withTaskDescription(taskDescription ?: "solve task", taskDescriptionFormat)
     taskBuilder.withStepId(stepId)
     taskBuilder.withUpdateDate(updateDate)
+    taskBuilder.withSolutionHidden(solutionHidden)
     taskBuilder.buildTask()
     lesson.addTask(taskBuilder.task)
   }
@@ -181,8 +185,9 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
     updateDate: Date = Date(0),
+    solutionHidden: Boolean? = null,
     buildTask: TaskBuilder.() -> Unit = {}
-  ) = task(EduTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+  ) = task(EduTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, solutionHidden, buildTask)
 
   fun theoryTask(
     name: String? = null,
@@ -191,7 +196,7 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     stepId: Int = 0,
     updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
-  ) = task(TheoryTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+  ) = task(TheoryTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, null, buildTask)
 
   fun outputTask(
     name: String? = null,
@@ -200,7 +205,7 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     stepId: Int = 0,
     updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
-  ) = task(OutputTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+  ) = task(OutputTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, null, buildTask)
 
   fun choiceTask(
     name: String? = null,
@@ -213,7 +218,7 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val choiceTask = ChoiceTask()
-    task(choiceTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+    task(choiceTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, null, buildTask)
     choiceTask.choiceOptions = choiceOptions.map { ChoiceOption(it.key, it.value) }
     choiceTask.isMultipleChoice = isMultipleChoice
   }
@@ -266,6 +271,10 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
 
   fun withUpdateDate(date: Date) {
     task.updateDate = date
+  }
+
+  fun withSolutionHidden(solutionHidden: Boolean?) {
+    task.solutionHidden = solutionHidden
   }
 
   fun withStepId(stepId: Int) {

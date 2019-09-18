@@ -165,9 +165,15 @@ public class CourseFormatTest extends EduTestCase {
                  ContainerUtil.map(course.getAuthors(), info -> info.getName()));
   }
 
-  public void testSolutionsHidden() throws IOException {
+  public void testSolutionsHiddenInCourse() throws IOException {
     final Course course = getCourseFromJson();
     assertTrue(course.getSolutionsHidden());
+  }
+
+  public void testSolutionHiddenInTask() throws IOException {
+    final Course course = getCourseFromJson();
+    Task task = course.getLessons().get(0).getTaskList().get(0);
+    assertTrue(task.getSolutionHidden());
   }
 
   private Course getCourseFromJson() throws IOException {

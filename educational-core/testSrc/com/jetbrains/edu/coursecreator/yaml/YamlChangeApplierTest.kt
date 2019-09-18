@@ -155,7 +155,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertNull(task.customPresentableName)
   }
 
-  fun `test hide solutions from the learner`() {
+  fun `test hide solutions for whole course`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson { }
     }
@@ -171,5 +171,22 @@ class YamlChangeApplierTest : YamlTestCase() {
 
     loadItemFromConfig(course, yamlContent)
     assertTrue(course.solutionsHidden)
+  }
+
+  fun `test do not hide solutions for one task`() {
+    val task = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask(solutionHidden = true)
+      }
+    }.lessons[0].taskList[0]
+    assertEquals(true, task.solutionHidden)
+
+    val yamlContent = """
+      |type: edu
+      |solution_hidden: false
+    """.trimMargin("|")
+
+    loadItemFromConfig(task, yamlContent)
+    assertEquals(false, task.solutionHidden)
   }
 }

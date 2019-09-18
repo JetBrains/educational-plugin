@@ -298,23 +298,27 @@ class YamlDeserializationTest : YamlTestCase() {
   fun `test output task`() {
     val yamlContent = """
     |type: output
+    |solution_hidden: false
     |files:
     |- name: Test.java
     |""".trimMargin()
     val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is OutputTask)
     assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
+    assertEquals(false, task.solutionHidden)
   }
 
   fun `test ide task`() {
     val yamlContent = """
     |type: ide
+    |solution_hidden: true
     |files:
     |- name: Test.java
     |""".trimMargin()
     val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is IdeTask)
     assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
+    assertEquals(true, task.solutionHidden)
   }
 
   fun `test choice task`() {
@@ -383,6 +387,7 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(3, answerPlaceholder.length)
     assertEquals("type here", answerPlaceholder.placeholderText)
     assertEquals("lesson1#task1#Test.java#1", answerPlaceholder.placeholderDependency.toString())
+    assertNull(task.solutionHidden)
   }
 
   fun `test with custom presentable name`() {

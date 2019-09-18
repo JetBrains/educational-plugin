@@ -425,9 +425,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test course with hidden solutions`() {
-    val course = course {
-      course.solutionsHidden = true
-    }
+    val course = course(solutionsHidden = true) {}
     doTest(course, """
       |title: Test Course
       |language: English
@@ -435,6 +433,36 @@ class YamlSerializationTest : YamlTestCase() {
       |solutions_hidden: true
       |
     """.trimMargin())
+  }
+
+  fun `test task with hidden solution`() {
+    val task = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask(solutionHidden = true)
+      }
+    }.findTask("lesson1", "task1")
+    val taskCustomName = "task custom name"
+    task.customPresentableName = taskCustomName
+    doTest(task, """
+    |type: edu
+    |custom_name: $taskCustomName
+    |solution_hidden: true
+    |""".trimMargin("|"))
+  }
+
+  fun `test task with hidden solution = false`() {
+    val task = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask(solutionHidden = false)
+      }
+    }.findTask("lesson1", "task1")
+    val taskCustomName = "task custom name"
+    task.customPresentableName = taskCustomName
+    doTest(task, """
+    |type: edu
+    |custom_name: $taskCustomName
+    |solution_hidden: false
+    |""".trimMargin("|"))
   }
 
   fun `test empty lesson`() {

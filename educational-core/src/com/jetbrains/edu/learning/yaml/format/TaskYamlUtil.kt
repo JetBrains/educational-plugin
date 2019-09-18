@@ -62,7 +62,7 @@ abstract class TaskYamlMixin {
   private var myCustomPresentableName: String? = null
 
   @JsonProperty(SOLUTION_HIDDEN)
-  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private var solutionHidden: Boolean? = null
 }
 
