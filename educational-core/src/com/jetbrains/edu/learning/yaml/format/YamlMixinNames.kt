@@ -33,6 +33,7 @@ object YamlMixinNames {
   const val FEEDBACK_LINK = "feedback_link"
   const val STATUS = "status"
   const val RECORD = "record"
+  const val SOLUTION_HIDDEN = "solution_hidden"
 
   // choice task
   const val IS_CORRECT = "is_correct"

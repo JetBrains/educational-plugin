@@ -125,7 +125,10 @@ fun Task.getDescriptionFile(project: Project): VirtualFile? {
 private fun TaskFile.canShowSolution() =
   answerPlaceholders.isNotEmpty() && answerPlaceholders.all { it.possibleAnswer.isNotEmpty() }
 
-fun Task.canShowSolution() = !course.solutionsHidden && taskFiles.values.any { it.canShowSolution() }
+fun Task.canShowSolution(): Boolean {
+  val solutionIsHidden = if (solutionHidden != null) solutionHidden!! else course.solutionsHidden
+  return !solutionIsHidden && taskFiles.values.any { it.canShowSolution() }
+}
 
 fun Task.taskDescriptionHintBlocks(): String {
   val text = StringBuffer()

@@ -91,6 +91,10 @@
       "feedback_link": {
         "type": "string",
         "description": "Custom link for learners to leave their feedback about the task (ex. Google Forms link)"
+      },
+      "solution_hidden": {
+        "description": "If solution is available for learners to peek and compare with their answer",
+        "type": "boolean"
       }
     },
     "additionalProperties": false,

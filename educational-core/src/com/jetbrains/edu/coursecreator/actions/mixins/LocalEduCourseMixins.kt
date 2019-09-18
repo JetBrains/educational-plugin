@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTION_HIDDEN
 import java.util.*
 
 private const val VERSION = "version"
@@ -177,6 +178,10 @@ abstract class LocalTaskMixin {
   @JsonProperty(CUSTOM_NAME)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private var myCustomPresentableName: String? = null
+
+  @JsonProperty(SOLUTION_HIDDEN)
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  private var solutionHidden: Boolean? = null
 
   @JsonProperty(TASK_TYPE)
   fun getItemType(): String {

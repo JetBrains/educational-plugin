@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTION_HIDDEN
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
 /**
@@ -34,7 +35,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
  * Update [TaskChangeApplier] if new fields added to mixin
  */
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK)
+@JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, SOLUTION_HIDDEN)
 abstract class TaskYamlMixin {
   @JsonProperty(TYPE)
   private fun getItemType(): String {
@@ -59,6 +60,10 @@ abstract class TaskYamlMixin {
   @JsonProperty(CUSTOM_NAME)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private var myCustomPresentableName: String? = null
+
+  @JsonProperty(SOLUTION_HIDDEN)
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  private var solutionHidden: Boolean? = null
 }
 
 private class FeedbackLinkToStringConverter : StdConverter<FeedbackLink?, String>() {
@@ -91,6 +96,7 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
     existingItem.feedbackLink = deserializedItem.feedbackLink
     @Suppress("DEPRECATION") // it's ok as we just copy value of deprecated field
     existingItem.customPresentableName = deserializedItem.customPresentableName
+    existingItem.solutionHidden = deserializedItem.solutionHidden
     if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {
       existingItem.isMultipleChoice = deserializedItem.isMultipleChoice
       existingItem.choiceOptions = deserializedItem.choiceOptions

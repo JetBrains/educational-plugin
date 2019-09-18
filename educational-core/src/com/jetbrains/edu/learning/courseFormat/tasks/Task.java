@@ -48,6 +48,8 @@ public abstract class Task extends StudyItem {
   private DescriptionFormat descriptionFormat = EduUtils.getDefaultTaskDescriptionFormat();
   @NotNull
   private FeedbackLink myFeedbackLink = new FeedbackLink();
+  @Nullable
+  private Boolean solutionHidden = null;
   private int myRecord = -1;
   @Transient private Lesson myLesson;
 
@@ -293,5 +295,14 @@ public abstract class Task extends StudyItem {
 
   public boolean supportSubmissions() {
     return false;
+  }
+
+  @Nullable
+  public Boolean getSolutionHidden() {
+    return solutionHidden;
+  }
+
+  public void setSolutionHidden(@Nullable Boolean solutionHidden) {
+    this.solutionHidden = solutionHidden;
   }
 }
