@@ -49,7 +49,7 @@ public abstract class Task extends StudyItem {
   @NotNull
   private FeedbackLink myFeedbackLink = new FeedbackLink();
   @Nullable
-  private Boolean solutionHidden = null;
+  private Boolean solutionHidden;
   private int myRecord = -1;
   @Transient private Lesson myLesson;
 
