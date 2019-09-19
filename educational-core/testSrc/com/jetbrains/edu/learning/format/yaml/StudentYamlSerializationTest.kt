@@ -112,6 +112,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
     |- name: task.txt
     |  visible: true
     |  text: text
+    |  learner_created: false
     |status: Unchecked
     |record: -1
     |""".trimMargin("|"))
@@ -144,6 +145,29 @@ class StudentYamlSerializationTest : EduTestCase()  {
     |    selected: false
     |    status: Unchecked
     |  text: 42 is the answer
+    |  learner_created: false
+    |status: Unchecked
+    |record: -1
+    |""".trimMargin("|"))
+  }
+
+  fun `test learner created`() {
+    val task = courseWithFiles {
+      lesson {
+        eduTask {
+          taskFile("task.txt", "text")
+        }
+      }
+    }.lessons.first().taskList.first()
+    task.taskFiles.values.first().isLearnerCreated = true
+
+    doTest(task, """
+    |type: edu
+    |files:
+    |- name: task.txt
+    |  visible: true
+    |  text: text
+    |  learner_created: true
     |status: Unchecked
     |record: -1
     |""".trimMargin("|"))

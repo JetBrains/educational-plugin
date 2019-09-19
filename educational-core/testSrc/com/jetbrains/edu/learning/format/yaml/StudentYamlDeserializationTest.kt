@@ -110,11 +110,14 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |- name: $taskFileName
     |  visible: true
     |  text: text
+    |  learner_created: true
     |""".trimMargin("|")
 
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)
-    assertEquals("text", task.taskFiles.values.first().text)
+    val taskFile = task.taskFiles.values.first()
+    assertEquals("text", taskFile.text)
+    assertTrue(taskFile.isLearnerCreated)
   }
 
   fun `test placeholder initial state`() {

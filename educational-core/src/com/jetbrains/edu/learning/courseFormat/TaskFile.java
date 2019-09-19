@@ -25,7 +25,6 @@ public class TaskFile {
   private List<AnswerPlaceholder> myAnswerPlaceholders = new ArrayList<>();
   private boolean myVisible = true;
   // Should be used only in student mode
-  // TODO: add to student yaml
   private boolean myLearnerCreated = false;
 
   private String myText = "";

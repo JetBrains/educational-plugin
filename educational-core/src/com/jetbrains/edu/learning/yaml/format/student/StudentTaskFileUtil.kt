@@ -7,27 +7,35 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.yaml.format.TaskFileBuilder
 import com.jetbrains.edu.learning.yaml.format.TaskFileYamlMixin
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LEARNER_CREATED
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDERS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TEXT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 
 @JsonDeserialize(builder = StudentTaskFileBuilder::class)
-@JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS, TEXT)
+@JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS, TEXT, LEARNER_CREATED)
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
   @JsonProperty(TEXT)
   private lateinit var myText: String
+
+  @JsonProperty(LEARNER_CREATED)
+  private var myLearnerCreated = false
 }
 
 private class StudentTaskFileBuilder(
-  val text: String?,
+  @JsonProperty(TEXT) val text: String?,
+  @JsonProperty(LEARNER_CREATED) val learnerCreated: Boolean = false,
   name: String?,
   placeholders: List<AnswerPlaceholder> = mutableListOf(),
   visible: Boolean = true
 ) : TaskFileBuilder(name, placeholders, visible) {
   override fun createTaskFile(): TaskFile {
-    return super.createTaskFile().also { it.setText(text) }
+    return super.createTaskFile().apply {
+      setText(text)
+      isLearnerCreated = learnerCreated
+    }
   }
 }
 
