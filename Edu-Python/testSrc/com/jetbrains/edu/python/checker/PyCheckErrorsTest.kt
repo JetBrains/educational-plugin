@@ -11,6 +11,7 @@ import com.jetbrains.python.PythonLanguage
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
 
+@Suppress("PyInterpreter")
 class PyCheckErrorsTest : PyCheckersTestBase() {
 
   override fun createCourse(): Course {
@@ -41,7 +42,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
 
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
-      assertEquals(checkResult.status, CheckStatus.Failed)
+      assertEquals(CheckStatus.Failed, checkResult.status)
       val (messageMatcher, diffMatcher) = when (task.name) {
         "EduTestsFailed" -> CoreMatchers.containsString("error happened") to nullValue()
         "EduNoTestsRun" -> CoreMatchers.containsString("No tests have run") to nullValue()
@@ -65,8 +66,8 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       if (task.name != "SyntaxError") return@setCheckResultVerifier
 
-      assertEquals(checkResult.status, CheckStatus.Failed)
-      assertEquals(checkResult.message, "Syntax Error")
+      assertEquals(CheckStatus.Failed, checkResult.status)
+      assertEquals("Syntax Error", checkResult.message)
 
       val detailsMatcher = CoreMatchers.containsString("SyntaxError: invalid syntax")
       Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.details, detailsMatcher)
