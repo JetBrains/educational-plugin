@@ -4,13 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CODE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SECONDS_FROM_CHANGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STATUS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
-
-private const val CODE = "code"
-private const val SECONDS_FROM_CHANGE = "seconds_from_change"
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, STATUS, CODE, SECONDS_FROM_CHANGE)

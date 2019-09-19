@@ -7,17 +7,15 @@ import com.jetbrains.edu.learning.yaml.format.CourseYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.MODE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE_VERSION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUMMARY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TITLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
-private const val MODE = "mode"
-
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
-@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT,
-                   MODE)
+@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT, MODE)
 abstract class StudentCourseYamlMixin : CourseYamlMixin() {
   @JsonProperty(MODE)
   private var courseMode: String = EduNames.STUDY

@@ -13,6 +13,7 @@ object YamlMixinNames {
   const val SUMMARY = "summary"
   const val PROGRAMMING_LANGUAGE = "programming_language"
   const val SOLUTIONS_HIDDEN = "solutions_hidden"
+  const val MODE = "mode"
 
   const val ENVIRONMENT = "environment"
   const val PROGRAMMING_LANGUAGE_VERSION = "programming_language_version"
@@ -36,6 +37,11 @@ object YamlMixinNames {
   const val IS_MULTIPLE_CHOICE = "is_multiple_choice"
   const val FEEDBACK_CORRECT = "message_correct"
   const val FEEDBACK_INCORRECT = "message_incorrect"
+  const val SELECTED_OPTIONS = "selected_options"
+
+  // checkio missions
+  const val CODE = "code"
+  const val SECONDS_FROM_CHANGE = "seconds_from_change"
 
   // task file
   const val NAME = "name"
@@ -48,6 +54,11 @@ object YamlMixinNames {
   const val LENGTH = "length"
   const val PLACEHOLDER_TEXT = "placeholder_text"
   const val DEPENDENCY = "dependency"
+  const val INIT_FROM_DEPENDENCY = "initialized_from_dependency"
+  const val STUDENT_ANSWER = "student_answer"
+  const val INITIAL_STATE = "initial_state"
+  const val POSSIBLE_ANSWER = "possible_answer"
+  const val SELECTED = "selected"
 
   // placeholder dependency
   const val SECTION = "section"

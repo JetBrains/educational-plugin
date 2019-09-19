@@ -10,14 +10,12 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_MULTIPLE_CHOICE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OPTIONS
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.RECORD
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SELECTED_OPTIONS
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STATUS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
-private const val SELECTED_OPTIONS = "selected_options"
-private const val STATUS = "status"
-private const val RECORD = "record"
-
-@JsonPropertyOrder(TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, FILES, FEEDBACK_LINK, OPTIONS,
-                   STATUS, RECORD)
+@JsonPropertyOrder(TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, FILES, FEEDBACK_LINK, OPTIONS, STATUS, RECORD)
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 abstract class StudentChoiceTaskYamlMixin : ChoiceTaskYamlMixin() {
   @JsonProperty(SELECTED_OPTIONS)

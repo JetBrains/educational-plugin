@@ -9,16 +9,15 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderBuilder
 import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.DEPENDENCY
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.INITIAL_STATE
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.INIT_FROM_DEPENDENCY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LENGTH
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OFFSET
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDER_TEXT
-
-private const val INITIAL_STATE = "initial_state"
-private const val INIT_FROM_DEPENDENCY = "initialized_from_dependency"
-private const val POSSIBLE_ANSWER = "possible_answer"
-private const val SELECTED = "selected"
-private const val STATUS = "status"
-private const val STUDENT_ANSWER = "student_answer"
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.POSSIBLE_ANSWER
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SELECTED
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STATUS
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STUDENT_ANSWER
 
 @JsonDeserialize(builder = EduAnswerPlaceholderBuilder::class)
 @JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY, INITIAL_STATE, INIT_FROM_DEPENDENCY, POSSIBLE_ANSWER, SELECTED, STATUS,

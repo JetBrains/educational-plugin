@@ -10,13 +10,12 @@ import com.jetbrains.edu.learning.yaml.format.LessonYamlMixin
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
-
-private const val TYPE_PROPERTY_NAME = "type"
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
 @JsonDeserialize(builder = StationBuilder::class)
-@JsonPropertyOrder(TYPE_PROPERTY_NAME, CUSTOM_NAME, CONTENT)
+@JsonPropertyOrder(TYPE, CUSTOM_NAME, CONTENT)
 class CheckiOStationYamlMixin : LessonYamlMixin() {
-  @JsonProperty(TYPE_PROPERTY_NAME)
+  @JsonProperty(TYPE)
   private fun getItemType(): String {
     throw NotImplementedInMixin()
   }
