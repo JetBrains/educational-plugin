@@ -9,9 +9,8 @@ import com.jetbrains.edu.learning.yaml.format.TaskFileBuilder
 import com.jetbrains.edu.learning.yaml.format.TaskFileYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDERS
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TEXT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
-
-private const val TEXT = "text"
 
 @JsonDeserialize(builder = StudentTaskFileBuilder::class)
 @JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS, TEXT)

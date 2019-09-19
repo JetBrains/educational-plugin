@@ -41,6 +41,7 @@ object YamlMixinNames {
   const val NAME = "name"
   const val PLACEHOLDERS = "placeholders"
   const val VISIBLE = "visible"
+  const val TEXT = "text"
 
   // placeholder
   const val OFFSET = "offset"
