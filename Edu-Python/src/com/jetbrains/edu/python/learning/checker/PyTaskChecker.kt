@@ -61,17 +61,15 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
     return super.check(indicator)
   }
 
-  /* We can reach this method only if we have syntax error */
-  override fun computePossibleErrorResult(stderr: String): CheckResult = CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE,
-                                                                                     stderr)
+  override fun computePossibleErrorResult(stderr: String): CheckResult {
+    val error = getSyntaxError() ?: return CheckResult.SOLVED
+    return CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE, error)
+  }
 
-  override fun isTestsFailedToRun(testRoots: List<SMTestProxy.SMRootTestProxy>, stderr: StringBuilder): Boolean {
-    if (super.isTestsFailedToRun(testRoots, stderr)) return true
+  override fun areTestsFailedToRun(testRoots: List<SMTestProxy.SMRootTestProxy>): Boolean {
+    if (super.areTestsFailedToRun(testRoots)) return true
     val result = testRoots.first().toCheckResult()
-    if (result.message != "The file contains syntax errors") return false
-    val error = getSyntaxError() ?: return false
-    stderr.append(error)
-    return true
+    return result.message == "The file contains syntax errors"
   }
 
   private fun getSyntaxError(): String? {
