@@ -35,7 +35,6 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     if (!EduUtils.isEduProject(project)) {
       return
     }
-    toolWindow.icon = EducationalCoreIcons.CourseToolWindow
     val taskDescriptionToolWindow = TaskDescriptionView.getInstance(project)
     (toolWindow as ToolWindowImpl).component.putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
     toolWindow.initTitleActions()
@@ -85,6 +84,10 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
       }
       return FontSize.values().size / 2
     }
+  }
+
+  override fun init(window: ToolWindow?) {
+    window?.icon = EducationalCoreIcons.CourseToolWindow
   }
 
   companion object {
