@@ -6,7 +6,7 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.EditorTestUtil
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.configFileName
+import com.jetbrains.edu.learning.yaml.configFileName
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory
 import java.nio.file.Paths
 
