@@ -52,9 +52,9 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.format.*
 import com.jetbrains.edu.learning.yaml.format.student.*
 import java.awt.BorderLayout
+import java.util.*
 import javax.swing.JLabel
 import javax.swing.JPanel
-import java.util.*
 
 object YamlFormatSynchronizer {
   val LOAD_FROM_CONFIG = Key<Boolean>("Edu.loadItem")
@@ -238,16 +238,6 @@ object YamlFormatSynchronizer {
       }
     }
   }
-
-  @JvmStatic
-  val StudyItem.configFileName: String
-    get() = when (this) {
-      is Course -> COURSE_CONFIG
-      is Section -> SECTION_CONFIG
-      is Lesson -> LESSON_CONFIG
-      is Task -> TASK_CONFIG
-      else -> error("Unknown StudyItem type: ${javaClass.simpleName}")
-    }
 
   private val VirtualFile.document: Document?
     get() = FileDocumentManager.getInstance().getDocument(this)

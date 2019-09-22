@@ -13,7 +13,7 @@ import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizerKt;
 import org.jetbrains.annotations.NotNull;
 
 import static com.jetbrains.edu.learning.EduUtils.addMnemonic;
@@ -58,7 +58,7 @@ public class CCChangeCourseInfo extends DumbAwareAction {
       return;
     }
 
-    String configFileName = YamlFormatSynchronizer.getConfigFileName(course);
+    String configFileName = YamlFormatSynchronizerKt.getConfigFileName(course);
     VirtualFile configFile = course.getDir(project).findChild(configFileName);
     if (configFile == null) {
       Logger.getInstance(CCChangeCourseInfo.class).error("Failed to find course config file");
