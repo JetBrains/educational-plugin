@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoSource
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
@@ -59,6 +60,22 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertInstanceOf(task, CheckiOMission::class.java)
     assertEquals("code", (task as CheckiOMission).code)
     assertEquals(1, task.secondsFromLastChangeOnServer)
+  }
+
+  fun `test framework lessons`() {
+    val yamlContent = """
+    |type: framework
+    |content:
+    | - task1
+    | - task2
+    |current_task: 1
+    |
+    """.trimMargin("|")
+    val lesson = STUDENT_MAPPER.deserializeLesson(yamlContent)
+    assertNotNull(lesson)
+    assertInstanceOf(lesson, FrameworkLesson::class.java)
+    assertEquals(1, (lesson as FrameworkLesson).currentTaskIndex)
+
   }
 
   fun `test task status`() {

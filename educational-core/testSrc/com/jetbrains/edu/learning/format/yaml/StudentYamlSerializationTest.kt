@@ -5,7 +5,9 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -38,6 +40,22 @@ class StudentYamlSerializationTest : EduTestCase()  {
       |type: checkiO
       |content:
       |- mission
+      |
+    """.trimMargin("|"))
+  }
+
+  fun `test framework lesson`() {
+    val frameworkLesson = FrameworkLesson()
+    frameworkLesson.addTask(EduTask("task1"))
+    frameworkLesson.addTask(EduTask("task2"))
+    frameworkLesson.currentTaskIndex = 1
+
+    doTest(frameworkLesson, """
+      |type: framework
+      |content:
+      |- task1
+      |- task2
+      |current_task: 1
       |
     """.trimMargin("|"))
   }

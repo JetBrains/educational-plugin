@@ -25,6 +25,9 @@ object YamlMixinNames {
   // lesson
   const val UNIT = "unit"
 
+  // framework lesson
+  const val CURRENT_TASK = "current_task"
+
   // task
   const val FILES = "files"
   const val FEEDBACK_LINK = "feedback_link"
