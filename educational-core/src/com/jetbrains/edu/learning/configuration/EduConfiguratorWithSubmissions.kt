@@ -123,7 +123,7 @@ abstract class EduConfiguratorWithSubmissions<Settings> : EduConfigurator<Settin
     val time = submission.time ?: return null
     val pictureSize = (StyleManager().bodyFontSize * 0.75).roundToInt()
     val text = formatDate(time)
-    return "<a><img src=${getImageUrl(submission.status)} hspace=6 width=${pictureSize} height=${pictureSize}/></a>" +
+    return "<h><img src=${getImageUrl(submission.status)} hspace=6 width=${pictureSize} height=${pictureSize}/></h>" +
            "<a ${StyleManager().textStyleHeader};color:${getLinkColor(submission)} href=${submission.id}> ${text}</a>"
   }
 
