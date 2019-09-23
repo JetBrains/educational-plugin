@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.stepik.course.StepikCourse
  * [mainCMakeList] - configures the course project, e.g. find all tasks `CMakeList.txt` files and adds them.
  * [taskCMakeList] - configures the task project.
  * [testCMakeList] - specializes settings for loading a test framework, for Course Creator project only.
+ * [runTestsCpp]   - test runner file, for Course Creator project only.
  */
 data class CppCMakeTemplateNames(
   val mainCMakeList: String,
