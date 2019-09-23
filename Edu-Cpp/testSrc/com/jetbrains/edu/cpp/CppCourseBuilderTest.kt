@@ -22,7 +22,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
     fileTree {
       dir("lesson1/task1") {
         dir("src") {
-          file("run.cpp")
           file("task.cpp")
         }
         dir("test") {
@@ -34,6 +33,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       }
       file("CMakeLists.txt.in")
       file("CMakeLists.txt")
+      file("run.cpp")
     }.assertEquals(rootDir)
   }
 
@@ -41,7 +41,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
     val course = course(language = OCLanguage.getInstance()) {
       lesson("lesson") {
         eduTask("task") {
-          taskFile("src/run.cpp")
           taskFile("src/task.cpp")
           taskFile("test/test.cpp")
           taskFile("CMakeLists.txt")
@@ -57,7 +56,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
     fileTree {
       dir("lesson/task") {
         dir("src") {
-          file("run.cpp")
           file("task.cpp")
         }
         dir("test") {
@@ -76,7 +74,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       section("section") {
         lesson("lesson") {
           eduTask("task") {
-            taskFile("src/run.cpp")
             taskFile("src/task.cpp")
             taskFile("test/test.cpp")
             taskFile("CMakeLists.txt")
@@ -93,7 +90,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
     fileTree {
       dir("section/lesson/task") {
         dir("src") {
-          file("run.cpp")
           file("task.cpp")
         }
         dir("test") {
@@ -112,7 +108,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       section("section") {
         lesson("lesson") {
           eduTask("task") {
-            taskFile("src/run.cpp")
             taskFile("src/task.cpp")
             taskFile("test/test.cpp")
             taskFile("CMakeLists.txt")
@@ -121,7 +116,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       }
       lesson("top_level_lesson") {
         eduTask("task") {
-          taskFile("src/run.cpp")
           taskFile("src/task.cpp")
           taskFile("test/test.cpp")
           taskFile("CMakeLists.txt")
@@ -137,7 +131,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
     fileTree {
       dir("section/lesson/task") {
         dir("src") {
-          file("run.cpp")
           file("task.cpp")
         }
         dir("test") {
@@ -148,7 +141,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       }
       dir("top_level_lesson/task") {
         dir("src") {
-          file("run.cpp")
           file("task.cpp")
         }
         dir("test") {
@@ -166,7 +158,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
     val course = course(language = OCLanguage.getInstance()) {
       lesson("lesson") {
         eduTask("edu") {
-          taskFile("src/run.cpp")
           taskFile("src/task.cpp")
           taskFile("test/test.cpp")
           taskFile("CMakeLists.txt")
@@ -193,7 +184,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       dir("lesson") {
         dir("edu") {
           dir("src") {
-            file("run.cpp")
             file("task.cpp")
           }
           dir("test") {
