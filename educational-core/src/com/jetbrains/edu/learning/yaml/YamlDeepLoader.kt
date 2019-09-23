@@ -50,7 +50,9 @@ object YamlDeepLoader {
     // to obtain description/remote config file to set info from
     deserializedCourse.init(null, null, true)
     deserializedCourse.loadRemoteInfoRecursively(project)
-    deserializedCourse.setDescriptionInfo(project)
+    if (!deserializedCourse.isStudy) {
+      deserializedCourse.setDescriptionInfo(project)
+    }
     return deserializedCourse
   }
 
