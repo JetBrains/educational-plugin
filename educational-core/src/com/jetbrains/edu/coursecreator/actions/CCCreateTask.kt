@@ -8,20 +8,15 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.layout.*
 import com.intellij.util.Function
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.placeholderDependencies
-import com.jetbrains.edu.learning.courseFormat.ext.testDirs
+import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import icons.EducationalCoreIcons
-import java.io.IOException
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
@@ -108,11 +103,10 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
       val needCopyTests = info.getUserData(COPY_TESTS_FROM_PREV_TASK) ?: false
       for ((path, file) in prevTask.taskFiles) {
         if (needCopyTests || !(testDirs.any { path.startsWith(it) } || path == defaultTestFileName)) {
-          newTaskFiles[path] = file.copyForNewTask(prevTaskDir)
+          newTaskFiles[path] = file.copyForNewTask(prevTaskDir, newTask)
         }
       }
       newTask.taskFiles = newTaskFiles
-      afterFrameworkTaskCopy(course, project, prevTask, newTask)
 
       if (!needCopyTests) {
         val defaultTestFile = course.configurator?.courseBuilder?.createDefaultTestFile(newTask)
@@ -145,21 +139,10 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
     }
   }
 
-  private fun afterFrameworkTaskCopy(course: Course, project: Project, oldTask: Task, newTask: Task) {
-    if (!course.isStudy) {
-      course.configurator?.courseBuilder?.afterFrameworkTaskCopy(project, oldTask, newTask)
-    }
-  }
-
-  private fun TaskFile.copyForNewTask(taskDir: VirtualFile): TaskFile {
+  private fun TaskFile.copyForNewTask(taskDir: VirtualFile, newTask: Task): TaskFile {
     val newTaskFile = TaskFile()
     newTaskFile.name = name
-    val text = try {
-      EduUtils.findTaskFileInDir(this, taskDir)?.let(CCUtils::loadText) ?: ""
-    } catch (e: IOException) {
-      LOG.error("Can't load text for `$name` task file", e)
-      ""
-    }
+    val text = course()?.configurator?.courseBuilder?.getTextForNewTask(this, taskDir, newTask) ?: ""
     newTaskFile.setText(text)
     newTaskFile.isVisible = isVisible
     newTaskFile.answerPlaceholders = answerPlaceholders.map { it.copyForNewTaskFile() }

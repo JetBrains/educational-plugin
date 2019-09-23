@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo;
@@ -146,10 +147,28 @@ public interface EduCourseBuilder<Settings> {
   }
 
   /**
-   * Fix problems with task files after copy them on framework task creation.
-   * By default, we think that no problems so method do nothing.
+   * Copy and return text of given `taskFile`.
+   * Note: it is needed to override if content of copied text should be modified before copying.
+   *
+   * @param taskFile - `taskFile` which text will be copied.
+   * @param taskDir  - directory of given `taskFile`.
+   * @param newTask  - task for which the text is copied.
+   * @return return copied text of given `taskFile` or null if can't load it.
    */
-  default void afterFrameworkTaskCopy(@NotNull Project project, @NotNull Task oldTask,  @NotNull Task newTask) {
+  @Nullable
+  default String getTextForNewTask(@NotNull TaskFile taskFile, @NotNull VirtualFile taskDir, @NotNull Task newTask) {
+    try {
+      VirtualFile file = EduUtils.findTaskFileInDir(taskFile, taskDir);
+      if (file == null) {
+        LOG.warn("Can't find a file by path relative to this file for `" + taskFile.getName() + "` file");
+        return null;
+      }
+      return CCUtils.loadText(file);
+    }
+    catch (IOException e) {
+      LOG.error("Can't load text for `" + taskFile.getName() + "` task file", e);
+    }
+    return null;
   }
 
   @Nullable

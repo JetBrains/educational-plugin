@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilBase
@@ -22,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -43,12 +45,21 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     addCMakeList(task, cMakeProjectName, languageSettings.settings.languageStandard)
   }
 
-  override fun afterFrameworkTaskCopy(project: Project, sourceTask: Task, newTask: Task) {
-    val sourceCMake = sourceTask.taskFiles[CMakeListsFileType.FILE_NAME] ?: return
-    val virtualFile = sourceCMake.getVirtualFile(project)
+  override fun getTextForNewTask(taskFile: TaskFile, taskDir: VirtualFile, newTask: Task): String? {
+    if (taskFile.name != CMakeListsFileType.FILE_NAME) {
+      return super.getTextForNewTask(taskFile, taskDir, newTask)
+    }
+
+    val project = newTask.project
+    if (project == null) {
+      LOG.warn("Cannot get project by the task `${newTask.name}`")
+      return null
+    }
+
+    val virtualFile = taskFile.getVirtualFile(project)
     if (virtualFile == null) {
       LOG.warn("Cannot get a virtual file from the '${CMakeListsFileType.FILE_NAME}' task file")
-      return
+      return null
     }
 
     val psiFile = PsiUtilBase.getPsiFile(project, virtualFile).copy() as PsiFile
@@ -56,9 +67,11 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
 
     val projectCommand = cMakeCommands.first { it.name == "project" }
     val newProjectName = getCMakeProjectUniqueName(newTask) { FileUtil.sanitizeFileName(it.name, true) }
-    replaceFirstArgument(psiFile, projectCommand, false) { it }
+    replaceFirstArgument(psiFile, projectCommand, false) { newProjectName }
 
     val targets = cMakeCommands.filter { it.name == "add_executable" }
+
+    // could be optimized by using hash map
     targets.forEachIndexed { index, cMakeCommand ->
       replaceFirstArgument(psiFile, cMakeCommand, true) { targetName ->
         val suffix = when {
@@ -70,7 +83,7 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
       }
     }
 
-    newTask.taskFiles[CMakeListsFileType.FILE_NAME]?.setText(psiFile.text)
+    return psiFile.text
   }
 
   private fun replaceFirstArgument(
