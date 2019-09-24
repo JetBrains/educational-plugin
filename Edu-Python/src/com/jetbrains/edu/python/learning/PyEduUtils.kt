@@ -1,15 +1,11 @@
 package com.jetbrains.edu.python.learning
 
-import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.runReadActionInSmartMode
-import com.jetbrains.extensions.python.toPsi
 
 fun Task.getCurrentTaskVirtualFile(project: Project): VirtualFile? {
   val taskDir = getTaskDir(project) ?: error("Failed to get task dir for `${name}` task")
@@ -31,13 +27,6 @@ fun Task.getCurrentTaskVirtualFile(project: Project): VirtualFile? {
 
 fun Task.getCurrentTaskFilePath(project: Project): String? {
   return getCurrentTaskVirtualFile(project)?.systemDependentPath
-}
-
-fun createRunConfiguration(project: Project, taskFile: VirtualFile?): RunnerAndConfigurationSettings? {
-  return runReadActionInSmartMode(project) {
-    val psiFile = taskFile?.toPsi(project)?.containingFile ?: return@runReadActionInSmartMode null
-    ConfigurationContext(psiFile).configuration
-  }
 }
 
 private val VirtualFile.systemDependentPath: String get() = FileUtil.toSystemDependentName(path)

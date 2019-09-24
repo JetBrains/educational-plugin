@@ -15,15 +15,14 @@ import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.NO_TESTS_RUN
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.runReadActionInSmartMode
 import java.util.concurrent.CountDownLatch
 
 abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
@@ -48,7 +47,7 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
       }
     })
 
-    val configurations = DumbService.getInstance(project).runReadActionInSmartMode(Computable { createTestConfigurations() })
+    val configurations = runReadActionInSmartMode(project) { createTestConfigurations() }
     configurations.forEach {
       it.isActivateToolWindowBeforeRun = activateRunToolWindow
       it.isTemporary = true
@@ -108,7 +107,7 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
     return firstFailure ?: testResults.first()
   }
 
-  fun SMTestProxy.SMRootTestProxy.toCheckResult(): CheckResult {
+  protected fun SMTestProxy.SMRootTestProxy.toCheckResult(): CheckResult {
     if (isPassed) return CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
 
     val failedChildren = collectChildren(object : Filter<SMTestProxy>() {
@@ -144,7 +143,7 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
   protected open fun computePossibleErrorResult(stderr: String): CheckResult = CheckResult.SOLVED
 
   /**
-   * Check if the error is hidden in the test results
+   * Check if the launch of tests was not successful. It allows us to create meaningful output in such cases.
    */
   protected open fun areTestsFailedToRun(testRoots: List<SMTestProxy.SMRootTestProxy>): Boolean = testRoots.all { it.children.isEmpty() }
 

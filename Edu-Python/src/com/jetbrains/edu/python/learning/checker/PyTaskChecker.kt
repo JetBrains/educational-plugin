@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.learning.checker.CheckUtils.createRunConfiguration
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -32,13 +33,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.editor.ACTION_TEXT
 import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_END
 import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_START
-import com.jetbrains.edu.python.learning.createRunConfiguration
 import com.jetbrains.edu.python.learning.getCurrentTaskVirtualFile
 import com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer
 import java.util.concurrent.CountDownLatch
 
 /**
- * Checker for legacy test_helper.py
+ * Checker for legacy python courses
+ * @see com.jetbrains.edu.python.learning.PyConfigurator
+ * @see fileTemplates.internal (test_helper.py)
  */
 open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(task, project) {
 
@@ -68,8 +70,8 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
 
   override fun areTestsFailedToRun(testRoots: List<SMTestProxy.SMRootTestProxy>): Boolean {
     if (super.areTestsFailedToRun(testRoots)) return true
-    val result = testRoots.first().toCheckResult()
-    return result.message == "The file contains syntax errors"
+    val result = testRoots.firstOrNull()?.toCheckResult()
+    return result?.message == "The file contains syntax errors"
   }
 
   private fun getSyntaxError(): String? {
@@ -106,6 +108,7 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
       }
 
       latch.await()
+      connection.disconnect()
     }
     catch (e: Exception) {
       LOG.error(e)

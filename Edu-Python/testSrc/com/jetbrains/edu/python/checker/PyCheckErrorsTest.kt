@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.nullValue
 import com.jetbrains.python.PythonLanguage
 import org.hamcrest.CoreMatchers
+import org.hamcrest.Matcher
 import org.junit.Assert
 
 @Suppress("PyInterpreter")
@@ -43,35 +44,26 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals(CheckStatus.Failed, checkResult.status)
-      val (messageMatcher, diffMatcher) = when (task.name) {
-        "EduTestsFailed" -> CoreMatchers.containsString("error happened") to nullValue()
-        "EduNoTestsRun" -> CoreMatchers.containsString("No tests have run") to nullValue()
-        "SyntaxError" -> CoreMatchers.containsString("Syntax Error") to nullValue()
+      val matcher = when (task.name) {
+        "EduTestsFailed" -> Result(CoreMatchers.containsString("error happened"), nullValue(), nullValue())
+        "EduNoTestsRun" -> Result(CoreMatchers.containsString("No tests have run"), nullValue(), nullValue())
+        "SyntaxError" -> Result(CoreMatchers.containsString("Syntax Error"), nullValue(),
+                                CoreMatchers.containsString("SyntaxError: invalid syntax"))
         "OutputTestsFailed" ->
-          CoreMatchers.equalTo("Expected output:\n" +
-                               "Hello, World!\n" +
-                               " \n" +
-                               "Actual output:\n" +
-                               "Hello, World\n") to
-            CheckResultDiffMatcher.diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n"))
+          Result(CoreMatchers.equalTo("Expected output:\n" +
+                                      "Hello, World!\n" +
+                                      " \n" +
+                                      "Actual output:\n" +
+                                      "Hello, World\n"),
+                 CheckResultDiffMatcher.diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n")), nullValue())
         else -> error("Unexpected task name: ${task.name}")
       }
-      Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.message, messageMatcher)
-      Assert.assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, diffMatcher)
+      Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.message, matcher.message)
+      Assert.assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, matcher.diff)
+      Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.details, matcher.details)
     }
     doTest()
   }
 
-  fun `test syntax error`() {
-    CheckActionListener.setCheckResultVerifier { task, checkResult ->
-      if (task.name != "SyntaxError") return@setCheckResultVerifier
-
-      assertEquals(CheckStatus.Failed, checkResult.status)
-      assertEquals("Syntax Error", checkResult.message)
-
-      val detailsMatcher = CoreMatchers.containsString("SyntaxError: invalid syntax")
-      Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.details, detailsMatcher)
-    }
-    doTest()
-  }
+  private data class Result(val message: Matcher<String>, val diff: Matcher<CheckResultDiff?>, val details: Matcher<String?>)
 }

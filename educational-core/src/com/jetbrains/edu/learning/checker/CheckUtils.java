@@ -13,8 +13,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.util.PsiUtilCore;
 import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -119,5 +122,15 @@ public class CheckUtils {
 
   public static String postProcessOutput(@NotNull String output) {
     return StringsKt.removeSuffix(output.replace(System.getProperty("line.separator"), "\n"), "\n");
+  }
+
+  @Nullable
+  public static RunnerAndConfigurationSettings createRunConfiguration(@NotNull Project project, @Nullable VirtualFile taskFile) {
+    return OpenApiExtKt.runReadActionInSmartMode(project, () -> {
+      PsiFileSystemItem item = PsiUtilCore.findFileSystemItem(project, taskFile);
+      if (item == null) return null;
+      PsiFile psiFile = item.getContainingFile();
+      return psiFile == null ? null : new ConfigurationContext(psiFile).getConfiguration();
+    });
   }
 }
