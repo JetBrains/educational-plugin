@@ -1,7 +1,6 @@
 package com.jetbrains.edu.cpp
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.ValidationInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialogBase
