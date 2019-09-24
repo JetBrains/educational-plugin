@@ -71,7 +71,6 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
 
     val targets = cMakeCommands.filter { it.name == "add_executable" }
 
-    // could be optimized by using hash map
     targets.forEachIndexed { index, cMakeCommand ->
       replaceFirstArgument(psiFile, cMakeCommand, true) { targetName ->
         val suffix = when {
