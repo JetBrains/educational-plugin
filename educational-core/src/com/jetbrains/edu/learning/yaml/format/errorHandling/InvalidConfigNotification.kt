@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.yaml
+package com.jetbrains.edu.learning.yaml.format.errorHandling
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener

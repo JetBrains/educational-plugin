@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
-import com.jetbrains.edu.coursecreator.yaml.formatError
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDERS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
+import com.jetbrains.edu.learning.yaml.format.errorHandling.formatError
 
 /**
  * Mixin class is used to deserialize [TaskFile] item.

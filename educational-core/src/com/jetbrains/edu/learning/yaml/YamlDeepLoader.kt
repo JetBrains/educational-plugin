@@ -3,15 +3,15 @@ package com.jetbrains.edu.learning.yaml
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.coursecreator.yaml.loadingError
-import com.jetbrains.edu.coursecreator.yaml.noDirForItemMessage
-import com.jetbrains.edu.coursecreator.yaml.notFoundMessage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
+import com.jetbrains.edu.learning.yaml.format.errorHandling.loadingError
+import com.jetbrains.edu.learning.yaml.format.errorHandling.noDirForItemMessage
+import com.jetbrains.edu.learning.yaml.format.errorHandling.notFoundMessage
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
 
 object YamlDeepLoader {

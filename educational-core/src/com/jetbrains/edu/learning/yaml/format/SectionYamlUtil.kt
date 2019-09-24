@@ -8,12 +8,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.jetbrains.edu.coursecreator.yaml.formatError
-import com.jetbrains.edu.coursecreator.yaml.unnamedItemAtMessage
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
+import com.jetbrains.edu.learning.yaml.format.errorHandling.formatError
+import com.jetbrains.edu.learning.yaml.format.errorHandling.unnamedItemAtMessage
 
 /**
  * Mixin class is used to deserialize [Section] item.

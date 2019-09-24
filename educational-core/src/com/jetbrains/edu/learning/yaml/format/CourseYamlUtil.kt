@@ -11,10 +11,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.yaml.formatError
-import com.jetbrains.edu.coursecreator.yaml.unknownFieldValueMessage
-import com.jetbrains.edu.coursecreator.yaml.unnamedItemAtMessage
-import com.jetbrains.edu.coursecreator.yaml.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduNames.EDU
 import com.jetbrains.edu.learning.EduNames.PYCHARM
@@ -44,6 +40,10 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TITLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TOP_LEVEL_LESSONS_SECTION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
+import com.jetbrains.edu.learning.yaml.format.errorHandling.formatError
+import com.jetbrains.edu.learning.yaml.format.errorHandling.unknownFieldValueMessage
+import com.jetbrains.edu.learning.yaml.format.errorHandling.unnamedItemAtMessage
+import com.jetbrains.edu.learning.yaml.format.errorHandling.unsupportedItemTypeMessage
 import java.util.*
 
 /**

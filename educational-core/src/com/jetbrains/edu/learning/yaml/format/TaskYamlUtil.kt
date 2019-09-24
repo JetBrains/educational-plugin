@@ -11,8 +11,6 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.coursecreator.yaml.YamlLoader.addItemAsNew
-import com.jetbrains.edu.coursecreator.yaml.noDirForItemMessage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
@@ -24,10 +22,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.yaml.YamlLoader.addItemAsNew
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
+import com.jetbrains.edu.learning.yaml.format.errorHandling.noDirForItemMessage
 
 /**
  * Mixin class is used to deserialize [Task] item.

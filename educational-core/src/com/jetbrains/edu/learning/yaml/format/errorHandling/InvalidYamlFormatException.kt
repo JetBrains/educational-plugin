@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.yaml
+package com.jetbrains.edu.learning.yaml.format.errorHandling
 
 
 class InvalidYamlFormatException(override val message: String) : IllegalStateException(message)

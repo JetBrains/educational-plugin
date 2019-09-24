@@ -6,6 +6,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.placeholderDependencies.NotificationsTestBase
+import com.jetbrains.edu.learning.yaml.GeneratedRemoteInfoNotificationProvider
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 
 class RemoteInfoNotificationTest : NotificationsTestBase() {

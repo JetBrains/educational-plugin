@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
+import com.jetbrains.edu.learning.yaml.format.errorHandling.InvalidYamlFormatException
 
 class YamlErrorProcessingTest : YamlTestCase() {
 

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.yaml
+package com.jetbrains.edu.learning.yaml
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.editor.Editor
@@ -6,15 +6,15 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.coursecreator.yaml.YamlLoader.loadItem
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.yaml.*
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import com.jetbrains.edu.learning.yaml.YamlLoader.loadItem
+import com.jetbrains.edu.learning.yaml.format.errorHandling.*
 import com.jetbrains.edu.learning.yaml.format.getChangeApplierForItem
 
 /**
