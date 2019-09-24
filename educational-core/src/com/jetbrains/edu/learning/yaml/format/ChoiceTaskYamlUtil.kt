@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_CORRECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_INCORRECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
@@ -18,7 +19,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_CORRECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_MULTIPLE_CHOICE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OPTIONS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
-import com.jetbrains.edu.learning.yaml.format.errorHandling.formatError
 
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization

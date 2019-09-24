@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.yaml.format.errorHandling
+package com.jetbrains.edu.learning.yaml.errorHandling
 
 class YamlLoadingException(override val message: String) : IllegalStateException(message)
 

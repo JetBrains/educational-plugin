@@ -10,8 +10,8 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.getConfigFileForChild
 import com.jetbrains.edu.learning.yaml.YamlLoader.addItemAsNew
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeChildrenIfNeeded
-import com.jetbrains.edu.learning.yaml.format.errorHandling.loadingError
-import com.jetbrains.edu.learning.yaml.format.errorHandling.unexpectedItemTypeMessage
+import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
+import com.jetbrains.edu.learning.yaml.errorHandling.unexpectedItemTypeMessage
 
 /**
  * Specific instance of this class applies changes from deserialized item, see [com.jetbrains.edu.learning.yaml.YamlDeserializer],

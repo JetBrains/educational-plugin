@@ -27,6 +27,10 @@ import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.yaml.errorHandling.formatError
+import com.jetbrains.edu.learning.yaml.errorHandling.unknownFieldValueMessage
+import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
+import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
@@ -40,10 +44,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TITLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TOP_LEVEL_LESSONS_SECTION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
-import com.jetbrains.edu.learning.yaml.format.errorHandling.formatError
-import com.jetbrains.edu.learning.yaml.format.errorHandling.unknownFieldValueMessage
-import com.jetbrains.edu.learning.yaml.format.errorHandling.unnamedItemAtMessage
-import com.jetbrains.edu.learning.yaml.format.errorHandling.unsupportedItemTypeMessage
 import java.util.*
 
 /**

@@ -9,9 +9,9 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
-import com.jetbrains.edu.learning.yaml.format.errorHandling.loadingError
-import com.jetbrains.edu.learning.yaml.format.errorHandling.noDirForItemMessage
-import com.jetbrains.edu.learning.yaml.format.errorHandling.notFoundMessage
+import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
+import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
+import com.jetbrains.edu.learning.yaml.errorHandling.notFoundMessage
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
 
 object YamlDeepLoader {
