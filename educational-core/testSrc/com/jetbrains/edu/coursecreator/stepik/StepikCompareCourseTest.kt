@@ -472,6 +472,20 @@ class StepikCompareCourseTest : EduTestCase() {
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
+  fun `test course with hidden solutions`() {
+    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask { }
+      }
+    }.asRemote()
+
+    val courseFromServer = localCourse.copy() as EduCourse
+    localCourse.solutionsHidden = true
+
+    val expectedChangedItems = StepikChangesInfo(isCourseAttachmentsChanged = true)
+    checkChangedItems(localCourse, courseFromServer, expectedChangedItems)
+  }
+
   private fun checkChangedItems(localCourse: EduCourse, courseFromServer: EduCourse, expected: StepikChangesInfo) {
     val actual = StepikChangeRetriever(project, localCourse, courseFromServer).getChangedItems()
     assertEquals(expected.isCourseAttachmentsChanged, actual.isCourseAttachmentsChanged)
@@ -494,5 +508,5 @@ class StepikCompareCourseTest : EduTestCase() {
 infix fun <T : StudyItem> Collection<T>.sameContentWith(collection: Collection<T>): Boolean {
   if (collection.size != this.size) return false
   val pairList = collection.zip(this)
-  return pairList.all { (elt1, elt2) -> elt1.name == elt2.name}
+  return pairList.all { (elt1, elt2) -> elt1.name == elt2.name }
 }

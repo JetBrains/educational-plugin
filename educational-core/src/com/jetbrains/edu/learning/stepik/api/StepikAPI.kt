@@ -408,12 +408,12 @@ class AdditionalInfo {
   lateinit var additionalFiles: List<TaskFile>
 
   @JsonProperty(SOLUTIONS_HIDDEN)
-  var solutions_hidden: Boolean = false
+  var solutionsHidden: Boolean = false
 
   constructor()
 
-  constructor(additionalFiles: List<TaskFile>, solutions_hidden: Boolean = false) {
+  constructor(additionalFiles: List<TaskFile>, solutionsHidden: Boolean = false) {
     this.additionalFiles = additionalFiles
-    this.solutions_hidden = solutions_hidden
+    this.solutionsHidden = solutionsHidden
   }
 }

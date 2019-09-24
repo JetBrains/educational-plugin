@@ -69,7 +69,7 @@ private fun markStepAsViewed(lessonId: Int, stepId: Int) {
 
 private fun fillAttachmentsInfo(course: Course, info: AdditionalInfo) {
   course.additionalFiles = info.additionalFiles
-  course.solutionsHidden = info.solutions_hidden
+  course.solutionsHidden = info.solutionsHidden
 }
 
 fun loadAndFillAttachmentsInfo(course: Course, lesson: Lesson?) = fillAttachmentsInfo(course, loadAttachment(course, lesson))
