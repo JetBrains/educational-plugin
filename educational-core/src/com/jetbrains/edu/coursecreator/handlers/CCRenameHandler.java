@@ -72,10 +72,13 @@ public abstract class CCRenameHandler implements EduRenameHandler {
                                @NotNull Course course,
                                @NotNull final Project project,
                                @NotNull VirtualFile directory) {
+    final EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
+
     String name = item.getName();
     String text = "Rename " + StringUtil.toTitleCase(namePrefix);
     String newName = Messages
-      .showInputDialog(project, text + " '" + name + "' to", text, null, name, new ItemNameValidator(directory.getParent(), name));
+      .showInputDialog(project, text + " '" + name + "' to", text, null, name,
+                       new ItemNameValidator(directory.getParent(), name, configurator));
     if (newName != null) {
       item.setName(newName);
       ApplicationManager.getApplication().runWriteAction(() -> {
@@ -86,7 +89,6 @@ public abstract class CCRenameHandler implements EduRenameHandler {
           Logger.getInstance(CCRenameHandler.class).error(e);
         }
       });
-      final EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
       if (configurator != null) {
         configurator.getCourseBuilder().refreshProject(project);
       }
@@ -99,15 +101,22 @@ public abstract class CCRenameHandler implements EduRenameHandler {
   }
 
   private class ItemNameValidator extends CCUtils.PathInputValidator {
+    private final EduConfigurator<?> configurator;
 
-    public ItemNameValidator(@Nullable VirtualFile myParentDir, @Nullable String myName) {
+    public ItemNameValidator(@Nullable VirtualFile myParentDir, @Nullable String myName, @Nullable EduConfigurator<?> configurator) {
       super(myParentDir, myName);
+      this.configurator = configurator;
     }
 
     @Override
     public boolean checkInput(@NotNull String inputString) {
       if (super.checkInput(inputString)) {
-        setMyErrorText(performCustomNameValidation(inputString));
+        if (configurator != null) {
+          setMyErrorText(configurator.getCustomItemNameValidator().apply(inputString));
+        }
+        if (getMyErrorText() == null) {
+          setMyErrorText(performCustomNameValidation(inputString));
+        }
       }
       return getMyErrorText() == null;
     }

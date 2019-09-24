@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import icons.CMakeIcons
+import java.util.function.Function
 import javax.swing.Icon
 
 class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
@@ -32,11 +33,13 @@ class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
 
   override fun isCourseCreatorEnabled(): Boolean = true
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
-    return super.excludeFromArchive(project, file) || file.path.contains("cmake-build-debug")
-  }
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
+    super.excludeFromArchive(project, file) || file.path.contains("cmake-build-debug")
+
 
   override fun getLogo(): Icon = CMakeIcons.CMake
+
+  override fun getCustomItemNameValidator(): Function<String, String?> = Function { validateStudyItemName(it) }
 
   companion object {
     const val GTEST_VERSION = "release-1.8.1"

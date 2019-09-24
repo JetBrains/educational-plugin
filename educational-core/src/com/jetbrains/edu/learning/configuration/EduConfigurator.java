@@ -30,6 +30,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * The main interface provides courses support for some language and course type.
@@ -214,5 +215,17 @@ public interface EduConfigurator<Settings> {
   @Nullable
   default Pair<JPanel, String> additionalTaskTab(@Nullable Task currentTask, Project project) {
     return null;
+  }
+
+  /**
+   * This validator will be used when user try rename any study item.
+   * Validator should return error message if given string could not be used
+   * as new name of study item and `null` otherwise.
+   *
+   * @see {@link com.jetbrains.edu.coursecreator.handlers.CCRenameHandler}
+   */
+  @NotNull
+  default Function<String, String> getCustomItemNameValidator() {
+    return (s) -> null;
   }
 }
