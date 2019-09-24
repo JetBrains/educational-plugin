@@ -36,7 +36,9 @@ import java.util.*;
  * - Update {@link StepikJacksonDeserializersKt#doDeserializeTask} to handle json serialization
  * - Update {@link TaskCheckerProvider#getTaskChecker} and provide default checker for new task
  * - Update {@link StepikTaskBuilder#pluginTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder#stepikTaskTypes} otherwise
- * - Handle yaml deserialization in {@link YamlDeserializer#deserializeTask(String)}
+ * - Handle yaml deserialization:
+ *    - add type in {@link YamlDeserializer#deserializeTask(com.fasterxml.jackson.databind.ObjectMapper, String)}
+ *    - add yaml mixins for course creator and student fields {@link com.jetbrains.edu.learning.yaml.format}
  */
 public abstract class Task extends StudyItem {
   protected CheckStatus myStatus = CheckStatus.Unchecked;
