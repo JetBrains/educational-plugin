@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.api.AdditionalInfo;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikUnit;
 import org.apache.http.HttpStatus;
@@ -109,10 +110,11 @@ public class CCStepikConnector {
     showNotification(project, "Course is published", openOnStepikAction("/course/" + courseOnRemote.getId()));
   }
 
-  public static void postAdditionalFiles(@NotNull EduCourse course, @NotNull final Project project, int id) {
+  public static void postAdditionalFiles(@NotNull EduCourse course, @NotNull final Project project, int courseId) {
     updateProgress("Publishing additional files");
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
-    StepikConnector.getInstance().postAttachment(additionalFiles, id);
+    AdditionalInfo additionalInfo = new AdditionalInfo(additionalFiles, course.getSolutionsHidden());
+    StepikConnector.getInstance().postAttachment(additionalInfo, courseId);
   }
 
   /**
@@ -275,12 +277,13 @@ public class CCStepikConnector {
     return true;
   }
 
-  public static boolean updateAdditionalMaterials(@NotNull Project project, int courseId) {
-    EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(courseId);
+  public static boolean updateAdditionalMaterials(@NotNull Project project, @NotNull Course course) {
+    EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
     assert courseInfo != null;
-    updateProgress("Publishing additional files");
+    updateProgress("Publishing additional files and info");
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(courseInfo, project);
-    return StepikConnector.getInstance().updateCourseAttachment(additionalFiles, courseInfo) == HttpStatus.SC_CREATED;
+    AdditionalInfo additionalInfo = new AdditionalInfo(additionalFiles, course.getSolutionsHidden());
+    return StepikConnector.getInstance().updateCourseAttachment(additionalInfo, courseInfo) == HttpStatus.SC_CREATED;
   }
 
   public static boolean updateSectionForTopLevelLessons(@NotNull EduCourse course) {

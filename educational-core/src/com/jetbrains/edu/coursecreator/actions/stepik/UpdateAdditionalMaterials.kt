@@ -23,7 +23,7 @@ class UpdateAdditionalMaterials : DumbAwareAction("Update Additional Materials")
     ProgressManager.getInstance().run(object : Task.Modal(project, "Updating Additional Materials", false) {
       override fun run(indicator: ProgressIndicator) {
         indicator.isIndeterminate = false
-        val success = CCStepikConnector.updateAdditionalMaterials(project, course.id)
+        val success = CCStepikConnector.updateAdditionalMaterials(project, course)
         if (!success) {
           showErrorNotification(project, FAILED_TITLE, "Failed to update additional materials")
         }

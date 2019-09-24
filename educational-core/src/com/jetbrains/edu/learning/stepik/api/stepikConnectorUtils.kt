@@ -67,24 +67,32 @@ private fun markStepAsViewed(lessonId: Int, stepId: Int) {
     .forEach { StepikConnector.getInstance().postView(it.id, stepId) }
 }
 
-fun loadAttachment(course: Course, lesson: Lesson?) : List<TaskFile> {
+private fun fillAttachmentsInfo(course: Course, info: AdditionalInfo) {
+  course.additionalFiles = info.additionalFiles
+  course.solutionsHidden = info.solutions_hidden
+}
+
+fun loadAndFillAttachmentsInfo(course: Course, lesson: Lesson?) = fillAttachmentsInfo(course, loadAttachment(course, lesson))
+
+fun loadAndFillAttachmentsInfo(course: Course, attachmentLink: String) = fillAttachmentsInfo(course, loadAttachment(attachmentLink))
+
+fun loadAttachment(course: Course, lesson: Lesson?) : AdditionalInfo {
   val id = lesson?.id ?: course.id
   val lessonOrCourse = if (lesson != null) "lesson" else "course"
   val attachmentLink = StepikNames.STEPIK_URL + "/media/attachments/" + lessonOrCourse + "/" + id + "/" + StepikNames.ADDITIONAL_FILES
   return loadAttachment(attachmentLink)
 }
 
-fun loadAttachment(attachmentLink: String) : List<TaskFile> {
+fun loadAttachment(attachmentLink: String) : AdditionalInfo {
   return try {
     val attachmentUrl = URL(attachmentLink)
     val conn = attachmentUrl.openConnection()
 
     val additionalInfoText = conn.getInputStream().bufferedReader().use(BufferedReader::readText)
-    val additionalInfo = HyperskillConnector.getInstance().objectMapper.readValue(additionalInfoText, AdditionalInfo::class.java)
-    additionalInfo.additionalFiles
+    HyperskillConnector.getInstance().objectMapper.readValue(additionalInfoText, AdditionalInfo::class.java)
   }
   catch (e: IOException) {
     LOG.info("No attachments found $attachmentLink")
-    mutableListOf()
+    AdditionalInfo(emptyList())
   }
 }

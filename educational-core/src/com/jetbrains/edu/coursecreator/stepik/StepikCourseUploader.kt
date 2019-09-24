@@ -45,8 +45,8 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     if (changedItems.isCourseInfoChanged) {
       success = updateCourseInfo(project, course) && success
     }
-    if (changedItems.isCourseAdditionalFilesChanged) {
-      success = updateAdditionalMaterials(project, course.id) && success
+    if (changedItems.isCourseAttachmentsChanged) {
+      success = updateAdditionalMaterials(project, course) && success
     }
     return success
   }

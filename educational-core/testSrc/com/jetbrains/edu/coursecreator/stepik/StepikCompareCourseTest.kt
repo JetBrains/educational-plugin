@@ -474,7 +474,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
   private fun checkChangedItems(localCourse: EduCourse, courseFromServer: EduCourse, expected: StepikChangesInfo) {
     val actual = StepikChangeRetriever(project, localCourse, courseFromServer).getChangedItems()
-    assertEquals(expected.isCourseAdditionalFilesChanged, actual.isCourseAdditionalFilesChanged)
+    assertEquals(expected.isCourseAttachmentsChanged, actual.isCourseAttachmentsChanged)
     assertEquals(expected.isCourseInfoChanged, actual.isCourseInfoChanged)
     assertTrue(expected.newSections.sameContentWith(actual.newSections))
     assertTrue(expected.sectionsToDelete.sameContentWith(actual.sectionsToDelete))

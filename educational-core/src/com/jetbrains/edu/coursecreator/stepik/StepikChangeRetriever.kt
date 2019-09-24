@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.isUnitTestMode
 
 @VisibleForTesting
 data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
-                             var isCourseAdditionalFilesChanged: Boolean = false,
+                             var isCourseAttachmentsChanged: Boolean = false,
                              var isTopLevelSectionNameChanged: Boolean = false,
                              var isTopLevelSectionRemoved: Boolean = false,
                              var isTopLevelSectionAdded: Boolean = false,
@@ -29,7 +29,7 @@ data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
                              var newTasks: MutableList<Task> = ArrayList(),
                              var tasksToDelete: MutableList<Task> = ArrayList()) {
   fun isEmpty(): Boolean {
-    return !isCourseInfoChanged && !isCourseAdditionalFilesChanged && !isTopLevelSectionNameChanged && !isTopLevelSectionRemoved &&
+    return !isCourseInfoChanged && !isCourseAttachmentsChanged && !isTopLevelSectionNameChanged && !isTopLevelSectionRemoved &&
            !isTopLevelSectionAdded && sectionsToDelete.isEmpty() && newSections.isEmpty() && sectionInfosToUpdate.isEmpty() &&
            newLessons.isEmpty() && lessonsInfoToUpdate.isEmpty() && lessonsToDelete.isEmpty() && tasksToUpdate.isEmpty() &&
            newTasks.isEmpty() && tasksToDelete.isEmpty()
@@ -54,7 +54,7 @@ class StepikChangeRetriever(private val project: Project, course: EduCourse, pri
 
   private fun processCourse(stepikChanges: StepikChangesInfo) {
     stepikChanges.isCourseInfoChanged = courseInfoChanged()
-    stepikChanges.isCourseAdditionalFilesChanged = additionalFilesChanged(course, remoteCourse, project)
+    stepikChanges.isCourseAttachmentsChanged = attachmentsChanged(course, remoteCourse, project)
   }
 
   private fun processTopLevelSection(stepikChanges: StepikChangesInfo) {
@@ -125,7 +125,8 @@ class StepikChangeRetriever(private val project: Project, course: EduCourse, pri
            course.formatVersion != remoteCourse.formatVersion
   }
 
-  private fun additionalFilesChanged(course: EduCourse, remoteCourse: EduCourse, project: Project): Boolean {
+  private fun attachmentsChanged(course: EduCourse, remoteCourse: EduCourse, project: Project): Boolean {
+    if (course.solutionsHidden != remoteCourse.solutionsHidden) return true
     val additionalFiles = CCUtils.collectAdditionalFiles(course, project)
     if (additionalFiles.size != remoteCourse.additionalFiles.size) return true
     for ((index, additionalFile) in additionalFiles.withIndex()) {

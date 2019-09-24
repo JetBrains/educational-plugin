@@ -245,8 +245,7 @@ abstract class StepikConnector {
   }
 
   @JvmOverloads
-  fun postAttachment(additionalFiles: List<TaskFile>, courseId: Int?, lessonId: Int? = null): Int {
-    val additionalInfo = AdditionalInfo(additionalFiles)
+  fun postAttachment(additionalInfo: AdditionalInfo, courseId: Int?, lessonId: Int? = null): Int {
     val fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), objectMapper.writeValueAsString(additionalInfo))
     val fileData = MultipartBody.Part.createFormData("file", StepikNames.ADDITIONAL_FILES, fileBody)
     val courseBody = if (courseId != null) RequestBody.create(MediaType.parse("text/plain"), courseId.toString()) else null
@@ -255,6 +254,9 @@ abstract class StepikConnector {
     val response = service.attachment(fileData, courseBody, lessonBody).executeHandlingExceptions()
     return response?.code() ?: -1
   }
+
+  fun postLessonAttachment(additionalFiles: List<TaskFile>, lessonId: Int): Int =
+    postAttachment(AdditionalInfo(additionalFiles), null, lessonId)
 
   // Update requests:
 
@@ -303,15 +305,15 @@ abstract class StepikConnector {
     return response?.code() ?: -1
   }
 
-  fun updateCourseAttachment(additionalFiles: List<TaskFile>, course: EduCourse): Int {
+  fun updateCourseAttachment(info: AdditionalInfo, course: EduCourse): Int {
     deleteAttachment(course.id)
     updateCourse(course)  // Needed to push forward update_date in course
-    return postAttachment(additionalFiles, course.id)
+    return postAttachment(info, course.id)
   }
 
   fun updateLessonAttachment(additionalFiles: List<TaskFile>, lessonId: Int): Int {
     deleteAttachment(null, lessonId)
-    return postAttachment(additionalFiles, null, lessonId)
+    return postLessonAttachment(additionalFiles, lessonId)
   }
 
   private fun deleteAttachment(courseId: Int?, lessonId: Int? = null) {
