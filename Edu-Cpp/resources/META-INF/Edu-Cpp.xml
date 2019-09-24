@@ -3,10 +3,4 @@
   <extensions defaultExtensionNs="Educational">
     <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppConfigurator" displayName="Cpp"/>
   </extensions>
-
-  <extensions defaultExtensionNs="com.intellij">
-    <renameHandler implementation="com.jetbrains.edu.cpp.CppTaskRenameHandler" order="first"/>
-    <renameHandler implementation="com.jetbrains.edu.cpp.CppLessonRenameHandler" order="first"/>
-    <renameHandler implementation="com.jetbrains.edu.cpp.CppSectionRenameHandler" order="first"/>
-  </extensions>
 </idea-plugin>
