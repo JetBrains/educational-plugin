@@ -81,7 +81,7 @@ private class StringToFeedbackLinkConverter : StdConverter<String?, FeedbackLink
   }
 }
 
-class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
+open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
   override fun applyChanges(existingItem: Task, deserializedItem: Task) {
     val project = existingItem.project ?: error("Project not found for ${existingItem.name}")
     if (existingItem.itemType != deserializedItem.itemType) {
@@ -103,7 +103,7 @@ class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
     paintPlaceholdersForOpenedFiles(project, existingItem)
   }
 
-  private fun changeType(project: Project, existingItem: StudyItem, deserializedItem: Task) {
+  open fun changeType(project: Project, existingItem: StudyItem, deserializedItem: Task) {
     deserializedItem.name = existingItem.name
     deserializedItem.index = existingItem.index
 
@@ -124,8 +124,7 @@ class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
     for ((name, deserializedTaskFile) in deserializedItem.taskFiles) {
       val existingTaskFile = taskFiles[name]
       val taskFile: TaskFile = if (existingTaskFile != null) {
-        existingTaskFile.applyPlaceholderChanges(deserializedTaskFile)
-        existingTaskFile.isVisible = deserializedTaskFile.isVisible
+        applyTaskFileChanges(existingTaskFile, deserializedTaskFile)
         existingTaskFile
       }
       else {
@@ -135,6 +134,12 @@ class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
       deserializedTaskFile.initTaskFile(this, false)
     }
     taskFiles = orderedTaskFiles
+  }
+
+  protected open fun applyTaskFileChanges(existingTaskFile: TaskFile,
+                                   deserializedTaskFile: TaskFile) {
+    existingTaskFile.applyPlaceholderChanges(deserializedTaskFile)
+    existingTaskFile.isVisible = deserializedTaskFile.isVisible
   }
 
   private fun TaskFile.applyPlaceholderChanges(deserializedTaskFile: TaskFile) {

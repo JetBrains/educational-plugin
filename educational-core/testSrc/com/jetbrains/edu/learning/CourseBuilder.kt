@@ -7,6 +7,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
@@ -57,15 +59,22 @@ abstract class LessonOwnerBuilder(val course: Course) {
   protected abstract fun addLesson(lesson: Lesson)
 
   fun frameworkLesson(name: String? = null, buildLesson: LessonBuilder.() -> Unit = {}) {
-    lesson(name, true, buildLesson)
+    lesson(name, "framework", buildLesson)
   }
 
   fun lesson(name: String? = null, buildLesson: LessonBuilder.() -> Unit = {}) {
-    lesson(name, false, buildLesson)
+    lesson(name, "edu", buildLesson)
   }
 
-  protected fun lesson(name: String? = null, isFramework: Boolean = false, buildLesson: LessonBuilder.() -> Unit) {
-    val lessonBuilder = LessonBuilder(course, null, if (isFramework) FrameworkLesson() else Lesson())
+  fun station(name: String? = null, buildLesson: LessonBuilder.() -> Unit = {}) {
+    lesson(name, "checkiO", buildLesson)
+  }
+  protected fun lesson(name: String? = null, type: String, buildLesson: LessonBuilder.() -> Unit) {
+    val lessonBuilder = LessonBuilder(course, null, when(type) {
+      "framework" -> FrameworkLesson()
+      "checkiO" -> CheckiOStation()
+      else -> Lesson()
+    })
     val lesson = lessonBuilder.lesson
     lesson.index = nextLessonIndex
     lessonBuilder.withName(name ?: EduNames.LESSON + nextLessonIndex)
@@ -201,6 +210,20 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     task(choiceTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
     choiceTask.choiceOptions = choiceOptions.map { ChoiceOption(it.key, it.value) }
     choiceTask.isMultipleChoice = isMultipleChoice
+  }
+
+  fun mission(
+    name: String? = null,
+    taskDescription: String? = null,
+    taskDescriptionFormat: DescriptionFormat? = null,
+    code: String = "",
+    secondsFromChange: Long = 0,
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) {
+    val mission = CheckiOMission()
+    task(mission, name, taskDescription, taskDescriptionFormat, buildTask = buildTask)
+    mission.code = code
+    mission.secondsFromLastChangeOnServer = secondsFromChange
   }
 
   fun videoTask(
