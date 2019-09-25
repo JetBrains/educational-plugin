@@ -39,8 +39,8 @@ class RsConfigurator : EduConfiguratorWithSubmissions<RsProjectSettings>() {
 
     override fun isEnabled(): Boolean {
         val rustPluginVersion = pluginVersion("org.rust.lang") ?: return false
-        // Rust plugin has binary incompatible settings API before 0.2.94
-        // so disable Rust support for all versions below 0.2.94
-        return VersionComparatorUtil.compare(rustPluginVersion, "0.2.94") >= 0
+        // Rust plugin has incompatibility in API that we use before 0.2.106
+        // so disable Rust support for all versions below 0.2.106
+        return VersionComparatorUtil.compare(rustPluginVersion, "0.2.106") >= 0
     }
 }

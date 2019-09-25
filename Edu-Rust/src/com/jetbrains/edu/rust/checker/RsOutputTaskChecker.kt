@@ -51,7 +51,7 @@ class RsOutputTaskChecker(project: Project, task: OutputTask) : OutputTaskChecke
     val cargo = project.rustSettings.toolchain?.rawCargo() ?: return FailedToCheck("Failed to find Rust toolchain")
     val cmd = CargoCommandLine.forTarget(target, "run")
 
-    val processOutput = cargo.toGeneralCommandLine(cmd).execute(project)
+    val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(project)
     val output = processOutput.stdout
 
     return when {

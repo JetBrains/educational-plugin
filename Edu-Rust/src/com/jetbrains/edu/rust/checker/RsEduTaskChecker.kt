@@ -28,7 +28,7 @@ class RsEduTaskChecker(project: Project, task: EduTask) : TaskChecker<EduTask>(t
         val cmd = CargoCommandLine.forPackage(pkg, "test", listOf(
             "--", "-Z", "unstable-options", "--format=json"
         ))
-        val processOutput = cargo.toGeneralCommandLine(cmd).execute(project)
+        val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(project)
         for (line in processOutput.stdoutLines) {
             if (line.trimStart().startsWith("error: Could not compile")) {
                 return CheckResult(CheckStatus.Failed, CheckUtils.COMPILATION_FAILED_MESSAGE, processOutput.stdout)
