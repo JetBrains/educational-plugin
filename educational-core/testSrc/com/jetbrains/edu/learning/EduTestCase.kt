@@ -168,12 +168,11 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     environment: String = "",
     language: Language = PlainTextLanguage.INSTANCE,
     settings: Any = Unit,
-    solutionsHidden: Boolean = false,
     courseProducer: () -> Course = ::EduCourse,
     createYamlConfigs: Boolean = false,
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
-    return course(name, language, environment, courseMode, solutionsHidden, courseProducer, buildCourse).apply {
+    return course(name, language, environment, courseMode, courseProducer, buildCourse).apply {
       // BACKCOMPAT: 2019.1. Use `module` instead of `myFixture.module`
       createCourseFiles(project, myFixture.module, settings = settings)
       if (createYamlConfigs) {

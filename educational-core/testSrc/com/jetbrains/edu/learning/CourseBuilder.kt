@@ -31,7 +31,6 @@ fun course(
   language: com.intellij.lang.Language = PlainTextLanguage.INSTANCE,
   environment: String = "",
   courseMode: String = EduNames.STUDY,
-  solutionsHidden: Boolean = false,
   courseProducer: () -> Course = ::EduCourse,
   buildCourse: CourseBuilder.() -> Unit
 ): Course {
@@ -42,7 +41,6 @@ fun course(
   val course = builder.course
   course.language = language.id
   course.environment = environment
-  course.solutionsHidden = solutionsHidden
   return course
 }
 

@@ -425,7 +425,8 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test course with hidden solutions`() {
-    val course = course(solutionsHidden = true) {}
+    val course = course {}
+    course.solutionsHidden = true
     doTest(course, """
       |title: Test Course
       |language: English
