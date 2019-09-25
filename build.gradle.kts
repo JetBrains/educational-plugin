@@ -337,7 +337,7 @@ project(":jvm-core") {
       plugins += "java"
     }
     if (isAtLeast193) {
-      plugins += "Gradle-Java"
+      plugins += "gradle-java"
     }
     setPlugins(*plugins.toTypedArray())
   }
@@ -384,7 +384,7 @@ project(":Edu-Java") {
       plugins += "java"
     }
     if (isAtLeast193) {
-      plugins += "Gradle-Java"
+      plugins += "gradle-java"
     }
     setPlugins(*plugins.toTypedArray())
   }
@@ -414,7 +414,7 @@ project(":Edu-Kotlin") {
       plugins += "java"
     }
     if (isAtLeast193) {
-      plugins += "Gradle-Java"
+      plugins += "gradle-java"
     }
     setPlugins(*plugins.toTypedArray())
   }
@@ -442,7 +442,7 @@ project(":Edu-Scala") {
       plugins += "java"
     }
     if (isAtLeast193) {
-      plugins += "Gradle-Java"
+      plugins += "gradle-java"
     }
     setPlugins(*plugins.toTypedArray())
   }
