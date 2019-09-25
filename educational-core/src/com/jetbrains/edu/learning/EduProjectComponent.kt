@@ -89,7 +89,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
       override fun appWillBeClosed(isRestart: Boolean) {
         val projects = ProjectManager.getInstance().openProjects
         for (project in projects) {
-          if (PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.PREVIEW_FOLDER_PREFIX)) {
+          if (PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW)) {
             // force closing project -> IDE will not try to reopen course preview in the next session
             ProjectManager.getInstance().closeProject(project)
             RecentProjectsManager.getInstance().removePath(project.basePath)
@@ -180,7 +180,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
   }
 
   override fun projectClosed() {
-    if (PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.PREVIEW_FOLDER_PREFIX)) {
+    if (PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW)) {
       RecentProjectsManager.getInstance().removePath(project.basePath)
       RecentProjectsManager.getInstance().updateLastProjectPath()
     }

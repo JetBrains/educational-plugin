@@ -64,7 +64,7 @@ class CCCreateCoursePreviewDialog(
             showErrorMessage()
             return
           }
-          PropertiesComponent.getInstance(previewProject).setValue(PREVIEW_FOLDER_PREFIX, true)
+          PropertiesComponent.getInstance(previewProject).setValue(IS_COURSE_PREVIEW, true)
           RecentProjectsManager.getInstance().removePath(location.absolutePath)
           EduCounterUsageCollector.createCoursePreview()
         }
@@ -91,5 +91,6 @@ class CCCreateCoursePreviewDialog(
     private const val HEIGHT: Int = 330
 
     const val PREVIEW_FOLDER_PREFIX: String = "course_preview"
+    const val IS_COURSE_PREVIEW: String = "Edu.IsCoursePreview"
   }
 }
