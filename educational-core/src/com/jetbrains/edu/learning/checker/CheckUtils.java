@@ -128,9 +128,7 @@ public class CheckUtils {
   public static RunnerAndConfigurationSettings createRunConfiguration(@NotNull Project project, @Nullable VirtualFile taskFile) {
     return OpenApiExtKt.runReadActionInSmartMode(project, () -> {
       PsiFileSystemItem item = PsiUtilCore.findFileSystemItem(project, taskFile);
-      if (item == null) return null;
-      PsiFile psiFile = item.getContainingFile();
-      return psiFile == null ? null : new ConfigurationContext(psiFile).getConfiguration();
+      return item == null ? null : new ConfigurationContext(item).getConfiguration();
     });
   }
 }

@@ -44,13 +44,13 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals(CheckStatus.Failed, checkResult.status)
-      val matcher = when (task.name) {
-        "EduTestsFailed" -> Result(CoreMatchers.containsString("error happened"), nullValue(), nullValue())
-        "EduNoTestsRun" -> Result(CoreMatchers.containsString("No tests have run"), nullValue(), nullValue())
-        "SyntaxError" -> Result(CoreMatchers.containsString("Syntax Error"), nullValue(),
+      val matcher: Triple<Matcher<String>, Matcher<CheckResultDiff?>, Matcher<String?>> = when (task.name) {
+        "EduTestsFailed" -> Triple(CoreMatchers.containsString("error happened"), nullValue(), nullValue())
+        "EduNoTestsRun" -> Triple(CoreMatchers.containsString("No tests have run"), nullValue(), nullValue())
+        "SyntaxError" -> Triple(CoreMatchers.containsString("Syntax Error"), nullValue(),
                                 CoreMatchers.containsString("SyntaxError: invalid syntax"))
         "OutputTestsFailed" ->
-          Result(CoreMatchers.equalTo("Expected output:\n" +
+          Triple(CoreMatchers.equalTo("Expected output:\n" +
                                       "Hello, World!\n" +
                                       " \n" +
                                       "Actual output:\n" +
@@ -58,12 +58,10 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
                  CheckResultDiffMatcher.diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n")), nullValue())
         else -> error("Unexpected task name: ${task.name}")
       }
-      Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.message, matcher.message)
-      Assert.assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, matcher.diff)
-      Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.details, matcher.details)
+      Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.message, matcher.first)
+      Assert.assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, matcher.second)
+      Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.details, matcher.third)
     }
     doTest()
   }
-
-  private data class Result(val message: Matcher<String>, val diff: Matcher<CheckResultDiff?>, val details: Matcher<String?>)
 }

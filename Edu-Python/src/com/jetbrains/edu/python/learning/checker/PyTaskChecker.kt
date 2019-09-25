@@ -108,10 +108,12 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
       }
 
       latch.await()
-      connection.disconnect()
     }
     catch (e: Exception) {
       LOG.error(e)
+    }
+    finally {
+      connection.disconnect()
     }
 
     return errorOutput.toString().nullize()
