@@ -65,6 +65,12 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
         dir("task") {
           file("Fizz.kt")
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
       }
       dir("lesson2") {
         dir("task1") {

@@ -45,6 +45,15 @@ class HyperskillNavigationTest : NavigationTestBase() {
             """)
           }
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
       }
       file("build.gradle")
       file("settings.gradle")
@@ -81,6 +90,15 @@ class HyperskillNavigationTest : NavigationTestBase() {
               fun tests1() {}
             """)
           }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -128,6 +146,15 @@ class HyperskillNavigationTest : NavigationTestBase() {
             """)
           }
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
       }
       file("build.gradle")
       file("settings.gradle")
@@ -174,6 +201,15 @@ class HyperskillNavigationTest : NavigationTestBase() {
             """)
           }
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
       }
       file("build.gradle")
       file("settings.gradle")
@@ -216,6 +252,15 @@ class HyperskillNavigationTest : NavigationTestBase() {
             """)
           }
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
       }
       file("build.gradle")
       file("settings.gradle")
@@ -256,6 +301,15 @@ class HyperskillNavigationTest : NavigationTestBase() {
             """)
           }
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
       }
       file("build.gradle")
       file("settings.gradle")
@@ -293,6 +347,15 @@ class HyperskillNavigationTest : NavigationTestBase() {
               fun tests2() {}
             """)
           }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
         }
       }
       file("build.gradle")

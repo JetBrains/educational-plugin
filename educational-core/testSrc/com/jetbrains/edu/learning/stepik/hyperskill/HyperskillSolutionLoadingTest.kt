@@ -47,6 +47,15 @@ class HyperskillSolutionLoadingTest : NavigationTestBase() {
             file("Tests1.kt", "fun tests1() {}")
           }
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
       }
       file("build.gradle")
       file("settings.gradle")
@@ -77,6 +86,15 @@ class HyperskillSolutionLoadingTest : NavigationTestBase() {
           dir("test") {
             file("Tests2.kt", "fun tests2() {}")
           }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
         }
       }
       file("build.gradle")

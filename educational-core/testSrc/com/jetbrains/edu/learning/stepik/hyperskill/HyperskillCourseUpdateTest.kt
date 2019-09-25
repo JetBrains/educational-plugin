@@ -74,6 +74,12 @@ class HyperskillCourseUpdateTest : EduTestCase() {
             file("Tests1.kt", testText)
           }
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
       }
       file("build.gradle")
       file("settings.gradle")
@@ -116,6 +122,12 @@ class HyperskillCourseUpdateTest : EduTestCase() {
             file("Tests1.kt", testText)
           }
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
       }
       file("build.gradle")
       file("settings.gradle")
@@ -150,6 +162,12 @@ class HyperskillCourseUpdateTest : EduTestCase() {
           dir("test") {
             file("Tests1.kt", "fun test1() {}")
           }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -197,6 +215,12 @@ class HyperskillCourseUpdateTest : EduTestCase() {
           dir("test") {
             file("Tests2.kt", testText)
           }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -249,6 +273,12 @@ class HyperskillCourseUpdateTest : EduTestCase() {
             file("Tests2.kt", testText)
           }
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
       }
       file("build.gradle")
       file("settings.gradle")
@@ -274,6 +304,12 @@ class HyperskillCourseUpdateTest : EduTestCase() {
           dir("test") {
             file("Tests1.kt")
           }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
         }
       }
       file("build.gradle", buildGradleText)

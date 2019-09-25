@@ -35,6 +35,12 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
             """)
           }
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
       }
       file("build.gradle")
       file("settings.gradle")
@@ -73,6 +79,12 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
               fun tests1() {}
             """)
           }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -123,6 +135,12 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
             """)
           }
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
       }
       file("build.gradle")
       file("settings.gradle")
@@ -155,6 +173,12 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
               fun tests2() {}
             """)
           }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -192,6 +216,12 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
             """)
           }
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
       }
       file("build.gradle")
       file("settings.gradle")
@@ -224,6 +254,12 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
               fun tests2() {}
             """)
           }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -258,6 +294,12 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
               fun tests1() {}
             """)
           }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
         }
       }
       file("build.gradle")

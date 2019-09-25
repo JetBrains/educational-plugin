@@ -36,6 +36,15 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
             fun buzz() = TODO()
           """)
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
       }
     }
     fileTree.assertEquals(rootDir, myFixture)
@@ -65,6 +74,15 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
             fun fizzBuzz() = 123 + 456
           """)
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
       }
     }
     fileTree.assertEquals(rootDir, myFixture)
@@ -89,6 +107,15 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           file("fizz.kt", """
             fun fizz() = 123
           """)
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
         }
       }
     }
@@ -136,6 +163,12 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
             fun buzz() = 90
           """)
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
       }
     }
     fileTree.assertEquals(rootDir, myFixture)
@@ -178,6 +211,15 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
             fun fizzBuzz() = TODO() + TODO()
           """)
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
       }
     }.assertEquals(rootDir, myFixture)
 
@@ -191,6 +233,15 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           file("fizz.kt", """
             fun fizz() = TODO()
           """)
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
         }
       }
     }.assertEquals(rootDir, myFixture)
@@ -230,6 +281,15 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
             fun fizz() = 123
           """)
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
       }
     }
     fileTree.assertEquals(rootDir, myFixture)
@@ -265,6 +325,15 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
             fun buzz() = 456
           """)
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
       }
     }
     fileTree.assertEquals(rootDir, myFixture)
@@ -294,6 +363,15 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
             fun foo() {}
           """)
         }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
       }
     }
     fileTree.assertEquals(rootDir, myFixture)
@@ -318,6 +396,15 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           file("buzz.kt", """
             fun buzz() = TODO()
           """)
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
         }
       }
     }
