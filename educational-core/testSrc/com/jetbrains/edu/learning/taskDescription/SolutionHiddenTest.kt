@@ -2,26 +2,23 @@ package com.jetbrains.edu.learning.taskDescription
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class SolutionHiddenTest : EduTestCase() {
-  private fun Task.solutionIsHidden() = !canShowSolution()
+  fun `test is solution hidden when course value == true`() =
+    doTestSolutionHidden(solutionsHiddenInCourse = true, solutionHiddenInTask = null, expectedSolutionHiddenInTask = true)
 
-  fun `test is solution hidden when task is not set`() {
-    val task = createTask()
+  fun `test is solution hidden when course value == false`() =
+    doTestSolutionHidden(solutionsHiddenInCourse = false, solutionHiddenInTask = null, expectedSolutionHiddenInTask = false)
 
-    assertTrue(task.apply(true).solutionIsHidden())
-    assertFalse(task.apply(false).solutionIsHidden())
-  }
+  fun `test is solution hidden when task value == true`() =
+    doTestSolutionHidden(solutionsHiddenInCourse = false, solutionHiddenInTask = true, expectedSolutionHiddenInTask = true)
 
-  fun `test is solution hidden when task is set`() {
-    val task = createTask()
+  fun `test is solution hidden when task value == false`() =
+    doTestSolutionHidden(solutionsHiddenInCourse = true, solutionHiddenInTask = false, expectedSolutionHiddenInTask = false)
 
-    assertFalse(task.apply(solutionsHiddenInCourse = true, solutionHiddenInTask = false).solutionIsHidden())
-    assertTrue(task.apply(solutionsHiddenInCourse = false, solutionHiddenInTask = true).solutionIsHidden())
-  }
-
-  private fun createTask(): Task {
+  private fun doTestSolutionHidden(solutionsHiddenInCourse: Boolean,
+                                   solutionHiddenInTask: Boolean?,
+                                   expectedSolutionHiddenInTask: Boolean) {
     val course = courseWithFiles("Edu test course") {
       lesson(name = "lesson1") {
         eduTask(name = "task1") {
@@ -31,12 +28,10 @@ class SolutionHiddenTest : EduTestCase() {
         }
       }
     }
-    return course.findTask("lesson1", "task1")
-  }
-
-  private fun Task.apply(solutionsHiddenInCourse: Boolean, solutionHiddenInTask: Boolean? = null): Task {
     course.solutionsHidden = solutionsHiddenInCourse
-    solutionHidden = solutionHiddenInTask
-    return this
+    val task = findTask(0, 0)
+    task.solutionHidden = solutionHiddenInTask
+
+    assertEquals(expectedSolutionHiddenInTask, !task.canShowSolution())
   }
 }
