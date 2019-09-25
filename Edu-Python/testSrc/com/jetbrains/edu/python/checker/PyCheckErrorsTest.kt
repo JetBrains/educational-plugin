@@ -43,7 +43,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
 
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
-      assertEquals(CheckStatus.Failed, checkResult.status)
+      assertEquals("Status for ${task.name} doesn't match", CheckStatus.Failed, checkResult.status)
       val matcher: Triple<Matcher<String>, Matcher<CheckResultDiff?>, Matcher<String?>> = when (task.name) {
         "EduTestsFailed" -> Triple(CoreMatchers.containsString("error happened"), nullValue(), nullValue())
         "EduNoTestsRun" -> Triple(CoreMatchers.containsString("No tests have run"), nullValue(), nullValue())
