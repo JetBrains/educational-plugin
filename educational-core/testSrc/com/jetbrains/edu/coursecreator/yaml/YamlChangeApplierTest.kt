@@ -176,10 +176,10 @@ class YamlChangeApplierTest : YamlTestCase() {
   fun `test do not hide solutions for one task`() {
     val task = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
-        eduTask(solutionHidden = true)
+        eduTask {}
       }
     }.lessons[0].taskList[0]
-    assertEquals(true, task.solutionHidden)
+    task.solutionHidden = true
 
     val yamlContent = """
       |type: edu
@@ -187,6 +187,6 @@ class YamlChangeApplierTest : YamlTestCase() {
     """.trimMargin("|")
 
     loadItemFromConfig(task, yamlContent)
-    assertEquals(false, task.solutionHidden)
+    assertFalse(task.solutionHidden!!)
   }
 }

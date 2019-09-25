@@ -439,11 +439,12 @@ class YamlSerializationTest : YamlTestCase() {
   fun `test task with hidden solution`() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
-        eduTask(solutionHidden = true)
+        eduTask {}
       }
     }.findTask("lesson1", "task1")
     val taskCustomName = "task custom name"
     task.customPresentableName = taskCustomName
+    task.solutionHidden = true
     doTest(task, """
     |type: edu
     |custom_name: $taskCustomName
@@ -454,11 +455,12 @@ class YamlSerializationTest : YamlTestCase() {
   fun `test task with hidden solution = false`() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
-        eduTask(solutionHidden = false)
+        eduTask {}
       }
     }.findTask("lesson1", "task1")
     val taskCustomName = "task custom name"
     task.customPresentableName = taskCustomName
+    task.solutionHidden = false
     doTest(task, """
     |type: edu
     |custom_name: $taskCustomName

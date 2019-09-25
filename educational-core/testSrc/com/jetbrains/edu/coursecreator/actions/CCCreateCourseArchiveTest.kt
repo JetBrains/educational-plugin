@@ -246,11 +246,12 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
   }
 
   fun `test peek solution is hidden for task`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val task = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
-        eduTask(solutionHidden = true)
+        eduTask {}
       }
-    }
+    }.lessons[0].taskList[0]
+    task.solutionHidden = true
     val generatedJsonFile = generateJson()
     val expectedCourseJson = loadExpectedJson()
     assertEquals(expectedCourseJson, generatedJsonFile)
