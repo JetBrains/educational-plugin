@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator
+package com.jetbrains.edu.learning
 
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -16,7 +16,7 @@ data class FileCheck(
       check(taskFile != null) {
         "`$path` should be in `${task.name}` task"
       }
-      additionalCheck?.invoke(taskFile!!) // !! is safe because of `check` call
+      additionalCheck?.invoke(taskFile) // !! is safe because of `check` call
     } else {
       check(taskFile == null) {
         "`$path` shouldn't be in `${task.name}` task"

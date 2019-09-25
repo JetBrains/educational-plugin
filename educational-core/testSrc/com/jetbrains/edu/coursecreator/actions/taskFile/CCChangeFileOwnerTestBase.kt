@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.taskFile
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.command.undo.UndoManager
-import com.jetbrains.edu.coursecreator.FileCheck
+import com.jetbrains.edu.learning.FileCheck
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.StudyTaskManager
