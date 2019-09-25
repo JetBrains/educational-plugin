@@ -1,6 +1,7 @@
 package com.jetbrains.edu.java.checker
 
 import com.intellij.lang.java.JavaLanguage
+import com.jetbrains.edu.jvm.checker.JdkCheckerTestBase
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
@@ -9,7 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 
-class JCheckersTest : JCheckersTestBase() {
+class JCheckersTest : JdkCheckerTestBase() {
 
   override fun createCourse(): Course = course(language = JavaLanguage.INSTANCE) {
     lesson {

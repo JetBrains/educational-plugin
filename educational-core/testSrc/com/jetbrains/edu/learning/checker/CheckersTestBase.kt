@@ -26,10 +26,10 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.createFileEditorManager
 import com.jetbrains.edu.learning.registerComponent
@@ -93,7 +93,6 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
             get() = "\n" + causes.joinToString("\n") { it.message ?: "" }
     }
 
-    protected abstract val courseBuilder: EduCourseBuilder<Settings>
     protected abstract val projectSettings: Settings
     protected abstract fun createCourse(): Course
 
@@ -118,7 +117,8 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
 
         val settings = projectSettings
 
-        val generator = courseBuilder.getCourseProjectGenerator(myCourse) ?: error("Failed to get `CourseProjectGenerator`")
+        val generator =  myCourse.configurator?.courseBuilder?.getCourseProjectGenerator(myCourse)
+                         ?: error("Failed to get `CourseProjectGenerator`")
         myProject = generator.doCreateCourseProject(myTestDir.absolutePath, settings as Any)
                     ?: error("Cannot create project with name ${projectName()}")
     }

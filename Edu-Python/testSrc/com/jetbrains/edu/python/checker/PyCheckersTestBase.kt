@@ -5,16 +5,13 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.util.ThrowableRunnable
-import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.CheckersTestBase
-import com.jetbrains.edu.python.learning.PyCourseBuilder
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.sdk.PythonSdkType
 import java.io.File
 
 // This test runs only when PYTHON_SDK environment variable is defined and points to the valid python interpreter.
 abstract class PyCheckersTestBase : CheckersTestBase<PyNewProjectSettings>() {
-  override val courseBuilder: EduCourseBuilder<PyNewProjectSettings> = PyCourseBuilder()
   override val projectSettings: PyNewProjectSettings = PyNewProjectSettings()
 
   override fun setUpEnvironment() {

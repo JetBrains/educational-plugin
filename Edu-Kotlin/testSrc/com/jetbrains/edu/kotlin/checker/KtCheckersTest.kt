@@ -1,5 +1,6 @@
 package com.jetbrains.edu.kotlin.checker
 
+import com.jetbrains.edu.jvm.checker.JdkCheckerTestBase
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
@@ -9,7 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
-class KtCheckersTest : KtCheckersTestBase() {
+class KtCheckersTest : JdkCheckerTestBase() {
 
   override fun createCourse(): Course = course(language = KotlinLanguage.INSTANCE) {
     lesson {

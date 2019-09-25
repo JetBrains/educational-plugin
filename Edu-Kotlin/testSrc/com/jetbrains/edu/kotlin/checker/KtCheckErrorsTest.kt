@@ -6,6 +6,7 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.jvm.checker.JdkCheckerTestBase
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckResultDiffMatcher.Companion.diff
@@ -18,7 +19,7 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert.assertThat
 
-class KtCheckErrorsTest : KtCheckersTestBase() {
+class KtCheckErrorsTest : JdkCheckerTestBase() {
 
   override fun createCourse(): Course = course(language = KotlinLanguage.INSTANCE) {
     lesson {
