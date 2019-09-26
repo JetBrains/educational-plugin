@@ -221,7 +221,7 @@ object YamlFormatSynchronizer {
   private fun StudyItem.saveConfigDocument(project: Project, configName: String, mapper: ObjectMapper) {
     val dir = getDir(project) ?: error("Failed to save ${javaClass.simpleName} '$name' to config file: directory not found")
 
-    ApplicationManager.getApplication().invokeLater {
+    val saveAction = Runnable {
       runWriteAction {
         val file = dir.findOrCreateChildData(javaClass, configName)
         try {
@@ -236,6 +236,12 @@ object YamlFormatSynchronizer {
           file.putUserData(LOAD_FROM_CONFIG, true)
         }
       }
+    }
+
+    if (isUnitTestMode) {
+      saveAction.run()
+    } else {
+      ApplicationManager.getApplication().invokeLater(saveAction)
     }
   }
 

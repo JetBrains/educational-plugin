@@ -6,10 +6,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.learning.FileCheck
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListenerTest
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduTestDialog
+import com.jetbrains.edu.learning.FileCheck
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -38,7 +38,8 @@ abstract class VirtualFileListenerTestBase : EduTestCase() {
   protected fun doAddFileTest(filePathInTask: String, checksProducer: (Task) -> List<FileCheck>) {
     val course = courseWithFiles(
       courseMode = courseMode,
-      language = FakeGradleBasedLanguage
+      language = FakeGradleBasedLanguage,
+      createYamlConfigs = true
     ) {
       lesson("lesson1") {
         eduTask("task1") {

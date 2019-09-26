@@ -24,6 +24,7 @@ import com.intellij.ui.docking.DockManager
 import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
+import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
@@ -168,10 +169,14 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     language: Language = PlainTextLanguage.INSTANCE,
     settings: Any = Unit,
     courseProducer: () -> Course = ::EduCourse,
+    createYamlConfigs: Boolean = false,
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
     return course(name, language, environment, courseMode, courseProducer, buildCourse).apply {
       createCourseFiles(project, LightPlatformTestCase.getSourceRoot(), settings)
+      if (createYamlConfigs) {
+        createConfigFiles(project)
+      }
     }
   }
 

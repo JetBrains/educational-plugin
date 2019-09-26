@@ -35,6 +35,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
     if (task.getTaskFile(pathInTask) == null) {
       val taskFile = task.addTaskFile(pathInTask)
       taskFileCreated(taskFile, createFile)
+      YamlFormatSynchronizer.saveItem(fileInfo.task)
     }
   }
 

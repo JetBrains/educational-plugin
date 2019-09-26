@@ -86,11 +86,6 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     }
   }
 
-  override fun fileInTaskCreated(fileInfo: FileInfo.FileInTask, createFile: VirtualFile) {
-    super.fileInTaskCreated(fileInfo, createFile)
-    YamlFormatSynchronizer.saveItem(fileInfo.task)
-  }
-
   override fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {
     super.taskFileCreated(taskFile, file)
     if (EduUtils.isTestsFile(project, file)) {
