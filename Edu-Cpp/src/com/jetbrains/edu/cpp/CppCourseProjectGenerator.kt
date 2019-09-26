@@ -39,6 +39,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
 
     val dataProvider = { key: String ->
       when (key) {
+        CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KAY -> cMakeMinimumRequired
         CppTemplates.PROJECT_NAME_KEY -> FileUtil.sanitizeFileName(baseDir.name)
         CppTemplates.GTEST_VERSION_KEY -> CppConfigurator.GTEST_VERSION
         else -> ""
