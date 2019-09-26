@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import icons.CMakeIcons
-import java.util.function.Function
 import javax.swing.Icon
 
 class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
@@ -39,7 +38,8 @@ class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
 
   override fun getLogo(): Icon = CMakeIcons.CMake
 
-  override fun getCustomItemNameValidator(): Function<String, String?> = Function { validateStudyItemName(it) }
+  override fun isValidItemName(name: String): String? =
+    if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else "Name should contain only latin letters, digits, spaces or '_' symbols."
 
   companion object {
     const val GTEST_VERSION = "release-1.8.1"
@@ -47,5 +47,7 @@ class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
     const val TASK_CPP = "task.cpp"
     const val TEST_CPP = "test.cpp"
     private const val MOCK_CPP = "mock.cpp"
+
+    private val STUDY_ITEM_NAME_PATTERN = "[a-zA-Z0-9_ ]+".toRegex()
   }
 }

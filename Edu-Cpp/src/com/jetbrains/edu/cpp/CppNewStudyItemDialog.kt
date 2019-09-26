@@ -4,9 +4,11 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialogBase
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 
 class CppNewStudyItemDialog(
-  project: Project,
+  val project: Project,
   model: NewStudyItemUiModel,
   additionalPanels: List<AdditionalPanel>
 ) : CCCreateStudyItemDialogBase(project, model, additionalPanels) {
@@ -15,5 +17,6 @@ class CppNewStudyItemDialog(
     init()
   }
 
-  override fun performCustomNameValidation(name: String): String? = validateStudyItemName(name)
+  override fun performCustomNameValidation(name: String): String? =
+    project.course?.configurator?.isValidItemName(name)
 }
