@@ -82,6 +82,11 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
         if (course != null && !isUnitTestMode && !YamlFormatSettings.disableYaml(course)) {
           saveAll(project)
         }
+
+        if (PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW)) {
+          RecentProjectsManager.getInstance().removePath(project.basePath)
+          RecentProjectsManager.getInstance().updateLastProjectPath()
+        }
       }
     })
 
@@ -176,13 +181,6 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
           }
         }
       }
-    }
-  }
-
-  override fun projectClosed() {
-    if (PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW)) {
-      RecentProjectsManager.getInstance().removePath(project.basePath)
-      RecentProjectsManager.getInstance().updateLastProjectPath()
     }
   }
 
