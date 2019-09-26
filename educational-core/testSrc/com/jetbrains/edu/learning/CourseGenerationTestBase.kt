@@ -1,16 +1,14 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.idea.IdeaTestApplication
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.PlatformTestCase
-import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.runInEdtAndWait
+import com.intellij.testFramework.*
+import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.courseFormat.Course
 import java.io.File
 
@@ -55,12 +53,14 @@ abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
 
   override fun tearDown() {
     try {
-      ApplicationManager.getApplication().runWriteAction { rootDir.delete(this) }
-
-      LightPlatformTestCase.doTearDown(project, application)
-      // BACKCOMPAT: 2019.2
-      @Suppress("DEPRECATION")
-      PlatformTestCase.closeAndDisposeProjectAndCheckThatNoOpenProjects(project)
+      RunAll()
+        .append(ThrowableRunnable { runWriteAction { rootDir.delete(this) } })
+        .append(ThrowableRunnable { LightPlatformTestCase.doTearDown(project, application) })
+        .append(ThrowableRunnable {
+          // BACKCOMPAT: 2019.2
+          @Suppress("DEPRECATION")
+          PlatformTestCase.closeAndDisposeProjectAndCheckThatNoOpenProjects(project)
+        })
     } finally {
       super.tearDown()
     }
