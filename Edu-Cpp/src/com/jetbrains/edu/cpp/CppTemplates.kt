@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 
-/** Provides CMake file template names, where:
+/** Provides CMake file template information, where:
  * [mainCMakeList] - configures the course project, e.g. find all tasks `CMakeList.txt` files and adds them.
  * [taskCMakeList] - configures the task project.
  * [extraTopLevelFiles] - another depended on course type files that should be added to the top dir of the course.
