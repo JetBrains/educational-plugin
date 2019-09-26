@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.EduNames.FRAMEWORK
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
@@ -75,6 +76,7 @@ class Step {
   constructor()
 
   constructor(project: Project, task: Task) {
+    CourseArchiveCreator.addDescriptions(project, task)
     text = task.descriptionText
     name = if (task is ChoiceTask) CHOICE else PYCHARM
     if (task is ChoiceTask) {

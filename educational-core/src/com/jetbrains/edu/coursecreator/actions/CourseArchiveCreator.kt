@@ -162,7 +162,7 @@ class CourseArchiveCreator(
       task.taskFiles = studentTaskFiles
     }
 
-    private fun addDescriptions(project: Project, task: Task) {
+    fun addDescriptions(project: Project, task: Task) {
       val descriptionFile = task.getDescriptionFile(project)
 
       if (descriptionFile != null) {
