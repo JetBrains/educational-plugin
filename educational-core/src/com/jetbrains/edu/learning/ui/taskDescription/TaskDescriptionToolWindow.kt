@@ -13,108 +13,101 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jetbrains.edu.learning.ui.taskDescription;
+package com.jetbrains.edu.learning.ui.taskDescription
 
-import com.google.common.annotations.VisibleForTesting;
-import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
-import com.intellij.ide.actions.QualifiedNameProvider;
-import com.intellij.ide.ui.LafManager;
-import com.intellij.ide.ui.LafManagerListener;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.NavigatablePsiElement;
-import com.intellij.psi.PsiElement;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import com.google.common.annotations.VisibleForTesting
+import com.intellij.codeInsight.documentation.DocumentationManagerProtocol
+import com.intellij.ide.actions.QualifiedNameProvider
+import com.intellij.ide.ui.LafManager
+import com.intellij.ide.ui.LafManagerListener
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
+import com.intellij.psi.NavigatablePsiElement
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
+import javax.swing.JComponent
 
-import javax.swing.*;
-
-public abstract class TaskDescriptionToolWindow {
-  public static final String EMPTY_TASK_TEXT = "Please, open any task to see task description";
-  public static final String PSI_ELEMENT_PROTOCOL = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL;
-
-
-  public TaskDescriptionToolWindow() {
-    LafManager.getInstance().addLafManagerListener(new StudyLafManagerListener());
+abstract class TaskDescriptionToolWindow {
+  init {
+    LafManager.getInstance().addLafManagerListener(StudyLafManagerListener())
   }
 
-  public abstract JComponent createTaskInfoPanel(@NotNull Project project);
+  abstract fun createTaskInfoPanel(project: Project): JComponent
 
-  public abstract JComponent createTaskSpecificPanel(Task currentTask);
+  abstract fun createTaskSpecificPanel(currentTask: Task): JComponent
 
-  public void updateTaskSpecificPanel(@Nullable Task task) {
-  }
+  open fun updateTaskSpecificPanel(task: Task?) {}
 
-  protected String wrapHints(@NotNull String text) {
-    Document document = Jsoup.parse(text);
-    Elements hints = document.getElementsByClass("hint");
-    if (hints.size() == 1) {
-      Element hint = hints.get(0);
-      String hintText = wrapHint(hint,  "");
-      hint.html(hintText);
-      return document.html();
+  protected fun wrapHints(text: String): String {
+    val document = Jsoup.parse(text)
+    val hints = document.getElementsByClass("hint")
+    if (hints.size == 1) {
+      val hint = hints[0]
+      val hintText = wrapHint(hint, "")
+      hint.html(hintText)
+      return document.html()
     }
-    for (int i = 0; i < hints.size(); i++) {
-      Element hint = hints.get(i);
-      String hintText = wrapHint(hint, String.valueOf(i + 1));
-      hint.html(hintText);
+    for (i in hints.indices) {
+      val hint = hints[i]
+      val hintText = wrapHint(hint, (i + 1).toString())
+      hint.html(hintText)
     }
-    return document.html();
+    return document.html()
   }
 
-  protected abstract String wrapHint(@NotNull Element hintText, @NotNull String displayedHintNumber);
+  protected abstract fun wrapHint(hintText: Element, displayedHintNumber: String): String
 
-  protected void setTaskText(@NotNull Project project, @Nullable Task task) {
-    setText(getTaskDescriptionWithCodeHighlighting(project, task));
+  protected fun setTaskText(project: Project, task: Task?) {
+    setText(getTaskDescriptionWithCodeHighlighting(project, task))
   }
 
-  public abstract void setText(@NotNull String text);
+  abstract fun setText(text: String)
 
-  protected abstract void updateLaf();
+  protected abstract fun updateLaf()
 
-  @VisibleForTesting
-  @NotNull
-  public static String getTaskDescriptionWithCodeHighlighting(@NotNull Project project, @Nullable Task task) {
-    if (task != null) {
-      String taskText = EduUtils.getTaskTextFromTask(task.getTaskDir(project), task);
-      if (taskText != null) {
-        return EduCodeHighlighter.highlightCodeFragments(project, taskText, task.getCourse().getLanguageById());
-      }
+  private inner class StudyLafManagerListener : LafManagerListener {
+    override fun lookAndFeelChanged(manager: LafManager) {
+      updateLaf()
     }
-    return EMPTY_TASK_TEXT;
   }
 
-  public static void navigateToPsiElement(@NotNull Project project, @NotNull String url) {
-    String qualifiedName = url.replace(PSI_ELEMENT_PROTOCOL, "");
+  companion object {
+    val EMPTY_TASK_TEXT = "Please, open any task to see task description"
+    val PSI_ELEMENT_PROTOCOL = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL
 
-    Application application = ApplicationManager.getApplication();
-    application.invokeLater(() -> application.runReadAction(() -> {
-      for (QualifiedNameProvider provider : QualifiedNameProvider.EP_NAME.getExtensionList()) {
-        PsiElement element = provider.qualifiedNameToElement(qualifiedName, project);
-        if (element instanceof NavigatablePsiElement) {
-          NavigatablePsiElement navigatableElement = (NavigatablePsiElement)element;
-          if (navigatableElement.canNavigate()) {
-            navigatableElement.navigate(true);
-          }
-          break;
+    @VisibleForTesting
+    fun getTaskDescriptionWithCodeHighlighting(project: Project, task: Task?): String {
+      if (task != null) {
+        val taskText = EduUtils.getTaskTextFromTask(task.getTaskDir(project), task)
+        if (taskText != null) {
+          return EduCodeHighlighter.highlightCodeFragments(project, taskText, task.course.languageById!!)
         }
       }
-    }));
-    EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.PSI);
-  }
+      return EMPTY_TASK_TEXT
+    }
 
-  private class StudyLafManagerListener implements LafManagerListener {
-    @Override
-    public void lookAndFeelChanged(@NotNull LafManager manager) {
-      updateLaf();
+    fun navigateToPsiElement(project: Project, url: String) {
+      val qualifiedName = url.replace(PSI_ELEMENT_PROTOCOL, "")
+
+      val application = ApplicationManager.getApplication()
+      application.invokeLater {
+        application.runReadAction {
+          for (provider in QualifiedNameProvider.EP_NAME.extensionList) {
+            val element = provider.qualifiedNameToElement(qualifiedName, project)
+            if (element is NavigatablePsiElement) {
+              val navigatableElement = element as NavigatablePsiElement?
+              if (navigatableElement!!.canNavigate()) {
+                navigatableElement.navigate(true)
+              }
+              break
+            }
+          }
+        }
+      }
+      EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.PSI)
     }
   }
 }
