@@ -1,10 +1,13 @@
 package com.jetbrains.edu.cpp
 
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
-fun getExpectedTaskCMakeText(course: Course, projectSettings: CppProjectSettings, expectedProjectName: String): String {
-  val cMakeName = getCppCMakeTemplateNames(course).taskCMakeList
-  val cMakeVariables = getCMakeTemplateVariables(expectedProjectName, projectSettings.languageStandard)
-  return GeneratorUtils.getInternalTemplateText(cMakeName, cMakeVariables)
-}
+fun getExpectedTaskCMakeText(course: Course, projectSettings: CppProjectSettings, expectedProjectName: String): String =
+  getCppTemplates(course).taskCMakeList.getText { key ->
+    when (key) {
+      CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KAY -> cMakeMinimumRequired
+      CppTemplates.PROJECT_NAME_KEY -> expectedProjectName
+      CppTemplates.CPP_STANDARD_LINE_KEY -> projectSettings.languageStandard
+      else -> ""
+    }
+  }

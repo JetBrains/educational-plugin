@@ -37,18 +37,19 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
     if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
 
-    val mainCMakeText = GeneratorUtils.getInternalTemplateText(getCppCMakeTemplateNames(myCourse).mainCMakeList,
-                                                               getCMakeTemplateVariables(FileUtil.sanitizeFileName(baseDir.name)))
+    val dataProvider = { key: String ->
+      when (key) {
+        CppTemplates.PROJECT_NAME_KEY -> FileUtil.sanitizeFileName(baseDir.name)
+        CppTemplates.GTEST_VERSION_KEY -> CppConfigurator.GTEST_VERSION
+        else -> ""
+      }
+    }
 
-    GeneratorUtils.createChildFile(baseDir, CMakeListsFileType.FILE_NAME, mainCMakeText)
+    val mainCMakeTemplateInfo = getCppTemplates(myCourse).mainCMakeList
+    GeneratorUtils.createChildFile(baseDir, mainCMakeTemplateInfo.fileName, mainCMakeTemplateInfo.getText(dataProvider))
 
-    if (myCourse !is StepikCourse) {
-      val initCMakeText = GeneratorUtils.getInternalTemplateText(getCppCMakeTemplateNames(myCourse).testCMakeList,
-                                                                 getCMakeTemplateVariables(gtestVersion = CppConfigurator.GTEST_VERSION))
-      GeneratorUtils.createChildFile(baseDir, INIT_CMAKE_FILE_NAME, initCMakeText)
-
-      val runTestsText = GeneratorUtils.getInternalTemplateText(getCppCMakeTemplateNames(myCourse).runTestsCpp)
-      GeneratorUtils.createChildFile(baseDir, RUN_TEST_FILE_NAME, runTestsText)
+    getCppTemplates(myCourse).extraTopLevelFiles.forEach { templateInfo ->
+      GeneratorUtils.createChildFile(baseDir, templateInfo.fileName, templateInfo.getText(dataProvider))
     }
   }
 
@@ -56,7 +57,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     when (item) {
       is ItemContainer -> item.items.forEach { addCMakeListToTasks(it, project, projectSettings) }
       is Task -> {
-        val cMakeFile = addCMakeList(item, getCMakeProjectUniqueName(item), projectSettings.languageStandard)
+        val cMakeFile = item.addCMakeList(getCMakeProjectUniqueName(item), projectSettings.languageStandard)
         GeneratorUtils.createChildFile(item.getTaskDir(project) ?: return, cMakeFile.name, cMakeFile.text)
       }
     }

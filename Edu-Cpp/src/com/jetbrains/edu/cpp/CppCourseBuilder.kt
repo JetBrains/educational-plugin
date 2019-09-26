@@ -40,7 +40,7 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     super.initNewTask(project, lesson, task, info)
 
     val cMakeProjectName = getCMakeProjectUniqueName(task) { FileUtil.sanitizeFileName(it.name, true) }
-    addCMakeList(task, cMakeProjectName, languageSettings.settings.languageStandard)
+    task.addCMakeList(cMakeProjectName, languageSettings.settings.languageStandard)
   }
 
   override fun getTextForNewTask(taskFile: TaskFile, taskDir: VirtualFile, newTask: Task): String? {

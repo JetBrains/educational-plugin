@@ -10,11 +10,6 @@ import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-
-private const val CMAKE_MINIMUM_REQUIRED_LINE = "CMAKE_MINIMUM_REQUIRED_LINE"
-private const val CPP_STANDARD_LINE = "CPP_STANDARD"
-private const val GTEST_VERSION = "GTEST_VERSION"
 
 val cMakeMinimumRequired: String by lazy {
   val cMakeVersionExtractor = {
@@ -34,35 +29,25 @@ val cMakeMinimumRequired: String by lazy {
 }
 
 /**
- * [cMakeProjectName] - name of the CMake project that will be specified.
- * [cppStandard] - standard of language that will be specified in CMake.
- * [gtestVersion] - 'google test' framework version that will be loaded.
+ * Create CMake for the task and add it as taskFile.
  *
- * NOTE: if some parameter is `null` it will be ignored and not be added to result map.
- * Use `null` value for the parameter only if it isn't used in the template.
+ * @return created taskFile
  */
-fun getCMakeTemplateVariables(
-  cMakeProjectName: String? = null,
-  cppStandard: String? = null,
-  gtestVersion: String? = null
-): Map<String, Any> {
-  val result = mutableMapOf(CMAKE_MINIMUM_REQUIRED_LINE to cMakeMinimumRequired)
+fun Task.addCMakeList(projectName: String, cppStandard: String): TaskFile {
+  val templateInfo = getCppTemplates(course).taskCMakeList
 
-  cMakeProjectName?.let { result[EduNames.PROJECT_NAME] = it }
-  cppStandard?.let { result[CPP_STANDARD_LINE] = it }
-  gtestVersion?.let { result[GTEST_VERSION] = it }
-
-  return result
-}
-
-fun addCMakeList(task: Task, projectName: String, cppStandard: String): TaskFile {
-  val text = GeneratorUtils.getInternalTemplateText(getCppCMakeTemplateNames(task.course).taskCMakeList,
-                                                    getCMakeTemplateVariables(projectName, cppStandard))
-
-  val taskFile = TaskFile(CMakeListsFileType.FILE_NAME, text)
+  val taskFile = TaskFile(CMakeListsFileType.FILE_NAME,
+                          templateInfo.getText { key ->
+                            when (key) {
+                              CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KAY -> cMakeMinimumRequired
+                              CppTemplates.PROJECT_NAME_KEY -> projectName
+                              CppTemplates.CPP_STANDARD_LINE_KEY -> cppStandard
+                              else -> ""
+                            }
+                          })
   taskFile.isVisible = false
 
-  task.addTaskFile(taskFile)
+  addTaskFile(taskFile)
 
   return taskFile
 }
