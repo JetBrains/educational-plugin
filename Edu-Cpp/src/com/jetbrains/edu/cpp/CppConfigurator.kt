@@ -38,7 +38,7 @@ class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
 
   override fun getLogo(): Icon = CMakeIcons.CMake
 
-  override fun isValidItemName(name: String): String? =
+  override fun validateItemName(name: String): String? =
     if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else "Name should contain only latin letters, digits, spaces or '_' symbols."
 
   companion object {

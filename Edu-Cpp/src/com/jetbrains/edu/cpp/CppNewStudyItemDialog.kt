@@ -18,5 +18,5 @@ class CppNewStudyItemDialog(
   }
 
   override fun performCustomNameValidation(name: String): String? =
-    project.course?.configurator?.isValidItemName(name)
+    project.course?.configurator?.validateItemName(name)
 }

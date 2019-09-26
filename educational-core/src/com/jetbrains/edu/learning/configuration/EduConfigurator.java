@@ -224,7 +224,7 @@ public interface EduConfigurator<Settings> {
    * @see {@link com.jetbrains.edu.coursecreator.handlers.CCRenameHandler}
    */
   @Nullable
-  default String isValidItemName(@NotNull String name) {
+  default String validateItemName(@NotNull String name) {
     return null;
   }
 }

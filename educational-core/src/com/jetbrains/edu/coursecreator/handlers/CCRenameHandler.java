@@ -112,7 +112,7 @@ public abstract class CCRenameHandler implements EduRenameHandler {
     public boolean checkInput(@NotNull String inputString) {
       if (super.checkInput(inputString)) {
         if (configurator != null) {
-          setMyErrorText(configurator.isValidItemName(inputString));
+          setMyErrorText(configurator.validateItemName(inputString));
         }
         if (getMyErrorText() == null) {
           setMyErrorText(performCustomNameValidation(inputString));
