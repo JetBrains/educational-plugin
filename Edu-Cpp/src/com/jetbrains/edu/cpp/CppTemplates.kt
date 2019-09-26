@@ -43,7 +43,10 @@ fun getCppTemplates(course: Course): CppTemplates =
                                              CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KAY,
                                              CppTemplates.PROJECT_NAME_KEY,
                                              CppTemplates.CPP_STANDARD_LINE_KEY
-                                           )))
+                                           )),
+                 listOf(
+                   CppTemplates.TemplateInfo("cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
+                 ))
   else
     CppTemplates(CppTemplates.TemplateInfo("EduMainCMakeList.txt", CMakeListsFileType.FILE_NAME,
                                            listOf(
@@ -57,7 +60,10 @@ fun getCppTemplates(course: Course): CppTemplates =
                                              CppTemplates.CPP_STANDARD_LINE_KEY
                                            )),
                  listOf(
-                   CppTemplates.TemplateInfo("EduTestCMakeList.txt.in", "${CMakeListsFileType.FILE_NAME}.in",
+                   CppTemplates.TemplateInfo("cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake")),
+                   CppTemplates.TemplateInfo("cmake_googletest.cmake", GeneratorUtils.joinPaths("cmake", "googletest.cmake")),
+                   CppTemplates.TemplateInfo("cmake_googletest-download.cmake",
+                                             GeneratorUtils.joinPaths("cmake", "googletest-download.cmake"),
                                              listOf(
                                                CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KAY,
                                                CppTemplates.GTEST_VERSION_KEY

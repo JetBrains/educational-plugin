@@ -2,7 +2,7 @@ ${CMAKE_MINIMUM_REQUIRED_LINE}
 project(${PROJECT_NAME})
 
 set(CMAKE_CXX_STANDARD ${CPP_STANDARD})
-
+#[[
 # Files for the task.
 set(SOURCE
         src/task.cpp)
@@ -12,14 +12,14 @@ set(TEST
         test/test.cpp)
 
 
-# Customize student-run target.
+# Customize student-run target.]]#
 add_executable(${PROJECT_NAME}-run
-        ${SOURCE})
+#[[        ${SOURCE})
 
-# Customize test target.
+# Customize test target.]]#
 add_executable(${PROJECT_NAME}-test
-        ${SOURCE}
+#[[        ${SOURCE}
         ${TEST})
-
+]]#
 target_link_libraries(${PROJECT_NAME}-test test_runner)
 target_link_options(${PROJECT_NAME}-test PRIVATE "-e_run_tests")

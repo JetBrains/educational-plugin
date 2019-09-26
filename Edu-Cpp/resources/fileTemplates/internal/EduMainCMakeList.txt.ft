@@ -1,83 +1,25 @@
-# This file handles building each task as sub-project.
+#[[# This file handles building each task as sub-project.
 #
 # Each task becomes an independent project in which you can experiment.
 #
 # Tasks are added as separate sub-projects so as compilation errors in
-# one task don't affect another task.
+# one task don't affect another task.]]#
 
 ${CMAKE_MINIMUM_REQUIRED_LINE}
 project(${PROJECT_NAME})
 
-#-----------------------------------------------------------------------------------
-# Dounload actual version of Google Test from github.
-#-----------------------------------------------------------------------------------
+#[[# Add GoogleTest to the project
+include(cmake/googletest.cmake)
+fetch_googletest(
+        ${PROJECT_SOURCE_DIR}/cmake
+        ${PROJECT_SOURCE_DIR}/googletest
+)
 
-# Download and unpack googletest at configure time
-configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
-execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-        RESULT_VARIABLE result
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download)
-if (result)
-    message(FATAL_ERROR "CMake step for googletest failed: ${result}")
-endif ()
-execute_process(COMMAND ${CMAKE_COMMAND} --build .
-        RESULT_VARIABLE result
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download)
-if (result)
-    message(FATAL_ERROR "Build step for googletest failed: ${result}")
-endif ()
-
-# Prevent overriding the parent project's compiler/linker
-# settings on Windows
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
-# Add googletest directly to our build. This defines
-# the gtest and gtest_main targets.
-add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
-        ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
-        EXCLUDE_FROM_ALL)
-
-#-----------------------------------------------------------------------------------
 # Add test runner link
-#-----------------------------------------------------------------------------------
-
 add_library(test_runner run.cpp)
 target_link_libraries(test_runner gtest)
 
 
-#-----------------------------------------------------------------------------------
-# The function returns a list of subdirectories containing the CMakeLists.txt files.
-#
-# Parameters:
-#
-# root_dir     Starting directory for traversing all subdirectories
-# return_dirs  List of subdirectories containing CMakeLists.txt
-#
-# Example usage:
-#
-# get_dirs_with_cmakelists(current_dir dirs)
-#-----------------------------------------------------------------------------------
-
-function(get_dirs_with_cmakelists root_dir return_dirs)
-    # Find all CMakeLists.txt paths
-    file(GLOB_RECURSE cmake_file_path_list RELATIVE "${root_dir}" CMakeLists.txt)
-    # Collect all subdirectories containing CMakeLists.txt
-    set(dir_list)
-    foreach (file_path ${cmake_file_path_list})
-        get_filename_component(dir_path ${file_path} PATH)
-        list(APPEND dir_list ${dir_path})
-    endforeach ()
-    list(REMOVE_DUPLICATES dir_list)
-    set(${return_dirs} ${dir_list} PARENT_SCOPE)
-endfunction()
-
-set(GTEST_DIR_PREFIX "googletest")
-
-get_dirs_with_cmakelists(${CMAKE_CURRENT_SOURCE_DIR} dirs)
-foreach (dir ${dirs})
-    # Ignore CMakeList.txt files from "googletest*" dirs
-    string(FIND "${dir}" "${GTEST_DIR_PREFIX}" out)
-    if ("${out}" EQUAL -1)
-        add_subdirectory(${dir})
-    endif ()
-endforeach ()
+# Add tasks subprojects
+include(cmake/utils.cmake)
+add_subprojects(${CMAKE_SOURCE_DIR})]]#
