@@ -314,7 +314,7 @@ open class StepikIntegrationTest : StepikTestCase() {
   }
 
   fun `test upload course with hidden solutions`() {
-    val course = initCourse {
+    val course = courseWithFiles {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")

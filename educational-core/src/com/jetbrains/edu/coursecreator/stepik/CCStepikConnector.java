@@ -104,13 +104,13 @@ public class CCStepikConnector {
       postTopLevelLessons(project, courseOnRemote);
     }
 
-    postAdditionalFiles(course, project, courseOnRemote.getId());
+    postAdditionalInfo(course, project, courseOnRemote.getId());
     StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
     courseOnRemote.init(null, null, true);
     showNotification(project, "Course is published", openOnStepikAction("/course/" + courseOnRemote.getId()));
   }
 
-  public static void postAdditionalFiles(@NotNull EduCourse course, @NotNull final Project project, int courseId) {
+  public static void postAdditionalInfo(@NotNull EduCourse course, @NotNull final Project project, int courseId) {
     updateProgress("Publishing additional files");
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
     AdditionalInfo additionalInfo = new AdditionalInfo(additionalFiles, course.getSolutionsHidden());
