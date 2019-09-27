@@ -31,6 +31,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.taskDescription.SHORTCUT_ENTITY
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.KeyAdapter
@@ -70,7 +71,7 @@ open class InsertShortcutAction : AnAction("Insert Shortcut", "Inserts shortcut 
         runInEdt {
           WriteCommandAction.runWriteCommandAction(project) {
             editor.document.insertString(editor.caretModel.offset,
-                                         "${EduUtils.SHORTCUT_ENTITY}${ActionManager.getInstance().getId(action)};")
+                                         "${SHORTCUT_ENTITY}${ActionManager.getInstance().getId(action)};")
           }
         }
         balloon?.closeOk(null)

@@ -3,8 +3,8 @@ package com.jetbrains.edu.coursecreator.taskDescription
 import com.intellij.xml.util.CheckDtdReferencesInspection
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.taskDescription.SHORTCUT_ENTITY
 
 class ShortcutsHighlightingTest : EduTestCase() {
   override fun setUp() {
@@ -21,7 +21,7 @@ class ShortcutsHighlightingTest : EduTestCase() {
   }
 
   private fun doTest(descriptionFormat: DescriptionFormat = DescriptionFormat.HTML) {
-    val taskDescriptionText = "Text with shortcut: ${EduUtils.SHORTCUT_ENTITY}${"CodeCompletion"};"
+    val taskDescriptionText = "Text with shortcut: ${SHORTCUT_ENTITY}${"CodeCompletion"};"
     courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask(taskDescriptionFormat = descriptionFormat, taskDescription = taskDescriptionText) {

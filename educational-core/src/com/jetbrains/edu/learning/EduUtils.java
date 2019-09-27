@@ -25,7 +25,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
-import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -53,6 +52,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
+import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import kotlin.Unit;
@@ -78,7 +78,6 @@ public class EduUtils {
   }
 
   public static final Comparator<StudyItem> INDEX_COMPARATOR = Comparator.comparingInt(StudyItem::getIndex);
-  public static final String SHORTCUT_ENTITY = "&shortcut:";
   private static final Logger LOG = Logger.getInstance(EduUtils.class.getName());
 
   public static void closeSilently(@Nullable final Closeable stream) {
@@ -262,7 +261,7 @@ public class EduUtils {
       text = "<h2>" + task.getUIName() + " #" + task.getIndex() + ": " + task.getName() + "<h2/> " + text;
     }
     StringBuffer textBuffer = new StringBuffer(text);
-    replaceActionIDsWithShortcuts(textBuffer);
+    TaskDescriptionUtil.replaceActionIDsWithShortcuts(textBuffer);
     textBuffer.append(TaskExt.taskDescriptionHintBlocks(task));
     return textBuffer.toString();
   }
@@ -430,27 +429,7 @@ public class EduUtils {
     return EduNames.TASK_HTML.equals(fileName) || EduNames.TASK_MD.equals(fileName);
   }
 
-  public static void replaceActionIDsWithShortcuts(StringBuffer text) {
-    int lastIndex = 0;
-    while (lastIndex < text.length()) {
-      lastIndex = text.indexOf(SHORTCUT_ENTITY, lastIndex);
-      if (lastIndex < 0) {
-        return;
-      }
-      final int actionIdStart = lastIndex + SHORTCUT_ENTITY.length();
-      int actionIdEnd = text.indexOf(";", actionIdStart);
-      if (actionIdEnd < 0) {
-        return;
-      }
-      final String actionId = text.substring(actionIdStart, actionIdEnd);
-      String shortcutText = KeymapUtil.getFirstKeyboardShortcutText(actionId);
-      if (shortcutText.isEmpty()) {
-        shortcutText = "<no shortcut for action " + actionId + ">";
-      }
-      text.replace(lastIndex, actionIdEnd + 1, shortcutText);
-      lastIndex += shortcutText.length();
-    }
-  }
+
 
   @Nullable
   public static VirtualFile findTaskFileInDir(@NotNull TaskFile taskFile, @NotNull VirtualFile taskDir) {
