@@ -182,7 +182,6 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
         error("Multiple configurators for language with name: $programmingLanguage")
       }
 
-      environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
       language = languages.first().id
 
       val languageSettings = configurator?.courseBuilder?.languageSettings
