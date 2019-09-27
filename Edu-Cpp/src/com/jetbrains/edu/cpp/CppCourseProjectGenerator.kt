@@ -81,9 +81,4 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     item.customPresentableName = item.name
     item.name = getDefaultName(item)
   }
-
-  companion object {
-    private const val INIT_CMAKE_FILE_NAME = "${CMakeListsFileType.FILE_NAME}.in"
-    private const val RUN_TEST_FILE_NAME = "run.cpp"
-  }
 }
