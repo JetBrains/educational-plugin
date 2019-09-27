@@ -12,6 +12,7 @@ public class EducationalCoreIcons {
   public static final Icon JavaLogo = load("/icons/com/jetbrains/edu/learning/JavaLogo.png"); // 16x16
   public static final Icon ScalaLogo = load("/icons/com/jetbrains/edu/learning/ScalaLogo.png"); // 16x16
   public static final Icon JsLogo = load("/icons/com/jetbrains/edu/learning/JavaScript.svg"); // 16x16
+  public static final Icon CppLogo = load("/icons/com/jetbrains/edu/learning/cAndC++.svg"); // 16x16
 
   public static final Icon WatchInput = load("/icons/com/jetbrains/edu/learning/WatchInput.png"); // 24x24
 

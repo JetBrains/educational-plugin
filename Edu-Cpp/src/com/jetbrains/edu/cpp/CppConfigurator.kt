@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
-import icons.CMakeIcons
+import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
@@ -35,8 +35,7 @@ class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
     super.excludeFromArchive(project, file) || file.path.contains("cmake-build-debug")
 
-
-  override fun getLogo(): Icon = CMakeIcons.CMake
+  override fun getLogo(): Icon = EducationalCoreIcons.CppLogo
 
   override fun validateItemName(name: String): String? =
     if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else "Name should contain only latin letters, digits, spaces or '_' symbols."
