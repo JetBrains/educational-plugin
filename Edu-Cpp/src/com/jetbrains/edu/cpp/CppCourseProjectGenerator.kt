@@ -2,6 +2,8 @@ package com.jetbrains.edu.cpp
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vcs.VcsDirectoryMapping
+import com.intellij.openapi.vcs.ex.ProjectLevelVcsManagerEx
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -68,6 +70,10 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     if (myCourse is StepikCourse) {
       myCourse.items.forEach { addCMakeListToTasks(it, project, projectSettings) }
     }
+
+    val googleTestSrc = FileUtil.join(myCourse.getDir(project).path, "googletest", "googletest-src")
+    // Empty string in vcs argument of VcsDirectoryMapping constructor is mean `<none>`
+    ProjectLevelVcsManagerEx.getInstance(project).directoryMappings = listOf(VcsDirectoryMapping(googleTestSrc, ""))
 
     super.afterProjectGenerated(project, projectSettings)
   }
