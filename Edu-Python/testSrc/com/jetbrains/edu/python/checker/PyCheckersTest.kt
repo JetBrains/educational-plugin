@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.python.PythonLanguage
 
+@Suppress("PyInterpreter")
 class PyCheckersTest : PyCheckersTestBase() {
 
   override fun createCourse(): Course {

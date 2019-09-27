@@ -8,21 +8,26 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.python.PythonLanguage
 
+@Suppress("PyInterpreter")
 class PyNewCheckersTest : PyCheckersTestBase() {
 
   override fun createCourse(): Course {
     return course(language = PythonLanguage.INSTANCE, environment = "unittest") {
       lesson {
         eduTask("Edu") {
-          pythonTaskFile("task.py", """def sum(a, b):
-            |    return a + b""".trimMargin())
+          pythonTaskFile("task.py", """
+            def sum(a, b):
+                return a + b
+            """)
           dir("tests") {
             taskFile("__init__.py")
-            taskFile("tests.py", """import unittest
-              |from ..task import sum
-              |class TestCase(unittest.TestCase):
-              |    def test_add(self):
-              |        self.assertEqual(sum(1, 2), 3, msg="error")""".trimMargin())
+            taskFile("tests.py", """
+              import unittest
+              from ..task import sum
+              class TestCase(unittest.TestCase):
+                  def test_add(self):
+                      self.assertEqual(sum(1, 2), 3, msg="error")
+              """)
           }
         }
         outputTask("Output") {

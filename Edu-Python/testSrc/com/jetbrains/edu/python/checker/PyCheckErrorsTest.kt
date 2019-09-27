@@ -8,9 +8,10 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.nullValue
 import com.jetbrains.python.PythonLanguage
-import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.containsString
+import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.Matcher
-import org.junit.Assert
+import org.junit.Assert.assertThat
 
 @Suppress("PyInterpreter")
 class PyCheckErrorsTest : PyCheckersTestBase() {
@@ -28,8 +29,9 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
         }
         eduTask("SyntaxError") {
           pythonTaskFile("hello_world.py", """This is not Python code""")
-          pythonTaskFile("tests.py", """from test_helper import run_common_tests, failed, passed, get_answer_placeholders
-            |run_common_tests()""".trimMargin())
+          pythonTaskFile("tests.py", """
+            from test_helper import run_common_tests, failed, passed, get_answer_placeholders
+            run_common_tests()""")
         }
         outputTask("OutputTestsFailed") {
           pythonTaskFile("hello_world.py", """print("Hello, World")""")
@@ -45,22 +47,24 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("Status for ${task.name} doesn't match", CheckStatus.Failed, checkResult.status)
       val matcher: Triple<Matcher<String>, Matcher<CheckResultDiff?>, Matcher<String?>> = when (task.name) {
-        "EduTestsFailed" -> Triple(CoreMatchers.containsString("error happened"), nullValue(), nullValue())
-        "EduNoTestsRun" -> Triple(CoreMatchers.containsString("No tests have run"), nullValue(), nullValue())
-        "SyntaxError" -> Triple(CoreMatchers.containsString("Syntax Error"), nullValue(),
-                                CoreMatchers.containsString("SyntaxError: invalid syntax"))
+        "EduTestsFailed" -> Triple(containsString("error happened"), nullValue(), nullValue())
+        "EduNoTestsRun" -> Triple(containsString("No tests have run"), nullValue(), nullValue())
+        "SyntaxError" -> Triple(containsString("Syntax Error"), nullValue(),
+                                containsString("SyntaxError: invalid syntax"))
         "OutputTestsFailed" ->
-          Triple(CoreMatchers.equalTo("Expected output:\n" +
-                                      "Hello, World!\n" +
-                                      " \n" +
-                                      "Actual output:\n" +
-                                      "Hello, World\n"),
+          Triple(equalTo("""
+          |Expected output:
+          |Hello, World!
+          | 
+          |Actual output:
+          |Hello, World
+          |""".trimMargin()),
                  CheckResultDiffMatcher.diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n")), nullValue())
         else -> error("Unexpected task name: ${task.name}")
       }
-      Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.message, matcher.first)
-      Assert.assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, matcher.second)
-      Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.details, matcher.third)
+      assertThat("Checker output for ${task.name} doesn't match", checkResult.message, matcher.first)
+      assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, matcher.second)
+      assertThat("Checker output for ${task.name} doesn't match", checkResult.details, matcher.third)
     }
     doTest()
   }
