@@ -277,7 +277,7 @@ public class CCStepikConnector {
     return true;
   }
 
-  public static boolean updateAdditionalMaterials(@NotNull Project project, @NotNull Course course) {
+  public static boolean updateAdditionalInfo(@NotNull Project project, @NotNull Course course) {
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
     assert courseInfo != null;
     updateProgress("Publishing additional files and info");

@@ -74,7 +74,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
     if (changedItems.isCourseInfoChanged()) {
       appendChangeLine(course, builder);
     }
-    if (changedItems.isCourseAttachmentsChanged()) {
+    if (changedItems.isCourseAdditionalInfoChanged()) {
       builder.append("Additional Files Or Info Changed").append("\n");
     }
     for (Section section : changedItems.getNewSections()) {

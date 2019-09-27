@@ -482,13 +482,13 @@ class StepikCompareCourseTest : EduTestCase() {
     val courseFromServer = localCourse.copy() as EduCourse
     localCourse.solutionsHidden = true
 
-    val expectedChangedItems = StepikChangesInfo(isCourseAttachmentsChanged = true)
+    val expectedChangedItems = StepikChangesInfo(isCourseAdditionalInfoChanged = true)
     checkChangedItems(localCourse, courseFromServer, expectedChangedItems)
   }
 
   private fun checkChangedItems(localCourse: EduCourse, courseFromServer: EduCourse, expected: StepikChangesInfo) {
     val actual = StepikChangeRetriever(project, localCourse, courseFromServer).getChangedItems()
-    assertEquals(expected.isCourseAttachmentsChanged, actual.isCourseAttachmentsChanged)
+    assertEquals(expected.isCourseAdditionalInfoChanged, actual.isCourseAdditionalInfoChanged)
     assertEquals(expected.isCourseInfoChanged, actual.isCourseInfoChanged)
     assertTrue(expected.newSections.sameContentWith(actual.newSections))
     assertTrue(expected.sectionsToDelete.sameContentWith(actual.sectionsToDelete))
