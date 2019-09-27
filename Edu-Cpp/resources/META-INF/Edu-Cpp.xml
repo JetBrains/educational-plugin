@@ -1,6 +1,6 @@
 <idea-plugin>
   <depends>com.intellij.modules.lang</depends>
   <extensions defaultExtensionNs="Educational">
-    <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppConfigurator" displayName="Cpp"/>
+    <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppConfigurator" displayName="C++"/>
   </extensions>
 </idea-plugin>
