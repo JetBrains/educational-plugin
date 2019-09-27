@@ -1,7 +1,6 @@
-package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
+package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.ui.taskDescription.loadText
 import kotlinx.css.*
 import kotlinx.css.properties.lh
 
@@ -11,7 +10,7 @@ internal class StyleResourcesManager(taskText: String) {
   val resources = mapOf(
     "typography_color_style" to typographyAndColorStylesheet(),
     "content" to taskText,
-    "base_css" to loadText("/style/browser.css"),
+    "base_css" to com.jetbrains.edu.learning.taskDescription.ui.loadText("/style/browser.css"),
     resourcePair("stepik_link", "/style/stepikLink.css"),
     *panelSpecificHintFiles()
   )

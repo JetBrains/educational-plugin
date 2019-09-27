@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
+import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
 import javax.swing.Icon
 
 abstract class TaskNavigationAction(

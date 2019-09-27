@@ -29,8 +29,8 @@ import com.jetbrains.edu.learning.stepik.SubmissionsManager.getSubmissionsFromMe
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
-import com.jetbrains.edu.learning.ui.taskDescription.AdditionalTabPanel
-import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
+import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import icons.EducationalCoreIcons
 import java.net.URL
 import java.text.SimpleDateFormat

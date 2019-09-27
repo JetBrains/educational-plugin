@@ -7,7 +7,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.FileTreeBuilder
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow
 import junit.framework.TestCase
 
 abstract class TaskDescriptionPsiLinksTestBase : EduTestCase() {

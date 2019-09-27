@@ -42,7 +42,7 @@ import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction;
 import com.jetbrains.edu.learning.stepik.course.StepikCourse;
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillNamesKt;
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import kotlin.Unit;
 import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NonNls;

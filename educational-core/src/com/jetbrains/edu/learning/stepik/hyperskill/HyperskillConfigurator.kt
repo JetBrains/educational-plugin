@@ -7,8 +7,8 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.ui.taskDescription.AdditionalTabPanel
-import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
+import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import javax.swing.JPanel
 
 interface HyperskillConfigurator<T> : EduConfigurator<T> {

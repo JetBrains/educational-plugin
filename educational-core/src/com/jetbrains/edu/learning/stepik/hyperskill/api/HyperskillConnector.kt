@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.stepik.createRetrofitBuilder
 import com.jetbrains.edu.learning.stepik.executeHandlingExceptions
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.apache.http.HttpStatus
 import retrofit2.Call
 import retrofit2.Callback

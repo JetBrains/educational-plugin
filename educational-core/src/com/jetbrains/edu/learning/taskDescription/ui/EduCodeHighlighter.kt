@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.ui.taskDescription
+package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.codeEditor.printing.HTMLTextPainter
 import com.intellij.lang.Language

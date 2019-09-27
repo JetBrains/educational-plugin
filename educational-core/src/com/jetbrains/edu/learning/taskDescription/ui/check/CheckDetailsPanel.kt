@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.ui.taskDescription.check
+package com.jetbrains.edu.learning.taskDescription.ui.check
 
 import com.intellij.diff.DiffContentFactory
 import com.intellij.diff.DiffDialogHints
@@ -25,10 +25,10 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.HSPeekSolutionAction
 import com.jetbrains.edu.learning.stepik.hyperskill.canShowHyperskillSolution
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.ui.taskDescription.LightColoredActionLink
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
-import com.jetbrains.edu.learning.ui.taskDescription.check.CheckMessagePanel.Companion.MAX_EXPECTED_ACTUAL_LENGTH
-import com.jetbrains.edu.learning.ui.taskDescription.check.CheckMessagePanel.Companion.MAX_MESSAGE_LENGTH
+import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
+import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.MAX_EXPECTED_ACTUAL_LENGTH
+import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.MAX_MESSAGE_LENGTH
 import java.awt.BorderLayout
 import javax.swing.BoxLayout
 import javax.swing.JPanel
@@ -61,7 +61,9 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     val messageLength = (checkResult.diff?.message ?: checkResult.escapedMessage).length
 
     if (messageLength > MAX_MESSAGE_LENGTH || expectedActualTextLength > MAX_EXPECTED_ACTUAL_LENGTH) {
-      linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, details ?: checkResult.message)),
+      linksPanel.add(LightColoredActionLink("Show Full Output...",
+                                            ShowFullOutputAction(project, details
+                                                                                                                        ?: checkResult.message)),
                      BorderLayout.NORTH)
     }
     return messagePanel
@@ -73,7 +75,8 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
 
     val course = task.course
     if (course is HyperskillCourse && course.isTaskInProject(task) && checkResult.status == CheckStatus.Failed) {
-      val showMoreInfo = LightColoredActionLink("Review Topics for the Stage...", SwitchTaskTabAction(project, 1))
+      val showMoreInfo = LightColoredActionLink("Review Topics for the Stage...",
+                                                                                              SwitchTaskTabAction(project, 1))
       linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
     }
 
@@ -95,12 +98,15 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
 
     if (EduUtils.isStudentProject(project) && (task.canShowSolution() || canShowHyperskillSolution(task))) {
       val peekSolution = LightColoredActionLink("Peek Solution...",
-                                                ActionManager.getInstance().getAction(getPeekSolutionAction(task)))
+                                                                                              ActionManager.getInstance().getAction(
+                                                                                                getPeekSolutionAction(task)))
       answerHintsPanel.value.add(peekSolution)
     }
 
     if (checkResult.diff != null) {
-      val compareOutputs = LightColoredActionLink("Compare Outputs...", CompareOutputsAction(project, checkResult.diff))
+      val compareOutputs = LightColoredActionLink("Compare Outputs...",
+                                                                                                CompareOutputsAction(project,
+                                                                                                                     checkResult.diff))
       answerHintsPanel.value.add(compareOutputs)
     }
     return if (answerHintsPanel.isInitialized()) answerHintsPanel.value else null
@@ -132,7 +138,8 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
 
   companion object {
     fun selectTab(project: Project, index: Int): Content? {
-      val window = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
+      val window = ToolWindowManager.getInstance(project).getToolWindow(
+        TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
       val tab = window.contentManager.getContent(index) ?: return null
       window.contentManager.setSelectedContent(tab)
       return tab

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
+package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 
 import com.google.gson.Gson
 import com.jetbrains.edu.learning.EduSettings

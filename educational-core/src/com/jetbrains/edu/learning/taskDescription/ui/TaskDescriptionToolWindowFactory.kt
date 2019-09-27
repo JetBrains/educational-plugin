@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.ui.taskDescription
+package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.ActionManager
@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
-import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import icons.EducationalCoreIcons
 import java.awt.MouseInfo
 import java.awt.Point
@@ -37,7 +37,8 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     if (!EduUtils.isEduProject(project)) {
       return
     }
-    val taskDescriptionToolWindow = TaskDescriptionView.getInstance(project)
+    val taskDescriptionToolWindow = TaskDescriptionView.getInstance(
+      project)
     (toolWindow as ToolWindowImpl).component.putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
     toolWindow.initTitleActions()
     taskDescriptionToolWindow.init(toolWindow)
@@ -69,7 +70,8 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
         val fontFactor = FontSize.values()[fontSizeSlider.value.toReverseIndex()]
         PropertiesComponent.getInstance().setValue(StyleManager.FONT_FACTOR_PROPERTY, fontFactor.size, FontPreferences.DEFAULT_FONT_SIZE)
         if (!(EduUtils.getCurrentTask(project) is VideoTask && EduSettings.getInstance().shouldUseJavaFx())) {
-          TaskDescriptionView.updateAllTabs(project, taskDescription)
+          TaskDescriptionView.updateAllTabs(project,
+                                            taskDescription)
         }
       })
       val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(fontSizeSlider, fontSizeSlider).createPopup()

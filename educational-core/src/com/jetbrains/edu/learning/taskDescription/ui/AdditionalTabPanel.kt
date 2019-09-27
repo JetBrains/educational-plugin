@@ -1,10 +1,10 @@
-package com.jetbrains.edu.learning.ui.taskDescription
+package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.ui.taskDescription.check.CheckDetailsPanel
+import com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.BoxLayout
@@ -15,7 +15,7 @@ import javax.swing.event.HyperlinkListener
 
 class AdditionalTabPanel(project: Project) : JPanel() {
 
-  private val textPane: JTextPane = createTextPane()
+  private val textPane: JTextPane = com.jetbrains.edu.learning.taskDescription.ui.createTextPane()
 
   init {
     val scrollPane = JBScrollPane(textPane)

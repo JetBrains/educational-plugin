@@ -199,9 +199,9 @@
                         overrides="true"/>
 
     <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.StepikWidgetProvider"/>
-    <projectService serviceInterface="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView"
-                    serviceImplementation="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionViewImpl"
-                    testServiceImplementation="com.jetbrains.edu.learning.ui.taskDescription.MockTaskDescriptionView"/>
+    <projectService serviceInterface="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView"
+                    serviceImplementation="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionViewImpl"
+                    testServiceImplementation="com.jetbrains.edu.learning.taskDescription.ui.MockTaskDescriptionView"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.checker.details.CheckDetailsView"
                     serviceImplementation="com.jetbrains.edu.learning.checker.details.CheckDetailsViewImpl"
                     testServiceImplementation="com.jetbrains.edu.learning.checker.details.MockCheckDetailsView"/>
@@ -211,8 +211,8 @@
                          id="Educational" displayName="Education"/>
 
     <toolWindow id="Task" anchor="right"
-                factoryClass="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory"
-                conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
+                factoryClass="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory"
+                conditionClass="com.jetbrains.edu.learning.taskDescription.ui.EduCondition"/>
     <toolWindow id="Educational.CheckDetails" anchor="bottom" canCloseContents="true"
                 factoryClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowFactory"
                 conditionClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowCondition"/>

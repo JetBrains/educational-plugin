@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow
+import com.jetbrains.edu.learning.taskDescription.ui.BrowserWindow
 import org.jsoup.Jsoup
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent

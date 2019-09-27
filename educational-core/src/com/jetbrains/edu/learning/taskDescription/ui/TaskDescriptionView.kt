@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.ui.taskDescription
+package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
@@ -9,7 +9,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.ui.taskDescription.check.CheckDetailsPanel
+import com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel
 import java.awt.Color
 
 abstract class TaskDescriptionView {

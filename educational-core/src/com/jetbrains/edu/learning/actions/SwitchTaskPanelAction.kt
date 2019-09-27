@@ -8,8 +8,8 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -21,7 +21,8 @@ class SwitchTaskPanelAction : DumbAwareAction() {
     val project = e.project
     val result = createDialog().showAndGet()
     if (result && project != null) {
-      val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
+      val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(
+        TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
       toolWindow.contentManager.removeAllContents(false)
       TaskDescriptionToolWindowFactory().createToolWindowContent(project, toolWindow)
       TaskDescriptionView.getInstance(project).updateTaskDescription()

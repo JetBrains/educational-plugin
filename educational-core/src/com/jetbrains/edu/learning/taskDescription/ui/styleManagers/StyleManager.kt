@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
+package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 
 import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo

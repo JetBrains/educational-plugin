@@ -6,8 +6,8 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.testFramework.LightVirtualFile
 import com.jetbrains.edu.learning.EduDocumentListenerBase
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory.Companion.STUDY_TOOL_WINDOW
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory.Companion.STUDY_TOOL_WINDOW
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
 class SynchronizeTaskDescription(project: Project) : EduDocumentListenerBase(project) {
   override fun documentChanged(event: DocumentEvent) {

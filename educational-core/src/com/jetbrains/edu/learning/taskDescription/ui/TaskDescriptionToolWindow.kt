@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jetbrains.edu.learning.ui.taskDescription
+package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol
@@ -63,7 +63,9 @@ abstract class TaskDescriptionToolWindow {
   protected abstract fun wrapHint(hintText: Element, displayedHintNumber: String): String
 
   fun setTaskText(project: Project, task: Task?) {
-    setText(getTaskDescriptionWithCodeHighlighting(project, task), task)
+    setText(
+      getTaskDescriptionWithCodeHighlighting(
+        project, task), task)
   }
 
   abstract fun setText(text: String, task: Task?)
@@ -96,7 +98,8 @@ abstract class TaskDescriptionToolWindow {
 
     @JvmStatic
     fun navigateToPsiElement(project: Project, url: String) {
-      val qualifiedName = url.replace(PSI_ELEMENT_PROTOCOL, "")
+      val qualifiedName = url.replace(
+        PSI_ELEMENT_PROTOCOL, "")
 
       val application = ApplicationManager.getApplication()
       application.invokeLater {

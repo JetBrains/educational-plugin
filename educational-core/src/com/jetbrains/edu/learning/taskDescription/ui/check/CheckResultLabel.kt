@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.ui.taskDescription.check
+package com.jetbrains.edu.learning.taskDescription.ui.check
 
 import com.intellij.icons.AllIcons
 import com.intellij.ui.JBColor

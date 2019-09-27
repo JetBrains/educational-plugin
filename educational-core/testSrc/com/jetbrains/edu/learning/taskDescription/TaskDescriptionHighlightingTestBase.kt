@@ -4,7 +4,7 @@ import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.util.BuildNumber
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow
 import org.intellij.lang.annotations.Language
 
 abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {

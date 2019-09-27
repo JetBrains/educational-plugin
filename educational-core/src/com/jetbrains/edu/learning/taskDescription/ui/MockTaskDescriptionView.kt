@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.ui.taskDescription
+package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.awt.RelativePoint

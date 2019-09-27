@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
+package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.editor.colors.EditorColorsManager

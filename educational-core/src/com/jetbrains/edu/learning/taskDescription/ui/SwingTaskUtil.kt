@@ -1,6 +1,6 @@
 @file:JvmName("SwingTaskUtil")
 
-package com.jetbrains.edu.learning.ui.taskDescription
+package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.util.ui.JBUI
@@ -25,14 +25,17 @@ fun Task?.createSpecificPanel(): JPanel? {
 
 fun ChoiceTask.createSpecificPanel(): JPanel {
   val jPanel = JPanel(VerticalFlowLayout())
-  jPanel.border = JBUI.Borders.empty(TOP_INSET, LEFT_INSET, BOTTOM_INSET, RIGHT_INSET)
+  jPanel.border = JBUI.Borders.empty(com.jetbrains.edu.learning.taskDescription.ui.TOP_INSET,
+                                     com.jetbrains.edu.learning.taskDescription.ui.LEFT_INSET,
+                                     com.jetbrains.edu.learning.taskDescription.ui.BOTTOM_INSET,
+                                     com.jetbrains.edu.learning.taskDescription.ui.RIGHT_INSET)
 
   if (this.isMultipleChoice) {
     val text = JLabel(MULTIPLE_CHOICE_LABEL, SwingConstants.LEFT)
     jPanel.add(text)
 
     for ((index, option) in this.choiceOptions.withIndex()) {
-      val checkBox = createCheckBox(option.text, index, this)
+      val checkBox = com.jetbrains.edu.learning.taskDescription.ui.createCheckBox(option.text, index, this)
       jPanel.add(checkBox)
     }
   }
@@ -42,7 +45,7 @@ fun ChoiceTask.createSpecificPanel(): JPanel {
 
     val group = ButtonGroup()
     for ((index, option) in this.choiceOptions.withIndex()) {
-      val checkBox = createRadioButton(option.text, index, group, this)
+      val checkBox = com.jetbrains.edu.learning.taskDescription.ui.createRadioButton(option.text, index, group, this)
       jPanel.add(checkBox)
     }
   }
@@ -53,14 +56,14 @@ fun ChoiceTask.createSpecificPanel(): JPanel {
 fun createCheckBox(variant: String?, index: Int, task: ChoiceTask): JCheckBox {
   val checkBox = JCheckBox(variant)
   checkBox.isSelected = task.selectedVariants.contains(index)
-  checkBox.addItemListener(createListener(task, index))
+  checkBox.addItemListener(com.jetbrains.edu.learning.taskDescription.ui.createListener(task, index))
   return checkBox
 }
 
 fun createRadioButton(variant: String, index: Int, group: ButtonGroup, task: ChoiceTask): JRadioButton {
   val button = JRadioButton(variant)
   button.isSelected = task.selectedVariants.contains(index)
-  button.addItemListener(createListener(task, index))
+  button.addItemListener(com.jetbrains.edu.learning.taskDescription.ui.createListener(task, index))
   group.add(button)
   return button
 }
@@ -78,13 +81,13 @@ fun createListener(task: ChoiceTask, index: Int): ItemListener? {
 
 fun createTextPane(): JTextPane {
   val editorKit = UIUtil.JBWordWrapHtmlEditorKit()
-  prepareCss(editorKit)
+  com.jetbrains.edu.learning.taskDescription.ui.prepareCss(editorKit)
 
   val textPane = JTextPane()
   textPane.contentType = editorKit.contentType
   textPane.editorKit = editorKit
   textPane.isEditable = false
-  textPane.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
+  textPane.background = TaskDescriptionView.Companion.getTaskDescriptionBackgroundColor()
 
   return textPane
 }

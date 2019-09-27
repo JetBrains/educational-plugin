@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.EduProjectComponent
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -57,8 +57,9 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
     course.courseMode = CCUtils.COURSE_MODE
     course.init(null, null, false)
     if (getTaskDescriptionToolWindow(project) == null) {
-      ToolWindowManager.getInstance(project).registerToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW, false,
-                                                                ToolWindowAnchor.RIGHT)
+      ToolWindowManager.getInstance(project).registerToolWindow(
+        TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW, false,
+        ToolWindowAnchor.RIGHT)
       val toolWindow = getTaskDescriptionToolWindow(project) ?: error("Task Description tool window not found")
       TaskDescriptionToolWindowFactory().createToolWindowContent(project, toolWindow)
     }
