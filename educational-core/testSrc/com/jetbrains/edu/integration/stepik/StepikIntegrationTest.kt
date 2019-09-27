@@ -313,6 +313,22 @@ open class StepikIntegrationTest : StepikTestCase() {
     assertEquals(incorrect, choiceTask.messageIncorrect)
   }
 
+  fun `test upload course with hidden solutions`() {
+    val course = initCourse {
+      lesson("lesson1") {
+        eduTask {
+          taskFile("fizz.kt")
+        }
+      }
+    }
+    course.solutionsHidden = true
+    val sourceCourse = initCourse(course)
+    val courseFromStepik = getCourseFromStepik(sourceCourse.id)
+    checkCourseUploaded(sourceCourse)
+    StepikCourseLoader.fillItems(courseFromStepik)
+    assertTrue(courseFromStepik.solutionsHidden)
+  }
+
   private fun setText(path: String, text: String) {
     val file = findFile(path)
     runWriteAction { VfsUtil.saveText(file, text) }
