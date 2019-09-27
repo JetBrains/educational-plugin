@@ -13,9 +13,9 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDERS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TEXT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 
+@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonDeserialize(builder = StudentTaskFileBuilder::class)
 @JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS, TEXT, LEARNER_CREATED)
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
   @JsonProperty(TEXT)
   private lateinit var myText: String

@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
+@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonDeserialize(builder = FrameworkLessonBuilder::class)
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, CONTENT)
 abstract class FrameworkLessonYamlMixin : LessonYamlMixin() {

@@ -15,8 +15,9 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SELECTED_OPTIONS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STATUS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
-@JsonPropertyOrder(TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, FILES, FEEDBACK_LINK, OPTIONS, STATUS, RECORD)
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@JsonPropertyOrder(TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, FILES, FEEDBACK_LINK, OPTIONS, STATUS, RECORD,
+                   SELECTED_OPTIONS)
 abstract class StudentChoiceTaskYamlMixin : ChoiceTaskYamlMixin() {
   @JsonProperty(SELECTED_OPTIONS)
   private var selectedVariants = mutableListOf<Int>()
