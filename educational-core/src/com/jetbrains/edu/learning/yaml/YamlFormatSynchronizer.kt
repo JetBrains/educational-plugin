@@ -14,7 +14,6 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
@@ -26,7 +25,6 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
@@ -190,16 +188,13 @@ object YamlFormatSynchronizer {
     if (isUnitTestMode) {
       return
     }
-    if (CCUtils.isCourseCreator(project)) {
-      EditorFactory.getInstance().eventMulticaster.addDocumentListener(YamlSynchronizationListener(project), project)
-    }
+    EditorFactory.getInstance().eventMulticaster.addDocumentListener(YamlSynchronizationListener(project), project)
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
         if (isLocalConfigFile(file)) {
           if (EduUtils.isStudentProject(project)) {
             val editor = file.getEditor(project) ?: error("Can't find editor for a file: ${file.name}")
             showNoEditingNotification(editor)
-            (editor as EditorEx).isViewer = !ApplicationManager.getApplication().isInternal
             return
           }
 
