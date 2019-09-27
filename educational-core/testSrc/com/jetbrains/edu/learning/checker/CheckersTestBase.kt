@@ -117,7 +117,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
 
         val settings = projectSettings
 
-        val generator =  myCourse.configurator?.courseBuilder?.getCourseProjectGenerator(myCourse)
+        val generator = myCourse.configurator?.courseBuilder?.getCourseProjectGenerator(myCourse)
                          ?: error("Failed to get `CourseProjectGenerator`")
         myProject = generator.doCreateCourseProject(myTestDir.absolutePath, settings as Any)
                     ?: error("Cannot create project with name ${projectName()}")
