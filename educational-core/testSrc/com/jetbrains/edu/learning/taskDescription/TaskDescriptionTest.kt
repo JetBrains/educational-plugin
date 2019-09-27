@@ -2,21 +2,18 @@ package com.jetbrains.edu.learning.taskDescription
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationNamesInfo
-import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.keymap.impl.KeymapManagerImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow
 import org.jsoup.Jsoup
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 import java.io.File
-import java.io.IOException
 import javax.swing.KeyStroke
 
 class TaskDescriptionTest : EduTestCase() {
@@ -28,9 +25,8 @@ class TaskDescriptionTest : EduTestCase() {
   }
 
   fun testIDEName() {
-    configureByTaskFile(1, 1, "taskFile1.txt")
+    createCourseWithDescription("This is %IDE_NAME%")
     val task = findTask(0, 0)
-    task.descriptionText = "This is %IDE_NAME%"
     val taskDescription = EduUtils.getTaskTextFromTask(task.getTaskDir(project), task)
     assertEquals("This is ${ApplicationNamesInfo.getInstance().fullProductName}", taskDescription!!.getBody())
   }
@@ -44,7 +40,7 @@ class TaskDescriptionTest : EduTestCase() {
   }
 
   fun testWebImage() {
-    configureByTaskFile(1, 1, "taskFile1.txt")
+    createCourseWithDescription()
     val name = getTestName(true) + ".html"
     val fileText = FileUtil.loadFile(File(testDataPath, name))
     val initialDocument = Jsoup.parse(fileText)
@@ -59,7 +55,8 @@ class TaskDescriptionTest : EduTestCase() {
   }
 
   private fun doTestImage() {
-    configureByTaskFile(1, 1, "taskFile1.txt")
+    createCourseWithDescription()
+    myFixture.openFileInEditor(findFileInTask(0, 0, "taskFile1.txt"))
     val name = getTestName(true) + ".html"
     val fileText = FileUtil.loadFile(File(testDataPath, name))
     val processedText = BrowserWindow.processContent(fileText, project)
@@ -75,6 +72,12 @@ class TaskDescriptionTest : EduTestCase() {
     doTestShortcut(taskText, taskTextWithShortcuts)
   }
 
+  fun testShortcutRenderingMarkdown() {
+    val taskText = "You can use &shortcut:OverrideMethods; to override methods"
+    val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods"
+    doTestShortcut(taskText, taskTextWithShortcuts, descriptionFormat = DescriptionFormat.MD)
+  }
+
   fun testSeveralShortcutsRendering() {
     val taskText = "You can use &shortcut:OverrideMethods; to override methods. One more useful shortcut: &shortcut:GotoAction;"
     val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods. " +
@@ -88,33 +91,32 @@ class TaskDescriptionTest : EduTestCase() {
     doTestShortcut(taskText, taskTextWithShortcuts)
   }
 
-  private fun doTestShortcut(taskText: String, taskTextWithShortcuts: String, keymapName: String = "Default for XWin") {
-    configureByTaskFile(1, 1, "taskFile1.txt")
-    val task = EduUtils.getCurrentTask(project)!!
-    task.descriptionText = taskText
+  private fun doTestShortcut(taskText: String,
+                             taskTextWithShortcuts: String,
+                             keymapName: String = "Default for XWin",
+                             descriptionFormat: DescriptionFormat = DescriptionFormat.HTML) {
+    createCourseWithDescription(taskText, descriptionFormat)
     val oldActiveKeymap = KeymapManager.getInstance().activeKeymap
     val keymapManager = KeymapManager.getInstance() as KeymapManagerImpl
     try {
       keymapManager.activeKeymap = keymapManager.getKeymap(keymapName)!!
+      val task = findTask(0, 0)
       val taskDescription = EduUtils.getTaskTextFromTask(task.getTaskDir(project), task)
       assertEquals(taskTextWithShortcuts, taskDescription!!.getBody())
-    } finally {
+    }
+    finally {
       keymapManager.activeKeymap = oldActiveKeymap
     }
   }
 
-  @Throws(IOException::class)
-  override fun createCourse() {
-    myFixture.copyDirectoryToProject("lesson1", "lesson1")
-    val course = EduCourse()
-    course.name = "Edu test course"
-    course.language = PlainTextLanguage.INSTANCE.id
-    StudyTaskManager.getInstance(myFixture.project).course = course
-
-    val lesson1 = createLesson(1, 1)
-    course.addLesson(lesson1)
-    course.init(null, null, false)
-
+  private fun createCourseWithDescription(taskText: String = "Solve", descriptionFormat: DescriptionFormat = DescriptionFormat.HTML) {
+    courseWithFiles {
+      lesson {
+        eduTask(taskDescription = taskText, taskDescriptionFormat = descriptionFormat) {
+          taskFile("taskFile1.txt")
+        }
+      }
+    }
   }
 
   override fun getTestDataPath(): String {
