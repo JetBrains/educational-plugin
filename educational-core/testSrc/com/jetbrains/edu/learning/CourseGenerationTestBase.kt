@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning
 import com.intellij.idea.IdeaTestApplication
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -27,10 +26,10 @@ abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
 
   protected fun createCourseStructure(course: Course) {
     val generator = courseBuilder.getCourseProjectGenerator(course) ?: error("given builder returns null as course project generator")
-    generator.doCreateCourseProject(rootDir.path, defaultSettings as Any)
+    val project = generator.doCreateCourseProject(rootDir.path, defaultSettings as Any) ?: error("Cannot create project")
 
     runInEdtAndWait {
-      project = ProjectManager.getInstance().openProjects.firstOrNull() ?: error("Cannot find project")
+      this.project = project
     }
   }
 
@@ -61,6 +60,7 @@ abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
           @Suppress("DEPRECATION")
           PlatformTestCase.closeAndDisposeProjectAndCheckThatNoOpenProjects(project)
         })
+        .run()
     } finally {
       super.tearDown()
     }

@@ -13,6 +13,8 @@ fun createFileEditorManager(project: Project): FileEditorManagerImpl = FileEdito
 fun <T> ComponentManager.registerComponent(componentKey: Class<T>, implementation: T, disposable: Disposable) {
   val oldValue = (this as ComponentManagerImpl).registerComponentInstance(componentKey, implementation)
   Disposer.register(disposable, Disposable {
-    registerComponentInstance(componentKey, oldValue)
+    if (!isDisposed) {
+      registerComponentInstance(componentKey, oldValue)
+    }
   })
 }
