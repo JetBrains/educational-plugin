@@ -4,8 +4,9 @@ package com.jetbrains.edu.learning.taskDescription
 
 import com.intellij.openapi.keymap.KeymapUtil
 
-const val SHORTCUT_ENTITY = "&shortcut:"
-const val SHORTCUT_ENTITY_ENCODED = "&amp;shortcut:"
+private const val SHORTCUT = "shortcut"
+private const val SHORTCUT_ENTITY = "&$SHORTCUT:"
+private const val SHORTCUT_ENTITY_ENCODED = "&amp;$SHORTCUT:"
 
 fun replaceActionIDsWithShortcuts(text: StringBuffer) {
   var lastIndex = 0
@@ -13,6 +14,7 @@ fun replaceActionIDsWithShortcuts(text: StringBuffer) {
     lastIndex = text.indexOf(SHORTCUT_ENTITY, lastIndex)
     var shortcutEntityLength = SHORTCUT_ENTITY.length
     if (lastIndex < 0) {
+      //`&` symbol might be replaced with `&amp;`
       lastIndex = text.indexOf(SHORTCUT_ENTITY_ENCODED)
       if (lastIndex < 0) {
         return
@@ -33,3 +35,7 @@ fun replaceActionIDsWithShortcuts(text: StringBuffer) {
     lastIndex += shortcutText.length
   }
 }
+
+fun String.toShortcut(): String = "${SHORTCUT_ENTITY}$this;"
+
+fun String.containsShortcut(): Boolean = startsWith(SHORTCUT_ENTITY) || startsWith(SHORTCUT_ENTITY_ENCODED)
