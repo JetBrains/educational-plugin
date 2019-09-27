@@ -36,6 +36,8 @@ fun replaceActionIDsWithShortcuts(text: StringBuffer) {
   }
 }
 
+fun String.replaceEncodedShortcuts() = this.replace(SHORTCUT_ENTITY_ENCODED, SHORTCUT_ENTITY)
+
 fun String.toShortcut(): String = "${SHORTCUT_ENTITY}$this;"
 
 fun String.containsShortcut(): Boolean = startsWith(SHORTCUT_ENTITY) || startsWith(SHORTCUT_ENTITY_ENCODED)

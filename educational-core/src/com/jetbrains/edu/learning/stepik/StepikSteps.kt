@@ -5,6 +5,8 @@ package com.jetbrains.edu.learning.stepik
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -22,6 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.taskDescription.replaceEncodedShortcuts
 import java.util.*
 
 const val SOURCE = "source"
@@ -56,6 +59,7 @@ const val URL = "url"
 
 class Step {
   @JsonProperty(TEXT)
+  @JsonDeserialize(converter = TaskDescriptionConverter::class)
   var text: String = ""
 
   @JsonProperty(NAME)
@@ -96,6 +100,12 @@ class Step {
       task.course is HyperskillCourse -> HyperskillStepOptions(project, task)
       else -> PyCharmStepOptions(project, task)
     }
+  }
+}
+
+class TaskDescriptionConverter: StdConverter<String, String>() {
+  override fun convert(value: String?): String {
+    return value?.replaceEncodedShortcuts() ?: ""
   }
 }
 
