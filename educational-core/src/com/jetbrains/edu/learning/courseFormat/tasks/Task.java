@@ -297,6 +297,7 @@ public abstract class Task extends StudyItem {
     return false;
   }
 
+  /* null means that course.solutionsHidden should be used */
   @Nullable
   public Boolean getSolutionHidden() {
     return solutionHidden;

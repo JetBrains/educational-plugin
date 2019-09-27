@@ -126,7 +126,7 @@ private fun TaskFile.canShowSolution() =
   answerPlaceholders.isNotEmpty() && answerPlaceholders.all { it.possibleAnswer.isNotEmpty() }
 
 fun Task.canShowSolution(): Boolean {
-  val solutionIsHidden = if (solutionHidden != null) solutionHidden!! else course.solutionsHidden
+  val solutionIsHidden = solutionHidden ?: course.solutionsHidden
   return !solutionIsHidden && taskFiles.values.any { it.canShowSolution() }
 }
 
