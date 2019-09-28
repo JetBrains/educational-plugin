@@ -1,4 +1,4 @@
-package com.jetbrains.edu.javascript.learning.messages
+package com.jetbrains.edu.jvm.messages
 
 import com.intellij.CommonBundle
 import com.jetbrains.edu.learning.messages.EduBundle
