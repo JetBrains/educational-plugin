@@ -39,7 +39,7 @@ fun Task.addCMakeList(projectName: String, cppStandard: String): TaskFile {
   val taskFile = TaskFile(CMakeListsFileType.FILE_NAME,
                           templateInfo.getText { key ->
                             when (key) {
-                              CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KAY -> cMakeMinimumRequired
+                              CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KEY -> cMakeMinimumRequired
                               CppTemplates.PROJECT_NAME_KEY -> projectName
                               CppTemplates.CPP_STANDARD_LINE_KEY -> cppStandard
                               else -> ""

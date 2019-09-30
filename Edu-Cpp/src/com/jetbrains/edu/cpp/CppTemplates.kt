@@ -24,7 +24,7 @@ data class CppTemplates(
   }
 
   companion object {
-    const val CMAKE_MINIMUM_REQUIRED_LINE_KAY: String = "CMAKE_MINIMUM_REQUIRED_LINE"
+    const val CMAKE_MINIMUM_REQUIRED_LINE_KEY: String = "CMAKE_MINIMUM_REQUIRED_LINE"
     const val PROJECT_NAME_KEY = EduNames.PROJECT_NAME
     const val CPP_STANDARD_LINE_KEY = "CPP_STANDARD"
     const val GTEST_VERSION_KEY = "GTEST_VERSION"
@@ -36,12 +36,12 @@ fun getCppTemplates(course: Course): CppTemplates =
   if (course is StepikCourse)
     CppTemplates(CppTemplates.TemplateInfo("StepikMainCMakeList.txt", CMakeListsFileType.FILE_NAME,
                                            listOf(
-                                             CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KAY,
+                                             CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KEY,
                                              CppTemplates.PROJECT_NAME_KEY
                                            )),
                  CppTemplates.TemplateInfo("StepikTaskCMakeList.txt", CMakeListsFileType.FILE_NAME,
                                            listOf(
-                                             CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KAY,
+                                             CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KEY,
                                              CppTemplates.PROJECT_NAME_KEY,
                                              CppTemplates.CPP_STANDARD_LINE_KEY
                                            )),
@@ -51,13 +51,13 @@ fun getCppTemplates(course: Course): CppTemplates =
   else
     CppTemplates(CppTemplates.TemplateInfo("EduMainCMakeList.txt", CMakeListsFileType.FILE_NAME,
                                            listOf(
-                                             CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KAY,
+                                             CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KEY,
                                              CppTemplates.PROJECT_NAME_KEY,
                                              CppTemplates.TEST_FRAMEWORK_DIR_KEY
                                            )),
                  CppTemplates.TemplateInfo("EduTaskCMakeList.txt", CMakeListsFileType.FILE_NAME,
                                            listOf(
-                                             CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KAY,
+                                             CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KEY,
                                              CppTemplates.PROJECT_NAME_KEY,
                                              CppTemplates.CPP_STANDARD_LINE_KEY
                                            )),
@@ -67,7 +67,7 @@ fun getCppTemplates(course: Course): CppTemplates =
                    CppTemplates.TemplateInfo("cmake_googletest-download.cmake",
                                              GeneratorUtils.joinPaths("cmake", "googletest-download.cmake"),
                                              listOf(
-                                               CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KAY,
+                                               CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KEY,
                                                CppTemplates.GTEST_VERSION_KEY
                                              )),
                    CppTemplates.TemplateInfo("runTests.cpp", "run.cpp")
