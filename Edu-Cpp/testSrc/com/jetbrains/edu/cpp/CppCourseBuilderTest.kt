@@ -31,7 +31,11 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         file("CMakeLists.txt",
              getExpectedTaskCMakeText(course, defaultSettings, "global-lesson1-task1"))
       }
-      file("CMakeLists.txt.in")
+      dir("cmake") {
+        file("utils.cmake")
+        file("googletest.cmake")
+        file("googletest-download.cmake")
+      }
       file("CMakeLists.txt")
       file("run.cpp")
     }.assertEquals(rootDir)
@@ -252,6 +256,9 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         file("CMakeLists.txt",
              getExpectedTaskCMakeText(course, defaultSettings, "global-lesson2-task1"))
       }
+      dir("cmake") {
+        file("utils.cmake")
+      }
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
   }
@@ -293,6 +300,9 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         file("task.html")
         file("CMakeLists.txt",
              getExpectedTaskCMakeText(course, defaultSettings, "global-lesson2-task1"))
+      }
+      dir("cmake") {
+        file("utils.cmake")
       }
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
