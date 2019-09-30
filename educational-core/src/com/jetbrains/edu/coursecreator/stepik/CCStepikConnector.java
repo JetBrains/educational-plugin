@@ -22,7 +22,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.*;
-import com.jetbrains.edu.learning.stepik.api.AdditionalInfo;
+import com.jetbrains.edu.learning.stepik.api.AdditionalCourseInfo;
+import com.jetbrains.edu.learning.stepik.api.AdditionalLessonInfo;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikUnit;
 import org.apache.http.HttpStatus;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.event.HyperlinkEvent;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -104,17 +106,17 @@ public class CCStepikConnector {
       postTopLevelLessons(project, courseOnRemote);
     }
 
-    postAdditionalInfo(course, project, courseOnRemote.getId());
+    postAdditionalCourseInfo(course, project, courseOnRemote.getId());
     StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
     courseOnRemote.init(null, null, true);
     showNotification(project, "Course is published", openOnStepikAction("/course/" + courseOnRemote.getId()));
   }
 
-  public static void postAdditionalInfo(@NotNull EduCourse course, @NotNull final Project project, int courseId) {
-    updateProgress("Publishing additional files");
+  public static void postAdditionalCourseInfo(@NotNull EduCourse course, @NotNull final Project project, int courseId) {
+    updateProgress("Publishing additional course info");
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
-    AdditionalInfo additionalInfo = new AdditionalInfo(additionalFiles, course.getSolutionsHidden());
-    StepikConnector.getInstance().postAttachment(additionalInfo, courseId);
+    AdditionalCourseInfo additionalCourseInfo = new AdditionalCourseInfo(additionalFiles, course.getSolutionsHidden());
+    StepikConnector.getInstance().postCourseAttachment(additionalCourseInfo, courseId);
   }
 
   /**
@@ -198,6 +200,7 @@ public class CCStepikConnector {
       }
       success = postTask(project, task, postedLesson.getId()) && success;
     }
+    postAdditionalLessonInfo(lesson);
     return success;
   }
 
@@ -219,6 +222,13 @@ public class CCStepikConnector {
     lesson.unitId = postedLesson.unitId;
     lesson.setUpdateDate(postedLesson.getUpdateDate());
     return postedLesson;
+  }
+
+  public static void postAdditionalLessonInfo(@NotNull final Lesson lesson) {
+    updateProgress("Publishing additional info for " + lesson.getName());
+    final Map<Integer, Boolean> solutionHiddenInTask = CCUtils.collectSolutionHiddenInTasks(lesson);
+    AdditionalLessonInfo additionalLessonInfo = new AdditionalLessonInfo(solutionHiddenInTask);
+    StepikConnector.getInstance().postLessonAttachment(additionalLessonInfo, lesson.getId());
   }
 
   public static int postUnit(int lessonId, int position, int sectionId, @NotNull Project project) {
@@ -277,13 +287,13 @@ public class CCStepikConnector {
     return true;
   }
 
-  public static boolean updateAdditionalInfo(@NotNull Project project, @NotNull Course course) {
+  public static boolean updateAdditionalCourseInfo(@NotNull Project project, @NotNull Course course) {
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
     assert courseInfo != null;
     updateProgress("Publishing additional files and info");
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(courseInfo, project);
-    AdditionalInfo additionalInfo = new AdditionalInfo(additionalFiles, course.getSolutionsHidden());
-    return StepikConnector.getInstance().updateCourseAttachment(additionalInfo, courseInfo) == HttpStatus.SC_CREATED;
+    AdditionalCourseInfo additionalCourseInfo = new AdditionalCourseInfo(additionalFiles, course.getSolutionsHidden());
+    return StepikConnector.getInstance().updateCourseAttachment(additionalCourseInfo, courseInfo) == HttpStatus.SC_CREATED;
   }
 
   public static boolean updateSectionForTopLevelLessons(@NotNull EduCourse course) {
@@ -324,6 +334,7 @@ public class CCStepikConnector {
     Lesson postedLesson = updateLessonInfo(project, lesson, showNotification, sectionId);
     if (postedLesson != null) {
       updateLessonTasks(project, lesson, postedLesson.steps);
+      updateAdditionalLessonInfo(lesson);
       return true;
     }
 
@@ -346,6 +357,13 @@ public class CCStepikConnector {
     }
 
     return updatedLesson;
+  }
+
+  public static boolean updateAdditionalLessonInfo(@NotNull final Lesson lesson) {
+    updateProgress("Publishing additional info for " + lesson.getName());
+    final Map<Integer, Boolean> solutionHiddenInTask = CCUtils.collectSolutionHiddenInTasks(lesson);
+    AdditionalLessonInfo additionalLessonInfo = new AdditionalLessonInfo(solutionHiddenInTask);
+    return StepikConnector.getInstance().updateLessonAttachment(additionalLessonInfo, lesson.getId()) == HttpStatus.SC_CREATED;
   }
 
   public static void updateUnit(int unitId, int lessonId, int position, int sectionId, @NotNull Project project) {

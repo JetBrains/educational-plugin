@@ -147,9 +147,13 @@ class StepikChangeRetriever(private val project: Project, course: EduCourse, pri
   private fun lessonInfoChanged(lesson: Lesson, remoteLesson: Lesson): Boolean {
     val localSection = lesson.section?.id ?: (lesson.course as EduCourse).sectionIds.first()
     val remoteSection = remoteLesson.section?.id ?: (remoteLesson.course as EduCourse).sectionIds.first()
+    val solutionHiddenChanged = lesson.taskList.zip(remoteLesson.taskList).any {
+      (localTask, remoteTask) -> localTask.solutionHidden != remoteTask.solutionHidden
+    }
     return lesson.index != remoteLesson.index ||
            lesson.name != remoteLesson.name ||
-           localSection != remoteSection
+           localSection != remoteSection ||
+           solutionHiddenChanged
   }
 
   private fun taskInfoChanged(task: Task, remoteTask: Task): Boolean {

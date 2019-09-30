@@ -67,32 +67,30 @@ private fun markStepAsViewed(lessonId: Int, stepId: Int) {
     .forEach { StepikConnector.getInstance().postView(it.id, stepId) }
 }
 
-private fun fillAttachmentsInfo(course: Course, info: AdditionalInfo) {
+fun loadAndFillAdditionalLessonInfo(lesson: Lesson) {
+  val attachmentLink = StepikNames.STEPIK_URL + "/media/attachments/lesson/" + lesson.id + "/" + StepikNames.ADDITIONAL_INFO
+  val additionalInfoText = loadAttachment(attachmentLink) ?: return
+  val info = HyperskillConnector.getInstance().objectMapper.readValue(additionalInfoText, AdditionalLessonInfo::class.java)
+
+  info.solutionHiddenInTasks.forEach { (id, value) -> lesson.getTask(id).solutionHidden = value }
+}
+
+fun loadAndFillAdditionalCourseInfo(course: Course, attachmentLink: String? = null) {
+  val link = attachmentLink ?: StepikNames.STEPIK_URL + "/media/attachments/course/" + course.id + "/" + StepikNames.ADDITIONAL_INFO
+  val additionalInfoText = loadAttachment(link) ?: return
+  val info = HyperskillConnector.getInstance().objectMapper.readValue(additionalInfoText, AdditionalCourseInfo::class.java)
+
   course.additionalFiles = info.additionalFiles
   course.solutionsHidden = info.solutionsHidden
 }
 
-fun loadAndFillAttachmentsInfo(course: Course, lesson: Lesson?) = fillAttachmentsInfo(course, loadAttachment(course, lesson))
-
-fun loadAndFillAttachmentsInfo(course: Course, attachmentLink: String) = fillAttachmentsInfo(course, loadAttachment(attachmentLink))
-
-fun loadAttachment(course: Course, lesson: Lesson?) : AdditionalInfo {
-  val id = lesson?.id ?: course.id
-  val lessonOrCourse = if (lesson != null) "lesson" else "course"
-  val attachmentLink = StepikNames.STEPIK_URL + "/media/attachments/" + lessonOrCourse + "/" + id + "/" + StepikNames.ADDITIONAL_FILES
-  return loadAttachment(attachmentLink)
-}
-
-fun loadAttachment(attachmentLink: String) : AdditionalInfo {
-  return try {
-    val attachmentUrl = URL(attachmentLink)
-    val conn = attachmentUrl.openConnection()
-
-    val additionalInfoText = conn.getInputStream().bufferedReader().use(BufferedReader::readText)
-    HyperskillConnector.getInstance().objectMapper.readValue(additionalInfoText, AdditionalInfo::class.java)
+private fun loadAttachment(attachmentLink: String): String? {
+  try {
+    val conn = URL(attachmentLink).openConnection()
+    return conn.getInputStream().bufferedReader().use(BufferedReader::readText)
   }
   catch (e: IOException) {
     LOG.info("No attachments found $attachmentLink")
-    AdditionalInfo(emptyList())
   }
+  return null
 }

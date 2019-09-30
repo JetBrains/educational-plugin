@@ -164,6 +164,15 @@ object CCUtils {
   }
 
   @JvmStatic
+  fun collectSolutionHiddenInTasks(lesson: Lesson): Map<Int, Boolean> {
+    val result: MutableMap<Int, Boolean> = mutableMapOf()
+    for (task in lesson.taskList) {
+      result[task.id] = task.solutionHidden ?: continue
+    }
+    return result
+  }
+
+  @JvmStatic
   @Throws(IOException::class)
   fun loadText(file: VirtualFile): String {
     return if (EduUtils.isImage(file.name)) {

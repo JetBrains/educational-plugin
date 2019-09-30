@@ -157,7 +157,9 @@ abstract class HyperskillConnector {
     for (task in tasks) {
       lesson.addTask(task)
     }
-    loadAndFillAttachmentsInfo(course, attachmentLink)
+    // TODO do we really need to load courseInfo here?
+    loadAndFillAdditionalCourseInfo(course, attachmentLink)
+    loadAndFillAdditionalLessonInfo(lesson)
     return lesson
   }
 
