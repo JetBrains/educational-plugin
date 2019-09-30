@@ -36,15 +36,7 @@ val cMakeMinimumRequired: String by lazy {
 fun Task.addCMakeList(projectName: String, cppStandard: String): TaskFile {
   val templateInfo = getCppTemplates(course).taskCMakeList
 
-  val taskFile = TaskFile(CMakeListsFileType.FILE_NAME,
-                          templateInfo.getText { key ->
-                            when (key) {
-                              CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KEY -> cMakeMinimumRequired
-                              CppTemplates.PROJECT_NAME_KEY -> projectName
-                              CppTemplates.CPP_STANDARD_LINE_KEY -> cppStandard
-                              else -> ""
-                            }
-                          })
+  val taskFile = TaskFile(CMakeListsFileType.FILE_NAME, templateInfo.getText(projectName, cppStandard))
   taskFile.isVisible = false
 
   addTaskFile(taskFile)

@@ -38,21 +38,11 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
     if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
 
-    val dataProvider = { key: String ->
-      when (key) {
-        CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KEY -> cMakeMinimumRequired
-        CppTemplates.PROJECT_NAME_KEY -> FileUtil.sanitizeFileName(baseDir.name)
-        CppTemplates.GTEST_VERSION_KEY -> CppConfigurator.GTEST_VERSION
-        CppTemplates.TEST_FRAMEWORK_DIR_KEY -> CppConfigurator.TEST_FRAMEWORK_DIR
-        else -> ""
-      }
-    }
-
     val mainCMakeTemplateInfo = getCppTemplates(myCourse).mainCMakeList
-    GeneratorUtils.createChildFile(baseDir, mainCMakeTemplateInfo.fileName, mainCMakeTemplateInfo.getText(dataProvider))
+    GeneratorUtils.createChildFile(baseDir, mainCMakeTemplateInfo.generatedFileName, mainCMakeTemplateInfo.getText(FileUtil.sanitizeFileName(baseDir.name)))
 
     getCppTemplates(myCourse).extraTopLevelFiles.forEach { templateInfo ->
-      GeneratorUtils.createChildFile(baseDir, templateInfo.fileName, templateInfo.getText(dataProvider))
+      GeneratorUtils.createChildFile(baseDir, templateInfo.generatedFileName, templateInfo.getText(FileUtil.sanitizeFileName(baseDir.name)))
     }
   }
 

@@ -15,60 +15,34 @@ data class CppTemplates(
   val mainCMakeList: TemplateInfo,
   val taskCMakeList: TemplateInfo,
   val extraTopLevelFiles: List<TemplateInfo> = emptyList()
-) {
-  data class TemplateInfo(val templateName: String, val fileName: String, val dataKeys: List<String> = emptyList()) {
-    fun getText(dataProvider: (String) -> String = { "" }): String {
-      val templateVariables = dataKeys.map { it to dataProvider(it) }.toMap()
-      return GeneratorUtils.getInternalTemplateText(templateName, templateVariables)
-    }
-  }
+)
 
-  companion object {
-    const val CMAKE_MINIMUM_REQUIRED_LINE_KEY: String = "CMAKE_MINIMUM_REQUIRED_LINE"
-    const val PROJECT_NAME_KEY = EduNames.PROJECT_NAME
-    const val CPP_STANDARD_LINE_KEY = "CPP_STANDARD"
-    const val GTEST_VERSION_KEY = "GTEST_VERSION"
-    const val TEST_FRAMEWORK_DIR_KEY = "TEST_FRAMEWORK_DIR"
+data class TemplateInfo(private val templateName: String, val generatedFileName: String) {
+  fun getText(projectName: String = "", cppStandardLine: String = ""): String {
+    val templateVariables = mapOf(
+      "CMAKE_MINIMUM_REQUIRED_LINE" to cMakeMinimumRequired,
+      "GTEST_VERSION" to CppConfigurator.GTEST_VERSION,
+      "TEST_FRAMEWORK_DIR" to CppConfigurator.TEST_FRAMEWORK_DIR,
+      EduNames.PROJECT_NAME to projectName,
+      "CPP_STANDARD" to cppStandardLine
+    )
+    return GeneratorUtils.getInternalTemplateText(templateName, templateVariables)
   }
 }
 
 fun getCppTemplates(course: Course): CppTemplates =
   if (course is StepikCourse)
-    CppTemplates(CppTemplates.TemplateInfo("StepikMainCMakeList.txt", CMakeListsFileType.FILE_NAME,
-                                           listOf(
-                                             CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KEY,
-                                             CppTemplates.PROJECT_NAME_KEY
-                                           )),
-                 CppTemplates.TemplateInfo("StepikTaskCMakeList.txt", CMakeListsFileType.FILE_NAME,
-                                           listOf(
-                                             CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KEY,
-                                             CppTemplates.PROJECT_NAME_KEY,
-                                             CppTemplates.CPP_STANDARD_LINE_KEY
-                                           )),
+    CppTemplates(TemplateInfo("StepikMainCMakeList.txt", CMakeListsFileType.FILE_NAME),
+                 TemplateInfo("StepikTaskCMakeList.txt", CMakeListsFileType.FILE_NAME),
                  listOf(
-                   CppTemplates.TemplateInfo("cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
+                   TemplateInfo("cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
                  ))
   else
-    CppTemplates(CppTemplates.TemplateInfo("EduMainCMakeList.txt", CMakeListsFileType.FILE_NAME,
-                                           listOf(
-                                             CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KEY,
-                                             CppTemplates.PROJECT_NAME_KEY,
-                                             CppTemplates.TEST_FRAMEWORK_DIR_KEY
-                                           )),
-                 CppTemplates.TemplateInfo("EduTaskCMakeList.txt", CMakeListsFileType.FILE_NAME,
-                                           listOf(
-                                             CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KEY,
-                                             CppTemplates.PROJECT_NAME_KEY,
-                                             CppTemplates.CPP_STANDARD_LINE_KEY
-                                           )),
+    CppTemplates(TemplateInfo("EduMainCMakeList.txt", CMakeListsFileType.FILE_NAME),
+                 TemplateInfo("EduTaskCMakeList.txt", CMakeListsFileType.FILE_NAME),
                  listOf(
-                   CppTemplates.TemplateInfo("cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake")),
-                   CppTemplates.TemplateInfo("cmake_googletest.cmake", GeneratorUtils.joinPaths("cmake", "googletest.cmake")),
-                   CppTemplates.TemplateInfo("cmake_googletest-download.cmake",
-                                             GeneratorUtils.joinPaths("cmake", "googletest-download.cmake"),
-                                             listOf(
-                                               CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KEY,
-                                               CppTemplates.GTEST_VERSION_KEY
-                                             )),
-                   CppTemplates.TemplateInfo("runTests.cpp", "run.cpp")
+                   TemplateInfo("cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake")),
+                   TemplateInfo("cmake_googletest.cmake", GeneratorUtils.joinPaths("cmake", "googletest.cmake")),
+                   TemplateInfo("cmake_googletest-download.cmake", GeneratorUtils.joinPaths("cmake", "googletest-download.cmake")),
+                   TemplateInfo("runTests.cpp", "run.cpp")
                  ))
