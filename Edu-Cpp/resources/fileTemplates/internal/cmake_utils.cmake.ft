@@ -1,4 +1,4 @@
-#[[macro(add_subprojects _base_dir)
+#[[macro(add_subprojects _base_dir _test_dir)
     # Find all CMakeLists.txt paths
     file(GLOB_RECURSE _cmake_files RELATIVE "${_base_dir}" CMakeLists.txt)
     # Collect all subdirectories containing CMakeLists.txt
@@ -14,7 +14,7 @@
     # Add all finded directories
     foreach (dir ${_dirs})
         # Ignore CMakeList.txt files from "googletest/*" dirs
-        string(FIND "${dir}" "googletest/" _out)
+        string(FIND "${dir}" ${_test_dir} _out)
         if ("${_out}" EQUAL -1)
             add_subdirectory(${dir})
         endif ()

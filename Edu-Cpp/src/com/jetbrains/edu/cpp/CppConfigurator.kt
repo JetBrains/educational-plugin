@@ -43,7 +43,7 @@ class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
     // we could use it how indicator because CLion generate build dirs with names `cmake-build-*`
     // @see com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace.getProfileGenerationDirNames
     val buildDirPrefix = GeneratorUtils.joinPaths(courseDir.path, "cmake-build-")
-    val googleTestDirPrefix = GeneratorUtils.joinPaths(courseDir.path, "googletest")
+    val googleTestDirPrefix = GeneratorUtils.joinPaths(courseDir.path, TEST_FRAMEWORK_DIR)
 
     return file.path.startsWith(buildDirPrefix) || file.path.startsWith(googleTestDirPrefix)
   }
@@ -55,6 +55,7 @@ class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
 
   companion object {
     const val GTEST_VERSION = "release-1.8.1"
+    const val TEST_FRAMEWORK_DIR = "test-framework"
 
     const val TASK_CPP = "task.cpp"
     const val TEST_CPP = "test.cpp"

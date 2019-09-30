@@ -28,6 +28,7 @@ data class CppTemplates(
     const val PROJECT_NAME_KEY = EduNames.PROJECT_NAME
     const val CPP_STANDARD_LINE_KEY = "CPP_STANDARD"
     const val GTEST_VERSION_KEY = "GTEST_VERSION"
+    const val TEST_FRAMEWORK_DIR_KEY = "TEST_FRAMEWORK_DIR"
   }
 }
 
@@ -51,7 +52,8 @@ fun getCppTemplates(course: Course): CppTemplates =
     CppTemplates(CppTemplates.TemplateInfo("EduMainCMakeList.txt", CMakeListsFileType.FILE_NAME,
                                            listOf(
                                              CppTemplates.CMAKE_MINIMUM_REQUIRED_LINE_KAY,
-                                             CppTemplates.PROJECT_NAME_KEY
+                                             CppTemplates.PROJECT_NAME_KEY,
+                                             CppTemplates.TEST_FRAMEWORK_DIR_KEY
                                            )),
                  CppTemplates.TemplateInfo("EduTaskCMakeList.txt", CMakeListsFileType.FILE_NAME,
                                            listOf(
