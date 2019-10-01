@@ -71,7 +71,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
 
     val connection = ApplicationManager.getApplication().messageBus.connect()
     connection.subscribe(EditorColorsManager.TOPIC, EditorColorsListener {
-      TaskDescriptionView.updateAllTabs(project, TaskDescriptionView.getInstance(project))
+      TaskDescriptionView.updateAllTabs(TaskDescriptionView.getInstance(project))
     })
 
     // we need opened project to get project for a course using `CourseExt.getProject`,

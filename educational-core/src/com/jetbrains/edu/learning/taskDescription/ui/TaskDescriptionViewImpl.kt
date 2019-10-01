@@ -56,11 +56,16 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   private fun updateAdditionalTaskTab(task: Task?) {
     val additionalTab = StudyTaskManager.getInstance(project).course?.configurator?.additionalTaskTab(task, project)
     if (additionalTab != null) {
+      val currentContent = contentManager.selectedContent
+      val isAdditionalTabSelected = currentContent?.let { contentManager.getIndexOfContent(it) } == 1
       val content = contentManager.findContent(additionalTab.second)
       content?.let { contentManager.removeContent(it, true) }
       val topicsContent = ContentFactory.SERVICE.getInstance().createContent(additionalTab.first, additionalTab.second, false)
       topicsContent.isCloseable = false
       contentManager.addContent(topicsContent, 1)
+      if (isAdditionalTabSelected) {
+        contentManager.setSelectedContent(topicsContent)
+      }
     }
     else {
       val contents = contentManager.contents
@@ -77,6 +82,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       addTabToTaskDescription(project)
     }
   }
+
 
   private fun updateCheckPanel(task: Task?) {
     if (task == null) return

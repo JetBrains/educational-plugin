@@ -1,21 +1,27 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import java.awt.BorderLayout
 import java.awt.Component
+import java.awt.FlowLayout
 import javax.swing.BoxLayout
 import javax.swing.JPanel
 import javax.swing.JSeparator
 import javax.swing.JTextPane
 import javax.swing.event.HyperlinkListener
 
-class AdditionalTabPanel(project: Project) : JPanel() {
+class AdditionalTabPanel(val project: Project) : JPanel(), Disposable {
 
   private val textPane: JTextPane = createTextPane()
+  val connection get() = project.messageBus.connect()
 
   init {
     val scrollPane = JBScrollPane(textPane)
@@ -51,5 +57,21 @@ class AdditionalTabPanel(project: Project) : JPanel() {
     backLinkPanel.add(JSeparator(), BorderLayout.SOUTH)
     backLinkPanel.maximumSize = JBUI.size(Int.MAX_VALUE, 30)
     return backLinkPanel
+  }
+
+  fun addLoadingPanel() {
+    removeAll()
+    val asyncProcessIcon = AsyncProcessIcon("Loading submissions")
+    val iconPanel = JPanel(FlowLayout(FlowLayout.LEADING))
+    iconPanel.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
+    iconPanel.add(asyncProcessIcon)
+    setText("<a ${StyleManager().textStyleHeader}>Loading submissions from ${StepikNames.STEPIK}")
+    iconPanel.add(textPane)
+    add(iconPanel, Component.LEFT_ALIGNMENT)
+    revalidate()
+  }
+
+  override fun dispose() {
+    connection.disconnect()
   }
 }

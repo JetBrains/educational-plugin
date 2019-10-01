@@ -69,7 +69,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
         val fontFactor = FontSize.values()[fontSizeSlider.value.toReverseIndex()]
         PropertiesComponent.getInstance().setValue(StyleManager.FONT_FACTOR_PROPERTY, fontFactor.size, FontPreferences.DEFAULT_FONT_SIZE)
         if (!(EduUtils.getCurrentTask(project) is VideoTask && EduSettings.getInstance().shouldUseJavaFx())) {
-          TaskDescriptionView.updateAllTabs(project, taskDescription)
+          TaskDescriptionView.updateAllTabs(taskDescription)
         }
       })
       val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(fontSizeSlider, fontSizeSlider).createPopup()
