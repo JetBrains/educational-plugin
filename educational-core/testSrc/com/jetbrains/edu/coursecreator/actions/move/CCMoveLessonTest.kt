@@ -1,15 +1,9 @@
 package com.jetbrains.edu.coursecreator.actions.move
 
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiManager
-import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.coursecreator.handlers.CCLessonMoveHandlerDelegate
-import com.jetbrains.edu.learning.courseFormat.StudyItem
-import junit.framework.TestCase
+import com.jetbrains.edu.learning.actions.move.MoveTestBase
 
-class CCMoveLessonTest : EduActionTestCase() {
+class CCMoveLessonTest : MoveTestBase() {
 
   fun `test move lesson to section`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
@@ -18,19 +12,16 @@ class CCMoveLessonTest : EduActionTestCase() {
         lesson("lesson2")
       }
     }
-    val sourceVFile = findFile("lesson1")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
-    val targetVFile = findFile("section2")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
+    val sourceDir = findPsiDirectory("lesson1")
+    val targetDir = findPsiDirectory("section2")
 
-    val handler = CCLessonMoveHandlerDelegate()
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
-    handler.doMove(project, arrayOf(sourceDir), targetDir, {})
-    TestCase.assertEquals(1, course.items.size)
-    val section = course.getSection("section2")
-    TestCase.assertEquals(2, section!!.items.size)
-    TestCase.assertEquals(1, section.getLesson("lesson2")!!.index)
-    TestCase.assertEquals(2, section.getLesson("lesson1")!!.index)
+    doMoveAction(sourceDir, targetDir)
+
+    assertEquals(1, course.items.size)
+    val section = course.getSection("section2")!!
+    assertEquals(2, section.items.size)
+    assertEquals(1, section.getLesson("lesson2")!!.index)
+    assertEquals(2, section.getLesson("lesson1")!!.index)
   }
 
   fun `test move lesson before lesson in course`() {
@@ -41,19 +32,17 @@ class CCMoveLessonTest : EduActionTestCase() {
       }
       lesson()
     }
-    val sourceVFile = findFile("lesson1")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
-    val targetVFile = findFile("lesson2")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
+    val sourceDir = findPsiDirectory("lesson1")
+    val targetDir = findPsiDirectory("lesson2")
 
-    val handler = CCLessonMoveHandlerTest(0)
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
-    handler.doMove(project, arrayOf(sourceDir), targetDir, {})
-    TestCase.assertEquals(3, course.items.size)
-    TestCase.assertEquals(1, course.getSection("section2")!!.index)
-    TestCase.assertEquals(2, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(3, course.getLesson("lesson2")!!.index)
+    doMoveAction(sourceDir, targetDir, delta = 0)
+
+    assertEquals(3, course.items.size)
+    assertEquals(1, course.getSection("section2")!!.index)
+    assertEquals(2, course.getLesson("lesson1")!!.index)
+    assertEquals(3, course.getLesson("lesson2")!!.index)
   }
+
 
   fun `test move lesson after lesson in course`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
@@ -63,18 +52,15 @@ class CCMoveLessonTest : EduActionTestCase() {
         lesson()
       }
     }
-    val sourceVFile = findFile("lesson1")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
-    val targetVFile = findFile("lesson2")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
+    val sourceDir = findPsiDirectory("lesson1")
+    val targetDir = findPsiDirectory("lesson2")
 
-    val handler = CCLessonMoveHandlerTest(1)
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
-    handler.doMove(project, arrayOf(sourceDir), targetDir, {})
-    TestCase.assertEquals(3, course.items.size)
-    TestCase.assertEquals(1, course.getLesson("lesson2")!!.index)
-    TestCase.assertEquals(2, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(3, course.getSection("section3")!!.index)
+    doMoveAction(sourceDir, targetDir, delta = 1)
+
+    assertEquals(3, course.items.size)
+    assertEquals(1, course.getLesson("lesson2")!!.index)
+    assertEquals(2, course.getLesson("lesson1")!!.index)
+    assertEquals(3, course.getSection("section3")!!.index)
   }
 
   fun `test move lesson from section to course`() {
@@ -85,19 +71,16 @@ class CCMoveLessonTest : EduActionTestCase() {
         lesson("lesson3")
       }
     }
-    val sourceVFile = findFile("section3/lesson3")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
-    val targetVFile = LightPlatformTestCase.getSourceRoot()
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile!!)
+    val sourceDir = findPsiDirectory("section3/lesson3")
+    val targetDir = findPsiDirectory(".")
 
-    val handler = CCLessonMoveHandlerDelegate()
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
-    handler.doMove(project, arrayOf(sourceDir), targetDir, {})
-    TestCase.assertEquals(4, course.items.size)
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, course.getLesson("lesson2")!!.index)
-    TestCase.assertEquals(3, course.getSection("section3")!!.index)
-    TestCase.assertEquals(4, course.getLesson("lesson3")!!.index)
+    doMoveAction(sourceDir, targetDir)
+
+    assertEquals(4, course.items.size)
+    assertEquals(1, course.getLesson("lesson1")!!.index)
+    assertEquals(2, course.getLesson("lesson2")!!.index)
+    assertEquals(3, course.getSection("section3")!!.index)
+    assertEquals(4, course.getLesson("lesson3")!!.index)
   }
 
   fun `test move lesson in section`() {
@@ -108,19 +91,16 @@ class CCMoveLessonTest : EduActionTestCase() {
         lesson()
       }
     }
-    val sourceVFile = findFile("section1/lesson3")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
-    val targetVFile = findFile("section1/lesson1")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
+    val sourceDir = findPsiDirectory("section1/lesson3")
+    val targetDir = findPsiDirectory("section1/lesson1")
 
-    val handler = CCLessonMoveHandlerTest(1)
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
-    handler.doMove(project, arrayOf(sourceDir), targetDir, {})
-    val section = course.getSection("section1")
-    TestCase.assertEquals(3, section!!.items.size)
-    TestCase.assertEquals(1, section.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, section.getLesson("lesson3")!!.index)
-    TestCase.assertEquals(3, section.getLesson("lesson2")!!.index)
+    doMoveAction(sourceDir, targetDir, delta = 1)
+
+    val section = course.getSection("section1")!!
+    assertEquals(3, section.items.size)
+    assertEquals(1, section.getLesson("lesson1")!!.index)
+    assertEquals(2, section.getLesson("lesson3")!!.index)
+    assertEquals(3, section.getLesson("lesson2")!!.index)
   }
 
   fun `test move lesson from section to section`() {
@@ -136,22 +116,19 @@ class CCMoveLessonTest : EduActionTestCase() {
         lesson("lesson6")
       }
     }
-    val sourceVFile = findFile("section1/lesson2")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
-    val targetVFile = findFile("section2")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
+    val sourceDir = findPsiDirectory("section1/lesson2")
+    val targetDir = findPsiDirectory("section2")
 
-    val handler = CCLessonMoveHandlerDelegate()
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
-    handler.doMove(project, arrayOf(sourceDir), targetDir, {})
-    val section1 = course.getSection("section1")
-    val section2 = course.getSection("section2")
+    doMoveAction(sourceDir, targetDir)
 
-    TestCase.assertEquals(2, section1!!.items.size)
-    TestCase.assertEquals(1, section1.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, section1.getLesson("lesson3")!!.index)
+    val section1 = course.getSection("section1")!!
+    val section2 = course.getSection("section2")!!
 
-    TestCase.assertEquals(4, section2!!.items.size)
+    assertEquals(2, section1.items.size)
+    assertEquals(1, section1.getLesson("lesson1")!!.index)
+    assertEquals(2, section1.getLesson("lesson3")!!.index)
+
+    assertEquals(4, section2.items.size)
   }
 
   fun `test move lesson from section to lesson in another section`() {
@@ -166,30 +143,21 @@ class CCMoveLessonTest : EduActionTestCase() {
         lesson("lesson5")
       }
     }
-    val sourceVFile = findFile("section1/lesson2")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
-    val targetVFile = findFile("section2/lesson5")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
+    val sourceDir = findPsiDirectory("section1/lesson2")
+    val targetDir = findPsiDirectory("section2/lesson5")
 
-    val handler = CCLessonMoveHandlerTest(0)
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
-    handler.doMove(project, arrayOf(sourceDir), targetDir, {})
-    val section1 = course.getSection("section1")
-    val section2 = course.getSection("section2")
+    doMoveAction(sourceDir, targetDir, delta = 0)
 
-    TestCase.assertEquals(2, section1!!.items.size)
-    TestCase.assertEquals(1, section1.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, section1.getLesson("lesson3")!!.index)
+    val section1 = course.getSection("section1")!!
+    val section2 = course.getSection("section2")!!
 
-    TestCase.assertEquals(3, section2!!.items.size)
-    TestCase.assertEquals(1, section2.getLesson("lesson4")!!.index)
-    TestCase.assertEquals(2, section2.getLesson("lesson2")!!.index)
-    TestCase.assertEquals(3, section2.getLesson("lesson5")!!.index)
-  }
+    assertEquals(2, section1.items.size)
+    assertEquals(1, section1.getLesson("lesson1")!!.index)
+    assertEquals(2, section1.getLesson("lesson3")!!.index)
 
-  internal inner class CCLessonMoveHandlerTest(private val myDelta: Int) : CCLessonMoveHandlerDelegate() {
-    override fun getDelta(project: Project, targetItem: StudyItem): Int {
-      return myDelta
-    }
+    assertEquals(3, section2.items.size)
+    assertEquals(1, section2.getLesson("lesson4")!!.index)
+    assertEquals(2, section2.getLesson("lesson2")!!.index)
+    assertEquals(3, section2.getLesson("lesson5")!!.index)
   }
 }

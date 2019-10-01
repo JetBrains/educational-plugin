@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.TestActionEvent
@@ -36,7 +37,7 @@ abstract class EduActionTestCase : EduTestCase() {
   }
 
   protected fun dataContext(element: PsiElement): MapDataContext {
-    val file = element.containingFile.virtualFile
+    val file = if (element is PsiFileSystemItem) element.virtualFile else element.containingFile.virtualFile
     return MapDataContext().apply {
       put(CommonDataKeys.PROJECT, project)
       put(CommonDataKeys.VIRTUAL_FILE, file)

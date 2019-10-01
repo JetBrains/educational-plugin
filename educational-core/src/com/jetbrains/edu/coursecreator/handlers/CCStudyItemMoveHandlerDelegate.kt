@@ -4,13 +4,11 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.refactoring.move.MoveHandlerDelegate
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 abstract class CCStudyItemMoveHandlerDelegate(private val itemName: String) : MoveHandlerDelegate() {
@@ -28,9 +26,7 @@ abstract class CCStudyItemMoveHandlerDelegate(private val itemName: String) : Mo
   override fun isValidTarget(psiElement: PsiElement?, sources: Array<PsiElement>): Boolean = true
 
   protected open fun getDelta(project: Project, targetItem: StudyItem): Int {
-    val dialog = CCMoveStudyItemDialog(project, itemName, targetItem.name)
-    dialog.show()
-    return if (dialog.exitCode != DialogWrapper.OK_EXIT_CODE) -1 else dialog.indexDelta
+    return showMoveStudyItemDialog(project, itemName, targetItem.name)
   }
 
   override fun tryToMove(
