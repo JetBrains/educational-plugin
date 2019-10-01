@@ -57,9 +57,8 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
     course.courseMode = CCUtils.COURSE_MODE
     course.init(null, null, false)
     if (getTaskDescriptionToolWindow(project) == null) {
-      ToolWindowManager.getInstance(project).registerToolWindow(
-        TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW, false,
-        ToolWindowAnchor.RIGHT)
+      ToolWindowManager.getInstance(project).registerToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW, false,
+                                                                ToolWindowAnchor.RIGHT)
       val toolWindow = getTaskDescriptionToolWindow(project) ?: error("Task Description tool window not found")
       TaskDescriptionToolWindowFactory().createToolWindowContent(project, toolWindow)
     }

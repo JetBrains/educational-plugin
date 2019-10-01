@@ -61,9 +61,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     val messageLength = (checkResult.diff?.message ?: checkResult.escapedMessage).length
 
     if (messageLength > MAX_MESSAGE_LENGTH || expectedActualTextLength > MAX_EXPECTED_ACTUAL_LENGTH) {
-      linksPanel.add(LightColoredActionLink("Show Full Output...",
-                                            ShowFullOutputAction(project, details
-                                                                                                                        ?: checkResult.message)),
+      linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, details ?: checkResult.message)),
                      BorderLayout.NORTH)
     }
     return messagePanel
@@ -75,8 +73,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
 
     val course = task.course
     if (course is HyperskillCourse && course.isTaskInProject(task) && checkResult.status == CheckStatus.Failed) {
-      val showMoreInfo = LightColoredActionLink("Review Topics for the Stage...",
-                                                                                              SwitchTaskTabAction(project, 1))
+      val showMoreInfo = LightColoredActionLink("Review Topics for the Stage...", SwitchTaskTabAction(project, 1))
       linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
     }
 
@@ -97,22 +94,18 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     }
 
     if (EduUtils.isStudentProject(project) && (task.canShowSolution() || canShowHyperskillSolution(task))) {
-      val peekSolution = LightColoredActionLink("Peek Solution...",
-                                                                                              ActionManager.getInstance().getAction(
-                                                                                                getPeekSolutionAction(task)))
+      val peekSolution = LightColoredActionLink("Peek Solution...", ActionManager.getInstance().getAction(getPeekSolutionAction(task)))
       answerHintsPanel.value.add(peekSolution)
     }
 
     if (checkResult.diff != null) {
-      val compareOutputs = LightColoredActionLink("Compare Outputs...",
-                                                                                                CompareOutputsAction(project,
-                                                                                                                     checkResult.diff))
+      val compareOutputs = LightColoredActionLink("Compare Outputs...", CompareOutputsAction(project, checkResult.diff))
       answerHintsPanel.value.add(compareOutputs)
     }
     return if (answerHintsPanel.isInitialized()) answerHintsPanel.value else null
   }
 
-  private fun getPeekSolutionAction(task: Task) : String {
+  private fun getPeekSolutionAction(task: Task): String {
     val course = task.course
     if (course is HyperskillCourse && !course.isTaskInProject(task)) {
       return HSPeekSolutionAction.ACTION_ID
@@ -120,14 +113,14 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     return CompareWithAnswerAction.ACTION_ID
   }
 
-  private class ShowFullOutputAction(private val project: Project, private val text: String): DumbAwareAction(null) {
+  private class ShowFullOutputAction(private val project: Project, private val text: String) : DumbAwareAction(null) {
     override fun actionPerformed(e: AnActionEvent) {
       CheckDetailsView.getInstance(project).showOutput(text)
       EduCounterUsageCollector.fullOutputShown()
     }
   }
 
-  class SwitchTaskTabAction(private val project: Project, private val index: Int): DumbAwareAction(null) {
+  class SwitchTaskTabAction(private val project: Project, private val index: Int) : DumbAwareAction(null) {
     override fun actionPerformed(e: AnActionEvent) {
       val tab = selectTab(project, index)
       if (tab != null && index == 1) {
@@ -138,15 +131,14 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
 
   companion object {
     fun selectTab(project: Project, index: Int): Content? {
-      val window = ToolWindowManager.getInstance(project).getToolWindow(
-        TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
+      val window = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
       val tab = window.contentManager.getContent(index) ?: return null
       window.contentManager.setSelectedContent(tab)
       return tab
     }
   }
 
-  private class CompareOutputsAction(private val project: Project, private val diff: CheckResultDiff): DumbAwareAction(null) {
+  private class CompareOutputsAction(private val project: Project, private val diff: CheckResultDiff) : DumbAwareAction(null) {
     override fun actionPerformed(e: AnActionEvent) {
       val expected = DiffContentFactory.getInstance().create(diff.expected)
       val actual = DiffContentFactory.getInstance().create(diff.actual)

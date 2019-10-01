@@ -15,7 +15,7 @@ import javax.swing.event.HyperlinkListener
 
 class AdditionalTabPanel(project: Project) : JPanel() {
 
-  private val textPane: JTextPane = com.jetbrains.edu.learning.taskDescription.ui.createTextPane()
+  private val textPane: JTextPane = createTextPane()
 
   init {
     val scrollPane = JBScrollPane(textPane)

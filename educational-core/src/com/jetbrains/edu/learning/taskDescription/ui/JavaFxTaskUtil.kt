@@ -45,35 +45,32 @@ fun Task.createScene(): Scene? {
 
 fun ChoiceTask.createScene(): Scene {
   val group = Group()
-  val scene = Scene(group, com.jetbrains.edu.learning.taskDescription.ui.getSceneBackground())
+  val scene = Scene(group, getSceneBackground())
 
   val vBox = VBox()
   vBox.spacing = JBUI.scale(10).toDouble()
-  vBox.padding = Insets(com.jetbrains.edu.learning.taskDescription.ui.TOP_INSET, com.jetbrains.edu.learning.taskDescription.ui.RIGHT_INSET,
-                        com.jetbrains.edu.learning.taskDescription.ui.BOTTOM_INSET,
-                        com.jetbrains.edu.learning.taskDescription.ui.LEFT_INSET)
+  vBox.padding = Insets(TOP_INSET, RIGHT_INSET, BOTTOM_INSET, LEFT_INSET)
   if (this.isMultipleChoice) {
-    val text = com.jetbrains.edu.learning.taskDescription.ui.createLabel(
-      com.jetbrains.edu.learning.taskDescription.ui.MULTIPLE_CHOICE_LABEL)
+    val text = createLabel(MULTIPLE_CHOICE_LABEL)
 
     vBox.children.add(text)
     for ((index, option) in this.choiceOptions.withIndex()) {
-      val checkBox = com.jetbrains.edu.learning.taskDescription.ui.createCheckbox(option.text, index, this)
+      val checkBox = createCheckbox(option.text, index, this)
       vBox.children.add(checkBox)
     }
   }
   else {
     val toggleGroup = ToggleGroup()
-    val text = com.jetbrains.edu.learning.taskDescription.ui.createLabel(com.jetbrains.edu.learning.taskDescription.ui.SINGLE_CHOICE_LABEL)
+    val text = createLabel(SINGLE_CHOICE_LABEL)
     vBox.children.add(text)
     for ((index, option) in this.choiceOptions.withIndex()) {
-      val radioButton = com.jetbrains.edu.learning.taskDescription.ui.createRadioButton(option.text, index, toggleGroup, this)
+      val radioButton = createRadioButton(option.text, index, toggleGroup, this)
       vBox.children.add(radioButton)
     }
   }
   group.children.add(vBox)
 
-  LafManager.getInstance().addLafManagerListener(com.jetbrains.edu.learning.taskDescription.ui.StudyLafManagerListener(scene))
+  LafManager.getInstance().addLafManagerListener(StudyLafManagerListener(scene))
   return scene
 }
 
@@ -90,7 +87,7 @@ private fun createSelectionListener(task: ChoiceTask, index: Int): (ObservableVa
 
 private fun createLabel(text: String): Label {
   val textLabel = Label(text)
-  com.jetbrains.edu.learning.taskDescription.ui.setUpLabelStyle(textLabel)
+  setUpLabelStyle(textLabel)
   return textLabel
 }
 
@@ -98,8 +95,8 @@ private fun createCheckbox(variant: String, index: Int, task: ChoiceTask): Check
   val checkBox = CheckBox(variant)
   checkBox.isMnemonicParsing = false
   checkBox.isSelected = task.selectedVariants.contains(index)
-  checkBox.selectedProperty().addListener(com.jetbrains.edu.learning.taskDescription.ui.createSelectionListener(task, index))
-  com.jetbrains.edu.learning.taskDescription.ui.setUpButtonStyle(checkBox)
+  checkBox.selectedProperty().addListener(createSelectionListener(task, index))
+  setUpButtonStyle(checkBox)
   return checkBox
 }
 
@@ -108,8 +105,8 @@ private fun createRadioButton(variant: String, index: Int, toggleGroup: ToggleGr
   val radioButton = RadioButton(variant)
   radioButton.toggleGroup = toggleGroup
   radioButton.isSelected = isSelected
-  radioButton.selectedProperty().addListener(com.jetbrains.edu.learning.taskDescription.ui.createSelectionListener(task, index))
-  com.jetbrains.edu.learning.taskDescription.ui.setUpButtonStyle(radioButton)
+  radioButton.selectedProperty().addListener(createSelectionListener(task, index))
+  setUpButtonStyle(radioButton)
   return radioButton
 }
 
@@ -121,7 +118,7 @@ private fun getSceneBackground(): Color {
 
 private fun setUpLabelStyle(node: Label) {
   node.stylesheets.add(StyleManager().baseStylesheet)
-  node.font = Font(StyleManager().bodyFont, com.jetbrains.edu.learning.taskDescription.ui.getFontSize())
+  node.font = Font(StyleManager().bodyFont, getFontSize())
   val labelForeground = UIUtil.getLabelForeground()
   node.textFill = Color.rgb(labelForeground.red, labelForeground.green, labelForeground.blue)
 }
@@ -130,8 +127,8 @@ private fun getFontSize() = (EditorColorsManager.getInstance().globalScheme.edit
 
 private fun setUpButtonStyle(button: ButtonBase) {
   button.isWrapText = true
-  button.font = Font.font(com.jetbrains.edu.learning.taskDescription.ui.getFontSize())
-  com.jetbrains.edu.learning.taskDescription.ui.setButtonLaf(button)
+  button.font = Font.font(getFontSize())
+  setButtonLaf(button)
 }
 
 fun Scene.updateLaf() {
@@ -139,23 +136,23 @@ fun Scene.updateLaf() {
     val panelBackground = UIUtil.getPanelBackground()
     val root = this.root
     this.fill = Color.rgb(panelBackground.red, panelBackground.green, panelBackground.blue)
-    for (node in com.jetbrains.edu.learning.taskDescription.ui.getAllNodes(root)) {
-      (node as? ButtonBase)?.let { com.jetbrains.edu.learning.taskDescription.ui.setButtonLaf(it) }
-      (node as? Label)?.let { com.jetbrains.edu.learning.taskDescription.ui.setUpLabelStyle(it) }
+    for (node in getAllNodes(root)) {
+      (node as? ButtonBase)?.let { setButtonLaf(it) }
+      (node as? Label)?.let { setUpLabelStyle(it) }
     }
   }
 }
 
 fun getAllNodes(root: Parent): ArrayList<Node> {
   val nodes = ArrayList<Node>()
-  com.jetbrains.edu.learning.taskDescription.ui.addAllDescendants(root, nodes)
+  addAllDescendants(root, nodes)
   return nodes
 }
 
 private fun addAllDescendants(parent: Parent, nodes: ArrayList<Node>) {
   for (node in parent.childrenUnmodifiable) {
     nodes.add(node)
-    (node as? Parent)?.let { com.jetbrains.edu.learning.taskDescription.ui.addAllDescendants(it, nodes) }
+    (node as? Parent)?.let { addAllDescendants(it, nodes) }
   }
 }
 
@@ -165,11 +162,11 @@ fun setButtonLaf(button: ButtonBase) {
 }
 
 fun htmlWithResources(project: Project, content: String): String {
-  val templateText = com.jetbrains.edu.learning.taskDescription.ui.loadText("/style/template.html.ft")
+  val templateText = loadText("/style/template.html.ft")
   val styleManager = StyleManager()
 
   val textWithResources = StrSubstitutor(styleManager.resources(content)).replace(templateText) ?: "Cannot load task text"
-  return com.jetbrains.edu.learning.taskDescription.ui.absolutizeImgPaths(project, textWithResources)
+  return absolutizeImgPaths(project, textWithResources)
 }
 
 fun loadText(filePath: String): String? {

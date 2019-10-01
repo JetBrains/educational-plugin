@@ -9,6 +9,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
+import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import kotlinx.css.CSSBuilder
 import kotlinx.css.body
@@ -18,7 +19,7 @@ import javax.swing.*
 
 class CheckMessagePanel private constructor(): JPanel() {
 
-  private val messagePane: JTextPane = com.jetbrains.edu.learning.taskDescription.ui.createTextPane().apply {
+  private val messagePane: JTextPane = createTextPane().apply {
     border = JBUI.Borders.empty()
     addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
   }

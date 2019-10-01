@@ -75,7 +75,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
       content
     }
     else {
-      com.jetbrains.edu.learning.taskDescription.ui.htmlWithResources(myProject, content)
+      htmlWithResources(myProject, content)
     }
     Platform.runLater {
       myEngine.loadContent(htmlText)
@@ -97,16 +97,13 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
     if (doc != null) {
       val nodeList = doc.getElementsByTagName("a")
       for (i in 0 until nodeList.length) {
-        (nodeList.item(i) as EventTarget).addEventListener(
-          EVENT_TYPE_CLICK, listener, false)
+        (nodeList.item(i) as EventTarget).addEventListener(EVENT_TYPE_CLICK, listener, false)
       }
       // listener is added only for collapsed hints so as not to have stats for educator
       // in educator projects expanded is default state for hints
-      val hints = (doc as DocumentImpl).getElementsByClassName(
-        JavaFxToolWindow.HINT_HEADER)
+      val hints = (doc as DocumentImpl).getElementsByClassName(JavaFxToolWindow.HINT_HEADER)
       for (i in 0 until hints.length) {
-        (hints.item(i) as EventTarget).addEventListener(
-          EVENT_TYPE_CLICK, listener, false)
+        (hints.item(i) as EventTarget).addEventListener(EVENT_TYPE_CLICK, listener, false)
       }
     }
   }
@@ -149,10 +146,8 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
               NavigationUtils.navigateToTask(myProject, sectionName, lessonName, taskName)
             }
             else {
-              if (hrefAttribute.startsWith(
-                  TaskDescriptionToolWindow.PSI_ELEMENT_PROTOCOL)) {
-                TaskDescriptionToolWindow.navigateToPsiElement(
-                  myProject, hrefAttribute)
+              if (hrefAttribute.startsWith(TaskDescriptionToolWindow.PSI_ELEMENT_PROTOCOL)) {
+                TaskDescriptionToolWindow.navigateToPsiElement(myProject, hrefAttribute)
               }
               else {
                 EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)
@@ -207,7 +202,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
 
     @TestOnly
     fun processContent(content: String, project: Project): String {
-      return com.jetbrains.edu.learning.taskDescription.ui.htmlWithResources(project, content)
+      return htmlWithResources(project, content)
     }
   }
 }

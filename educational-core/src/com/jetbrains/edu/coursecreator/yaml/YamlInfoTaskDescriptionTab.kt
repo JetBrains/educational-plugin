@@ -9,10 +9,7 @@ import com.intellij.ui.content.ContentManager
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.taskDescription.ui.BrowserWindow
-import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskDescription.ui.*
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.resourceUrl
@@ -25,7 +22,7 @@ private const val NAME = "YAML Help"
 class YamlInfoTaskDescriptionTab(val project: Project) : JPanel() {
 
   init {
-    var templateText = com.jetbrains.edu.learning.taskDescription.ui.loadText("/yaml-tab/yaml-tab-template.html") ?: "Cannot load yaml documentation"
+    var templateText = loadText("/yaml-tab/yaml-tab-template.html") ?: "Cannot load yaml documentation"
     val styleManager = StyleManager()
 
     templateText = StrSubstitutor(styleManager.resources(templateText)).replace(templateText)
@@ -40,7 +37,7 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel() {
       browserWindow.panel
     }
     else {
-      val textPane = com.jetbrains.edu.learning.taskDescription.ui.createTextPane()
+      val textPane = createTextPane()
       textPane.text = templateText
       val scrollPane = JBScrollPane(textPane)
       scrollPane.border = JBUI.Borders.empty(20, 0, 0, 10)
@@ -68,8 +65,7 @@ fun addTabToTaskDescription(project: Project) {
 
 private val Project.taskDescriptionTWContentManager: ContentManager?
   get() {
-    val toolWindow = ToolWindowManager.getInstance(this).getToolWindow(
-      TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
+    val toolWindow = ToolWindowManager.getInstance(this).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
     return toolWindow.contentManager
   }
 

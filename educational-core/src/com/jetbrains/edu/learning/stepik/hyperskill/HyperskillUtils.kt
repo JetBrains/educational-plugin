@@ -52,7 +52,7 @@ fun getTopPanelForProblem(project: Project, course: HyperskillCourse, task: Task
   val panel = JPanel(BorderLayout())
   panel.background = UIUtil.getListBackground()
   panel.add(LightColoredActionLink("Return to project \"${course.hyperskillProject.title}\"",
-                                                                                 OpenProjectAction(project, course), AllIcons.Actions.Back), BorderLayout.WEST)
+                                   OpenProjectAction(project, course), AllIcons.Actions.Back), BorderLayout.WEST)
   panel.border = JBUI.Borders.empty(0, 0, 10, 0)
   return panel
 }

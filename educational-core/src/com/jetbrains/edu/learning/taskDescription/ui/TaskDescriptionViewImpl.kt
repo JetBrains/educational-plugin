@@ -140,8 +140,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
     panel.add(bottomPanel, BorderLayout.SOUTH)
     UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
-    project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
-                                           EduFileEditorManagerListener(project))
+    project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
     val course = StudyTaskManager.getInstance(project).course
     val displayNamePrefix = if (course is HyperskillCourse) "Stage" else "Task"
     val content = ContentFactory.SERVICE.getInstance().createContent(panel, "$displayNamePrefix Description", false)

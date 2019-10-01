@@ -96,8 +96,7 @@ abstract class TaskDescriptionToolWindow {
 
     @JvmStatic
     fun navigateToPsiElement(project: Project, url: String) {
-      val qualifiedName = url.replace(
-        PSI_ELEMENT_PROTOCOL, "")
+      val qualifiedName = url.replace(PSI_ELEMENT_PROTOCOL, "")
 
       val application = ApplicationManager.getApplication()
       application.invokeLater {

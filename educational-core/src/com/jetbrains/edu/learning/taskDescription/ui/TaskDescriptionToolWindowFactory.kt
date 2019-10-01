@@ -37,8 +37,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     if (!EduUtils.isEduProject(project)) {
       return
     }
-    val taskDescriptionToolWindow = TaskDescriptionView.getInstance(
-      project)
+    val taskDescriptionToolWindow = TaskDescriptionView.getInstance(project)
     (toolWindow as ToolWindowImpl).component.putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
     toolWindow.initTitleActions()
     taskDescriptionToolWindow.init(toolWindow)
@@ -70,8 +69,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
         val fontFactor = FontSize.values()[fontSizeSlider.value.toReverseIndex()]
         PropertiesComponent.getInstance().setValue(StyleManager.FONT_FACTOR_PROPERTY, fontFactor.size, FontPreferences.DEFAULT_FONT_SIZE)
         if (!(EduUtils.getCurrentTask(project) is VideoTask && EduSettings.getInstance().shouldUseJavaFx())) {
-          TaskDescriptionView.updateAllTabs(project,
-                                            taskDescription)
+          TaskDescriptionView.updateAllTabs(project, taskDescription)
         }
       })
       val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(fontSizeSlider, fontSizeSlider).createPopup()
