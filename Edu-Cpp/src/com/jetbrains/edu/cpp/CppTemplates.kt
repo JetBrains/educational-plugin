@@ -1,10 +1,36 @@
 package com.jetbrains.edu.cpp
 
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
+import com.jetbrains.cidr.cpp.cmake.projectWizard.CLionProjectWizardUtils
+import com.jetbrains.cidr.cpp.toolchains.CMake
+import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
+
+private val cMakeMinimumRequired: String by lazy {
+  val cMakeVersionExtractor = {
+    CLionProjectWizardUtils.getCMakeMinimumRequiredLine(CMake.readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
+  }
+
+  val progressManager = ProgressManager.getInstance()
+
+  if (progressManager.hasProgressIndicator()) {
+    progressManager.runProcess(cMakeVersionExtractor, null)
+  }
+  else {
+    progressManager.run(object : Task.WithResult<String, Nothing>(null, "Getting CMake Minimum Required Version", false) {
+      override fun compute(indicator: ProgressIndicator) = cMakeVersionExtractor()
+    })
+  }
+}
+private const val GTEST_VERSION = "release-1.8.1"
+
+const val TEST_FRAMEWORK_DIR = "test-framework"
 
 /** Provides CMake file template information, where:
  * [mainCMakeList] - configures the course project, e.g. find all tasks `CMakeList.txt` files and adds them.
@@ -18,16 +44,16 @@ data class CppTemplates(
 )
 
 data class TemplateInfo(private val templateName: String, val generatedFileName: String) {
-  fun getText(projectName: String = "", cppStandardLine: String = ""): String {
-    val templateVariables = mapOf(
-      "CMAKE_MINIMUM_REQUIRED_LINE" to cMakeMinimumRequired,
-      "GTEST_VERSION" to CppConfigurator.GTEST_VERSION,
-      "TEST_FRAMEWORK_DIR" to CppConfigurator.TEST_FRAMEWORK_DIR,
-      EduNames.PROJECT_NAME to projectName,
-      "CPP_STANDARD" to cppStandardLine
-    )
-    return GeneratorUtils.getInternalTemplateText(templateName, templateVariables)
-  }
+  private fun getTemplateVariables(projectName: String, cppStandardLine: String) = mapOf(
+    "CMAKE_MINIMUM_REQUIRED_LINE" to cMakeMinimumRequired,
+    "GTEST_VERSION" to GTEST_VERSION,
+    "TEST_FRAMEWORK_DIR" to TEST_FRAMEWORK_DIR,
+    EduNames.PROJECT_NAME to projectName,
+    "CPP_STANDARD" to cppStandardLine
+  )
+
+  fun getText(projectName: String = "", cppStandardLine: String = ""): String =
+    GeneratorUtils.getInternalTemplateText(templateName, getTemplateVariables(projectName, cppStandardLine))
 }
 
 fun getCppTemplates(course: Course): CppTemplates =

@@ -54,9 +54,6 @@ class CppConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
     if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else "Name should contain only latin letters, digits, spaces or '_' symbols."
 
   companion object {
-    const val GTEST_VERSION = "release-1.8.1"
-    const val TEST_FRAMEWORK_DIR = "test-framework"
-
     const val TASK_CPP = "task.cpp"
     const val TEST_CPP = "test.cpp"
     private const val MOCK_CPP = "mock.cpp"
