@@ -9,27 +9,21 @@ import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.Nullable;
 
-import static com.jetbrains.edu.learning.handlers.HandlersUtils.isRenameAndMoveForbidden;
+import static com.jetbrains.edu.learning.handlers.HandlersUtils.isMoveForbidden;
 
 public class EduMoveDelegate extends MoveHandlerDelegate{
   @Override
   public boolean canMove(DataContext dataContext) {
-    return isRenameAndMoveForbidden(dataContext);
+    return isMoveForbidden(dataContext);
   }
 
   @Override
   public boolean canMove(PsiElement[] elements, @Nullable PsiElement targetContainer) {
     if (elements.length == 1) {
       Project project = elements[0].getProject();
-      Course course = StudyTaskManager.getInstance(project).getCourse();
-      if (course == null || !course.isStudy()) {
-        return false;
-      }
-      return isRenameAndMoveForbidden(project, course, elements[0]);
+      return isMoveForbidden(project, elements[0], targetContainer);
     }
     return false;
   }

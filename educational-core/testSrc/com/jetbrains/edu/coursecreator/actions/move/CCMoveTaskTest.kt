@@ -18,7 +18,7 @@ class CCMoveTaskTest : MoveTestBase() {
     val sourceDir = findPsiDirectory("lesson1/task1")
     val targetDir = findPsiDirectory("lesson2")
 
-    doMoveAction(sourceDir, targetDir)
+    doMoveAction(course, sourceDir, targetDir)
 
     val lesson1 = course.getLesson("lesson1")!!
     val lesson2 = course.getLesson("lesson2")!!
@@ -45,7 +45,7 @@ class CCMoveTaskTest : MoveTestBase() {
     val sourceDir = findPsiDirectory("lesson1/$customTaskName")
     val targetDir = findPsiDirectory("lesson2")
 
-    doMoveAction(sourceDir, targetDir)
+    doMoveAction(course, sourceDir, targetDir)
 
     val lesson1 = course.getLesson("lesson1")!!
     val lesson2 = course.getLesson("lesson2")!!
@@ -71,7 +71,7 @@ class CCMoveTaskTest : MoveTestBase() {
     val sourceDir = findPsiDirectory("lesson1/task2")
     val targetDir = findPsiDirectory("lesson1/task3")
 
-    doMoveAction(sourceDir, targetDir, delta = 1)
+    doMoveAction(course, sourceDir, targetDir, delta = 1)
 
     val lesson1 = course.getLesson("lesson1")!!
     assertEquals(4, lesson1.taskList.size)
@@ -94,7 +94,7 @@ class CCMoveTaskTest : MoveTestBase() {
     val sourceDir = findPsiDirectory("lesson1/task1")
     val targetDir = findPsiDirectory("lesson1/task3")
 
-    doMoveAction(sourceDir, targetDir, delta = 0)
+    doMoveAction(course, sourceDir, targetDir, delta = 0)
 
     val lesson1 = course.getLesson("lesson1")!!
     assertEquals(4, lesson1.taskList.size)
@@ -119,7 +119,7 @@ class CCMoveTaskTest : MoveTestBase() {
     val sourceDir = findPsiDirectory("lesson1/task1")
     val targetDir = findPsiDirectory("lesson2/task3")
 
-    doMoveAction(sourceDir, targetDir, delta = 0)
+    doMoveAction(course, sourceDir, targetDir, delta = 0)
 
     val lesson1 = course.getLesson("lesson1")!!
     val lesson2 = course.getLesson("lesson2")!!
@@ -147,7 +147,7 @@ class CCMoveTaskTest : MoveTestBase() {
     val sourceDir = findPsiDirectory("lesson1/task1")
     val targetDir = findPsiDirectory("lesson2/task3")
 
-    doMoveAction(sourceDir, targetDir, delta = 1)
+    doMoveAction(course, sourceDir, targetDir, delta = 1)
 
     val lesson1 = course.getLesson("lesson1")!!
     val lesson2 = course.getLesson("lesson2")!!

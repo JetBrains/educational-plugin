@@ -2,6 +2,7 @@ package com.jetbrains.edu.java
 
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -9,22 +10,24 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.handlers.EduMoveDelegate
 import com.jetbrains.edu.learning.handlers.EduRenameHandler
-import com.jetbrains.edu.learning.handlers.isRenameAndMoveForbidden
+import com.jetbrains.edu.learning.handlers.isMoveForbidden
+import com.jetbrains.edu.learning.handlers.isRenameForbidden
 
 class JMoveRenameHandler : EduMoveDelegate(), EduRenameHandler {
-  override fun canMove(dataContext: DataContext?): Boolean {
-    return isAvailable(CommonDataKeys.PROJECT.getData(dataContext!!), CommonDataKeys.PSI_ELEMENT.getData(dataContext))
+  override fun canMove(dataContext: DataContext): Boolean {
+    return isMoveAvailable(CommonDataKeys.PROJECT.getData(dataContext),
+                           CommonDataKeys.PSI_ELEMENT.getData(dataContext),
+                           LangDataKeys.TARGET_PSI_ELEMENT.getData(dataContext))
   }
 
   override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?): Boolean {
-    return if (elements.size == 1) isAvailable(elements[0].project, elements[0]) else false
+    return if (elements.size == 1) isMoveAvailable(elements[0].project, elements[0], targetContainer) else false
   }
 
   override fun isAvailableOnDataContext(dataContext: DataContext): Boolean {
-    return isAvailable(CommonDataKeys.PROJECT.getData(dataContext), CommonDataKeys.PSI_ELEMENT.getData(dataContext))
+    return isRenameAvailable(CommonDataKeys.PROJECT.getData(dataContext), CommonDataKeys.PSI_ELEMENT.getData(dataContext))
   }
 
   override fun isRenaming(dataContext: DataContext): Boolean {
@@ -39,12 +42,20 @@ class JMoveRenameHandler : EduMoveDelegate(), EduRenameHandler {
     invoke(project, null, null, dataContext)
   }
 
-  private fun isAvailable(project: Project?, element: PsiElement?): Boolean {
+  private fun isRenameAvailable(project: Project?, element: PsiElement?): Boolean {
+    return isRefactoringAvailable(project, element, ::isRenameForbidden)
+  }
+
+  private fun isMoveAvailable(project: Project?, source: PsiElement?, target: PsiElement?): Boolean {
+    return isRefactoringAvailable(project, source) { p, element ->
+      isMoveForbidden(p, element, target)
+    }
+  }
+
+  private fun isRefactoringAvailable(project: Project?, element: PsiElement?, isAvailable: (Project, PsiElement) -> Boolean): Boolean {
     if (element == null || project == null) return false
-    if (!EduUtils.isStudentProject(project)) return false
-    val course = StudyTaskManager.getInstance(project).course ?: error("Project ${project.name} should have course instance")
     val adjustedElement = adjustElement(element) ?: return false
-    return isRenameAndMoveForbidden(project, course, adjustedElement)
+    return isAvailable(project, adjustedElement)
   }
 
   private fun adjustElement(element: PsiElement): PsiElement? {

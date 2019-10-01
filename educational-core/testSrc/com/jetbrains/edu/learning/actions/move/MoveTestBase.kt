@@ -4,22 +4,32 @@ import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.actions.MoveAction
 import com.intellij.testFramework.MapDataContext
 import com.jetbrains.edu.coursecreator.handlers.MoveStudyItemUI
 import com.jetbrains.edu.coursecreator.handlers.withMockMoveStudyItemUI
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.courseFormat.Course
 
 abstract class MoveTestBase : EduActionTestCase() {
 
-  protected fun doMoveAction(sourceDir: PsiDirectory, targetDir: PsiDirectory, delta: Int? = null) {
-    val dataContext = dataContext(sourceDir).withTarget(targetDir)
+  protected fun doMoveAction(course: Course, source: PsiElement, targetDir: PsiDirectory, delta: Int? = null) {
+    val dataContext = dataContext(source).withTarget(targetDir)
     withMockMoveStudyItemUI(object : MoveStudyItemUI {
-      override fun showDialog(project: Project, itemName: String, thresholdName: String): Int = delta ?: error("Pass `delta` value explicitly")
+      override fun showDialog(project: Project, itemName: String, thresholdName: String): Int =
+        delta ?: error("Pass `delta` value explicitly")
     }) {
-      testAction(dataContext, MoveAction())
+      withVirtualFileListener(course) {
+        testAction(dataContext, MoveAction())
+      }
     }
+  }
+
+  protected fun findPsiFile(path: String): PsiFile {
+    val file = findFile(path)
+    return PsiManager.getInstance(project).findFile(file) ?: error("Failed to find psi file for `$file` file")
   }
 
   protected fun findPsiDirectory(path: String): PsiDirectory {

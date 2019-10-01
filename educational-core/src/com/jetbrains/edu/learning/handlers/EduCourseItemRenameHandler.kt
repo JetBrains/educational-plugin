@@ -12,7 +12,7 @@ import com.intellij.psi.PsiFile
  */
 class EduCourseItemRenameHandler : EduRenameHandler {
   override fun isAvailableOnDataContext(dataContext: DataContext): Boolean {
-    return isRenameAndMoveForbidden(dataContext)
+    return isRenameForbidden(dataContext)
   }
 
   override fun isRenaming(dataContext: DataContext): Boolean {

@@ -15,7 +15,7 @@ class CCMoveSectionTest : MoveTestBase() {
     val sourceDir = findPsiDirectory("section2")
     val targetDir = findPsiDirectory("lesson1")
 
-    doMoveAction(sourceDir, targetDir, delta = 0)
+    doMoveAction(course, sourceDir, targetDir, delta = 0)
 
     assertEquals(2, course.items.size)
     assertEquals(1, course.getSection("section2")!!.index)
@@ -33,7 +33,7 @@ class CCMoveSectionTest : MoveTestBase() {
     val sourceDir = findPsiDirectory("section1")
     val targetDir = findPsiDirectory("lesson1")
 
-    doMoveAction(sourceDir, targetDir, delta = 1)
+    doMoveAction(course, sourceDir, targetDir, delta = 1)
 
     assertEquals(3, course.items.size)
     assertEquals(1, course.getLesson("lesson1")!!.index)
@@ -50,7 +50,7 @@ class CCMoveSectionTest : MoveTestBase() {
     val sourceDir = findPsiDirectory("section3")
     val targetDir = findPsiDirectory("section2")
 
-    doMoveAction(sourceDir, targetDir, delta = 0)
+    doMoveAction(course, sourceDir, targetDir, delta = 0)
 
     assertEquals(3, course.items.size)
     assertEquals(1, course.getLesson("lesson1")!!.index)
@@ -68,7 +68,7 @@ class CCMoveSectionTest : MoveTestBase() {
     val sourceDir = findPsiDirectory("section2")
     val targetDir = findPsiDirectory("section3")
 
-    doMoveAction(sourceDir, targetDir, delta = 1)
+    doMoveAction(course, sourceDir, targetDir, delta = 1)
 
     assertEquals(4, course.items.size)
     assertEquals(1, course.getLesson("lesson1")!!.index)
