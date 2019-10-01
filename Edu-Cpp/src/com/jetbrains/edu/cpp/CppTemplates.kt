@@ -12,6 +12,9 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 
+private const val GTEST_VERSION = "release-1.8.1"
+const val TEST_FRAMEWORK_DIR = "test-framework"
+
 private val cMakeMinimumRequired: String by lazy {
   val cMakeVersionExtractor = {
     CLionProjectWizardUtils.getCMakeMinimumRequiredLine(CMake.readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
@@ -28,9 +31,6 @@ private val cMakeMinimumRequired: String by lazy {
     })
   }
 }
-private const val GTEST_VERSION = "release-1.8.1"
-
-const val TEST_FRAMEWORK_DIR = "test-framework"
 
 /** Provides CMake file template information, where:
  * [mainCMakeList] - configures the course project, e.g. find all tasks `CMakeList.txt` files and adds them.
