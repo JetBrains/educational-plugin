@@ -1,8 +1,10 @@
 package com.jetbrains.edu.learning.handlers
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.*
 import com.jetbrains.edu.learning.FileInfo
+import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.fileInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -66,5 +68,78 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
     YamlFormatSynchronizer.saveItem(task)
   }
 
+  override fun beforeFileMovement(event: VirtualFileMoveEvent) {
+    val (task, oldPath) = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return
+    val (oldParentTask, oldParentPath) = event.oldParent.directoryFileInfo(project) ?: return
+    val (newParentTask, newParentPath) = event.newParent.directoryFileInfo(project) ?: return
+
+    if (oldParentTask != newParentTask) {
+      LOG.warn("Unsupported case. `EduMoveDelegate` should forbid file moving between different tasks")
+      return
+    }
+
+    val affectedFiles = mutableListOf<TaskFile>()
+    val oldPaths = task.taskFiles.keys.filter { it.startsWith(oldPath) }
+
+    for (path in oldPaths) {
+      val taskFile = task.taskFiles.remove(path) ?: continue
+      PlaceholderPainter.hidePlaceholders(taskFile)
+      affectedFiles += taskFile
+    }
+
+    for (taskFile in affectedFiles) {
+      var newPath = taskFile.name.removePrefix("$oldParentPath/")
+      if (newParentPath.isNotEmpty()) {
+        newPath = "$newParentPath/$newPath"
+      }
+
+      taskFile.name = newPath
+      task.addTaskFile(taskFile)
+    }
+
+    YamlFormatSynchronizer.saveItem(task)
+  }
+
+  /**
+   * Handles move events for non course files like drag & drop action produces
+   */
+  override fun fileMoved(event: VirtualFileMoveEvent) {
+    val movedFile = event.file
+    val fileInfo = movedFile.fileInfo(project) as? FileInfo.FileInTask ?: return
+    val directoryInfo = event.oldParent.directoryFileInfo(project)
+    // not null directoryInfo means that we've already processed this file in `beforeFileMovement`
+    if (directoryInfo != null) return
+
+    if (movedFile.isDirectory) {
+      // We need to collect all children files manually
+      // because the platform produces move event only for root file
+      VfsUtil.visitChildrenRecursively(movedFile, object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
+        override fun visitFile(file: VirtualFile): Boolean {
+          if (!file.isDirectory) {
+            val relativePath = VfsUtil.findRelativePath(movedFile, file, VfsUtilCore.VFS_SEPARATOR_CHAR)
+            val newFileInfo = fileInfo.copy(pathInTask = "${fileInfo.pathInTask}${VfsUtilCore.VFS_SEPARATOR_CHAR}$relativePath")
+            fileInTaskCreated(newFileInfo, file)
+          }
+          return true
+        }
+      })
+    } else {
+      fileInTaskCreated(fileInfo, movedFile)
+    }
+  }
+
+  private fun VirtualFile.directoryFileInfo(project: Project): FileInfo.FileInTask? {
+    val info = fileInfo(project) ?: return null
+    return when (info) {
+      is FileInfo.TaskDirectory -> FileInfo.FileInTask(info.task, "")
+      is FileInfo.FileInTask -> FileInfo.FileInTask(info.task, info.pathInTask)
+      else -> null
+    }
+  }
+
   protected open fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {}
+
+  companion object {
+    private val LOG: Logger = Logger.getInstance(EduVirtualFileListener::class.java)
+  }
 }
