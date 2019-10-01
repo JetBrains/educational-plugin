@@ -53,12 +53,12 @@ public class CourseFormatTest extends EduTestCase {
 
   public void testDescription() throws IOException {
     EduTask eduTask = getFirstEduTask();
-    assertEquals("First task description", EduUtils.getTaskTextFromTask(eduTask.getTaskDir(getProject()), eduTask));
+    assertEquals("First task description", EduUtils.getTaskTextFromTask(getProject(), eduTask));
   }
 
   public void testDescriptionWithPlaceholderHints() throws IOException {
     EduTask eduTask = getFirstEduTask();
-    assertEquals("First task description\n<div class='hint'>my first hint</div>\n\n", EduUtils.getTaskTextFromTask(eduTask.getTaskDir(getProject()), eduTask));
+    assertEquals("First task description\n<div class='hint'>my first hint</div>\n\n", EduUtils.getTaskTextFromTask(getProject(), eduTask));
   }
 
   public void testFeedbackLinks() throws IOException {

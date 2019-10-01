@@ -246,10 +246,16 @@ public class EduUtils {
   }
 
   @Nullable
-  public static String getTaskTextFromTask(@Nullable final VirtualFile taskDirectory, @Nullable final Task task) {
+  public static String getTaskTextFromTask(@NotNull final Project project, @Nullable final Task task) {
     if (task == null || task.getLesson() == null) {
       return null;
     }
+    Lesson lesson = task.getLesson();
+    VirtualFile lessonDir = lesson.getDir(project);
+    if (lessonDir == null) {
+      return null;
+    }
+    VirtualFile taskDirectory = lesson instanceof FrameworkLesson ? lessonDir.findChild(task.getName()) : task.getDir(project);
     String textFromFile = getTaskTextByTaskName(task, taskDirectory);
     String text = textFromFile != null ? textFromFile: task.getTaskDescription();
     if (text == null) {
@@ -257,7 +263,7 @@ public class EduUtils {
       return null;
     }
     text = StringUtil.replace(text, "%IDE_NAME%", ApplicationNamesInfo.getInstance().getFullProductName());
-    if (task.getLesson() instanceof FrameworkLesson) {
+    if (lesson instanceof FrameworkLesson) {
       text = "<h2>" + task.getUIName() + " #" + task.getIndex() + ": " + task.getName() + "<h2/> " + text;
     }
     StringBuffer textBuffer = new StringBuffer(text);

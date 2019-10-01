@@ -42,7 +42,7 @@ class TaskDescriptionMarkdownTest : EduTestCase() {
 
   private fun doTest(descriptionText: String, expectedText: String) {
     val first = taskWithFile(descriptionText)
-    val actualText = EduUtils.getTaskTextFromTask(first.getTaskDir(project), first)
+    val actualText = EduUtils.getTaskTextFromTask(project, first)
 
     TestCase.assertEquals("Task description text mismatch. Expected: ${expectedText} Actual: ${actualText}",
                         expectedText, actualText)

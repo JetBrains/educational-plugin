@@ -83,7 +83,7 @@ abstract class TaskDescriptionToolWindow {
     @VisibleForTesting
     fun getTaskDescriptionWithCodeHighlighting(project: Project, task: Task?): String {
       if (task != null) {
-        val taskText = EduUtils.getTaskTextFromTask(task.getTaskDir(project), task)
+        val taskText = EduUtils.getTaskTextFromTask(project, task)
         if (taskText != null) {
           if (task is VideoTask) {
             return taskText

@@ -83,7 +83,7 @@ object YamlDeepLoader {
   }
 
   private fun StudyItem.loadRemoteInfo(project: Project) {
-    val itemDir = getDir(project) ?: error(noDirForItemMessage(name))
+    val itemDir = getConfigDir(project)
     val remoteConfigFile = itemDir.findChild(remoteConfigFileName)
     if (remoteConfigFile == null) {
       if (id > 0) {

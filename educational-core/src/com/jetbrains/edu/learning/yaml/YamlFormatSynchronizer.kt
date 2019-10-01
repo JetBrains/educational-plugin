@@ -224,7 +224,7 @@ object YamlFormatSynchronizer {
   }
 
   private fun StudyItem.saveConfigDocument(project: Project, configName: String, mapper: ObjectMapper) {
-    val dir = getDir(project) ?: error("Failed to save ${javaClass.simpleName} '$name' to config file: directory not found")
+    val dir = getConfigDir(project)
 
     val saveAction = Runnable {
       runWriteAction {
@@ -291,3 +291,12 @@ val StudyItem.remoteConfigFileName: String
     is Task -> REMOTE_TASK_CONFIG
     else -> error("Unknown StudyItem type: ${javaClass.simpleName}")
   }
+
+fun StudyItem.getConfigDir(project: Project): VirtualFile {
+  return if (this is Task && lesson is FrameworkLesson) {
+    lesson.getDir(project)?.findChild(name) ?: error("Config for '$name' task dir in framework lesson not found")
+  }
+  else {
+    getDir(project)
+  }
+}

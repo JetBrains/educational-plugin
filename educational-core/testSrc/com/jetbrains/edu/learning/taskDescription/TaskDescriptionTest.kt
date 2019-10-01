@@ -27,7 +27,7 @@ class TaskDescriptionTest : EduTestCase() {
   fun testIDEName() {
     createCourseWithDescription("This is %IDE_NAME%")
     val task = findTask(0, 0)
-    val taskDescription = EduUtils.getTaskTextFromTask(task.getTaskDir(project), task)
+    val taskDescription = EduUtils.getTaskTextFromTask(project, task)
     assertEquals("This is ${ApplicationNamesInfo.getInstance().fullProductName}", taskDescription!!.getBody())
   }
 
@@ -101,7 +101,7 @@ class TaskDescriptionTest : EduTestCase() {
     try {
       keymapManager.activeKeymap = keymapManager.getKeymap(keymapName)!!
       val task = findTask(0, 0)
-      val taskDescription = EduUtils.getTaskTextFromTask(task.getTaskDir(project), task)
+      val taskDescription = EduUtils.getTaskTextFromTask(project, task)
       assertEquals(taskTextWithShortcuts, taskDescription!!.getBody())
     }
     finally {
