@@ -74,7 +74,7 @@ class EduSingleFileEditor(
   }
 
   override fun selectNotify() {
-    super.selectNotify()
+    super<PsiAwareTextEditorImpl>.selectNotify()
     PlaceholderDependencyManager.updateDependentPlaceholders(myProject, taskFile.task)
   }
 
