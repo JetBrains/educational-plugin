@@ -1,8 +1,10 @@
-package com.jetbrains.edu.learning.actions
+package com.jetbrains.edu.learning.actions.navigate
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduTestDialog
+import com.jetbrains.edu.learning.actions.NextTaskAction
+import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course

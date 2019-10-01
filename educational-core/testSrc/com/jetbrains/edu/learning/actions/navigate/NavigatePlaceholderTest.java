@@ -1,7 +1,9 @@
-package com.jetbrains.edu.learning.actions;
+package com.jetbrains.edu.learning.actions.navigate;
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.jetbrains.edu.learning.EduTestCase;
+import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
+import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;

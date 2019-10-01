@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.actions.NavigationTestBase
+import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course

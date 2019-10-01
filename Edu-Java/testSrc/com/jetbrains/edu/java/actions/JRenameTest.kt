@@ -3,7 +3,7 @@ package com.jetbrains.edu.java.actions
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiJavaFile
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.actions.RenameTestBase
+import com.jetbrains.edu.learning.actions.rename.RenameTestBase
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
 class JRenameTest : RenameTestBase() {

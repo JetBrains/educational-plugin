@@ -1,8 +1,11 @@
-package com.jetbrains.edu.learning.actions
+package com.jetbrains.edu.learning.actions.navigate
 
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.actions.NextTaskAction
+import com.jetbrains.edu.learning.actions.PreviousTaskAction
+import com.jetbrains.edu.learning.actions.TaskNavigationAction
 import junit.framework.TestCase
 
 class NavigateTaskTest : EduTestCase() {

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.actions
+package com.jetbrains.edu.learning.actions.rename
 
 import com.intellij.openapi.ui.InputValidator
 import com.intellij.openapi.vfs.VirtualFile

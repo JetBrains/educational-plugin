@@ -1,10 +1,11 @@
-package com.jetbrains.edu.learning.actions
+package com.jetbrains.edu.learning.actions.refresh
 
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiDocumentManager
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.withTestDialog
 import java.io.IOException
 
