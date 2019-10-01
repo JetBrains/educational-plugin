@@ -792,6 +792,14 @@ public class EduUtils {
     return course.getSection(sectionDir.getName());
   }
 
+  public static boolean isSectionDirectory(@NotNull Project project, @NotNull VirtualFile file) {
+    Course course = StudyTaskManager.getInstance(project).getCourse();
+    if (course == null) {
+      return false;
+    }
+    return getSection(file, course) != null;
+  }
+
   public static void showNotification(@NotNull Project project, @NotNull String title, @Nullable AnAction action) {
     final Notification notification = new Notification(CCStepikConnector.PUSH_COURSE_GROUP_ID, title, "", NotificationType.INFORMATION);
     if (action != null) {

@@ -1,30 +1,20 @@
 package com.jetbrains.edu.coursecreator.handlers;
 
-import com.intellij.ide.IdeView;
 import com.intellij.ide.projectView.ProjectView;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.move.MoveCallback;
-import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
@@ -33,39 +23,17 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.List;
 
-public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
+public class CCTaskMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
 
   private static final Logger LOG = Logger.getInstance(CCTaskMoveHandlerDelegate.class);
-  @Override
-  public boolean canMove(DataContext dataContext) {
-    if (CommonDataKeys.PSI_FILE.getData(dataContext) != null) {
-      return false;
-    }
-    IdeView view = LangDataKeys.IDE_VIEW.getData(dataContext);
-    if (view == null) {
-      return false;
-    }
-    final PsiDirectory[] directories = view.getDirectories();
-    if (directories.length == 0 || directories.length > 1) {
-      return false;
-    }
 
-    final PsiDirectory sourceDirectory = directories[0];
-    return EduUtils.isTaskDirectory(sourceDirectory.getProject(), sourceDirectory.getVirtualFile());
+  public CCTaskMoveHandlerDelegate() {
+    super(EduNames.TASK);
   }
 
   @Override
-  public boolean canMove(PsiElement[] elements, @Nullable PsiElement targetContainer) {
-    if (elements.length > 0 && elements[0] instanceof PsiDirectory) {
-      PsiDirectory element = (PsiDirectory)elements[0];
-      return EduUtils.isTaskDirectory(element.getProject(), element.getVirtualFile());
-    }
-    return false;
-  }
-
-  @Override
-  public boolean isValidTarget(PsiElement psiElement, PsiElement[] sources) {
-    return true;
+  protected boolean isAvailable(@NotNull PsiDirectory directory) {
+    return EduUtils.isTaskDirectory(directory.getProject(), directory.getVirtualFile());
   }
 
   @Override
@@ -131,15 +99,6 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
     ProjectView.getInstance(project).refresh();
   }
 
-  protected int getDelta(@NotNull Project project, @NotNull StudyItem targetTask) {
-    final CCMoveStudyItemDialog dialog = new CCMoveStudyItemDialog(project, EduNames.TASK, targetTask.getName());
-    dialog.show();
-    if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
-      return -1;
-    }
-    return dialog.getIndexDelta();
-  }
-
   private void moveTask(@NotNull final PsiDirectory sourceDirectory,
                         @NotNull final Task taskToMove,
                         @Nullable Task targetTask,
@@ -177,14 +136,5 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
         }
       }
     });
-  }
-
-  @Override
-  public boolean tryToMove(PsiElement element,
-                           Project project,
-                           DataContext dataContext,
-                           @Nullable PsiReference reference,
-                           Editor editor) {
-    return CCUtils.isCourseCreator(project);
   }
 }
