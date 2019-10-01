@@ -63,9 +63,7 @@ abstract class TaskDescriptionToolWindow {
   protected abstract fun wrapHint(hintText: Element, displayedHintNumber: String): String
 
   fun setTaskText(project: Project, task: Task?) {
-    setText(
-      getTaskDescriptionWithCodeHighlighting(
-        project, task), task)
+    setText(getTaskDescriptionWithCodeHighlighting(project, task), task)
   }
 
   abstract fun setText(text: String, task: Task?)
