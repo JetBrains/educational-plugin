@@ -3,14 +3,13 @@ package com.jetbrains.edu.coursecreator.actions.stepik
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import junit.framework.TestCase
 
 class CCShowChangedFilesTest : EduActionTestCase() {
 
   fun `test course up to date`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -48,7 +47,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
   }
 
   fun `test course content changed`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -94,7 +93,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
   }
 
   fun `test course lesson moved`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson()
       lesson("lesson2")
       section()
@@ -113,7 +112,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
   }
 
   fun `test section renamed`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -138,7 +137,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
   }
 
   fun `test lesson added into section`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
         lesson {
           eduTask()
@@ -168,7 +167,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
   }
 
   fun `test lesson moved between sections`() {
-    val remoteCourse = course(courseMode = CCUtils.COURSE_MODE) {
+    val remoteCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
         lesson("lesson11")
         lesson("lesson12")
@@ -199,7 +198,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
   }
 
   fun `test task moved between lessons`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1")
         eduTask("task2")
@@ -227,7 +226,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
 
 
   fun `test task moved inside lesson`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1")
         eduTask("task2")

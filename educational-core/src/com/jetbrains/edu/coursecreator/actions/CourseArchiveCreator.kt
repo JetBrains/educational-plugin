@@ -143,11 +143,16 @@ class CourseArchiveCreator(
         val lessonDir = lesson.getLessonDir(project)
         if (lessonDir == null) return@visitLessons
         for (task in lesson.taskList) {
-          val taskDir = task.getTaskDir(project) ?: continue
-          convertToStudentTaskFiles(project, task, taskDir)
-          addDescriptions(project, task)
+          loadActualTexts(project, task)
         }
       }
+    }
+
+    @JvmStatic
+    fun loadActualTexts(project: Project, task: Task) {
+      val taskDir = task.getTaskDir(project) ?: return
+      convertToStudentTaskFiles(project, task, taskDir)
+      addDescriptions(project, task)
     }
 
     private fun convertToStudentTaskFiles(project: Project, task: Task, taskDir: VirtualFile) {

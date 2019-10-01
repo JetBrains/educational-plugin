@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.isUnitTestMode
 
 @VisibleForTesting
 data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
@@ -40,9 +39,6 @@ class StepikChangeRetriever(private val project: Project, course: EduCourse, pri
   val course: EduCourse = course.copyAs(EduCourse::class.java)
 
   fun getChangedItems(): StepikChangesInfo {
-    if (!isUnitTestMode) {
-      setTaskFileTextFromDocuments(project)
-    }
     val stepikChanges = StepikChangesInfo()
     processCourse(stepikChanges)
     processTopLevelSection(stepikChanges)
@@ -106,12 +102,19 @@ class StepikChangeRetriever(private val project: Project, course: EduCourse, pri
     stepikChanges.tasksToDelete.addAll(remoteTasks.filter { it.id !in localTasksIds })
     stepikChanges.newTasks.addAll(localLesson.taskList.filter { it.id !in remoteTasksIds })
 
-    for (localTask in localLesson.taskList) {
+    for (task in localLesson.taskList) {
+      val localTask = task.copy()
+      localTask.lesson = localLesson
+      runInEdtAndWait {
+        runReadAction {
+          CourseArchiveCreator.loadActualTexts(project, localTask)
+        }
+      }
       if (remoteTasksIds.contains(localTask.id)) {
         val remoteTask = remoteTasks.singleOrNull { it.id == localTask.id } ?: continue
         if (taskInfoChanged(localTask, remoteTask) || taskContentChanged(localTask, remoteTask) || taskFilesChanged(localTask,
                                                                                                                     remoteTask)) {
-          stepikChanges.tasksToUpdate.add(localTask)
+          stepikChanges.tasksToUpdate.add(task)
         }
       }
     }
@@ -217,13 +220,5 @@ class StepikChangeRetriever(private val project: Project, course: EduCourse, pri
            lessonName == otherDependency.lessonName &&
            placeholderIndex == otherDependency.placeholderIndex &&
            sectionName == otherDependency.sectionName
-  }
-
-  private fun setTaskFileTextFromDocuments(project: Project) {
-    runInEdtAndWait {
-      runReadAction {
-        CourseArchiveCreator.loadActualTexts(project, course)
-      }
-    }
   }
 }
