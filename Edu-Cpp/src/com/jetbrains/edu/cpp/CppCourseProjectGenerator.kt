@@ -61,7 +61,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
       myCourse.items.forEach { addCMakeListToTasks(it, project, projectSettings) }
     }
 
-    val googleTestSrc = FileUtil.join(myCourse.getDir(project).path, "googletest", "googletest-src")
+    val googleTestSrc = FileUtil.join(myCourse.getDir(project).path, TEST_FRAMEWORK_DIR, "googletest-src")
     VcsConfiguration.getInstance(project).addIgnoredUnregisteredRoots(listOf(googleTestSrc))
 
     super.afterProjectGenerated(project, projectSettings)
