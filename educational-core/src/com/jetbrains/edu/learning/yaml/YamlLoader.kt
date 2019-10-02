@@ -12,6 +12,8 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 import com.jetbrains.edu.learning.yaml.YamlLoader.loadItem
 import com.jetbrains.edu.learning.yaml.errorHandling.*
@@ -43,8 +45,11 @@ object YamlLoader {
 
   @VisibleForTesting
   fun doLoad(project: Project, configFile: VirtualFile) {
+    // for null course we load course again so no need to pass mode specific mapper here
+    val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: MAPPER
+
     val existingItem = getStudyItemForConfig(project, configFile)
-    val deserializedItem = YamlDeserializer.deserializeItem(project, configFile) ?: return
+    val deserializedItem = YamlDeserializer.deserializeItem(project, configFile, mapper) ?: return
     deserializedItem.ensureChildrenExist(configFile.parent)
 
     if (existingItem == null) {
@@ -54,11 +59,12 @@ object YamlLoader {
         StudyTaskManager.getInstance(project).course = YamlDeepLoader.loadCourse(project)
         return
       }
+
       val itemDir = configFile.parent
       deserializedItem.name = itemDir.name
       val parentItem = deserializedItem.getParentItem(project, itemDir.parent)
       val parentConfig = parentItem.getDir(project).findChild(parentItem.configFileName) ?: return
-      val deserializedParent = YamlDeserializer.deserializeItem(project, parentConfig) as? ItemContainer ?: return
+      val deserializedParent = YamlDeserializer.deserializeItem(project, parentConfig, mapper) as? ItemContainer ?: return
       if (deserializedParent.items.map { it.name }.contains(itemDir.name)) {
         parentItem.addItemAsNew(project, deserializedItem)
         reopenEditors(project)
@@ -103,11 +109,12 @@ object YamlLoader {
       return
     }
     init(course, this, false)
-    items = deserializeContent(project, items)
+    val mapper = course.mapper
+    items = deserializeContent(project, items, mapper)
     // set parent to deserialize content correctly
     items.forEach { it.init(course, this, false) }
     items.filterIsInstance(ItemContainer::class.java).forEach {
-      it.items = it.deserializeContent(project, it.items)
+      it.items = it.deserializeContent(project, it.items, mapper)
     }
   }
 

@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.getConfigFileForChild
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader.addItemAsNew
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeChildrenIfNeeded
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
@@ -69,7 +70,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
         // it is called from `YamlLoader.loadItem`
         val configFile = existingItem.getConfigFileForChild(project, titledItem.name) ?: continue
 
-        val deserializedChild = YamlDeserializer.deserializeItem(project, configFile) ?: continue
+        val deserializedChild = YamlDeserializer.deserializeItem(project, configFile, existingItem.course.mapper) ?: continue
         deserializedChild.name = titledItem.name
         deserializedChild.index = titledItem.index
         deserializedChild.deserializeChildrenIfNeeded(project, existingItem.course)
