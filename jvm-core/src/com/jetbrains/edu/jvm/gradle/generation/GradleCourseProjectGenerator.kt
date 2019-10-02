@@ -31,9 +31,9 @@ open class GradleCourseProjectGenerator(
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
-    super.afterProjectGenerated(project, projectSettings)
     setJdk(project, projectSettings)
     setupGradleSettings(project)
+    super.afterProjectGenerated(project, projectSettings)
   }
 
   protected open fun setupGradleSettings(project: Project) {
