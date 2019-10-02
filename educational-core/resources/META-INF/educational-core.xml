@@ -233,16 +233,16 @@
 
     <!--for educators-->
     <xml.xmlSuppressionProvider implementation="com.jetbrains.edu.coursecreator.taskDescription.ShortcutInTaskDescriptionSuppressionProvider"/>
-    <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCSectionMoveHandlerDelegate"
+    <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCSectionMoveHandlerDelegate"
                              order="first"/>
-    <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCLessonMoveHandlerDelegate"
+    <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCLessonMoveHandlerDelegate"
                              order="first"/>
-    <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCTaskMoveHandlerDelegate"
+    <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCTaskMoveHandlerDelegate"
                              order="first"/>
-    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCTaskRenameHandler" order="first"/>
-    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCLessonRenameHandler" order="first"/>
-    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCSectionRenameHandler" order="first"/>
-    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCDescriptionFileRenameHandler" order="first"/>
+    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCTaskRenameHandler" order="first"/>
+    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCLessonRenameHandler" order="first"/>
+    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCSectionRenameHandler" order="first"/>
+    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCDescriptionFileRenameHandler" order="first"/>
     <applicationService serviceInterface="com.jetbrains.edu.coursecreator.settings.CCSettings"
                         serviceImplementation="com.jetbrains.edu.coursecreator.settings.CCSettings"/>
     <highlightErrorFilter implementation="com.jetbrains.edu.coursecreator.CCHighlightErrorFilter"/>

@@ -8,8 +8,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.actions.MoveAction
 import com.intellij.testFramework.MapDataContext
-import com.jetbrains.edu.coursecreator.handlers.MoveStudyItemUI
-import com.jetbrains.edu.coursecreator.handlers.withMockMoveStudyItemUI
+import com.jetbrains.edu.coursecreator.handlers.move.MoveStudyItemUI
+import com.jetbrains.edu.coursecreator.handlers.move.withMockMoveStudyItemUI
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 

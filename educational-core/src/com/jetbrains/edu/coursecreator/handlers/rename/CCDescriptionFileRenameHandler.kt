@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.handlers
+package com.jetbrains.edu.coursecreator.handlers.rename
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger

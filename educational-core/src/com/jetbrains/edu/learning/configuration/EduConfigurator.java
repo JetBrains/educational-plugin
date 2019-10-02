@@ -8,6 +8,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.EmptyIcon;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.IdeDefaultCourseTypes;
+import com.jetbrains.edu.coursecreator.handlers.rename.CCRenameHandler;
 import com.jetbrains.edu.coursecreator.ui.CCNewCoursePanel;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
@@ -220,7 +221,7 @@ public interface EduConfigurator<Settings> {
    * Validate a study item name.
    * When name is a correct study item name, then return `null` else return error message string.
    *
-   * @see {@link com.jetbrains.edu.coursecreator.handlers.CCRenameHandler}
+   * @see {@link CCRenameHandler}
    */
   @Nullable
   default String validateItemName(@NotNull String name) {

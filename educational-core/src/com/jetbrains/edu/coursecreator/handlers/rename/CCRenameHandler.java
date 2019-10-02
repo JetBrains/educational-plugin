@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.handlers;
+package com.jetbrains.edu.coursecreator.handlers.rename;
 
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.CommonDataKeys;

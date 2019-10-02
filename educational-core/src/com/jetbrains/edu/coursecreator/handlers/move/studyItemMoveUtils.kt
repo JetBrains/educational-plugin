@@ -1,6 +1,6 @@
 @file:JvmName("StudyItemMoveUtils")
 
-package com.jetbrains.edu.coursecreator.handlers
+package com.jetbrains.edu.coursecreator.handlers.move
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper

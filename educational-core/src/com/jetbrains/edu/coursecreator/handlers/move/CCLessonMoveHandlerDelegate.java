@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.handlers;
+package com.jetbrains.edu.coursecreator.handlers.move;
 
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.application.ApplicationManager;

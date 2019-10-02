@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.handlers
+package com.jetbrains.edu.coursecreator.handlers.move
 
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
