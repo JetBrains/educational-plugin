@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.yaml.format.student
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -39,7 +40,9 @@ abstract class StudentTaskYamlMixin : TaskYamlMixin() {
 class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {
   override fun applyChanges(existingItem: Task, deserializedItem: Task) {
     super.applyChanges(existingItem, deserializedItem)
-    existingItem.status = deserializedItem.status
+    if (existingItem.status != deserializedItem.status && !ApplicationManager.getApplication().isInternal) {
+      throw YamlLoadingException("Status can't be changed")
+    }
     when (existingItem) {
       is CheckiOMission -> {
         existingItem.code = (deserializedItem as CheckiOMission).code
