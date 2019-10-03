@@ -256,8 +256,7 @@ public class EduUtils {
       return null;
     }
     VirtualFile taskDirectory = lesson instanceof FrameworkLesson ? lessonDir.findChild(task.getName()) : task.getDir(project);
-    String textFromFile = getTaskTextByTaskName(task, taskDirectory);
-    String text = textFromFile != null ? textFromFile: task.getTaskDescription();
+    String text = getTaskTextByTaskName(task, taskDirectory);
     if (text == null) {
       LOG.warn("Cannot find task description file for a task: " + task.getName());
       return null;
@@ -277,7 +276,14 @@ public class EduUtils {
     if (taskDirectory == null) return null;
 
     DescriptionFormat format = task.getDescriptionFormat();
-    String taskDescription = getTextByTaskFileFormat(taskDirectory, format.getDescriptionFileName());
+    String taskDescription;
+    String textFromFile = getTextByTaskFileFormat(taskDirectory, format.getDescriptionFileName());
+    if (textFromFile != null) {
+      taskDescription = textFromFile;
+    }
+    else {
+      taskDescription = task.getTaskDescription();
+    }
     if (format == DescriptionFormat.MD) {
       return convertToHtml(taskDescription, taskDirectory);
     }
