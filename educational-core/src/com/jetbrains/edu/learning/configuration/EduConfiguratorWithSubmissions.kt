@@ -47,7 +47,7 @@ abstract class EduConfiguratorWithSubmissions<Settings> : EduConfigurator<Settin
   override fun additionalTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
     if (currentTask !is EduTask && currentTask !is CodeTask && currentTask !is ChoiceTask) return null
     val course = currentTask.course
-    if (course !is EduCourse) return null
+    if (course !is EduCourse || !course.isStudy) return null
 
     val descriptionText = StringBuilder()
     val submissionsPanel = AdditionalTabPanel(project)
