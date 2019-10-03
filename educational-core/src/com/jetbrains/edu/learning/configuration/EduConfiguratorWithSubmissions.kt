@@ -64,7 +64,7 @@ abstract class EduConfiguratorWithSubmissions<Settings> : EduConfigurator<Settin
       }
     }
     else {
-      addLoginLink(descriptionText, submissionsPanel, project)
+      addLoginLink(descriptionText, submissionsPanel)
     }
 
     submissionsPanel.setText(descriptionText.toString())
@@ -81,7 +81,8 @@ abstract class EduConfiguratorWithSubmissions<Settings> : EduConfigurator<Settin
     submissionsPanel.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
   }
 
-  private fun addLoginLink(descriptionText: StringBuilder, submissionsPanel: AdditionalTabPanel, project: Project) {
+  private fun addLoginLink(descriptionText: StringBuilder,
+                           submissionsPanel: AdditionalTabPanel) {
     descriptionText.append("<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(hyperlinkColor())}" +
                            " href=>Log in to Stepik.org</a><a ${StyleManager().textStyleHeader}> to view submissions")
     submissionsPanel.addHyperlinkListener(HyperlinkListener { e ->
