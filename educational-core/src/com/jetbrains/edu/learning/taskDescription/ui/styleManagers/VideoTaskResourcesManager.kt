@@ -20,16 +20,17 @@ class VideoTaskResourcesManager(private val task: VideoTask, private val lesson:
     "sources" to Gson().toJson(task.sources),
     "currentTime" to task.currentTime.toString(),
     "stepikLink" to getStepikLink(task, lesson),
-    "video_style" to videoStylesheet()
+    "video_style" to videoStylesheet(),
+    "typography_color_style" to StyleResourcesManager().typographyAndColorStylesheet()
   )
 
   val text: String
     get() = if (task.sources.isNotEmpty()) {
       GeneratorUtils.getInternalTemplateText(VIDEO_TEMPLATE, resources)
-  }
-  else {
-    "View this video on <a href=" + getStepikLink(task, lesson) + ">Stepik</a>."
-  }
+    }
+    else {
+      "View this video on <a href=" + getStepikLink(task, lesson) + ">Stepik</a>."
+    }
 
   private fun videoStylesheet(): String {
     val styleManager = StyleManager()
@@ -42,15 +43,13 @@ class VideoTaskResourcesManager(private val task: VideoTask, private val lesson:
         backgroundColor = styleManager.bodyBackground
         textAlign = TextAlign.left
       }
-      a {
-        color = styleManager.linkColor
-      }
       ".video-js" {
         display = Display.block
-        height = 90.vh
-        width = 95.vw
+        height = 90.pct
+        width = 100.pct
         backgroundColor = styleManager.bodyBackground
         position = Position.relative
+        overflow = Overflow.hidden
       }
       ".vjs-resolution-button" {
         color = Color.white

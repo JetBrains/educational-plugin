@@ -8,6 +8,7 @@
 
   <style>
     ${video_style}
+    ${typography_color_style}
   </style>
   ​
 </head>
