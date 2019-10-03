@@ -12,6 +12,7 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.ui.ComboboxWithBrowseButton
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.Err
@@ -20,6 +21,7 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.python.learning.homePaths
 import com.jetbrains.edu.python.learning.messages.EduPyBundle
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.psi.LanguageLevel
@@ -33,9 +35,9 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
 
   protected val mySettings: PyNewProjectSettings = PyNewProjectSettings()
 
-  override fun getLanguageSettingsComponents(course: Course): List<LabeledComponent<JComponent>> {
+  override fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
     // by default we create new virtual env in project, we need to add this non-existing sdk to sdk list
-    val fakeSdk = createFakeSdk(course)
+    val fakeSdk = createFakeSdk(course, context)
 
     val combo = getInterpreterComboBox(fakeSdk)
     if (SystemInfo.isMac && !UIUtil.isUnderDarcula()) {
@@ -136,11 +138,11 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
       }
     }
 
+    @JvmOverloads
     @JvmStatic
-    fun getBaseSdk(course: Course): String? {
+    fun getBaseSdk(course: Course, context: UserDataHolder? = null): String? {
       val flavor = PythonSdkFlavor.getApplicableFlavors(false)[0]
-
-      val sdkPaths = ArrayList<String>(flavor.suggestHomePaths(null))
+      val sdkPaths = flavor.homePaths(null, context)
 
       if (sdkPaths.isEmpty()) {
         return null
@@ -155,8 +157,8 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
     private class NoApplicablePythonError(requiredVersion: Int) : Err<String>("Required Python $requiredVersion")
     private class SpecificPythonRequiredError(requiredVersion: String) : Err<String>("Required at least Python $requiredVersion")
 
-    private fun createFakeSdk(course: Course): ProjectJdkImpl? {
-      val fakeSdkPath = getBaseSdk(course) ?: return null
+    private fun createFakeSdk(course: Course, context: UserDataHolder?): ProjectJdkImpl? {
+      val fakeSdkPath = getBaseSdk(course, context) ?: return null
       val flavor = PythonSdkFlavor.getApplicableFlavors(false)[0]
       val prefix = flavor.name + " "
       val versionString = flavor.getVersionString(fakeSdkPath)

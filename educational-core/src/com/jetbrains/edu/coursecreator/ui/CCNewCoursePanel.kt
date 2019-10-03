@@ -7,6 +7,8 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.util.UserDataHolder
+import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.HyperlinkLabel
@@ -56,6 +58,8 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
   private var myRequiredAndDisabledPlugins: List<String> = emptyList()
 
   private var myValidationListener: ValidationListener? = null
+
+  private val context: UserDataHolder = UserDataHolderBase()
 
   init {
     layout = BorderLayout()
@@ -190,7 +194,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     myLanguageSettings.addSettingsChangeListener { doValidation() }
 
     val settings = arrayListOf<LabeledComponent<*>>(myLocationField)
-    settings.addAll(myLanguageSettings.getLanguageSettingsComponents(myCourse))
+    settings.addAll(myLanguageSettings.getLanguageSettingsComponents(myCourse, context))
     myAdvancedSettings.setSettingsComponents(settings)
 
     myRequiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements())

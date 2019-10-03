@@ -3,6 +3,7 @@ package com.jetbrains.edu.cpp
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.util.io.IOUtil
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.*
@@ -22,7 +23,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
 
   override fun getSettings(): CppProjectSettings = CppProjectSettings(languageStandard)
 
-  override fun getLanguageSettingsComponents(course: Course): List<LabeledComponent<JComponent>> {
+  override fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
     val standards = when (course) {
       is StepikCourse -> arrayOf(CPP11.standard, languageStandard)
       else -> languageVersions.toTypedArray()

@@ -15,6 +15,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -35,9 +36,9 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
     locationField.addActionListener(this)
   }
 
-  override fun getLanguageSettingsComponents(course: Course): List<LabeledComponent<JComponent>> {
+  override fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
     val androidSdkLocation = LabeledComponent.create<JComponent>(locationField, "Android SDK Location", BorderLayout.WEST)
-    return super.getLanguageSettingsComponents(course) + androidSdkLocation
+    return super.getLanguageSettingsComponents(course, context) + androidSdkLocation
   }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {

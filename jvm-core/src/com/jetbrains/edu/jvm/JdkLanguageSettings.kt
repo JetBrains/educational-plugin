@@ -9,6 +9,7 @@ import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.Condition
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.ui.ComboboxWithBrowseButton
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -30,7 +31,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
   protected open fun setupProjectSdksModel(model: ProjectSdksModel) {}
 
-  override fun getLanguageSettingsComponents(course: Course): List<LabeledComponent<JComponent>> {
+  override fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
     val sdkTypeFilter = Condition<SdkTypeId> { sdkTypeId -> sdkTypeId is JavaSdkType && !(sdkTypeId as JavaSdkType).isDependent }
     val sdkFilter = Condition<Sdk> { sdk -> sdkTypeFilter.value(sdk.sdkType) }
     val jdkComboBox = JdkComboBox(myModel, sdkTypeFilter, sdkFilter, sdkTypeFilter, true)

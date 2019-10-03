@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning;
 
 import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.openapi.util.UserDataHolder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage;
 import org.jetbrains.annotations.NotNull;
@@ -24,10 +25,13 @@ public abstract class LanguageSettings<Settings> {
    * Returns list of UI components that allows user to select course project settings such as project JDK or interpreter.
    *
    * @param course course of creating project
+   * @param context used as cache. If provided, must have "session"-scope. Session could be one dialog or wizard.
    * @return list of UI components with project settings
+   *
+   * @see PyLanguageSettings
    */
   @NotNull
-  public List<LabeledComponent<JComponent>> getLanguageSettingsComponents(@NotNull Course course) {
+  public List<LabeledComponent<JComponent>> getLanguageSettingsComponents(@NotNull Course course, @Nullable UserDataHolder context) {
     return Collections.emptyList();
   }
 

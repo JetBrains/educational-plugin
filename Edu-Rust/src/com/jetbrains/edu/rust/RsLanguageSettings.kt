@@ -4,6 +4,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.TextComponentAccessor
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.ui.DocumentAdapter
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -43,7 +44,7 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
 
     override fun getSettings(): RsProjectSettings = RsProjectSettings(rustToolchain)
 
-    override fun getLanguageSettingsComponents(course: Course): List<LabeledComponent<JComponent>> {
+    override fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
         return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(toolchainLocation, "Toolchain", BorderLayout.WEST))
     }
 

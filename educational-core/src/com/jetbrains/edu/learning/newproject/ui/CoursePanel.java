@@ -5,6 +5,8 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.OnePixelDivider;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.UserDataHolder;
+import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.BrowserHyperlinkListener;
@@ -63,6 +65,8 @@ public class CoursePanel extends JPanel {
 
   @Nullable
   private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
+
+  private UserDataHolder context = new UserDataHolderBase();
 
   public CoursePanel(boolean isIndependentPanel, boolean isLocationFieldNeeded) {
     setLayout(new BorderLayout());
@@ -211,7 +215,7 @@ public class CoursePanel extends JPanel {
   }
 
   private void updateAdvancedSettings(@NotNull Course course) {
-    EduConfigurator configurator = CourseExt.getConfigurator(course);
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
     if (configurator == null) {
       return;
     }
@@ -224,7 +228,7 @@ public class CoursePanel extends JPanel {
     if (myLocationField != null) {
       settingsComponents.add(myLocationField);
     }
-    List<LabeledComponent<JComponent>> components = myLanguageSettings.getLanguageSettingsComponents(course);
+    List<LabeledComponent<JComponent>> components = myLanguageSettings.getLanguageSettingsComponents(course, context);
     settingsComponents.addAll(components);
 
     if (settingsComponents.isEmpty()) {
