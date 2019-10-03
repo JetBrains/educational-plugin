@@ -95,10 +95,13 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
     if (fakeSdk != null) {
       comboBox.selectedJdk = fakeSdk
     }
+    else {
+      onSdkSelected(comboBox)
+    }
 
     val comboBoxWithBrowseButton = ComboboxWithBrowseButton(comboBox)
     val setupButton = comboBoxWithBrowseButton.button
-    comboBox.setSetupButton(setupButton, null, model, comboBox.model.selectedItem as JdkComboBox.JdkComboBoxItem?, null, false)
+    comboBox.setSetupButton(setupButton, null, model, comboBox.model.selectedItem as? JdkComboBox.JdkComboBoxItem, null, false)
     return comboBoxWithBrowseButton
 
   }
