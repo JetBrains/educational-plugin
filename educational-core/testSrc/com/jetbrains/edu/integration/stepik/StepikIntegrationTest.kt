@@ -316,17 +316,24 @@ open class StepikIntegrationTest : StepikTestCase() {
   fun `test upload course with hidden solutions`() {
     val course = courseWithFiles {
       lesson("lesson1") {
-        eduTask {
+        eduTask("task1") {
+          taskFile("fizz.kt")
+        }
+        eduTask("task2") {
           taskFile("fizz.kt")
         }
       }
     }
     course.solutionsHidden = true
+    course.getLesson("lesson1")!!.getTask("task1")!!.solutionHidden = true
+    course.getLesson("lesson1")!!.getTask("task2")!!.solutionHidden = false
     val sourceCourse = initCourse(course)
     val courseFromStepik = getCourseFromStepik(sourceCourse.id)
     checkCourseUploaded(sourceCourse)
     StepikCourseLoader.fillItems(courseFromStepik)
     assertTrue(courseFromStepik.solutionsHidden)
+    assertTrue(courseFromStepik.getLesson("lesson1")!!.getTask("task1")!!.solutionHidden!!)
+    assertFalse(courseFromStepik.getLesson("lesson1")!!.getTask("task2")!!.solutionHidden!!)
   }
 
   private fun setText(path: String, text: String) {

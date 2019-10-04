@@ -525,6 +525,22 @@ class StepikCompareCourseTest : EduTestCase() {
     checkChangedItems(localCourse, courseFromServer, expectedChangedItems)
   }
 
+  fun `test tasks with hidden solution`() {
+    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask("task1") { }
+        eduTask("task2") { }
+      }
+    }.asRemote()
+
+    val courseFromServer = localCourse.copy() as EduCourse
+    localCourse.getLesson("lesson1")!!.getTask("task1")!!.solutionHidden = true
+    localCourse.getLesson("lesson1")!!.getTask("task2")!!.solutionHidden = false
+
+    val expectedChangedItems = StepikChangesInfo(lessonsInfoToUpdate = localCourse.lessons)
+    checkChangedItems(localCourse, courseFromServer, expectedChangedItems)
+  }
+
   private fun checkChangedItems(localCourse: EduCourse, courseFromServer: EduCourse, expected: StepikChangesInfo) {
     val actual = StepikChangeRetriever(project, localCourse, courseFromServer).getChangedItems()
     assertEquals(expected.isCourseAdditionalInfoChanged, actual.isCourseAdditionalInfoChanged)
