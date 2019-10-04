@@ -13,6 +13,7 @@ import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.wm.*;
+import com.intellij.ui.content.Content;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduLogInListener;
@@ -26,6 +27,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
+import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel;
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +39,7 @@ import java.util.List;
 
 import static com.jetbrains.edu.learning.EduUtils.isEduProject;
 import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
+import static com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions.SUBMISSIONS_TAB_NAME;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class StepikProjectComponent implements ProjectComponent {
@@ -62,6 +66,18 @@ public class StepikProjectComponent implements ProjectComponent {
           busConnection.subscribe(EduSettings.SETTINGS_CHANGED, new EduLogInListener() {
             @Override
             public void userLoggedIn() {
+              if (EduSettings.getInstance().getUser() == null) {
+                return;
+              }
+              ToolWindow window = ToolWindowManager.getInstance(myProject).getToolWindow(
+                TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
+              Content submissionsContent = window.getContentManager().findContent(SUBMISSIONS_TAB_NAME);
+              if (submissionsContent != null) {
+                JComponent submissionsPanel = submissionsContent.getComponent();
+                if (submissionsPanel instanceof AdditionalTabPanel) {
+                  ApplicationManager.getApplication().invokeLater(() -> ((AdditionalTabPanel)submissionsPanel).addLoadingPanel());
+                }
+              }
               loadSubmissionsFromStepik(course);
             }
 
@@ -121,9 +137,7 @@ public class StepikProjectComponent implements ProjectComponent {
             SubmissionsManager.getAllSubmissions(task.getId());
           }
         }
-        ApplicationManager.getApplication().invokeLater(() -> {
-          TaskDescriptionView.getInstance(myProject).updateAdditionalTaskTab();
-        });
+        ApplicationManager.getApplication().invokeLater(() -> TaskDescriptionView.getInstance(myProject).updateAdditionalTaskTab());
       });
     }
   }

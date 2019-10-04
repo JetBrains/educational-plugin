@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.AsyncProcessIcon
@@ -18,10 +17,9 @@ import javax.swing.JSeparator
 import javax.swing.JTextPane
 import javax.swing.event.HyperlinkListener
 
-class AdditionalTabPanel(val project: Project) : JPanel(), Disposable {
+class AdditionalTabPanel(val project: Project) : JPanel() {
 
   private val textPane: JTextPane = createTextPane()
-  val connection get() = project.messageBus.connect()
 
   init {
     val scrollPane = JBScrollPane(textPane)
@@ -69,9 +67,5 @@ class AdditionalTabPanel(val project: Project) : JPanel(), Disposable {
     iconPanel.add(textPane)
     add(iconPanel, Component.LEFT_ALIGNMENT)
     revalidate()
-  }
-
-  override fun dispose() {
-    connection.disconnect()
   }
 }

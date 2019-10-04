@@ -12,7 +12,6 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.ui.BrowserHyperlinkListener
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
-import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
@@ -89,13 +88,6 @@ abstract class EduConfiguratorWithSubmissions<Settings> : EduConfigurator<Settin
       if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
         StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
         EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.SUBMISSIONS_TAB)
-        submissionsPanel.connection.subscribe(EduSettings.SETTINGS_CHANGED, object : EduLogInListener {
-          override fun userLoggedIn() {
-            runInEdt { submissionsPanel.addLoadingPanel() }
-          }
-
-          override fun userLoggedOut() {}
-        })
       }
     })
   }
