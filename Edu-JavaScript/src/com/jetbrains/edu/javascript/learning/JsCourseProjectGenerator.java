@@ -57,7 +57,12 @@ public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjec
     }
 
     if (packageJsonFile != null && !OpenApiExtKt.isUnitTestMode()) {
-      InstallNodeLocalDependenciesAction.runAndShowConsole(project, packageJsonFile);
+      installNodeDependencies(project, packageJsonFile);
     }
+  }
+
+  private static void installNodeDependencies(@NotNull Project project, @NotNull VirtualFile packageJsonFile) {
+    ApplicationManager.getApplication().invokeLater(
+      () -> InstallNodeLocalDependenciesAction.runAndShowConsole(project, packageJsonFile));
   }
 }
