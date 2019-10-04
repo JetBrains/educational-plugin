@@ -25,7 +25,7 @@ abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
 }
 
 private class StudentTaskFileBuilder(
-  @JsonProperty(TEXT) val text: String?,
+  @JsonProperty(TEXT) val textFromConfig: String?,
   @JsonProperty(LEARNER_CREATED) val learnerCreated: Boolean = false,
   name: String?,
   placeholders: List<AnswerPlaceholder> = mutableListOf(),
@@ -33,7 +33,7 @@ private class StudentTaskFileBuilder(
 ) : TaskFileBuilder(name, placeholders, visible) {
   override fun createTaskFile(): TaskFile {
     return super.createTaskFile().apply {
-      setText(text)
+      setText(textFromConfig)
       isLearnerCreated = learnerCreated
     }
   }
