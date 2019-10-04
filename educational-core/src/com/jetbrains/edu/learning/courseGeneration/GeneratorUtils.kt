@@ -213,7 +213,11 @@ object GeneratorUtils {
 
   private fun String.convertToValidName(): String {
     val invalidSymbols = if (SystemInfo.isWindows) WINDOWS_INVALID_SYMBOLS else UNIX_INVALID_SYMBOLS
-    return replace(invalidSymbols, " ").trim()
+    var validName = replace(invalidSymbols, " ").trim()
+    if (SystemInfo.isWindows && endsWith(".")) {
+      validName = validName.trim('.')
+    }
+    return validName
   }
 
   private fun createUniqueDir(parentDir: VirtualFile,
