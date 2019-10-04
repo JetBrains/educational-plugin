@@ -48,9 +48,10 @@ abstract class EduConfiguratorWithSubmissions<Settings> : EduConfigurator<Settin
 
     val descriptionText = StringBuilder()
     val submissionsPanel = AdditionalTabPanel(project)
+    val submissions = getSubmissionsFromMemory(currentTask.id)
 
-    if (EduSettings.isLoggedIn()) {
-      val submissions = getSubmissionsFromMemory(currentTask.id) ?: return null
+    if (EduSettings.isLoggedIn() || submissions != null) {
+      if (submissions == null) return null
       when {
         submissions.isEmpty() -> descriptionText.append("<a ${StyleManager().textStyleHeader}>You have no submissions yet")
         currentTask is ChoiceTask -> addViewOnStepikLink(descriptionText, currentTask, submissionsPanel)
