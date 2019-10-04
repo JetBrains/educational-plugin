@@ -89,11 +89,11 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     }
     resetDocument(document, taskFile);
     task.setStatus(CheckStatus.Unchecked);
-    YamlFormatSynchronizer.saveItem(task);
     resetAnswerPlaceholders(taskFile);
 
     WolfTheProblemSolver.getInstance(project).clearProblems(virtualFile);
     taskFile.setHighlightErrors(false);
+    YamlFormatSynchronizer.saveItem(task);
   }
 
   static void resetAnswerPlaceholders(@NotNull TaskFile selectedTaskFile) {
