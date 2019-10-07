@@ -101,7 +101,7 @@ object YamlLoader {
     deserializedItem.deserializeChildrenIfNeeded(project, course)
     addItem(deserializedItem)
     sortItems()
-    init(course, this.parent, false)
+    init(course, parent, false)
   }
 
   fun StudyItem.deserializeChildrenIfNeeded(project: Project, course: Course) {
