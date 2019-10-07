@@ -10,23 +10,28 @@ import kotlinx.css.*
 import kotlinx.css.properties.lh
 
 /**
- * Is used to provide resources and stylesheet to stepikVideo.html.ft
+ * Provides resources and stylesheet to stepikVideo.html.ft
  */
-class VideoTaskResourcesManager(private val task: VideoTask, private val lesson: Lesson) {
+class VideoTaskResourcesManager {
   private val VIDEO_TEMPLATE = "stepikVideo.html"
 
-  private val resources = mapOf(
+  val videoResources = mapOf(
+    "video_style" to videoStylesheet(),
+    "videojs-resolution-switcher" to "https://cdnjs.cloudflare.com/ajax/libs/videojs-resolution-switcher/0.4.2/videojs-resolution-switcher.min.js",
+    "videojs-resolution-switcher.css" to "https://cdnjs.cloudflare.com/ajax/libs/videojs-resolution-switcher/0.4.2/videojs-resolution-switcher.min.css",
+    "video.js" to "http://vjs.zencdn.net/5.16.0/video.js",
+    "video-js.css" to "http://vjs.zencdn.net/5.16.0/video-js.css"
+  )
+
+  private fun getResources(task: VideoTask, lesson: Lesson) = mapOf(
     "thumbnail" to task.thumbnail,
     "sources" to Gson().toJson(task.sources),
     "currentTime" to task.currentTime.toString(),
-    "stepikLink" to getStepikLink(task, lesson),
-    "video_style" to videoStylesheet(),
-    "typography_color_style" to StyleResourcesManager().typographyAndColorStylesheet()
+    "stepikLink" to getStepikLink(task, lesson)
   )
 
-  val text: String
-    get() = if (task.sources.isNotEmpty()) {
-      GeneratorUtils.getInternalTemplateText(VIDEO_TEMPLATE, resources)
+  fun getText(task: VideoTask, lesson: Lesson): String = if (task.sources.isNotEmpty()) {
+    GeneratorUtils.getInternalTemplateText(VIDEO_TEMPLATE, getResources(task, lesson))
     }
     else {
       "View this video on <a href=" + getStepikLink(task, lesson) + ">Stepik</a>."
@@ -42,14 +47,19 @@ class VideoTaskResourcesManager(private val task: VideoTask, private val lesson:
         color = styleManager.bodyColor
         backgroundColor = styleManager.bodyBackground
         textAlign = TextAlign.left
+        paddingLeft = 0.px
+        paddingTop = 0.px
       }
-      ".video-js" {
-        display = Display.block
-        height = 90.pct
-        width = 100.pct
-        backgroundColor = styleManager.bodyBackground
-        position = Position.relative
+      ".video-cell" {
+        display = Display.tableCell
+        verticalAlign = VerticalAlign.middle
         overflow = Overflow.hidden
+      }
+      ".container" {
+        width = 100.pct
+        height = 100.pct
+        display = Display.table
+        backgroundColor = styleManager.bodyBackground
       }
       ".vjs-resolution-button" {
         color = Color.white
@@ -59,5 +69,4 @@ class VideoTaskResourcesManager(private val task: VideoTask, private val lesson:
       }
     }.toString()
   }
-
 }

@@ -43,7 +43,8 @@ abstract class TaskDescriptionToolWindow {
 
   open fun updateTaskSpecificPanel(task: Task?) {}
 
-  protected fun wrapHints(text: String): String {
+  protected fun wrapHints(text: String, task: Task?): String {
+    if (task is VideoTask) return text
     val document = Jsoup.parse(text)
     val hints = document.getElementsByClass("hint")
     if (hints.size == 1) {

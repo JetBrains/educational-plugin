@@ -248,7 +248,7 @@ public class StepikTaskBuilder {
           urlsMapList.forEach(urlsMap -> sources.add(new VideoSource(urlsMap.getUrl(), urlsMap.getQuality())));
         }
         task.setSources(Collections.unmodifiableList(sources));
-        descriptionText = new VideoTaskResourcesManager(task, myLesson).getText();
+        descriptionText = new VideoTaskResourcesManager().getText(task, myLesson);
       }
       else {
         LOG.warn("Video for step " + myStepId + " is null");

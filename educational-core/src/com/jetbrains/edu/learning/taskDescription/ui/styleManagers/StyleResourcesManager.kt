@@ -12,9 +12,10 @@ internal class StyleResourcesManager(taskText: String = "") {
     "typography_color_style" to typographyAndColorStylesheet(),
     "content" to taskText,
     "base_css" to loadText("/style/browser.css"),
+    "mathJax" to "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
     resourcePair("stepik_link", "/style/stepikLink.css"),
     *panelSpecificHintFiles()
-  )
+  ).plus(VideoTaskResourcesManager().videoResources)
 
   private fun panelSpecificHintFiles(): Array<Pair<String, String>> {
     val isJavaFx = EduSettings.getInstance().shouldUseJavaFx()
@@ -32,7 +33,7 @@ internal class StyleResourcesManager(taskText: String = "") {
 
   private fun resourcePair(name: String, path: String) = name to resourceUrl(path)
 
-  fun typographyAndColorStylesheet(): String {
+  private fun typographyAndColorStylesheet(): String {
     val styleManager = StyleManager()
     return CSSBuilder().apply {
       body {

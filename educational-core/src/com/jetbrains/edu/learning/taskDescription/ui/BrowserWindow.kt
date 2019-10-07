@@ -4,7 +4,6 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
@@ -71,14 +70,8 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
 
   fun loadContent(content: String, task: Task?) {
     StudyTaskManager.getInstance(myProject).course ?: return
-    val htmlText = if (task is VideoTask) {
-      content
-    }
-    else {
-      htmlWithResources(myProject, content)
-    }
     Platform.runLater {
-      myEngine.loadContent(htmlText)
+      myEngine.loadContent(htmlWithResources(myProject, content))
     }
   }
 

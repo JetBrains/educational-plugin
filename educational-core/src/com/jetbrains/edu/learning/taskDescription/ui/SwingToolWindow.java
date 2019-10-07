@@ -25,7 +25,6 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -101,14 +100,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
   }
 
   public void setText(@NotNull String text, @Nullable Task task) {
-    String htmlText;
-    if (task instanceof VideoTask) {
-      htmlText = text;
-    }
-    else {
-      htmlText = JavaFxTaskUtil.htmlWithResources(myProject, wrapHints(text));
-    }
-    myTaskTextPane.setText(htmlText);
+    myTaskTextPane.setText(JavaFxTaskUtil.htmlWithResources(myProject, wrapHints(text, task)));
   }
 
   @NotNull

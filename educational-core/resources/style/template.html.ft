@@ -1,9 +1,12 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>-->
 <!-- we use key from substrings "${key}" in a StrSubstitutor as keys and in case of renaming keys one has to update map keys in
  com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionHtml-->
 <html>
 <head>
-  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script src="${video.js}"></script>
+  <script src="${videojs-resolution-switcher}"></script>
+
+  <script type="text/javascript" src="${mathJax}"></script>
   <script type="text/javascript" src="${jquery}"></script>
   <script type="text/javascript" src="${toggle_hint_script}"></script>
   <script type="text/x-mathjax-config">
@@ -24,9 +27,12 @@
   <link rel="stylesheet" type="text/css" href="${hint_base}"></link>
   <link rel="stylesheet" type="text/css" href="${hint_laf_specific}"></link>
   <link rel="stylesheet" type="text/css" href="${stepik_link}"></link>
+  <link rel="stylesheet" href="${video-js.css}"></link>
+  <link rel="stylesheet" href="${videojs-resolution-switcher.css}"></link>
 
   <style>
     ${typography_color_style}
+    ${video_style}
   </style>
 </head>
 <body>

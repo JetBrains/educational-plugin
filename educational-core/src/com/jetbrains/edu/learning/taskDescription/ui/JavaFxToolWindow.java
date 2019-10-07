@@ -100,7 +100,7 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
 
   @Override
   public void setText(@NotNull String text, @Nullable Task task) {
-    myBrowserWindow.loadContent(wrapHints(text), task);
+    myBrowserWindow.loadContent(wrapHints(text, task), task);
   }
 
 }
