@@ -290,4 +290,8 @@ public abstract class Task extends StudyItem {
     }
     return "Task";
   }
+
+  public boolean supportSubmissions() {
+    return false;
+  }
 }

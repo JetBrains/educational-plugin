@@ -17,8 +17,6 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -44,7 +42,7 @@ import kotlin.math.roundToInt
 abstract class EduConfiguratorWithSubmissions<Settings> : EduConfigurator<Settings> {
   
   override fun additionalTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
-    if (currentTask !is EduTask && currentTask !is CodeTask && currentTask !is ChoiceTask) return null
+    if (currentTask == null || !currentTask.supportSubmissions()) return null
     val course = currentTask.course
     if (course !is EduCourse || !course.isStudy) return null
 

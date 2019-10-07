@@ -14,4 +14,9 @@ public class CodeTask extends Task {
   public String getItemType() {
     return "code";
   }
+
+  @Override
+  public boolean supportSubmissions() {
+    return true;
+  }
 }
