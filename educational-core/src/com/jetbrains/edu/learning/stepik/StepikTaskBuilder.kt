@@ -1,436 +1,337 @@
-package com.jetbrains.edu.learning.stepik;
+package com.jetbrains.edu.learning.stepik
 
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.GsonBuilder;
-import com.intellij.lang.Commenter;
-import com.intellij.lang.Language;
-import com.intellij.lang.LanguageCommenters;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
-import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption;
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus;
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.stepik.api.Attempt;
-import com.jetbrains.edu.learning.stepik.api.Dataset;
-import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.VideoTaskResourcesManager;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.safety.Whitelist;
+import com.google.gson.GsonBuilder
+import com.intellij.lang.Language
+import com.intellij.lang.LanguageCommenters
+import com.intellij.openapi.diagnostic.Logger
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.VideoTaskResourcesManager
+import org.jetbrains.annotations.NonNls
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.safety.Whitelist
+import java.util.Collections.unmodifiableList
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+// TODO: get rid of LeakingThis warnings without suppression
+@Suppress("LeakingThis")
+open class StepikTaskBuilder(
+  course: Course,
+  private val lesson: Lesson,
+  private val stepSource: StepSource,
+  private val stepId: Int,
+  private val userId: Int
+) {
+  private val courseType: String = course.itemType
+  private val courseEnvironment: String = course.environment
+  private val language: Language = course.languageById ?: Language.ANY
+  private val step: Step = stepSource.block ?: error("Step is empty")
 
-import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
+  private val stepikTaskTypes: Map<String, (String) -> Task> = mapOf(
+    "code" to this::codeTask,
+    "choice" to this::choiceTask,
+    "text" to this::theoryTask,
+    "string" to this::theoryTask,
+    "pycharm" to { _: String -> pycharmTask() },
+    "video" to this::videoTask,
+    "number" to this::unsupportedTask,
+    "sorting" to this::unsupportedTask,
+    "matching" to this::unsupportedTask,
+    "math" to this::unsupportedTask,
+    "free-answer" to this::unsupportedTask,
+    "table" to this::unsupportedTask,
+    "dataset" to this::unsupportedTask,
+    "admin" to this::unsupportedTask,
+    "manual-score" to this::unsupportedTask
+  )
 
-public class StepikTaskBuilder {
-  private static final Logger LOG = Logger.getInstance(StepikTaskBuilder.class);
-  private final StepSource myStepSource;
-  private final String myCourseType;
-  private final String myCourseEnvironment;
-  private final Language myLanguage;
-  private Step myStep;
-  private int myStepId;
-  private int myUserId;
-  private final Lesson myLesson;
-  private final Map<String, Function<String, Task>> stepikTaskTypes = ImmutableMap.<String, Function<String, Task>>builder()
-    .put("code", this::codeTask)
-    .put("choice", this::choiceTask)
-    .put("text", this::theoryTask)
-    .put("string", this::theoryTask)
-    .put("pycharm", this::pycharmTask)
-    .put("video", this::videoTask)
-    .put("number", this::unsupportedTask)
-    .put("sorting", this::unsupportedTask)
-    .put("matching", this::unsupportedTask)
-    .put("math", this::unsupportedTask)
-    .put("free-answer", this::unsupportedTask)
-    .put("table", this::unsupportedTask)
-    .put("dataset", this::unsupportedTask)
-    .put("admin", this::unsupportedTask)
-    .put("manual-score", this::unsupportedTask)
-    .build();
+  private val pluginTaskTypes: Map<String, (String) -> Task> = mapOf(
+    "edu" to { name: String -> EduTask(name) },
+    "output" to { name: String -> OutputTask(name) },
+    "ide" to { name: String -> IdeTask(name) },
+    "theory" to this::theoryTask
+  )
 
-  private final Map<String, Function<String, Task>> pluginTaskTypes = ImmutableMap.<String, Function<String, Task>>builder()
-    .put("edu", StepikTaskBuilder::eduTask)
-    .put("output", StepikTaskBuilder::outputTask)
-    .put("ide", StepikTaskBuilder::ideTask)
-    .put("theory", this::theoryTask)
-    .build();
-
-  private static final Map<String, String> DEFAULT_NAMES = ImmutableMap.<String, String>builder()
-    .put("code", "Programming")
-    .put("choice", "Quiz")
-    .put("text", "Theory")
-    .put("pycharm", "Programming")
-    .put("video", "Video")
-    .put("number", "Number")
-    .put("sorting", "Sorting")
-    .put("matching", "Matching")
-    .put("string", "Text")
-    .put("math", "Math")
-    .put("free-answer", "Free Response")
-    .put("table", "Table")
-    .put("dataset", "Data")
-    .put("admin", "Linux")
-    .put("manual-score", "Manual Score")
-    .build();
-
-  private static final String DEFAULT_EDU_TASK_NAME = "Edu Task";
-  private static final String UNKNOWN_TASK_NAME = "Unknown Task";
-
-  public StepikTaskBuilder(@NotNull Course course,
-                           @NotNull Lesson lesson,
-                           @NotNull StepSource stepSource,
-                           int stepId, int userId) {
-    myStepSource = stepSource;
-    myStep = stepSource.getBlock();
-    myStepId = stepId;
-    myUserId = userId;
-    myLesson = lesson;
-    myCourseType = course.getItemType();
-    myLanguage = course.getLanguageById();
-    myCourseEnvironment = course.getEnvironment();
+  fun createTask(type: String): Task? {
+    val taskName = DEFAULT_NAMES[type]
+    return stepikTaskTypes[type]?.invoke(taskName ?: UNKNOWN_TASK_NAME)
   }
 
-  @Nullable
-  public Task createTask(@NotNull String type) {
-    String taskName = DEFAULT_NAMES.get(type);
-    return stepikTaskTypes.get(type).apply(taskName != null ? taskName : UNKNOWN_TASK_NAME);
+  fun isSupported(type: String): Boolean {
+    return stepikTaskTypes.containsKey(type)
   }
 
-  public boolean isSupported(@NotNull String type) {
-    return stepikTaskTypes.containsKey(type);
-  }
+  private fun codeTask(name: String): CodeTask {
+    val task = CodeTask(name)
+    task.id = stepId
+    task.index = stepSource.position
+    task.updateDate = stepSource.updateDate
 
-  @NotNull
-  private CodeTask codeTask(@NotNull String name) {
-    CodeTask task = new CodeTask(name);
-    task.setId(myStepId);
-    task.setIndex(myStepSource.getPosition());
-    task.setUpdateDate(myStepSource.getUpdateDate());
+    task.status = CheckStatus.Unchecked
+    val options = step.options as PyCharmStepOptions
+    val samples = options.samples
 
-    task.setStatus(CheckStatus.Unchecked);
-    final StringBuilder taskDescription = new StringBuilder(clearCodeBlockFromTags());
-    final PyCharmStepOptions options = (PyCharmStepOptions)myStep.getOptions();
-    if (options != null) {
-      if (options.getSamples() != null) {
-        taskDescription.append("<br>");
-        for (List<String> sample : options.getSamples()) {
-          if (sample.size() == 2) {
-            taskDescription.append("<b>Sample Input:</b><br>");
-            taskDescription.append(StringUtil.replace(sample.get(0), "\n", "<br>"));
-            taskDescription.append("<br>");
-            taskDescription.append("<b>Sample Output:</b><br>");
-            taskDescription.append(StringUtil.replace(sample.get(1), "\n", "<br>"));
-            taskDescription.append("<br><br>");
+    task.descriptionText = buildString {
+      append(clearCodeBlockFromTags())
+
+      if (samples != null) {
+        append("<br>")
+        for (sample in samples) {
+          if (sample.size == 2) {
+            append("<b>Sample Input:</b><br>${sample[0].replace("\n", "<br>")}<br>")
+            append("<b>Sample Output:</b><br>${sample[1].replace("\n", "<br>")}<br><br>")
           }
         }
       }
-      if (options.getExecutionMemoryLimit() != null && options.getExecutionTimeLimit() != null) {
-        taskDescription.append("<br>").append("<font color=\"gray\">Memory limit: ").append(options.getExecutionMemoryLimit())
-          .append(" Mb</font>").append("<br>").append("<font color=\"gray\">Time limit: ").append(options.getExecutionTimeLimit())
-          .append("s</font>").append("<br><br>");
+      val memoryLimit = options.executionMemoryLimit
+      val timeLimit = options.executionTimeLimit
+      if (memoryLimit != null && timeLimit != null) {
+        append("<br><font color=\"gray\">Memory limit: $memoryLimit Mb</font>")
+        append("<br><font color=\"gray\">Time limit: ${timeLimit}s</font><br><br>")
       }
-
-      if (myLanguage.isKindOf(EduNames.PYTHON) && options.getSamples() != null) {
-        createTestFileFromSamples(task, options.getSamples());
-      }
-      final String templateForTask = getCodeTemplateForTask(options.getCodeTemplates());
-      createMockTaskFile(task, "write your answer here \n", templateForTask);
     }
 
-    task.setDescriptionText(taskDescription.toString());
-    return task;
+    if (language.isKindOf(EduNames.PYTHON) && samples != null) {
+      createTestFileFromSamples(task, samples)
+    }
+    createMockTaskFile(task, "write your answer here \n", getCodeTemplateForTask(options.codeTemplates))
+    return task
   }
 
-  @NotNull
-  private String clearCodeBlockFromTags() {
-    String text = myStep.getText();
-    Document parsedText = Jsoup.parse(text);
-    for (Element element : parsedText.select("code")) {
-      Document.OutputSettings settings = new Document.OutputSettings().prettyPrint(false);
-      String codeBlockWithoutTags = Jsoup.clean(element.html(), "", new Whitelist().addTags("br"), settings);
-      codeBlockWithoutTags = codeBlockWithoutTags.replace("<br>", "\n");
-      codeBlockWithoutTags = codeBlockWithoutTags.replaceAll("[\n]+", "\n");
-      element.html(codeBlockWithoutTags);
+  private fun clearCodeBlockFromTags(): String {
+    val parsedText = Jsoup.parse(step.text)
+    for (element in parsedText.select("code")) {
+      val settings = Document.OutputSettings().prettyPrint(false)
+      var codeBlockWithoutTags = Jsoup.clean(element.html(), "", Whitelist().addTags("br"), settings)
+      codeBlockWithoutTags = codeBlockWithoutTags.replace("<br>", "\n")
+      codeBlockWithoutTags = codeBlockWithoutTags.replace("[\n]+".toRegex(), "\n")
+      element.html(codeBlockWithoutTags)
     }
-    return parsedText.toString();
+    return parsedText.toString()
   }
 
-  @NotNull
-  private ChoiceTask choiceTask(@NotNull String name) {
-    ChoiceTask task = new ChoiceTask(name);
-    task.setId(myStepId);
-    task.setIndex(myStepSource.getPosition());
-    task.setUpdateDate(myStepSource.getUpdateDate());
-    task.setDescriptionText(clearCodeBlockFromTags());
+  private fun choiceTask(name: String): ChoiceTask {
+    val task = ChoiceTask(name)
+    task.id = stepId
+    task.index = stepSource.position
+    task.updateDate = stepSource.updateDate
+    task.descriptionText = clearCodeBlockFromTags()
 
-    ChoiceStep choiceStep = null;
-    if (!ApplicationManager.getApplication().isUnitTestMode() || myStepId > 0) {
-      choiceStep = StepikConnector.getInstance().getChoiceStepSource(myStepId);
-    }
+    val choiceStep: ChoiceStep? = if (!isUnitTestMode || stepId > 0)
+      StepikConnector.getInstance().getChoiceStepSource(stepId)
+    else null
+
     if (choiceStep != null) {
-      ChoiceStepOptions choiceStepOptions = choiceStep.getSource();
+      val choiceStepOptions = choiceStep.source
       if (choiceStepOptions != null) {
-        task.setMultipleChoice(choiceStepOptions.isMultipleChoice());
-        task.setChoiceOptions(ContainerUtil.map(choiceStepOptions.getOptions(),
-                                                option -> new ChoiceOption(option.getText(), option.isCorrect()
-                                                                                             ? ChoiceOptionStatus.CORRECT
-                                                                                             : ChoiceOptionStatus.INCORRECT)));
+        task.isMultipleChoice = choiceStepOptions.isMultipleChoice
+        task.choiceOptions = choiceStepOptions.options.map { ChoiceOption(it.text, it.choiceStatus) }
       }
-      if (!choiceStep.getFeedbackCorrect().isEmpty()) {
-        task.setMessageCorrect(choiceStep.getFeedbackCorrect());
+      if (choiceStep.feedbackCorrect.isNotEmpty()) {
+        task.messageCorrect = choiceStep.feedbackCorrect
       }
-      if (!choiceStep.getFeedbackWrong().isEmpty()) {
-        task.setMessageIncorrect(choiceStep.getFeedbackWrong());
+      if (choiceStep.feedbackWrong.isNotEmpty()) {
+        task.messageIncorrect = choiceStep.feedbackWrong
       }
     }
-    else if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      final Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepId, myUserId);
+    else if (!isUnitTestMode) {
+      val attempt = StepikCheckerConnector.getAttemptForStep(stepId, userId)
       if (attempt != null) {
-        final Dataset dataset = attempt.getDataset();
-        if (dataset != null && dataset.getOptions() != null) {
-          task.setChoiceOptions(ContainerUtil.map(dataset.getOptions(), s -> new ChoiceOption(s)));
-          task.setMultipleChoice(dataset.isMultipleChoice());
+        val dataset = attempt.dataset
+        if (dataset?.options != null) {
+          task.choiceOptions = dataset.options.orEmpty().map(::ChoiceOption)
+          task.isMultipleChoice = dataset.isMultipleChoice
         }
         else {
-          LOG.warn("Dataset for step " + myStepId + " is null");
+          LOG.warn("Dataset for step $stepId is null")
         }
       }
     }
 
-    createMockTaskFile(task, "you can experiment here, it won't be checked\n");
-    return task;
+    createMockTaskFile(task)
+    return task
   }
 
-  @NotNull
-  private TheoryTask theoryTask(@NotNull String name) {
-    TheoryTask task = new TheoryTask(name);
-    task.setId(myStepId);
-    task.setIndex(myStepSource.getPosition());
-    task.setUpdateDate(myStepSource.getUpdateDate());
-    task.setDescriptionText(clearCodeBlockFromTags());
+  private fun theoryTask(name: String): TheoryTask {
+    val task = TheoryTask(name)
+    task.id = stepId
+    task.index = stepSource.position
+    task.updateDate = stepSource.updateDate
+    task.descriptionText = clearCodeBlockFromTags()
 
-    createMockTaskFile(task, "you can experiment here, it won’t be checked\n");
-    return task;
+    createMockTaskFile(task)
+    return task
   }
 
-  private VideoTask videoTask(@NotNull String name) {
-    VideoTask task = new VideoTask(name);
-    task.setId(myStepId);
-    task.setIndex(myStepSource.getPosition());
-    task.setUpdateDate(myStepSource.getUpdateDate());
-    String descriptionText = "View this video on <a href=\"" + StepikUtils.getStepikLink(task, myLesson) + "\">Stepik</a>.";
-    Step block = myStepSource.getBlock();
+  private fun videoTask(name: String): VideoTask {
+    val task = VideoTask(name)
+    task.id = stepId
+    task.index = stepSource.position
+    task.updateDate = stepSource.updateDate
+    var descriptionText = "View this video on <a href=\"${getStepikLink(task, lesson)}\">Stepik</a>."
+    val block = stepSource.block
     if (block != null) {
-      Video video = block.getVideo();
+      val video = block.video
       if (video != null) {
-        task.setThumbnail(video.getThumbnail());
-        List<UrlsMap> urlsMapList = video.getListUrls();
-        List<VideoSource> sources = new ArrayList<>();
-        if (urlsMapList != null) {
-          urlsMapList.forEach(urlsMap -> sources.add(new VideoSource(urlsMap.getUrl(), urlsMap.getQuality())));
-        }
-        task.setSources(Collections.unmodifiableList(sources));
-        descriptionText = new VideoTaskResourcesManager().getText(task, myLesson);
+        task.thumbnail = video.thumbnail
+        task.sources = unmodifiableList(video.listUrls?.map { VideoSource(it.url, it.quality) } ?: emptyList())
+        descriptionText = VideoTaskResourcesManager().getText(task, lesson)
       }
       else {
-        LOG.warn("Video for step " + myStepId + " is null");
+        LOG.warn("Video for step $stepId is null")
       }
     }
     else {
-      LOG.warn("Block for step " + myStepId + " is null");
+      LOG.warn("Block for step $stepId is null")
     }
 
-    task.setDescriptionText(descriptionText);
-    createMockTaskFile(task, "you can experiment here, it won’t be checked\n");
-    return task;
+    task.descriptionText = descriptionText
+    createMockTaskFile(task)
+    return task
   }
 
-  @NotNull
-  private Task unsupportedTask(@NotNull @NonNls String name) {
-    TheoryTask task = new TheoryTask(name);
-    task.setId(myStepId);
-    task.setIndex(myStepSource.getPosition());
-    task.setUpdateDate(myStepSource.getUpdateDate());
-    final String stepText = StringUtil.capitalize(name.toLowerCase()) + " tasks are not supported yet. <br>" +
-                            "View this step on <a href=\"" + StepikUtils.getStepikLink(task, myLesson) + "\">Stepik</a>.";
-    task.setDescriptionText(stepText);
+  private fun unsupportedTask(@NonNls name: String): Task {
+    val task = TheoryTask(name)
+    task.id = stepId
+    task.index = stepSource.position
+    task.updateDate = stepSource.updateDate
+    task.descriptionText = "${name.toLowerCase().capitalize()} tasks are not supported yet. <br>" +
+                           "View this step on <a href=\"${getStepikLink(task, lesson)}\">Stepik</a>."
 
-    createMockTaskFile(task, "this is a " + name.toLowerCase() + " task. You can use this editor as a playground\n");
-    return task;
+    createMockTaskFile(task, "This is a ${name.toLowerCase()} task. You can use this editor as a playground\n")
+    return task
   }
 
-  @NotNull
-  private Task pycharmTask(@NotNull String name) {
-    if (!myStep.getName().startsWith(PYCHARM_PREFIX)) {
-      LOG.error("Got a block with non-pycharm prefix: " + myStep.getName() + " for step: " + myStepId);
-      throw new IllegalArgumentException();
+  private fun pycharmTask(): Task {
+    val stepOptions = step.options as PyCharmStepOptions
+    val taskName: String = stepOptions.title ?: DEFAULT_EDU_TASK_NAME
+
+    val task = createPluginTask(taskName)
+    task.id = stepId
+    task.updateDate = stepSource.updateDate
+
+    task.customPresentableName = stepOptions.customPresentableName
+
+    task.descriptionText = if (step.text.isNotEmpty()) step.text else stepOptions.descriptionText.orEmpty()
+    task.descriptionFormat = stepOptions.descriptionFormat
+    task.feedbackLink = stepOptions.myFeedbackLink
+
+    stepOptions.files?.forEach {
+      addPlaceholdersTexts(it)
+      task.addTaskFile(it)
     }
-    PyCharmStepOptions stepOptions = ((PyCharmStepOptions)myStep.getOptions());
-    String taskName = DEFAULT_EDU_TASK_NAME;
-    if (stepOptions != null) {
-      taskName = stepOptions.getTitle() != null ? stepOptions.getTitle() : DEFAULT_EDU_TASK_NAME;
+
+    return task
+  }
+
+  private fun createPluginTask(name: String): Task {
+    val options = step.options as PyCharmStepOptions
+    return pluginTaskTypes.getOrDefault(options.taskType, null)?.invoke(name) ?: EduTask(name)
+  }
+
+  private fun createMockTaskFile(
+    task: Task,
+    comment: String = "You can experiment here, it won’t be checked\n",
+    codeTemplate: String? = null
+  ) {
+    val options = step.options
+    if (options is PyCharmStepOptions && !options.files.isNullOrEmpty()) {
+      options.files?.forEach { task.addTaskFile(it) }
+      return
     }
-    Task task = createPluginTask(taskName);
-    task.setId(myStepId);
-    task.setUpdateDate(myStepSource.getUpdateDate());
 
-    if (stepOptions != null) {
-      task.setCustomPresentableName(stepOptions.getCustomPresentableName());
-      if (!myStep.getText().isEmpty()) {
-        task.setDescriptionText(myStep.getText());
-      }
-      else if (stepOptions.getDescriptionText() != null) {
-        task.setDescriptionText(stepOptions.getDescriptionText());
-      }
-
-      if (stepOptions.getDescriptionFormat() != null) {
-        task.setDescriptionFormat(stepOptions.getDescriptionFormat());
-      }
-
-      task.setFeedbackLink(stepOptions.getMyFeedbackLink());
-      if (stepOptions.getFiles() != null) {
-        for (TaskFile taskFile : stepOptions.getFiles()) {
-          addPlaceholdersTexts(taskFile);
-          task.addTaskFile(taskFile);
-        }
-      }
-    }
-    return task;
-  }
-
-  @NotNull
-  private Task createPluginTask(@NotNull String name) {
-    final PyCharmStepOptions options = ((PyCharmStepOptions)myStep.getOptions());
-    if (options == null) {
-      LOG.error("No options in step source");
-      return eduTask(name);
-    }
-    String type = options.getTaskType();
-    if (type == null || !pluginTaskTypes.containsKey(type)) {
-      return eduTask(name);
-    }
-    return pluginTaskTypes.get(type).apply(name);
-  }
-
-  private static Task eduTask(@NotNull String name) {
-    return new EduTask(name);
-  }
-
-  private static Task ideTask(@NotNull String name) {
-    return new IdeTask(name);
-  }
-
-  private static Task outputTask(@NotNull String name) {
-    return new OutputTask(name);
-  }
-
-  private static void addPlaceholdersTexts(TaskFile file) {
-    final String fileText = file.getText();
-    final List<AnswerPlaceholder> placeholders = file.getAnswerPlaceholders();
-    for (AnswerPlaceholder placeholder : placeholders) {
-      final int offset = placeholder.getOffset();
-      final int length = placeholder.getLength();
-      if (fileText.length() > offset + length) {
-        placeholder.setPlaceholderText(fileText.substring(offset, offset + length));
-      }
-    }
-  }
-
-  private void createMockTaskFile(@NotNull Task task, @NotNull String comment) {
-    createMockTaskFile(task, comment, null);
-  }
-
-  private void createMockTaskFile(@NotNull Task task, @NotNull String comment, @Nullable String codeTemplate) {
-    final EduConfigurator<?> configurator =
-      EduConfiguratorManager.findConfigurator(myCourseType, myCourseEnvironment, myLanguage);
-
-    final StepOptions options = myStep.getOptions();
-    if (options instanceof PyCharmStepOptions) {
-      final List<TaskFile> taskFiles = ((PyCharmStepOptions)options).getFiles();
-      if (taskFiles != null && !taskFiles.isEmpty()) {
-        for (TaskFile file : taskFiles) {
-          task.addTaskFile(file);
-        }
-        return;
-      }
-    }
-    StringBuilder editorTextBuilder = new StringBuilder();
-
-    if (codeTemplate == null) {
-      Commenter commenter = LanguageCommenters.INSTANCE.forLanguage(myLanguage);
-      if (commenter != null) {
-        String commentPrefix = commenter.getLineCommentPrefix();
+    val configurator = EduConfiguratorManager.findConfigurator(courseType, courseEnvironment, language)
+    val editorText = buildString {
+      if (codeTemplate == null) {
+        val commentPrefix = LanguageCommenters.INSTANCE.forLanguage(language)?.lineCommentPrefix
         if (commentPrefix != null) {
-          editorTextBuilder.append(commentPrefix).append(" ").append(comment);
+          append("$commentPrefix $comment")
+        }
+
+        if (configurator != null) {
+          append("\n${configurator.mockTemplate}")
         }
       }
-
-      if (configurator != null) {
-        editorTextBuilder.append("\n").append(configurator.getMockTemplate());
+      else {
+        append(codeTemplate)
       }
     }
-    else {
-      editorTextBuilder.append(codeTemplate);
+
+    val taskFilePath = getTaskFilePath(editorText, configurator) ?: return
+    val taskFile = TaskFile()
+    taskFile.setText(editorText)
+    taskFile.name = taskFilePath
+    task.addTaskFile(taskFile)
+  }
+
+  private fun getCodeTemplateForTask(codeTemplates: Map<String, String>?): String? {
+    val languageString = getLanguageName(language)
+    return codeTemplates?.get(languageString)
+  }
+
+  protected open fun getLanguageName(language: Language): String? {
+    return StepikLanguages.langOfId(language.id).langName
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(StepikTaskBuilder::class.java)
+
+    private val DEFAULT_NAMES: Map<String, String> = mapOf(
+      "code" to "Programming",
+      "choice" to "Quiz",
+      "text" to "Theory",
+      "pycharm" to "Programming",
+      "video" to "Video",
+      "number" to "Number",
+      "sorting" to "Sorting",
+      "matching" to "Matching",
+      "string" to "Text",
+      "math" to "Math",
+      "free-answer" to "Free Response",
+      "table" to "Table",
+      "dataset" to "Data",
+      "admin" to "Linux",
+      "manual-score" to "Manual Score"
+    )
+
+    private const val DEFAULT_EDU_TASK_NAME = "Edu Task"
+    private const val UNKNOWN_TASK_NAME = "Unknown Task"
+
+    private fun addPlaceholdersTexts(file: TaskFile) {
+      val fileText = file.text
+      for (placeholder in file.answerPlaceholders) {
+        val offset = placeholder.offset
+        val length = placeholder.length
+        if (fileText.length > offset + length) {
+          placeholder.placeholderText = fileText.substring(offset, offset + length)
+        }
+      }
     }
 
-    String editorText = editorTextBuilder.toString();
-    String taskFilePath = getTaskFilePath(editorText, configurator);
-    if (taskFilePath == null) return;
-
-    final TaskFile taskFile = new TaskFile();
-    taskFile.setText(editorText);
-    taskFile.setName(taskFilePath);
-    task.addTaskFile(taskFile);
-  }
-
-  @Nullable
-  private static String getTaskFilePath(String editorText, EduConfigurator<?> configurator) {
-    if (configurator == null) return null;
-
-    String fileName = configurator.getMockFileName(editorText);
-    if (fileName == null) return null;
-    return GeneratorUtils.joinPaths(configurator.getSourceDir(), fileName);
-  }
-
-  private String getCodeTemplateForTask(@Nullable Map codeTemplates) {
-    final String languageString = getLanguageName(myLanguage);
-    if (languageString != null && codeTemplates != null) {
-      return (String)codeTemplates.get(languageString);
+    private fun getTaskFilePath(editorText: String, configurator: EduConfigurator<*>?): String? {
+      val fileName = configurator?.getMockFileName(editorText) ?: return null
+      return GeneratorUtils.joinPaths(configurator.sourceDir, fileName)
     }
 
-    return null;
-  }
-
-  protected String getLanguageName(@NotNull Language language) {
-    return StepikLanguages.langOfId(language.getID()).getLangName();
-  }
-
-  private static void createTestFileFromSamples(@NotNull Task task,
-                                                @NotNull List<List<String>> samples) {
-
-    String testText = "from test_helper import check_samples\n\n" +
-                      "if __name__ == '__main__':\n" +
-                      "    check_samples(samples=" + new GsonBuilder().create().toJson(samples) + ")";
-    TaskFile test = new TaskFile("tests.py", testText);
-    test.setVisible(false);
-    task.addTaskFile(test);
+    private fun createTestFileFromSamples(task: Task, samples: List<List<String>>) {
+      val testText =
+        "from test_helper import check_samples\n\n" +
+        "if __name__ == '__main__':\n" +
+        "    check_samples(samples=${GsonBuilder().create().toJson(samples)})"
+      val test = TaskFile("tests.py", testText)
+      test.isVisible = false
+      task.addTaskFile(test)
+    }
   }
 }

@@ -7,7 +7,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.util.StdConverter
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
@@ -103,7 +104,7 @@ class Step {
   }
 }
 
-class TaskDescriptionConverter: StdConverter<String, String>() {
+class TaskDescriptionConverter : StdConverter<String, String>() {
   override fun convert(value: String?): String {
     return value?.replaceEncodedShortcuts() ?: ""
   }
@@ -162,30 +163,27 @@ open class PyCharmStepOptions : StepOptions {
     title = task.name
     descriptionFormat = task.descriptionFormat
 
-    setTaskFiles(project, task)
-
+    files = collectTaskFiles(project, task)
     taskType = task.itemType
     lessonType = if (task.lesson is FrameworkLesson) FRAMEWORK else null
     myFeedbackLink = task.feedbackLink
     customPresentableName = task.presentableName
   }
+}
 
-  private fun setTaskFiles(project: Project, task: Task) {
-    val files = mutableListOf<TaskFile>()
-    val taskDir = task.getTaskDir(project)!!
-    for ((_, value) in task.taskFiles) {
-      ApplicationManager.getApplication().invokeAndWait {
-        ApplicationManager.getApplication().runWriteAction {
-          val answerFile = EduUtils.findTaskFileInDir(value, taskDir)
-          if (answerFile == null) return@runWriteAction
-          val studentTaskFile = EduUtils.createStudentFile(project, answerFile, task)
-          if (studentTaskFile == null) return@runWriteAction
-          files.add(studentTaskFile)
-        }
+private fun collectTaskFiles(project: Project, task: Task): MutableList<TaskFile> {
+  val files = mutableListOf<TaskFile>()
+  val taskDir = task.getTaskDir(project) ?: error("Directory for task ${task.name} does not exist")
+  for ((_, value) in task.taskFiles) {
+    invokeAndWaitIfNeeded {
+      runWriteAction {
+        val answerFile = EduUtils.findTaskFileInDir(value, taskDir) ?: return@runWriteAction
+        val studentTaskFile = EduUtils.createStudentFile(project, answerFile, task) ?: return@runWriteAction
+        files.add(studentTaskFile)
       }
     }
-    this.files = files
   }
+  return files
 }
 
 class HyperskillStepOptions : PyCharmStepOptions {
@@ -252,6 +250,8 @@ class ChoiceStepOption {
   @JsonProperty(FEEDBACK)
   val feedback = ""
 }
+
+val ChoiceStepOption.choiceStatus: ChoiceOptionStatus get() = if (isCorrect) ChoiceOptionStatus.CORRECT else ChoiceOptionStatus.INCORRECT
 
 open class StepSource {
   @JsonProperty(ID)
