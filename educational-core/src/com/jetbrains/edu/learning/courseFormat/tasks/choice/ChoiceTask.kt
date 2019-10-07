@@ -27,4 +27,6 @@ class ChoiceTask : Task {
   constructor(name: String) : super(name)
 
   override fun getItemType(): String = "choice"
+
+  override fun supportSubmissions(): Boolean = true
 }

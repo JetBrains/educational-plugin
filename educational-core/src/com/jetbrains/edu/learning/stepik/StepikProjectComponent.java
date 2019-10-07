@@ -62,28 +62,24 @@ public class StepikProjectComponent implements ProjectComponent {
       () -> {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
         if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
-          MessageBusConnection busConnection = myProject.getMessageBus().connect(myProject);
-          busConnection.subscribe(EduSettings.SETTINGS_CHANGED, new EduLogInListener() {
-            @Override
-            public void userLoggedIn() {
-              if (EduSettings.getInstance().getUser() == null) {
-                return;
-              }
-              ToolWindow window = ToolWindowManager.getInstance(myProject).getToolWindow(
-                TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
-              Content submissionsContent = window.getContentManager().findContent(SUBMISSIONS_TAB_NAME);
-              if (submissionsContent != null) {
-                JComponent submissionsPanel = submissionsContent.getComponent();
-                if (submissionsPanel instanceof AdditionalTabPanel) {
-                  ApplicationManager.getApplication().invokeLater(() -> ((AdditionalTabPanel)submissionsPanel).addLoadingPanel());
+          if (EduSettings.getInstance().getUser() != null) {
+            prepareSubmissionsContent(course);
+          }
+          else {
+            MessageBusConnection busConnection = myProject.getMessageBus().connect(myProject);
+            busConnection.subscribe(EduSettings.SETTINGS_CHANGED, new EduLogInListener() {
+              @Override
+              public void userLoggedIn() {
+                if (EduSettings.getInstance().getUser() == null) {
+                  return;
                 }
+                prepareSubmissionsContent(course);
               }
-              loadSubmissionsFromStepik(course);
-            }
 
-            @Override
-            public void userLoggedOut() { }
-          });
+              @Override
+              public void userLoggedOut() { }
+            });
+          }
           StepikUtils.updateCourseIfNeeded(myProject, (EduCourse)course);
 
           final StepikUser currentUser = EduSettings.getInstance().getUser();
@@ -98,6 +94,21 @@ public class StepikProjectComponent implements ProjectComponent {
         }
       }
     );
+  }
+
+  private void prepareSubmissionsContent(@NotNull Course course) {
+    ToolWindow window = ToolWindowManager.getInstance(myProject).getToolWindow(
+      TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
+    if (window != null) {
+      Content submissionsContent = window.getContentManager().findContent(SUBMISSIONS_TAB_NAME);
+      if (submissionsContent != null) {
+        JComponent submissionsPanel = submissionsContent.getComponent();
+        if (submissionsPanel instanceof AdditionalTabPanel) {
+          ApplicationManager.getApplication().invokeLater(() -> ((AdditionalTabPanel)submissionsPanel).addLoadingPanel());
+        }
+      }
+    }
+    loadSubmissionsFromStepik(course);
   }
 
   private void showBalloon() {
