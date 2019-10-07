@@ -53,7 +53,7 @@ public class StepikTaskBuilder {
     .put("choice", this::choiceTask)
     .put("text", this::theoryTask)
     .put("string", this::theoryTask)
-    .put("pycharm", (name) -> pycharmTask())
+    .put("pycharm", this::pycharmTask)
     .put("video", this::videoTask)
     .put("number", this::unsupportedTask)
     .put("sorting", this::unsupportedTask)
@@ -70,7 +70,7 @@ public class StepikTaskBuilder {
     .put("edu", StepikTaskBuilder::eduTask)
     .put("output", StepikTaskBuilder::outputTask)
     .put("ide", StepikTaskBuilder::ideTask)
-    .put("theory", (name) -> theoryTask(name))
+    .put("theory", this::theoryTask)
     .build();
 
   private static final Map<String, String> DEFAULT_NAMES = ImmutableMap.<String, String>builder()
@@ -127,7 +127,7 @@ public class StepikTaskBuilder {
 
     task.setStatus(CheckStatus.Unchecked);
     final StringBuilder taskDescription = new StringBuilder(clearCodeBlockFromTags());
-    final PyCharmStepOptions options = ((PyCharmStepOptions)myStep.getOptions());
+    final PyCharmStepOptions options = (PyCharmStepOptions)myStep.getOptions();
     if (options != null) {
       if (options.getSamples() != null) {
         taskDescription.append("<br>");
@@ -277,11 +277,11 @@ public class StepikTaskBuilder {
     return task;
   }
 
-  @Nullable
-  private Task pycharmTask() {
+  @NotNull
+  private Task pycharmTask(@NotNull String name) {
     if (!myStep.getName().startsWith(PYCHARM_PREFIX)) {
       LOG.error("Got a block with non-pycharm prefix: " + myStep.getName() + " for step: " + myStepId);
-      return null;
+      throw new IllegalArgumentException();
     }
     PyCharmStepOptions stepOptions = ((PyCharmStepOptions)myStep.getOptions());
     String taskName = DEFAULT_EDU_TASK_NAME;
@@ -402,7 +402,7 @@ public class StepikTaskBuilder {
   }
 
   @Nullable
-  private String getTaskFilePath(String editorText, EduConfigurator<?> configurator) {
+  private static String getTaskFilePath(String editorText, EduConfigurator<?> configurator) {
     if (configurator == null) return null;
 
     String fileName = configurator.getMockFileName(editorText);
