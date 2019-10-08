@@ -1,12 +1,10 @@
 package com.jetbrains.edu.java
 
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.FindTaskFileTestBase
 
 class JFindTaskTest : FindTaskFileTestBase<JdkProjectSettings>() {
 
-  override val courseBuilder: EduCourseBuilder<JdkProjectSettings> = JCourseBuilder()
   override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
 
   fun `test get task dir`() = doTestGetTaskDir(

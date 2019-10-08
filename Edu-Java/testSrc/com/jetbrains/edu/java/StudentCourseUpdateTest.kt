@@ -9,7 +9,6 @@ import junit.framework.TestCase
 import java.util.*
 
 class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
-  override val courseBuilder: EduCourseBuilder<JdkProjectSettings> = JCourseBuilder()
   override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
 
   fun `test lesson added`() {

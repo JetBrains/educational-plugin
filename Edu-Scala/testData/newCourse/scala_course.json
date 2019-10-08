@@ -3,6 +3,7 @@
   "title": "Scala Course11",
   "programming_language": "Scala",
   "language": "en",
+  "environment": "Gradle",
   "items": [
     {
       "id": 0,

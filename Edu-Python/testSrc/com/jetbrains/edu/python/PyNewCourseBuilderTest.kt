@@ -2,13 +2,11 @@ package com.jetbrains.edu.python
 
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.python.learning.PyNewCourseBuilder
 import com.jetbrains.python.PythonLanguage
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.newProject.PythonProjectGenerator
 
 class PyNewCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
-  override val courseBuilder: EduCourseBuilder<PyNewProjectSettings> = PyNewCourseBuilder()
   override val defaultSettings: PyNewProjectSettings = PythonProjectGenerator.NO_SETTINGS
 
   fun `test new educator course`() {

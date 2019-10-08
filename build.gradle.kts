@@ -460,8 +460,11 @@ project(":Edu-Scala") {
 project(":Edu-Android") {
   intellij {
     localPath = studioPath
-    // TODO: add `java` plugin for 192 platform when AS 3.6 will be based on 192
-    setPlugins("android", "junit", "properties", "gradle", "Groovy", "IntelliLang", "smali", "Kotlin")
+    val plugins = mutableListOf("android", "junit", "properties", "gradle", "Groovy", "IntelliLang", "smali", "Kotlin")
+    if (isAtLeast192) {
+      plugins += listOf("java", "android-wizardTemplate-plugin", "android-layoutlib")
+    }
+    setPlugins(*plugins.toTypedArray())
   }
 
   dependencies {

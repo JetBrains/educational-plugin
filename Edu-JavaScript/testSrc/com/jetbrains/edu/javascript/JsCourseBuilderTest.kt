@@ -3,7 +3,6 @@ package com.jetbrains.edu.javascript
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.openapi.project.ProjectManager
-import com.jetbrains.edu.javascript.learning.JsCourseBuilder
 import com.jetbrains.edu.javascript.learning.JsNewProjectSettings
 import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.course
@@ -12,7 +11,6 @@ import com.jetbrains.edu.learning.newCourse
 
 class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
 
-  override val courseBuilder = JsCourseBuilder()
   override val defaultSettings = JsNewProjectSettings()
   override fun setUp() {
     super.setUp()

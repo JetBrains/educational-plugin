@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 
 class YamlGeneratorTest : CourseGenerationTestBase<Unit>() {
-  override val courseBuilder: EduCourseBuilder<Unit> = PlainTextCourseBuilder()
   override val defaultSettings: Unit = Unit
 
   override fun setUp() {

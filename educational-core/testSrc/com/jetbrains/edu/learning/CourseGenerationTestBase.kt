@@ -9,12 +9,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.*
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import java.io.File
 
 // TODO: use [HeavyPlatformTestCase] as base class
 abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
 
-  abstract val courseBuilder: EduCourseBuilder<Settings>
   abstract val defaultSettings: Settings
 
   protected lateinit var rootDir: VirtualFile
@@ -25,7 +25,8 @@ abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
   protected fun findFile(path: String): VirtualFile = rootDir.findFileByRelativePath(path) ?: error("Can't find $path")
 
   protected fun createCourseStructure(course: Course) {
-    val generator = courseBuilder.getCourseProjectGenerator(course) ?: error("given builder returns null as course project generator")
+    val configurator = course.configurator ?: error("Failed to find `EduConfigurator` for `${course.name}` course")
+    val generator = configurator.courseBuilder.getCourseProjectGenerator(course) ?: error("given builder returns null as course project generator")
     val project = generator.doCreateCourseProject(rootDir.path, defaultSettings as Any) ?: error("Cannot create project")
 
     runInEdtAndWait {

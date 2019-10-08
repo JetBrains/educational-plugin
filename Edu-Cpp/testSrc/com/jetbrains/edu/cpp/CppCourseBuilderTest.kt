@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.stepik.course.StepikCourse
 
 class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
 
-  override val courseBuilder = CppCourseBuilder()
   override val defaultSettings = CppProjectSettings()
 
   fun `test create new cc edu course`() {

@@ -1,14 +1,11 @@
 package com.jetbrains.edu.python
 
-import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.FindTaskFileTestBase
-import com.jetbrains.edu.python.learning.PyCourseBuilder
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.newProject.PythonProjectGenerator
 
 class PyFindTaskFileTest : FindTaskFileTestBase<PyNewProjectSettings>() {
 
-  override val courseBuilder: EduCourseBuilder<PyNewProjectSettings> = PyCourseBuilder()
   override val defaultSettings: PyNewProjectSettings = PythonProjectGenerator.NO_SETTINGS
 
   fun `test get task dir`() = doTestGetTaskDir(

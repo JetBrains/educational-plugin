@@ -1,13 +1,11 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.jetbrains.edu.learning.configuration.PlainTextCourseBuilder
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
 
 class CourseGenerationTest : CourseGenerationTestBase<Unit>() {
-  override val courseBuilder: EduCourseBuilder<Unit> = PlainTextCourseBuilder()
   override val defaultSettings: Unit = Unit
 
   fun `test do not open invisible files after course creation`() {

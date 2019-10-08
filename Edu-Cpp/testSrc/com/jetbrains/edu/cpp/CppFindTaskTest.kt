@@ -5,10 +5,8 @@ import com.jetbrains.edu.learning.FindTaskFileTestBase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 
-
 class CppFindTaskTest : FindTaskFileTestBase<CppProjectSettings>() {
 
-  override val courseBuilder = CppCourseBuilder()
   override val defaultSettings = CppProjectSettings()
 
   fun `test get task dir from top-level lesson`() {

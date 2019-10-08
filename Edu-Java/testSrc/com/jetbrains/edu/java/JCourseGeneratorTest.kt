@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.*
 
 class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
-  override val courseBuilder: EduCourseBuilder<JdkProjectSettings> = JCourseBuilder()
   override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
 
   fun `test study course structure`() {

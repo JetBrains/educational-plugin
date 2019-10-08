@@ -4,6 +4,7 @@
   "programming_language" : "Scala",
   "language" : "en",
   "course_type" : "PyCharm",
+  "environment": "sbt",
   "items" : [
     {
       "title" : "lesson1",

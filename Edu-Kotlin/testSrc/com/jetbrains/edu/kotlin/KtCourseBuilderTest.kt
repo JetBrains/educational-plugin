@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
-  override val courseBuilder: EduCourseBuilder<JdkProjectSettings> = KtCourseBuilder()
   override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
 
   fun `test study course structure`() {

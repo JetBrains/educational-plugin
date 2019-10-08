@@ -5,7 +5,6 @@ import org.rust.lang.RsLanguage
 
 class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
 
-  override val courseBuilder: EduCourseBuilder<RsProjectSettings> = RsCourseBuilder()
   override val defaultSettings: RsProjectSettings = RsProjectSettings(null)
 
   fun `test new educator course`() {

@@ -1,14 +1,15 @@
 package com.jetbrains.edu.python
 
-import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.python.learning.PyCourseBuilder
+import com.jetbrains.edu.learning.CourseGenerationTestBase
+import com.jetbrains.edu.learning.CourseMode
+import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.newCourse
 import com.jetbrains.python.PythonLanguage
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.newProject.PythonProjectGenerator
 
 class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
 
-  override val courseBuilder: EduCourseBuilder<PyNewProjectSettings> = PyCourseBuilder()
   override val defaultSettings: PyNewProjectSettings = PythonProjectGenerator.NO_SETTINGS
 
   fun `test study course structure`() {
