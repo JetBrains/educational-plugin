@@ -28,10 +28,6 @@
 
 
   <extensions defaultExtensionNs="Educational">
-    <configurator implementationClass="com.jetbrains.edu.python.learning.PyConfigurator" language="Python"/>
-    <configurator implementationClass="com.jetbrains.edu.python.learning.pycharm.PyConfigurator" language="Python"/>
-    <configurator implementationClass="com.jetbrains.edu.python.learning.PyNewConfigurator" language="Python" environment="unittest" displayName="Python"/>
-    <configurator implementationClass="com.jetbrains.edu.python.learning.pycharm.PyNewConfigurator" language="Python" environment="unittest" displayName="Python"/>
     <coursesProvider implementation="com.jetbrains.edu.python.learning.PyBundledCoursesProvider"/>
   </extensions>
 

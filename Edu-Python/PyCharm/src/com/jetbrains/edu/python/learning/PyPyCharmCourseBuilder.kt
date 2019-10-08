@@ -1,16 +1,12 @@
-package com.jetbrains.edu.python.learning.pycharm
+package com.jetbrains.edu.python.learning
 
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import com.jetbrains.edu.python.learning.PyCourseBuilder
 import com.jetbrains.python.newProject.PyNewProjectSettings
 
-class PyCourseBuilder : PyCourseBuilder() {
-
-  override fun getLanguageSettings(): LanguageSettings<PyNewProjectSettings> =
-          PyLanguageSettings()
-
+open class PyPyCharmCourseBuilder : PyCourseBuilderBase() {
+  override fun getLanguageSettings(): LanguageSettings<PyNewProjectSettings> = PyPyCharmLanguageSettings()
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings>? =
-          PyCourseProjectGenerator(this, course)
+    PyPyCharmCourseProjectGenerator(this, course)
 }

@@ -2,7 +2,6 @@ package com.jetbrains.edu.python.learning;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions;
@@ -13,11 +12,15 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class PyConfigurator extends EduConfiguratorWithSubmissions<PyNewProjectSettings> {
+public abstract class PyConfiguratorBase extends EduConfiguratorWithSubmissions<PyNewProjectSettings> {
   public static final String TESTS_PY = "tests.py";
   public static final String TASK_PY = "task.py";
 
-  private final PyCourseBuilder myCourseBuilder = new PyCourseBuilder();
+  private final PyCourseBuilderBase myCourseBuilder;
+
+  public PyConfiguratorBase(@NotNull PyCourseBuilderBase courseBuilder) {
+    myCourseBuilder = courseBuilder;
+  }
 
   @NotNull
   @Override
@@ -46,11 +49,6 @@ public class PyConfigurator extends EduConfiguratorWithSubmissions<PyNewProjectS
   @Override
   public boolean isTestFile(@NotNull Project project, @NotNull VirtualFile file) {
     return TESTS_PY.equals(file.getName());
-  }
-
-  @Override
-  public boolean isEnabled() {
-    return !(PlatformUtils.isPyCharm() || PlatformUtils.isCLion());
   }
 
   @NotNull

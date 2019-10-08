@@ -1,15 +1,12 @@
 package com.jetbrains.edu.python.learning.newproject;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
@@ -21,18 +18,16 @@ import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.sdk.PyDetectedSdk;
 import com.jetbrains.python.sdk.PySdkExtKt;
-import com.jetbrains.python.sdk.PythonSdkType;
-import com.jetbrains.python.sdk.PythonSdkUpdater;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
 
-public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjectSettings> {
-  private static final Logger LOG = Logger.getInstance(PyCourseProjectGenerator.class);
+public abstract class PyCourseProjectGeneratorBase extends CourseProjectGenerator<PyNewProjectSettings> {
+  private static final Logger LOG = Logger.getInstance(PyCourseProjectGeneratorBase.class);
 
-  public PyCourseProjectGenerator(@NotNull EduCourseBuilder<PyNewProjectSettings> builder, @NotNull Course course) {
+  public PyCourseProjectGeneratorBase(@NotNull EduCourseBuilder<PyNewProjectSettings> builder, @NotNull Course course) {
     super(builder, course);
   }
 
@@ -62,7 +57,7 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
     if (course == null) {
       return;
     }
-    final String baseSdkPath = PyLanguageSettings.getBaseSdk(course);
+    final String baseSdkPath = PyLanguageSettingsBase.getBaseSdk(course);
     if (baseSdkPath != null) {
       final PyDetectedSdk baseSdk = new PyDetectedSdk(baseSdkPath);
       final String virtualEnvPath = project.getBasePath() + "/.idea/VirtualEnvironment";
@@ -87,22 +82,8 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
   }
 
   @Nullable
-  protected Sdk updateSdkIfNeeded(@NotNull Project project, @Nullable Sdk sdk) {
-    if (!(sdk instanceof PyDetectedSdk)) {
-      return sdk;
-    }
-    String name = sdk.getName();
-    VirtualFile sdkHome = WriteAction.compute(() -> LocalFileSystem.getInstance().refreshAndFindFileByPath(name));
-    Sdk newSdk = SdkConfigurationUtil.createAndAddSDK(sdkHome.getPath(), PythonSdkType.getInstance());
-    if (newSdk != null) {
-      PythonSdkUpdater.updateOrShowError(newSdk, null, project, null);
-      SdkConfigurationUtil.addSdk(newSdk);
-    }
-    return newSdk;
-  }
+  protected abstract Sdk updateSdkIfNeeded(@NotNull Project project, @Nullable Sdk sdk);
 
   @NotNull
-  protected List<Sdk> getAllSdks() {
-    return ProjectJdkTable.getInstance().getSdksOfType(PythonSdkType.getInstance());
-  }
+  protected abstract List<Sdk> getAllSdks();
 }

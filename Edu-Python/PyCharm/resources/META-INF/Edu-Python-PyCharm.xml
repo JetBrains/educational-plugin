@@ -1,4 +1,10 @@
 <idea-plugin>
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.python</depends>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.python.learning.PyPyCharmConfigurator" language="Python"/>
+    <configurator implementationClass="com.jetbrains.edu.python.learning.PyPyCharmNewConfigurator" language="Python" environment="unittest" displayName="Python"/>
+  </extensions>
+
 </idea-plugin>

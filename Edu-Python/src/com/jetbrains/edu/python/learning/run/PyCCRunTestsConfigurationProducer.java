@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.jetbrains.edu.python.learning.PyConfigurator.TESTS_PY;
+import static com.jetbrains.edu.python.learning.PyConfiguratorBase.TESTS_PY;
 
 public class PyCCRunTestsConfigurationProducer extends LazyRunConfigurationProducer<PyCCRunTestConfiguration> {
 
