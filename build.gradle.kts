@@ -211,6 +211,8 @@ project(":") {
     compile(project(":educational-core"))
     compile(project(":jvm-core"))
     compile(project(":Edu-Python"))
+    compile(project(":Edu-Python:Idea"))
+    compile(project(":Edu-Python:PyCharm"))
     compile(project(":Edu-Kotlin"))
     compile(project(":Edu-Java"))
     compile(project(":Edu-Scala"))
@@ -472,7 +474,23 @@ project(":Edu-Android") {
 
 project(":Edu-Python") {
   intellij {
-    // FIXME we should compile python module with CLion too
+    if (isAtLeast192) {
+      setPlugins("PythonCore:${prop("pythonPluginVersion")}", "java")
+    } else {
+      setPlugins("PythonCore:${prop("pythonPluginVersion")}")
+    }
+  }
+
+  dependencies {
+    compile(project(":educational-core"))
+    testCompile(project(":educational-core", "testOutput"))
+    testCompile(project(":Edu-Python:Idea"))
+    testCompile(project(":Edu-Python:PyCharm"))
+  }
+}
+
+project(":Edu-Python:Idea") {
+  intellij {
     if (!isJvmCenteredIDE) {
       localPath = null
       version = ideaVersion
@@ -486,6 +504,23 @@ project(":Edu-Python") {
 
   dependencies {
     compile(project(":educational-core"))
+    compileOnly(project(":Edu-Python"))
+    testCompile(project(":educational-core", "testOutput"))
+  }
+}
+
+project(":Edu-Python:PyCharm") {
+  intellij {
+    if (isAtLeast192) {
+      setPlugins("PythonCore:${prop("pythonPluginVersion")}", "java")
+    } else {
+      setPlugins("PythonCore:${prop("pythonPluginVersion")}")
+    }
+  }
+
+  dependencies {
+    compile(project(":educational-core"))
+    compileOnly(project(":Edu-Python"))
     testCompile(project(":educational-core", "testOutput"))
   }
 }

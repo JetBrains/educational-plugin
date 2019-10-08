@@ -4,7 +4,9 @@ include 'educational-core',
         'Edu-Java', 
         'Edu-Scala', 
         'Edu-Kotlin', 
-        'Edu-Python', 
+        'Edu-Python',
+        'Edu-Python:Idea', // python support for IDEA and Android Studio
+        'Edu-Python:PyCharm', // python support for PyCharm and CLion
         'Edu-Android',
         'Edu-JavaScript',
         'Edu-Rust',
