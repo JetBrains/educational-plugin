@@ -18,6 +18,7 @@ val isJvmCenteredIDE = baseIDE in listOf("idea", "studio")
 
 val ideaVersion: String by project
 val clionVersion: String by project
+val pycharmVersion: String by project
 val studioVersion: String by project
 
 val studioBuildVersion: String by project
@@ -25,6 +26,7 @@ val studioBuildVersion: String by project
 val baseVersion = when (baseIDE) {
   "idea" -> ideaVersion
   "clion" -> clionVersion
+  "pycharm" -> pycharmVersion
   "studio" -> studioVersion
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
@@ -262,12 +264,10 @@ project(":") {
 
   task("configurePyCharm") {
     doLast {
-      if (!hasProp("pycharmPath")) {
-        throw InvalidUserDataException("Path to PyCharm installed locally is needed\nDefine \"pycharmPath\" property")
-      }
-
       intellij.sandboxDirectory = pycharmSandbox
-      intellij.alternativeIdePath = prop("pycharmPath")
+      withProp("pycharmPath") {
+        intellij.alternativeIdePath = it
+      }
     }
   }
 
@@ -477,11 +477,14 @@ project(":Edu-Android") {
 
 project(":Edu-Python") {
   intellij {
-    if (isAtLeast192) {
-      setPlugins("PythonCore:${prop("pythonPluginVersion")}", "java")
-    } else {
-      setPlugins("PythonCore:${prop("pythonPluginVersion")}")
+    val plugins = mutableListOf<String>()
+    if (baseIDE != "pycharm") {
+      plugins += "PythonCore:${prop("pythonPluginVersion")}"
     }
+    if (isAtLeast192 && isJvmCenteredIDE) {
+      plugins += "java"
+    }
+    setPlugins(*plugins.toTypedArray())
   }
 
   dependencies {
@@ -514,11 +517,14 @@ project(":Edu-Python:Idea") {
 
 project(":Edu-Python:PyCharm") {
   intellij {
-    if (isAtLeast192) {
-      setPlugins("PythonCore:${prop("pythonPluginVersion")}", "java")
-    } else {
-      setPlugins("PythonCore:${prop("pythonPluginVersion")}")
+    val plugins = mutableListOf<String>()
+    if (baseIDE != "pycharm") {
+      plugins += "PythonCore:${prop("pythonPluginVersion")}"
     }
+    if (isAtLeast192 && isJvmCenteredIDE) {
+      plugins += "java"
+    }
+    setPlugins(*plugins.toTypedArray())
   }
 
   dependencies {
