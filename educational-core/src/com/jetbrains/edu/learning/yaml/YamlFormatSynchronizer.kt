@@ -219,7 +219,7 @@ object YamlFormatSynchronizer {
   private fun StudyItem.saveConfigDocument(project: Project, configName: String, mapper: ObjectMapper) {
     val dir = getConfigDir(project)
 
-    val saveAction = Runnable {
+    ApplicationManager.getApplication().invokeLater {
       runWriteAction {
         val file = dir.findOrCreateChildData(javaClass, configName)
         try {
@@ -234,12 +234,6 @@ object YamlFormatSynchronizer {
           file.putUserData(LOAD_FROM_CONFIG, true)
         }
       }
-    }
-
-    if (isUnitTestMode) {
-      saveAction.run()
-    } else {
-      ApplicationManager.getApplication().invokeLater(saveAction)
     }
   }
 
