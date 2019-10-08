@@ -98,17 +98,18 @@ object YamlLoader {
   }
 
   fun ItemContainer.addItemAsNew(project: Project, deserializedItem: StudyItem) {
-    deserializedItem.deserializeChildrenIfNeeded(project, course)
     addItem(deserializedItem)
     sortItems()
+    // we need parent to be set to obtain directories for children config files
     init(course, parent, false)
+    deserializedItem.deserializeChildrenIfNeeded(project, course)
   }
 
   fun StudyItem.deserializeChildrenIfNeeded(project: Project, course: Course) {
     if (this !is ItemContainer) {
       return
     }
-    init(course, this, false)
+
     val mapper = course.mapper
     items = deserializeContent(project, items, mapper)
     // set parent to deserialize content correctly

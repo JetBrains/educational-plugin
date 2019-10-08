@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
@@ -68,6 +67,7 @@ object YamlDeserializer {
       val configFile: VirtualFile = getConfigFileForChild(project, titledItem.name) ?: continue
       val deserializeItem = deserializeItem(project, configFile, mapper) as? T ?: continue
       deserializeItem.name = titledItem.name
+      deserializeItem.index = titledItem.index
       content.add(deserializeItem)
     }
 
