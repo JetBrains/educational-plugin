@@ -164,13 +164,8 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun collectSolutionHiddenInTasks(lesson: Lesson): Map<Int, Boolean> {
-    val result: MutableMap<Int, Boolean> = mutableMapOf()
-    for (task in lesson.taskList) {
-      result[task.id] = task.solutionHidden ?: continue
-    }
-    return result
-  }
+  fun collectSolutionHiddenInTasks(lesson: Lesson): Map<Int, Boolean> =
+    lesson.taskList.filter { it.solutionHidden != null }.map { it.id to it.solutionHidden!! }.toMap()
 
   @JvmStatic
   @Throws(IOException::class)

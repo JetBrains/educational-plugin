@@ -155,7 +155,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertNull(task.customPresentableName)
   }
 
-  fun `test hide solutions for whole course`() {
+  fun `test add hide solutions for course`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson { }
     }
@@ -173,7 +173,41 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertTrue(course.solutionsHidden)
   }
 
-  fun `test do not hide solutions for one task`() {
+  fun `test remove hide solutions for course`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson { }
+    }
+    course.solutionsHidden = true
+
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: My awesome summary
+      |programming_language: Plain text
+    """.trimMargin("|")
+
+    loadItemFromConfig(course, yamlContent)
+    assertFalse(course.solutionsHidden)
+  }
+
+  fun `test add hide solution for task`() {
+    val task = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {}
+      }
+    }.lessons[0].taskList[0]
+    assertNull(task.solutionHidden)
+
+    val yamlContent = """
+      |type: edu
+      |solution_hidden: false
+    """.trimMargin("|")
+
+    loadItemFromConfig(task, yamlContent)
+    assertFalse(task.solutionHidden!!)
+  }
+
+  fun `test remove hide solution for task`() {
     val task = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {}
@@ -183,10 +217,9 @@ class YamlChangeApplierTest : YamlTestCase() {
 
     val yamlContent = """
       |type: edu
-      |solution_hidden: false
     """.trimMargin("|")
 
     loadItemFromConfig(task, yamlContent)
-    assertFalse(task.solutionHidden!!)
+    assertNull(task.solutionHidden)
   }
 }

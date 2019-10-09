@@ -297,7 +297,10 @@ public abstract class Task extends StudyItem {
     return false;
   }
 
-  /* null means that course.solutionsHidden should be used */
+  /**
+   * @return null means that behaviour for this particular Task hasn't been configured by a user
+   * and {@link Course#getSolutionsHidden()} should be used instead
+   */
   @Nullable
   public Boolean getSolutionHidden() {
     return solutionHidden;
