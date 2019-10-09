@@ -13,6 +13,8 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.taskDescription.IMG_TAG
+import com.jetbrains.edu.learning.taskDescription.SRC_ATTRIBUTE
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import javafx.application.Platform
 import javafx.beans.value.ObservableValue
@@ -177,7 +179,6 @@ fun loadText(filePath: String): String? {
 }
 
 private fun absolutizeImgPaths(project: Project, content: String): String {
-  val srcAttribute = "src"
   val task = EduUtils.getCurrentTask(project)
   if (task == null) {
     return content
@@ -189,13 +190,13 @@ private fun absolutizeImgPaths(project: Project, content: String): String {
   }
 
   val document = Jsoup.parse(content)
-  val imageElements = document.getElementsByTag("img")
+  val imageElements = document.getElementsByTag(IMG_TAG)
   for (imageElement in imageElements) {
-    val imagePath = imageElement.attr(srcAttribute)
+    val imagePath = imageElement.attr(SRC_ATTRIBUTE)
     if (!BrowserUtil.isAbsoluteURL(imagePath)) {
       val file = File(imagePath)
       val absolutePath = File(taskDir.path, file.path).toURI().toString()
-      imageElement.attr("src", absolutePath)
+      imageElement.attr(SRC_ATTRIBUTE, absolutePath)
     }
   }
   return document.outerHtml()

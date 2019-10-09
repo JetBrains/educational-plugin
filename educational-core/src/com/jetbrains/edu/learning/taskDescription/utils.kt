@@ -7,6 +7,8 @@ import com.intellij.openapi.keymap.KeymapUtil
 private const val SHORTCUT = "shortcut"
 private const val SHORTCUT_ENTITY = "&$SHORTCUT:"
 private const val SHORTCUT_ENTITY_ENCODED = "&amp;$SHORTCUT:"
+const val IMG_TAG = "img"
+const val SRC_ATTRIBUTE = "src"
 
 fun replaceActionIDsWithShortcuts(text: StringBuffer) {
   var lastIndex = 0

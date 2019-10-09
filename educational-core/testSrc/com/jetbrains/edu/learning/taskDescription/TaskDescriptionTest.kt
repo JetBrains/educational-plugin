@@ -48,10 +48,10 @@ class TaskDescriptionTest : EduTestCase() {
     val processedText = BrowserWindow.processContent(fileText, project)
     val processedDocument = Jsoup.parse(processedText)
 
-    val initialImgElements = initialDocument.getElementsByTag("img")
-    val processedImageElements = processedDocument.getElementsByTag("img")
+    val initialImgElements = initialDocument.getElementsByTag(IMG_TAG)
+    val processedImageElements = processedDocument.getElementsByTag(IMG_TAG)
     processedImageElements.zip(initialImgElements)
-    initialImgElements.zip(processedImageElements).map { assert(it.first.attr("src") == it.second.attr("src") ) }
+    initialImgElements.zip(processedImageElements).map { assert(it.first.attr(SRC_ATTRIBUTE) == it.second.attr(SRC_ATTRIBUTE)) }
   }
 
   private fun doTestImage() {
@@ -61,9 +61,9 @@ class TaskDescriptionTest : EduTestCase() {
     val fileText = FileUtil.loadFile(File(testDataPath, name))
     val processedText = BrowserWindow.processContent(fileText, project)
     val document = Jsoup.parse(processedText)
-    val imageElements = document.getElementsByTag("img")
+    val imageElements = document.getElementsByTag(IMG_TAG)
     imageElements
-      .map { assert(BrowserUtil.isAbsoluteURL(it.attr("src"))) }
+      .map { assert(BrowserUtil.isAbsoluteURL(it.attr(SRC_ATTRIBUTE))) }
   }
 
   fun testShortcutRendering() {
