@@ -8,8 +8,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.nullValue
-import org.hamcrest.CoreMatchers.containsString
-import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.assertThat
 import org.rust.lang.RsLanguage
 
@@ -39,7 +38,7 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
               }
           """)
         }
-        eduTask("EduTestsFailed") {
+        eduTask("EduTestFailed") {
           taskFile("Cargo.toml", """
             [package]
             name = "task"
@@ -56,7 +55,28 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
 
               #[test]
               fn test() {
-                  assert_eq!(String::from("foo"), foo());
+                  assert!(foo() == String::from("foo"), "Test error message");
+              }
+          """)
+        }
+        eduTask("EduComparisonTestFailed") {
+          taskFile("Cargo.toml", """
+            [package]
+            name = "task"
+            version = "0.1.0"
+            edition = "2018"
+          """)
+          rustTaskFile("src/lib.rs", """
+              pub fn foo() -> String {
+                  String::from("bar")
+              }
+          """)
+          rustTaskFile("tests/tests.rs", """
+              use task::foo;
+
+              #[test]
+              fn test() {
+                  assert_eq!(foo(), String::from("foo"));
               }
           """)
         }
@@ -101,7 +121,9 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
       assertEquals(CheckStatus.Failed, checkResult.status)
       val (messageMatcher, diffMatcher) = when (task.name) {
         "EduCompilationFailed" -> equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE) to nullValue()
-        "EduTestsFailed" -> containsString("assertion failed") to nullValue()
+        "EduTestFailed" -> containsString("Test error message") to nullValue()
+        "EduComparisonTestFailed" -> any(String::class.java) to
+          diff(CheckResultDiff(expected = "foo", actual = "bar"))
         "OutputCompilationFailed" -> equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE) to nullValue()
         "OutputTestsFailed" ->
           equalTo("Expected output:\n<Hello, World!\n>\nActual output:\n<Hello, World\n>") to

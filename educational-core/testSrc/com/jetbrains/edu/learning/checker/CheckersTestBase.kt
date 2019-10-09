@@ -55,7 +55,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
         return super.shouldRunTest() && (!SystemInfo.isLinux || System.getenv("TEAMCITY_VERSION") == null)
     }
 
-    protected fun doTest() {
+    protected open fun doTest() {
         UIUtil.dispatchAllInvocationEvents()
 
         val exceptions = arrayListOf<AssertionError>()

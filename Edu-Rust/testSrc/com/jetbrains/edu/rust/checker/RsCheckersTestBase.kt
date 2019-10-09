@@ -18,4 +18,11 @@ abstract class RsCheckersTestBase : CheckersTestBase<RsProjectSettings>() {
     }
     super.runTest()
   }
+
+  override fun doTest() {
+    // Cargo build tool window is not essential here
+    // but IntelliJ Rust plugin doesn't dispose console editor without it
+    // and tests fail at platform assertion
+    withCargoBuildToolWindow { super.doTest() }
+  }
 }
