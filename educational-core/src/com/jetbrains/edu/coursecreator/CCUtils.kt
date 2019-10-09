@@ -141,7 +141,7 @@ object CCUtils {
         if (file.isDirectory) {
           // All files inside task directory are already handled by `CCVirtualFileListener`
           // so here we don't need to process them again
-          return EduUtils.getTask(file, course) == null
+          return EduUtils.getTask(project, course, file) == null
         }
         if (EduUtils.isTestsFile(project, file)) return true
         if (configurator != null && configurator.excludeFromArchive(project, file)) return false

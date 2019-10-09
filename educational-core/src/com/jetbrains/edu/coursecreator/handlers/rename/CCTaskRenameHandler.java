@@ -39,7 +39,7 @@ public class CCTaskRenameHandler extends CCStudyItemRenameHandler {
     if (lessonDir == null) {
       return;
     }
-    Lesson lesson = EduUtils.getLesson(lessonDir.getVirtualFile(), course);
+    Lesson lesson = EduUtils.getLesson(project, course, lessonDir.getVirtualFile());
     if (lesson == null) {
       return;
     }

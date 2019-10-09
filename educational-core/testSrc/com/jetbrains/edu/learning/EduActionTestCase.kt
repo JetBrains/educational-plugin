@@ -51,12 +51,12 @@ abstract class EduActionTestCase : EduTestCase() {
     var studyItem: StudyItem? = null
     val course = StudyTaskManager.getInstance(project).course
     if (course != null) {
-      studyItem = EduUtils.getSection(file, course)
+      studyItem = EduUtils.getSection(project, course, file)
       if (studyItem == null) {
-        studyItem = EduUtils.getLesson(file, course)
+        studyItem = EduUtils.getLesson(project, course, file)
       }
       if (studyItem == null) {
-        studyItem = EduUtils.getTask(file, course)
+        studyItem = EduUtils.getTask(project, course, file)
       }
     }
     return studyItem

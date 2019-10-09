@@ -70,7 +70,7 @@ public class EditInputAction extends DumbAwareAction {
         public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
           if (newSelection.getIcon() != null) {
             int tabCount = tabbedPane.getTabCount();
-            VirtualFile taskDir = EduUtils.getTaskDir(course, openedFile);
+            VirtualFile taskDir = EduUtils.getTaskDir(project, course, openedFile);
             assert taskDir != null;
             VirtualFile testsDir = taskDir.findChild(EduNames.USER_TESTS);
             assert testsDir != null;

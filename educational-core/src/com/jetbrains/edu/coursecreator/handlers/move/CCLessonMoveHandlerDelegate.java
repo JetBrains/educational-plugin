@@ -48,7 +48,7 @@ public class CCLessonMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate 
     }
     final PsiDirectory sourceDirectory = (PsiDirectory)elements[0];
     final VirtualFile sourceVFile = sourceDirectory.getVirtualFile();
-    final Lesson sourceLesson = EduUtils.getLesson(sourceVFile, course);
+    final Lesson sourceLesson = EduUtils.getLesson(project, course, sourceVFile);
     if (sourceLesson == null) {
       throw new IllegalStateException("Failed to find lesson for `sourceVFile` directory");
     }
@@ -119,7 +119,7 @@ public class CCLessonMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate 
     if (targetVFile.equals(OpenApiExtKt.getCourseDir(project))) return course;
     StudyItem targetItem = course.getItem(targetVFile.getName());
     if (targetItem == null) {
-      targetItem = EduUtils.getLesson(targetVFile, course);
+      targetItem = EduUtils.getLesson(project, course, targetVFile);
     }
     return targetItem;
   }

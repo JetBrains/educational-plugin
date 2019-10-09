@@ -35,8 +35,8 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
 
   @Override
   @Nullable
-  protected VirtualFile createItemDir(@NotNull final Project project, @NotNull final Section section,
-                                      @NotNull final VirtualFile parentDirectory, @NotNull final Course course) {
+  protected VirtualFile createItemDir(@NotNull final Project project, @NotNull final Course course, @NotNull final Section section,
+                                      @NotNull final VirtualFile parentDirectory) {
     return CCUtils.createSectionDir(project, section.getName());
   }
 
@@ -47,20 +47,18 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
 
   @Nullable
   @Override
-  protected StudyItem getParentItem(@NotNull Course course, @NotNull VirtualFile directory) {
+  protected StudyItem getParentItem(@NotNull Project project, @NotNull Course course, @NotNull VirtualFile directory) {
     return course;
   }
 
   @Nullable
   @Override
-  protected StudyItem getThresholdItem(@NotNull final Course course, @NotNull final VirtualFile sourceDirectory) {
+  protected StudyItem getThresholdItem(@NotNull Project project, @NotNull final Course course, @NotNull final VirtualFile sourceDirectory) {
     return course.getItem(sourceDirectory.getName());
   }
 
   @Override
-  protected boolean isAddedAsLast(@NotNull VirtualFile sourceDirectory,
-                                  @NotNull Project project,
-                                  @NotNull Course course) {
+  protected boolean isAddedAsLast(@NotNull Project project, @NotNull Course course, @NotNull VirtualFile sourceDirectory) {
     return sourceDirectory.equals(OpenApiExtKt.getCourseDir(project));
   }
 

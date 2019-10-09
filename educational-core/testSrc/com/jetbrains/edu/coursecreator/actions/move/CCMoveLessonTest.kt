@@ -131,6 +131,29 @@ class CCMoveLessonTest : MoveTestBase() {
     assertEquals(4, section2.items.size)
   }
 
+  // EDU-2467
+  fun `test move from section with the same name to section`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      section("section1") {
+        lesson("section1")
+      }
+      section {
+        lesson("lesson4")
+      }
+    }
+
+    val sourceDir = findPsiDirectory("section1/section1")
+    val targetDir = findPsiDirectory("section2")
+
+    doMoveAction(course, sourceDir, targetDir, delta = 1)
+
+    val section1 = course.getSection("section1")
+    val section2 = course.getSection("section2")
+
+    assertEquals(0, section1!!.items.size)
+    assertEquals(2, section2!!.items.size)
+  }
+
   fun `test move lesson from section to lesson in another section`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE){
       section {
@@ -146,7 +169,7 @@ class CCMoveLessonTest : MoveTestBase() {
     val sourceDir = findPsiDirectory("section1/lesson2")
     val targetDir = findPsiDirectory("section2/lesson5")
 
-    doMoveAction(course, sourceDir, targetDir, delta = 0)
+    doMoveAction(course, sourceDir, targetDir)
 
     val section1 = course.getSection("section1")!!
     val section2 = course.getSection("section2")!!

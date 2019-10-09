@@ -124,10 +124,10 @@ object YamlLoader {
     return when (this) {
              is Section -> course
              is Lesson -> {
-               val section = course?.let { EduUtils.getSection(parentDir, course) }
+               val section = course?.let { EduUtils.getSection(project, course, parentDir) }
                section ?: course
              }
-             is Task -> course?.let { EduUtils.getLesson(parentDir, course) }
+             is Task -> course?.let { EduUtils.getLesson(project, course, parentDir) }
              else -> loadingError(
                "Unexpected item type. Expected: 'Section', 'Lesson' or 'Task'. Was '${itemType}'")
            } ?: loadingError(notFoundMessage("parent", "for item '${name}'"))
@@ -143,9 +143,9 @@ object YamlLoader {
     val course = StudyTaskManager.getInstance(project).course ?: return null
     return when (name) {
       YamlFormatSettings.COURSE_CONFIG -> course
-      YamlFormatSettings.SECTION_CONFIG -> EduUtils.getSection(itemDir, course)
-      YamlFormatSettings.LESSON_CONFIG -> EduUtils.getLesson(itemDir, course)
-      YamlFormatSettings.TASK_CONFIG -> EduUtils.getTask(itemDir, course)
+      YamlFormatSettings.SECTION_CONFIG -> EduUtils.getSection(project, course, itemDir)
+      YamlFormatSettings.LESSON_CONFIG -> EduUtils.getLesson(project, course, itemDir)
+      YamlFormatSettings.TASK_CONFIG -> EduUtils.getTask(project, course, itemDir)
       else -> loadingError(unknownConfigMessage(name))
     }
   }

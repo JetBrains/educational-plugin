@@ -40,12 +40,12 @@ fun isMoveForbidden(project: Project?, element: PsiElement?, target: PsiElement?
   if (isRefactoringForbidden(project, element)) return true
   if (element is PsiFile) {
     val course = project?.course ?: return false
-    val sourceTaskDir = EduUtils.getTaskDir(course, element.originalFile.virtualFile) ?: return false
+    val sourceTaskDir = EduUtils.getTaskDir(project, course, element.originalFile.virtualFile) ?: return false
     val targetDir = (target as? PsiDirectory)?.virtualFile ?: return false
     val targetTaskDir = if (EduUtils.isTaskDirectory(project, targetDir)) {
       targetDir
     } else {
-      EduUtils.getTaskDir(course, targetDir)
+      EduUtils.getTaskDir(project, course, targetDir)
     }
 
     if (sourceTaskDir != targetTaskDir) return true

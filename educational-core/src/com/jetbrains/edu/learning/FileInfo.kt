@@ -14,9 +14,9 @@ fun VirtualFile.fileInfo(project: Project): FileInfo? {
   if (shouldIgnore(this, project)) return null
 
   if (isDirectory) {
-    EduUtils.getSection(this, course)?.let { return FileInfo.SectionDirectory(it) }
-    EduUtils.getLesson(this, course)?.let { return FileInfo.LessonDirectory(it) }
-    EduUtils.getTask(this, course)?.let { return FileInfo.TaskDirectory(it) }
+    EduUtils.getSection(project, course, this)?.let { return FileInfo.SectionDirectory(it) }
+    EduUtils.getLesson(project, course, this)?.let { return FileInfo.LessonDirectory(it) }
+    EduUtils.getTask(project, course, this)?.let { return FileInfo.TaskDirectory(it) }
   }
 
   val task = EduUtils.getTaskForFile(project, this) ?: return null

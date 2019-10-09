@@ -14,7 +14,7 @@ abstract class FindTaskFileTestBase<Settings> : CourseGenerationTestBase<Setting
   protected fun doTestGetTaskDir(course: Course, filePath: String, taskDirPath: String) {
     val file = findFile(filePath)
     val expectedTaskDir = findFile(taskDirPath)
-    assertEquals(expectedTaskDir, EduUtils.getTaskDir(course, file))
+    assertEquals(expectedTaskDir, EduUtils.getTaskDir(project, course, file))
   }
 
   protected fun doTestGetTaskForFile(pathToCourseJson: String, filePath: String, expectedTask: (Course) -> Task) {

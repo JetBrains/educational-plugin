@@ -356,14 +356,14 @@ public class EduUtils {
   }
 
   @Nullable
-  public static VirtualFile getTaskDir(@NotNull Course course, @NotNull VirtualFile taskFile) {
+  public static VirtualFile getTaskDir(Project project, @NotNull Course course, @NotNull VirtualFile taskFile) {
     VirtualFile file = taskFile.getParent();
     while (file != null) {
       VirtualFile lessonDirCandidate = file.getParent();
       if (lessonDirCandidate == null) {
         return null;
       }
-      Lesson lesson = getLesson(lessonDirCandidate, course);
+      Lesson lesson = getLesson(project, course, lessonDirCandidate);
       if (lesson != null) {
         if (lesson instanceof FrameworkLesson && EduNames.TASK.equals(file.getName()) ||
             lesson.getTask(file.getName()) != null) {
@@ -382,13 +382,13 @@ public class EduUtils {
     if (course == null) {
       return null;
     }
-    VirtualFile taskDir = getTaskDir(course, file);
+    VirtualFile taskDir = getTaskDir(project, course, file);
     if (taskDir == null) {
       return null;
     }
     final VirtualFile lessonDir = taskDir.getParent();
     if (lessonDir != null) {
-      final Lesson lesson = getLesson(lessonDir, course);
+      final Lesson lesson = getLesson(project, course, lessonDir);
       if (lesson == null) {
         return null;
       }
@@ -502,7 +502,7 @@ public class EduUtils {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) return file.getName();
 
-    VirtualFile taskDir = getTaskDir(course, file);
+    VirtualFile taskDir = getTaskDir(project, course, file);
     if (taskDir == null) return file.getName();
 
     String fullRelativePath = FileUtil.getRelativePath(taskDir.getPath(), file.getPath(), VfsUtilCore.VFS_SEPARATOR_CHAR);
@@ -638,15 +638,16 @@ public class EduUtils {
   }
 
   @Nullable
-  public static Task getTask(@NotNull VirtualFile taskDir, @NotNull final Course course) {
+  public static Task getTask(@NotNull Project project, @NotNull Course course, @NotNull VirtualFile taskDir) {
     VirtualFile lessonDir = taskDir.getParent();
     if (lessonDir == null) {
       return null;
     }
-    Lesson lesson = getLesson(lessonDir, course);
+    Lesson lesson = getLesson(project, course, lessonDir);
     if (lesson == null) {
       return null;
     }
+
     return lesson.getTask(taskDir.getName());
   }
 
@@ -764,7 +765,7 @@ public class EduUtils {
     if (lessonDirCandidate == null) {
       return false;
     }
-    Lesson lesson = getLesson(lessonDirCandidate, course);
+    Lesson lesson = getLesson(project, course, lessonDirCandidate);
     if (lesson == null) {
       return false;
     }
@@ -776,30 +777,42 @@ public class EduUtils {
     if (course == null) {
       return false;
     }
-    return getLesson(virtualFile, course) != null;
+    return getLesson(project, course, virtualFile) != null;
   }
 
   @Nullable
-  public static Lesson getLesson(@NotNull VirtualFile lessonDir, @NotNull final Course course) {
+  public static Lesson getLesson(@NotNull Project project, @NotNull final Course course, @NotNull VirtualFile lessonDir) {
     if (!lessonDir.isDirectory()) {
       return null;
     }
-    VirtualFile sectionDir = lessonDir.getParent();
-    if (sectionDir == null) {
+    VirtualFile lessonParent = lessonDir.getParent();
+    if (lessonParent == null) {
       return null;
     }
-    final Section section = getSection(sectionDir, course);
+    final Section section = getSection(project, course, lessonParent);
     if (section != null) {
       return section.getLesson(lessonDir.getName());
     }
 
-    return course.getLesson(lessonDir.getName());
+    VirtualFile courseDir = course.getDir(project);
+    if (courseDir.equals(lessonParent)) {
+      return course.getLesson(lessonDir.getName());
+    }
+
+    return null;
   }
 
   @Nullable
-  public static Section getSection(@NotNull VirtualFile sectionDir, @NotNull final Course course) {
+  public static Section getSection(@NotNull Project project, @NotNull Course course, @NotNull VirtualFile sectionDir) {
     if (!sectionDir.isDirectory()) return null;
-    return course.getSection(sectionDir.getName());
+
+    VirtualFile courseDir = course.getDir(project);
+    VirtualFile sectionParentDir = sectionDir.getParent();
+    if (courseDir.equals(sectionParentDir)) {
+      return course.getSection(sectionDir.getName());
+    }
+
+    return null;
   }
 
   public static boolean isSectionDirectory(@NotNull Project project, @NotNull VirtualFile file) {
@@ -807,7 +820,7 @@ public class EduUtils {
     if (course == null) {
       return false;
     }
-    return getSection(file, course) != null;
+    return getSection(project, course, file) != null;
   }
 
   public static void showNotification(@NotNull Project project, @NotNull String title, @Nullable AnAction action) {
@@ -826,13 +839,13 @@ public class EduUtils {
     VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
     if (courseDir.equals(dir)) return course;
 
-    Section section = getSection(dir, course);
+    Section section = getSection(project, course, dir);
     if (section != null) return section;
 
-    Lesson lesson = getLesson(dir, course);
+    Lesson lesson = getLesson(project, course, dir);
     if (lesson != null) return lesson;
 
-    Task task = getTask(dir, course);
+    Task task = getTask(project, course, dir);
     if (task != null) return task;
 
     return null;

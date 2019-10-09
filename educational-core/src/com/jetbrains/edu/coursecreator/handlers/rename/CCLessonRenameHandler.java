@@ -24,7 +24,7 @@ public class CCLessonRenameHandler extends CCStudyItemRenameHandler {
 
   @Override
   protected void rename(@NotNull Project project, @NotNull Course course, @NotNull PsiFileSystemItem item) {
-    Lesson lesson = EduUtils.getLesson(item.getVirtualFile(), course);
+    Lesson lesson = EduUtils.getLesson(project, course, item.getVirtualFile());
     if (lesson != null) {
       processRename(lesson, EduNames.LESSON, course, project, item.getVirtualFile());
       Section section = lesson.getSection();

@@ -29,8 +29,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
   override fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem> =
     Function { file -> (item as? Task)?.lesson?.getTask(file.name) }
 
-  override fun createItemDir(project: Project, item: Task,
-                             parentDirectory: VirtualFile, course: Course): VirtualFile? {
+  override fun createItemDir(project: Project, course: Course, item: Task, parentDirectory: VirtualFile): VirtualFile? {
     val configurator = course.configurator
     if (configurator == null) {
       LOG.info("Failed to get configurator for " + course.languageID)
@@ -42,16 +41,20 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
   override fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int =
     (parentItem as? Lesson)?.taskList?.size ?: 0
 
-  override fun getParentItem(course: Course, directory: VirtualFile): StudyItem? {
-    val task = EduUtils.getTask(directory, course) ?: return EduUtils.getLesson(directory, course)
+  override fun getParentItem(
+    project: Project,
+    course: Course,
+    directory: VirtualFile
+  ): StudyItem? {
+    val task = EduUtils.getTask(project, course, directory) ?: return EduUtils.getLesson(project, course, directory)
     return task.lesson
   }
 
-  override fun getThresholdItem(course: Course, sourceDirectory: VirtualFile): StudyItem? =
-    EduUtils.getTask(sourceDirectory, course)
+  override fun getThresholdItem(project: Project, course: Course, sourceDirectory: VirtualFile): StudyItem? =
+    EduUtils.getTask(project, course, sourceDirectory)
 
-  override fun isAddedAsLast(sourceDirectory: VirtualFile, project: Project, course: Course): Boolean =
-    EduUtils.getLesson(sourceDirectory, course) != null
+  override fun isAddedAsLast(project: Project, course: Course, sourceDirectory: VirtualFile): Boolean =
+    EduUtils.getLesson(project, course, sourceDirectory) != null
 
   override fun sortSiblings(course: Course, parentItem: StudyItem?) {
     if (parentItem is Lesson) {

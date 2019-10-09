@@ -29,8 +29,7 @@ abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: 
     return Function { file -> (item as? Lesson)?.container?.getItem(file.name) }
   }
 
-  override fun createItemDir(project: Project, item: Item,
-                             parentDirectory: VirtualFile, course: Course): VirtualFile? {
+  override fun createItemDir(project: Project, course: Course, item: Item, parentDirectory: VirtualFile): VirtualFile? {
     val configurator = course.configurator
     if (configurator == null) {
       LOG.info("Failed to get configurator for " + course.languageID)
@@ -43,17 +42,16 @@ abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: 
     return (parentItem as? ItemContainer)?.items?.size ?: 0
   }
 
-  override fun getParentItem(course: Course, directory: VirtualFile): StudyItem? {
-    val lesson = EduUtils.getLesson(directory, course)
+  override fun getParentItem(project: Project, course: Course, directory: VirtualFile): StudyItem? {
+    val lesson = EduUtils.getLesson(project, course, directory)
     return lesson?.container ?: (course.getSection(directory.name) ?: course)
   }
 
-  override fun getThresholdItem(course: Course, sourceDirectory: VirtualFile): StudyItem? = EduUtils.getLesson(sourceDirectory, course)
+  override fun getThresholdItem(project: Project, course: Course, sourceDirectory: VirtualFile): StudyItem? =
+    EduUtils.getLesson(project, course, sourceDirectory)
 
-  override fun isAddedAsLast(sourceDirectory: VirtualFile,
-                             project: Project,
-                             course: Course): Boolean {
-    val section = course.getSection(sourceDirectory.name)
+  override fun isAddedAsLast(project: Project, course: Course, sourceDirectory: VirtualFile): Boolean {
+    val section = EduUtils.getSection(project, course, sourceDirectory)
     return section != null || sourceDirectory == project.courseDir
   }
 
@@ -71,7 +69,7 @@ abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: 
     if (selectedFiles.size != 1) return
 
     val sourceDirectory = selectedFiles.first()
-    if (course.hasSections && getParentItem(course, sourceDirectory) is Course) {
+    if (course.hasSections && getParentItem(project, course, sourceDirectory) is Course) {
       event.presentation.isEnabledAndVisible = false
     }
   }

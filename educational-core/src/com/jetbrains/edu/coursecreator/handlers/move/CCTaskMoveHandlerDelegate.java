@@ -57,7 +57,7 @@ public class CCTaskMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
     if (course == null) {
       return;
     }
-    final Task taskToMove = EduUtils.getTask(sourceDirectory.getVirtualFile(), course);
+    final Task taskToMove = EduUtils.getTask(project, course, sourceDirectory.getVirtualFile());
     if (taskToMove == null) {
       return;
     }
@@ -65,7 +65,7 @@ public class CCTaskMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
     Lesson sourceLesson = taskToMove.getLesson();
     if (EduUtils.isLessonDirectory(project, targetVFile)) {
       //if user moves task to any lesson, this task is inserted as the last task in this lesson
-      Lesson targetLesson = EduUtils.getLesson(targetVFile, course);
+      Lesson targetLesson = EduUtils.getLesson(project, course, targetVFile);
       if (targetLesson == null) {
         return;
       }
@@ -84,7 +84,7 @@ public class CCTaskMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
       if (lessonDir == null) {
         return;
       }
-      Task targetTask = EduUtils.getTask(targetVFile, course);
+      Task targetTask = EduUtils.getTask(project, course, targetVFile);
       if (targetTask == null) {
         return;
       }

@@ -55,7 +55,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   }
 
   private fun suggestWrapLessonsIntoSection(project: Project, course: Course, sourceDirectory: VirtualFile) {
-    val parentItem = getParentItem(course, sourceDirectory)
+    val parentItem = getParentItem(project, course, sourceDirectory)
     if (parentItem != course) {
       return
     }
@@ -84,13 +84,13 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     val course = StudyTaskManager.getInstance(project).course ?: return
 
     val sourceDirectory = selectedFiles[0]
-    if (!isAddedAsLast(sourceDirectory, project, course) && getThresholdItem(course, sourceDirectory) == null) return
+    if (!isAddedAsLast(project, course, sourceDirectory) && getThresholdItem(project, course, sourceDirectory) == null) return
     if (CommonDataKeys.PSI_FILE.getData(event.dataContext) != null) return
     presentation.isEnabledAndVisible = true
   }
 
   private fun getParentDir(project: Project, course: Course, directory: VirtualFile): VirtualFile? {
-    return if (isAddedAsLast(directory, project, course)) directory else directory.parent
+    return if (isAddedAsLast(project, course, directory)) directory else directory.parent
   }
 
   private fun createItem(
@@ -99,7 +99,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     course: Course,
     dataContext: DataContext
   ): VirtualFile? {
-    val parentItem = getParentItem(course, sourceDirectory)
+    val parentItem = getParentItem(project, course, sourceDirectory)
     val item = getItem(project, course, sourceDirectory, parentItem, dataContext)
     if (item == null) {
       LOG.info("Failed to create study item")
@@ -113,7 +113,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     CCUtils.updateHigherElements(parentDir.children, getStudyOrderable(item, course), item.index - 1, 1)
     addItem(course, item)
     sortSiblings(course, parentItem)
-    val virtualFile = createItemDir(project, item, parentDir, course)
+    val virtualFile = createItemDir(project, course, item, parentDir)
     YamlFormatSynchronizer.saveItem(item)
     YamlFormatSynchronizer.saveItem(item.parent)
     EduCounterUsageCollector.studyItemCreated(item)
@@ -122,7 +122,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
 
   protected abstract fun addItem(course: Course, item: Item)
   protected abstract fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem>
-  protected abstract fun createItemDir(project: Project, item: Item, parentDirectory: VirtualFile, course: Course): VirtualFile?
+  protected abstract fun createItemDir(project: Project, course: Course, item: Item, parentDirectory: VirtualFile): VirtualFile?
 
   protected fun getItem(
     project: Project,
@@ -134,12 +134,12 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     val index: Int
     val suggestedName: String
     val additionalPanels = ArrayList<AdditionalPanel>()
-    if (isAddedAsLast(sourceDirectory, project, course)) {
+    if (isAddedAsLast(project, course, sourceDirectory)) {
       index = ITEM_INDEX.getData(dataContext) ?: getSiblingsSize(course, parentItem) + 1
       suggestedName = SUGGESTED_NAME.getData(dataContext) ?: itemType.presentableName + index
     }
     else {
-      val thresholdItem = getThresholdItem(course, sourceDirectory) ?: return null
+      val thresholdItem = getThresholdItem(project, course, sourceDirectory) ?: return null
       val defaultIndex = ITEM_INDEX.getData(dataContext)
       index = defaultIndex ?: thresholdItem.index
       val itemName = itemType.presentableName
@@ -170,9 +170,9 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   }
 
   protected abstract fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int
-  protected abstract fun getParentItem(course: Course, directory: VirtualFile): StudyItem?
-  protected abstract fun getThresholdItem(course: Course, sourceDirectory: VirtualFile): StudyItem?
-  protected abstract fun isAddedAsLast(sourceDirectory: VirtualFile, project: Project, course: Course): Boolean
+  protected abstract fun getParentItem(project: Project, course: Course, directory: VirtualFile): StudyItem?
+  protected abstract fun getThresholdItem(project: Project, course: Course, sourceDirectory: VirtualFile): StudyItem?
+  protected abstract fun isAddedAsLast(project: Project, course: Course, sourceDirectory: VirtualFile): Boolean
   protected abstract fun sortSiblings(course: Course, parentItem: StudyItem?)
 
   abstract fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, info: NewStudyItemInfo): Item?

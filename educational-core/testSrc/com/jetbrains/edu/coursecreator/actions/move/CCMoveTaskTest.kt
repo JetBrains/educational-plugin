@@ -31,6 +31,31 @@ class CCMoveTaskTest : MoveTestBase() {
     assertEquals(2, lesson2.getTask("task1")!!.index)
   }
 
+  // EDU-2467
+  fun `test move from lesson with the same name to another lesson`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask("lesson1")
+        eduTask("task2")
+      }
+      lesson("lesson2") {
+        eduTask("task2")
+      }
+    }
+    val sourceDir = findPsiDirectory("lesson1/lesson1")
+    val targetDir = findPsiDirectory("lesson2")
+    doMoveAction(course, sourceDir, targetDir, delta = 1)
+    val lesson1 = course.getLesson("lesson1")
+    val lesson2 = course.getLesson("lesson2")
+    assertEquals(1, lesson1!!.taskList.size)
+    assertEquals(2, lesson2!!.taskList.size)
+
+    assertEquals(1, lesson1.getTask("task2")!!.index)
+
+    assertEquals(1, lesson2.getTask("task2")!!.index)
+    assertEquals(2, lesson2.getTask("lesson1")!!.index)
+  }
+
   fun `test move task with custom name to another lesson`() {
     val customTaskName = "Custom Task Name"
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
@@ -147,7 +172,7 @@ class CCMoveTaskTest : MoveTestBase() {
     val sourceDir = findPsiDirectory("lesson1/task1")
     val targetDir = findPsiDirectory("lesson2/task3")
 
-    doMoveAction(course, sourceDir, targetDir, delta = 1)
+    doMoveAction(course, sourceDir, targetDir)
 
     val lesson1 = course.getLesson("lesson1")!!
     val lesson2 = course.getLesson("lesson2")!!
