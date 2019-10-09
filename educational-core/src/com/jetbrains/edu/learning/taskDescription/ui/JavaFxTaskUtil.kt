@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.taskDescription.IMG_TAG
+import com.jetbrains.edu.learning.taskDescription.SCRIPT_TAG
 import com.jetbrains.edu.learning.taskDescription.SRC_ATTRIBUTE
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import javafx.application.Platform
@@ -168,7 +169,7 @@ fun htmlWithResources(project: Project, content: String): String {
   val styleManager = StyleManager()
 
   val textWithResources = StrSubstitutor(styleManager.resources(content)).replace(templateText) ?: "Cannot load task text"
-  return absolutizeImgPaths(project, textWithResources)
+  return absolutizePaths(project, textWithResources)
 }
 
 fun loadText(filePath: String): String? {
@@ -178,7 +179,7 @@ fun loadText(filePath: String): String? {
   }
 }
 
-private fun absolutizeImgPaths(project: Project, content: String): String {
+private fun absolutizePaths(project: Project, content: String): String {
   val task = EduUtils.getCurrentTask(project)
   if (task == null) {
     return content
@@ -191,12 +192,13 @@ private fun absolutizeImgPaths(project: Project, content: String): String {
 
   val document = Jsoup.parse(content)
   val imageElements = document.getElementsByTag(IMG_TAG)
-  for (imageElement in imageElements) {
-    val imagePath = imageElement.attr(SRC_ATTRIBUTE)
-    if (!BrowserUtil.isAbsoluteURL(imagePath)) {
-      val file = File(imagePath)
+  val scriptElements = document.getElementsByTag(SCRIPT_TAG)
+  for (element in scriptElements + imageElements) {
+    val src = element.attr(SRC_ATTRIBUTE)
+    if (src.isNotEmpty() && !BrowserUtil.isAbsoluteURL(src)) {
+      val file = File(src)
       val absolutePath = File(taskDir.path, file.path).toURI().toString()
-      imageElement.attr(SRC_ATTRIBUTE, absolutePath)
+      element.attr(SRC_ATTRIBUTE, absolutePath)
     }
   }
   return document.outerHtml()

@@ -66,6 +66,31 @@ class TaskDescriptionTest : EduTestCase() {
       .map { assert(BrowserUtil.isAbsoluteURL(it.attr(SRC_ATTRIBUTE))) }
   }
 
+  fun `test js script`() {
+    val description = """
+      |<script src="task.js">
+      |</script>
+      |<button onclick="change_color(this)">Click me</button>
+      |
+      |Solve this task
+    """.trimMargin()
+
+    createCourseWithDescription(description)
+    myFixture.openFileInEditor(findFileInTask(0, 0, "taskFile1.txt"))
+
+    val processedText = BrowserWindow.processContent(description, project)
+    val document = Jsoup.parse(processedText)
+    for (script in document.getElementsByTag(SCRIPT_TAG)) {
+      val url = script.attr(SRC_ATTRIBUTE)
+
+      // it means there is no src attribute in this tag
+      if (url.isEmpty()) {
+        continue
+      }
+      assertTrue("Relative path for script:\n$script", BrowserUtil.isAbsoluteURL(url))
+    }
+  }
+
   fun testShortcutRendering() {
     val taskText = "You can use &shortcut:OverrideMethods; to override methods"
     val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods"

@@ -8,6 +8,7 @@ private const val SHORTCUT = "shortcut"
 private const val SHORTCUT_ENTITY = "&$SHORTCUT:"
 private const val SHORTCUT_ENTITY_ENCODED = "&amp;$SHORTCUT:"
 const val IMG_TAG = "img"
+const val SCRIPT_TAG = "script"
 const val SRC_ATTRIBUTE = "src"
 
 fun replaceActionIDsWithShortcuts(text: StringBuffer) {
