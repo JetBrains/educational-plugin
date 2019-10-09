@@ -71,6 +71,13 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
         val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configuration).activeTarget().build()
         environments.add(env)
         runner?.execute(env) { descriptor ->
+          // Descriptor can be null in some cases.
+          // For example, IntelliJ Rust's test runner provides null here if compilation fails
+          if (descriptor == null) {
+            latch.countDown()
+            return@execute
+          }
+
           descriptor.processHandler?.addProcessListener(object : ProcessAdapter() {
             override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
               val text = event.text
@@ -116,10 +123,10 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
 
     val firstFailedTest = failedChildren.firstOrNull() ?: error("Testing failed although no failed tests found")
     val diff = firstFailedTest.diffViewerProvider?.let {
-      CheckResultDiff(it.left, it.right, it.diffTitle, removeAttributes(firstFailedTest.comparisonMessage))
+      CheckResultDiff(it.left, it.right, it.diffTitle, removeAttributes(getComparisonErrorMessage(firstFailedTest)))
     }
     return CheckResult(CheckStatus.Failed,
-                       message = removeAttributes(firstFailedTest.errorMessage),
+                       message = removeAttributes(getErrorMessage(firstFailedTest)),
                        diff = diff)
   }
 
@@ -158,7 +165,12 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
   protected abstract fun createTestConfigurations(): List<RunnerAndConfigurationSettings>
 
   /**
-   * Returns message that will be shown to a user in Check Result panel
+   * Returns message for test error that will be shown to a user in Check Result panel
    */
-  protected open val SMTestProxy.comparisonMessage: String get() = errorMessage
+  protected open fun getErrorMessage(node: SMTestProxy): String = node.errorMessage
+
+  /**
+   * Returns message for comparison error that will be shown to a user in Check Result panel
+   */
+  protected open fun getComparisonErrorMessage(node: SMTestProxy): String = getErrorMessage(node)
 }

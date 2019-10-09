@@ -1,64 +1,46 @@
 package com.jetbrains.edu.rust.checker
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-import com.google.gson.JsonSyntaxException
+import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
-import com.jetbrains.edu.learning.checker.TaskChecker
+import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.rust.messages.EduRustBundle.message
 import org.rust.cargo.project.model.cargoProjects
 import org.rust.cargo.project.settings.rustSettings
 import org.rust.cargo.toolchain.CargoCommandLine
 import org.rust.openapiext.execute
 
-class RsEduTaskChecker(project: Project, task: EduTask) : TaskChecker<EduTask>(task, project) {
+class RsEduTaskChecker(project: Project, task: EduTask) : EduTaskCheckerBase(task, project) {
 
-    private val parser: JsonParser = JsonParser()
-
-    override fun check(indicator: ProgressIndicator): CheckResult {
-        val taskDir = task.getTaskDir(project) ?: return CheckResult.FAILED_TO_CHECK
-        val pkg = runReadAction { project.cargoProjects.findPackageForFile(taskDir) } ?: return CheckResult.FAILED_TO_CHECK
-        val cargo = project.rustSettings.toolchain?.rawCargo() ?: return CheckResult.FAILED_TO_CHECK
-        val cmd = CargoCommandLine.forPackage(pkg, "test", listOf(
-            "--", "-Z", "unstable-options", "--format=json"
-        ))
-        val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(project)
-        for (line in processOutput.stdoutLines) {
-            if (line.trimStart().startsWith("error: Could not compile")) {
-                return CheckResult(CheckStatus.Failed, CheckUtils.COMPILATION_FAILED_MESSAGE, processOutput.stdout)
-            }
-            val jsonObject = try {
-                parser.parse(line) as? JsonObject ?: continue
-            } catch (e: JsonSyntaxException) {
-                continue
-            }
-            val testMessage = LibtestTestMessage.fromJson(jsonObject) ?: continue
-            if (testMessage.event == "failed") {
-                return CheckResult(CheckStatus.Failed, testMessage.stdout ?: "")
-            }
-        }
-
-        return CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
+  override fun computePossibleErrorResult(stderr: String): CheckResult {
+    val taskDir = task.getTaskDir(project) ?: error("Failed to find directory of `${task.name}` task")
+    val cargo = project.rustSettings.toolchain?.rawCargo() ?: return CheckResult(CheckStatus.Failed, message("checker.fail.toolchain"))
+    val pkg = runReadAction { project.cargoProjects.findPackageForFile(taskDir) } ?:
+              return CheckResult(CheckStatus.Failed, message("checker.fail.package", task.name))
+    val cmd = CargoCommandLine.forPackage(pkg, "test", listOf("--no-run"))
+    val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(project)
+    for (line in processOutput.stdoutLines) {
+      if (line.trimStart().startsWith("error: Could not compile")) {
+        return CheckResult(CheckStatus.Failed, CheckUtils.COMPILATION_FAILED_MESSAGE, processOutput.stdout)
+      }
     }
-}
+    return super.computePossibleErrorResult(stderr)
+  }
 
-private data class LibtestTestMessage(
-  val type: String,
-  val event: String,
-  val name: String,
-  val stdout: String?
-) {
-    companion object {
-        fun fromJson(json: JsonObject): LibtestTestMessage? {
-            if (json.getAsJsonPrimitive("type")?.asString != "test") return null
-            return Gson().fromJson(json, LibtestTestMessage::class.java)
-        }
-    }
-}
+  override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
+    return task.getAllTestDirectories(project).mapNotNull { ConfigurationContext(it).configuration }
+  }
 
+  override fun getErrorMessage(node: SMTestProxy): String {
+    val message = super.getErrorMessage(node)
+    return if (message.isEmpty()) node.stacktrace.orEmpty() else message
+  }
+  override fun getComparisonErrorMessage(node: SMTestProxy): String = node.errorMessage
+}

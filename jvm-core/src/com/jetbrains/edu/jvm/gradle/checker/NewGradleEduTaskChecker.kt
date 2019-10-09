@@ -23,8 +23,8 @@ open class NewGradleEduTaskChecker(task: EduTask, project: Project) : EduTaskChe
     }.orEmpty()
   }
 
-  override val SMTestProxy.comparisonMessage: String get() {
-    val index = StringUtil.indexOfIgnoreCase(errorMessage, "expected:", 0)
-    return if (index != -1) errorMessage.substring(0, index).trim() else errorMessage
+  override fun getComparisonErrorMessage(node: SMTestProxy): String {
+    val index = StringUtil.indexOfIgnoreCase(node.errorMessage, "expected:", 0)
+    return if (index != -1) node.errorMessage.substring(0, index).trim() else node.errorMessage
   }
 }

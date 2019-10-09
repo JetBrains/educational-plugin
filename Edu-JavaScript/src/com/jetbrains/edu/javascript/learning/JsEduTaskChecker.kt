@@ -15,9 +15,9 @@ class JsEduTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(tas
     return task.getAllTestFiles(project).mapNotNull { ConfigurationContext(it).configuration }
   }
 
-  override val SMTestProxy.comparisonMessage: String get() {
+  override fun getComparisonErrorMessage(node: SMTestProxy): String {
     // It is tested only with Jest so may not work with other JS test frameworks
-    val index = StringUtil.indexOfIgnoreCase(errorMessage, "Expected:", 0)
-    return if (index != -1) errorMessage.substring(0, index).trim() else errorMessage
+    val index = StringUtil.indexOfIgnoreCase(node.errorMessage, "Expected:", 0)
+    return if (index != -1) node.errorMessage.substring(0, index).trim() else node.errorMessage
   }
 }
