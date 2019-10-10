@@ -15,6 +15,7 @@
  */
 package com.jetbrains.edu.learning.taskDescription.ui;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -64,9 +65,12 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
 
   public void updateTaskSpecificPanel(@Nullable Task task) {
     if (taskSpecificPanel == null) return;
+    final Scene scene = task != null ? JavaFxTaskUtil.createScene(task) : null;
     Platform.runLater(() -> {
-      final Scene scene = task != null ? JavaFxTaskUtil.createScene(task) : null;
       taskSpecificPanel.setScene(scene);
+    });
+
+    ApplicationManager.getApplication().invokeLater(() -> {
       taskSpecificPanel.setVisible(scene != null);
     });
   }
