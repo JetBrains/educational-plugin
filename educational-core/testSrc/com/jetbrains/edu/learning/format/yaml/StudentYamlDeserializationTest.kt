@@ -26,7 +26,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |  This is a course about string theory.
       |  Why not?"
       |programming_language: Plain text
-      |""".trimMargin("|")
+      |""".trimMargin()
     val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
     assertNotNull(course)
     assertEquals(EduNames.STUDY, course.courseMode)
@@ -40,7 +40,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |content:
       |- $firstTask
       |- $secondTask
-    """.trimMargin("|")
+    """.trimMargin()
     val lesson = STUDENT_MAPPER.deserializeLesson(yamlContent)
     assertTrue(lesson is CheckiOStation)
     assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
@@ -54,7 +54,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |code: code
     |seconds_from_change: 1
     |
-    """.trimMargin("|")
+    """.trimMargin()
     val task = STUDENT_MAPPER.deserializeTask(yamlContent)
     assertNotNull(task)
     assertInstanceOf(task, CheckiOMission::class.java)
@@ -82,7 +82,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     val yamlContent = """
     |type: edu
     |status: Solved
-    |""".trimMargin("|")
+    |""".trimMargin()
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     assertEquals(CheckStatus.Solved, task.status)
@@ -103,7 +103,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |record: 1
     |selected_options:
     |- 1
-    |""".trimMargin("|")
+    |""".trimMargin()
     val task = deserializeTask(yamlContent)
     assertTrue(task is ChoiceTask)
     assertEquals(CheckStatus.Solved, task.status)
@@ -154,7 +154,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     val yamlContent = """
     |type: edu
     |record: 1
-    |""".trimMargin("|")
+    |""".trimMargin()
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     assertEquals(1, task.record)
@@ -169,7 +169,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |  visible: true
     |  text: text
     |  learner_created: true
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)
@@ -193,7 +193,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |    initial_state:
     |      offset: 0
     |      length: 1
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)
@@ -221,7 +221,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |    initial_state:
     |      offset: 0
     |      length: 1
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)
@@ -245,7 +245,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |    initial_state:
     |      offset: 0
     |      length: 1
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)
@@ -293,7 +293,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |    initial_state:
     |      offset: 0
     |      length: 1
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)
@@ -317,7 +317,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |    initial_state:
     |      offset: 0
     |      length: 1
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)
@@ -341,7 +341,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |    initial_state:
     |      offset: 0
     |      length: 1
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)
