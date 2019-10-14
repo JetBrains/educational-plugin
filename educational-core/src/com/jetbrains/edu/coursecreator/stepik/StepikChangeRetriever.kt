@@ -35,8 +35,7 @@ data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
   }
 }
 
-class StepikChangeRetriever(private val project: Project, course: EduCourse, private val remoteCourse: EduCourse) {
-  val course: EduCourse = course.copyAs(EduCourse::class.java)
+class StepikChangeRetriever(private val project: Project, private val course: EduCourse, private val remoteCourse: EduCourse) {
 
   fun getChangedItems(): StepikChangesInfo {
     val stepikChanges = StepikChangesInfo()

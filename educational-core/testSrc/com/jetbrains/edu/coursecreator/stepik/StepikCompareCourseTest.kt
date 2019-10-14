@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import junit.framework.TestCase.assertTrue
 
 class StepikCompareCourseTest : EduTestCase() {
 
@@ -106,6 +107,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
     val courseFromServer = localCourse.copy() as EduCourse
     localCourse.items = mutableListOf<StudyItem>(localCourse.lessons[1], localCourse.lessons[0])
+    localCourse.init(null, null, false)
     val expectedInfo = StepikChangesInfo(lessonsInfoToUpdate = localCourse.lessons)
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
@@ -149,6 +151,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
     val courseFromServer = localCourse.copy() as EduCourse
     localCourse.items = mutableListOf<StudyItem>(localCourse.sections[1], localCourse.sections[0])
+    localCourse.init(null, null, false)
     val expectedInfo = StepikChangesInfo(sectionInfosToUpdate = localCourse.sections)
 
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
@@ -208,6 +211,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val courseFromServer = localCourse.copy() as EduCourse
     val lesson = localCourse.lessons.single()
     lesson.items = listOf<StudyItem>(lesson.taskList[2], lesson.taskList[1], lesson.taskList[0])
+    localCourse.init(null, null, false)
 
     val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(lesson.taskList[0], lesson.taskList[2]))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
@@ -545,24 +549,47 @@ class StepikCompareCourseTest : EduTestCase() {
 
   private fun checkChangedItems(localCourse: EduCourse, courseFromServer: EduCourse, expected: StepikChangesInfo) {
     val actual = StepikChangeRetriever(project, localCourse, courseFromServer).getChangedItems()
-    assertEquals(expected.isCourseAdditionalInfoChanged, actual.isCourseAdditionalInfoChanged)
-    assertEquals(expected.isCourseInfoChanged, actual.isCourseInfoChanged)
-    assertTrue(expected.newSections.sameContentWith(actual.newSections))
-    assertTrue(expected.sectionsToDelete.sameContentWith(actual.sectionsToDelete))
-    assertTrue(expected.sectionInfosToUpdate.sameContentWith(actual.sectionInfosToUpdate))
-    assertTrue(expected.newLessons.sameContentWith(actual.newLessons))
-    assertTrue(expected.lessonsToDelete.sameContentWith(actual.lessonsToDelete))
-    assertTrue(expected.lessonsInfoToUpdate.sameContentWith(actual.lessonsInfoToUpdate))
-    assertTrue(expected.newTasks.sameContentWith(actual.newTasks))
-    assertTrue(expected.tasksToDelete.sameContentWith(actual.tasksToDelete))
-    assertTrue(expected.tasksToUpdate.sameContentWith(actual.tasksToUpdate))
-    assertEquals(expected.isTopLevelSectionAdded, actual.isTopLevelSectionAdded)
-    assertEquals(expected.isTopLevelSectionNameChanged, actual.isTopLevelSectionNameChanged)
-    assertEquals(expected.isTopLevelSectionRemoved, actual.isTopLevelSectionRemoved)
+    assertEquals(message("isCourseAdditionalInfoChanged", expected.isCourseAdditionalInfoChanged),
+                 expected.isCourseAdditionalInfoChanged,
+                 actual.isCourseAdditionalInfoChanged)
+    assertEquals(message("isCourseInfoChanged", expected.isCourseInfoChanged),
+                 expected.isCourseInfoChanged,
+                 actual.isCourseInfoChanged)
+
+    compareContent(expected.newSections, actual.newSections)
+    compareContent(expected.sectionsToDelete, actual.sectionsToDelete)
+    compareContent(expected.sectionInfosToUpdate, actual.sectionInfosToUpdate)
+
+    compareContent(expected.newLessons, actual.newLessons)
+    compareContent(expected.lessonsToDelete, actual.lessonsToDelete)
+    compareContent(expected.lessonsInfoToUpdate, actual.lessonsInfoToUpdate)
+
+    compareContent(expected.newTasks, actual.newTasks)
+    compareContent(expected.tasksToDelete, actual.tasksToDelete)
+    compareContent(expected.tasksToUpdate, actual.tasksToUpdate)
+
+    assertEquals(message("isTopLevelSectionAdded", expected.isTopLevelSectionAdded),
+                 expected.isTopLevelSectionAdded,
+                 actual.isTopLevelSectionAdded)
+    assertEquals(message("isTopLevelSectionNameChanged", expected.isTopLevelSectionNameChanged),
+                 expected.isTopLevelSectionNameChanged,
+                 actual.isTopLevelSectionNameChanged)
+    assertEquals(message("isTopLevelSectionNameChanged", expected.isTopLevelSectionNameChanged),
+                 expected.isTopLevelSectionNameChanged,
+                 actual.isTopLevelSectionRemoved)
   }
+
+  private fun message(name: String, expectedValue: Boolean) = " `$name` expected to be `$expectedValue`"
 }
 
-infix fun <T : StudyItem> Collection<T>.sameContentWith(collection: Collection<T>): Boolean {
+private fun compareContent(expectedContent: List<StudyItem>, actualContent: List<StudyItem>) {
+  val message = "Content mismatch. Expected: ${expectedContent.asStringOfItemNames()}. Actual: ${actualContent.asStringOfItemNames()}"
+  assertTrue(message, expectedContent.sameTo(actualContent))
+}
+
+private fun List<StudyItem>.asStringOfItemNames() = if (isEmpty()) "empty list" else joinToString(prefix = "[", postfix = "]") { it.name }
+
+private infix fun <T : StudyItem> Collection<T>.sameTo(collection: Collection<T>): Boolean {
   if (collection.size != this.size) return false
   val pairList = collection.zip(this)
   return pairList.all { (elt1, elt2) -> elt1.name == elt2.name }
