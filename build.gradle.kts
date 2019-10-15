@@ -462,7 +462,7 @@ project(":Edu-Android") {
     localPath = studioPath
     val plugins = mutableListOf("android", "junit", "properties", "gradle", "Groovy", "IntelliLang", "smali", "Kotlin")
     if (isAtLeast192) {
-      plugins += listOf("java", "android-wizardTemplate-plugin", "android-layoutlib")
+      plugins += listOf("java", "android-layoutlib")
     }
     setPlugins(*plugins.toTypedArray())
   }

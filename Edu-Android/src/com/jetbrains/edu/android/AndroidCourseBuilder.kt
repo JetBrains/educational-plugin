@@ -4,7 +4,6 @@ import com.android.ide.common.repository.GradleCoordinate
 import com.android.tools.idea.gradle.project.sync.GradleSyncInvoker
 import com.android.tools.idea.gradle.project.sync.GradleSyncListener
 import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
-import com.android.tools.idea.templates.RepositoryUrlManager
 import com.google.wireless.android.sdk.stats.GradleSyncStats
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ModalityState
@@ -90,7 +89,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
   private fun getLibraryVersion(project: Project, groupId: String, artifactId: String, defaultVersion: String): String {
     val gradleCoordinate = GradleCoordinate(groupId, artifactId, "+")
-    return RepositoryUrlManager.get().resolveDynamicCoordinateVersion(gradleCoordinate, project) ?: return defaultVersion
+    return resolveDynamicCoordinateVersion(gradleCoordinate, project) ?: return defaultVersion
   }
 
   override fun refreshProject(project: Project, listener: EduCourseBuilder.ProjectRefreshListener?) {

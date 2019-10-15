@@ -3,7 +3,6 @@ package com.jetbrains.edu.android
 import com.android.tools.idea.sdk.IdeSdks
 import com.android.tools.idea.ui.ApplicationUtils
 import com.android.tools.idea.welcome.config.FirstRunWizardMode
-import com.android.tools.idea.welcome.install.FirstRunWizardDefaults
 import com.android.tools.idea.welcome.wizard.deprecated.ConsolidatedProgressStep
 import com.android.tools.idea.welcome.wizard.deprecated.InstallComponentsPath
 import com.android.tools.idea.wizard.WizardConstants
@@ -55,7 +54,7 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
 
         val sdkPath = locationField.text
         val location = if (sdkPath.isEmpty()) {
-          FirstRunWizardDefaults.getInitialSdkLocation(FirstRunWizardMode.MISSING_SDK)
+           getInitialSdkLocation(FirstRunWizardMode.MISSING_SDK)
         } else {
           File(sdkPath)
         }

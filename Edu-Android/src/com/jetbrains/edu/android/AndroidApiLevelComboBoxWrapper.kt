@@ -9,7 +9,7 @@ class AndroidApiLevelComboBoxWrapper {
 
   private val _combobox: AndroidApiLevelComboBox = AndroidApiLevelComboBox()
 
-  val combobox: JComboBox<AndroidVersionsInfo.VersionItem> get() = _combobox
+  val combobox: JComboBox<AndroidVersionsInfo.VersionItem?> get() = _combobox
 
   fun init(formFactor: FormFactor, items: List<AndroidVersionsInfo.VersionItem>) {
     _combobox.init(formFactor, items)
