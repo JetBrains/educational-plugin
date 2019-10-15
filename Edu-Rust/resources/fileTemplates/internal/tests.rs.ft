@@ -1,4 +1,7 @@
+use ${PACKAGE_NAME}::sum;
+
+// TODO: replace this with an actual tests
 #[test]
 fn test() {
-    assert!(false, "Implement tests");
+    assert_eq!(sum(1, 2), 3, "Error message");
 }
