@@ -35,6 +35,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.io.zip.JBZipEntry;
@@ -275,30 +276,29 @@ public class EduUtils {
   private static String getTaskTextByTaskName(@NotNull Task task, @Nullable VirtualFile taskDirectory) {
     if (taskDirectory == null) return null;
 
-    DescriptionFormat format = task.getDescriptionFormat();
-    String taskDescription;
-    String textFromFile = getTextByTaskFileFormat(taskDirectory, format.getDescriptionFileName());
-    if (textFromFile != null) {
-      taskDescription = textFromFile;
-    }
-    else {
-      taskDescription = task.getTaskDescription();
-    }
-    if (format == DescriptionFormat.MD) {
+    VirtualFile taskTextFile = getTaskTextFile(taskDirectory);
+    String taskDescription = ObjectUtils.chooseNotNull(getTextFromTaskTextFile(taskTextFile), task.getTaskDescription());
+    if (taskTextFile != null && EduNames.TASK_MD.equals(taskTextFile.getName()) || task.getDescriptionFormat() == DescriptionFormat.MD) {
       return convertToHtml(taskDescription, taskDirectory);
     }
     return taskDescription;
   }
 
   @Nullable
-  private static String getTextByTaskFileFormat(@NotNull VirtualFile taskDirectory, @NotNull String taskTextFileName) {
-    VirtualFile taskTextFile = taskDirectory.findChild(taskTextFileName);
+  private static VirtualFile getTaskTextFile(@NotNull VirtualFile taskDirectory) {
+    VirtualFile taskTextFile = taskDirectory.findChild(EduNames.TASK_HTML);
+    if (taskTextFile == null) {
+      taskTextFile = taskDirectory.findChild(EduNames.TASK_MD);
+    }
+    return taskTextFile;
+  }
 
+  @Nullable
+  private static String getTextFromTaskTextFile(@Nullable VirtualFile taskTextFile) {
     if (taskTextFile != null) {
       Document document = FileDocumentManager.getInstance().getDocument(taskTextFile);
       return document == null ? null : document.getText();
     }
-
     return null;
   }
 
