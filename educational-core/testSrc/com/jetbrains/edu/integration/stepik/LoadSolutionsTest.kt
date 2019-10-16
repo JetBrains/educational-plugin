@@ -228,7 +228,7 @@ class LoadSolutionsTest : StepikTestCase() {
     cleanupCourseFiles()
     val studentCourse = StepikConnector.getInstance().getCourseInfo(courseId, true) as EduCourse
     StepikCourseLoader.loadCourseStructure(studentCourse)
-    studentCourse.createCourseFiles(project)
+    studentCourse.createCourseFiles(project, module)
     return studentCourse
   }
 

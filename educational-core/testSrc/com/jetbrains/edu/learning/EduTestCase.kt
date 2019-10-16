@@ -173,7 +173,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
     return course(name, language, environment, courseMode, courseProducer, buildCourse).apply {
-      createCourseFiles(project, LightPlatformTestCase.getSourceRoot(), settings)
+      createCourseFiles(project, module, settings = settings)
       if (createYamlConfigs) {
         createConfigFiles(project)
       }

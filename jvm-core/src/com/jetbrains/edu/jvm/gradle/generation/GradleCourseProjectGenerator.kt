@@ -3,6 +3,7 @@ package com.jetbrains.edu.jvm.gradle.generation
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
@@ -23,11 +24,11 @@ open class GradleCourseProjectGenerator(
   course: Course
 ) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
 
-  override fun createCourseStructure(project: Project, baseDir: VirtualFile, settings: JdkProjectSettings) {
-    GeneratorUtils.renameBaseModule(project)
+  override fun createCourseStructure(project: Project, module: Module, baseDir: VirtualFile, settings: JdkProjectSettings) {
+      GeneratorUtils.removeModule(project, module)
 
     PropertiesComponent.getInstance(project).setValue(SHOW_UNLINKED_GRADLE_POPUP, false, true)
-    super.createCourseStructure(project, baseDir, settings)
+    super.createCourseStructure(project, module, baseDir, settings)
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {

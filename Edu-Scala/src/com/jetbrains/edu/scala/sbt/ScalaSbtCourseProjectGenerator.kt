@@ -3,6 +3,7 @@ package com.jetbrains.edu.scala.sbt
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtilRt
@@ -20,10 +21,10 @@ import org.jetbrains.sbt.project.SbtProjectSystem
 import org.jetbrains.sbt.project.settings.SbtProjectSettings
 
 class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Course) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
-  override fun createCourseStructure(project: Project, baseDir: VirtualFile, settings: JdkProjectSettings) {
-    GeneratorUtils.renameBaseModule(project)
+  override fun createCourseStructure(project: Project, module: Module, baseDir: VirtualFile, settings: JdkProjectSettings) {
+    GeneratorUtils.removeModule(project, module)
     project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
-    super.createCourseStructure(project, baseDir, settings)
+    super.createCourseStructure(project, module, baseDir, settings)
   }
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {

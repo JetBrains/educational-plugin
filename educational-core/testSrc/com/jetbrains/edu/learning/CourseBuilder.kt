@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -43,14 +44,19 @@ fun course(
   return course
 }
 
-fun Course.createCourseFiles(project: Project, baseDir: VirtualFile = LightPlatformTestCase.getSourceRoot(), settings: Any = Unit) {
+fun Course.createCourseFiles(
+  project: Project,
+  module: Module,
+  baseDir: VirtualFile = LightPlatformTestCase.getSourceRoot(),
+  settings: Any = Unit
+) {
   @Suppress("UNCHECKED_CAST")
   val configurator = configurator as? EduConfigurator<Any>
 
   configurator
     ?.courseBuilder
     ?.getCourseProjectGenerator(this)
-    ?.createCourseStructure(project, baseDir, settings)
+    ?.createCourseStructure(project, module, baseDir, settings)
 }
 
 abstract class LessonOwnerBuilder(val course: Course) {

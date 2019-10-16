@@ -21,6 +21,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -132,7 +133,7 @@ public abstract class CourseProjectGenerator<S> {
 
   /**
    * Create new project in given location.
-   * To create course structure: modules, folders, files, etc. use {@link CourseProjectGenerator#createCourseStructure(Project, VirtualFile, Object)}
+   * To create course structure: modules, folders, files, etc. use {@link CourseProjectGenerator#createCourseStructure(Project, Module, VirtualFile, Object)}
    *
    * @param locationString location of new project
    * @param projectSettings new project settings
@@ -156,7 +157,7 @@ public abstract class CourseProjectGenerator<S> {
 
     RecentProjectsManager.getInstance().setLastProjectCreationLocation(PathUtil.toSystemIndependentName(location.getParent()));
 
-    ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, baseDir, projectSettings);
+    ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, module, baseDir, projectSettings);
     EnumSet<PlatformProjectOpenProcessor.Option> options = EnumSet.of(PlatformProjectOpenProcessor.Option.FORCE_NEW_FRAME);
     baseDir.putUserData(COURSE_MODE_TO_CREATE, myCourse.getCourseMode());
     baseDir.putUserData(COURSE_TYPE_TO_CREATE, myCourse.getItemType());
@@ -170,13 +171,16 @@ public abstract class CourseProjectGenerator<S> {
 
   /**
    * Create course structure for already created project.
-   *
    * @param project course project
+   * @param module base project module
    * @param baseDir base directory of project
    * @param settings project settings
    */
   @VisibleForTesting
-  public void createCourseStructure(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull S settings) {
+  public void createCourseStructure(@NotNull Project project,
+                                    @NotNull Module module,
+                                    @NotNull VirtualFile baseDir,
+                                    @NotNull S settings) {
     GeneratorUtils.initializeCourse(project, myCourse);
 
     if (CCUtils.isCourseCreator(project) && myCourse.getItems().isEmpty()) {

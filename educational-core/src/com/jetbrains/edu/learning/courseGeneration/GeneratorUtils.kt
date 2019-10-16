@@ -7,8 +7,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.impl.ProjectImpl
 import com.intellij.openapi.project.modifyModules
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.ThrowableComputable
@@ -23,6 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
@@ -264,27 +267,15 @@ object GeneratorUtils {
     invokeAndWaitIfNeeded { runWriteAction { VfsUtil.saveText(child, content) } }
   }
 
-  fun renameBaseModule(project: Project) {
-    // Hack!
-    // We rename all modules (really only root module because new project has only one root module)
-    // to have names which are expected by gradle importer.
-    //
-    // We do these hacky things to avoid the following situation:
-    // If project dir contains some symbols (' ', '/', '\', ':', '<', '>', '"', '?', '*', '|')  in its name (for example, `Awesome Course`)
-    // then after project creation we will get `Awesome Course` root module.
-    // But gradle importer won't find it because it expects `Awesome_Course` module
-    // and it'll create new root module.
-    // After project reopening we will get an exception because of two modules with same content.
-    //
-    // Note we don't create gradle project from the beginning
-    // because it is much slower and prevents showing project content at the beginning
-    project.modifyModules {
-      for (module in modules) {
-        val sanitizedName = sanitizeName(module.name)
-        if (sanitizedName != module.name) {
-          renameModule(module, sanitizedName)
-        }
-      }
+  /**
+   * Removes [module] from [project].
+   * It should be used when external build system like Gradle, sbt, etc. creates modules itself
+   * and initial base module is unexpected while import
+   */
+  fun removeModule(project: Project, module: Module) {
+    // BACKCOMPAT 2019.2: use `ProjectEx` instead of `ProjectImpl`
+    if (!isUnitTestMode || (project as? ProjectImpl)?.isLight == false) {
+      project.modifyModules { disposeModule(module) }
     }
   }
 

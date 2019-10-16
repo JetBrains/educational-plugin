@@ -73,7 +73,7 @@ public class CourseFormatTest extends EduTestCase {
   private EduTask getFirstEduTask() throws IOException {
     final Course course = getCourseFromJson();
     course.init(null, null, false);
-    CourseBuilderKt.createCourseFiles(course, getProject(), LightPlatformTestCase.getSourceRoot(), new Object());
+    CourseBuilderKt.createCourseFiles(course, getProject(), getModule(), LightPlatformTestCase.getSourceRoot(), new Object());
     final List<Lesson> lessons = course.getLessons();
     assertFalse("No lessons found", lessons.isEmpty());
     final Lesson lesson = lessons.get(0);
