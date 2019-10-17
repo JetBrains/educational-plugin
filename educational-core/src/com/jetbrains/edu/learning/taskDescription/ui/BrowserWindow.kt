@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -27,7 +29,7 @@ import org.w3c.dom.html.HTMLDivElement
 import java.util.*
 import java.util.regex.Pattern
 
-class BrowserWindow(private val myProject: Project, private val myLinkInNewBrowser: Boolean) {
+class BrowserWindow(private val myProject: Project, private val myLinkInNewBrowser: Boolean) : Disposable {
   var panel: JFXPanel = JFXPanel()
   private lateinit var myWebComponent: WebView
   private lateinit var myPane: StackPane
@@ -43,6 +45,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
       myWebComponent = WebView()
       myWebComponent.setOnDragDetected { }
       myEngine = myWebComponent.engine
+      Disposer.register(myProject, this)
 
       myPane.children.add(myWebComponent)
       if (myLinkInNewBrowser) {
@@ -186,6 +189,12 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
         }
         return attributes.getNamedItem("href").nodeValue
       }
+    }
+  }
+
+  override fun dispose() {
+    Platform.runLater {
+      myEngine.load(null)
     }
   }
 
