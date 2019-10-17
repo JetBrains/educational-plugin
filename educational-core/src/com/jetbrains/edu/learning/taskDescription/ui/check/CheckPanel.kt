@@ -99,12 +99,12 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
     if (result.status != CheckStatus.Solved) {
       return resultLabel
     }
-    val panel = createResultPanel(task)
+    val panel = createNextTaskButtonPanel(task)
     panel.add(resultLabel, BorderLayout.CENTER)
     return panel
   }
 
-  private fun createResultPanel(task: Task): JPanel {
+  private fun createNextTaskButtonPanel(task: Task): JPanel {
     val panel = JPanel(BorderLayout())
     if (NavigationUtils.nextTask(task) != null) {
       val nextButton = createButtonToolbar(NextTaskAction.ACTION_ID)
@@ -115,13 +115,13 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
   }
 
   private fun addResultPanel(task: Task) {
-    checkFinishedPanel.add(createResultPanel(task))
+    checkFinishedPanel.add(createNextTaskButtonPanel(task))
   }
 
   fun updateCheckPanel(task: Task) {
     checkButtonWrapper.removeAll()
     checkButtonWrapper.add(createButtonToolbar(CheckAction.createCheckAction(task)), BorderLayout.WEST)
-    if (task is TheoryTask) {
+    if (task is TheoryTask || task.status == CheckStatus.Solved) {
       addResultPanel(task)
     }
   }
