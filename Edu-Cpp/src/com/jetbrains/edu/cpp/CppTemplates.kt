@@ -61,7 +61,7 @@ fun getCppTemplates(course: Course): CppTemplates =
     CppTemplates(TemplateInfo("StepikMainCMakeList.txt", CMakeListsFileType.FILE_NAME),
                  TemplateInfo("StepikTaskCMakeList.txt", CMakeListsFileType.FILE_NAME),
                  listOf(
-                   TemplateInfo("cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
+                   TemplateInfo("Stepik_cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
                  ))
   else
     CppTemplates(TemplateInfo("EduMainCMakeList.txt", CMakeListsFileType.FILE_NAME),
