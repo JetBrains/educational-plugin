@@ -11,7 +11,7 @@
     unset(_cmake_files)
     unset(_dir_path)
 
-    # Add all finded directories
+    # Add all found directories
     foreach (dir ${_dirs})
         # Ignore CMakeList.txt files from "googletest/*" dirs
         string(FIND "${dir}" ${_test_dir} _out)
