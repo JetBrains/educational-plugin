@@ -55,7 +55,7 @@ class InitialStateMixin {
 class EduAnswerPlaceholderBuilder(
   @JsonProperty(INIT_FROM_DEPENDENCY) private val isInitializedFromDependency: Boolean,
   private val initialState: AnswerPlaceholder.MyInitialState,
-  private val possibleAnswer: String,
+  private val possibleAnswer: String = "",
   private val selected: Boolean,
   private val status: CheckStatus,
   private val studentAnswer: String? = null,
