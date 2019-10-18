@@ -1,0 +1,23 @@
+#[[# This file handles building each task as sub-project.
+#
+# Each task becomes an independent project in which you can experiment.
+#
+# Tasks are added as separate sub-projects so as compilation errors in
+# one task don't affect another task.]]#
+
+${CMAKE_MINIMUM_REQUIRED_LINE}
+project(${PROJECT_NAME})
+
+#[[set(TEST_DIR ${PROJECT_SOURCE_DIR}/]]#${TEST_FRAMEWORK_DIR})
+#[[
+include(cmake/catch.cmake)
+fetch_catch(${TEST_DIR})
+
+# Add test runner link
+add_library(test_runner ${CATCH_HEADER} run.cpp)
+set_property(TARGET test_runner PROPERTY CXX_STANDARD 11)
+
+
+# Add tasks subprojects
+include(cmake/utils.cmake)
+add_subprojects(${PROJECT_SOURCE_DIR})]]#

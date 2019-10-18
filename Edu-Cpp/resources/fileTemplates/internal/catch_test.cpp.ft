@@ -1,0 +1,11 @@
+\#include <catch.hpp>
+
+// Headers of objects that student should implement:
+int sum(int a, int b);
+
+
+// Tests:
+// todo: replace this with an actual test
+TEST_CASE("Simple", "[SumTest]") {
+    REQUIRE(sum(1, 2) == 3);
+}
