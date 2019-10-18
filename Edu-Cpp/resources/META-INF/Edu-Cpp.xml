@@ -1,6 +1,11 @@
 <idea-plugin>
   <depends>com.intellij.modules.lang</depends>
   <extensions defaultExtensionNs="Educational">
-    <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppConfigurator" displayName="C++"/>
+    <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppGTestConfigurator"
+                  displayName="C++ (Google Test)" environment="GoogleTest"/>
+    <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppCatchConfigurator"
+                  displayName="C++ (Catch 2.0)" environment="Catch"/>
+    <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppBaseConfigurator"
+                  courseType="Stepik"/>
   </extensions>
 </idea-plugin>

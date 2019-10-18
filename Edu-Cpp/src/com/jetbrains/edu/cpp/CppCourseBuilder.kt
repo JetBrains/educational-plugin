@@ -15,6 +15,7 @@ import com.jetbrains.cmake.psi.CMakeCommand
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -23,14 +24,18 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
-class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
+class CppCourseBuilder(
+  override val taskTemplateName: String,
+  override val testTemplateName: String
+) : EduCourseBuilder<CppProjectSettings> {
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CppProjectSettings>? =
     CppCourseProjectGenerator(this, course)
 
-  override val taskTemplateName: String = CppConfigurator.TASK_CPP
-  override val testTemplateName: String = CppConfigurator.TEST_CPP
+  override fun createDefaultTestFile(task: Task): TaskFile? =
+    super.createDefaultTestFile(task)?.apply { name = GeneratorUtils.joinPaths(EduNames.TEST, CppBaseConfigurator.TEST_CPP) }
 
   override fun getLanguageSettings(): LanguageSettings<CppProjectSettings> = CppLanguageSettings()
 
