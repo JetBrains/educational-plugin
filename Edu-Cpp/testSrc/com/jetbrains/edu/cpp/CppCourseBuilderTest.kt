@@ -14,7 +14,8 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
   fun `test create new cc edu course`() {
     val course = course(
       language = OCLanguage.getInstance(),
-      courseMode = CCUtils.COURSE_MODE
+      courseMode = CCUtils.COURSE_MODE,
+      environment = "GoogleTest"
     ) { }
     createCourseStructure(course)
 
@@ -41,7 +42,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
   }
 
   fun `test study edu course structure with top-level lesson`() {
-    val course = course(language = OCLanguage.getInstance()) {
+    val course = course(language = OCLanguage.getInstance(), environment = "Catch") {
       lesson("lesson") {
         eduTask("task") {
           taskFile("src/task.cpp")
@@ -73,7 +74,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
   }
 
   fun `test study edu course structure with section`() {
-    val course = course(language = OCLanguage.getInstance()) {
+    val course = course(language = OCLanguage.getInstance(), environment = "Catch") {
       section("section") {
         lesson("lesson") {
           eduTask("task") {
@@ -107,7 +108,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
   }
 
   fun `test study course structure with top-level section and lesson`() {
-    val course = course(language = OCLanguage.getInstance()) {
+    val course = course(language = OCLanguage.getInstance(), environment = "Catch") {
       section("section") {
         lesson("lesson") {
           eduTask("task") {
@@ -158,7 +159,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
   }
 
   fun `test study edu course structure with different tasks`() {
-    val course = course(language = OCLanguage.getInstance()) {
+    val course = course(language = OCLanguage.getInstance(), environment = "Catch") {
       lesson("lesson") {
         eduTask("edu") {
           taskFile("src/task.cpp")
