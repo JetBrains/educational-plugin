@@ -254,6 +254,29 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals("answer", placeholder.possibleAnswer)
   }
 
+  fun `test placeholder no possible answer`() {
+    val yamlContent = """
+    |type: edu
+    |files:
+    |- name: Test.java
+    |  placeholders:
+    |  - offset: 0
+    |    length: 3
+    |    placeholder_text: type here
+    |    status: Solved
+    |    student_answer: student answer
+    |    initial_state:
+    |      offset: 0
+    |      length: 1
+    |""".trimMargin("|")
+
+    val task = deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    val taskFile = task.taskFiles.values.first()
+    val placeholder = taskFile.answerPlaceholders.first()
+    assertEquals("", placeholder.possibleAnswer)
+  }
+
   fun `test placeholder selected`() {
     val yamlContent = """
     |type: edu
