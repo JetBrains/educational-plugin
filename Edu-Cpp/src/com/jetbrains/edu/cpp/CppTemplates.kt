@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import java.lang.IllegalStateException
 
 private const val GTEST_VERSION = "release-1.8.1"
 const val TEST_FRAMEWORK_DIR = "test-framework"
@@ -57,18 +58,32 @@ data class TemplateInfo(private val templateName: String, val generatedFileName:
 }
 
 fun getCppTemplates(course: Course): CppTemplates =
-  if (course is StepikCourse)
-    CppTemplates(TemplateInfo("StepikMainCMakeList.txt", CMakeListsFileType.FILE_NAME),
-                 TemplateInfo("StepikTaskCMakeList.txt", CMakeListsFileType.FILE_NAME),
-                 listOf(
-                   TemplateInfo("stepik_cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
-                 ))
-  else
-    CppTemplates(TemplateInfo("EduMainCMakeList.txt", CMakeListsFileType.FILE_NAME),
-                 TemplateInfo("EduTaskCMakeList.txt", CMakeListsFileType.FILE_NAME),
-                 listOf(
-                   TemplateInfo("cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake")),
-                   TemplateInfo("cmake_googletest.cmake", GeneratorUtils.joinPaths("cmake", "googletest.cmake")),
-                   TemplateInfo("cmake_googletest-download.cmake", GeneratorUtils.joinPaths("cmake", "googletest-download.cmake")),
-                   TemplateInfo("runTests.cpp", "run.cpp")
-                 ))
+  when {
+    course is StepikCourse ->
+      CppTemplates(TemplateInfo("StepikMainCMakeList.txt", CMakeListsFileType.FILE_NAME),
+                   TemplateInfo("StepikTaskCMakeList.txt", CMakeListsFileType.FILE_NAME),
+                   listOf(
+                     TemplateInfo("stepik_cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
+                   ))
+    course.environment == "GoogleTest" ->
+      CppTemplates(TemplateInfo("EduMainCMakeList.txt", CMakeListsFileType.FILE_NAME),
+                   TemplateInfo("EduTaskCMakeList.txt", CMakeListsFileType.FILE_NAME),
+                   listOf(
+                     TemplateInfo("cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake")),
+                     TemplateInfo("cmake_googletest.cmake",
+                                  GeneratorUtils.joinPaths("cmake", "googletest.cmake")),
+                     TemplateInfo("cmake_googletest-download.cmake",
+                                  GeneratorUtils.joinPaths("cmake", "googletest-download.cmake")),
+                     TemplateInfo("runTests.cpp", "run.cpp")
+                   ))
+    course.environment == "Catch" ->
+      CppTemplates(TemplateInfo("catch_CMakeLists.txt", CMakeListsFileType.FILE_NAME),
+                   TemplateInfo("EduTaskCMakeList.txt", CMakeListsFileType.FILE_NAME),
+                   listOf(
+                     TemplateInfo("catch_cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake")),
+                     TemplateInfo("catch_cmake_catch.cmake", GeneratorUtils.joinPaths("cmake", "catch.cmake")),
+                     TemplateInfo("catch_run.cpp", "run.cpp")
+                   ))
+    else ->
+      throw IllegalStateException("Course must be Stepik type or have one of these environments: GoogleTest, Catch")
+  }
