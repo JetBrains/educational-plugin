@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH
 import com.jetbrains.edu.learning.EduUtils.execCancelable
 import com.jetbrains.edu.learning.EduUtils.navigateToStep
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.builtInServer.recentProjectsManagerInstance
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse

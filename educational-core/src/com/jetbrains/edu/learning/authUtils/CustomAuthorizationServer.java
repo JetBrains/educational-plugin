@@ -83,10 +83,7 @@ public class CustomAuthorizationServer {
     @NotNull String handlerPath,
     @NotNull CodeHandler codeHandler
   ) throws IOException {
-    int port = IntStream.rangeClosed(DEFAULT_PORTS_TO_TRY.getFrom(), DEFAULT_PORTS_TO_TRY.getTo())
-      .filter(CustomAuthorizationServer::isPortAvailable)
-      .findFirst()
-      .orElse(-1);
+    int port = getAvailablePort();
 
     if (port == -1) {
       throw new IOException("No ports available");
@@ -111,6 +108,13 @@ public class CustomAuthorizationServer {
 
     newServer.start();
     return new CustomAuthorizationServer(newServer, handlerPath);
+  }
+
+  public static int getAvailablePort() {
+    return IntStream.rangeClosed(DEFAULT_PORTS_TO_TRY.getFrom(), DEFAULT_PORTS_TO_TRY.getTo())
+      .filter(CustomAuthorizationServer::isPortAvailable)
+      .findFirst()
+      .orElse(-1);
   }
 
   private static boolean isPortAvailable(int port) {

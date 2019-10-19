@@ -287,7 +287,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   override fun isAccessible(request: HttpRequest): Boolean = isHyperskillSupportAvailable()
 
   companion object {
-    private const val EDU_HYPERSKILL_SERVICE_NAME = "edu/hyperskill"
+    const val EDU_HYPERSKILL_SERVICE_NAME = "edu/hyperskill"
     private val OAUTH_CODE_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME/oauth\\?code=(\\w+)")
     private val OPEN_COURSE_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME\\?stage_id=.+&project_id=.+")
     private val OPEN_STEP_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME\\?step_id=.+")
