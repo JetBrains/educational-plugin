@@ -261,7 +261,7 @@ public class StepikSolutionsLoader implements Disposable {
 
     List<String> progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + task.getId()).collect(Collectors.toList());
     List<Boolean> taskStatuses = StepikConnector.getInstance().taskStatuses(progresses);
-    if (taskStatuses == null) return tasksToUpdate;
+    if (taskStatuses == null || taskStatuses.size() != allTasks.length) return tasksToUpdate;
     for (int j = 0; j < allTasks.length; j++) {
       Boolean isSolved = taskStatuses.get(j);
       Task task = allTasks[j];
