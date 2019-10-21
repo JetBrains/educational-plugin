@@ -11,7 +11,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
 
   override val defaultSettings = CppProjectSettings()
 
-  fun `test create new cc edu course`() {
+  fun `test create new cc edu GoogleTest course`() {
     val course = course(
       language = OCLanguage.getInstance(),
       courseMode = CCUtils.COURSE_MODE,
@@ -35,6 +35,35 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         file("utils.cmake")
         file("googletest.cmake")
         file("googletest-download.cmake")
+      }
+      file("CMakeLists.txt")
+      file("run.cpp")
+    }.assertEquals(rootDir)
+  }
+
+  fun `test create new cc edu Catch course`() {
+    val course = course(
+      language = OCLanguage.getInstance(),
+      courseMode = CCUtils.COURSE_MODE,
+      environment = "Catch"
+    ) {}
+    createCourseStructure(course)
+
+    fileTree {
+      dir("lesson1/task1") {
+        dir("src") {
+          file("task.cpp")
+        }
+        dir("test") {
+          file("test.cpp")
+        }
+        file("task.html")
+        file("CMakeLists.txt",
+             getExpectedTaskCMakeText(course, defaultSettings, "global-lesson1-task1"))
+      }
+      dir("cmake") {
+        file("utils.cmake")
+        file("catch.cmake")
       }
       file("CMakeLists.txt")
       file("run.cpp")
