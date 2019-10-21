@@ -72,7 +72,7 @@ class CppFindTaskTest : FindTaskFileTestBase<CppProjectSettings>() {
   }
 
   private fun getCourseForTests(): Course {
-    return course(language = OCLanguage.getInstance()) {
+    return course(language = OCLanguage.getInstance(), environment = "GoogleTest") {
       section {
         lesson {
           eduTask {

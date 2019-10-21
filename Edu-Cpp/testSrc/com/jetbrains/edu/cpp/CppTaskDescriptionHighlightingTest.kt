@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTes
 class CppTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
   override val language: Language = OCLanguage.getInstance()
   override val settings = CppProjectSettings()
+  override val environment = "GoogleTest"
 
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:
