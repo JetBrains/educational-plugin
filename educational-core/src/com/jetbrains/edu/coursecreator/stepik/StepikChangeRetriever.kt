@@ -160,7 +160,8 @@ class StepikChangeRetriever(private val project: Project, course: EduCourse, pri
            task.descriptionFormat != remoteTask.descriptionFormat ||
            task.feedbackLink.link != remoteTask.feedbackLink.link ||
            task.feedbackLink.type != remoteTask.feedbackLink.type ||
-           task.lesson.id != remoteTask.lesson.id
+           task.lesson.id != remoteTask.lesson.id ||
+           task.solutionHidden != remoteTask.solutionHidden
   }
 
   private fun taskContentChanged(localTask: Task, remoteTask: Task): Boolean {

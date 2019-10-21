@@ -222,6 +222,7 @@ open class StepikTaskBuilder(
     task.updateDate = stepSource.updateDate
 
     task.customPresentableName = stepOptions.customPresentableName
+    task.solutionHidden = stepOptions.solutionHidden
 
     task.descriptionText = if (step.text.isNotEmpty()) step.text else stepOptions.descriptionText.orEmpty()
     task.descriptionFormat = stepOptions.descriptionFormat

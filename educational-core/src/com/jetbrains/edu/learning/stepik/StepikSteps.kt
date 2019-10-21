@@ -157,6 +157,9 @@ open class PyCharmStepOptions : StepOptions {
   @JsonProperty(CUSTOM_NAME)
   var customPresentableName: String? = null
 
+  @JsonProperty(SOLUTION_HIDDEN)
+  var solutionHidden: Boolean? = null
+
   constructor()
 
   constructor(project: Project, task: Task) {
@@ -168,6 +171,7 @@ open class PyCharmStepOptions : StepOptions {
     lessonType = if (task.lesson is FrameworkLesson) FRAMEWORK else null
     myFeedbackLink = task.feedbackLink
     customPresentableName = task.presentableName
+    solutionHidden = task.solutionHidden
   }
 }
 

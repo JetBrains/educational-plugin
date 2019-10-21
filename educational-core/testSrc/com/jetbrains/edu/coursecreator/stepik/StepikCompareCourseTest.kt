@@ -534,10 +534,12 @@ class StepikCompareCourseTest : EduTestCase() {
     }.asRemote()
 
     val courseFromServer = localCourse.copy() as EduCourse
-    localCourse.getLesson("lesson1")!!.getTask("task1")!!.solutionHidden = true
-    localCourse.getLesson("lesson1")!!.getTask("task2")!!.solutionHidden = false
 
-    val expectedChangedItems = StepikChangesInfo(lessonsInfoToUpdate = localCourse.lessons)
+    val localLesson = localCourse.getLesson("lesson1")!!
+    localLesson.getTask("task1")!!.solutionHidden = true
+    localLesson.getTask("task2")!!.solutionHidden = false
+
+    val expectedChangedItems = StepikChangesInfo(tasksToUpdate = localLesson.taskList)
     checkChangedItems(localCourse, courseFromServer, expectedChangedItems)
   }
 

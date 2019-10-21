@@ -55,6 +55,7 @@ const val CHOICE_VARIANTS = "choice_variants"
 const val IS_MULTICHOICE = "is_multichoice"
 const val SELECTED_VARIANTS = "selected_variants"
 const val CUSTOM_NAME = "custom_name"
+const val SOLUTION_HIDDEN = "solution_hidden"
 private const val TASK_TYPE = "task_type"
 
 abstract class StepikEduCourseMixin {
