@@ -34,4 +34,28 @@ class SolutionHiddenTest : EduTestCase() {
 
     assertEquals(expectedSolutionHiddenInTask, !task.canShowSolution())
   }
+
+  fun `test do not show solution when placeholders are empty`() {
+    courseWithFiles("Edu test course") {
+      lesson(name = "lesson1") {
+        eduTask(name = "task1") {
+          taskFile("taskFile1.txt", "a = <p>TODO()</p>") {
+            placeholder(0, null)
+          }
+        }
+      }
+    }
+    assertEquals(false, findTask(0, 0).canShowSolution())
+  }
+
+  fun `test do not show solution when there are no placeholders`() {
+    courseWithFiles("Edu test course") {
+      lesson(name = "lesson1") {
+        eduTask(name = "task1") {
+          taskFile("taskFile1.txt", "a = <p>TODO()</p>")
+        }
+      }
+    }
+    assertEquals(false, findTask(0, 0).canShowSolution())
+  }
 }
