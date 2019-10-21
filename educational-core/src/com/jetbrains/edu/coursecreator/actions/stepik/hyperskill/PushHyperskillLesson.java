@@ -18,8 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.api.AdditionalCourseInfo;
-import com.jetbrains.edu.learning.stepik.api.AdditionalLessonInfo;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
@@ -28,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showStepikNotification;
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.updateLesson;
@@ -110,19 +107,12 @@ public class PushHyperskillLesson extends DumbAwareAction {
     return lesson;
   }
 
-  // TODO can we update course info in another method?
   public static void doPush(Lesson lesson, Course course, Project project) {
     if (lesson.getId() > 0) {
       boolean success = updateLesson(project, lesson, true, -1);
       if (success) {
         final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
-        AdditionalCourseInfo courseInfo = new AdditionalCourseInfo(additionalFiles, course.getSolutionsHidden());
-        StepikConnector.getInstance().updateCourseAttachment(courseInfo, course);
-
-        final Map<Integer, Boolean> solutionHiddenInTasks = CCUtils.collectSolutionHiddenInTasks(lesson);
-        AdditionalLessonInfo lessonInfo = new AdditionalLessonInfo(solutionHiddenInTasks);
-        StepikConnector.getInstance().updateLessonAttachment(lessonInfo, lesson.getId());
-
+        StepikConnector.getInstance().updateLessonAttachment(additionalFiles, lesson.getId());
         showNotification(project, "Hyperskill lesson updated", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.getId()));
       }
       else {
@@ -131,15 +121,8 @@ public class PushHyperskillLesson extends DumbAwareAction {
     }
     else {
       CCStepikConnector.postLesson(project, lesson, lesson.getIndex(), -1);
-
       final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
-      AdditionalCourseInfo courseInfo = new AdditionalCourseInfo(additionalFiles, course.getSolutionsHidden());
-      StepikConnector.getInstance().postCourseAttachment(courseInfo, course.getId());
-
-      final Map<Integer, Boolean> solutionHiddenInTasks = CCUtils.collectSolutionHiddenInTasks(lesson);
-      AdditionalLessonInfo lessonInfo = new AdditionalLessonInfo(solutionHiddenInTasks);
-      StepikConnector.getInstance().postLessonAttachment(lessonInfo, lesson.getId());
-
+      StepikConnector.getInstance().postLessonAttachment(additionalFiles, lesson.getId());
       showNotification(project, "Lesson uploaded", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.getId()));
     }
   }

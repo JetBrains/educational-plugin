@@ -164,10 +164,6 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun collectSolutionHiddenInTasks(lesson: Lesson): Map<Int, Boolean> =
-    lesson.taskList.filter { it.solutionHidden != null }.map { it.id to it.solutionHidden!! }.toMap()
-
-  @JvmStatic
   @Throws(IOException::class)
   fun loadText(file: VirtualFile): String {
     return if (EduUtils.isImage(file.name)) {

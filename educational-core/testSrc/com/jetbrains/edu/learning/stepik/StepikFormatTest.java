@@ -74,9 +74,9 @@ public class StepikFormatTest extends EduTestCase {
   public void testAdditionalMaterialsLesson() throws IOException {
     String responseString = loadJsonText();
     final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final AdditionalCourseInfo additionalCourseInfo = mapper.readValue(responseString, AdditionalCourseInfo.class);
-    assertEquals(1, additionalCourseInfo.additionalFiles.size());
-    assertTrue(additionalCourseInfo.getSolutionsHidden());
+    final AdditionalInfo additionalInfo = mapper.readValue(responseString, AdditionalInfo.class);
+    assertEquals(1, additionalInfo.additionalFiles.size());
+    assertTrue(additionalInfo.getSolutionsHidden());
   }
 
   public void testAdditionalMaterialsStep() throws IOException {

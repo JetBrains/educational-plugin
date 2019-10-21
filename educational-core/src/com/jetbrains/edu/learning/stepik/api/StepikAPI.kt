@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.stepik.ChoiceStepSource
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTION_HIDDEN
 import java.util.*
 
 const val USERS = "users"
@@ -404,9 +403,7 @@ class Attachment {
   lateinit var name: String
 }
 
-open class AdditionalInfo
-
-class AdditionalCourseInfo: AdditionalInfo {
+class AdditionalInfo {
   @JsonProperty(ADDITIONAL_FILES)
   lateinit var additionalFiles: List<TaskFile>
 
@@ -415,20 +412,8 @@ class AdditionalCourseInfo: AdditionalInfo {
 
   constructor()
 
-  @JvmOverloads
   constructor(additionalFiles: List<TaskFile>, solutionsHidden: Boolean = false) {
     this.additionalFiles = additionalFiles
     this.solutionsHidden = solutionsHidden
-  }
-}
-
-class AdditionalLessonInfo: AdditionalInfo {
-  @JsonProperty(SOLUTION_HIDDEN)
-  lateinit var solutionHiddenInTasks: Map<Int, Boolean>
-
-  constructor()
-
-  constructor(solutionHiddenInTasks: Map<Int, Boolean>) {
-    this.solutionHiddenInTasks = solutionHiddenInTasks
   }
 }

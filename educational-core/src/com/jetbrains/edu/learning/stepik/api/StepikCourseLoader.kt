@@ -117,7 +117,7 @@ object StepikCourseLoader {
   }
 
   private fun fillAdditionalMaterials(course: EduCourse, additionalSection: Section?) {
-    loadAndFillAdditionalCourseInfo(course)
+    loadAndFillAttachmentsInfo(course, null)
     if (course.additionalFiles.isEmpty() && additionalSection != null) {
       // load the old way for compatibility with old courses
       if (additionalSection.units.size == 1) {
@@ -137,7 +137,6 @@ object StepikCourseLoader {
     if (unitIds.isNotEmpty()) {
       val lessons = getLessonsFromUnits(remoteCourse, unitIds, true)
       remoteCourse.addLessons(lessons)
-      lessons.forEach { loadAndFillAdditionalLessonInfo(it) }
       remoteCourse.sectionIds = allSections.map { s -> s.id }
     }
   }
@@ -267,7 +266,6 @@ object StepikCourseLoader {
       if (item is Section && item.getName() == remoteCourse.name) {
         remoteCourse.sectionIds = listOf(item.getId())
         itemsWithTopLevelLessons.addAll(item.lessons)
-        item.lessons.forEach { loadAndFillAdditionalLessonInfo(it) }
       }
       else {
         itemsWithTopLevelLessons.add(item)
