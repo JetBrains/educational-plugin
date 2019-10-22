@@ -134,13 +134,17 @@ public class StepikSolutionsLoader implements Disposable {
       @Override
       public void run(@NotNull ProgressIndicator progressIndicator) {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
-        if (course != null) {
-          loadSolutions(progressIndicator, course);
-          EduUtils.updateCourseProgress(myProject);
-        }
-        removeSolvedTaskSelection();
+        loadSolutions(course, progressIndicator);
       }
     });
+  }
+
+  public void loadSolutions(@Nullable Course course, @NotNull ProgressIndicator progressIndicator) {
+    if (course != null) {
+      loadSolutions(progressIndicator, course);
+      EduUtils.updateCourseProgress(myProject);
+    }
+    removeSolvedTaskSelection();
   }
 
   private void removeSolvedTaskSelection(){

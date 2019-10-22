@@ -75,6 +75,8 @@ fun updateCourseIfNeeded(project: Project, course: EduCourse) {
         if (!course.isUpToDate()) {
           showUpdateAvailableNotification(project) {
             StepikCourseUpdater(course, project).updateCourse()
+            SubmissionsManager.loadMissingSubmissions(course)
+            StepikSolutionsLoader.getInstance(project).loadSolutionsInBackground()
           }
         }
       }

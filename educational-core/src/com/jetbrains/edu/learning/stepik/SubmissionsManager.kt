@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.Submission
@@ -8,6 +10,14 @@ import java.util.concurrent.ConcurrentHashMap
 
 object SubmissionsManager {
   private val submissions = ConcurrentHashMap<Int, MutableList<Submission>>()
+
+  @JvmStatic
+  fun loadMissingSubmissions(course: Course) {
+    val newTasks = course.allTasks.filter { !submissions.containsKey(it.id) }
+    for (task in newTasks) {
+      getAllSubmissions(task.id)
+    }
+  }
 
   @JvmStatic
   fun getSubmissionsFromMemory(taskId: Int): List<Submission>? {
