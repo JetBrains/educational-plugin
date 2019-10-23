@@ -47,6 +47,7 @@ class YamlChangeApplierTest : YamlTestCase() {
 
     val lesson = findLesson(0)
     loadItemFromConfig(lesson, yamlContent)
+    @Suppress("DEPRECATION")
     assertEquals(lessonCustomName, lesson.customPresentableName)
   }
 
@@ -67,6 +68,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     """.trimMargin()
 
     loadItemFromConfig(lesson, yamlContent)
+    @Suppress("DEPRECATION")
     assertNull(lesson.customPresentableName)
   }
 
@@ -82,6 +84,7 @@ class YamlChangeApplierTest : YamlTestCase() {
 
     val section = course.sections[0]
     loadItemFromConfig(section, yamlContent)
+    @Suppress("DEPRECATION")
     assertEquals(customName, section.customPresentableName)
   }
 
@@ -102,6 +105,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     """.trimMargin()
 
     loadItemFromConfig(section, yamlContent)
+    @Suppress("DEPRECATION")
     assertNull(section.customPresentableName)
   }
 
@@ -123,6 +127,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     """.trimMargin()
 
     loadItemFromConfig(task, yamlContent)
+    @Suppress("DEPRECATION")
     assertEquals(customName, task.customPresentableName)
   }
 
@@ -146,6 +151,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     """.trimMargin()
 
     loadItemFromConfig(task, yamlContent)
+    @Suppress("DEPRECATION")
     assertNull(task.customPresentableName)
   }
 

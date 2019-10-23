@@ -236,6 +236,7 @@ class YamlDeserializationTest : YamlTestCase() {
     """.trimMargin()
     val section = MAPPER.deserializeSection(yamlContent)
     assertEquals(listOf(firstLesson, secondLesson), section.items.map { it.name })
+    @Suppress("DEPRECATION")
     assertEquals(customSectionName, section.customPresentableName)
   }
 
@@ -263,6 +264,7 @@ class YamlDeserializationTest : YamlTestCase() {
     """.trimMargin()
     val lesson = MAPPER.deserializeLesson(yamlContent)
     assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
+    @Suppress("DEPRECATION")
     assertEquals(lessonCustomName, lesson.customPresentableName)
   }
 
@@ -403,6 +405,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |""".trimMargin()
     val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
+    @Suppress("DEPRECATION")
     assertEquals(customName, task.customPresentableName)
   }
 
