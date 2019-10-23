@@ -273,7 +273,7 @@ object GeneratorUtils {
    * and initial base module is unexpected while import
    */
   fun removeModule(project: Project, module: Module) {
-    // BACKCOMPAT 2019.2: use `ProjectEx` instead of `ProjectImpl`
+    // BACKCOMPAT: 2019.2. use `ProjectEx` instead of `ProjectImpl`
     if (!isUnitTestMode || (project as? ProjectImpl)?.isLight == false) {
       project.modifyModules { disposeModule(module) }
     }

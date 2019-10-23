@@ -228,7 +228,8 @@ class LoadSolutionsTest : StepikTestCase() {
     cleanupCourseFiles()
     val studentCourse = StepikConnector.getInstance().getCourseInfo(courseId, true) as EduCourse
     StepikCourseLoader.loadCourseStructure(studentCourse)
-    studentCourse.createCourseFiles(project, module)
+    // BACKCOMPAT: 2019.1. Use `module` instead of `myFixture.module`
+    studentCourse.createCourseFiles(project, myFixture.module)
     return studentCourse
   }
 
