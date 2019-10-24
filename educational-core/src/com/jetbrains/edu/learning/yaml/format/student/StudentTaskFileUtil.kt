@@ -17,8 +17,11 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 @JsonDeserialize(builder = StudentTaskFileBuilder::class)
 @JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS, TEXT, LEARNER_CREATED)
 abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
+
   @JsonProperty(TEXT)
-  private lateinit var myText: String
+  fun getTextToSerialize(): String {
+    throw NotImplementedError()
+  }
 
   @JsonProperty(LEARNER_CREATED)
   private var myLearnerCreated = false

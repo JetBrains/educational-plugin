@@ -1,5 +1,8 @@
 package com.jetbrains.edu.learning.courseFormat;
 
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
@@ -129,6 +132,18 @@ public class TaskFile {
 
   public void setText(@Nullable String text) {
     myText = StringUtil.notNullize(text);
+  }
+
+  @SuppressWarnings("unused") // used for yaml serialization
+  @Nullable
+  public String getTextToSerialize() {
+    String extension = FileUtilRt.getExtension(myName);
+    FileType fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension);
+    if (fileType.isBinary() || !isVisible()) {
+      return null;
+    }
+
+    return myText;
   }
 
   public void sortAnswerPlaceholders() {

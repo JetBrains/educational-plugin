@@ -226,6 +226,46 @@ class StudentYamlSerializationTest : EduTestCase()  {
     |""".trimMargin())
   }
 
+  fun `test no text for image`() {
+    val task = courseWithFiles {
+      lesson {
+        eduTask {
+          taskFile("task.png", "")
+        }
+      }
+    }.findTask("lesson1", "task1")
+
+    doTest(task, """
+    |type: edu
+    |files:
+    |- name: task.png
+    |  visible: true
+    |  learner_created: false
+    |status: Unchecked
+    |record: -1
+    |""".trimMargin())
+  }
+
+  fun `test no text for invisible task file`() {
+    val task = courseWithFiles {
+      lesson {
+        eduTask {
+          taskFile("task.txt", "", false)
+        }
+      }
+    }.findTask("lesson1", "task1")
+
+    doTest(task, """
+    |type: edu
+    |files:
+    |- name: task.txt
+    |  visible: false
+    |  learner_created: false
+    |status: Unchecked
+    |record: -1
+    |""".trimMargin())
+  }
+
   private fun doTest(item: StudyItem, expected: String) {
     val actual = YamlFormatSynchronizer.STUDENT_MAPPER.writeValueAsString(item)
     assertEquals(expected, actual)
