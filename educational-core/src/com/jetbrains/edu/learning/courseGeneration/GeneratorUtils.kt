@@ -5,7 +5,9 @@ import com.intellij.ide.fileTemplates.FileTemplateUtil
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
@@ -17,6 +19,8 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -24,6 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -276,6 +281,27 @@ object GeneratorUtils {
     // BACKCOMPAT: 2019.2. use `ProjectEx` instead of `ProjectImpl`
     if (!isUnitTestMode || (project as? ProjectImpl)?.isLight == false) {
       project.modifyModules { disposeModule(module) }
+    }
+  }
+
+  /**
+   * Reformat the code so that learners do not see tons of IDE highlighting.
+   * Should be used when author of the course provides code samples and systematically does not follow language styleguide.
+   * */
+  @JvmStatic
+  fun reformatCodeInAllTaskFiles(project: Project, course: Course) {
+    for (lesson in course.lessons) {
+      for (task in lesson.taskList) {
+        for ((_, file) in task.taskFiles) {
+          val virtualFile = file.getVirtualFile(project) ?: continue
+          val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: continue
+          runInEdt {
+            WriteCommandAction.runWriteCommandAction(project) {
+              CodeStyleManager.getInstance(project).reformat(psiFile)
+            }
+          }
+        }
+      }
     }
   }
 
