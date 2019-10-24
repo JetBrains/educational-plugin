@@ -31,8 +31,8 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CppProjectSettings>? =
     CppCourseProjectGenerator(this, course)
 
-  override fun getTaskTemplateName(): String = CppConfigurator.TASK_CPP
-  override fun getTestTemplateName(): String = CppConfigurator.TEST_CPP
+  override val taskTemplateName: String = CppConfigurator.TASK_CPP
+  override val testTemplateName: String = CppConfigurator.TEST_CPP
 
   override fun getLanguageSettings(): LanguageSettings<CppProjectSettings> = CppLanguageSettings()
 
@@ -40,7 +40,7 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     super.initNewTask(project, lesson, task, info)
 
     val cMakeProjectName = getCMakeProjectUniqueName(task) { FileUtil.sanitizeFileName(it.name, true) }
-    task.addCMakeList(cMakeProjectName, languageSettings.settings.languageStandard)
+    task.addCMakeList(cMakeProjectName, getLanguageSettings().settings.languageStandard)
   }
 
   override fun getTextForNewTask(taskFile: TaskFile, taskDir: VirtualFile, newTask: Task): String? {
@@ -108,7 +108,7 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
   override fun showNewStudyItemUi(
     project: Project,
     model: NewStudyItemUiModel,
-    additionalPanels: MutableList<AdditionalPanel>
+    additionalPanels: List<AdditionalPanel>
   ): NewStudyItemInfo? {
     return showNewStudyItemDialog(project, model, additionalPanels, ::CppNewStudyItemDialog)
   }

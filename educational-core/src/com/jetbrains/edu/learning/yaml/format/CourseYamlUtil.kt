@@ -184,7 +184,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
 
       language = languages.first().id
 
-      val languageSettings = configurator?.courseBuilder?.languageSettings
+      val languageSettings = configurator?.courseBuilder?.getLanguageSettings()
                              ?: formatError("Unsupported language $programmingLanguage")
       if (programmingLanguageVersion != null) {
         if (!languageSettings.languageVersions.contains(programmingLanguageVersion)) {

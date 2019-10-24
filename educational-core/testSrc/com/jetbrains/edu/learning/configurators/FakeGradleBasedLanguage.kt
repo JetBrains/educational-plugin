@@ -16,10 +16,7 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import javax.swing.Icon
@@ -70,7 +67,7 @@ class FakeGradleCourseBuilder : EduCourseBuilder<Unit> {
   override fun getCourseProjectGenerator(course: Course): FakeGradleCourseProjectGenerator = FakeGradleCourseProjectGenerator(
     this, course)
   override fun refreshProject(project: Project) {}
-  override fun getTestTemplateName(): String? = "Tests.kt"
+  override val testTemplateName: String? = "Tests.kt"
 }
 
 class FakeGradleCourseProjectGenerator(

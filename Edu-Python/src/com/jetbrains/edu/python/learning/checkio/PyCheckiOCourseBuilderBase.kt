@@ -1,18 +1,8 @@
-package com.jetbrains.edu.python.learning.checkio;
+package com.jetbrains.edu.python.learning.checkio
 
-import com.jetbrains.edu.python.learning.PyCourseBuilderBase;
-import org.jetbrains.annotations.Nullable;
+import com.jetbrains.edu.python.learning.PyCourseBuilderBase
 
-public abstract class PyCheckiOCourseBuilderBase extends PyCourseBuilderBase {
-  @Nullable
-  @Override
-  public String getTaskTemplateName() {
-    return null;
-  }
-
-  @Nullable
-  @Override
-  public String getTestTemplateName() {
-    return null;
-  }
+abstract class PyCheckiOCourseBuilderBase : PyCourseBuilderBase() {
+  override val taskTemplateName: String? = null
+  override val testTemplateName: String? = null
 }

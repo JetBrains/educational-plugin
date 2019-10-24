@@ -1,40 +1,37 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
-import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo;
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel;
-import com.jetbrains.edu.coursecreator.ui.AdditionalPanel;
-import com.jetbrains.edu.coursecreator.ui.NewStudyItemUiUtils;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.util.List;
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.CCUtils.loadText
+import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
+import com.jetbrains.edu.coursecreator.actions.CCCreateTask
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
+import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
+import com.jetbrains.edu.learning.courseFormat.ext.testDirs
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createDefaultFile
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTask
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.joinPaths
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import java.io.IOException
 
 /**
  * The main interface provides courses creation for some language.
  *
- * @param <Settings> container type holds course project settings state
+ * @param Settings container type holds course project settings state
  */
-public interface EduCourseBuilder<Settings> {
-
-  Logger LOG = Logger.getInstance(EduCourseBuilder.class);
-
+interface EduCourseBuilder<Settings> {
   /**
    * Shows UI for new study item creation
    *
@@ -45,77 +42,69 @@ public interface EduCourseBuilder<Settings> {
    *
    * @return properties for study item creation
    */
-  @Nullable
-  default NewStudyItemInfo showNewStudyItemUi(@NotNull Project project,
-                                              @NotNull NewStudyItemUiModel model,
-                                              @NotNull List<AdditionalPanel> additionalPanels) {
-    return NewStudyItemUiUtils.showNewStudyItemDialog(project, model, additionalPanels);
+  fun showNewStudyItemUi(project: Project, model: NewStudyItemUiModel, additionalPanels: List<AdditionalPanel>): NewStudyItemInfo? {
+    return showNewStudyItemDialog(project, model, additionalPanels)
   }
 
   /**
    * Creates content (including its directory or module) of new lesson in project
    *
    * @param project Parameter is used in Java and Kotlin plugins
-   * @param lesson  Lesson to create content for. It's already properly initialized and added to course.
-   * @return VirtualFile of created lesson
+   * @param lesson  [Lesson] to create content for. It's already properly initialized and added to course.
+   * @return [VirtualFile] of created lesson
    */
-  default VirtualFile createLessonContent(@NotNull Project project,
-                                          @NotNull Lesson lesson,
-                                          @NotNull VirtualFile parentDirectory) {
-    final VirtualFile[] lessonDirectory = new VirtualFile[1];
-    ApplicationManager.getApplication().runWriteAction(() -> {
+  fun createLessonContent(project: Project, lesson: Lesson, parentDirectory: VirtualFile): VirtualFile? {
+    val lessonDirectory = arrayOfNulls<VirtualFile>(1)
+    runWriteAction {
       try {
-        lessonDirectory[0] = VfsUtil.createDirectoryIfMissing(parentDirectory, lesson.getName());
-      } catch (IOException e) {
-        LOG.error("Failed to create lesson directory", e);
+        lessonDirectory[0] = VfsUtil.createDirectoryIfMissing(
+          parentDirectory, lesson.name)
       }
-    });
-    return lessonDirectory[0];
+      catch (e: IOException) {
+        LOG.error("Failed to create lesson directory", e)
+      }
+    }
+    return lessonDirectory[0]
   }
 
   /**
    * Creates content (including its directory or module) of new task in project
    *
-   * @param task Task to create content for. It's already properly initialized and added to corresponding lesson.
-   * @return VirtualFile of created task
+   * @param task [Task] to create content for. It's already properly initialized and added to corresponding lesson.
+   * @return [VirtualFile] of created task
    */
-  @Nullable
-  default VirtualFile createTaskContent(@NotNull final Project project,
-                                        @NotNull final Task task,
-                                        @NotNull final VirtualFile parentDirectory) {
+  fun createTaskContent(project: Project, task: Task, parentDirectory: VirtualFile): VirtualFile? {
     try {
-      GeneratorUtils.createTask(task, parentDirectory);
-    } catch (IOException e) {
-      LOG.error("Failed to create task", e);
+      createTask(task, parentDirectory)
     }
-    final VirtualFile taskDir = parentDirectory.findChild(task.getName());
-    if (!OpenApiExtKt.isUnitTestMode()) {
-      refreshProject(project);
+    catch (e: IOException) {
+      LOG.error("Failed to create task", e)
     }
-    return taskDir;
+    val taskDir = parentDirectory.findChild(task.name)
+    if (!isUnitTestMode) {
+      refreshProject(project)
+    }
+    return taskDir
   }
 
   /**
    * Allows to update project modules and the whole project structure
    */
-  default void refreshProject(@NotNull final Project project) {
-    refreshProject(project, null);
+  fun refreshProject(project: Project) {
+    refreshProject(project, null)
   }
 
-  default void refreshProject(@NotNull final Project project, @Nullable ProjectRefreshListener listener) {
-    if (listener != null) {
-      listener.onSuccess();
-    }
+  fun refreshProject(project: Project, listener: ProjectRefreshListener?) {
+    listener?.onSuccess()
   }
 
-  @Nullable
-  default Lesson createInitialLesson(@NotNull Project project, @NotNull Course course) {
-    Lesson lesson = new CCCreateLesson().createAndInitItem(project, course, null, new NewStudyItemInfo(EduNames.LESSON + 1, 1));
-    Task task = new CCCreateTask().createAndInitItem(project, course, lesson, new NewStudyItemInfo(EduNames.TASK + 1, 1));
+  fun createInitialLesson(project: Project, course: Course): Lesson? {
+    val lesson = CCCreateLesson().createAndInitItem(project, course, null, NewStudyItemInfo(EduNames.LESSON + 1, 1))
+    val task = CCCreateTask().createAndInitItem(project, course, lesson, NewStudyItemInfo(EduNames.TASK + 1, 1))
     if (task != null) {
-      lesson.addTask(task);
+      lesson.addTask(task)
     }
-    return lesson;
+    return lesson
   }
 
   /**
@@ -124,24 +113,24 @@ public interface EduCourseBuilder<Settings> {
    *
    * @param task initializing task
    */
-  default void initNewTask(@NotNull Project project, @NotNull final Lesson lesson, @NotNull final Task task, @NotNull NewStudyItemInfo info) {
-    if (task.getTaskFiles().isEmpty()) {
-      String sourceDir = TaskExt.getSourceDir(task);
-      TaskFile taskFile = new TaskFile();
-      String taskTemplateName = getTaskTemplateName();
+  fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
+    if (task.taskFiles.isEmpty()) {
+      val sourceDir = task.sourceDir
+      val taskFile = TaskFile()
+      val taskTemplateName = taskTemplateName
       if (taskTemplateName != null) {
-        taskFile.setName(GeneratorUtils.joinPaths(sourceDir, taskTemplateName));
-        taskFile.setText(StringUtil.notNullize(GeneratorUtils.getInternalTemplateText(taskTemplateName)));
-      } else {
-        GeneratorUtils.DefaultFileProperties taskFileProperties =
-          GeneratorUtils.createDefaultFile(task.getLesson().getCourse(), "Task", "type task text here");
-        taskFile.setName(GeneratorUtils.joinPaths(sourceDir, taskFileProperties.getName()));
-        taskFile.setText(taskFileProperties.getText());
+        taskFile.name = joinPaths(sourceDir, taskTemplateName)
+        taskFile.setText(StringUtil.notNullize(getInternalTemplateText(taskTemplateName)))
       }
-      task.addTaskFile(taskFile);
-      TaskFile defaultTestFile = createDefaultTestFile(task);
+      else {
+        val (name, text) = createDefaultFile(task.lesson.course, "Task", "type task text here")
+        taskFile.name = joinPaths(sourceDir, name)
+        taskFile.setText(text)
+      }
+      task.addTaskFile(taskFile)
+      val defaultTestFile = createDefaultTestFile(task)
       if (defaultTestFile != null) {
-        task.addTaskFile(defaultTestFile);
+        task.addTaskFile(defaultTestFile)
       }
     }
   }
@@ -153,66 +142,56 @@ public interface EduCourseBuilder<Settings> {
    * @param taskFile - `taskFile` which text will be copied.
    * @param taskDir  - directory of given `taskFile`.
    * @param newTask  - task for which the text is copied.
-   * @return return copied text of given `taskFile` or null if can't load it.
+   * @return return copied text of given [taskFile] or null if can't load it.
    */
-  @Nullable
-  default String getTextForNewTask(@NotNull TaskFile taskFile, @NotNull VirtualFile taskDir, @NotNull Task newTask) {
+  fun getTextForNewTask(taskFile: TaskFile, taskDir: VirtualFile, newTask: Task): String? {
     try {
-      VirtualFile file = EduUtils.findTaskFileInDir(taskFile, taskDir);
+      val file = EduUtils.findTaskFileInDir(taskFile, taskDir)
       if (file == null) {
-        LOG.warn("Can't find a file by path relative to this file for `" + taskFile.getName() + "` file");
-        return null;
+        LOG.warn("Can't find a file by path relative to this file for `${taskFile.name}` file")
+        return null
       }
-      return CCUtils.loadText(file);
+      return loadText(file)
     }
-    catch (IOException e) {
-      LOG.error("Can't load text for `" + taskFile.getName() + "` task file", e);
+    catch (e: IOException) {
+      LOG.error("Can't load text for `${taskFile.name}` task file", e)
     }
-    return null;
+    return null
   }
 
-  @Nullable
-  default TaskFile createDefaultTestFile(@NotNull Task task) {
-    List<String> testDirs = TaskExt.getTestDirs(task);
-    String testDir = "";
+  fun createDefaultTestFile(task: Task): TaskFile? {
+    val testDirs = task.testDirs
+    var testDir = ""
     if (!testDirs.isEmpty()) {
-      testDir = testDirs.get(0);
+      testDir = testDirs[0]
     }
-    String testTemplateName = getTestTemplateName();
+    val testTemplateName = testTemplateName
     if (testTemplateName != null) {
-      String testText = GeneratorUtils.getInternalTemplateText(testTemplateName);
-      TaskFile test =
-        new TaskFile(GeneratorUtils.joinPaths(testDir, testTemplateName), testText);
-      test.setVisible(false);
-      return test;
+      val testText = getInternalTemplateText(testTemplateName)
+      val test = TaskFile(joinPaths(testDir, testTemplateName), testText)
+      test.isVisible = false
+      return test
     }
-    return null;
+    return null
   }
 
-  @Nullable
-  default String getTaskTemplateName() {
-    return null;
-  }
-
-  @Nullable
-  default String getTestTemplateName() {
-    return null;
-  }
+  val taskTemplateName: String? get() = null
+  val testTemplateName: String? get() = null
 
   /**
    * @return object responsible for language settings
    * @see LanguageSettings
    */
-  @NotNull
-  LanguageSettings<Settings> getLanguageSettings();
+  fun getLanguageSettings(): LanguageSettings<Settings>
 
-  @Nullable
-  default CourseProjectGenerator<Settings> getCourseProjectGenerator(@NotNull Course course) {
-    return null;
-  }
+  fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<Settings>? = null
 
   interface ProjectRefreshListener {
-    default void onSuccess() {}
-    default void onFailure(@NotNull String errorMessage) {}
+    fun onSuccess() {}
+    fun onFailure(errorMessage: String) {}
+  }
+
+  companion object {
+    val LOG = Logger.getInstance(EduCourseBuilder::class.java)
   }
 }

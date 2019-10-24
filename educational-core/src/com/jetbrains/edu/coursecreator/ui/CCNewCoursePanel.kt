@@ -190,7 +190,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
                                                                courseData.language) ?: return
     myCourse.language = courseData.language.id
     myCourse.environment = courseData.environment
-    myLanguageSettings = configurator.courseBuilder.languageSettings
+    myLanguageSettings = configurator.courseBuilder.getLanguageSettings()
     myLanguageSettings.addSettingsChangeListener { doValidation() }
 
     val settings = arrayListOf<LabeledComponent<*>>(myLocationField)

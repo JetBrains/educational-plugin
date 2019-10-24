@@ -78,13 +78,14 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
 }
 
 class PlainTextCourseBuilder : EduCourseBuilder<Unit> {
+  override val taskTemplateName: String = "Task.txt"
+  override val testTemplateName: String = "Tests.txt"
+
   override fun getLanguageSettings(): LanguageSettings<Unit> = object : LanguageSettings<Unit>() {
     override fun getSettings() {}
     override fun getLanguageVersions() = mutableListOf("1.42")
   }
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<Unit> = PlainTextCourseGenerator(this, course)
-  override fun getTaskTemplateName(): String? = "Task.txt"
-  override fun getTestTemplateName(): String? = "Tests.txt"
 }
 
 class PlainTextCourseGenerator(builder: EduCourseBuilder<Unit>, course: Course) : CourseProjectGenerator<Unit>(builder, course)

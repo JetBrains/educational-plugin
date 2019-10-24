@@ -45,7 +45,7 @@ class EduYamlCompletionContributor : CompletionContributor() {
     extendCompletionForKey(PROGRAMMING_LANGUAGE_VERSION) { yamlFile ->
       val language = yamlFile.programmingLanguage ?: return@extendCompletionForKey emptyList()
       val languageSettings =
-        EduConfiguratorManager.findConfigurator(EduNames.PYCHARM, EduNames.DEFAULT_ENVIRONMENT, language)?.courseBuilder?.languageSettings
+        EduConfiguratorManager.findConfigurator(EduNames.PYCHARM, EduNames.DEFAULT_ENVIRONMENT, language)?.courseBuilder?.getLanguageSettings()
       return@extendCompletionForKey languageSettings?.languageVersions.orEmpty()
     }
   }

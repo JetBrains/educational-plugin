@@ -13,8 +13,8 @@ import com.jetbrains.python.PyNames
 import com.jetbrains.python.newProject.PyNewProjectSettings
 
 abstract class PyNewCourseBuilderBase : EduCourseBuilder<PyNewProjectSettings> {
-  override fun getTaskTemplateName(): String = TASK_PY
-  override fun getTestTemplateName(): String = TEST_FILE_NAME
+  override val taskTemplateName: String = TASK_PY
+  override val testTemplateName: String = TEST_FILE_NAME
 
   override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     if (task.taskFiles.isEmpty()) {
