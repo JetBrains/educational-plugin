@@ -4,16 +4,16 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 
 class SolutionHiddenTest : EduTestCase() {
-  fun `test is solution hidden when course value == true`() =
+  fun `test do not show solution when it's hidden for course and not specified for task`() =
     doTestSolutionHidden(solutionsHiddenInCourse = true, solutionHiddenInTask = null, expectedSolutionHiddenInTask = true)
 
-  fun `test is solution hidden when course value == false`() =
+  fun `test show solution when it's visible for course and not specified for task`() =
     doTestSolutionHidden(solutionsHiddenInCourse = false, solutionHiddenInTask = null, expectedSolutionHiddenInTask = false)
 
-  fun `test is solution hidden when task value == true`() =
+  fun `test do not show solution when it's hidden for task`() =
     doTestSolutionHidden(solutionsHiddenInCourse = false, solutionHiddenInTask = true, expectedSolutionHiddenInTask = true)
 
-  fun `test is solution hidden when task value == false`() =
+  fun `test show solution when it's visible for task`() =
     doTestSolutionHidden(solutionsHiddenInCourse = true, solutionHiddenInTask = false, expectedSolutionHiddenInTask = false)
 
   private fun doTestSolutionHidden(solutionsHiddenInCourse: Boolean,
@@ -35,20 +35,20 @@ class SolutionHiddenTest : EduTestCase() {
     assertEquals(expectedSolutionHiddenInTask, !task.canShowSolution())
   }
 
-  fun `test do not show solution when placeholders are empty`() {
+  fun `test do not show solution when answer is empty`() {
     courseWithFiles("Edu test course") {
       lesson(name = "lesson1") {
         eduTask(name = "task1") {
           taskFile("taskFile1.txt", "a = <p>TODO()</p>") {
-            placeholder(0, null)
+            placeholder(0, "")
           }
         }
       }
     }
-    assertEquals(false, findTask(0, 0).canShowSolution())
+    assertFalse(findTask(0, 0).canShowSolution())
   }
 
-  fun `test do not show solution when there are no placeholders`() {
+  fun `test do not show solution when no answer provided`() {
     courseWithFiles("Edu test course") {
       lesson(name = "lesson1") {
         eduTask(name = "task1") {
@@ -56,6 +56,6 @@ class SolutionHiddenTest : EduTestCase() {
         }
       }
     }
-    assertEquals(false, findTask(0, 0).canShowSolution())
+    assertFalse(findTask(0, 0).canShowSolution())
   }
 }
