@@ -24,7 +24,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
       |programming_language: Plain text
       |mode: Study
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test checkio station`() {
@@ -41,7 +41,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
       |content:
       |- mission
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test framework lesson`() {
@@ -57,7 +57,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
       |- task2
       |current_task: 1
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test task`() {
@@ -65,7 +65,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
       lesson {
         eduTask()
       }
-    }.lessons.first().taskList.first()
+    }.findTask("lesson1", "task1")
     task.status = CheckStatus.Solved
     task.record = 1
 
@@ -73,7 +73,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
     |type: edu
     |status: Solved
     |record: 1
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test choice task`() {
@@ -81,7 +81,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
       lesson {
         choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT))
       }
-    }.lessons.first().taskList.first() as ChoiceTask
+    }.findTask("lesson1", "task1") as ChoiceTask
     task.status = CheckStatus.Solved
     task.record = 1
     task.selectedVariants = mutableListOf(1)
@@ -100,7 +100,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
     |record: 1
     |selected_options:
     |- 1
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test video task`() {
@@ -115,7 +115,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
         videoTask(sources = mapOf(firstSrc to firstRes, secondSrc to secondRes),
                   thumbnail = thumbnail)
       }
-    }.lessons.first().taskList.first() as VideoTask
+    }.findTask("lesson1", "task1") as VideoTask
     task.status = CheckStatus.Solved
     task.record = 1
 
@@ -134,7 +134,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
     |currentTime: 0
     |status: Solved
     |record: 1
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test checkio mission`() {
@@ -147,7 +147,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
     |code: code
     |seconds_from_change: 0
     |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test task with task files`() {
@@ -157,7 +157,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
           taskFile("task.txt", "text")
         }
       }
-    }.lessons.first().taskList.first()
+    }.findTask("lesson1", "task1")
 
     doTest(task, """
     |type: edu
@@ -168,7 +168,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
     |  learner_created: false
     |status: Unchecked
     |record: -1
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test task with placeholders`() {
@@ -180,7 +180,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
           }
         }
       }
-    }.lessons.first().taskList.first()
+    }.findTask("lesson1", "task1")
 
     doTest(task, """
     |type: edu
@@ -201,7 +201,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
     |  learner_created: false
     |status: Unchecked
     |record: -1
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test learner created`() {
@@ -211,7 +211,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
           taskFile("task.txt", "text")
         }
       }
-    }.lessons.first().taskList.first()
+    }.findTask("lesson1", "task1")
     task.taskFiles.values.first().isLearnerCreated = true
 
     doTest(task, """
@@ -223,7 +223,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
     |  learner_created: true
     |status: Unchecked
     |record: -1
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   private fun doTest(item: StudyItem, expected: String) {
