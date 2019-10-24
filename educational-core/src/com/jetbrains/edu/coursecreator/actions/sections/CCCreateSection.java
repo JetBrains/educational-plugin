@@ -7,6 +7,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase;
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo;
 import com.jetbrains.edu.coursecreator.actions.StudyItemType;
+import com.jetbrains.edu.coursecreator.actions.StudyItemVariant;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Section;
@@ -14,6 +15,9 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
 
@@ -68,12 +72,17 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   }
 
   @Override
-  public Section createAndInitItem(@NotNull Project project, @NotNull Course course,
-                                   @Nullable StudyItem parentItem, @NotNull NewStudyItemInfo info) {
-    final Section section = new Section();
-    section.setCourse(course);
-    section.setName(info.getName());
-    section.setIndex(info.getIndex());
-    return section;
+  protected void initItem(@NotNull Project project,
+                          @NotNull Course course,
+                          @Nullable StudyItem parentItem,
+                          @NotNull Section item,
+                          @NotNull NewStudyItemInfo info) {
+    item.setCourse(course);
+  }
+
+  @NotNull
+  @Override
+  protected List<StudyItemVariant> getStudyItemVariants() {
+    return Collections.singletonList(new StudyItemVariant("Section", EducationalCoreIcons.Section, Section::new));
   }
 }

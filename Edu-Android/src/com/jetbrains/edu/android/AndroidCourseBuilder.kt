@@ -42,13 +42,14 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    additionalPanels: List<AdditionalPanel>
-  ): NewStudyItemInfo? {
+    additionalPanels: List<AdditionalPanel>,
+    studyItemCreator: (NewStudyItemInfo) -> Unit
+  ) {
     val parentItem = model.parent
     return if (model.itemType != StudyItemType.TASK || parentItem is FrameworkLesson && parentItem.taskList.isNotEmpty()) {
-      super.showNewStudyItemUi(project, course, model, additionalPanels)
+      super.showNewStudyItemUi(project, course, model, additionalPanels, studyItemCreator)
     } else {
-      showNewStudyItemDialog(project, course, model, additionalPanels, ::AndroidNewTaskDialog)
+      showNewStudyItemDialog(project, course, model, additionalPanels, ::AndroidNewTaskDialog, studyItemCreator)
     }
   }
 

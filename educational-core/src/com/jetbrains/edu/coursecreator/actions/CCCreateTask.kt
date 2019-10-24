@@ -9,8 +9,8 @@ import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import icons.EducationalCoreIcons
 import java.util.*
 import kotlin.collections.LinkedHashMap
@@ -57,18 +57,18 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
     }
   }
 
-  override fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, info: NewStudyItemInfo): Task? {
-    if (parentItem !is Lesson) return null
-    val newTask = EduTask(info.name)
-    newTask.index = info.index
-    newTask.lesson = parentItem
-    newTask.addDefaultTaskDescription()
+  override fun initItem(project: Project, course: Course, parentItem: StudyItem?, item: Task, info: NewStudyItemInfo) {
+    require(parentItem is Lesson) {
+      "parentItem should be Lesson, found `$parentItem`"
+    }
+    item.lesson = parentItem
+    item.addDefaultTaskDescription()
     if (parentItem is FrameworkLesson) {
       val prevTask = parentItem.getTaskList().getOrNull(info.index - 2)
       val prevTaskDir = prevTask?.getTaskDir(project)
       if (prevTask == null || prevTaskDir == null) {
-        initTask(project, course, parentItem, newTask, info)
-        return newTask
+        initTask(project, course, parentItem, item, info)
+        return
       }
       FileDocumentManager.getInstance().saveAllDocuments()
       // We can't just copy text from course objects because they can contain outdated text
@@ -80,13 +80,13 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
       val needCopyTests = CCSettings.getInstance().copyTestsInFrameworkLessons()
       for ((path, file) in prevTask.taskFiles) {
         if (needCopyTests || !(testDirs.any { path.startsWith(it) } || path == defaultTestFileName)) {
-          newTaskFiles[path] = file.copyForNewTask(prevTaskDir, newTask)
+          newTaskFiles[path] = file.copyForNewTask(prevTaskDir, item)
         }
       }
-      newTask.taskFiles = newTaskFiles
+      item.taskFiles = newTaskFiles
 
       if (!needCopyTests) {
-        val defaultTestFile = course.configurator?.courseBuilder?.createDefaultTestFile(newTask)
+        val defaultTestFile = course.configurator?.courseBuilder?.createDefaultTestFile(item)
         if (defaultTestFile != null) {
           newTaskFiles[defaultTestFile.name] = defaultTestFile
         }
@@ -100,15 +100,23 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
         ?.forEach { dependency ->
           if (dependency.resolve(course)?.taskFile?.task == prevTask) {
             val placeholder = dependency.answerPlaceholder
-            placeholder.placeholderDependency = dependency.copy(taskName = newTask.name)
+            placeholder.placeholderDependency = dependency.copy(taskName = item.name)
           }
         }
-      newTask.init(course, parentItem, false)
+      item.init(course, parentItem, false)
     } else {
-      initTask(project, course, parentItem, newTask, info)
+      initTask(project, course, parentItem, item, info)
     }
-    return newTask
   }
+
+  override val studyItemVariants: List<StudyItemVariant>
+    get() = listOf(
+      StudyItemVariant("Edu", EducationalCoreIcons.Task, ::EduTask),
+      StudyItemVariant("Output", EducationalCoreIcons.Task, ::OutputTask),
+      StudyItemVariant("Theory", EducationalCoreIcons.Task, ::TheoryTask),
+      StudyItemVariant("Choice", EducationalCoreIcons.Task, ::ChoiceTask),
+      StudyItemVariant("IDE", EducationalCoreIcons.IdeTask, ::IdeTask)
+    )
 
   private fun initTask(project: Project, course: Course, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     if (!course.isStudy) {

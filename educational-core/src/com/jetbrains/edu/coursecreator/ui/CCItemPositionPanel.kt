@@ -7,7 +7,7 @@ import com.intellij.ui.layout.*
  * Allows user to choose where new item should be located
  * if creating action was called with sibling item context.
  *
- * @see [com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase.getItem]
+ * @see [com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase.showCreationUI]
  */
 class CCItemPositionPanel(thresholdName: String) : AdditionalPanel {
 

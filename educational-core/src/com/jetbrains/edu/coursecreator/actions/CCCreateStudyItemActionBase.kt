@@ -41,17 +41,8 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     val project = e.project ?: return
     val selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return
     if (!isActionApplicable(project, selectedFiles)) return
-
     val course = StudyTaskManager.getInstance(project).course ?: return
-
-    val itemFile = createItem(project, selectedFiles[0], course, e.dataContext)
-    if (itemFile != null) {
-      ProjectView.getInstance(project).select(itemFile, itemFile, true)
-    }
-    askFeedback(course, project)
-    if (StudyItemType.LESSON == itemType) {
-      suggestWrapLessonsIntoSection(project, course, selectedFiles[0])
-    }
+    createItem(project, selectedFiles[0], course, e.dataContext)
   }
 
   private fun suggestWrapLessonsIntoSection(project: Project, course: Course, sourceDirectory: VirtualFile) {
@@ -93,44 +84,50 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     return if (isAddedAsLast(project, course, directory)) directory else directory.parent
   }
 
-  private fun createItem(
+  protected fun createItem(
     project: Project,
     sourceDirectory: VirtualFile,
     course: Course,
     dataContext: DataContext
-  ): VirtualFile? {
+  ) {
     val parentItem = getParentItem(project, course, sourceDirectory)
-    val item = getItem(project, course, sourceDirectory, parentItem, dataContext)
-    if (item == null) {
-      LOG.info("Failed to create study item")
-      return null
+    showCreationUI(project, course, sourceDirectory, parentItem, dataContext) { info ->
+      val item = createAndInitItem(project, course, parentItem, info)
+      val parentDir = getParentDir(project, course, sourceDirectory)
+      if (parentDir == null) {
+        LOG.info("Failed to get parent directory")
+        return@showCreationUI
+      }
+      CCUtils.updateHigherElements(parentDir.children, getStudyOrderable(item, course), item.index - 1, 1)
+      addItem(course, item)
+      sortSiblings(course, parentItem)
+      val virtualFile = createItemDir(project, course, item, parentDir)
+      YamlFormatSynchronizer.saveItem(item)
+      YamlFormatSynchronizer.saveItem(item.parent)
+      EduCounterUsageCollector.studyItemCreated(item)
+
+      if (virtualFile != null) {
+        ProjectView.getInstance(project).select(virtualFile, virtualFile, true)
+      }
+      askFeedback(course, project)
+      if (StudyItemType.LESSON == itemType) {
+        suggestWrapLessonsIntoSection(project, course, sourceDirectory)
+      }
     }
-    val parentDir = getParentDir(project, course, sourceDirectory)
-    if (parentDir == null) {
-      LOG.info("Failed to get parent directory")
-      return null
-    }
-    CCUtils.updateHigherElements(parentDir.children, getStudyOrderable(item, course), item.index - 1, 1)
-    addItem(course, item)
-    sortSiblings(course, parentItem)
-    val virtualFile = createItemDir(project, course, item, parentDir)
-    YamlFormatSynchronizer.saveItem(item)
-    YamlFormatSynchronizer.saveItem(item.parent)
-    EduCounterUsageCollector.studyItemCreated(item)
-    return virtualFile
   }
 
   protected abstract fun addItem(course: Course, item: Item)
   protected abstract fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem>
   protected abstract fun createItemDir(project: Project, course: Course, item: Item, parentDirectory: VirtualFile): VirtualFile?
 
-  protected fun getItem(
+  protected fun showCreationUI(
     project: Project,
     course: Course,
     sourceDirectory: VirtualFile,
     parentItem: StudyItem?,
-    dataContext: DataContext
-  ): Item? {
+    dataContext: DataContext,
+    studyItemCreator: (NewStudyItemInfo) -> Unit
+  ) {
     val index: Int
     val suggestedName: String
     val additionalPanels = ArrayList<AdditionalPanel>()
@@ -139,7 +136,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
       suggestedName = SUGGESTED_NAME.getData(dataContext) ?: itemType.presentableName + index
     }
     else {
-      val thresholdItem = getThresholdItem(project, course, sourceDirectory) ?: return null
+      val thresholdItem = getThresholdItem(project, course, sourceDirectory) ?: return
       val defaultIndex = ITEM_INDEX.getData(dataContext)
       index = defaultIndex ?: thresholdItem.index
       val itemName = itemType.presentableName
@@ -151,22 +148,24 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
       }
     }
     if (parentItem == null) {
-      return null
+      return
     }
-    val parentItemDir = parentItem.getDir(project) ?: return null
-    val model = NewStudyItemUiModel(parentItem, parentItemDir, itemType, suggestedName, index)
-    val info = showCreateStudyItemDialog(project, course, model, additionalPanels) ?: return null
-    return createAndInitItem(project, course, parentItem, info)
+    val parentItemDir = parentItem.getDir(project) ?: return
+    val model = NewStudyItemUiModel(parentItem, parentItemDir, itemType, suggestedName, index, studyItemVariants)
+    showCreateStudyItemDialog(project, course, model, additionalPanels, studyItemCreator)
   }
+
+  protected abstract val studyItemVariants: List<StudyItemVariant>
 
   protected open fun showCreateStudyItemDialog(
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    additionalPanels: List<AdditionalPanel>
-  ): NewStudyItemInfo? {
-    val configurator = course.configurator ?: return null
-    return configurator.courseBuilder.showNewStudyItemUi(project, course, model, additionalPanels)
+    additionalPanels: List<AdditionalPanel>,
+    studyItemCreator: (NewStudyItemInfo) -> Unit
+  ) {
+    val configurator = course.configurator ?: return
+    configurator.courseBuilder.showNewStudyItemUi(project, course, model, additionalPanels, studyItemCreator)
   }
 
   protected abstract fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int
@@ -175,7 +174,16 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   protected abstract fun isAddedAsLast(project: Project, course: Course, sourceDirectory: VirtualFile): Boolean
   protected abstract fun sortSiblings(course: Course, parentItem: StudyItem?)
 
-  abstract fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, info: NewStudyItemInfo): Item?
+  fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, info: NewStudyItemInfo): Item {
+    @Suppress("UNCHECKED_CAST")
+    val item = info.ctr() as Item
+    item.name = info.name
+    item.index = info.index
+    initItem(project, course, parentItem, item, info)
+    return item
+  }
+
+  protected open fun initItem(project: Project, course: Course, parentItem: StudyItem?, item: Item, info: NewStudyItemInfo) {}
 
   companion object {
     protected val LOG: Logger = Logger.getInstance(CCCreateStudyItemActionBase::class.java)

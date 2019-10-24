@@ -4,10 +4,12 @@ import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import javax.swing.Icon
 
 open class NewStudyItemInfo(
   val name: String,
-  val index: Int
+  val index: Int,
+  val ctr: () -> StudyItem
 ) : UserDataHolderBase()
 
 /**
@@ -26,8 +28,11 @@ data class NewStudyItemUiModel(
    * If creating UI was called with sibling item context (i.e. new task creation was called from task item),
    * it will be index of this sibling item. The final index of new item will be chosen by user.
    */
-  val baseIndex: Int
+  val baseIndex: Int,
+  val studyItemVariants: List<StudyItemVariant>
 )
+
+data class StudyItemVariant(val type: String, val icon: Icon, val ctr: () -> StudyItem)
 
 enum class StudyItemType(val presentableName: String) {
   COURSE(EduNames.COURSE),

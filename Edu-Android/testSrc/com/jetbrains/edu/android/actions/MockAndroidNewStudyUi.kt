@@ -13,16 +13,18 @@ class MockAndroidNewStudyUi(
   private val packageName: String,
   index: Int? = null
 ) : MockNewStudyItemUi(name, index) {
-  override fun showDialog(
+  override fun show(
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    additionalPanels: List<AdditionalPanel>
-  ): NewStudyItemInfo? {
-    return super.showDialog(project, course, model, additionalPanels)?.apply {
-      putUserData(AndroidCourseBuilder.PACKAGE_NAME, packageName)
-      putUserData(AndroidCourseBuilder.MIN_ANDROID_SDK, 15)
-      putUserData(AndroidCourseBuilder.COMPILE_ANDROID_SDK, 28)
+    additionalPanels: List<AdditionalPanel>,
+    studyItemCreator: (NewStudyItemInfo) -> Unit
+  ) {
+    super.show(project, course, model, additionalPanels) {
+      it.putUserData(AndroidCourseBuilder.PACKAGE_NAME, packageName)
+      it.putUserData(AndroidCourseBuilder.MIN_ANDROID_SDK, 15)
+      it.putUserData(AndroidCourseBuilder.COMPILE_ANDROID_SDK, 28)
+      studyItemCreator(it)
     }
   }
 }

@@ -47,7 +47,7 @@ abstract class CCCreateStudyItemDialogBase(
   override fun getPreferredFocusedComponent(): JComponent? = nameField
 
   open fun showAndGetResult(): NewStudyItemInfo? =
-    if (showAndGet()) NewStudyItemInfo(nameField.text, model.baseIndex + (positionPanel?.indexDelta ?: 0)) else null
+    if (showAndGet()) NewStudyItemInfo(nameField.text, model.baseIndex + (positionPanel?.indexDelta ?: 0), model.studyItemVariants.first().ctr) else null
 
   protected open fun createAdditionalFields(builder: LayoutBuilder) {}
 }

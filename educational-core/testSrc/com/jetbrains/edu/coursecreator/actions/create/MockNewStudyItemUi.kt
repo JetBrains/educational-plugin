@@ -8,11 +8,13 @@ import com.jetbrains.edu.coursecreator.ui.NewStudyItemUi
 import com.jetbrains.edu.learning.courseFormat.Course
 
 open class MockNewStudyItemUi(private val name: String? = null, private val index: Int? = null): NewStudyItemUi {
-  override fun showDialog(
+  override fun show(
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    additionalPanels: List<AdditionalPanel>
-  ): NewStudyItemInfo? =
-    NewStudyItemInfo(name ?: model.suggestedName, index ?: model.baseIndex)
+    additionalPanels: List<AdditionalPanel>,
+    studyItemCreator: (NewStudyItemInfo) -> Unit
+  ) {
+    studyItemCreator(NewStudyItemInfo(name ?: model.suggestedName, index ?: model.baseIndex, model.studyItemVariants.first().ctr))
+  }
 }

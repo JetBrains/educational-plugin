@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createDefaultFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTask
@@ -43,10 +44,9 @@ interface EduCourseBuilder<Settings> {
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    additionalPanels: List<AdditionalPanel>
-  ): NewStudyItemInfo? {
-    return showNewStudyItemDialog(project, course, model, additionalPanels)
-  }
+    additionalPanels: List<AdditionalPanel>,
+    studyItemCreator: (NewStudyItemInfo) -> Unit
+  ) = showNewStudyItemDialog(project, course, model, additionalPanels, studyItemCreator = studyItemCreator)
 
   /**
    * Creates content (including its directory or module) of new lesson in project
@@ -101,11 +101,11 @@ interface EduCourseBuilder<Settings> {
   }
 
   fun createInitialLesson(project: Project, course: Course): Lesson? {
-    val lesson = CCCreateLesson().createAndInitItem(project, course, null, NewStudyItemInfo(EduNames.LESSON + 1, 1))
-    val task = CCCreateTask().createAndInitItem(project, course, lesson, NewStudyItemInfo(EduNames.TASK + 1, 1))
-    if (task != null) {
-      lesson.addTask(task)
-    }
+    val lessonInfo = NewStudyItemInfo(EduNames.LESSON + 1, 1, ::Lesson)
+    val lesson = CCCreateLesson().createAndInitItem(project, course, null, lessonInfo)
+    val taskInfo = NewStudyItemInfo(EduNames.TASK + 1, 1, ::EduTask)
+    val task = CCCreateTask().createAndInitItem(project, course, lesson, taskInfo)
+    lesson.addTask(task)
     return lesson
   }
 
