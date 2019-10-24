@@ -10,11 +10,9 @@ import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
-class PyCheckiOWidget(project: Project) : LoginWidget(project, CheckiOOAuthConnector.getAuthorizationTopic()) {
+class PyCheckiOWidget(project: Project) : LoginWidget(project, CheckiOOAuthConnector.getAuthorizationTopic(), PyCheckiONames.PY_CHECKIO) {
   override val account: OAuthAccount<out Any>?
     get() = PyCheckiOSettings.INSTANCE.account
-  override val linkName: String
-    get() = PyCheckiONames.PY_CHECKIO
   override val icon: Icon
     get() = EducationalCoreIcons.CheckiO
 

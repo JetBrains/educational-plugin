@@ -10,11 +10,9 @@ import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
-class JsCheckiOWidget(project: Project) : LoginWidget(project, CheckiOOAuthConnector.getAuthorizationTopic()) {
+class JsCheckiOWidget(project: Project) : LoginWidget(project, CheckiOOAuthConnector.getAuthorizationTopic(), JsCheckiONames.JS_CHECKIO) {
   override val account: OAuthAccount<out Any>?
     get() = JsCheckiOSettings.getInstance().account
-  override val linkName: String
-    get() = JsCheckiONames.JS_CHECKIO
   override val icon: Icon
     get() = EducationalCoreIcons.JSCheckiO
 

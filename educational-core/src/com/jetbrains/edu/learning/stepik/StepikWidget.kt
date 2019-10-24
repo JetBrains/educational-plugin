@@ -10,11 +10,9 @@ import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
-class StepikWidget(project: Project) : LoginWidget(project, EduSettings.SETTINGS_CHANGED) {
+class StepikWidget(project: Project) : LoginWidget(project, EduSettings.SETTINGS_CHANGED, StepikNames.STEPIK) {
   override val account: OAuthAccount<out Any>?
     get() = EduSettings.getInstance().user
-  override val linkName: String
-    get() = StepikNames.STEPIK
   override val icon: Icon
     get() = EducationalCoreIcons.Stepik
   override val syncStep: SynchronizationStep

@@ -21,9 +21,11 @@ import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JLabel
 
-abstract class LoginWidget(val project: Project, topic: Topic<EduLogInListener>) : IconLikeCustomStatusBarWidget {
+abstract class LoginWidget(val project: Project,
+                           topic: Topic<EduLogInListener>,
+                           private val platformName: String
+) : IconLikeCustomStatusBarWidget {
   abstract val account: OAuthAccount<out Any>?
-  abstract val linkName: String
   abstract val icon: Icon
   open val syncStep: SynchronizationStep? = null
   val component: JLabel = JLabel(getWidgetIcon())
@@ -52,7 +54,7 @@ abstract class LoginWidget(val project: Project, topic: Topic<EduLogInListener>)
 
   private fun setToolTipText() {
     val logInLogOutText = if (account == null) "Log In to" else "Log Out from"
-    component.toolTipText = "$logInLogOutText ${linkName}"
+    component.toolTipText = "$logInLogOutText ${platformName}"
   }
 
   private fun update() {
@@ -81,11 +83,11 @@ abstract class LoginWidget(val project: Project, topic: Topic<EduLogInListener>)
             }
             loginText -> {
               authorize()
-              EduCounterUsageCollector.loggedIn(linkName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
+              EduCounterUsageCollector.loggedIn(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
             }
             logOutText -> {
               resetAccount()
-              EduCounterUsageCollector.loggedOut(linkName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
+              EduCounterUsageCollector.loggedOut(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
             }
           }
         }

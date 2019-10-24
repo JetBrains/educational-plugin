@@ -8,9 +8,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
-class HyperskillWidget(project: Project) : LoginWidget(project, HyperskillConnector.AUTHORIZATION_TOPIC) {
+class HyperskillWidget(project: Project) : LoginWidget(project, HyperskillConnector.AUTHORIZATION_TOPIC, HYPERSKILL) {
   override val account: OAuthAccount<out Any>? get() = HyperskillSettings.INSTANCE.account
-  override val linkName: String = HYPERSKILL
   override val icon: Icon get() = EducationalCoreIcons.Hyperskill
 
   override fun ID() = "HyperskillAccountWidget"
