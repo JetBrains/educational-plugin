@@ -29,7 +29,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |""".trimMargin("|")
     val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
     assertNotNull(course)
-    assertEquals(EduNames.STUDY, course!!.courseMode)
+    assertEquals(EduNames.STUDY, course.courseMode)
   }
 
   fun `test checkio station`() {

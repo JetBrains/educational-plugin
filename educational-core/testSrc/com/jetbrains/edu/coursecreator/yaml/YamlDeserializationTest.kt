@@ -134,7 +134,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin()
-    val course = MAPPER.deserializeCourse(yamlContent)!!
+    val course = MAPPER.deserializeCourse(yamlContent)
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -160,7 +160,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin()
-    val course = MAPPER.deserializeCourse(yamlContent)!!
+    val course = MAPPER.deserializeCourse(yamlContent)
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -186,7 +186,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin()
-    val course = MAPPER.deserializeCourse(yamlContent)!!
+    val course = MAPPER.deserializeCourse(yamlContent)
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById.displayName)
@@ -612,5 +612,5 @@ class YamlDeserializationTest : YamlTestCase() {
     Locale.setDefault(defaultLocale)
   }
 
-  private fun deserializeNotNull(yamlContent: String) : Course = MAPPER.deserializeCourse(yamlContent)!!
+  private fun deserializeNotNull(yamlContent: String) : Course = MAPPER.deserializeCourse(yamlContent)
 }
