@@ -11,24 +11,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
-import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showStepikNotification;
-import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.updateLesson;
+import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 import static com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL;
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
 import static com.jetbrains.edu.learning.ExperimentsKt.isFeatureEnabled;
@@ -108,22 +102,15 @@ public class PushHyperskillLesson extends DumbAwareAction {
   }
 
   public static void doPush(Lesson lesson, Course course, Project project) {
-    if (lesson.getId() > 0) {
-      boolean success = updateLesson(project, lesson, true, -1);
-      if (success) {
-        final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
-        StepikConnector.getInstance().updateLessonAttachment(additionalFiles, lesson.getId());
-        showNotification(project, "Hyperskill lesson updated", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.getId()));
-      }
-      else {
-        LOG.error("Failed to update hyperskill lesson");
-      }
+    boolean success = lesson.getId() > 0 ? updateLesson(project, lesson, true, -1)
+                                         : postLesson(project, lesson, lesson.getIndex(), -1);
+
+    if (success) {
+      updateAdditionalCourseInfo(project, course);
+      showNotification(project, "Hyperskill lesson updated", openOnStepikAction("/lesson/" + lesson.getId()));
     }
     else {
-      CCStepikConnector.postLesson(project, lesson, lesson.getIndex(), -1);
-      final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
-      StepikConnector.getInstance().postLessonAttachment(additionalFiles, lesson.getId());
-      showNotification(project, "Lesson uploaded", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.getId()));
+      LOG.error("Failed to update hyperskill lesson");
     }
   }
 }

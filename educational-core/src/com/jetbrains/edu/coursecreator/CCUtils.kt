@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.stepik.api.AdditionalLessonInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
@@ -160,6 +161,12 @@ object CCUtils {
       }
     })
     return additionalTaskFiles
+  }
+
+  @JvmStatic
+  fun collectAdditionalLessonInfo(lesson: Lesson): AdditionalLessonInfo {
+    val taskFiles = lesson.taskList.map { it.id to it.taskFiles.values.toList() }.toMap()
+    return AdditionalLessonInfo(taskFiles)
   }
 
   @JvmStatic

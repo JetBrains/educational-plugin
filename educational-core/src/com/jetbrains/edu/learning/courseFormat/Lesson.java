@@ -90,6 +90,7 @@ public class Lesson extends ItemContainer {
     return (Task)getItem(name);
   }
 
+  @Nullable
   public Task getTask(int id) {
     for (Task task : getTaskList()) {
       if (task.getId() == id) {

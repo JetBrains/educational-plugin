@@ -18,7 +18,8 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
-import com.jetbrains.edu.learning.stepik.api.loadAndFillAttachmentsInfo
+import com.jetbrains.edu.learning.stepik.api.loadAndFillAdditionalCourseInfo
+import com.jetbrains.edu.learning.stepik.api.loadAndFillAdditionalLessonInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import icons.EducationalCoreIcons
 
@@ -58,7 +59,8 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
 
     val hyperskillLesson = FrameworkLesson(lesson)
     course.addItem(hyperskillLesson, 0)
-    loadAndFillAttachmentsInfo(course, lesson)
+    loadAndFillAdditionalCourseInfo(course)
+    loadAndFillAdditionalLessonInfo(lesson)
 
     runInEdt {
       CCNewCourseDialog("Get Hyperskill Lesson from Stepik", "Create", course).show()

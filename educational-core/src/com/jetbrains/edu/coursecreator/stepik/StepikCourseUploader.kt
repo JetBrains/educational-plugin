@@ -46,7 +46,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       success = updateCourseInfo(project, course) && success
     }
     if (changedItems.isCourseAdditionalInfoChanged) {
-      success = updateAdditionalInfo(project, course) && success
+      success = updateAdditionalCourseInfo(project, course) && success
     }
     return success
   }
@@ -113,6 +113,9 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       val section = localLesson.section?.id ?: course.sectionIds.first()
       val lesson = updateLessonInfo(project, localLesson, false, section)
       success = lesson != null && success
+    }
+    changedItems.lessonsAdditionalInfo.forEach {
+      success = updateAdditionalLessonInfo(it) && success
     }
 
     return success

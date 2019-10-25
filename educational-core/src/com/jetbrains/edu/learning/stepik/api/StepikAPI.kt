@@ -51,6 +51,7 @@ const val EDU_TASK = "edu_task"
 const val VERSION = "version"
 const val ATTACHMENTS = "attachments"
 const val ADDITIONAL_FILES = "additional_files"
+const val TASK_FILES = "task_files"
 const val TIME = "time"
 
 // List wrappers for GET requests:
@@ -403,7 +404,9 @@ class Attachment {
   lateinit var name: String
 }
 
-class AdditionalInfo {
+open class AdditionalInfo
+
+class AdditionalCourseInfo : AdditionalInfo {
   @JsonProperty(ADDITIONAL_FILES)
   lateinit var additionalFiles: List<TaskFile>
 
@@ -412,8 +415,20 @@ class AdditionalInfo {
 
   constructor()
 
+  @JvmOverloads
   constructor(additionalFiles: List<TaskFile>, solutionsHidden: Boolean = false) {
     this.additionalFiles = additionalFiles
     this.solutionsHidden = solutionsHidden
+  }
+}
+
+class AdditionalLessonInfo : AdditionalInfo {
+  @JsonProperty(TASK_FILES)
+  lateinit var taskFiles: Map<Int, List<TaskFile>> // taskId -> taskFiles
+
+  constructor()
+
+  constructor(taskFiles: Map<Int, List<TaskFile>>) {
+    this.taskFiles = taskFiles
   }
 }

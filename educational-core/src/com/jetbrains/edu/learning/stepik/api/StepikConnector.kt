@@ -250,10 +250,9 @@ abstract class StepikConnector {
     }
   }
 
-  @JvmOverloads
-  fun postAttachment(additionalInfo: AdditionalInfo, courseId: Int?, lessonId: Int? = null): Int {
-    val fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), objectMapper.writeValueAsString(additionalInfo))
-    val fileData = MultipartBody.Part.createFormData("file", StepikNames.ADDITIONAL_FILES, fileBody)
+  private fun postAttachment(info: AdditionalInfo, courseId: Int?, lessonId: Int?): Int {
+    val fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), objectMapper.writeValueAsString(info))
+    val fileData = MultipartBody.Part.createFormData("file", StepikNames.ADDITIONAL_INFO, fileBody)
     val courseBody = if (courseId != null) RequestBody.create(MediaType.parse("text/plain"), courseId.toString()) else null
     val lessonBody = if (lessonId != null) RequestBody.create(MediaType.parse("text/plain"), lessonId.toString()) else null
 
@@ -261,12 +260,13 @@ abstract class StepikConnector {
     return response?.code() ?: -1
   }
 
-  fun postLessonAttachment(additionalFiles: List<TaskFile>, lessonId: Int): Int =
-    postAttachment(AdditionalInfo(additionalFiles), null, lessonId)
+  fun postCourseAttachment(info: AdditionalCourseInfo, courseId: Int) = postAttachment(info, courseId, null)
+
+  fun postLessonAttachment(info: AdditionalLessonInfo, lessonId: Int) = postAttachment(info, null, lessonId)
 
   // Update requests:
 
-  fun updateCourse(course: EduCourse): Int {
+  fun updateCourse(course: Course): Int {
     val response = service.course(course.id, CourseData(course)).executeHandlingExceptions()
     val postedCourse = response?.body()?.courses?.firstOrNull()
     if (postedCourse != null) {
@@ -311,21 +311,22 @@ abstract class StepikConnector {
     return response?.code() ?: -1
   }
 
-  fun updateCourseAttachment(info: AdditionalInfo, course: EduCourse): Int {
+  fun updateCourseAttachment(info: AdditionalCourseInfo, course: Course): Int {
     deleteAttachment(course.id)
     updateCourse(course)  // Needed to push forward update_date in course
-    return postAttachment(info, course.id)
+    return postCourseAttachment(info, course.id)
   }
 
-  fun updateLessonAttachment(additionalFiles: List<TaskFile>, lessonId: Int): Int {
-    deleteAttachment(null, lessonId)
-    return postLessonAttachment(additionalFiles, lessonId)
+  fun updateLessonAttachment(info: AdditionalLessonInfo, lesson: Lesson): Int {
+    deleteAttachment(null, lesson.id)
+    updateLesson(lesson) // Needed to push forward update_date in lesson
+    return postLessonAttachment(info, lesson.id)
   }
 
   private fun deleteAttachment(courseId: Int?, lessonId: Int? = null) {
     val attachments = service.attachments(courseId, lessonId).executeHandlingExceptions(true)?.body()
     if (attachments != null && attachments.attachments.isNotEmpty()) {
-      val attachmentId = attachments.attachments.firstOrNull { StepikNames.ADDITIONAL_FILES == it.name }?.id
+      val attachmentId = attachments.attachments.firstOrNull { StepikNames.ADDITIONAL_INFO == it.name }?.id
       if (attachmentId != null) {
         service.deleteAttachment(attachmentId).executeHandlingExceptions()
       }

@@ -24,6 +24,7 @@ data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
                              var newLessons: MutableList<Lesson> = ArrayList(),
                              var lessonsInfoToUpdate: MutableList<Lesson> = ArrayList(),
                              var lessonsToDelete: MutableList<Lesson> = ArrayList(),
+                             var lessonsAdditionalInfo: MutableList<Lesson> = ArrayList(),
                              var tasksToUpdate: MutableList<Task> = ArrayList(),
                              var newTasks: MutableList<Task> = ArrayList(),
                              var tasksToDelete: MutableList<Task> = ArrayList()) {
@@ -88,6 +89,9 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
         if (lessonInfoChanged(localLesson, remoteLesson)) {
           stepikChanges.lessonsInfoToUpdate.add(localLesson)
         }
+        if (lessonAdditionalInfoChanged(localLesson, remoteLesson)) {
+          stepikChanges.lessonsAdditionalInfo.add(localLesson)
+        }
         processTasks(stepikChanges, localLesson, remoteLesson)
       }
     }
@@ -136,6 +140,10 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
       if (!additionalFile.isEqualTo(remoteAdditionalFile)) return true
     }
     return false
+  }
+
+  private fun lessonAdditionalInfoChanged(localLesson: Lesson, remoteLesson: Lesson): Boolean {
+    return localLesson.taskList.zip(remoteLesson.taskList).any { (local, remote) -> taskInfoChanged(local, remote) }
   }
 
   private fun sectionInfoChanged(section: Section, remoteSection: Section): Boolean {
