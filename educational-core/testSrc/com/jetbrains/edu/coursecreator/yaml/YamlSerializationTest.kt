@@ -35,7 +35,7 @@ class YamlSerializationTest : YamlTestCase() {
     |    placeholder_text: |-
     |      type here
     |      and here
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test empty placeholder`() {
@@ -57,7 +57,7 @@ class YamlSerializationTest : YamlTestCase() {
     |  - offset: 0
     |    length: 16
     |    placeholder_text: ""
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test placeholder starts with spaces`() {
@@ -79,7 +79,7 @@ class YamlSerializationTest : YamlTestCase() {
     |  - offset: 0
     |    length: 16
     |    placeholder_text: '   type here'
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test placeholder ends with spaces`() {
@@ -101,7 +101,7 @@ class YamlSerializationTest : YamlTestCase() {
     |  - offset: 0
     |    length: 16
     |    placeholder_text: 'type here   '
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test edu task with test files`() {
@@ -128,7 +128,7 @@ class YamlSerializationTest : YamlTestCase() {
     |      and here
     |- name: Test.java
     |  visible: false
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test edu task with additional files`() {
@@ -155,7 +155,7 @@ class YamlSerializationTest : YamlTestCase() {
     |      and here
     |- name: Additional.java
     |  visible: false
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test edu task with dependency`() {
@@ -190,7 +190,7 @@ class YamlSerializationTest : YamlTestCase() {
     |      file: Test.java
     |      placeholder: 1
     |      is_visible: true
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test output task`() {
@@ -206,7 +206,7 @@ class YamlSerializationTest : YamlTestCase() {
     |files:
     |- name: Test.java
     |  visible: true
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test quiz task`() {
@@ -230,7 +230,7 @@ class YamlSerializationTest : YamlTestCase() {
       |files:
       |- name: Test.java
       |  visible: true
-      |""".trimMargin("|"))
+      |""".trimMargin())
   }
 
   fun `test quiz task without answers`() {
@@ -252,7 +252,7 @@ class YamlSerializationTest : YamlTestCase() {
       |files:
       |- name: Test.java
       |  visible: true
-      |""".trimMargin("|"))
+      |""".trimMargin())
   }
 
   fun `test course`() {
@@ -273,7 +273,7 @@ class YamlSerializationTest : YamlTestCase() {
       |- the first lesson
       |- the second lesson
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test lesson`() {
@@ -288,7 +288,7 @@ class YamlSerializationTest : YamlTestCase() {
       |- Introduction Task
       |- Advanced Task
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test lesson with custom presentable name`() {
@@ -306,7 +306,7 @@ class YamlSerializationTest : YamlTestCase() {
       |- Introduction Task
       |- Advanced Task
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test use dir name for lesson with custom name`() {
@@ -326,7 +326,7 @@ class YamlSerializationTest : YamlTestCase() {
       |content:
       |- ${lesson.name}
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test framework lesson`() {
@@ -342,7 +342,7 @@ class YamlSerializationTest : YamlTestCase() {
       |- Introduction Task
       |- Advanced Task
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test section`() {
@@ -358,7 +358,7 @@ class YamlSerializationTest : YamlTestCase() {
       |- Introduction Lesson
       |- Advanced Lesson
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test section with custom name`() {
@@ -376,7 +376,7 @@ class YamlSerializationTest : YamlTestCase() {
       |- Introduction Lesson
       |- Advanced Lesson
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test feedback link`() {
@@ -390,7 +390,7 @@ class YamlSerializationTest : YamlTestCase() {
     doTest(task, """
     |type: edu
     |feedback_link: example.com
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test with custom presentable name`() {
@@ -404,7 +404,7 @@ class YamlSerializationTest : YamlTestCase() {
     doTest(task, """
     |type: edu
     |custom_name: $taskCustomName
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test course with environment`() {
@@ -421,7 +421,7 @@ class YamlSerializationTest : YamlTestCase() {
       |content:
       |- lesson1
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test course with hidden solutions`() {
@@ -434,7 +434,7 @@ class YamlSerializationTest : YamlTestCase() {
       |programming_language: Plain text
       |solutions_hidden: true
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test empty lesson`() {
@@ -446,7 +446,7 @@ class YamlSerializationTest : YamlTestCase() {
     doTest(lesson, """
       |{}
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test empty section`() {
@@ -458,7 +458,7 @@ class YamlSerializationTest : YamlTestCase() {
     doTest(section, """
       |{}
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test empty course`() {
@@ -469,7 +469,7 @@ class YamlSerializationTest : YamlTestCase() {
       |language: English
       |programming_language: Plain text
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test course with lang version`() {
@@ -484,7 +484,7 @@ class YamlSerializationTest : YamlTestCase() {
       |programming_language: Plain text
       |programming_language_version: 1.42
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test coursera course`() {
@@ -500,7 +500,7 @@ class YamlSerializationTest : YamlTestCase() {
       |programming_language: Plain text
       |programming_language_version: 1.42
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test coursera course manual submit`() {
@@ -518,7 +518,7 @@ class YamlSerializationTest : YamlTestCase() {
       |programming_language_version: 1.42
       |submit_manually: true
       |
-    """.trimMargin("|"))
+    """.trimMargin())
   }
 
   fun `test course with non-english locale`() {
@@ -542,7 +542,7 @@ class YamlSerializationTest : YamlTestCase() {
       |- the first lesson
       |- the second lesson
       |
-    """.trimMargin("|"))
+    """.trimMargin())
 
     Locale.setDefault(defaultLocale)
   }

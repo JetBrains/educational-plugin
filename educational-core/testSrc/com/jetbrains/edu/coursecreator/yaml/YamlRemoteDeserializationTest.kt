@@ -19,7 +19,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |id: $id
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |default_section: $id
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
     val course = YamlDeserializer.deserializeRemoteItem(configFile) as EduCourse
@@ -33,7 +33,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     val yamlText = """
     |id: $id
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
     val course = YamlDeserializer.deserializeRemoteItem(configFile) as EduCourse
@@ -47,7 +47,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     val yamlText = """
     |id: $id
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_SECTION_CONFIG)
     val section = YamlDeserializer.deserializeRemoteItem(configFile)
@@ -61,7 +61,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |id: $id
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |unit: $id
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_LESSON_CONFIG)
     val lesson = YamlDeserializer.deserializeRemoteItem(configFile) as Lesson
@@ -75,7 +75,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     val yamlText = """
     |id: $id
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_LESSON_CONFIG)
     val task = YamlDeserializer.deserializeRemoteItem(configFile)

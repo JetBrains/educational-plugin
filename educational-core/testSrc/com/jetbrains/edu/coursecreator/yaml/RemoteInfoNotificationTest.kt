@@ -16,7 +16,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     val yamlText = """
     |id: 1
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val configFile = GeneratorUtils.createChildFile(LightPlatformTestCase.getSourceRoot(), YamlFormatSettings.REMOTE_COURSE_CONFIG, yamlText)
     myFixture.openFileInEditor(configFile!!)
@@ -30,7 +30,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     val yamlText = """
     |id: 1
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val sectionDir = LightPlatformTestCase.getSourceRoot().findChild(course.sections[0].name)!!
     val configFile = GeneratorUtils.createChildFile(sectionDir, YamlFormatSettings.REMOTE_SECTION_CONFIG, yamlText)
@@ -45,7 +45,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     val yamlText = """
     |id: 1
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val lessonDir = course.lessons[0].getLessonDir(project)!!
     val configFile = GeneratorUtils.createChildFile(lessonDir, YamlFormatSettings.REMOTE_LESSON_CONFIG, yamlText)
@@ -62,7 +62,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     val yamlText = """
     |id: 1
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val taskDir = course.lessons[0].taskList[0].getTaskDir(project)!!
     val configFile = GeneratorUtils.createChildFile(taskDir, YamlFormatSettings.REMOTE_TASK_CONFIG, yamlText)
@@ -93,7 +93,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     val yamlText = """
     |id: 1
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin("|")
+    |""".trimMargin()
 
     val taskDir = course.lessons[0].taskList[0].getTaskDir(project)!!
     val configFile = GeneratorUtils.createChildFile(taskDir, YamlFormatSettings.TASK_CONFIG, yamlText)

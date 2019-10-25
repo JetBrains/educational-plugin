@@ -20,7 +20,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     |id: 1
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |default_section: 1
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test course without top-level lessons`() {
@@ -33,7 +33,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     doTest(course, """
     |id: 1
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test section`() {
@@ -46,7 +46,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     doTest(section, """
     |id: 1
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test lesson`() {
@@ -61,7 +61,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     |id: 1
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |unit: 1
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   fun `test task`() {
@@ -76,7 +76,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     doTest(task, """
     |id: 1
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin("|"))
+    |""".trimMargin())
   }
 
   private fun doTest(item: StudyItem, expected: String) {

@@ -28,7 +28,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |content:
             |- the first lesson
             |- the second lesson
-            |""".trimMargin("|"), YamlFormatSettings.COURSE_CONFIG,
+            |""".trimMargin(), YamlFormatSettings.COURSE_CONFIG,
            "title is empty", MissingKotlinParameterException::class.java)
   }
 
@@ -43,7 +43,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |content:
             |- the first lesson
             |- the second lesson
-            |""".trimMargin("|"), YamlFormatSettings.COURSE_CONFIG,
+            |""".trimMargin(), YamlFormatSettings.COURSE_CONFIG,
            "Unknown language 'wrong'", InvalidYamlFormatException::class.java)
   }
 
@@ -59,7 +59,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |content:e
             |- the first lesson
             |- the second lesson
-            |""".trimMargin("|"), YamlFormatSettings.COURSE_CONFIG,
+            |""".trimMargin(), YamlFormatSettings.COURSE_CONFIG,
            "could not find expected ':' at line 7",
            com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException::class.java)
   }
@@ -74,7 +74,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |programming_language: Plain text
             |content:
             |- the first lesson
-            |""".trimMargin("|"), YamlFormatSettings.COURSE_CONFIG,
+            |""".trimMargin(), YamlFormatSettings.COURSE_CONFIG,
            "invalid config", MismatchedInputException::class.java)
   }
 
@@ -87,7 +87,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |  - offset: a
     |    length: 3
     |    placeholder_text: type here
-    |""".trimMargin("|"), YamlFormatSettings.TASK_CONFIG,
+    |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
            "invalid config", InvalidFormatException::class.java)
   }
 
@@ -103,7 +103,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
       |  is_correct: true
       |- text: 2
       |  is_correct: false
-      |""".trimMargin("|"), YamlFormatSettings.TASK_CONFIG,
+      |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
            "Unsupported task type 'e'", InvalidYamlFormatException::class.java)
   }
 
@@ -123,7 +123,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |  - offset: 2
     |    length: -1
     |    placeholder_text: type here
-    |""".trimMargin("|"), YamlFormatSettings.TASK_CONFIG,
+    |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
            "Answer placeholders with negative length not allowed", InvalidYamlFormatException::class.java)
   }
 
@@ -137,7 +137,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |  - offset: -1
     |    length: 1
     |    placeholder_text: type here
-    |""".trimMargin("|"), YamlFormatSettings.TASK_CONFIG,
+    |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
            "Answer placeholders with negative offset not allowed", InvalidYamlFormatException::class.java)
   }
 
@@ -147,7 +147,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |files:
     |- name:
     |  visible: true
-    |""".trimMargin("|"), YamlFormatSettings.TASK_CONFIG,
+    |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
            "File without a name not allowed", InvalidYamlFormatException::class.java)
   }
 
@@ -174,7 +174,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
       |content:
       |- $firstLesson
       |- $secondLesson
-      |""".trimMargin("|")
+      |""".trimMargin()
         MAPPER.deserializeCourse(yamlContent)
       }
 

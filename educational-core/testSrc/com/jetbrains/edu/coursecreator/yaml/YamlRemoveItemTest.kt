@@ -24,7 +24,7 @@ class YamlRemoveItemTest : YamlTestCase() {
       |content:
       |- lesson1
       |
-    """.trimMargin("|"))
+    """.trimMargin())
 
     assertEquals(1, getCourse().items.size)
     assertEquals("lesson1", findLesson(0).name)
@@ -48,7 +48,7 @@ class YamlRemoveItemTest : YamlTestCase() {
       |content:
       |- section2
       |
-    """.trimMargin("|"))
+    """.trimMargin())
 
     assertEquals(1, getCourse().items.size)
     assertEquals("section2", getCourse().items[0].name)
@@ -69,7 +69,7 @@ class YamlRemoveItemTest : YamlTestCase() {
       |- task1
       |- task3
       |
-    """.trimMargin("|"))
+    """.trimMargin())
 
     assertEquals(2, lesson.taskList.size)
     assertEquals("task1", lesson.taskList[0].name)
@@ -92,7 +92,7 @@ class YamlRemoveItemTest : YamlTestCase() {
         |files:
         |- name: task1.txt
         |  visible: true
-    """.trimMargin("|"))
+    """.trimMargin())
 
     assertEquals(1, task.taskFiles.size)
     assertEquals("task1.txt", task.taskFiles.keys.single())

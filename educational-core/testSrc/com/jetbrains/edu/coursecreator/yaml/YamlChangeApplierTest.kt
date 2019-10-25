@@ -29,7 +29,7 @@ class YamlChangeApplierTest : YamlTestCase() {
       |programming_language: Plain text
       |content:
       |- lesson1
-      |""".trimMargin("|")
+      |""".trimMargin()
 
     loadItemFromConfig(course, yamlContent)
     assertTrue(course.submitManually)
@@ -43,7 +43,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     val lessonCustomName = "my best lesson"
     val yamlContent = """
       |custom_name: $lessonCustomName
-    """.trimMargin("|")
+    """.trimMargin()
 
     val lesson = findLesson(0)
     loadItemFromConfig(lesson, yamlContent)
@@ -64,7 +64,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     val yamlContent = """
       |content:
       |- Introduction Task
-    """.trimMargin("|")
+    """.trimMargin()
 
     loadItemFromConfig(lesson, yamlContent)
     assertNull(lesson.customPresentableName)
@@ -78,7 +78,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     val customName = "my best lesson"
     val yamlContent = """
       |custom_name: $customName
-    """.trimMargin("|")
+    """.trimMargin()
 
     val section = course.sections[0]
     loadItemFromConfig(section, yamlContent)
@@ -99,7 +99,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     val yamlContent = """
       |content:
       |- lesson 1
-    """.trimMargin("|")
+    """.trimMargin()
 
     loadItemFromConfig(section, yamlContent)
     assertNull(section.customPresentableName)
@@ -120,7 +120,7 @@ class YamlChangeApplierTest : YamlTestCase() {
       |custom_name: $customName
       |files:
       |- name: task.txt
-    """.trimMargin("|")
+    """.trimMargin()
 
     loadItemFromConfig(task, yamlContent)
     assertEquals(customName, task.customPresentableName)
@@ -143,7 +143,7 @@ class YamlChangeApplierTest : YamlTestCase() {
       |type: edu
       |files:
       |- name: task.txt
-    """.trimMargin("|")
+    """.trimMargin()
 
     loadItemFromConfig(task, yamlContent)
     assertNull(task.customPresentableName)
@@ -161,7 +161,7 @@ class YamlChangeApplierTest : YamlTestCase() {
       |summary: My awesome summary
       |programming_language: Plain text
       |solutions_hidden: true
-    """.trimMargin("|")
+    """.trimMargin()
 
     loadItemFromConfig(course, yamlContent)
     assertTrue(course.solutionsHidden)

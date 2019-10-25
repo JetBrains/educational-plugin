@@ -102,7 +102,7 @@ class YamlTypeChangedTest : YamlTestCase() {
       |programming_language: Plain text
       |content:
       |- lesson1
-      |""".trimMargin("|"))
+      |""".trimMargin())
 
     assertEquals(course.itemType, StudyTaskManager.getInstance(project).course!!.itemType)
   }
@@ -117,7 +117,7 @@ class YamlTypeChangedTest : YamlTestCase() {
       |programming_language: Plain text
       |content:
       |- lesson1
-      |""".trimMargin("|"))
+      |""".trimMargin())
 
     val loadedCourse = getCourse()
     assertInstanceOf(loadedCourse, expectedCourse)
@@ -131,7 +131,7 @@ class YamlTypeChangedTest : YamlTestCase() {
       |feedback_link: http://example.com
       |files:
       |- name: test1.txt
-      |""".trimMargin("|"))
+      |""".trimMargin())
 
     val loadedTask = findTask(0, 0)
     assertInstanceOf(loadedTask, expectedClass)
@@ -146,7 +146,7 @@ class YamlTypeChangedTest : YamlTestCase() {
       |content:
       | - task1
       | - choice
-      |""".trimMargin("|"))
+      |""".trimMargin())
 
     val loadedLesson = findLesson(0)
     assertInstanceOf(loadedLesson, expectedClass)
