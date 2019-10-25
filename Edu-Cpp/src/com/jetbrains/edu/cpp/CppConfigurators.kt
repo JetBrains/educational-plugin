@@ -13,17 +13,22 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTem
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
-class CppCatchConfigurator : CppBaseConfigurator(TASK_CPP, "catch_test.cpp")
+class CppGTestConfigurator : CppBaseConfigurator() {
+  override val builder = CppCourseBuilder(TASK_CPP, TEST_CPP)
+}
 
-class CppGTestConfigurator : CppBaseConfigurator(TASK_CPP, "test.cpp")
+class CppCatchConfigurator : CppBaseConfigurator() {
+  override val builder = CppCourseBuilder(TASK_CPP, CATCH_TEST_CPP)
 
-open class CppBaseConfigurator(
-  taskTemplateName: String = "",
-  testTemplateName: String = ""
-) : EduConfiguratorWithSubmissions<CppProjectSettings>() {
+  companion object {
+    private const val CATCH_TEST_CPP = "catch_test.cpp"
+  }
+}
 
-  private val builder: CppCourseBuilder = CppCourseBuilder(taskTemplateName, testTemplateName)
-  private val taskCheckerProvider: CppTaskCheckerProvider = CppTaskCheckerProvider()
+open class CppBaseConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
+
+  protected open val builder: CppCourseBuilder = CppCourseBuilder("", "")
+  protected open val taskCheckerProvider: CppTaskCheckerProvider = CppTaskCheckerProvider()
 
   override fun getTaskCheckerProvider(): TaskCheckerProvider = taskCheckerProvider
 
