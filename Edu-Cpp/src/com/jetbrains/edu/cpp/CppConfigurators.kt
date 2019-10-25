@@ -13,9 +13,9 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTem
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
-class CppCatchConfigurator : CppBaseConfigurator("task.cpp", "catch_test.cpp")
+class CppCatchConfigurator : CppBaseConfigurator(TASK_CPP, "catch_test.cpp")
 
-class CppGTestConfigurator : CppBaseConfigurator("task.cpp", "test.cpp")
+class CppGTestConfigurator : CppBaseConfigurator(TASK_CPP, "test.cpp")
 
 open class CppBaseConfigurator(
   taskTemplateName: String = "",
@@ -58,7 +58,7 @@ open class CppBaseConfigurator(
   override fun getLogo(): Icon = EducationalCoreIcons.CppLogo
 
   companion object {
-    private const val TASK_CPP = "task.cpp"
+    const val TASK_CPP = "task.cpp"
     const val TEST_CPP = "test.cpp"
     private const val MOCK_CPP = "mock.cpp"
   }
