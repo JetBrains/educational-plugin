@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.checkio
 
-import com.google.common.collect.TreeMultimap
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.progress.ProgressManager
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException
@@ -25,21 +24,16 @@ class CheckiOCourseContentGenerator(private val fileType: LanguageFileType, priv
     )
 
   private fun generateStationsFromMissions(missions: List<CheckiOMission>): List<CheckiOStation> {
-    missions.forEach { this.generateTaskFile(it) }
+    val stations = missions.map { it.station.id to it.station }.distinctBy { it.first }.toMap()
 
-    val stationsMap = TreeMultimap.create(
-      Comparator.comparing(CheckiOStation::getId),
-      Comparator.comparing(CheckiOMission::getId)
-    )
-
-    missions.forEach { mission -> stationsMap.put(mission.station, mission) }
-
-    stationsMap.forEach { station, mission ->
+    for (mission in missions) {
+      generateTaskFile(mission)
+      val station = stations[mission.station.id] ?: continue
       station.addMission(mission)
       mission.station = station
     }
 
-    return ArrayList(stationsMap.keySet())
+    return stations.values.toList()
   }
 
 
