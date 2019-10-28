@@ -1,75 +1,51 @@
-package com.jetbrains.edu.learning.checkio;
+package com.jetbrains.edu.learning.checkio
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.TreeMultimap;
-import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.progress.ProgressManager;
-import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
-import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import org.jetbrains.annotations.NotNull;
+import com.google.common.collect.TreeMultimap
+import com.intellij.openapi.fileTypes.LanguageFileType
+import com.intellij.openapi.progress.ProgressManager
+import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+class CheckiOCourseContentGenerator(private val fileType: LanguageFileType, private val apiConnector: CheckiOApiConnector) {
+  val stationsFromServer: List<CheckiOStation>
+    @Throws(ApiException::class, CheckiOLoginRequiredException::class)
+    get() = generateStationsFromMissions(apiConnector.missionList)
 
-public class CheckiOCourseContentGenerator {
-  private static final String DEFAULT_TASK_FILE_NAME = "mission";
-
-  private final LanguageFileType myFileType;
-  private final CheckiOApiConnector myApiConnector;
-
-  public CheckiOCourseContentGenerator(@NotNull LanguageFileType fileType, @NotNull CheckiOApiConnector apiConnector) {
-    myFileType = fileType;
-    myApiConnector = apiConnector;
-  }
-
-  public List<CheckiOStation> getStationsFromServer()
-    throws ApiException, CheckiOLoginRequiredException {
-    return generateStationsFromMissions(myApiConnector.getMissionList());
-  }
-
-  public List<CheckiOStation> getStationsFromServerUnderProgress() throws Exception {
-    return ProgressManager.getInstance().runProcessWithProgressSynchronously(
-      () -> getStationsFromServer(),
+  val stationsFromServerUnderProgress: List<CheckiOStation>
+    @Throws(Exception::class)
+    get() = ProgressManager.getInstance().runProcessWithProgressSynchronously<List<CheckiOStation>, Exception>(
+      { stationsFromServer },
       "Getting Course from Server",
       false,
       null
-    );
-  }
+    )
 
-  @NotNull
-  private List<CheckiOStation> generateStationsFromMissions(@NotNull List<CheckiOMission> missions) {
-    missions.forEach(this::generateTaskFile);
+  private fun generateStationsFromMissions(missions: List<CheckiOMission>): List<CheckiOStation> {
+    missions.forEach { this.generateTaskFile(it) }
 
-    final Multimap<CheckiOStation, CheckiOMission> stationsMap  = TreeMultimap.create(
+    val stationsMap = TreeMultimap.create(
       Comparator.comparing(CheckiOStation::getId),
       Comparator.comparing(CheckiOMission::getId)
-    );
+    )
 
+    missions.forEach { mission -> stationsMap.put(mission.station, mission) }
 
-    missions.forEach(mission -> stationsMap.put(mission.getStation(), mission));
+    stationsMap.forEach { station, mission ->
+      station.addMission(mission)
+      mission.station = station
+    }
 
-    stationsMap.forEach(((station, mission) -> {
-      station.addMission(mission);
-      mission.setStation(station);
-    }));
-
-    return new ArrayList<>(stationsMap.keySet());
+    return ArrayList(stationsMap.keySet())
   }
 
-  private void generateTaskFile(@NotNull CheckiOMission mission) {
-    final TaskFile taskFile = new TaskFile();
-    taskFile.setName(DEFAULT_TASK_FILE_NAME + "." + myFileType.getDefaultExtension());
-    setTaskFileText(taskFile, mission.getCode());
-    taskFile.setHighlightErrors(true);
-    mission.addTaskFile(taskFile);
-  }
 
-  private static void setTaskFileText(@NotNull TaskFile taskFile, @NotNull String text) {
-    taskFile.setText(text.replaceAll("\r\n", "\n"));
+  private fun generateTaskFile(mission: CheckiOMission) {
+    val taskFile = TaskFile("mission.${fileType.defaultExtension}", mission.code)
+    taskFile.isHighlightErrors = true
+    mission.addTaskFile(taskFile)
   }
 }
