@@ -28,6 +28,7 @@ import java.util.Collections;
 public class CCShowChangedFiles extends DumbAwareAction {
 
   private static final String INFO_CHANGED = "Info Changed";
+  private static final String ADDITIONAL_INFO_CHANGED = "Additional Info Changed";
   private static final String REMOVED = "Removed";
   private static final String NEW = "New";
 
@@ -75,7 +76,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
       appendChangeLine(course, builder);
     }
     if (changedItems.isCourseAdditionalInfoChanged()) {
-      builder.append("Additional Files Or Info Changed").append("\n");
+      appendChangeLine(course, builder, ADDITIONAL_INFO_CHANGED);
     }
     for (Section section : changedItems.getNewSections()) {
       appendChangeLine(section, builder, NEW);
@@ -94,6 +95,9 @@ public class CCShowChangedFiles extends DumbAwareAction {
     }
     for (Lesson lesson : changedItems.getLessonsInfoToUpdate()) {
       appendChangeLine(lesson, builder, INFO_CHANGED);
+    }
+    for (Lesson lesson: changedItems.getLessonsAdditionalInfo()) {
+      appendChangeLine(lesson, builder, ADDITIONAL_INFO_CHANGED);
     }
     for (Task task : changedItems.getNewTasks()) {
       appendChangeLine(task, builder, NEW);

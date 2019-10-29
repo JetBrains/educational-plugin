@@ -563,6 +563,7 @@ class StepikCompareCourseTest : EduTestCase() {
     compareContent(expected.newLessons, actual.newLessons)
     compareContent(expected.lessonsToDelete, actual.lessonsToDelete)
     compareContent(expected.lessonsInfoToUpdate, actual.lessonsInfoToUpdate)
+    compareContent(expected.lessonsAdditionalInfo, actual.lessonsAdditionalInfo)
 
     compareContent(expected.newTasks, actual.newTasks)
     compareContent(expected.tasksToDelete, actual.tasksToDelete)
