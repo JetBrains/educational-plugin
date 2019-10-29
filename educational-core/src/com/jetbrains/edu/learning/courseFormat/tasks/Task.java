@@ -265,8 +265,8 @@ public abstract class Task extends StudyItem {
     return getTaskFiles().values();
   }
 
-  // @SuppressWarnings("unused") //used for yaml deserialization
-  public void setTaskFileValues(List<TaskFile> taskFiles) {
+  @SuppressWarnings("unused") //used for yaml deserialization
+  private void setTaskFileValues(List<TaskFile> taskFiles) {
     this.myTaskFiles.clear();
     for (TaskFile taskFile : taskFiles) {
       this.myTaskFiles.put(taskFile.getName(), taskFile);

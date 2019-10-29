@@ -73,7 +73,7 @@ fun loadAndFillAdditionalLessonInfo(lesson: Lesson) {
   val lessonInfo = HyperskillConnector.getInstance().objectMapper.readValue(infoText, AdditionalLessonInfo::class.java)
 
   lessonInfo.taskFiles.forEach { (taskId, taskFiles) ->
-    lesson.getTask(taskId)?.setTaskFileValues(taskFiles)
+    lesson.getTask(taskId)?.taskFiles = taskFiles.map { it.name to it }.toMap()
   }
 }
 
