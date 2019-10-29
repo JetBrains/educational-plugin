@@ -254,12 +254,11 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   }
 
   @Throws(IOException::class)
-  private fun createTaskDirectories(lessonDir: VirtualFile,
-                                    task: Task) {
-    GeneratorUtils.createTask(task, lessonDir)
+  private fun createTaskDirectories(lessonDir: VirtualFile, task: Task) {
     if (!task.lesson.course.isStudy) {
       CCUtils.initializeTaskPlaceholders(task, project)
     }
+    GeneratorUtils.createTask(task, lessonDir)
   }
 
   private fun getTaskDir(taskName: String, lessonDir: VirtualFile?): VirtualFile? {

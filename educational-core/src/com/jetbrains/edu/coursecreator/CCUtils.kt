@@ -10,6 +10,7 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
@@ -20,15 +21,13 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
+import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.Function
+import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.apache.commons.codec.binary.Base64
@@ -173,6 +172,10 @@ object CCUtils {
     }
   }
 
+  /**
+   * Replaces placeholder texts with [AnswerPlaceholder.getPossibleAnswer]` for each task file in [course].
+   * Note, it doesn't affect files in file system
+   */
   @JvmStatic
   fun initializeCCPlaceholders(project: Project, course: Course) {
     for (item in course.items) {
@@ -186,7 +189,6 @@ object CCUtils {
   }
 
   private fun initializeSectionPlaceholders(project: Project, section: Section) {
-    project.courseDir.findChild(section.name) ?: return
     for (item in section.lessons) {
       initializeLessonPlaceholders(project, item)
     }
@@ -198,14 +200,22 @@ object CCUtils {
     }
   }
 
+  /**
+   * Replaces placeholder texts with [AnswerPlaceholder.getPossibleAnswer]` for each task file in [task].
+   * Note, it doesn't affect files in file system
+   */
   fun initializeTaskPlaceholders(task: Task, project: Project) {
-    for (entry in task.taskFiles.entries) {
-      invokeAndWaitIfNeeded { runWriteAction { initializeTaskFilePlaceholders(project, entry.value) } }
+    for ((path, taskFile) in task.taskFiles) {
+      invokeAndWaitIfNeeded {
+        val file = LightVirtualFile(PathUtil.getFileName(path), PlainTextFileType.INSTANCE, taskFile.text)
+        EduDocumentListener.runWithListener(project, taskFile, file) { document ->
+          initializeTaskFilePlaceholders(project, taskFile, document)
+        }
+      }
     }
   }
 
-  private fun initializeTaskFilePlaceholders(project: Project, taskFile: TaskFile) {
-    val document = taskFile.getDocument(project) ?: return
+  private fun initializeTaskFilePlaceholders(project: Project, taskFile: TaskFile, document: Document) {
     taskFile.sortAnswerPlaceholders()
     for (placeholder in taskFile.answerPlaceholders) {
       replaceAnswerPlaceholder(document, placeholder)
@@ -213,6 +223,7 @@ object CCUtils {
     CommandProcessor.getInstance().executeCommand(project, {
       runWriteAction { FileDocumentManager.getInstance().saveDocumentAsIs(document) }
     }, "Create answer document", "Create answer document")
+    taskFile.setText(document.text)
   }
 
   fun replaceAnswerPlaceholder(document: Document, placeholder: AnswerPlaceholder) {

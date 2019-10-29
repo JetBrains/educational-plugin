@@ -193,10 +193,10 @@ public abstract class CourseProjectGenerator<S> {
     try {
       ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-        GeneratorUtils.createCourse(myCourse, baseDir, indicator);
         if (CCUtils.isCourseCreator(project)) {
           CCUtils.initializeCCPlaceholders(project, myCourse);
         }
+        GeneratorUtils.createCourse(myCourse, baseDir, indicator);
         if (myCourse instanceof EduCourse && ((EduCourse)myCourse).isRemote() && CCUtils.isCourseCreator(project)) {
           checkIfAvailableOnRemote();
         }
