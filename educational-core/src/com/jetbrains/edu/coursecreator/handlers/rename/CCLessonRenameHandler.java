@@ -1,9 +1,9 @@
 package com.jetbrains.edu.coursecreator.handlers.rename;
 
-import com.intellij.ide.TitledHandler;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
+import com.jetbrains.edu.coursecreator.actions.StudyItemType;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -12,7 +12,11 @@ import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 
-public class CCLessonRenameHandler extends CCRenameHandler implements TitledHandler {
+public class CCLessonRenameHandler extends CCStudyItemRenameHandler {
+  public CCLessonRenameHandler() {
+    super(StudyItemType.LESSON);
+  }
+
   @Override
   protected boolean isAvailable(@NotNull Project project, @NotNull VirtualFile file) {
     return EduUtils.isLessonDirectory(project, file);

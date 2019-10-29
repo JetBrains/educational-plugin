@@ -268,8 +268,13 @@ class CCCreateTaskTest : EduActionTestCase() {
 }
 
 private class MockNewFrameworkTaskUi(name: String, index: Int? = null, private val copyTests: Boolean = false) : MockNewStudyItemUi(name, index) {
-  override fun showDialog(project: Project, model: NewStudyItemUiModel, additionalPanels: List<AdditionalPanel>): NewStudyItemInfo? {
-    return super.showDialog(project, model, additionalPanels)?.apply {
+  override fun showDialog(
+    project: Project,
+    course: Course,
+    model: NewStudyItemUiModel,
+    additionalPanels: List<AdditionalPanel>
+  ): NewStudyItemInfo? {
+    return super.showDialog(project, course, model, additionalPanels)?.apply {
       putUserData(CCCreateTask.COPY_TESTS_FROM_PREV_TASK, copyTests)
     }
   }

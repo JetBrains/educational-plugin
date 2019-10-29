@@ -2,7 +2,10 @@ package com.jetbrains.edu.coursecreator
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.*
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runUndoTransparentWriteAction
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
@@ -11,7 +14,6 @@ import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.TextRange
@@ -19,7 +21,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
 import com.intellij.util.Function
-import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
@@ -223,34 +224,6 @@ object CCUtils {
       document.replaceString(offset, offset + placeholder.length, placeholder.possibleAnswer)
       FileDocumentManager.getInstance().saveDocumentAsIs(document)
     }
-  }
-
-  open class PathInputValidator @JvmOverloads constructor(
-    private val myParentDir: VirtualFile?,
-    private val myName: String? = null
-  ) : InputValidatorEx {
-
-    protected var myErrorText: String? = null
-
-    override fun checkInput(inputString: String): Boolean {
-      if (myParentDir == null) {
-        myErrorText = "Invalid parent directory"
-        return false
-      }
-      myErrorText = null
-      if (!PathUtil.isValidFileName(inputString)) {
-        myErrorText = "Invalid name"
-        return false
-      }
-      if (myParentDir.findChild(inputString) != null && inputString != myName) {
-        myErrorText = String.format("%s already contains directory named %s", myParentDir.name, inputString)
-      }
-      return myErrorText == null
-    }
-
-    override fun canClose(inputString: String): Boolean = checkInput(inputString)
-
-    override fun getErrorText(inputString: String): String? = myErrorText
   }
 
   @JvmStatic

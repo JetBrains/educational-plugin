@@ -166,7 +166,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     additionalPanels: List<AdditionalPanel>
   ): NewStudyItemInfo? {
     val configurator = course.configurator ?: return null
-    return configurator.courseBuilder.showNewStudyItemUi(project, model, additionalPanels)
+    return configurator.courseBuilder.showNewStudyItemUi(project, course, model, additionalPanels)
   }
 
   protected abstract fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int

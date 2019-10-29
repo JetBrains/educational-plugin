@@ -4,11 +4,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.exists
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
-import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
-import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -19,6 +16,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.rust.cargo.CargoConstants
 import org.rust.cargo.project.model.CargoProject
 import org.rust.cargo.project.model.cargoProjects
+import org.rust.ide.newProject.RsPackageNameValidator
 import org.rust.lang.RsConstants
 import org.rust.openapiext.pathAsPath
 import java.nio.file.Path
@@ -85,14 +83,6 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
         cargoProjects.refreshAllProjects()
     }
 
-    override fun showNewStudyItemUi(project: Project, model: NewStudyItemUiModel, additionalPanels: List<AdditionalPanel>): NewStudyItemInfo? {
-        return if (model.itemType != StudyItemType.TASK) {
-            super.showNewStudyItemUi(project, model, additionalPanels)
-        } else {
-            showNewStudyItemDialog(project, model, additionalPanels, ::RsNewTaskDialog)
-        }
-    }
-
     override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
         if (task.taskFiles.isNotEmpty()) return
         val params = mapOf("PACKAGE_NAME" to info.name.toPackageName())
@@ -108,6 +98,9 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
       TemplateFileInfo(TESTS_RS, "tests/$TESTS_RS", false),
       TemplateFileInfo(CargoConstants.MANIFEST_FILE, CargoConstants.MANIFEST_FILE, true)
     )
+
+    override fun validateItemName(name: String, itemType: StudyItemType): String? =
+      if (itemType == StudyItemType.TASK) RsPackageNameValidator.validate(name.toPackageName(), true) else null
 
     companion object {
         private const val LIB_RS = RsConstants.LIB_RS_FILE

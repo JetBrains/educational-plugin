@@ -48,14 +48,15 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
   override fun showNewStudyItemUi(
     project: Project,
+    course: Course,
     model: NewStudyItemUiModel,
     additionalPanels: List<AdditionalPanel>
   ): NewStudyItemInfo? {
     val parentItem = model.parent
     return if (model.itemType != StudyItemType.TASK || parentItem is FrameworkLesson && parentItem.taskList.isNotEmpty()) {
-      super.showNewStudyItemUi(project, model, additionalPanels)
+      super.showNewStudyItemUi(project, course, model, additionalPanels)
     } else {
-      showNewStudyItemDialog(project, model, additionalPanels, ::AndroidNewTaskDialog)
+      showNewStudyItemDialog(project, course, model, additionalPanels, ::AndroidNewTaskDialog)
     }
   }
 

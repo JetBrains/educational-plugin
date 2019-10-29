@@ -13,9 +13,7 @@ import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.cmake.psi.CMakeArgument
 import com.jetbrains.cmake.psi.CMakeCommand
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
-import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
-import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
+import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseDir
@@ -105,23 +103,20 @@ class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     }
   }
 
-  override fun showNewStudyItemUi(
-    project: Project,
-    model: NewStudyItemUiModel,
-    additionalPanels: List<AdditionalPanel>
-  ): NewStudyItemInfo? {
-    return showNewStudyItemDialog(project, model, additionalPanels, ::CppNewStudyItemDialog)
-  }
-
   override fun refreshProject(project: Project) {
     // if it is a new project it will be initialized, else it will be reloaded only.
     CMakeWorkspace.getInstance(project).selectProjectDir(VfsUtil.virtualToIoFile(project.courseDir))
   }
+
+  override fun validateItemName(name: String, itemType: StudyItemType): String? =
+    if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else "Name should contain only latin letters, digits, spaces or '_' symbols."
 
   companion object {
     private val LOG: Logger = Logger.getInstance(CppCourseBuilder::class.java)
 
     private const val RUN_SUFFIX = "run"
     private const val TEST_SUFFIX = "test"
+
+    private val STUDY_ITEM_NAME_PATTERN = "[a-zA-Z0-9_ ]+".toRegex()
   }
 }

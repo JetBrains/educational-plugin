@@ -7,10 +7,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils.loadText
-import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
-import com.jetbrains.edu.coursecreator.actions.CCCreateTask
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.actions.*
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -42,8 +39,13 @@ interface EduCourseBuilder<Settings> {
    *
    * @return properties for study item creation
    */
-  fun showNewStudyItemUi(project: Project, model: NewStudyItemUiModel, additionalPanels: List<AdditionalPanel>): NewStudyItemInfo? {
-    return showNewStudyItemDialog(project, model, additionalPanels)
+  fun showNewStudyItemUi(
+    project: Project,
+    course: Course,
+    model: NewStudyItemUiModel,
+    additionalPanels: List<AdditionalPanel>
+  ): NewStudyItemInfo? {
+    return showNewStudyItemDialog(project, course, model, additionalPanels)
   }
 
   /**
@@ -185,6 +187,16 @@ interface EduCourseBuilder<Settings> {
   fun getLanguageSettings(): LanguageSettings<Settings>
 
   fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<Settings>? = null
+
+  /**
+   * Validates a study item name.
+   * Returns null if [name] is a correct item name, otherwise returns error message string.
+   *
+   * @see [com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator]
+   */
+  fun validateItemName(name: String, itemType: StudyItemType): String? {
+    return null
+  }
 
   interface ProjectRefreshListener {
     fun onSuccess() {}

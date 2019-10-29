@@ -10,6 +10,7 @@ import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialogBase
+import com.jetbrains.edu.learning.courseFormat.Course
 import org.jetbrains.android.util.AndroidUtils
 import java.awt.Component
 import javax.swing.JLabel
@@ -18,9 +19,10 @@ import javax.swing.ListCellRenderer
 
 class AndroidNewTaskDialog(
   project: Project,
+  course: Course,
   model: NewStudyItemUiModel,
   additionalPanels: List<AdditionalPanel>
-) : CCCreateStudyItemDialogBase(project, model, additionalPanels) {
+) : CCCreateStudyItemDialogBase(project, course, model, additionalPanels) {
 
   private val packageNameField: JBTextField = JBTextField().apply {
     val userName = System.getProperty("user.name")
