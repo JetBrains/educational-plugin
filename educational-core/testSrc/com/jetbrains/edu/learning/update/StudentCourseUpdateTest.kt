@@ -1,6 +1,5 @@
-package com.jetbrains.edu.java
+package com.jetbrains.edu.learning.update
 
-import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -8,8 +7,8 @@ import com.jetbrains.edu.learning.stepik.StepikCourseUpdater
 import junit.framework.TestCase
 import java.util.*
 
-class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
-  override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
+class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
+  override val defaultSettings: Unit get() = Unit
 
   fun `test lesson added`() {
     val expectedFileTree = fileTree {
