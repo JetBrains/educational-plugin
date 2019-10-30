@@ -13,10 +13,7 @@
             playbackRates: [0.5, 1, 1.5, 2],
             sources: ${sources},
             controlBar: {
-              volumeMenuButton: {
-                inline: false,
-                vertical: true
-              }
+              volumePanel: {inline: false}
             },
             plugins: {
               videoJsResolutionSwitcher: {
