@@ -34,8 +34,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_added")
@@ -65,8 +63,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lessons_rearranged")
@@ -98,8 +94,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lessons_rearranged_in_section")
@@ -119,8 +113,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_renamed")
@@ -147,8 +139,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_added")
@@ -176,8 +166,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/theory_task_added")
@@ -205,8 +193,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/theory_task_text_changed")
@@ -237,8 +223,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_in_section_added")
@@ -258,8 +242,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_renamed")
@@ -278,8 +260,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_text_changed")
@@ -298,8 +278,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_file_renamed")
@@ -318,8 +296,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_file_text_changed")
@@ -338,8 +314,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/theory_task_file_changed")
@@ -360,8 +334,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_file_in_section_text_changed")
@@ -394,8 +366,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/section_added")
@@ -429,8 +399,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/sections_rearranged")
@@ -474,8 +442,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
         }
 
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_added_into_section")
@@ -507,8 +473,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/section_renamed")
@@ -540,8 +504,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_in_section_renamed")
@@ -560,8 +522,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_removed")
@@ -580,8 +540,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           file("task.html")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_removed")
@@ -602,76 +560,8 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<Unit>() {
           }
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/section_removed")
-  }
-
-  private fun doTest(expectedFileTree: FileTree, testPath: String) {
-    val course = createCourseFromJson("$testPath/course.json", CourseMode.STUDENT)
-    setTopLevelSection(course)
-    createCourseStructure(course)
-    val courseFromServer = createCourseFromJson("$testPath/updated_course.json", CourseMode.STUDENT)
-    setTopLevelSection(courseFromServer)
-
-    StepikCourseUpdater(course, project).doUpdate(courseFromServer)
-    TestCase.assertEquals("Lessons number mismatch. Expected: ${courseFromServer.lessons.size}. Actual: ${course.lessons.size}",
-                          courseFromServer.lessons.size, course.lessons.size)
-
-    TestCase.assertEquals("Sections number mismatch. Expected: ${courseFromServer.sections.size}. Actual: ${course.sections.size}",
-                          courseFromServer.sections.size, course.sections.size)
-
-    for ((section, newSection) in course.sections.zip(courseFromServer.sections)) {
-      TestCase.assertTrue("Lesson number mismatch.\n" +
-                          "Lesson \"${section.name}\". \n" +
-                          "Expected lesson number: ${newSection.lessons.size}. Actual: ${section.lessons.size}",
-                          section.lessons.size == newSection.lessons.size)
-
-      checkLessons(section.lessons, newSection.lessons)
-    }
-
-    checkLessons(course.lessons, courseFromServer.lessons)
-
-
-    expectedFileTree.assertEquals(rootDir)
-  }
-
-  private fun setTopLevelSection(course: EduCourse) {
-    if (!course.lessons.isEmpty()) {
-      // it's a hack.Originally we need to put here and id of remote section for top-level lesson
-      course.sectionIds = Collections.singletonList(1)
-    }
-  }
-
-  private fun checkLessons(lessons: List<Lesson>,
-                           lessonsFromServer: List<Lesson>) {
-    for ((lesson, newLesson) in lessons.zip(lessonsFromServer)) {
-      TestCase.assertTrue("Tasks number mismatch.\n" +
-                          "Lesson \"${lesson.name}\". \n" +
-                          "Expected task number: ${newLesson.taskList.size}. Actual: ${lesson.taskList.size}",
-                          lesson.taskList.size == newLesson.taskList.size)
-
-      TestCase.assertTrue("Lesson name mismatch. Expected: ${newLesson.name}. Actual: ${lesson.name}", lesson.name == newLesson.name)
-      for ((task, newTask) in lesson.taskList.zip(newLesson.taskList)) {
-        TestCase.assertTrue("Task files number mismatch.\n" +
-                            "Lesson \"${lesson.name}\". \n" +
-                            "Task \"${task.name}\". \n" +
-                            "Expected task files number: ${newTask.taskFiles.size}. Actual: ${task.taskFiles.size}",
-                            task.taskFiles.size == newTask.taskFiles.size)
-
-        TestCase.assertTrue("Task text mismatch.\n" +
-                            "Lesson \"${lesson.name}\". \n" +
-                            "Task \"${task.name}\". \n" +
-                            "Expected:\n \"${newTask.descriptionText}\"\n" +
-                            "Actual:\n \"${task.descriptionText}\"",
-                            newTask.descriptionText == task.descriptionText)
-
-        TestCase.assertTrue("Lesson index mismatch.\n Expected: Lesson \"${newLesson.name}\", index: ${newLesson.index}.\n" +
-                            " Actual: Lesson \"${lesson.name}\", index: ${lesson.index}", lesson.index == newLesson.index)
-
-      }
-    }
   }
 }
