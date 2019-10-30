@@ -5,7 +5,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
@@ -71,7 +70,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
     }
   }
 
-  fun loadContent(content: String, task: Task?) {
+  fun loadContent(content: String) {
     StudyTaskManager.getInstance(myProject).course ?: return
     Platform.runLater {
       myEngine.loadContent(htmlWithResources(myProject, content))

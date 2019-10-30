@@ -33,7 +33,7 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel() {
 
     val panel = if (EduSettings.getInstance().shouldUseJavaFx()) {
       val browserWindow = BrowserWindow(project, false)
-      browserWindow.loadContent(templateText, null)
+      browserWindow.loadContent(templateText)
       browserWindow.panel
     }
     else {

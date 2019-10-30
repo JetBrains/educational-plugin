@@ -18,9 +18,8 @@ class VideoTaskResourcesManager {
   val videoResources = mapOf(
     "video_style" to videoStylesheet(),
     "videojs-resolution-switcher" to "https://cdnjs.cloudflare.com/ajax/libs/videojs-resolution-switcher/0.4.2/videojs-resolution-switcher.min.js",
-    "videojs-resolution-switcher.css" to "https://cdnjs.cloudflare.com/ajax/libs/videojs-resolution-switcher/0.4.2/videojs-resolution-switcher.min.css",
-    "video.js" to "http://vjs.zencdn.net/5.16.0/video.js",
-    "video-js.css" to "http://vjs.zencdn.net/5.16.0/video-js.css"
+    "video.js" to "http://vjs.zencdn.net/7.6.5/video.js",
+    "video-js.css" to "http://vjs.zencdn.net/7.6.5/video-js.css"
   )
 
   private fun getResources(task: VideoTask, lesson: Lesson) = mapOf(
@@ -61,8 +60,16 @@ class VideoTaskResourcesManager {
         display = Display.table
         backgroundColor = styleManager.bodyBackground
       }
-      ".vjs-resolution-button" {
-        color = Color.white
+      ".vjs-resolution-button .vjs-menu-button .vjs-icon-placeholder::before" {
+        //insert gear character as content to resolution button
+        content = QuotedString("\\f110")
+        //without fontFamily specification gear is not rendered
+        fontFamily = "VideoJS"
+        //line height specification is needed for correct vertical position
+        lineHeight = 1.67.em.lh
+      }
+      ".vjs-picture-in-picture-control" {
+        display = Display.none
       }
       ".vjs-nofull .vjs-fullscreen-control" {
         display = Display.none
