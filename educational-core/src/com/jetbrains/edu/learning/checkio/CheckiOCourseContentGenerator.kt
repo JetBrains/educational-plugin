@@ -2,20 +2,16 @@ package com.jetbrains.edu.learning.checkio
 
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.progress.ProgressManager
-import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
-import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 
 class CheckiOCourseContentGenerator(private val fileType: LanguageFileType, private val apiConnector: CheckiOApiConnector) {
   val stationsFromServer: List<CheckiOStation>
-    @Throws(ApiException::class, CheckiOLoginRequiredException::class)
     get() = generateStationsFromMissions(apiConnector.missionList)
 
   val stationsFromServerUnderProgress: List<CheckiOStation>
-    @Throws(Exception::class)
     get() = ProgressManager.getInstance().runProcessWithProgressSynchronously<List<CheckiOStation>, Exception>(
       { stationsFromServer },
       "Getting Course from Server",
@@ -35,7 +31,6 @@ class CheckiOCourseContentGenerator(private val fileType: LanguageFileType, priv
 
     return stations.values.toList()
   }
-
 
   private fun generateTaskFile(mission: CheckiOMission) {
     val taskFile = TaskFile("mission.${fileType.defaultExtension}", mission.code)
