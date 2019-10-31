@@ -1,7 +1,8 @@
-package com.jetbrains.edu.python.checkio
+package com.jetbrains.edu.coursecreator.checkio
 
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
@@ -12,7 +13,6 @@ import com.jetbrains.edu.learning.checkio.call.CheckiOCall
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
-import com.jetbrains.python.PythonFileType
 import java.io.File
 
 class CheckiOCourseGenerationTest : EduTestCase() {
@@ -21,7 +21,7 @@ class CheckiOCourseGenerationTest : EduTestCase() {
   fun `test order of missions`() {
     val sourceMissions = MockCheckiOApiConnector().missionList
 
-    val processedStations = CheckiOCourseContentGenerator(PythonFileType.INSTANCE, MockCheckiOApiConnector()).stationsFromServer
+    val processedStations = CheckiOCourseContentGenerator(PlainTextFileType.INSTANCE, MockCheckiOApiConnector()).stationsFromServer
     val processedMissions = processedStations.flatMap { it.missions }
 
     assertTrue(processedMissions.zip(sourceMissions).all { it.first.name == it.second.name })
