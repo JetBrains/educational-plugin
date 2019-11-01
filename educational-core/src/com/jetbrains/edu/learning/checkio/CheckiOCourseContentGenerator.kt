@@ -8,29 +8,25 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 
 class CheckiOCourseContentGenerator(private val fileType: LanguageFileType, private val apiConnector: CheckiOApiConnector) {
-  val stationsFromServer: List<CheckiOStation>
-    get() = generateStationsFromMissions(apiConnector.missionList)
+  fun getStationsFromServer(): List<CheckiOStation> {
+    val stations = mutableMapOf<Int, CheckiOStation>()
 
-  val stationsFromServerUnderProgress: List<CheckiOStation>
-    get() = ProgressManager.getInstance().runProcessWithProgressSynchronously<List<CheckiOStation>, Exception>(
-      { stationsFromServer },
+    for (mission in apiConnector.missionList) {
+      generateTaskFile(mission)
+      val station = stations.computeIfAbsent(mission.station.id) { mission.station }
+      station.addMission(mission)
+      mission.station = station
+    }
+    return stations.values.toList()
+  }
+
+  fun getStationsFromServerUnderProgress(): List<CheckiOStation> =
+    ProgressManager.getInstance().runProcessWithProgressSynchronously<List<CheckiOStation>, Exception>(
+      this::getStationsFromServer,
       "Getting Course from Server",
       false,
       null
     )
-
-  private fun generateStationsFromMissions(missions: List<CheckiOMission>): List<CheckiOStation> {
-    val stations = missions.map { it.station.id to it.station }.distinctBy { it.first }.toMap()
-
-    for (mission in missions) {
-      generateTaskFile(mission)
-      val station = stations[mission.station.id] ?: continue
-      station.addMission(mission)
-      mission.station = station
-    }
-
-    return stations.values.toList()
-  }
 
   private fun generateTaskFile(mission: CheckiOMission) {
     val taskFile = TaskFile("mission.${fileType.defaultExtension}", mission.code)

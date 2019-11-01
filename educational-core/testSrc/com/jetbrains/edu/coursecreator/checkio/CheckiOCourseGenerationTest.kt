@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.checkio
 
-import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.util.io.FileUtil
@@ -8,7 +7,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import com.jetbrains.edu.learning.checkio.api.CheckiOApiInterface
-import com.jetbrains.edu.learning.checkio.api.adapters.CheckiOMissionListDeserializer
+import com.jetbrains.edu.learning.checkio.api.RetrofitUtils.createApiGson
 import com.jetbrains.edu.learning.checkio.call.CheckiOCall
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
@@ -18,13 +17,25 @@ import java.io.File
 class CheckiOCourseGenerationTest : EduTestCase() {
   private val missionsJson = FileUtil.loadFile(File(testDataPath, "missions.json"))
 
+  fun `test deserialized missions list has correct size`() {
+    assertEquals(6, getSourceMissions().size)
+  }
+
   fun `test order of missions`() {
-    val sourceMissions = MockCheckiOApiConnector().missionList
+    val sourceMissions = getSourceMissions()
+    val processedMissions = getProcessedMissions()
+    assertEquals(sourceMissions.size, processedMissions.size)
 
-    val processedStations = CheckiOCourseContentGenerator(PlainTextFileType.INSTANCE, MockCheckiOApiConnector()).stationsFromServer
-    val processedMissions = processedStations.flatMap { it.missions }
+    for ((source, processed) in sourceMissions.zip(processedMissions)) {
+      assertEquals(source.name, processed.name)
+    }
+  }
 
-    assertTrue(processedMissions.zip(sourceMissions).all { it.first.name == it.second.name })
+  private fun getSourceMissions() = MockCheckiOApiConnector().missionList
+
+  private fun getProcessedMissions(): List<CheckiOMission> {
+    val stations = CheckiOCourseContentGenerator(PlainTextFileType.INSTANCE, MockCheckiOApiConnector()).getStationsFromServer()
+    return stations.flatMap { it.missions }
   }
 
   override fun getTestDataPath(): String {
@@ -33,9 +44,7 @@ class CheckiOCourseGenerationTest : EduTestCase() {
 
   inner class MockCheckiOApiConnector : CheckiOApiConnector(MockCheckiOApiInterface(), MockCheckiOOAuthConnector()) {
     override fun getMissionList(): List<CheckiOMission> {
-      val gson = GsonBuilder().registerTypeAdapter(object : TypeToken<List<CheckiOMission>>() {}.type,
-                                                   CheckiOMissionListDeserializer()).create()
-      return gson.fromJson(missionsJson, object : TypeToken<List<CheckiOMission>>() {}.type)
+      return createApiGson().fromJson(missionsJson, object : TypeToken<MutableList<CheckiOMission>>() {}.type)
     }
   }
 

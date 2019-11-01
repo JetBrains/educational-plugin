@@ -27,7 +27,7 @@ class CheckiOCourseUpdater(
 
   @Throws(Exception::class)
   fun doUpdate() {
-    val stationsFromServer = contentGenerator.stationsFromServer
+    val stationsFromServer = contentGenerator.getStationsFromServer()
     val newStations = mutableSetOf<CheckiOStation>()
     val stationsWithNewMissions = mutableSetOf<CheckiOStation>()
     updateStations(stationsFromServer, newStations, stationsWithNewMissions)

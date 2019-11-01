@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.checkio.call.CheckiOCallAdapterFactory;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
+import org.assertj.core.util.VisibleForTesting;
 import org.jetbrains.annotations.NotNull;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -33,7 +34,8 @@ public final class RetrofitUtils {
     return gsonBuilder.create();
   }
 
-  private static Gson createApiGson() {
+  @VisibleForTesting
+  public static Gson createApiGson() {
     final GsonBuilder gsonBuilder = new GsonBuilder();
     final Type missionListType = new TypeToken<List<CheckiOMission>>() {}.getType();
 
