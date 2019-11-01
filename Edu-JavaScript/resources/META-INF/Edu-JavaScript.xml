@@ -6,5 +6,6 @@
   <xi:include href="/META-INF/CheckiO-JavaScript.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.javascript.learning.JsConfigurator" language="JavaScript"/>
+    <codeforcesLanguageProvider implementation="com.jetbrains.edu.javascript.learning.codeforces.JsCodeforcesLanguageProvider"/>
   </extensions>
 </idea-plugin>

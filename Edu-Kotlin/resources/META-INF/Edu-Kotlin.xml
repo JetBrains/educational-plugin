@@ -14,6 +14,7 @@
     <twitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>
     <optionsProvider instance="com.jetbrains.edu.kotlin.twitter.KtOptionsProvider"/>
     <coursesProvider implementation="com.jetbrains.edu.kotlin.KtBundledCoursesProvider"/>
+    <codeforcesLanguageProvider implementation="com.jetbrains.edu.kotlin.codeforces.KtCodeforcesLanguageProvider"/>
 
     <!-- Hyperskill -->
     <configurator implementationClass="com.jetbrains.edu.kotlin.stepik.hyperskill.KtHyperskillConfigurator" language="kotlin" courseType="Hyperskill"/>

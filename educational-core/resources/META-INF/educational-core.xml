@@ -43,6 +43,9 @@
 
     <extensionPoint qualifiedName="Educational.coursesProvider"
                     interface="com.jetbrains.edu.learning.CoursesProvider"/>
+
+    <extensionPoint qualifiedName="Educational.codeforcesLanguageProvider"
+                    interface="com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider"/>
   </extensionPoints>
 
   <actions>

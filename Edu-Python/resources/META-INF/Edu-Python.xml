@@ -29,6 +29,7 @@
 
   <extensions defaultExtensionNs="Educational">
     <coursesProvider implementation="com.jetbrains.edu.python.learning.PyBundledCoursesProvider"/>
+    <codeforcesLanguageProvider implementation="com.jetbrains.edu.python.learning.codeforces.PyCodeforcesLanguageProvider"/>
   </extensions>
 
   <project-components>

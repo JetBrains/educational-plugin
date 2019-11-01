@@ -7,7 +7,7 @@ import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.codeforces.CodeforcesLanguage.Companion.getLanguageId
+import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider.Companion.getLanguageIdAndVersion
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.isFeatureEnabled
@@ -49,7 +49,7 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
       return null
     }
 
-    val languageId = showDialogAndGetLanguageId(contestNameAndLanguages.name, contestNameAndLanguages.languages) ?: return null
+    val languageId = showDialogAndGetLanguageIdAndVersion(contestNameAndLanguages.name, contestNameAndLanguages.languages) ?: return null
     val contestURLInfo = ContestURLInfo(contestId, contestLanguage, languageId)
 
     val contestInfo = getContestInfoUnderProgress(contestURLInfo)
@@ -65,19 +65,19 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
     return dialog.getContestIdAndLanguage()
   }
 
-  private fun showDialogAndGetLanguageId(contestName: String, contestLanguages: List<String>): String? {
+  private fun showDialogAndGetLanguageIdAndVersion(contestName: String, contestLanguages: List<String>): String? {
     val dialog = ChooseCodeforcesContestLanguageDialog(contestName, contestLanguages)
     when (contestLanguages.size) {
       0 -> {
         showNoSupportedLanguagesForContestNotification(contestName)
         return null
       }
-      1 -> return getLanguageId(contestLanguages[0])
+      1 -> return getLanguageIdAndVersion(contestLanguages[0])
       else -> {
         if (!dialog.showAndGet()) {
           return null
         }
-        return getLanguageId(dialog.selectedProgrammingLanguage())
+        return getLanguageIdAndVersion(dialog.selectedProgrammingLanguage())
       }
     }
   }

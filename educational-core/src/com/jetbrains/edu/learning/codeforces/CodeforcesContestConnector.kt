@@ -34,11 +34,13 @@ object CodeforcesContestConnector {
       .text()
 
   @JvmStatic
-  fun getLanguages(contest: Document): List<String> =
-    contest.selectFirst("#programTypeForInvoker")
+  fun getLanguages(contest: Document): List<String> {
+    val supportedLanguages = CodeforcesLanguageProvider.getSupportedLanguages()
+    return contest.selectFirst("#programTypeForInvoker")
       .select("option")
       .map { it.text() }
       .filter { language ->
-        CodeforcesLanguage.isSupported(language)
+        language in supportedLanguages
       }
+  }
 }
