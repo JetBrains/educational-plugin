@@ -286,19 +286,17 @@ object GeneratorUtils {
 
   /**
    * Reformat the code so that learners do not see tons of IDE highlighting.
-   * Should be used when author of the course provides code samples and systematically does not follow language styleguide.
+   * Should be used for third-party sources of courses when language styleguide is systematically ignored.
    * */
   @JvmStatic
   fun reformatCodeInAllTaskFiles(project: Project, course: Course) {
-    for (lesson in course.lessons) {
-      for (task in lesson.taskList) {
-        for ((_, file) in task.taskFiles) {
-          val virtualFile = file.getVirtualFile(project) ?: continue
-          val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: continue
-          runInEdt {
-            WriteCommandAction.runWriteCommandAction(project) {
-              CodeStyleManager.getInstance(project).reformat(psiFile)
-            }
+    course.visitTasks {
+      for ((_, file) in it.taskFiles) {
+        val virtualFile = file.getVirtualFile(project) ?: continue
+        val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: continue
+        runInEdt {
+          WriteCommandAction.runWriteCommandAction(project) {
+            CodeStyleManager.getInstance(project).reformat(psiFile)
           }
         }
       }
