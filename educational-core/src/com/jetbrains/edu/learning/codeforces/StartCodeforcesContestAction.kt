@@ -4,15 +4,21 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguage.Companion.getLanguageId
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.newproject.ui.CoursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
 
 class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest") {
+
+  override fun update(e: AnActionEvent) {
+    e.presentation.isVisible = isFeatureEnabled(EduExperimentalFeatures.CODEFORCES)
+  }
 
   override fun actionPerformed(e: AnActionEvent) {
     val course = importCodeforcesContest() ?: return
