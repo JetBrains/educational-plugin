@@ -7,8 +7,10 @@ import com.jetbrains.edu.learning.codeforces.ContestURLInfo
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import icons.EducationalCoreIcons
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
+import javax.swing.Icon
 
 class CodeforcesCourse : EduCourse {
   @Suppress("unused") //used for deserialization
@@ -26,6 +28,7 @@ class CodeforcesCourse : EduCourse {
   val submissionUrl: String by lazy { "$contestUrl/submit?locale=${languageCode}" }
 
   override fun courseCompatibility(courseInfo: EduCourse): CourseCompatibility = CourseCompatibility.COMPATIBLE
+  override fun getIcon(): Icon = EducationalCoreIcons.Codeforces
   override fun getItemType(): String = CODEFORCES_COURSE_TYPE
 
   private fun parseResponseToAddContent(html: ResponseBody) {

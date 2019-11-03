@@ -10,9 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import icons.EducationalCoreIcons.Codeforces
 import org.jsoup.nodes.Element
-import javax.swing.Icon
 
 class CodeforcesTask : Task {
   @Suppress("unused") //used for deserialization
@@ -39,8 +37,6 @@ class CodeforcesTask : Task {
   }
 
   override fun getItemType(): String = CODEFORCES_TASK_TYPE
-
-  override fun getIcon(): Icon = Codeforces
 
   private fun createTaskFile() {
     val taskTemplateName = lesson.course.configurator?.courseBuilder?.taskTemplateName

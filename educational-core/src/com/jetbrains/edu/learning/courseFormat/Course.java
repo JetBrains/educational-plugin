@@ -10,11 +10,13 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
+import icons.EducationalCoreIcons;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -292,5 +294,10 @@ public abstract class Course extends LessonContainer {
 
   public void addItem(@NotNull StudyItem item, int index) {
     items.add(index, item);
+  }
+
+  @NotNull
+  public Icon getIcon() {
+    return EducationalCoreIcons.CourseTree;
   }
 }

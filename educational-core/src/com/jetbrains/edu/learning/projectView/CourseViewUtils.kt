@@ -121,9 +121,7 @@ object CourseViewUtils {
   val StudyItem.icon: Icon
     get() {
       return when (this) {
-        is Course -> {
-          EducationalCoreIcons.CourseTree
-        }
+        is Course -> icon
         is Section -> {
           if (isSolved) EducationalCoreIcons.SectionSolved else EducationalCoreIcons.Section
         }
