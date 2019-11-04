@@ -19,7 +19,5 @@ add_executable(${PROJECT_NAME}-run
 # Customize test target.]]#
 add_executable(${PROJECT_NAME}-test
 #[[        ${SOURCE}
-        ${TEST})
-]]#
-target_link_libraries(${PROJECT_NAME}-test test_runner)
-target_link_options(${PROJECT_NAME}-test PRIVATE "-e_run_tests")
+        ${TEST})]]#
+configure_test_target(${PROJECT_NAME}-test)

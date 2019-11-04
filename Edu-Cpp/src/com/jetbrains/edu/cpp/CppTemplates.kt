@@ -73,8 +73,7 @@ fun getCppTemplates(course: Course): CppTemplates =
                      TemplateInfo("cmake_googletest.cmake",
                                   GeneratorUtils.joinPaths("cmake", "googletest.cmake")),
                      TemplateInfo("cmake_googletest-download.cmake",
-                                  GeneratorUtils.joinPaths("cmake", "googletest-download.cmake")),
-                     TemplateInfo("runTests.cpp", "run.cpp")
+                                  GeneratorUtils.joinPaths("cmake", "googletest-download.cmake"))
                    ))
     course.environment == "Catch" ->
       CppTemplates(TemplateInfo("catch_CMakeLists.txt", CMakeListsFileType.FILE_NAME),

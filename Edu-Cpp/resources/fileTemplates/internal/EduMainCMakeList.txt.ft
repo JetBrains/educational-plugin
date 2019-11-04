@@ -17,11 +17,6 @@ fetch_googletest(
         ${PROJECT_SOURCE_DIR}/${TEST_DIR}
 )
 
-# Add test runner link
-add_library(test_runner run.cpp)
-target_link_libraries(test_runner gtest)
-
-
 # Add tasks subprojects
 include(cmake/utils.cmake)
 add_subprojects(${CMAKE_SOURCE_DIR} ${TEST_DIR})]]#

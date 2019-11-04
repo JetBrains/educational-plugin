@@ -19,4 +19,17 @@
             add_subdirectory(${dir})
         endif ()
     endforeach ()
+endmacro()
+
+macro(configure_test_target _target_name)
+    # Add Google Test libraries to target
+    target_link_libraries(${_target_name} gtest gtest_main)
+
+    # Rename students main function to prevent overloading or name conflicts
+    # Add:
+    #   #undef main
+    # line before custom test main if you use it.
+    string(SHA1 _hash _target_name)
+    target_compile_definitions(${_target_name} PRIVATE main=gen${_hash}_main)
+    unset(_hash)
 endmacro()]]#
