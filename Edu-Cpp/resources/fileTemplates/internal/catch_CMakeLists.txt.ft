@@ -13,11 +13,6 @@ project(${PROJECT_NAME})
 include(cmake/catch.cmake)
 fetch_catch(${TEST_DIR})
 
-# Add test runner link
-add_library(test_runner ${CATCH_HEADER} run.cpp)
-set_property(TARGET test_runner PROPERTY CXX_STANDARD 11)
-
-
 # Add tasks subprojects
 include(cmake/utils.cmake)
 add_subprojects(${PROJECT_SOURCE_DIR})]]#

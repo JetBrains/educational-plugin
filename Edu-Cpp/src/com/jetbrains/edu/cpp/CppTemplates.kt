@@ -80,8 +80,7 @@ fun getCppTemplates(course: Course): CppTemplates =
                    TemplateInfo("EduTaskCMakeList.txt", CMakeListsFileType.FILE_NAME),
                    listOf(
                      TemplateInfo("catch_cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake")),
-                     TemplateInfo("catch_cmake_catch.cmake", GeneratorUtils.joinPaths("cmake", "catch.cmake")),
-                     TemplateInfo("catch_run.cpp", "run.cpp")
+                     TemplateInfo("catch_cmake_catch.cmake", GeneratorUtils.joinPaths("cmake", "catch.cmake"))
                    ))
     else ->
       throw IllegalStateException("Course must be Stepik type or have one of these environments: GoogleTest, Catch")
