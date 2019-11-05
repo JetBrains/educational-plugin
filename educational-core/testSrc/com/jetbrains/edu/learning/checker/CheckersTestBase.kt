@@ -13,8 +13,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageManagerImpl
@@ -22,6 +20,8 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
+import com.intellij.testFramework.fixtures.TempDirTestFixture
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.intellij.util.ui.UIUtil
@@ -34,7 +34,6 @@ import com.jetbrains.edu.learning.createFileEditorManager
 import com.jetbrains.edu.learning.registerComponent
 import org.junit.Assert
 import org.junit.ComparisonFailure
-import java.io.File
 
 abstract class CheckersTestBase<Settings> : UsefulTestCase() {
     private lateinit var myManager: FileEditorManagerImpl
@@ -44,8 +43,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
     protected lateinit var myProject: Project
     private lateinit var myApplication: IdeaTestApplication
 
-    private lateinit var myTestDir: File
-
+    private lateinit var tempDirFixture: TempDirTestFixture
     private lateinit var checkerFixture: EduCheckerFixture<Settings>
 
     override fun runBare() {
@@ -132,17 +130,18 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
 
         val generator = myCourse.configurator?.courseBuilder?.getCourseProjectGenerator(myCourse)
                          ?: error("Failed to get `CourseProjectGenerator`")
-        myProject = generator.doCreateCourseProject(myTestDir.absolutePath, settings as Any)
+        myProject = generator.doCreateCourseProject(tempDirFixture.tempDirPath, settings as Any)
                     ?: error("Cannot create project with name ${projectName()}")
     }
 
     override fun setUp() {
         super.setUp()
         myApplication = IdeaTestApplication.getInstance()
-        myTestDir = File(FileUtil.getTempDirectory())
-        myTestDir.mkdirs()
 
-        VfsUtil.markDirtyAndRefresh(false, true, true, VfsUtil.findFileByIoFile(myTestDir, true)!!)
+        tempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture()
+        tempDirFixture.setUp()
+        val rootDir = tempDirFixture.getFile("")!!
+        VfsUtil.markDirtyAndRefresh(false, true, true, rootDir)
 
         checkerFixture.setUp()
 
@@ -169,7 +168,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
     override fun tearDown() {
         try {
             checkerFixture.tearDown()
-            FileUtilRt.delete(myTestDir)
+            tempDirFixture.tearDown()
             LightPlatformTestCase.doTearDown(myProject, myApplication)
             InjectedLanguageManagerImpl.checkInjectorsAreDisposed(myProject)
 
