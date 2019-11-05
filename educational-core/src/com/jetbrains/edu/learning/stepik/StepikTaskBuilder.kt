@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NonNls
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Whitelist
+import java.util.*
 import java.util.Collections.unmodifiableList
 
 // TODO: get rid of LeakingThis warnings without suppression
@@ -64,21 +65,24 @@ open class StepikTaskBuilder(
   )
 
   fun createTask(type: String): Task? {
-    val taskName = DEFAULT_NAMES[type]
-    return stepikTaskTypes[type]?.invoke(taskName ?: UNKNOWN_TASK_NAME)
+    val taskName = DEFAULT_NAMES[type] ?: UNKNOWN_TASK_NAME
+    return stepikTaskTypes[type]?.invoke(taskName)
   }
 
   fun isSupported(type: String): Boolean {
     return stepikTaskTypes.containsKey(type)
   }
 
+  private fun Task.initBaseFields() {
+    id = stepId
+    index = stepSource.position
+    updateDate = stepSource.updateDate ?: Date(0)
+    status = CheckStatus.Unchecked
+  }
+
   private fun codeTask(name: String): CodeTask {
     val task = CodeTask(name)
-    task.id = stepId
-    task.index = stepSource.position
-    task.updateDate = stepSource.updateDate
-
-    task.status = CheckStatus.Unchecked
+    task.initBaseFields()
     val options = step.options as PyCharmStepOptions
     val samples = options.samples
 
@@ -123,9 +127,7 @@ open class StepikTaskBuilder(
 
   private fun choiceTask(name: String): ChoiceTask {
     val task = ChoiceTask(name)
-    task.id = stepId
-    task.index = stepSource.position
-    task.updateDate = stepSource.updateDate
+    task.initBaseFields()
     task.descriptionText = clearCodeBlockFromTags()
 
     val choiceStep: ChoiceStep? = if (!isUnitTestMode || stepId > 0)
@@ -165,9 +167,7 @@ open class StepikTaskBuilder(
 
   private fun theoryTask(name: String): TheoryTask {
     val task = TheoryTask(name)
-    task.id = stepId
-    task.index = stepSource.position
-    task.updateDate = stepSource.updateDate
+    task.initBaseFields()
     task.descriptionText = clearCodeBlockFromTags()
 
     createMockTaskFile(task)
@@ -176,9 +176,7 @@ open class StepikTaskBuilder(
 
   private fun videoTask(name: String): VideoTask {
     val task = VideoTask(name)
-    task.id = stepId
-    task.index = stepSource.position
-    task.updateDate = stepSource.updateDate
+    task.initBaseFields()
     var descriptionText = "View this video on <a href=\"${getStepikLink(task, lesson)}\">Stepik</a>."
     val block = stepSource.block
     if (block != null) {
@@ -203,9 +201,7 @@ open class StepikTaskBuilder(
 
   private fun unsupportedTask(@NonNls name: String): Task {
     val task = TheoryTask(name)
-    task.id = stepId
-    task.index = stepSource.position
-    task.updateDate = stepSource.updateDate
+    task.initBaseFields()
     task.descriptionText = "${name.toLowerCase().capitalize()} tasks are not supported yet. <br>" +
                            "View this step on <a href=\"${getStepikLink(task, lesson)}\">Stepik</a>."
 
@@ -217,10 +213,8 @@ open class StepikTaskBuilder(
     val stepOptions = step.options as PyCharmStepOptions
     val taskName: String = stepOptions.title ?: DEFAULT_EDU_TASK_NAME
 
-    val task = createPluginTask(taskName)
-    task.id = stepId
-    task.updateDate = stepSource.updateDate
-
+    val task = pluginTaskTypes[stepOptions.taskType]?.invoke(taskName) ?: EduTask(taskName)
+    task.initBaseFields()
     task.customPresentableName = stepOptions.customPresentableName
     task.solutionHidden = stepOptions.solutionHidden
 
@@ -234,11 +228,6 @@ open class StepikTaskBuilder(
     }
 
     return task
-  }
-
-  private fun createPluginTask(name: String): Task {
-    val options = step.options as PyCharmStepOptions
-    return pluginTaskTypes.getOrDefault(options.taskType, null)?.invoke(name) ?: EduTask(name)
   }
 
   private fun createMockTaskFile(
