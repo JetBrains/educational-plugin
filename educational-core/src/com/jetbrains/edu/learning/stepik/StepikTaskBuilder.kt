@@ -61,7 +61,7 @@ open class StepikTaskBuilder(
     "edu" to { name: String -> EduTask(name) },
     "output" to { name: String -> OutputTask(name) },
     "ide" to { name: String -> IdeTask(name) },
-    "theory" to this::theoryTask
+    "theory" to { name: String -> TheoryTask(name) }
   )
 
   fun createTask(type: String): Task? {
@@ -109,7 +109,7 @@ open class StepikTaskBuilder(
     if (language.isKindOf(EduNames.PYTHON) && samples != null) {
       createTestFileFromSamples(task, samples)
     }
-    createMockTaskFile(task, "write your answer here \n", getCodeTemplateForTask(options.codeTemplates))
+    initTaskFiles(task, "write your answer here \n", getCodeTemplateForTask(options.codeTemplates))
     return task
   }
 
@@ -161,7 +161,7 @@ open class StepikTaskBuilder(
       }
     }
 
-    createMockTaskFile(task)
+    initTaskFiles(task)
     return task
   }
 
@@ -170,7 +170,7 @@ open class StepikTaskBuilder(
     task.initBaseFields()
     task.descriptionText = clearCodeBlockFromTags()
 
-    createMockTaskFile(task)
+    initTaskFiles(task)
     return task
   }
 
@@ -195,7 +195,7 @@ open class StepikTaskBuilder(
     }
 
     task.descriptionText = descriptionText
-    createMockTaskFile(task)
+    initTaskFiles(task)
     return task
   }
 
@@ -205,7 +205,7 @@ open class StepikTaskBuilder(
     task.descriptionText = "${name.toLowerCase().capitalize()} tasks are not supported yet. <br>" +
                            "View this step on <a href=\"${getStepikLink(task, lesson)}\">Stepik</a>."
 
-    createMockTaskFile(task, "This is a ${name.toLowerCase()} task. You can use this editor as a playground\n")
+    initTaskFiles(task, "This is a ${name.toLowerCase()} task. You can use this editor as a playground\n")
     return task
   }
 
@@ -222,25 +222,29 @@ open class StepikTaskBuilder(
     task.descriptionFormat = stepOptions.descriptionFormat
     task.feedbackLink = stepOptions.myFeedbackLink
 
-    stepOptions.files?.forEach {
-      addPlaceholdersTexts(it)
-      task.addTaskFile(it)
-    }
-
+    initTaskFiles(task)
     return task
   }
 
-  private fun createMockTaskFile(
+  private fun initTaskFiles(
     task: Task,
     comment: String = "You can experiment here, it won’t be checked\n",
     codeTemplate: String? = null
   ) {
     val options = step.options
     if (options is PyCharmStepOptions && !options.files.isNullOrEmpty()) {
-      options.files?.forEach { task.addTaskFile(it) }
-      return
+      options.files?.forEach {
+        addPlaceholdersTexts(it)
+        task.addTaskFile(it)
+      }
     }
 
+    if (task.taskFiles.isEmpty()) {
+      createMockTaskFile(task, comment, codeTemplate)
+    }
+  }
+
+  private fun createMockTaskFile(task: Task, comment: String, codeTemplate: String?) {
     val configurator = EduConfiguratorManager.findConfigurator(courseType, courseEnvironment, language)
     val editorText = buildString {
       if (codeTemplate == null) {

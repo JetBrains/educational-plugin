@@ -28,6 +28,10 @@ import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotific
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.getDocument
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.api.AdditionalLessonInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -165,9 +169,12 @@ object CCUtils {
 
   @JvmStatic
   fun collectAdditionalLessonInfo(lesson: Lesson): AdditionalLessonInfo {
-    val taskFiles = lesson.taskList.map { it.id to it.taskFiles.values.toList() }.toMap()
+    val taskFiles = lesson.taskList.filter { !isPluginTaskType(it) }.map { it.id to it.taskFiles.values.toList() }.toMap()
     return AdditionalLessonInfo(taskFiles)
   }
+
+  @JvmStatic
+  fun isPluginTaskType(task: Task) = task is IdeTask || task is EduTask || task is OutputTask // || task is TheoryTask
 
   @JvmStatic
   @Throws(IOException::class)
