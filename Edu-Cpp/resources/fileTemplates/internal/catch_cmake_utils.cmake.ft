@@ -18,9 +18,6 @@
 endmacro()
 
 macro(configure_test_target _target_name)
-# Add Google Test libraries to target
-target_link_libraries(${_target_name} gtest gtest_main)
-
 # Rename students main function to prevent overloading or name conflicts
 # Add:
 #   #undef main

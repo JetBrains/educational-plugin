@@ -1,3 +1,6 @@
+#undef main
+\#define CATCH_CONFIG_MAIN
+
 \#include <catch.hpp>
 
 // Headers of objects that student should implement:
