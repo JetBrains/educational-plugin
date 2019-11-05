@@ -39,6 +39,9 @@ abstract class StudentTaskYamlMixin : TaskYamlMixin() {
 
 class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {
   override fun applyChanges(existingItem: Task, deserializedItem: Task) {
+    if (existingItem.solutionHidden != deserializedItem.solutionHidden && !ApplicationManager.getApplication().isInternal) {
+      throw YamlLoadingException("Visibility of solution can't be changed")
+    }
     super.applyChanges(existingItem, deserializedItem)
     if (existingItem.status != deserializedItem.status && !ApplicationManager.getApplication().isInternal) {
       throw YamlLoadingException("Status can't be changed")
