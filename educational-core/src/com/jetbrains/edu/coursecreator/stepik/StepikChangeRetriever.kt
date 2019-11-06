@@ -5,6 +5,7 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.CCUtils.isPluginTaskType
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
@@ -143,7 +144,11 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
   }
 
   private fun lessonAdditionalInfoChanged(localLesson: Lesson, remoteLesson: Lesson): Boolean {
-    return localLesson.taskList.zip(remoteLesson.taskList).any { (local, remote) -> taskFilesChanged(local, remote) }
+    return localLesson.taskList.zip(remoteLesson.taskList).any { (local, remote) -> stepikTaskFilesChanged(local, remote) }
+  }
+
+  private fun stepikTaskFilesChanged(localTask: Task, remoteTask: Task): Boolean {
+    return !isPluginTaskType(localTask) && !isPluginTaskType(remoteTask) && taskFilesChanged (localTask, remoteTask)
   }
 
   private fun sectionInfoChanged(section: Section, remoteSection: Section): Boolean {
