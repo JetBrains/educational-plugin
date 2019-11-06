@@ -47,6 +47,24 @@ val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val isAtLeast192 = environmentName.toInt() >= 192
 val isAtLeast193 = environmentName.toInt() >= 193
 
+val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
+val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
+// python community plugin is not compatible with IDEA Ultimate since 2019.3
+val pythonIDEAPlugin = if (isAtLeast193) pythonProPlugin else pythonCommunityPlugin
+
+val pythonPlugin = when (baseIDE) {
+  "idea" -> pythonIDEAPlugin
+  "clion" -> "python"
+  // PyCharm has separate python plugin since 2019.3. Previously it was part of PyCharm core code
+  "pycharm" -> if (isAtLeast193) "python-ce" else null
+  "studio" -> pythonCommunityPlugin
+  else -> error("Unexpected IDE name = `$baseIDE`")
+}
+val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
+val nodeJsPlugin = "NodeJS:${prop("nodeJsPluginVersion")}"
+val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
+val tomlPlugin = "org.toml.lang:${prop("tomlPluginVersion")}"
+
 plugins {
   idea
   kotlin("jvm") version "1.3.11"
@@ -190,20 +208,20 @@ project(":") {
     }
 
     val pluginsList = mutableListOf(
-      "PythonCore:${prop("pythonPluginVersion")}",
-      "org.rust.lang:${prop("rustPluginVersion")}",
-      "org.toml.lang:${prop("tomlPluginVersion")}",
+      rustPlugin,
+      tomlPlugin,
       "yaml"
     )
+    pluginsList += listOfNotNull(pythonPlugin)
     if (isJvmCenteredIDE) {
-      pluginsList += listOf("junit", "Kotlin", "org.intellij.scala:${prop("scalaPluginVersion")}")
+      pluginsList += listOf("junit", "Kotlin", scalaPlugin)
       if (isAtLeast192) {
         pluginsList += "java"
       }
     }
     if (baseIDE == "idea") {
       // BACKCOMPAT: 2019.1 - use bundled nodeJS plugin
-      pluginsList += listOf("NodeJS:${prop("nodeJsPluginVersion")}", "JavaScriptLanguage")
+      pluginsList += listOf(nodeJsPlugin, "JavaScriptLanguage")
     }
 
     setPlugins(*pluginsList.toTypedArray())
@@ -434,7 +452,7 @@ project(":Edu-Scala") {
     localPath = null
     version = ideaVersion
     val plugins = mutableListOf(
-      "org.intellij.scala:${prop("scalaPluginVersion")}",
+      scalaPlugin,
       "junit",
       "properties",
       "gradle",
@@ -477,10 +495,9 @@ project(":Edu-Android") {
 
 project(":Edu-Python") {
   intellij {
-    val plugins = mutableListOf<String>()
-    if (baseIDE != "pycharm") {
-      plugins += "PythonCore:${prop("pythonPluginVersion")}"
-    }
+    // python pro plugin has mandatory dependency on yaml plugin
+    val plugins = mutableListOf("yaml")
+    plugins += listOfNotNull(pythonPlugin)
     if (isAtLeast192 && isJvmCenteredIDE) {
       plugins += "java"
     }
@@ -501,11 +518,13 @@ project(":Edu-Python:Idea") {
       localPath = null
       version = ideaVersion
     }
+    // python pro plugin has mandatory dependency on yaml plugin
+    val plugins = mutableListOf("yaml")
+    plugins += listOfNotNull(if (!isJvmCenteredIDE) pythonIDEAPlugin else pythonPlugin)
     if (isAtLeast192) {
-      setPlugins("PythonCore:${prop("pythonPluginVersion")}", "java")
-    } else {
-      setPlugins("PythonCore:${prop("pythonPluginVersion")}")
+      plugins += "java"
     }
+    setPlugins(*plugins.toTypedArray())
   }
 
   dependencies {
@@ -517,10 +536,9 @@ project(":Edu-Python:Idea") {
 
 project(":Edu-Python:PyCharm") {
   intellij {
-    val plugins = mutableListOf<String>()
-    if (baseIDE != "pycharm") {
-      plugins += "PythonCore:${prop("pythonPluginVersion")}"
-    }
+    // python pro plugin has mandatory dependency on yaml plugin
+    val plugins = mutableListOf("yaml")
+    plugins += listOfNotNull(pythonPlugin)
     if (isAtLeast192 && isJvmCenteredIDE) {
       plugins += "java"
     }
@@ -538,13 +556,12 @@ project(":Edu-JavaScript") {
   intellij {
     localPath = null
     version = ideaVersion
+    // BACKCOMPAT: 2019.1 - use bundled nodeJS plugin
+    val plugins = mutableListOf(nodeJsPlugin, "JavaScriptLanguage", "CSS", "JavaScriptDebugger")
     if (isAtLeast192) {
-      // BACKCOMPAT: 2019.1 - use bundled nodeJS plugin
-      setPlugins("NodeJS:${prop("nodeJsPluginVersion")}", "JavaScriptLanguage", "CSS", "JavaScriptDebugger", "java")
-    } else {
-      // BACKCOMPAT: 2019.1 - use bundled nodeJS plugin
-      setPlugins("NodeJS:${prop("nodeJsPluginVersion")}", "JavaScriptLanguage", "CSS", "JavaScriptDebugger")
+      plugins += "java"
     }
+    setPlugins(*plugins.toTypedArray())
   }
   dependencies {
     compile(project(":educational-core"))
@@ -554,11 +571,11 @@ project(":Edu-JavaScript") {
 
 project(":Edu-Rust") {
   intellij {
+    val plugins = mutableListOf(rustPlugin, tomlPlugin)
     if (isAtLeast192 && isJvmCenteredIDE) {
-      setPlugins("org.rust.lang:${prop("rustPluginVersion")}", "org.toml.lang:${prop("tomlPluginVersion")}", "java")
-    } else {
-      setPlugins("org.rust.lang:${prop("rustPluginVersion")}", "org.toml.lang:${prop("tomlPluginVersion")}")
+      plugins += "java"
     }
+    setPlugins(*plugins.toTypedArray())
   }
 
   dependencies {
