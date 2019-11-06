@@ -7,11 +7,13 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.stepik.IsUpToDateCachedValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 
 public class EduCourse extends Course {
   private static final Logger LOG = Logger.getInstance(Course.class);
@@ -26,6 +28,7 @@ public class EduCourse extends Course {
   List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
   private Date myCreateDate = new Date(0);
+  @Transient private IsUpToDateCachedValue isUpToDate = new IsUpToDateCachedValue(this);
   boolean isPublic;
   @Transient private String myAdminsGroup;
 
@@ -178,5 +181,14 @@ public class EduCourse extends Course {
     sectionIds = new ArrayList<>();
     instructors = new ArrayList<>();
     myType = String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
+  }
+
+  @Transient
+  public boolean isUpToDate() {
+    return isUpToDate.get();
+  }
+
+  public void setUpToDate(boolean isUpToDateValue) {
+    isUpToDate.resetCachedValue(isUpToDateValue);
   }
 }

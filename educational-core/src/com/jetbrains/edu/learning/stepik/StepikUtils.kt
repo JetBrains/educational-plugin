@@ -73,15 +73,19 @@ fun updateCourseIfNeeded(project: Project, course: EduCourse) {
   ProgressManager.getInstance().run(
     object : com.intellij.openapi.progress.Task.Backgroundable(project, "Checking for Course Updates") {
       override fun run(indicator: ProgressIndicator) {
-        if (!course.isUpToDate()) {
+        if (!course.isUpToDate) {
           showUpdateAvailableNotification(project) {
-            StepikCourseUpdater(course, project).updateCourse()
-            SubmissionsManager.loadMissingSubmissions(course)
-            StepikSolutionsLoader.getInstance(project).loadSolutionsInBackground()
+            updateCourse(project, course)
           }
         }
       }
     })
+}
+
+fun updateCourse(project: Project, course: EduCourse) {
+  StepikCourseUpdater(course, project).updateCourse()
+  SubmissionsManager.loadMissingSubmissions(course)
+  StepikSolutionsLoader.getInstance(project).loadSolutionsInBackground()
 }
 
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {

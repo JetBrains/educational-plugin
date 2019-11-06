@@ -15,14 +15,13 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.fillItems
 import java.util.*
 
-
-fun EduCourse.isUpToDate(): Boolean {
+fun EduCourse.checkIsUpToDate(): Boolean {
   // disable update for courses with framework lessons as now it's unsupported
-  if (lessons.plus(sections.flatMap { it.lessons }).any { it is FrameworkLesson }) {
+  if (lessons.any { it is FrameworkLesson } || sections.any { it -> it.lessons.any { it is FrameworkLesson } }) {
     return true
   }
 
-  if (updateDate == null || course.id == 0) {
+  if (updateDate == null || id == 0) {
     return true
   }
 
@@ -110,6 +109,8 @@ fun EduCourse.setUpdated(courseFromServer: EduCourse) {
     val sectionFromServer = sectionsById[it.id] ?: error("Section with id ${it.id} not found")
     it.setUpdated(sectionFromServer)
   }
+
+  isUpToDate = true
 }
 
 internal fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
@@ -146,3 +147,4 @@ private fun Lesson.setUpdated(lessonFromServer: Lesson) {
     it.updateDate = taskFromServer.updateDate
   }
 }
+

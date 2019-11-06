@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
-import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.SubmissionsManager;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +44,7 @@ public class SyncStepikCourseAction extends SyncCourseAction {
   }
 
   public void updateCourseStructure(@NotNull Project project, EduCourse course) {
-    if (!StepikUpdateDateExt.isUpToDate(course)) {
+    if (!course.isUpToDate()) {
       new StepikCourseUpdater(course, project).updateCourse();
     }
     else {
