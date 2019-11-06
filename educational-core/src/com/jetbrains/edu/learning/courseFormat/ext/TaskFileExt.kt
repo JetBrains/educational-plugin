@@ -8,6 +8,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.CCUtils.loadText
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.editor.EduEditor
@@ -25,6 +26,11 @@ fun TaskFile.getVirtualFile(project: Project): VirtualFile? {
 }
 
 fun TaskFile.course() = task?.lesson?.course
+
+fun TaskFile.getTextFromDisk(project: Project): String? {
+  val virtualFile = getVirtualFile(project) ?: return null
+  return loadText(virtualFile)
+}
 
 fun TaskFile.getEduEditors(project: Project): List<EduEditor> {
   val file = getVirtualFile(project) ?: return emptyList()

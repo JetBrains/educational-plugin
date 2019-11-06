@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.api.AdditionalCourseInfo;
+import com.jetbrains.edu.learning.stepik.api.AdditionalLessonInfo;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikUnit;
 import org.apache.http.HttpStatus;
@@ -199,7 +200,7 @@ public class CCStepikConnector {
       }
       success = postTask(project, task, postedLesson.getId()) && success;
     }
-    updateAdditionalLessonInfo(lesson);
+    updateAdditionalLessonInfo(lesson, project);
     return success;
   }
 
@@ -326,7 +327,7 @@ public class CCStepikConnector {
     Lesson postedLesson = updateLessonInfo(project, lesson, showNotification, sectionId);
     if (postedLesson != null) {
       updateLessonTasks(project, lesson, postedLesson.steps);
-      updateAdditionalLessonInfo(lesson);
+      updateAdditionalLessonInfo(lesson, project);
       return true;
     }
 
@@ -351,9 +352,10 @@ public class CCStepikConnector {
     return updatedLesson;
   }
 
-  public static boolean updateAdditionalLessonInfo(@NotNull final Lesson lesson) {
+  public static boolean updateAdditionalLessonInfo(@NotNull final Lesson lesson, @NotNull Project project) {
     updateProgress("Publishing additional info for " + lesson.getName());
-    return StepikConnector.getInstance().updateLessonAttachment(collectAdditionalLessonInfo(lesson), lesson) == HttpStatus.SC_CREATED;
+    AdditionalLessonInfo info = collectAdditionalLessonInfo(lesson, project);
+    return StepikConnector.getInstance().updateLessonAttachment(info, lesson) == HttpStatus.SC_CREATED;
   }
 
   public static void updateUnit(int unitId, int lessonId, int position, int sectionId, @NotNull Project project) {

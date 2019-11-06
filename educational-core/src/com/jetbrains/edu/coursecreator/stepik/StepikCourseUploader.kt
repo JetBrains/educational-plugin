@@ -115,7 +115,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       success = lesson != null && success
     }
     changedItems.lessonsAdditionalInfo.forEach {
-      success = updateAdditionalLessonInfo(it) && success
+      success = updateAdditionalLessonInfo(it, project) && success
     }
 
     return success

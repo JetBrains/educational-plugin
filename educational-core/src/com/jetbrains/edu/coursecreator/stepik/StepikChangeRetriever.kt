@@ -143,7 +143,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
   }
 
   private fun lessonAdditionalInfoChanged(localLesson: Lesson, remoteLesson: Lesson): Boolean {
-    return localLesson.taskList.zip(remoteLesson.taskList).any { (local, remote) -> taskInfoChanged(local, remote) }
+    return localLesson.taskList.zip(remoteLesson.taskList).any { (local, remote) -> taskFilesChanged(local, remote) }
   }
 
   private fun sectionInfoChanged(section: Section, remoteSection: Section): Boolean {
