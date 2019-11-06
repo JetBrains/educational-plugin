@@ -148,7 +148,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
   }
 
   private fun stepikTaskFilesChanged(localTask: Task, remoteTask: Task): Boolean {
-    return !isPluginTaskType(localTask) && !isPluginTaskType(remoteTask) && taskFilesChanged (localTask, remoteTask)
+    return !isPluginTaskType(localTask) && !isPluginTaskType(remoteTask) && taskFilesChanged(localTask, remoteTask)
   }
 
   private fun sectionInfoChanged(section: Section, remoteSection: Section): Boolean {
