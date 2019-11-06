@@ -6,9 +6,4 @@
     <extensions defaultExtensionNs="Educational">
         <checkListener implementation="com.jetbrains.edu.learning.checker.CheckActionListener"/>
     </extensions>
-    <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceInterface="org.rust.cargo.project.model.CargoProjectsService"
-                        serviceImplementation="org.rust.cargo.project.model.impl.CargoProjectsServiceImpl"
-                        overrides="true"/>
-    </extensions>
 </idea-plugin>
