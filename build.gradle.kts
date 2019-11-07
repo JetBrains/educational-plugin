@@ -64,6 +64,7 @@ val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
 val nodeJsPlugin = "NodeJS:${prop("nodeJsPluginVersion")}"
 val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
 val tomlPlugin = "org.toml.lang:${prop("tomlPluginVersion")}"
+val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
 
 plugins {
   idea
@@ -210,6 +211,7 @@ project(":") {
     val pluginsList = mutableListOf(
       rustPlugin,
       tomlPlugin,
+      goPlugin,
       "yaml"
     )
     pluginsList += listOfNotNull(pythonPlugin)
@@ -240,6 +242,7 @@ project(":") {
     compile(project(":Edu-JavaScript"))
     compile(project(":Edu-Rust"))
     compile(project(":Edu-Cpp"))
+    compile(project(":Edu-Go"))
     compile(project(":Edu-YAML"))
   }
 
@@ -588,6 +591,22 @@ project(":Edu-Cpp") {
   intellij {
     localPath = null
     version = clionVersion
+  }
+
+  dependencies {
+    compile(project(":educational-core"))
+    testCompile(project(":educational-core", "testOutput"))
+  }
+}
+
+project(":Edu-Go") {
+  intellij {
+    val plugins = mutableListOf<String>()
+    plugins += goPlugin
+    if (isAtLeast192 && isJvmCenteredIDE) {
+      plugins += "java"
+    }
+    setPlugins(*plugins.toTypedArray())
   }
 
   dependencies {

@@ -11,4 +11,5 @@ include 'educational-core',
         'Edu-JavaScript',
         'Edu-Rust',
         'Edu-Cpp',
+        'Edu-Go',
         'Edu-YAML'
