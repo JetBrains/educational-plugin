@@ -88,9 +88,8 @@
 
     <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.BrowseCoursesAction"/>
 
-    <action id="Educational.LearnAndTeach" class="com.jetbrains.edu.learning.newproject.LearnAndTeachAction">
-      <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>
-    </action>
+    <action id="Educational.LearnAndTeach" class="com.jetbrains.edu.learning.newproject.LearnAndTeachAction"/>
+
     <!--educator actions-->
     <action id="Educational.Educator.InsertShortcut" class="com.jetbrains.edu.coursecreator.actions.InsertShortcutAction">
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
@@ -286,5 +285,6 @@
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
   </extensions>
 
+  <xi:include href="/META-INF/ide-specific-actions.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
 </idea-plugin>
