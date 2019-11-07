@@ -162,6 +162,7 @@ public class CustomAuthorizationServer {
       }
       finally {
         SERVER_BY_NAME.get(platformName).stopServer();
+        SERVER_BY_NAME.remove(platformName);
       }
     };
   }

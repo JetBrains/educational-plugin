@@ -36,12 +36,13 @@ val AUTHORISATION_CODE_URL: String
   get() = "${HYPERSKILL_URL}oauth2/authorize/?" +
           "client_id=$CLIENT_ID&redirect_uri=${URLUtil.encodeURIComponent(REDIRECT_URI)}&grant_type=code&scope=read+write&response_type=code"
 
-val REDIRECT_URI: String = if (EduUtils.isAndroidStudio()) {
-  getCustomServer().handlingUri
-}
-else {
-  REDIRECT_URI_DEFAULT
-}
+val REDIRECT_URI: String
+  get() = if (EduUtils.isAndroidStudio()) {
+    getCustomServer().handlingUri
+  }
+  else {
+    REDIRECT_URI_DEFAULT
+  }
 
 private fun createCustomServer(): CustomAuthorizationServer {
   return CustomAuthorizationServer.create(HYPERSKILL, "/api/edu/hyperskill/oauth")
