@@ -16,6 +16,11 @@ class StepikUpdateDateTest : EduTestCase() {
     EduSettings.getInstance().user = StepikUser.createEmptyUser()
   }
 
+  override fun tearDown() {
+    EduSettings.getInstance().user = null
+    super.tearDown()
+  }
+
   fun `test course up to date`() {
     val course = course(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
