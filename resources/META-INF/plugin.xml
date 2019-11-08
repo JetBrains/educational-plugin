@@ -20,6 +20,7 @@
     <depends optional="true" config-file="Edu-Rust.xml">org.rust.lang</depends>
     <depends optional="true" config-file="Edu-Cpp.xml">com.intellij.modules.clion</depends>
     <depends optional="true" config-file="Edu-YAML.xml">org.jetbrains.plugins.yaml</depends>
+    <depends optional="true" config-file="Edu-Go.xml">org.jetbrains.plugins.go</depends>
     <!-- Hack! -->
     <!-- Platform doesn't take into account dependencies from optional config files including `org.jetbrains.android`. -->
     <!-- It leads to `NoClassDefFoundError` when you try to load any class from android plugin. -->
