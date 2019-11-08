@@ -1,6 +1,5 @@
 package com.jetbrains.edu.go
 
-import com.goide.GoLanguage
+import com.intellij.lang.Language
 
-
-data class GoProjectSettings(val language: GoLanguage)
+data class GoProjectSettings(val language: Language)

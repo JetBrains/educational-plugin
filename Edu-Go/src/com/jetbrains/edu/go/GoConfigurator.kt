@@ -1,19 +1,31 @@
 package com.jetbrains.edu.go
 
+import com.goide.GoIcons
+import com.jetbrains.edu.go.checker.GoEduTaskChecker
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
+import javax.swing.Icon
 
 class GoConfigurator : EduConfiguratorWithSubmissions<GoProjectSettings>() {
-  override fun getCourseBuilder(): EduCourseBuilder<GoProjectSettings> {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
+  private val courseBuilder = GoCourseBuilder()
 
-  override fun getTestFileName(): String {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
+  override fun getCourseBuilder(): EduCourseBuilder<GoProjectSettings> = courseBuilder
 
-  override fun getTaskCheckerProvider(): TaskCheckerProvider {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
+  override fun getTestFileName() = ""
+
+  override fun getMockFileName(text: String): String = "task.go"
+
+  override fun getTestDirs() = listOf("test")
+
+  override fun getTaskCheckerProvider(): TaskCheckerProvider = TaskCheckerProvider { task, project -> GoEduTaskChecker(project, task) }
+
+  override fun pluginRequirements() = listOf("org.jetbrains.plugins.go")
+
+  override fun getLogo(): Icon = GoIcons.ICON
+
+  /**
+   * What do we want to exclude from archive?
+   * Is there cases when isEnabled should be false?
+   * */
 }
