@@ -90,7 +90,12 @@ class Step {
 
   constructor(project: Project, task: Task) {
     CourseArchiveCreator.addDescriptions(project, task)
-    text = task.descriptionText
+    text = if (task.descriptionFormat == DescriptionFormat.MD) {
+      val taskDir = task.getTaskDir(project)
+      if (taskDir != null) EduUtils.generateMarkdownHtml(taskDir, task.descriptionText) else task.descriptionText
+    }
+    else task.descriptionText
+
     name = if (task is ChoiceTask) CHOICE else PYCHARM
     if (task is ChoiceTask) {
       feedbackCorrect = task.messageCorrect
@@ -165,6 +170,7 @@ open class PyCharmStepOptions : StepOptions {
   constructor(project: Project, task: Task) {
     title = task.name
     descriptionFormat = task.descriptionFormat
+    descriptionText = task.descriptionText
 
     files = collectTaskFiles(project, task)
     taskType = task.itemType
