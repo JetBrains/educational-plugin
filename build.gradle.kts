@@ -54,7 +54,7 @@ val pythonIDEAPlugin = if (isAtLeast193) pythonProPlugin else pythonCommunityPlu
 
 val pythonPlugin = when (baseIDE) {
   "idea" -> pythonIDEAPlugin
-  "clion" -> "python"
+  "clion" -> if (isAtLeast193) "python-ce" else "python"
   // PyCharm has separate python plugin since 2019.3. Previously it was part of PyCharm core code
   "pycharm" -> if (isAtLeast193) "python-ce" else null
   "studio" -> pythonCommunityPlugin
