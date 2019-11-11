@@ -423,10 +423,10 @@ public class EduUtils {
   }
 
   @Nullable
-  public static String convertToHtml(@Nullable final String content, @NotNull VirtualFile virtualFile) {
+  public static String convertToHtml(@Nullable final String content, @NotNull VirtualFile taskDirectory) {
     if (content == null) return null;
 
-    return generateMarkdownHtml(virtualFile, content);
+    return generateMarkdownHtml(taskDirectory, content);
   }
 
   @NotNull
