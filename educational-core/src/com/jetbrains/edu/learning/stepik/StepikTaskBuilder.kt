@@ -224,7 +224,7 @@ open class StepikTaskBuilder(
     task.customPresentableName = stepOptions.customPresentableName
     task.solutionHidden = stepOptions.solutionHidden
 
-    task.descriptionText = if (step.text.isNotEmpty()) step.text else stepOptions.descriptionText.orEmpty()
+    task.descriptionText = if (!stepOptions.descriptionText.isNullOrEmpty()) stepOptions.descriptionText.orEmpty() else step.text
     task.descriptionFormat = stepOptions.descriptionFormat
     task.feedbackLink = stepOptions.myFeedbackLink
 
