@@ -56,7 +56,7 @@ class RsOutputTaskChecker(project: Project, task: OutputTask) : OutputTaskChecke
 
     return when {
       processOutput.isSuccess -> checkOutput(output, expectedOutput)
-      "error: Could not compile" in output -> CheckResult(CheckStatus.Failed, CheckUtils.COMPILATION_FAILED_MESSAGE, output)
+      output.contains(COMPILATION_ERROR_MESSAGE, true) -> CheckResult(CheckStatus.Failed, CheckUtils.COMPILATION_FAILED_MESSAGE, output)
       else -> CheckResult(CheckStatus.Unchecked, output)
     }
   }
