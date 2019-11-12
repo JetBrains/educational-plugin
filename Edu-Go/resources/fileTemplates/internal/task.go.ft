@@ -1,14 +1,6 @@
-package main
-
-import (
-	"fmt"
-)
-
-func main() {
-	fmt.Println(sum(1, 2))
-}
+package task1
 
 // todo: replace this with an actual task
-func sum(a, b int) int {
+func Sum(a, b int) int {
 	return a + b
 }
