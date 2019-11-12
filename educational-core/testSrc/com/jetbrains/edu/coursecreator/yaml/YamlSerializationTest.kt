@@ -416,6 +416,7 @@ class YamlSerializationTest : YamlTestCase() {
     doTest(course, """
       |title: Test Course
       |language: English
+      |summary: Test Course Description
       |programming_language: Plain text
       |environment: Android
       |content:
@@ -430,6 +431,7 @@ class YamlSerializationTest : YamlTestCase() {
     doTest(course, """
       |title: Test Course
       |language: English
+      |summary: Test Course Description
       |programming_language: Plain text
       |solutions_hidden: true
       |
@@ -498,6 +500,7 @@ class YamlSerializationTest : YamlTestCase() {
     doTest(course, """
       |title: Test Course
       |language: English
+      |summary: Test Course Description
       |programming_language: Plain text
       |
     """.trimMargin())

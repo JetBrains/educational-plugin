@@ -139,7 +139,7 @@ public class TaskFile {
   public String getTextToSerialize() {
     String extension = FileUtilRt.getExtension(myName);
     FileType fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension);
-    if (fileType.isBinary() || !isVisible()) {
+    if (fileType.isBinary()) {
       return null;
     }
 

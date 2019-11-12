@@ -83,6 +83,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     final Task task = taskFile.getTask();
     final Document document = TaskFileExt.getDocument(taskFile, project);
     final VirtualFile virtualFile = TaskFileExt.getVirtualFile(taskFile, project);
+    // Note, nullable document is valid situation in case of binary files.
     if (document == null || virtualFile == null) {
       LOG.warn("Failed to find document and virtual file for task file " + taskFile.getName());
       return;

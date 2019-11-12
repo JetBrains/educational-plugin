@@ -21,6 +21,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
     doTest(course, """
       |title: Test Course
       |language: English
+      |summary: Test Course Description
       |programming_language: Plain text
       |mode: Study
       |
@@ -250,7 +251,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
     val task = courseWithFiles {
       lesson {
         eduTask {
-          taskFile("task.txt", "", false)
+          taskFile("task.txt", "task text", false)
         }
       }
     }.findTask("lesson1", "task1")
@@ -260,6 +261,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
     |files:
     |- name: task.txt
     |  visible: false
+    |  text: task text
     |  learner_created: false
     |status: Unchecked
     |record: -1

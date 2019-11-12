@@ -29,6 +29,7 @@ private val CLOSING_TAG: Pattern = Pattern.compile("</p>")
 fun course(
   name: String = "Test Course",
   language: com.intellij.lang.Language = PlainTextLanguage.INSTANCE,
+  description: String = "Test Course Description",
   environment: String = "",
   courseMode: String = EduNames.STUDY,
   courseProducer: () -> Course = ::EduCourse,
@@ -41,6 +42,7 @@ fun course(
   val course = builder.course
   course.language = language.id
   course.environment = environment
+  course.description = description
   return course
 }
 

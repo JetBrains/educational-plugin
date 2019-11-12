@@ -2,11 +2,9 @@ package com.jetbrains.edu.learning.actions.refresh
 
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiDocumentManager
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduTestDialog
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.RevertTaskAction
-import com.jetbrains.edu.learning.withTestDialog
+import com.jetbrains.edu.learning.yaml.YamlDeepLoader
 import java.io.IOException
 
 class RefreshTaskTest : EduTestCase() {
@@ -53,32 +51,53 @@ class RefreshTaskTest : EduTestCase() {
     assertEquals("Look! There is placeholder.", myFixture.editor.document.text)
   }
 
+  fun `test invisible files`() {
+    // Emulate load course from yaml after project reopening
+    StudyTaskManager.getInstance(project).course = YamlDeepLoader.loadCourse(project)
+
+    configureByTaskFile(1, 4, "taskFile1.txt")
+    myFixture.editor.caretModel.moveToOffset(0)
+    myFixture.type("test")
+    PsiDocumentManager.getInstance(project).commitAllDocuments()
+    withTestDialog(EduTestDialog(Messages.OK)) {
+      myFixture.testAction(RevertTaskAction())
+    }
+
+    val taskDir = findFile("lesson1/task4")
+
+    fileTree {
+      file("taskFile1.txt", "TaskFile1")
+      file("taskFile2.txt", "TaskFile2")
+      file("task.html")
+      file("task-info.yaml")
+    }.assertEquals(taskDir, myFixture)
+  }
+
   @Throws(IOException::class)
   override fun createCourse() {
-
-    StudyTaskManager.getInstance(myFixture.project).course = courseWithFiles {
+    StudyTaskManager.getInstance(myFixture.project).course = courseWithFiles(createYamlConfigs = true) {
       lesson {
         eduTask {
-          taskFile(
-            "taskFile1.txt", """
-          Look! There <p>is</p> placeholder.
-        """
-          )
+          taskFile("taskFile1.txt", """
+            Look! There <p>is</p> placeholder.
+          """)
         }
         eduTask {
           taskFile("taskFile2.txt", """
-          Look! There <p>is</p> placeholder.
-        """
-          )
+            Look! There <p>is</p> placeholder.
+          """)
         }
         eduTask {
           taskFile("taskFile1.txt", """
-          Look! There <p>is</p> my placeholder.
-        """)
+            Look! There <p>is</p> my placeholder.
+          """)
           taskFile("taskFile2.txt", """
-          Look! There <p>is</p> placeholder.
-        """
-          )
+            Look! There <p>is</p> placeholder.
+          """)
+        }
+        eduTask {
+          taskFile("taskFile1.txt", "TaskFile1")
+          taskFile("taskFile2.txt", "TaskFile2", visible = false)
         }
       }
     }
