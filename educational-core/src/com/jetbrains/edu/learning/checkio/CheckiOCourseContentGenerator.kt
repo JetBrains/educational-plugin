@@ -22,7 +22,7 @@ class CheckiOCourseContentGenerator(private val fileType: LanguageFileType, priv
 
   fun getStationsFromServerUnderProgress(): List<CheckiOStation> =
     ProgressManager.getInstance().runProcessWithProgressSynchronously<List<CheckiOStation>, Exception>(
-      this::getStationsFromServer,
+      ::getStationsFromServer,
       "Getting Course from Server",
       false,
       null
