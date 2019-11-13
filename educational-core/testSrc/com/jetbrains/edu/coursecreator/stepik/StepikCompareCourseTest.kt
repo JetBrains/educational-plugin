@@ -239,7 +239,7 @@ class StepikCompareCourseTest : EduTestCase() {
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
-  fun `test add task file to Stepik types of tasks`() {
+  fun `test add task file to choice task`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
     val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
