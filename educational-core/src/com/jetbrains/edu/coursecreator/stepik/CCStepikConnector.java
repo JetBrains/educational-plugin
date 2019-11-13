@@ -353,8 +353,9 @@ public class CCStepikConnector {
   }
 
   public static boolean updateAdditionalLessonInfo(@NotNull final Lesson lesson, @NotNull Project project) {
-    updateProgress("Publishing additional info for " + lesson.getName());
     AdditionalLessonInfo info = collectAdditionalLessonInfo(lesson, project);
+    if (info.taskFiles.isEmpty()) return true;
+    updateProgress("Publishing additional info for " + lesson.getName());
     return StepikConnector.getInstance().updateLessonAttachment(info, lesson) == HttpStatus.SC_CREATED;
   }
 
