@@ -40,7 +40,17 @@ class RsEduTaskChecker(project: Project, task: EduTask) : EduTaskCheckerBase(tas
 
   override fun getErrorMessage(node: SMTestProxy): String {
     val message = super.getErrorMessage(node)
-    return if (message.isEmpty()) node.stacktrace.orEmpty() else message
+    // We assume that Rust plugin should put correct error message into test node
+    // or put all test error output into stacktrace
+    if (message.isNotEmpty()) return message
+    val stacktrace = node.stacktrace.orEmpty()
+    val matchResult = ASSERT_MESSAGE_RE.find(stacktrace) ?: return stacktrace
+    return matchResult.groups["message"]?.value ?: error("Failed to find `message` capturing group")
   }
-  override fun getComparisonErrorMessage(node: SMTestProxy): String = node.errorMessage
+
+  companion object {
+    private val ASSERT_MESSAGE_RE =
+      """thread '.*' panicked at '(assertion failed: `\(left (.*) right\)`\s*left: `(.*?)`,\s*right: `(.*?)`(: )?)?(?<message>.*)',"""
+        .toRegex(setOf(RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL))
+  }
 }

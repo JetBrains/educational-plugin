@@ -55,11 +55,11 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
 
               #[test]
               fn test() {
-                  assert!(foo() == String::from("foo"), "Test error message");
+                  assert!(foo() == String::from("foo"));
               }
           """)
         }
-        eduTask("EduComparisonTestFailed") {
+        eduTask("EduTestFailedWithMessage") {
           taskFile("Cargo.toml", """
             [package]
             name = "task"
@@ -76,7 +76,70 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
 
               #[test]
               fn test() {
-                  assert_eq!(foo(), String::from("foo"));
+                  assert!(foo() == String::from("foo"), "Test error message");
+              }
+          """)
+        }
+        eduTask("EduTestFailedWithMultilineMessage") {
+          taskFile("Cargo.toml", """
+            [package]
+            name = "task"
+            version = "0.1.0"
+            edition = "2018"
+          """)
+          rustTaskFile("src/lib.rs", """
+              pub fn foo() -> String {
+                  String::from("bar")
+              }
+          """)
+          rustTaskFile("tests/tests.rs", """
+              use task::foo;
+
+              #[test]
+              fn test() {
+                  assert_ne!(foo(), String::from("bar"), "Test\nerror\nmessage");
+              }
+          """)
+        }
+        eduTask("EduComparisonTestFailed") {
+          taskFile("Cargo.toml", """
+            [package]
+            name = "task"
+            version = "0.1.0"
+            edition = "2018"
+          """)
+          rustTaskFile("src/lib.rs", """
+              pub fn foo() -> i32 {
+                  123
+              }
+          """)
+          rustTaskFile("tests/tests.rs", """
+              use task::foo;
+
+              #[test]
+              fn test() {
+                  assert_eq!(foo(), 12);
+              }
+          """)
+        }
+        eduTask("EduComparisonTestFailedWithMessage") {
+          taskFile("Cargo.toml", """
+            [package]
+            name = "task"
+            version = "0.1.0"
+            edition = "2018"
+          """)
+          rustTaskFile("src/lib.rs", """
+              pub fn foo() -> String {
+                  String::from("bar")
+              }
+          """)
+          rustTaskFile("tests/tests.rs", """
+              use task::foo;
+
+              #[test]
+              fn test() {
+                  assert_eq!(foo(), String::from("foo"), "Test error message");
               }
           """)
         }
@@ -121,9 +184,13 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
       assertEquals(CheckStatus.Failed, checkResult.status)
       val (messageMatcher, diffMatcher) = when (task.name) {
         "EduCompilationFailed" -> equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE) to nullValue()
-        "EduTestFailed" -> containsString("Test error message") to nullValue()
-        "EduComparisonTestFailed" -> any(String::class.java) to
-          diff(CheckResultDiff(expected = "foo", actual = "bar"))
+        "EduTestFailed" -> equalTo("assertion failed: foo() == String::from(\"foo\")") to nullValue()
+        "EduTestFailedWithMessage" -> equalTo("Test error message") to nullValue()
+        "EduTestFailedWithMultilineMessage" -> equalTo("Test\nerror\nmessage") to nullValue()
+        "EduComparisonTestFailed" -> equalTo("") to
+          diff(CheckResultDiff(expected = "12", actual = "123", message = ""))
+        "EduComparisonTestFailedWithMessage" -> equalTo("Test error message") to
+          diff(CheckResultDiff(expected = "foo", actual = "bar", message = "Test error message"))
         "OutputCompilationFailed" -> equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE) to nullValue()
         "OutputTestsFailed" ->
           equalTo("Expected output:\n<Hello, World!\n>\nActual output:\n<Hello, World\n>") to
