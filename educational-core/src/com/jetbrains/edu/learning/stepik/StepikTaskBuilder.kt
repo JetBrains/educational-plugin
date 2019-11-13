@@ -232,7 +232,7 @@ open class StepikTaskBuilder(
     codeTemplate: String? = null
   ) {
     val options = step.options
-    if (options is PyCharmStepOptions && !options.files.isNullOrEmpty()) {
+    if (options is PyCharmStepOptions) {
       options.files?.forEach {
         addPlaceholdersTexts(it)
         task.addTaskFile(it)
