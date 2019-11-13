@@ -67,18 +67,18 @@ private fun markStepAsViewed(lessonId: Int, stepId: Int) {
     .forEach { StepikConnector.getInstance().postView(it.id, stepId) }
 }
 
-fun loadAndFillAdditionalLessonInfo(lesson: Lesson) {
-  val attachmentLink = StepikNames.STEPIK_URL + "/media/attachments/lesson/" + lesson.id + "/" + StepikNames.ADDITIONAL_INFO
+fun loadAndFillLessonAdditionalInfo(lesson: Lesson) {
+  val attachmentLink = "${StepikNames.STEPIK_URL}/media/attachments/lesson/${lesson.id}/${StepikNames.ADDITIONAL_INFO}"
   val infoText = loadAttachment(attachmentLink) ?: return
   val lessonInfo = HyperskillConnector.getInstance().objectMapper.readValue(infoText, AdditionalLessonInfo::class.java)
 
   lessonInfo.taskFiles.forEach { (taskId, taskFiles) ->
-    lesson.getTask(taskId)?.taskFiles = taskFiles.map { it.name to it }.toMap()
+    lesson.getTask(taskId)?.taskFiles = taskFiles.associateBy(TaskFile::getName) { it }
   }
 }
 
 fun loadAndFillAdditionalCourseInfo(course: Course, attachmentLink: String? = null) {
-  val link = attachmentLink ?: StepikNames.STEPIK_URL + "/media/attachments/course/" + course.id + "/" + StepikNames.ADDITIONAL_INFO
+  val link = attachmentLink ?: "${StepikNames.STEPIK_URL}/media/attachments/course/${course.id}/${StepikNames.ADDITIONAL_INFO}"
   val infoText = loadAttachment(link) ?: return
   val courseInfo = HyperskillConnector.getInstance().objectMapper.readValue(infoText, AdditionalCourseInfo::class.java)
 

@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
-import com.jetbrains.edu.learning.stepik.api.loadAndFillAdditionalLessonInfo
+import com.jetbrains.edu.learning.stepik.api.loadAndFillLessonAdditionalInfo
 
 open class StepikIntegrationTest : StepikTestCase() {
 
@@ -294,7 +294,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
     val section = StepikConnector.getInstance().getSection(courseFromStepik.sectionIds[0])!!
     val lesson = StepikCourseLoader.getLessonsFromUnits(courseFromStepik, section.units, false)[0]
-    loadAndFillAdditionalLessonInfo(lesson)
+    loadAndFillLessonAdditionalInfo(lesson)
 
     val taskFromStepik = lesson.getTask("Quiz") ?: error("Can't find `Quiz`")
     assertEquals(taskText, taskFromStepik.getTaskFile("src/Task.kt")?.text)

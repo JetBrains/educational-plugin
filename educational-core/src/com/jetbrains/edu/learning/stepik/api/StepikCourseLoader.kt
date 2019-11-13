@@ -137,7 +137,7 @@ object StepikCourseLoader {
     if (unitIds.isNotEmpty()) {
       val lessons = getLessonsFromUnits(remoteCourse, unitIds, true)
       remoteCourse.addLessons(lessons)
-      lessons.forEach { loadAndFillAdditionalLessonInfo(it) }
+      lessons.forEach { loadAndFillLessonAdditionalInfo(it) }
       remoteCourse.sectionIds = allSections.map { s -> s.id }
     }
   }
@@ -267,7 +267,7 @@ object StepikCourseLoader {
       if (item is Section && item.getName() == remoteCourse.name) {
         remoteCourse.sectionIds = listOf(item.getId())
         itemsWithTopLevelLessons.addAll(item.lessons)
-        item.lessons.forEach { loadAndFillAdditionalLessonInfo(it) }
+        item.lessons.forEach { loadAndFillLessonAdditionalInfo(it) }
       }
       else {
         itemsWithTopLevelLessons.add(item)

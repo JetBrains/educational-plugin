@@ -161,7 +161,7 @@ abstract class HyperskillConnector {
       lesson.addTask(task)
     }
     loadAndFillAdditionalCourseInfo(course, attachmentLink)
-    loadAndFillAdditionalLessonInfo(lesson)
+    loadAndFillLessonAdditionalInfo(lesson)
     return lesson
   }
 
