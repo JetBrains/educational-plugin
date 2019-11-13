@@ -75,7 +75,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
     ProgressManager.getInstance().run(new Modal(project, "Uploading Hyperskill Lesson", true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText("Uploading hyperskill lesson to " + StepikNames.STEPIK_URL);
+        indicator.setText("Uploading Hyperskill lesson to " + StepikNames.STEPIK_URL);
         doPush(lesson, course, project);
         YamlFormatSynchronizer.saveRemoteInfo(lesson);
       }
@@ -102,15 +102,16 @@ public class PushHyperskillLesson extends DumbAwareAction {
   }
 
   public static void doPush(Lesson lesson, Course course, Project project) {
+    String notification = "Hyperskill lesson " + (lesson.getId() > 0 ? "updated" : "uploaded");
     boolean success = lesson.getId() > 0 ? updateLesson(project, lesson, true, -1)
                                          : postLesson(project, lesson, lesson.getIndex(), -1);
 
     if (success) {
       updateAdditionalCourseInfo(project, course);
-      showNotification(project, "Hyperskill lesson updated", openOnStepikAction("/lesson/" + lesson.getId()));
+      showNotification(project, notification, openOnStepikAction("/lesson/" + lesson.getId()));
     }
     else {
-      LOG.error("Failed to update hyperskill lesson");
+      LOG.error("Failed to update Hyperskill lesson");
     }
   }
 }
