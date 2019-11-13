@@ -30,7 +30,6 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.stepik.api.AdditionalLessonInfo
 import com.jetbrains.edu.learning.stepik.collectTaskFiles
@@ -187,12 +186,6 @@ object CCUtils {
    * Replaces placeholder texts with [AnswerPlaceholder.getPossibleAnswer]` for each task file in [course].
    * Note, it doesn't affect files in file system
    */
-  @JvmStatic
-  fun loadText(taskFile: TaskFile, project: Project): String? {
-    val virtualFile = taskFile.getVirtualFile(project) ?: return null
-    return loadText(virtualFile)
-  }
-
   @JvmStatic
   fun initializeCCPlaceholders(project: Project, course: Course) {
     for (item in course.items) {
