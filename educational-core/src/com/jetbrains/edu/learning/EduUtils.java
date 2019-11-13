@@ -53,6 +53,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
@@ -268,6 +269,9 @@ public class EduUtils {
     }
     StringBuffer textBuffer = new StringBuffer(text);
     TaskDescriptionUtil.replaceActionIDsWithShortcuts(textBuffer);
+    if (task.getCourse() instanceof HyperskillCourse) {
+      TaskDescriptionUtil.removeHyperskillTags(textBuffer);
+    }
     textBuffer.append(TaskExt.taskDescriptionHintBlocks(task));
     return textBuffer.toString();
   }

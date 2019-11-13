@@ -8,7 +8,10 @@ import com.intellij.openapi.keymap.impl.KeymapManagerImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.BrowserWindow
 import org.jsoup.Jsoup
 import java.awt.event.InputEvent
@@ -22,6 +25,39 @@ class TaskDescriptionTest : EduTestCase() {
     private val goToActionShortcut: String = getKeystrokeText(KeyEvent.VK_A, InputEvent.CTRL_MASK + InputEvent.SHIFT_MASK)
 
     private fun getKeystrokeText(keyChar: Int, modifiers: Int) = KeymapUtil.getKeystrokeText(KeyStroke.getKeyStroke(keyChar, modifiers))
+  }
+
+  fun testHyperskillTagsRemoved() {
+    createCourseWithHyperskillTags(courseProducer = ::HyperskillCourse)
+
+    val taskDescription = EduUtils.getTaskTextFromTask(project, findTask(0, 0))
+
+    val expectedTextWithoutTags = """
+      text danger hint pre meta
+    """.trimIndent()
+    assertEquals(expectedTextWithoutTags, taskDescription)
+  }
+
+  fun testHyperskillTagsNotRemoved() {
+    val expectedTextWithTags = createCourseWithHyperskillTags(courseProducer = ::EduCourse)
+
+    val taskDescription = EduUtils.getTaskTextFromTask(project, findTask(0, 0))
+
+    assertEquals(expectedTextWithTags, taskDescription)
+  }
+
+  private fun createCourseWithHyperskillTags(courseProducer: () -> Course): String {
+    val taskText = "text [ALERT-danger]danger[/ALERT] [HINT]hint[/HINT] [PRE]pre[/PRE] [META]meta[/META]"
+
+    courseWithFiles(courseProducer = courseProducer) {
+      lesson {
+        eduTask(taskDescription = taskText) {
+          taskFile("taskFile1.txt")
+        }
+      }
+    }
+
+    return taskText
   }
 
   fun testIDEName() {

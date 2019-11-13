@@ -10,6 +10,22 @@ private const val SHORTCUT_ENTITY_ENCODED = "&amp;$SHORTCUT:"
 const val IMG_TAG = "img"
 const val SCRIPT_TAG = "script"
 const val SRC_ATTRIBUTE = "src"
+private val HYPERSKILL_TAGS = tagsToRegex({ "\\[$it](.*)\\[/$it]" }, "HINT", "PRE", "META") +
+                              tagsToRegex({ "\\[$it-\\w+](.*)\\[/$it]" }, "ALERT")
+
+
+private fun tagsToRegex(pattern: (String) -> String, vararg tags: String): List<Regex> = tags.map { pattern(it).toRegex() }
+
+// see EDU-2444
+fun removeHyperskillTags(text: StringBuffer) {
+  var result: String = text.toString()
+  for (regex in HYPERSKILL_TAGS) {
+    result = result.replace(regex) { it.groupValues[1] }
+  }
+
+  text.delete(0, text.length)
+  text.append(result)
+}
 
 fun replaceActionIDsWithShortcuts(text: StringBuffer) {
   var lastIndex = 0
