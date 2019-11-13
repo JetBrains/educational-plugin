@@ -271,24 +271,19 @@ open class StepikIntegrationTest : StepikTestCase() {
     assertEquals(additionalText, taskFromStepik.getTaskFile("build.gradle")?.text)
   }
 
-  fun `test file texts in Quiz task`() {
+  fun `test file text in Quiz task`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
 
-    val localCourse = courseWithFiles {
+    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         choiceTask("Quiz", choiceOptions = choiceOptions) {
           taskFile("src/Task.kt")
-          taskFile("build.gradle")
         }
       }
     }
 
     val taskText = "// task text"
-    val additionalText = "// additional text"
-
     setText("lesson1/Quiz/src/Task.kt", taskText)
-    setText("lesson1/Quiz/build.gradle", additionalText)
-
     CCPushCourse.doPush(project, localCourse.asEduCourse())
 
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
@@ -298,7 +293,34 @@ open class StepikIntegrationTest : StepikTestCase() {
 
     val taskFromStepik = lesson.getTask("Quiz") ?: error("Can't find `Quiz`")
     assertEquals(taskText, taskFromStepik.getTaskFile("src/Task.kt")?.text)
-    assertEquals(additionalText, taskFromStepik.getTaskFile("build.gradle")?.text)
+  }
+
+  fun `test placeholders in Quiz task`() {
+    val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
+
+    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        choiceTask("Quiz", choiceOptions = choiceOptions) {
+          taskFile("src/Task.kt", "fun foo(): String = <p>Foo</p>") {
+            placeholder(0)
+          }
+        }
+      }
+    }
+
+    findPlaceholder(0, 0, "src/Task.kt", 0).apply {
+      placeholderText = "TODO()"
+    }
+
+    CCPushCourse.doPush(project, localCourse.asEduCourse())
+
+    val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
+    val section = StepikConnector.getInstance().getSection(courseFromStepik.sectionIds[0])!!
+    val lesson = StepikCourseLoader.getLessonsFromUnits(courseFromStepik, section.units, false)[0]
+    loadAndFillLessonAdditionalInfo(lesson)
+
+    val taskFromStepik = lesson.getTask("Quiz") ?: error("Can't find `Quiz`")
+    assertEquals("fun foo(): String = TODO()", taskFromStepik.getTaskFile("src/Task.kt")?.text)
   }
 
   fun `test course with language version`() {
