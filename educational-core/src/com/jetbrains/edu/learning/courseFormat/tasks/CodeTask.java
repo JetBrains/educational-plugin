@@ -22,4 +22,9 @@ public class CodeTask extends Task {
   public boolean supportSubmissions() {
     return true;
   }
+
+  @Override
+  public boolean isPluginTaskType() {
+    return false;
+  }
 }

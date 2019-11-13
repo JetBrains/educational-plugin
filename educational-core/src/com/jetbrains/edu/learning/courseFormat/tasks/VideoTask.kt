@@ -16,6 +16,7 @@ class VideoTask : TheoryTask {
 
   override fun getItemType() = "video"
 
+  override fun isPluginTaskType() = false
 }
 
 class VideoSource(var src: String, var res: String) {

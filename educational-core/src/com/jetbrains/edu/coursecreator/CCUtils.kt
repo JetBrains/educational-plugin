@@ -167,16 +167,13 @@ object CCUtils {
 
   @JvmStatic
   fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): AdditionalLessonInfo {
-    val taskFiles = lesson.taskList.filter { !isPluginTaskType(it) }.map { it.id to it.computeTaskFiles(project) }.toMap()
+    val taskFiles = lesson.taskList.filter { !it.isPluginTaskType }.associateBy(Task::getId) { it.computeTaskFiles(project) }
     return AdditionalLessonInfo(taskFiles)
   }
 
   private fun Task.computeTaskFiles(project: Project): List<TaskFile> {
     return taskFiles.map { (name, file) -> TaskFile(name, loadText(file, project).orEmpty(), file.isVisible) }
   }
-
-  @JvmStatic
-  fun isPluginTaskType(task: Task) = task is IdeTask || task is EduTask || task is OutputTask || task is TheoryTask
 
   @JvmStatic
   @Throws(IOException::class)

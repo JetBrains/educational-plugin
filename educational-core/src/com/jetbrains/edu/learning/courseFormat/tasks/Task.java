@@ -315,6 +315,10 @@ public abstract class Task extends StudyItem {
     this.solutionHidden = solutionHidden;
   }
 
+  public boolean isPluginTaskType() {
+    return true;
+  }
+
   @NotNull
   public CheckAction getCheckAction() {
     return getCourse().getCheckAction();
