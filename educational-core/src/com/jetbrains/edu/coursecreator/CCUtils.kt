@@ -29,7 +29,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
-import com.jetbrains.edu.learning.courseFormat.ext.getTextFromDisk
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.stepik.api.AdditionalLessonInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -172,7 +172,7 @@ object CCUtils {
   }
 
   private fun Task.computeTaskFiles(project: Project): List<TaskFile> {
-    return taskFiles.map { (name, file) -> TaskFile(name, file.getTextFromDisk(project).orEmpty()) }
+    return taskFiles.map { (name, file) -> TaskFile(name, loadText(file, project).orEmpty()) }
   }
 
   @JvmStatic
@@ -192,6 +192,12 @@ object CCUtils {
    * Replaces placeholder texts with [AnswerPlaceholder.getPossibleAnswer]` for each task file in [course].
    * Note, it doesn't affect files in file system
    */
+  @JvmStatic
+  fun loadText(taskFile: TaskFile, project: Project): String? {
+    val virtualFile = taskFile.getVirtualFile(project) ?: return null
+    return loadText(virtualFile)
+  }
+
   @JvmStatic
   fun initializeCCPlaceholders(project: Project, course: Course) {
     for (item in course.items) {
