@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.stepik.api.AdditionalLessonInfo
+import com.jetbrains.edu.learning.stepik.collectTaskFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
@@ -168,13 +169,8 @@ object CCUtils {
 
   @JvmStatic
   fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): AdditionalLessonInfo {
-    val taskFiles = lesson.taskList.filter { !it.isPluginTaskType }.associateBy(Task::getId) { it.computeTaskFiles(project) }
+    val taskFiles = lesson.taskList.filter { !it.isPluginTaskType }.associateBy(Task::getId) { collectTaskFiles(project, it) }
     return AdditionalLessonInfo(taskFiles)
-  }
-
-  private fun Task.computeTaskFiles(project: Project): List<TaskFile> {
-    loadActualTexts(project, this)
-    return taskFiles.values.toList()
   }
 
   @JvmStatic

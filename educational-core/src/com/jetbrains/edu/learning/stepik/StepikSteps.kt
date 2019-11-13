@@ -181,7 +181,7 @@ open class PyCharmStepOptions : StepOptions {
   }
 }
 
-private fun collectTaskFiles(project: Project, task: Task): MutableList<TaskFile> {
+fun collectTaskFiles(project: Project, task: Task): MutableList<TaskFile> {
   val files = mutableListOf<TaskFile>()
   val taskDir = task.getTaskDir(project) ?: error("Directory for task ${task.name} does not exist")
   for ((_, value) in task.taskFiles) {
