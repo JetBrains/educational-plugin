@@ -323,6 +323,8 @@ abstract class StepikConnector {
     return postLessonAttachment(info, lesson.id)
   }
 
+  fun deleteLessonAttachment(lessonId: Int) = deleteAttachment(null, lessonId)
+
   private fun deleteAttachment(courseId: Int?, lessonId: Int? = null) {
     val attachments = service.attachments(courseId, lessonId).executeHandlingExceptions(true)?.body()
     if (attachments != null && attachments.attachments.isNotEmpty()) {

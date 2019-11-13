@@ -96,7 +96,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
     for (Lesson lesson : changedItems.getLessonsInfoToUpdate()) {
       appendChangeLine(lesson, builder, INFO_CHANGED);
     }
-    for (Lesson lesson: changedItems.getLessonsAdditionalInfo()) {
+    for (Lesson lesson: changedItems.getLessonAdditionalInfosToUpdate()) {
       appendChangeLine(lesson, builder, ADDITIONAL_INFO_CHANGED);
     }
     for (Task task : changedItems.getNewTasks()) {

@@ -114,7 +114,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       val lesson = updateLessonInfo(project, localLesson, false, section)
       success = lesson != null && success
     }
-    changedItems.lessonsAdditionalInfo.forEach {
+    changedItems.lessonAdditionalInfosToUpdate.forEach {
       success = updateAdditionalLessonInfo(it, project) && success
     }
 

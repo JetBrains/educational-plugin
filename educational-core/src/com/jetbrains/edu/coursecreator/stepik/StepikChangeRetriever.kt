@@ -24,7 +24,7 @@ data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
                              var newLessons: MutableList<Lesson> = ArrayList(),
                              var lessonsInfoToUpdate: MutableList<Lesson> = ArrayList(),
                              var lessonsToDelete: MutableList<Lesson> = ArrayList(),
-                             var lessonsAdditionalInfo: MutableList<Lesson> = ArrayList(),
+                             var lessonAdditionalInfosToUpdate: MutableList<Lesson> = ArrayList(),
                              var tasksToUpdate: MutableList<Task> = ArrayList(),
                              var newTasks: MutableList<Task> = ArrayList(),
                              var tasksToDelete: MutableList<Task> = ArrayList()) {
@@ -90,7 +90,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
           stepikChanges.lessonsInfoToUpdate.add(localLesson)
         }
         if (lessonAdditionalInfoChanged(localLesson, remoteLesson)) {
-          stepikChanges.lessonsAdditionalInfo.add(localLesson)
+          stepikChanges.lessonAdditionalInfosToUpdate.add(localLesson)
         }
         processTasks(stepikChanges, localLesson, remoteLesson)
       }
@@ -142,12 +142,32 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
     return false
   }
 
+  /**
+   * This function is used to detect all changed or added non-plugin tasks.
+   * */
   private fun lessonAdditionalInfoChanged(localLesson: Lesson, remoteLesson: Lesson): Boolean {
-    return localLesson.taskList.zip(remoteLesson.taskList).any { (local, remote) -> stepikTaskFilesChanged(local, remote) }
-  }
+    for (localTask in localLesson.taskList) {
+      val remoteTask = remoteLesson.getTask(localTask.id)
 
-  private fun stepikTaskFilesChanged(localTask: Task, remoteTask: Task): Boolean {
-    return !localTask.isPluginTaskType && !remoteTask.isPluginTaskType && taskFilesChanged(localTask, remoteTask)
+      if (remoteTask == null) {
+        if (localTask.isPluginTaskType)
+          continue // do not handle changes of plugin tasks
+        else
+          return true // non-plugin task added
+      }
+
+      if (localTask.isPluginTaskType && remoteTask.isPluginTaskType)
+        continue // do not handle changes of plugin tasks
+
+      if (localTask.isPluginTaskType != remoteTask.isPluginTaskType)
+        return true // task type changed. If task type becomes plugin, previous additional info should be deleted
+
+      // Our last case is
+      // if (!localTask.isPluginTaskType && !remoteTask.isPluginTaskType)
+      // It means that we need to check the files itself
+      if (taskFilesChanged(localTask, remoteTask)) return true
+    }
+    return false
   }
 
   private fun sectionInfoChanged(section: Section, remoteSection: Section): Boolean {

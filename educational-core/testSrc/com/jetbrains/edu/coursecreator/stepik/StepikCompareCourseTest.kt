@@ -256,7 +256,7 @@ class StepikCompareCourseTest : EduTestCase() {
     }
     changedTask.addTaskFile(newFileName)
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask), lessonsAdditionalInfo = localCourse.lessons)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask), lessonAdditionalInfosToUpdate = localCourse.lessons)
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
@@ -584,7 +584,7 @@ class StepikCompareCourseTest : EduTestCase() {
     compareContent(expected.newLessons, actual.newLessons)
     compareContent(expected.lessonsToDelete, actual.lessonsToDelete)
     compareContent(expected.lessonsInfoToUpdate, actual.lessonsInfoToUpdate)
-    compareContent(expected.lessonsAdditionalInfo, actual.lessonsAdditionalInfo)
+    compareContent(expected.lessonAdditionalInfosToUpdate, actual.lessonAdditionalInfosToUpdate)
 
     compareContent(expected.newTasks, actual.newTasks)
     compareContent(expected.tasksToDelete, actual.tasksToDelete)
