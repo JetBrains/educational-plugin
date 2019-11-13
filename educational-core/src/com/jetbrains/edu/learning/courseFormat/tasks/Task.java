@@ -56,8 +56,12 @@ public abstract class Task extends StudyItem {
 
   public Task() {} //use only for deserialization
 
-  public Task(@NotNull final String name) {
+  public Task(@NotNull final String name, int id, int position, @NotNull Date updateDate, @NotNull CheckStatus status) {
     super(name);
+    myId = id;
+    setIndex(position);
+    setUpdateDate(updateDate);
+    myStatus = status;
   }
 
   public void init(@Nullable Course course, @Nullable final StudyItem parentItem, boolean isRestarted) {

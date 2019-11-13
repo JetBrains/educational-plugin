@@ -1,8 +1,10 @@
 package com.jetbrains.edu.learning.courseFormat.tasks.choice
 
 import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import java.util.*
 
 class ChoiceTask : Task {
 
@@ -24,7 +26,7 @@ class ChoiceTask : Task {
   @Suppress("unused")
   constructor()
 
-  constructor(name: String) : super(name)
+  constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name, id, position, updateDate, status)
 
   override fun getItemType(): String = "choice"
 

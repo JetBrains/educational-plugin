@@ -38,6 +38,7 @@ open class StepikTaskBuilder(
   private val courseEnvironment: String = course.environment
   private val language: Language = course.languageById ?: Language.ANY
   private val step: Step = stepSource.block ?: error("Step is empty")
+  private val updateDate = stepSource.updateDate ?: Date(0)
 
   private val stepikTaskTypes: Map<String, (String) -> Task> = mapOf(
     "code" to this::codeTask,
@@ -58,10 +59,10 @@ open class StepikTaskBuilder(
   )
 
   private val pluginTaskTypes: Map<String, (String) -> Task> = mapOf(
-    "edu" to { name: String -> EduTask(name) },
-    "output" to { name: String -> OutputTask(name) },
-    "ide" to { name: String -> IdeTask(name) },
-    "theory" to { name: String -> TheoryTask(name) }
+    "edu" to { name: String -> EduTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
+    "output" to { name: String -> OutputTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
+    "ide" to { name: String -> IdeTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
+    "theory" to { name: String -> TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) }
   )
 
   fun createTask(type: String): Task? {
@@ -73,16 +74,8 @@ open class StepikTaskBuilder(
     return stepikTaskTypes.containsKey(type)
   }
 
-  private fun Task.initBaseFields() {
-    id = stepId
-    index = stepSource.position
-    updateDate = stepSource.updateDate ?: Date(0)
-    status = CheckStatus.Unchecked
-  }
-
   private fun codeTask(name: String): CodeTask {
-    val task = CodeTask(name)
-    task.initBaseFields()
+    val task = CodeTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
     val options = step.options as PyCharmStepOptions
     val samples = options.samples
 
@@ -126,8 +119,7 @@ open class StepikTaskBuilder(
   }
 
   private fun choiceTask(name: String): ChoiceTask {
-    val task = ChoiceTask(name)
-    task.initBaseFields()
+    val task = ChoiceTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
     task.descriptionText = clearCodeBlockFromTags()
 
     val choiceStep: ChoiceStep? = if (!isUnitTestMode || stepId > 0)
@@ -166,8 +158,7 @@ open class StepikTaskBuilder(
   }
 
   private fun theoryTask(name: String): TheoryTask {
-    val task = TheoryTask(name)
-    task.initBaseFields()
+    val task = TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
     task.descriptionText = clearCodeBlockFromTags()
 
     initTaskFiles(task)
@@ -175,8 +166,7 @@ open class StepikTaskBuilder(
   }
 
   private fun videoTask(name: String): VideoTask {
-    val task = VideoTask(name)
-    task.initBaseFields()
+    val task = VideoTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
     var descriptionText = "View this video on <a href=\"${getStepikLink(task, lesson)}\">Stepik</a>."
     val block = stepSource.block
     if (block != null) {
@@ -200,8 +190,7 @@ open class StepikTaskBuilder(
   }
 
   private fun unsupportedTask(@NonNls name: String): Task {
-    val task = TheoryTask(name)
-    task.initBaseFields()
+    val task = TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
     task.descriptionText = "${name.toLowerCase().capitalize()} tasks are not supported yet. <br>" +
                            "View this step on <a href=\"${getStepikLink(task, lesson)}\">Stepik</a>."
 
@@ -213,8 +202,8 @@ open class StepikTaskBuilder(
     val stepOptions = step.options as PyCharmStepOptions
     val taskName: String = stepOptions.title ?: DEFAULT_EDU_TASK_NAME
 
-    val task = pluginTaskTypes[stepOptions.taskType]?.invoke(taskName) ?: EduTask(taskName)
-    task.initBaseFields()
+    val task = pluginTaskTypes[stepOptions.taskType]?.invoke(taskName)
+               ?: EduTask(taskName, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
     task.customPresentableName = stepOptions.customPresentableName
     task.solutionHidden = stepOptions.solutionHidden
 
