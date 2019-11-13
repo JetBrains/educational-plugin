@@ -161,7 +161,7 @@ abstract class StepikConnector {
     return submissions.firstOrNull()
   }
 
-  fun getSubmissionsList(stepId: Int, page: Int = 1): SubmissionsList? {
+  private fun getSubmissionsList(stepId: Int, page: Int = 1): SubmissionsList? {
     val response = service.submissions(step = stepId, page = page).executeHandlingExceptions()
     return response?.body()
   }
@@ -262,7 +262,7 @@ abstract class StepikConnector {
 
   fun postCourseAttachment(info: AdditionalCourseInfo, courseId: Int) = postAttachment(info, courseId, null)
 
-  fun postLessonAttachment(info: AdditionalLessonInfo, lessonId: Int) = postAttachment(info, null, lessonId)
+  private fun postLessonAttachment(info: AdditionalLessonInfo, lessonId: Int) = postAttachment(info, null, lessonId)
 
   // Update requests:
 
