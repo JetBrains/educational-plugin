@@ -43,6 +43,7 @@ import static com.jetbrains.edu.learning.EduUtils.showOAuthDialog;
 public class CCStepikConnector {
   private static final Logger LOG = Logger.getInstance(CCStepikConnector.class.getName());
   public static final String FAILED_TITLE = "Failed to publish ";
+  public static final String PUBLISHING_COURSE_TITLE = "Publishing additional course data";
   public static final String PUSH_COURSE_GROUP_ID = "Push.course";
   private static final String JETBRAINS_USER_ID = "17813950";
   private static final List<Integer> TESTER_USER_IDS = Lists.newArrayList(17869355);
@@ -113,7 +114,7 @@ public class CCStepikConnector {
   }
 
   public static void postAdditionalCourseInfo(@NotNull EduCourse course, @NotNull final Project project, int courseId) {
-    updateProgress("Publishing additional course info");
+    updateProgress(PUBLISHING_COURSE_TITLE);
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
     AdditionalCourseInfo additionalCourseInfo = new AdditionalCourseInfo(additionalFiles, course.getSolutionsHidden());
     StepikConnector.getInstance().postCourseAttachment(additionalCourseInfo, courseId);
@@ -283,7 +284,7 @@ public class CCStepikConnector {
   public static boolean updateAdditionalCourseInfo(@NotNull Project project, @NotNull Course course) {
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
     assert courseInfo != null;
-    updateProgress("Publishing additional files and info");
+    updateProgress(PUBLISHING_COURSE_TITLE);
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(courseInfo, project);
     AdditionalCourseInfo additionalCourseInfo = new AdditionalCourseInfo(additionalFiles, course.getSolutionsHidden());
     return StepikConnector.getInstance().updateCourseAttachment(additionalCourseInfo, courseInfo) == HttpStatus.SC_CREATED;
@@ -355,7 +356,7 @@ public class CCStepikConnector {
   public static boolean updateAdditionalLessonInfo(@NotNull final Lesson lesson, @NotNull Project project) {
     AdditionalLessonInfo info = collectAdditionalLessonInfo(lesson, project);
     if (info.taskFiles.isEmpty()) return true;
-    updateProgress("Publishing additional info for " + lesson.getName());
+    updateProgress("Publishing additional data for " + lesson.getName());
     return StepikConnector.getInstance().updateLessonAttachment(info, lesson) == HttpStatus.SC_CREATED;
   }
 
