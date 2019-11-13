@@ -152,7 +152,7 @@ object CCUtils {
         var taskFile = EduUtils.getTaskFile(project, file)
         if (taskFile == null) {
           val path = VfsUtilCore.getRelativePath(file, baseDir) ?: return true
-          taskFile = TaskFile(path, loadText(file))
+          taskFile = TaskFile(path, loadText(file), taskFile?.isVisible ?: true)
           try {
             additionalTaskFiles.add(taskFile)
           } catch (e: IOException) {
@@ -172,7 +172,7 @@ object CCUtils {
   }
 
   private fun Task.computeTaskFiles(project: Project): List<TaskFile> {
-    return taskFiles.map { (name, file) -> TaskFile(name, loadText(file, project).orEmpty()) }
+    return taskFiles.map { (name, file) -> TaskFile(name, loadText(file, project).orEmpty(), file.isVisible) }
   }
 
   @JvmStatic

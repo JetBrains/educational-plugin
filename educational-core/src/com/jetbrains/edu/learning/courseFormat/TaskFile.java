@@ -42,6 +42,12 @@ public class TaskFile {
     setText(text);
   }
 
+  public TaskFile(@NotNull String name, @NotNull String text, boolean isVisible) {
+    myName = name;
+    setText(text);
+    myVisible = isVisible;
+  }
+
   public void initTaskFile(final Task task, boolean isRestarted) {
     setTask(task);
     final List<AnswerPlaceholder> answerPlaceholders = getAnswerPlaceholders();
