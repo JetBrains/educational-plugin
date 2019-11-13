@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.*
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
+import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator.Companion.loadActualTexts
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
@@ -152,7 +153,7 @@ object CCUtils {
         var taskFile = EduUtils.getTaskFile(project, file)
         if (taskFile == null) {
           val path = VfsUtilCore.getRelativePath(file, baseDir) ?: return true
-          taskFile = TaskFile(path, loadText(file), taskFile?.isVisible ?: true)
+          taskFile = TaskFile(path, loadText(file))
           try {
             additionalTaskFiles.add(taskFile)
           } catch (e: IOException) {
@@ -172,7 +173,8 @@ object CCUtils {
   }
 
   private fun Task.computeTaskFiles(project: Project): List<TaskFile> {
-    return taskFiles.map { (name, file) -> TaskFile(name, loadText(file, project).orEmpty(), file.isVisible) }
+    loadActualTexts(project, this)
+    return taskFiles.values.toList()
   }
 
   @JvmStatic
