@@ -56,6 +56,10 @@ public abstract class Task extends StudyItem {
 
   public Task() {} //use only for deserialization
 
+  public Task(@NotNull final String name) {
+    super(name);
+  }
+
   public Task(@NotNull final String name, int id, int position, @NotNull Date updateDate, @NotNull CheckStatus status) {
     super(name);
     myId = id;

@@ -13,6 +13,10 @@ public class EduTask extends Task {
   public EduTask() {
   }
 
+  public EduTask(@NotNull final String name) {
+    super(name);
+  }
+
   public EduTask(@NotNull final String name, int id, int position, @NotNull Date updateDate, @NotNull CheckStatus status) {
     super(name, id, position, updateDate, status);
   }
