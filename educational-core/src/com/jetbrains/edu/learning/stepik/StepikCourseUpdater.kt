@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.loadCourseStructure
@@ -230,15 +229,9 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     val serverTasksById = lessonFromServer.taskList.associateBy({ it.id }, { it })
     val tasksById = currentLesson.taskList.associateBy { it.id }
     for (taskId in taskIdsToUpdate) {
-      val taskFromServer = serverTasksById[taskId]
-      val taskIndex = taskFromServer!!.index
-      if (tasksById.containsKey(taskId)) {
-        val currentTask = tasksById[taskId]
-        if ((isSolved(currentTask!!) && !isTheory(currentTask)) && course.isStudy) {
-          currentTask.index = taskIndex
-          currentTask.descriptionText = taskFromServer.descriptionText
-          continue
-        }
+      val taskFromServer = serverTasksById[taskId] ?: error("task from server should not be null")
+      val currentTask = tasksById[taskId]
+      if (currentTask != null) {
         removeExistingDir(currentTask, lessonDir)
       }
 
@@ -247,8 +240,6 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
       createTaskDirectories(lessonDir!!, taskFromServer)
     }
   }
-
-  private fun isTheory(currentTask: Task) = currentTask.itemType == TheoryTask().itemType
 
   @Throws(IOException::class)
   private fun removeExistingDir(studentTask: Task,
@@ -267,10 +258,6 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
 
   private fun getTaskDir(taskName: String, lessonDir: VirtualFile?): VirtualFile? {
     return lessonDir?.findChild(taskName)
-  }
-
-  private fun isSolved(studentTask: Task): Boolean {
-    return CheckStatus.Solved == studentTask.status
   }
 
   @Throws(URISyntaxException::class, IOException::class)

@@ -11,9 +11,10 @@ import java.util.*
 
 abstract class CourseUpdateTestBase<Settings> : CourseGenerationTestBase<Settings>() {
 
-  protected fun doTest(expectedFileTree: FileTree, testPath: String) {
+  protected fun doTest(expectedFileTree: FileTree, testPath: String, modifyCourse: (course: EduCourse) -> Unit = {}) {
     val course = createCourseFromJson("$testPath/course.json", CourseMode.STUDENT)
     val courseFromServer = createCourseFromJson("$testPath/updated_course.json", CourseMode.STUDENT)
+    modifyCourse(course)
     doTest(course, courseFromServer, expectedFileTree)
   }
 

@@ -1,5 +1,9 @@
 package com.jetbrains.edu.learning.update
 
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.fileTree
 
 class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
@@ -296,6 +300,32 @@ class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_file_text_changed")
   }
 
+  private fun testsAdded(setFirstTaskSolved: (course: EduCourse) -> Unit = {}) {
+    val expectedFileTree = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          dir("src") {
+            file("Task.java", "public class Task {\n  //put your task here\n}")
+          }
+          dir("test") {
+            file("Tests.java")
+          }
+          file("task.html")
+        }
+      }
+    }
+
+    doTest(expectedFileTree, "testData/stepik/updateCourse/tests_added") { course -> setFirstTaskSolved(course) }
+  }
+
+  fun `test tests added for solved task`() {
+    testsAdded { course -> setFirstTaskSolved(course) }
+  }
+
+  fun `test tests added for unchecked task`() {
+    testsAdded()
+  }
+
   fun `test theory task file text changed`() {
     val expectedFileTree = fileTree {
       dir("lesson1") {
@@ -578,5 +608,9 @@ class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
     }
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/section_removed")
+  }
+
+  private fun setFirstTaskSolved(course: EduCourse) {
+    ((course.items[0] as Lesson).items[0] as EduTask).status = CheckStatus.Solved
   }
 }
