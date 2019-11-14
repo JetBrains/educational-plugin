@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.stepik.executeHandlingExceptions
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import okhttp3.ConnectionPool
 import org.apache.http.HttpStatus
 import retrofit2.Call
 import retrofit2.Callback
@@ -34,6 +35,7 @@ abstract class HyperskillConnector {
 
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
 
+  private val connectionPool: ConnectionPool = ConnectionPool()
   private val converterFactory: JacksonConverterFactory
   val objectMapper: ObjectMapper
 
@@ -49,7 +51,7 @@ abstract class HyperskillConnector {
 
   private val authorizationService: HyperskillService
     get() {
-      val retrofit = createRetrofitBuilder(baseUrl)
+      val retrofit = createRetrofitBuilder(baseUrl, connectionPool)
         .addConverterFactory(converterFactory)
         .build()
 
@@ -64,7 +66,7 @@ abstract class HyperskillConnector {
       account.refreshTokens()
     }
 
-    val retrofit = createRetrofitBuilder(baseUrl, account?.tokenInfo?.accessToken)
+    val retrofit = createRetrofitBuilder(baseUrl, connectionPool, account?.tokenInfo?.accessToken)
       .addConverterFactory(converterFactory)
       .build()
 

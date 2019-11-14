@@ -7,6 +7,7 @@ import com.intellij.util.net.HttpConfigurable
 import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.pluginVersion
+import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -23,13 +24,13 @@ import java.util.concurrent.TimeUnit
 
 private val LOG = Logger.getInstance("com.jetbrains.edu.learning.stepik.RetrofitExt")
 
-fun createRetrofitBuilder(baseUrl: String, accessToken: String? = null): Retrofit.Builder {
+fun createRetrofitBuilder(baseUrl: String, connectionPool: ConnectionPool, accessToken: String? = null): Retrofit.Builder {
   return Retrofit.Builder()
-    .client(createOkHttpClient(baseUrl, accessToken))
+    .client(createOkHttpClient(baseUrl, connectionPool, accessToken))
     .baseUrl(baseUrl)
 }
 
-private fun createOkHttpClient(baseUrl: String, accessToken: String?): OkHttpClient {
+private fun createOkHttpClient(baseUrl: String, connectionPool: ConnectionPool, accessToken: String?): OkHttpClient {
   val dispatcher = Dispatcher()
   dispatcher.maxRequests = 10
 
@@ -37,6 +38,7 @@ private fun createOkHttpClient(baseUrl: String, accessToken: String?): OkHttpCli
   logger.level = if (ApplicationManager.getApplication().isInternal) BODY else BASIC
 
   val builder = OkHttpClient.Builder()
+    .connectionPool(connectionPool)
     .readTimeout(60, TimeUnit.SECONDS)
     .connectTimeout(60, TimeUnit.SECONDS)
     .addInterceptor { chain ->

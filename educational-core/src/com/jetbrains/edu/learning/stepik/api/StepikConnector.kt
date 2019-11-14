@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.stepik.*
+import okhttp3.ConnectionPool
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -21,6 +22,7 @@ import java.util.*
 
 abstract class StepikConnector {
 
+  private val connectionPool: ConnectionPool = ConnectionPool()
   private val converterFactory: JacksonConverterFactory
   val objectMapper: ObjectMapper
 
@@ -35,7 +37,7 @@ abstract class StepikConnector {
   protected abstract val baseUrl: String
 
   private val authorizationService: StepikOAuthService
-    get() = createRetrofitBuilder(baseUrl)
+    get() = createRetrofitBuilder(baseUrl, connectionPool)
       .addConverterFactory(converterFactory)
       .build()
       .create(StepikOAuthService::class.java)
@@ -48,7 +50,7 @@ abstract class StepikConnector {
       account.refreshTokens()
     }
 
-    return createRetrofitBuilder(baseUrl, account?.tokenInfo?.accessToken)
+    return createRetrofitBuilder(baseUrl, connectionPool, account?.tokenInfo?.accessToken)
       .addConverterFactory(converterFactory)
       .build()
       .create(StepikService::class.java)
