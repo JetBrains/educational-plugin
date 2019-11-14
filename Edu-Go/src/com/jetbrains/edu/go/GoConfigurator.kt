@@ -20,12 +20,5 @@ class GoConfigurator : EduConfiguratorWithSubmissions<GoProjectSettings>() {
 
   override fun getTaskCheckerProvider(): TaskCheckerProvider = TaskCheckerProvider { task, project -> GoEduTaskChecker(project, task) }
 
-  override fun pluginRequirements() = listOf("org.jetbrains.plugins.go")
-
   override fun getLogo(): Icon = GoIcons.ICON
-
-  /**
-   * What do we want to exclude from archive?
-   * Is there cases when isEnabled should be false?
-   * */
 }
