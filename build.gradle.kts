@@ -211,7 +211,6 @@ project(":") {
     val pluginsList = mutableListOf(
       rustPlugin,
       tomlPlugin,
-      goPlugin,
       "yaml"
     )
     pluginsList += listOfNotNull(pythonPlugin)
@@ -223,7 +222,7 @@ project(":") {
     }
     if (baseIDE == "idea") {
       // BACKCOMPAT: 2019.1 - use bundled nodeJS plugin
-      pluginsList += listOf(nodeJsPlugin, "JavaScriptLanguage")
+      pluginsList += listOf(nodeJsPlugin, "JavaScriptLanguage", goPlugin)
     }
 
     setPlugins(*pluginsList.toTypedArray())
@@ -601,9 +600,10 @@ project(":Edu-Cpp") {
 
 project(":Edu-Go") {
   intellij {
-    val plugins = mutableListOf<String>()
-    plugins += goPlugin
-    if (isAtLeast192 && isJvmCenteredIDE) {
+    version = ideaVersion
+
+    val plugins = mutableListOf(goPlugin)
+    if (isAtLeast192) {
       plugins += "java"
     }
     setPlugins(*plugins.toTypedArray())
