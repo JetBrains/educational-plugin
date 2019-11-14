@@ -11,6 +11,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class StudentYamlSerializationTest : EduTestCase()  {
@@ -24,6 +26,30 @@ class StudentYamlSerializationTest : EduTestCase()  {
       |summary: Test Course Description
       |programming_language: Plain text
       |mode: Study
+      |
+    """.trimMargin())
+  }
+
+  fun `test hyperskill course`() {
+    val course = course(courseProducer = ::HyperskillCourse) {} as HyperskillCourse
+
+    val hyperskillProject = HyperskillProject()
+    hyperskillProject.id = 111
+    hyperskillProject.ideFiles = "ideFiles"
+    hyperskillProject.isTemplateBased = true
+
+    course.hyperskillProject = hyperskillProject
+
+    doTest(course, """
+      |type: hyperskill
+      |title: Test Course
+      |language: English
+      |programming_language: Plain text
+      |mode: Study
+      |hyperskill_project:
+      |  id: ${hyperskillProject.id}
+      |  ide_files: ${hyperskillProject.ideFiles}
+      |  is_template_based: ${hyperskillProject.isTemplateBased}
       |
     """.trimMargin())
   }

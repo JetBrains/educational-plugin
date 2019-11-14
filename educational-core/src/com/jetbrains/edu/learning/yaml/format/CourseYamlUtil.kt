@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unknownFieldValueMessage
@@ -33,6 +34,7 @@ import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_PROJECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
@@ -139,16 +141,19 @@ private class TopLevelLessonsSectionDeserializer : StdConverter<Int, List<Int>>(
 }
 
 @JsonPOJOBuilder(withPrefix = "")
-private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
-                            @JsonProperty(TITLE) val title: String,
-                            @JsonProperty(SUMMARY) val summary: String,
-                            @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
-                            @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
-                            @JsonProperty(LANGUAGE) val language: String,
-                            @JsonProperty(ENVIRONMENT) val yamlEnvironment: String?,
-                            @JsonProperty(CONTENT) val content: List<String?> = emptyList(),
-                            @JsonProperty(SUBMIT_MANUALLY) val courseraSubmitManually: Boolean?,
-                            @JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?) {
+private class CourseBuilder(
+  @JsonProperty(TYPE) val courseType: String?,
+  @JsonProperty(TITLE) val title: String,
+  @JsonProperty(SUMMARY) val summary: String,
+  @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
+  @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
+  @JsonProperty(LANGUAGE) val language: String,
+  @JsonProperty(ENVIRONMENT) val yamlEnvironment: String?,
+  @JsonProperty(CONTENT) val content: List<String?> = emptyList(),
+  @JsonProperty(SUBMIT_MANUALLY) val courseraSubmitManually: Boolean?,
+  @JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?,
+  @JsonProperty(HYPERSKILL_PROJECT) val hyperskillProject: HyperskillProject?
+) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
     val course = when (courseType?.capitalize()) {
@@ -158,7 +163,7 @@ private class CourseBuilder(@JsonProperty(TYPE) val courseType: String?,
         }
       }
       CHECKIO_TYPE -> CheckiOCourse()
-      HYPERSKILL_TYPE -> HyperskillCourse()
+      HYPERSKILL_TYPE -> HyperskillCourse().also { it.hyperskillProject = hyperskillProject!! }
       STEPIK_TYPE -> StepikCourse()
       EDU -> EduCourse()
       null -> EduCourse()

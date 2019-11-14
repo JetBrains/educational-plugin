@@ -22,6 +22,9 @@ object YamlMixinNames {
   const val TOP_LEVEL_LESSONS_SECTION = "default_section"
   const val SUBMIT_MANUALLY = "submit_manually"
 
+  //hyperskill course
+  const val HYPERSKILL_PROJECT = "hyperskill_project"
+
   // lesson
   const val UNIT = "unit"
 
