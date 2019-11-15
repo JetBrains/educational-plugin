@@ -34,7 +34,6 @@ import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_PROJECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
@@ -151,8 +150,7 @@ private class CourseBuilder(
   @JsonProperty(ENVIRONMENT) val yamlEnvironment: String?,
   @JsonProperty(CONTENT) val content: List<String?> = emptyList(),
   @JsonProperty(SUBMIT_MANUALLY) val courseraSubmitManually: Boolean?,
-  @JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?,
-  @JsonProperty(HYPERSKILL_PROJECT) val hyperskillProject: HyperskillProject?
+  @JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
@@ -163,7 +161,7 @@ private class CourseBuilder(
         }
       }
       CHECKIO_TYPE -> CheckiOCourse()
-      HYPERSKILL_TYPE -> HyperskillCourse().also { if (hyperskillProject != null) it.hyperskillProject = hyperskillProject }
+      HYPERSKILL_TYPE -> HyperskillCourse()
       STEPIK_TYPE -> StepikCourse()
       EDU -> EduCourse()
       null -> EduCourse()

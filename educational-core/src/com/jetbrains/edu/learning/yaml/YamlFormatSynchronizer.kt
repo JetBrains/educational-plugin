@@ -118,14 +118,15 @@ object YamlFormatSynchronizer {
 
   private fun addRemoteMixIns(mapper: ObjectMapper) {
     mapper.addMixIn(EduCourse::class.java, EduCourseRemoteInfoYamlMixin::class.java)
+    mapper.addMixIn(HyperskillProject::class.java, HyperskillProjectMixin::class.java)
     mapper.addMixIn(Lesson::class.java, RemoteLessonYamlMixin::class.java)
-    mapper.addMixIn(StudyItem::class.java, RemoteStudyItemYamlMixin::class.java)
+    mapper.addMixIn(Section::class.java, RemoteStudyItemYamlMixin::class.java)
+    mapper.addMixIn(Task::class.java, RemoteStudyItemYamlMixin::class.java)
+    mapper.addMixIn(HyperskillCourse::class.java, HyperskillCourseMixin::class.java)
   }
 
   private fun ObjectMapper.addStudentMixIns() {
     addMixIn(Course::class.java, StudentCourseYamlMixin::class.java)
-    addMixIn(HyperskillCourse::class.java, HyperskillCourseMixin::class.java)
-    addMixIn(HyperskillProject::class.java, HyperskillProjectMixin::class.java)
     addMixIn(CheckiOStation::class.java, CheckiOStationYamlMixin::class.java)
     addMixIn(FrameworkLesson::class.java, StudentFrameworkLessonYamlMixin::class.java)
     addMixIn(Task::class.java, StudentTaskYamlMixin::class.java)

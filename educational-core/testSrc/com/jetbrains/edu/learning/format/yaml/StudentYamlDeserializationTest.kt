@@ -33,32 +33,6 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(EduNames.STUDY, course.courseMode)
   }
 
-  fun `test hyperskill course`() {
-    val id = 15
-    val ideFiles = "ideFiles"
-    val isTemplateBased = true
-    val yamlContent = """
-      |type: hyperskill
-      |title: Test Course
-      |language: English
-      |summary: some summary
-      |programming_language: Plain text
-      |mode: Study
-      |hyperskill_project:
-      |  id: $id
-      |  ide_files: $ideFiles
-      |  is_template_based: $isTemplateBased
-      |
-    """.trimMargin()
-
-    val course = STUDENT_MAPPER.deserializeCourse(yamlContent) as HyperskillCourse
-
-    val hyperskillProject = course.hyperskillProject
-    assertEquals(id, hyperskillProject.id)
-    assertEquals(ideFiles, hyperskillProject.ideFiles)
-    assertEquals(isTemplateBased, hyperskillProject.isTemplateBased)
-  }
-
   fun `test checkio station`() {
     val firstTask = "Introduction Task"
     val secondTask = "Advanced Task"

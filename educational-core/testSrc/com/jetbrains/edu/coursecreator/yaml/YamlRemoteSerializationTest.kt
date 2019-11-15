@@ -3,6 +3,8 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
 
@@ -21,6 +23,26 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |default_section: 1
     |""".trimMargin())
+  }
+
+  fun `test hyperskill project`() {
+    val course = course(courseProducer = ::HyperskillCourse) {  } as HyperskillCourse
+    val hyperskillProject = HyperskillProject()
+    hyperskillProject.id = 111
+    hyperskillProject.ideFiles = "ideFiles"
+    hyperskillProject.isTemplateBased = true
+
+    course.hyperskillProject = hyperskillProject
+
+    val expectedYaml = """
+      |hyperskill_project:
+      |  id: ${hyperskillProject.id}
+      |  ide_files: ${hyperskillProject.ideFiles}
+      |  is_template_based: ${hyperskillProject.isTemplateBased}
+      |
+    """.trimMargin()
+
+    doTest(course, expectedYaml)
   }
 
   fun `test course without top-level lessons`() {

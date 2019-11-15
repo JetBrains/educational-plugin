@@ -46,10 +46,6 @@ class StudentYamlSerializationTest : EduTestCase()  {
       |language: English
       |programming_language: Plain text
       |mode: Study
-      |hyperskill_project:
-      |  id: ${hyperskillProject.id}
-      |  ide_files: ${hyperskillProject.ideFiles}
-      |  is_template_based: ${hyperskillProject.isTemplateBased}
       |
     """.trimMargin())
   }

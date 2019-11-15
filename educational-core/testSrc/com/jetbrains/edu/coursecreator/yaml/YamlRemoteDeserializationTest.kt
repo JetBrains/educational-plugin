@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightVirtualFile
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_LESSON_CONFIG
@@ -26,6 +27,27 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertEquals(1, course.id)
     assertEquals(Date(0), course.updateDate)
     assertEquals(listOf(1), course.sectionIds)
+  }
+
+  fun `test hyperskill project`() {
+    val id = 15
+    val ideFiles = "ideFiles"
+    val isTemplateBased = true
+    val yamlContent = """
+      |hyperskill_project:
+      |  id: $id
+      |  ide_files: $ideFiles
+      |  is_template_based: $isTemplateBased
+      |
+    """.trimMargin()
+
+    val configFile = createConfigFile(yamlContent, REMOTE_COURSE_CONFIG)
+    val course = YamlDeserializer.deserializeRemoteItem(configFile) as HyperskillCourse
+
+    val hyperskillProject = course.hyperskillProject
+    assertEquals(id, hyperskillProject.id)
+    assertEquals(ideFiles, hyperskillProject.ideFiles)
+    assertEquals(isTemplateBased, hyperskillProject.isTemplateBased)
   }
 
   fun `test course without top-level lessons`() {

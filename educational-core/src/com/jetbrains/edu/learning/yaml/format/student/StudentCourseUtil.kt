@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.yaml.format.CourseYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_PROJECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.MODE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
@@ -22,36 +21,4 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 abstract class StudentCourseYamlMixin : CourseYamlMixin() {
   @JsonProperty(MODE)
   private var courseMode: String = EduNames.STUDY
-}
-
-@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT, MODE, HYPERSKILL_PROJECT)
-abstract class HyperskillCourseMixin: StudentCourseYamlMixin() {
-
-  @JsonProperty(HYPERSKILL_PROJECT)
-  lateinit var hyperskillProject: HyperskillProject
-}
-
-@Suppress("unused")
-@JsonPropertyOrder(ID, IDE_FILES, IS_TEMPLATE_BASED)
-abstract class HyperskillProjectMixin {
-  @JsonProperty(ID)
-  var id: Int = -1
-
-  @JsonIgnore
-  var title: String = ""
-
-  @JsonIgnore
-  var description: String = ""
-
-  @JsonProperty(IDE_FILES)
-  var ideFiles: String = ""
-
-  @JsonIgnore
-  var useIde: Boolean = false
-
-  @JsonIgnore
-  var language: String = ""
-
-  @JsonProperty(IS_TEMPLATE_BASED)
-  var isTemplateBased: Boolean = false
 }

@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
@@ -33,6 +34,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
 import com.jetbrains.edu.learning.yaml.YamlLoader.getEditor
 import com.jetbrains.edu.learning.yaml.errorHandling.*
 import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 
 /**
  * Deserialize [StudyItem] object from yaml config file without any additional modifications.
@@ -130,12 +132,21 @@ object YamlDeserializer {
     val configName = configFile.name
     val configFileText = configFile.document.text
     return when (configName) {
-      REMOTE_COURSE_CONFIG -> REMOTE_MAPPER.readValue(configFileText, EduCourse::class.java)
+      REMOTE_COURSE_CONFIG -> deserializeCourseRemoteInfo(configFileText)
       REMOTE_LESSON_CONFIG -> REMOTE_MAPPER.readValue(configFileText, Lesson::class.java)
       REMOTE_SECTION_CONFIG,
       REMOTE_TASK_CONFIG -> REMOTE_MAPPER.readValue(configFileText, RemoteStudyItem::class.java)
       else -> loadingError(unknownConfigMessage(configName))
     }
+  }
+
+  private fun deserializeCourseRemoteInfo(configFileText: String): Course {
+    val tree = REMOTE_MAPPER.readTree(configFileText)
+    val clazz = if (tree.get(YamlMixinNames.HYPERSKILL_PROJECT) != null)
+      HyperskillCourse::class.java
+    else EduCourse::class.java
+
+    return REMOTE_MAPPER.treeToValue(tree, clazz)
   }
 
   private fun asText(node: JsonNode?): String? {
