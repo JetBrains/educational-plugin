@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.yaml
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -7,6 +9,9 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
@@ -15,6 +20,9 @@ import com.jetbrains.edu.learning.yaml.errorHandling.notFoundMessage
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
 
 object YamlDeepLoader {
+  private val HYPERSKILL_PROJECT_REGEX = "$HYPERSKILL_PROJECTS_URL/(\\d+)/.*".toRegex()
+  private val LOG = Logger.getInstance(YamlDeepLoader::class.java)
+
   @JvmStatic
   fun loadCourse(project: Project): Course? {
     val projectDir = project.courseDir
@@ -72,13 +80,37 @@ object YamlDeepLoader {
   }
 
   private fun Course.loadRemoteInfoRecursively(project: Project) {
-    course.loadRemoteInfo(project)
+    loadRemoteInfo(project)
     sections.forEach { section -> section.loadRemoteInfo(project) }
 
     // top-level and from sections
     visitLessons { lesson ->
       lesson.loadRemoteInfo(project)
       lesson.taskList.forEach { task -> task.loadRemoteInfo(project) }
+    }
+
+    if (this is HyperskillCourse && hyperskillProject == null) {
+      reconnectHyperskillProject()
+    }
+  }
+
+  private fun HyperskillCourse.reconnectHyperskillProject() {
+    LOG.info("Current project is disconnected from Hyperskill")
+    val firstTask = getProjectLesson()?.taskList?.firstOrNull() ?: return
+    val link = firstTask.feedbackLink.link ?: return
+    val matchResult = HYPERSKILL_PROJECT_REGEX.matchEntire(link) ?: return
+    val projectId = matchResult.groupValues[1].toInt()
+
+    ApplicationManager.getApplication().executeOnPooledThread {
+      HyperskillConnector.getInstance().getProject(projectId)?.let {
+        hyperskillProject = it
+        LOG.info("Current project successfully reconnected to Hyperskill")
+      }
+
+      HyperskillConnector.getInstance().getStages(projectId)?.let {
+        stages = it
+        LOG.info("Stages for disconnected Hyperskill project retrieved")
+      }
     }
   }
 
@@ -94,7 +126,9 @@ object YamlDeepLoader {
     }
 
     val courseWithRemoteInfo = YamlDeserializer.deserializeRemoteItem(remoteConfigFile)
-    getRemoteChangeApplierForItem(courseWithRemoteInfo).applyChanges(this, courseWithRemoteInfo)
+    if (courseWithRemoteInfo.id > 0 || courseWithRemoteInfo is HyperskillCourse) {
+      getRemoteChangeApplierForItem(courseWithRemoteInfo).applyChanges(this, courseWithRemoteInfo)
+    }
   }
 
   private fun Course.setDescriptionInfo(project: Project) {
