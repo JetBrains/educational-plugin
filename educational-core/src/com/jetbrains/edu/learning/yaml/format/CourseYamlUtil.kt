@@ -163,7 +163,7 @@ private class CourseBuilder(
         }
       }
       CHECKIO_TYPE -> CheckiOCourse()
-      HYPERSKILL_TYPE -> HyperskillCourse().also { it.hyperskillProject = hyperskillProject!! }
+      HYPERSKILL_TYPE -> HyperskillCourse().also { if (hyperskillProject != null) it.hyperskillProject = hyperskillProject }
       STEPIK_TYPE -> StepikCourse()
       EDU -> EduCourse()
       null -> EduCourse()
