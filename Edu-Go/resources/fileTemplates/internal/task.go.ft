@@ -1,4 +1,4 @@
-package task1
+package ${TASK_NAME}
 
 // todo: replace this with an actual task
 func Sum(a, b int) int {

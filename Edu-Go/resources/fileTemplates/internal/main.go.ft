@@ -1,0 +1,10 @@
+package main
+
+import (
+	"fmt"
+	"go_course/${LESSON_NAME}/${TASK_NAME}"
+)
+
+func main() {
+	fmt.Println(${TASK_NAME}.Sum(2, 3))
+}

@@ -1,7 +1,7 @@
 package test
 
 import (
-	"go_course/lesson1/task1"
+	"go_course/${LESSON_NAME}/${TASK_NAME}"
 	"testing"
 )
 
@@ -21,7 +21,7 @@ func TestSum(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := task1.Sum(tt.args.a, tt.args.b); got != tt.want {
+			if got := ${TASK_NAME}.Sum(tt.args.a, tt.args.b); got != tt.want {
 				t.Errorf("Sum() = %v, want %v", got, tt.want)
 			}
 		})
