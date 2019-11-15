@@ -38,16 +38,23 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
       |  id: $id
       |  ide_files: $ideFiles
       |  is_template_based: $isTemplateBased
+      |stages:
+      |- id: 1
+      |  step: 11
       |
     """.trimMargin()
 
     val configFile = createConfigFile(yamlContent, REMOTE_COURSE_CONFIG)
     val course = YamlDeserializer.deserializeRemoteItem(configFile) as HyperskillCourse
 
-    val hyperskillProject = course.hyperskillProject
+    val hyperskillProject = course.hyperskillProject!!
     assertEquals(id, hyperskillProject.id)
     assertEquals(ideFiles, hyperskillProject.ideFiles)
     assertEquals(isTemplateBased, hyperskillProject.isTemplateBased)
+
+    val hyperskillStage = course.stages[0]
+    assertEquals(1, hyperskillStage.id)
+    assertEquals(11, hyperskillStage.stepId)
   }
 
   fun `test course without top-level lessons`() {

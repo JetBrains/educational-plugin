@@ -46,6 +46,16 @@ class HyperskillUserInfo {
 }
 
 class HyperskillStage {
+
+  @Suppress("unused") //used for deserialization
+  constructor()
+
+  constructor(stageId: Int, stageTitle: String, stageStepId: Int) {
+    id = stageId
+    title = stageTitle
+    stepId = stageStepId
+  }
+
   @JsonProperty(ID)
   var id: Int = -1
 

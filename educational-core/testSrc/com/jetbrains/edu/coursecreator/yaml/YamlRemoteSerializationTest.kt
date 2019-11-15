@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
@@ -26,19 +27,26 @@ class YamlRemoteSerializationTest : YamlTestCase() {
   }
 
   fun `test hyperskill project`() {
-    val course = course(courseProducer = ::HyperskillCourse) {  } as HyperskillCourse
-    val hyperskillProject = HyperskillProject()
-    hyperskillProject.id = 111
-    hyperskillProject.ideFiles = "ideFiles"
-    hyperskillProject.isTemplateBased = true
-
+    val course = course(courseProducer = ::HyperskillCourse) { } as HyperskillCourse
+    val hyperskillProject = HyperskillProject().apply {
+      id = 111
+      ideFiles = "ideFiles"
+      isTemplateBased = true
+    }
     course.hyperskillProject = hyperskillProject
 
+    course.stages = listOf(HyperskillStage(1, "First", 11),
+                           HyperskillStage(2, "Second", 22))
     val expectedYaml = """
       |hyperskill_project:
       |  id: ${hyperskillProject.id}
       |  ide_files: ${hyperskillProject.ideFiles}
       |  is_template_based: ${hyperskillProject.isTemplateBased}
+      |stages:
+      |- id: 1
+      |  step: 11
+      |- id: 2
+      |  step: 22
       |
     """.trimMargin()
 

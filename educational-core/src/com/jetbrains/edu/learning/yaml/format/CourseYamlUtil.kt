@@ -26,7 +26,6 @@ import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unknownFieldValueMessage
@@ -247,5 +246,6 @@ class RemoteCourseChangeApplier : RemoteInfoChangeApplierBase<EduCourse>() {
 class RemoteHyperskillChangeApplier: RemoteInfoChangeApplierBase<HyperskillCourse>() {
   override fun applyChanges(existingItem: HyperskillCourse, deserializedItem: HyperskillCourse) {
     existingItem.hyperskillProject = deserializedItem.hyperskillProject
+    existingItem.stages = deserializedItem.stages
   }
 }

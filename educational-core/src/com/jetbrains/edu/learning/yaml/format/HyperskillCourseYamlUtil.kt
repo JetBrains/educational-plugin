@@ -1,20 +1,20 @@
 package com.jetbrains.edu.learning.yaml.format
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
-import com.jetbrains.edu.learning.stepik.hyperskill.api.ID
-import com.jetbrains.edu.learning.stepik.hyperskill.api.IDE_FILES
-import com.jetbrains.edu.learning.stepik.hyperskill.api.IS_TEMPLATE_BASED
+import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_PROJECT
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STAGES
 import java.util.*
 
-
+@JsonPropertyOrder(HYPERSKILL_PROJECT, STAGES)
 abstract class HyperskillCourseMixin {
   @JsonProperty(HYPERSKILL_PROJECT)
   lateinit var hyperskillProject: HyperskillProject
+
+  @JsonProperty(STAGES)
+  var stages: List<HyperskillStage> = mutableListOf()
 }
 
 @Suppress("unused")
@@ -46,4 +46,16 @@ abstract class HyperskillProjectMixin {
 
   @JsonProperty(IS_TEMPLATE_BASED)
   var isTemplateBased: Boolean = false
+}
+
+@JsonPropertyOrder(ID, STEP_ID)
+class HyperskillStageMixin {
+  @JsonProperty(ID)
+  var id: Int = -1
+
+  @JsonIgnore
+  var title: String = ""
+
+  @JsonProperty(STEP_ID)
+  var stepId: Int = -1
 }
