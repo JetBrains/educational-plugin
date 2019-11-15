@@ -14,7 +14,7 @@ class HyperskillCourse : Course {
 
   var taskToTopics: MutableMap<Int, List<HyperskillTopic>> = ConcurrentHashMap()
   var stages: List<HyperskillStage> = mutableListOf()
-  lateinit var hyperskillProject: HyperskillProject
+  var hyperskillProject: HyperskillProject? = null
 
   constructor(hyperskillProject: HyperskillProject, languageID: String) {
     this.hyperskillProject = hyperskillProject
@@ -22,6 +22,12 @@ class HyperskillCourse : Course {
     description = hyperskillProject.description + descriptionNote(hyperskillProject.id)
     language = languageID
   }
+
+  val isTemplateBased: Boolean
+    get() {
+      return (hyperskillProject ?: error("Disconnected Hyperskill project")).isTemplateBased
+    }
+
 
   fun getProjectLesson(): FrameworkLesson? = lessons.firstOrNull() as? FrameworkLesson
 

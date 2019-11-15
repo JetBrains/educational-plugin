@@ -131,7 +131,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     // There are special rules for hyperskill courses for now
     // All user changes from the current task should be propagated to next task as is
     val course = lesson.course
-    val changes = if (taskIndexDelta == 1 && course is HyperskillCourse && !course.hyperskillProject.isTemplateBased) {
+    val changes = if (taskIndexDelta == 1 && course is HyperskillCourse && !course.isTemplateBased) {
       calculatePropagationChanges(targetTask, currentState, targetState, showDialogIfConflict)
     } else {
       calculateChanges(currentState, targetState)

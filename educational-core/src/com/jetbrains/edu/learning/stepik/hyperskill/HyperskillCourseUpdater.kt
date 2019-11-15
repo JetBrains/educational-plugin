@@ -33,7 +33,8 @@ object HyperskillCourseUpdater {
     ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.Backgroundable(project, "Checking for Course Updates") {
 
       override fun run(indicator: ProgressIndicator) {
-        val projectId = course.hyperskillProject.id
+        val localHyperskillProject = course.hyperskillProject ?: error("Disconnected hyperskill project")
+        val projectId = localHyperskillProject.id
         val connector = HyperskillConnector.getInstance()
         val hyperskillProject = connector.getProject(projectId) ?: return
         val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language] ?: return

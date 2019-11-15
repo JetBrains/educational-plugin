@@ -183,7 +183,7 @@ abstract class HyperskillConnector {
             LOG.error("User is not logged in to the Hyperskill")
             return false
           }
-          val hyperskillProject = hyperskillCourse.hyperskillProject
+          val hyperskillProject = hyperskillCourse.hyperskillProject ?: error("Disconnected Hyperskill project")
           if (!hyperskillProject.useIde) {
             LOG.error("Selected project is not supported")
             return false
