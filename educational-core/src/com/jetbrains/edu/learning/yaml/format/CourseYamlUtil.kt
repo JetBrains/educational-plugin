@@ -243,3 +243,9 @@ class RemoteCourseChangeApplier : RemoteInfoChangeApplierBase<EduCourse>() {
     existingItem.sectionIds = deserializedItem.sectionIds
   }
 }
+
+class RemoteHyperskillChangeApplier: RemoteInfoChangeApplierBase<HyperskillCourse>() {
+  override fun applyChanges(existingItem: HyperskillCourse, deserializedItem: HyperskillCourse) {
+    existingItem.hyperskillProject = deserializedItem.hyperskillProject
+  }
+}
