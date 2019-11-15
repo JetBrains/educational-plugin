@@ -600,6 +600,7 @@ project(":Edu-Cpp") {
 
 project(":Edu-Go") {
   intellij {
+    localPath = null
     version = ideaVersion
 
     val plugins = mutableListOf(goPlugin)
