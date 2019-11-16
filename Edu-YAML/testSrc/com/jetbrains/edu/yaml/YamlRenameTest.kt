@@ -33,6 +33,7 @@ class YamlRenameTest : YamlCodeInsightTest() {
     doTest(psiDir, "lesson2", lesson.parent, """
       |title: Test Course
       |language: English
+      |summary: Test Course Description
       |programming_language: Plain text
       |content:
       |- lesson2
