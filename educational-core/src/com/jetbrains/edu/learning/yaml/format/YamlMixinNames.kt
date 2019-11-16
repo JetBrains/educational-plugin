@@ -25,6 +25,7 @@ object YamlMixinNames {
   //hyperskill course
   const val HYPERSKILL_PROJECT = "hyperskill_project"
   const val STAGES = "stages"
+  const val THEORY_ID = "theory_id"
 
   // lesson
   const val UNIT = "unit"

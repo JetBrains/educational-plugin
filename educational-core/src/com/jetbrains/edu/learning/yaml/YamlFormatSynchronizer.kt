@@ -40,6 +40,7 @@ import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
@@ -122,10 +123,14 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(Lesson::class.java, RemoteLessonYamlMixin::class.java)
     mapper.addMixIn(Section::class.java, RemoteStudyItemYamlMixin::class.java)
     mapper.addMixIn(Task::class.java, RemoteStudyItemYamlMixin::class.java)
+    mapper.addHyperskillMixins()
+  }
 
-    mapper.addMixIn(HyperskillCourse::class.java, HyperskillCourseMixin::class.java)
-    mapper.addMixIn(HyperskillProject::class.java, HyperskillProjectMixin::class.java)
-    mapper.addMixIn(HyperskillStage::class.java, HyperskillStageMixin::class.java)
+  private fun ObjectMapper.addHyperskillMixins() {
+    addMixIn(HyperskillCourse::class.java, HyperskillCourseMixin::class.java)
+    addMixIn(HyperskillProject::class.java, HyperskillProjectMixin::class.java)
+    addMixIn(HyperskillStage::class.java, HyperskillStageMixin::class.java)
+    addMixIn(HyperskillTopic::class.java, HyperskillTopicMixin::class.java)
   }
 
   private fun ObjectMapper.addStudentMixIns() {

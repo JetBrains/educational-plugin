@@ -41,6 +41,10 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
       |stages:
       |- id: 1
       |  step: 11
+      |topics:
+      |  0:
+      |  - title: Learn Anything
+      |    theory_id: 404
       |
     """.trimMargin()
 
@@ -55,6 +59,10 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     val hyperskillStage = course.stages[0]
     assertEquals(1, hyperskillStage.id)
     assertEquals(11, hyperskillStage.stepId)
+
+    val hyperskillTopic = course.taskToTopics[0]!!.first()
+    assertEquals(404, hyperskillTopic.theoryId)
+    assertEquals("Learn Anything", hyperskillTopic.title)
   }
 
   fun `test course without top-level lessons`() {

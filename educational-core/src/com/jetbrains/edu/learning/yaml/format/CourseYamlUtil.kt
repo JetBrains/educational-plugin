@@ -247,5 +247,6 @@ class RemoteHyperskillChangeApplier: RemoteInfoChangeApplierBase<HyperskillCours
   override fun applyChanges(existingItem: HyperskillCourse, deserializedItem: HyperskillCourse) {
     existingItem.hyperskillProject = deserializedItem.hyperskillProject
     existingItem.stages = deserializedItem.stages
+    existingItem.taskToTopics = deserializedItem.taskToTopics
   }
 }

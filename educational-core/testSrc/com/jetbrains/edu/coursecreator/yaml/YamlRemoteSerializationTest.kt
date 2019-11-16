@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
@@ -36,7 +37,13 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     course.hyperskillProject = hyperskillProject
 
     course.stages = listOf(HyperskillStage(1, "First", 11),
-                           HyperskillStage(2, "Second", 22))
+                           HyperskillStage(2, "Second", 22)
+    )
+
+    val topic = HyperskillTopic()
+    topic.title = "Learn Anything"
+    topic.theoryId = 404
+    course.taskToTopics = mutableMapOf(0 to listOf(topic))
     val expectedYaml = """
       |hyperskill_project:
       |  id: ${hyperskillProject.id}
@@ -47,6 +54,10 @@ class YamlRemoteSerializationTest : YamlTestCase() {
       |  step: 11
       |- id: 2
       |  step: 22
+      |topics:
+      |  0:
+      |  - title: Learn Anything
+      |    theory_id: 404
       |
     """.trimMargin()
 

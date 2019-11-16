@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_PROJECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STAGES
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.THEORY_ID
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 @JsonPropertyOrder(HYPERSKILL_PROJECT, STAGES)
 abstract class HyperskillCourseMixin {
@@ -15,6 +17,9 @@ abstract class HyperskillCourseMixin {
 
   @JsonProperty(STAGES)
   var stages: List<HyperskillStage> = mutableListOf()
+
+  @JsonProperty(TOPICS)
+  var taskToTopics: MutableMap<Int, List<HyperskillTopic>> = ConcurrentHashMap()
 }
 
 @Suppress("unused")
@@ -58,4 +63,16 @@ class HyperskillStageMixin {
 
   @JsonProperty(STEP_ID)
   var stepId: Int = -1
+}
+
+@JsonPropertyOrder(TITLE, THEORY_ID)
+class HyperskillTopicMixin {
+  @JsonIgnore
+  var id: Int = -1
+
+  @JsonProperty(TITLE)
+  var title: String = ""
+
+  @JsonProperty(THEORY_ID)
+  var theoryId: Int? = null
 }
