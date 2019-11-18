@@ -17,12 +17,24 @@
     endforeach ()
 endmacro()
 
-macro(configure_test_target _target_name)
-# Rename learners main function to prevent overloading or name conflicts
-# Add:
-#   #undef main
-# line before custom test main if you use it.
-string(SHA1 _hash _target_name)
-target_compile_definitions(${_target_name} PRIVATE main=gen${_hash}_main)
-unset(_hash)
+macro(configure_test_target _target_name _source_files _test_files)
+    set(_test_source ${_target_name}-source)
+
+    # Create utility library to separate source from test files
+    add_library(${_test_source} STATIC
+    ${_source_files})
+
+    # Rename learners main function to prevent overloading or name conflicts
+    string(SHA1 _hash _target_name)
+    target_compile_definitions(${_test_source} PRIVATE main=main${_hash})
+    unset(_hash)
+
+    # Create test executable target
+    add_executable(${_target_name}
+    ${_test_files})
+
+    # Add source files to target
+    target_link_libraries(${_target_name} ${_test_source})
+
+    unset(_test_source)
 endmacro()]]#

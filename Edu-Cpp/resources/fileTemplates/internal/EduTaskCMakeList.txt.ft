@@ -17,7 +17,6 @@ add_executable(${PROJECT_NAME}-run
 #[[        ${SOURCE})
 
 # Customize test target.]]#
-add_executable(${PROJECT_NAME}-test
+configure_test_target(${PROJECT_NAME}-test
 #[[        ${SOURCE}
         ${TEST})]]#
-configure_test_target(${PROJECT_NAME}-test)
