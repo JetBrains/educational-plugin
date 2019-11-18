@@ -32,7 +32,7 @@
         ],
         "language": null,
         "code": null,
-        "edu_task": "{\"task\":{\"name\":\"task2\",\"stepic_id\":2,\"status\":\"Unchecked\",\"files\":{\"src/Task.kt\":{\"name\":\"src/Task.kt\",\"placeholders\":[],\"is_visible\":true,\"text\":\"fun userFoo() {}\"},\"src/Baz.kt\":{\"name\":\"src/Baz.kt\",\"placeholders\":[],\"is_visible\":true,\"text\":\"fun userBaz() {}\"},\"test/Tests2.kt\":{\"name\":\"test/Tests2.kt\",\"placeholders\":[],\"is_visible\":true,\"text\":\"fun userTests2() {}\"}},\"task_type\":\"edu\"}}",
+        "edu_task": "{\"task\":{\"name\":\"task2\",\"stepic_id\":2,\"status\":\"Solved\",\"files\":{\"src/Task.kt\":{\"name\":\"src/Task.kt\",\"placeholders\":[],\"is_visible\":true,\"text\":\"fun userFoo() {}\"},\"src/Baz.kt\":{\"name\":\"src/Baz.kt\",\"placeholders\":[],\"is_visible\":true,\"text\":\"fun userBaz() {}\"},\"test/Tests4.kt\":{\"name\":\"test/Tests2.kt\",\"placeholders\":[],\"is_visible\":true,\"text\":\"fun userTests2() {}\"}},\"task_type\":\"edu\"}}",
         "version": 11
       },
       "status": "correct",

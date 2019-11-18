@@ -31,7 +31,7 @@ val HYPERSKILL_STAGE: Key<Int> = Key.create("HYPERSKILL_STAGE")
 const val HYPERSKILL_GROUP_ID = "Hyperskill.post"
 
 fun openSelectedStage(course: Course, project: Project) {
-  val stageId = course.getUserData(HYPERSKILL_STAGE) ?: return
+  val stageId = course.getUserData(HYPERSKILL_STAGE) ?: computeSelectedStage(course)
   if (course is HyperskillCourse && stageId > 0) {
     val index = course.stages.indexOfFirst { stage -> stage.id == stageId }
     if (course.lessons.isNotEmpty()) {
@@ -43,6 +43,12 @@ fun openSelectedStage(course: Course, project: Project) {
       }
     }
   }
+}
+
+private fun computeSelectedStage(course: Course): Int {
+  val projectLesson = (course as HyperskillCourse).getProjectLesson() ?: return 0
+  val firstUnsolvedTask = projectLesson.taskList.indexOfFirst { task -> task.status != CheckStatus.Solved }
+  return course.stages[if (firstUnsolvedTask != -1) firstUnsolvedTask else projectLesson.taskList.size - 1].id
 }
 
 fun getTopPanelForProblem(project: Project, course: HyperskillCourse, task: Task?): JPanel? {
