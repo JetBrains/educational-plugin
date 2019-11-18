@@ -288,7 +288,6 @@
     <coursesProvider implementation="com.jetbrains.edu.learning.stepik.StepikCoursesProvider"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.checker.StepikRemoteTaskChecker"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.coursera.CourseraTaskChecker"/>
-    <remoteTaskChecker implementation="com.jetbrains.edu.learning.codeforces.checker.CodeforcesRemoteTaskChecker"/>
     <!--educator-->
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
   </extensions>

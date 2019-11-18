@@ -9,6 +9,7 @@ import com.intellij.util.xmlb.annotations.OptionTag;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
@@ -308,5 +309,10 @@ public abstract class Task extends StudyItem {
 
   public void setSolutionHidden(@Nullable Boolean solutionHidden) {
     this.solutionHidden = solutionHidden;
+  }
+
+  @NotNull
+  public CheckAction getCheckAction() {
+    return getCourse().getCheckAction();
   }
 }

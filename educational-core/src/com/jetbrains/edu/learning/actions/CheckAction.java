@@ -75,7 +75,7 @@ public class CheckAction extends DumbAwareAction {
     if (task instanceof TheoryTask) {
       return new CheckAction(RUN_TASK, RUN_DESCRIPTION);
     }
-    return task.getCourse().getCheckAction();
+    return task.getCheckAction();
   }
 
   @Override
@@ -116,7 +116,8 @@ public class CheckAction extends DumbAwareAction {
       Future<?> future = ApplicationManager.getApplication().executeOnPooledThread(() -> ProgressManager.getInstance().run(checkTask));
       //noinspection TestOnlyProblems
       EduUtils.waitAndDispatchInvocationEvents(future);
-    } else {
+    }
+    else {
       ProgressManager.getInstance().run(checkTask);
     }
   }
@@ -208,7 +209,8 @@ public class CheckAction extends DumbAwareAction {
       long start = System.currentTimeMillis();
       NotificationSettings notificationSettings = turnOffTestRunnerNotifications();
       CheckResult localCheckResult = myChecker == null ? CheckResult.NO_LOCAL_CHECK : myChecker.check(indicator);
-      ApplicationManager.getApplication().invokeLater(() -> NotificationsConfigurationImpl.getInstanceImpl().changeSettings(notificationSettings));
+      ApplicationManager.getApplication()
+        .invokeLater(() -> NotificationsConfigurationImpl.getInstanceImpl().changeSettings(notificationSettings));
       long end = System.currentTimeMillis();
       LOG.info(String.format("Checking of %s task took %d ms", myTask.getName(), end - start));
       if (localCheckResult.getStatus() == CheckStatus.Failed) {
@@ -232,7 +234,8 @@ public class CheckAction extends DumbAwareAction {
         if (myChecker != null) {
           myChecker.onTaskFailed(message, details);
         }
-      } else if (status == CheckStatus.Solved) {
+      }
+      else if (status == CheckStatus.Solved) {
         if (myChecker != null) {
           myChecker.onTaskSolved(message);
         }

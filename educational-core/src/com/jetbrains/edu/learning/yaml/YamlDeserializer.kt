@@ -16,7 +16,10 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -124,7 +127,8 @@ object YamlDeserializer {
       // for student mode
       "code" -> CodeTask::class.java
       "checkiO" -> CheckiOMission::class.java
-      "codeforces" -> CodeforcesTask::class.java
+      CODEFORCES_TASK_TYPE -> CodeforcesTask::class.java
+      CODEFORCES_TASK_TYPE_WITH_FILE_IO ->  CodeforcesTaskWithFileIO::class.java
       else -> formatError(unsupportedItemTypeMessage(type, EduNames.TASK))
     }
     return treeToValue(treeNode, clazz)

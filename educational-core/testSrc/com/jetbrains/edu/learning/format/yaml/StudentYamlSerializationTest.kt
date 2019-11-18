@@ -3,16 +3,14 @@ package com.jetbrains.edu.learning.format.yaml
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
-import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -179,26 +177,9 @@ class StudentYamlSerializationTest : EduTestCase() {
   }
 
   fun `test codeforces task`() {
-    val feedbackUrl = "https://codeforces.com/contest/1218/problem/A?locale=en"
-    val status = CheckStatus.Unchecked
-    val codeforcesTask = CodeforcesTask().apply {
-      feedbackLink = FeedbackLink(feedbackUrl)
-      this.status = status
-    }
-
-    doTest(codeforcesTask, """
-    |type: ${CodeforcesNames.CODEFORCES_TASK_TYPE}
-    |feedback_link: $feedbackUrl
-    |status: $status
-    |""".trimMargin())
-  }
-
-  fun `test codeforces task with files`() {
     val taskFileName = "src/Task.kt"
     val taskSolution = "Task solution"
-    val testFileName = "test/Tests.kt"
-    val testSolution = "Test solution"
-    val feedbackUrl = "https://codeforces.com/contest/1228/problem/F?locale=ru"
+    val feedbackUrl = "https://codeforces.com/contest/1218/problem/A?locale=en"
     val status = CheckStatus.Unchecked
 
     val codeforcesTask = CodeforcesTask().apply {
@@ -206,19 +187,45 @@ class StudentYamlSerializationTest : EduTestCase() {
       this.status = status
     }
     codeforcesTask.addTaskFile(TaskFile(taskFileName, taskSolution).apply { isVisible = true })
-    codeforcesTask.addTaskFile(TaskFile(testFileName, testSolution).apply { isVisible = true })
 
     doTest(codeforcesTask, """
-    |type: ${CodeforcesNames.CODEFORCES_TASK_TYPE}
+    |type: $CODEFORCES_TASK_TYPE
     |files:
     |- name: $taskFileName
     |  visible: true
     |  text: $taskSolution
-    |- name: $testFileName
-    |  visible: true
-    |  text: $testSolution
+    |  learner_created: false
     |feedback_link: $feedbackUrl
     |status: $status
+    |""".trimMargin())
+  }
+
+  fun `test codeforces task with file io`() {
+    val taskFileName = "src/Task.kt"
+    val taskSolution = "Task solution"
+    val feedbackUrl = "https://codeforces.com/contest/1228/problem/F?locale=ru"
+    val status = CheckStatus.Unchecked
+
+    val inputFileName = "in.txt"
+    val outputFileName = "out.txt"
+
+    val codeforcesTask = CodeforcesTaskWithFileIO(inputFileName, outputFileName).apply {
+      feedbackLink = FeedbackLink(feedbackUrl)
+      this.status = status
+    }
+    codeforcesTask.addTaskFile(TaskFile(taskFileName, taskSolution).apply { isVisible = true })
+
+    doTest(codeforcesTask, """
+    |type: $CODEFORCES_TASK_TYPE_WITH_FILE_IO
+    |files:
+    |- name: $taskFileName
+    |  visible: true
+    |  text: $taskSolution
+    |  learner_created: false
+    |feedback_link: $feedbackUrl
+    |status: $status
+    |input_file: $inputFileName
+    |output_file: $outputFileName
     |""".trimMargin())
   }
 

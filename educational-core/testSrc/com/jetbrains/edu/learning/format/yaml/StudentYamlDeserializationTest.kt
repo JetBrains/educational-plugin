@@ -4,8 +4,10 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -81,10 +83,11 @@ class StudentYamlDeserializationTest : EduTestCase() {
   }
 
   fun `test codeforces task`() {
-    val status = CheckStatus.Unchecked
     val feedbackUrl = "https://codeforces.com/contest/1218/problem/A?locale=en"
+    val status = CheckStatus.Unchecked
+
     val yamlContent = """
-    |type: ${CodeforcesNames.CODEFORCES_TASK_TYPE}
+    |type: $CODEFORCES_TASK_TYPE
     |feedback_link: $feedbackUrl
     |status: $status
     |""".trimMargin()
@@ -92,44 +95,45 @@ class StudentYamlDeserializationTest : EduTestCase() {
     val task = deserializeTask(yamlContent)
     assertNotNull(task)
     assertInstanceOf(task, CodeforcesTask::class.java)
-    assertEquals(status, task.status)
     assertEquals(feedbackUrl, task.feedbackLink.link)
+    assertEquals(status, task.status)
   }
 
-  fun `test codeforces task with files`() {
+  fun `test codeforces task with file io`() {
     val taskFileName = "src/Task.kt"
     val taskSolution = "Task solution"
-    val testFileName = "test/Tests.kt"
-    val testSolution = "Test solution"
-    val status = CheckStatus.Unchecked
     val feedbackUrl = "https://codeforces.com/contest/1228/problem/F?locale=ru"
+    val status = CheckStatus.Unchecked
+
+    val inputFileName = "in.txt"
+    val outputFileName = "out.txt"
 
     val yamlContent = """
-    |type: ${CodeforcesNames.CODEFORCES_TASK_TYPE}
+    |type: $CODEFORCES_TASK_TYPE_WITH_FILE_IO
     |files:
     |- name: $taskFileName
     |  visible: true
     |  text: $taskSolution
-    |- name: $testFileName
-    |  visible: true
-    |  text: $testSolution
+    |  learner_created: false
     |feedback_link: $feedbackUrl
     |status: $status
+    |input_file: $inputFileName
+    |output_file: $outputFileName
     |""".trimMargin()
+
     val task = deserializeTask(yamlContent)
     assertNotNull(task)
-    assertInstanceOf(task, CodeforcesTask::class.java)
+    assertInstanceOf(task, CodeforcesTaskWithFileIO::class.java)
 
     val taskFile = task.taskFiles[taskFileName]!!
     assertEquals(true, taskFile.isVisible)
     assertEquals(taskSolution, taskFile.text)
 
-    val testFile = task.taskFiles[testFileName]!!
-    assertEquals(true, testFile.isVisible)
-    assertEquals(testSolution.trimMargin(), testFile.text)
-
     assertEquals(feedbackUrl, task.feedbackLink.link)
     assertEquals(status, task.status)
+
+    assertEquals(inputFileName, (task as CodeforcesTaskWithFileIO).inputFileName)
+    assertEquals(outputFileName, task.outputFileName)
   }
 
   fun `test task status`() {

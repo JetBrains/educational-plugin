@@ -61,6 +61,10 @@ object YamlMixinNames {
   const val CODE = "code"
   const val SECONDS_FROM_CHANGE = "seconds_from_change"
 
+  // codeforces task with file IO
+  const val INPUT_FILE = "input_file"
+  const val OUTPUT_FILE = "output_file"
+
   // task file
   const val NAME = "name"
   const val PLACEHOLDERS = "placeholders"

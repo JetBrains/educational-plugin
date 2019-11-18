@@ -31,7 +31,7 @@ class CodeforcesCourse : EduCourse {
   override fun courseCompatibility(courseInfo: EduCourse): CourseCompatibility = CourseCompatibility.COMPATIBLE
   override fun getIcon(): Icon = EducationalCoreIcons.Codeforces
   override fun getItemType(): String = CODEFORCES_COURSE_TYPE
-  override fun getCheckAction(): CheckAction = CheckAction(CodeforcesNames.SUBMIT_TO_CODEFORCES)
+  override fun getCheckAction(): CheckAction = CheckAction(CodeforcesNames.RUN_LOCAL_TESTS)
 
   private fun parseResponseToAddContent(html: ResponseBody) {
     val doc = Jsoup.parse(html.string())
@@ -48,6 +48,6 @@ class CodeforcesCourse : EduCourse {
     lesson.course = this
 
     addLesson(lesson)
-    problems.forEach { lesson.addTask(CodeforcesTask(it, lesson)) }
+    problems.forEach { lesson.addTask(CodeforcesTask.create(it, lesson)) }
   }
 }

@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -146,6 +147,7 @@ object YamlFormatSynchronizer {
     addMixIn(VideoSource::class.java, VideoSourceYamlMixin::class.java)
     addMixIn(CheckiOMission::class.java, CheckiOMissionYamlMixin::class.java)
     addMixIn(CodeforcesTask::class.java, CodeforcesTaskYamlMixin::class.java)
+    addMixIn(CodeforcesTaskWithFileIO::class.java, CodeforcesTaskWithFileIOYamlMixin::class.java)
 
     addMixIn(TaskFile::class.java, StudentTaskFileYamlMixin::class.java)
     addMixIn(AnswerPlaceholder::class.java, StudentAnswerPlaceholderYamlMixin::class.java)
