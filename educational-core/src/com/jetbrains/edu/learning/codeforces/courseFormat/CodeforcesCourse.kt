@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.courseFormat
 
+import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestURLFromID
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
@@ -30,6 +31,7 @@ class CodeforcesCourse : EduCourse {
   override fun courseCompatibility(courseInfo: EduCourse): CourseCompatibility = CourseCompatibility.COMPATIBLE
   override fun getIcon(): Icon = EducationalCoreIcons.Codeforces
   override fun getItemType(): String = CODEFORCES_COURSE_TYPE
+  override fun getCheckAction(): CheckAction = CheckAction(CodeforcesNames.SUBMIT_TO_CODEFORCES)
 
   private fun parseResponseToAddContent(html: ResponseBody) {
     val doc = Jsoup.parse(html.string())

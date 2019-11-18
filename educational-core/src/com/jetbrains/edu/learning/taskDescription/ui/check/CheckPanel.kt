@@ -42,6 +42,7 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   private fun createRightActionsToolbar(): JPanel {
     val actionsPanel = JPanel(HorizontalLayout(10))
     actionsPanel.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
+    // TODO:  com.jetbrains.edu.learning.actions.CheckAction.createCheckAction
     actionsPanel.add(createSingleActionToolbar(GoToTaskUrlAction.ACTION_ID))
     return actionsPanel
   }

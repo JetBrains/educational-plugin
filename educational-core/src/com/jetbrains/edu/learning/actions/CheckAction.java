@@ -32,16 +32,12 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager;
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames;
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
-import com.jetbrains.edu.learning.coursera.CourseraCourse;
-import com.jetbrains.edu.learning.coursera.CourseraNames;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
@@ -64,31 +60,22 @@ public class CheckAction extends DumbAwareAction {
   protected final Ref<Boolean> myCheckInProgress = new Ref<>(false);
 
   public CheckAction() {
-    super(CHECK_TASK, "Check current task", null);
+    super(CHECK_TASK, CHECK_DESCRIPTION, null);
+  }
+
+  public CheckAction(String text) {
+    super(text, text, null);
   }
 
   private CheckAction(String text, String description) {
     super(text, description, null);
   }
 
-  public static CheckAction createCheckAction(@Nullable Task task) {
+  public static CheckAction createCheckAction(@NotNull Task task) {
     if (task instanceof TheoryTask) {
       return new CheckAction(RUN_TASK, RUN_DESCRIPTION);
     }
-    if (task != null) {
-      Course course = task.getCourse();
-      if (course instanceof CourseraCourse) {
-        if (((CourseraCourse)course).getSubmitManually()) {
-          return new CheckAction(CourseraNames.RUN_TESTS, CourseraNames.RUN_TESTS);
-        }
-        else {
-          return new CheckAction(CourseraNames.SUBMIT_TO_COURSERA, CourseraNames.SUBMIT_TO_COURSERA);
-        }
-      } else if (course instanceof CodeforcesCourse) {
-        return new CheckAction(CodeforcesNames.SUBMIT_TO_CODEFORCES, CodeforcesNames.SUBMIT_TO_CODEFORCES);
-      }
-    }
-    return new CheckAction(CHECK_TASK, CHECK_DESCRIPTION);
+    return task.getCourse().getCheckAction();
   }
 
   @Override
