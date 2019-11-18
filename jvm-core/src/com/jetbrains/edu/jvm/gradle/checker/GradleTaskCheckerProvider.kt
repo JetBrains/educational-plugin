@@ -9,12 +9,13 @@ import com.jetbrains.edu.learning.checker.TheoryTaskChecker
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.handlers.CodeExecutor
 
 abstract class GradleTaskCheckerProvider : TaskCheckerProvider {
 
   override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> = NewGradleEduTaskChecker(task, project)
-  override fun getOutputTaskChecker(task: OutputTask, project: Project): OutputTaskChecker =
-    GradleOutputTaskChecker(task, project, this::mainClassForFile)
+  override fun getOutputTaskChecker(task: OutputTask, project: Project, codeExecutor: CodeExecutor): OutputTaskChecker =
+    GradleOutputTaskChecker(task, project, codeExecutor, this::mainClassForFile)
   override fun getTheoryTaskChecker(task: TheoryTask, project: Project): TheoryTaskChecker =
     GradleTheoryTaskChecker(task, project, this::mainClassForFile)
 

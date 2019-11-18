@@ -14,12 +14,14 @@ import com.jetbrains.edu.learning.checker.OutputTaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
+import com.jetbrains.edu.learning.handlers.CodeExecutor
 
 class GradleOutputTaskChecker(
   task: OutputTask,
   project: Project,
+  codeExecutor: CodeExecutor,
   private val mainClassForFile: (Project, VirtualFile) -> String?
-) : OutputTaskChecker(task, project) {
+) : OutputTaskChecker(task, project, codeExecutor) {
 
   override fun check(indicator: ProgressIndicator): CheckResult {
     val result = runGradleRunTask(project, task, mainClassForFile)

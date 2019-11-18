@@ -1,9 +1,12 @@
 package com.jetbrains.edu.learning.checker;
 
 import com.intellij.openapi.project.Project;
+import com.jetbrains.edu.learning.codeforces.checker.CodeforcesTaskChecker;
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
+import com.jetbrains.edu.learning.handlers.CodeExecutor;
+import com.jetbrains.edu.learning.handlers.DefaultCodeExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,8 +15,8 @@ public interface TaskCheckerProvider {
     TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask task, @NotNull Project project);
 
     @NotNull
-    default OutputTaskChecker getOutputTaskChecker(@NotNull OutputTask task, @NotNull Project project) {
-        return new OutputTaskChecker(task, project);
+    default OutputTaskChecker getOutputTaskChecker(@NotNull OutputTask task, @NotNull Project project, @NotNull CodeExecutor codeExecutor) {
+        return new OutputTaskChecker(task, project, codeExecutor);
     }
 
     @NotNull
@@ -36,13 +39,18 @@ public interface TaskCheckerProvider {
         return new IdeTaskChecker(task, project);
     }
 
+    @NotNull
+    default CodeExecutor getCodeExecutor() {
+      return new DefaultCodeExecutor();
+    }
+
     @Nullable
     default TaskChecker getTaskChecker(@NotNull Task task, @NotNull Project project) {
         if (task instanceof EduTask) {
             return getEduTaskChecker((EduTask) task, project);
         }
         else if (task instanceof OutputTask) {
-            return getOutputTaskChecker((OutputTask) task, project);
+            return getOutputTaskChecker((OutputTask) task, project, getCodeExecutor());
         }
         else if (task instanceof TheoryTask) {
             return getTheoryTaskChecker((TheoryTask) task, project);
@@ -57,7 +65,7 @@ public interface TaskCheckerProvider {
             return getIdeTaskChecker((IdeTask) task, project);
         }
         else if (task instanceof CodeforcesTask) {
-            return null;
+            return new CodeforcesTaskChecker((CodeforcesTask) task, project, getCodeExecutor());
         }
         else {
             throw new IllegalStateException("Unknown task type: " + task.getItemType());

@@ -6,8 +6,16 @@ import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
+import com.jetbrains.edu.learning.handlers.CodeExecutor
 
 class RsTaskCheckerProvider : TaskCheckerProvider {
   override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> = RsEduTaskChecker(project, task)
-  override fun getOutputTaskChecker(task: OutputTask, project: Project): OutputTaskChecker = RsOutputTaskChecker(project, task)
+
+  override fun getOutputTaskChecker(
+    task: OutputTask,
+    project: Project,
+    codeExecutor: CodeExecutor
+  ): OutputTaskChecker = RsOutputTaskChecker(project, task, codeExecutor)
+
+  override fun getCodeExecutor(): CodeExecutor = RsCodeExecutor()
 }
