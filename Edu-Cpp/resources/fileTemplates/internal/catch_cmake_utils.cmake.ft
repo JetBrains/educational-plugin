@@ -18,7 +18,7 @@
 endmacro()
 
 macro(configure_test_target _target_name)
-# Rename students main function to prevent overloading or name conflicts
+# Rename learners main function to prevent overloading or name conflicts
 # Add:
 #   #undef main
 # line before custom test main if you use it.
