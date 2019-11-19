@@ -3,6 +3,9 @@ package com.jetbrains.edu.jvm.gradle.generation
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.JavaSdkVersion
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtilRt
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
@@ -44,7 +47,7 @@ object EduGradleUtils {
 
   @JvmOverloads
   @JvmStatic
-  fun setGradleSettings(project: Project, location: String, distributionType: DistributionType = DistributionType.WRAPPED) {
+  fun setGradleSettings(project: Project, sdk: Sdk?, location: String, distributionType: DistributionType = DistributionType.WRAPPED) {
     val systemSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
     val existingProject = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).getLinkedProjectSettings(location)
     if (existingProject is GradleProjectSettings) {
@@ -64,6 +67,14 @@ object EduGradleUtils {
     // IDEA runner is much more faster and it doesn't write redundant messages into console.
     // Note, it doesn't affect tests - they still are run with gradle runner
     gradleProjectSettings.setDelegateBuildEnabled(false)
+    val javaVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk)
+
+    // Java 13 requires gradle 6.0.
+    // If the current bundled gradle version is less than 6.0, let's delegate selection of `gradleJvm` to IDE itself.
+    // BACKCOMPAT: 2019.1. Don't use `JavaSdkVersion.JDK_13` here because it's available since 2019.2
+    if ((javaVersion == null || javaVersion > JavaSdkVersion.JDK_12) && GradleVersion.current() < GradleVersion.version("6.0")) {
+      gradleProjectSettings.gradleJvm = null
+    }
 
     val projects = ContainerUtilRt.newHashSet<Any>(systemSettings.getLinkedProjectsSettings())
     projects.add(gradleProjectSettings)

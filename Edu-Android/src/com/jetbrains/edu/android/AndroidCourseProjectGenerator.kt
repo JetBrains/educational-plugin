@@ -4,6 +4,7 @@ import com.android.SdkConstants
 import com.android.tools.idea.sdk.IdeSdks
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
@@ -29,8 +30,8 @@ class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Cours
       .saveAsPropertyFile(baseDir, GRADLE_PROPERTIES)
   }
 
-  override fun setupGradleSettings(project: Project) {
-    EduGradleUtils.setGradleSettings(project, project.basePath!!, DistributionType.DEFAULT_WRAPPED)
+  override fun setupGradleSettings(project: Project, sdk: Sdk?) {
+    EduGradleUtils.setGradleSettings(project, sdk, project.basePath!!, DistributionType.DEFAULT_WRAPPED)
   }
 
   companion object {

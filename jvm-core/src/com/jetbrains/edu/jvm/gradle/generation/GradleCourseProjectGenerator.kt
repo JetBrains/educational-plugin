@@ -32,13 +32,13 @@ open class GradleCourseProjectGenerator(
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
-    setJdk(project, projectSettings)
-    setupGradleSettings(project)
+    val jdk = setJdk(project, projectSettings)
+    setupGradleSettings(project, jdk)
     super.afterProjectGenerated(project, projectSettings)
   }
 
-  protected open fun setupGradleSettings(project: Project) {
-    EduGradleUtils.setGradleSettings(project, project.basePath!!)
+  protected open fun setupGradleSettings(project: Project, sdk: Sdk?) {
+    EduGradleUtils.setGradleSettings(project, sdk, project.basePath!!)
   }
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
@@ -47,7 +47,7 @@ open class GradleCourseProjectGenerator(
                                             gradleCourseBuilder.templateVariables(project))
   }
 
-  private fun setJdk(project: Project, settings: JdkProjectSettings) {
+  private fun setJdk(project: Project, settings: JdkProjectSettings): Sdk? {
     val jdk = getJdk(settings)
 
     // Try to apply model, i.e. commit changes from sdk model into ProjectJdkTable
@@ -61,6 +61,7 @@ open class GradleCourseProjectGenerator(
       ProjectRootManager.getInstance(project).projectSdk = jdk
       addAnnotations(ProjectRootManager.getInstance(project).projectSdk?.sdkModificator)
     }
+    return jdk
   }
 
   private fun addAnnotations(sdkModificator: SdkModificator?) {
