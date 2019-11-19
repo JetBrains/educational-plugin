@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.api.REPLY
 import com.jetbrains.edu.learning.stepik.api.STEPS
+import java.util.*
 
 const val PROFILES = "profiles"
 const val STAGES = "stages"
@@ -24,6 +25,7 @@ const val STEP_ID = "step"
 const val TOPIC_THEORY = "topic_theory"
 const val SOLUTIONS = "solutions"
 const val IS_TEMPLATE_BASED = "is_template_based"
+const val UPDATED_AT = "updated_at"
 
 class HyperskillAccount : OAuthAccount<HyperskillUserInfo>()
 
@@ -106,6 +108,10 @@ class HyperskillStepSource : StepSource() {
 
   @JsonProperty(TOPIC_THEORY)
   var topicTheory: Int? = null
+
+  @JsonProperty(UPDATED_AT)
+  override var updateDate: Date? = null
+
 }
 
 class Solution {

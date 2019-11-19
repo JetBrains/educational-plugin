@@ -277,7 +277,7 @@ open class StepSource {
   var cost = 1
 
   @JsonProperty(UPDATE_DATE)
-  var updateDate: Date? = null
+  open var updateDate: Date? = null
 
   constructor()
 
