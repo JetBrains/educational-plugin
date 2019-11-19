@@ -19,9 +19,12 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
-open class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare your solution with answer", AllIcons.Actions.Diff) {
+open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.message("compare.with.answer.title"),
+                                                     EduCoreBundle.message("compare.with.answer.description"),
+                                                     AllIcons.Actions.Diff) {
   companion object {
     const val ACTION_ID = "Educational.CompareWithAnswer"
   }
@@ -45,7 +48,7 @@ open class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Com
       val studentFileContent = DiffContentFactory.getInstance().create(VfsUtil.loadText(virtualFile), virtualFile.fileType)
       val solution = getSolution(it) ?: return@mapNotNull null
       val solutionFileContent = DiffContentFactory.getInstance().create(solution, virtualFile.fileType)
-      SimpleDiffRequest("Compare your solution with answer", studentFileContent, solutionFileContent, virtualFile.name,
+      SimpleDiffRequest(EduCoreBundle.message("compare.with.answer.description"), studentFileContent, solutionFileContent, virtualFile.name,
                         "${virtualFile.name} Answer")
     }
     if (requests.isEmpty()) {
