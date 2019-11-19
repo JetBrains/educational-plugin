@@ -44,6 +44,7 @@ class StudentYamlSerializationTest : EduTestCase()  {
       |type: hyperskill
       |title: Test Course
       |language: English
+      |summary: Test Course Description
       |programming_language: Plain text
       |mode: Study
       |
