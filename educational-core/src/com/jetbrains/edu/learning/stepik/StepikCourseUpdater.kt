@@ -81,8 +81,12 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   }
 
   private fun processDeletedLessons(courseFromServer: Course) {
-    val lessonsFromServerId = courseFromServer.lessons.map { it.id }
-    val lessonsToDelete = course.lessons.filter { it.id !in lessonsFromServerId }
+    val lessonsFromServerIds = mutableListOf<Int>()
+    courseFromServer.visitLessons { lessonsFromServerIds.add(it.id) }
+    val courseLessons = mutableListOf<Lesson>()
+    course.visitLessons { courseLessons.add(it) }
+
+    val lessonsToDelete = courseLessons.filter { it.id !in lessonsFromServerIds }
     if (lessonsToDelete.isNotEmpty()) {
       runInEdt {
         runWriteAction {

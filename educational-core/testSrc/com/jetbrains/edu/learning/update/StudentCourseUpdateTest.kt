@@ -540,6 +540,26 @@ class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
     doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_removed")
   }
 
+  fun `test lesson removed from section`() {
+    val expectedFileTree = fileTree {
+      dir("section1") {
+        dir("lesson1") {
+          dir("task1") {
+            dir("src") {
+              file("Task.java", "public class Task {\n  // put your task here\n}")
+            }
+            dir("test") {
+              file("Tests.java")
+            }
+            file("task.html")
+          }
+        }
+      }
+    }
+
+    doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_removed_from_section")
+  }
+
   fun `test section removed`() {
     val expectedFileTree = fileTree {
       dir("section1") {

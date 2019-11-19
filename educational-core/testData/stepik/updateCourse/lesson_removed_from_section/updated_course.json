@@ -1,0 +1,47 @@
+{
+  "id": 8490,
+  "update_date": "Apr 17, 2018 3:09:23 PM",
+  "items": [
+    {
+      "id": 1,
+      "title": "section1",
+      "type": "section",
+      "update_date": "Apr 17, 2018 3:09:23 PM",
+      "items": [
+        {
+          "id": 1,
+          "title": "lesson1",
+          "update_date": "Apr 17, 2018 3:09:23 PM",
+          "task_list": [
+            {
+              "name": "task1",
+              "stepic_id": 1,
+              "update_date": "Apr 17, 2018 3:09:23 PM",
+              "task_texts": {
+                "task": "Write task description here using markdown or html"
+              },
+              "task_type": "edu",
+              "files": {
+                "src/Task.java": {
+                  "name": "src/Task.java",
+                  "text": "public class Task {\n  // put your task here\n}",
+                  "placeholders": []
+                },
+                "test/Tests.java": {
+                  "name": "test/Tests.java",
+                  "text": "import org.junit.Assert;\nimport org.junit.Test;\n\npublic class Tests {\n  @Test\n public void testSolution() {\n    // put your test here\n   Assert.fail(\"Tests not implemented for the task\");\n  }\n}",
+                  "placeholders": [],
+                  "is_visible": false
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": "Test Java Course",
+  "title": "Java Course",
+  "programming_language": "TEXT",
+  "language": "en"
+}
