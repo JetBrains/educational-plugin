@@ -19,10 +19,8 @@ abstract class PyNewConfiguratorBase(private val courseBuilder: PyNewCourseBuild
 
   override fun getCourseBuilder(): EduCourseBuilder<PyNewProjectSettings> = courseBuilder
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
-    val path = file.path
-    return super.excludeFromArchive(project, file) || path.contains("__pycache__") || path.endsWith(".pyc")
-  }
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
+    super.excludeFromArchive(project, file) || excludeFromArchive(file)
 
   override fun getTaskCheckerProvider(): TaskCheckerProvider = PyNewTaskCheckerProvider()
   override fun getLogo(): Icon = PythonIcons.Python.Python

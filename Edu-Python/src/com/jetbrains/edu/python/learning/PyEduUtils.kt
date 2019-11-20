@@ -1,8 +1,10 @@
+@file:JvmName("PyEduUtils")
 package com.jetbrains.edu.python.learning
 
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -29,4 +31,12 @@ fun Task.getCurrentTaskFilePath(project: Project): String? {
   return getCurrentTaskVirtualFile(project)?.systemDependentPath
 }
 
+fun excludeFromArchive(file: VirtualFile): Boolean {
+  val path = file.path
+  val pathSegments = path.split(VfsUtilCore.VFS_SEPARATOR_CHAR)
+  return pathSegments.any { it in FOLDERS_TO_EXCLUDE } || path.endsWith(".pyc")
+}
+
 private val VirtualFile.systemDependentPath: String get() = FileUtil.toSystemDependentName(path)
+
+private val FOLDERS_TO_EXCLUDE: List<String> = listOf("__pycache__", "venv")
