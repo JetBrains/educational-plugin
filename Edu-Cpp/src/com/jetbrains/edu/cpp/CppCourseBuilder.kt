@@ -63,11 +63,11 @@ class CppCourseBuilder(
     val psiFile = PsiUtilBase.getPsiFile(project, virtualFile).copy() as PsiFile
     val cMakeCommands = PsiTreeUtil.findChildrenOfType(psiFile, CMakeCommand::class.java)
 
-    val projectCommand = cMakeCommands.first { it.name == "project" }
+    val projectCommand = cMakeCommands.first { it.name.compareTo("project", true) == 1 }
     val newProjectName = getCMakeProjectUniqueName(newTask) { FileUtil.sanitizeFileName(it.name, true) }
     replaceFirstArgument(psiFile, projectCommand, false) { newProjectName }
 
-    val targets = cMakeCommands.filter { it.name == "add_executable" }
+    val targets = cMakeCommands.filter { it.name.compareTo("add_executable", true) == 1 }
 
     targets.forEachIndexed { index, cMakeCommand ->
       replaceFirstArgument(psiFile, cMakeCommand, true) { targetName ->
@@ -92,6 +92,11 @@ class CppCourseBuilder(
     val cMakeCommandArguments = command.cMakeCommandArguments ?: return
     val argument = cMakeCommandArguments.cMakeArgumentList.firstOrNull() ?: return
     val argumentName = argument.name ?: return
+
+    if (argumentName.matches(GOOD_TARGET_NAME_PATTERN)) {
+      // name depends on the project name
+      return
+    }
 
     val replaceTo = newNameGenerator(argumentName)
 
@@ -120,5 +125,6 @@ class CppCourseBuilder(
     private const val TEST_SUFFIX = "test"
 
     private val STUDY_ITEM_NAME_PATTERN = "[a-zA-Z0-9_ ]+".toRegex()
+    private val GOOD_TARGET_NAME_PATTERN = """.*\$\{PROJECT_NAME}.*""".toRegex()
   }
 }
