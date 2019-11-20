@@ -42,8 +42,7 @@ public abstract class PyConfiguratorBase extends EduConfiguratorWithSubmissions<
 
   @Override
   public boolean excludeFromArchive(@NotNull Project project, @NotNull VirtualFile file) {
-    String path = file.getPath();
-    return super.excludeFromArchive(project, file) || path.contains("__pycache__") || path.endsWith(".pyc");
+    return super.excludeFromArchive(project, file) || PyEduUtils.excludeFromArchive(file);
   }
 
   @Override
