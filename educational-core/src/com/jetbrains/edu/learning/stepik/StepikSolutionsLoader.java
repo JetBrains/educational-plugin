@@ -53,6 +53,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.jetbrains.edu.learning.stepik.StepikCheckerConnector.EDU_TOOLS_COMMENT;
+import static com.jetbrains.edu.learning.stepik.SubmissionsManager.isLastSubmissionUpToDate;
 
 public class StepikSolutionsLoader implements Disposable {
   public static final String PROGRESS_ID_PREFIX = "77-";
@@ -270,7 +271,7 @@ public class StepikSolutionsLoader implements Disposable {
       Boolean isSolved = taskStatuses.get(j);
       Task task = allTasks[j];
       boolean toUpdate = false;
-      if (isSolved != null && !(task instanceof TheoryTask)) {
+      if (isSolved != null && !(task instanceof TheoryTask) && isLastSubmissionUpToDate(task, isSolved)) {
         toUpdate = isToUpdate(task, isSolved, task.getStatus(), task.getId());
       }
       if (toUpdate) {
@@ -332,7 +333,7 @@ public class StepikSolutionsLoader implements Disposable {
     }
 
     if (task instanceof EduTask) {
-      Reply reply = SubmissionsManager.getLastSubmission(stepId, false);
+      Reply reply = SubmissionsManager.getLastSubmissonReply(stepId, false);
       if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
         return true;
       }
@@ -389,7 +390,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static TaskSolutions getEduTaskSolutions(@NotNull Task task, boolean isSolved) {
     String language = task.getCourse().getLanguageID();
-    Reply reply = SubmissionsManager.getLastSubmission(task.getId(), isSolved);
+    Reply reply = SubmissionsManager.getLastSubmissonReply(task.getId(), isSolved);
     if (reply == null || reply.getSolution() == null || reply.getSolution().isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449
       if (reply != null && reply.getSolution() == null) {

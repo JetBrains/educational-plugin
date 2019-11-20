@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.Submission
@@ -35,10 +36,14 @@ object SubmissionsManager {
     return submissions.getOrPut(taskId) { StepikConnector.getInstance().getAllSubmissions(taskId) }
   }
 
-  @JvmStatic
-  fun getLastSubmission(taskId: Int, isSolved: Boolean): Reply? {
+  private fun getLastSubmission(taskId: Int, isSolved: Boolean): Submission? {
     val submissions = getSubmissions(taskId, isSolved)
-    return submissions.firstOrNull()?.reply
+    return submissions.firstOrNull()
+  }
+
+  @JvmStatic
+  fun getLastSubmissonReply(taskId: Int, isSolved: Boolean): Reply? {
+    return getLastSubmission(taskId, isSolved)?.reply
   }
 
   @JvmStatic
@@ -54,5 +59,11 @@ object SubmissionsManager {
 
   fun putToSubmissions(taskId: Int, submissionsToAdd: MutableList<Submission>) {
     submissions[taskId] = submissionsToAdd
+  }
+
+  @JvmStatic
+  fun isLastSubmissionUpToDate(task: Task, isSolved: Boolean): Boolean {
+    val submission = getLastSubmission(task.id, isSolved) ?: return false
+    return submission.time?.after(task.updateDate) ?: false
   }
 }
