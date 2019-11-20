@@ -3,4 +3,10 @@
   <extensions defaultExtensionNs="Educational">
     <configurator language="go" implementationClass="com.jetbrains.edu.go.GoConfigurator"/>
   </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <experimentalFeature id="com.jetbrains.edu.go" percentOfUsers="100" internalFeature="true">
+      <description>Enables support of Go courses</description>
+    </experimentalFeature>
+  </extensions>
 </idea-plugin>
