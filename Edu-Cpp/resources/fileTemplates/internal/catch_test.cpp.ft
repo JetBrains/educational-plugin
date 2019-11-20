@@ -1,3 +1,5 @@
+// Indicates that the `main` function is need to be set.
+// Add this directive only in a one test file!
 \#define CATCH_CONFIG_MAIN
 
 \#include <catch.hpp>

@@ -3,20 +3,20 @@ project(${PROJECT_NAME})
 
 set(CMAKE_CXX_STANDARD ${CPP_STANDARD})
 #[[
-# Files for the task.
-set(SOURCE
+# Files from `./src` directory
+set(SRC
         src/task.cpp)
 
-# Files for testing.
+# Files from `./test` directory
 set(TEST
         test/test.cpp)
 
 
-# Customize student-run target.]]#
+# Running learner side code]]#
 add_executable(${PROJECT_NAME}-run
-#[[        ${SOURCE})
+#[[        ${SRC})
 
-# Customize test target.]]#
+# Running tests]]#
 configure_test_target(${PROJECT_NAME}-test
-#[[        ${SOURCE}
+#[[        ${SRC}
         ${TEST})]]#
