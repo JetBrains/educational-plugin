@@ -3,6 +3,7 @@ package com.jetbrains.edu.jvm.gradle
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -19,6 +20,9 @@ class GradleProjectComponent(private val project: Project) : ProjectComponent {
     if (project.isDisposed || !isEduProject(project)) {
       return
     }
+    if (EduGradleUtils.isConfiguredWithGradle(project)) {
+      updateGradleSettings()
+    }
 
     StartupManager.getInstance(project).runWhenProjectIsInitialized {
       val course = StudyTaskManager.getInstance(project).course
@@ -31,6 +35,12 @@ class GradleProjectComponent(private val project: Project) : ProjectComponent {
         setupGradleProject()
       }
     }
+  }
+
+  private fun updateGradleSettings() {
+    val projectBasePath = project.basePath ?: return
+    val sdk = ProjectRootManager.getInstance(project).projectSdk
+    EduGradleUtils.setGradleSettings(project, sdk, projectBasePath)
   }
 
   private fun setupGradleProject() {
