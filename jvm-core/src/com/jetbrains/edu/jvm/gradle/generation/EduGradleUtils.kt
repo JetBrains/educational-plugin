@@ -19,8 +19,6 @@ import java.io.File
 import java.io.IOException
 
 object EduGradleUtils {
-  private const val DEFAULT_GRADLE_VERSION = "4.5"
-
   @JvmStatic
   fun isConfiguredWithGradle(project: Project): Boolean {
     return File(project.basePath, GradleConstants.DEFAULT_SCRIPT_NAME).exists()
@@ -57,6 +55,7 @@ object EduGradleUtils {
       if (existingProject.externalProjectPath == null) {
         existingProject.externalProjectPath = location
       }
+      setUpGradleJvm(existingProject, sdk)
       return
     }
 
@@ -67,14 +66,7 @@ object EduGradleUtils {
     // IDEA runner is much more faster and it doesn't write redundant messages into console.
     // Note, it doesn't affect tests - they still are run with gradle runner
     gradleProjectSettings.setDelegateBuildEnabled(false)
-    val javaVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk)
-
-    // Java 13 requires gradle 6.0.
-    // If the current bundled gradle version is less than 6.0, let's delegate selection of `gradleJvm` to IDE itself.
-    // BACKCOMPAT: 2019.1. Don't use `JavaSdkVersion.JDK_13` here because it's available since 2019.2
-    if ((javaVersion == null || javaVersion > JavaSdkVersion.JDK_12) && GradleVersion.current() < GradleVersion.version("6.0")) {
-      gradleProjectSettings.gradleJvm = null
-    }
+    setUpGradleJvm(gradleProjectSettings, sdk)
 
     val projects = ContainerUtilRt.newHashSet<Any>(systemSettings.getLinkedProjectsSettings())
     projects.add(gradleProjectSettings)
@@ -82,7 +74,14 @@ object EduGradleUtils {
     ExternalSystemUtil.ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID)
   }
 
-  @JvmStatic
-  fun gradleVersion(): String = maxOf(GradleVersion.current(), GradleVersion.version(DEFAULT_GRADLE_VERSION)).version
+  private fun setUpGradleJvm(projectSettings: GradleProjectSettings, sdk: Sdk?) {
+    val javaVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk)
 
+    // Java 13 requires gradle 6.0.
+    // If the current bundled gradle version is less than 6.0, let's delegate selection of `gradleJvm` to IDE itself.
+    // BACKCOMPAT: 2019.1. Don't use `JavaSdkVersion.JDK_13` here because it's available since 2019.2
+    if ((javaVersion == null || javaVersion > JavaSdkVersion.JDK_12) && GradleVersion.current() < GradleVersion.version("6.0")) {
+      projectSettings.gradleJvm = null
+    }
+  }
 }
