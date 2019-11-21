@@ -14,6 +14,7 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.layout.*
+import com.intellij.util.text.nullize
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.getDefaultCourseType
@@ -34,6 +35,9 @@ import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.ItemEvent
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.text.AttributeSet
@@ -154,12 +158,8 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
       myRequiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(myRequiredAndDisabledPlugins)
       else -> {
         val validationMessage = myLanguageSettings.validate(null, locationString)
-        if (validationMessage != null) {
-          myAdvancedSettings.setOn(true)
-          validationMessage
-        } else {
-          null
-        }
+        myAdvancedSettings.setOn(validationMessage != null)
+        validationMessage
       }
     }
     if (validationMessage != null) {
@@ -198,6 +198,10 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     myAdvancedSettings.setSettingsComponents(settings)
 
     myRequiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements())
+    myDescriptionTextArea.text = myCourse.description.nullize() ?: """
+      Initial description for ${myTitleField.text}.
+      Created at ${LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))}.
+    """.trimIndent()
     doValidation()
   }
 
