@@ -13,9 +13,9 @@ set(TEST
 
 
 # Running learner side code
-# Use PROJECT_NAME depended names for targets in Framework Lessons, it's needed correct coping CMake files.
+# Use PROJECT_NAME dependent names of targets for the plugin support to work correctly.
 add_executable(${PROJECT_NAME}-run ${SRC})
 
 # Running tests
-# Use PROJECT_NAME depended names for targets in Framework Lessons, it's needed correct coping CMake files.
+# Use PROJECT_NAME dependent names of targets for the plugin support to work correctly.
 configure_test_target(${PROJECT_NAME}-test ${SRC} ${TEST})]]#

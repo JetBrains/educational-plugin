@@ -8,9 +8,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilBase
+import com.intellij.util.IncorrectOperationException
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cmake.CMakeListsFileType
-import com.jetbrains.cmake.psi.CMakeArgument
 import com.jetbrains.cmake.psi.CMakeCommand
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
@@ -62,52 +62,23 @@ class CppCourseBuilder(
 
     val psiFile = PsiUtilBase.getPsiFile(project, virtualFile).copy() as PsiFile
     val cMakeCommands = PsiTreeUtil.findChildrenOfType(psiFile, CMakeCommand::class.java)
+    val projectCommand = cMakeCommands.firstOrNull { it.name.equals("project", true) }
 
-    val projectCommand = cMakeCommands.first { it.name.compareTo("project", true) == 1 }
-    val newProjectName = getCMakeProjectUniqueName(newTask) { FileUtil.sanitizeFileName(it.name, true) }
-    replaceFirstArgument(psiFile, projectCommand, false) { newProjectName }
-
-    val targets = cMakeCommands.filter { it.name.compareTo("add_executable", true) == 1 }
-
-    targets.forEachIndexed { index, cMakeCommand ->
-      replaceFirstArgument(psiFile, cMakeCommand, true) { targetName ->
-        val suffix = when {
-          targetName.endsWith("-${RUN_SUFFIX}") -> RUN_SUFFIX
-          targetName.endsWith("-${TEST_SUFFIX}") -> TEST_SUFFIX
-          else -> "target${index + 1}"
+    if (projectCommand != null) {
+      val newProjectName = getCMakeProjectUniqueName(newTask) { FileUtil.sanitizeFileName(it.name, true) }
+      run {
+        val cMakeCommandArguments = projectCommand.cMakeCommandArguments ?: return@run
+        val firstArgument = cMakeCommandArguments.cMakeArgumentList.firstOrNull() ?: return@run
+        try {
+          firstArgument.setName(newProjectName)
         }
-        "$newProjectName-$suffix"
+        catch (e: IncorrectOperationException) {
+          LOG.warn("Cannot set project name for a new template task CMakeLists.txt file.", e)
+        }
       }
     }
 
     return psiFile.text
-  }
-
-  private fun replaceFirstArgument(
-    psiFile: PsiFile,
-    command: CMakeCommand,
-    needReplaceOccurrences: Boolean,
-    newNameGenerator: (String) -> String
-  ) {
-    val cMakeCommandArguments = command.cMakeCommandArguments ?: return
-    val argument = cMakeCommandArguments.cMakeArgumentList.firstOrNull() ?: return
-    val argumentName = argument.name ?: return
-
-    if (argumentName.matches(GOOD_TARGET_NAME_PATTERN)) {
-      // name depends on the project name
-      return
-    }
-
-    val replaceTo = newNameGenerator(argumentName)
-
-    if (needReplaceOccurrences) {
-      PsiTreeUtil.findChildrenOfType(psiFile, CMakeArgument::class.java)
-        .filter { it.name == argument.name }
-        .forEach { it.setName(replaceTo) }
-    }
-    else {
-      argument.setName(replaceTo)
-    }
   }
 
   override fun refreshProject(project: Project, cause: RefreshCause) {
@@ -121,10 +92,6 @@ class CppCourseBuilder(
   companion object {
     private val LOG: Logger = Logger.getInstance(CppCourseBuilder::class.java)
 
-    private const val RUN_SUFFIX = "run"
-    private const val TEST_SUFFIX = "test"
-
     private val STUDY_ITEM_NAME_PATTERN = "[a-zA-Z0-9_ ]+".toRegex()
-    private val GOOD_TARGET_NAME_PATTERN = """.*\$\{PROJECT_NAME}.*""".toRegex()
   }
 }
