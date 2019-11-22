@@ -107,14 +107,18 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
         return component
       }
     }
+
+    val courseData = collectCoursesData(course)
+    val defaultCourseType = getDefaultCourseType(courseData)
     myCourseDataComboBox.addItemListener {
       if (it.stateChange == ItemEvent.SELECTED) {
         onCourseDataSelected(it.item as CourseData)
       }
     }
-
+    if (defaultCourseType != null) {
+      myCourseDataComboBox.selectedItem = defaultCourseType
+    }
     setupValidation()
-    collectCoursesData(course)
 
     if (course != null) {
       myDescriptionTextArea.text = course.description
@@ -158,7 +162,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
       myRequiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(myRequiredAndDisabledPlugins)
       else -> {
         val validationMessage = myLanguageSettings.validate(null, locationString)
-        myAdvancedSettings.setOn(validationMessage != null)
+        if (validationMessage != null) myAdvancedSettings.setOn(true)
         validationMessage
       }
     }
@@ -199,13 +203,13 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
 
     myRequiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements())
     myDescriptionTextArea.text = myCourse.description.nullize() ?: """
-      Initial description for ${myTitleField.text}.
-      Created at ${LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))}.
+      ${myCourse.language.capitalize()} course.
+      Created: ${LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))}.
     """.trimIndent()
     doValidation()
   }
 
-  private fun collectCoursesData(course: Course?) {
+  private fun collectCoursesData(course: Course?): List<CourseData> {
     val courseData = if (course != null) {
       listOfNotNull(obtainCourseData(course.languageID, course.environment, course.itemType))
     }
@@ -217,11 +221,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     courseData
       .sortedBy { it.displayName }
       .forEach { myCourseDataComboBox.addItem(it) }
-
-    val defaultCourseType = getDefaultCourseType(courseData)
-    if (defaultCourseType != null) {
-      myCourseDataComboBox.selectedItem = defaultCourseType
-    }
+    return courseData
   }
 
   private fun obtainCourseData(languageId: String, environment: String, courseType: String): CourseData? {
