@@ -1,6 +1,9 @@
 package com.jetbrains.edu.cpp
 
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.cmake.CMakeListsFileType
+import com.jetbrains.cmake.psi.CMakeCommand
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -39,3 +42,7 @@ fun getDefaultName(item: StudyItem) = when (item) {
   is Task -> "${EduNames.TASK}${item.index}"
   else -> "NonCommonStudyItem${item.index}"
 }
+
+fun PsiFile.findCMakeCommand(commandName: String): CMakeCommand? =
+  PsiTreeUtil.findChildrenOfType(this, CMakeCommand::class.java)
+    .firstOrNull { it.name.equals(commandName, true) }

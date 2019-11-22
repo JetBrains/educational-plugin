@@ -6,12 +6,10 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilBase
 import com.intellij.util.IncorrectOperationException
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cmake.CMakeListsFileType
-import com.jetbrains.cmake.psi.CMakeCommand
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.learning.*
@@ -61,8 +59,7 @@ class CppCourseBuilder(
     }
 
     val psiFile = PsiUtilBase.getPsiFile(project, virtualFile).copy() as PsiFile
-    val cMakeCommands = PsiTreeUtil.findChildrenOfType(psiFile, CMakeCommand::class.java)
-    val projectCommand = cMakeCommands.firstOrNull { it.name.equals("project", true) }
+    val projectCommand = psiFile.findCMakeCommand("project")
 
     if (projectCommand != null) {
       val newProjectName = getCMakeProjectUniqueName(newTask) { FileUtil.sanitizeFileName(it.name, true) }

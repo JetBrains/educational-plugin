@@ -9,4 +9,12 @@
                   courseType="Stepik"/>
     <codeforcesLanguageProvider implementation="com.jetbrains.edu.cpp.codeforces.CppCodeforcesLanguageProvider"/>
   </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!--suppress PluginXmlCapitalization -->
+    <localInspection language="CMake" groupPath="EduTools" groupName="Course Creator"
+                     displayName="Project name isn't set"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.jetbrains.edu.cpp.inspections.NoProjectNameInspection"/>
+  </extensions>
 </idea-plugin>
