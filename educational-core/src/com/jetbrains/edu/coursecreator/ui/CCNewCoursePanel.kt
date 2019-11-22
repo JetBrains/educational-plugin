@@ -109,12 +109,17 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     }
 
     val courseData = collectCoursesData(course)
-    val defaultCourseType = getDefaultCourseType(courseData)
+    courseData.forEach { myCourseDataComboBox.addItem(it) }
+
+    // It is important to add listener after filling CCNewCoursePanel.myCourseDataComboBox,
+    // but before selecting default option. We validate only default option in this scenario.
     myCourseDataComboBox.addItemListener {
       if (it.stateChange == ItemEvent.SELECTED) {
         onCourseDataSelected(it.item as CourseData)
       }
     }
+
+    val defaultCourseType = getDefaultCourseType(courseData)
     if (defaultCourseType != null) {
       myCourseDataComboBox.selectedItem = defaultCourseType
     }
@@ -218,10 +223,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
         .filter { it.instance.isCourseCreatorEnabled }
         .filter { it.courseType == myCourse.itemType }.mapNotNull { extension -> obtainCourseData(extension) }
     }
-    courseData
-      .sortedBy { it.displayName }
-      .forEach { myCourseDataComboBox.addItem(it) }
-    return courseData
+    return courseData.sortedBy { it.displayName }
   }
 
   private fun obtainCourseData(languageId: String, environment: String, courseType: String): CourseData? {
