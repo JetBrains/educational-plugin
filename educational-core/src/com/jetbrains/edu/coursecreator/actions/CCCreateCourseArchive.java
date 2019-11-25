@@ -9,7 +9,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCCreateCourseArchiveDialog;
@@ -19,9 +18,11 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
+import static com.intellij.openapi.ui.Messages.showErrorDialog;
 import static com.jetbrains.edu.coursecreator.CCUtils.askToWrapTopLevelLessons;
 import static com.jetbrains.edu.learning.EduUtils.addMnemonic;
 
@@ -78,27 +79,29 @@ public class CCCreateCourseArchive extends DumbAwareAction {
       return;
     }
     course.setAuthorsAsString(new String[]{myAuthorName});
-    boolean isSuccessful = createCourseArchive(project, myZipName, myLocationDir, true);
-    if (isSuccessful) {
+    String errorMessage = createCourseArchive(project, myZipName, myLocationDir, true);
+    if (errorMessage == null) {
       PropertiesComponent.getInstance(project).setValue(LAST_ARCHIVE_LOCATION, myLocationDir);
       PropertiesComponent.getInstance(project).setValue(AUTHOR_NAME, myAuthorName);
       EduCounterUsageCollector.createCourseArchive();
     }
     else {
-      Messages.showErrorDialog("Can not create archive for current course", "Failed to Create Course Archive");
+      showErrorDialog(errorMessage, "Failed to Create Course Archive");
     }
   }
 
   /**
-   * @return true if course archive was created successfully, false otherwise
+   * @return null if course archive was created successfully, non-empty error message otherwise
    */
-  public static boolean createCourseArchive(@NotNull Project project, String zipName, String locationDir, boolean showMessage) {
+  @Nullable
+  public static String createCourseArchive(@NotNull Project project, String zipName, String locationDir, boolean showMessage) {
+    String archiveName = zipName + ".zip";
     VirtualFile jsonFolder = CCUtils.generateFolder(project, zipName);
     if (jsonFolder == null) {
-      return false;
+      return "Failed to generate " + archiveName;
     }
     FileDocumentManager.getInstance().saveAllDocuments();
-    final File zipFile = new File(locationDir, zipName + ".zip");
+    final File zipFile = new File(locationDir, archiveName);
     return ApplicationManager.getApplication()
       .runWriteAction(new CourseArchiveCreator(project, jsonFolder, zipFile, showMessage));
   }

@@ -29,7 +29,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.FrameWrapper;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -44,6 +43,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.exceptions.FailedToCreateCourseArchiveException;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,9 +52,14 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import static com.intellij.openapi.ui.Messages.showErrorDialog;
+import static com.intellij.openapi.ui.Messages.showInfoMessage;
+import static com.jetbrains.edu.learning.EduUtils.createStudentFile;
+
 public class CCShowPreview extends DumbAwareAction {
   public static final String SHOW_PREVIEW = "Preview Task File";
   public static final String NO_PREVIEW_MESSAGE = "Preview is available for task files with answer placeholders only";
+  public static final String NO_PREVIEW_TITLE = "No Preview for This File";
 
   public CCShowPreview() {
     super(SHOW_PREVIEW, SHOW_PREVIEW, null);
@@ -110,13 +115,20 @@ public class CCShowPreview extends DumbAwareAction {
     }
 
     if (taskFile.getAnswerPlaceholders().isEmpty()) {
-      Messages.showInfoMessage(NO_PREVIEW_MESSAGE, "No Preview for This File");
+      showInfoMessage(NO_PREVIEW_MESSAGE, NO_PREVIEW_TITLE);
       return;
     }
 
     final Task task = taskFile.getTask();
     ApplicationManager.getApplication().runWriteAction(() -> {
-      TaskFile studentTaskFile = EduUtils.createStudentFile(project, virtualFile, task);
+      TaskFile studentTaskFile;
+      try {
+        studentTaskFile = createStudentFile(project, virtualFile, task);
+      }
+      catch (FailedToCreateCourseArchiveException exception) {
+        showErrorDialog(exception.getMessage(), NO_PREVIEW_TITLE);
+        return;
+      }
       if (studentTaskFile != null) {
         showPreviewDialog(project, studentTaskFile);
       }

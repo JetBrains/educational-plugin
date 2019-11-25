@@ -265,19 +265,19 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
   private fun generateJson(): String {
     val baseDir = myFixture.project.baseDir
     VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
-    val created = CCCreateCourseArchive.createCourseArchive(myFixture.project, "course",
-                                                            myFixture.project.basePath + "/" + GENERATED_FILES_FOLDER,
-                                                            false)
-    TestCase.assertTrue(created)
+    val errorMessage = CCCreateCourseArchive.createCourseArchive(myFixture.project, "course",
+                                                                 myFixture.project.basePath + "/" + GENERATED_FILES_FOLDER,
+                                                                 false)
+    assertNull(errorMessage)
     VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
     val generated = baseDir.findChild(GENERATED_FILES_FOLDER)
-    TestCase.assertNotNull(generated)
+    assertNotNull(generated)
     val archive = generated!!.findChild("course.zip")
-    TestCase.assertNotNull(archive)
+    assertNotNull(archive)
     val courseFolder = generated.findChild("course")
-    TestCase.assertNotNull(courseFolder)
+    assertNotNull(courseFolder)
     val jsonFile = courseFolder!!.findChild(EduNames.COURSE_META_FILE)
-    TestCase.assertNotNull(jsonFile)
+    assertNotNull(jsonFile)
     return FileUtil.loadFile(File(jsonFile!!.path), true).replace(Regex("\\n\\n"), "\n")
   }
 

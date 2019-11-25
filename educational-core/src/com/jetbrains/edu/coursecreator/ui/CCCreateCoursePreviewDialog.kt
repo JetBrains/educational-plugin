@@ -49,9 +49,9 @@ class CCCreateCoursePreviewDialog(
     val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
     val locationDir = folder.path
     close(OK_EXIT_CODE)
-    val isSuccessful = CCCreateCourseArchive.createCourseArchive(myProject, archiveName, locationDir, false)
+    val errorMessage = CCCreateCourseArchive.createCourseArchive(myProject, archiveName, locationDir, false)
 
-    if (isSuccessful) {
+    if (errorMessage.isNullOrEmpty()) {
       val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")
       val course = EduUtils.getLocalCourse(archivePath)
       if (course != null) {

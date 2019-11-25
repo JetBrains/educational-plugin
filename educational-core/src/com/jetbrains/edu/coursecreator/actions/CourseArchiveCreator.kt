@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.exceptions.FailedToCreateCourseArchiveException
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -37,13 +38,18 @@ class CourseArchiveCreator(
   private val jsonFolder: VirtualFile,
   private val zipFile: File,
   private val showMessage: Boolean
-) : Computable<Boolean> {
+) : Computable<String?> {
 
-  override fun compute(): Boolean? {
-    val course = StudyTaskManager.getInstance(project).course ?: return false
+  override fun compute(): String? {
+    val course = StudyTaskManager.getInstance(project).course ?: return "Unable to obtain course for current project"
     jsonFolder.refresh(false, true)
     val courseCopy = course.copy()
-    loadActualTexts(project, courseCopy)
+    try {
+      loadActualTexts(project, courseCopy)
+    }
+    catch (e: FailedToCreateCourseArchiveException) {
+      return e.message
+    }
     courseCopy.sortItems()
     courseCopy.additionalFiles = CCUtils.collectAdditionalFiles(courseCopy, project)
     return try {
@@ -51,11 +57,11 @@ class CourseArchiveCreator(
       VirtualFileManager.getInstance().refreshWithoutFileWatcher(false)
       packCourse(json, zipFile, showMessage)
       synchronize(project)
-      true
+      null
     }
     catch (e: IOException) {
       LOG.error("Failed to create course archive", e)
-      false
+      return "Write operation failed. Please check if write operations are allowed and try again."
     }
   }
 
