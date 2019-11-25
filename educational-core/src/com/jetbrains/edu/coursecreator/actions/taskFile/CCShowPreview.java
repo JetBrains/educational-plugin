@@ -43,7 +43,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.exceptions.FailedToCreateCourseArchiveException;
+import com.jetbrains.edu.learning.exceptions.BrokenPlaceholdersException;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import org.jetbrains.annotations.NotNull;
 
@@ -125,7 +125,7 @@ public class CCShowPreview extends DumbAwareAction {
       try {
         studentTaskFile = createStudentFile(project, virtualFile, task);
       }
-      catch (FailedToCreateCourseArchiveException exception) {
+      catch (BrokenPlaceholdersException exception) {
         showErrorDialog(exception.getMessage(), NO_PREVIEW_TITLE);
         return;
       }

@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
-import com.jetbrains.edu.learning.exceptions.FailedToCreateCourseArchiveException
+import com.jetbrains.edu.learning.exceptions.BrokenPlaceholdersException
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -47,7 +47,7 @@ class CourseArchiveCreator(
     try {
       loadActualTexts(project, courseCopy)
     }
-    catch (e: FailedToCreateCourseArchiveException) {
+    catch (e: BrokenPlaceholdersException) {
       return e.message
     }
     courseCopy.sortItems()

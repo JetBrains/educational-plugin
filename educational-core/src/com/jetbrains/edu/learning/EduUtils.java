@@ -49,7 +49,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
-import com.jetbrains.edu.learning.exceptions.FailedToCreateCourseArchiveException;
+import com.jetbrains.edu.learning.exceptions.BrokenPlaceholdersException;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
@@ -572,7 +572,7 @@ public class EduUtils {
 
   @Nullable
   public static TaskFile createStudentFile(@NotNull Project project, @NotNull VirtualFile answerFile, @NotNull final Task task)
-    throws FailedToCreateCourseArchiveException {
+    throws BrokenPlaceholdersException {
     try {
       Task taskCopy = task.copy();
 
@@ -602,7 +602,7 @@ public class EduUtils {
     }
     catch (IOException | IndexOutOfBoundsException e) {
       LOG.error(CONVERT_ERROR + answerFile.getPath());
-      throw new FailedToCreateCourseArchiveException(CONVERT_ERROR + answerFile.getPath());
+      throw new BrokenPlaceholdersException(CONVERT_ERROR + answerFile.getPath());
     }
   }
 
