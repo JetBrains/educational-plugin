@@ -43,6 +43,7 @@ val pycharmSandbox = "${project.buildDir.absolutePath}/pycharm-sandbox"
 val studioSandbox = "${project.buildDir.absolutePath}/studio-sandbox"
 val webStormSandbox = "${project.buildDir.absolutePath}/webstorm-sandbox"
 val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
+val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 
 val isAtLeast192 = environmentName.toInt() >= 192
 val isAtLeast193 = environmentName.toInt() >= 193
@@ -317,6 +318,17 @@ project(":") {
       withProp("androidStudioPath") {
         intellij.alternativeIdePath = it
       }
+    }
+  }
+
+  task("configureGoLand") {
+    doLast {
+      if (!hasProp("goLandPath")) {
+        throw InvalidUserDataException("Path to GoLand installed locally is needed\nDefine \"goLandPath\" property")
+      }
+
+      intellij.sandboxDirectory = goLandSandbox
+      intellij.alternativeIdePath = prop("goLandPath")
     }
   }
 }

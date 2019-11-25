@@ -72,6 +72,7 @@ public class EduNames {
   public static final String RUST = "Rust";
   // Single `ObjectiveC` id is used both for `ObjectiveC` and `C/C++`
   public static final String CPP = "ObjectiveC";
+  public static final String GO = "go";
 
   // Language versions
   public static final String PYTHON_2_VERSION = "2.x";

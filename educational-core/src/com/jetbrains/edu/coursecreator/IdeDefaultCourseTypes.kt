@@ -16,6 +16,7 @@ fun getDefaultLanguageId(): String? = when {
   PlatformUtils.isPyCharm() -> EduNames.PYTHON
   PlatformUtils.isWebStorm() -> EduNames.JAVASCRIPT
   PlatformUtils.isCLion() -> EduNames.CPP
+  PlatformUtils.isGoIde() -> EduNames.GO
   else -> null
 }
 

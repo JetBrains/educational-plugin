@@ -111,17 +111,20 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     val courseData = collectCoursesData(course)
     courseData.forEach { myCourseDataComboBox.addItem(it) }
 
-    // It is important to add listener after filling CCNewCoursePanel.myCourseDataComboBox,
-    // but before selecting default option. We validate only default option in this scenario.
+    val defaultCourseType = getDefaultCourseType(courseData)
+    if (defaultCourseType != null) {
+      myCourseDataComboBox.selectedItem = defaultCourseType
+    }
+
+    val selectedItem = myCourseDataComboBox.selectedItem as? CourseData
+    if (selectedItem != null) {
+      onCourseDataSelected(selectedItem)
+    }
+
     myCourseDataComboBox.addItemListener {
       if (it.stateChange == ItemEvent.SELECTED) {
         onCourseDataSelected(it.item as CourseData)
       }
-    }
-
-    val defaultCourseType = getDefaultCourseType(courseData)
-    if (defaultCourseType != null) {
-      myCourseDataComboBox.selectedItem = defaultCourseType
     }
     setupValidation()
 
