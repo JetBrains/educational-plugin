@@ -21,7 +21,8 @@ public class EducationalCoreIcons {
 
   public static final Icon CheckiO = load("/icons/com/jetbrains/edu/learning/PyCheckiO.svg");
   public static final Icon JSCheckiO = load("/icons/com/jetbrains/edu/learning/JSCheckiO.svg");
-  public static final Icon Hyperskill = load("/icons/com/jetbrains/edu/learning/hyperskill.svg");
+  public static final Icon JB_ACADEMY_ENABLED = load("/icons/com/jetbrains/edu/learning/JB_academy_enabled.svg");
+  public static final Icon JB_ACADEMY_DISABLED = load("/icons/com/jetbrains/edu/learning/JB_academy_disabled.svg");
 
   public static final Icon Student = load("/icons/com/jetbrains/edu/Learner.svg"); // 180x180
   public static final Icon StudentHover = load("/icons/com/jetbrains/edu/LearnerActive.svg"); // 180x180

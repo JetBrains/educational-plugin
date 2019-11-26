@@ -27,6 +27,11 @@ abstract class LoginWidget(val project: Project,
 ) : IconLikeCustomStatusBarWidget {
   abstract val account: OAuthAccount<out Any>?
   abstract val icon: Icon
+  open val disabledIcon: Icon
+    get() {
+      return IconUtil.desaturate(icon) ?: error("IconUtil.desaturate failed")
+    }
+
   open val syncStep: SynchronizationStep? = null
   val component: JLabel = JLabel(getWidgetIcon())
 
@@ -101,11 +106,7 @@ abstract class LoginWidget(val project: Project,
   abstract fun resetAccount()
 
   private fun getWidgetIcon(): Icon {
-    return if (account == null) {
-      IconUtil.desaturate(icon) ?: error("IconUtil.desaturate failed")
-    } else {
-      icon
-    }
+    return if (account == null) disabledIcon else icon
   }
 
   override fun getComponent(): JComponent = component
