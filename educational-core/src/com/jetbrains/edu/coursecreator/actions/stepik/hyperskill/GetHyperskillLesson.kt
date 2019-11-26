@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.actions.stepik.hyperskill
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -25,7 +24,7 @@ import icons.EducationalCoreIcons
 
 @Suppress("ComponentNotRegistered") // Hyperskill.xml
 class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik", "Get Hyperskill Lesson from Stepik",
-                                            EducationalCoreIcons.Hyperskill) {
+                                            EducationalCoreIcons.JB_ACADEMY_ENABLED) {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = CCPluginToggleAction.isCourseCreatorFeaturesEnabled
@@ -34,7 +33,7 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
-    val lessonId = Messages.showInputDialog("Please, enter lesson id", "Get Hyperskill Lesson from Stepik", EducationalCoreIcons.Hyperskill)
+    val lessonId = Messages.showInputDialog("Please, enter lesson id", "Get Hyperskill Lesson from Stepik", EducationalCoreIcons.JB_ACADEMY_ENABLED)
     if (lessonId != null && lessonId.isNotEmpty()) {
       ProgressManager.getInstance().run(object : Task.Modal(project, "Loading Course", true) {
         override fun run(indicator: ProgressIndicator) {

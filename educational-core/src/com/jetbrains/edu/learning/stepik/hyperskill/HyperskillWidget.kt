@@ -10,7 +10,8 @@ import javax.swing.Icon
 
 class HyperskillWidget(project: Project) : LoginWidget(project, HyperskillConnector.AUTHORIZATION_TOPIC, HYPERSKILL) {
   override val account: OAuthAccount<out Any>? get() = HyperskillSettings.INSTANCE.account
-  override val icon: Icon get() = EducationalCoreIcons.Hyperskill
+  override val icon: Icon get() = EducationalCoreIcons.JB_ACADEMY_ENABLED
+  override val disabledIcon: Icon get() = EducationalCoreIcons.JB_ACADEMY_DISABLED
 
   override fun ID() = "HyperskillAccountWidget"
 

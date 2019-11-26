@@ -38,7 +38,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(PushHyperskillLesson.class);
 
   public PushHyperskillLesson() {
-    super("Push Hyperskill Lesson to Stepik", "Push Hyperskill Lesson to Stepik", EducationalCoreIcons.Hyperskill);
+    super("Push Hyperskill Lesson to Stepik", "Push Hyperskill Lesson to Stepik", EducationalCoreIcons.JB_ACADEMY_ENABLED);
   }
 
   @Override
