@@ -172,7 +172,7 @@ class CCMoveTaskTest : MoveTestBase() {
     val sourceDir = findPsiDirectory("lesson1/task1")
     val targetDir = findPsiDirectory("lesson2/task3")
 
-    doMoveAction(course, sourceDir, targetDir)
+    doMoveAction(course, sourceDir, targetDir, delta = 1)
 
     val lesson1 = course.getLesson("lesson1")!!
     val lesson2 = course.getLesson("lesson2")!!
