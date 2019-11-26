@@ -38,7 +38,7 @@ abstract class StepikTestCase : EduTestCase() {
   override fun setUp() {
     super.setUp()
     val mockStepikConnector = StepikConnector.getInstance() as MockStepikConnector
-    mockStepikConnector.baseUrl = StepikNames.STEPIK_URL
+    mockStepikConnector.setBaseUrl(StepikNames.STEPIK_URL, testRootDisposable)
     httpClient = HttpClients.createDefault()
     login()
     httpClient = HttpClients.custom()
