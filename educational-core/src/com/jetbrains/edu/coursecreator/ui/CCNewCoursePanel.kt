@@ -114,11 +114,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     val defaultCourseType = getDefaultCourseType(courseData)
     if (defaultCourseType != null) {
       myCourseDataComboBox.selectedItem = defaultCourseType
-    }
-
-    val selectedItem = myCourseDataComboBox.selectedItem as? CourseData
-    if (selectedItem != null) {
-      onCourseDataSelected(selectedItem)
+      onCourseDataSelected(defaultCourseType)
     }
 
     myCourseDataComboBox.addItemListener {
