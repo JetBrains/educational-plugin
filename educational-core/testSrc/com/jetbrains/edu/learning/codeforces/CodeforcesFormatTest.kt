@@ -8,7 +8,7 @@ import java.io.IOException
 import java.time.Duration
 import java.time.ZonedDateTime
 
-class CodeforcesFormatTest: EduTestCase() {
+class CodeforcesFormatTest : EduTestCase() {
   override fun getTestDataPath(): String = "testData/codeforces"
 
   fun testAvailableContests() {
@@ -32,8 +32,8 @@ class CodeforcesFormatTest: EduTestCase() {
     assertEquals(ContestPhase.BEFORE, contestInfo.phase)
     assertEquals(false, contestInfo.frozen)
     assertEquals(Duration.ofSeconds(7200), contestInfo.duration)
-    assertEquals(ZonedDateTime.parse("2019-08-11T15:35+03:00[Europe/Moscow]"), contestInfo.startTime)
-    assertEquals(ZonedDateTime.parse("2019-08-11T17:35+03:00[Europe/Moscow]"), contestInfo.endTime)
+    assertEquals(ZonedDateTime.parse("2019-08-11T15:35+03:00[Europe/Moscow]").toEpochSecond(), contestInfo.startTime.toEpochSecond())
+    assertEquals(ZonedDateTime.parse("2019-08-11T17:35+03:00[Europe/Moscow]").toEpochSecond(), contestInfo.endTime.toEpochSecond())
     assertEquals(Duration.ofSeconds(-782281), contestInfo.relativeTime)
   }
 
