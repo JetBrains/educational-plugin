@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.codeforces.api.*
 import java.io.File
 import java.io.IOException
 import java.time.Duration
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 class CodeforcesFormatTest: EduTestCase() {
   override fun getTestDataPath(): String = "testData/codeforces"
@@ -32,8 +32,8 @@ class CodeforcesFormatTest: EduTestCase() {
     assertEquals(ContestPhase.BEFORE, contestInfo.phase)
     assertEquals(false, contestInfo.frozen)
     assertEquals(Duration.ofSeconds(7200), contestInfo.duration)
-    assertEquals(LocalDateTime.parse("2019-08-11T15:35"), contestInfo.startTime.toLocalDateTime())
-    assertEquals(LocalDateTime.parse("2019-08-11T17:35"), contestInfo.endTime.toLocalDateTime())
+    assertEquals(ZonedDateTime.parse("2019-08-11T15:35+03:00[Europe/Moscow]"), contestInfo.startTime)
+    assertEquals(ZonedDateTime.parse("2019-08-11T17:35+03:00[Europe/Moscow]"), contestInfo.endTime)
     assertEquals(Duration.ofSeconds(-782281), contestInfo.relativeTime)
   }
 
