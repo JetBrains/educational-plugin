@@ -4,4 +4,5 @@
   <depends optional="true" config-file="pycharm-specific-actions.xml">com.intellij.modules.pycharm</depends>
   <depends optional="true" config-file="clion-specific-actions.xml">com.intellij.modules.clion</depends>
   <depends optional="true" config-file="webstorm-specific-actions.xml">com.intellij.modules.webstorm</depends>
+  <depends optional="true" config-file="goland-specific-actions.xml">com.intellij.modules.go</depends>
 </idea-plugin>
