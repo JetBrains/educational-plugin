@@ -20,14 +20,12 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
-import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.yaml.YamlInfoTaskDescriptionTabKt;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
@@ -41,10 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.COURSE;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
@@ -63,7 +58,6 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   @Transient
   private Course myCourse;
   public int VERSION = EduVersions.XML_FORMAT_VERSION;
-  public final Map<Task, List<UserTest>> myUserTests = new HashMap<>();
 
   @Transient @Nullable private final Project myProject;
 
@@ -87,32 +81,6 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   @Transient
   public Course getCourse() {
     return myCourse;
-  }
-
-  public void addUserTest(@NotNull final Task task, UserTest userTest) {
-    List<UserTest> userTests = myUserTests.get(task);
-    if (userTests == null) {
-      userTests = new ArrayList<>();
-      myUserTests.put(task, userTests);
-    }
-    userTests.add(userTest);
-  }
-
-  public void setUserTests(@NotNull final Task task, @NotNull final List<UserTest> userTests) {
-    myUserTests.put(task, userTests);
-  }
-
-  @NotNull
-  public List<UserTest> getUserTests(@NotNull final Task task) {
-    final List<UserTest> userTests = myUserTests.get(task);
-    return userTests != null ? userTests : Collections.emptyList();
-  }
-
-  public void removeUserTest(@NotNull final Task task, @NotNull final UserTest userTest) {
-    final List<UserTest> userTests = myUserTests.get(task);
-    if (userTests != null) {
-      userTests.remove(userTest);
-    }
   }
 
   public boolean hasFailedAnswerPlaceholders(@NotNull final TaskFile taskFile) {

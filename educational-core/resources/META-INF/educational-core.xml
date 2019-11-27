@@ -79,9 +79,6 @@
             text="Refresh Answer Placeholder">
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
     </action>
-    <action id="Educational.WatchInput" class="com.jetbrains.edu.learning.actions.EditInputAction"
-            text="Watch Test Input"
-            description="Watch test input "/>
     <action id="Educational.Educator.EnablePluginAction" class="com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction"
             text="Enable Course Creator Features">
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
