@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.createFileEditorManager
 import com.jetbrains.edu.learning.registerComponent
 import org.junit.Assert
@@ -39,7 +40,7 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
     private lateinit var myManager: FileEditorManagerImpl
     private lateinit var myOldDockContainers: Set<DockContainer>
 
-    private lateinit var myCourse: Course
+    protected lateinit var myCourse: Course
     protected lateinit var myProject: Project
     private lateinit var myApplication: IdeaTestApplication
 
@@ -70,27 +71,33 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
         UIUtil.dispatchAllInvocationEvents()
 
         val exceptions = arrayListOf<AssertionError>()
-        for (lesson in myCourse.lessons) {
+        myCourse.visitLessons { lesson ->
             for (task in lesson.taskList) {
-                try {
-                    val taskFile = task.taskFiles.values.first()
-                    val virtualFile = taskFile.getVirtualFile(myProject)
-                                      ?: error("Can't find virtual file for `${taskFile.name}` task file in `${task.name} task`")
-                    FileEditorManager.getInstance(myProject).openFile(virtualFile, true)
-
-                    launchAction(virtualFile, CheckAction())
-
-                    UIUtil.dispatchAllInvocationEvents()
-                } catch (e: AssertionError) {
-                    exceptions.add(e)
-                } catch (e: ComparisonFailure) {
-                    exceptions.add(e)
-                }
+                exceptions += checkTask(task)
             }
         }
+
         if (exceptions.isNotEmpty()) {
             throw MultipleCauseException(exceptions)
         }
+    }
+
+    protected open fun checkTask(currentTask: Task): List<AssertionError> {
+        UIUtil.dispatchAllInvocationEvents()
+        val exceptions = mutableListOf<AssertionError>()
+        try {
+            val taskFile = currentTask.taskFiles.values.first()
+            val virtualFile = taskFile.getVirtualFile(myProject)
+                              ?: error("Can't find virtual file for `${taskFile.name}` task file in `${currentTask.name} task`")
+            FileEditorManager.getInstance(myProject).openFile(virtualFile, true)
+            launchAction(virtualFile, CheckAction())
+            UIUtil.dispatchAllInvocationEvents()
+        } catch (e: AssertionError) {
+            exceptions.add(e)
+        } catch (e: ComparisonFailure) {
+            exceptions.add(e)
+        }
+        return exceptions
     }
 
     private class MultipleCauseException(val causes: List<AssertionError>) : Exception() {

@@ -30,7 +30,10 @@ class CheckActionListener : CheckListener {
       println("Checking status for $taskName: passes as expected")
     }
 
-    private fun getTaskName(task: Task): String = "${task.lesson.name}/${task.name}"
+    private fun getTaskName(task: Task): String {
+      val sectionPrefix = task.lesson.section?.let { "${it.name}/" } ?: ""
+      return "$sectionPrefix${task.lesson.name}/${task.name}"
+    }
 
     // Those fields can be modified if some special checks are needed (return true if should run standard checks)
     private var checkResultVerifier = SHOULD_PASS
