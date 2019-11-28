@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
@@ -24,7 +24,6 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -50,8 +49,8 @@ class CourseArchiveCreator(
       loadActualTexts(project, courseCopy)
     }
     catch (e: BrokenPlaceholderException) {
-      val file = e.placeholder.taskFile?.getVirtualFile(project) ?: return e.message
-      FileEditorManagerEx.getInstanceEx(project).openFile(file, true)
+      val yamlFile = e.placeholder.taskFile?.task?.getTaskDir(project)?.findChild("task-info.yaml") ?: return e.message
+      FileEditorManager.getInstance(project).openFile(yamlFile, true)
       return e.message
     }
     courseCopy.sortItems()
