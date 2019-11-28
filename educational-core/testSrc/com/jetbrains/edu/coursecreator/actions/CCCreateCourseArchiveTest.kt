@@ -2,12 +2,14 @@ package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import junit.framework.TestCase
 import java.io.File
 import java.text.SimpleDateFormat
@@ -177,6 +179,26 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     val generatedJsonFile = generateJson()
     val expectedCourseJson = loadExpectedJson()
     TestCase.assertEquals(expectedCourseJson, generatedJsonFile)
+  }
+
+  fun `test throw exception if placeholder is broken`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("fizz.kt", """fn fizzz() = <p>TODO()</p>""") {
+            placeholder(0)
+          }
+        }
+      }
+    }
+    course.description = "my summary"
+    val placeholder = course.lessons.first().taskList.first().taskFiles["fizz.kt"]?.answerPlaceholders?.firstOrNull()
+                      ?: error("Cannot find placeholder")
+    placeholder.offset = 1000
+
+    assertThrows(BrokenPlaceholderException::class.java, ThrowableRunnable<BrokenPlaceholderException> {
+      CourseArchiveCreator.loadActualTexts(project, course)
+    })
   }
 
   fun `test course additional files`() {

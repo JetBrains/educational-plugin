@@ -584,7 +584,6 @@ public class EduUtils {
             replaceAnswerPlaceholder(studentDocument, placeholder);
           }
           catch (IndexOutOfBoundsException e) {
-            LOG.error(CONVERT_ERROR + answerFile.getPath());
             // We are here because placeholder is broken. We need to put broken placeholder into exception.
             // We need to take it from original task, because taskCopy has issues with links (taskCopy.lesson is always null)
             TaskFile file = task.getTaskFile(taskFile.getName());
