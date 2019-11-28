@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "id": 399616,
+      "lesson": 116110,
+      "position": 3,
+      "status": "ready",
+      "block": {
+        "name": "pycharm",
+        "text": "<h2>Properties (#1)</h2><p>Now the field the robot can move in is constrained in size to <code>100 x 100</code>, but\nat the borders of the field the robot teleports: if the robot is in the cell\n<code>(0,0)</code> and goes up 1 step, he arrives at the cell <code>(0,99)</code>:</p><pre><code>(0,0)\n// goUp(1)\n(0,99)\n// goLeft(10)\n(90,99)\n</code></pre><br><div><p><a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdkaliSwYkjiV21bZl0yP-In2g5p17sAQCfaGjyHx_QYMWTiQ/viewform?usp=pp_url&amp;entry.189755027=Introduction+to+Objects+%2F+Properties+%2F+Exercise2\n\">Share feedback</a></p></div>",
+        "video": null,
+        "animation": null,
+        "options": {
+          "task_type": "edu",
+          "test": [
+            {
+              "name": "Tests.kt",
+              "text": "package properties2\n\nimport org.junit.Assert\nimport org.junit.FixMethodOrder\nimport org.junit.Test\nimport org.junit.runners.MethodSorters\n\n@FixMethodOrder(MethodSorters.NAME_ASCENDING)\nclass TestRobotTeleportation {\n    class RobotHandler {\n        val robot: Robot = Robot()\n        val loggedMovements = StringBuilder()\n\n        fun goRight(steps: Int) {\n            robot.goRight(steps)\n            loggedMovements.appendln(\"goRight($steps)\")\n        }\n\n        fun goLeft(steps: Int) {\n            robot.goLeft(steps)\n            loggedMovements.appendln(\"goLeft($steps)\")\n\n        }\n\n        fun goDown(steps: Int) {\n            robot.goDown(steps)\n            loggedMovements.appendln(\"goDown($steps)\")\n\n        }\n\n        fun goUp(steps: Int) {\n            robot.goUp(steps)\n            loggedMovements.appendln(\"goUp($steps)\")\n        }\n    }\n\n    private fun testMovements(location: String, movements: RobotHandler.() -> Unit) {\n        val robotHandler = RobotHandler()\n        robotHandler.movements()\n        val actualLocation = robotHandler.robot.getLocation()\n        val message = if (robotHandler.loggedMovements.isEmpty()) {\n            \"Initial location of the robot should be (0,0)\"\n        } else {\n            \"Wrong location after:\\n\" + robotHandler.loggedMovements\n        }\n        Assert.assertEquals(message, location, actualLocation)\n    }\n\n    @Test\n    fun test1Sample() = testMovements(\"(90,99)\") {\n        goUp(1)\n        goLeft(10)\n    }\n\n    @Test\n    fun test2Left() = testMovements(\"(70,0)\") {\n        goLeft(30)\n    }\n\n    @Test\n    fun test3Up() = testMovements(\"(0,99)\") {\n        goUp(1)\n    }\n\n    @Test\n    fun test4Left() = testMovements(\"(70,0)\") {\n        goLeft(130)\n    }\n\n    @Test\n    fun test5Up() = testMovements(\"(0,99)\") {\n        goUp(101)\n    }\n\n    @Test\n    fun test6Right() = testMovements(\"(10,0)\") {\n        goRight(110)\n    }\n\n    @Test\n    fun test7Down() = testMovements(\"(0,20)\") {\n        goDown(120)\n    }\n\n    @Test\n    fun test8SeveralSteps() = testMovements(\"(10,10)\") {\n        goRight(313)\n        goDown(415)\n        goUp(505)\n        goLeft(703)\n    }\n}\n"
+            }
+          ],
+          "title": "Exercise 2",
+          "description_format": "HTML",
+          "feedback_link": {
+            "link_type": "NONE"
+          },
+          "files": [
+            {
+              "name": "Task.kt",
+              "text": "package properties2\n\nclass Robot {\n    /*TODO*/\n    fun goRight(steps: Int) {\n        TODO()\n    }\n\n    fun goLeft(steps: Int) {\n        TODO()\n    }\n\n    fun goDown(steps: Int) {\n        TODO()\n    }\n\n    fun goUp(steps: Int) {\n        TODO()\n    }\n\n    fun getLocation(): String = TODO()\n}\n\nfun main(args: Array<String>) {\n    val robot = Robot()\n    println(robot.getLocation())\n    robot.goUp(1)\n    println(robot.getLocation())\n    robot.goLeft(10)\n    println(robot.getLocation())\n}\n/* Output:\n(0,0)\n(0,99)\n(90,99)\n*/",
+              "placeholders": []
+            }
+          ],
+          "additional_files": [],
+          "format_version": 5
+        },
+        "subtitle_files": []
+      },
+      "actions": {
+        "submit": "#"
+      },
+      "progress": "77-399616",
+      "subscriptions": [
+        "31-77-399616",
+        "30-77-399616"
+      ],
+      "instruction": null,
+      "session": null,
+      "instruction_type": null,
+      "viewed_by": 0,
+      "passed_by": 5,
+      "correct_ratio": 0.22727272727272727,
+      "worth": 0,
+      "is_solutions_unlocked": false,
+      "solutions_unlocked_attempts": 3,
+      "has_submissions_restrictions": false,
+      "max_submissions_count": 3,
+      "variation": 1,
+      "variations_count": 1,
+      "create_date": "2018-07-25T09:34:49Z",
+      "update_date": "2018-07-25T14:29:24Z",
+      "discussions_count": 0,
+      "discussion_proxy": "77-399616-1",
+      "discussion_threads": [
+        "77-399616-1"
+      ]
+    }
+  ]
+}

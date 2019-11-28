@@ -36,16 +36,36 @@ class StepikTaskBuilderTest : EduTestCase() {
   fun `test output task python`() = doTest<OutputTask>(PlainTextLanguage.INSTANCE)
   fun `test ide task python`() = doTest<IdeTask>(PlainTextLanguage.INSTANCE)
 
+  // EDU-2730 old way: task text is get from `text` filed that is displayed on Stepik
+  fun `test edu task text from step option`() {
+    val stepSource = loadStepSource()
+    val task = buildTask(stepSource, PlainTextLanguage.INSTANCE)
+
+    val block = stepSource.block
+    assertNotNull(block)
+    val options = block!!.options
+
+    assertInstanceOf(options, PyCharmStepOptions::class.java)
+    assertNull((block.options as PyCharmStepOptions).descriptionText)
+    assertEquals(block.text, task.descriptionText)
+  }
+
+  // EDU-2730 new way: task text from option
+  fun `test edu task text from block`() {
+    val stepSource = loadStepSource()
+    val task = buildTask(stepSource, PlainTextLanguage.INSTANCE)
+
+    val block = stepSource.block
+    assertNotNull(block)
+    val options = block!!.options
+
+    assertInstanceOf(options, PyCharmStepOptions::class.java)
+    assertEquals((options as PyCharmStepOptions).descriptionText, task.descriptionText)
+  }
+
   private inline fun <reified T : Task> doTest(language: Language) {
-    val response = loadResponse()
-
-    val mapper = StepikConnector.getInstance().objectMapper
-    val stepSource = mapper.readValue(response, StepsList::class.java).steps[0]
-
-    val course = EduCourse()
-    course.language = language.id
-    val lesson = Lesson()
-    val task = StepikTaskBuilder(course, lesson, stepSource, -1, -1).createTask(stepSource.block?.name!!) ?: error("")
+    val stepSource = loadStepSource()
+    val task = buildTask(stepSource, language)
 
     assertInstanceOf(task, T::class.java)
 
@@ -56,6 +76,20 @@ class StepikTaskBuilderTest : EduTestCase() {
       assertThat(path, pathMatcher)
       assertThat(taskFile.name, pathMatcher)
     }
+  }
+
+  private fun loadStepSource(): StepSource {
+    val response = loadResponse()
+
+    val mapper = StepikConnector.getInstance().objectMapper
+    return mapper.readValue(response, StepsList::class.java).steps[0]
+  }
+
+  private fun buildTask(stepSource: StepSource, language: Language): Task {
+    val course = EduCourse()
+    course.language = language.id
+    val lesson = Lesson()
+    return StepikTaskBuilder(course, lesson, stepSource, -1, -1).createTask(stepSource.block?.name!!) ?: error("")
   }
 
   private fun createPathMatcher(basePath: String, language: Language): Matcher<String> {
