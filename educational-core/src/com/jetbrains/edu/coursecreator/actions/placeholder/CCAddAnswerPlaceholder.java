@@ -139,7 +139,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
       return !arePlaceholdersIntersect(taskFile, start, end);
     }
     int offset = editor.getCaretModel().getOffset();
-    return EduUtils.getAnswerPlaceholder(offset, taskFile.getAnswerPlaceholders()) == null;
+    return taskFile.getAnswerPlaceholder(offset) == null;
   }
 
   protected CCCreateAnswerPlaceholderDialog createDialog(Project project, AnswerPlaceholder answerPlaceholder) {

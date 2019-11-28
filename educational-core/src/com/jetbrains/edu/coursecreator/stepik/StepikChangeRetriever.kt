@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.exceptions.BrokenPlaceholdersException
+import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 
 @VisibleForTesting
 data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
@@ -114,7 +114,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
           try {
             CourseArchiveCreator.loadActualTexts(project, localTask)
           }
-          catch (e: BrokenPlaceholdersException) {
+          catch (e: BrokenPlaceholderException) {
           }
         }
       }

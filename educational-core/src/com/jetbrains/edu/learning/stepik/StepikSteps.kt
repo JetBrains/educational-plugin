@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.exceptions.BrokenPlaceholdersException
+import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -194,7 +194,7 @@ fun collectTaskFiles(project: Project, task: Task): MutableList<TaskFile> {
         val studentTaskFile = try {
           EduUtils.createStudentFile(project, answerFile, task) ?: return@runWriteAction
         }
-        catch (e: BrokenPlaceholdersException) {
+        catch (e: BrokenPlaceholderException) {
           return@runWriteAction
         }
         files.add(studentTaskFile)

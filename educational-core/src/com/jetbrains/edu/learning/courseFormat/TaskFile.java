@@ -6,7 +6,6 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,7 +81,14 @@ public class TaskFile {
    */
   @Nullable
   public AnswerPlaceholder getAnswerPlaceholder(int offset) {
-    return EduUtils.getAnswerPlaceholder(offset, getAnswerPlaceholders());
+    for (AnswerPlaceholder placeholder : getAnswerPlaceholders()) {
+      int placeholderStart = placeholder.getOffset();
+      int placeholderEnd = placeholder.getEndOffset();
+      if (placeholderStart <= offset && offset <= placeholderEnd) {
+        return placeholder;
+      }
+    }
+    return null;
   }
 
   public boolean isTrackChanges() {

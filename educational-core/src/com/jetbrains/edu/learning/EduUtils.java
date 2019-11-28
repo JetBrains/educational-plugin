@@ -49,7 +49,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
-import com.jetbrains.edu.learning.exceptions.BrokenPlaceholdersException;
+import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
@@ -486,18 +486,6 @@ public class EduUtils {
     editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
   }
 
-  @Nullable
-  public static AnswerPlaceholder getAnswerPlaceholder(int offset, List<AnswerPlaceholder> placeholders) {
-    for (AnswerPlaceholder placeholder : placeholders) {
-      int placeholderStart = placeholder.getOffset();
-      int placeholderEnd = placeholder.getEndOffset();
-      if (placeholderStart <= offset && offset <= placeholderEnd) {
-        return placeholder;
-      }
-    }
-    return null;
-  }
-
   @NotNull
   public static String pathRelativeToTask(@NotNull Project project, @NotNull VirtualFile file) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
@@ -571,8 +559,7 @@ public class EduUtils {
   private static final String CONVERT_ERROR = "Failed to convert answer file to student one: ";
 
   @Nullable
-  public static TaskFile createStudentFile(@NotNull Project project, @NotNull VirtualFile answerFile, @NotNull final Task task)
-    throws BrokenPlaceholdersException {
+  public static TaskFile createStudentFile(@NotNull Project project, @NotNull VirtualFile answerFile, @NotNull final Task task) {
     try {
       Task taskCopy = task.copy();
 
@@ -592,18 +579,29 @@ public class EduUtils {
       final LightVirtualFile studentFile = new LightVirtualFile("student_task", PlainTextFileType.INSTANCE, document.getText());
       EduDocumentListener.runWithListener(project, taskFile, studentFile, (studentDocument) -> {
         for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
-          placeholder.setPossibleAnswer(studentDocument.getText(TextRange.create(placeholder.getOffset(), placeholder.getEndOffset())));
-          replaceAnswerPlaceholder(studentDocument, placeholder);
+          try {
+            placeholder.setPossibleAnswer(studentDocument.getText(TextRange.create(placeholder.getOffset(), placeholder.getEndOffset())));
+            replaceAnswerPlaceholder(studentDocument, placeholder);
+          }
+          catch (IndexOutOfBoundsException e) {
+            LOG.error(CONVERT_ERROR + answerFile.getPath());
+            // We are here because placeholder is broken. We need to put broken placeholder into exception.
+            // We need to take it from original task, because taskCopy has issues with links (taskCopy.lesson is always null)
+            TaskFile file = task.getTaskFile(taskFile.getName());
+            AnswerPlaceholder answerPlaceholder = file != null ? file.getAnswerPlaceholder(placeholder.getOffset()) : null;
+            throw new BrokenPlaceholderException(CONVERT_ERROR + answerFile.getPath(),
+                                                 answerPlaceholder != null ? answerPlaceholder : placeholder);
+          }
         }
         taskFile.setText(studentDocument.getImmutableCharSequence().toString());
         return Unit.INSTANCE;
       });
       return taskFile;
     }
-    catch (IOException | IndexOutOfBoundsException e) {
+    catch (IOException e) {
       LOG.error(CONVERT_ERROR + answerFile.getPath());
-      throw new BrokenPlaceholdersException(CONVERT_ERROR + answerFile.getPath());
     }
+    return null;
   }
 
   public static void runUndoableAction(Project project, String name, UndoableAction action, UndoConfirmationPolicy confirmationPolicy) {

@@ -17,8 +17,6 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
 
   protected CCAnswerPlaceholderAction(@Nullable String text, @Nullable String description) {
@@ -48,12 +46,8 @@ abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
     if (taskFile == null || !taskFile.isVisible()) {
       return null;
     }
-    AnswerPlaceholder answerPlaceholder = EduUtils.getAnswerPlaceholder(editor.getCaretModel().getOffset(), getPlaceholders(taskFile));
+    AnswerPlaceholder answerPlaceholder = taskFile.getAnswerPlaceholder(editor.getCaretModel().getOffset());
     return new CCState(taskFile, answerPlaceholder, psiFile, editor, project);
-  }
-
-  protected List<AnswerPlaceholder> getPlaceholders(@NotNull TaskFile taskFile) {
-    return taskFile.getAnswerPlaceholders();
   }
 
   @Override
