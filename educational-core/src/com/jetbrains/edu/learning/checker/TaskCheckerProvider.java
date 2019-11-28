@@ -7,8 +7,6 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask;
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
-import com.jetbrains.edu.learning.handlers.CodeExecutor;
-import com.jetbrains.edu.learning.handlers.DefaultCodeExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

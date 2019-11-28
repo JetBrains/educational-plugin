@@ -12,9 +12,9 @@ import com.intellij.psi.util.PsiUtilBase
 import com.jetbrains.cidr.execution.CidrTargetRunConfigurationProducer
 import com.jetbrains.cidr.execution.CidrTargetRunLineMarkerProvider
 import com.jetbrains.cidr.lang.psi.OCFunctionDeclaration
+import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.handlers.DefaultCodeExecutor
 
 class CppCodeExecutor : DefaultCodeExecutor() {
   override fun createTestConfiguration(

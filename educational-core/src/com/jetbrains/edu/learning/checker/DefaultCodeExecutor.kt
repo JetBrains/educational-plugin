@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.handlers
+package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.ExecutionListener
 import com.intellij.execution.ExecutionManager

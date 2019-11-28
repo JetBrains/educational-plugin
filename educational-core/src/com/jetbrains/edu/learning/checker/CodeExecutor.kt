@@ -1,9 +1,8 @@
-package com.jetbrains.edu.learning.handlers
+package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.Result
-import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 /**

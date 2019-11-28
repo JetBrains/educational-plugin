@@ -10,13 +10,13 @@ import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
+import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TEST_DATA_FOLDER
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.editor.EduEditor
-import com.jetbrains.edu.learning.handlers.CodeExecutor
 import java.awt.datatransfer.StringSelection
 
 class CodeforcesTaskChecker(

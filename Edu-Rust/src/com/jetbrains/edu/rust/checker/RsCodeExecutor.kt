@@ -6,9 +6,9 @@ import com.intellij.psi.PsiManager
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.handlers.CodeExecutor
 import org.rust.cargo.project.settings.rustSettings
 import org.rust.cargo.toolchain.CargoCommandLine
 import org.rust.lang.RsConstants.MAIN_RS_FILE

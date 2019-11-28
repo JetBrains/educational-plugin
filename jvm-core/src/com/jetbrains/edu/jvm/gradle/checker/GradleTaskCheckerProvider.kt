@@ -2,14 +2,10 @@ package com.jetbrains.edu.jvm.gradle.checker
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.checker.OutputTaskChecker
-import com.jetbrains.edu.learning.checker.TaskChecker
-import com.jetbrains.edu.learning.checker.TaskCheckerProvider
-import com.jetbrains.edu.learning.checker.TheoryTaskChecker
+import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.handlers.CodeExecutor
 
 abstract class GradleTaskCheckerProvider : TaskCheckerProvider {
 

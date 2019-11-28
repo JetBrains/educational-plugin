@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.checker.CheckResult.Companion.FAILED_TO_CHECK
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
-import com.jetbrains.edu.learning.handlers.CodeExecutor
 
 
 open class OutputTaskChecker(
