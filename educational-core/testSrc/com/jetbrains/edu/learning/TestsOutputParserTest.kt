@@ -1,7 +1,11 @@
 package com.jetbrains.edu.learning
 
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.CheckUtils.*
+import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATS_MESSAGE
+import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATULATIONS
+import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
+import com.jetbrains.edu.learning.checker.CheckUtils.TEST_FAILED
+import com.jetbrains.edu.learning.checker.CheckUtils.TEST_OK
 import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import junit.framework.TestCase

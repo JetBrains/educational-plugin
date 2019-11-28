@@ -1,6 +1,10 @@
 package com.jetbrains.edu.learning.checker
 
-import com.jetbrains.edu.learning.checker.CheckUtils.*
+import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATS_MESSAGE
+import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATULATIONS
+import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
+import com.jetbrains.edu.learning.checker.CheckUtils.TEST_FAILED
+import com.jetbrains.edu.learning.checker.CheckUtils.TEST_OK
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import java.util.regex.Pattern
 

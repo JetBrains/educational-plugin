@@ -17,7 +17,11 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.CheckUtils.*
+import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
+import com.jetbrains.edu.learning.checker.CheckUtils.FAILED_TO_CHECK_MESSAGE
+import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
+import com.jetbrains.edu.learning.checker.CheckUtils.hasCompilationErrors
+import com.jetbrains.edu.learning.checker.CheckUtils.postProcessOutput
 import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.dirName

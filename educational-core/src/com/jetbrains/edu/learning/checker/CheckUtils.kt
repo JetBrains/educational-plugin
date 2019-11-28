@@ -1,134 +1,100 @@
-package com.jetbrains.edu.learning.checker;
+package com.jetbrains.edu.learning.checker
 
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.process.ProcessOutput;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.util.PsiUtilCore;
-import com.jetbrains.edu.learning.EduState;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.editor.EduSingleFileEditor;
-import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import kotlin.collections.CollectionsKt;
-import kotlin.text.StringsKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.process.ProcessOutput
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.wm.IdeFocusManager
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.util.PsiUtilCore
+import com.jetbrains.edu.learning.EduState
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.editor.EduSingleFileEditor
+import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToFirstFailedAnswerPlaceholder
+import com.jetbrains.edu.learning.runReadActionInSmartMode
 
-import java.util.List;
-import java.util.Map;
+object CheckUtils {
+  const val STUDY_PREFIX = "#educational_plugin"
+  const val CONGRATULATIONS = "Congratulations!"
+  const val TEST_OK = "test OK"
+  const val TEST_FAILED = "FAILED + "
+  const val CONGRATS_MESSAGE = "CONGRATS_MESSAGE "
+  val COMPILATION_ERRORS = listOf("Compilation failed", "Compilation error")
+  const val COMPILATION_FAILED_MESSAGE = "Compilation Failed"
+  const val NOT_RUNNABLE_MESSAGE = "Solution isn't runnable"
+  const val LOGIN_NEEDED_MESSAGE = "Please, login to Stepik to check the task"
+  const val FAILED_TO_CHECK_MESSAGE = "Failed to launch checking"
+  const val SYNTAX_ERROR_MESSAGE = "Syntax Error"
+  val ERRORS = listOf(COMPILATION_FAILED_MESSAGE, FAILED_TO_CHECK_MESSAGE, SYNTAX_ERROR_MESSAGE)
 
-public class CheckUtils {
-  public static final String STUDY_PREFIX = "#educational_plugin";
-  public static final String CONGRATULATIONS = "Congratulations!";
-  public static final String TEST_OK = "test OK";
-  public static final String TEST_FAILED = "FAILED + ";
-  public static final String CONGRATS_MESSAGE = "CONGRATS_MESSAGE ";
-  
-  public static final List<String> COMPILATION_ERRORS = CollectionsKt.listOf("Compilation failed", "Compilation error");
-  public static final String COMPILATION_FAILED_MESSAGE = "Compilation Failed";
-  public static final String NOT_RUNNABLE_MESSAGE = "Solution isn't runnable";
-  public static final String LOGIN_NEEDED_MESSAGE = "Please, login to Stepik to check the task";
-  public static final String FAILED_TO_CHECK_MESSAGE = "Failed to launch checking";
-  public static final String SYNTAX_ERROR_MESSAGE = "Syntax Error";
-  public static final List<String> ERRORS = CollectionsKt.listOf(COMPILATION_FAILED_MESSAGE, FAILED_TO_CHECK_MESSAGE, SYNTAX_ERROR_MESSAGE);
-
-  private CheckUtils() {
-  }
-
-  public static void navigateToFailedPlaceholder(@NotNull final EduState eduState,
-                                                 @NotNull final Task task,
-                                                 @NotNull final VirtualFile taskDir,
-                                                 @NotNull final Project project) {
-    TaskFile selectedTaskFile = eduState.getTaskFile();
-    if (selectedTaskFile == null) return;
-    Editor editor = eduState.getEditor();
-    TaskFile taskFileToNavigate = selectedTaskFile;
-    VirtualFile fileToNavigate = eduState.getVirtualFile();
-    final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
+  fun navigateToFailedPlaceholder(eduState: EduState, task: Task, taskDir: VirtualFile, project: Project) {
+    val selectedTaskFile = eduState.taskFile ?: return
+    var editor = eduState.editor
+    var taskFileToNavigate = selectedTaskFile
+    var fileToNavigate = eduState.virtualFile
+    val studyTaskManager = StudyTaskManager.getInstance(project)
     if (!studyTaskManager.hasFailedAnswerPlaceholders(selectedTaskFile)) {
-      for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-        TaskFile taskFile = entry.getValue();
+      for ((_, taskFile) in task.taskFiles) {
         if (studyTaskManager.hasFailedAnswerPlaceholders(taskFile)) {
-          taskFileToNavigate = taskFile;
-          VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
-          if (virtualFile == null) {
-            continue;
+          taskFileToNavigate = taskFile
+          val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
+          val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile)
+          if (fileEditor is EduSingleFileEditor) {
+            editor = fileEditor.editor
           }
-          FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile);
-          if (fileEditor instanceof EduSingleFileEditor) {
-            EduSingleFileEditor eduEditor = (EduSingleFileEditor)fileEditor;
-            editor = eduEditor.getEditor();
-          }
-          fileToNavigate = virtualFile;
-          break;
+          fileToNavigate = virtualFile
+          break
         }
       }
     }
     if (fileToNavigate != null) {
-      FileEditorManager.getInstance(project).openFile(fileToNavigate, true);
+      FileEditorManager.getInstance(project).openFile(fileToNavigate, true)
     }
     if (editor == null) {
-      return;
+      return
     }
-    final Editor editorToNavigate = editor;
-    ApplicationManager.getApplication().invokeLater(
-      () -> IdeFocusManager.getInstance(project).requestFocus(editorToNavigate.getContentComponent(), true));
-
-    NavigationUtils.navigateToFirstFailedAnswerPlaceholder(editor, taskFileToNavigate);
+    ApplicationManager.getApplication().invokeLater {
+      IdeFocusManager.getInstance(project).requestFocus(editor.contentComponent, true)
+    }
+    navigateToFirstFailedAnswerPlaceholder(editor, taskFileToNavigate)
   }
 
-  public static void flushWindows(@NotNull final Task task, @NotNull final VirtualFile taskDir) {
-    for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-      TaskFile taskFile = entry.getValue();
-      VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
-      if (virtualFile == null) {
-        continue;
-      }
-      EduUtils.flushWindows(taskFile, virtualFile);
+  fun flushWindows(task: Task, taskDir: VirtualFile) {
+    for ((_, taskFile) in task.taskFiles) {
+      val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
+      EduUtils.flushWindows(taskFile, virtualFile)
     }
   }
 
-  @Nullable
-  public static RunnerAndConfigurationSettings createDefaultRunConfiguration(@NotNull Project project) {
-    return ApplicationManager.getApplication().runReadAction((Computable<RunnerAndConfigurationSettings>) () -> {
-      Editor editor = EduUtils.getSelectedEditor(project);
-      if (editor == null) return null;
-      PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-      if (psiFile == null) return null;
-      return new ConfigurationContext(psiFile).getConfiguration();
-    });
-  }
-
-  public static boolean hasCompilationErrors(ProcessOutput processOutput) {
-    for (String error : COMPILATION_ERRORS) {
-      if (processOutput.getStderr().contains(error)) return true;
+  fun createDefaultRunConfiguration(project: Project): RunnerAndConfigurationSettings? {
+    return runReadAction {
+      val editor = EduUtils.getSelectedEditor(project) ?: return@runReadAction null
+      val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return@runReadAction null
+      ConfigurationContext(psiFile).configuration
     }
-    return false;
   }
 
-  public static String postProcessOutput(@NotNull String output) {
-    return StringsKt.removeSuffix(output.replace(System.getProperty("line.separator"), "\n"), "\n");
+  fun hasCompilationErrors(processOutput: ProcessOutput): Boolean {
+    for (error in COMPILATION_ERRORS) {
+      if (processOutput.stderr.contains(error)) return true
+    }
+    return false
   }
 
-  @Nullable
-  public static RunnerAndConfigurationSettings createRunConfiguration(@NotNull Project project, @Nullable VirtualFile taskFile) {
-    return OpenApiExtKt.runReadActionInSmartMode(project, () -> {
-      PsiFileSystemItem item = PsiUtilCore.findFileSystemItem(project, taskFile);
-      return item == null ? null : new ConfigurationContext(item).getConfiguration();
-    });
+  fun postProcessOutput(output: String): String {
+    return output.replace(System.getProperty("line.separator"), "\n").removeSuffix("\n")
+  }
+
+  fun createRunConfiguration(project: Project, taskFile: VirtualFile?): RunnerAndConfigurationSettings? {
+    return runReadActionInSmartMode(project) {
+      val item = PsiUtilCore.findFileSystemItem(project, taskFile)
+      if (item == null) null else ConfigurationContext(item).configuration
+    }
   }
 }
