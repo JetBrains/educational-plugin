@@ -1,5 +1,6 @@
 package com.jetbrains.edu.cpp
 
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
@@ -66,12 +67,7 @@ class CppCourseBuilder(
       run {
         val cMakeCommandArguments = projectCommand.cMakeCommandArguments ?: return@run
         val firstArgument = cMakeCommandArguments.cMakeArgumentList.firstOrNull() ?: return@run
-        try {
-          firstArgument.setName(newProjectName)
-        }
-        catch (e: IncorrectOperationException) {
-          LOG.warn("Cannot set project name for a new template task CMakeLists.txt file.", e)
-        }
+        runWriteAction { firstArgument.setName(newProjectName) }
       }
     }
 

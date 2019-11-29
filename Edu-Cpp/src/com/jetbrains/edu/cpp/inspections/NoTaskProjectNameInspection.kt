@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.cmake.psi.CMakeVisitor
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.cpp.findCMakeCommand
 import com.jetbrains.edu.cpp.getCMakeProjectUniqueName
 import com.jetbrains.edu.cpp.messages.EduCppBundle
@@ -17,18 +18,18 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 
-class NoProjectNameInspection : LocalInspectionTool() {
+class NoTaskProjectNameInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
     object : CMakeVisitor() {
       override fun visitFile(file: PsiFile) {
-        if (EduUtils.isStudentProject(file.project)) {
+        if (!CCUtils.isCourseCreator(file.project)) {
           return
         }
 
         val taskFile = EduUtils.getTaskFile(file.project, file.virtualFile) ?: return
 
         if (file.findCMakeCommand("project") == null) {
-          holder.registerProblem(file, EduCppBundle.message("projectName.not.set.warning"), AddDefaultProjectNameFix(file, taskFile))
+          holder.registerProblem(file, EduCppBundle.message("project.name.not.set.warning"), AddDefaultProjectNameFix(file, taskFile))
         }
       }
     }
@@ -43,7 +44,7 @@ class NoProjectNameInspection : LocalInspectionTool() {
         "mock",
         CMakeListsFileType.INSTANCE, "project(${getCMakeProjectUniqueName(taskFile.task, StudyItem::getName)})\n"
       )
-      val projectCommand = mockFile.firstChild
+      val projectCommand = mockFile.findCMakeCommand("project")!! // must be set in mock file
       val cmakeMinimumRequiredCommand = file.findCMakeCommand("cmake_minimum_required")
       if (cmakeMinimumRequiredCommand != null) {
         file.addAfter(projectCommand, cmakeMinimumRequiredCommand)

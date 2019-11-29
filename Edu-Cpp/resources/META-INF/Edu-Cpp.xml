@@ -13,8 +13,8 @@
   <extensions defaultExtensionNs="com.intellij">
     <!--suppress PluginXmlCapitalization -->
     <localInspection language="CMake" groupPath="EduTools" groupName="Course Creator"
-                     displayName="Project name isn't set"
+                     displayName="Task project name isn't set"
                      enabledByDefault="true" level="WARNING"
-                     implementationClass="com.jetbrains.edu.cpp.inspections.NoProjectNameInspection"/>
+                     implementationClass="com.jetbrains.edu.cpp.inspections.NoTaskProjectNameInspection"/>
   </extensions>
 </idea-plugin>
