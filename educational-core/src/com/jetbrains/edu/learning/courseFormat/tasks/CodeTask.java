@@ -9,6 +9,10 @@ public class CodeTask extends Task {
   @SuppressWarnings("unused") //used for deserialization
   public CodeTask() {}
 
+  public CodeTask(@NotNull final String name) {
+    super(name);
+  }
+
   public CodeTask(@NotNull final String name, int id, int position, @NotNull Date updateDate, @NotNull CheckStatus status) {
     super(name, id, position, updateDate, status);
   }

@@ -12,6 +12,9 @@ import java.util.*
 class OutputTask : Task {
 
   constructor() : super()
+
+  constructor(name: String) : super(name)
+
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name, id, position, updateDate, status)
 
   companion object {

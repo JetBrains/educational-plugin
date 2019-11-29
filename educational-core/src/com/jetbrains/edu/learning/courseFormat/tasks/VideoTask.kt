@@ -12,6 +12,8 @@ class VideoTask : TheoryTask {
   @Suppress("unused")
   constructor()
 
+  constructor(name: String) : super(name)
+
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name, id, position, updateDate, status)
 
   override fun getItemType() = "video"

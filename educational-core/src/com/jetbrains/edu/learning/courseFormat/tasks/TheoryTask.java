@@ -9,6 +9,10 @@ public class TheoryTask extends Task {
   @SuppressWarnings("unused") //used for deserialization
   public TheoryTask() {}
 
+  public TheoryTask(@NotNull final String name) {
+    super(name);
+  }
+
   public TheoryTask(@NotNull final String name, int id, int position, @NotNull Date updateDate, @NotNull CheckStatus status) {
     super(name, id, position, updateDate, status);
   }
