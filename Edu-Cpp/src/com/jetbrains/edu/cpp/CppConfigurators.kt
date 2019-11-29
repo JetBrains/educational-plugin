@@ -1,5 +1,6 @@
 package com.jetbrains.edu.cpp
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.cpp.checker.CppTaskCheckerProvider
@@ -21,7 +22,8 @@ class CppCatchConfigurator : CppBaseConfigurator() {
   override val builder = CppCourseBuilder(TASK_CPP, CATCH_TEST_CPP)
 
   companion object {
-    private const val CATCH_TEST_CPP = "catch_test.cpp"
+    @VisibleForTesting
+    public const val CATCH_TEST_CPP = "catch_test.cpp"
   }
 }
 
