@@ -86,6 +86,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
   override fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, info: NewStudyItemInfo): Task? {
     if (parentItem !is Lesson) return null
     val newTask = EduTask(info.name)
+    newTask.index = info.index
     newTask.lesson = parentItem
     newTask.addDefaultTaskDescription()
     if (parentItem is FrameworkLesson) {
