@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -173,7 +174,27 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
+    // It also checks that we do not use Stepik Lesson Attachments API (lessonAdditionalInfosToUpdate is empty)
     val expectedInfo = StepikChangesInfo(newTasks = mutableListOf(localCourse.lessons.single().taskList[2]))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
+  }
+
+  fun `test add new non-plugin task`() {
+    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask { }
+      }
+    }.asRemote()
+
+    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask { }
+        videoTask(sources = mapOf())
+      }
+    }.asRemote()
+
+    val expectedInfo = StepikChangesInfo(newTasks = mutableListOf(localCourse.lessons.single().taskList[1]),
+                                         lessonAdditionalInfosToUpdate = localCourse.lessons)
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
@@ -214,6 +235,24 @@ class StepikCompareCourseTest : EduTestCase() {
     localCourse.init(null, null, false)
 
     val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(lesson.taskList[0], lesson.taskList[2]))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
+  }
+
+  fun `test change task type`() {
+    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        videoTask(sources = mapOf())
+      }
+    }.asRemote()
+
+    val courseFromServer = localCourse.copy() as EduCourse
+    val lesson = localCourse.lessons.single()
+    val newTask = EduTask("task")
+    newTask.id = 1
+    lesson.items = listOf<StudyItem>(newTask)
+    localCourse.init(null, null, false)
+
+    val expectedInfo = StepikChangesInfo(lessonAdditionalInfosToUpdate = localCourse.lessons, tasksToUpdate = lesson.taskList)
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
