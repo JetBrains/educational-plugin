@@ -1,15 +1,18 @@
 package com.jetbrains.edu.coursecreator.actions
 
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
+import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
+import com.jetbrains.edu.learning.yaml.configFileName
 import junit.framework.TestCase
 import java.io.File
 import java.text.SimpleDateFormat
@@ -185,9 +188,7 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
-          taskFile("fizz.kt", """fn fizzz() = <p>TODO()</p>""") {
-            placeholder(0)
-          }
+          taskFile("fizz.kt", """fn fizzz() = <p>TODO()</p>""")
         }
       }
     }
@@ -199,6 +200,31 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     assertThrows(BrokenPlaceholderException::class.java, ThrowableRunnable<BrokenPlaceholderException> {
       CourseArchiveCreator.loadActualTexts(project, course)
     })
+  }
+
+  fun `test navigate to yaml if placeholder is broken`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("fizz.kt", """fn fizzz() = <p>TODO()</p>""")
+        }
+      }
+    }
+    course.description = "my summary"
+    createConfigFiles(project)
+
+    val task = course.lessons.first().taskList.first() ?: error("Cannot find task")
+    val placeholder = task.taskFiles["fizz.kt"]?.answerPlaceholders?.firstOrNull() ?: error("Cannot find placeholder")
+    placeholder.offset = 1000
+
+    assertNull(FileEditorManagerEx.getInstanceEx(project).currentFile)
+
+    // It is not important, what would be passed to the constructor, except the first argument - project
+    // Inside `compute()`, exception would be thrown, so we will not reach the moment of creating the archive
+    CourseArchiveCreator(project, course.getDir(project), File(""), false).compute()
+
+    val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
+    assertEquals(task.configFileName, navigatedFile.name)
   }
 
   fun `test course additional files`() {
