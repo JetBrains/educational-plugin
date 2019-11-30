@@ -34,7 +34,6 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
     doTest(task, "Add default project name.", """
       |cmake_minimum_required(VERSION 3.15)
       |project(global-lesson-task)
-      |
       |# some text
     """.trimMargin("|"))
   }
