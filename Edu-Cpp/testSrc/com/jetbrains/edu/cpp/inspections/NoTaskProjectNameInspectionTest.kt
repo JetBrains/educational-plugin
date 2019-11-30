@@ -8,6 +8,7 @@ import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
+import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -31,7 +32,7 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
     }
 
     val task = course.findTask("lesson", "task")
-    doTest(task, "Add default project name.", """
+    doTest(task, EduCppBundle.message("projectName.addDefault.fix.description"), """
       |cmake_minimum_required(VERSION 3.15)
       |project(global-lesson-task)
       |# some text
@@ -53,7 +54,7 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
     }
 
     val task = course.findTask("lesson", "task")
-    doTest(task, "Add default project name.", """
+    doTest(task, EduCppBundle.message("projectName.addDefault.fix.description"), """
       |project(global-lesson-task)
       |# some text
     """.trimMargin("|"))
