@@ -93,6 +93,21 @@ class StepikCompareCourseTest : EduTestCase() {
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
+  fun `test change lesson custom presentable name`() {
+    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask { }
+        outputTask { }
+        theoryTask { }
+      }
+    }.asRemote()
+
+    val courseFromServer = localCourse.copy() as EduCourse
+    localCourse.lessons.single().customPresentableName = "renamed"
+    val expectedInfo = StepikChangesInfo(lessonAdditionalInfosToUpdate = arrayListOf(localCourse.lessons.single()))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
+  }
+
   fun `test change lesson index`() {
     val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {

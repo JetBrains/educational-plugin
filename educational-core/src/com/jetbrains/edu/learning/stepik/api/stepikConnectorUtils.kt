@@ -72,6 +72,7 @@ fun loadAndFillLessonAdditionalInfo(lesson: Lesson) {
   val infoText = loadAttachment(attachmentLink) ?: return
   val lessonInfo = HyperskillConnector.getInstance().objectMapper.readValue(infoText, AdditionalLessonInfo::class.java)
 
+  lesson.customPresentableName = lessonInfo.customName
   lessonInfo.taskFiles.forEach { (taskId, taskFiles) ->
     lesson.getTask(taskId)?.taskFiles = taskFiles.associateBy(TaskFile::getName) { it }
   }

@@ -52,6 +52,8 @@ const val VERSION = "version"
 const val ATTACHMENTS = "attachments"
 const val ADDITIONAL_FILES = "additional_files"
 const val TASK_FILES = "task_files"
+const val TASK_NAMES = "task_names"
+const val LESSON_CUSTOM_NAME = "lesson_custom_name"
 const val TIME = "time"
 
 // List wrappers for GET requests:
@@ -423,12 +425,18 @@ class AdditionalCourseInfo : AdditionalInfo {
 }
 
 class AdditionalLessonInfo : AdditionalInfo {
+  @JsonProperty(LESSON_CUSTOM_NAME)
+  var customName: String? = null
+
   @JsonProperty(TASK_FILES)
   lateinit var taskFiles: Map<Int, List<TaskFile>> // taskId -> taskFiles
 
   constructor()
 
-  constructor(taskFiles: Map<Int, List<TaskFile>>) {
+  constructor(customName: String?, taskFiles: Map<Int, List<TaskFile>>) {
+    this.customName = customName
     this.taskFiles = taskFiles
   }
+
+  val isEmpty: Boolean get() = customName.isNullOrEmpty() && taskFiles.isEmpty()
 }

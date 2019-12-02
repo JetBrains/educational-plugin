@@ -24,13 +24,11 @@ import com.intellij.openapi.vfs.*
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
-import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator.Companion.loadActualTexts
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.getDocument
-import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.api.AdditionalLessonInfo
 import com.jetbrains.edu.learning.stepik.collectTaskFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -168,8 +166,10 @@ object CCUtils {
 
   @JvmStatic
   fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): AdditionalLessonInfo {
-    val taskFiles = lesson.taskList.filter { !it.isPluginTaskType }.associateBy(Task::getId) { collectTaskFiles(project, it) }
-    return AdditionalLessonInfo(taskFiles)
+    val tasks = lesson.taskList.filter { !it.isPluginTaskType }
+    val taskFiles = tasks.associateBy(Task::getId) { collectTaskFiles(project, it) }
+    @Suppress("deprecation")
+    return AdditionalLessonInfo(lesson.customPresentableName, taskFiles)
   }
 
   @JvmStatic

@@ -207,6 +207,24 @@ open class StepikIntegrationTest : StepikTestCase() {
     checkSections(localCourse)
   }
 
+  fun `test custom lesson name`() {
+    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask { }
+      }
+    }
+    val newName = "renamed"
+    localCourse.lessons[0].customPresentableName = newName
+
+    CCPushCourse.doPush(project, localCourse.asEduCourse())
+    val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
+    val section = StepikConnector.getInstance().getSection(courseFromStepik.sectionIds[0])!!
+    val lesson = StepikCourseLoader.getLessonsFromUnits(courseFromStepik, section.units, false)[0]
+    loadAndFillLessonAdditionalInfo(lesson)
+
+    assertEquals(newName, lesson.presentableName)
+  }
+
   fun `test post new section`() {
     val localCourse = initCourse {
       section("section1") {

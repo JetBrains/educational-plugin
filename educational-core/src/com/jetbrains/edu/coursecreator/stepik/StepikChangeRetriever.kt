@@ -143,9 +143,15 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
   }
 
   /**
-   * This function is used to detect all changed or added non-plugin tasks.
+   * This function is used to detect:
+   * 1. custom lesson name changes
+   * 2. all changed/added/deleted non-plugin tasks.
    * */
   private fun lessonAdditionalInfoChanged(localLesson: Lesson, remoteLesson: Lesson): Boolean {
+    @Suppress("deprecation")
+    if (localLesson.customPresentableName != remoteLesson.customPresentableName)
+      return true
+
     for (localTask in localLesson.taskList) {
       val remoteTask = remoteLesson.getTask(localTask.id)
 
