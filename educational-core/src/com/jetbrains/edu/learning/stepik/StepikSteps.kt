@@ -176,7 +176,8 @@ open class PyCharmStepOptions : StepOptions {
     taskType = task.itemType
     lessonType = if (task.lesson is FrameworkLesson) FRAMEWORK else null
     myFeedbackLink = task.feedbackLink
-    customPresentableName = task.presentableName
+    @Suppress("deprecation")
+    customPresentableName = task.customPresentableName
     solutionHidden = task.solutionHidden
   }
 }
