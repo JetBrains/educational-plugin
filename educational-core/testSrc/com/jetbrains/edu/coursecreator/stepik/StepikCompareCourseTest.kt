@@ -235,6 +235,28 @@ class StepikCompareCourseTest : EduTestCase() {
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
+  fun `test change non-plugin task name`() {
+    val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
+    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        choiceTask(choiceOptions = choiceOptions) { }
+      }
+    }.asRemote()
+
+    val courseFromServer = localCourse.copy() as EduCourse
+    val lesson = localCourse.lessons.single()
+    val changedTask = lesson.taskList[0]
+
+    val newName = "renamed"
+    runWriteAction {
+      changedTask.getTaskDir(project)!!.rename(this, newName)
+    }
+    changedTask.name = newName
+
+    val expectedInfo = StepikChangesInfo(lessonAdditionalInfosToUpdate = mutableListOf(lesson))
+    checkChangedItems(localCourse, courseFromServer, expectedInfo)
+  }
+
   fun `test change task index`() {
     val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {

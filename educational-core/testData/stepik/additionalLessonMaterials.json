@@ -1,5 +1,8 @@
 {
   "lesson_custom_name": "renamed",
+  "task_names": {
+    "123": "My cool task"
+  },
   "task_files": {
     "123": [
       {

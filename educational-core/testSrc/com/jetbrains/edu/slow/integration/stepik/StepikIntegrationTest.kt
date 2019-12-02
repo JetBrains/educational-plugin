@@ -353,9 +353,10 @@ open class StepikIntegrationTest : StepikTestCase() {
 
   fun `test course with choice task`() {
     val expectedChoiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.CORRECT)
+    val taskName = "Greatest name ever"
     val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
-        choiceTask(isMultipleChoice = true, choiceOptions = expectedChoiceOptions) {
+        choiceTask(taskName, isMultipleChoice = true, choiceOptions = expectedChoiceOptions) {
           taskFile("text.txt")
         }
       }
@@ -382,6 +383,8 @@ open class StepikIntegrationTest : StepikTestCase() {
     assertEquals(expectedChoiceOptions, choiceTask.choiceOptions.associateBy({ it.text }, { it.status }))
     assertEquals(correct, choiceTask.messageCorrect)
     assertEquals(incorrect, choiceTask.messageIncorrect)
+
+    assertEquals(taskName, choiceTask.name)
   }
 
   fun `test upload course with hidden solutions`() {

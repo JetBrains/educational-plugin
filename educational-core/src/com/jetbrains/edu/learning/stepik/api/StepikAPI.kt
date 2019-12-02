@@ -428,15 +428,21 @@ class AdditionalLessonInfo : AdditionalInfo {
   @JsonProperty(LESSON_CUSTOM_NAME)
   var customName: String? = null
 
+  // only for non-plugin tasks
+  @JsonProperty(TASK_NAMES)
+  lateinit var taskNames: Map<Int, String> // taskId -> taskName
+
+  // only for non-plugin tasks
   @JsonProperty(TASK_FILES)
   lateinit var taskFiles: Map<Int, List<TaskFile>> // taskId -> taskFiles
 
   constructor()
 
-  constructor(customName: String?, taskFiles: Map<Int, List<TaskFile>>) {
+  constructor(customName: String?, taskNames: Map<Int, String>, taskFiles: Map<Int, List<TaskFile>>) {
     this.customName = customName
+    this.taskNames = taskNames
     this.taskFiles = taskFiles
   }
 
-  val isEmpty: Boolean get() = customName.isNullOrEmpty() && taskFiles.isEmpty()
+  val isEmpty: Boolean get() = customName.isNullOrEmpty() && taskNames.isEmpty() && taskFiles.isEmpty()
 }
