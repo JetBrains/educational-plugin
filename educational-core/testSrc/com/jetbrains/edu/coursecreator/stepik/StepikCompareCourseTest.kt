@@ -604,10 +604,6 @@ class StepikCompareCourseTest : EduTestCase() {
     }.asRemote()
     val courseFromServer = localCourse.copy() as EduCourse
 
-    val taskFromRemote = courseFromServer.lessons.single().taskList.single()
-    //choice tasks are being renamed when uploading to Stepik
-    taskFromRemote.name = "Quiz"
-
     val expectedInfo = StepikChangesInfo()
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
