@@ -369,6 +369,9 @@ open class StepikIntegrationTest : StepikTestCase() {
     sourceChoiceTask.messageCorrect = correct
     sourceChoiceTask.messageIncorrect = incorrect
 
+    val customName = "New cool custom name"
+    sourceChoiceTask.customPresentableName = customName
+
     val sourceCourse = initCourse(localCourse)
 
     val courseFromStepik = getCourseFromStepik(sourceCourse.id)
@@ -385,6 +388,8 @@ open class StepikIntegrationTest : StepikTestCase() {
     assertEquals(incorrect, choiceTask.messageIncorrect)
 
     assertEquals(taskName, choiceTask.name)
+    @Suppress("deprecation")
+    assertEquals(customName, choiceTask.customPresentableName)
   }
 
   fun `test upload course with hidden solutions`() {

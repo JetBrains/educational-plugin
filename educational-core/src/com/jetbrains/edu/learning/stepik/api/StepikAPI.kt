@@ -53,6 +53,7 @@ const val ATTACHMENTS = "attachments"
 const val ADDITIONAL_FILES = "additional_files"
 const val TASK_FILES = "task_files"
 const val TASK_NAMES = "task_names"
+const val TASK_CUSTOM_NAMES = "task_custom_names"
 const val LESSON_CUSTOM_NAME = "lesson_custom_name"
 const val TIME = "time"
 
@@ -428,21 +429,29 @@ class AdditionalLessonInfo : AdditionalInfo {
   @JsonProperty(LESSON_CUSTOM_NAME)
   var customName: String? = null
 
-  // only for non-plugin tasks
+  /**
+   * We have another mechanism to store info about plugin tasks: com.jetbrains.edu.learning.stepik.PyCharmStepOptions
+   * This object is used to store additional info about lesson or non-plugin tasks
+   * (we use lessonInfo for tasks because Stepik API does not have attachments for tasks)
+   * */
+
   @JsonProperty(TASK_NAMES)
   lateinit var taskNames: Map<Int, String> // taskId -> taskName
 
-  // only for non-plugin tasks
+  @JsonProperty(TASK_CUSTOM_NAMES)
+  lateinit var taskCustomNames: Map<Int, String> // taskId -> taskCustomName
+
   @JsonProperty(TASK_FILES)
   lateinit var taskFiles: Map<Int, List<TaskFile>> // taskId -> taskFiles
 
   constructor()
 
-  constructor(customName: String?, taskNames: Map<Int, String>, taskFiles: Map<Int, List<TaskFile>>) {
+  constructor(customName: String?, taskNames: Map<Int, String>, taskCustomNames: Map<Int, String>, taskFiles: Map<Int, List<TaskFile>>) {
     this.customName = customName
     this.taskNames = taskNames
+    this.taskCustomNames = taskCustomNames
     this.taskFiles = taskFiles
   }
 
-  val isEmpty: Boolean get() = customName.isNullOrEmpty() && taskNames.isEmpty() && taskFiles.isEmpty()
+  val isEmpty: Boolean get() = customName.isNullOrEmpty() && taskNames.isEmpty() && taskCustomNames.isEmpty() && taskFiles.isEmpty()
 }

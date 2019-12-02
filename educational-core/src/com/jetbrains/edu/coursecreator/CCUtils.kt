@@ -168,9 +168,11 @@ object CCUtils {
   fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): AdditionalLessonInfo {
     val tasks = lesson.taskList.filter { !it.isPluginTaskType }
     val taskNames = tasks.associateBy(Task::getId) { it.name }
+    @Suppress("deprecation")
+    val taskCustomNames = tasks.filter { it.customPresentableName != null }.associateBy(Task::getId) { it.customPresentableName!! }
     val taskFiles = tasks.associateBy(Task::getId) { collectTaskFiles(project, it) }
     @Suppress("deprecation")
-    return AdditionalLessonInfo(lesson.customPresentableName, taskNames, taskFiles)
+    return AdditionalLessonInfo(lesson.customPresentableName, taskNames, taskCustomNames, taskFiles)
   }
 
   @JvmStatic

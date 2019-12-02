@@ -3,6 +3,9 @@
   "task_names": {
     "123": "My cool task"
   },
+  "task_custom_names": {
+    "123": "Very cool"
+  },
   "task_files": {
     "123": [
       {

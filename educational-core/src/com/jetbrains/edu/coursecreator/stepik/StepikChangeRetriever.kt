@@ -146,7 +146,8 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
    * This function is used to detect:
    * 1. custom lesson name changes
    * 2. all changed/added/deleted non-plugin task names
-   * 3. all changed/added/deleted taskFiles in non-plugin tasks
+   * 3. all changed/added/deleted non-plugin custom task names
+   * 4. all changed/added/deleted taskFiles in non-plugin tasks
    * */
   private fun lessonAdditionalInfoChanged(localLesson: Lesson, remoteLesson: Lesson): Boolean {
     @Suppress("deprecation")
@@ -172,8 +173,12 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
       // Our last case is
       // if (!localTask.isPluginTaskType && !remoteTask.isPluginTaskType)
       // It means that we need to check filenames and the files itself
-      if (localTask.name != remoteTask.name || taskFilesChanged(localTask, remoteTask))
+      @Suppress("deprecation")
+      if (localTask.name != remoteTask.name ||
+          localTask.customPresentableName != remoteTask.customPresentableName ||
+          taskFilesChanged(localTask, remoteTask)) {
         return true
+      }
     }
     return false
   }

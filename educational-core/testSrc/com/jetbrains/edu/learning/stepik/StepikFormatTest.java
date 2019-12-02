@@ -85,6 +85,7 @@ public class StepikFormatTest extends EduTestCase {
     final AdditionalLessonInfo additionalLessonInfo = mapper.readValue(responseString, AdditionalLessonInfo.class);
     assertEquals("renamed", additionalLessonInfo.getCustomName());
     assertEquals("My cool task", additionalLessonInfo.taskNames.get(123));
+    assertEquals("Very cool", additionalLessonInfo.taskCustomNames.get(123));
     assertEquals(1, additionalLessonInfo.taskFiles.size());
     assertEquals(3, additionalLessonInfo.taskFiles.get(123).size());
   }

@@ -122,6 +122,7 @@ class HyperskillAdditionalInfo {
 
 interface StepOptions
 
+// If you need to store non-plugin task/lesson info, please use com.jetbrains.edu.learning.stepik.api.AdditionalLessonInfo
 open class PyCharmStepOptions : StepOptions {
   @JsonProperty(TASK_TYPE)
   var taskType: String? = null
