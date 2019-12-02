@@ -22,6 +22,7 @@ import junit.framework.TestCase.assertTrue
 class StepikCompareCourseTest : EduTestCase() {
 
   fun `test the same course`() {
+    val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
     val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section {
         lesson {
@@ -33,7 +34,7 @@ class StepikCompareCourseTest : EduTestCase() {
       section {
         lesson {
           eduTask { }
-          eduTask { }
+          choiceTask(isMultipleChoice = false, choiceOptions = choiceOptions)
         }
       }
     }.asRemote()
@@ -592,19 +593,6 @@ class StepikCompareCourseTest : EduTestCase() {
     val courseFromServer = localCourse.copy() as EduCourse
     (localCourse.lessons.single().taskList.single() as ChoiceTask).messageIncorrect = "incorrect"
     val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(courseFromServer.lessons.single().taskList.single()))
-    checkChangedItems(localCourse, courseFromServer, expectedInfo)
-  }
-
-  fun `test choice task nothing changed`() {
-    val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-      lesson {
-        choiceTask(isMultipleChoice = false, choiceOptions = choiceOptions)
-      }
-    }.asRemote()
-    val courseFromServer = localCourse.copy() as EduCourse
-
-    val expectedInfo = StepikChangesInfo()
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
