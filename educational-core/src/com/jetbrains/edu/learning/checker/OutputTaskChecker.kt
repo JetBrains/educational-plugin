@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.checker
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.FAILED_TO_CHECK
@@ -25,10 +26,7 @@ open class OutputTaskChecker(
         is Err -> return CheckResult(CheckStatus.Unchecked, result.error)
       }
 
-      val outputPatternFile = task.findTestDirs(project)
-                                .mapNotNull { it.findChild(OUTPUT_PATTERN_NAME) }
-                                .firstOrNull()
-                              ?: return CheckResult.FAILED_TO_CHECK
+      val outputPatternFile = getOutputFile() ?: return FAILED_TO_CHECK
 
       val expectedOutput = VfsUtil.loadText(outputPatternFile)
       if (expectedOutput.trimEnd('\n') == outputString.trimEnd('\n')) {
@@ -41,6 +39,13 @@ open class OutputTaskChecker(
       LOG.error(e)
       return FAILED_TO_CHECK
     }
+  }
+
+  private fun getOutputFile(): VirtualFile? {
+    val outputFile = task.findTestDirs(project)
+      .mapNotNull { it.findChild(OUTPUT_PATTERN_NAME) }
+      .firstOrNull()
+    return outputFile ?: task.getTaskDir(project)?.findChild(OUTPUT_PATTERN_NAME)
   }
 
   companion object {
