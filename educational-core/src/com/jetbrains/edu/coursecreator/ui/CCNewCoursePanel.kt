@@ -207,7 +207,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
 
     myRequiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements())
     myDescriptionTextArea.text = myCourse.description.nullize() ?: """
-      ${myCourse.language.capitalize()} course.
+      ${myCourse.languageById.displayName} course.
       Created: ${LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))}.
     """.trimIndent()
     doValidation()
