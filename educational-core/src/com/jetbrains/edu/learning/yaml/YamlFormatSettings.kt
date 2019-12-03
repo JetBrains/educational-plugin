@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
 
 object YamlFormatSettings {
@@ -35,11 +34,4 @@ object YamlFormatSettings {
   val YAML_TEST_THROW_EXCEPTION = Key<Boolean>("EDU.yaml_test_throw_exception")
 
   fun shouldCreateConfigFiles(project: Project): Boolean = !isUnitTestMode || project.getUserData(YAML_TEST_PROJECT_READY) == true
-
-  // disable yaml for framework lessons in student project
-  // TODO: remove when student yaml is ready
-  @JvmStatic
-  fun disableYaml(course: Course?): Boolean {
-    return false
-  }
 }

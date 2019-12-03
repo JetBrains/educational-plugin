@@ -31,7 +31,6 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveAll
 import java.io.IOException
 
@@ -79,7 +78,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
     connection.subscribe(ProjectManager.TOPIC, object : ProjectManagerListener {
       override fun projectClosing(project: Project) {
         val course = StudyTaskManager.getInstance(project).course
-        if (!isUnitTestMode && isStudentProject(project) && !YamlFormatSettings.disableYaml(course)) {
+        if (!isUnitTestMode && isStudentProject(project)) {
           saveAll(project)
         }
 

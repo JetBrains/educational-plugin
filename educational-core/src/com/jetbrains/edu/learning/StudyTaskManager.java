@@ -43,7 +43,6 @@ import java.util.List;
 
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.COURSE;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
-import static com.jetbrains.edu.learning.yaml.YamlFormatSettings.disableYaml;
 
 /**
  * Implementation of class which contains all the information
@@ -90,9 +89,6 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   @Nullable
   @Override
   public Element getState() {
-    if (disableYaml(myCourse)) {
-      return serialize();
-    }
     return null;
   }
 
@@ -169,9 +165,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
       VERSION = EduVersions.XML_FORMAT_VERSION;
       if (myCourse != null) {
         myCourse.init(null, null, true);
-        if (!disableYaml(myCourse)) {
-          createConfigFilesIfMissing();
-        }
+        createConfigFilesIfMissing();
       }
     }
     catch (StudyUnrecognizedFormatException e) {

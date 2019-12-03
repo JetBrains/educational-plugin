@@ -48,7 +48,6 @@ import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -101,9 +100,6 @@ public abstract class CourseProjectGenerator<S> {
     loadSolutions(project, myCourse);
     EduUtils.openFirstTask(myCourse, project);
 
-    if (YamlFormatSettings.disableYaml(myCourse)) {
-      return;
-    }
     YamlFormatSynchronizer.saveAll(project);
     YamlFormatSynchronizer.startSynchronization(project);
   }
