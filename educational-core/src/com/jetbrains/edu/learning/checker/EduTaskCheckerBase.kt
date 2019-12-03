@@ -1,16 +1,9 @@
 package com.jetbrains.edu.learning.checker
 
-import com.intellij.execution.ExecutionListener
-import com.intellij.execution.ExecutionManager
 import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.process.*
-import com.intellij.execution.runners.ExecutionEnvironment
-import com.intellij.execution.runners.ExecutionEnvironmentBuilder
-import com.intellij.execution.runners.ProgramRunner
 import com.intellij.execution.testframework.Filter
 import com.intellij.execution.testframework.sm.runner.SMTRunnerEventsAdapter
-import com.intellij.execution.testframework.sm.runner.SMTRunnerEventsListener
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
@@ -23,7 +16,6 @@ import com.jetbrains.edu.learning.checker.CheckResult.Companion.NO_TESTS_RUN
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.runReadActionInSmartMode
-import java.util.concurrent.CountDownLatch
 
 abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
   var activateRunToolWindow: Boolean = !task.course.isStudy
@@ -34,18 +26,6 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
         ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
       }
     }
-    val connection = project.messageBus.connect()
-    val testRoots = mutableListOf<SMTestProxy.SMRootTestProxy>()
-
-    connection.subscribe(SMTRunnerEventsListener.TEST_STATUS, object : SMTRunnerEventsAdapter() {
-      // We have to collect test roots in `onTestingStarted`
-      // because some test framework integrations (Gradle)
-      // have custom components in implementation that don't provide test events
-      // except `onTestingStarted`
-      override fun onTestingStarted(testsRoot: SMTestProxy.SMRootTestProxy) {
-        testRoots += testsRoot
-      }
-    })
 
     val configurations = runReadActionInSmartMode(project) { createTestConfigurations() }
     configurations.forEach {
@@ -55,47 +35,33 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
 
     if (configurations.isEmpty()) return NO_TESTS_RUN
 
-    val latch = CountDownLatch(configurations.size)
+    val testRoots = mutableListOf<SMTestProxy.SMRootTestProxy>()
+    val testEventsListener = object : SMTRunnerEventsAdapter() {
+      // We have to collect test roots in `onTestingStarted`
+      // because some test framework integrations (Gradle)
+      // have custom components in implementation that don't provide test events
+      // except `onTestingStarted`
+      override fun onTestingStarted(testsRoot: SMTestProxy.SMRootTestProxy) {
+        testRoots += testsRoot
+      }
+    }
+
     val stderr = StringBuilder()
-    runInEdt {
-      val environments = mutableListOf<ExecutionEnvironment>()
-      connection.subscribe(ExecutionManager.EXECUTION_TOPIC, object : ExecutionListener {
-        override fun processNotStarted(executorId: String, e: ExecutionEnvironment) {
-          if (executorId == DefaultRunExecutor.EXECUTOR_ID && environments.contains(e)) {
-            latch.countDown()
-          }
-        }
-      })
-      for (configuration in configurations) {
-        val runner = ProgramRunner.getRunner(DefaultRunExecutor.EXECUTOR_ID, configuration.configuration)
-        val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configuration).activeTarget().build()
-        environments.add(env)
-        runner?.execute(env) { descriptor ->
-          // Descriptor can be null in some cases.
-          // For example, IntelliJ Rust's test runner provides null here if compilation fails
-          if (descriptor == null) {
-            latch.countDown()
-            return@execute
-          }
-
-          descriptor.processHandler?.addProcessListener(object : ProcessAdapter() {
-            override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-              val text = event.text
-              if (text != null && ProcessOutputType.isStderr(outputType)) {
-                stderr.append(text)
-              }
-            }
-
-            override fun processTerminated(event: ProcessEvent) {
-              latch.countDown()
-            }
-          })
+    val processListener = object : ProcessAdapter() {
+      override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+        val text = event.text
+        if (text != null && ProcessOutputType.isStderr(outputType)) {
+          stderr.append(text)
         }
       }
     }
 
-    latch.await()
-    connection.disconnect()
+    CheckUtils.executeRunConfigurations(
+      project,
+      configurations,
+      processListener = processListener,
+      testEventsListener = testEventsListener
+    )
 
     // We need to invoke all current pending EDT actions to get proper states of test roots.
     invokeAndWaitIfNeeded {}
