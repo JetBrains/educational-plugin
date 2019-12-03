@@ -25,6 +25,7 @@ class CheckResult @JvmOverloads constructor(
     @JvmField val CONNECTION_FAILED = CheckResult(CheckStatus.Unchecked, "Connection failed")
     @JvmField val SOLVED = CheckResult(CheckStatus.Solved, "")
     @JvmField val NO_TESTS_RUN = CheckResult(CheckStatus.Unchecked, "No tests have run")
+    @JvmField val CANCELED = CheckResult(CheckStatus.Unchecked, "Canceled")
   }
 }
 

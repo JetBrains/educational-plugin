@@ -20,7 +20,7 @@ open class OutputTaskChecker(
 
   override fun check(indicator: ProgressIndicator): CheckResult {
     try {
-      val outputString = when (val result = codeExecutor.execute(project, task)) {
+      val outputString = when (val result = codeExecutor.execute(project, task, indicator)) {
         is Ok -> result.value
         is Err -> return CheckResult(CheckStatus.Unchecked, result.error)
       }

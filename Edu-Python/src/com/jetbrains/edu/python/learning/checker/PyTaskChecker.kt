@@ -55,8 +55,10 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
     return super.check(indicator)
   }
 
-  override fun computePossibleErrorResult(stderr: String): CheckResult {
-    val error = getSyntaxError() ?: return CheckResult.SOLVED
+  override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult {
+    val error = getSyntaxError(indicator)
+    if (indicator.isCanceled) return CheckResult.CANCELED
+    if (error == null) return CheckResult.SOLVED
     return CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE, error)
   }
 
@@ -66,7 +68,7 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
     return result?.message == "The file contains syntax errors"
   }
 
-  private fun getSyntaxError(): String? {
+  private fun getSyntaxError(indicator: ProgressIndicator): String? {
     val configuration = createRunConfiguration(project, task.getCurrentTaskVirtualFile(project)) ?: return null
     configuration.isActivateToolWindowBeforeRun = false
 
@@ -80,7 +82,7 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
     }
 
     try {
-      CheckUtils.executeRunConfigurations(project, listOf(configuration), processListener = processListener)
+      CheckUtils.executeRunConfigurations(project, listOf(configuration), indicator, processListener = processListener)
     }
     catch (e: Exception) {
       LOG.error(e)

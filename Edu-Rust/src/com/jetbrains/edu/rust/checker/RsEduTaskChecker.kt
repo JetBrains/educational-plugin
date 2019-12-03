@@ -4,6 +4,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
@@ -19,7 +20,7 @@ import org.rust.openapiext.execute
 
 class RsEduTaskChecker(project: Project, task: EduTask) : EduTaskCheckerBase(task, project) {
 
-  override fun computePossibleErrorResult(stderr: String): CheckResult {
+  override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult {
     val taskDir = task.getTaskDir(project) ?: error("Failed to find directory of `${task.name}` task")
     val cargo = project.rustSettings.toolchain?.rawCargo() ?: return CheckResult(CheckStatus.Failed, message("checker.fail.toolchain"))
     val pkg = runReadAction { project.cargoProjects.findPackageForFile(taskDir) } ?:
@@ -31,7 +32,7 @@ class RsEduTaskChecker(project: Project, task: EduTask) : EduTaskCheckerBase(tas
         return CheckResult(CheckStatus.Failed, CheckUtils.COMPILATION_FAILED_MESSAGE, processOutput.stdout)
       }
     }
-    return super.computePossibleErrorResult(stderr)
+    return super.computePossibleErrorResult(indicator, stderr)
   }
 
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {

@@ -20,7 +20,7 @@ class GradleOutputTaskChecker(
 ) : OutputTaskChecker(task, project, codeExecutor) {
 
   override fun check(indicator: ProgressIndicator): CheckResult {
-    val result = runGradleRunTask(project, task, mainClassForFile)
+    val result = runGradleRunTask(project, task, indicator, mainClassForFile)
     val output = when (result) {
       is Err -> return result.error
       is Ok -> result.value

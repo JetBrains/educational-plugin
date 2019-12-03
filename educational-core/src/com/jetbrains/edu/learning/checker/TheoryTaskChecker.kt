@@ -1,12 +1,8 @@
 package com.jetbrains.edu.learning.checker
 
-import com.intellij.execution.ProgramRunnerUtil
 import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckUtils.NOT_RUNNABLE_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.createDefaultRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -20,12 +16,8 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
       return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     }
 
-    StudyTaskManager.getInstance(project).course?.let {
-      runInEdt {
-        ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
-      }
-    }
-    return CheckResult(CheckStatus.Solved, "")
+    CheckUtils.executeRunConfigurations(project, listOf(configuration), indicator)
+    return CheckResult.SOLVED
   }
 
   protected open fun createTestConfiguration(): RunnerAndConfigurationSettings? = createDefaultRunConfiguration(project)

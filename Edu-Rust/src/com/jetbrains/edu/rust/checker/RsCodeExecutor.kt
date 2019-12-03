@@ -1,6 +1,7 @@
 package com.jetbrains.edu.rust.checker
 
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.learning.Err
@@ -18,7 +19,7 @@ import org.rust.openapiext.execute
 import org.rust.openapiext.isSuccess
 
 class RsCodeExecutor : CodeExecutor {
-  override fun execute(project: Project, task: Task, input: String?): Result<String, String> {
+  override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, String> {
     val taskDir = task.getTaskDir(project) ?: return Err("Failed to find task dir")
     val mainVFile = task.findSourceDir(taskDir)?.findChild(MAIN_RS_FILE)
                     ?: return Err("Failed to find `$MAIN_RS_FILE`")

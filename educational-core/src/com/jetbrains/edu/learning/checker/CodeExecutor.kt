@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -19,6 +20,7 @@ interface CodeExecutor {
   fun execute(
     project: Project,
     task: Task,
+    indicator: ProgressIndicator,
     input: String? = null
   ): Result<String, String>
 

@@ -46,7 +46,7 @@ class CodeforcesTaskChecker(
       indicator.text2 = "Running test $testNumber of ${testFolders.size}"
 
       val input = runReadAction { inputDocument.text }
-      val output = when (val result = codeExecutor.execute(project, task, input)) {
+      val output = when (val result = codeExecutor.execute(project, task, indicator, input)) {
         is Ok -> result.value
         is Err -> return CheckResult(CheckStatus.Unchecked, result.error)
       }

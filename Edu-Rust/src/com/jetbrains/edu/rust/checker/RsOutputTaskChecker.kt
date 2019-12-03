@@ -40,7 +40,7 @@ class RsOutputTaskChecker(
       return FAILED_TO_CHECK
     }
 
-    val output = when (val result = codeExecutor.execute(project, task)) {
+    val output = when (val result = codeExecutor.execute(project, task, indicator)) {
       is Ok -> result.value
       is Err -> {
         return when {

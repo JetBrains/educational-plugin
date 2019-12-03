@@ -2,6 +2,7 @@ package com.jetbrains.edu.python.learning.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
@@ -21,7 +22,7 @@ class PyNewEduTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(
       .filter { it.configuration !is PythonRunConfiguration }
   }
 
-  override fun computePossibleErrorResult(stderr: String): CheckResult =
+  override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult =
     if (SYNTAX_ERRORS.any { it in stderr }) CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE, stderr) else CheckResult.SOLVED
 
   companion object {

@@ -20,7 +20,7 @@ open class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<E
     }
 
     return GradleCommandLine.create(project, taskName, *params.toTypedArray())
-             ?.launchAndCheck()
+             ?.launchAndCheck(indicator)
              ?: FAILED_TO_CHECK
   }
 

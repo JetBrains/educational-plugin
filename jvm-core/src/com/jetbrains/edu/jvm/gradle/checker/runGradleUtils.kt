@@ -9,7 +9,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.ModuleUtil
-import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SystemInfo
@@ -51,22 +51,18 @@ class GradleCommandLine private constructor(
   private val taskName: String
 ) {
 
-  fun launchAndCheck(): CheckResult {
-    val output = launch() ?: return CheckResult.FAILED_TO_CHECK
+  fun launchAndCheck(indicator: ProgressIndicator): CheckResult {
+    val output = launch(indicator) ?: return CheckResult.FAILED_TO_CHECK
     if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.firstMessage, output.messages.joinToString("\n"))
 
     // TODO: do not use `TestsOutputParser` here
     return TestsOutputParser().getCheckResult(output.messages.map { STUDY_PREFIX + it })
   }
 
-  fun launch(): GradleOutput? {
+  fun launch(indicator: ProgressIndicator): GradleOutput? {
     val output = try {
       val handler = CapturingProcessHandler(cmd)
-      if (ProgressManager.getInstance().hasProgressIndicator()) {
-        handler.runProcessWithProgressIndicator(ProgressManager.getInstance().progressIndicator)
-      } else {
-        handler.runProcess()
-      }
+      handler.runProcessWithProgressIndicator(indicator)
     } catch (e: ExecutionException) {
       LOG.info(FAILED_TO_CHECK_MESSAGE, e)
       return null
@@ -151,6 +147,7 @@ class GradleOutput(val isSuccess: Boolean, _messages: List<String>) {
 fun runGradleRunTask(
   project: Project,
   task: Task,
+  indicator: ProgressIndicator,
   mainClassForFile: (Project, VirtualFile) -> String?
 ): Result<String, CheckResult> {
   val mainClassName = findMainClass(project, task, mainClassForFile)
@@ -158,7 +155,7 @@ fun runGradleRunTask(
   val taskName = if (task.hasSeparateModule(project)) "${getGradleProjectName(task)}:run" else "run"
 
   val gradleOutput = GradleCommandLine.create(project, taskName, "$MAIN_CLASS_PROPERTY_PREFIX$mainClassName")
-    ?.launch()
+    ?.launch(indicator)
     ?: return Err(CheckResult.FAILED_TO_CHECK)
 
   if (!gradleOutput.isSuccess) {

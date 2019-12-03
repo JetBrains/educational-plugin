@@ -59,6 +59,7 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
     CheckUtils.executeRunConfigurations(
       project,
       configurations,
+      indicator,
       processListener = processListener,
       testEventsListener = testEventsListener
     )
@@ -66,8 +67,10 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
     // We need to invoke all current pending EDT actions to get proper states of test roots.
     invokeAndWaitIfNeeded {}
 
+    if (indicator.isCanceled) return CheckResult.CANCELED
+
     if (areTestsFailedToRun(testRoots)) {
-      val result = computePossibleErrorResult(stderr.toString())
+      val result = computePossibleErrorResult(indicator, stderr.toString())
       if (!result.isSolved) {
         return result
       }
@@ -113,7 +116,7 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
    * Main purpose is to get proper error message for such cases.
    * If test framework support already provides correct message, you don't need to override this method
    */
-  protected open fun computePossibleErrorResult(stderr: String): CheckResult = CheckResult.SOLVED
+  protected open fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult = CheckResult.SOLVED
 
   /**
    * Check if the launch of tests was not successful. It allows us to create meaningful output in such cases.

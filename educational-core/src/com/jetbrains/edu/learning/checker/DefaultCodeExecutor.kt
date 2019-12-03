@@ -6,6 +6,7 @@ import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.jetbrains.edu.learning.Err
@@ -18,7 +19,7 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 
 open class DefaultCodeExecutor : CodeExecutor {
-  override fun execute(project: Project, task: Task, input: String?): Result<String, String> {
+  override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, String> {
     val configuration = createTestConfiguration(project, task)
     if (configuration == null) {
       return Err("Run configuration can't be created")
@@ -53,9 +54,12 @@ open class DefaultCodeExecutor : CodeExecutor {
     CheckUtils.executeRunConfigurations(
       project,
       listOf(configuration),
+      indicator,
       executionListener = executionListener,
       processListener = processListener
     )
+
+    if (indicator.isCanceled) return Err("Canceled")
 
     if (processNotStarted) {
       return Err("Process isn't started")

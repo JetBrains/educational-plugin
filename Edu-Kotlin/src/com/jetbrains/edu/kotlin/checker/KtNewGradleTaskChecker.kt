@@ -1,6 +1,7 @@
 package com.jetbrains.edu.kotlin.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.jvm.gradle.checker.GradleCommandLine
@@ -15,11 +16,11 @@ import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 
 class KtNewGradleTaskChecker(task: EduTask, project: Project) : NewGradleEduTaskChecker(task, project) {
 
-  override fun computePossibleErrorResult(stderr: String): CheckResult {
+  override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult {
     return if (task.hasSeparateModule(project)) {
-      super.computePossibleErrorResult(stderr)
+      super.computePossibleErrorResult(indicator, stderr)
     } else  {
-      GradleCommandLine.create(project, "testClasses")?.launchAndCheck() ?: CheckResult.FAILED_TO_CHECK
+      GradleCommandLine.create(project, "testClasses")?.launchAndCheck(indicator) ?: CheckResult.FAILED_TO_CHECK
     }
   }
 
