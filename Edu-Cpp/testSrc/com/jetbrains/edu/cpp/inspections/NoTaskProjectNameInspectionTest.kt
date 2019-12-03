@@ -67,14 +67,14 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
 
   private fun doTest(quickFixName: String, expectedText: String) {
     withMockCreateStudyItemUi(MockNewStudyItemUi()) {
-      testHighlighting()
+      runTestHighlighting()
       val action = myFixture.findSingleIntention(quickFixName)
       myFixture.launchAction(action)
       myFixture.checkResult(expectedText)
     }
   }
 
-  private fun testHighlighting() {
+  private fun runTestHighlighting() {
     val cMakeListsFile = findFile("lesson/task/${CMakeListsFileType.FILE_NAME}")
 
     val document = FileDocumentManager.getInstance().getDocument(cMakeListsFile)
