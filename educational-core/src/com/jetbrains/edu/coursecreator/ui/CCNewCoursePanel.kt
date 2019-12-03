@@ -38,6 +38,7 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.*
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.text.AttributeSet
@@ -208,7 +209,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     myRequiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements())
     myDescriptionTextArea.text = myCourse.description.nullize() ?: """
       ${myCourse.languageById.displayName} course.
-      Created: ${LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))}.
+      Created: ${LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.US))}.
     """.trimIndent()
     doValidation()
   }
