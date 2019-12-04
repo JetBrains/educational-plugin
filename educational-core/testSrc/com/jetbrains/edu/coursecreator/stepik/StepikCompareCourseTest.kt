@@ -3,8 +3,8 @@ package com.jetbrains.edu.coursecreator.stepik
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.integration.stepik.addNewLesson
-import com.jetbrains.edu.integration.stepik.addNewSection
+import com.jetbrains.edu.slow.integration.stepik.addNewLesson
+import com.jetbrains.edu.slow.integration.stepik.addNewSection
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
