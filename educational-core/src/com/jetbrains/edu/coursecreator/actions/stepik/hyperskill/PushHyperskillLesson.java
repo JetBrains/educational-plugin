@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
-import static com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL;
+import static com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL;
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
 import static com.jetbrains.edu.learning.ExperimentsKt.isFeatureEnabled;
 
@@ -38,7 +38,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
   @Override
   public void update(@NotNull AnActionEvent e) {
     e.getPresentation().setEnabledAndVisible(false);
-    if (!isFeatureEnabled(HYPERSKILL) || ! CCPluginToggleAction.isCourseCreatorFeaturesEnabled()) return;
+    if (!isFeatureEnabled(CC_HYPERSKILL) || ! CCPluginToggleAction.isCourseCreatorFeaturesEnabled()) return;
 
     final Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;

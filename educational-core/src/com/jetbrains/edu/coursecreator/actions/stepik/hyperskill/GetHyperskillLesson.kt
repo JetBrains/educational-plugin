@@ -29,7 +29,7 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = CCPluginToggleAction.isCourseCreatorFeaturesEnabled
-                                         && isFeatureEnabled(EduExperimentalFeatures.HYPERSKILL)
+                                         && isFeatureEnabled(EduExperimentalFeatures.CC_HYPERSKILL)
   }
 
   override fun actionPerformed(e: AnActionEvent) {

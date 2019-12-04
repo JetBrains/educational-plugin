@@ -17,6 +17,6 @@ class NewHyperskillCourseAction : DumbAwareAction("Create New Hyperskill Course"
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = CCPluginToggleAction.isCourseCreatorFeaturesEnabled
-                                         && isFeatureEnabled(EduExperimentalFeatures.HYPERSKILL)
+                                         && isFeatureEnabled(EduExperimentalFeatures.CC_HYPERSKILL)
   }
 }
