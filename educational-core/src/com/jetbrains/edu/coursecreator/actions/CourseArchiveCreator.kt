@@ -49,6 +49,7 @@ class CourseArchiveCreator(
       loadActualTexts(project, courseCopy)
     }
     catch (e: BrokenPlaceholderException) {
+      LOG.error("Failed to create course archive: ${e.message}")
       val yamlFile = e.placeholder.taskFile?.task?.getTaskDir(project)?.findChild("task-info.yaml") ?: return e.message
       FileEditorManager.getInstance(project).openFile(yamlFile, true)
       return """

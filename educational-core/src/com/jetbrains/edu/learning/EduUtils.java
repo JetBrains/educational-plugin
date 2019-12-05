@@ -75,8 +75,6 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static com.jetbrains.edu.learning.OpenApiExtKt.isUnitTestMode;
-
 public class EduUtils {
 
   private EduUtils() {
@@ -590,11 +588,7 @@ public class EduUtils {
             // We need to take it from original task, because taskCopy has issues with links (taskCopy.lesson is always null)
             TaskFile file = task.getTaskFile(taskFile.getName());
             AnswerPlaceholder answerPlaceholder = file != null ? file.getAnswerPlaceholders().get(placeholder.getIndex()) : null;
-            if (!isUnitTestMode()) {
-              LOG.error(CONVERT_ERROR + ": " + answerFile.getPath());
-            }
-            throw new BrokenPlaceholderException(CONVERT_ERROR + ".",
-                                                 answerPlaceholder != null ? answerPlaceholder : placeholder);
+            throw new BrokenPlaceholderException(CONVERT_ERROR + ".", answerPlaceholder != null ? answerPlaceholder : placeholder);
           }
         }
         taskFile.setText(studentDocument.getImmutableCharSequence().toString());
@@ -876,7 +870,7 @@ public class EduUtils {
 
   @TestOnly
   public static <T> void waitAndDispatchInvocationEvents(@NotNull Future<T> future) {
-    if (!isUnitTestMode()) {
+    if (!OpenApiExtKt.isUnitTestMode()) {
       LOG.error("`waitAndDispatchInvocationEvents` should be invoked only in unit tests");
     }
     while (true) {

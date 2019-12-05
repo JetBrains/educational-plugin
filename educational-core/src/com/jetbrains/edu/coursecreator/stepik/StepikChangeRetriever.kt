@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.stepik
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -115,6 +116,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
             CourseArchiveCreator.loadActualTexts(project, localTask)
           }
           catch (e: BrokenPlaceholderException) {
+            LOG.error("Failed to load actual texts: ${e.message}")
           }
         }
       }
@@ -269,5 +271,9 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
            lessonName == otherDependency.lessonName &&
            placeholderIndex == otherDependency.placeholderIndex &&
            sectionName == otherDependency.sectionName
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(StepikChangeRetriever::class.java.name)
   }
 }

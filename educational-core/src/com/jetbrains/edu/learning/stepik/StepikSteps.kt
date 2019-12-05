@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
@@ -195,6 +196,7 @@ fun collectTaskFiles(project: Project, task: Task): MutableList<TaskFile> {
           EduUtils.createStudentFile(project, answerFile, task) ?: return@runWriteAction
         }
         catch (e: BrokenPlaceholderException) {
+          LOG.error(e.message)
           return@runWriteAction
         }
         files.add(studentTaskFile)
@@ -336,3 +338,5 @@ class UrlsMap {
   @JsonProperty(URL)
   var url: String = ""
 }
+
+private val LOG = Logger.getInstance("StepikSteps")

@@ -20,6 +20,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.diff.impl.util.LabeledEditor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
@@ -57,9 +58,12 @@ import static com.intellij.openapi.ui.Messages.showInfoMessage;
 import static com.jetbrains.edu.learning.EduUtils.createStudentFile;
 
 public class CCShowPreview extends DumbAwareAction {
+  private static final Logger LOG = Logger.getInstance(CCShowPreview.class.getName());
+
   public static final String SHOW_PREVIEW = "Preview Task File";
   public static final String NO_PREVIEW_MESSAGE = "Preview is available for task files with answer placeholders only";
   public static final String NO_PREVIEW_TITLE = "No Preview for This File";
+  public static final String BROKEN_PREVIEW_TITLE = "Failed to Create Preview";
 
   public CCShowPreview() {
     super(SHOW_PREVIEW, SHOW_PREVIEW, null);
@@ -126,7 +130,8 @@ public class CCShowPreview extends DumbAwareAction {
         studentTaskFile = createStudentFile(project, virtualFile, task);
       }
       catch (BrokenPlaceholderException exception) {
-        showErrorDialog(exception.getMessage(), NO_PREVIEW_TITLE);
+        LOG.error(BROKEN_PREVIEW_TITLE + ": " + exception.getMessage());
+        showErrorDialog(exception.getPlaceholderInfo(), BROKEN_PREVIEW_TITLE);
         return;
       }
       if (studentTaskFile != null) {
