@@ -51,7 +51,11 @@ class CourseArchiveCreator(
     catch (e: BrokenPlaceholderException) {
       val yamlFile = e.placeholder.taskFile?.task?.getTaskDir(project)?.findChild("task-info.yaml") ?: return e.message
       FileEditorManager.getInstance(project).openFile(yamlFile, true)
-      return e.message
+      return """
+        ${e.message}
+        
+        ${e.placeholderInfo}
+      """.trimIndent()
     }
     courseCopy.sortItems()
     courseCopy.additionalFiles = CCUtils.collectAdditionalFiles(courseCopy, project)

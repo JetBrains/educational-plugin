@@ -75,6 +75,8 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.*;
 
+import static com.jetbrains.edu.learning.OpenApiExtKt.isUnitTestMode;
+
 public class EduUtils {
 
   private EduUtils() {
@@ -556,7 +558,7 @@ public class EduUtils {
     dialog.show();
   }
 
-  private static final String CONVERT_ERROR = "Failed to convert answer file to student one: ";
+  private static final String CONVERT_ERROR = "Failed to convert answer file to student one";
 
   @Nullable
   public static TaskFile createStudentFile(@NotNull Project project, @NotNull VirtualFile answerFile, @NotNull final Task task) {
@@ -588,7 +590,10 @@ public class EduUtils {
             // We need to take it from original task, because taskCopy has issues with links (taskCopy.lesson is always null)
             TaskFile file = task.getTaskFile(taskFile.getName());
             AnswerPlaceholder answerPlaceholder = file != null ? file.getAnswerPlaceholder(placeholder.getOffset()) : null;
-            throw new BrokenPlaceholderException(CONVERT_ERROR + answerFile.getPath(),
+            if (!isUnitTestMode()) {
+              LOG.error(CONVERT_ERROR + ": " + answerFile.getPath());
+            }
+            throw new BrokenPlaceholderException(CONVERT_ERROR + " because of broken placeholder.",
                                                  answerPlaceholder != null ? answerPlaceholder : placeholder);
           }
         }
@@ -598,7 +603,7 @@ public class EduUtils {
       return taskFile;
     }
     catch (IOException e) {
-      LOG.error(CONVERT_ERROR + answerFile.getPath());
+      LOG.error(CONVERT_ERROR + ": " + answerFile.getPath());
     }
     return null;
   }
@@ -871,7 +876,7 @@ public class EduUtils {
 
   @TestOnly
   public static <T> void waitAndDispatchInvocationEvents(@NotNull Future<T> future) {
-    if (!OpenApiExtKt.isUnitTestMode()) {
+    if (!isUnitTestMode()) {
       LOG.error("`waitAndDispatchInvocationEvents` should be invoked only in unit tests");
     }
     while (true) {

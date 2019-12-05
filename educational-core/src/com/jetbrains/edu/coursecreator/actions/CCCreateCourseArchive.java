@@ -86,7 +86,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
       EduCounterUsageCollector.createCourseArchive();
     }
     else {
-      showErrorDialog(errorMessage, "Failed to Create Course Archive");
+      showErrorDialog(project, errorMessage, "Failed to Create Course Archive");
     }
   }
 
