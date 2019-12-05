@@ -589,11 +589,11 @@ public class EduUtils {
             // We are here because placeholder is broken. We need to put broken placeholder into exception.
             // We need to take it from original task, because taskCopy has issues with links (taskCopy.lesson is always null)
             TaskFile file = task.getTaskFile(taskFile.getName());
-            AnswerPlaceholder answerPlaceholder = file != null ? file.getAnswerPlaceholder(placeholder.getOffset()) : null;
+            AnswerPlaceholder answerPlaceholder = file != null ? file.getAnswerPlaceholders().get(placeholder.getIndex()) : null;
             if (!isUnitTestMode()) {
               LOG.error(CONVERT_ERROR + ": " + answerFile.getPath());
             }
-            throw new BrokenPlaceholderException(CONVERT_ERROR + " because of broken placeholder.",
+            throw new BrokenPlaceholderException(CONVERT_ERROR + ".",
                                                  answerPlaceholder != null ? answerPlaceholder : placeholder);
           }
         }
