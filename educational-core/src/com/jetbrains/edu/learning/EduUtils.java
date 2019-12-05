@@ -75,6 +75,8 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.*;
 
+import static com.jetbrains.edu.learning.messages.EduCoreBundle.FAILED_TO_CONVERT_TO_STUDENT_FILE;
+
 public class EduUtils {
 
   private EduUtils() {
@@ -556,8 +558,6 @@ public class EduUtils {
     dialog.show();
   }
 
-  private static final String CONVERT_ERROR = "Failed to convert answer file to student one";
-
   @Nullable
   public static TaskFile createStudentFile(@NotNull Project project, @NotNull VirtualFile answerFile, @NotNull final Task task) {
     try {
@@ -588,7 +588,8 @@ public class EduUtils {
             // We need to take it from original task, because taskCopy has issues with links (taskCopy.lesson is always null)
             TaskFile file = task.getTaskFile(taskFile.getName());
             AnswerPlaceholder answerPlaceholder = file != null ? file.getAnswerPlaceholders().get(placeholder.getIndex()) : null;
-            throw new BrokenPlaceholderException(CONVERT_ERROR + ".", answerPlaceholder != null ? answerPlaceholder : placeholder);
+            throw new BrokenPlaceholderException(FAILED_TO_CONVERT_TO_STUDENT_FILE,
+                                                 answerPlaceholder != null ? answerPlaceholder : placeholder);
           }
         }
         taskFile.setText(studentDocument.getImmutableCharSequence().toString());
@@ -597,7 +598,7 @@ public class EduUtils {
       return taskFile;
     }
     catch (IOException e) {
-      LOG.error(CONVERT_ERROR + ": " + answerFile.getPath());
+      LOG.error(FAILED_TO_CONVERT_TO_STUDENT_FILE + " Path to broken file " + answerFile.getPath());
     }
     return null;
   }
