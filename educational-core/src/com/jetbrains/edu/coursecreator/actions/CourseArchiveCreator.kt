@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
+import com.jetbrains.edu.learning.isUnitTestMode
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -49,7 +50,9 @@ class CourseArchiveCreator(
       loadActualTexts(project, courseCopy)
     }
     catch (e: BrokenPlaceholderException) {
-      LOG.error("Failed to create course archive: ${e.message}")
+      if (!isUnitTestMode) {
+        LOG.error("Failed to create course archive: ${e.message}")
+      }
       val yamlFile = e.placeholder.taskFile?.task?.getTaskDir(project)?.findChild("task-info.yaml") ?: return e.message
       FileEditorManager.getInstance(project).openFile(yamlFile, true)
       return """
