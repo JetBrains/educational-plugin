@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+// Deprecated, use com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreviewTest instead
 public class CCShowPreviewTest extends CCTestCase {
-
   public void testOnePlaceholder() {
     doTest("test");
   }

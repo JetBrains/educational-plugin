@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.withTestDialog
 
-// Could be merged with CCShowPreviewTest
 class CCCreateCoursePreviewTest : EduActionTestCase() {
   fun `test show error if placeholder is broken`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
@@ -36,7 +35,7 @@ class CCCreateCoursePreviewTest : EduActionTestCase() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
-          taskFile("fizz.kt", """no placeholders""")
+          taskFile("fizz.kt", "no placeholders")
         }
       }
     }
