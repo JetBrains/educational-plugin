@@ -3,6 +3,7 @@ package com.jetbrains.edu.slow.integration.stepik
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson
@@ -69,6 +70,24 @@ open class StepikIntegrationTest : StepikTestCase() {
     }
 
     checkTopLevelLessons(localCourse)
+  }
+
+  fun `test upload course failed because of broken placeholders`() {
+    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask {
+          taskFile("fizz.kt", "fn fizzz() = <p>TODO()</p>")
+        }
+      }
+    } as EduCourse
+
+    val placeholder = localCourse.lessons.first().taskList.first().taskFiles["fizz.kt"]!!.answerPlaceholders?.firstOrNull()
+                      ?: error("Cannot find placeholder")
+    placeholder.offset = 1000
+
+    assertThrows(RuntimeException::class.java, ThrowableRunnable<RuntimeException> {
+      CCPushCourse.doPush(project, localCourse)
+    })
   }
 
   fun `test post top level lesson`() {
