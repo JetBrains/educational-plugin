@@ -22,11 +22,11 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
     }
   }
 
-  private fun `add deleted task project name to CMakeLists base`(beforeWithHighlighting: String, after: String) {
-    val course = courseWithFiles(
+  private fun addDeletedTaskProjectNameToCMakeListsTestBase(beforeWithHighlighting: String, after: String) {
+    courseWithFiles(
       language = OCLanguage.getInstance(),
       courseMode = CCUtils.COURSE_MODE,
-      environment = "GoogleTest" // Environment doesn't meter
+      environment = "GoogleTest" // Environment doesn't matter here
     ) {
       lesson("lesson") {
         eduTask("task") {
@@ -35,29 +35,29 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
       }
     }
 
-    doTest(EduCppBundle.message("projectName.addDefault.fix.description"), after)
+    doTest(EduCppBundle.message("project.name.not.set.fix.description"), after)
   }
 
   fun `test add deleted project name to CMakeList with set minimum required`() =
-    `add deleted task project name to CMakeLists base`(
+    addDeletedTaskProjectNameToCMakeListsTestBase(
       """
         |<warning descr="Project name isn't set. It could break project structure.">cmake_minimum_required(VERSION 3.15)
         |# some text<caret></warning>
-      """.trimMargin("|"),
+      """.trimMargin(),
       """
         |cmake_minimum_required(VERSION 3.15)
         |project(global-lesson-task)
         |# some text
-      """.trimMargin("|")
+      """.trimMargin()
     )
 
   fun `test add deleted project name to CMakeList without minimum required`() =
-    `add deleted task project name to CMakeLists base`(
+    addDeletedTaskProjectNameToCMakeListsTestBase(
       """<warning descr="Project name isn't set. It could break project structure."># some text<caret></warning>""",
       """
         |project(global-lesson-task)
         |# some text
-      """.trimMargin("|")
+      """.trimMargin()
     )
 
   override fun setUp() {

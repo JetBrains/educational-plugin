@@ -23,7 +23,7 @@ class CppCatchConfigurator : CppBaseConfigurator() {
 
   companion object {
     @VisibleForTesting
-    public const val CATCH_TEST_CPP = "catch_test.cpp"
+    const val CATCH_TEST_CPP = "catch_test.cpp"
   }
 }
 

@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.fileTree
 class CppCreateTaskTest : EduActionTestCase() {
   private val defaultSettings = CppProjectSettings()
 
-  private fun `create task in empty lesson base`(environment: String, useFrameworkLesson: Boolean = false) {
+  private fun createTaskInEmptyLessonTestBase(environment: String, useFrameworkLesson: Boolean = false) {
     val course = courseWithFiles(
       language = OCLanguage.getInstance(),
       courseMode = CCUtils.COURSE_MODE,
@@ -70,16 +70,16 @@ class CppCreateTaskTest : EduActionTestCase() {
   }
 
   fun `test create task in empty lesson (Google Test)`() =
-    `create task in empty lesson base`("GoogleTest")
+    createTaskInEmptyLessonTestBase("GoogleTest")
 
   fun `test crete task in empty lesson (Catch Test)`() =
-    `create task in empty lesson base`("Catch")
+    createTaskInEmptyLessonTestBase("Catch")
 
   fun `test create task in empty framework lesson (Google Test)`() =
-    `create task in empty lesson base`("GoogleTest", true)
+    createTaskInEmptyLessonTestBase("GoogleTest", true)
 
   fun `test crete task in empty framework lesson (Catch Test)`() =
-    `create task in empty lesson base`("Catch", true)
+    createTaskInEmptyLessonTestBase("Catch", true)
 
   fun `test create second framework task`() {
     val taskText = """
@@ -89,11 +89,11 @@ class CppCreateTaskTest : EduActionTestCase() {
       |  std::cout << "Hi, from Bugs Bunny!" << std::endl;
       |  return 0;
       |}
-    """.trimMargin("|")
+    """.trimMargin()
 
     val testText = """
       |//Image some tests here
-    """.trimMargin("|")
+    """.trimMargin()
 
     val cMakeListsTextGenerator: (String) -> String = { projectName ->
       """
@@ -106,13 +106,13 @@ class CppCreateTaskTest : EduActionTestCase() {
         |add_executable(${'$'}{PROJECT_NAME}-test src/task.cpp test/test.cpp)
         |
         |configure_test_target(${'$'}{PROJECT_NAME}-test)
-      """.trimMargin("|")
+      """.trimMargin()
     }
 
-    val course = courseWithFiles(
+    courseWithFiles(
       language = OCLanguage.getInstance(),
       courseMode = CCUtils.COURSE_MODE,
-      environment = "Catch" // environment isn't meter here
+      environment = "Catch" // Environment doesn't matter here
     ) {
       frameworkLesson("lesson") {
         eduTask("task1") {

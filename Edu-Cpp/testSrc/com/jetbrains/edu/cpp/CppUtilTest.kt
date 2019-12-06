@@ -5,7 +5,7 @@ import com.jetbrains.cmake.CMakeLanguage
 import com.jetbrains.edu.coursecreator.CCTestCase
 
 class CppUtilTest : CCTestCase() {
-  private fun `find CMake command base`(cMakeFile: String, commandName: String, shouldFind: Boolean = true) {
+  private fun findCMakeCommandTestBase(cMakeFile: String, commandName: String, shouldFind: Boolean = true) {
     val mockPsiFile = PsiFileFactory.getInstance(myFixture.project).createFileFromText(CMakeLanguage.INSTANCE, cMakeFile)
     val result = mockPsiFile.findCMakeCommand(commandName)
     if (shouldFind) {
@@ -18,41 +18,41 @@ class CppUtilTest : CCTestCase() {
   }
 
   fun `test find CMake command - project`() =
-    `find CMake command base`(
+    findCMakeCommandTestBase(
       """
         |#some text
         |
         |project(name)
         |
         |# some text
-      """.trimMargin("|"),
+      """.trimMargin(),
       "project")
 
   fun `test find CMake command - ProJEct`() =
-    `find CMake command base`(
+    findCMakeCommandTestBase(
       """
         | #some text
         | 
         | ProJEct(name)
-      """.trimMargin("|"),
+      """.trimMargin(),
       "project"
     )
 
   fun `test find CMake command - inline call`() =
-    `find CMake command base`(
+    findCMakeCommandTestBase(
       """
         | message("Hi!") project(name) message("By!")
-      """.trimMargin("|"),
+      """.trimMargin(),
       "project"
     )
 
   fun `test find CMake command - no command`() =
-    `find CMake command base`(
+    findCMakeCommandTestBase(
       """
         | #some text
         | message("empty me )=")
         | # no text ;)
-      """.trimMargin("|"),
+      """.trimMargin(),
       "project",
       false
     )

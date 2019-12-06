@@ -37,7 +37,7 @@ class NoTaskProjectNameInspection : LocalInspectionTool() {
   private class AddDefaultProjectNameFix(file: PsiFile, val taskFile: TaskFile) : LocalQuickFixOnPsiElement(file) {
     override fun getFamilyName(): String = "CMake"
 
-    override fun getText(): String = EduCppBundle.message("projectName.addDefault.fix.description")
+    override fun getText(): String = EduCppBundle.message("project.name.not.set.fix.description")
 
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
       val mockFile = PsiFileFactory.getInstance(project).createFileFromText(
