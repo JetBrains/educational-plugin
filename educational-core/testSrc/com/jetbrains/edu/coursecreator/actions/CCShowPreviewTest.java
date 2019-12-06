@@ -15,25 +15,12 @@ import com.intellij.testFramework.MapDataContext;
 import com.jetbrains.edu.coursecreator.CCTestCase;
 import com.jetbrains.edu.coursecreator.CCTestsUtil;
 import com.jetbrains.edu.coursecreator.actions.taskFile.CCShowPreview;
-import com.jetbrains.edu.learning.EduTestDialog;
-import com.jetbrains.edu.learning.EduTestDialogKt;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class CCShowPreviewTest extends CCTestCase {
-
-  public void testPreviewUnavailable() {
-    VirtualFile file = configureByTaskFile("noplaceholders.txt");
-    CCShowPreview action = new CCShowPreview();
-
-    EduTestDialogKt.withTestDialog(new EduTestDialog(), () -> {
-      testAction(createDataContext(file), action);
-      return Unit.INSTANCE;
-    }).checkWasShown(CCShowPreview.NO_PREVIEW_MESSAGE);
-  }
 
   public void testOnePlaceholder() {
     doTest("test");

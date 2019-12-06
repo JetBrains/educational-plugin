@@ -32,6 +32,21 @@ class CCCreateCoursePreviewTest : EduActionTestCase() {
     }.checkWasShown("Broken placeholder 1 of 1, offset 1000, length 0.")
   }
 
+  fun `test show error if we have no placeholders`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("fizz.kt", """no placeholders""")
+        }
+      }
+    }
+    course.description = "my summary"
+
+    withTestDialog(EduTestDialog()) {
+      testAction(createDataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview())
+    }.checkWasShown(CCShowPreview.NO_PREVIEW_MESSAGE)
+  }
+
   private fun createDataContext(file: VirtualFile): DataContext {
     val context = MapDataContext()
     context.put(CommonDataKeys.PSI_FILE, PsiManager.getInstance(project).findFile(file))
