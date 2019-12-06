@@ -39,6 +39,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -130,7 +131,9 @@ public class CCShowPreview extends DumbAwareAction {
         studentTaskFile = createStudentFile(project, virtualFile, task);
       }
       catch (BrokenPlaceholderException exception) {
-        LOG.error(BROKEN_PREVIEW_TITLE + ": " + exception.getMessage());
+        if (!OpenApiExtKt.isUnitTestMode()) {
+          LOG.error(BROKEN_PREVIEW_TITLE + ": " + exception.getMessage());
+        }
         showErrorDialog(exception.getPlaceholderInfo(), BROKEN_PREVIEW_TITLE);
         return;
       }
