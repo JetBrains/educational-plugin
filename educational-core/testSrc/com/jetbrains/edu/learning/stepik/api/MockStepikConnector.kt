@@ -24,6 +24,10 @@ class MockStepikConnector : StepikConnector() {
     })
   }
 
+  fun setHelperBaseUrl() {
+    _baseUrl = helper.baseUrl
+  }
+
   fun withResponseHandler(disposable: Disposable, handler: ResponseHandler): MockStepikConnector {
     helper.addResponseHandler(disposable, handler)
     return this

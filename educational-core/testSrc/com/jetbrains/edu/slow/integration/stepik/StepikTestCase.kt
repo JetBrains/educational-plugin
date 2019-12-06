@@ -43,6 +43,8 @@ abstract class StepikTestCase : EduTestCase() {
   }
 
   override fun tearDown() {
+    val mockStepikConnector = StepikConnector.getInstance() as MockStepikConnector
+    mockStepikConnector.setHelperBaseUrl()
     val course = StudyTaskManager.getInstance(project).course
     if (course is EduCourse && course.isRemote) {
       removeUploadedCourse(course.id, course.getLessons().map { it.id })

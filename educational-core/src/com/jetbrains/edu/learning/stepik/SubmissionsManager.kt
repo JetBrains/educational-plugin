@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik
 
+import com.google.common.annotations.VisibleForTesting
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
@@ -65,5 +66,10 @@ object SubmissionsManager {
   fun isLastSubmissionUpToDate(task: Task, isSolved: Boolean): Boolean {
     val submission = getLastSubmission(task.id, isSolved) ?: return false
     return submission.time?.after(task.updateDate) ?: false
+  }
+
+  @VisibleForTesting
+  fun clear() {
+    submissions.clear()
   }
 }

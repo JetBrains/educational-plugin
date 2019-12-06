@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "submissions": [
+    {
+      "id": 150174783,
+      "status": "correct",
+      "score": 1,
+      "hint": "",
+      "feedback": "",
+      "time": "1970-01-01T07:24:15Z",
+      "reply": {
+        "choices": null,
+        "score": "1",
+        "solution": [
+          {
+            "name": "src/Task.kt",
+            "text": "\"package creatingClasses fun test5() = testString(\\\"abC\\\")\\n}\""
+          }
+        ],
+        "language": null,
+        "code": null,
+        "edu_task": "{\"task\":{\"name\":\"task1\",\"stepic_id\":969538,\"status\":\"Solved\",\"files\":{\"src/Task.kt\":{\"name\":\"src/Task.kt\",\"placeholders\":[{\"offset\":55,\"length\":14,\"dependency\":null,\"hints\":[],\"possible_answer\":\".capitalize()\",\"placeholder_text\":\"  \",\"selected\":true}],\"is_visible\":true,\"text\":\"package creatingClassesExercise5},\"test/Tests.kt\":{\"name\":\"test/Tests.kt\",\"placeholders\":[],\"is_visible\":false,\"text\":\"package creatingClassesExercise5fun test5() = testString(\\\"abC\\\")\\n}\"}},\"task_type\":\"ide\"}}",
+        "version": 11,
+        "feedback": null,
+        "check_profile": ""
+      },
+      "reply_url": null,
+      "attempt": 140654321,
+      "session": null,
+      "eta": 0
+    }
+  ]
+}

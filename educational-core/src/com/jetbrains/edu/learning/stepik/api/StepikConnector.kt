@@ -442,7 +442,7 @@ abstract class StepikConnector {
     return steps
   }
 
-  fun taskStatuses(ids: List<String>): List<Boolean>? {
+  fun taskStatuses(ids: List<String>): Map<String, Boolean> {
     val idsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
     val progresses = mutableListOf<Progress>()
     idsChunks
@@ -452,8 +452,7 @@ abstract class StepikConnector {
       }
       .forEach { progresses.addAll(it) }
 
-    val progressesMap = progresses.associate { it.id to it.isPassed }
-    return ids.mapNotNull { progressesMap[it] }
+    return progresses.associate { it.id to it.isPassed }
   }
 
   companion object {

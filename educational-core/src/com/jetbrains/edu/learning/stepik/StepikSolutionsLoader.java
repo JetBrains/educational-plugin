@@ -264,23 +264,28 @@ public class StepikSolutionsLoader implements Disposable {
     Stream<Lesson> allLessons = Stream.concat(lessonsFromSection, course.getLessons().stream());
     Task[] allTasks = allLessons.flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
 
-    List<String> progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + task.getId()).collect(Collectors.toList());
-    List<Boolean> taskStatuses = StepikConnector.getInstance().taskStatuses(progresses);
-    if (taskStatuses == null || taskStatuses.size() != allTasks.length) return tasksToUpdate;
-    for (int j = 0; j < allTasks.length; j++) {
-      Boolean isSolved = taskStatuses.get(j);
-      Task task = allTasks[j];
-      boolean toUpdate = false;
+    List<String> progresses = Arrays.stream(allTasks).map(task -> getProgressId(task)).collect(Collectors.toList());
+    Map<String, Boolean> taskStatusesMap = StepikConnector.getInstance().taskStatuses(progresses);
+    if (taskStatusesMap.isEmpty()) {
+      LOG.warn("No task statuses loaded for course" + course.getId());
+      return tasksToUpdate;
+    }
+    for (Task task : allTasks) {
+      Boolean isSolved = taskStatusesMap.get(getProgressId(task));
       if (isSolved != null && !(task instanceof TheoryTask) && isLastSubmissionUpToDate(task, isSolved)) {
-        toUpdate = isToUpdate(task, isSolved, task.getStatus(), task.getId());
-      }
-      if (toUpdate) {
+        if (isToUpdate(task, isSolved, task.getStatus(), task.getId())) {
+          tasksToUpdate.add(task);
+        }
         task.setStatus(checkStatus(isSolved));
         YamlFormatSynchronizer.saveItem(task);
-        tasksToUpdate.add(task);
       }
     }
     return tasksToUpdate;
+  }
+
+  @NotNull
+  private static String getProgressId(@NotNull Task task) {
+    return PROGRESS_ID_PREFIX + task.getId();
   }
 
   private static CheckStatus checkStatus(boolean solved) {

@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "progresses": [
+    {
+      "id": "77-1",
+      "last_viewed": null,
+      "score": 0,
+      "cost": 0,
+      "n_steps": 1,
+      "n_steps_attempted": 1,
+      "n_steps_passed": 1,
+      "is_attempted": true,
+      "is_passed": false,
+      "is_exam_mode": false
+    },
+    {
+      "id": "77-2",
+      "last_viewed": null,
+      "score": 1,
+      "cost": 1,
+      "n_steps": 1,
+      "n_steps_attempted": 1,
+      "n_steps_passed": 1,
+      "is_attempted": true,
+      "is_passed": true,
+      "is_exam_mode": false
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "submissions": [
+    {
+      "id": 150174784,
+      "status": "correct",
+      "score": 1,
+      "hint": "",
+      "feedback": "",
+      "time": "1970-01-03T07:24:15Z",
+      "reply": {
+        "choices": null,
+        "score": "1",
+        "solution": [
+          {
+            "name": "task.kt",
+            "text": "// comment from task 2\nfun fizz() {}"
+          }
+        ],
+        "language": null,
+        "code": null,
+        "edu_task": "{\"task\":{\"name\":\"task2\",\"stepic_id\":969538,\"status\":\"Solved\",\"files\":{\"task.kt\":{\"name\":\"task.kt\",\"placeholders\":[],\"is_visible\":true,\"text\":\"package creatingClassesExercise5\"},\"test/Tests.kt\":{\"name\":\"test/Tests.kt\",\"placeholders\":[],\"is_visible\":false,\"text\":\"package creatingClassesExercise @Test(timeout = TIMEOUT)\\n= testString(\\\"abC\\\")\\n}\"}},\"task_type\":\"ide\"}}",
+        "version": 11,
+        "feedback": null,
+        "check_profile": ""
+      },
+      "reply_url": null,
+      "attempt": 140654322,
+      "session": null,
+      "eta": 0
+    }
+  ]
+}
