@@ -64,8 +64,8 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
 
   override fun areTestsFailedToRun(testRoots: List<SMTestProxy.SMRootTestProxy>): Boolean {
     if (super.areTestsFailedToRun(testRoots)) return true
-    val result = testRoots.firstOrNull()?.toCheckResult()
-    return result?.message == "The file contains syntax errors"
+    val result = testRoots.firstOrNull()?.toCheckResult() ?: return false
+    return SYNTAX_ERRORS.any { it == result.message }
   }
 
   private fun getSyntaxError(indicator: ProgressIndicator): String? {
@@ -109,5 +109,9 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
       }
       CheckUtils.navigateToFailedPlaceholder(EduState(EduUtils.getSelectedEduEditor(project)), task, taskDir, project)
     }
+  }
+
+  companion object {
+    private val SYNTAX_ERRORS = listOf("The file contains syntax errors", "No tests have run")
   }
 }
