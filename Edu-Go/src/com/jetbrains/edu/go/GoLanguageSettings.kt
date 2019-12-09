@@ -27,7 +27,7 @@ class GoLanguageSettings : LanguageSettings<GoProjectSettings>() {
   }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    if (sdkChooser.sdk == GoSdk.NULL) return ValidationMessage("Please specify $SDK_TYPE_ID")
+    if (sdkChooser.sdk == GoSdk.NULL || !sdkChooser.sdk.isValid) return ValidationMessage("Please specify $SDK_TYPE_ID")
     val message = validateSelectedSdk(sdkChooser) ?: return null
     return ValidationMessage(message)
   }
