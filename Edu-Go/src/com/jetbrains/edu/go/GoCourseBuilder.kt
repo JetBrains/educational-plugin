@@ -2,7 +2,9 @@ package com.jetbrains.edu.go
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
+import com.jetbrains.edu.go.GoConfigurator.Companion.GO_MOD
 import com.jetbrains.edu.go.GoConfigurator.Companion.MAIN_GO
 import com.jetbrains.edu.go.GoConfigurator.Companion.TASK_GO
 import com.jetbrains.edu.go.GoConfigurator.Companion.TEST_GO
@@ -26,16 +28,25 @@ class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
 
   override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     if (task.taskFiles.isNotEmpty()) return
-    val params = mapOf("LESSON_NAME" to lesson.name, "TASK_NAME" to task.name)
-    for (templateInfo in defaultTaskFiles()) {
+    val params = mapOf("MODULE_NAME" to task.name.replace(" ", "_").toLowerCase())
+    for (templateInfo in defaultTaskFiles) {
       val taskFile = templateInfo.toTaskFile(params) ?: continue
       task.addTaskFile(taskFile)
     }
   }
 
-  private fun defaultTaskFiles(): List<TemplateFileInfo> = listOf(
-    TemplateFileInfo(TASK_GO, TASK_GO, true),
-    TemplateFileInfo(MAIN_GO, joinPaths("main", MAIN_GO), true),
-    TemplateFileInfo(TEST_GO, joinPaths(TEST, TEST_GO), false)
-  )
+  // https://golang.org/ref/spec#Import_declarations
+  override fun validateItemName(name: String, itemType: StudyItemType): String? {
+    val forbiddenSymbols = Regex.escape("!\"#\$%&'()*,:;<=>?[\\]^`{|}~")
+    val badRegex = "[${forbiddenSymbols}]+".toRegex()
+    return if (itemType == StudyItemType.TASK && name.contains(badRegex)) "Name contains forbidden symbols" else null
+  }
+
+  private val defaultTaskFiles: List<TemplateFileInfo>
+    get() = listOf(
+      TemplateFileInfo(TASK_GO, TASK_GO, true),
+      TemplateFileInfo(MAIN_GO, joinPaths("main", MAIN_GO), true),
+      TemplateFileInfo(TEST_GO, joinPaths(TEST, TEST_GO), false),
+      TemplateFileInfo(GO_MOD, GO_MOD, false)
+    )
 }

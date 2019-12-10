@@ -32,5 +32,6 @@ class GoConfigurator : EduConfiguratorWithSubmissions<GoProjectSettings>() {
     const val TEST_GO = "task_test.go"
     const val TASK_GO = "task.go"
     const val MAIN_GO = "main.go"
+    const val GO_MOD = "go.mod"
   }
 }

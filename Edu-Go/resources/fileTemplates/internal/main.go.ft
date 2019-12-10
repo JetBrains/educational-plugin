@@ -1,10 +1,10 @@
 package main
 
 import (
+	task "${MODULE_NAME}"
 	"fmt"
-	"go_course/${LESSON_NAME}/${TASK_NAME}"
 )
 
 func main() {
-	fmt.Println(${TASK_NAME}.Sum(2, 3))
+	fmt.Println(task.Sum(2, 3))
 }
