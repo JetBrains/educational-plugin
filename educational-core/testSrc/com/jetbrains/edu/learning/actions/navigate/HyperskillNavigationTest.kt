@@ -109,7 +109,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
-  fun `test ask user when changes conflicts (next, prev, next) 1`() {
+  fun `test ask user when changes conflict (next, prev, next), select no`() {
     val course = createHyperskillCourse()
 
     withVirtualFileListener(course) {
@@ -164,7 +164,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
-  fun `test ask user when changes conflicts (next, prev, next) 2`() {
+  fun `test ask user when changes conflict (next, prev, next), select yes`() {
     val course = createHyperskillCourse()
 
     withVirtualFileListener(course) {
