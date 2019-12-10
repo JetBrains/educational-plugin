@@ -69,7 +69,10 @@ object YamlDeepLoader {
    * we remove it from task object but keep in the config file.
    */
   private fun Lesson.removeNonExistingTaskFiles(project: Project) {
-    taskList.forEach { task ->
+    for (task in taskList) {
+      if (this is FrameworkLesson && task.index != currentTaskIndex + 1) {
+        continue
+      }
       // set parent to get dir
       task.lesson = this
       val taskDir = task.getDir(project)
