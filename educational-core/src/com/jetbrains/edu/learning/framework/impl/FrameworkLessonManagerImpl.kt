@@ -185,14 +185,14 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       return calculateChanges(currentTestFilesState, targetTestFiles)
     }
 
-    val replaceConflictingChanges = if (showDialogIfConflict) {
+    val keepConflictingChanges = if (showDialogIfConflict) {
       Messages.showYesNoDialog(project, "The current task changes conflict with next task. Replace with current changes?",
-                               "Changes conflict", "Replace", "Keep", null)
+                               "Changes conflict", "Keep", "Replace", null)
     } else {
-      Messages.NO
+      Messages.YES
     }
 
-    return if (replaceConflictingChanges == Messages.NO) {
+    return if (keepConflictingChanges == Messages.YES) {
       calculateChanges(currentState, targetState)
     } else {
       calculateCurrentTaskChanges()

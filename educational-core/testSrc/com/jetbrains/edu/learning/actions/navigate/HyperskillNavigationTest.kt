@@ -109,7 +109,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
-  fun `test ask user when changes conflict (next, prev, next), select no`() {
+  fun `test ask user when changes conflict (next, prev, next), select keep changes`() {
     val course = createHyperskillCourse()
 
     withVirtualFileListener(course) {
@@ -127,7 +127,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun baz() {}\n")
 
-      withTestDialog(EduTestDialog(Messages.NO)) {
+      withTestDialog(EduTestDialog(Messages.YES)) {
         myFixture.testAction(NextTaskAction())
       }.checkWasShown()
     }
@@ -164,7 +164,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
-  fun `test ask user when changes conflict (next, prev, next), select yes`() {
+  fun `test ask user when changes conflict (next, prev, next), select replace changes`() {
     val course = createHyperskillCourse()
 
     withVirtualFileListener(course) {
@@ -182,7 +182,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun baz() {}\n")
 
-      withTestDialog(EduTestDialog(Messages.YES)) {
+      withTestDialog(EduTestDialog(Messages.NO)) {
         myFixture.testAction(NextTaskAction())
       }.checkWasShown()
     }
@@ -281,7 +281,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     frameworkLessonManager.saveExternalChanges(task2, externalState)
 
     withVirtualFileListener(course) {
-      withTestDialog(EduTestDialog(Messages.NO)) {
+      withTestDialog(EduTestDialog(Messages.YES)) {
         task1.openTaskFileInEditor("src/Task.kt")
         task1.status = CheckStatus.Solved
         myFixture.testAction(NextTaskAction())
