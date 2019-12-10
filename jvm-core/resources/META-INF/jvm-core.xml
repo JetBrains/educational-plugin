@@ -3,9 +3,17 @@
   <depends>org.jetbrains.plugins.gradle</depends>
   <depends>JUnit</depends>
 
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.gradleRefresher" interface="com.jetbrains.edu.jvm.gradle.GradleCourseRefresher"/>
+  </extensionPoints>
+
   <project-components>
     <component>
       <implementation-class>com.jetbrains.edu.jvm.gradle.GradleProjectComponent</implementation-class>
     </component>
   </project-components>
+
+  <extensions defaultExtensionNs="Educational">
+    <gradleRefresher implementation="com.jetbrains.edu.jvm.gradle.IdeaGradleCourseRefresher"/>
+  </extensions>
 </idea-plugin>

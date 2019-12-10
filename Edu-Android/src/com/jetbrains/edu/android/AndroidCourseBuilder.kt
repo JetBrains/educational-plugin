@@ -1,13 +1,7 @@
 package com.jetbrains.edu.android
 
 import com.android.ide.common.repository.GradleCoordinate
-import com.android.tools.idea.gradle.project.sync.GradleSyncInvoker
-import com.android.tools.idea.gradle.project.sync.GradleSyncListener
 import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
-import com.google.wireless.android.sdk.stats.GradleSyncStats
-import com.intellij.ide.projectView.ProjectView
-import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -20,7 +14,6 @@ import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
-import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -28,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.kotlinVersion
-import com.jetbrains.edu.learning.projectView.CourseViewPane
 
 class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
@@ -91,23 +83,6 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
   private fun getLibraryVersion(project: Project, groupId: String, artifactId: String, defaultVersion: String): String {
     val gradleCoordinate = GradleCoordinate(groupId, artifactId, "+")
     return resolveDynamicCoordinateVersion(gradleCoordinate, project) ?: return defaultVersion
-  }
-
-  override fun refreshProject(project: Project, listener: EduCourseBuilder.ProjectRefreshListener?) {
-    val syncListener = object : GradleSyncListener {
-      override fun syncSucceeded(project: Project) {
-        ExternalSystemUtil.invokeLater(project, ModalityState.NON_MODAL) {
-          ProjectView.getInstance(project).changeViewCB(CourseViewPane.ID, null)
-        }
-        listener?.onSuccess()
-      }
-
-      override fun syncFailed(project: Project, errorMessage: String) {
-        listener?.onFailure(errorMessage)
-      }
-    }
-    val request = GradleSyncInvoker.Request(GradleSyncStats.Trigger.TRIGGER_PROJECT_MODIFIED)
-    GradleSyncInvoker.getInstance().requestProjectSync(project, request, syncListener)
   }
 
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = AndroidLanguageSettings()

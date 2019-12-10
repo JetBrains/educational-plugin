@@ -5,6 +5,7 @@
     <depends>JUnit</depends>
 
     <extensions defaultExtensionNs="Educational">
+        <gradleRefresher implementation="com.jetbrains.edu.gradle.StudioGradleCourseRefresher"/>
         <configurator implementationClass="com.jetbrains.edu.android.AndroidConfigurator" language="kotlin" environment="Android" displayName="Android"/>
     </extensions>
 
