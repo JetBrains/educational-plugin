@@ -219,7 +219,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
-
   fun `test propagate new files next task (next)`() {
     val course = createHyperskillCourse()
 
