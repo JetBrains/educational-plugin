@@ -1,10 +1,10 @@
 package com.jetbrains.edu.android
 
-import com.intellij.openapi.application.Experiments
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.isUnitTestMode
 import icons.AndroidIcons
 import javax.swing.Icon
@@ -24,7 +24,7 @@ class AndroidConfigurator : GradleConfiguratorBase() {
 
   override fun getTaskCheckerProvider(): TaskCheckerProvider = taskCheckerProvider
 
-  override fun isEnabled(): Boolean = Experiments.isFeatureEnabled(EduExperimentalFeatures.ANDROID_COURSES) || isUnitTestMode
+  override fun isEnabled(): Boolean = isFeatureEnabled(EduExperimentalFeatures.ANDROID_COURSES) || isUnitTestMode
 
   override fun getLogo(): Icon = AndroidIcons.Android
 }
