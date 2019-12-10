@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.createRetrofitBuilder
+import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.executeHandlingExceptions
 import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepikUserAgent
@@ -195,9 +196,15 @@ abstract class StepikConnector {
 
   fun postTask(project: Project, task: Task, lessonId: Int): StepSource? {
     var stepSourceData: StepSourceData? = null
-    invokeAndWaitIfNeeded {
-      FileDocumentManager.getInstance().saveAllDocuments()
-      stepSourceData = StepSourceData(project, task, lessonId)
+    try {
+      invokeAndWaitIfNeeded {
+        FileDocumentManager.getInstance().saveAllDocuments()
+        stepSourceData = StepSourceData(project, task, lessonId)
+      }
+    } catch (e: RuntimeException) {
+      val cause = e.cause as? BrokenPlaceholderException
+      LOG.error("${e.message}\n${cause?.placeholderInfo}")
+      return null
     }
     val response = service.stepSource(stepSourceData!!).executeHandlingExceptions()
     return response?.body()?.steps?.firstOrNull()
@@ -302,7 +309,14 @@ abstract class StepikConnector {
     invokeAndWaitIfNeeded {
       FileDocumentManager.getInstance().saveAllDocuments()
     }
-    val stepSourceData = StepSourceData(project, task, task.lesson.id)
+    val stepSourceData = try {
+      StepSourceData(project, task, task.lesson.id)
+    }
+    catch (e: RuntimeException) {
+      val cause = e.cause as? BrokenPlaceholderException
+      LOG.error("${e.message}\n${cause?.placeholderInfo}")
+      return -1
+    }
     val response = service.stepSource(task.id, stepSourceData).executeHandlingExceptions()
     val stepSource = response?.body()?.steps?.firstOrNull()
     if (stepSource != null) {
