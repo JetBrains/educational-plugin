@@ -45,7 +45,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     val currentRecord = task.record
     task.record = try {
       storage.updateUserChanges(currentRecord, changes)
-    } catch (e: IOException) {
+    }
+    catch (e: IOException) {
       LOG.error("Failed to save solution for task `${task.name}`", e)
       currentRecord
     }
@@ -65,7 +66,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
     val changes = try {
       storage.getUserChanges(currentRecord)
-    } catch (e: IOException) {
+    }
+    catch (e: IOException) {
       LOG.error("Failed to get user changes for task `${task.name}`", e)
       return
     }
@@ -82,7 +84,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
     try {
       storage.updateUserChanges(currentRecord, UserChanges(newChanges))
-    } catch (e: IOException) {
+    }
+    catch (e: IOException) {
       LOG.error("Failed to update user changes for task `${task.name}`", e)
     }
   }
@@ -110,7 +113,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     val initialCurrentFiles = currentTask.allFiles
     val (newCurrentRecord, currentUserChanges) = try {
       updateUserChanges(currentRecord, initialCurrentFiles, taskDir)
-    } catch (e: IOException) {
+    }
+    catch (e: IOException) {
       LOG.error("Failed to save user changes for task `${currentTask.name}`", e)
       UpdatedUserChanges(currentRecord, UserChanges.empty())
     }
@@ -120,7 +124,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
     val nextUserChanges = try {
       storage.getUserChanges(targetRecord)
-    } catch (e: IOException) {
+    }
+    catch (e: IOException) {
       LOG.error("Failed to get user changes for task `${currentTask.name}`", e)
       UserChanges.empty()
     }
@@ -132,8 +137,9 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     // All user changes from the current task should be propagated to next task as is
     val course = lesson.course
     val changes = if (taskIndexDelta == 1 && course is HyperskillCourse && !course.isTemplateBased) {
-      calculatePropagationChanges(targetTask, currentState, targetState, showDialogIfConflict)
-    } else {
+      calculatePropagationChanges(targetTask, currentTask, currentState, targetState, showDialogIfConflict)
+    }
+    else {
       calculateChanges(currentState, targetState)
     }
 
@@ -148,6 +154,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
    */
   private fun calculatePropagationChanges(
     targetTask: Task,
+    currentTask: Task,
     currentState: Map<String, String>,
     targetState: Map<String, String>,
     showDialogIfConflict: Boolean
@@ -174,7 +181,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       val testChanges = calculateChanges(currentTestFilesState, targetTestFiles)
       return testChanges + taskFileChanges
     }
-    
+
     // target task initialization
     if (targetTask.record == -1) {
       return calculateCurrentTaskChanges()
@@ -186,15 +193,20 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
 
     val keepConflictingChanges = if (showDialogIfConflict) {
-      Messages.showYesNoDialog(project, "The current task changes conflict with next task. Replace with current changes?",
-                               "Changes conflict", "Keep", "Replace", null)
-    } else {
+      val currentTaskName = "${currentTask.uiName} ${currentTask.index}"
+      val targetTaskName = "${targetTask.uiName} ${targetTask.index}"
+      val message = "Changes from $currentTaskName conflict with the changes made on $targetTaskName.\n" +
+                    "Keep content of $targetTaskName or replace with the changes from $currentTaskName?"
+      Messages.showYesNoDialog(project, message, "Conflicting Changes", "Keep", "Replace", null)
+    }
+    else {
       Messages.YES
     }
 
     return if (keepConflictingChanges == Messages.YES) {
       calculateChanges(currentState, targetState)
-    } else {
+    }
+    else {
       calculateCurrentTaskChanges()
     }
   }
@@ -216,7 +228,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       val newRecord = storage.updateUserChanges(record, changes)
       storage.force()
       UpdatedUserChanges(newRecord, changes)
-    } catch (e: IOException) {
+    }
+    catch (e: IOException) {
       LOG.error("Failed to update user changes", e)
       UpdatedUserChanges(record, UserChanges.empty())
     }
@@ -231,7 +244,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   ): UserChanges {
     val changes = mutableListOf<Change>()
     val current = HashMap(currentState)
-    loop@for ((path, nextText) in targetState) {
+    loop@ for ((path, nextText) in targetState) {
       val currentText = current.remove(path)
       changes += when {
         currentText == null -> Change.AddFile(path, nextText)
@@ -255,7 +268,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     for ((path, text) in this) {
       val state = if (path == defaultTestName || testDirs.any { path.startsWith(it) }) {
         testFiles
-      } else {
+      }
+      else {
         taskFiles
       }
       state[path] = text
