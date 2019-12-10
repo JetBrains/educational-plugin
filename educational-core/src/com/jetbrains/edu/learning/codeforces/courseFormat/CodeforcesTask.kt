@@ -56,8 +56,8 @@ open class CodeforcesTask : Task() {
         CodeforcesTask()
       }
       else {
-        val inputFileName = parseFileName(htmlElement.selectFirst("div.input-file"))
-        val outputFileName = parseFileName(htmlElement.selectFirst("div.output-file"))
+        val inputFileName = htmlElement.selectFirst("div.input-file").text()
+        val outputFileName = htmlElement.selectFirst("div.output-file").text()
         CodeforcesTaskWithFileIO(inputFileName, outputFileName)
       }
       task.lesson = lesson
@@ -85,11 +85,6 @@ open class CodeforcesTask : Task() {
         "ru" -> "стандарт" in text
         else -> false
       }
-    }
-
-    private fun parseFileName(element: Element): String {
-      element.selectFirst("div.property-title").remove()
-      return element.text()
     }
   }
 }
