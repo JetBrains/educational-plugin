@@ -176,26 +176,26 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
     
     // target task initialization
-    return if (targetTask.record == -1) {
-      calculateCurrentTaskChanges()
+    if (targetTask.record == -1) {
+      return calculateCurrentTaskChanges()
+    }
+    if (currentTaskFilesState == targetTaskFiles) {
+      // if current and target states of task files are the same
+      // it needs to calculate only diff for test files
+      return calculateChanges(currentTestFilesState, targetTestFiles)
+    }
+
+    val replaceConflictingChanges = if (showDialogIfConflict) {
+      Messages.showYesNoDialog(project, "The current task changes conflict with next task. Replace with current changes?",
+                               "Changes conflict", "Replace", "Keep", null)
     } else {
-      if (currentTaskFilesState == targetTaskFiles) {
-        // if current and target states of task files are the same
-        // it needs to calculate only diff for test files
-        calculateChanges(currentTestFilesState, targetTestFiles)
-      } else {
-        val result = if (showDialogIfConflict) {
-          Messages.showYesNoDialog(project, "The current task changes conflict with next task. Replace with current changes?",
-                                   "Changes conflict", "Replace", "Keep", null)
-        } else {
-          Messages.NO
-        }
-        if (result == Messages.NO) {
-          calculateChanges(currentState, targetState)
-        } else {
-          calculateCurrentTaskChanges()
-        }
-      }
+      Messages.NO
+    }
+
+    return if (replaceConflictingChanges == Messages.NO) {
+      calculateChanges(currentState, targetState)
+    } else {
+      calculateCurrentTaskChanges()
     }
   }
 
