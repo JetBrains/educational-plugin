@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.withTestDialog
 
-class CCCreateCoursePreviewTest : EduActionTestCase() {
+class CCCreateTaskFilePreviewTest : EduActionTestCase() {
   fun `test show error if placeholder is broken`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {

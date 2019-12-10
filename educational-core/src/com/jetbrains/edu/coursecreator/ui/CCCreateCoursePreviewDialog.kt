@@ -42,7 +42,7 @@ class CCCreateCoursePreviewDialog(
   override fun doOKAction() {
     val folder = CCUtils.getGeneratedFilesFolder(myProject)
     if (folder == null) {
-      LOG.error(TMP_DIR_ERROR)
+      LOG.info(TMP_DIR_ERROR)
       showErrorDialog(myProject, "$TMP_DIR_ERROR Please check permissions and try again.", PREVIEW_CREATION_ERROR_TITLE)
       return
     }
@@ -63,7 +63,7 @@ class CCCreateCoursePreviewDialog(
           val previewProject = myConfigurator.courseBuilder.getCourseProjectGenerator(course)
             ?.doCreateCourseProject(location.absolutePath, settings)
           if (previewProject == null) {
-            LOG.error(PREVIEW_PROJECT_ERROR)
+            LOG.info(PREVIEW_PROJECT_ERROR)
             showErrorDialog(myProject, "$PREVIEW_PROJECT_ERROR Please try again.", PREVIEW_CREATION_ERROR_TITLE)
             return
           }
@@ -81,7 +81,7 @@ class CCCreateCoursePreviewDialog(
       }
     }
     else {
-      LOG.error(errorMessage)
+      LOG.info(errorMessage)
       showErrorDialog(myProject, errorMessage, PREVIEW_CREATION_ERROR_TITLE)
     }
   }

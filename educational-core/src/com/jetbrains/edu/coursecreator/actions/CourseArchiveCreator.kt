@@ -55,11 +55,7 @@ class CourseArchiveCreator(
       }
       val yamlFile = e.placeholder.taskFile?.task?.getTaskDir(project)?.findChild("task-info.yaml") ?: return e.message
       FileEditorManager.getInstance(project).openFile(yamlFile, true)
-      return """
-        ${e.message}
-        
-        ${e.placeholderInfo}
-      """.trimIndent()
+      return "${e.message}\n\n${e.placeholderInfo}"
     }
     courseCopy.sortItems()
     courseCopy.additionalFiles = CCUtils.collectAdditionalFiles(courseCopy, project)
