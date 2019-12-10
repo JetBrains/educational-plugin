@@ -48,7 +48,8 @@ class CodeforcesConnector {
                      .executeHandlingExceptions()
                      ?.checkStatusCode()
                      ?.body() ?: return null
-    return CodeforcesCourse(contestURLInfo, response)
+    val doc = Jsoup.parse(response.string())
+    return CodeforcesCourse(contestURLInfo, doc)
   }
 
   fun getContestShortInfo(contestId: Int): ContestShortInfo? {

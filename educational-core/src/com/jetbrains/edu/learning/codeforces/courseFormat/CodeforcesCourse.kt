@@ -9,20 +9,19 @@ import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import icons.EducationalCoreIcons
-import okhttp3.ResponseBody
-import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import javax.swing.Icon
 
 class CodeforcesCourse : EduCourse {
   @Suppress("unused") //used for deserialization
   constructor()
 
-  constructor(contestURLInfo: ContestURLInfo, html: ResponseBody) {
+  constructor(contestURLInfo: ContestURLInfo, doc: Document) {
     id = contestURLInfo.id
     language = contestURLInfo.languageId
     languageCode = contestURLInfo.locale
 
-    parseResponseToAddContent(html)
+    parseResponseToAddContent(doc)
   }
 
   val contestUrl: String by lazy { getContestURLFromID(id) }
@@ -33,8 +32,7 @@ class CodeforcesCourse : EduCourse {
   override fun getItemType(): String = CODEFORCES_COURSE_TYPE
   override fun getCheckAction(): CheckAction = CheckAction(CodeforcesNames.RUN_LOCAL_TESTS)
 
-  private fun parseResponseToAddContent(html: ResponseBody) {
-    val doc = Jsoup.parse(html.string())
+  private fun parseResponseToAddContent(doc: Document) {
     name = doc.selectFirst(".caption").text()
 
     val problems = doc.select(".problem-statement")
