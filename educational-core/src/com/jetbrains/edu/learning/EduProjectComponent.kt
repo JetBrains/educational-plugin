@@ -10,7 +10,6 @@ import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.colors.EditorColorsListener
 import com.intellij.openapi.editor.colors.EditorColorsManager
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.ProjectManagerListener
@@ -21,7 +20,8 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
-import com.jetbrains.edu.learning.EduUtils.*
+import com.jetbrains.edu.learning.EduUtils.isEduProject
+import com.jetbrains.edu.learning.EduUtils.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
@@ -115,27 +115,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
     }
 
     if (project.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED) == true) {
-      configurator.courseBuilder.refreshProject(project)
-    }
-    else if (isAndroidStudio()) {
-      // Unexpectedly, Android Studio corrupts content root paths after course project reopening
-      // And project structure can't show project tree because of it.
-      // We don't know better and cleaner way how to fix it than to refresh project.
-      configurator.courseBuilder.refreshProject(project, object : EduCourseBuilder.ProjectRefreshListener {
-        override fun onSuccess() {
-          // We have to open current opened file in project view manually
-          // because it can't restore previous state.
-          val files = FileEditorManager.getInstance(project).selectedFiles
-          for (file in files) {
-            getTaskForFile(project, file) ?: continue
-            ProjectView.getInstance(project).select(file, file, false)
-          }
-        }
-
-        override fun onFailure(errorMessage: String) {
-          LOG.warn("Failed to refresh gradle project: $errorMessage")
-        }
-      })
+      configurator.courseBuilder.refreshProject(project, RefreshCause.PROJECT_CREATED)
     }
 
     // Android Studio creates `gradlew` not via VFS so we have to refresh project dir

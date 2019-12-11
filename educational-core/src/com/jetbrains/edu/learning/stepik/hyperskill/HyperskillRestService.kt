@@ -16,6 +16,7 @@ import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.AppIcon
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
@@ -158,7 +159,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
       GeneratorUtils.createTask(task, lessonDir)
 
-      course.configurator?.courseBuilder?.refreshProject(project)
+      course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
     }
     return task
   }

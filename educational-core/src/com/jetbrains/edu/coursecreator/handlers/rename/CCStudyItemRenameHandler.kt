@@ -9,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
+import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -31,6 +32,6 @@ abstract class CCStudyItemRenameHandler(private val studyItemType: StudyItemType
         Logger.getInstance(CCStudyItemRenameHandler::class.java).error(e)
       }
     }
-    configurator?.courseBuilder?.refreshProject(project)
+    configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
   }
 }

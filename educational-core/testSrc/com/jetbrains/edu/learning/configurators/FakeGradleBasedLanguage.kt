@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -66,7 +67,7 @@ class FakeGradleCourseBuilder : EduCourseBuilder<Unit> {
 
   override fun getCourseProjectGenerator(course: Course): FakeGradleCourseProjectGenerator = FakeGradleCourseProjectGenerator(
     this, course)
-  override fun refreshProject(project: Project) {}
+  override fun refreshProject(project: Project, cause: RefreshCause) {}
   override val testTemplateName: String? = "Tests.kt"
 }
 

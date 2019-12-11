@@ -14,10 +14,7 @@ import com.jetbrains.cmake.psi.CMakeArgument
 import com.jetbrains.cmake.psi.CMakeCommand
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.LanguageSettings
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -108,7 +105,7 @@ class CppCourseBuilder(
     }
   }
 
-  override fun refreshProject(project: Project) {
+  override fun refreshProject(project: Project, cause: RefreshCause) {
     // if it is a new project it will be initialized, else it will be reloaded only.
     CMakeWorkspace.getInstance(project).selectProjectDir(VfsUtil.virtualToIoFile(project.courseDir))
   }

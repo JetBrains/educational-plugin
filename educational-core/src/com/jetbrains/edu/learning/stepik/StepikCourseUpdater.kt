@@ -14,6 +14,7 @@ import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils.showNotification
 import com.jetbrains.edu.learning.EduUtils.synchronize
+import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -48,7 +49,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
       synchronize()
       ProjectView.getInstance(project).refresh()
       showNotification(project, "Course updated", null)
-      course.configurator?.courseBuilder?.refreshProject(project)
+      course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
       YamlFormatSynchronizer.saveAll(project)
     }
   }

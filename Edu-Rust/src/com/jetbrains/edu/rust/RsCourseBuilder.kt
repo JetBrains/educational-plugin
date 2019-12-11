@@ -8,6 +8,7 @@ import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -28,7 +29,7 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
 
     override fun getLanguageSettings(): LanguageSettings<RsProjectSettings> = RsLanguageSettings()
 
-    override fun refreshProject(project: Project) {
+    override fun refreshProject(project: Project, cause: RefreshCause) {
         val course = StudyTaskManager.getInstance(project).course ?: return
         if (project.isSingleWorkspaceProject) {
             refreshWorkspace(project)

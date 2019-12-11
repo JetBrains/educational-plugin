@@ -8,6 +8,7 @@ import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.FileInfo
+import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.fileInfo
@@ -71,7 +72,7 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
 
     val configurator = course.configurator
     if (configurator != null) {
-      runInEdt { configurator.courseBuilder.refreshProject(project) }
+      runInEdt { configurator.courseBuilder.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED) }
     }
   }
 

@@ -84,7 +84,7 @@ interface EduCourseBuilder<Settings> {
     }
     val taskDir = parentDirectory.findChild(task.name)
     if (!isUnitTestMode) {
-      refreshProject(project)
+      refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
     }
     return taskDir
   }
@@ -92,11 +92,11 @@ interface EduCourseBuilder<Settings> {
   /**
    * Allows to update project modules and the whole project structure
    */
-  fun refreshProject(project: Project) {
-    refreshProject(project, null)
+  fun refreshProject(project: Project, cause: RefreshCause) {
+    refreshProject(project, cause, null)
   }
 
-  fun refreshProject(project: Project, listener: ProjectRefreshListener?) {
+  fun refreshProject(project: Project, cause: RefreshCause, listener: ProjectRefreshListener?) {
     listener?.onSuccess()
   }
 

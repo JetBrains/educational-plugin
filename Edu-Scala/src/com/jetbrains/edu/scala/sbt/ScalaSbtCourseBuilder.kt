@@ -13,6 +13,7 @@ import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -39,7 +40,7 @@ class ScalaSbtCourseBuilder : EduCourseBuilder<JdkProjectSettings> {
     task.addTaskFile(taskFile)
   }
 
-  override fun refreshProject(project: Project) {
+  override fun refreshProject(project: Project, cause: RefreshCause) {
     val projectBasePath = project.basePath ?: return
     val builder = ImportSpecBuilder(project, SbtProjectSystem.Id()).use(ProgressExecutionMode.IN_BACKGROUND_ASYNC).dontReportRefreshErrors()
     builder.useDefaultCallback()
