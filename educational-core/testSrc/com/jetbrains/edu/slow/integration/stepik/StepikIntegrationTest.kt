@@ -85,7 +85,7 @@ open class StepikIntegrationTest : StepikTestCase() {
                       ?: error("Cannot find placeholder")
     placeholder.offset = 1000
 
-    assertThrows(RuntimeException::class.java, ThrowableRunnable<RuntimeException> {
+    assertThrows(Throwable::class.java, ThrowableRunnable<Throwable> {
       CCPushCourse.doPush(project, localCourse)
     })
   }
