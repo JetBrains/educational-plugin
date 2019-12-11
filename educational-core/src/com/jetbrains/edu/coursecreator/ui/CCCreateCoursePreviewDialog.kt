@@ -72,7 +72,7 @@ class CCCreateCoursePreviewDialog(
           EduCounterUsageCollector.createCoursePreview()
         }
         catch (e: IOException) {
-          LOG.error(TMP_DIR_ERROR, e)
+          LOG.info(TMP_DIR_ERROR, e)
           showErrorDialog(myProject, "$TMP_DIR_ERROR Please check permissions and try again.", PREVIEW_CREATION_ERROR_TITLE)
         }
         finally {
