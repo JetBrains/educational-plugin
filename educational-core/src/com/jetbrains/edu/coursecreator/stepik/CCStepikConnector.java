@@ -247,7 +247,9 @@ public class CCStepikConnector {
     final StepSource stepSource = StepikConnector.getInstance().postTask(project, task, lessonId);
     if (stepSource == null) {
       final String message = FAILED_TITLE + "task in lesson " + lessonId;
-      LOG.error(message);
+      if (!ApplicationManager.getApplication().isUnitTestMode()) {
+        LOG.error(message);
+      }
       showErrorNotification(project, FAILED_TITLE, message);
       return false;
     }

@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.createRetrofitBuilder
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.executeHandlingExceptions
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepikUserAgent
 import okhttp3.ConnectionPool
@@ -203,7 +204,9 @@ abstract class StepikConnector {
       }
     } catch (e: RuntimeException) {
       val cause = e.cause as? BrokenPlaceholderException
-      LOG.error("${e.message}\n${cause?.placeholderInfo}")
+      if (!isUnitTestMode) {
+        LOG.error("${e.message}\n${cause?.placeholderInfo}")
+      }
       return null
     }
     val response = service.stepSource(stepSourceData!!).executeHandlingExceptions()

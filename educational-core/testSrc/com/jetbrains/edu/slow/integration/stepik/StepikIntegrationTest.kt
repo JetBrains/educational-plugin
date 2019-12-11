@@ -3,11 +3,11 @@ package com.jetbrains.edu.slow.integration.stepik
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushSection
+import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
@@ -72,7 +72,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     checkTopLevelLessons(localCourse)
   }
 
-  fun `test upload course failed because of broken placeholders`() {
+  fun `test upload task failed because of broken placeholders`() {
     val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
@@ -85,9 +85,10 @@ open class StepikIntegrationTest : StepikTestCase() {
                       ?: error("Cannot find placeholder")
     placeholder.offset = 1000
 
-    assertThrows(Throwable::class.java, ThrowableRunnable<Throwable> {
-      CCPushCourse.doPush(project, localCourse)
-    })
+    val lesson = localCourse.lessons[0]
+    val task = lesson.taskList[0]
+    assertFalse("Task should not be loaded into the system because placeholder is broken",
+                CCStepikConnector.postTask(project, task, lesson.id))
   }
 
   fun `test post top level lesson`() {
