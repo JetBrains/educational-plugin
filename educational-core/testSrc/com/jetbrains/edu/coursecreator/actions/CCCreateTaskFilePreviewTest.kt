@@ -28,7 +28,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
 
     withTestDialog(EduTestDialog()) {
       testAction(createDataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview())
-    }.checkWasShown("Broken placeholder 1 of 1, offset 1000, length 0.")
+    }.checkWasShown("Broken placeholder, offset 1000, length 0.")
   }
 
   fun `test show error if we have no placeholders`() {
