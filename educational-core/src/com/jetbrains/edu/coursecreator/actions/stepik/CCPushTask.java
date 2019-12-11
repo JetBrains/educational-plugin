@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Modal;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
@@ -15,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
@@ -23,9 +23,9 @@ import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
-public class CCPushTask extends DumbAwareAction {
+public class CCPushTask extends CCPushAction {
   public CCPushTask() {
-    super("Update Task on Stepik", "Update Task on Stepik", null);
+    super(EduCoreBundle.message("study.item.task"), null);
   }
 
   @Override
@@ -54,8 +54,13 @@ public class CCPushTask extends DumbAwareAction {
     if (lesson != null && lesson.getId() > 0 && course.getId() > 0) {
       e.getPresentation().setEnabledAndVisible(true);
       final Task task = lesson.getTask(taskDir.getName());
-      if (task != null && task.getId() <= 0) {
-        e.getPresentation().setText("Upload Task to Stepik");
+      if (task != null) {
+        if (task.getId() <= 0) {
+          e.getPresentation().setText(getUploadText(getItemName()));
+        }
+        else {
+          e.getPresentation().setText(getUpdateText(getItemName()));
+        }
       }
     }
   }

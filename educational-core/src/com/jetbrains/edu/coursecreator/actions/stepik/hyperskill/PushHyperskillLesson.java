@@ -6,15 +6,16 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Modal;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
+import com.jetbrains.edu.coursecreator.actions.stepik.CCPushAction;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
@@ -28,17 +29,17 @@ import static com.jetbrains.edu.learning.EduUtils.showNotification;
 import static com.jetbrains.edu.learning.ExperimentsKt.isFeatureEnabled;
 
 @SuppressWarnings("ComponentNotRegistered") // Hyperskill.xml
-public class PushHyperskillLesson extends DumbAwareAction {
+public class PushHyperskillLesson extends CCPushAction {
   private static final Logger LOG = Logger.getInstance(PushHyperskillLesson.class);
 
   public PushHyperskillLesson() {
-    super("Push Hyperskill Lesson to Stepik", "Push Hyperskill Lesson to Stepik", EducationalCoreIcons.JB_ACADEMY_ENABLED);
+    super(EduCoreBundle.message("study.item.hyperskill.lesson"), EducationalCoreIcons.JB_ACADEMY_ENABLED);
   }
 
   @Override
   public void update(@NotNull AnActionEvent e) {
     e.getPresentation().setEnabledAndVisible(false);
-    if (!isFeatureEnabled(CC_HYPERSKILL) || ! CCPluginToggleAction.isCourseCreatorFeaturesEnabled()) return;
+    if (!isFeatureEnabled(CC_HYPERSKILL) || !CCPluginToggleAction.isCourseCreatorFeaturesEnabled()) return;
 
     final Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
@@ -51,7 +52,10 @@ public class PushHyperskillLesson extends DumbAwareAction {
     if (lesson == null) return;
 
     if (lesson.getId() > 0) {
-      e.getPresentation().setText("Update Hyperskill Lesson on Stepik");
+      e.getPresentation().setText(getUpdateText(getItemName()));
+    }
+    else {
+      e.getPresentation().setText(getUploadText(getItemName()));
     }
     e.getPresentation().setEnabledAndVisible(true);
   }

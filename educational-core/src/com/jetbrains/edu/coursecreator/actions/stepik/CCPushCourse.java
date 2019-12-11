@@ -11,17 +11,14 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Modal;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduVersions;
-import com.jetbrains.edu.learning.PluginUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
@@ -31,15 +28,12 @@ import javax.swing.event.HyperlinkEvent;
 
 import static com.jetbrains.edu.coursecreator.CCUtils.askToWrapTopLevelLessons;
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
-import static com.jetbrains.edu.learning.EduUtils.addMnemonic;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
-public class CCPushCourse extends DumbAwareAction {
-
-  private static final String ACTION_TEXT = "Upload Course to Stepik";
+public class CCPushCourse extends CCPushAction {
 
   public CCPushCourse() {
-    super(addMnemonic(ACTION_TEXT), ACTION_TEXT, null);
+    super(EduCoreBundle.message("study.item.course"), null);
   }
 
   @Override
@@ -56,7 +50,10 @@ public class CCPushCourse extends DumbAwareAction {
     }
     presentation.setEnabledAndVisible(true);
     if (((EduCourse)course).isRemote()) {
-      presentation.setText("Update Course on Stepik");
+      presentation.setText(getUpdateText(getItemName()));
+    }
+    else {
+      presentation.setText(getUploadText(getItemName()));
     }
   }
 

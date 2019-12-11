@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.pushAvailable
@@ -16,11 +15,12 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Section on Stepik", null) {
+class CCPushSection : CCPushAction(EduCoreBundle.message("study.item.section")) {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
@@ -42,7 +42,10 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
     if (section != null && course.id > 0) {
       e.presentation.isEnabledAndVisible = true
       if (section.id <= 0) {
-        e.presentation.text = "Upload Section to Stepik"
+        e.presentation.text = getUploadText(itemName)
+      }
+      else {
+        e.presentation.text = getUpdateText(itemName)
       }
     }
   }
