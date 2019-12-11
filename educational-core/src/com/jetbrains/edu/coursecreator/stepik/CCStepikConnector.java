@@ -22,8 +22,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.*;
-import com.jetbrains.edu.learning.stepik.api.AdditionalCourseInfo;
-import com.jetbrains.edu.learning.stepik.api.AdditionalLessonInfo;
+import com.jetbrains.edu.learning.stepik.api.CourseAdditionalInfo;
+import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikUnit;
 import org.apache.http.HttpStatus;
@@ -116,8 +116,8 @@ public class CCStepikConnector {
   public static void postAdditionalCourseInfo(@NotNull EduCourse course, @NotNull final Project project, int courseId) {
     updateProgress(PUBLISHING_COURSE_TITLE);
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
-    AdditionalCourseInfo additionalCourseInfo = new AdditionalCourseInfo(additionalFiles, course.getSolutionsHidden());
-    StepikConnector.getInstance().postCourseAttachment(additionalCourseInfo, courseId);
+    CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
+    StepikConnector.getInstance().postCourseAttachment(courseAdditionalInfo, courseId);
   }
 
   /**
@@ -286,8 +286,8 @@ public class CCStepikConnector {
     assert courseInfo != null;
     updateProgress(PUBLISHING_COURSE_TITLE);
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(courseInfo, project);
-    AdditionalCourseInfo additionalCourseInfo = new AdditionalCourseInfo(additionalFiles, course.getSolutionsHidden());
-    return StepikConnector.getInstance().updateCourseAttachment(additionalCourseInfo, courseInfo) == HttpStatus.SC_CREATED;
+    CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
+    return StepikConnector.getInstance().updateCourseAttachment(courseAdditionalInfo, courseInfo) == HttpStatus.SC_CREATED;
   }
 
   public static boolean updateSectionForTopLevelLessons(@NotNull EduCourse course) {
@@ -354,7 +354,7 @@ public class CCStepikConnector {
   }
 
   public static boolean updateAdditionalLessonInfo(@NotNull final Lesson lesson, @NotNull Project project) {
-    AdditionalLessonInfo info = collectAdditionalLessonInfo(lesson, project);
+    LessonAdditionalInfo info = collectAdditionalLessonInfo(lesson, project);
     if (info.isEmpty()) {
       StepikConnector.getInstance().deleteLessonAttachment(lesson.getId());
       return true;

@@ -70,24 +70,20 @@ private fun markStepAsViewed(lessonId: Int, stepId: Int) {
 fun loadAndFillLessonAdditionalInfo(lesson: Lesson) {
   val attachmentLink = "${StepikNames.STEPIK_URL}/media/attachments/lesson/${lesson.id}/${StepikNames.ADDITIONAL_INFO}"
   val infoText = loadAttachment(attachmentLink) ?: return
-  val lessonInfo = HyperskillConnector.getInstance().objectMapper.readValue(infoText, AdditionalLessonInfo::class.java)
+  val lessonInfo = HyperskillConnector.getInstance().objectMapper.readValue(infoText, LessonAdditionalInfo::class.java)
 
   lesson.customPresentableName = lessonInfo.customName
-  lessonInfo.taskNames.forEach { (id, name) ->
-    lesson.getTask(id)?.name = name
-  }
-  lessonInfo.taskCustomNames.forEach { (id, name) ->
-    lesson.getTask(id)?.customPresentableName = name
-  }
-  lessonInfo.taskFiles.forEach { (taskId, taskFiles) ->
-    lesson.getTask(taskId)?.taskFiles = taskFiles.associateBy(TaskFile::getName) { it }
+  lessonInfo.taskInfo.forEach { (id, task) ->
+    lesson.getTask(id)?.name = task.name
+    lesson.getTask(id)?.customPresentableName = task.customName
+    lesson.getTask(id)?.taskFiles = task.taskFiles.associateBy(TaskFile::getName) { it }
   }
 }
 
 fun loadAndFillAdditionalCourseInfo(course: Course, attachmentLink: String? = null) {
   val link = attachmentLink ?: "${StepikNames.STEPIK_URL}/media/attachments/course/${course.id}/${StepikNames.ADDITIONAL_INFO}"
   val infoText = loadAttachment(link) ?: return
-  val courseInfo = HyperskillConnector.getInstance().objectMapper.readValue(infoText, AdditionalCourseInfo::class.java)
+  val courseInfo = HyperskillConnector.getInstance().objectMapper.readValue(infoText, CourseAdditionalInfo::class.java)
 
   course.additionalFiles = courseInfo.additionalFiles
   course.solutionsHidden = courseInfo.solutionsHidden

@@ -260,9 +260,9 @@ abstract class StepikConnector {
     return response?.code() ?: -1
   }
 
-  fun postCourseAttachment(info: AdditionalCourseInfo, courseId: Int) = postAttachment(info, courseId, null)
+  fun postCourseAttachment(info: CourseAdditionalInfo, courseId: Int) = postAttachment(info, courseId, null)
 
-  private fun postLessonAttachment(info: AdditionalLessonInfo, lessonId: Int) = postAttachment(info, null, lessonId)
+  private fun postLessonAttachment(info: LessonAdditionalInfo, lessonId: Int) = postAttachment(info, null, lessonId)
 
   // Update requests:
 
@@ -311,13 +311,13 @@ abstract class StepikConnector {
     return response?.code() ?: -1
   }
 
-  fun updateCourseAttachment(info: AdditionalCourseInfo, course: Course): Int {
+  fun updateCourseAttachment(info: CourseAdditionalInfo, course: Course): Int {
     deleteAttachment(course.id)
     updateCourse(course)  // Needed to push forward update_date in course
     return postCourseAttachment(info, course.id)
   }
 
-  fun updateLessonAttachment(info: AdditionalLessonInfo, lesson: Lesson): Int {
+  fun updateLessonAttachment(info: LessonAdditionalInfo, lesson: Lesson): Int {
     deleteAttachment(null, lesson.id)
     updateLesson(lesson) // Needed to push forward update_date in lesson
     return postLessonAttachment(info, lesson.id)

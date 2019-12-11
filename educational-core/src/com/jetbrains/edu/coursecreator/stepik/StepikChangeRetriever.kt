@@ -197,8 +197,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
   }
 
   private fun taskInfoChanged(task: Task, remoteTask: Task): Boolean {
-    //choice tasks are being renamed to "Quiz" when uploading to Stepik
-    return (task !is ChoiceTask && task.name != remoteTask.name) ||
+    return task.name != remoteTask.name ||
            task.index != remoteTask.index ||
            task.descriptionText != remoteTask.descriptionText ||
            task.descriptionFormat != remoteTask.descriptionFormat ||

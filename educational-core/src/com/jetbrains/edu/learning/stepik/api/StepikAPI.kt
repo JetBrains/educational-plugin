@@ -52,9 +52,7 @@ const val VERSION = "version"
 const val ATTACHMENTS = "attachments"
 const val ADDITIONAL_FILES = "additional_files"
 const val TASK_FILES = "task_files"
-const val TASK_NAMES = "task_names"
-const val TASK_CUSTOM_NAMES = "task_custom_names"
-const val LESSON_CUSTOM_NAME = "lesson_custom_name"
+const val TASK_INFO = "task_info"
 const val TIME = "time"
 
 // List wrappers for GET requests:
@@ -409,7 +407,7 @@ class Attachment {
 
 open class AdditionalInfo
 
-class AdditionalCourseInfo : AdditionalInfo {
+class CourseAdditionalInfo : AdditionalInfo {
   @JsonProperty(ADDITIONAL_FILES)
   lateinit var additionalFiles: List<TaskFile>
 
@@ -425,8 +423,8 @@ class AdditionalCourseInfo : AdditionalInfo {
   }
 }
 
-class AdditionalLessonInfo : AdditionalInfo {
-  @JsonProperty(LESSON_CUSTOM_NAME)
+class LessonAdditionalInfo : AdditionalInfo {
+  @JsonProperty(CUSTOM_NAME)
   var customName: String? = null
 
   /**
@@ -435,23 +433,35 @@ class AdditionalLessonInfo : AdditionalInfo {
    * (we use lessonInfo for tasks because Stepik API does not have attachments for tasks)
    * */
 
-  @JsonProperty(TASK_NAMES)
-  lateinit var taskNames: Map<Int, String> // taskId -> taskName
-
-  @JsonProperty(TASK_CUSTOM_NAMES)
-  lateinit var taskCustomNames: Map<Int, String> // taskId -> taskCustomName
-
-  @JsonProperty(TASK_FILES)
-  lateinit var taskFiles: Map<Int, List<TaskFile>> // taskId -> taskFiles
+  @JsonProperty(TASK_INFO)
+  lateinit var taskInfo: Map<Int, TaskAdditionalInfo>
 
   constructor()
 
-  constructor(customName: String?, taskNames: Map<Int, String>, taskCustomNames: Map<Int, String>, taskFiles: Map<Int, List<TaskFile>>) {
+  constructor(customName: String?, taskInfo: Map<Int, TaskAdditionalInfo>) {
     this.customName = customName
-    this.taskNames = taskNames
-    this.taskCustomNames = taskCustomNames
-    this.taskFiles = taskFiles
+    this.taskInfo = taskInfo
   }
 
-  val isEmpty: Boolean get() = customName.isNullOrEmpty() && taskNames.isEmpty() && taskCustomNames.isEmpty() && taskFiles.isEmpty()
+  val isEmpty: Boolean get() = customName.isNullOrEmpty() && taskInfo.isEmpty()
+}
+
+// Not inherited from AdditionalInfo because Stepik does not support Attachments for tasks
+class TaskAdditionalInfo {
+  @JsonProperty(NAME)
+  var name: String = ""
+
+  @JsonProperty(CUSTOM_NAME)
+  var customName: String? = null
+
+  @JsonProperty(TASK_FILES)
+  lateinit var taskFiles: List<TaskFile>
+
+  constructor()
+
+  constructor(name: String, customName: String?, taskFiles: List<TaskFile>) {
+    this.name = name
+    this.customName = customName
+    this.taskFiles = taskFiles
+  }
 }

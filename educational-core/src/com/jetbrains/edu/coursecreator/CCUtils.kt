@@ -29,7 +29,8 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.api.AdditionalLessonInfo
+import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo
+import com.jetbrains.edu.learning.stepik.api.TaskAdditionalInfo
 import com.jetbrains.edu.learning.stepik.collectTaskFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.apache.commons.codec.binary.Base64
@@ -165,14 +166,14 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): AdditionalLessonInfo {
-    val tasks = lesson.taskList.filter { !it.isPluginTaskType }
-    val taskNames = tasks.associateBy(Task::getId) { it.name }
+  fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): LessonAdditionalInfo {
+    val nonPluginTasks = lesson.taskList.filter { !it.isPluginTaskType }
+    val taskInfo = nonPluginTasks.associateBy(Task::getId) {
+      @Suppress("deprecation")
+      TaskAdditionalInfo(it.name, it.customPresentableName, collectTaskFiles(project, it))
+    }
     @Suppress("deprecation")
-    val taskCustomNames = tasks.filter { it.customPresentableName != null }.associateBy(Task::getId) { it.customPresentableName!! }
-    val taskFiles = tasks.associateBy(Task::getId) { collectTaskFiles(project, it) }
-    @Suppress("deprecation")
-    return AdditionalLessonInfo(lesson.customPresentableName, taskNames, taskCustomNames, taskFiles)
+    return LessonAdditionalInfo(lesson.customPresentableName, taskInfo)
   }
 
   @JvmStatic
