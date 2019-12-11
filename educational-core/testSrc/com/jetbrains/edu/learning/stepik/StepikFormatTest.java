@@ -71,7 +71,7 @@ public class StepikFormatTest extends EduTestCase {
     doStepOptionMigrationTest(10);
   }
 
-  public void testAdditionalCourseMaterials() throws IOException {
+  public void testCourseAdditionalMaterials() throws IOException {
     String responseString = loadJsonText();
     final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
     final CourseAdditionalInfo courseAdditionalInfo = mapper.readValue(responseString, CourseAdditionalInfo.class);
@@ -79,15 +79,15 @@ public class StepikFormatTest extends EduTestCase {
     assertTrue(courseAdditionalInfo.getSolutionsHidden());
   }
 
-  public void testAdditionalLessonMaterials() throws IOException {
+  public void testLessonAdditionalMaterials() throws IOException {
     String responseString = loadJsonText();
     final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
     final LessonAdditionalInfo lessonAdditionalInfo = mapper.readValue(responseString, LessonAdditionalInfo.class);
     assertEquals("renamed", lessonAdditionalInfo.getCustomName());
-    assertEquals("My cool task", lessonAdditionalInfo.taskNames.get(123));
-    assertEquals("Very cool", lessonAdditionalInfo.taskCustomNames.get(123));
-    assertEquals(1, lessonAdditionalInfo.taskFiles.size());
-    assertEquals(3, lessonAdditionalInfo.taskFiles.get(123).size());
+    assertEquals("My cool task", lessonAdditionalInfo.taskInfo.get(123).getName());
+    assertEquals("Very cool", lessonAdditionalInfo.taskInfo.get(123).getCustomName());
+    assertEquals(1, lessonAdditionalInfo.taskInfo.size());
+    assertEquals(3, lessonAdditionalInfo.taskInfo.get(123).getTaskFiles().size());
   }
 
   public void testAdditionalMaterialsStep() throws IOException {

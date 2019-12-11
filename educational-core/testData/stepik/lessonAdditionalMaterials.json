@@ -1,0 +1,29 @@
+{
+  "custom_name": "renamed",
+  "task_info": {
+    "123": {
+      "name": "My cool task",
+      "custom_name": "Very cool",
+      "task_files": [
+        {
+          "name": "src/another file.kt",
+          "placeholders": [],
+          "is_visible": true,
+          "text": "// type your solution here"
+        },
+        {
+          "name": "test/Tests.kt",
+          "placeholders": [],
+          "is_visible": false,
+          "text": "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}"
+        },
+        {
+          "name": "src/one more file.txt",
+          "placeholders": [],
+          "is_visible": true,
+          "text": "File text"
+        }
+      ]
+    }
+  }
+}
