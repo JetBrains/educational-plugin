@@ -52,7 +52,7 @@ const val VERSION = "version"
 const val ATTACHMENTS = "attachments"
 const val ADDITIONAL_FILES = "additional_files"
 const val TASK_FILES = "task_files"
-const val TASK_INFO = "task_info"
+const val TASKS_INFO = "tasks_info"
 const val TIME = "time"
 
 // List wrappers for GET requests:
@@ -433,17 +433,17 @@ class LessonAdditionalInfo : AdditionalInfo {
    * (we use lessonInfo for tasks because Stepik API does not have attachments for tasks)
    * */
 
-  @JsonProperty(TASK_INFO)
-  lateinit var taskInfo: Map<Int, TaskAdditionalInfo>
+  @JsonProperty(TASKS_INFO)
+  lateinit var tasksInfo: Map<Int, TaskAdditionalInfo>
 
   constructor()
 
-  constructor(customName: String?, taskInfo: Map<Int, TaskAdditionalInfo>) {
+  constructor(customName: String?, tasksInfo: Map<Int, TaskAdditionalInfo>) {
     this.customName = customName
-    this.taskInfo = taskInfo
+    this.tasksInfo = tasksInfo
   }
 
-  val isEmpty: Boolean get() = customName.isNullOrEmpty() && taskInfo.isEmpty()
+  val isEmpty: Boolean get() = customName.isNullOrEmpty() && tasksInfo.isEmpty()
 }
 
 // Not inherited from AdditionalInfo because Stepik does not support Attachments for tasks

@@ -84,10 +84,12 @@ public class StepikFormatTest extends EduTestCase {
     final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
     final LessonAdditionalInfo lessonAdditionalInfo = mapper.readValue(responseString, LessonAdditionalInfo.class);
     assertEquals("renamed", lessonAdditionalInfo.getCustomName());
-    assertEquals("My cool task", lessonAdditionalInfo.taskInfo.get(123).getName());
-    assertEquals("Very cool", lessonAdditionalInfo.taskInfo.get(123).getCustomName());
-    assertEquals(1, lessonAdditionalInfo.taskInfo.size());
-    assertEquals(3, lessonAdditionalInfo.taskInfo.get(123).getTaskFiles().size());
+    assertEquals(1, lessonAdditionalInfo.tasksInfo.size());
+
+    final TaskAdditionalInfo taskAdditionalInfo = lessonAdditionalInfo.tasksInfo.get(123);
+    assertEquals("My cool task", taskAdditionalInfo.getName());
+    assertEquals("Very cool", taskAdditionalInfo.getCustomName());
+    assertEquals(3, taskAdditionalInfo.getTaskFiles().size());
   }
 
   public void testAdditionalMaterialsStep() throws IOException {
