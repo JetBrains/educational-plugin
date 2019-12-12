@@ -1,5 +1,6 @@
 package com.jetbrains.edu.python.learning.stepik.hyperskill
 
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -10,6 +11,6 @@ class PyPyCharmHyperskillCourseProjectGenerator(builder: PyPyCharmHyperskillCour
 
   override fun beforeProjectGenerated(): Boolean {
     assert(myCourse is HyperskillCourse)
-    return HyperskillConnector.getInstance().fillHyperskillCourse(myCourse as HyperskillCourse)
+    return myCourse.courseMode == CCUtils.COURSE_MODE || HyperskillConnector.getInstance().fillHyperskillCourse(myCourse as HyperskillCourse)
   }
 }
