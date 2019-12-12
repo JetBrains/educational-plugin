@@ -434,7 +434,7 @@ class LessonAdditionalInfo : AdditionalInfo {
    * */
 
   @JsonProperty(TASKS_INFO)
-  lateinit var tasksInfo: Map<Int, TaskAdditionalInfo>
+  var tasksInfo: Map<Int, TaskAdditionalInfo> = emptyMap()
 
   constructor()
 
