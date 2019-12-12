@@ -107,7 +107,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
                                          : postLesson(project, lesson, lesson.getIndex(), -1);
 
     if (success) {
-      updateAdditionalCourseInfo(project, course);
+      updateCourseAdditionalInfo(project, course);
       showNotification(project, notification, openOnStepikAction("/lesson/" + lesson.getId()));
     }
     else {

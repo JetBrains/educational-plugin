@@ -103,14 +103,14 @@ public class CCStepikConnector {
     boolean dataPosted = getHasSections(course) ? postSections(project, courseOnRemote) : postTopLevelLessons(project, courseOnRemote);
     if (!dataPosted) return;
 
-    if (!postAdditionalCourseInfo(course, project, courseOnRemote.getId())) return;
+    if (!postCourseAdditionalInfo(course, project, courseOnRemote.getId())) return;
 
     StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
     courseOnRemote.init(null, null, true);
     showNotification(project, "Course is published", openOnStepikAction("/course/" + courseOnRemote.getId()));
   }
 
-  public static boolean postAdditionalCourseInfo(@NotNull EduCourse course, @NotNull final Project project, int courseId) {
+  public static boolean postCourseAdditionalInfo(@NotNull EduCourse course, @NotNull final Project project, int courseId) {
     updateProgress(PUBLISHING_COURSE_TITLE);
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
     CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
@@ -160,8 +160,7 @@ public class CCStepikConnector {
     EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     final int sectionId = postSectionInfo(project, section, course.getId());
-    postLessons(project, course, sectionId, section.getLessons());
-    return sectionId != -1;
+    return sectionId != -1 && postLessons(project, course, sectionId, section.getLessons());
   }
 
   public static int postSectionInfo(@NotNull Project project, @NotNull Section section, int courseId) {
@@ -195,10 +194,8 @@ public class CCStepikConnector {
 
   public static boolean postLesson(@NotNull final Project project, @NotNull final Lesson lesson, int position, int sectionId) {
     Lesson postedLesson = postLessonInfo(project, lesson, sectionId, position);
+    if (postedLesson == null) return false;
 
-    if (postedLesson == null) {
-      return false;
-    }
     for (Task task : lesson.getTaskList()) {
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       if (indicator != null) {
@@ -206,7 +203,11 @@ public class CCStepikConnector {
       }
       if (!postTask(project, task, postedLesson.getId())) return false;
     }
-    return updateAdditionalLessonInfo(lesson, project));
+    if (!updateLessonAdditionalInfo(lesson, project)) {
+      showErrorNotification(project, FAILED_TITLE, "Failed to update lesson " + lesson.getId());
+      return false;
+    }
+    return true;
   }
 
   public static Lesson postLessonInfo(@NotNull Project project, @NotNull Lesson lesson, int sectionId, int position) {
@@ -233,16 +234,17 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "postUnit")) return lessonId;
 
     final StepikUnit unit = StepikConnector.getInstance().postUnit(lessonId, position, sectionId);
-    if (unit == null) {
+    if (unit == null || unit.getId() == null) {
       showErrorNotification(project, FAILED_TITLE, "Failed to post unit");
       return -1;
     }
-    return unit.getId() != null ? unit.getId() : -1;
+    return unit.getId();
   }
 
   public static boolean postTask(@NotNull final Project project, @NotNull final Task task, final int lessonId) {
     if (!checkIfAuthorized(project, "postTask")) return false;
-    if (task instanceof CodeTask) return false;
+    // TODO: add meaningful comment to final Success notification that Code tasks were not pushed
+    if (task instanceof CodeTask) return true;
 
     final StepSource stepSource = StepikConnector.getInstance().postTask(project, task, lessonId);
     if (stepSource == null) {
@@ -285,7 +287,7 @@ public class CCStepikConnector {
     return true;
   }
 
-  public static boolean updateAdditionalCourseInfo(@NotNull Project project, @NotNull Course course) {
+  public static boolean updateCourseAdditionalInfo(@NotNull Project project, @NotNull Course course) {
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
     assert courseInfo != null;
     updateProgress(PUBLISHING_COURSE_TITLE);
@@ -331,12 +333,9 @@ public class CCStepikConnector {
                                      boolean showNotification,
                                      int sectionId) {
     Lesson postedLesson = updateLessonInfo(project, lesson, showNotification, sectionId);
-    if (postedLesson == null ||
-        !updateLessonTasks(project, lesson, postedLesson.steps) ||
-        !updateAdditionalLessonInfo(lesson, project)) {
-      return false;
-    }
-      return true;
+    return postedLesson != null &&
+           updateLessonTasks(project, lesson, postedLesson.steps) &&
+           updateLessonAdditionalInfo(lesson, project);
   }
 
   public static Lesson updateLessonInfo(@NotNull final Project project,
@@ -357,7 +356,7 @@ public class CCStepikConnector {
     return updatedLesson;
   }
 
-  public static boolean updateAdditionalLessonInfo(@NotNull final Lesson lesson, @NotNull Project project) {
+  public static boolean updateLessonAdditionalInfo(@NotNull final Lesson lesson, @NotNull Project project) {
     LessonAdditionalInfo info = collectAdditionalLessonInfo(lesson, project);
     if (info.isEmpty()) {
       StepikConnector.getInstance().deleteLessonAttachment(lesson.getId());
@@ -376,7 +375,7 @@ public class CCStepikConnector {
     }
   }
 
-  private static void updateLessonTasks(@NotNull Project project, @NotNull Lesson localLesson, @NotNull List<Integer> steps) {
+  private static boolean updateLessonTasks(@NotNull Project project, @NotNull Lesson localLesson, @NotNull List<Integer> steps) {
     final Set<Integer> localTasksIds = localLesson.getTaskList()
       .stream()
       .map(task -> task.getId())
@@ -394,13 +393,10 @@ public class CCStepikConnector {
 
     for (Task task : localLesson.getTaskList()) {
       checkCancelled();
-      if (task.getId() > 0) {
-        updateTask(project, task);
-      }
-      else {
-        postTask(project, task, localLesson.getId());
-      }
+      boolean success = task.getId() > 0 ? updateTask(project, task) : postTask(project, task, localLesson.getId());
+      if (!success) return false;
     }
+    return true;
   }
 
   public static boolean updateTask(@NotNull final Project project, @NotNull final Task task) {
