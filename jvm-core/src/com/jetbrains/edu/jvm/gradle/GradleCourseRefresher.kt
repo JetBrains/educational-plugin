@@ -9,7 +9,7 @@ interface GradleCourseRefresher {
   fun refresh(project: Project, listener: EduCourseBuilder.ProjectRefreshListener?)
 
   companion object {
-    val EP_NAME: ExtensionPointName<GradleCourseRefresher> = ExtensionPointName.create("Educational.gradle.refresher")
+    val EP_NAME: ExtensionPointName<GradleCourseRefresher> = ExtensionPointName.create("Educational.gradleRefresher")
 
     fun firstAvailable(): GradleCourseRefresher? = EP_NAME.extensionList.first(GradleCourseRefresher::isAvailable)
   }
