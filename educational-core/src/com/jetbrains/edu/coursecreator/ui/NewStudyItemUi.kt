@@ -10,7 +10,9 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
 
@@ -28,7 +30,7 @@ fun showNewStudyItemDialog(
   val ui = if (isUnitTestMode) {
     MOCK ?: error("You should set mock ui via `withMockCreateStudyItemUi`")
   } else {
-    NewStudyItemPopupUi()
+    if (isFeatureEnabled(EduExperimentalFeatures.NEW_ITEM_POPUP_UI)) NewStudyItemPopupUi() else NewStudyItemDialogUi(dialogGenerator)
   }
   ui.show(project, course, model, additionalPanels, studyItemCreator)
 }

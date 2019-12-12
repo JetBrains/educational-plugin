@@ -5,4 +5,5 @@ object EduExperimentalFeatures {
   const val SPLIT_EDITOR = "edu.course.creator.split.editor"
   const val CC_HYPERSKILL = "edu.course.hyperskill"
   const val CODEFORCES = "edu.course.codeforces"
+  const val NEW_ITEM_POPUP_UI = "edu.course.creator.new.popup.ui"
 }

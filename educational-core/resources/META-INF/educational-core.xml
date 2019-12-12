@@ -268,6 +268,9 @@
     <experimentalFeature id="edu.course.codeforces" percentOfUsers="100" internalFeature="true">
       <description>Enables Codeforces support</description>
     </experimentalFeature>
+    <experimentalFeature id="edu.course.creator.new.popup.ui" percentOfUsers="100" internalFeature="true">
+      <description>Use popup UI instead of modal dialog for new item (task, lesson, section) creation</description>
+    </experimentalFeature>
     <defaultLiveTemplatesProvider implementation="com.jetbrains.edu.coursecreator.HintTemplateProvider"/>
     <liveTemplateContext implementation="com.jetbrains.edu.coursecreator.HintTemplateContentType"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.yaml.GeneratedRemoteInfoNotificationProvider"/>
