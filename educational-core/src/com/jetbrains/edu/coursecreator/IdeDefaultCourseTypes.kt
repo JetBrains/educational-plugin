@@ -7,9 +7,8 @@ import com.jetbrains.edu.coursecreator.ui.CCNewCoursePanel
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 
-fun getDefaultCourseType(courses: List<CCNewCoursePanel.CourseData>): CCNewCoursePanel.CourseData? = courses.find {
-  it.language == Language.findLanguageByID(getDefaultLanguageId())
-}
+fun getDefaultCourseType(courses: List<CCNewCoursePanel.CourseData>): CCNewCoursePanel.CourseData? =
+  courses.find { it.language == Language.findLanguageByID(getDefaultLanguageId()) } ?: courses.firstOrNull()
 
 fun getDefaultLanguageId(): String? = when {
   PlatformUtils.isIntelliJ() || EduUtils.isAndroidStudio() -> EduNames.KOTLIN
