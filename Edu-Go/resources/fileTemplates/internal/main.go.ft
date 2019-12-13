@@ -1,8 +1,7 @@
 package main
 
 import (
-	task "${MODULE_NAME}"
-	"fmt"
+	${MAIN_IMPORTS}
 )
 
 func main() {

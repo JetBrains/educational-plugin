@@ -1,8 +1,7 @@
 package test
 
 import (
-	task "${MODULE_NAME}"
-	"testing"
+	${TEST_IMPORTS}
 )
 
 //todo: replace this with an actual test

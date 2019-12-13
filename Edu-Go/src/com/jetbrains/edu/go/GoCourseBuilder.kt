@@ -28,7 +28,14 @@ class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
 
   override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     if (task.taskFiles.isNotEmpty()) return
-    val params = mapOf("MODULE_NAME" to task.name.replace(" ", "_").toLowerCase())
+    val moduleName = task.name.replace(" ", "_").toLowerCase()
+    val moduleQuoted = "\"$moduleName\""
+    val params = mapOf(
+      "MODULE_NAME" to moduleName,
+      "MAIN_IMPORTS" to createImportsSection(FMT, "task $moduleQuoted"),
+      "TEST_IMPORTS" to createImportsSection(TESTING, "task $moduleQuoted")
+    )
+
     for (templateInfo in defaultTaskFiles) {
       val taskFile = templateInfo.toTaskFile(params) ?: continue
       task.addTaskFile(taskFile)
@@ -37,9 +44,7 @@ class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
 
   // https://golang.org/ref/spec#Import_declarations
   override fun validateItemName(name: String, itemType: StudyItemType): String? {
-    val forbiddenSymbols = Regex.escape("!\"#\$%&'()*,:;<=>?[\\]^`{|}~")
-    val badRegex = "[${forbiddenSymbols}]+".toRegex()
-    return if (itemType == StudyItemType.TASK && name.contains(badRegex)) "Name contains forbidden symbols" else null
+    return if (itemType == StudyItemType.TASK && name.contains(FORBIDDEN_SYMBOLS)) "Name contains forbidden symbols" else null
   }
 
   private val defaultTaskFiles: List<TemplateFileInfo>
@@ -49,4 +54,19 @@ class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
       TemplateFileInfo(TEST_GO, joinPaths(TEST, TEST_GO), false),
       TemplateFileInfo(GO_MOD, GO_MOD, false)
     )
+
+  /**
+   * We have 2 types of imports in Go:
+   * 1. "import/without/spaces"
+   * 2. alias_without_spaces "import/without/spaces"
+   * All imports should be sorted by value in quotes.
+   * */
+  private fun createImportsSection(vararg imports: String): String =
+    imports.sortedBy { it.split(" ").last() }.joinToString("\n\t")
+
+  companion object {
+    private val FORBIDDEN_SYMBOLS = """[!"#$%&'()*,:;<=>?\[\]^`{|}~]+""".toRegex()
+    private const val TESTING = "\"testing\""
+    private const val FMT = "\"fmt\""
+  }
 }
