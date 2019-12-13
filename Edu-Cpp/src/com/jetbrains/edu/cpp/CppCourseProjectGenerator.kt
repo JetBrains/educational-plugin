@@ -39,7 +39,11 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
 
     val mainCMakeTemplateInfo = getCppTemplates(myCourse).mainCMakeList
-    GeneratorUtils.createChildFile(baseDir, mainCMakeTemplateInfo.generatedFileName, mainCMakeTemplateInfo.getText(FileUtil.sanitizeFileName(baseDir.name)))
+    GeneratorUtils.createChildFile(
+      baseDir,
+      mainCMakeTemplateInfo.generatedFileName,
+      mainCMakeTemplateInfo.getText(FileUtil.sanitizeFileName(baseDir.name))
+    )
 
     getCppTemplates(myCourse).extraTopLevelFiles.forEach { templateInfo ->
       GeneratorUtils.createChildFile(baseDir, templateInfo.generatedFileName, templateInfo.getText(FileUtil.sanitizeFileName(baseDir.name)))

@@ -1,5 +1,12 @@
 <idea-plugin>
   <depends>com.intellij.modules.lang</depends>
+
+  <project-components>
+    <component>
+      <implementation-class>com.jetbrains.edu.cpp.CppProjectComponent</implementation-class>
+    </component>
+  </project-components>
+
   <extensions defaultExtensionNs="Educational">
     <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppGTestConfigurator"
                   displayName="C++ (Google Test)" environment="GoogleTest"/>

@@ -3,11 +3,16 @@ package com.jetbrains.edu.cpp
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.cmake.CMakeLanguage
+import com.intellij.openapi.project.Project
+import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.cmake.psi.CMakeCommand
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 /**
  * Create CMake for the task and add it as taskFile.
@@ -42,6 +47,16 @@ fun getDefaultName(item: StudyItem) = when (item) {
   is Lesson -> "${EduNames.LESSON}${item.index}"
   is Task -> "${EduNames.TASK}${item.index}"
   else -> "NonCommonStudyItem${item.index}"
+}
+
+fun isEduCppProject(project: Project): Boolean {
+  val course = StudyTaskManager.getInstance(project).course
+
+  val baseDir = project.courseDir
+  val modeToCreate = baseDir.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE)
+  val languageId = baseDir.getUserData(CourseProjectGenerator.COURSE_LANGUAGE_ID_TO_CREATE)
+
+  return course != null || (modeToCreate != null && languageId == OCLanguage.getInstance().id)
 }
 
 fun PsiFile.findCMakeCommand(commandName: String): CMakeCommand? {
