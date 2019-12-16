@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isReadAccessAllowed
@@ -40,19 +41,33 @@ private fun EduCourse.checkIsUpToDate(): Boolean {
 
   val courseInfo = StepikConnector.getInstance().getCourseInfo(id) ?: return true
   courseInfo.language = language
-  return isUpToDate(courseInfo)
+  val isUpToDate = isUpToDate(courseInfo)
+  if (!isUpToDate) {
+    checkTasksUpToDate(courseInfo)
+  }
+  return isUpToDate
+}
+
+private fun EduCourse.checkTasksUpToDate(courseFromStepik: EduCourse) {
+  val tasksFromServer = courseFromStepik.allTasks.map { it.id to it }.toMap()
+  visitTasks {
+    val taskFromServer = tasksFromServer[it.id]
+    if (taskFromServer == null || taskFromServer.updateDate.isSignificantlyAfter(updateDate)) {
+      it.isUpToDate = false
+    }
+  }
 }
 
 @VisibleForTesting
 fun EduCourse.isUpToDate(courseFromStepik: EduCourse): Boolean {
   val dateFromServer = courseFromStepik.updateDate ?: return true
 
-  if (dateFromServer.isSignificantlyAfter(updateDate)) {
-    return false
-  }
-
   if (!isUnitTestMode) {
     fillItems(courseFromStepik)
+  }
+
+  if (dateFromServer.isSignificantlyAfter(updateDate)) {
+    return false
   }
 
   if (hasNewOrRemovedSections(courseFromStepik) || hasNewOrRemovedTopLevelLessons(courseFromStepik)) {
@@ -158,6 +173,7 @@ private fun Lesson.setUpdated(lessonFromServer: Lesson) {
   taskList.forEach {
     val taskFromServer = tasksById[it.id] ?: error("Task with id ${it.id} not found")
     it.updateDate = taskFromServer.updateDate
+    it.isUpToDate = true
   }
 }
 

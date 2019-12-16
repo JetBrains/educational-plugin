@@ -91,17 +91,22 @@ fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) 
   val notification = Notification("Update.course", "Course Updates",
                                   "Course is ready to <a href=\"update\">update</a>",
                                   NotificationType.INFORMATION,
-                                  NotificationListener { notification, _ ->
-                                    FileEditorManagerEx.getInstanceEx(project).closeAllFiles()
-                                    ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                                      {
-                                        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-                                        notification.expire()
-                                        updateAction()
-                                      },
-                                      "Updating Course", true, project)
-                                  })
+                                  notificationListener(project, updateAction))
   notification.notify(project)
+}
+
+fun notificationListener(project: Project,
+                         updateAction: () -> Unit): NotificationListener {
+  return NotificationListener { notification, _ ->
+    FileEditorManagerEx.getInstanceEx(project).closeAllFiles()
+    notification.expire()
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+      {
+        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+        updateAction()
+      },
+      "Updating Course", true, project)
+  }
 }
 
 private fun getCourseIdsWithLanguage(link: String): Map<Int, String> {
