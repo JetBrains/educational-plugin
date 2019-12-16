@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.fillItems
 import java.util.*
 
+@JvmName("checkIsUpToDate")
 fun EduCourse.checkIsUpToDate(): Boolean {
   // disable update for courses with framework lessons as now it's unsupported
   if (lessons.any { it is FrameworkLesson } || sections.any { it -> it.lessons.any { it is FrameworkLesson } }) {

@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
+import static com.jetbrains.edu.learning.stepik.StepikUpdateDateExt.checkIsUpToDate;
 
 public class SyncStepikCourseAction extends SyncCourseAction {
 
@@ -44,7 +45,7 @@ public class SyncStepikCourseAction extends SyncCourseAction {
   }
 
   public void updateCourseStructure(@NotNull Project project, EduCourse course) {
-    if (!course.isUpToDate()) {
+    if (!checkIsUpToDate(course)) {
       new StepikCourseUpdater(course, project).updateCourse();
     }
     else {
