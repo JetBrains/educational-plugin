@@ -28,10 +28,43 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
           pythonTaskFile("tests.py", """print("")""")
         }
         eduTask("SyntaxError") {
+          /**
+           * We do not have test_helper.py here because it is generated automatically
+           * @see com.jetbrains.edu.python.learning.newproject.PyCourseProjectGeneratorBase.createAdditionalFiles
+           * */
           pythonTaskFile("hello_world.py", """This is not Python code""")
           pythonTaskFile("tests.py", """
             from test_helper import run_common_tests, failed, passed, get_answer_placeholders
-            run_common_tests()""")
+            run_common_tests()
+            """)
+        }
+        eduTask("SyntaxErrorFromUnittest") {
+          pythonTaskFile("hello_world.py", """This is not Python code""")
+          pythonTaskFile("my_unit_tests.py", """
+            import unittest
+            from hello_world import sum_of_two_digits
+
+            class TestSumOfTwoDigits(unittest.TestCase):
+                def test_something(self):
+                    self.assertTrue(sum_of_two_digits())
+
+            if __name__ == '__main__':
+                unittest.main()
+            """)
+          pythonTaskFile("tests.py", """
+            from test_helper import run_common_tests, failed, passed, import_file
+            from unittest import defaultTestLoader, TestResult
+            
+            module = import_file("my_unit_tests.py")
+            test_suite = defaultTestLoader.loadTestsFromModule(module)
+            test_result = TestResult()
+            test_suite.run(test_result)
+            
+            if test_result.wasSuccessful():
+                passed()
+            else:
+                failed("Some unit tests failed")
+            """)
         }
         outputTask("OutputTestsFailed") {
           pythonTaskFile("hello_world.py", """print("Hello, World")""")
@@ -60,6 +93,8 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
           |Hello, World
           |""".trimMargin()),
                  CheckResultDiffMatcher.diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n")), nullValue())
+        "SyntaxErrorFromUnittest" -> Triple(containsString("Syntax Error"), nullValue(),
+                                            containsString("SyntaxError: invalid syntax"))
         else -> error("Unexpected task name: ${task.name}")
       }
       assertThat("Checker output for ${task.name} doesn't match", checkResult.message, matcher.first)
