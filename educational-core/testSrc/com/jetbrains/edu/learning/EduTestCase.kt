@@ -254,11 +254,11 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     return copyAs(EduCourse::class.java)
   }
 
-  protected fun Course.asRemote(): EduCourse {
+  protected fun Course.asRemote(courseMode: String = CCUtils.COURSE_MODE): EduCourse {
     val remoteCourse = EduCourse()
     remoteCourse.id = 1
     remoteCourse.name = name
-    remoteCourse.courseMode = CCUtils.COURSE_MODE
+    remoteCourse.courseMode = courseMode
     remoteCourse.items = Lists.newArrayList(items)
     remoteCourse.language = language
 

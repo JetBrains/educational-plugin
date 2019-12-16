@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -21,7 +22,8 @@ class UpdateCourseNotificationProvider(val project: Project) :
     get() = EduUtils.getTaskFile(project, this) != null
 
   companion object {
-    private val KEY: Key<EditorNotificationPanel> = Key.create("Edu.updateCourse")
+    @VisibleForTesting
+    val KEY: Key<EditorNotificationPanel> = Key.create("Edu.updateCourse")
     private val NOTIFICATION_TEXT: String = EduCoreBundle.message("update.course.notification.text")
   }
 
