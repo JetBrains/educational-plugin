@@ -116,7 +116,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
             CourseArchiveCreator.loadActualTexts(project, localTask)
           }
           catch (e: BrokenPlaceholderException) {
-            LOG.error("Failed to load actual texts: ${e.message}")
+            LOG.info("Failed to load actual texts: ${e.message}")
           }
         }
       }
@@ -196,8 +196,8 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
   }
 
   private fun lessonInfoChanged(lesson: Lesson, remoteLesson: Lesson): Boolean {
-    val localSection = lesson.section?.id ?: (lesson.course as EduCourse).sectionIds.first()
-    val remoteSection = remoteLesson.section?.id ?: (remoteLesson.course as EduCourse).sectionIds.first()
+    val localSection = lesson.section?.id ?: (lesson.course as EduCourse).sectionIds.firstOrNull() ?: return true
+    val remoteSection = remoteLesson.section?.id ?: (remoteLesson.course as EduCourse).sectionIds.firstOrNull() ?: return true
     return lesson.index != remoteLesson.index ||
            lesson.name != remoteLesson.name ||
            localSection != remoteSection
