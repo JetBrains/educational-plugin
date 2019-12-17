@@ -26,9 +26,6 @@ import com.jetbrains.edu.learning.stepikUserAgent
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import okhttp3.ConnectionPool
 import org.apache.http.HttpStatus
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.*
 
@@ -126,24 +123,27 @@ abstract class HyperskillConnector {
 
   fun fillTopics(course: HyperskillCourse, project: Project) {
     for ((taskIndex, stage) in course.stages.withIndex()) {
-      val call = service.topics(stage.id)
-      call.enqueue(object: Callback<TopicsList> {
-        override fun onFailure(call: Call<TopicsList>, t: Throwable) {
-          LOG.warn("Failed to get topics for stage ${stage.id}")
-        }
+      val topics = getAllTopics(stage)
+      if (topics.isEmpty()) continue
 
-        override fun onResponse(call: Call<TopicsList>, response: Response<TopicsList>) {
-          val topics = response.body()?.topics?.filter { it.theoryId != null}
-          if (topics != null && topics.isNotEmpty()) {
-            course.taskToTopics[taskIndex] = topics
-            runInEdt {
-              if (project.isDisposed) return@runInEdt
-              TaskDescriptionView.getInstance(project).updateAdditionalTaskTab()
-            }
-          }
-        }
-      })
+      course.taskToTopics[taskIndex] = topics
+      runInEdt {
+        if (project.isDisposed) return@runInEdt
+        TaskDescriptionView.getInstance(project).updateAdditionalTaskTab()
+      }
     }
+  }
+
+  private fun getAllTopics(stage: HyperskillStage): List<HyperskillTopic> {
+    var page = 1
+    val topics = mutableListOf<HyperskillTopic>()
+    while (true) {
+      val topicsList = service.topics(stage.id, page).executeHandlingExceptions(true)?.body() ?: break
+      topics.addAll(topicsList.topics.filter { it.theoryId != null })
+      if (topicsList.topics.isEmpty() || topicsList.meta["has_next"] == false) break
+      page += 1
+    }
+    return topics
   }
 
   fun getLesson(course: HyperskillCourse, attachmentLink: String): Lesson? {

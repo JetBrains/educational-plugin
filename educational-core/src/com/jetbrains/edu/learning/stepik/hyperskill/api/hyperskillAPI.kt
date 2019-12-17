@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.stepik.api.REPLY
 import com.jetbrains.edu.learning.stepik.api.STEPS
 import java.util.*
 
+const val META = "meta"
 const val PROFILES = "profiles"
 const val STAGES = "stages"
 const val TOPICS = "topics"
@@ -135,6 +136,9 @@ class StagesList {
 }
 
 class TopicsList {
+  @JsonProperty(META)
+  lateinit var meta: Map<Any, Any>
+
   @JsonProperty(TOPICS)
   lateinit var topics: List<HyperskillTopic>
 }
