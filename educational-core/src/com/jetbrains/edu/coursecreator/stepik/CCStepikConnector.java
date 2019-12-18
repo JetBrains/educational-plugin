@@ -110,6 +110,8 @@ public class CCStepikConnector {
   }
 
   public static boolean postCourseAdditionalInfo(@NotNull EduCourse course, @NotNull final Project project, int courseId) {
+    if (!checkIfAuthorized(project, "post course additional information")) return false;
+
     updateProgress(PUBLISHING_COURSE_TITLE);
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
     CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
@@ -131,6 +133,7 @@ public class CCStepikConnector {
     int i = 1;
     boolean success = true;
     for (Section section : sections) {
+      checkCanceled();
       section.setPosition(i++);
       List<Lesson> lessons = section.getLessons();
 
@@ -281,6 +284,8 @@ public class CCStepikConnector {
   }
 
   public static boolean updateCourseAdditionalInfo(@NotNull Project project, @NotNull Course course) {
+    if (!checkIfAuthorized(project, "update course additional information")) return false;
+
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
     assert courseInfo != null;
     updateProgress(PUBLISHING_COURSE_TITLE);
@@ -305,6 +310,7 @@ public class CCStepikConnector {
       return false;
     }
     for (Lesson lesson : section.getLessons()) {
+      checkCanceled();
       if (lesson.getId() > 0) {
         updateLesson(project, lesson, false, section.getId());
       }
@@ -350,6 +356,8 @@ public class CCStepikConnector {
   }
 
   public static boolean updateLessonAdditionalInfo(@NotNull final Lesson lesson, @NotNull Project project) {
+    if (!checkIfAuthorized(project, "update lesson additional information")) return false;
+
     LessonAdditionalInfo info = collectAdditionalLessonInfo(lesson, project);
     if (info.isEmpty()) {
       StepikConnector.getInstance().deleteLessonAttachment(lesson.getId());
@@ -444,6 +452,7 @@ public class CCStepikConnector {
   }
 
   public static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
+    checkCanceled();
     if (!EduSettings.isLoggedIn()) {
       showStepikNotification(project, failedActionName);
       return false;

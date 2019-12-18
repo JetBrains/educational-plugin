@@ -196,8 +196,8 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
   }
 
   private fun lessonInfoChanged(lesson: Lesson, remoteLesson: Lesson): Boolean {
-    val localSection = lesson.section?.id ?: (lesson.course as EduCourse).sectionIds.firstOrNull() ?: return true
-    val remoteSection = remoteLesson.section?.id ?: (remoteLesson.course as EduCourse).sectionIds.firstOrNull() ?: return true
+    val localSection = lesson.section?.id ?: (lesson.course as EduCourse).sectionIds.firstOrNull()
+    val remoteSection = remoteLesson.section?.id ?: (remoteLesson.course as EduCourse).sectionIds.firstOrNull()
     return lesson.index != remoteLesson.index ||
            lesson.name != remoteLesson.name ||
            localSection != remoteSection
