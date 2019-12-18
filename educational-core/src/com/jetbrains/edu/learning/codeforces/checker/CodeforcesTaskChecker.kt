@@ -53,7 +53,7 @@ class CodeforcesTaskChecker(
 
       val expectedOutput = runReadAction { outputDocument.text }
       if (expectedOutput.trimEnd('\n') != output.trimEnd('\n')) {
-        val message = "$testNumber test failed"
+        val message = "Test №$testNumber is failed"
         val diff = CheckResultDiff(expected = expectedOutput, actual = output, message = message)
         return CheckResult(CheckStatus.Failed, message, diff = diff)
       }
