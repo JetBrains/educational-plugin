@@ -30,6 +30,7 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   private val checkActionsPanel: JPanel = JPanel(BorderLayout())
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
   private val checkButtonWrapper = JPanel(BorderLayout())
+  private val rightActionsToolbar = JPanel(HorizontalLayout(10))
 
   init {
     checkActionsPanel.add(checkButtonWrapper, BorderLayout.WEST)
@@ -40,11 +41,9 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   }
 
   private fun createRightActionsToolbar(): JPanel {
-    val actionsPanel = JPanel(HorizontalLayout(10))
-    actionsPanel.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
-    // TODO:  com.jetbrains.edu.learning.actions.CheckAction.createCheckAction
-    actionsPanel.add(createSingleActionToolbar(GoToTaskUrlAction.ACTION_ID))
-    return actionsPanel
+    rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
+    rightActionsToolbar.add(createSingleActionToolbar(GoToTaskUrlAction.ACTION_ID))
+    return rightActionsToolbar
   }
 
   private fun createButtonToolbar(actionId: String): JComponent {
@@ -57,6 +56,10 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
 
   private fun createSingleActionToolbar(actionId: String): JComponent {
     val action = ActionManager.getInstance().getAction(actionId)
+    return createSingleActionToolbar(action)
+  }
+
+  private fun createSingleActionToolbar(action: AnAction): JComponent {
     val toolbar = ActionManager.getInstance().createActionToolbar(ACTION_PLACE, DefaultActionGroup(action), true)
     //these options affect paddings
     toolbar.layoutPolicy = ActionToolbar.NOWRAP_LAYOUT_POLICY
@@ -120,11 +123,22 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   }
 
   fun updateCheckPanel(task: Task) {
+    updateCheckButtonWrapper(task)
+    updateRightActionsToolbar(task)
+  }
+
+  private fun updateCheckButtonWrapper(task: Task) {
     checkButtonWrapper.removeAll()
     checkButtonWrapper.add(createButtonToolbar(CheckAction.createCheckAction(task)), BorderLayout.WEST)
     if (task is TheoryTask || task.status == CheckStatus.Solved) {
       addResultPanel(task)
     }
+  }
+
+  private fun updateRightActionsToolbar(task: Task) {
+    rightActionsToolbar.removeAll()
+    rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
+    rightActionsToolbar.add(createSingleActionToolbar(GoToTaskUrlAction(task)))
   }
 
   fun checkTooltipPosition(): RelativePoint {

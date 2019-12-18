@@ -83,7 +83,6 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     }
   }
 
-
   private fun updateCheckPanel(task: Task?) {
     if (task == null) return
     readyToCheck()
