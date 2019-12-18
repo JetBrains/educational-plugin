@@ -6,29 +6,29 @@ import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.withTestDialog
 import okhttp3.mockwebserver.MockResponse
 
-class HyperskillSolutionLoadingTest : NavigationTestBase() {
+class HyperskillLoadingTest : NavigationTestBase() {
 
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
-  private fun configureResponse(submissions: Map<Int, String>) {
+  private fun configureResponse(requestPattern: Regex, items: Map<Int, String>) {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
-      val result = SUBMISSION_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+      val result = requestPattern.matchEntire(request.path) ?: return@withResponseHandler null
       val stepId = result.groupValues[1].toInt()
-      submissions[stepId]?.let { mockResponse(it) } ?: mockResponse("submissions_response_empty.json")
+      items[stepId]?.let { mockResponse(it) } ?: mockResponse("response_empty.json")
     }
   }
 
   private fun mockResponse(fileName: String): MockResponse = MockResponseFactory.fromFile(getTestFile(fileName))
 
   fun `test solution loading second stage failed`() {
-    configureResponse(mapOf(1 to "submissions_response_1.json", 2 to "submissions_response_2_wrong.json"))
+    configureResponse(SUBMISSION_REQUEST_RE, mapOf(1 to "submissions_response_1.json",
+                                                   2 to "submissions_response_2_wrong.json"))
     val course = createHyperskillCourse()
     HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
 
@@ -60,9 +60,9 @@ class HyperskillSolutionLoadingTest : NavigationTestBase() {
   }
 
   fun `test solution loading all stages solved`() {
-    configureResponse(mapOf(1 to "submissions_response_1.json",
-                            2 to "submissions_response_2_correct.json",
-                            3 to "submissions_response_3.json"))
+    configureResponse(SUBMISSION_REQUEST_RE, mapOf(1 to "submissions_response_1.json",
+                                                   2 to "submissions_response_2_correct.json",
+                                                   3 to "submissions_response_3.json"))
     val course = createHyperskillCourse()
     HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
 
@@ -94,7 +94,8 @@ class HyperskillSolutionLoadingTest : NavigationTestBase() {
   }
 
   fun `test navigation after solution loading`() {
-    configureResponse(mapOf(1 to "submissions_response_1.json", 2 to "submissions_response_2_wrong.json"))
+    configureResponse(SUBMISSION_REQUEST_RE, mapOf(1 to "submissions_response_1.json",
+                                                   2 to "submissions_response_2_wrong.json"))
     val course = createHyperskillCourse()
     HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
 
@@ -134,8 +135,16 @@ class HyperskillSolutionLoadingTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  fun `test all topics loaded`() {
+    configureResponse(TOPICS_REQUEST_RE, mapOf(1 to "topics_response_1.json",
+                                               2 to "topics_response_2.json"))
+    val course = createHyperskillCourse()
 
-  private fun createHyperskillCourse(): Course {
+    mockConnector.fillTopics(course, project)
+    assertEquals(3, course.taskToTopics[0]?.size)
+  }
+
+  private fun createHyperskillCourse(): HyperskillCourse {
     val course = courseWithFiles(
       language = FakeGradleBasedLanguage,
       courseProducer = ::HyperskillCourse
@@ -170,5 +179,6 @@ class HyperskillSolutionLoadingTest : NavigationTestBase() {
 
   companion object {
     private val SUBMISSION_REQUEST_RE = """/api/submission?.*step=(\d*).*""".toRegex()
+    private val TOPICS_REQUEST_RE = """/api/topics?.*page=(\d*).*""".toRegex()
   }
 }

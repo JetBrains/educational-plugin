@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "page": 2,
+    "has_next": false,
+    "has_previous": true
+  },
+  "topics": [
+    {
+      "id": 260,
+      "theory": 3801,
+      "title": "IntelliJ IDEA"
+    }
+  ]
+}

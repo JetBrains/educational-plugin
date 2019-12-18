@@ -137,12 +137,12 @@ abstract class HyperskillConnector {
   private fun getAllTopics(stage: HyperskillStage): List<HyperskillTopic> {
     var page = 1
     val topics = mutableListOf<HyperskillTopic>()
-    while (true) {
+    do {
       val topicsList = service.topics(stage.id, page).executeHandlingExceptions(true)?.body() ?: break
       topics.addAll(topicsList.topics.filter { it.theoryId != null })
-      if (topicsList.topics.isEmpty() || topicsList.meta["has_next"] == false) break
       page += 1
     }
+    while (topicsList.topics.isNotEmpty() && topicsList.meta["has_next"] == true)
     return topics
   }
 
