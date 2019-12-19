@@ -25,6 +25,9 @@ class ScalaSbtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>()
           file("build.sbt")
         }
       }
+      dir("project") {
+        file("build.properties")
+      }
       file("build.sbt")
     }
     expectedFileTree.assertEquals(rootDir)
@@ -46,6 +49,9 @@ class ScalaSbtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>()
           file("task.html")
           file("build.sbt")
         }
+      }
+      dir("project") {
+        file("build.properties")
       }
       file("build.sbt")
     }

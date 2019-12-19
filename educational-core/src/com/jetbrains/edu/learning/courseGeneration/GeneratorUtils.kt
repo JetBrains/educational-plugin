@@ -273,6 +273,23 @@ object GeneratorUtils {
   }
 
   /**
+   * Checks if file exists in [baseDir] by given [path].
+   * If it doesn't exist, creates a new file from internal [templateName] template.
+   * Otherwise, substitutes all template variables in file text
+   */
+  @Throws(IOException::class)
+  fun createFileFromTemplate(baseDir: VirtualFile, path: String, templateName: String, templateVariables: Map<String, Any>) {
+    val file = baseDir.findFileByRelativePath(path)
+    if (file == null) {
+      val configText = getInternalTemplateText(templateName, templateVariables)
+      createChildFile(baseDir, path, configText)
+    }
+    else {
+      evaluateExistingTemplate(file, templateVariables)
+    }
+  }
+
+  /**
    * Removes [module] from [project].
    * It should be used when external build system like Gradle, sbt, etc. creates modules itself
    * and initial base module is unexpected while import

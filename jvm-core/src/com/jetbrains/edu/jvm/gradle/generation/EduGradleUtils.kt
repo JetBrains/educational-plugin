@@ -8,9 +8,7 @@ import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtilRt
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.evaluateExistingTemplate
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createFileFromTemplate
 import org.gradle.util.GradleVersion
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
@@ -32,14 +30,7 @@ object EduGradleUtils {
     templateVariables: Map<String, Any>
   ) {
     for ((name, templateName) in templates) {
-      val child = projectDir.findChild(name)
-      if (child == null) {
-        val configText = getInternalTemplateText(templateName, templateVariables)
-        createChildFile(projectDir, name, configText)
-      }
-      else {
-        evaluateExistingTemplate(child, templateVariables)
-      }
+      createFileFromTemplate(projectDir, name, templateName, templateVariables)
     }
   }
 

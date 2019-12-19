@@ -11,12 +11,11 @@ import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduNames.PROJECT_NAME
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.evaluateExistingTemplate
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.sanitizeName
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.scala.sbt.ScalaSbtCourseBuilder.Companion.BUILD_SBT
+import org.jetbrains.plugins.scala.project.Version
+import org.jetbrains.sbt.Sbt
 import org.jetbrains.sbt.project.SbtProjectSystem
 import org.jetbrains.sbt.project.settings.SbtProjectSettings
 
@@ -28,16 +27,19 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
   }
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
-    val child = baseDir.findChild(BUILD_SBT)
-    val templateVariables = mapOf(PROJECT_NAME to sanitizeName(project.name))
+    val sbtVersion = maxOf(Sbt.LatestVersion(), MIN_RECOMMENDED_SBT_VERSION)
+    val templateVariables = mapOf(
+      PROJECT_NAME to sanitizeName(project.name),
+      "SBT_VERSION" to sbtVersion.toString()
+    )
 
-    if (child == null) {
-      val configText = getInternalTemplateText(BUILD_SBT, templateVariables)
-      createChildFile(baseDir, BUILD_SBT, configText)
-    }
-    else {
-      evaluateExistingTemplate(child, templateVariables)
-    }
+    GeneratorUtils.createFileFromTemplate(baseDir, BUILD_SBT, BUILD_SBT, templateVariables)
+    GeneratorUtils.createFileFromTemplate(
+      baseDir,
+      "${Sbt.ProjectDirectory()}/${Sbt.PropertiesFile()}",
+      Sbt.PropertiesFile(),
+      templateVariables
+    )
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
@@ -57,5 +59,10 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
     projects.add(projectSettings)
     systemSettings.setLinkedProjectsSettings(projects)
     ExternalSystemUtil.ensureToolWindowInitialized(project, SbtProjectSystem.Id())
+  }
+
+  companion object {
+    // Minimal version of sbt that supports java 13
+    private val MIN_RECOMMENDED_SBT_VERSION: Version = Version("1.3.3")
   }
 }
