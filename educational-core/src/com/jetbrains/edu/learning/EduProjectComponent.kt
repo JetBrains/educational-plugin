@@ -79,7 +79,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
     connection.subscribe(ProjectManager.TOPIC, object : ProjectManagerListener {
       override fun projectClosing(project: Project) {
         val course = StudyTaskManager.getInstance(project).course
-        if (isStudentProject(project) && !isUnitTestMode && !YamlFormatSettings.disableYaml(course)) {
+        if (!isUnitTestMode && isStudentProject(project) && !YamlFormatSettings.disableYaml(course)) {
           saveAll(project)
         }
 
