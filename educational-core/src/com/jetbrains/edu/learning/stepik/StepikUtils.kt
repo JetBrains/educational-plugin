@@ -25,7 +25,6 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -66,7 +65,7 @@ fun getStepikLink(task: Task, lesson: Lesson): String {
 
 fun updateCourseIfNeeded(project: Project, course: EduCourse) {
   val id = course.id
-  if (id == 0 || !course.isStudy || course is CodeforcesCourse) {
+  if (!course.isRemote || !course.isStudy) {
     return
   }
 
