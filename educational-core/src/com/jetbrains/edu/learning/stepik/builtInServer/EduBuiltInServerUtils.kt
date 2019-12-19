@@ -18,10 +18,13 @@ package com.jetbrains.edu.learning.stepik.builtInServer
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.util.PathUtil
 import com.intellij.util.xmlb.XmlSerializationException
 import com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH
 import com.jetbrains.edu.learning.EduUtils.execCancelable
@@ -34,6 +37,8 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.StepikProjectComponent.STEP_ID
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import com.jetbrains.edu.learning.yaml.YamlDeserializer
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
 import org.jdom.Element
 import org.jdom.JDOMException
 import org.jdom.input.SAXBuilder
@@ -81,8 +86,11 @@ object EduBuiltInServerUtils {
     val parser = SAXBuilder()
 
     for (projectPath in recentPaths) {
-      val component = readComponent(parser, projectPath) ?: continue
-      val course = getCourse(component) ?: continue
+      val component = readComponent(parser, projectPath)
+      val course = if (component != null) getCourse(component) else getCourseFromYaml(projectPath)
+      if (course == null) {
+        continue
+      }
       if (coursePredicate(course)) {
         val project = openProject(projectPath) ?: continue
         val realProjectCourse = project.course ?: continue
@@ -90,6 +98,15 @@ object EduBuiltInServerUtils {
       }
     }
     return null
+  }
+
+  private fun getCourseFromYaml(projectPath: String): Course? {
+    val projectFile = File(PathUtil.toSystemDependentName(projectPath))
+    val projectDir = VfsUtil.findFile(projectFile.toPath(), true) ?: return null
+    val remoteInfoConfig = projectDir.findChild(REMOTE_COURSE_CONFIG) ?: return null
+    return runReadAction {
+      YamlDeserializer.deserializeRemoteItem(remoteInfoConfig) as Course
+    }
   }
 
   @JvmStatic
