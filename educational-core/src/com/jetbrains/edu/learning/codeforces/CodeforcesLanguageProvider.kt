@@ -1,6 +1,10 @@
 package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
 interface CodeforcesLanguageProvider {
   val codeforcesLanguageNamings: List<String>
@@ -8,6 +12,11 @@ interface CodeforcesLanguageProvider {
   val templateFileName: String
 
   fun getLanguageVersion(codeforcesLanguage: String): String? = null
+
+  fun createTaskFiles(task: Task): List<TaskFile> {
+    val text = GeneratorUtils.getInternalTemplateText(templateFileName)
+    return listOf(TaskFile(GeneratorUtils.joinPaths(task.sourceDir, templateFileName), text))
+  }
 
   companion object {
     private val EP_NAME: ExtensionPointName<CodeforcesLanguageProvider> =
@@ -42,7 +51,9 @@ interface CodeforcesLanguageProvider {
       return null
     }
 
-    fun getTemplateName(languageId: String): String? =
-      EP_NAME.extensions.firstOrNull { it.languageId == languageId }?.templateFileName
+    fun generateTaskFiles(task: Task): List<TaskFile>? =
+      EP_NAME.extensions
+        .firstOrNull { it.languageId == task.course.languageID }
+        ?.createTaskFiles(task)
   }
 }

@@ -10,9 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import org.jsoup.nodes.Element
 
 open class CodeforcesTask : Task() {
@@ -20,13 +18,6 @@ open class CodeforcesTask : Task() {
   open val outputFileName: String = "output.txt"
 
   override fun getItemType(): String = CODEFORCES_TASK_TYPE
-
-  private fun createTaskFile() {
-    val taskTemplateName = CodeforcesLanguageProvider.getTemplateName(course.languageID)
-    val name = taskTemplateName ?: "Task"
-    val text = if (taskTemplateName != null) GeneratorUtils.getInternalTemplateText(taskTemplateName) else "type task text here"
-    addTaskFile(TaskFile(GeneratorUtils.joinPaths(sourceDir, name), text))
-  }
 
   private fun addSampleTests(htmlElement: Element) {
     htmlElement.select("div.input").forEachIndexed { index, inputElement ->
@@ -73,7 +64,9 @@ open class CodeforcesTask : Task() {
         "${(task.course as CodeforcesCourse).contestUrl}/problem/${task.name.substringBefore(".")}?locale=${task.course.languageCode}"
       )
 
-      task.createTaskFile()
+      CodeforcesLanguageProvider.generateTaskFiles(task)?.forEach {
+        task.addTaskFile(it)
+      }
       task.addSampleTests(htmlElement.selectFirst("div.sample-test"))
       return task
     }
