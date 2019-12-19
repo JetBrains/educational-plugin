@@ -15,6 +15,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -84,9 +85,7 @@ public class CCStepikConnector {
 
     final EduCourse courseOnRemote = StepikConnector.getInstance().postCourse(course);
     if (courseOnRemote == null) {
-      final String message = FAILED_TITLE + "course " + course.getName();
-      LOG.info(message);
-      showErrorNotification(project, FAILED_TITLE, message);
+      showErrorNotification(project, FAILED_TITLE, getErrorMessage(course, true));
       return;
     }
     final List<StudyItem> items = course.getItems();
@@ -117,7 +116,7 @@ public class CCStepikConnector {
     CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
     int code = StepikConnector.getInstance().postCourseAttachment(courseAdditionalInfo, courseId);
     if (code != HttpStatus.SC_CREATED) {
-      showErrorNotification(project, FAILED_TITLE, "Failed to post additional files ");
+      showErrorNotification(project, FAILED_TITLE, "Failed to post additional files");
       return false;
     }
     return true;
@@ -170,7 +169,7 @@ public class CCStepikConnector {
     section.setCourseId(courseId);
     final Section postedSection = StepikConnector.getInstance().postSection(section);
     if (postedSection == null) {
-      showErrorNotification(project, FAILED_TITLE, "Failed to post section " + section.getId());
+      showErrorNotification(project, FAILED_TITLE, getErrorMessage(section, true));
       return -1;
     }
     section.setId(postedSection.getId());
@@ -200,7 +199,7 @@ public class CCStepikConnector {
       success = postTask(project, task, postedLesson.getId()) && success;
     }
     if (!updateLessonAdditionalInfo(lesson, project)) {
-      showErrorNotification(project, FAILED_TITLE, "Failed to update lesson " + lesson.getId());
+      showErrorNotification(project, FAILED_TITLE, getErrorMessage(lesson, true));
       return false;
     }
     return success;
@@ -212,8 +211,7 @@ public class CCStepikConnector {
     assert course != null;
     final Lesson postedLesson = StepikConnector.getInstance().postLesson(lesson);
     if (postedLesson == null) {
-      final String message = FAILED_TITLE + "lesson " + lesson.getId();
-      showErrorNotification(project, FAILED_TITLE, message);
+      showErrorNotification(project, FAILED_TITLE, getErrorMessage(lesson, true));
       return null;
     }
     if (sectionId != -1) {
@@ -244,9 +242,7 @@ public class CCStepikConnector {
 
     final StepSource stepSource = StepikConnector.getInstance().postTask(project, task, lessonId);
     if (stepSource == null) {
-      final String message = FAILED_TITLE + "task in lesson " + lessonId;
-      LOG.info(message);
-      showErrorNotification(project, FAILED_TITLE, message);
+      showErrorNotification(project, FAILED_TITLE, getErrorMessage(task, task.getLesson(), true));
       return false;
     }
     task.setId(stepSource.getId());
@@ -275,9 +271,7 @@ public class CCStepikConnector {
       return false;
     }
     if (responseCode != HttpStatus.SC_OK) {
-      final String message = FAILED_TITLE + "course " + course.getId();
-      LOG.warn(message);
-      showErrorNotification(project, FAILED_TITLE, message);
+      showErrorNotification(project, FAILED_TITLE, getErrorMessage(course, false));
       return false;
     }
     return true;
@@ -306,7 +300,7 @@ public class CCStepikConnector {
     section.setCourseId(course.getId());
     boolean updated = updateSectionInfo(section);
     if (!updated) {
-      showErrorNotification(project, FAILED_TITLE, "Failed to update section " + section.getId());
+      showErrorNotification(project, FAILED_TITLE, getErrorMessage(section, false));
       return false;
     }
     for (Lesson lesson : section.getLessons()) {
@@ -345,7 +339,7 @@ public class CCStepikConnector {
 
     final Lesson updatedLesson = StepikConnector.getInstance().updateLesson(lesson);
     if (updatedLesson == null && showNotification) {
-      showErrorNotification(project, FAILED_TITLE, "Failed to update lesson " + lesson.getId());
+      showErrorNotification(project, FAILED_TITLE, getErrorMessage(lesson, false));
       return null;
     }
     if (sectionId != -1) {
@@ -425,8 +419,7 @@ public class CCStepikConnector {
         showNoRightsToUpdateNotification(project, (EduCourse)course);
         return false;
       default:
-        final String message = "Failed to update task " + task.getId();
-        LOG.error(message);
+        showErrorNotification(project, FAILED_TITLE, getErrorMessage(task, task.getLesson(), false));
         return false;
     }
   }
@@ -469,6 +462,7 @@ public class CCStepikConnector {
   }
 
   public static void showErrorNotification(@NotNull Project project, @NotNull String title, @NotNull String message) {
+    LOG.info(message);
     final Notification notification = new Notification(PUSH_COURSE_GROUP_ID, title, message, NotificationType.ERROR);
     notification.notify(project);
   }
@@ -522,5 +516,27 @@ public class CCStepikConnector {
     if (indicator != null) {
       indicator.checkCanceled();
     }
+  }
+
+  private static String getPrintableType(StudyItem item) {
+    if (item instanceof Course) return EduNames.COURSE;
+    if (item instanceof Section) return EduNames.SECTION;
+    if (item instanceof FrameworkLesson) return EduNames.FRAMEWORK_LESSON;
+    if (item instanceof Lesson) return EduNames.LESSON;
+    if (item instanceof Task) return EduNames.TASK;
+    return "item";
+  }
+
+  private static String getItemInfo(StudyItem item, boolean isNew) {
+    String id = isNew ? "" : " (id = " + item.getId() + ")";
+    return getPrintableType(item) + " `" + item.getName() + "`" + id;
+  }
+
+  private static String getErrorMessage(StudyItem item, boolean isNew) {
+    return "Failed to " + (isNew ? "post " : "update ") + getItemInfo(item, isNew);
+  }
+
+  private static String getErrorMessage(StudyItem item, StudyItem parent, boolean isNew) {
+    return getErrorMessage(item, isNew) + " in " + getItemInfo(parent, false);
   }
 }
