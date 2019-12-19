@@ -6,4 +6,5 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 class RsCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> = listOf("Rust")
   override val languageId: String = EduNames.RUST
+  override val templateFileName: String = "codeforces.main.rs"
 }

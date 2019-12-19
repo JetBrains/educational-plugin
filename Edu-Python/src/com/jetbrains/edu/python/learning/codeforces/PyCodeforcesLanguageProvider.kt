@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 class PyCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> = listOf("Python 2", "PyPy 2", "Python 3", "PyPy 3")
   override val languageId: String = EduNames.PYTHON
+  override val templateFileName: String = "codeforces.main.py"
 
   override fun getLanguageVersion(codeforcesLanguage: String): String? =
     when (codeforcesLanguage.split(" ").last()) {

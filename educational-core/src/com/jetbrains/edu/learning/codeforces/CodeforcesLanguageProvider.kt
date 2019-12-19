@@ -5,6 +5,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 interface CodeforcesLanguageProvider {
   val codeforcesLanguageNamings: List<String>
   val languageId: String
+  val templateFileName: String
 
   fun getLanguageVersion(codeforcesLanguage: String): String? = null
 
@@ -40,5 +41,8 @@ interface CodeforcesLanguageProvider {
       }
       return null
     }
+
+    fun getTemplateName(languageId: String): String? =
+      EP_NAME.extensions.firstOrNull { it.languageId == languageId }?.templateFileName
   }
 }

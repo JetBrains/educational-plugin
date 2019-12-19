@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.codeforces.courseFormat
 
 import com.intellij.openapi.util.text.StringUtil.join
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
+import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TEST_DATA_FOLDER
@@ -9,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -22,7 +22,7 @@ open class CodeforcesTask : Task() {
   override fun getItemType(): String = CODEFORCES_TASK_TYPE
 
   private fun createTaskFile() {
-    val taskTemplateName = lesson.course.configurator?.courseBuilder?.taskTemplateName
+    val taskTemplateName = CodeforcesLanguageProvider.getTemplateName(course.languageID)
     val name = taskTemplateName ?: "Task"
     val text = if (taskTemplateName != null) GeneratorUtils.getInternalTemplateText(taskTemplateName) else "type task text here"
     addTaskFile(TaskFile(GeneratorUtils.joinPaths(sourceDir, name), text))

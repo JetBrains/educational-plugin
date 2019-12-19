@@ -6,4 +6,5 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 class ScalaCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> = listOf("Scala")
   override val languageId: String = EduNames.SCALA
+  override val templateFileName: String = "codeforces.Main.scala"
 }

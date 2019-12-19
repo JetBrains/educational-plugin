@@ -6,4 +6,5 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 class JsCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> = listOf("JavaScript", "Node.js")
   override val languageId: String = EduNames.JAVASCRIPT
+  override val templateFileName: String = "codeforces.main.js"
 }
