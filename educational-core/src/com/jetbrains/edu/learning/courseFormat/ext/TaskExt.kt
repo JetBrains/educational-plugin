@@ -15,7 +15,10 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
 import kotlin.collections.HashSet
@@ -160,4 +163,15 @@ fun Task.taskDescriptionHintBlocks(): String {
   text.append("\n")
 
   return text.toString()
+}
+
+@JvmName("revertTaskParameters")
+fun Task.revertTaskParameters(project: Project) {
+  if (this is VideoTask) {
+    currentTime = 0
+    TaskDescriptionView.getInstance(project).updateTaskDescription()
+  }
+  else if (this is ChoiceTask) {
+    this.clearSelectedVariants()
+  }
 }

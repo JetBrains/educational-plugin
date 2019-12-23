@@ -15,17 +15,22 @@
  */
 package com.jetbrains.edu.learning.taskDescription.ui;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.ChoiceTaskResourcesManager;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
+import netscape.javascript.JSObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jsoup.nodes.Element;
+import org.w3c.dom.Document;
 
 import javax.swing.*;
 
@@ -43,7 +48,7 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
                                                              "  </div>";
 
   private Project myProject;
-  private JFXPanel taskSpecificPanel;
+  private BrowserWindow taskSpecificBrowserWindow;
 
   public JavaFxToolWindow() {
     super();
@@ -58,20 +63,46 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   }
 
   @NotNull
-  public JComponent createTaskSpecificPanel(@Nullable Task task) {
-    taskSpecificPanel = new JFXPanel();
-    return taskSpecificPanel;
+  public JComponent createTaskSpecificPanel(@NotNull Project project, @Nullable Task task) {
+    taskSpecificBrowserWindow = new BrowserWindow(project, true);
+    taskSpecificBrowserWindow.getPanel().setPreferredSize(JBUI.size(Integer.MAX_VALUE, 0));
+    return taskSpecificBrowserWindow.getPanel();
   }
 
   public void updateTaskSpecificPanel(@Nullable Task task) {
-    if (taskSpecificPanel == null) return;
-    final Scene scene = task != null ? JavaFxTaskUtil.createScene(task) : null;
-    Platform.runLater(() -> {
-      taskSpecificPanel.setScene(scene);
-    });
+    if (taskSpecificBrowserWindow == null) {
+      return;
+    }
+    taskSpecificBrowserWindow.getPanel().setVisible(false);
+    if (!(task instanceof ChoiceTask)) {
+      return;
+    }
+    ChoiceTask choiceTask = (ChoiceTask)task;
+    taskSpecificBrowserWindow.getPanel().setPreferredSize(JBUI.size(Integer.MAX_VALUE, 250));
+    Platform.runLater(() -> addTextLoadedListener(choiceTask));
+    taskSpecificBrowserWindow.loadContent(new ChoiceTaskResourcesManager().getText(choiceTask));
+    taskSpecificBrowserWindow.getPanel().setVisible(true);
+  }
 
-    ApplicationManager.getApplication().invokeLater(() -> {
-      taskSpecificPanel.setVisible(scene != null);
+  private void addTextLoadedListener(@NotNull ChoiceTask task) {
+    taskSpecificBrowserWindow.getEngine().documentProperty().addListener(new ChangeListener<Document>() {
+      @Override
+      public void changed(ObservableValue<? extends Document> observable, Document oldValue, Document newValue) {
+        if (newValue == null) {
+          return;
+        }
+        JSObject window = (JSObject)taskSpecificBrowserWindow.getEngine().executeScript("window");
+        window.setMember("task", task);
+        if (taskSpecificBrowserWindow.getEngine().executeScript("document.getElementById('choiceOptions')") == null) {
+          return;
+        }
+        int height =
+          (Integer)taskSpecificBrowserWindow.getEngine().executeScript("document.getElementById('choiceOptions').scrollHeight");
+        JFXPanel taskSpecificPanel = taskSpecificBrowserWindow.getPanel();
+        taskSpecificPanel.setPreferredSize(JBUI.size(Integer.MAX_VALUE, height + 20));
+        taskSpecificPanel.revalidate();
+        taskSpecificBrowserWindow.getEngine().documentProperty().removeListener(this);
+      }
     });
   }
 

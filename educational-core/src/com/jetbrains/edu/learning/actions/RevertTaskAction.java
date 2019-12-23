@@ -24,7 +24,6 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
@@ -34,6 +33,7 @@ import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.openapi.ui.Messages.*;
+import static com.jetbrains.edu.learning.courseFormat.ext.TaskExt.revertTaskParameters;
 
 
 public class RevertTaskAction extends DumbAwareAction implements RightAlignedToolbarAction {
@@ -49,15 +49,9 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     final Task currentTask = EduUtils.getCurrentTask(project);
     if (currentTask == null) return;
 
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      for (TaskFile taskFile : currentTask.getTaskFiles().values()) {
-        revertTaskFile(taskFile, project);
-      }
-    });
-    if (currentTask instanceof VideoTask) {
-      ((VideoTask)currentTask).setCurrentTime(0);
-      TaskDescriptionView.getInstance(project).updateTaskDescription();
-    }
+    revertTaskFiles(currentTask, project);
+    revertTaskParameters(currentTask, project);
+
     PlaceholderDependencyManager.updateDependentPlaceholders(project, currentTask);
     validateEditors(project);
     String message =
@@ -77,6 +71,14 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
         ((EduEditor)editor).validateTaskFile();
       }
     }
+  }
+
+  private static void revertTaskFiles(@NotNull Task task, @NotNull Project project) {
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      for (TaskFile taskFile : task.getTaskFiles().values()) {
+        revertTaskFile(taskFile, project);
+      }
+    });
   }
 
   private static void revertTaskFile(@NotNull final TaskFile taskFile, @NotNull final Project project) {

@@ -31,11 +31,6 @@ class StyleManager {
 
   val scrollBarStylesheets = getScrollBarStylesheetsUrls()
   val baseStylesheet = resourceUrl("/style/browser.css")
-  val buttonStylesheets = listOfNotNull(baseStylesheet,
-                                        resourceUrl(
-                                          "/style/javafxButtons/buttonsBase.css"),
-                                        resourceUrl(
-                                          "/style/javafxButtons/buttonsDarcula.css").takeIf { UIUtil.isUnderDarcula() })
 
   fun resources(content: String) = StyleResourcesManager(content).resources
 

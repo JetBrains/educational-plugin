@@ -17,6 +17,7 @@ internal class StyleResourcesManager(taskText: String = "") {
     resourcePair("codeforces_task", "/style/codeforces_task.css"),
     *panelSpecificHintFiles()
   ).plus(VideoTaskResourcesManager().videoResources)
+    .plus(ChoiceTaskResourcesManager().choiceTaskResources)
 
   private fun panelSpecificHintFiles(): Array<Pair<String, String>> {
     val isJavaFx = EduSettings.getInstance().shouldUseJavaFx()

@@ -1,0 +1,72 @@
+<style>
+  ${choice_options_style}
+</style>
+<div id='choiceOptions'>
+  ${text}
+</div>
+<script>
+  var parentElement = document.getElementById('choiceOptions');
+  var inputType = getInputType(${is_multiple_choice});
+  var choice_options = ${choice_options};
+  var selectedVariants = ${selected_variants};
+  createCheckboxes(choice_options);
+
+  function createCheckboxes(options) {
+    for (var count in options) { //make sure that order is preserved
+      var br = document.createElement('br');
+      parentElement.appendChild(br);
+      var inputElement = document.createElement('input');
+      inputElement.className = inputType
+      inputElement.type = inputType;
+      inputElement.name = inputType; //should be the same for radioButtons to be single choice
+      inputElement.id = count; // need unique Ids
+      inputElement.value = count;
+      if (selectedVariants.includes(parseInt(count))) {
+        inputElement.checked = true;
+      }
+      inputElement.addEventListener('change', function (event) {
+        addSelectionListener(this)
+      })
+      var label = document.createElement('label')
+      label.htmlFor = inputElement.id;
+      label.innerHTML = options[count];
+      parentElement.appendChild(inputElement);
+      parentElement.appendChild(label);
+    }
+  }
+
+  function addSelectionListener(element) {
+    if (element.type === 'checkbox') {
+      createCheckboxListener(element)
+    }
+    else {
+      createRadioButtonListener(element)
+    }
+  }
+
+  function createCheckboxListener(element) {
+    var id = element.id
+    if (element.checked) {
+      task.addSelectedVariant(id);
+    }
+    else {
+      task.removeSelectedVariant(id);
+    }
+  }
+
+  function createRadioButtonListener(element) {
+    task.clearSelectedVariants();
+    task.addSelectedVariant(element.id);
+  }
+
+  function getInputType(isMultipleChoice) {
+    var type;
+    if (isMultipleChoice) {
+      type = 'checkbox';
+    }
+    else {
+      type = 'radio';
+    }
+    return type;
+  }
+</script>

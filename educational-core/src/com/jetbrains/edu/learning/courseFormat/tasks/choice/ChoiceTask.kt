@@ -35,4 +35,22 @@ class ChoiceTask : Task {
   override fun supportSubmissions(): Boolean = true
 
   override fun isPluginTaskType() = false
+
+  //Is called from choiceTask.html.ft
+  @Suppress("unused")
+  fun addSelectedVariant(variant: Int) {
+    selectedVariants.add(variant)
+  }
+
+  //Is called from choiceTask.html.ft
+  @Suppress("unused")
+  fun removeSelectedVariant(variant: Int) {
+    selectedVariants.remove(variant)
+  }
+
+  //Is called from choiceTask.html.ft
+  @Suppress("unused")
+  fun clearSelectedVariants() {
+    selectedVariants.clear()
+  }
 }
