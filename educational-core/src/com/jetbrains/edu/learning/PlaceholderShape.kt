@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.LogicalPosition
 import java.awt.Point
 import java.awt.Rectangle
 import java.awt.Shape
@@ -157,23 +156,22 @@ fun getPlaceholderShape(editor: Editor, startOffset: Int, endOffset: Int): Place
     return PlaceholderShape.Line(editor, leftTop, rightBottom)
   }
   val boundaries = (startLine..endLine).map {
-    LineBoundary(it, 0, document.getLineEndOffset(it) - document.getLineStartOffset(it))
+    LineBoundary(document.getLineStartOffset(it), document.getLineEndOffset(it))
   }
 
   var isLeftRectangular = leftTop.y == rightBottom.y
   var isRightRectangular = leftTop.y == rightBottom.y
-  val lineStart = document.getLineStartOffset(startLine)
-  var leftMinBoundary = LineBoundary(startLine, startOffset - lineStart, endOffset - lineStart)
-  var rightMaxBoundary = LineBoundary(startLine, startOffset - lineStart, endOffset - lineStart)
+  var leftMinBoundary = LineBoundary(startOffset, endOffset)
+  var rightMaxBoundary = LineBoundary(startOffset, endOffset)
 
   if (startLine != endLine) {
     leftMinBoundary = boundaries.subList(1, boundaries.size).minBy { it.getVisualBoundaries(editor).first } ?: leftMinBoundary
     val endBoundary = if (endOffset == document.getLineEndOffset(endLine)) boundaries.size else boundaries.size - 1
     rightMaxBoundary = boundaries.subList(0, endBoundary).maxBy { it.getVisualBoundaries(editor).second } ?: rightMaxBoundary
 
-    isLeftRectangular = leftMinBoundary.left >= editor.offsetToLogicalPosition(startOffset).column
-    isRightRectangular = rightMaxBoundary.right <= editor.offsetToLogicalPosition(endOffset).column ||
-      document.getLineEndOffset(endLine) == endOffset
+    isLeftRectangular = editor.columnByOffset(leftMinBoundary.startOffset) >= editor.columnByOffset(startOffset)
+    isRightRectangular = editor.columnByOffset(rightMaxBoundary.endOffset) <= editor.columnByOffset(endOffset) ||
+                         document.getLineEndOffset(endLine) == endOffset
   }
 
   val rightPointX = maxOf(rightMaxBoundary.getVisualBoundaries(editor).second, rightBottom.x)
@@ -204,14 +202,11 @@ fun getPlaceholderShape(editor: Editor, startOffset: Int, endOffset: Int): Place
   return PlaceholderShape.Complex(editor, leftTop, point3, point5, point7)
 }
 
-data class LineBoundary(val line: Int, val left: Int, val right: Int)
+data class LineBoundary(val startOffset: Int, val endOffset: Int)
 
 private fun LineBoundary.getVisualBoundaries(editor: Editor): Pair<Int, Int> {
-  val leftPosition = LogicalPosition(this.line, this.left)
-  val rightPosition = LogicalPosition(this.line, this.right)
-
-  val leftXY = editor.logicalPositionToXY(leftPosition)
-  val rightXY = editor.logicalPositionToXY(rightPosition)
+  val leftXY = editor.offsetToXY(startOffset)
+  val rightXY = editor.offsetToXY(endOffset)
 
   if (leftXY.y != rightXY.y) {
     return Pair(0, editor.contentComponent.x + editor.contentComponent.width)
@@ -219,3 +214,4 @@ private fun LineBoundary.getVisualBoundaries(editor: Editor): Pair<Int, Int> {
   return Pair(leftXY.x, rightXY.x)
 }
 
+private fun Editor.columnByOffset(offset: Int): Int = offsetToLogicalPosition(offset).column

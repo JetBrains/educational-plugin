@@ -15,6 +15,10 @@ class PlaceholderPainterTest : EduTestCase() {
     """, LogicalPosition(0, 8), LogicalPosition(0, 17))
   }
 
+  fun `test inline placeholder with tabs`() {
+    checkRectangular("\t\t1 <placeholder>23</placeholder> 4", LogicalPosition(0, 10), LogicalPosition(0, 12))
+  }
+
   fun `test multi line rectangle`() {
     checkRectangular("""
     |def f():
