@@ -16,6 +16,7 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
@@ -113,7 +114,7 @@ public abstract class PyCourseProjectGeneratorBase extends CourseProjectGenerato
     if (course == null) {
       return;
     }
-    final String baseSdkPath = PyLanguageSettingsBase.getBaseSdk(course);
+    final String baseSdkPath = getBaseSdkPath(settings, course);
     if (baseSdkPath != null) {
       final PyDetectedSdk baseSdk = new PyDetectedSdk(baseSdkPath);
       final String virtualEnvPath = project.getBasePath() + "/.idea/VirtualEnvironment";
@@ -135,6 +136,15 @@ public abstract class PyCourseProjectGeneratorBase extends CourseProjectGenerato
       SdkConfigurationUtil.addSdk(sdk);
       PySdkExtKt.associateWithModule(sdk, null, project.getBasePath());
     }
+  }
+
+  @Nullable
+  private static String getBaseSdkPath(@NotNull PyNewProjectSettings settings, Course course) {
+    if (OpenApiExtKt.isUnitTestMode()) {
+      Sdk sdk = settings.getSdk();
+      return sdk != null ? sdk.getHomePath() : null;
+    }
+    return PyLanguageSettingsBase.getBaseSdk(course);
   }
 
   @Nullable
