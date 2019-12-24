@@ -5,6 +5,7 @@ import com.goide.sdk.GoSdk
 import com.goide.sdk.combobox.GoSdkChooserCombo
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.openapi.util.io.FileUtil.isAncestor
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
@@ -29,6 +30,8 @@ class GoLanguageSettings : LanguageSettings<GoProjectSettings>() {
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     if (sdkChooser.sdk == GoSdk.NULL) return ValidationMessage("Please specify $SDK_TYPE_ID")
     if (!sdkChooser.sdk.isValid) return ValidationMessage("Please specify valid $SDK_TYPE_ID")
+    if (courseLocation != null && isAncestor(courseLocation, sdkChooser.sdk.homePath, false))
+      return ValidationMessage("$SDK_TYPE_ID could not be in course directory, please specify another $SDK_TYPE_ID")
     return null
   }
 }
