@@ -23,5 +23,11 @@ class CCItemPositionPanel(thresholdName: String) : AdditionalPanel {
     }
   }
 
-  val indexDelta: Int get() = if (beforeButton.isSelected) 0 else 1
+  val indexDelta: Int get() = if (beforeButton.isSelected) BEFORE_DELTA else AFTER_DELTA
+
+  // TODO: move these constants in better place
+  companion object {
+    const val BEFORE_DELTA = 0
+    const val AFTER_DELTA = 1
+  }
 }

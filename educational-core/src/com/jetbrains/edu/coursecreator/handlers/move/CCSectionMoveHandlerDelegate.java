@@ -54,8 +54,8 @@ public class CCSectionMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate
       return;
     }
 
-    final int delta = getDelta(project, targetItem);
-    if (delta == -1) {
+    final Integer delta = getDelta(project, targetItem);
+    if (delta == null) {
       return;
     }
 

@@ -25,7 +25,7 @@ abstract class CCStudyItemMoveHandlerDelegate(private val itemName: String) : Mo
 
   override fun isValidTarget(psiElement: PsiElement?, sources: Array<PsiElement>): Boolean = true
 
-  protected open fun getDelta(project: Project, targetItem: StudyItem): Int {
+  protected open fun getDelta(project: Project, targetItem: StudyItem): Int? {
     return showMoveStudyItemDialog(project, itemName, targetItem.name)
   }
 

@@ -10,6 +10,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.move.MoveCallback;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.OpenApiExtKt;
@@ -73,11 +74,11 @@ public class CCLessonMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate 
     final Section targetSection = course.getSection(targetParentDir.getName());
     final LessonContainer targetContainer = targetSection != null ? targetSection : course;
 
-    int delta = 0;
+    Integer delta = CCItemPositionPanel.AFTER_DELTA;
     if (targetItem instanceof Lesson) {
       delta = getDelta(project, targetItem);
     }
-    if (delta == -1) {
+    if (delta == null) {
       return;
     }
 
@@ -87,7 +88,7 @@ public class CCLessonMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate 
     sourceLesson.setIndex(-1);
     CCUtils.updateHigherElements(sourceParentDir.getChildren(), file -> sourceContainer.getItem(file.getName()), sourceLessonIndex, -1);
 
-    final int newItemIndex = targetItem instanceof Lesson ? targetItem.getIndex() + delta : ((ItemContainer)targetItem).getItems().size() + 1;
+    final int newItemIndex = (targetItem instanceof Lesson ? targetItem.getIndex() : ((ItemContainer)targetItem).getItems().size()) + delta;
     CCUtils.updateHigherElements(targetParentDir.getChildren(), file -> targetContainer.getItem(file.getName()), newItemIndex - 1, 1);
 
     sourceLesson.setIndex(newItemIndex);

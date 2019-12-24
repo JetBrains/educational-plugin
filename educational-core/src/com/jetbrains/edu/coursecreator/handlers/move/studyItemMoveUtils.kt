@@ -11,7 +11,7 @@ import org.jetbrains.annotations.TestOnly
 private var MOCK: MoveStudyItemUI? = null
 
 /** Returns delta */
-fun showMoveStudyItemDialog(project: Project, itemName: String, thresholdName: String): Int {
+fun showMoveStudyItemDialog(project: Project, itemName: String, thresholdName: String): Int? {
   val ui = if (isUnitTestMode) {
     MOCK ?: error("Mock UI should be set via `withMockMoveStudyItemUI`")
   } else {
@@ -31,13 +31,13 @@ fun withMockMoveStudyItemUI(mockUi: MoveStudyItemUI, action: () -> Unit) {
 }
 
 interface MoveStudyItemUI {
-  fun showDialog(project: Project, itemName: String, thresholdName: String): Int
+  fun showDialog(project: Project, itemName: String, thresholdName: String): Int?
 }
 
 class DialogMoveStudyItemUI : MoveStudyItemUI {
-  override fun showDialog(project: Project, itemName: String, thresholdName: String): Int {
+  override fun showDialog(project: Project, itemName: String, thresholdName: String): Int? {
     val dialog = CCMoveStudyItemDialog(project, itemName, thresholdName)
     dialog.show()
-    return if (dialog.exitCode != DialogWrapper.OK_EXIT_CODE) -1 else dialog.indexDelta
+    return if (dialog.exitCode != DialogWrapper.OK_EXIT_CODE) null else dialog.indexDelta
   }
 }

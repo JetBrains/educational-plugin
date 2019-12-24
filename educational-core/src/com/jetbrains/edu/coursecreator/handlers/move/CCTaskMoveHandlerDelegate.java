@@ -88,8 +88,8 @@ public class CCTaskMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
       if (targetTask == null) {
         return;
       }
-      final int delta = getDelta(project, targetTask);
-      if (delta == -1) {
+      final Integer delta = getDelta(project, targetTask);
+      if (delta == null) {
         return;
       }
       moveTask(sourceDirectory, taskToMove, targetTask, delta, lessonDir, targetTask.getLesson());
