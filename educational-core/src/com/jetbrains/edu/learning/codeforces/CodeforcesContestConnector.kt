@@ -22,10 +22,6 @@ object CodeforcesContestConnector {
       getContestIdFromLink(text)
     }
 
-  // TODO: remove before merge to master
-  @JvmStatic
-  fun getContestURL(text: String): String = getContestURLFromID(getContestId(text))
-
   @JvmStatic
   fun getContestName(contest: Document): String =
     contest.selectFirst("#sidebar")
