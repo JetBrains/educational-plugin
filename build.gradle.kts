@@ -117,6 +117,9 @@ allprojects {
       withProp("excludeTests") { exclude(it) }
 
       ignoreFailures = true
+      filter {
+        isFailOnNoMatchingTests = false
+      }
     }
 
     withType<JavaCompile> { options.encoding = "UTF-8" }
