@@ -1,6 +1,8 @@
-// Should be the same as `com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.sanitizeName`
+## Should be the same as `com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.sanitizeName`
 static String sanitizeName(String name) {
-    return name.replaceAll("[ /\\\\:<>\"?*|()]", "_")
+##    Replaces ' ', '/', '\', ':', '<', '>', '"', '?', '*', '|', '(', ')' symbols with '_' as they are invalid in gradle module names.
+##    Also removes leading and trailing dots, because gradle project name must not start or end with a '.'
+    return name.replaceAll("[ /\\\\:<>\"?*|()]", "_").replaceAll("(^[.]+)|([.]+\$)", "")
 }
 
 rootProject.name = '${PROJECT_NAME}'

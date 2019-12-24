@@ -321,12 +321,14 @@ object GeneratorUtils {
   }
 
   private val INVALID_SYMBOLS = "[ /\\\\:<>\"?*|()]".toRegex()
+  private val LEADING_AND_TRAILING_DOTS = "(^[.]+)|([.]+\$)".toRegex()
 
   // Should be the same as `sanitizeName` in `resources/fileTemplates/internal/settings.gradle.ft`
   /**
    * Replaces ' ', '/', '\', ':', '<', '>', '"', '?', '*', '|', '(', ')' symbols with '_' as they are invalid in gradle module names
+   * Also removes leading and trailing dots, because gradle project name must not start or end with a '.'
    */
-  fun sanitizeName(name: String): String = name.replace(INVALID_SYMBOLS, "_")
+  fun sanitizeName(name: String): String = name.replace(INVALID_SYMBOLS, "_").replace(LEADING_AND_TRAILING_DOTS, "")
 
   data class DefaultFileProperties(val name: String, val text: String)
 }
