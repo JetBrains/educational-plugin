@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
@@ -15,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
-import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
@@ -116,59 +114,7 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
   }
 
-  fun `test checkio course`() {
-    val name = "Test Course"
-    val language = "Russian"
-    val programmingLanguage = "Plain text"
-    val firstLesson = "the first lesson"
-    val secondLesson = "the second lesson"
-    val yamlContent = """
-      |type: ${CheckiONames.CHECKIO_TYPE}
-      |title: $name
-      |language: $language
-      |summary: |-
-      |  This is a course about string theory.
-      |  Why not?"
-      |programming_language: $programmingLanguage
-      |content:
-      |- $firstLesson
-      |- $secondLesson
-      |""".trimMargin()
-    val course = MAPPER.deserializeCourse(yamlContent)
-    assertEquals(name, course.name)
-    assertEquals(language, course.humanLanguage)
-    assertEquals(programmingLanguage, course.languageById.displayName)
-    assertNotNull(course.description)
-    assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
-  }
-
-  fun `test stepik course`() {
-    val name = "Test Course"
-    val language = "Russian"
-    val programmingLanguage = "Plain text"
-    val firstLesson = "the first lesson"
-    val secondLesson = "the second lesson"
-    val yamlContent = """
-      |type: ${StepikNames.STEPIK_TYPE}
-      |title: $name
-      |language: $language
-      |summary: |-
-      |  This is a course about string theory.
-      |  Why not?"
-      |programming_language: $programmingLanguage
-      |content:
-      |- $firstLesson
-      |- $secondLesson
-      |""".trimMargin()
-    val course = MAPPER.deserializeCourse(yamlContent)
-    assertEquals(name, course.name)
-    assertEquals(language, course.humanLanguage)
-    assertEquals(programmingLanguage, course.languageById.displayName)
-    assertNotNull(course.description)
-    assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
-  }
-
-  fun `test hyperskill course`() {
+  fun `test course with type`() {
     val name = "Test Course"
     val language = "Russian"
     val programmingLanguage = "Plain text"
