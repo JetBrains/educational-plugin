@@ -499,6 +499,9 @@ project(":Edu-Android") {
     if (isAtLeast192) {
       plugins += listOf("java", "android-layoutlib")
     }
+    if (isAtLeast193) {
+      plugins += "gradle-java"
+    }
     setPlugins(*plugins.toTypedArray())
   }
 
