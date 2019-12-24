@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseDir
 import org.rust.cargo.CargoConstants
 
-private val INVALID_SYMBOLS = """[\s-]""".toRegex()
+private val INVALID_SYMBOLS = """[^a-zA-Z0-9_]""".toRegex()
 
 fun String.toPackageName(): String = replace(INVALID_SYMBOLS, "_").toLowerCase()
 

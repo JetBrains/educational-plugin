@@ -17,11 +17,17 @@ class RsCodeforcesLanguageProvider : CodeforcesLanguageProvider {
 
   override fun createTaskFiles(task: Task): List<TaskFile> {
     val fileTemplate = GeneratorUtils.getInternalTemplateText(templateFileName)
-    val manifestTemplate = GeneratorUtils.getInternalTemplateText(MANIFEST_FILE, mapOf("PACKAGE_NAME" to task.name.toPackageName()))
+
+    val packageName = task.name.replace(TASK_LEADING_SYMBOLS, "").toPackageName()
+    val manifestTemplate = GeneratorUtils.getInternalTemplateText(MANIFEST_FILE, mapOf("PACKAGE_NAME" to packageName))
 
     return listOf(
       TaskFile(GeneratorUtils.joinPaths(task.sourceDir, MAIN_RS_FILE), fileTemplate),
       TaskFile(MANIFEST_FILE, manifestTemplate)
     )
+  }
+
+  companion object {
+    private val TASK_LEADING_SYMBOLS = """^.*?\.\s""".toRegex()
   }
 }
