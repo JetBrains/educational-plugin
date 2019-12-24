@@ -8,6 +8,7 @@ import com.intellij.ui.layout.*
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel.Companion.AFTER_DELTA
 import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.JComponent
 
@@ -47,7 +48,11 @@ abstract class CCCreateStudyItemDialogBase(
   override fun getPreferredFocusedComponent(): JComponent? = nameField
 
   open fun showAndGetResult(): NewStudyItemInfo? =
-    if (showAndGet()) NewStudyItemInfo(nameField.text, model.baseIndex + (positionPanel?.indexDelta ?: 0), model.studyItemVariants.first().ctr) else null
+    if (showAndGet()) NewStudyItemInfo(
+      nameField.text,
+      model.baseIndex + (positionPanel?.indexDelta ?: AFTER_DELTA),
+      model.studyItemVariants.first().ctr
+    ) else null
 
   protected open fun createAdditionalFields(builder: LayoutBuilder) {}
 }

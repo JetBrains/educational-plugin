@@ -10,6 +10,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel.Companion.AFTER_DELTA
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isFeatureEnabled
@@ -95,7 +96,7 @@ class NewStudyItemPopupUi : NewStudyItemUi {
         popup.closeOk(event)
         val itemCtr = contentPanel.getSelectedItem()?.ctr
         if (itemCtr != null) {
-          val info = NewStudyItemInfo(nameField.text, model.baseIndex, itemCtr)
+          val info = NewStudyItemInfo(nameField.text, model.baseIndex + AFTER_DELTA, itemCtr)
           studyItemCreator(info)
         }
       }

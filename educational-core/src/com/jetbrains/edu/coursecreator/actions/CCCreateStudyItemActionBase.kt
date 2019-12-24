@@ -132,8 +132,8 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     val suggestedName: String
     val additionalPanels = ArrayList<AdditionalPanel>()
     if (isAddedAsLast(project, course, sourceDirectory)) {
-      index = ITEM_INDEX.getData(dataContext) ?: getSiblingsSize(course, parentItem) + 1
-      suggestedName = SUGGESTED_NAME.getData(dataContext) ?: itemType.presentableName + index
+      index = ITEM_INDEX.getData(dataContext) ?: getSiblingsSize(course, parentItem)
+      suggestedName = SUGGESTED_NAME.getData(dataContext) ?: itemType.presentableName + (index + 1)
     }
     else {
       val thresholdItem = getThresholdItem(project, course, sourceDirectory) ?: return

@@ -82,7 +82,7 @@ class StudyItemNotFoundInspection : UnresolvedFileReferenceInspection() {
         when {
           CommonDataKeys.PROJECT.`is`(dataId) -> project
           CommonDataKeys.VIRTUAL_FILE_ARRAY.`is`(dataId) -> arrayOf(configFile.parent)
-          CCCreateStudyItemActionBase.ITEM_INDEX.`is`(dataId) -> index + 1
+          CCCreateStudyItemActionBase.ITEM_INDEX.`is`(dataId) -> index
           CCCreateStudyItemActionBase.SUGGESTED_NAME.`is`(dataId) -> name
           else -> null
         }
