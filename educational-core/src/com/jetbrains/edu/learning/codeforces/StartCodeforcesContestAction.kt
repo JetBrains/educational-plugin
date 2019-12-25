@@ -53,7 +53,7 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
     val contestURLInfo = ContestURLInfo(contestId, contestLanguage, languageId)
 
     val contestInfo = getContestInfoUnderProgress(contestURLInfo)
-    if (contestInfo == null) showFailedToAddCourseNotification(contestURLInfo.url)
+    if (contestInfo == null) showFailedToAddContestNotification(contestURLInfo.url)
     return contestInfo
   }
 
@@ -105,7 +105,7 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
                              "Failed to Load Available Contest Languages")
   }
 
-  private fun showFailedToAddCourseNotification(contestURL: String) {
+  private fun showFailedToAddContestNotification(contestURL: String) {
     Messages.showErrorDialog("Cannot find contest on Codeforces, please check if the link is correct: $contestURL",
                              "Failed to Load Codeforces Contest")
   }
