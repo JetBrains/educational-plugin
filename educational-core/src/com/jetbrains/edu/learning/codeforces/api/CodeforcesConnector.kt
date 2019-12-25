@@ -58,7 +58,9 @@ class CodeforcesConnector {
                      ?.checkStatusCode()
                      ?.body() ?: return null
     val doc = Jsoup.parse(response.string())
-    return ContestShortInfo(getContestName(doc), getLanguages(doc))
+    val contestName = getContestName(doc) ?: return null
+    val contestLanguage = getLanguages(doc) ?: return null
+    return ContestShortInfo(contestName, contestLanguage)
   }
 
   companion object {

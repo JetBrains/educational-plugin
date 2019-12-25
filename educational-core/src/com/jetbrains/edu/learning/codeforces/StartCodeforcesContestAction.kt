@@ -45,7 +45,7 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
 
     val contestNameAndLanguages = getContestShortInfoUnderProgress(contestId)
     if (contestNameAndLanguages == null) {
-      showFailedToLoadContestProgrammingLanguagesNotification(contestId)
+      showFailedToLoadContestShortInfoNotification(contestId)
       return null
     }
 
@@ -100,8 +100,8 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
         }
       }, "Getting Contest Information", true, null)
 
-  private fun showFailedToLoadContestProgrammingLanguagesNotification(contestId: Int) {
-    Messages.showErrorDialog("Cannot get contest languages on Codeforces, contest ID: $contestId",
+  private fun showFailedToLoadContestShortInfoNotification(contestId: Int) {
+    Messages.showErrorDialog("Cannot get contest information on Codeforces, contest ID: $contestId",
                              "Failed to Load Available Contest Languages")
   }
 

@@ -23,19 +23,19 @@ object CodeforcesContestConnector {
     }
 
   @JvmStatic
-  fun getContestName(contest: Document): String =
+  fun getContestName(contest: Document): String? =
     contest.selectFirst("#sidebar")
-      .selectFirst("table.rtable")
-      .selectFirst("a")
-      .text()
+      ?.selectFirst("table.rtable")
+      ?.selectFirst("a")
+      ?.text()
 
   @JvmStatic
-  fun getLanguages(contest: Document): List<String> {
+  fun getLanguages(contest: Document): List<String>? {
     val supportedLanguages = CodeforcesLanguageProvider.getSupportedLanguages()
     return contest.selectFirst("#programTypeForInvoker")
-      .select("option")
-      .map { it.text() }
-      .filter { language ->
+      ?.select("option")
+      ?.map { it.text() }
+      ?.filter { language ->
         language in supportedLanguages
       }
   }
