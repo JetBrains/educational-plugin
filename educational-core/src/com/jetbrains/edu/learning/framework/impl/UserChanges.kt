@@ -7,6 +7,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.DataInputOutputUtil
+import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -88,7 +89,9 @@ sealed class Change {
 
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
       try {
-        GeneratorUtils.createChildFile(taskDir, path, text)
+        EduDocumentListener.modifyWithoutListener(task, path) {
+          GeneratorUtils.createChildFile(taskDir, path, text)
+        }
       } catch (e: IOException) {
         LOG.error("Failed to create file `${taskDir.path}/$path`", e)
       }
@@ -133,9 +136,7 @@ sealed class Change {
         return
       }
 
-      val taskFile = task.getTaskFile(path) ?: return
-      taskFile.isTrackChanges = false
-      try {
+      EduDocumentListener.modifyWithoutListener(task, path) {
         val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
         if (document == null) {
           LOG.warn("Can't get document for `$file`")
@@ -143,8 +144,6 @@ sealed class Change {
         else {
           runUndoTransparentWriteAction { document.setText(text) }
         }
-      } finally {
-        taskFile.isTrackChanges = true
       }
     }
 

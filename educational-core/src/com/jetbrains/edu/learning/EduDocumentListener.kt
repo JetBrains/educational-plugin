@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 /**
@@ -143,6 +144,18 @@ class EduDocumentListener private constructor(
       }
       finally {
         document.removeDocumentListener(listener)
+      }
+    }
+
+    @JvmStatic
+    fun modifyWithoutListener(task: Task, pathInTask: String, modification: () -> Unit) {
+      val taskFile = task.getTaskFile(pathInTask) ?: return
+      val isTrackChanges = taskFile.isTrackChanges
+      taskFile.isTrackChanges = false
+      try {
+        modification()
+      } finally {
+        taskFile.isTrackChanges = isTrackChanges
       }
     }
   }
