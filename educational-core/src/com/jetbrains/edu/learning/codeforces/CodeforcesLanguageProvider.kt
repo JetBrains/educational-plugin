@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -8,6 +10,10 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
 interface CodeforcesLanguageProvider {
   val codeforcesLanguageNamings: List<String>
+  val configurator: EduConfigurator<*>?
+    get() {
+      return EduConfiguratorManager.allExtensions().find { it.language == languageId }?.instance
+    }
   val languageId: String
   val templateFileName: String
 
@@ -56,5 +62,9 @@ interface CodeforcesLanguageProvider {
       EP_NAME.extensions
         .firstOrNull { it.languageId == task.course.languageID }
         ?.createTaskFiles(task)
+
+    fun getConfigurator(languageId: String): EduConfigurator<*>? {
+      return EP_NAME.extensions.find { it.languageId == languageId }?.configurator
+    }
   }
 }

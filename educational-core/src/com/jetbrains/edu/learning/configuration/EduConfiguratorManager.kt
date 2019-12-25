@@ -3,7 +3,8 @@ package com.jetbrains.edu.learning.configuration
 import com.intellij.lang.Language
 import com.intellij.openapi.extensions.Extensions
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.stepik.StepikNames
 
@@ -14,7 +15,10 @@ object EduConfiguratorManager {
    */
   @JvmStatic
   fun findConfigurator(courseType: String, environment: String, language: Language): EduConfigurator<out Any>? =
-    findExtension(courseType, environment, language)?.instance
+    when (courseType) {
+      CODEFORCES_COURSE_TYPE -> CodeforcesLanguageProvider.getConfigurator(language.id)
+      else -> findExtension(courseType, environment, language)?.instance
+    }
 
   @JvmStatic
   fun findExtension(courseType: String, environment: String, language: Language): EducationalExtensionPoint<EduConfigurator<out Any>>? {
@@ -50,9 +54,7 @@ object EduConfiguratorManager {
     allExtensions().filter { it.courseType == EduNames.PYCHARM }.map { it.language }
   }
 
-  private val compatibleCourseTypes: List<String> = listOf(CourseraNames.COURSE_TYPE,
-                                                           StepikNames.STEPIK_TYPE,
-                                                           CodeforcesNames.CODEFORCES_COURSE_TYPE)
+  private val compatibleCourseTypes: List<String> = listOf(CourseraNames.COURSE_TYPE, StepikNames.STEPIK_TYPE)
 
   private fun compatibleCourseType(extension: EducationalExtensionPoint<EduConfigurator<out Any>>, courseType: String): Boolean {
     return extension.courseType == EduNames.PYCHARM && courseType in compatibleCourseTypes

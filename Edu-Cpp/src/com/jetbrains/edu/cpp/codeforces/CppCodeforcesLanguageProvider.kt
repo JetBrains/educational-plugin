@@ -1,11 +1,14 @@
 package com.jetbrains.edu.cpp.codeforces
 
+import com.jetbrains.edu.cpp.CppBaseConfigurator
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 
 class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> =
     listOf("GNU C11", "GNU C++11", "GNU C++14", "MS C++", "Clang++17 Diagnostics", "GNU C++17", "MS C++ 2017")
+  override val configurator: EduConfigurator<*> = CppBaseConfigurator()
   override val languageId: String = EduNames.CPP
   override val templateFileName: String = "codeforces.main.cpp"
 
