@@ -1,10 +1,8 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.google.gson.GsonBuilder
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -99,9 +97,6 @@ open class StepikTaskBuilder(
       }
     }
 
-    if (language.isKindOf(EduNames.PYTHON) && samples != null) {
-      createTestFileFromSamples(task, samples)
-    }
     initTaskFiles(task, "write your answer here \n", getCodeTemplateForTask(options.codeTemplates))
     return task
   }
@@ -305,16 +300,6 @@ open class StepikTaskBuilder(
     private fun getTaskFilePath(editorText: String, configurator: EduConfigurator<*>?): String? {
       val fileName = configurator?.getMockFileName(editorText) ?: return null
       return GeneratorUtils.joinPaths(configurator.sourceDir, fileName)
-    }
-
-    private fun createTestFileFromSamples(task: Task, samples: List<List<String>>) {
-      val testText =
-        "from test_helper import check_samples\n\n" +
-        "if __name__ == '__main__':\n" +
-        "    check_samples(samples=${GsonBuilder().create().toJson(samples)})"
-      val test = TaskFile("tests.py", testText)
-      test.isVisible = false
-      task.addTaskFile(test)
     }
   }
 }
