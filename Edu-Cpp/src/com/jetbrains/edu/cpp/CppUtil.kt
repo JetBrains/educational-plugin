@@ -51,12 +51,17 @@ fun getDefaultName(item: StudyItem) = when (item) {
 
 fun isEduCppProject(project: Project): Boolean {
   val course = StudyTaskManager.getInstance(project).course
+  if (course != null) {
+    // Checks that, created course is OCLanguage course
+    return course.languageById == OCLanguage.getInstance()
+  }
 
+  // Checks that, course will be created with OCLanguage
   val baseDir = project.courseDir
   val modeToCreate = baseDir.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE)
   val languageId = baseDir.getUserData(CourseProjectGenerator.COURSE_LANGUAGE_ID_TO_CREATE)
 
-  return course != null || (modeToCreate != null && languageId == OCLanguage.getInstance().id)
+  return modeToCreate != null && languageId == OCLanguage.getInstance().id
 }
 
 fun PsiFile.findCMakeCommand(commandName: String): CMakeCommand? {
