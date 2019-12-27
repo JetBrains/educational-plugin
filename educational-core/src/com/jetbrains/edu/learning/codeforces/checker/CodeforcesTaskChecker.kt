@@ -37,9 +37,9 @@ class CodeforcesTaskChecker(
       val inputVirtualFile = testFolder.findChild(task.inputFileName) ?: continue
       val outputVirtualFile = testFolder.findChild(task.outputFileName) ?: continue
 
-      val inputDocument = FileDocumentManager.getInstance().getDocument(inputVirtualFile)
+      val inputDocument = runReadAction { FileDocumentManager.getInstance().getDocument(inputVirtualFile) }
                           ?: error("Can't get document of input file - ${inputVirtualFile.path}")
-      val outputDocument = FileDocumentManager.getInstance().getDocument(outputVirtualFile)
+      val outputDocument = runReadAction { FileDocumentManager.getInstance().getDocument(outputVirtualFile) }
                            ?: error("Can't get document of output file - ${outputVirtualFile.path}")
 
       val testNumber = index + 1
