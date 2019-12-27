@@ -21,8 +21,8 @@ class CppProjectComponent(private val project: Project) : ProjectComponent {
           return
         }
 
-        // Current method is called in WriteAction, so we could use it.
-        // You could look at realisation of com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace#doReload method.
+        // The current method is called under write action, so we could safely call a synchronous refresh here.
+        // See com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace#doReload method.
         VfsUtil.refreshAndFindChild(project.courseDir, TEST_FRAMEWORK_DIR)?.refresh(true, true)
       }
     })
