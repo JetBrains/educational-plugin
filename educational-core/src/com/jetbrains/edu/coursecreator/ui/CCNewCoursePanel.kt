@@ -68,8 +68,9 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
 
   init {
     layout = BorderLayout()
-    preferredSize = JBUI.size(700, 320)
-    minimumSize = JBUI.size(700, 320)
+    // Check both Darcula and Light theme before changing size
+    preferredSize = JBUI.size(700, 350)
+    minimumSize = JBUI.size(700, 350)
 
     myDescriptionTextArea.rows = 10
     myDescriptionTextArea.lineWrap = true
