@@ -4,10 +4,10 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.python.learning.PyPyCharmCourseProjectGenerator
+import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator
 
-class PyPyCharmHyperskillCourseProjectGenerator(builder: PyPyCharmHyperskillCourseBuilder, course: Course) :
-  PyPyCharmCourseProjectGenerator(builder, course) {
+class PyHyperskillCourseProjectGenerator(builder: PyHyperskillCourseBuilder, course: Course) :
+  PyCourseProjectGenerator(builder, course) {
 
   override fun beforeProjectGenerated(): Boolean {
     assert(myCourse is HyperskillCourse)

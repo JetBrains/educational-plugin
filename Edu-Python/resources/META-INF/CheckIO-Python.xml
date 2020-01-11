@@ -1,7 +1,4 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <xi:include href="/META-INF/CheckIO-Python-Idea.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <xi:include href="/META-INF/CheckIO-Python-PyCharm.xml" xpointer="xpointer(/idea-plugin/*)"/>
-
+<idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <statusBarWidgetProvider implementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOWidgetProvider" />
     <httpRequestHandler implementation="com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthRestService"/>
@@ -9,6 +6,8 @@
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.PyCheckiOConfigurator"
+                  language="Python" courseType="CheckiO"/>
     <coursesProvider implementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseProvider"/>
     <optionsProvider instance="com.jetbrains.edu.python.learning.checkio.settings.PyCheckiOOptions"/>
     <checkListener implementation="com.jetbrains.edu.python.learning.checkio.checker.PyCheckiOCheckListener"/>

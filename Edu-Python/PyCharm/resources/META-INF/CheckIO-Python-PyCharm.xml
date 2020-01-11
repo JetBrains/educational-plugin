@@ -1,6 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="Educational">
-    <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.PyPyCharmCheckiOConfigurator"
-                  language="Python" courseType="CheckiO"/>
-  </extensions>
-</idea-plugin>

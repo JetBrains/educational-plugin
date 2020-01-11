@@ -4,8 +4,6 @@
 
   <extensions defaultExtensionNs="Educational">
     <pySdkSettingsHelper implementation="com.jetbrains.edu.python.learning.PyIdeaSdkSettingsHelper"/>
-    <configurator implementationClass="com.jetbrains.edu.python.learning.PyIdeaConfigurator" language="Python"/>
-    <configurator implementationClass="com.jetbrains.edu.python.learning.PyIdeaNewConfigurator" language="Python" environment="unittest" displayName="Python"/>
   </extensions>
 
 </idea-plugin>

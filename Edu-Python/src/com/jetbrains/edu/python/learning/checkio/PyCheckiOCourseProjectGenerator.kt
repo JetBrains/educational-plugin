@@ -4,11 +4,10 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.reformatCodeInAllTaskFiles
 import com.jetbrains.edu.python.learning.PyCourseBuilder
-import com.jetbrains.edu.python.learning.PyPyCharmCourseProjectGenerator
+import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator
 import com.jetbrains.python.newProject.PyNewProjectSettings
 
-class PyPyCharmCheckiOCourseProjectGenerator(builder: PyCourseBuilder, val course: Course) :
-  PyPyCharmCourseProjectGenerator(builder, course) {
+class PyCheckiOCourseProjectGenerator(builder: PyCourseBuilder, val course: Course) : PyCourseProjectGenerator(builder, course) {
 
   override fun beforeProjectGenerated(): Boolean = true
 

@@ -5,13 +5,15 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
-import com.jetbrains.edu.python.learning.PyConfiguratorBase.TASK_PY
+import com.jetbrains.edu.python.learning.PyConfigurator.TASK_PY
 import com.jetbrains.edu.python.learning.checker.PyNewTaskCheckerProvider
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import icons.PythonIcons
 import javax.swing.Icon
 
-abstract class PyNewConfiguratorBase(private val courseBuilder: PyNewCourseBuilderBase) : EduConfiguratorWithSubmissions<PyNewProjectSettings>() {
+class PyNewConfigurator : EduConfiguratorWithSubmissions<PyNewProjectSettings>() {
+
+  private val courseBuilder: PyNewCourseBuilder = PyNewCourseBuilder()
 
   override fun getTestFileName(): String = TEST_FILE_NAME
   override fun getMockFileName(text: String): String = TASK_PY

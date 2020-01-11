@@ -9,8 +9,8 @@ import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings
 import com.jetbrains.python.newProject.PyNewProjectSettings
 
 open class PyCourseBuilder : EduCourseBuilder<PyNewProjectSettings> {
-  override val taskTemplateName: String? = PyConfiguratorBase.TASK_PY
-  override val testTemplateName: String? = PyConfiguratorBase.TESTS_PY
+  override val taskTemplateName: String? = PyConfigurator.TASK_PY
+  override val testTemplateName: String? = PyConfigurator.TESTS_PY
 
   override fun getLanguageSettings(): LanguageSettings<PyNewProjectSettings> = PyLanguageSettings()
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings>? =

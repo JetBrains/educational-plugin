@@ -12,15 +12,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public abstract class PyConfiguratorBase extends EduConfiguratorWithSubmissions<PyNewProjectSettings> {
+public class PyConfigurator extends EduConfiguratorWithSubmissions<PyNewProjectSettings> {
   public static final String TESTS_PY = "tests.py";
   public static final String TASK_PY = "task.py";
 
-  private final PyCourseBuilder myCourseBuilder;
-
-  public PyConfiguratorBase(@NotNull PyCourseBuilder courseBuilder) {
-    myCourseBuilder = courseBuilder;
-  }
+  private final PyCourseBuilder myCourseBuilder = new PyCourseBuilder();
 
   @NotNull
   @Override

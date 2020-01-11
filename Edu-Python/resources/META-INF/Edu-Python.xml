@@ -34,6 +34,11 @@
 
 
   <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.python.learning.PyConfigurator" language="Python"/>
+    <configurator implementationClass="com.jetbrains.edu.python.learning.PyNewConfigurator"
+                  language="Python"
+                  environment="unittest"
+                  displayName="Python"/>
     <coursesProvider implementation="com.jetbrains.edu.python.learning.PyBundledCoursesProvider"/>
     <codeforcesLanguageProvider implementation="com.jetbrains.edu.python.learning.codeforces.PyCodeforcesLanguageProvider"/>
   </extensions>
