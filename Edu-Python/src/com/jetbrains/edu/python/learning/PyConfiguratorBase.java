@@ -16,9 +16,9 @@ public abstract class PyConfiguratorBase extends EduConfiguratorWithSubmissions<
   public static final String TESTS_PY = "tests.py";
   public static final String TASK_PY = "task.py";
 
-  private final PyCourseBuilderBase myCourseBuilder;
+  private final PyCourseBuilder myCourseBuilder;
 
-  public PyConfiguratorBase(@NotNull PyCourseBuilderBase courseBuilder) {
+  public PyConfiguratorBase(@NotNull PyCourseBuilder courseBuilder) {
     myCourseBuilder = courseBuilder;
   }
 

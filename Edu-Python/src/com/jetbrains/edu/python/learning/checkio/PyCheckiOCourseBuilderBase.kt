@@ -1,8 +1,8 @@
 package com.jetbrains.edu.python.learning.checkio
 
-import com.jetbrains.edu.python.learning.PyCourseBuilderBase
+import com.jetbrains.edu.python.learning.PyCourseBuilder
 
-abstract class PyCheckiOCourseBuilderBase : PyCourseBuilderBase() {
+abstract class PyCheckiOCourseBuilderBase : PyCourseBuilder() {
   override val taskTemplateName: String? = null
   override val testTemplateName: String? = null
 }

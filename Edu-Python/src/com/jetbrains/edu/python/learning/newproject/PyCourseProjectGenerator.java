@@ -35,15 +35,15 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class PyCourseProjectGeneratorBase extends CourseProjectGenerator<PyNewProjectSettings> {
-  private static final Logger LOG = Logger.getInstance(PyCourseProjectGeneratorBase.class);
+public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjectSettings> {
+  private static final Logger LOG = Logger.getInstance(PyCourseProjectGenerator.class);
 
   /**
    * should be the same as {@link PyPackageManagerUI.PackagingTask#PACKAGING_GROUP_ID}
    */
   private static final String PY_PACKAGES_NOTIFICATION_GROUP = "Packaging";
 
-  public PyCourseProjectGeneratorBase(@NotNull EduCourseBuilder<PyNewProjectSettings> builder, @NotNull Course course) {
+  public PyCourseProjectGenerator(@NotNull EduCourseBuilder<PyNewProjectSettings> builder, @NotNull Course course) {
     super(builder, course);
   }
 
@@ -144,12 +144,18 @@ public abstract class PyCourseProjectGeneratorBase extends CourseProjectGenerato
       Sdk sdk = settings.getSdk();
       return sdk != null ? sdk.getHomePath() : null;
     }
-    return PyLanguageSettingsBase.getBaseSdk(course);
+    return PyLanguageSettings.getBaseSdk(course);
   }
 
   @Nullable
-  protected abstract Sdk updateSdkIfNeeded(@NotNull Project project, @Nullable Sdk sdk);
+  private static Sdk updateSdkIfNeeded(@NotNull Project project, @Nullable Sdk sdk) {
+    PySdkSettingsHelper helper = PySdkSettingsHelper.firstAvailable();
+    return helper.updateSdkIfNeeded(project, sdk);
+  }
 
   @NotNull
-  protected abstract List<Sdk> getAllSdks();
+  private static List<Sdk> getAllSdks() {
+    PySdkSettingsHelper helper = PySdkSettingsHelper.firstAvailable();
+    return helper.getAllSdks();
+  }
 }

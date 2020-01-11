@@ -30,7 +30,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
         eduTask("SyntaxError") {
           /**
            * We do not have test_helper.py here because it is generated automatically
-           * @see com.jetbrains.edu.python.learning.newproject.PyCourseProjectGeneratorBase.createAdditionalFiles
+           * @see com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator.createAdditionalFiles
            * */
           pythonTaskFile("hello_world.py", """This is not Python code""")
           pythonTaskFile("tests.py", """

@@ -28,7 +28,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.python.learning.newproject.PyLanguageSettingsBase;
 import com.jetbrains.python.inspections.PyInspection;
 import com.jetbrains.python.inspections.PyInspectionVisitor;
 import com.jetbrains.python.psi.LanguageLevel;

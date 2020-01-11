@@ -5,11 +5,11 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.python.learning.PyConfiguratorBase
 import com.jetbrains.edu.python.learning.PyConfiguratorBase.TASK_PY
-import com.jetbrains.edu.python.learning.PyCourseBuilderBase
+import com.jetbrains.edu.python.learning.PyCourseBuilder
 import com.jetbrains.python.newProject.PyNewProjectSettings
 
 abstract class PyHyperskillConfiguratorBase(
-  private val courseBuilder: PyCourseBuilderBase
+  private val courseBuilder: PyCourseBuilder
 ) : HyperskillConfigurator<PyNewProjectSettings> {
   override fun getCourseBuilder(): EduCourseBuilder<PyNewProjectSettings> = courseBuilder
   override fun getTestFileName(): String = PyConfiguratorBase.TESTS_PY

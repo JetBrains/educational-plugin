@@ -25,7 +25,7 @@ import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
-abstract class PyLanguageSettingsBase : LanguageSettings<PyNewProjectSettings>() {
+open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
 
   protected val mySettings: PyNewProjectSettings = PyNewProjectSettings()
 
@@ -66,7 +66,13 @@ abstract class PyLanguageSettingsBase : LanguageSettings<PyNewProjectSettings>()
       }
     }
 
-  protected abstract fun getInterpreterComboBox(fakeSdk: Sdk?): ComboboxWithBrowseButton
+  private fun getInterpreterComboBox(fakeSdk: Sdk?): ComboboxWithBrowseButton {
+    val helper = PySdkSettingsHelper.firstAvailable()
+    return helper.getInterpreterComboBox(fakeSdk) { sdk ->
+      mySettings.sdk = sdk
+      notifyListeners()
+    }
+  }
 
   companion object {
 

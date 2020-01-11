@@ -3,11 +3,11 @@ package com.jetbrains.edu.python.learning.checkio
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.reformatCodeInAllTaskFiles
-import com.jetbrains.edu.python.learning.PyCourseBuilderBase
+import com.jetbrains.edu.python.learning.PyCourseBuilder
 import com.jetbrains.edu.python.learning.PyIdeaCourseProjectGenerator
 import com.jetbrains.python.newProject.PyNewProjectSettings
 
-class PyIdeaCheckiOCourseProjectGenerator(builder: PyCourseBuilderBase, val course: Course) :
+class PyIdeaCheckiOCourseProjectGenerator(builder: PyCourseBuilder, val course: Course) :
   PyIdeaCourseProjectGenerator(builder, course) {
 
   override fun beforeProjectGenerated(): Boolean = true
