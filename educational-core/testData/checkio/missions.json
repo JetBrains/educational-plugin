@@ -63,7 +63,7 @@
       "id": 474,
       "stationId": "32",
       "stationName": "SendGrid",
-      "isSolved": false,
+      "isSolved": true,
       "slug": "stressful-subject"
     }
   ]

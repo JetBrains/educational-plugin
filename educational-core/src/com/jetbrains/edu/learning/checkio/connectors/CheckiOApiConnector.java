@@ -22,4 +22,7 @@ public abstract class CheckiOApiConnector {
     final String accessToken = myOauthConnector.getAccessToken();
     return myCheckiOApiInterface.getMissionList(accessToken).execute();
   }
+
+  @NotNull
+  abstract public String getLanguageId();
 }

@@ -5,14 +5,22 @@ import com.intellij.openapi.progress.ProgressManager
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames.*
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import java.util.*
+import java.util.Locale.ENGLISH
 
-class CheckiOCourseContentGenerator(private val fileType: LanguageFileType, private val apiConnector: CheckiOApiConnector) {
+class CheckiOCourseContentGenerator @JvmOverloads constructor(private val fileType: LanguageFileType,
+                                                              private val apiConnector: CheckiOApiConnector,
+                                                              private val locale: Locale = ENGLISH) {
+
   fun getStationsFromServer(): List<CheckiOStation> {
     val stations = mutableMapOf<Int, CheckiOStation>()
 
     for (mission in apiConnector.missionList) {
       generateTaskFile(mission)
+      addLinks(mission)
       val station = stations.computeIfAbsent(mission.station.id) { mission.station }
       station.addMission(mission)
       mission.station = station
@@ -27,6 +35,16 @@ class CheckiOCourseContentGenerator(private val fileType: LanguageFileType, priv
       false,
       null
     )
+
+  private fun addLinks(mission: CheckiOMission) {
+    val solutionsLink = getSolutionsLink(apiConnector.languageId, mission.slug)
+    val solutions = if (mission.status == CheckStatus.Solved) "<p><a href=\"$solutionsLink\">$VIEW_SOLUTIONS</a></p>" else ""
+
+    val taskLink = getTaskLink(apiConnector.languageId, locale.language, mission.slug)
+    val task = "<p><a href=\"$taskLink\">$TASK_LINK</a></p>"
+
+    mission.descriptionText += "$solutions\n$task"
+  }
 
   private fun generateTaskFile(mission: CheckiOMission) {
     val taskFile = TaskFile("mission.${fileType.defaultExtension}", mission.code)

@@ -10,11 +10,13 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtils.synchronize
+import com.jetbrains.edu.learning.EduUtils.updateToolWindows
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.checkio.notifications.CheckiONotification
+import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
@@ -38,6 +40,7 @@ class CheckiOCourseUpdater(
       synchronize()
       ProjectView.getInstance(project).refresh()
       YamlFormatSynchronizer.saveAll(project)
+      updateToolWindows(project)
     }
   }
 
@@ -115,11 +118,7 @@ class CheckiOCourseUpdater(
     }
   }
 
-  private fun updateMission(newMission: CheckiOMission, oldMission: CheckiOMission?) {
-    if (oldMission == null) {
-      return LOG.error("Corresponding local mission is not found for mission from server [${newMission.id}; ${newMission.name}]")
-    }
-
+  private fun updateMission(newMission: CheckiOMission, oldMission: CheckiOMission) {
     val oldTaskFile = oldMission.taskFile
 
     val oldMissionDir = oldMission.getDir(project)
@@ -134,17 +133,20 @@ class CheckiOCourseUpdater(
     if (secondsFromChangeOnServer < secondsFromLocalChange) {
       val oldDocument = runReadAction {
         FileDocumentManager.getInstance().getDocument(oldVirtualFile)
-      }
-
-      if (oldDocument == null) {
-        return LOG.error("Document isn't provided for VirtualFile ${oldVirtualFile.name}")
-      }
+      } ?: return LOG.error("Document isn't provided for VirtualFile ${oldVirtualFile.name}")
 
       runWriteAction {
         RevertTaskAction.resetDocument(oldDocument, newMission.taskFile)
       }
+
+      val descriptionFile = oldMission.getDescriptionFile(project) ?: return
+      val descriptionDocument = FileDocumentManager.getInstance().getDocument(descriptionFile) ?: return
+
+      runWriteAction {
+        descriptionDocument.setText(newMission.descriptionText)
+      }
     } else {
-      newMission.taskFile.setText(oldTaskFile.getText())
+      newMission.taskFile.setText(oldTaskFile.text)
     }
   }
 

@@ -16,10 +16,14 @@ public class CheckiOMission extends EduTask {
   @NotNull
   private String myCode;
 
+  @NotNull
+  private String mySlug;
+
   private long mySecondsFromLastChangeOnServer;
 
   public CheckiOMission() {
     myCode = "";
+    mySlug = "";
     myStation = new CheckiOStation();
   }
 
@@ -48,7 +52,16 @@ public class CheckiOMission extends EduTask {
   }
 
   public void setCode(@NotNull String code) {
-    this.myCode = code;
+    myCode = code;
+  }
+
+  @NotNull
+  public String getSlug() {
+    return mySlug;
+  }
+
+  public void setSlug(@NotNull String slug) {
+    mySlug = slug;
   }
 
   @NotNull

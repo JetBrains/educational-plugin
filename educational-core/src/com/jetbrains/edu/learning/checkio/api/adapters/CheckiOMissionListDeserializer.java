@@ -33,7 +33,8 @@ public class CheckiOMissionListDeserializer implements JsonDeserializer<List<Che
       mission.setDescriptionFormat(DescriptionFormat.HTML);
       mission.setDescriptionText(jsonMissionObject.get("description").getAsString());
       mission.setStatus(jsonMissionObject.get("isSolved").getAsBoolean() ? CheckStatus.Solved : CheckStatus.Unchecked);
-      mission.setCode(jsonMissionObject.getAsJsonObject().get("code").getAsString());
+      mission.setCode(jsonMissionObject.get("code").getAsString());
+      mission.setSlug(jsonMissionObject.get("slug").getAsString());
 
       final JsonElement secondsPast = jsonMissionObject.get("secondsPast");
 

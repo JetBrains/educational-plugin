@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat.tasks;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -42,6 +43,7 @@ import java.util.*;
  *    - add yaml mixins for course creator and student fields {@link com.jetbrains.edu.learning.yaml.format}
  */
 public abstract class Task extends StudyItem {
+  private static final Logger LOG = Logger.getInstance(Task.class);
   protected CheckStatus myStatus = CheckStatus.Unchecked;
   private Map<String, TaskFile> myTaskFiles = new LinkedHashMap<>();
   @NotNull
@@ -159,6 +161,10 @@ public abstract class Task extends StudyItem {
 
   @Nullable
   public VirtualFile getTaskDir(@NotNull final Project project) {
+    if (myLesson == null) {
+      LOG.warn("Lesson is null for task " + getName() + " (id " + getId() + ")");
+      return null;
+    }
     final VirtualFile lessonDir = myLesson.getLessonDir(project);
 
     return lessonDir == null ? null : lessonDir.findChild(TaskExt.getDirName(this));
