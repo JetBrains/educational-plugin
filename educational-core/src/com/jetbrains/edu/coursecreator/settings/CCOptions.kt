@@ -8,6 +8,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.Companion.isCourseCreatorFeaturesEnabled
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
 import javax.swing.ButtonGroup
 import javax.swing.JComponent
@@ -27,18 +28,18 @@ class CCOptions : OptionsProvider {
     buttonGroup.add(markdownRadioButton)
   }
 
-  override fun getDisplayName(): String = "Course Creator"
+  override fun getDisplayName(): String = EduCoreBundle.message("ccoptions.display.name")
 
   override fun createComponent(): JComponent? {
     if (!isCourseCreatorFeaturesEnabled) return null
 
     return panel {
-      row("Default task description format:") { }
+      row(EduCoreBundle.message("ccoptions.task.description.format")) { }
       row { htmlRadioButton(gapLeft = RADIO_BUTTON_INDENT) }
       row { markdownRadioButton(gapLeft = RADIO_BUTTON_INDENT) }
 
       if (isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR)) {
-        row("Show previous task file in framework lessons:") { showSplitEditorCheckBox() }
+        row(EduCoreBundle.message("ccoptions.split.editor")) { showSplitEditorCheckBox() }
       }
     }.apply {
       border = IdeBorderFactory.createTitledBorder(displayName)
