@@ -47,8 +47,8 @@ open class CodeforcesTask : Task() {
         CodeforcesTask()
       }
       else {
-        val inputFileName = htmlElement.selectFirst("div.input-file").text()
-        val outputFileName = htmlElement.selectFirst("div.output-file").text()
+        val inputFileName = htmlElement.selectFirst("div.input-file").ownText()
+        val outputFileName = htmlElement.selectFirst("div.output-file").ownText()
         CodeforcesTaskWithFileIO(inputFileName, outputFileName)
       }
       task.lesson = lesson
