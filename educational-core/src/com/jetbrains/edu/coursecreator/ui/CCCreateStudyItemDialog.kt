@@ -19,7 +19,7 @@ abstract class CCCreateStudyItemDialogBase(
   protected val additionalPanels: List<AdditionalPanel>
 ) : CCDialogWrapperBase(project) {
 
-  private val nameField: JBTextField = JBTextField(model.suggestedName, 30)
+  private val nameField: JBTextField = JBTextField(model.suggestedName, TEXT_FIELD_COLUMNS)
   private val validator: InputValidatorEx = CCStudyItemPathInputValidator(course, model.itemType, model.parentDir)
 
   protected val positionPanel: CCItemPositionPanel? = additionalPanels.find { it is CCItemPositionPanel } as? CCItemPositionPanel
@@ -39,7 +39,9 @@ abstract class CCCreateStudyItemDialogBase(
       }
     }
     return panel {
-      row("Name:") { nameField() }
+      if (showNameField()) {
+        row("Name:") { nameField() }
+      }
       createAdditionalFields(this)
       additionalPanels.forEach { it.attach(this) }
     }
@@ -48,13 +50,22 @@ abstract class CCCreateStudyItemDialogBase(
   override fun getPreferredFocusedComponent(): JComponent? = nameField
 
   open fun showAndGetResult(): NewStudyItemInfo? =
-    if (showAndGet()) NewStudyItemInfo(
+    if (showAndGet()) createNewStudyItemInfo() else null
+
+  protected open fun createNewStudyItemInfo(): NewStudyItemInfo {
+    return NewStudyItemInfo(
       nameField.text,
       model.baseIndex + (positionPanel?.indexDelta ?: AFTER_DELTA),
       model.studyItemVariants.first().ctr
-    ) else null
+    )
+  }
 
   protected open fun createAdditionalFields(builder: LayoutBuilder) {}
+  protected open fun showNameField(): Boolean = true
+
+  companion object {
+    const val TEXT_FIELD_COLUMNS: Int = 30
+  }
 }
 
 class CCCreateStudyItemDialog(

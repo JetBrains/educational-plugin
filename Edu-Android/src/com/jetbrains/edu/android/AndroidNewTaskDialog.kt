@@ -22,9 +22,30 @@ class AndroidNewTaskDialog(
   course: Course,
   model: NewStudyItemUiModel,
   additionalPanels: List<AdditionalPanel>
+) : AndroidNewTaskDialogBase(project, course, model, additionalPanels) {
+  init { init() }
+}
+
+class AndroidNewTaskAfterPopupDialog(
+  project: Project,
+  course: Course,
+  model: NewStudyItemUiModel,
+  private val currentInfo: NewStudyItemInfo
+) : AndroidNewTaskDialogBase(project, course, model, emptyList()) {
+  init { init() }
+
+  override fun showNameField(): Boolean = false
+  override fun createNewStudyItemInfo(): NewStudyItemInfo = currentInfo
+}
+
+abstract class AndroidNewTaskDialogBase(
+  project: Project,
+  course: Course,
+  model: NewStudyItemUiModel,
+  additionalPanels: List<AdditionalPanel>
 ) : CCCreateStudyItemDialogBase(project, course, model, additionalPanels) {
 
-  private val packageNameField: JBTextField = JBTextField().apply {
+  private val packageNameField: JBTextField = JBTextField(TEXT_FIELD_COLUMNS).apply {
     val userName = System.getProperty("user.name")
     val packageSuffix = if (userName != null) convertNameToPackage(userName) else null
     text = if (packageSuffix.isNullOrEmpty()) {
@@ -40,8 +61,6 @@ class AndroidNewTaskDialog(
   }
 
   private var compileSdkVersion: Int = SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
-
-  init { init() }
 
   override fun createAdditionalFields(builder: LayoutBuilder) {
     val androidVersionsInfo = AndroidVersionsInfo()
