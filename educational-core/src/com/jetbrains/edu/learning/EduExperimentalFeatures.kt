@@ -5,5 +5,4 @@ object EduExperimentalFeatures {
   const val SPLIT_EDITOR = "edu.course.creator.split.editor"
   const val CC_HYPERSKILL = "edu.course.hyperskill"
   const val CODEFORCES = "edu.course.codeforces"
-  const val GO_COURSES = "com.jetbrains.edu.go"
 }
