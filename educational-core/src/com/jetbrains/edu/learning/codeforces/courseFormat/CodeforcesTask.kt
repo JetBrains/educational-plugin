@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TEST_DATA_FOLDER
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -41,7 +40,7 @@ open class CodeforcesTask : Task() {
 
   companion object {
     fun create(htmlElement: Element, lesson: Lesson): CodeforcesTask {
-      val isStandardIO = htmlElement.select("div.input-file, div.output-file").all { isStandardIOType(lesson.course, it) }
+      val isStandardIO = htmlElement.select("div.input-file, div.output-file").all { isStandardIOType(it) }
 
       val task = if (isStandardIO) {
         CodeforcesTask()
@@ -71,13 +70,11 @@ open class CodeforcesTask : Task() {
       return task
     }
 
-    private fun isStandardIOType(course: Course, element: Element): Boolean {
-      val text = element.text()
-      return when (course.languageCode) {
-        "en" -> "standard" in text
-        "ru" -> "стандарт" in text
-        else -> false
-      }
+    private fun isStandardIOType(element: Element): Boolean {
+      val text = element.ownText()
+      return text.contains(STANDARD_INPUT_REGEX)
     }
+
+    private val STANDARD_INPUT_REGEX = "^(standard|стандарт)[^.]*".toRegex()
   }
 }
