@@ -15,7 +15,8 @@ interface CodeforcesLanguageProvider {
 
   fun createTaskFiles(task: Task): List<TaskFile> {
     val text = GeneratorUtils.getInternalTemplateText(templateFileName)
-    return listOf(TaskFile(GeneratorUtils.joinPaths(task.sourceDir, templateFileName), text))
+    val fileName = templateFileName.removePrefix("codeforces.")
+    return listOf(TaskFile(GeneratorUtils.joinPaths(task.sourceDir, fileName), text))
   }
 
   companion object {
