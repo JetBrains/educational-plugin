@@ -21,11 +21,13 @@ import com.intellij.ide.actions.QualifiedNameProvider
 import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.NavigatablePsiElement
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -102,14 +104,20 @@ abstract class TaskDescriptionToolWindow {
       val application = ApplicationManager.getApplication()
       application.invokeLater {
         application.runReadAction {
-          for (provider in QualifiedNameProvider.EP_NAME.extensionList) {
-            val element = provider.qualifiedNameToElement(qualifiedName, project)
-            if (element is NavigatablePsiElement) {
-              val navigatableElement = element as NavigatablePsiElement?
-              if (navigatableElement!!.canNavigate()) {
-                navigatableElement.navigate(true)
+          val dumbService = DumbService.getInstance(project)
+          if (dumbService.isDumb) {
+            dumbService.showDumbModeNotification(EduCoreBundle.message("task.description.psi.link.dumb.mode"))
+          }
+          else {
+            for (provider in QualifiedNameProvider.EP_NAME.extensionList) {
+              val element = provider.qualifiedNameToElement(qualifiedName, project)
+              if (element is NavigatablePsiElement) {
+                val navigatableElement = element as NavigatablePsiElement?
+                if (navigatableElement!!.canNavigate()) {
+                  navigatableElement.navigate(true)
+                }
+                break
               }
-              break
             }
           }
         }
