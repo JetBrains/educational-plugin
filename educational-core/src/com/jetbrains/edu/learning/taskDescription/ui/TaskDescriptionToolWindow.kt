@@ -112,9 +112,8 @@ abstract class TaskDescriptionToolWindow {
             for (provider in QualifiedNameProvider.EP_NAME.extensionList) {
               val element = provider.qualifiedNameToElement(qualifiedName, project)
               if (element is NavigatablePsiElement) {
-                val navigatableElement = element as NavigatablePsiElement?
-                if (navigatableElement!!.canNavigate()) {
-                  navigatableElement.navigate(true)
+                if (element.canNavigate()) {
+                  element.navigate(true)
                 }
                 break
               }
