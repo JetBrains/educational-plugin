@@ -91,8 +91,8 @@ class Step {
   constructor(project: Project, task: Task) {
     CourseArchiveCreator.addDescriptions(project, task)
     text = if (task.descriptionFormat == DescriptionFormat.MD) {
-      val taskDir = task.getTaskDir(project)
-      if (taskDir != null) EduUtils.generateMarkdownHtml(task.descriptionText) else task.descriptionText
+      // convert to html because Stepik web site can't display markdown
+      EduUtils.convertToHtml(task.descriptionText)
     }
     else task.descriptionText
 
