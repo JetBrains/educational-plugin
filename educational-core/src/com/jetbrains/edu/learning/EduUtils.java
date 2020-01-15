@@ -421,15 +421,15 @@ public class EduUtils {
     return result;
   }
 
-  @Nullable
-  public static String convertToHtml(@Nullable final String content) {
-    if (content == null) return null;
+  public static String convertToHtml(@NotNull final String content) {
+    // markdown parser is supposed to work with normalized text from document
+    String normalizedContent = StringUtil.convertLineSeparators(content);
 
-    return generateMarkdownHtml(content);
+    return generateMarkdownHtml(normalizedContent);
   }
 
   @NotNull
-  public static String generateMarkdownHtml(@NotNull String text) {
+  private static String generateMarkdownHtml(@NotNull String text) {
     GFMFlavourDescriptor flavour = new GFMFlavourDescriptor();
     final ASTNode parsedTree = new MarkdownParser(flavour).buildMarkdownTreeFromString(text);
 
