@@ -440,8 +440,6 @@ public class EduUtils {
     return EduNames.TASK_HTML.equals(fileName) || EduNames.TASK_MD.equals(fileName);
   }
 
-
-
   @Nullable
   public static VirtualFile findTaskFileInDir(@NotNull TaskFile taskFile, @NotNull VirtualFile taskDir) {
     return taskDir.findFileByRelativePath(taskFile.getName());
