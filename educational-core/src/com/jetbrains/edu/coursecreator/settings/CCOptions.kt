@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.settings
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBRadioButton
+import com.intellij.ui.components.Label
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.Companion.isCourseCreatorFeaturesEnabled
@@ -18,6 +19,7 @@ class CCOptions : OptionsProvider {
   private val htmlRadioButton = JBRadioButton("Html", CCSettings.getInstance().useHtmlAsDefaultTaskFormat())
   private val markdownRadioButton = JBRadioButton("Markdown", !CCSettings.getInstance().useHtmlAsDefaultTaskFormat())
 
+  private val copyTestsCheckBox = JBCheckBox(null, CCSettings.getInstance().copyTestsInFrameworkLessons())
   private val showSplitEditorCheckBox = JBCheckBox(null, CCSettings.getInstance().showSplitEditor())
 
   init {
@@ -38,6 +40,10 @@ class CCOptions : OptionsProvider {
       row { htmlRadioButton(gapLeft = RADIO_BUTTON_INDENT) }
       row { markdownRadioButton(gapLeft = RADIO_BUTTON_INDENT) }
 
+      val copyTestLabel = Label(EduCoreBundle.message("ccoptions.copy.tests"))
+      copyTestLabel.toolTipText = EduCoreBundle.message("ccoptions.copy.tests.tooltip")
+      row(copyTestLabel) { copyTestsCheckBox() }
+
       if (isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR)) {
         row(EduCoreBundle.message("ccoptions.split.editor")) { showSplitEditorCheckBox() }
       }
@@ -49,13 +55,15 @@ class CCOptions : OptionsProvider {
   override fun isModified(): Boolean {
     val settings = CCSettings.getInstance()
     return htmlRadioButton.isSelected != settings.useHtmlAsDefaultTaskFormat() ||
-           showSplitEditorCheckBox.isSelected != settings.showSplitEditor()
+           showSplitEditorCheckBox.isSelected != settings.showSplitEditor() ||
+           copyTestsCheckBox.isSelected != settings.copyTestsInFrameworkLessons()
   }
 
   override fun apply() {
     val settings = CCSettings.getInstance()
     settings.setUseHtmlAsDefaultTaskFormat(htmlRadioButton.isSelected)
     settings.setShowSplitEditor(showSplitEditorCheckBox.isSelected)
+    settings.setCopyTestsInFrameworkLessons(copyTestsCheckBox.isSelected)
   }
 
   override fun reset() {
@@ -63,6 +71,7 @@ class CCOptions : OptionsProvider {
     htmlRadioButton.isSelected = settings.useHtmlAsDefaultTaskFormat()
     markdownRadioButton.isSelected = !settings.useHtmlAsDefaultTaskFormat()
     showSplitEditorCheckBox.isSelected = settings.showSplitEditor()
+    copyTestsCheckBox.isSelected = settings.copyTestsInFrameworkLessons()
   }
 
   companion object {

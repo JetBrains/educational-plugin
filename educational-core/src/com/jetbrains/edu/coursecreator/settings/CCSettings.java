@@ -14,6 +14,7 @@ public class CCSettings implements PersistentStateComponent<CCSettings.State> {
   public static class State {
     public boolean isHtmlDefault = true;
     public boolean showSplitEditor = false;
+    public boolean copyTestsInFrameworkLessons = false;
   }
   @Nullable
   @Override
@@ -40,6 +41,14 @@ public class CCSettings implements PersistentStateComponent<CCSettings.State> {
 
   public void setShowSplitEditor(boolean value) {
     myState.showSplitEditor = value;
+  }
+
+  public boolean copyTestsInFrameworkLessons() {
+    return myState.copyTestsInFrameworkLessons;
+  }
+
+  public void setCopyTestsInFrameworkLessons(boolean value) {
+    myState.copyTestsInFrameworkLessons = value;
   }
 
   public static CCSettings getInstance() {

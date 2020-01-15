@@ -1,13 +1,10 @@
 package com.jetbrains.edu.coursecreator.actions.create
 
-import com.intellij.openapi.project.Project
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
-import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
+import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -15,7 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
-import junit.framework.TestCase
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.hasItem
 import org.junit.Assert.assertThat
@@ -35,7 +31,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi("task2")) {
       testAction(dataContext(lessonFile), CCCreateTask())
     }
-    TestCase.assertEquals(2, course.lessons[0].taskList.size)
+    assertEquals(2, course.lessons[0].taskList.size)
   }
 
   fun `test create task in lesson in section`() {
@@ -53,7 +49,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi("task2")) {
       testAction(dataContext(lessonFile), CCCreateTask())
     }
-    TestCase.assertEquals(2, course.sections[0].lessons[0].taskList.size)
+    assertEquals(2, course.sections[0].lessons[0].taskList.size)
   }
 
   fun `test create task in empty lesson`() {
@@ -65,7 +61,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi("task1")) {
       testAction(dataContext(lessonFile), CCCreateTask())
     }
-    TestCase.assertEquals(1, course.lessons[0].taskList.size)
+    assertEquals(1, course.lessons[0].taskList.size)
   }
 
   fun `test create task after task`() {
@@ -86,10 +82,10 @@ class CCCreateTaskTest : EduActionTestCase() {
     }
 
     val lesson = course.lessons[0]
-    TestCase.assertEquals(3, lesson.taskList.size)
-    TestCase.assertEquals(1, lesson.getTask("task1")!!.index)
-    TestCase.assertEquals(2, lesson.getTask("task01")!!.index)
-    TestCase.assertEquals(3, lesson.getTask("task2")!!.index)
+    assertEquals(3, lesson.taskList.size)
+    assertEquals(1, lesson.getTask("task1")!!.index)
+    assertEquals(2, lesson.getTask("task01")!!.index)
+    assertEquals(3, lesson.getTask("task2")!!.index)
   }
 
   fun `test create task before task`() {
@@ -110,10 +106,10 @@ class CCCreateTaskTest : EduActionTestCase() {
     }
 
     val lesson = course.lessons[0]
-    TestCase.assertEquals(3, lesson.taskList.size)
-    TestCase.assertEquals(1, lesson.getTask("task1")!!.index)
-    TestCase.assertEquals(2, lesson.getTask("task01")!!.index)
-    TestCase.assertEquals(3, lesson.getTask("task2")!!.index)
+    assertEquals(3, lesson.taskList.size)
+    assertEquals(1, lesson.getTask("task1")!!.index)
+    assertEquals(2, lesson.getTask("task01")!!.index)
+    assertEquals(3, lesson.getTask("task2")!!.index)
   }
 
   fun `test create task before task with custom name`() {
@@ -135,10 +131,10 @@ class CCCreateTaskTest : EduActionTestCase() {
     }
 
     val lesson = course.lessons[0]
-    TestCase.assertEquals(3, lesson.taskList.size)
-    TestCase.assertEquals(1, lesson.getTask("task1")!!.index)
-    TestCase.assertEquals(2, lesson.getTask("task01")!!.index)
-    TestCase.assertEquals(3, lesson.getTask(customTaskName)!!.index)
+    assertEquals(3, lesson.taskList.size)
+    assertEquals(1, lesson.getTask("task1")!!.index)
+    assertEquals(2, lesson.getTask("task01")!!.index)
+    assertEquals(3, lesson.getTask(customTaskName)!!.index)
   }
 
   fun `test create task after task in section`() {
@@ -161,10 +157,10 @@ class CCCreateTaskTest : EduActionTestCase() {
     }
 
     val lesson = course.sections[0].lessons[0]
-    TestCase.assertEquals(3, lesson.taskList.size)
-    TestCase.assertEquals(1, lesson.getTask("task1")!!.index)
-    TestCase.assertEquals(2, lesson.getTask("task01")!!.index)
-    TestCase.assertEquals(3, lesson.getTask("task2")!!.index)
+    assertEquals(3, lesson.taskList.size)
+    assertEquals(1, lesson.getTask("task1")!!.index)
+    assertEquals(2, lesson.getTask("task01")!!.index)
+    assertEquals(3, lesson.getTask("task2")!!.index)
   }
 
   fun `test create task not available on course`() {
@@ -179,7 +175,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     val action = CCCreateTask()
     val event = TestActionEvent(dataContext(sourceVFile!!), action)
     action.beforeActionPerformedUpdate(event)
-    TestCase.assertFalse(event.presentation.isEnabledAndVisible)
+    assertFalse(event.presentation.isEnabledAndVisible)
   }
 
   fun `test create task not available on section`() {
@@ -196,7 +192,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     val action = CCCreateTask()
     val event = TestActionEvent(dataContext(sourceVFile), action)
     action.beforeActionPerformedUpdate(event)
-    TestCase.assertFalse(event.presentation.isEnabledAndVisible)
+    assertFalse(event.presentation.isEnabledAndVisible)
   }
 
   fun `test create framework task without test copy`() = doCreateFrameworkTaskTest(false)
@@ -215,8 +211,16 @@ class CCCreateTaskTest : EduActionTestCase() {
 
     val lessonFile = findFile(lessonName)
     val newTaskName = "task2"
-    withMockCreateStudyItemUi(MockNewFrameworkTaskUi(newTaskName, copyTests = copyTests)) {
-      testAction(dataContext(lessonFile), CCCreateTask())
+    withMockCreateStudyItemUi(MockNewStudyItemUi(newTaskName)) {
+      val settings = CCSettings.getInstance()
+      val copyTestOld = settings.copyTestsInFrameworkLessons()
+      settings.setCopyTestsInFrameworkLessons(copyTests)
+      try {
+        testAction(dataContext(lessonFile), CCCreateTask())
+      }
+      finally {
+        settings.setCopyTestsInFrameworkLessons(copyTestOld)
+      }
     }
 
     val newTask = course.findTask(lessonName, newTaskName)
@@ -226,7 +230,7 @@ class CCCreateTaskTest : EduActionTestCase() {
 
     assertThat(newTask.taskFiles.keys, allOf(hasItem("src/Task.kt"), testFileMatcher))
     val testText = if (copyTests) "//text changed" else getDefaultTestText(course)
-    TestCase.assertEquals(testText, newTask.taskFiles[if (copyTests) "test/Tests1.kt" else "test/Tests.kt"]?.text)
+    assertEquals(testText, newTask.taskFiles[if (copyTests) "test/Tests1.kt" else "test/Tests.kt"]?.text)
 
     fileTree {
       dir(lessonName) {
@@ -264,18 +268,5 @@ class CCCreateTaskTest : EduActionTestCase() {
   private fun getDefaultTestText(course: Course): String? {
     val testTemplateName = course.configurator?.courseBuilder?.testTemplateName ?: return null
     return GeneratorUtils.getInternalTemplateText(testTemplateName)
-  }
-}
-
-private class MockNewFrameworkTaskUi(name: String, index: Int? = null, private val copyTests: Boolean = false) : MockNewStudyItemUi(name, index) {
-  override fun showDialog(
-    project: Project,
-    course: Course,
-    model: NewStudyItemUiModel,
-    additionalPanels: List<AdditionalPanel>
-  ): NewStudyItemInfo? {
-    return super.showDialog(project, course, model, additionalPanels)?.apply {
-      putUserData(CCCreateTask.COPY_TESTS_FROM_PREV_TASK, copyTests)
-    }
   }
 }
