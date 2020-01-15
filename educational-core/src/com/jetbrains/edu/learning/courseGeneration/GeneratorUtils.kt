@@ -223,7 +223,7 @@ object GeneratorUtils {
     val invalidSymbols = if (SystemInfo.isWindows) WINDOWS_INVALID_SYMBOLS else UNIX_INVALID_SYMBOLS
     var validName = replace(invalidSymbols, " ").trim()
     if (SystemInfo.isWindows && endsWith(".")) {
-      validName = validName.trim('.')
+      validName = validName.trim('.').trim()
     }
     return validName
   }
