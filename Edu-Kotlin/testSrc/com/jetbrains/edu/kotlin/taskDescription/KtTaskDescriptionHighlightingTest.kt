@@ -29,18 +29,18 @@ class KtTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
   """, """
     <html>
      <head></head>
-     <body md-src-pos="0..252">
-      <p md-src-pos="0..33">Code block with default language:</p>
+     <body>
+      <p>Code block with default language:</p>
       <span class="code-block"><pre>  <span style="...">fun </span>main(args: Array&lt;String&gt;) {
         println(<span style="...">"Hello!"</span>)
       }
     </pre> </span>
-      <p md-src-pos="103..137">Code block with specific language:</p>
+      <p>Code block with specific language:</p>
       <span class="code-block"><pre>  <span style="...">fun </span>main(args: Array&lt;String&gt;) {
         println(<span style="...">"Hello!"</span>)
       }
     </pre> </span>
-      <p md-src-pos="213..252">Inline code <span class="code"><span style="...">if </span>(condition) {} <span style="...">else </span>{}</span></p>
+      <p>Inline code <span class="code"><span style="...">if </span>(condition) {} <span style="...">else </span>{}</span></p>
      </body>
     </html>
   """)

@@ -92,7 +92,7 @@ class Step {
     CourseArchiveCreator.addDescriptions(project, task)
     text = if (task.descriptionFormat == DescriptionFormat.MD) {
       val taskDir = task.getTaskDir(project)
-      if (taskDir != null) EduUtils.generateMarkdownHtml(taskDir, task.descriptionText) else task.descriptionText
+      if (taskDir != null) EduUtils.generateMarkdownHtml(task.descriptionText) else task.descriptionText
     }
     else task.descriptionText
 

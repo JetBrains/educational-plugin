@@ -9,7 +9,7 @@ import junit.framework.TestCase
 class TaskDescriptionMarkdownTest : EduTestCase() {
 
   fun `test plain text`() {
-    doTest("solve task", "<body md-src-pos=\"0..10\"><p md-src-pos=\"0..10\">solve task</p></body>")
+    doTest("solve task", "<body><p>solve task</p></body>")
   }
 
   fun `test template text`() {
@@ -20,7 +20,7 @@ class TaskDescriptionMarkdownTest : EduTestCase() {
            "<div class=\"hint\">\n" +
            "  You can add hints anywhere in task text. Copy all hint div block and change its content.\n" +
            "</div>",
-           "<body md-src-pos=\"0..175\"><p md-src-pos=\"0..30\">This is the markdown document.</p><p md-src-pos=\"32..57\">Write your task text here</p><div class=\"hint\">\n" +
+           "<body><p>This is the markdown document.</p><p>Write your task text here</p><div class=\"hint\">\n" +
            "  You can add hints anywhere in task text. Copy all hint div block and change its content.\n" +
            "</div>\n" +
            "</body>")
@@ -34,7 +34,7 @@ class TaskDescriptionMarkdownTest : EduTestCase() {
            "<div class=\"hint\">\n" +
            "  You can add hints anywhere in task text. Copy all hint div block and change its content.\n" +
            "</div>",
-           "<body md-src-pos=\"0..176\"><h1 md-src-pos=\"0..31\">This is the markdown document.</h1><p md-src-pos=\"33..58\">Write your task text here</p><div class=\"hint\">\n" +
+           "<body><h1>This is the markdown document.</h1><p>Write your task text here</p><div class=\"hint\">\n" +
            "  You can add hints anywhere in task text. Copy all hint div block and change its content.\n" +
            "</div>\n" +
            "</body>")

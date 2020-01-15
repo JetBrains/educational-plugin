@@ -28,18 +28,18 @@ class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
   """, """
     <html>
      <head></head>
-     <body md-src-pos="0..221">
-      <p md-src-pos="0..33">Code block with default language:</p>
+     <body>
+      <p>Code block with default language:</p>
       <span class="code-block"><pre>  <span style="...">pub struct </span>Foo&lt;<span style="...">'a</span>&gt; {
           s: &amp;<span style="...">'a </span>str
       }
     </pre> </span>
-      <p md-src-pos="87..121">Code block with specific language:</p>
+      <p>Code block with specific language:</p>
       <span class="code-block"><pre>  <span style="...">fn </span>main() {
           println!(<span style="...">"Hello!"</span>)
       }
     </pre> </span>
-      <p md-src-pos="178..221">Inline code <span class="code"><span style="...">if </span>condition { <span style="...">1 </span>} <span style="...">else </span>{ <span style="...">2 </span>}</span></p>
+      <p>Inline code <span class="code"><span style="...">if </span>condition { <span style="...">1 </span>} <span style="...">else </span>{ <span style="...">2 </span>}</span></p>
      </body>
     </html>
   """)

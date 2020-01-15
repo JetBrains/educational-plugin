@@ -31,22 +31,22 @@ class CppTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase()
     Inline code `if (condition) {} else {}`
   """, """<html>
  <head></head>
- <body md-src-pos="0..328">
-  <p md-src-pos="0..33">Code block with default language:</p>
+ <body>
+  <p>Code block with default language:</p>
   <span class="code-block"><pre>  <span style="...">int </span>main(<span style="...">void</span>) {
       <span style="...">double </span>x = <span style="...">1e-6 </span>+ <span style="...">5.0</span>;
       cout &lt;&lt; <span style="...">"Hello world!"</span>;
       <span style="...">return </span><span style="...">0</span>;
    }
 </pre> </span>
-  <p md-src-pos="142..176">Code block with specific language:</p>
+  <p>Code block with specific language:</p>
   <span class="code-block"><pre>   <span style="...">int </span>main(<span style="...">void</span>) {
       <span style="...">double </span>x = <span style="...">1e-6 </span>+ <span style="...">5.0</span>;
       cout &lt;&lt; <span style="...">"Hello world!"</span>;
       <span style="...">return </span><span style="...">0</span>;
    }
 </pre> </span>
-  <p md-src-pos="289..328">Inline code <span class="code"><span style="...">if </span>(condition) {} <span style="...">else </span>{}</span></p>
+  <p>Inline code <span class="code"><span style="...">if </span>(condition) {} <span style="...">else </span>{}</span></p>
  </body>
 </html>
   """)
