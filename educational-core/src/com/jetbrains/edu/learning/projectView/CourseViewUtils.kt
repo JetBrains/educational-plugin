@@ -92,7 +92,7 @@ object CourseViewUtils {
     val fragments = presentation.coloredText
     val className = node.javaClass.simpleName
     return if (fragments.isEmpty()) {
-      "$className ${node.value.name}"
+      "$className ${presentation.presentableText}"
     }
     else {
       fragments.joinToString(separator = "", prefix = "$className ") { it.text }

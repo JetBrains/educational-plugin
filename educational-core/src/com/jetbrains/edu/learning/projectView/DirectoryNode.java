@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.projectView;
 
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
+import com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
@@ -57,6 +58,10 @@ public class DirectoryNode extends EduNode<Task> {
 
     if (name.equals(CourseExt.getSourceDir(course)) || CourseExt.getTestDirs(course).contains(name)) {
       data.setPresentableText(name);
+    }
+    else {
+      Object parentValue = getParentValue();
+      data.setPresentableText(ProjectViewDirectoryHelper.getInstance(myProject).getNodeName(getSettings(), parentValue, dir));
     }
   }
 }
