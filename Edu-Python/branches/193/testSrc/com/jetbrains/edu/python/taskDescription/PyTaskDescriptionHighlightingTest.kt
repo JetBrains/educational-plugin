@@ -27,16 +27,16 @@ class PyTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
   """, """
     <html>
      <head></head>
-     <body md-src-pos="0..200">
-      <p md-src-pos="0..33">Code block with default language:</p>
+     <body>
+      <p>Code block with default language:</p>
       <span class="code-block"><pre>  <span style="...">def </span>foo():
           print <span style="...">"Hello!"</span>
     </pre> </span>
-      <p md-src-pos="77..111">Code block with specific language:</p>
+      <p>Code block with specific language:</p>
       <span class="code-block"><pre>  <span style="...">def </span>foo():
           print <span style="...">"Hello!"</span>
     </pre> </span>
-      <p md-src-pos="161..200">Inline code <span class="code"><span style="...">if </span>__name__ == <span style="...">"__main__"</span></span></p>
+      <p>Inline code <span class="code"><span style="...">if </span>__name__ == <span style="...">"__main__"</span></span></p>
      </body>
     </html>
   """)

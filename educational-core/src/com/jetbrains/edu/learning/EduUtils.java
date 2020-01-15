@@ -60,18 +60,14 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import kotlin.Unit;
 import org.apache.commons.codec.binary.Base64;
-import org.intellij.markdown.IElementType;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor;
-import org.intellij.markdown.html.GeneratingProvider;
 import org.intellij.markdown.html.HtmlGenerator;
-import org.intellij.markdown.parser.LinkMap;
 import org.intellij.markdown.parser.MarkdownParser;
 import org.jetbrains.annotations.*;
 
 import javax.imageio.ImageIO;
 import java.io.*;
-import java.net.URI;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -286,7 +282,7 @@ public class EduUtils {
     VirtualFile taskTextFile = getTaskTextFile(taskDirectory);
     String taskDescription = ObjectUtils.chooseNotNull(getTextFromTaskTextFile(taskTextFile), task.getTaskDescription());
     if (taskTextFile != null && EduNames.TASK_MD.equals(taskTextFile.getName()) || task.getDescriptionFormat() == DescriptionFormat.MD) {
-      return convertToHtml(taskDescription, taskDirectory);
+      return convertToHtml(taskDescription);
     }
     return taskDescription;
   }
@@ -426,22 +422,18 @@ public class EduUtils {
   }
 
   @Nullable
-  public static String convertToHtml(@Nullable final String content, @NotNull VirtualFile taskDirectory) {
+  public static String convertToHtml(@Nullable final String content) {
     if (content == null) return null;
 
-    return generateMarkdownHtml(taskDirectory, content);
+    return generateMarkdownHtml(content);
   }
 
   @NotNull
-  public static String generateMarkdownHtml(@NotNull VirtualFile parent, @NotNull String text) {
-    final URI baseUri = new File(parent.getPath()).toURI();
-
+  public static String generateMarkdownHtml(@NotNull String text) {
     GFMFlavourDescriptor flavour = new GFMFlavourDescriptor();
     final ASTNode parsedTree = new MarkdownParser(flavour).buildMarkdownTreeFromString(text);
-    final Map<IElementType, GeneratingProvider> htmlGeneratingProviders =
-      flavour.createHtmlGeneratingProviders(LinkMap.Builder.buildLinkMap(parsedTree, text), baseUri);
 
-    return new HtmlGenerator(text, parsedTree, htmlGeneratingProviders, true).generateHtml();
+    return new HtmlGenerator(text, parsedTree, flavour, false).generateHtml();
   }
 
   public static boolean isTaskDescriptionFile(@NotNull final String fileName) {

@@ -30,18 +30,18 @@ class ScalaTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase
   """, """
     <html>
      <head></head>
-     <body md-src-pos="0..267">
-      <p md-src-pos="0..33">Code block with default language:</p>
+     <body>
+      <p>Code block with default language:</p>
       <span class="code-block"><pre>  <span style="...">def </span>main(args: Array[String]): Unit = {
         println(<span style="...">"Hello!"</span>)
       }
     </pre> </span>
-      <p md-src-pos="111..145">Code block with specific language:</p>
+      <p>Code block with specific language:</p>
       <span class="code-block"><pre>  <span style="...">def </span>main(args: Array[String]): Unit = {
         println(<span style="...">"Hello!"</span>)
       }
     </pre> </span>
-      <p md-src-pos="228..267">Inline code <span class="code"><span style="...">if </span>(condition) {} <span style="...">else </span>{}</span></p>
+      <p>Inline code <span class="code"><span style="...">if </span>(condition) {} <span style="...">else </span>{}</span></p>
      </body>
     </html>
   """)
