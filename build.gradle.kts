@@ -136,7 +136,7 @@ allprojects {
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compile(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
     compile("org.jsoup:jsoup:1.11.2")
-    compile("org.jetbrains:markdown:0.1.28") {
+    compile("org.jetbrains:markdown:0.1.41") {
       excludeKotlinDeps()
     }
 
