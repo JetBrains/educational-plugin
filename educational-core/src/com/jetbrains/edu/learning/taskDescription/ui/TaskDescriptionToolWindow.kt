@@ -20,6 +20,7 @@ import com.intellij.codeInsight.documentation.DocumentationManagerProtocol
 import com.intellij.ide.actions.QualifiedNameProvider
 import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.LafManagerListener
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -106,7 +107,8 @@ abstract class TaskDescriptionToolWindow {
         application.runReadAction {
           val dumbService = DumbService.getInstance(project)
           if (dumbService.isDumb) {
-            dumbService.showDumbModeNotification(EduCoreBundle.message("task.description.psi.link.dumb.mode"))
+            val message = ActionUtil.getUnavailableMessage(EduCoreBundle.message("task.description.psi.link.navigation"), false)
+            dumbService.showDumbModeNotification(message)
           }
           else {
             for (provider in QualifiedNameProvider.EP_NAME.extensionList) {

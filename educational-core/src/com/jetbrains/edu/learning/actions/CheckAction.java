@@ -7,6 +7,7 @@ import com.intellij.notification.impl.NotificationsConfigurationImpl;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -39,6 +40,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel;
@@ -125,7 +127,7 @@ public class CheckAction extends DumbAwareAction {
   private static void showCheckUnavailablePopup(Project project) {
     Balloon balloon = JBPopupFactory.getInstance()
       .createHtmlTextBalloonBuilder(
-        "Checking is not available while indexing is in progress",
+        ActionUtil.getUnavailableMessage(EduCoreBundle.message("check.task.checking"), false),
         null,
         UIUtil.getToolTipActionBackground(),
         BrowserHyperlinkListener.INSTANCE)
