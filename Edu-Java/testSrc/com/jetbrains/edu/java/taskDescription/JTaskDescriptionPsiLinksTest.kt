@@ -42,6 +42,25 @@ class JTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
+  fun `test navigate to method with encoded url`() = doTest("Foo%23foo%28int%2C%20int%29", """
+      public class Foo {
+        public void foo() {}
+        public void <caret>foo(int bar, int baz) {}
+      }
+  """) {
+    java("Foo.java", """
+      public class Foo {
+        public void foo() {}
+        public void foo(int bar, int baz) {}
+      }
+    """)
+    java("Bar.java", """
+      public class Bar {
+        public void bar() {}
+      }
+    """)
+  }
+
   fun `test navigate to inner class`() = doTest("Foo.Baz", """
     public class Foo {
       public void foo() {}
