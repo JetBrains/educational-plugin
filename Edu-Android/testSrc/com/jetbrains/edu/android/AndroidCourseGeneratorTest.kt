@@ -2,10 +2,7 @@ package com.jetbrains.edu.android
 
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.learning.CourseGenerationTestBase
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.newCourse
+import com.jetbrains.edu.learning.*
 import org.hamcrest.CoreMatchers
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert.assertThat
@@ -34,5 +31,19 @@ class AndroidCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>(
       android.useAndroidX=true
       org.gradle.jvmargs=-Xmx1536m
     """.trimIndent()))
+  }
+
+  fun `test do not rewrite already created additional files`() {
+    val course = course(language = KotlinLanguage.INSTANCE, environment = EduNames.ANDROID) {
+      additionalFile("gradle.properties", "some.awesome.property=true")
+    }
+    createCourseStructure(course)
+
+    fileTree {
+      file("local.properties")
+      file("gradle.properties", "some.awesome.property=true")
+      file("build.gradle")
+      file("settings.gradle")
+    }.assertEquals(rootDir)
   }
 }

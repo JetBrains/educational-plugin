@@ -9,6 +9,7 @@ import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
@@ -300,6 +301,19 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
       }
     }.findTask("lesson1", "task1")
     task.solutionHidden = true
+    val generatedJsonFile = generateJson()
+    val expectedCourseJson = loadExpectedJson()
+    assertEquals(expectedCourseJson, generatedJsonFile)
+  }
+
+  fun `test gradle properties in archive`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+      additionalFile("gradle.properties", "some.awesome.property=true")
+    }
+
     val generatedJsonFile = generateJson()
     val expectedCourseJson = loadExpectedJson()
     assertEquals(expectedCourseJson, generatedJsonFile)

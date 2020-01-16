@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
+import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import java.io.IOException
 import java.util.*
@@ -49,11 +50,16 @@ class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Cours
       val properties = toSortedProperties()
       try {
         GeneratorUtils.runInWriteActionAndWait(ThrowableComputable {
-          val propertiesFile = baseDir.createChildData(AndroidCourseBuilder::class.java, name)
-          propertiesFile.getOutputStream(AndroidCourseBuilder::class.java).use { properties.store(it, "") }
+          val child = baseDir.findChild(name)
+          if (child == null) {
+            val propertiesFile = baseDir.createChildData(AndroidCourseBuilder::class.java, name)
+            propertiesFile.getOutputStream(AndroidCourseBuilder::class.java).use { properties.store(it, "") }
+          }
         })
       } catch (e: IOException) {
-        LOG.warn("Failed to create `$name`", e)
+        // We want to fail tests if exception happened
+        val log: (String, Throwable) -> Unit = if (isUnitTestMode) LOG::error else LOG::warn
+        log("Failed to create `$name`", e)
       }
     }
 
