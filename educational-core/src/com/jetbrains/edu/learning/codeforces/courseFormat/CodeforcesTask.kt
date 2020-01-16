@@ -53,11 +53,19 @@ open class CodeforcesTask : Task() {
       task.lesson = lesson
       task.name = htmlElement.select("div.header").select("div.title").text()
 
+      htmlElement.select("img").forEach {
+        var srcValue = it.attr("src")
+        if (srcValue.startsWith(ESPRESSO_CODEFORCES_COM)) {
+          srcValue = srcValue.replace(ESPRESSO_CODEFORCES_COM, "https:$ESPRESSO_CODEFORCES_COM")
+        } else if (srcValue.matches(URL_WITH_TRAILING_SLASH)) {
+          srcValue = srcValue.replace(TRAILING_SLASH, "${CodeforcesNames.CODEFORCES_URL}/")
+        }
+        it.attr("src", srcValue)
+      }
+
       task.descriptionText = htmlElement.outerHtml()
         // This replacement is needed for proper MathJax visualization
         .replace("$$$", "$")
-        // Replace picture src property if it starts with slash but not codeforces URL
-        .replace("src=\"/", "src=\"${CodeforcesNames.CODEFORCES_URL}/")
 
       task.feedbackLink = FeedbackLink(
         "${(task.course as CodeforcesCourse).contestUrl}/problem/${task.name.substringBefore(".")}?locale=${task.course.languageCode}"
@@ -75,6 +83,9 @@ open class CodeforcesTask : Task() {
       return text.contains(STANDARD_INPUT_REGEX)
     }
 
+    private const val ESPRESSO_CODEFORCES_COM = "//espresso.codeforces.com/"
+    private val TRAILING_SLASH = "^/".toRegex()
+    private val URL_WITH_TRAILING_SLASH = "^/.+".toRegex()
     private val STANDARD_INPUT_REGEX = "^(standard|стандарт)[^.]*".toRegex()
   }
 }

@@ -10,12 +10,10 @@ import org.jsoup.Jsoup
 import java.io.File
 import java.io.IOException
 
-const val expectedTaskDescriptionFile = "expected task description.html"
-
 class CodeforcesParsingTest : EduTestCase() {
   override fun getTestDataPath(): String = "testData/codeforces"
 
-  fun `test codeforces task`() {
+  fun `test codeforces contest Kotlin Heroes Episode 2 task A`() {
     val course = CodeforcesCourse().apply {
       id = 1211
       languageCode = "en"
@@ -23,18 +21,36 @@ class CodeforcesParsingTest : EduTestCase() {
     val lesson = Lesson().apply { this.course = course }
     course.addLesson(lesson)
 
-    val htmlElement = Jsoup.parse(loadHtmlText()).select(".problem-statement").first()
+    val htmlElement = Jsoup.parse(loadText(contest1211)).select(".problem-statement").first()
     val task = CodeforcesTask.create(htmlElement, lesson)
 
     assertEquals("A. Three Problems", task.name)
     assertEquals("https://codeforces.com/contest/1211/problem/A?locale=en", task.feedbackLink.link)
 
-    val expectedTaskDescription = loadText(expectedTaskDescriptionFile)
+    val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1211).getValue("A"))
     assertEquals(expectedTaskDescription.trim(), task.descriptionText.trim())
   }
 
-  fun `test codeforces course`() {
-    val doc = Jsoup.parse(loadHtmlText())
+  fun `test codeforces contest Kotlin Heroes Episode 2 task G with image`() {
+    val course = CodeforcesCourse().apply {
+      id = 1211
+      languageCode = "en"
+    }
+    val lesson = Lesson().apply { this.course = course }
+    course.addLesson(lesson)
+
+    val htmlElement = Jsoup.parse(loadText(contest1211)).select(".problem-statement")[6]
+    val task = CodeforcesTask.create(htmlElement, lesson)
+
+    assertEquals("G. King's Path", task.name)
+    assertEquals("https://codeforces.com/contest/1211/problem/G?locale=en", task.feedbackLink.link)
+
+    val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1211).getValue("G"))
+    assertEquals(expectedTaskDescription.trim(), task.descriptionText.trim())
+  }
+
+  fun `test codeforces contest Kotlin Heroes Episode 2`() {
+    val doc = Jsoup.parse(loadText(contest1211))
     val course = CodeforcesCourse(ContestURLInfo(1211, "en", EduNames.KOTLIN), doc)
 
     assertEquals("Kotlin Heroes: Episode 2", course.name)
@@ -55,9 +71,15 @@ class CodeforcesParsingTest : EduTestCase() {
     assertEquals(9, lesson.taskList.size)
 
     assertEquals("A. Three Problems", lesson.taskList[0].name)
-    val expectedTaskDescription = loadText(expectedTaskDescriptionFile)
-    assertEquals(expectedTaskDescription.trim(), lesson.taskList[0].descriptionText.trim())
+    assertEquals("B. Traveling Around the Golden Ring of Berland", lesson.taskList[1].name)
+    assertEquals("C. Ice Cream", lesson.taskList[2].name)
+    assertEquals("D. Teams", lesson.taskList[3].name)
+    assertEquals("E. Double Permutation Inc.", lesson.taskList[4].name)
     assertEquals("F. kotlinkotlinkotlinkotlin...", lesson.taskList[5].name)
+    assertEquals("G. King's Path", lesson.taskList[6].name)
+    assertEquals("H. Road Repair in Treeland", lesson.taskList[7].name)
+    assertEquals("I. Unusual Graph", lesson.taskList[8].name)
+
     assertEquals("https://codeforces.com/contest/1211/problem/H?locale=en", lesson.taskList[7].feedbackLink.link)
   }
 
@@ -66,12 +88,13 @@ class CodeforcesParsingTest : EduTestCase() {
     return FileUtil.loadFile(File(testDataPath, fileName), true)
   }
 
-  @Throws(IOException::class)
-  private fun loadHtmlText(): String {
-    return loadText(getTestFile())
-  }
-
-  private fun getTestFile(): String {
-    return getTestName(true).trim() + ".html"
+  companion object {
+    private const val contest1211 = "Contest 1211.html"
+    private val expectedTaskDescriptionFiles = mapOf(
+      1211 to mapOf(
+        "A" to "Contest 1211 problem A expected task description.html",
+        "G" to "Contest 1211 problem G expected task description.html"
+      )
+    )
   }
 }
