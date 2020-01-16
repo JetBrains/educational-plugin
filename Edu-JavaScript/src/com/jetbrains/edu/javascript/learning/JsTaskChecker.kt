@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestFiles
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
-class JsEduTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(task, project) {
+open class JsTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(task, project) {
 
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
     return task.getAllTestFiles(project).mapNotNull { ConfigurationContext(it).configuration }

@@ -1,0 +1,6 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.javascript.learning.stepik.hyperskill.JsHyperskillConfigurator"
+                  language="JavaScript" courseType="Hyperskill"/>
+  </extensions>
+</idea-plugin>

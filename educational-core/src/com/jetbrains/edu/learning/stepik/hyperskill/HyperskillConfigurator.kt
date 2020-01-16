@@ -46,4 +46,8 @@ interface HyperskillConfigurator<T> : EduConfigurator<T> {
     "<a ${StyleManager().textStyleHeader};color:${linkColor()} href=\"https://hyperskill.org/learn/step/${topic.theoryId}/\">${topic.title}</a>"
 
   private fun linkColor(): String = if (UIUtil.isUnderDarcula()) "#6894C6" else "#5C84C9"
+
+  companion object {
+    const val TEST = "hstest"
+  }
 }

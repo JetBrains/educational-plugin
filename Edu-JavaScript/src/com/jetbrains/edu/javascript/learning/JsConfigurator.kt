@@ -18,11 +18,11 @@ open class JsConfigurator : EduConfiguratorWithSubmissions<JsNewProjectSettings>
 
   override fun getTestFileName() = ""
 
-  override fun getMockFileName(text: String): String = "task.js"
+  override fun getMockFileName(text: String): String = TASK_JS
 
   override fun getTestDirs() = listOf("test")
 
-  override fun getTaskCheckerProvider(): TaskCheckerProvider = TaskCheckerProvider { task, project -> JsEduTaskChecker(task, project) }
+  override fun getTaskCheckerProvider(): TaskCheckerProvider = JsTaskCheckerProvider()
 
   override fun pluginRequirements() = listOf("NodeJS")
 
@@ -31,6 +31,14 @@ open class JsConfigurator : EduConfiguratorWithSubmissions<JsNewProjectSettings>
   override fun getLogo(): Icon = EducationalCoreIcons.JsLogo
 
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
-    return super.excludeFromArchive(project, file) || file.path.contains("node_modules") || "package-lock.json" == file.name
+    return super.excludeFromArchive(project, file) || excludeFromArchive(file)
+  }
+
+  companion object {
+    const val TASK_JS = "task.js"
+
+    fun excludeFromArchive(file: VirtualFile): Boolean {
+      return file.path.contains("node_modules") || "package-lock.json" == file.name
+    }
   }
 }
