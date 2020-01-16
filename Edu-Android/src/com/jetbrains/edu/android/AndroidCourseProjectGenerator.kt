@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import java.io.IOException
+import java.util.*
 
 class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Course) : GradleCourseProjectGenerator(builder, course) {
 
@@ -26,8 +27,12 @@ class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Cours
     // because they work only with `java.io.File` but in tests we use in memory file system
     mapOf(SdkConstants.SDK_DIR_PROPERTY to (IdeSdks.getInstance().androidSdkPath?.path ?: ""))
       .saveAsPropertyFile(baseDir, LOCAL_PROPERTIES)
-    mapOf("org.gradle.jvmargs" to "-Xmx1536m")
-      .saveAsPropertyFile(baseDir, GRADLE_PROPERTIES)
+    mapOf(
+      // https://developer.android.com/jetpack/androidx#using_androidx_libraries_in_your_project
+      "android.useAndroidX" to "true",
+      "android.enableJetifier" to "true",
+      "org.gradle.jvmargs" to "-Xmx1536m"
+    ).saveAsPropertyFile(baseDir, GRADLE_PROPERTIES)
   }
 
   override fun setupGradleSettings(project: Project, sdk: Sdk?) {
@@ -41,7 +46,7 @@ class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Cours
       // We don't use template based creation for properties files because
       // `java.util.Properties#store` does escaping before writing into a file.
       // It's important in case of Windows file path because they contains `\` and `:` which should be escaped.
-      val properties = toProperties()
+      val properties = toSortedProperties()
       try {
         GeneratorUtils.runInWriteActionAndWait(ThrowableComputable {
           val propertiesFile = baseDir.createChildData(AndroidCourseBuilder::class.java, name)
@@ -50,6 +55,16 @@ class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Cours
       } catch (e: IOException) {
         LOG.warn("Failed to create `$name`", e)
       }
+    }
+
+    private fun Map<String, String>.toSortedProperties(): Properties =
+      SortedProperties().apply { putAll(this@toSortedProperties) }
+  }
+
+  private class SortedProperties : Properties() {
+    @Synchronized
+    override fun keys(): Enumeration<Any> {
+      return Collections.enumeration(super.keys().toList().sortedBy(Any::toString))
     }
   }
 }
