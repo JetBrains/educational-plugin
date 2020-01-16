@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.codeforces
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAwareAction
@@ -52,7 +53,7 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
     val languageId = showDialogAndGetLanguageIdAndVersion(contestNameAndLanguages.name, contestNameAndLanguages.languages) ?: return null
     val contestURLInfo = ContestURLInfo(contestId, contestLanguage, languageId)
 
-    val contestInfo = getContestInfoUnderProgress(contestURLInfo)
+    val contestInfo = Companion.getContestInfoUnderProgress(contestURLInfo)
     if (contestInfo == null) showFailedToAddContestNotification(contestURLInfo.url)
     return contestInfo
   }
@@ -91,15 +92,6 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
         }
       }, "Getting Available Languages", true, null)
 
-  private fun getContestInfoUnderProgress(contestURLInfo: ContestURLInfo): CodeforcesCourse? =
-    ProgressManager.getInstance().runProcessWithProgressSynchronously<CodeforcesCourse?, RuntimeException>(
-      {
-        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-        EduUtils.execCancelable {
-          CodeforcesConnector.getInstance().getContestInfo(contestURLInfo)
-        }
-      }, "Getting Contest Information", true, null)
-
   private fun showFailedToLoadContestShortInfoNotification(contestId: Int) {
     Messages.showErrorDialog("Cannot get contest information on Codeforces, contest ID: $contestId",
                              "Failed to Load Available Contest Languages")
@@ -113,5 +105,17 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
   private fun showNoSupportedLanguagesForContestNotification(contestName: String) {
     Messages.showErrorDialog("No supported languages for `$contestName` contest, please choose another one",
                              "Failed to Load Codeforces Contest")
+  }
+
+  companion object {
+    @VisibleForTesting
+    fun getContestInfoUnderProgress(contestURLInfo: ContestURLInfo): CodeforcesCourse? =
+      ProgressManager.getInstance().runProcessWithProgressSynchronously<CodeforcesCourse?, RuntimeException>(
+        {
+          ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+          EduUtils.execCancelable {
+            CodeforcesConnector.getInstance().getContestInfo(contestURLInfo)
+          }
+        }, "Getting Contest Information", true, null)
   }
 }

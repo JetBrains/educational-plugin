@@ -28,7 +28,7 @@ class CodeforcesTaskChecker(
   override fun check(indicator: ProgressIndicator): CheckResult {
     val studyEditor = FileEditorManager.getInstance(project).selectedEditor
     val solution = (studyEditor as EduEditor).editor.document.text
-    val url = (task.course as CodeforcesCourse).submissionUrl
+    val url = (task.course as CodeforcesCourse).getSubmissionUrl()
 
     indicator.text = "Executing tests"
     val testFolders = task.getDir(project)?.findChild(TEST_DATA_FOLDER)?.children.orEmpty()

@@ -25,13 +25,13 @@ class CodeforcesCourse : Course {
     parseResponseToAddContent(doc)
   }
 
-  val contestUrl: String by lazy { getContestURLFromID(id) }
-  val submissionUrl: String by lazy { "$contestUrl/submit?locale=${languageCode}" }
-
   override fun getIcon(): Icon = EducationalCoreIcons.Codeforces
   override fun getId(): Int = myId
   override fun getItemType(): String = CODEFORCES_COURSE_TYPE
   override fun getCheckAction(): CheckAction = CheckAction(CodeforcesNames.RUN_LOCAL_TESTS)
+
+  fun getContestUrl(): String = getContestURLFromID(id)
+  fun getSubmissionUrl(): String = "${getContestUrl()}/submit?locale=$languageCode"
 
   fun getConfigurator(): EduConfigurator<*>? {
     return CodeforcesLanguageProvider.getConfigurator(languageID)

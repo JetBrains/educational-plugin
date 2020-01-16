@@ -67,20 +67,20 @@ class CodeforcesParsingTest : EduTestCase() {
     """.trimIndent(), course.description)
 
     assertEquals(1, course.lessons.size)
-    val lesson = course.lessons.first()
-    assertEquals(9, lesson.taskList.size)
+    val tasks = course.lessons.first().taskList
+    assertEquals(9, tasks.size)
 
-    assertEquals("A. Three Problems", lesson.taskList[0].name)
-    assertEquals("B. Traveling Around the Golden Ring of Berland", lesson.taskList[1].name)
-    assertEquals("C. Ice Cream", lesson.taskList[2].name)
-    assertEquals("D. Teams", lesson.taskList[3].name)
-    assertEquals("E. Double Permutation Inc.", lesson.taskList[4].name)
-    assertEquals("F. kotlinkotlinkotlinkotlin...", lesson.taskList[5].name)
-    assertEquals("G. King's Path", lesson.taskList[6].name)
-    assertEquals("H. Road Repair in Treeland", lesson.taskList[7].name)
-    assertEquals("I. Unusual Graph", lesson.taskList[8].name)
+    assertEquals("A. Three Problems", tasks[0].name)
+    assertEquals("B. Traveling Around the Golden Ring of Berland", tasks[1].name)
+    assertEquals("C. Ice Cream", tasks[2].name)
+    assertEquals("D. Teams", tasks[3].name)
+    assertEquals("E. Double Permutation Inc.", tasks[4].name)
+    assertEquals("F. kotlinkotlinkotlinkotlin...", tasks[5].name)
+    assertEquals("G. King's Path", tasks[6].name)
+    assertEquals("H. Road Repair in Treeland", tasks[7].name)
+    assertEquals("I. Unusual Graph", tasks[8].name)
 
-    assertEquals("https://codeforces.com/contest/1211/problem/H?locale=en", lesson.taskList[7].feedbackLink.link)
+    assertEquals("https://codeforces.com/contest/1211/problem/H?locale=en", tasks[7].feedbackLink.link)
   }
 
   @Throws(IOException::class)

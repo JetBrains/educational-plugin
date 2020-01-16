@@ -68,7 +68,7 @@ open class CodeforcesTask : Task() {
         .replace("$$$", "$")
 
       task.feedbackLink = FeedbackLink(
-        "${(task.course as CodeforcesCourse).contestUrl}/problem/${task.name.substringBefore(".")}?locale=${task.course.languageCode}"
+        "${(task.course as CodeforcesCourse).getContestUrl()}/problem/${task.name.substringBefore(".")}?locale=${task.course.languageCode}"
       )
 
       CodeforcesLanguageProvider.generateTaskFiles(task)?.forEach {
