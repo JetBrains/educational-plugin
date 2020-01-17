@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.taskDescription
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationNamesInfo
+import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.keymap.impl.KeymapManagerImpl
@@ -13,6 +14,8 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.BrowserWindow
+import com.jetbrains.edu.learning.taskDescription.ui.EduFileEditorManagerListener
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.jsoup.Jsoup
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
@@ -150,6 +153,32 @@ class TaskDescriptionTest : EduTestCase() {
     val taskText = "You can use <code>&shortcut:OverrideMethods;</code> to override methods. One more useful shortcut: &shortcut:GotoAction;"
     val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods. One more useful shortcut: $goToActionShortcut"
     doTestShortcut(taskText, taskTextWithShortcuts)
+  }
+
+  fun testDoNotChangeCurrentTaskOnExternalFileOpening() {
+    val taskText = "Solve"
+    courseWithFiles {
+      lesson {
+        eduTask(taskDescription = taskText, taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile("taskFile1.txt")
+        }
+      }
+      additionalFile("File.txt")
+    }
+    //forcibly subscribing to FileEditorManagerListener here because it's not called in MockTaskDescriptionView init(), otherwise
+    // current task won't be set on myFixture.openFileInEditor() call
+    project.messageBus.connect(testRootDisposable).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
+                                                             EduFileEditorManagerListener(project))
+    try {
+      myFixture.openFileInEditor(findFileInTask(0, 0, "taskFile1.txt"))
+      val firstTask = TaskDescriptionView.getInstance(project).currentTask
+      myFixture.openFileInEditor(findFile("File.txt"))
+      val taskOnExternalFileOpen = TaskDescriptionView.getInstance(project).currentTask
+      assertEquals(firstTask, taskOnExternalFileOpen)
+    }
+    finally {
+      TaskDescriptionView.getInstance(project).currentTask = null
+    }
   }
 
   private fun doTestShortcut(taskText: String,

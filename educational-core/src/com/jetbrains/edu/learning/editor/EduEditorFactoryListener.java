@@ -77,7 +77,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         WolfTheProblemSolver.getInstance(project).clearProblems(openedFile);
         final ToolWindow studyToolWindow =
           ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
-        if (studyToolWindow != null) {
+        if (studyToolWindow != null && !taskFile.getTask().equals(EduUtils.getCurrentTask(project))) {
           EduUtils.updateToolWindows(project);
           studyToolWindow.show(null);
         }

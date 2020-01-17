@@ -22,6 +22,8 @@ public class EduFileEditorManagerListener implements FileEditorManagerListener {
     if (file != null) {
       task = EduUtils.getTaskForFile(myProject, file);
     }
-    TaskDescriptionView.getInstance(myProject).setCurrentTask(task);
+    if (task != null) {
+      TaskDescriptionView.getInstance(myProject).setCurrentTask(task);
+    }
   }
 }

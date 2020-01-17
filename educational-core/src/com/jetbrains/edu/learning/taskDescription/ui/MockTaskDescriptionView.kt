@@ -7,9 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.awt.Point
 
 class MockTaskDescriptionView : TaskDescriptionView() {
-  override var currentTask: Task?
-    get() = null
-    set(_) {}
+  override var currentTask: Task? = null
 
   override fun init(toolWindow: ToolWindow) {}
   override fun updateTaskSpecificPanel() {}
