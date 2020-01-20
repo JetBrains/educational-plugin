@@ -10,6 +10,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.projectView.CourseViewUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 /**
  * represents a file which is invisible for student in student mode
@@ -42,6 +43,7 @@ public class CCStudentInvisibleFileNode extends PsiFileNode {
   }
 
   @SuppressWarnings("deprecation")
+  @TestOnly
   @Override
   public String getTestPresentation() {
     return CourseViewUtils.testPresentation(this);

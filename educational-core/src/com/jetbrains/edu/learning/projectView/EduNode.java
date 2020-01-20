@@ -12,6 +12,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public abstract class EduNode<T extends StudyItem> extends PsiDirectoryNode {
     return false;
   }
 
+  @TestOnly
   @Override
   public String getTestPresentation() {
     return CourseViewUtils.testPresentation(this);

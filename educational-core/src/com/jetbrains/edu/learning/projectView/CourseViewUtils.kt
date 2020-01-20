@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import icons.EducationalCoreIcons
+import org.jetbrains.annotations.TestOnly
 import javax.swing.Icon
 
 object CourseViewUtils {
@@ -86,6 +87,7 @@ object CourseViewUtils {
     return PsiManager.getInstance(project).findDirectory(sourceVFile)
   }
 
+  @TestOnly
   @JvmStatic
   fun testPresentation(node: AbstractTreeNode<out PsiFileSystemItem>): String {
     val presentation = node.presentation
