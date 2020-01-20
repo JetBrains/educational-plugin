@@ -10,6 +10,7 @@ import com.jetbrains.edu.coursecreator.actions.stepik.CCPushSection
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
@@ -19,6 +20,8 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.loadAndFillLessonAdditionalInfo
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 open class StepikIntegrationTest : StepikTestCase() {
 
@@ -433,6 +436,15 @@ open class StepikIntegrationTest : StepikTestCase() {
     assertTrue(courseFromStepik.solutionsHidden)
     assertTrue(courseFromStepik.getLesson("lesson1")!!.getTask("task1")!!.solutionHidden!!)
     assertFalse(courseFromStepik.getLesson("lesson1")!!.getTask("task2")!!.solutionHidden!!)
+  }
+
+  fun `test upload Hyperskill lesson to Stepik`() {
+    val course = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
+      lesson {}
+    } as HyperskillCourse
+    course.hyperskillProject = HyperskillProject()
+    val lesson = course.lessons.first()
+    assertTrue(CCStepikConnector.postLesson(project, lesson, lesson.index, -1))
   }
 
   private fun setText(path: String, text: String) {
