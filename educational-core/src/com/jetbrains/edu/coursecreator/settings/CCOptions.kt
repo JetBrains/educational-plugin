@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.settings
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBRadioButton
-import com.intellij.ui.components.Label
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.Companion.isCourseCreatorFeaturesEnabled
@@ -19,8 +18,17 @@ class CCOptions : OptionsProvider {
   private val htmlRadioButton = JBRadioButton("Html", CCSettings.getInstance().useHtmlAsDefaultTaskFormat())
   private val markdownRadioButton = JBRadioButton("Markdown", !CCSettings.getInstance().useHtmlAsDefaultTaskFormat())
 
-  private val copyTestsCheckBox = JBCheckBox(null, CCSettings.getInstance().copyTestsInFrameworkLessons())
-  private val showSplitEditorCheckBox = JBCheckBox(null, CCSettings.getInstance().showSplitEditor())
+  private val copyTestsCheckBox = JBCheckBox(
+    EduCoreBundle.message("ccoptions.copy.tests"),
+    CCSettings.getInstance().copyTestsInFrameworkLessons()
+  ).apply {
+    toolTipText = EduCoreBundle.message("ccoptions.copy.tests.tooltip")
+  }
+
+  private val showSplitEditorCheckBox = JBCheckBox(
+    EduCoreBundle.message("ccoptions.split.editor"),
+    CCSettings.getInstance().showSplitEditor()
+  )
 
   init {
     // BACKCOMPAT: 2019.1. use radio button dsl
@@ -39,13 +47,9 @@ class CCOptions : OptionsProvider {
       row(EduCoreBundle.message("ccoptions.task.description.format")) { }
       row { htmlRadioButton(gapLeft = RADIO_BUTTON_INDENT) }
       row { markdownRadioButton(gapLeft = RADIO_BUTTON_INDENT) }
-
-      val copyTestLabel = Label(EduCoreBundle.message("ccoptions.copy.tests"))
-      copyTestLabel.toolTipText = EduCoreBundle.message("ccoptions.copy.tests.tooltip")
-      row(copyTestLabel) { copyTestsCheckBox() }
-
+      row { copyTestsCheckBox() }
       if (isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR)) {
-        row(EduCoreBundle.message("ccoptions.split.editor")) { showSplitEditorCheckBox() }
+        row { showSplitEditorCheckBox() }
       }
     }.apply {
       border = IdeBorderFactory.createTitledBorder(displayName)
