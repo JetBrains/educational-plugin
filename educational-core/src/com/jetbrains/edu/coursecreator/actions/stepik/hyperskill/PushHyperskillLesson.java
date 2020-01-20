@@ -76,7 +76,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText("Uploading Hyperskill lesson to " + StepikNames.STEPIK_URL);
-        doPush(lesson, course, project);
+        doPush(lesson, project);
         YamlFormatSynchronizer.saveRemoteInfo(lesson);
       }
     });
@@ -101,13 +101,12 @@ public class PushHyperskillLesson extends DumbAwareAction {
     return lesson;
   }
 
-  public static void doPush(Lesson lesson, Course course, Project project) {
+  public static void doPush(Lesson lesson, Project project) {
     String notification = "Hyperskill lesson " + (lesson.getId() > 0 ? "updated" : "uploaded");
     boolean success = lesson.getId() > 0 ? updateLesson(project, lesson, true, -1)
                                          : postLesson(project, lesson, lesson.getIndex(), -1);
 
     if (success) {
-      updateCourseAdditionalInfo(project, course);
       showNotification(project, notification, openOnStepikAction("/lesson/" + lesson.getId()));
     }
     else {
