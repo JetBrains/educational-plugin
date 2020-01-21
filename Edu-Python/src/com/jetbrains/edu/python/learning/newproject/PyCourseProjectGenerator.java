@@ -48,7 +48,7 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
   }
 
   @Override
-  protected void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {
+  public void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {
     final String testHelper = EduNames.TEST_HELPER;
     if (baseDir.findChild(testHelper) != null) return;
     final String templateText = GeneratorUtils.getInternalTemplateText("test_helper");

@@ -29,7 +29,7 @@ public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjec
   }
 
   @Override
-  protected void afterProjectGenerated(@NotNull Project project, @NotNull JsNewProjectSettings projectSettings) {
+  public void afterProjectGenerated(@NotNull Project project, @NotNull JsNewProjectSettings projectSettings) {
     super.afterProjectGenerated(project, projectSettings);
     NodeJsInterpreter interpreter = projectSettings.getSelectedInterpreter();
     NodeJsInterpreterManager.getInstance(project).setInterpreterRef(interpreter.toRef());
@@ -48,7 +48,7 @@ public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjec
 
 
   @Override
-  protected void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {
+  public void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {
     String packageJson = "package.json";
     VirtualFile packageJsonFile = baseDir.findChild(packageJson);
     if (packageJsonFile == null && !myCourse.isStudy()) {

@@ -31,14 +31,10 @@ open class JsConfigurator : EduConfiguratorWithSubmissions<JsNewProjectSettings>
   override fun getLogo(): Icon = EducationalCoreIcons.JsLogo
 
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
-    return super.excludeFromArchive(project, file) || excludeFromArchive(file)
+    return super.excludeFromArchive(project, file) || file.path.contains("node_modules") || "package-lock.json" == file.name
   }
 
   companion object {
     const val TASK_JS = "task.js"
-
-    fun excludeFromArchive(file: VirtualFile): Boolean {
-      return file.path.contains("node_modules") || "package-lock.json" == file.name
-    }
   }
 }

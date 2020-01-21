@@ -74,7 +74,7 @@ public abstract class CourseProjectGenerator<S> {
     myCourse = course;
   }
 
-  protected boolean beforeProjectGenerated() {
+  public boolean beforeProjectGenerated() {
     if (!(myCourse instanceof EduCourse) || !((EduCourse)myCourse).isRemote()) return true;
     final EduCourse remoteCourse = (EduCourse) this.myCourse;
     if (remoteCourse.getId() > 0) {
@@ -96,7 +96,7 @@ public abstract class CourseProjectGenerator<S> {
     return true;
   }
 
-  protected void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
+  public void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
     loadSolutions(project, myCourse);
     EduUtils.openFirstTask(myCourse, project);
 
@@ -136,7 +136,7 @@ public abstract class CourseProjectGenerator<S> {
    * @return project of new course or null if new project can't be created
    */
   @Nullable
-  protected Project createProject(@NotNull String locationString, @NotNull S projectSettings) {
+  private Project createProject(@NotNull String locationString, @NotNull S projectSettings) {
     final File location = new File(FileUtil.toSystemDependentName(locationString));
     if (!location.exists() && !location.mkdirs()) {
       String message = ActionsBundle.message("action.NewDirectoryProject.cannot.create.dir", location.getAbsolutePath());
@@ -215,7 +215,7 @@ public abstract class CourseProjectGenerator<S> {
     }
   }
 
-  protected void loadSolutions(@NotNull Project project, @NotNull Course course) {
+  private void loadSolutions(@NotNull Project project, @NotNull Course course) {
     if (course.isStudy() && course instanceof EduCourse && ((EduCourse)course).isRemote() && EduSettings.isLoggedIn()) {
       PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
       if (alreadyEnrolled) {
@@ -234,5 +234,5 @@ public abstract class CourseProjectGenerator<S> {
    *
    * @throws IOException
    */
-  protected void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {}
+  public void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {}
 }
