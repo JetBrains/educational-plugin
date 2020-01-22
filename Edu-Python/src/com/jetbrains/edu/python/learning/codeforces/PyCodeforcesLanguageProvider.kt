@@ -4,11 +4,14 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduNames.PYTHON_2_VERSION
 import com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
+import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.python.learning.PyNewConfigurator
 
 class PyCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> = listOf("Python 2", "PyPy 2", "Python 3", "PyPy 3")
   override val languageId: String = EduNames.PYTHON
   override val templateFileName: String = "codeforces.main.py"
+  override val configurator: EduConfigurator<*> = PyNewConfigurator()
 
   override fun getLanguageVersion(codeforcesLanguage: String): String? =
     when (codeforcesLanguage.split(" ").last()) {
