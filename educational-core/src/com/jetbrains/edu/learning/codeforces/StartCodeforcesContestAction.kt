@@ -53,7 +53,7 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
     val languageId = showDialogAndGetLanguageIdAndVersion(contestNameAndLanguages.name, contestNameAndLanguages.languages) ?: return null
     val contestURLInfo = ContestURLInfo(contestId, contestLanguage, languageId)
 
-    val contestInfo = Companion.getContestInfoUnderProgress(contestURLInfo)
+    val contestInfo = getContestInfoUnderProgress(contestURLInfo)
     if (contestInfo == null) showFailedToAddContestNotification(contestURLInfo.url)
     return contestInfo
   }
