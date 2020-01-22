@@ -43,7 +43,8 @@ class ImportCodeforcesContestDialog : DialogWrapper(false) {
     init()
   }
 
-  fun getContestIdAndLanguage(): Pair<Int, String> = Pair(contestPanel.contestId(), contestPanel.contestLanguage())
+  fun getContestTextLanguage(): TaskTextLanguage = contestPanel.getContestTextLanguage()
+  fun getContestId(): Int = contestPanel.getContestId()
 
   private fun codeforcesListPanel() {
     val courses = CourseLoader.getCourseInfosUnderProgress("Getting Available Contests") {

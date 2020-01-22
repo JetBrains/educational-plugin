@@ -57,7 +57,8 @@ open class CodeforcesTask : Task() {
         var srcValue = it.attr("src")
         if (srcValue.startsWith(ESPRESSO_CODEFORCES_COM)) {
           srcValue = srcValue.replace(ESPRESSO_CODEFORCES_COM, "https:$ESPRESSO_CODEFORCES_COM")
-        } else if (srcValue.matches(URL_WITH_TRAILING_SLASH)) {
+        }
+        else if (srcValue.matches(URL_WITH_TRAILING_SLASH)) {
           srcValue = srcValue.replace(TRAILING_SLASH, "${CodeforcesNames.CODEFORCES_URL}/")
         }
         it.attr("src", srcValue)

@@ -42,7 +42,7 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
   }
 
   private fun importCodeforcesContest(): CodeforcesCourse? {
-    val (contestId, contestLanguage) = showDialogAndGetContestIdAndLanguages() ?: return null
+    val (contestId, contestTextLanguage) = showDialogAndGetContestIdAndTextLanguage() ?: return null
 
     val contestNameAndLanguages = getContestShortInfoUnderProgress(contestId)
     if (contestNameAndLanguages == null) {
@@ -50,36 +50,60 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
       return null
     }
 
-    val languageId = showDialogAndGetLanguageIdAndVersion(contestNameAndLanguages.name, contestNameAndLanguages.languages) ?: return null
-    val contestURLInfo = ContestURLInfo(contestId, contestLanguage, languageId)
+    val contestLanguage = showDialogAndGetLanguageIdAndVersion(
+      contestNameAndLanguages.name,
+      contestNameAndLanguages.languages
+    ) ?: return null
+
+    if (contestLanguage.saveAsPreferable) {
+      CodeforcesSettings.getInstance().codeforcesPreferableLanguage = contestLanguage.representation
+    }
+
+    val contestURLInfo = ContestURLInfo(contestId, contestTextLanguage.locale, contestLanguage.idAndVersion)
 
     val contestInfo = getContestInfoUnderProgress(contestURLInfo)
     if (contestInfo == null) showFailedToAddContestNotification(contestURLInfo.url)
     return contestInfo
   }
 
-  private fun showDialogAndGetContestIdAndLanguages(): Pair<Int, String>? {
+  private fun showDialogAndGetContestIdAndTextLanguage(): Pair<Int, TaskTextLanguage>? {
     val dialog = ImportCodeforcesContestDialog()
     if (!dialog.showAndGet()) {
       return null
     }
-    return dialog.getContestIdAndLanguage()
+    val contestTextLanguage = dialog.getContestTextLanguage()
+    CodeforcesSettings.getInstance().codeforcesPreferableTextLanguage = contestTextLanguage.name
+
+    return Pair(dialog.getContestId(), contestTextLanguage)
   }
 
-  private fun showDialogAndGetLanguageIdAndVersion(contestName: String, contestLanguages: List<String>): String? {
+  private fun showDialogAndGetLanguageIdAndVersion(contestName: String,
+                                                   contestLanguages: List<String>): ContestLanguage? {
     val dialog = ChooseCodeforcesContestLanguageDialog(contestName, contestLanguages)
-    when (contestLanguages.size) {
+    val language = when (contestLanguages.size) {
       0 -> {
         showNoSupportedLanguagesForContestNotification(contestName)
         return null
       }
-      1 -> return getLanguageIdAndVersion(contestLanguages[0])
+      1 -> contestLanguages[0]
       else -> {
+        val preferableLanguage = CodeforcesSettings.getInstance().codeforcesPreferableLanguage
+        if (preferableLanguage != null && preferableLanguage in contestLanguages) {
+          dialog.selectLanguage(preferableLanguage)
+        }
         if (!dialog.showAndGet()) {
           return null
         }
-        return getLanguageIdAndVersion(dialog.selectedProgrammingLanguage())
+        dialog.selectedLanguage()
       }
+    }
+
+    val languageIdAndVersion = getLanguageIdAndVersion(language)
+    return if (languageIdAndVersion != null) {
+      ContestLanguage(languageIdAndVersion, language, dialog.isSaveLanguageAsPreferable())
+    }
+    else {
+      null
     }
   }
 
@@ -106,6 +130,8 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
     Messages.showErrorDialog("No supported languages for `$contestName` contest, please choose another one",
                              "Failed to Load Codeforces Contest")
   }
+
+  private data class ContestLanguage(val idAndVersion: String, val representation: String, val saveAsPreferable: Boolean = false)
 
   companion object {
     @VisibleForTesting

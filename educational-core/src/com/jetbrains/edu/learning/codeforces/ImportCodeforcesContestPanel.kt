@@ -17,12 +17,12 @@ import javax.swing.JTextField
 class ImportCodeforcesContestPanel {
   val panel: JPanel
   val contestURLTextField: JTextField = JTextField()
-  private val languageComboBox = ComboBox<LANGUAGE>()
+  private val textLanguageComboBox = ComboBox<TaskTextLanguage>()
   private val helpLabel = JLabel(CODEFORCES_HELP_TEXT)
   private val panelSize = Dimension(500, 100)
 
-  fun contestId(): Int = CodeforcesContestConnector.getContestId(contestURLTextField.text)
-  fun contestLanguage(): String = (languageComboBox.selectedItem as LANGUAGE).locale
+  fun getContestId(): Int = CodeforcesContestConnector.getContestId(contestURLTextField.text)
+  fun getContestTextLanguage(): TaskTextLanguage = textLanguageComboBox.selectedItem as TaskTextLanguage
 
   val preferredFocusedComponent: JComponent?
     get() = contestURLTextField
@@ -31,20 +31,29 @@ class ImportCodeforcesContestPanel {
     helpLabel.foreground = UIUtil.getLabelDisabledForeground()
     helpLabel.font = UIUtil.getLabelFont()
 
-    LANGUAGE.values().forEach {
-      languageComboBox.addItem(it)
-    }
+    initLanguageComboBox()
 
     panel = panel {
       row("Contest URL:") {
         contestURLTextField(comment = helpLabel.text)
       }
       row("Language:") {
-        languageComboBox()
+        textLanguageComboBox()
       }
     }
 
     setPanelSize(panelSize)
+  }
+
+  private fun initLanguageComboBox() {
+    TaskTextLanguage.values().forEach {
+      textLanguageComboBox.addItem(it)
+    }
+
+    val preferableTextLanguage = CodeforcesSettings.getInstance().codeforcesPreferableTextLanguage
+    if (preferableTextLanguage != null && preferableTextLanguage in TaskTextLanguage.values().map { it.name }) {
+      textLanguageComboBox.selectedItem = TaskTextLanguage.valueOf(preferableTextLanguage)
+    }
   }
 
   fun isValidCodeforcesLink(): Boolean {
@@ -56,16 +65,6 @@ class ImportCodeforcesContestPanel {
     panel.preferredSize = JBUI.size(dimension)
     if (isMinimumSizeEqualsPreferred) {
       panel.minimumSize = panel.preferredSize
-    }
-  }
-
-  @Suppress("unused")
-  private enum class LANGUAGE(val locale: String) {
-    ENGLISH("en") {
-      override fun toString() = "English"
-    },
-    RUSSIAN("ru") {
-      override fun toString() = "Русский"
     }
   }
 }

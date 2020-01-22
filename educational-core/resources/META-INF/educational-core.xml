@@ -211,6 +211,8 @@
                     serviceImplementation="com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl"/>
     <projectConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
                          id="Educational" displayName="Education"/>
+    <projectConfigurable groupId="Educational" instance="com.jetbrains.edu.learning.codeforces.CodeforcesOptions"
+                         id="Codeforces" displayName="Codeforces"/>
 
     <toolWindow id="Task" anchor="right"
                 factoryClass="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory"
@@ -229,6 +231,7 @@
     <statistics.counterUsagesCollector groupId="educational.counters" version="1"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.coursera.CourseraSettings"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.codeforces.CodeforcesSettings"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
