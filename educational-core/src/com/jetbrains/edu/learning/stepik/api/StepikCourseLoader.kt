@@ -92,6 +92,11 @@ object StepikCourseLoader {
   }
 
   @JvmStatic
+  fun getPrivateCourseInfos(): List<Course> {
+    return getCourseInfos(false)
+  }
+
+  @JvmStatic
   fun loadCourseStructure(remoteCourse: EduCourse) {
     if (remoteCourse.items.isNotEmpty()) return
     fillItems(remoteCourse)

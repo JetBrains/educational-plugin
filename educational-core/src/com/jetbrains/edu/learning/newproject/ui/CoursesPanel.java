@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui;
 
-import com.google.common.collect.Lists;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.DataManager;
@@ -37,6 +36,7 @@ import com.jetbrains.edu.learning.courseLoading.CourseLoader;
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer;
+import com.jetbrains.edu.learning.stepik.StepikCoursesProvider;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction;
 import com.jetbrains.edu.learning.stepik.course.StepikCourse;
@@ -233,9 +233,11 @@ public class CoursesPanel extends JPanel {
     Course selectedCourse = myCoursesList.getSelectedValue();
     List<Course> courses = CourseLoader.getCourseInfosUnderProgress(
       "Getting Available Courses",
-      () -> CoursesProvider.loadAllCourses()
+      () -> StepikCoursesProvider.loadPrivateCourses()
     );
-    myCourses = courses != null ? courses : Lists.newArrayList();
+    if (courses != null) {
+      myCourses.addAll(courses);
+    }
     updateModel(myCourses, selectedCourse);
     myErrorLabel.setVisible(false);
     notifyListeners(true);

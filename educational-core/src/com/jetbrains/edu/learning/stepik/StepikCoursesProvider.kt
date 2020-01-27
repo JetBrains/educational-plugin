@@ -11,4 +11,12 @@ class StepikCoursesProvider : CoursesProvider {
     checkIsBackgroundThread()
     return if (isUnitTestMode) emptyList() else StepikCourseLoader.getCourseInfos()
   }
+
+  companion object {
+    @JvmStatic
+    fun loadPrivateCourses(): List<Course> {
+      checkIsBackgroundThread()
+      return if (isUnitTestMode) emptyList() else StepikCourseLoader.getPrivateCourseInfos()
+    }
+  }
 }
