@@ -17,6 +17,7 @@ import javafx.concurrent.Worker
 import javafx.embed.swing.JFXPanel
 import javafx.scene.Scene
 import javafx.scene.layout.StackPane
+import javafx.scene.text.FontSmoothingType
 import javafx.scene.web.WebEngine
 import javafx.scene.web.WebView
 import org.jetbrains.annotations.TestOnly
@@ -42,6 +43,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
       Platform.setImplicitExit(false)
       myPane = StackPane()
       myWebComponent = WebView()
+      myWebComponent.fontSmoothingTypeProperty().value = FontSmoothingType.GRAY
       myWebComponent.setOnDragDetected { }
       myEngine = myWebComponent.engine
       Disposer.register(myProject, this)
