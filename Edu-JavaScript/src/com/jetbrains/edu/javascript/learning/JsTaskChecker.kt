@@ -24,7 +24,7 @@ open class JsTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
   override fun getErrorMessage(node: SMTestProxy): String {
     val failedMessageStart = "Failed: \""
     return if (node.errorMessage.startsWith(failedMessageStart))
-      node.errorMessage.substringAfter(failedMessageStart).substringBeforeLast('"')
+      node.errorMessage.substringAfter(failedMessageStart).substringBeforeLast('"').replace("\\\"", "\"")
     else node.errorMessage
   }
 }
