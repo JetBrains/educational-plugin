@@ -66,7 +66,7 @@ fun addTabToTaskDescription(project: Project) {
 private val Project.taskDescriptionTWContentManager: ContentManager?
   get() {
     val toolWindow = ToolWindowManager.getInstance(this).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
-    return toolWindow.contentManager
+    return toolWindow?.contentManager
   }
 
 fun showYamlTab(project: Project) {

@@ -113,14 +113,14 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     return CompareWithAnswerAction.ACTION_ID
   }
 
-  private class ShowFullOutputAction(private val project: Project, private val text: String) : DumbAwareAction(null) {
+  private class ShowFullOutputAction(private val project: Project, private val text: String) : DumbAwareAction(null as String?) {
     override fun actionPerformed(e: AnActionEvent) {
       CheckDetailsView.getInstance(project).showOutput(text)
       EduCounterUsageCollector.fullOutputShown()
     }
   }
 
-  class SwitchTaskTabAction(private val project: Project, private val index: Int) : DumbAwareAction(null) {
+  class SwitchTaskTabAction(private val project: Project, private val index: Int) : DumbAwareAction(null as String?) {
     override fun actionPerformed(e: AnActionEvent) {
       val tab = selectTab(project, index)
       if (tab != null && index == 1) {
@@ -132,13 +132,13 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
   companion object {
     fun selectTab(project: Project, index: Int): Content? {
       val window = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
-      val tab = window.contentManager.getContent(index) ?: return null
+      val tab = window?.contentManager?.getContent(index) ?: return null
       window.contentManager.setSelectedContent(tab)
       return tab
     }
   }
 
-  private class CompareOutputsAction(private val project: Project, private val diff: CheckResultDiff) : DumbAwareAction(null) {
+  private class CompareOutputsAction(private val project: Project, private val diff: CheckResultDiff) : DumbAwareAction(null as String?) {
     override fun actionPerformed(e: AnActionEvent) {
       val expected = DiffContentFactory.getInstance().create(diff.expected)
       val actual = DiffContentFactory.getInstance().create(diff.actual)

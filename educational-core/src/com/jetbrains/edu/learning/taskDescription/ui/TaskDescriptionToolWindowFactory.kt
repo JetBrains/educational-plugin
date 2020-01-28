@@ -89,8 +89,8 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     }
   }
 
-  override fun init(window: ToolWindow?) {
-    window?.icon = EducationalCoreIcons.CourseToolWindow
+  override fun init(window: ToolWindow) {
+    window.setIcon(EducationalCoreIcons.CourseToolWindow)
   }
 
   companion object {

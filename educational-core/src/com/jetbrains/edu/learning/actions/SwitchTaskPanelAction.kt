@@ -22,7 +22,7 @@ class SwitchTaskPanelAction : DumbAwareAction() {
     val project = e.project
     val result = createDialog().showAndGet()
     if (result && project != null) {
-      val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
+      val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW) ?: return
       toolWindow.contentManager.removeAllContents(false)
       TaskDescriptionToolWindowFactory().createToolWindowContent(project, toolWindow)
       TaskDescriptionView.getInstance(project).updateTaskDescription()

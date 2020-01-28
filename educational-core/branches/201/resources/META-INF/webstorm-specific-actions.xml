@@ -1,0 +1,7 @@
+<idea-plugin>
+  <actions>
+    <reference id="Educational.LearnAndTeach">
+      <add-to-group group-id="WelcomeScreen.QuickStart" anchor="before" relative-to-action="WelcomeScreen.Platform.NewProject"/>
+    </reference>
+  </actions>
+</idea-plugin>

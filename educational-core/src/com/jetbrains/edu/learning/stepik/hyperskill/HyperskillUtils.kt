@@ -63,7 +63,7 @@ fun getTopPanelForProblem(project: Project, course: HyperskillCourse, task: Task
   return panel
 }
 
-class OpenProjectAction(private val project: Project, private val course: HyperskillCourse) : DumbAwareAction(null) {
+class OpenProjectAction(private val project: Project, private val course: HyperskillCourse) : DumbAwareAction(null as String?) {
   override fun actionPerformed(e: AnActionEvent) {
     val lesson = course.getProjectLesson() ?: return
     NavigationUtils.navigateToTask(project, lesson.currentTask())

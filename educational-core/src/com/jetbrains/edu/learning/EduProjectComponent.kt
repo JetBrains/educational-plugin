@@ -46,7 +46,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
 
     if (!isUnitTestMode) {
       EduDocumentListener.setGlobalListener(project)
-      ToolWindowManager.getInstance(project).invokeLater { selectProjectView() }
+      ToolWindowManager.getInstance(project).invokeLater(Runnable { selectProjectView() })
     }
     StartupManager.getInstance(project).runWhenProjectIsInitialized {
       val course = StudyTaskManager.getInstance(project)?.course
@@ -83,8 +83,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
         }
 
         if (PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW)) {
-          RecentProjectsManager.getInstance().removePath(project.basePath)
-          RecentProjectsManager.getInstance().updateLastProjectPath()
+          removeProjectFromRecentProjects(project)
         }
       }
     })
@@ -96,14 +95,21 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
           if (PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW)) {
             // force closing project -> IDE will not try to reopen course preview in the next session
             ProjectManager.getInstance().closeProject(project)
-            RecentProjectsManager.getInstance().removePath(project.basePath)
-            RecentProjectsManager.getInstance().updateLastProjectPath()
+            removeProjectFromRecentProjects(project)
           }
         }
       }
     })
 
     busConnection = connection
+  }
+
+  private fun removeProjectFromRecentProjects(project: Project) {
+    val basePath = project.basePath
+    if (basePath != null) {
+      RecentProjectsManager.getInstance().removePath(basePath)
+      RecentProjectsManager.getInstance().updateLastProjectPath()
+    }
   }
 
   private fun setupProject(course: Course) {

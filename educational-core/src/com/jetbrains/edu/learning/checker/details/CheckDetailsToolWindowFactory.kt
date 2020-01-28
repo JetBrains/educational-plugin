@@ -12,7 +12,7 @@ import com.intellij.openapi.wm.ToolWindowFactory
 class CheckDetailsToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     toolWindow.stripeTitle = "Check Details"
-    toolWindow.isToHideOnEmptyContent = true
+    toolWindow.setToHideOnEmptyContent(true)
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object: FileEditorManagerListener {
       override fun selectionChanged(event: FileEditorManagerEvent) {
         toolWindow.setAvailable(false, null)
