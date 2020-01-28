@@ -1,59 +1,37 @@
-package com.jetbrains.edu.learning.projectView;
+package com.jetbrains.edu.learning.projectView
 
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.Section;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.projectView.ViewSettings
+import com.intellij.ide.util.treeView.AbstractTreeNode
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDirectory
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.projectView.FrameworkLessonNode.Companion.createFrameworkLessonNode
 
+open class SectionNode(
+  project: Project,
+  viewSettings: ViewSettings,
+  section: Section,
+  psiDirectory: PsiDirectory
+) : EduNode<Section>(project, psiDirectory, viewSettings, section) {
 
-public class SectionNode extends EduNode<Section> {
-  @NotNull protected final Project myProject;
-  @NotNull protected final ViewSettings myViewSettings;
+  override val item: Section get() = super.item!!
 
-  public SectionNode(@NotNull Project project, @NotNull ViewSettings viewSettings, @NotNull Section section, @Nullable PsiDirectory psiDirectory) {
-    super(project, psiDirectory, viewSettings, section);
-    myProject = project;
-    myViewSettings = viewSettings;
+  override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
+    val directory = childNode.value as? PsiDirectory ?: return null
+    val lesson = item.getLesson(directory.name) ?: return null
+    return createLessonNode(directory, lesson)
   }
 
-  @Nullable
-  @Override
-  protected AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode child) {
-    Object value = child.getValue();
-    if (value instanceof PsiDirectory) {
-      PsiDirectory directory = (PsiDirectory)value;
-      final Lesson lesson = getItem().getLesson(directory.getName());
-      if (lesson != null) {
-        return createLessonNode(directory, lesson);
-      }
+  protected open fun createLessonNode(directory: PsiDirectory, lesson: Lesson): LessonNode? {
+    return if (lesson is FrameworkLesson) {
+      createFrameworkLessonNode(myProject, directory, settings, lesson)
     }
-    return null;
-  }
-
-  @Nullable
-  protected LessonNode createLessonNode(@NotNull PsiDirectory directory, @NotNull Lesson lesson) {
-    if (lesson instanceof FrameworkLesson) {
-      return FrameworkLessonNode.createFrameworkLessonNode(myProject, directory, getSettings(), (FrameworkLesson) lesson);
-    } else {
-      return new LessonNode(myProject, directory, getSettings(), lesson);
+    else {
+      LessonNode(myProject, directory, settings, lesson)
     }
   }
 
-  @Override
-  public int getWeight() {
-    return getItem().getIndex();
-  }
-
-  @NotNull
-  @Override
-  public Section getItem() {
-    Section item = super.getItem();
-    assert item != null;
-    return item;
-  }
+  override fun getWeight(): Int = item.index
 }

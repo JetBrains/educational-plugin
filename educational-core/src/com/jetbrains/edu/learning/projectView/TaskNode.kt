@@ -1,59 +1,36 @@
-package com.jetbrains.edu.learning.projectView;
+package com.jetbrains.edu.learning.projectView
 
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.projectView.ViewSettings
+import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode
+import com.intellij.ide.util.treeView.AbstractTreeNode
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDirectory
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask
+import com.jetbrains.edu.learning.projectView.CourseViewUtils.modifyTaskChildNode
 
-public class TaskNode extends EduNode<Task> {
+open class TaskNode(
+  project: Project,
+  value: PsiDirectory,
+  viewSettings: ViewSettings,
+  task: Task
+) : EduNode<Task>(project, value, viewSettings, task) {
 
-  public TaskNode(@NotNull Project project,
-                  PsiDirectory value,
-                  ViewSettings viewSettings,
-                  @NotNull Task task) {
-    super(project, value, viewSettings, task);
+  override val item: Task get() = super.item!!
+
+  override fun getWeight(): Int = item.index
+  override fun expandOnDoubleClick(): Boolean = false
+  override fun canNavigate(): Boolean = true
+
+  override fun navigate(requestFocus: Boolean) {
+    navigateToTask(myProject, item)
   }
 
-  @Override
-  public int getWeight() {
-    return getItem().getIndex();
+  public override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
+    return modifyTaskChildNode(myProject, childNode, item, this::createChildDirectoryNode)
   }
 
-  @Override
-  public boolean expandOnDoubleClick() {
-    return false;
-  }
-
-  @Override
-  public boolean canNavigate() {
-    return true;
-  }
-
-  @Override
-  public void navigate(boolean requestFocus) {
-    NavigationUtils.navigateToTask(myProject, getItem());
-  }
-
-  @Override
-  @Nullable
-  public AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode childNode) {
-    return CourseViewUtils.modifyTaskChildNode(myProject, childNode, getItem(), this::createChildDirectoryNode);
-  }
-
-  public PsiDirectoryNode createChildDirectoryNode(PsiDirectory value) {
-    return new DirectoryNode(myProject, value, getSettings(), getItem());
-  }
-
-  @Override
-  @NotNull
-  public Task getItem() {
-    Task item = super.getItem();
-    assert item != null;
-    return item;
+  open fun createChildDirectoryNode(value: PsiDirectory): PsiDirectoryNode {
+    return DirectoryNode(myProject, value, settings, item)
   }
 }

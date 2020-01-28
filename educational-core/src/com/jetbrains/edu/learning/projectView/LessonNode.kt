@@ -1,59 +1,32 @@
-package com.jetbrains.edu.learning.projectView;
+package com.jetbrains.edu.learning.projectView
 
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.projectView.ViewSettings
+import com.intellij.ide.util.treeView.AbstractTreeNode
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDirectory
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.projectView.CourseViewUtils.findTaskDirectory
 
-public class LessonNode extends EduNode<Lesson> {
-  @NotNull protected final Project myProject;
-  protected final ViewSettings myViewSettings;
+open class LessonNode(
+  project: Project,
+  value: PsiDirectory,
+  viewSettings: ViewSettings,
+  lesson: Lesson
+) : EduNode<Lesson>(project, value, viewSettings, lesson) {
 
-  public LessonNode(@NotNull Project project,
-                    PsiDirectory value,
-                    ViewSettings viewSettings,
-                    @NotNull Lesson lesson) {
-    super(project, value, viewSettings, lesson);
-    myProject = project;
-    myViewSettings = viewSettings;
+  override fun getWeight(): Int = item.index
+
+  override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
+    val directory = childNode.value as? PsiDirectory ?: return null
+    val task = item.getTask(directory.name) ?: return null
+    val taskDirectory = findTaskDirectory(myProject, directory, task) ?: return null
+    return createTaskNode(taskDirectory, task)
   }
 
-  @Override
-  public int getWeight() {
-    return getItem().getIndex();
+  protected open fun createTaskNode(directory: PsiDirectory, task: Task): TaskNode {
+    return TaskNode(myProject, directory, settings, task)
   }
 
-  @Nullable
-  @Override
-  protected AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode child) {
-    Object value = child.getValue();
-    if (value instanceof PsiDirectory) {
-      PsiDirectory directory = (PsiDirectory)value;
-      Task task = getItem().getTask(directory.getName());
-      if (task == null) {
-        return null;
-      }
-      PsiDirectory taskDirectory = CourseViewUtils.findTaskDirectory(myProject, directory, task);
-      if (taskDirectory == null) return null;
-      return createTaskNode(taskDirectory, task);
-    }
-    return null;
-  }
-
-  @NotNull
-  protected TaskNode createTaskNode(PsiDirectory directory, Task task) {
-    return new TaskNode(myProject, directory, myViewSettings, task);
-  }
-
-  @NotNull
-  @Override
-  public Lesson getItem() {
-    Lesson item = super.getItem();
-    assert item != null;
-    return item;
-  }
+  override val item: Lesson get() = super.item!!
 }

@@ -1,66 +1,46 @@
-package com.jetbrains.edu.learning.projectView;
+package com.jetbrains.edu.learning.projectView
 
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper;
-import com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiManager;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.projectView.CCCourseNode;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.ide.projectView.ViewSettings
+import com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper
+import com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode
+import com.intellij.ide.util.treeView.AbstractTreeNode
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiManager
+import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
+import com.jetbrains.edu.coursecreator.projectView.CCCourseNode
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.isUnitTestMode
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+class RootNode(project: Project, viewSettings: ViewSettings?) : ProjectViewProjectNode(project, viewSettings) {
 
-
-public class RootNode extends ProjectViewProjectNode {
-  @NotNull protected final Project myProject;
-
-  public RootNode(@NotNull Project project,
-                  ViewSettings viewSettings) {
-    super(project, viewSettings);
-    myProject = project;
-  }
-
-  @NotNull
-  @Override
-  public Collection<AbstractTreeNode> getChildren() {
-    final Course course = StudyTaskManager.getInstance(myProject).getCourse();
-    if (course == null) {
-      return Collections.emptyList();
-    }
-    else {
-      final ArrayList<AbstractTreeNode> nodes = new ArrayList<>();
-      if (!ApplicationManager.getApplication().isUnitTestMode()) {
-        final PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(OpenApiExtKt.getCourseDir(myProject));
-        addCourseNode(course, nodes, psiDirectory);
+  override fun getChildren(): Collection<AbstractTreeNode<*>> {
+    val course = StudyTaskManager.getInstance(myProject).course ?: return emptyList()
+      val nodes = ArrayList<AbstractTreeNode<*>>()
+      if (!isUnitTestMode) {
+        val psiDirectory = PsiManager.getInstance(myProject).findDirectory(myProject.courseDir)
+        addCourseNode(course, nodes, psiDirectory)
       }
       else {
-        List<VirtualFile> topLevelContentRoots = ProjectViewDirectoryHelper.getInstance(myProject).getTopLevelRoots();
-        for (VirtualFile root : topLevelContentRoots) {
-          final PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(root);
-          addCourseNode(course, nodes, psiDirectory);
+        val topLevelContentRoots = ProjectViewDirectoryHelper.getInstance(myProject).topLevelRoots
+        for (root in topLevelContentRoots) {
+          val psiDirectory = PsiManager.getInstance(myProject).findDirectory(root)
+          addCourseNode(course, nodes, psiDirectory)
         }
       }
-      return nodes;
-    }
+      return nodes
   }
 
-  private void addCourseNode(Course course, ArrayList<AbstractTreeNode> nodes, PsiDirectory psiDirectory) {
-    if (CCUtils.isCourseCreator(myProject)) {
-      nodes.add(new CCCourseNode(myProject, psiDirectory, getSettings(), course));
+  private fun addCourseNode(course: Course, nodes: MutableList<AbstractTreeNode<*>>, psiDirectory: PsiDirectory?) {
+    if (psiDirectory == null) return
+    nodes += if (isCourseCreator(myProject)) {
+      CCCourseNode(myProject, psiDirectory, settings, course)
     }
     else {
-      nodes.add(new CourseNode(myProject, psiDirectory, getSettings(), course));
+      CourseNode(myProject, psiDirectory, settings, course)
     }
   }
 }

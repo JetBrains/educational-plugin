@@ -102,38 +102,36 @@ object CourseViewUtils {
   }
 
   @JvmStatic
-  val StudyItem.additionalInformation: String?
-    get() {
-      if (this is Course) {
-        return if (course.isStudy) {
-          val progress = ProgressUtil.countProgress(this)
-          val tasksSolved = progress.first
-          val tasksTotal = progress.second
-          " $tasksSolved/$tasksTotal"
-        }
-        else {
-          "(Course Creation)"
-        }
+  fun getAdditionalInformation(item: StudyItem): String? {
+    if (item is Course) {
+      return if (item.course.isStudy) {
+        val progress = ProgressUtil.countProgress(item)
+        val tasksSolved = progress.first
+        val tasksTotal = progress.second
+        " $tasksSolved/$tasksTotal"
       }
-
-      return if (!course.isStudy && presentableName != name) "($name)" else null
+      else {
+        "(Course Creation)"
+      }
     }
+
+    return if (!item.course.isStudy && item.presentableName != item.name) "(${item.name})" else null
+  }
 
   @JvmStatic
-  val StudyItem.icon: Icon
-    get() {
-      return when (this) {
-        is Course -> icon
-        is Section -> {
-          if (isSolved) EducationalCoreIcons.SectionSolved else EducationalCoreIcons.Section
-        }
-        is Lesson -> {
-          if (isSolved) EducationalCoreIcons.LessonSolved else EducationalCoreIcons.Lesson
-        }
-        is Task -> icon
-        else -> error("Unexpected item type: ${this.javaClass.simpleName}")
+  fun getIcon(item: StudyItem): Icon {
+    return when (item) {
+      is Course -> item.icon
+      is Section -> {
+        if (item.isSolved) EducationalCoreIcons.SectionSolved else EducationalCoreIcons.Section
       }
+      is Lesson -> {
+        if (item.isSolved) EducationalCoreIcons.LessonSolved else EducationalCoreIcons.Lesson
+      }
+      is Task -> item.icon
+      else -> error("Unexpected item type: ${item.javaClass.simpleName}")
     }
+  }
 
   private val StudyItem.isSolved: Boolean
     get() {

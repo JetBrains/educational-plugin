@@ -1,35 +1,27 @@
-package com.jetbrains.edu.coursecreator.projectView;
+package com.jetbrains.edu.coursecreator.projectView
 
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.Section;
-import com.jetbrains.edu.learning.projectView.LessonNode;
-import com.jetbrains.edu.learning.projectView.SectionNode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.projectView.ViewSettings
+import com.intellij.ide.util.treeView.AbstractTreeNode
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDirectory
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.projectView.LessonNode
+import com.jetbrains.edu.learning.projectView.SectionNode
 
+class CCSectionNode(
+  project: Project,
+  viewSettings: ViewSettings,
+  section: Section,
+  psiDirectory: PsiDirectory
+) : SectionNode(project, viewSettings, section, psiDirectory) {
 
-public class CCSectionNode extends SectionNode {
-  public CCSectionNode(@NotNull Project project, @NotNull ViewSettings viewSettings, @NotNull Section section, @Nullable PsiDirectory psiDirectory) {
-    super(project, viewSettings, section, psiDirectory);
+  override fun createLessonNode(directory: PsiDirectory, lesson: Lesson): LessonNode {
+    return CCLessonNode(myProject, directory, settings, lesson)
   }
 
-  @Override
-  @NotNull
-  protected LessonNode createLessonNode(@NotNull PsiDirectory directory, @NotNull Lesson lesson) {
-    return new CCLessonNode(myProject, directory, getSettings(), lesson);
-  }
-
-  @Nullable
-  @Override
-  protected AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode child) {
-    AbstractTreeNode node = super.modifyChildNode(child);
-    if (node != null) {
-      return node;
-    }
-    return CCCourseViewUtil.modifyNodeInEducatorMode(myProject, myViewSettings, child);
+  override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
+    val node = super.modifyChildNode(childNode)
+    return node ?: modifyNodeInEducatorMode(myProject, settings, childNode)
   }
 }

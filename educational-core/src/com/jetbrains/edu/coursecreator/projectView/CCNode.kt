@@ -1,74 +1,56 @@
-package com.jetbrains.edu.coursecreator.projectView;
+package com.jetbrains.edu.coursecreator.projectView
 
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.projectView.DirectoryNode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.projectView.ViewSettings
+import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode
+import com.intellij.ide.util.treeView.AbstractTreeNode
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiElement
+import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.projectView.DirectoryNode
 
-public class CCNode extends DirectoryNode {
-  public CCNode(@NotNull Project project,
-                PsiDirectory value,
-                ViewSettings viewSettings,
-                @Nullable Task task) {
-    super(project, value, viewSettings, task);
-  }
+class CCNode(
+  project: Project,
+  value: PsiDirectory,
+  viewSettings: ViewSettings,
+  task: Task?
+) : DirectoryNode(project, value, viewSettings, task) {
 
-  @Override
-  public boolean canNavigate() {
-    return true;
-  }
+  override fun canNavigate(): Boolean = true
 
-  @Nullable
-  @Override
-  public AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode childNode) {
-    final AbstractTreeNode node = super.modifyChildNode(childNode);
-    if (node != null) return node;
-    Object value = childNode.getValue();
-    if (value instanceof PsiDirectory) {
-      return new CCNode(myProject, ((PsiDirectory)value), myViewSettings, getItem());
+  override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
+    val node = super.modifyChildNode(childNode)
+    if (node != null) return node
+    val value = childNode.value
+
+    if (value is PsiDirectory) {
+      return CCNode(myProject, value, settings, item)
     }
-    if (value instanceof PsiElement) {
-      PsiFile psiFile = ((PsiElement) value).getContainingFile();
-      VirtualFile virtualFile = psiFile.getVirtualFile();
-
-      Course course = StudyTaskManager.getInstance(myProject).getCourse();
-      if (course == null) {
-        return null;
-      }
-      EduConfigurator configurator = CourseExt.getConfigurator(course);
-      if (configurator == null) {
-        return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
-      }
-      if (EduUtils.isTaskDescriptionFile(virtualFile.getName())) {
-        return null;
+    if (value is PsiElement) {
+      val psiFile = value.containingFile
+      val virtualFile = psiFile.virtualFile
+      val course = StudyTaskManager.getInstance(myProject).course ?: return null
+      val configurator = course.configurator ?: return CCStudentInvisibleFileNode(myProject, psiFile, settings)
+      if (EduUtils.isTaskDescriptionFile(virtualFile.name)) {
+        return null
       }
       if (!EduUtils.isTestsFile(myProject, virtualFile)) {
-        return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
-      } else {
-        if (CCUtils.isCourseCreator(myProject)) {
-          return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
+        return CCStudentInvisibleFileNode(myProject, psiFile, settings)
+      }
+      else {
+        if (isCourseCreator(myProject)) {
+          return CCStudentInvisibleFileNode(myProject, psiFile, settings)
         }
       }
     }
-    return null;
+    return null
   }
 
-  @Override
-  public PsiDirectoryNode createChildDirectoryNode(PsiDirectory value) {
-    return new CCNode(myProject, value, myViewSettings, getItem());
+  override fun createChildDirectoryNode(value: PsiDirectory): PsiDirectoryNode {
+    return CCNode(myProject, value, settings, item)
   }
 }

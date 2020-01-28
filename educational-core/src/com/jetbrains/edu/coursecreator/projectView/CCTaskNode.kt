@@ -1,86 +1,69 @@
-package com.jetbrains.edu.coursecreator.projectView;
+package com.jetbrains.edu.coursecreator.projectView
 
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiNamedElement;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.projectView.TaskNode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.projectView.ViewSettings
+import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode
+import com.intellij.ide.util.treeView.AbstractTreeNode
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiNamedElement
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.projectView.TaskNode
 
-public class CCTaskNode extends TaskNode {
-  public CCTaskNode(@NotNull Project project,
-                    PsiDirectory value,
-                    ViewSettings viewSettings,
-                    @NotNull Task task) {
-    super(project, value, viewSettings, task);
-  }
+class CCTaskNode(
+  project: Project,
+  value: PsiDirectory,
+  viewSettings: ViewSettings,
+  task: Task
+) : TaskNode(project, value, viewSettings, task) {
 
-  @Nullable
-  @Override
-  public AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode childNode) {
-    AbstractTreeNode node = super.modifyChildNode(childNode);
+  override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
+    val node = super.modifyChildNode(childNode)
     if (node != null) {
-      return node;
+      return node
     }
-    Object value = childNode.getValue();
-    if (value instanceof PsiDirectory) {
-      String name = ((PsiDirectory) value).getName();
-      if (EduNames.BUILD.equals(name) || EduNames.OUT.equals(name)) {
-        return null;
-      }
-      return createChildDirectoryNode((PsiDirectory) value);
+    val value = childNode.value
+    if (value is PsiDirectory) {
+      val name = value.name
+      if (EduNames.BUILD == name || EduNames.OUT == name) return null
+      return createChildDirectoryNode(value)
     }
-    else if (value instanceof PsiElement) {
-      PsiElement psiElement = (PsiElement) value;
-      PsiFile psiFile = psiElement.getContainingFile();
-      VirtualFile virtualFile = psiFile.getVirtualFile();
-      if (virtualFile == null) {
-        return null;
+    else if (value is PsiElement) {
+      val psiFile = value.containingFile
+      val virtualFile = psiFile.virtualFile ?: return null
+      val course = StudyTaskManager.getInstance(myProject).course ?: return null
+      val configurator = course.configurator ?: return CCStudentInvisibleFileNode(myProject, psiFile, settings)
+      return if (!EduUtils.isTestsFile(myProject, virtualFile)) {
+        CCStudentInvisibleFileNode(myProject, psiFile, settings)
       }
-      Course course = StudyTaskManager.getInstance(myProject).getCourse();
-      if (course == null) {
-        return null;
+      else {
+        CCStudentInvisibleFileNode(myProject, psiFile, settings, getTestNodeName(configurator, value))
       }
-      EduConfigurator configurator = CourseExt.getConfigurator(course);
-      if (configurator == null) {
-        return new CCStudentInvisibleFileNode(myProject, psiFile, getSettings());
-      }
-      if (!EduUtils.isTestsFile(myProject, virtualFile)) {
-        return new CCStudentInvisibleFileNode(myProject, psiFile, getSettings());
-      }
-      return new CCStudentInvisibleFileNode(myProject, psiFile, getSettings(), getTestNodeName(configurator, psiElement));
     }
-    return null;
+    return null
   }
 
-  @NotNull
-  private static String getTestNodeName(EduConfigurator configurator, PsiElement psiElement) {
-    String defaultTestName = configurator.getTestFileName();
-    if (psiElement instanceof PsiFile) {
-      return defaultTestName;
-    }
-    if (psiElement instanceof PsiNamedElement) {
-      String name = ((PsiNamedElement)psiElement).getName();
-      return name != null ? name : defaultTestName;
-    }
-    return defaultTestName;
+  override fun createChildDirectoryNode(value: PsiDirectory): PsiDirectoryNode {
+    return CCNode(myProject, value, settings, item)
   }
 
-  @Override
-  public PsiDirectoryNode createChildDirectoryNode(PsiDirectory value) {
-    return new CCNode(myProject, value, getSettings(), getItem());
+  companion object {
+    private fun getTestNodeName(configurator: EduConfigurator<*>, psiElement: PsiElement): String {
+      val defaultTestName = configurator.testFileName
+      if (psiElement is PsiFile) {
+        return defaultTestName
+      }
+      if (psiElement is PsiNamedElement) {
+        val name = psiElement.name
+        return name ?: defaultTestName
+      }
+      return defaultTestName
+    }
   }
 }
