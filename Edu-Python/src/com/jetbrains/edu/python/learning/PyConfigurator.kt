@@ -1,65 +1,31 @@
-package com.jetbrains.edu.python.learning;
+package com.jetbrains.edu.python.learning
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.EduCourseBuilder;
-import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
-import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions;
-import com.jetbrains.edu.python.learning.checker.PyTaskCheckerProvider;
-import com.jetbrains.python.newProject.PyNewProjectSettings;
-import icons.PythonIcons;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
+import com.jetbrains.edu.python.learning.checker.PyTaskCheckerProvider
+import com.jetbrains.python.newProject.PyNewProjectSettings
+import icons.PythonIcons
+import javax.swing.Icon
 
-import javax.swing.*;
+open class PyConfigurator : EduConfiguratorWithSubmissions<PyNewProjectSettings>() {
+  override val courseBuilder: EduCourseBuilder<PyNewProjectSettings> = PyCourseBuilder()
+  override fun getMockFileName(text: String): String = TASK_PY
+  override val testFileName: String = TESTS_PY
 
-public class PyConfigurator extends EduConfiguratorWithSubmissions<PyNewProjectSettings> {
-  public static final String TESTS_PY = "tests.py";
-  public static final String TASK_PY = "task.py";
-
-  private final PyCourseBuilder myCourseBuilder = new PyCourseBuilder();
-
-  @NotNull
-  @Override
-  public EduCourseBuilder<PyNewProjectSettings> getCourseBuilder() {
-    return myCourseBuilder;
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
+    return super.excludeFromArchive(project, file) || excludeFromArchive(file)
   }
 
-  @NotNull
-  @Override
-  public String getTestFileName() {
-    return TESTS_PY;
-  }
+  override fun isTestFile(project: Project, file: VirtualFile): Boolean = testFileName == file.name
+  override val taskCheckerProvider: TaskCheckerProvider = PyTaskCheckerProvider()
+  override val logo: Icon = PythonIcons.Python.Python
+  override val isCourseCreatorEnabled: Boolean = false
 
-  @Override
-  @NotNull
-  public String getMockFileName(@NotNull String text) {
-    return TASK_PY;
-  }
-
-  @Override
-  public boolean excludeFromArchive(@NotNull Project project, @NotNull VirtualFile file) {
-    return super.excludeFromArchive(project, file) || PyEduUtils.excludeFromArchive(file);
-  }
-
-  @Override
-  public boolean isTestFile(@NotNull Project project, @NotNull VirtualFile file) {
-    return TESTS_PY.equals(file.getName());
-  }
-
-  @NotNull
-  @Override
-  public TaskCheckerProvider getTaskCheckerProvider() {
-    return new PyTaskCheckerProvider();
-  }
-
-  @NotNull
-  @Override
-  public Icon getLogo() {
-    return PythonIcons.Python.Python;
-  }
-
-  @Override
-  public boolean isCourseCreatorEnabled() {
-    return false;
+  companion object {
+    const val TESTS_PY = "tests.py"
+    const val TASK_PY = "task.py"
   }
 }

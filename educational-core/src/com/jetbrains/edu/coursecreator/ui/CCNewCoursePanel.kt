@@ -207,7 +207,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     settings.addAll(myLanguageSettings.getLanguageSettingsComponents(myCourse, context))
     myAdvancedSettings.setSettingsComponents(settings)
 
-    myRequiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements())
+    myRequiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements)
     myDescriptionTextArea.text = myCourse.description.nullize() ?: """
       ${courseData.displayName} course.
       Created: ${LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.ENGLISH))}.

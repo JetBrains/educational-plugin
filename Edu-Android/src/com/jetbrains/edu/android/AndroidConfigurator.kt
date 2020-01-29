@@ -10,21 +10,11 @@ import icons.AndroidIcons
 import javax.swing.Icon
 
 class AndroidConfigurator : GradleConfiguratorBase() {
-
-  private val courseBuilder: AndroidCourseBuilder = AndroidCourseBuilder()
-  private val taskCheckerProvider: AndroidTaskCheckerProvider = AndroidTaskCheckerProvider()
-
-  override fun getCourseBuilder(): GradleCourseBuilderBase = courseBuilder
-
-  override fun getSourceDir(): String = "src/main"
-  override fun getTestDirs(): List<String> = listOf("src/test", "src/androidTest")
-
-  // TODO: get rid of this method at all
-  override fun getTestFileName(): String = "ExampleUnitTest.kt"
-
-  override fun getTaskCheckerProvider(): TaskCheckerProvider = taskCheckerProvider
-
-  override fun isEnabled(): Boolean = isFeatureEnabled(EduExperimentalFeatures.ANDROID_COURSES) || isUnitTestMode
-
-  override fun getLogo(): Icon = AndroidIcons.Android
+  override val courseBuilder: GradleCourseBuilderBase = AndroidCourseBuilder()
+  override val taskCheckerProvider: TaskCheckerProvider = AndroidTaskCheckerProvider()
+  override val sourceDir: String = "src/main"
+  override val testDirs: List<String> = listOf("src/test", "src/androidTest")
+  override val testFileName: String = "ExampleUnitTest.kt"
+  override val isEnabled: Boolean = isFeatureEnabled(EduExperimentalFeatures.ANDROID_COURSES) || isUnitTestMode
+  override val logo: Icon = AndroidIcons.Android
 }

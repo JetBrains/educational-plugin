@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import com.jetbrains.edu.python.learning.PyConfigurator.TASK_PY
+import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
 import com.jetbrains.edu.python.learning.PyNewConfigurator.Companion.TEST_FILE_NAME
 import com.jetbrains.edu.python.learning.PyNewConfigurator.Companion.TEST_FOLDER
 import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator

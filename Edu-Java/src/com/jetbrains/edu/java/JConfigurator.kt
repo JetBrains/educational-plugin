@@ -1,62 +1,27 @@
-package com.jetbrains.edu.java;
+package com.jetbrains.edu.java
 
-import com.intellij.lang.java.JavaLanguage;
-import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase;
-import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase;
-import com.jetbrains.edu.jvm.stepik.CodeTaskHelper;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
-import icons.EducationalCoreIcons;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.java.JavaLanguage
+import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
+import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.jvm.stepik.fileName
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
+import icons.EducationalCoreIcons
+import javax.swing.Icon
 
-import javax.swing.*;
+class JConfigurator : GradleConfiguratorBase() {
+  override val courseBuilder: GradleCourseBuilderBase = JCourseBuilder()
+  override val testFileName: String = TEST_JAVA
+  override val isEnabled: Boolean = !EduUtils.isAndroidStudio()
+  override val taskCheckerProvider: TaskCheckerProvider = JTaskCheckerProvider()
+  override fun getMockFileName(text: String): String? = fileName(JavaLanguage.INSTANCE, text)
+  override val mockTemplate: String = getInternalTemplateText(MOCK_JAVA)
+  override val logo: Icon = EducationalCoreIcons.JavaLogo
 
-import static com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText;
-
-public class JConfigurator extends GradleConfiguratorBase {
-
-  public static final String TEST_JAVA = "Tests.java";
-  public static final String TASK_JAVA = "Task.java";
-  public static final String MOCK_JAVA = "Mock.java";
-
-  private final JCourseBuilder myCourseBuilder = new JCourseBuilder();
-
-  @NotNull
-  @Override
-  public GradleCourseBuilderBase getCourseBuilder() {
-    return myCourseBuilder;
-  }
-
-  @NotNull
-  @Override
-  public String getTestFileName() {
-    return TEST_JAVA;
-  }
-
-  @Override
-  public boolean isEnabled() {
-    return !EduUtils.isAndroidStudio();
-  }
-
-  @NotNull
-  @Override
-  public TaskCheckerProvider getTaskCheckerProvider() {
-    return new JTaskCheckerProvider();
-  }
-
-  @Override
-  public String getMockFileName(@NotNull String text) {
-    return CodeTaskHelper.fileName(JavaLanguage.INSTANCE, text);
-  }
-
-  @Override
-  public String getMockTemplate() {
-    return getInternalTemplateText(MOCK_JAVA);
-  }
-
-  @NotNull
-  @Override
-  public Icon getLogo() {
-    return EducationalCoreIcons.JavaLogo;
+  companion object {
+    const val TEST_JAVA = "Tests.java"
+    const val TASK_JAVA = "Task.java"
+    const val MOCK_JAVA = "Mock.java"
   }
 }

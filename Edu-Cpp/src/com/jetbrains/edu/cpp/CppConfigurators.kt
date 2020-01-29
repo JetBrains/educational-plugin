@@ -15,11 +15,11 @@ import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class CppGTestConfigurator : CppBaseConfigurator() {
-  override val builder = CppCourseBuilder(TASK_CPP, TEST_CPP)
+  override val courseBuilder: EduCourseBuilder<CppProjectSettings> = CppCourseBuilder(TASK_CPP, TEST_CPP)
 }
 
 class CppCatchConfigurator : CppBaseConfigurator() {
-  override val builder = CppCourseBuilder(TASK_CPP, CATCH_TEST_CPP)
+  override val courseBuilder: EduCourseBuilder<CppProjectSettings> = CppCourseBuilder(TASK_CPP, CATCH_TEST_CPP)
 
   companion object {
     @VisibleForTesting
@@ -28,25 +28,15 @@ class CppCatchConfigurator : CppBaseConfigurator() {
 }
 
 open class CppBaseConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
-
-  protected open val builder: CppCourseBuilder = CppCourseBuilder("", "")
-  protected open val taskCheckerProvider: CppTaskCheckerProvider = CppTaskCheckerProvider()
-
-  override fun getTaskCheckerProvider(): TaskCheckerProvider = taskCheckerProvider
-
-  override fun getTestFileName(): String = TEST_CPP
-
+  override val courseBuilder: EduCourseBuilder<CppProjectSettings> = CppCourseBuilder("", "")
+  override val taskCheckerProvider: TaskCheckerProvider = CppTaskCheckerProvider()
+  override val testFileName: String = TEST_CPP
   override fun getMockFileName(text: String): String = TASK_CPP
-
-  override fun getCourseBuilder(): EduCourseBuilder<CppProjectSettings> = builder
-
-  override fun getSourceDir(): String = EduNames.SRC
-
-  override fun getTestDirs(): List<String> = listOf(EduNames.TEST)
-
-  override fun getMockTemplate(): String = getInternalTemplateText(MOCK_CPP)
-
-  override fun isCourseCreatorEnabled(): Boolean = true
+  override val sourceDir: String = EduNames.SRC
+  override val testDirs: List<String> = listOf(EduNames.TEST)
+  override val mockTemplate: String = getInternalTemplateText(MOCK_CPP)
+  override val isCourseCreatorEnabled: Boolean = true
+  override val logo: Icon = EducationalCoreIcons.CppLogo
 
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
     if (super.excludeFromArchive(project, file)) {
@@ -61,8 +51,6 @@ open class CppBaseConfigurator : EduConfiguratorWithSubmissions<CppProjectSettin
 
     return file.path.startsWith(buildDirPrefix) || file.path.startsWith(googleTestDirPrefix)
   }
-
-  override fun getLogo(): Icon = EducationalCoreIcons.CppLogo
 
   companion object {
     const val TASK_CPP = "task.cpp"

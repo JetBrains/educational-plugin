@@ -6,6 +6,7 @@ import com.jetbrains.edu.python.learning.PyConfigurator
 import com.jetbrains.python.newProject.PyNewProjectSettings
 
 class PyHyperskillConfigurator : HyperskillConfigurator<PyNewProjectSettings>(PyConfigurator()) {
-  override fun getTestDirs() = listOf(HYPERSKILL_TEST_DIR)
-  override fun isEnabled(): Boolean = !isAndroidStudio()
+  override val testDirs: List<String> = listOf(HYPERSKILL_TEST_DIR)
+  override val isEnabled: Boolean = !isAndroidStudio()
+  override val isCourseCreatorEnabled: Boolean = true
 }

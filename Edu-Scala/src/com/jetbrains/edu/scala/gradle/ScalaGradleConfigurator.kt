@@ -10,22 +10,13 @@ import org.jetbrains.plugins.scala.ScalaLanguage
 import javax.swing.Icon
 
 class ScalaGradleConfigurator : GradleConfiguratorBase() {
-
-  private val myCourseBuilder = ScalaGradleCourseBuilder()
-
-  override fun getCourseBuilder() = myCourseBuilder
-
-  override fun getTestFileName(): String = TEST_SCALA
-
-  override fun isEnabled(): Boolean = !EduUtils.isAndroidStudio()
-
-  override fun getTaskCheckerProvider(): TaskCheckerProvider = ScalaGradleTaskCheckerProvider()
-
-  override fun getMockTemplate(): String = getInternalTemplateText(MOCK_SCALA)
-
+  override val courseBuilder: ScalaGradleCourseBuilder = ScalaGradleCourseBuilder()
+  override val testFileName: String = TEST_SCALA
+  override val isEnabled: Boolean = !EduUtils.isAndroidStudio()
+  override val taskCheckerProvider: TaskCheckerProvider = ScalaGradleTaskCheckerProvider()
+  override val mockTemplate: String = getInternalTemplateText(MOCK_SCALA)
   override fun getMockFileName(text: String): String = fileName(ScalaLanguage.INSTANCE, text)
-
-  override fun getLogo(): Icon = EducationalCoreIcons.ScalaLogo
+  override val logo: Icon = EducationalCoreIcons.ScalaLogo
 
   companion object {
     const val TEST_SCALA = "Test.scala"

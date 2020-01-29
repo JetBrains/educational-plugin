@@ -1,77 +1,43 @@
-package com.jetbrains.edu.learning.checker;
+package com.jetbrains.edu.learning.checker
 
-import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.codeforces.checker.CodeforcesTaskChecker;
-import com.jetbrains.edu.learning.codeforces.checker.CodeforcesTaskWithFileIOTaskChecker;
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask;
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO;
-import com.jetbrains.edu.learning.courseFormat.tasks.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.codeforces.checker.CodeforcesTaskChecker
+import com.jetbrains.edu.learning.codeforces.checker.CodeforcesTaskWithFileIOTaskChecker
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
+import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 
-public interface TaskCheckerProvider {
-    @NotNull
-    TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask task, @NotNull Project project);
+interface TaskCheckerProvider {
+  fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask>
 
-    @NotNull
-    default OutputTaskChecker getOutputTaskChecker(@NotNull OutputTask task, @NotNull Project project, @NotNull CodeExecutor codeExecutor) {
-        return new OutputTaskChecker(task, project, codeExecutor);
+  fun getOutputTaskChecker(task: OutputTask, project: Project, codeExecutor: CodeExecutor): OutputTaskChecker {
+    return OutputTaskChecker(task, project, codeExecutor)
+  }
+
+  fun getTheoryTaskChecker(task: TheoryTask, project: Project): TheoryTaskChecker = TheoryTaskChecker(task, project)
+
+  fun getChoiceTaskChecker(task: ChoiceTask, project: Project): TaskChecker<ChoiceTask>? {
+    return if (task.canCheckLocally) ChoiceTaskChecker(task, project) else null
+  }
+
+  fun getCodeTaskChecker(task: CodeTask, project: Project): TaskChecker<CodeTask>? = null
+
+  fun getIdeTaskChecker(task: IdeTask, project: Project): TaskChecker<IdeTask> = IdeTaskChecker(task, project)
+
+  fun getCodeExecutor(): CodeExecutor = DefaultCodeExecutor()
+
+  fun getTaskChecker(task: Task, project: Project): TaskChecker<*>? {
+    return when (task) {
+      is EduTask -> getEduTaskChecker(task, project)
+      is OutputTask -> getOutputTaskChecker(task, project, getCodeExecutor())
+      is TheoryTask -> getTheoryTaskChecker(task, project)
+      is CodeTask -> getCodeTaskChecker(task, project)
+      is ChoiceTask -> getChoiceTaskChecker(task, project)
+      is IdeTask -> getIdeTaskChecker(task, project)
+      is CodeforcesTaskWithFileIO -> CodeforcesTaskWithFileIOTaskChecker(task, project)
+      is CodeforcesTask -> CodeforcesTaskChecker(task, project, getCodeExecutor())
+      else -> throw IllegalStateException("Unknown task type: " + task.itemType)
     }
-
-    @NotNull
-    default TheoryTaskChecker getTheoryTaskChecker(@NotNull TheoryTask task, @NotNull Project project) {
-        return new TheoryTaskChecker(task, project);
-    }
-
-    @Nullable
-    default TaskChecker<ChoiceTask> getChoiceTaskChecker(@NotNull ChoiceTask task, @NotNull Project project) {
-        return task.getCanCheckLocally() ? new ChoiceTaskChecker(task, project) : null;
-    }
-
-    @Nullable
-    default TaskChecker<CodeTask> getCodeTaskChecker(@NotNull CodeTask task, @NotNull Project project) {
-        return null;
-    }
-
-    @NotNull
-    default TaskChecker<IdeTask> getIdeTaskChecker(@NotNull IdeTask task, @NotNull Project project) {
-        return new IdeTaskChecker(task, project);
-    }
-
-    @NotNull
-    default CodeExecutor getCodeExecutor() {
-      return new DefaultCodeExecutor();
-    }
-
-    @Nullable
-    default TaskChecker getTaskChecker(@NotNull Task task, @NotNull Project project) {
-        if (task instanceof EduTask) {
-            return getEduTaskChecker((EduTask) task, project);
-        }
-        else if (task instanceof OutputTask) {
-            return getOutputTaskChecker((OutputTask) task, project, getCodeExecutor());
-        }
-        else if (task instanceof TheoryTask) {
-            return getTheoryTaskChecker((TheoryTask) task, project);
-        }
-        else if (task instanceof CodeTask) {
-            return getCodeTaskChecker((CodeTask) task, project);
-        }
-        else if (task instanceof ChoiceTask) {
-            return getChoiceTaskChecker((ChoiceTask) task, project);
-        }
-        else if (task instanceof IdeTask) {
-            return getIdeTaskChecker((IdeTask) task, project);
-        }
-        else if (task instanceof CodeforcesTask) {
-            if (task instanceof CodeforcesTaskWithFileIO) {
-                return new CodeforcesTaskWithFileIOTaskChecker((CodeforcesTaskWithFileIO) task, project);
-            }
-            return new CodeforcesTaskChecker((CodeforcesTask) task, project, getCodeExecutor());
-        }
-        else {
-            throw new IllegalStateException("Unknown task type: " + task.getItemType());
-        }
-    }
+  }
 }

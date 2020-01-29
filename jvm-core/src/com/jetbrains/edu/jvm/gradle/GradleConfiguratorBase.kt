@@ -21,8 +21,7 @@ import java.io.File
 import java.io.IOException
 
 abstract class GradleConfiguratorBase : EduConfiguratorWithSubmissions<JdkProjectSettings>() {
-
-  abstract override fun getCourseBuilder(): GradleCourseBuilderBase
+  abstract override val courseBuilder: GradleCourseBuilderBase
 
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
     if (super.excludeFromArchive(project, file)) return true
@@ -43,10 +42,9 @@ abstract class GradleConfiguratorBase : EduConfiguratorWithSubmissions<JdkProjec
     return name in NAMES_TO_EXCLUDE || pathSegments.any { it in FOLDERS_TO_EXCLUDE }
   }
 
-  override fun getSourceDir(): String = EduNames.SRC
-  override fun getTestDirs(): List<String> = listOf(EduNames.TEST)
-
-  override fun pluginRequirements(): List<String> = listOf("org.jetbrains.plugins.gradle", "JUnit")
+  override val sourceDir: String = EduNames.SRC
+  override val testDirs: List<String> = listOf(EduNames.TEST)
+  override val pluginRequirements: List<String> = listOf("org.jetbrains.plugins.gradle", "JUnit")
 
   companion object {
     private val NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(

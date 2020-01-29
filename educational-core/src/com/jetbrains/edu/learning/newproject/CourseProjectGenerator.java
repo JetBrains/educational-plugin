@@ -48,6 +48,7 @@ import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseProjectGenerator;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,6 +57,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
 
+/**
+ * If you add any new public methods here, please do not forget to add it also to
+ * @see HyperskillCourseProjectGenerator
+ */
 public abstract class CourseProjectGenerator<S> {
 
   public static final Key<Boolean> EDU_PROJECT_CREATED = Key.create("edu.projectCreated");

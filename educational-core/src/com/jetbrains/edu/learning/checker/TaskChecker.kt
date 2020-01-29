@@ -6,6 +6,10 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
+/**
+ * If you add any new public methods here, please do not forget to add it also to
+ * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillTaskCheckerProvider
+ */
 open class TaskChecker<out T : Task>(@JvmField val task: T, @JvmField val project: Project) {
   open fun onTaskSolved(message: String) {
   }

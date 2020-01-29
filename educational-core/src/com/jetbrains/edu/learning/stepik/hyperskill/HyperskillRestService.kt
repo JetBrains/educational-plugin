@@ -232,7 +232,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     var project: Project? = null
     ApplicationManager.getApplication().invokeAndWait {
       TransactionGuard.getInstance().submitTransactionAndWait {
-        project = projectGenerator.doCreateCourseProject(location, configurator.courseBuilder.getLanguageSettings().settings)
+        project = projectGenerator.doCreateCourseProject(location, configurator.courseBuilder.getLanguageSettings().settings!!)
       }
     }
     return project

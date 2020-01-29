@@ -38,19 +38,17 @@ class FakeGradleTypeFactory : FileTypeFactory() {
 }
 
 class FakeGradleConfigurator : EduConfigurator<Unit> {
-
-  private val courseBuilder = FakeGradleCourseBuilder()
-
-  override fun getSourceDir(): String = EduNames.SRC
-  override fun getTestDirs(): List<String> = listOf(EduNames.TEST)
-
-  override fun getCourseBuilder(): FakeGradleCourseBuilder = courseBuilder
-  override fun getTestFileName(): String = TEST_FILE_NAME
+  override val sourceDir: String = EduNames.SRC
+  override val testDirs: List<String> = listOf(EduNames.TEST)
+  override val courseBuilder: FakeGradleCourseBuilder = FakeGradleCourseBuilder()
+  override val testFileName: String = TEST_FILE_NAME
   override fun getMockFileName(text: String): String = TASK_FILE_NAME
 
-  override fun getTaskCheckerProvider() = TaskCheckerProvider { task, project ->
-    object : TaskChecker<EduTask>(task, project) {
-      override fun check(indicator: ProgressIndicator): CheckResult = CheckResult(CheckStatus.Solved, "")
+  override val taskCheckerProvider = object : TaskCheckerProvider {
+    override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
+      return object : TaskChecker<EduTask>(task, project) {
+        override fun check(indicator: ProgressIndicator): CheckResult = CheckResult(CheckStatus.Solved, "")
+      }
     }
   }
 

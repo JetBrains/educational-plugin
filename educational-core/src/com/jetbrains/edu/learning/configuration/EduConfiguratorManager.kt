@@ -14,14 +14,14 @@ object EduConfiguratorManager {
    * Returns any enabled [EduConfigurator] for given language, courseType and environment
    */
   @JvmStatic
-  fun findConfigurator(courseType: String, environment: String, language: Language): EduConfigurator<out Any>? =
+  fun findConfigurator(courseType: String, environment: String, language: Language): EduConfigurator<*>? =
     when (courseType) {
       CODEFORCES_COURSE_TYPE -> CodeforcesLanguageProvider.getConfigurator(language.id)
       else -> findExtension(courseType, environment, language)?.instance
     }
 
   @JvmStatic
-  fun findExtension(courseType: String, environment: String, language: Language): EducationalExtensionPoint<EduConfigurator<out Any>>? {
+  fun findExtension(courseType: String, environment: String, language: Language): EducationalExtensionPoint<EduConfigurator<*>>? {
     var configurator =
       allExtensions().find { extension ->
         extension.language == language.id &&
@@ -42,8 +42,8 @@ object EduConfiguratorManager {
    * Returns all extension points of [EduConfigurator] where instance of [EduConfigurator] is enabled
    */
   @JvmStatic
-  fun allExtensions(): List<EducationalExtensionPoint<EduConfigurator<out Any>>> =
-    Extensions.getExtensions<EducationalExtensionPoint<EduConfigurator<out Any>>>(EducationalExtensionPoint.EP_NAME, null)
+  fun allExtensions(): List<EducationalExtensionPoint<EduConfigurator<*>>> =
+    Extensions.getExtensions<EducationalExtensionPoint<EduConfigurator<*>>>(EducationalExtensionPoint.EP_NAME, null)
       .filter { it.instance.isEnabled }
 
   /**
@@ -56,7 +56,7 @@ object EduConfiguratorManager {
 
   private val compatibleCourseTypes: List<String> = listOf(CourseraNames.COURSE_TYPE, StepikNames.STEPIK_TYPE)
 
-  private fun compatibleCourseType(extension: EducationalExtensionPoint<EduConfigurator<out Any>>, courseType: String): Boolean {
+  private fun compatibleCourseType(extension: EducationalExtensionPoint<EduConfigurator<*>>, courseType: String): Boolean {
     return extension.courseType == EduNames.PYCHARM && courseType in compatibleCourseTypes
   }
 

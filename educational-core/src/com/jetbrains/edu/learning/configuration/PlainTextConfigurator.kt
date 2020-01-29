@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.configuration
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduCourseBuilder
@@ -19,14 +20,11 @@ import java.io.IOException
 import javax.swing.Icon
 
 open class PlainTextConfigurator : EduConfigurator<Unit> {
-
-  override fun getCourseBuilder() = PlainTextCourseBuilder()
-  override fun getTestFileName() = "Tests.txt"
+  override val courseBuilder: EduCourseBuilder<Unit> = PlainTextCourseBuilder()
+  override val testFileName: String = "Tests.txt"
   override fun getMockFileName(text: String): String = "Task.txt"
-
-  override fun getTestDirs() = listOf("tests")
-
-  override fun getLogo(): Icon = AllIcons.FileTypes.Text
+  override val testDirs: List<String> = listOf("tests")
+  override val logo: Icon = AllIcons.FileTypes.Text
 
   /**
    * To specify check result for plain text courses in tests:
@@ -42,35 +40,36 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
    *
    * `Unchecked Failed to check`*
    */
-  override fun getTaskCheckerProvider() = TaskCheckerProvider { task, project ->
-    object : TaskChecker<EduTask>(task, project) {
-      override fun check(indicator: ProgressIndicator): CheckResult {
-        val taskDir = task.getDir(project) ?: error("No taskDir in tests")
-        val checkResultFile = taskDir.findChild(CHECK_RESULT_FILE)
-        if (checkResultFile == null) {
-          return CheckResult.SOLVED
+  override val taskCheckerProvider = object : TaskCheckerProvider {
+    override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
+      return object : TaskChecker<EduTask>(task, project) {
+        override fun check(indicator: ProgressIndicator): CheckResult {
+          val taskDir = task.getDir(project) ?: error("No taskDir in tests")
+          val checkResultFile = taskDir.findChild(CHECK_RESULT_FILE)
+          if (checkResultFile == null) {
+            return CheckResult.SOLVED
+          }
+          return checkResultFile.checkResult
         }
-        return checkResultFile.checkResult
       }
     }
   }
 
   private val VirtualFile.checkResult: CheckResult
-    get() =
-      try {
-        val text = VfsUtil.loadText(this)
-        val statusWithMessage = text.split(" ", limit = 2)
-        val message = if (statusWithMessage.size > 1) statusWithMessage[1] else ""
-        CheckResult(CheckStatus.valueOf(statusWithMessage[0]), message)
-      }
-      catch (e: IOException) {
-        CheckResult.SOLVED
-      }
-      catch (e: IllegalArgumentException) {
-        CheckResult.SOLVED
-      }
+    get() = try {
+      val text = VfsUtil.loadText(this)
+      val statusWithMessage = text.split(" ", limit = 2)
+      val message = if (statusWithMessage.size > 1) statusWithMessage[1] else ""
+      CheckResult(CheckStatus.valueOf(statusWithMessage[0]), message)
+    }
+    catch (e: IOException) {
+      CheckResult.SOLVED
+    }
+    catch (e: IllegalArgumentException) {
+      CheckResult.SOLVED
+    }
 
-  override fun isCourseCreatorEnabled(): Boolean = ApplicationManager.getApplication().isInternal || isUnitTestMode
+  override val isCourseCreatorEnabled: Boolean = ApplicationManager.getApplication().isInternal || isUnitTestMode
 
   companion object {
     const val CHECK_RESULT_FILE = "checkResult.txt"

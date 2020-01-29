@@ -72,7 +72,7 @@ sealed class ErrorState(
     }
 
     private fun getPluginRequirements(course: Course?): List<String> {
-      return course?.configurator?.pluginRequirements().orEmpty()
+      return course?.configurator?.pluginRequirements.orEmpty()
     }
 
     @JvmStatic

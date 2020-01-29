@@ -14,12 +14,8 @@ import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import javax.swing.JPanel
 
 abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfigurator<T>) : EduConfigurator<T> by baseConfigurator {
-
-  override fun getTestFileName() = ""
-
-  override fun getTaskCheckerProvider(): TaskCheckerProvider = HyperskillTaskCheckerProvider(baseConfigurator.taskCheckerProvider)
-
-  override fun getCourseBuilder(): EduCourseBuilder<T> = HyperskillCourseBuilder(baseConfigurator.courseBuilder)
+  override val taskCheckerProvider: TaskCheckerProvider = HyperskillTaskCheckerProvider(baseConfigurator.taskCheckerProvider)
+  override val courseBuilder: EduCourseBuilder<T> = HyperskillCourseBuilder(baseConfigurator.courseBuilder)
 
   override fun additionalTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
     if (currentTask == null) return null

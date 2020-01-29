@@ -1,35 +1,22 @@
-package com.jetbrains.edu.learning.configuration;
+package com.jetbrains.edu.learning.configuration
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.EmptyIcon;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.IdeDefaultCourseTypes;
-import com.jetbrains.edu.coursecreator.ui.CCNewCoursePanel;
-import com.jetbrains.edu.learning.EduCourseBuilder;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
-import com.jetbrains.edu.learning.checker.TheoryTaskChecker;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.newproject.ui.CoursesPanel;
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
-import kotlin.Pair;
-import kotlin.collections.CollectionsKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.SystemIndependent;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.ui.EmptyIcon
+import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isConfigFile
+import org.jetbrains.annotations.SystemIndependent
+import javax.swing.Icon
+import javax.swing.JPanel
 
 /**
  * The main interface provides courses support for some language and course type.
@@ -37,65 +24,53 @@ import java.util.List;
  * IdeDefaultCourseTypes.kt provides default CourseTypeData. When creating new course, default course type will be suggested first,
  * or, if default course type is not specified, course types will be shown in alphabetic order.
  *
- * @see CCNewCoursePanel
- * @see IdeDefaultCourseTypes
+ * @see com.jetbrains.edu.coursecreator.ui.CCNewCoursePanel
+ * @see com.jetbrains.edu.coursecreator.IdeDefaultCourseTypes
  *
  * To get configurator instance for some language use {@link EduConfiguratorManager}
  * and {@link EduConfiguratorManager} supports the corresponding filtering.
+ *
  *
  * @param <Settings> container type holds course project settings state
  *
  * @see EduConfiguratorManager
  * @see EducationalExtensionPoint
  */
-public interface EduConfigurator<Settings> {
-  Logger LOG = Logger.getInstance(EduConfigurator.class);
-
-  @NotNull
-  EduCourseBuilder<Settings> getCourseBuilder();
-
-  @NotNull
-  String getTestFileName();
+interface EduConfigurator<Settings> {
+  val courseBuilder: EduCourseBuilder<Settings>
+  val testFileName: String
+  val taskCheckerProvider: TaskCheckerProvider
 
   /**
    * Used in educator plugin to filter files to be packed into course archive
    */
-  default boolean excludeFromArchive(@NotNull Project project, @NotNull VirtualFile file) {
-    List<String> ancestorNames = new ArrayList<>();
-    VirtualFile parent = file;
+  fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
+    val ancestorNames = mutableListOf<String>()
+    var parent: VirtualFile? = file
     while (parent != null) {
-      ancestorNames.add(parent.getName());
-      parent = parent.getParent();
+      ancestorNames.add(parent.name)
+      parent = parent.parent
     }
-    String name = file.getName();
 
+    val name = file.name
     // Project related files
-    if (ancestorNames.contains(Project.DIRECTORY_STORE_FOLDER) || "iml".equals(file.getExtension())) return true;
-    // Course structure files
-    if (EduUtils.isTaskDescriptionFile(name) || YamlFormatSynchronizer.isConfigFile(file)) return true;
-    // Hidden files
-    if (CollectionsKt.any(ancestorNames, ancestorName -> ancestorName.startsWith("."))) return true;
-    // Special files
-    if (ancestorNames.contains(CCUtils.GENERATED_FILES_FOLDER) || EduNames.HINTS.equals(name) || EduNames.STEPIK_IDS_JSON.equals(name)) return true;
-
-    return false;
+    return ancestorNames.contains(Project.DIRECTORY_STORE_FOLDER) || "iml" == file.extension ||
+           // Course structure files
+           EduUtils.isTaskDescriptionFile(name) || isConfigFile(file) ||
+           // Hidden files
+           ancestorNames.any { ancestorName: String -> ancestorName.startsWith(".") } ||
+           // Special files
+           ancestorNames.contains(CCUtils.GENERATED_FILES_FOLDER) || EduNames.HINTS == name || EduNames.STEPIK_IDS_JSON == name
   }
 
   /**
    * @return true for all the test files
    */
-  default boolean isTestFile(@NotNull Project project, @NotNull VirtualFile file) {
-    if (file.isDirectory()) return false;
-    Task task = EduUtils.getTaskForFile(project, file);
-    if (task == null) {
-      return false;
-    }
-
-    VirtualFile taskDir = task.getTaskDir(project);
-    if (taskDir == null) {
-      return false;
-    }
-    return ContainerUtil.find(TaskExt.findTestDirs(task, taskDir), testDir -> VfsUtilCore.isAncestor(testDir, file, true)) != null;
+  fun isTestFile(project: Project, file: VirtualFile): Boolean {
+    if (file.isDirectory) return false
+    val task = EduUtils.getTaskForFile(project, file) ?: return false
+    val taskDir = task.getTaskDir(project) ?: return false
+    return ContainerUtil.find(task.findTestDirs(taskDir)) { VfsUtilCore.isAncestor(it, file, true) } != null
   }
 
   /**
@@ -107,30 +82,19 @@ public interface EduConfigurator<Settings> {
    *
    * @return task files directory path
    */
-  @SystemIndependent
-  @NotNull
-  default String getSourceDir() {
-    return "";
-  }
+  val sourceDir: @SystemIndependent String
+    get() = ""
 
   /**
    * Provides list of directories where test files should be placed in task folder.
    * Can be empty.
    *
-   * See {@link EduConfigurator#getSourceDir()} javadoc for example.
+   * See [EduConfigurator.sourceDir] javadoc for example.
    *
    * @return list of test files directories paths
    */
-  @SystemIndependent
-  @NotNull
-  default List<String> getTestDirs() {
-    return Collections.emptyList();
-  }
-
-  /**
-   * @return class that provide checkers for all types of tasks
-   */
-  @NotNull TaskCheckerProvider getTaskCheckerProvider();
+  val testDirs: List<@SystemIndependent String>
+    get() = listOf()
 
   /**
    * Allows to determine if configurator can be used in current environment or not.
@@ -139,18 +103,16 @@ public interface EduConfigurator<Settings> {
    *
    * @see EduConfiguratorManager
    */
-  default boolean isEnabled() {
-    return true;
-  }
+  val isEnabled: Boolean
+    get() = true
 
   /**
    * Allows to determine if configurator can be used to create new course using course creator features.
    *
    * @return true if configurator can be used to create new courses
    */
-  default boolean isCourseCreatorEnabled() {
-    return true;
-  }
+  val isCourseCreatorEnabled: Boolean
+    get() = true
 
   /**
    * Constructs file name for Stepik tasks according to its text.
@@ -158,38 +120,31 @@ public interface EduConfigurator<Settings> {
    *
    * @see com.jetbrains.edu.learning.stepik.StepikTaskBuilder
    */
-  @Nullable
-  default String getMockFileName(@NotNull String text) {
-    return null;
-  }
+  fun getMockFileName(text: String): String? = null
 
   /**
    * Allows to customize file template used as playground in theory and choice tasks
-   * Template should work along with the according {@link TheoryTaskChecker}
+   * Template should work along with the according [com.jetbrains.edu.learning.checker.TheoryTaskChecker]
    *
    * @see com.jetbrains.edu.learning.stepik.StepikTaskBuilder
-   *
    */
-  default String getMockTemplate() {
-    return "";
-  }
+  val mockTemplate: String
+    get() = ""
 
   /**
    * Provide IDE plugin ids which are required for correct work of courses for the corresponding language.
    *
    * @return list of plugin ids
    */
-  default List<String> pluginRequirements() {
-    return Collections.emptyList();
-  }
+  val pluginRequirements: List<String>
+    get() = listOf()
 
   /**
    * Allows to perform heavy computations (ex.HTTP requests) before actual project is created
    * It's recommended to perform these computations under progress
    * @throws CourseCantBeStartedException if impossible to start course
    */
-  default void beforeCourseStarted(@NotNull Course course) throws CourseCantBeStartedException {
-
+  fun beforeCourseStarted(course: Course) {
   }
 
   /**
@@ -198,21 +153,16 @@ public interface EduConfigurator<Settings> {
    *
    * @return 16x16 icon
    *
-   * @see CoursesPanel
-   * @see CCNewCoursePanel
+   * @see com.jetbrains.edu.learning.newproject.ui.CoursesPanel
+   * @see com.jetbrains.edu.coursecreator.ui.CCNewCoursePanel
    */
-  @NotNull
-  default Icon getLogo() {
-    return EmptyIcon.ICON_16;
-  }
+  val logo: Icon
+    get() = EmptyIcon.ICON_16
 
   /**
    * Tab next to the task description.
    *
-   * @see TaskDescriptionView
+   * @see com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
    */
-  @Nullable
-  default Pair<JPanel, String> additionalTaskTab(@Nullable Task currentTask, Project project) {
-    return null;
-  }
+  fun additionalTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? = null
 }
