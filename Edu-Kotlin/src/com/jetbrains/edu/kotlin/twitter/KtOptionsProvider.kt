@@ -33,6 +33,8 @@ class KtOptionsProvider(private val project: Project) : OptionsProvider {
   }
 
   override fun createComponent(): JComponent? {
+    // Default project can be passed here while building searchable options
+    if (project.isDefault) return null
     if (!EduUtils.isEduProject(project)) return null
     if (EduUtils.getTwitterConfigurator(project) == null) return null
 
