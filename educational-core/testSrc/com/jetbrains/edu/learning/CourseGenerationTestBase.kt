@@ -1,26 +1,19 @@
+// BACKCOMPAT: 2019.2. Use HeavyPlatformTestCase instead of PlatformTestCase
+@file:Suppress("DEPRECATION")
+
 package com.jetbrains.edu.learning
 
-import com.intellij.idea.IdeaTestApplication
-import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.*
-import com.intellij.util.ThrowableRunnable
+import com.intellij.testFramework.PlatformTestCase
+import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import java.io.File
 
-// TODO: use [HeavyPlatformTestCase] as base class
-abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
+abstract class CourseGenerationTestBase<Settings> : PlatformTestCase() {
 
   abstract val defaultSettings: Settings
 
   protected lateinit var rootDir: VirtualFile
-  protected lateinit var project: Project
-
-  private lateinit var application: IdeaTestApplication
 
   protected fun findFile(path: String): VirtualFile = rootDir.findFileByRelativePath(path) ?: error("Can't find $path")
 
@@ -30,7 +23,7 @@ abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
     val project = generator.doCreateCourseProject(rootDir.path, defaultSettings as Any) ?: error("Cannot create project")
 
     runInEdtAndWait {
-      this.project = project
+      myProject = project
     }
   }
 
@@ -42,29 +35,13 @@ abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
 
   override fun setUp() {
     super.setUp()
-
-    application = LightPlatformTestCase.initApplication()
-
-    val tempDir = File(FileUtil.getTempDirectory())
-    tempDir.mkdirs()
-
-    rootDir = VfsUtil.findFileByIoFile(tempDir, true) ?: error("Can't find ${tempDir.absolutePath}")
+    rootDir = tempDir.createTempVDir() ?: error("Failed to create root dir for test")
   }
 
-  override fun tearDown() {
-    try {
-      RunAll()
-        .append(ThrowableRunnable { runWriteAction { rootDir.delete(this) } })
-        .append(ThrowableRunnable { LightPlatformTestCase.doTearDown(project, application) })
-        .append(ThrowableRunnable {
-          // BACKCOMPAT: 2019.2
-          @Suppress("DEPRECATION")
-          PlatformTestCase.closeAndDisposeProjectAndCheckThatNoOpenProjects(project)
-        })
-        .run()
-    } finally {
-      super.tearDown()
-    }
-  }
-
+  /**
+   * It intentionally does nothing to avoid project creation in [setUp].
+   *
+   * If you need to create course project, use [createCourseStructure]
+   */
+  override fun setUpProject() {}
 }

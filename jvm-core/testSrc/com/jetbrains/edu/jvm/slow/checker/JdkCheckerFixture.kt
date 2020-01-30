@@ -2,6 +2,7 @@ package com.jetbrains.edu.jvm.slow.checker
 
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
@@ -11,10 +12,11 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.IdeaTestUtil
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.slow.checker.EduCheckerFixture
-import org.junit.Assert
 import java.io.File
 
 class JdkCheckerFixture : EduCheckerFixture<JdkProjectSettings>() {
+
+  private var sdks: Set<Sdk>? = null
 
   override val projectSettings: JdkProjectSettings get() {
     val jdk = ProjectJdkTable.getInstance().findJdk(MY_TEST_JDK_NAME) ?: error("Gradle JDK should be configured in setUp()")
@@ -38,19 +40,23 @@ class JdkCheckerFixture : EduCheckerFixture<JdkProjectSettings>() {
     val myJdkHome = IdeaTestUtil.requireRealJdkHome()
     VfsRootAccess.allowRootAccess(testRootDisposable, myJdkHome)
 
-    val oldJdk = ProjectJdkTable.getInstance().findJdk(MY_TEST_JDK_NAME)
-    if (oldJdk != null) {
-      ProjectJdkTable.getInstance().removeJdk(oldJdk)
-    }
+    sdks = ProjectJdkTable.getInstance().allJdks.toSet()
+
     val jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(myJdkHome))!!
     val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null, MY_TEST_JDK_NAME)
-    Assert.assertNotNull("Cannot create JDK for $myJdkHome", jdk)
-    SdkConfigurationUtil.addSdk(jdk!!)
+    checkNotNull(jdk) {
+      "Cannot create JDK for $myJdkHome"
+    }
+    SdkConfigurationUtil.addSdk(jdk)
   }
 
   override fun tearDown() {
-    val old = ProjectJdkTable.getInstance().findJdk(MY_TEST_JDK_NAME) ?: return
-    SdkConfigurationUtil.removeSdk(old)
+    for (sdk in ProjectJdkTable.getInstance().allJdks) {
+      if (sdk !in sdks.orEmpty()) {
+        SdkConfigurationUtil.removeSdk(sdk)
+      }
+    }
+    sdks = null
   }
 
   companion object {

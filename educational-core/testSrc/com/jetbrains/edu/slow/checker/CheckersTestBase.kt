@@ -1,9 +1,10 @@
+// BACKCOMPAT: 2019.2. Use HeavyPlatformTestCase instead of PlatformTestCase
+@file:Suppress("DEPRECATION")
+
 package com.jetbrains.edu.slow.checker
 
-import com.intellij.idea.IdeaTestApplication
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager
@@ -13,15 +14,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageManagerImpl
-import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.MapDataContext
+import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.TestActionEvent
-import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
-import com.intellij.testFramework.fixtures.TempDirTestFixture
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.intellij.util.ui.UIUtil
@@ -38,15 +34,12 @@ import com.jetbrains.edu.learning.registerComponent
 import org.junit.Assert
 import org.junit.ComparisonFailure
 
-abstract class CheckersTestBase<Settings> : UsefulTestCase() {
+abstract class CheckersTestBase<Settings> : PlatformTestCase() {
     private lateinit var myManager: FileEditorManagerImpl
     private lateinit var myOldDockContainers: Set<DockContainer>
 
     protected lateinit var myCourse: Course
-    protected lateinit var myProject: Project
-    private lateinit var myApplication: IdeaTestApplication
 
-    private lateinit var tempDirFixture: TempDirTestFixture
     private lateinit var checkerFixture: EduCheckerFixture<Settings>
 
     override fun runBare() {
@@ -132,36 +125,26 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
         return TestActionEvent(context, action)
     }
 
-    private fun createEduProject() {
-        myCourse = createCourse()
+    override fun setUpProject() {
+        checkerFixture.setUp()
 
+        myCourse = createCourse()
         val settings = checkerFixture.projectSettings
 
-        val generator = myCourse.configurator?.courseBuilder?.getCourseProjectGenerator(myCourse)
-                         ?: error("Failed to get `CourseProjectGenerator`")
-        myProject = generator.doCreateCourseProject(tempDirFixture.tempDirPath, settings as Any)
-                    ?: error("Cannot create project with name ${projectName()}")
+        val prevDialog = Messages.setTestDialog(TestDialog.NO)
+        try {
+            val rootDir = tempDir.createTempDir()
+            val generator = myCourse.configurator?.courseBuilder?.getCourseProjectGenerator(myCourse)
+                            ?: error("Failed to get `CourseProjectGenerator`")
+            myProject = generator.doCreateCourseProject(rootDir.absolutePath, settings as Any)
+                        ?: error("Cannot create project with name ${projectName()}")
+        } finally {
+            Messages.setTestDialog(prevDialog)
+        }
     }
 
     override fun setUp() {
         super.setUp()
-        myApplication = IdeaTestApplication.getInstance()
-
-        tempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture()
-        tempDirFixture.setUp()
-        val rootDir = tempDirFixture.getFile("")!!
-        VfsUtil.markDirtyAndRefresh(false, true, true, rootDir)
-
-        checkerFixture.setUp()
-
-        val prevDialog = Messages.setTestDialog(TestDialog.NO)
-        try {
-            createEduProject()
-        } finally {
-          Messages.setTestDialog(prevDialog)
-        }
-
-        InjectedLanguageManagerImpl.pushInjectors(myProject)
 
         val dockManager = DockManager.getInstance(myProject)
         myOldDockContainers = dockManager.containers
@@ -177,9 +160,6 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
     override fun tearDown() {
         try {
             checkerFixture.tearDown()
-            tempDirFixture.tearDown()
-            LightPlatformTestCase.doTearDown(myProject, myApplication)
-            InjectedLanguageManagerImpl.checkInjectorsAreDisposed(myProject)
 
             DockManager.getInstance(myProject).containers
                     .filterNot { myOldDockContainers.contains(it) }
@@ -187,12 +167,12 @@ abstract class CheckersTestBase<Settings> : UsefulTestCase() {
 
             myManager.closeAllFiles()
 
-            EditorHistoryManager.getInstance(myProject).files.forEach {
-                EditorHistoryManager.getInstance(myProject).removeFile(it)
+            val editorHistoryManager = EditorHistoryManager.getInstance(myProject)
+            editorHistoryManager.files.forEach {
+                editorHistoryManager.removeFile(it)
             }
 
             (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
-            runWriteAction { Disposer.dispose(myProject) }
         } finally {
             super.tearDown()
         }

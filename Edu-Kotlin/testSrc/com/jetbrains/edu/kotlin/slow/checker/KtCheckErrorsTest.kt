@@ -215,15 +215,20 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
   fun testBrokenJdk() {
     UIUtil.dispatchAllInvocationEvents()
 
-    val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), myProject.baseDir, JavaSdk.getInstance(), true, null, "Broken JDK")
+    val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), myProject.baseDir, JavaSdk.getInstance(), true, null, "Broken JDK")!!
     runWriteAction {
       ProjectRootManager.getInstance(myProject).projectSdk = jdk
-      ProjectJdkTable.getInstance().addJdk(jdk!!)
+      ProjectJdkTable.getInstance().addJdk(jdk)
     }
 
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { CheckUtils.FAILED_TO_CHECK_MESSAGE }
 
-    doTest()
+    try {
+      doTest()
+    }
+    finally {
+      SdkConfigurationUtil.removeSdk(jdk)
+    }
   }
 }
