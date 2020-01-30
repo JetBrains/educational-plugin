@@ -13,13 +13,10 @@ import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.TestActionEvent
-import com.intellij.ui.docking.DockContainer
-import com.intellij.ui.docking.DockManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.actions.CheckAction
@@ -36,7 +33,6 @@ import org.junit.ComparisonFailure
 
 abstract class CheckersTestBase<Settings> : PlatformTestCase() {
     private lateinit var myManager: FileEditorManagerImpl
-    private lateinit var myOldDockContainers: Set<DockContainer>
 
     protected lateinit var myCourse: Course
 
@@ -146,8 +142,6 @@ abstract class CheckersTestBase<Settings> : PlatformTestCase() {
     override fun setUp() {
         super.setUp()
 
-        val dockManager = DockManager.getInstance(myProject)
-        myOldDockContainers = dockManager.containers
         myManager = createFileEditorManager(myProject)
         myProject.registerComponent(FileEditorManager::class.java, myManager, testRootDisposable)
         (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
@@ -160,10 +154,6 @@ abstract class CheckersTestBase<Settings> : PlatformTestCase() {
     override fun tearDown() {
         try {
             checkerFixture.tearDown()
-
-            DockManager.getInstance(myProject).containers
-                    .filterNot { myOldDockContainers.contains(it) }
-                    .forEach { Disposer.dispose(it) }
 
             myManager.closeAllFiles()
 

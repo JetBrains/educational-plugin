@@ -16,7 +16,6 @@ import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorPsiDataProvider;
 import com.intellij.openapi.fileTypes.PlainTextLanguage;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
@@ -25,7 +24,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.TestActionEvent;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import com.intellij.ui.docking.DockContainer;
 import com.intellij.ui.docking.DockManager;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.EduDocumentListener;
@@ -52,7 +50,6 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
   private static final Logger LOG = Logger.getInstance(CCTestCase.class);
 
   private FileEditorManagerImpl myManager;
-  private Set<DockContainer> myOldDockContainers;
 
   public static void checkPainters(@NotNull AnswerPlaceholder placeholder) {
     final Set<AnswerPlaceholder> paintedPlaceholders = PlaceholderPainter.getPaintedPlaceholder();
@@ -86,7 +83,6 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     super.setUp();
 
     DockManager dockManager = DockManager.getInstance(myFixture.getProject());
-    myOldDockContainers = dockManager.getContainers();
     myManager = UtilsKt.createFileEditorManager(myFixture.getProject());
     // Copied from TestEditorManagerImpl's constructor
     myManager.registerExtraEditorDataProvider(new TextEditorPsiDataProvider(), null);
@@ -132,11 +128,6 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
   @Override
   protected void tearDown() throws Exception {
     try {
-      DockManager.getInstance(myFixture.getProject()).getContainers()
-        .stream()
-        .filter(container -> !myOldDockContainers.contains(container))
-        .forEach(container -> Disposer.dispose(container));
-
       myManager.closeAllFiles();
       for (VirtualFile file : EditorHistoryManager.getInstance(myFixture.getProject()).getFiles()) {
         EditorHistoryManager.getInstance(myFixture.getProject()).removeFile(file);

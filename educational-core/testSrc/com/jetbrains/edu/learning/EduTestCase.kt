@@ -47,7 +47,6 @@ import java.io.IOException
 
 abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   private lateinit var myManager: FileEditorManagerImpl
-  private lateinit var myOldDockContainers: Set<DockContainer>
 
   @Throws(Exception::class)
   override fun setUp() {
@@ -70,8 +69,6 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
     registerAdditionalResourceBundleProviders(testRootDisposable)
 
-    val dockManager = DockManager.getInstance(myFixture.project)
-    myOldDockContainers = dockManager.containers
     myManager = createFileEditorManager(myFixture.project)
     // Copied from TestEditorManagerImpl's constructor
     myManager.registerExtraEditorDataProvider(TextEditorPsiDataProvider(), null)
@@ -90,11 +87,6 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
 
   override fun tearDown() {
     try {
-      DockManager.getInstance(myFixture.project).containers
-        .filterNot { myOldDockContainers.contains(it) }
-        .forEach { Disposer.dispose(it) }
-
-//      project.registerComponent(FileEditorManager::class.java, myOldManager)
       myManager.closeAllFiles()
 
       EditorHistoryManager.getInstance(myFixture.project).files.forEach {
