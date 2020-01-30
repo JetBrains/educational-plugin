@@ -16,6 +16,7 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import java.io.IOException
+import java.io.InterruptedIOException
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.URI
@@ -87,6 +88,9 @@ fun <T> Call<T>.executeHandlingExceptions(optional: Boolean = false): Response<T
         else -> LOG.error(errorBody.string())
       }
     }
+  }
+  catch (e: InterruptedIOException) {
+    LOG.warn("Connection to server was interrupted. ${e.message}")
   }
   catch (e: IOException) {
     LOG.error("Failed to connect to server. ${e.message}")

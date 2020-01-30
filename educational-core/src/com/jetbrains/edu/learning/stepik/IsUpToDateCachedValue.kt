@@ -21,7 +21,7 @@ class IsUpToDateCachedValue(private val course: EduCourse) {
       if (hasUpToDateValue()) {
         return cache
       }
-      resetCachedValue(course.checkIsUpToDate())
+      resetCachedValue(course.checkIsUpToDateNotBlocking())
       return cache
     } finally {
       lock.unlock()

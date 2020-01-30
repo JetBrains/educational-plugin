@@ -3,6 +3,8 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.application.ex.ApplicationUtil
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.Time
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -10,13 +12,23 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isReadAccessAllowed
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.fillItems
 import java.util.*
 
-@JvmName("checkIsUpToDate")
-fun EduCourse.checkIsUpToDate(): Boolean {
+fun EduCourse.checkIsUpToDateNotBlocking(): Boolean {
+  return if (isReadAccessAllowed) {
+    ApplicationUtil.runWithCheckCanceled({ checkIsUpToDate() }, ProgressManager.getInstance().progressIndicator)
+  }
+  else {
+    checkIsUpToDate()
+  }
+}
+
+private fun EduCourse.checkIsUpToDate(): Boolean {
+  check(!isReadAccessAllowed)
   // disable update for courses with framework lessons as now it's unsupported
   if (lessons.any { it is FrameworkLesson } || sections.any { it -> it.lessons.any { it is FrameworkLesson } }) {
     return true
