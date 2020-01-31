@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.PyConfigurator.TASK_PY
@@ -33,10 +32,8 @@ class PyNewCourseBuilder : EduCourseBuilder<PyNewProjectSettings> {
   override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     if (task.taskFiles.isEmpty()) {
       super.initNewTask(project, lesson, task, info)
-      task.addTaskFile(PyNames.INIT_DOT_PY)
-      val testInitPy = TaskFile("$TEST_FOLDER/${PyNames.INIT_DOT_PY}", "")
-      testInitPy.isVisible = false
-      task.addTaskFile(testInitPy)
+      task.addTaskFile(PyNames.INIT_DOT_PY, false)
+      task.addTaskFile("$TEST_FOLDER/${PyNames.INIT_DOT_PY}", false)
     }
   }
 }

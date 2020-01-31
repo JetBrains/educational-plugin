@@ -111,12 +111,17 @@ public abstract class Task extends StudyItem {
     return name != null ? myTaskFiles.get(name) : null;
   }
 
-  public TaskFile addTaskFile(@NotNull final String name) {
+  public TaskFile addTaskFile(@NotNull final String name, boolean isVisible) {
     TaskFile taskFile = new TaskFile();
     taskFile.setTask(this);
     taskFile.setName(name);
+    taskFile.setVisible(isVisible);
     myTaskFiles.put(name, taskFile);
     return taskFile;
+  }
+
+  public TaskFile addTaskFile(@NotNull final String name) {
+    return addTaskFile(name, true);
   }
 
   public void addTaskFile(@NotNull final TaskFile taskFile) {
