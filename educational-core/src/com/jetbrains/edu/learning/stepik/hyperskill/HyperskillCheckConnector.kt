@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit
 
 object HyperskillCheckConnector {
   private val LOG = Logger.getInstance(HyperskillCheckConnector::class.java)
+  private const val MAX_FILE_SIZE_FOR_PUBLISH = 5 * 1024 * 1024 // 5 Mb
 
   fun postSolution(task: Task, project: Project, result: CheckResult) {
     val attempt = HyperskillConnector.getInstance().postAttempt(task.id)
@@ -36,6 +37,11 @@ object HyperskillCheckConnector {
     val files = ArrayList<SolutionFile>()
     for (taskFile in task.taskFiles.values) {
       val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
+      if (virtualFile.length > MAX_FILE_SIZE_FOR_PUBLISH) {
+        LOG.warn("File ${virtualFile.path} is too big (${virtualFile.length} bytes), will be ignored for submitting to the server")
+        continue
+      }
+
       runReadAction {
         val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: return@runReadAction
         files.add(SolutionFile(taskFile.name, document.text))
