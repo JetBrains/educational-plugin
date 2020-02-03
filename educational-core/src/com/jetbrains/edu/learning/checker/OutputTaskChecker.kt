@@ -18,6 +18,13 @@ open class OutputTaskChecker(
   private val codeExecutor: CodeExecutor
 ) : TaskChecker<OutputTask>(task, project) {
 
+  /**
+   * Try not to overload this method!
+   * This method contains logic of testing output task that should be same in all implementations.
+   *
+   * @see checkOutput
+   * @see CodeExecutor
+   */
   override fun check(indicator: ProgressIndicator): CheckResult {
     try {
       val outputString = when (val result = codeExecutor.execute(project, task, indicator)) {
@@ -39,6 +46,15 @@ open class OutputTaskChecker(
     }
   }
 
+  /**
+   * By default, this method trims last line separators from actual and expected strings
+   * and then compare them.
+   * If actual will be equal with expected will return [CheckStatus.Solved] result
+   * or [CheckStatus.Failed] otherwise.
+   *
+   * @param actual - output of program that [codeExecutor] return as [Ok] result
+   * @param expected - text from output file
+   */
   protected open fun checkOutput(actual: String, expected: String): CheckResult {
     val trimActual = actual.removeLastLineBreaks()
     val trimExpected = expected.removeLastLineBreaks()
