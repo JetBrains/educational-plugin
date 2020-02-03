@@ -7,15 +7,19 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.awt.RelativePoint
+import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.GoToTaskUrlAction
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.OPEN_ON_CODEFORCES_ACTION
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
@@ -31,6 +35,7 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
   private val checkButtonWrapper = JPanel(BorderLayout())
   private val rightActionsToolbar = JPanel(HorizontalLayout(10))
+  private val task = EduUtils.getCurrentTask(project)
 
   init {
     checkActionsPanel.add(checkButtonWrapper, BorderLayout.WEST)
@@ -41,11 +46,16 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   }
 
   private fun createRightActionsToolbar(): JPanel {
-    rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
-    rightActionsToolbar.add(createSingleActionToolbar(GoToTaskUrlAction.ACTION_ID))
+    if (task is CodeforcesTask) {
+      rightActionsToolbar.add(createActionLink(OPEN_ON_CODEFORCES_ACTION, GoToTaskUrlAction.ACTION_ID))
+    } else {
+      rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
+      rightActionsToolbar.add(createSingleActionToolbar(GoToTaskUrlAction.ACTION_ID))
+    }
     return rightActionsToolbar
   }
 
+  @Suppress("SameParameterValue")
   private fun createButtonToolbar(actionId: String): JComponent {
     val action = ActionManager.getInstance().getAction(actionId)
     return createButtonToolbar(action)
@@ -57,6 +67,11 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   private fun createSingleActionToolbar(actionId: String): JComponent {
     val action = ActionManager.getInstance().getAction(actionId)
     return createSingleActionToolbar(action)
+  }
+
+  @Suppress("SameParameterValue")
+  private fun createActionLink(actionText: String, actionId: String): ActionLink {
+    return ActionLink(actionText, ActionManager.getInstance().getAction(actionId))
   }
 
   private fun createSingleActionToolbar(action: AnAction): JComponent {
@@ -124,7 +139,7 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
 
   fun updateCheckPanel(task: Task) {
     updateCheckButtonWrapper(task)
-    updateRightActionsToolbar(task)
+    updateRightActionsToolbar()
   }
 
   private fun updateCheckButtonWrapper(task: Task) {
@@ -135,10 +150,9 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
     }
   }
 
-  private fun updateRightActionsToolbar(task: Task) {
+  private fun updateRightActionsToolbar() {
     rightActionsToolbar.removeAll()
-    rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
-    rightActionsToolbar.add(createSingleActionToolbar(GoToTaskUrlAction(task)))
+    createRightActionsToolbar()
   }
 
   fun checkTooltipPosition(): RelativePoint {

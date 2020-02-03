@@ -6,8 +6,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.GO_TO_CODEFORCES_ACTION
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink.LinkType.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -18,12 +16,8 @@ import icons.EducationalCoreIcons
 
 private const val LEAVE_A_COMMENT_ACTION = "Leave a comment"
 
-class GoToTaskUrlAction() : DumbAwareAction(LEAVE_A_COMMENT_ACTION, LEAVE_A_COMMENT_ACTION, EducationalCoreIcons.CommentTask),
+class GoToTaskUrlAction : DumbAwareAction(LEAVE_A_COMMENT_ACTION, LEAVE_A_COMMENT_ACTION, EducationalCoreIcons.CommentTask),
                           RightAlignedToolbarAction {
-
-  constructor(task: Task) : this() {
-    setTemplatePresentation(task)
-  }
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -42,7 +36,6 @@ class GoToTaskUrlAction() : DumbAwareAction(LEAVE_A_COMMENT_ACTION, LEAVE_A_COMM
     }
 
     val task = EduUtils.getCurrentTask(project) ?: return
-    setTemplatePresentation(task)
 
     val feedbackLink = task.feedbackLink
     val course = task.course
@@ -50,13 +43,6 @@ class GoToTaskUrlAction() : DumbAwareAction(LEAVE_A_COMMENT_ACTION, LEAVE_A_COMM
       NONE -> false
       CUSTOM -> feedbackLink.link != null
       STEPIK -> (course is EduCourse && course.isRemote) || course is HyperskillCourse
-    }
-  }
-
-  private fun setTemplatePresentation(task: Task) {
-    if (task is CodeforcesTask) {
-      templatePresentation.text = GO_TO_CODEFORCES_ACTION
-      templatePresentation.icon = EducationalCoreIcons.CodeforcesGrayed
     }
   }
 
