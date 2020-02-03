@@ -23,7 +23,7 @@ interface CodeExecutor {
     task: Task,
     indicator: ProgressIndicator,
     input: String? = null
-  ): Result<String, String>
+  ): Result<String, CheckResult>
 
   fun createRunConfiguration(
     project: Project,

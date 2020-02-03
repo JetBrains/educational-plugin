@@ -7,7 +7,10 @@ import com.intellij.psi.PsiManager
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.checker.CodeExecutor
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.rust.cargo.project.settings.rustSettings
@@ -19,13 +22,14 @@ import org.rust.openapiext.execute
 import org.rust.openapiext.isSuccess
 
 class RsCodeExecutor : CodeExecutor {
-  override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, String> {
-    val taskDir = task.getTaskDir(project) ?: return Err("Failed to find task dir")
+  override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, CheckResult> {
+    val taskDir = task.getTaskDir(project) ?: return Err(CheckResult(CheckStatus.Unchecked, "Failed to find task dir"))
     val mainVFile = task.findSourceDir(taskDir)?.findChild(MAIN_RS_FILE)
-                    ?: return Err("Failed to find `$MAIN_RS_FILE`")
+                    ?: return Err(CheckResult(CheckStatus.Unchecked, "Failed to find `$MAIN_RS_FILE`"))
     val target = runReadAction { PsiManager.getInstance(project).findFile(mainVFile)?.rustFile?.containingCargoTarget }
-                 ?: return Err("Failed to find target for `$MAIN_RS_FILE`")
-    val cargo = project.rustSettings.toolchain?.rawCargo() ?: return Err("Failed to find Rust toolchain")
+                 ?: return Err(CheckResult(CheckStatus.Unchecked, "Failed to find target for `$MAIN_RS_FILE`"))
+    val cargo = project.rustSettings.toolchain?.rawCargo()
+                ?: return Err(CheckResult(CheckStatus.Unchecked, "Failed to find Rust toolchain"))
     val cmd = CargoCommandLine.forTarget(target, "run")
 
     val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(project, stdIn = input?.toByteArray())
@@ -33,7 +37,9 @@ class RsCodeExecutor : CodeExecutor {
 
     return when {
       processOutput.isSuccess -> Ok(output)
-      else -> Err(output)
+      output.contains(COMPILATION_ERROR_MESSAGE, true) ->
+        Err(CheckResult(CheckStatus.Failed, COMPILATION_FAILED_MESSAGE, output))
+      else -> Err(CheckResult.FAILED_TO_CHECK)
     }
   }
 }

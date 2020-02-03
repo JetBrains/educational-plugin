@@ -54,7 +54,7 @@ class CodeforcesTaskChecker(
 
       val output = when (result) {
         is Ok -> result.value
-        is Err -> return CheckResult(CheckStatus.Unchecked, result.error)
+        is Err -> return result.error
       }
 
       val expectedOutput = runReadAction { outputDocument.text }

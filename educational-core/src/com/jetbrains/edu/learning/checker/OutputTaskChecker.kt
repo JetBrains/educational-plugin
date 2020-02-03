@@ -22,18 +22,12 @@ open class OutputTaskChecker(
     try {
       val outputString = when (val result = codeExecutor.execute(project, task, indicator)) {
         is Ok -> result.value
-        is Err -> return when {
-          hasCompileError(result) -> CheckResult(CheckStatus.Failed, CheckUtils.COMPILATION_FAILED_MESSAGE, result.error)
-          else -> {
-            logWarning(result.error)
-            CheckResult(CheckStatus.Unchecked, result.error)
-          }
-        }
+        is Err -> return result.error
       }
 
       val outputPatternFile = getOutputFile()
       if (outputPatternFile == null) {
-        logWarning("Failed to find `output.txt` file")
+        LOG.warn("Failed to find `output.txt` file (output task `${task.lesson.name}/${task.name}`)")
         return FAILED_TO_CHECK
       }
       val expectedOutput = VfsUtil.loadText(outputPatternFile)
@@ -45,23 +39,20 @@ open class OutputTaskChecker(
     }
   }
 
-  protected open fun hasCompileError(result: Err<String>): Boolean = false
-
-  protected open fun checkOutput(actual: String, expected: String): CheckResult = when {
-    compareResults(actual, expected) -> CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
-    else -> {
-      val diff = CheckResultDiff(expected = expected, actual = actual)
-      CheckResult(CheckStatus.Failed, "Expected output:\n$expected \nActual output:\n$actual", diff = diff)
+  protected open fun checkOutput(actual: String, expected: String): CheckResult {
+    val trimActual = actual.removeLastLineBreaks()
+    val trimExpected = expected.removeLastLineBreaks()
+    return if (trimActual == trimExpected) {
+      CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
+    }
+    else {
+      val diff = CheckResultDiff(expected = trimExpected, actual = trimActual)
+      CheckResult(CheckStatus.Failed, "Expected output:\n<$trimExpected>\nActual output:\n<$trimActual>", diff = diff)
     }
   }
 
-  protected open fun compareResults(actual: String, expected: String): Boolean {
-    return CheckUtils.postProcessOutput(actual) == CheckUtils.postProcessOutput(expected)
-  }
-
-  private fun logWarning(logMessage: String) {
-    LOG.warn("$logMessage (output task `${task.lesson.name}/${task.name}`)")
-  }
+  protected fun String.removeLastLineBreaks(): String =
+    replace(System.getProperty("line.separator"), "\n").trimEnd('\n')
 
   private fun getOutputFile(): VirtualFile? {
     val outputFile = task.findTestDirs(project)
