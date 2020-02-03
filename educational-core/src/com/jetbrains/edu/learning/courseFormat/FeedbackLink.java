@@ -15,6 +15,10 @@ public class FeedbackLink {
     myLink = link;
   }
 
+  public FeedbackLink(@NotNull LinkType type) {
+    myType = type;
+  }
+
   public FeedbackLink() {
     myType = LinkType.STEPIK;
   }

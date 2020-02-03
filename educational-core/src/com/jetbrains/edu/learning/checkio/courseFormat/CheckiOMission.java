@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.checkio.courseFormat;
 
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.FeedbackLink;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,7 @@ public class CheckiOMission extends EduTask {
   private long mySecondsFromLastChangeOnServer;
 
   public CheckiOMission() {
+    setFeedbackLink(new FeedbackLink(FeedbackLink.LinkType.NONE));
     myCode = "";
     mySlug = "";
     myStation = new CheckiOStation();

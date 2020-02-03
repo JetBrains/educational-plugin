@@ -28,7 +28,7 @@ class GoToTaskUrlAction : DumbAwareAction(LEAVE_A_COMMENT_ACTION, LEAVE_A_COMMEN
   }
 
   override fun update(e: AnActionEvent) {
-    templatePresentation.isEnabledAndVisible = false
+    e.presentation.isEnabledAndVisible = false
 
     val project = e.project ?: return
     if (!EduUtils.isStudentProject(project)) {
@@ -39,7 +39,7 @@ class GoToTaskUrlAction : DumbAwareAction(LEAVE_A_COMMENT_ACTION, LEAVE_A_COMMEN
 
     val feedbackLink = task.feedbackLink
     val course = task.course
-    templatePresentation.isEnabledAndVisible = when (feedbackLink.type) {
+    e.presentation.isEnabledAndVisible = when (feedbackLink.type) {
       NONE -> false
       CUSTOM -> feedbackLink.link != null
       STEPIK -> (course is EduCourse && course.isRemote) || course is HyperskillCourse
