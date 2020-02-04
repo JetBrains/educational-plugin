@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
+import com.intellij.testFramework.ThreadTracker
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -27,6 +28,7 @@ class MockWebServerHelper(parentDisposable: Disposable) {
 
   init {
     Disposer.register(parentDisposable, Disposable { mockWebServer.shutdown() })
+    ThreadTracker.longRunningThreadCreated(parentDisposable, "MockWebServer", "OkHttp ConnectionPool", "Okio Watchdog")
   }
 
   val baseUrl: String get() = mockWebServer.url("/").toString()
