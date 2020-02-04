@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.serialization.converter.json.local
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.EduNames
@@ -25,7 +26,7 @@ class To10VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
     }
 
     task?.get(FILES)?.fields()?.forEach { (_, fileObject) -> additionalFiles.add(fileObject) }
-    localCourse.set(ADDITIONAL_FILES, additionalFiles)
+    localCourse.set<JsonNode?>(ADDITIONAL_FILES, additionalFiles)
     if (additionalMaterialsLesson != null) {
       localCourse.get(ITEMS).removeAll { isAdditional(it.get(TITLE).asText()) }
     }

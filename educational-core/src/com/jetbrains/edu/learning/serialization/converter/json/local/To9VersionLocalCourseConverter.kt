@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.serialization.converter.json.local
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
@@ -24,7 +25,7 @@ class To9VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
         testObject.put(NAME, path)
         testObject.put(TEXT, testText.asText())
         testObject.put(IS_VISIBLE, false)
-        files.set(path, testObject)
+        files.set<JsonNode?>(path, testObject)
       }
 
       val additionalFiles = taskObject.remove(ADDITIONAL_FILES) as? ObjectNode ?: mapper.createObjectNode()
@@ -32,9 +33,9 @@ class To9VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
         if (files.has(path)) continue
         if (fileObject !is ObjectNode) continue
         fileObject.put(NAME, path)
-        files.set(path, fileObject)
+        files.set<JsonNode?>(path, fileObject)
       }
-      taskObject.set(FILES, files)
+      taskObject.set<JsonNode?>(FILES, files)
     }
   }
 }

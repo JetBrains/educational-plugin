@@ -37,7 +37,7 @@ val studioPath: String
     return androidStudioPath ?: downloadStudioIfNeededAndGetPath()
   }
 
-val jacksonVersion = "2.9.5"
+val jacksonVersion = "2.10.0"
 
 val pycharmSandbox = "${project.buildDir.absolutePath}/pycharm-sandbox"
 val studioSandbox = "${project.buildDir.absolutePath}/studio-sandbox"
@@ -150,7 +150,7 @@ allprojects {
 
     //transitive dependency is specified explicitly because of the issue https://github.com/FasterXML/jackson-dataformats-text/issues/81
     //intellij platform uses affected snakeyaml version inside
-    compile(group = "org.yaml", name = "snakeyaml", version = "1.19")
+    compile(group = "org.yaml", name = "snakeyaml", version = "1.21")
     compile(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion) {
       excludeKotlinDeps()
     }

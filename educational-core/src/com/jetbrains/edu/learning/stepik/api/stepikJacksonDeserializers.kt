@@ -164,19 +164,19 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
           for ((path, taskFile) in taskFiles.fields()) {
             val convertedPath = "${taskRoots.taskFilesRoot}/$path"
             (taskFile as ObjectNode).put(SerializationUtils.Json.NAME, convertedPath)
-            convertedTaskFiles.set(convertedPath, taskFile)
+            convertedTaskFiles.set<JsonNode?>(convertedPath, taskFile)
           }
-          set(SerializationUtils.Json.TASK_FILES, convertedTaskFiles)
+          set<JsonNode?>(SerializationUtils.Json.TASK_FILES, convertedTaskFiles)
         }
 
         val testFiles = get(SerializationUtils.Json.TEST_FILES)
         if (testFiles != null) {
           val convertedTestFiles = ObjectMapper().createObjectNode()
           for ((path, testFile) in testFiles.fields()) {
-            convertedTestFiles.set("${taskRoots.testFilesRoot}/$path", testFile)
+            convertedTestFiles.set<JsonNode?>("${taskRoots.testFilesRoot}/$path", testFile)
           }
 
-          set(SerializationUtils.Json.TEST_FILES, convertedTestFiles)
+          set<JsonNode?>(SerializationUtils.Json.TEST_FILES, convertedTestFiles)
         }
       }
     }

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.serialization.converter.json
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
@@ -16,10 +17,10 @@ class ToSixthVersionJsonStepOptionConverter : JsonStepOptionsConverter {
         val newAdditionalFile = ObjectMapper().createObjectNode()
         newAdditionalFile.put(TEXT, text)
         newAdditionalFile.put(IS_VISIBLE, true)
-        additionalFilesMap.set(path, newAdditionalFile)
+        additionalFilesMap.set<JsonNode?>(path, newAdditionalFile)
       }
     }
-    stepOptionsJson.set(ADDITIONAL_FILES, additionalFilesMap)
+    stepOptionsJson.set<JsonNode?>(ADDITIONAL_FILES, additionalFilesMap)
     return stepOptionsJson
   }
 }

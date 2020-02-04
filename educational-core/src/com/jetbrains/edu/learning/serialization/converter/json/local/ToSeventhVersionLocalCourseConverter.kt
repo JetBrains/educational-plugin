@@ -18,24 +18,24 @@ class ToSeventhVersionLocalCourseConverter : JsonLocalCourseConverterBase() {
       val taskFiles = ObjectMapper().createObjectNode()
       for ((path, taskFileObject) in taskObject.getJsonObjectMap<ObjectNode>(TASK_FILES)) {
         convertTaskFile(taskFileObject, taskFilesRoot)
-        taskFiles.set("$taskFilesRoot/$path", taskFileObject)
+        taskFiles.set<JsonNode?>("$taskFilesRoot/$path", taskFileObject)
       }
-      taskObject.set(TASK_FILES, taskFiles)
+      taskObject.set<JsonNode?>(TASK_FILES, taskFiles)
 
       val testFiles = ObjectMapper().createObjectNode()
       for ((path, text) in taskObject.getJsonObjectMap<JsonNode>(TEST_FILES)) {
         testFiles.put("$testFilesRoot/$path", text.asText())
       }
-      taskObject.set(TEST_FILES, testFiles)
+      taskObject.set<JsonNode?>(TEST_FILES, testFiles)
     }
 
     val additionalFiles = ObjectMapper().createObjectNode()
     for ((path, text) in taskObject.getJsonObjectMap<JsonNode>(ADDITIONAL_FILES)) {
       val additionalFile = ObjectMapper().createObjectNode()
       additionalFile.put(TEXT, text.asText())
-      additionalFiles.set(path, additionalFile)
+      additionalFiles.set<JsonNode?>(path, additionalFile)
     }
-    taskObject.set(ADDITIONAL_FILES, additionalFiles)
+    taskObject.set<JsonNode?>(ADDITIONAL_FILES, additionalFiles)
   }
 
   companion object {
