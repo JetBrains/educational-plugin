@@ -20,11 +20,19 @@ import java.io.IOException
 import javax.swing.Icon
 
 open class PlainTextConfigurator : EduConfigurator<Unit> {
-  override val courseBuilder: EduCourseBuilder<Unit> = PlainTextCourseBuilder()
-  override val testFileName: String = "Tests.txt"
+  override val courseBuilder: EduCourseBuilder<Unit>
+    get() = PlainTextCourseBuilder()
+
+  override val testFileName: String
+    get() = "Tests.txt"
+
   override fun getMockFileName(text: String): String = "Task.txt"
-  override val testDirs: List<String> = listOf("tests")
-  override val logo: Icon = AllIcons.FileTypes.Text
+
+  override val testDirs: List<String>
+    get() = listOf("tests")
+
+  override val logo: Icon
+    get() = AllIcons.FileTypes.Text
 
   /**
    * To specify check result for plain text courses in tests:
@@ -40,20 +48,21 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
    *
    * `Unchecked Failed to check`*
    */
-  override val taskCheckerProvider = object : TaskCheckerProvider {
-    override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
-      return object : TaskChecker<EduTask>(task, project) {
-        override fun check(indicator: ProgressIndicator): CheckResult {
-          val taskDir = task.getDir(project) ?: error("No taskDir in tests")
-          val checkResultFile = taskDir.findChild(CHECK_RESULT_FILE)
-          if (checkResultFile == null) {
-            return CheckResult.SOLVED
+  override val taskCheckerProvider
+    get() = object : TaskCheckerProvider {
+      override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
+        return object : TaskChecker<EduTask>(task, project) {
+          override fun check(indicator: ProgressIndicator): CheckResult {
+            val taskDir = task.getDir(project) ?: error("No taskDir in tests")
+            val checkResultFile = taskDir.findChild(CHECK_RESULT_FILE)
+            if (checkResultFile == null) {
+              return CheckResult.SOLVED
+            }
+            return checkResultFile.checkResult
           }
-          return checkResultFile.checkResult
         }
       }
     }
-  }
 
   private val VirtualFile.checkResult: CheckResult
     get() = try {
@@ -69,7 +78,8 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
       CheckResult.SOLVED
     }
 
-  override val isCourseCreatorEnabled: Boolean = ApplicationManager.getApplication().isInternal || isUnitTestMode
+  override val isCourseCreatorEnabled: Boolean
+    get() = ApplicationManager.getApplication().isInternal || isUnitTestMode
 
   companion object {
     const val CHECK_RESULT_FILE = "checkResult.txt"
@@ -84,6 +94,7 @@ class PlainTextCourseBuilder : EduCourseBuilder<Unit> {
     override fun getSettings() {}
     override fun getLanguageVersions() = mutableListOf("1.42")
   }
+
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<Unit> = PlainTextCourseGenerator(this, course)
 }
 

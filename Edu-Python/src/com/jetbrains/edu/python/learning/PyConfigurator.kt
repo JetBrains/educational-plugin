@@ -11,18 +11,27 @@ import icons.PythonIcons
 import javax.swing.Icon
 
 open class PyConfigurator : EduConfiguratorWithSubmissions<PyNewProjectSettings>() {
-  override val courseBuilder: EduCourseBuilder<PyNewProjectSettings> = PyCourseBuilder()
-  override fun getMockFileName(text: String): String = TASK_PY
-  override val testFileName: String = TESTS_PY
+  override val courseBuilder: EduCourseBuilder<PyNewProjectSettings>
+    get() = PyCourseBuilder()
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
-    return super.excludeFromArchive(project, file) || excludeFromArchive(file)
-  }
+  override fun getMockFileName(text: String): String = TASK_PY
+
+  override val testFileName: String
+    get() = TESTS_PY
+
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
+    super.excludeFromArchive(project, file) || excludeFromArchive(file)
 
   override fun isTestFile(project: Project, file: VirtualFile): Boolean = testFileName == file.name
-  override val taskCheckerProvider: TaskCheckerProvider = PyTaskCheckerProvider()
-  override val logo: Icon = PythonIcons.Python.Python
-  override val isCourseCreatorEnabled: Boolean = false
+
+  override val taskCheckerProvider: TaskCheckerProvider
+    get() = PyTaskCheckerProvider()
+
+  override val logo: Icon
+    get() = PythonIcons.Python.Python
+
+  override val isCourseCreatorEnabled: Boolean
+    get() = false
 
   companion object {
     const val TESTS_PY = "tests.py"

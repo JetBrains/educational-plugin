@@ -15,22 +15,35 @@ import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class ScalaSbtConfigurator : EduConfiguratorWithSubmissions<JdkProjectSettings>() {
-  override val courseBuilder: EduCourseBuilder<JdkProjectSettings> = ScalaSbtCourseBuilder()
-  override val testFileName: String = TEST_SCALA
-  override val isEnabled: Boolean = !EduUtils.isAndroidStudio()
+  override val courseBuilder: EduCourseBuilder<JdkProjectSettings>
+    get() = ScalaSbtCourseBuilder()
 
-  override val taskCheckerProvider: TaskCheckerProvider = object : TaskCheckerProvider {
-    override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> = ScalaSbtEduTaskChecker(task, project)
-  }
+  override val testFileName: String
+    get() = TEST_SCALA
 
-  override val mockTemplate: String = getInternalTemplateText(MOCK_SCALA)
-  override val sourceDir: String = EduNames.SRC
-  override val testDirs: List<String> = listOf(EduNames.TEST)
-  override val logo: Icon = EducationalCoreIcons.ScalaLogo
+  override val isEnabled: Boolean
+    get() = !EduUtils.isAndroidStudio()
+
+  override val taskCheckerProvider: TaskCheckerProvider
+    get() = object : TaskCheckerProvider {
+      override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> = ScalaSbtEduTaskChecker(task, project)
+    }
+
+  override val mockTemplate: String
+    get() = getInternalTemplateText(MOCK_SCALA)
+
+  override val sourceDir: String
+    get() = EduNames.SRC
+
+  override val testDirs: List<String>
+    get() = listOf(EduNames.TEST)
+
+  override val logo: Icon
+    get() = EducationalCoreIcons.ScalaLogo
 
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
-    if (super.excludeFromArchive(project, file)) return true
-    return generateSequence(file, VirtualFile::getParent).any { it.name == "target" || it.name == "project" }
+    return super.excludeFromArchive(project, file) ||
+           generateSequence(file, VirtualFile::getParent).any { it.name == "target" || it.name == "project" }
   }
 
   companion object {

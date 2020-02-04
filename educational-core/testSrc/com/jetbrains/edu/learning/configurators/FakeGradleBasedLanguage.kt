@@ -38,19 +38,28 @@ class FakeGradleTypeFactory : FileTypeFactory() {
 }
 
 class FakeGradleConfigurator : EduConfigurator<Unit> {
-  override val sourceDir: String = EduNames.SRC
-  override val testDirs: List<String> = listOf(EduNames.TEST)
-  override val courseBuilder: FakeGradleCourseBuilder = FakeGradleCourseBuilder()
-  override val testFileName: String = TEST_FILE_NAME
+  override val sourceDir: String
+    get() = EduNames.SRC
+
+  override val testDirs: List<String>
+    get() = listOf(EduNames.TEST)
+
+  override val courseBuilder: FakeGradleCourseBuilder
+    get() = FakeGradleCourseBuilder()
+
+  override val testFileName: String
+    get() = TEST_FILE_NAME
+
   override fun getMockFileName(text: String): String = TASK_FILE_NAME
 
-  override val taskCheckerProvider = object : TaskCheckerProvider {
-    override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
-      return object : TaskChecker<EduTask>(task, project) {
-        override fun check(indicator: ProgressIndicator): CheckResult = CheckResult(CheckStatus.Solved, "")
+  override val taskCheckerProvider
+    get() = object : TaskCheckerProvider {
+      override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
+        return object : TaskChecker<EduTask>(task, project) {
+          override fun check(indicator: ProgressIndicator): CheckResult = CheckResult(CheckStatus.Solved, "")
+        }
       }
     }
-  }
 
   companion object {
     const val TEST_FILE_NAME = "Tests.kt"

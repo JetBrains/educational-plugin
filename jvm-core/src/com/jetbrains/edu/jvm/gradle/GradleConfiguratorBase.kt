@@ -42,9 +42,14 @@ abstract class GradleConfiguratorBase : EduConfiguratorWithSubmissions<JdkProjec
     return name in NAMES_TO_EXCLUDE || pathSegments.any { it in FOLDERS_TO_EXCLUDE }
   }
 
-  override val sourceDir: String = EduNames.SRC
-  override val testDirs: List<String> = listOf(EduNames.TEST)
-  override val pluginRequirements: List<String> = listOf("org.jetbrains.plugins.gradle", "JUnit")
+  override val sourceDir: String
+    get() = EduNames.SRC
+
+  override val testDirs: List<String>
+    get() = listOf(EduNames.TEST)
+
+  override val pluginRequirements: List<String>
+    get() = listOf("org.jetbrains.plugins.gradle", "JUnit")
 
   companion object {
     private val NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(

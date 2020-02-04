@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.configuration
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.EmptyIcon
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduCourseBuilder
@@ -31,10 +30,13 @@ import javax.swing.JPanel
  * and {@link EduConfiguratorManager} supports the corresponding filtering.
  *
  *
- * @param <Settings> container type holds course project settings state
+ * @param Settings container type holds course project settings state
  *
  * @see EduConfiguratorManager
  * @see EducationalExtensionPoint
+ *
+ * If you add any new methods here, please do not forget to add it also to
+ * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
  */
 interface EduConfigurator<Settings> {
   val courseBuilder: EduCourseBuilder<Settings>
@@ -70,7 +72,7 @@ interface EduConfigurator<Settings> {
     if (file.isDirectory) return false
     val task = EduUtils.getTaskForFile(project, file) ?: return false
     val taskDir = task.getTaskDir(project) ?: return false
-    return ContainerUtil.find(task.findTestDirs(taskDir)) { VfsUtilCore.isAncestor(it, file, true) } != null
+    return task.findTestDirs(taskDir).any { VfsUtilCore.isAncestor(it, file, true) }
   }
 
   /**

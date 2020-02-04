@@ -20,18 +20,21 @@ import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class JsCheckiOConfigurator : JsConfigurator(), CheckiOConnectorProvider {
-  private val contentGenerator = CheckiOCourseContentGenerator(JavaScriptFileType.INSTANCE, JsCheckiOApiConnector.getInstance())
-
   override val taskCheckerProvider: TaskCheckerProvider = object : TaskCheckerProvider {
     override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> =
       CheckiOTaskChecker(task, project, JsCheckiOOAuthConnector.getInstance(), JS_CHECKIO_INTERPRETER, JS_CHECKIO_TEST_FORM_TARGET_URL)
   }
 
   override fun getOAuthConnector(): CheckiOOAuthConnector = JsCheckiOOAuthConnector.getInstance()
-  override val logo: Icon = EducationalCoreIcons.JSCheckiO
-  override val isCourseCreatorEnabled: Boolean = false
+
+  override val logo: Icon
+    get() = EducationalCoreIcons.JSCheckiO
+
+  override val isCourseCreatorEnabled: Boolean
+    get() = false
 
   override fun beforeCourseStarted(course: Course) {
+    val contentGenerator = CheckiOCourseContentGenerator(JavaScriptFileType.INSTANCE, JsCheckiOApiConnector.getInstance())
     getCourseFromServerUnderProgress(contentGenerator, course as CheckiOCourse, JsCheckiOSettings.getInstance().account,
                                      JS_CHECKIO_API_HOST)
   }

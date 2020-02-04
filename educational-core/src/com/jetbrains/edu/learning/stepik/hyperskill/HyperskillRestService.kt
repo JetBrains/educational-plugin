@@ -232,7 +232,9 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     var project: Project? = null
     ApplicationManager.getApplication().invokeAndWait {
       TransactionGuard.getInstance().submitTransactionAndWait {
-        project = projectGenerator.doCreateCourseProject(location, configurator.courseBuilder.getLanguageSettings().settings!!)
+        val settings = configurator.courseBuilder.getLanguageSettings().settings
+                       ?: error("Settings should not be null while creating the project")
+        project = projectGenerator.doCreateCourseProject(location, settings)
       }
     }
     return project

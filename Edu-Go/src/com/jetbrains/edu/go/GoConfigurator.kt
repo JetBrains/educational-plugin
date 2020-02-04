@@ -12,15 +12,24 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import javax.swing.Icon
 
 class GoConfigurator : EduConfiguratorWithSubmissions<GoProjectSettings>() {
-  override val courseBuilder: EduCourseBuilder<GoProjectSettings> = GoCourseBuilder()
-  override val testFileName: String = TEST_GO
-  override fun getMockFileName(text: String): String = TASK_GO
-  override val testDirs: List<String> = listOf(TEST)
-  override val logo: Icon = GoIcons.ICON
+  override val courseBuilder: EduCourseBuilder<GoProjectSettings>
+    get() = GoCourseBuilder()
 
-  override val taskCheckerProvider: TaskCheckerProvider = object : TaskCheckerProvider {
-    override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> = GoEduTaskChecker(project, task)
-  }
+  override val testFileName: String
+    get() = TEST_GO
+
+  override fun getMockFileName(text: String): String = TASK_GO
+
+  override val testDirs: List<String>
+    get() = listOf(TEST)
+
+  override val logo: Icon
+    get() = GoIcons.ICON
+
+  override val taskCheckerProvider: TaskCheckerProvider
+    get() = object : TaskCheckerProvider {
+      override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> = GoEduTaskChecker(project, task)
+    }
 
   companion object {
     const val TEST_GO = "task_test.go"

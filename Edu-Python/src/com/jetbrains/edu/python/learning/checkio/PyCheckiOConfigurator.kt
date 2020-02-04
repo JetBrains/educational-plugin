@@ -23,9 +23,8 @@ import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class PyCheckiOConfigurator : PyConfigurator(), CheckiOConnectorProvider {
-  private val contentGenerator = CheckiOCourseContentGenerator(PythonFileType.INSTANCE, PyCheckiOApiConnector.getInstance())
-
-  override val courseBuilder: EduCourseBuilder<PyNewProjectSettings> = PyCheckiOCourseBuilder()
+  override val courseBuilder: EduCourseBuilder<PyNewProjectSettings>
+    get() = PyCheckiOCourseBuilder()
 
   override val taskCheckerProvider: TaskCheckerProvider = object : TaskCheckerProvider {
     override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
@@ -35,12 +34,18 @@ class PyCheckiOConfigurator : PyConfigurator(), CheckiOConnectorProvider {
   }
 
   override fun getOAuthConnector(): CheckiOOAuthConnector = PyCheckiOOAuthConnector.getInstance()
-  override val logo: Icon = EducationalCoreIcons.CheckiO
-  override val isCourseCreatorEnabled: Boolean = false
+
+  override val logo: Icon
+    get() = EducationalCoreIcons.CheckiO
+
+  override val isCourseCreatorEnabled: Boolean
+    get() = false
 
   override fun beforeCourseStarted(course: Course) {
+    val contentGenerator = CheckiOCourseContentGenerator(PythonFileType.INSTANCE, PyCheckiOApiConnector.getInstance())
     getCourseFromServerUnderProgress(contentGenerator, (course as CheckiOCourse), PyCheckiOSettings.INSTANCE.account, PY_CHECKIO_API_HOST)
   }
 
-  override val isEnabled: Boolean = !EduUtils.isAndroidStudio()
+  override val isEnabled: Boolean
+    get() = !EduUtils.isAndroidStudio()
 }

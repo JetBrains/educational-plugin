@@ -17,16 +17,19 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseProjectGener
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class JHyperskillConfigurator : HyperskillConfigurator<JdkProjectSettings>(JConfigurator()) {
-  override val courseBuilder: EduCourseBuilder<JdkProjectSettings> = JHyperskillCourseBuilder(JCourseBuilder())
-  override val testDirs: List<String> = listOf("${EduNames.TEST}/stageTest", EduNames.TEST)
+  override val courseBuilder: EduCourseBuilder<JdkProjectSettings>
+    get() = JHyperskillCourseBuilder(JCourseBuilder())
+
+  override val testDirs: List<String>
+    get() = listOf("${EduNames.TEST}/stageTest", EduNames.TEST)
 
   private class JHyperskillCourseBuilder(private val gradleCourseBuilder: GradleCourseBuilderBase) :
     HyperskillCourseBuilder<JdkProjectSettings>(gradleCourseBuilder) {
 
     override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<JdkProjectSettings>? {
+      if (course !is HyperskillCourse) return null
       val generatorBase = JHyperskillCourseProjectGenerator(gradleCourseBuilder, course)
-      val hyperskillCourse = course as? HyperskillCourse ?: return null
-      return HyperskillCourseProjectGenerator(generatorBase, this, hyperskillCourse)
+      return HyperskillCourseProjectGenerator(generatorBase, this, course)
     }
   }
 

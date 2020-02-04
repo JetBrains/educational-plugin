@@ -2,14 +2,13 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.TaskChecker
-import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
-class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvider) : TaskCheckerProvider by baseProvider {
+class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvider) : TaskCheckerProvider {
   override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
     val checker = baseProvider.getEduTaskChecker(task, project)
 
@@ -23,11 +22,26 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
         return checkResult
       }
 
-      // Can't use Kotlin delegation feature (https://kotlinlang.org/docs/reference/delegation.html)
-      // because TaskChecker is abstract class, not an interface
       override fun onTaskSolved(message: String) = checker.onTaskSolved(message)
       override fun onTaskFailed(message: String, details: String?) = checker.onTaskFailed(message, details)
       override fun clearState() = checker.clearState()
     }
   }
+
+  override fun getOutputTaskChecker(task: OutputTask, project: Project, codeExecutor: CodeExecutor): OutputTaskChecker =
+    baseProvider.getOutputTaskChecker(task, project, codeExecutor)
+
+  override fun getTheoryTaskChecker(task: TheoryTask, project: Project): TheoryTaskChecker =
+    baseProvider.getTheoryTaskChecker(task, project)
+
+  override fun getCodeExecutor(): CodeExecutor = baseProvider.getCodeExecutor()
+
+  override fun getChoiceTaskChecker(task: ChoiceTask, project: Project): TaskChecker<ChoiceTask>? =
+    baseProvider.getChoiceTaskChecker(task, project)
+
+  override fun getCodeTaskChecker(task: CodeTask, project: Project): TaskChecker<CodeTask>? =
+    baseProvider.getCodeTaskChecker(task, project)
+
+  override fun getIdeTaskChecker(task: IdeTask, project: Project): TaskChecker<IdeTask> =
+    baseProvider.getIdeTaskChecker(task, project)
 }

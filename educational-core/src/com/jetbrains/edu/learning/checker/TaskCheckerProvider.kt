@@ -8,6 +8,10 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFile
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 
+/**
+ * If you add any new methods here, please do not forget to add it also to
+ * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillTaskCheckerProvider
+ */
 interface TaskCheckerProvider {
   fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask>
 
@@ -27,6 +31,7 @@ interface TaskCheckerProvider {
 
   fun getCodeExecutor(): CodeExecutor = DefaultCodeExecutor()
 
+  // Should not be overloaded by anyone
   fun getTaskChecker(task: Task, project: Project): TaskChecker<*>? {
     return when (task) {
       is EduTask -> getEduTaskChecker(task, project)

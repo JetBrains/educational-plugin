@@ -11,13 +11,25 @@ import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class JConfigurator : GradleConfiguratorBase() {
-  override val courseBuilder: GradleCourseBuilderBase = JCourseBuilder()
-  override val testFileName: String = TEST_JAVA
-  override val isEnabled: Boolean = !EduUtils.isAndroidStudio()
-  override val taskCheckerProvider: TaskCheckerProvider = JTaskCheckerProvider()
-  override fun getMockFileName(text: String): String? = fileName(JavaLanguage.INSTANCE, text)
-  override val mockTemplate: String = getInternalTemplateText(MOCK_JAVA)
-  override val logo: Icon = EducationalCoreIcons.JavaLogo
+  override val courseBuilder: GradleCourseBuilderBase
+    get() = JCourseBuilder()
+
+  override val testFileName: String
+    get() = TEST_JAVA
+
+  override val isEnabled: Boolean
+    get() = !EduUtils.isAndroidStudio()
+
+  override val taskCheckerProvider: TaskCheckerProvider
+    get() = JTaskCheckerProvider()
+
+  override fun getMockFileName(text: String): String = fileName(JavaLanguage.INSTANCE, text)
+
+  override val mockTemplate: String
+    get() = getInternalTemplateText(MOCK_JAVA)
+
+  override val logo: Icon
+    get() = EducationalCoreIcons.JavaLogo
 
   companion object {
     const val TEST_JAVA = "Tests.java"

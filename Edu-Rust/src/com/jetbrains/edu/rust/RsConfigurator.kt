@@ -13,13 +13,25 @@ import org.rust.lang.RsConstants
 import javax.swing.Icon
 
 class RsConfigurator : EduConfiguratorWithSubmissions<RsProjectSettings>() {
-  override val taskCheckerProvider: RsTaskCheckerProvider = RsTaskCheckerProvider()
-  override val testFileName: String = ""
-  override fun getMockFileName(text: String): String? = RsConstants.MAIN_RS_FILE
-  override val courseBuilder: EduCourseBuilder<RsProjectSettings> = RsCourseBuilder()
-  override val testDirs: List<String> = listOf("tests")
-  override val sourceDir: String = "src"
-  override val logo: Icon = RsIcons.RUST
+  override val taskCheckerProvider: RsTaskCheckerProvider
+    get() = RsTaskCheckerProvider()
+
+  override val testFileName: String
+    get() = ""
+
+  override fun getMockFileName(text: String): String = RsConstants.MAIN_RS_FILE
+
+  override val courseBuilder: EduCourseBuilder<RsProjectSettings>
+    get() = RsCourseBuilder()
+
+  override val testDirs: List<String>
+    get() = listOf("tests")
+
+  override val sourceDir: String
+    get() = "src"
+
+  override val logo: Icon
+    get() = RsIcons.RUST
 
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
     return super.excludeFromArchive(project, file) || file.name == CargoConstants.LOCK_FILE ||

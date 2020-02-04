@@ -28,6 +28,9 @@ import java.io.IOException
  * The main interface provides courses creation for some language.
  *
  * @param Settings container type holds course project settings state
+ *
+ * If you add any new methods here, please do not forget to add it also to
+ * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseBuilder
  */
 interface EduCourseBuilder<Settings> {
   /**

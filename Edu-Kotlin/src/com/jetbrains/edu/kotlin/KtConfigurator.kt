@@ -7,13 +7,23 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTem
 import org.jetbrains.kotlin.idea.KotlinIcons
 import javax.swing.Icon
 
-open class KtConfigurator : GradleConfiguratorBase() {
-  override val courseBuilder: GradleCourseBuilderBase = KtCourseBuilder()
-  override val testFileName: String = TESTS_KT
+class KtConfigurator : GradleConfiguratorBase() {
+  override val courseBuilder: GradleCourseBuilderBase
+    get() = KtCourseBuilder()
+
+  override val testFileName: String
+    get() = TESTS_KT
+
   override fun getMockFileName(text: String): String = TASK_KT
-  override val taskCheckerProvider: KtTaskCheckerProvider = KtTaskCheckerProvider()
-  override val mockTemplate: String = getInternalTemplateText(MOCK_KT)
-  override val logo: Icon = KotlinIcons.SMALL_LOGO
+
+  override val taskCheckerProvider: KtTaskCheckerProvider
+    get() = KtTaskCheckerProvider()
+
+  override val mockTemplate: String
+    get() = getInternalTemplateText(MOCK_KT)
+
+  override val logo: Icon
+    get() = KotlinIcons.SMALL_LOGO
 
   companion object {
     const val TESTS_KT = "Tests.kt"
