@@ -26,7 +26,8 @@ object HyperskillCheckConnector {
       showFailedToPostNotification()
       return LOG.error("Failed to post attempt for stage ${task.id}")
     }
-    postEduSubmission(attempt, project, task, "${result.message}\n${result.details}")
+    val feedback = if (result.details == null) result.message else "${result.message}\n${result.details}"
+    postEduSubmission(attempt, project, task, feedback)
   }
 
   private fun postEduSubmission(attempt: Attempt, project: Project, task: Task, feedback: String) {
