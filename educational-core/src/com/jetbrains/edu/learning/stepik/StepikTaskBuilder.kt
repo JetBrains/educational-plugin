@@ -107,7 +107,6 @@ open class StepikTaskBuilder(
       val settings = Document.OutputSettings().prettyPrint(false)
       var codeBlockWithoutTags = Jsoup.clean(element.html(), "", Whitelist().addTags("br"), settings)
       codeBlockWithoutTags = codeBlockWithoutTags.replace("<br>", "\n")
-      codeBlockWithoutTags = codeBlockWithoutTags.replace("[\n]+".toRegex(), "\n")
       element.html(codeBlockWithoutTags)
     }
     return parsedText.toString()
