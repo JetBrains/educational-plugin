@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import com.fasterxml.jackson.databind.node.MissingNode
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runInEdt
@@ -95,13 +96,21 @@ object YamlDeserializer {
 
   @VisibleForTesting
   fun ObjectMapper.deserializeSection(configFileText: String): Section {
-    val jsonNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+    val jsonNode = when (val tree = readTree(configFileText)) {
+      null -> JsonNodeFactory.instance.objectNode()
+      is MissingNode -> JsonNodeFactory.instance.objectNode()
+      else -> tree
+    }
     return treeToValue(jsonNode, Section::class.java)
   }
 
   @VisibleForTesting
   fun ObjectMapper.deserializeLesson(configFileText: String): Lesson {
-    val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+    val treeNode = when (val tree = readTree(configFileText)) {
+      null -> JsonNodeFactory.instance.objectNode()
+      is MissingNode -> JsonNodeFactory.instance.objectNode()
+      else -> tree
+    }
     val type = asText(treeNode.get("type"))
     val clazz = when (type) {
       FrameworkLesson().itemType -> FrameworkLesson::class.java
@@ -128,7 +137,7 @@ object YamlDeserializer {
       "code" -> CodeTask::class.java
       "checkiO" -> CheckiOMission::class.java
       CODEFORCES_TASK_TYPE -> CodeforcesTask::class.java
-      CODEFORCES_TASK_TYPE_WITH_FILE_IO ->  CodeforcesTaskWithFileIO::class.java
+      CODEFORCES_TASK_TYPE_WITH_FILE_IO -> CodeforcesTaskWithFileIO::class.java
       else -> formatError(unsupportedItemTypeMessage(type, EduNames.TASK))
     }
     return treeToValue(treeNode, clazz)
