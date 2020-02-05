@@ -5,7 +5,7 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.CoursesPanel.browseHyperlink
+import com.jetbrains.edu.learning.newproject.ui.CoursesPanel.Companion.browseHyperlink
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.io.File
