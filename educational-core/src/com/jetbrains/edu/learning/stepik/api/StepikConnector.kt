@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.createRetrofitBuilder
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.executeHandlingExceptions
 import com.jetbrains.edu.learning.stepik.*
-import com.jetbrains.edu.learning.stepikUserAgent
 import okhttp3.ConnectionPool
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -41,7 +40,7 @@ abstract class StepikConnector {
   protected abstract val baseUrl: String
 
   private val authorizationService: StepikOAuthService
-    get() = createRetrofitBuilder(baseUrl, connectionPool, stepikUserAgent)
+    get() = createRetrofitBuilder(baseUrl, connectionPool)
       .addConverterFactory(converterFactory)
       .build()
       .create(StepikOAuthService::class.java)
@@ -54,7 +53,7 @@ abstract class StepikConnector {
       account.refreshTokens()
     }
 
-    return createRetrofitBuilder(baseUrl, connectionPool, stepikUserAgent, account?.tokenInfo?.accessToken)
+    return createRetrofitBuilder(baseUrl, connectionPool, account?.tokenInfo?.accessToken)
       .addConverterFactory(converterFactory)
       .build()
       .create(StepikService::class.java)

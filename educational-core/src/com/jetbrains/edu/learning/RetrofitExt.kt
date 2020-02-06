@@ -23,19 +23,18 @@ import java.net.URI
 import java.util.concurrent.TimeUnit
 
 private val LOG = Logger.getInstance("com.jetbrains.edu.learning.RetrofitExt")
+const val USER_AGENT = "User-Agent"
 
 fun createRetrofitBuilder(baseUrl: String,
                           connectionPool: ConnectionPool,
-                          userAgent: String = "unknown",
                           accessToken: String? = null): Retrofit.Builder {
   return Retrofit.Builder()
-    .client(createOkHttpClient(baseUrl, connectionPool, userAgent, accessToken))
+    .client(createOkHttpClient(baseUrl, connectionPool, accessToken))
     .baseUrl(baseUrl)
 }
 
 private fun createOkHttpClient(baseUrl: String,
                                connectionPool: ConnectionPool,
-                               userAgent: String = "unknown",
                                accessToken: String?): OkHttpClient {
   val dispatcher = Dispatcher()
   dispatcher.maxRequests = 10
@@ -48,7 +47,7 @@ private fun createOkHttpClient(baseUrl: String,
     .readTimeout(60, TimeUnit.SECONDS)
     .connectTimeout(60, TimeUnit.SECONDS)
     .addInterceptor { chain ->
-      val builder = chain.request().newBuilder().addHeader("User-Agent", userAgent)
+      val builder = chain.request().newBuilder().addHeader(USER_AGENT, eduToolsUserAgent)
       if (accessToken != null) {
         builder.addHeader("Authorization", "Bearer $accessToken")
       }
@@ -71,7 +70,7 @@ private fun createOkHttpClient(baseUrl: String,
   return builder.build()
 }
 
-val stepikUserAgent: String
+val eduToolsUserAgent: String
   get() {
     val version = pluginVersion(EduNames.PLUGIN_ID) ?: "unknown"
 

@@ -46,7 +46,7 @@ abstract class HyperskillConnector {
 
   private val authorizationService: HyperskillService
     get() {
-      val retrofit = createRetrofitBuilder(baseUrl, connectionPool, stepikUserAgent)
+      val retrofit = createRetrofitBuilder(baseUrl, connectionPool)
         .addConverterFactory(converterFactory)
         .build()
 
@@ -61,7 +61,7 @@ abstract class HyperskillConnector {
       account.refreshTokens()
     }
 
-    val retrofit = createRetrofitBuilder(baseUrl, connectionPool, accessToken = account?.tokenInfo?.accessToken, userAgent = stepikUserAgent)
+    val retrofit = createRetrofitBuilder(baseUrl, connectionPool, accessToken = account?.tokenInfo?.accessToken)
       .addConverterFactory(converterFactory)
       .build()
 
