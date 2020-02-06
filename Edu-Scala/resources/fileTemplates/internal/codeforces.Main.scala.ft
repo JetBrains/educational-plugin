@@ -1,7 +1,9 @@
 /**
- * Accomplished using the EduTools plugin by JetBrains https://plugins.jetbrains.com/plugin/10081-edutools
- */
+* Accomplished using the EduTools plugin by JetBrains https://plugins.jetbrains.com/plugin/10081-edutools
+*/
 
-object Problem extends App {
-   // Write your solution here
+object Main {
+   def main(args: Array[String]): Unit = {
+      // Write your solution here
+   }
 }
