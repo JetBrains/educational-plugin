@@ -84,7 +84,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     return if (isAddedAsLast(project, course, directory)) directory else directory.parent
   }
 
-  protected fun createItem(
+  private fun createItem(
     project: Project,
     sourceDirectory: VirtualFile,
     course: Course,
@@ -120,7 +120,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   protected abstract fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem>
   protected abstract fun createItemDir(project: Project, course: Course, item: Item, parentDirectory: VirtualFile): VirtualFile?
 
-  protected fun showCreationUI(
+  private fun showCreationUI(
     project: Project,
     course: Course,
     sourceDirectory: VirtualFile,
@@ -176,7 +176,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
 
   fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, info: NewStudyItemInfo): Item {
     @Suppress("UNCHECKED_CAST")
-    val item = info.ctr() as Item
+    val item = info.producer() as Item
     item.name = info.name
     item.index = info.index
     initItem(project, course, parentItem, item, info)

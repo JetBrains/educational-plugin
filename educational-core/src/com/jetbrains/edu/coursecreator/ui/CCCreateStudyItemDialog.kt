@@ -56,7 +56,7 @@ abstract class CCCreateStudyItemDialogBase(
     return NewStudyItemInfo(
       nameField.text,
       model.baseIndex + (positionPanel?.indexDelta ?: AFTER_DELTA),
-      model.studyItemVariants.first().ctr
+      model.studyItemVariants.first().producer
     )
   }
 

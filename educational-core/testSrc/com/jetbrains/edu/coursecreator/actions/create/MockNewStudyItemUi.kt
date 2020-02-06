@@ -19,7 +19,7 @@ open class MockNewStudyItemUi(private val name: String? = null, private val inde
     val info = NewStudyItemInfo(
       name ?: model.suggestedName,
       index ?: model.baseIndex + AFTER_DELTA,
-      model.studyItemVariants.first().ctr
+      model.studyItemVariants.first().producer
     )
     studyItemCreator(info)
   }

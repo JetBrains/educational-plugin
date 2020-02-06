@@ -41,9 +41,9 @@ class NewStudyItemPopupUi : NewStudyItemUi {
       val name = nameField.text
       if (validator.checkInput(name) && validator.canClose(name)) {
         popup.closeOk(event)
-        val itemCtr = contentPanel.getSelectedItem()?.ctr
-        if (itemCtr != null) {
-          val info = NewStudyItemInfo(nameField.text, model.baseIndex + CCItemPositionPanel.AFTER_DELTA, itemCtr)
+        val itemProducer = contentPanel.getSelectedItem()?.producer
+        if (itemProducer != null) {
+          val info = NewStudyItemInfo(nameField.text, model.baseIndex + CCItemPositionPanel.AFTER_DELTA, itemProducer)
           studyItemCreator(info)
         }
       }

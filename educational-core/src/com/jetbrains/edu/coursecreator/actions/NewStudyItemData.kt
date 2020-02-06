@@ -6,10 +6,10 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import javax.swing.Icon
 
-open class NewStudyItemInfo(
+class NewStudyItemInfo(
   val name: String,
   val index: Int,
-  val ctr: () -> StudyItem
+  val producer: () -> StudyItem
 ) : UserDataHolderBase()
 
 /**
@@ -36,7 +36,7 @@ data class StudyItemVariant(
   val type: String,
   val description: String,
   val icon: Icon,
-  val ctr: () -> StudyItem
+  val producer: () -> StudyItem
 )
 
 enum class StudyItemType(val presentableName: String) {
