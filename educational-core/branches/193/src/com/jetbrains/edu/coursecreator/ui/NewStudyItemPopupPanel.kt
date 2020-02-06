@@ -10,6 +10,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.StudyItemVariant
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Font
@@ -39,7 +40,9 @@ class NewStudyItemPopupPanel(
 
   private fun setTextFieldIcon(icon: Icon) {
     val enter = KeymapUtil.getKeystrokeText(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0))
-    myTextField.setExtensions(TemplateIconExtension(icon), HintExtension("Press $enter to create ${itemType.presentableName}", font))
+    val hintMessage = EduCoreBundle.message("action.new.study.item.hint", enter, itemType.presentableName)
+
+    myTextField.setExtensions(TemplateIconExtension(icon), HintExtension(hintMessage, font))
     myTextField.repaint()
   }
 
@@ -110,7 +113,7 @@ private class StudyItemRenderer(private val itemType: StudyItemType) : ListCellR
     separator.background = list.background
     separator.font = UIUtil.getLabelFont(UIUtil.FontSize.NORMAL)
     separator.border = JBUI.Borders.empty(UIUtil.DEFAULT_VGAP / 2, 0)
-    separator.caption = "Select ${itemType.presentableName} type:"
+    separator.caption = EduCoreBundle.message("action.new.study.item.select.type", itemType.presentableName)
     separator.setCaptionCentered(false)
     return separator
   }

@@ -11,11 +11,13 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import icons.EducationalCoreIcons
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import icons.EducationalCoreIcons.IdeTask
+import icons.EducationalCoreIcons.Task
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
-class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, EducationalCoreIcons.Task) {
+class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Task) {
 
   override fun addItem(course: Course, item: Task) {
     item.lesson.addTask(item)
@@ -111,11 +113,11 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
 
   override val studyItemVariants: List<StudyItemVariant>
     get() = listOf(
-      StudyItemVariant("Edu", "Coding exercise, validated by tests", EducationalCoreIcons.Task, ::EduTask),
-      StudyItemVariant("Output", "Coding exercise, validated by output", EducationalCoreIcons.Task, ::OutputTask),
-      StudyItemVariant("Theory", "Theoretical material, no validation", EducationalCoreIcons.Task, ::TheoryTask),
-      StudyItemVariant("Multiple-Choice", "Single or multiple choice quiz", EducationalCoreIcons.Task, ::ChoiceTask),
-      StudyItemVariant("IDE", "Exercise about IDE", EducationalCoreIcons.IdeTask, ::IdeTask)
+      StudyItemVariant(message("action.new.study.item.task.edu.name"), message("action.new.study.item.task.edu.description"), Task, ::EduTask),
+      StudyItemVariant(message("action.new.study.item.task.output.name"), message("action.new.study.item.task.output.description"), Task, ::OutputTask),
+      StudyItemVariant(message("action.new.study.item.task.theory.name"), message("action.new.study.item.task.theory.description"), Task, ::TheoryTask),
+      StudyItemVariant(message("action.new.study.item.task.choice.name"), message("action.new.study.item.task.choice.description"), Task, ::ChoiceTask),
+      StudyItemVariant(message("action.new.study.item.task.ide.name"), message("action.new.study.item.task.ide.description"), IdeTask, ::IdeTask)
     )
 
   private fun initTask(project: Project, course: Course, lesson: Lesson, task: Task, info: NewStudyItemInfo) {

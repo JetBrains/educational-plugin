@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions.sections;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
@@ -12,17 +13,19 @@ import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
-import icons.EducationalCoreIcons;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 
+import static icons.EducationalCoreIcons.Section;
+
 public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
 
   public CCCreateSection() {
-    super(StudyItemType.SECTION, EducationalCoreIcons.Section);
+    super(StudyItemType.SECTION, Section);
   }
 
   @Override
@@ -83,6 +86,8 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   @NotNull
   @Override
   protected List<StudyItemVariant> getStudyItemVariants() {
-    return Collections.singletonList(new StudyItemVariant("Section", "", EducationalCoreIcons.Section, Section::new));
+    return Collections.singletonList(
+      new StudyItemVariant(StringUtil.toTitleCase(EduCoreBundle.message("study.item.section")), "", Section, Section::new)
+    );
   }
 }

@@ -11,6 +11,7 @@ import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 fun createNewStudyItemUi(
   dialogGenerator: (Project, Course, NewStudyItemUiModel, List<AdditionalPanel>) -> CCCreateStudyItemDialogBase
@@ -36,7 +37,8 @@ class NewStudyItemPopupUi : NewStudyItemUi {
     val nameField = contentPanel.textField
     nameField.text = model.suggestedName
     nameField.selectAll()
-    val popup = NewItemPopupUtil.createNewItemPopup("New ${StringUtil.toTitleCase(model.itemType.presentableName)}", contentPanel, nameField)
+    val title = EduCoreBundle.message("action.new.study.item.title", StringUtil.toTitleCase(model.itemType.presentableName))
+    val popup = NewItemPopupUtil.createNewItemPopup(title, contentPanel, nameField)
     contentPanel.setApplyAction { event ->
       val name = nameField.text
       if (validator.checkInput(name) && validator.canClose(name)) {
