@@ -111,11 +111,11 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
 
   override val studyItemVariants: List<StudyItemVariant>
     get() = listOf(
-      StudyItemVariant("Edu", EducationalCoreIcons.Task, ::EduTask),
-      StudyItemVariant("Output", EducationalCoreIcons.Task, ::OutputTask),
-      StudyItemVariant("Theory", EducationalCoreIcons.Task, ::TheoryTask),
-      StudyItemVariant("Choice", EducationalCoreIcons.Task, ::ChoiceTask),
-      StudyItemVariant("IDE", EducationalCoreIcons.IdeTask, ::IdeTask)
+      StudyItemVariant("Edu", "Coding exercise, validated by tests", EducationalCoreIcons.Task, ::EduTask),
+      StudyItemVariant("Output", "Coding exercise, validated by output", EducationalCoreIcons.Task, ::OutputTask),
+      StudyItemVariant("Theory", "Theoretical material, no validation", EducationalCoreIcons.Task, ::TheoryTask),
+      StudyItemVariant("Multiple-Choice", "Single or multiple choice quiz", EducationalCoreIcons.Task, ::ChoiceTask),
+      StudyItemVariant("IDE", "Exercise about IDE", EducationalCoreIcons.IdeTask, ::IdeTask)
     )
 
   private fun initTask(project: Project, course: Course, lesson: Lesson, task: Task, info: NewStudyItemInfo) {

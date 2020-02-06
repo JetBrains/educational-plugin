@@ -32,7 +32,12 @@ data class NewStudyItemUiModel(
   val studyItemVariants: List<StudyItemVariant>
 )
 
-data class StudyItemVariant(val type: String, val icon: Icon, val ctr: () -> StudyItem)
+data class StudyItemVariant(
+  val type: String,
+  val description: String,
+  val icon: Icon,
+  val ctr: () -> StudyItem
+)
 
 enum class StudyItemType(val presentableName: String) {
   COURSE(EduNames.COURSE),

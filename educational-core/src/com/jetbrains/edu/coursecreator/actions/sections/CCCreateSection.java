@@ -83,6 +83,6 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   @NotNull
   @Override
   protected List<StudyItemVariant> getStudyItemVariants() {
-    return Collections.singletonList(new StudyItemVariant("Section", EducationalCoreIcons.Section, Section::new));
+    return Collections.singletonList(new StudyItemVariant("Section", "", EducationalCoreIcons.Section, Section::new));
   }
 }

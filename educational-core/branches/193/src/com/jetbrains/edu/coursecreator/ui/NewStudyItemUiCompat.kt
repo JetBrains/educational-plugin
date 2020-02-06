@@ -32,7 +32,7 @@ class NewStudyItemPopupUi : NewStudyItemUi {
   }
 
   private fun createLightWeightPopup(model: NewStudyItemUiModel, validator: InputValidatorEx, studyItemCreator: (NewStudyItemInfo) -> Unit): JBPopup {
-    val contentPanel = NewStudyItemPopupPanel(model.studyItemVariants)
+    val contentPanel = NewStudyItemPopupPanel(model.itemType, model.studyItemVariants)
     val nameField = contentPanel.textField
     nameField.text = model.suggestedName
     nameField.selectAll()

@@ -8,8 +8,8 @@ class CCCreateLesson : CCCreateLessonBase<Lesson>(StudyItemType.LESSON, Educatio
 
   override val studyItemVariants: List<StudyItemVariant>
     get() = listOf(
-      StudyItemVariant("Simple", EducationalCoreIcons.Lesson, ::Lesson),
-      StudyItemVariant("Framework", EducationalCoreIcons.Lesson, ::FrameworkLesson)
+      StudyItemVariant("Lesson", "", EducationalCoreIcons.Lesson, ::Lesson),
+      StudyItemVariant("Project-based Lesson", "", EducationalCoreIcons.Lesson, ::FrameworkLesson)
     )
 
   override fun initItem(project: Project, course: Course, parentItem: StudyItem?, item: Lesson, info: NewStudyItemInfo) {
