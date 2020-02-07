@@ -2,5 +2,6 @@
   <depends>com.intellij.modules.lang</depends>
   <extensions defaultExtensionNs="Educational">
     <configurator language="go" implementationClass="com.jetbrains.edu.go.GoConfigurator"/>
+    <codeforcesLanguageProvider implementation="com.jetbrains.edu.go.codeforces.GoCodeforcesLanguageProvider"/>
   </extensions>
 </idea-plugin>

@@ -65,7 +65,7 @@ class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
     imports.sortedBy { it.split(" ").last() }.joinToString("\n\t")
 
   companion object {
-    private val FORBIDDEN_SYMBOLS = """[!"#$%&'()*,:;<=>?\[\]^`{|}~]+""".toRegex()
+    val FORBIDDEN_SYMBOLS = """[!"#$%&'()*,:;<=>?\[\]^`{|}~]+""".toRegex()
     private const val TESTING = "\"testing\""
     private const val FMT = "\"fmt\""
   }

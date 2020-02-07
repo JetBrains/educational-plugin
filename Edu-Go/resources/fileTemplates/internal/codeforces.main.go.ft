@@ -1,0 +1,12 @@
+// Accomplished using the EduTools plugin by JetBrains https://plugins.jetbrains.com/plugin/10081-edutools
+
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	// Write your solution here
+	fmt.Println()
+}

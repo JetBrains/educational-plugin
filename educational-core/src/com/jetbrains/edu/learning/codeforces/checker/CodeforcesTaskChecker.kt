@@ -6,6 +6,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -46,7 +47,12 @@ class CodeforcesTaskChecker(
       indicator.text2 = "Running test $testNumber of ${testFolders.size}"
 
       val input = runReadAction { inputDocument.text }
-      val output = when (val result = codeExecutor.execute(project, task, indicator, input)) {
+
+      val result = withRunProcessesWithPtyOff {
+        codeExecutor.execute(project, task, indicator, input)
+      }
+
+      val output = when (result) {
         is Ok -> result.value
         is Err -> return CheckResult(CheckStatus.Unchecked, result.error)
       }
@@ -61,5 +67,23 @@ class CodeforcesTaskChecker(
 
     CopyPasteManager.getInstance().setContents(StringSelection(solution))
     return CheckResult(CheckStatus.Unchecked, "<a href=\"$url\">Submit solution</a> (already copied to clipboard)<br>", needEscape = false)
+  }
+
+  private fun <T> withRunProcessesWithPtyOff(action: () -> T): T {
+    val value = Registry.get(runProcessesWithPtyRegistryKey)
+    val currentValue = value.asBoolean()
+    val result: T
+    try {
+      value.setValue(false)
+      result = action()
+    }
+    finally {
+      value.setValue(currentValue)
+    }
+    return result
+  }
+
+  companion object {
+    const val runProcessesWithPtyRegistryKey = "run.processes.with.pty"
   }
 }
