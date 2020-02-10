@@ -54,6 +54,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.PluginUtils.enablePlugins;
 
@@ -236,7 +237,12 @@ public class CoursesPanel extends JPanel {
       () -> StepikCoursesProvider.loadPrivateCourses()
     );
     if (courses != null) {
-      myCourses.addAll(courses);
+      Set<Integer> coursesIds = myCourses.stream().map(it -> it.getId()).collect(Collectors.toSet());
+      for (Course course : courses) {
+        if (!coursesIds.contains(course.getId())) {
+          myCourses.add(course);
+        }
+      }
     }
     updateModel(myCourses, selectedCourse);
     myErrorLabel.setVisible(false);
