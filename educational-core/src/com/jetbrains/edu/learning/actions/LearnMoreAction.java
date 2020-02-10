@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class LearnMoreAction extends DumbAwareAction {
   public LearnMoreAction() {
-    super("Learn more about Edu Tools", null, null);
+    super("Learn more about EduTools", null, null);
   }
 
   @Override
