@@ -4,7 +4,6 @@ import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBRadioButton
 import com.intellij.ui.layout.*
-import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.Companion.isCourseCreatorFeaturesEnabled
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.isFeatureEnabled
@@ -12,6 +11,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
 import javax.swing.ButtonGroup
 import javax.swing.JComponent
+import javax.swing.JLabel
 
 class CCOptions : OptionsProvider {
 
@@ -44,9 +44,14 @@ class CCOptions : OptionsProvider {
     if (!isCourseCreatorFeaturesEnabled) return null
 
     return panel {
-      row(EduCoreBundle.message("ccoptions.task.description.format")) { }
-      row { htmlRadioButton(gapLeft = RADIO_BUTTON_INDENT) }
-      row { markdownRadioButton(gapLeft = RADIO_BUTTON_INDENT) }
+      row {
+        cell {
+          // BACKCOMPAT: 2019.1. Use `label` method instead
+          JLabel(EduCoreBundle.message("ccoptions.task.description.format"))()
+          htmlRadioButton()
+          markdownRadioButton()
+        }
+      }
       row { copyTestsCheckBox() }
       if (isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR)) {
         row { showSplitEditorCheckBox() }
@@ -76,9 +81,5 @@ class CCOptions : OptionsProvider {
     markdownRadioButton.isSelected = !settings.useHtmlAsDefaultTaskFormat()
     showSplitEditorCheckBox.isSelected = settings.showSplitEditor()
     copyTestsCheckBox.isSelected = settings.copyTestsInFrameworkLessons()
-  }
-
-  companion object {
-    private val RADIO_BUTTON_INDENT = JBUI.scale(24)
   }
 }
