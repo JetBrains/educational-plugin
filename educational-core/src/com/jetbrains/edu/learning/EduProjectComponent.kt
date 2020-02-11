@@ -16,6 +16,7 @@ import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -46,7 +47,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
 
     if (!isUnitTestMode) {
       EduDocumentListener.setGlobalListener(project)
-      ToolWindowManager.getInstance(project).invokeLater(Runnable { selectProjectView() })
+      selectProjectView(true)
     }
     StartupManager.getInstance(project).runWhenProjectIsInitialized {
       val course = StudyTaskManager.getInstance(project)?.course
@@ -127,17 +128,32 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
     VfsUtil.markDirtyAndRefresh(false, true, true, project.courseDir)
   }
 
-  private fun selectProjectView() {
-    val projectView = ProjectView.getInstance(project)
-    if (projectView != null) {
-      val selectedViewId = ProjectView.getInstance(project).currentViewId
-      if (CourseViewPane.ID != selectedViewId) {
-        projectView.changeView(CourseViewPane.ID)
+  // In general, it's hack to select proper Project View pane for course projects
+  // Should be replaced with proper API
+  private fun selectProjectView(retry: Boolean) {
+    ToolWindowManager.getInstance(project).invokeLater(Runnable {
+      val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.PROJECT_VIEW)
+      // Since 2020.1 project view tool window can be uninitialized here yet
+      if (toolWindow == null) {
+        if (retry) {
+          selectProjectView(false)
+        }
+        else {
+          LOG.warn("Failed to show Course View because Project View is not initialized yet")
+        }
+        return@Runnable
       }
-    }
-    else {
-      LOG.warn("Failed to select Project View")
-    }
+      val projectView = ProjectView.getInstance(project)
+      if (projectView != null) {
+        val selectedViewId = ProjectView.getInstance(project).currentViewId
+        if (CourseViewPane.ID != selectedViewId) {
+          projectView.changeView(CourseViewPane.ID)
+        }
+      }
+      else {
+        LOG.warn("Failed to select Project View")
+      }
+    })
   }
 
   @VisibleForTesting
