@@ -167,7 +167,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   private fun openTheoryLink(stepId: Int?) =
     if (stepId != null) "<a href=\"${stepLink(stepId)}\">Show topic summary</a>" else ""
 
-  private fun openOnHyperskillLink(stepId: Int) = "<a class=\"right\" href=\"${stepLink(stepId)}\">Open on Hyperskill</a>"
+  private fun openOnHyperskillLink(stepId: Int) = "<a class=\"right\" href=\"${stepLink(stepId)}\">Open on ${EduNames.JBA}</a>"
 
   private fun findOrCreateProblemsLesson(course: HyperskillCourse, project: Project): Lesson {
     var lesson = course.getLesson(HYPERSKILL_PROBLEMS)
