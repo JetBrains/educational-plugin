@@ -8,13 +8,14 @@ import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.rust.RsConfigurator
+import com.jetbrains.edu.rust.RsProjectSettings
 import com.jetbrains.edu.rust.toPackageName
 import org.rust.cargo.CargoConstants.MANIFEST_FILE
 import org.rust.lang.RsConstants.MAIN_RS_FILE
 
 class RsCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> = listOf("Rust")
-  override val configurator: EduConfigurator<*> = RsConfigurator()
+  override val configurator: EduConfigurator<RsProjectSettings> = RsConfigurator()
   override val languageId: String = EduNames.RUST
   override val templateFileName: String = "codeforces.main.rs"
 

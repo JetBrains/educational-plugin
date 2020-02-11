@@ -15,6 +15,8 @@ interface CodeforcesLanguageProvider {
       return EduConfiguratorManager.allExtensions().find { it.language == languageId }?.instance
     }
   val languageId: String
+  val preferableCodeforcesLanguage: String
+    get() = codeforcesLanguageNamings.first()
   val templateFileName: String
 
   fun getLanguageVersion(codeforcesLanguage: String): String? = null
@@ -35,6 +37,13 @@ interface CodeforcesLanguageProvider {
         languages.addAll(it.codeforcesLanguageNamings)
       }
       return languages
+    }
+
+    fun getPreferableCodeforcesLanguage(languageId: String): String? {
+      EP_NAME.extensions.forEach {
+        if (languageId == it.languageId) return it.preferableCodeforcesLanguage
+      }
+      return null
     }
 
     /**

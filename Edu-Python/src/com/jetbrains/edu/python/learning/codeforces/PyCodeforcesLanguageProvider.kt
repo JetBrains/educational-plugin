@@ -6,12 +6,14 @@ import com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.python.learning.PyNewConfigurator
+import com.jetbrains.python.newProject.PyNewProjectSettings
 
 class PyCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> = listOf("Python 2", "PyPy 2", "Python 3", "PyPy 3")
+  override val configurator: EduConfigurator<PyNewProjectSettings> = PyNewConfigurator()
   override val languageId: String = EduNames.PYTHON
+  override val preferableCodeforcesLanguage: String = "Python 3"
   override val templateFileName: String = "codeforces.main.py"
-  override val configurator: EduConfigurator<*> = PyNewConfigurator()
 
   override fun getLanguageVersion(codeforcesLanguage: String): String? =
     when (codeforcesLanguage.split(" ").last()) {

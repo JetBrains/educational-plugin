@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.codeforces
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.layout.*
+import com.jetbrains.edu.coursecreator.getDefaultLanguageId
 import javax.swing.JCheckBox
 import javax.swing.JComponent
 
@@ -65,8 +66,15 @@ class ChooseCodeforcesContestLanguagesDialog(private val contestName: String, pr
     }
 
     val preferableLanguage = CodeforcesSettings.getInstance().codeforcesPreferableLanguage
+
     if (preferableLanguage != null && preferableLanguage in languagesList) {
       languageComboBox.selectedItem = preferableLanguage
+    }
+    else {
+      val defaultLanguageId = getDefaultLanguageId()
+      if (defaultLanguageId != null) {
+        languageComboBox.selectedItem = CodeforcesLanguageProvider.getPreferableCodeforcesLanguage(defaultLanguageId)
+      }
     }
   }
 }
