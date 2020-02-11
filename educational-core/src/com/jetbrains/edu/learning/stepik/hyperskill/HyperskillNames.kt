@@ -46,7 +46,7 @@ val REDIRECT_URI: String
 
 private fun createCustomServer(): CustomAuthorizationServer {
   return CustomAuthorizationServer.create(HYPERSKILL, "/api/edu/hyperskill/oauth")
-  { code, _ -> if (HyperskillConnector.getInstance().login(code)) null else "Failed to login to $HYPERSKILL" }
+  { code, _ -> if (HyperskillConnector.getInstance().login(code)) null else "Failed to login to ${EduNames.JBA}" }
 }
 
 private fun getCustomServer(): CustomAuthorizationServer {
