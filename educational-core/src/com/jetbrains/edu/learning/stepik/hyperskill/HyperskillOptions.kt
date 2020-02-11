@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.edu.learning.EduLogInListener
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.settings.OauthOptions
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -30,7 +31,7 @@ class HyperskillOptions : OauthOptions<HyperskillAccount>() {
 
   @Nls
   override fun getDisplayName(): String {
-    return HYPERSKILL
+    return EduNames.JBA
   }
 
   override fun createAuthorizeListener(): LoginListener {
