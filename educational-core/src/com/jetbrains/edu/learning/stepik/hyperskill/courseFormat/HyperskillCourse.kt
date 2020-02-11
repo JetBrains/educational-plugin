@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseFormat
 
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -25,7 +26,7 @@ class HyperskillCourse : Course {
 
   val isTemplateBased: Boolean
     get() {
-      return (hyperskillProject ?: error("Disconnected Hyperskill project")).isTemplateBased
+      return (hyperskillProject ?: error("Disconnected ${EduNames.JBA} project")).isTemplateBased
     }
 
 
