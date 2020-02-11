@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -55,11 +56,14 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     doOpenTaskDescription()
 
     //need this because opening file with FileEditorManager#open doesn't set fixture's selected editor
-    myFixture.openFileInEditor(findTaskDescriptionFile())
+    val taskDescriptionFile = findTaskDescriptionFile()
+    myFixture.openFileInEditor(taskDescriptionFile)
     myFixture.editor.caretModel.moveToOffset(0)
-    myFixture.type("Do not ")
 
-    assertEquals("Do not solve task", findTask(0, 0).descriptionText)
+    WriteCommandAction.runWriteCommandAction(myFixture.project) {
+      FileDocumentManager.getInstance().getDocument(taskDescriptionFile)!!.insertString(0, "Do not ")
+      assertEquals("Do not solve task", findTask(0, 0).descriptionText)
+    }
   }
 
   private fun getCurrentlyOpenedText() = FileEditorManager.getInstance(project).selectedTextEditor?.document?.text ?: error(
