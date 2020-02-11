@@ -12,7 +12,7 @@ class ChooseCodeforcesContestLanguageDialog(private val contestName: String, lan
 
   init {
     title = "Choose Contest Language"
-    languagesList.forEach {
+    languagesList.sorted().forEach {
       languageComboBox.addItem(it)
     }
     init()
