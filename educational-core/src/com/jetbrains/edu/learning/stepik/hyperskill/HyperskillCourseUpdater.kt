@@ -8,6 +8,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -33,7 +34,7 @@ object HyperskillCourseUpdater {
     ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.Backgroundable(project, "Checking for Course Updates") {
 
       override fun run(indicator: ProgressIndicator) {
-        val localHyperskillProject = course.hyperskillProject ?: error("Disconnected hyperskill project")
+        val localHyperskillProject = course.hyperskillProject ?: error("Disconnected ${EduNames.JBA} project")
         val projectId = localHyperskillProject.id
         val connector = HyperskillConnector.getInstance()
         val hyperskillProject = connector.getProject(projectId) ?: return
