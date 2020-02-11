@@ -13,6 +13,7 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.components.labels.ActionLink
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -22,7 +23,7 @@ import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import javax.swing.event.HyperlinkEvent
 
-class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
+class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = isHyperskillSupportAvailable()
@@ -31,7 +32,7 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
   override fun actionPerformed(e: AnActionEvent) {
     val account = HyperskillSettings.INSTANCE.account
     if (account == null) {
-      showBalloon(e, "Please <a href=\"\">login to Hyperskill</a> and select a project.", true)
+      showBalloon(e, "Please <a href=\"\">login to ${EduNames.JBA}</a> and select a project.", true)
     }
     else {
       val hyperskillProject = ProgressManager.getInstance().run(
