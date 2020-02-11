@@ -25,7 +25,7 @@ const val HYPERSKILL_PROJECT_NOT_SUPPORTED = "Selected project is not supported 
 
 val HYPERSKILL_LANGUAGES = mapOf("java" to "${EduNames.JAVA} 11", "kotlin" to EduNames.KOTLIN, "python" to EduNames.PYTHON)
 
-const val CONTINUE_ON_HYPERSKILL = "Continue on <a href=\"https://hyperskill.org/learning-path\">Hyperskill</a>."
+const val CONTINUE_ON_HYPERSKILL = "Continue on <a href=\"https://hyperskill.org/learning-path\">${EduNames.JBA}</a>."
 
 const val SUCCESS_MESSAGE = "<html>${CheckUtils.CONGRATULATIONS} $CONTINUE_ON_HYPERSKILL</html>"
 
