@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -17,10 +18,10 @@ class HyperskillRemoteTaskChecker : RemoteTaskChecker {
   }
 
   override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {
-    HyperskillSettings.INSTANCE.account ?: return CheckResult(CheckStatus.Unchecked, "Please, login to Hyperskill to check the task")
+    HyperskillSettings.INSTANCE.account ?: return CheckResult(CheckStatus.Unchecked, "Please, login to ${EduNames.JBA} to check the task")
     return when (task) {
       is CodeTask -> checkCodeTask(project, task)
-      else -> error("Can't check ${task.itemType} on Hyperskill")
+      else -> error("Can't check ${task.itemType} on ${EduNames.JBA}")
     }
   }
 
