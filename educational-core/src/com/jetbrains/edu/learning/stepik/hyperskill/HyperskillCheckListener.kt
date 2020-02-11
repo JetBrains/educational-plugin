@@ -4,6 +4,7 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -17,8 +18,8 @@ class HyperskillCheckListener : CheckListener {
     if (course.isTaskInProject(task)) {
       if (HyperskillSettings.INSTANCE.account == null) {
         val notification = Notification("hyperskill",
-                                        "Failed to post solution to the $HYPERSKILL",
-                                        "Please, log in to post solutions to the $HYPERSKILL",
+                                        "Failed to post solution to ${EduNames.JBA}",
+                                        "Please, log in to post solutions to ${EduNames.JBA}",
                                         NotificationType.WARNING)
         notification.notify(project)
         return
@@ -36,7 +37,7 @@ class HyperskillCheckListener : CheckListener {
     if (solved == total) {
       val notification = Notification("hyperskill",
                                       "Well done!", "Congratulations! You finished this project. " +
-                                                    "Visit <a href=\"$HYPERSKILL_URL\">Hyperskill</a> to choose new project.",
+                                                    "Visit <a href=\"$HYPERSKILL_URL\">${EduNames.JBA}</a> to choose new project.",
                                       NotificationType.INFORMATION)
       notification.notify(project)
     }
