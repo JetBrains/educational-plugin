@@ -109,17 +109,17 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   private fun openStep(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val stepId = getIntParameter("step_id", urlDecoder)
     val (project, course) = openOrCreateProject() ?: return sendErrorResponse(request, context,
-                                                                              "Failed to create or open hyperskill project")
+                                                                              "Failed to create or open ${EduNames.JBA} project")
     runInEdt { requestFocus() }
 
-    if (course !is HyperskillCourse) return sendErrorResponse(request, context, "Failed to create or open hyperskill project")
+    if (course !is HyperskillCourse) return sendErrorResponse(request, context, "Failed to create or open ${EduNames.JBA} project")
 
     val lesson = findOrCreateProblemsLesson(course, project)
     val lessonDir = lesson.getLessonDir(project)
                     ?: return sendErrorResponse(request, context, "Could not find Problems directory")
 
     val stepSource = ProgressManager.getInstance().run(
-      object : Task.WithResult<HyperskillStepSource?, Exception>(null, "Loading hyperskill problem", true) {
+      object : Task.WithResult<HyperskillStepSource?, Exception>(null, "Loading $${EduNames.JBA} problem", true) {
         override fun compute(indicator: ProgressIndicator): HyperskillStepSource? {
           return HyperskillConnector.getInstance().getStepSource(stepId)
         }
@@ -189,7 +189,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
     if (focusOpenProject(projectId, stageId) || openRecentProject(projectId, stageId) || createProject(projectId, stageId)) {
       sendOk(request, context)
-      LOG.info("Hyperskill project opened: $projectId")
+      LOG.info("${EduNames.JBA} project opened: $projectId")
       return null
     }
     sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
