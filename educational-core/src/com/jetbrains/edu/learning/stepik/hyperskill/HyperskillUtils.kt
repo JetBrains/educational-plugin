@@ -105,7 +105,7 @@ fun isHyperskillSupportAvailable(): Boolean {
 }
 
 fun showFailedToPostNotification() {
-  val notification = Notification(HYPERSKILL_GROUP_ID, "Failed to post submission to the Hyperskill",
+  val notification = Notification(HYPERSKILL_GROUP_ID, "Failed to post submission to ${EduNames.JBA}",
                                   "Please, try to check again", NotificationType.WARNING)
   notification.notify(null)
 }
