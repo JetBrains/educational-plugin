@@ -14,15 +14,12 @@ import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
-import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
-import com.jetbrains.edu.learning.isFeatureEnabled
-import com.jetbrains.edu.learning.kotlinVersion
 
 class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
@@ -53,13 +50,19 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     }
     else {
       if (isFeatureEnabled(EduExperimentalFeatures.NEW_ITEM_POPUP_UI)) {
-        val androidStudyItemCreator: (NewStudyItemInfo) -> Unit = { info ->
-          val fullInfo = AndroidNewTaskAfterPopupDialog(project, course, model, info).showAndGetResult()
-          if (fullInfo != null) {
-            studyItemCreator(fullInfo)
-          }
+        val studyItemCreatorWrapper = if (isUnitTestMode) {
+          studyItemCreator
         }
-        super.showNewStudyItemUi(project, course, model, additionalPanels, androidStudyItemCreator)
+        else {
+          val androidStudyItemCreator: (NewStudyItemInfo) -> Unit = { info ->
+            val fullInfo = AndroidNewTaskAfterPopupDialog(project, course, model, info).showAndGetResult()
+            if (fullInfo != null) {
+              studyItemCreator(fullInfo)
+            }
+          }
+          androidStudyItemCreator
+        }
+        super.showNewStudyItemUi(project, course, model, additionalPanels, studyItemCreatorWrapper)
       }
       else {
         showNewStudyItemDialog(project, course, model, additionalPanels, ::AndroidNewTaskDialog, studyItemCreator)
