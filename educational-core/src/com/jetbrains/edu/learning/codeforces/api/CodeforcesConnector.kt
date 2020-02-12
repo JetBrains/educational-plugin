@@ -37,8 +37,8 @@ class CodeforcesConnector {
       .build()
       .create(CodeforcesService::class.java)
 
-  fun getContests(withTrainings: Boolean = false): ContestsList? =
-    service.contests(withTrainings)
+  fun getContests(withTrainings: Boolean = false, locale: String = "en"): ContestsList? =
+    service.contests(withTrainings, locale)
       .executeHandlingExceptions()
       ?.checkStatusCode()
       ?.body()

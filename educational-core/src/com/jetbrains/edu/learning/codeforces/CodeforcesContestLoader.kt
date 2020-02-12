@@ -7,12 +7,12 @@ import com.jetbrains.edu.learning.codeforces.api.ContestPhase
 
 object CodeforcesContestLoader {
   @JvmStatic
-  fun getContestInfos(withTrainings: Boolean = false): List<ContestInfo> {
+  fun getContestInfos(withTrainings: Boolean = false, locale: String = "en"): List<ContestInfo> {
     val result = mutableListOf<ContestInfo>()
     val indicator = ProgressManager.getInstance().progressIndicator
     if (indicator != null && indicator.isCanceled) return emptyList()
 
-    val contestList = CodeforcesConnector.getInstance().getContests(withTrainings) ?: return emptyList()
+    val contestList = CodeforcesConnector.getInstance().getContests(withTrainings, locale) ?: return emptyList()
     if (contestList.isOK) {
       val acceptablePhases = listOf(ContestPhase.CODING, ContestPhase.FINISHED)
       result.addAll(

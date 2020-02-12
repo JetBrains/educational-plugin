@@ -43,7 +43,6 @@ class ImportCodeforcesContestDialog : DialogWrapper(false) {
     init()
   }
 
-  fun getContestTextLanguage(): TaskTextLanguage = contestPanel.getContestTextLanguage()
   fun getContestId(): Int = contestPanel.getContestId()
 
   private fun codeforcesListPanel() {

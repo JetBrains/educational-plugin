@@ -8,7 +8,8 @@ import retrofit2.http.Query
 
 interface CodeforcesService {
   @GET("api/contest.list")
-  fun contests(@Query("gym") trainings: Boolean): Call<ContestsList>
+  fun contests(@Query("gym") trainings: Boolean,
+               @Query("locale") locale: String = "en"): Call<ContestsList>
 
   @GET("contest/{id}")
   fun contest(@Path("id") contestId: Int,
