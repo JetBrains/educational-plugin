@@ -297,7 +297,7 @@ class EduDocumentListenerTest : EduTestCase() {
       isPromptOnReplace = false
     }
 
-    val usages = mutableListOf<UsageInfo>()
+    val usages = mutableListOf<UsageInfo?>()
     val collector = CommonProcessors.CollectProcessor(usages)
     FindInProjectUtil
       .findUsages(findModel, project, collector, FindUsagesProcessPresentation(FindInProjectUtil.setupViewPresentation(true, findModel)))
@@ -305,7 +305,9 @@ class EduDocumentListenerTest : EduTestCase() {
     CommandProcessor.getInstance().executeCommand(project, {
       val replaceManager = ReplaceInProjectManager.getInstance(project)
       for (usage in usages) {
-        replaceManager.replaceUsage(UsageInfo2UsageAdapter(usage), findModel, emptySet(), false)
+        if (usage != null) {
+          replaceManager.replaceUsage(UsageInfo2UsageAdapter(usage), findModel, emptySet(), false)
+        }
       }
     }, "", null)
 
