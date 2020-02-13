@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.editor;
 
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
@@ -31,12 +32,15 @@ import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyM
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
 import com.jetbrains.edu.learning.stepik.api.StepikConnectorUtils;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory;
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
+
+  private static final Logger LOG = Logger.getInstance(EduEditorFactoryListener.class);
 
   private static class WindowSelectionListener implements EditorMouseListener {
     private final TaskFile myTaskFile;
@@ -68,6 +72,11 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     if (project == null) {
       return;
     }
+    Course course = StudyTaskManager.getInstance(project).getCourse();
+    if (course == null) {
+      return;
+    }
+
 
     final Document document = editor.getDocument();
     final VirtualFile openedFile = FileDocumentManager.getInstance().getFile(document);
@@ -75,16 +84,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       TaskFile taskFile = EduUtils.getTaskFile(project, openedFile);
       if (taskFile != null) {
         WolfTheProblemSolver.getInstance(project).clearProblems(openedFile);
-        final ToolWindow studyToolWindow =
-          ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
-        if (studyToolWindow != null && !taskFile.getTask().equals(EduUtils.getCurrentTask(project))) {
-          EduUtils.updateToolWindows(project);
-          studyToolWindow.show(null);
-        }
-        Course course = StudyTaskManager.getInstance(project).getCourse();
-        if (course == null) {
-          return;
-        }
+        showTaskDescriptionToolWindow(project, taskFile, true);
 
         Task task = taskFile.getTask();
         if (task instanceof TheoryTask && task.getStatus() != CheckStatus.Solved) {
@@ -113,5 +113,22 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     event.getEditor().getSelectionModel().removeSelection();
   }
 
+  private static void showTaskDescriptionToolWindow(@NotNull Project project, @NotNull TaskFile taskFile, boolean retry) {
+    ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+    final ToolWindow studyToolWindow = toolWindowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
+    if (studyToolWindow == null) {
+      if (retry) {
+        toolWindowManager.invokeLater(() -> showTaskDescriptionToolWindow(project, taskFile, false));
+      }
+      else {
+        LOG.warn(String.format("Failed to get toolwindow with `%s` id", TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW));
+      }
+      return;
+    }
 
+    if (!taskFile.getTask().equals(TaskDescriptionView.getInstance(project).getCurrentTask())) {
+      EduUtils.updateToolWindows(project);
+      studyToolWindow.show(null);
+    }
+  }
 }
