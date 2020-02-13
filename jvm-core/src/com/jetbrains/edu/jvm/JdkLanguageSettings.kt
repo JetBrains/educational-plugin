@@ -1,6 +1,7 @@
 package com.jetbrains.edu.jvm
 
 import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
@@ -48,7 +49,8 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   }
 
   protected open fun preselectJdk(course: Course, jdkComboBox: JdkComboBox, sdksModel: ProjectSdksModel) {
-
+    if (jdkComboBox.selectedJdk != null) return
+    jdkComboBox.selectedJdk = sdksModel.sdks.firstOrNull { it.sdkType == JavaSdk.getInstance() }
   }
 
   override fun getSettings(): JdkProjectSettings = myJdkSettings
