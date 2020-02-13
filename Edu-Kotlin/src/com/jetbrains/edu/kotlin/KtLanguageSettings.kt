@@ -12,11 +12,12 @@ class KtLanguageSettings : JdkLanguageSettings() {
   override fun getLanguageVersions() = listOf("1.2", "1.3")
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    course ?: return null
-    val courseKotlinVersion = course.kotlinVersion
-    val kotlinVersion = kotlinVersion()
-    if (kotlinVersion < courseKotlinVersion) {
-      return ValidationMessage(EduKtBundle.message("update.kotlin.plugin", courseKotlinVersion.version))
+    if (course != null) {
+      val courseKotlinVersion = course.kotlinVersion
+      val kotlinVersion = kotlinVersion()
+      if (kotlinVersion < courseKotlinVersion) {
+        return ValidationMessage(EduKtBundle.message("update.kotlin.plugin", courseKotlinVersion.version))
+      }
     }
     return super.validate(course, courseLocation)
   }

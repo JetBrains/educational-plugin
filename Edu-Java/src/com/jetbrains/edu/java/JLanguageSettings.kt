@@ -35,26 +35,25 @@ class JLanguageSettings : JdkLanguageSettings() {
   override fun getLanguageVersions() = JavaSdkVersion.values().filter { it.isAtLeast(DEFAULT_JAVA) }.map { it.description }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    if (course == null) {
-      return null
-    }
-    val courseJavaVersionDescription = course.languageVersion ?: DEFAULT_JAVA.description
-    val courseJavaVersion = courseJavaVersionDescription.toJavaSdkVersion()
-                            ?: return ValidationMessage("Unsupported Java versions: $courseJavaVersionDescription")
+    if (course != null) {
+      val courseJavaVersionDescription = course.languageVersion ?: DEFAULT_JAVA.description
+      val courseJavaVersion = courseJavaVersionDescription.toJavaSdkVersion()
+                              ?: return ValidationMessage("Unsupported Java versions: $courseJavaVersionDescription")
 
-    val jdkItem = myJdkSettings.jdkItem
-    if (jdkItem !is JdkComboBox.SuggestedJdkItem) {
-      val providedJavaVersion = jdkItem?.jdk?.versionString ?: return ValidationMessage("No Java sdk")
+      val jdkItem = myJdkSettings.jdkItem
+      if (jdkItem !is JdkComboBox.SuggestedJdkItem) {
+        val providedJavaVersion = jdkItem?.jdk?.versionString ?: return ValidationMessage("No Java sdk")
 
-      val javaSdkVersion = JavaSdkVersion.fromVersionString(providedJavaVersion)
-                           ?: return ValidationMessage(EduJavaBundle.message("failed.to.get.java.version"))
-      if (javaSdkVersion.isAtLeast(courseJavaVersion)) {
-        return null
+        val javaSdkVersion = JavaSdkVersion.fromVersionString(providedJavaVersion)
+                             ?: return ValidationMessage(EduJavaBundle.message("failed.to.get.java.version"))
+        if (javaSdkVersion.isAtLeast(courseJavaVersion)) {
+          return null
+        }
+        return ValidationMessage("Java version should be at least $courseJavaVersionDescription. ",
+                                 "Download JDK", "", "https://www.oracle.com/technetwork/java/javase/downloads/index.html")
       }
-      return ValidationMessage("Java version should be at least $courseJavaVersionDescription. ",
-                               "Download JDK", "", "https://www.oracle.com/technetwork/java/javase/downloads/index.html")
     }
-    return null
+    return super.validate(course, courseLocation)
   }
 
   override fun preselectJdk(course: Course, jdkComboBox: JdkComboBox, sdksModel: ProjectSdksModel) {

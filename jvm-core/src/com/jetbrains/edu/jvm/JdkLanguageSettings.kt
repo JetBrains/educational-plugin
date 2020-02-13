@@ -12,8 +12,10 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.ui.ComboboxWithBrowseButton
+import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
@@ -51,6 +53,13 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   protected open fun preselectJdk(course: Course, jdkComboBox: JdkComboBox, sdksModel: ProjectSdksModel) {
     if (jdkComboBox.selectedJdk != null) return
     jdkComboBox.selectedJdk = sdksModel.sdks.firstOrNull { it.sdkType == JavaSdk.getInstance() }
+  }
+
+  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
+    if (myJdkSettings.jdkItem == null) {
+      return ValidationMessage(EduJVMBundle.message("jdk.is.not.selected"))
+    }
+    return super.validate(course, courseLocation)
   }
 
   override fun getSettings(): JdkProjectSettings = myJdkSettings
