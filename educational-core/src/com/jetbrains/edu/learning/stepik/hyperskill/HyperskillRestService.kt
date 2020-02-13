@@ -119,7 +119,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
                     ?: return sendErrorResponse(request, context, "Could not find Problems directory")
 
     val stepSource = ProgressManager.getInstance().run(
-      object : Task.WithResult<HyperskillStepSource?, Exception>(null, "Loading $${EduNames.JBA} problem", true) {
+      object : Task.WithResult<HyperskillStepSource?, Exception>(null, "Loading ${EduNames.JBA} problem", true) {
         override fun compute(indicator: ProgressIndicator): HyperskillStepSource? {
           return HyperskillConnector.getInstance().getStepSource(stepId)
         }
