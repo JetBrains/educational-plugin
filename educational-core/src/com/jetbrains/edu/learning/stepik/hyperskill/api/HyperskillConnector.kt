@@ -10,19 +10,16 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduLogInListener
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.createRetrofitBuilder
-import com.jetbrains.edu.learning.executeHandlingExceptions
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepikUserAgent
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import okhttp3.ConnectionPool
 import org.apache.http.HttpStatus
@@ -180,14 +177,14 @@ abstract class HyperskillConnector {
 
   fun fillHyperskillCourse(hyperskillCourse: HyperskillCourse): Boolean {
     return try {
-      ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.WithResult<Boolean, Exception>(null, "Loading hyperskill project", true) {
+      ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.WithResult<Boolean, Exception>(null, "Loading ${EduNames.JBA} project", true) {
         override fun compute(indicator: ProgressIndicator): Boolean {
           val hyperskillAccount = HyperskillSettings.INSTANCE.account
           if (hyperskillAccount == null) {
-            LOG.error("User is not logged in to the Hyperskill")
+            LOG.error("User is not logged in to ${EduNames.JBA}")
             return false
           }
-          val hyperskillProject = hyperskillCourse.hyperskillProject ?: error("Disconnected Hyperskill project")
+          val hyperskillProject = hyperskillCourse.hyperskillProject ?: error("Disconnected ${EduNames.JBA} project")
           if (!hyperskillProject.useIde) {
             LOG.error("Selected project is not supported")
             return false
