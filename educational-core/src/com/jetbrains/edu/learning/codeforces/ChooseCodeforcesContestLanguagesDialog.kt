@@ -9,11 +9,10 @@ import javax.swing.JCheckBox
 import javax.swing.JComponent
 
 // TODO move text of labels to message bundle
-class ChooseCodeforcesContestLanguagesDialog(private val contestName: String, private val languagesList: List<String>) :
-  DialogWrapper(false) {
+class ChooseCodeforcesContestLanguagesDialog(private val contestInformation: ContestInformation) : DialogWrapper(false) {
   private val textLanguageComboBox: ComboBox<TaskTextLanguage> = ComboBox()
   private val languageComboBox: ComboBox<String> = ComboBox()
-  private val languagePreferenceCheckBox: JCheckBox = JCheckBox("Save language preferences")
+  private val doNotShowLanguageDialogCheckBox: JCheckBox = JCheckBox("Do not ask if selected languages are available")
   private val comboBoxesWidth: Int = JBUI.scale(130)
 
   init {
@@ -25,7 +24,7 @@ class ChooseCodeforcesContestLanguagesDialog(private val contestName: String, pr
 
   override fun createCenterPanel(): JComponent? = panel {
     row {
-      label("Contest: $contestName")
+      label("Contest: ${contestInformation.name}")
     }
     row {
       row("Language:") {
@@ -35,7 +34,7 @@ class ChooseCodeforcesContestLanguagesDialog(private val contestName: String, pr
         languageComboBox()
       }
       row {
-        languagePreferenceCheckBox()
+        doNotShowLanguageDialogCheckBox()
       }
     }
   }
@@ -46,29 +45,28 @@ class ChooseCodeforcesContestLanguagesDialog(private val contestName: String, pr
 
   fun selectedLanguage(): String = languageComboBox.selectedItem as String
 
-  fun isSavePreferences(): Boolean = languagePreferenceCheckBox.isSelected
+  fun isDoNotShowLanguageDialog(): Boolean = doNotShowLanguageDialogCheckBox.isSelected
 
   private fun initTextLanguageComboBox() {
     TaskTextLanguage.values().forEach {
       textLanguageComboBox.addItem(it)
     }
 
-    val preferableTextLanguage = CodeforcesSettings.getInstance().codeforcesPreferableTextLanguage
-    if (preferableTextLanguage != null && preferableTextLanguage in TaskTextLanguage.values().map { it.name }) {
-      textLanguageComboBox.selectedItem = TaskTextLanguage.valueOf(preferableTextLanguage)
+    val preferableTaskTextLanguage = CodeforcesSettings.getInstance().preferableTaskTextLanguage
+    if (preferableTaskTextLanguage != null && preferableTaskTextLanguage in TaskTextLanguage.values()) {
+      textLanguageComboBox.selectedItem = preferableTaskTextLanguage
     }
 
     textLanguageComboBox.setMinimumAndPreferredWidth(comboBoxesWidth)
   }
 
   private fun initLanguageComboBox() {
-    languagesList.sorted().forEach {
+    contestInformation.availableLanguages.sorted().forEach {
       languageComboBox.addItem(it)
     }
 
-    val preferableLanguage = CodeforcesSettings.getInstance().codeforcesPreferableLanguage
-
-    if (preferableLanguage != null && preferableLanguage in languagesList) {
+    val preferableLanguage = CodeforcesSettings.getInstance().preferableLanguage
+    if (preferableLanguage != null && preferableLanguage in contestInformation.availableLanguages) {
       languageComboBox.selectedItem = preferableLanguage
     }
     else {

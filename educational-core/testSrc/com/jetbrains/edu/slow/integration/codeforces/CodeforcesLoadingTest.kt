@@ -3,7 +3,7 @@ package com.jetbrains.edu.slow.integration.codeforces
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.codeforces.ContestURLInfo
+import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import java.io.File
@@ -13,13 +13,13 @@ class CodeforcesLoadingTest: EduTestCase() {
   override fun getTestDataPath(): String = "testData/codeforces"
 
   private val contestKotlinHeroesEpisode1: CodeforcesCourse by lazy {
-    val contestInfo = ContestURLInfo(1170, "en", EduNames.KOTLIN)
-    StartCodeforcesContestAction.getContestInfoUnderProgress(contestInfo)!!
+    val contestInfo = ContestParameters(1170, "en", "Kotlin", EduNames.KOTLIN)
+    StartCodeforcesContestAction.getCodeforcesContestUnderProgress(contestInfo)!!
   }
 
   private val codeforcesRound605Div3: CodeforcesCourse by lazy {
-    val contestInfo = ContestURLInfo(1272, "en", EduNames.JAVA)
-    StartCodeforcesContestAction.getContestInfoUnderProgress(contestInfo)!!
+    val contestInfo = ContestParameters(1272, "en", "Java", EduNames.JAVA)
+    StartCodeforcesContestAction.getCodeforcesContestUnderProgress(contestInfo)!!
   }
 
   fun `test codeforces contest Kotlin Heroes Episode 1`() {

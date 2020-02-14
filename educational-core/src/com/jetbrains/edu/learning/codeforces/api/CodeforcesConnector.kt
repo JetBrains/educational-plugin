@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.checkStatusCode
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestName
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_URL
-import com.jetbrains.edu.learning.codeforces.ContestShortInfo
-import com.jetbrains.edu.learning.codeforces.ContestURLInfo
+import com.jetbrains.edu.learning.codeforces.ContestInformation
+import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.createRetrofitBuilder
 import com.jetbrains.edu.learning.executeHandlingExceptions
@@ -43,16 +43,16 @@ class CodeforcesConnector {
       ?.checkStatusCode()
       ?.body()
 
-  fun getContestInfo(contestURLInfo: ContestURLInfo): CodeforcesCourse? {
-    val response = service.problems(contestURLInfo.id, contestURLInfo.locale)
+  fun getContest(contestParameters: ContestParameters): CodeforcesCourse? {
+    val response = service.problems(contestParameters.id, contestParameters.locale)
                      .executeHandlingExceptions()
                      ?.checkStatusCode()
                      ?.body() ?: return null
     val doc = Jsoup.parse(response.string())
-    return CodeforcesCourse(contestURLInfo, doc)
+    return CodeforcesCourse(contestParameters, doc)
   }
 
-  fun getContestShortInfo(contestId: Int): ContestShortInfo? {
+  fun getContestInformation(contestId: Int): ContestInformation? {
     val response = service.status(contestId)
                      .executeHandlingExceptions()
                      ?.checkStatusCode()
@@ -60,7 +60,7 @@ class CodeforcesConnector {
     val doc = Jsoup.parse(response.string())
     val contestName = getContestName(doc) ?: return null
     val contestLanguage = getLanguages(doc) ?: return null
-    return ContestShortInfo(contestName, contestLanguage)
+    return ContestInformation(contestId, contestName, contestLanguage)
   }
 
   companion object {

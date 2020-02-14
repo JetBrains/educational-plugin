@@ -37,29 +37,10 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
 
   private fun importCodeforcesContest(): CodeforcesCourse? {
     val contestId = showDialogAndGetContestId() ?: return null
-
-    val contestNameAndLanguages = getContestShortInfoUnderProgress(contestId)
-    if (contestNameAndLanguages == null) {
-      showFailedToLoadContestShortInfoNotification(contestId)
-      return null
-    }
-
-    val contestLanguage = showDialogAndGetLanguages(
-      contestNameAndLanguages.name,
-      contestNameAndLanguages.languages
-    ) ?: return null
-
-    if (contestLanguage.savePreferences) {
-      val codeforcesSettings = CodeforcesSettings.getInstance()
-      codeforcesSettings.codeforcesPreferableLanguage = contestLanguage.language
-      codeforcesSettings.codeforcesPreferableTextLanguage = contestLanguage.taskTextLanguage.name
-    }
-
-    val contestURLInfo = ContestURLInfo(contestId, contestLanguage.taskTextLanguage.locale, contestLanguage.languageIdAndVersion)
-
-    val contestInfo = getContestInfoUnderProgress(contestURLInfo)
-    if (contestInfo == null) showFailedToAddContestNotification(contestURLInfo.url)
-    return contestInfo
+    val contestParameters = getContestParameters(contestId) ?: return null
+    val codeforcesContest = getCodeforcesContestUnderProgress(contestParameters)
+    if (codeforcesContest == null) showFailedToLoadContestInfoNotification(contestId)
+    return codeforcesContest
   }
 
   private fun showDialogAndGetContestId(): Int? {
@@ -70,13 +51,56 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
     return dialog.getContestId()
   }
 
-  private fun showDialogAndGetLanguages(contestName: String, contestLanguages: List<String>): ContestLanguagePreferences? {
+  private fun getContestParameters(contestId: Int): ContestParameters? {
+    val contestInfo = getContestInfoUnderProgress(contestId)
+    if (contestInfo == null) {
+      showFailedToFindContestNotification(contestId)
+      return null
+    }
+
+    val codeforcesSettings = CodeforcesSettings.getInstance()
+    var contestParameters: ContestParameters?
+    if (codeforcesSettings.doNotShowLanguageDialog && codeforcesSettings.isSet()) {
+      contestParameters = getContestParametersFromSettings(contestId)
+
+      if (contestParameters != null && contestParameters.codeforcesLanguageRepresentation in contestInfo.availableLanguages) {
+        return contestParameters
+      }
+    }
+
+    contestParameters = showDialogAndGetContestParameters(contestInfo)
+    return contestParameters
+  }
+
+  private fun getContestParametersFromSettings(contestId: Int): ContestParameters? {
+    val codeforcesSettings = CodeforcesSettings.getInstance()
+
+    val locale = (codeforcesSettings.preferableTaskTextLanguage ?: return null).locale
+    val language = codeforcesSettings.preferableLanguage ?: return null
+    val languageIdAndVersion = getLanguageIdAndVersion(language) ?: return null
+
+    return ContestParameters(contestId, locale, language, languageIdAndVersion)
+  }
+
+  private fun getContestInfoUnderProgress(contestId: Int): ContestInformation? =
+    ProgressManager.getInstance().runProcessWithProgressSynchronously<ContestInformation?, RuntimeException>(
+      {
+        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+        EduUtils.execCancelable {
+          CodeforcesConnector.getInstance().getContestInformation(contestId)
+        }
+      }, "Getting Available Languages", true, null)
+
+  private fun showDialogAndGetContestParameters(contestInformation: ContestInformation): ContestParameters? {
+    val contestName = contestInformation.name
+    val contestLanguages = contestInformation.availableLanguages
+
     if (contestLanguages.isEmpty()) {
       showNoSupportedLanguagesForContestNotification(contestName)
       return null
     }
 
-    val dialog = ChooseCodeforcesContestLanguagesDialog(contestName, contestLanguages)
+    val dialog = ChooseCodeforcesContestLanguagesDialog(contestInformation)
     if (!dialog.showAndGet()) {
       return null
     }
@@ -85,25 +109,24 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
     val language = dialog.selectedLanguage()
     val languageIdAndVersion = getLanguageIdAndVersion(language) ?: return null
 
-    return ContestLanguagePreferences(taskTextLanguage, language, languageIdAndVersion, dialog.isSavePreferences())
+    val codeforcesSettings = CodeforcesSettings.getInstance()
+    if (dialog.isDoNotShowLanguageDialog()) {
+      codeforcesSettings.preferableTaskTextLanguage = taskTextLanguage
+      codeforcesSettings.preferableLanguage = language
+      codeforcesSettings.doNotShowLanguageDialog = true
+    }
+
+    return ContestParameters(contestInformation.id, taskTextLanguage.locale, language, languageIdAndVersion)
   }
 
-  private fun getContestShortInfoUnderProgress(contestId: Int): ContestShortInfo? =
-    ProgressManager.getInstance().runProcessWithProgressSynchronously<ContestShortInfo?, RuntimeException>(
-      {
-        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-        EduUtils.execCancelable {
-          CodeforcesConnector.getInstance().getContestShortInfo(contestId)
-        }
-      }, "Getting Available Languages", true, null)
-
-  private fun showFailedToLoadContestShortInfoNotification(contestId: Int) {
+  private fun showFailedToLoadContestInfoNotification(contestId: Int) {
     Messages.showErrorDialog("Cannot get contest information on Codeforces, contest ID: $contestId",
                              "Failed to Load Available Contest Languages")
   }
 
-  private fun showFailedToAddContestNotification(contestURL: String) {
-    Messages.showErrorDialog("Cannot find contest on Codeforces, please check if the link is correct: $contestURL",
+  private fun showFailedToFindContestNotification(contestId: Int) {
+    val contestUrl = CodeforcesContestConnector.getContestURLFromID(contestId)
+    Messages.showErrorDialog("Cannot find contest on Codeforces, please check if the link is correct: $contestUrl",
                              "Failed to Load Codeforces Contest")
   }
 
@@ -112,21 +135,14 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
                              "Failed to Load Codeforces Contest")
   }
 
-  private data class ContestLanguagePreferences(
-    val taskTextLanguage: TaskTextLanguage,
-    val language: String,
-    val languageIdAndVersion: String,
-    val savePreferences: Boolean
-  )
-
   companion object {
     @VisibleForTesting
-    fun getContestInfoUnderProgress(contestURLInfo: ContestURLInfo): CodeforcesCourse? =
+    fun getCodeforcesContestUnderProgress(contestParameters: ContestParameters): CodeforcesCourse? =
       ProgressManager.getInstance().runProcessWithProgressSynchronously<CodeforcesCourse?, RuntimeException>(
         {
           ProgressManager.getInstance().progressIndicator.isIndeterminate = true
           EduUtils.execCancelable {
-            CodeforcesConnector.getInstance().getContestInfo(contestURLInfo)
+            CodeforcesConnector.getInstance().getContest(contestParameters)
           }
         }, "Getting Contest Information", true, null)
   }

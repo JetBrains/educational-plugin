@@ -8,8 +8,7 @@ import com.jetbrains.edu.learning.isUnitTestMode
 object CodeforcesContestsProvider : CoursesProvider {
   override fun loadCourses(): List<Course> {
     checkIsBackgroundThread()
-    val preferableTextLanguage = CodeforcesSettings.getInstance().codeforcesPreferableTextLanguage
-    val lang = if (preferableTextLanguage != null) TaskTextLanguage.valueOf(preferableTextLanguage) else TaskTextLanguage.ENGLISH
-    return if (isUnitTestMode) emptyList() else CodeforcesContestLoader.getContestInfos(locale = lang.locale)
+    val taskTextLanguage = CodeforcesSettings.getInstance().preferableTaskTextLanguage ?: TaskTextLanguage.ENGLISH
+    return if (isUnitTestMode) emptyList() else CodeforcesContestLoader.getContestInfos(locale = taskTextLanguage.locale)
   }
 }

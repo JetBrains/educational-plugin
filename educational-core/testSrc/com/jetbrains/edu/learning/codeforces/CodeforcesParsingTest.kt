@@ -51,7 +51,7 @@ class CodeforcesParsingTest : EduTestCase() {
 
   fun `test codeforces contest Kotlin Heroes Episode 2`() {
     val doc = Jsoup.parse(loadText(contest1211))
-    val course = CodeforcesCourse(ContestURLInfo(1211, "en", EduNames.KOTLIN), doc)
+    val course = CodeforcesCourse(ContestParameters(1211, "en", "Kotlin", EduNames.KOTLIN), doc)
 
     assertEquals("Kotlin Heroes: Episode 2", course.name)
     assertEquals("""

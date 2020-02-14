@@ -5,44 +5,47 @@ import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.getDefaultLanguageId
 import com.jetbrains.edu.learning.settings.OptionsProvider
+import javax.swing.JCheckBox
 import javax.swing.JComponent
 
 class CodeforcesOptions : OptionsProvider {
   private val textLanguageComboBox: ComboBox<TaskTextLanguage> = ComboBox()
   private val languageComboBox: ComboBox<String> = ComboBox()
+  private val doNotShowLanguageDialogCheckBox: JCheckBox = JCheckBox("Do not ask if selected languages are available")
   private val comboBoxesWidth: Int = JBUI.scale(130)
   private val state: State
 
   init {
-    initTextLanguageComboBox()
-    initLanguageComboBox()
-    state = State(getTextLanguage(), getLanguage())
+    val codeforcesSettings = CodeforcesSettings.getInstance()
+    initTextLanguageComboBox(codeforcesSettings)
+    initLanguageComboBox(codeforcesSettings)
+    initLanguagePreferencesCheckBox(codeforcesSettings)
+    state = State(getTaskTextLanguage(), getLanguage(), getDoNotShowLanguageDialog())
   }
 
-  data class State(var textLanguage: String, var language: String)
+  data class State(var textLanguage: TaskTextLanguage, var language: String, var doNotShowLanguageDialog: Boolean)
 
-  private fun initTextLanguageComboBox() {
+  private fun initTextLanguageComboBox(codeforcesSettings: CodeforcesSettings) {
     TaskTextLanguage.values().forEach {
       textLanguageComboBox.addItem(it)
     }
 
-    val preferableTextLanguage = CodeforcesSettings.getInstance().codeforcesPreferableTextLanguage
-    if (preferableTextLanguage != null) {
-      textLanguageComboBox.selectedItem = TaskTextLanguage.valueOf(preferableTextLanguage)
+    val preferableTaskTextLanguage = codeforcesSettings.preferableTaskTextLanguage
+    if (preferableTaskTextLanguage != null) {
+      textLanguageComboBox.selectedItem = preferableTaskTextLanguage
     }
 
     textLanguageComboBox.setMinimumAndPreferredWidth(comboBoxesWidth)
   }
 
-  private fun initLanguageComboBox() {
-    CodeforcesLanguageProvider.getSupportedLanguages()
-      .sorted()
-      .forEach {
-        languageComboBox.addItem(it)
-      }
+  private fun initLanguageComboBox(codeforcesSettings: CodeforcesSettings) {
+    val languages = CodeforcesLanguageProvider.getSupportedLanguages().sorted()
+    languages.forEach {
+      languageComboBox.addItem(it)
+    }
 
-    val preferableLanguage = CodeforcesSettings.getInstance().codeforcesPreferableLanguage
-    if (preferableLanguage != null) {
+    val preferableLanguage = codeforcesSettings.preferableLanguage
+    if (preferableLanguage != null && preferableLanguage in languages) {
       languageComboBox.selectedItem = preferableLanguage
     }
     else {
@@ -55,18 +58,25 @@ class CodeforcesOptions : OptionsProvider {
     languageComboBox.setMinimumAndPreferredWidth(comboBoxesWidth)
   }
 
+  private fun initLanguagePreferencesCheckBox(codeforcesSettings: CodeforcesSettings) {
+    doNotShowLanguageDialogCheckBox.isSelected = codeforcesSettings.doNotShowLanguageDialog
+  }
+
   override fun getDisplayName(): String = "Codeforces"
 
   override fun apply() {
-    val textLanguage = getTextLanguage()
+    val textLanguage = getTaskTextLanguage()
     val language = getLanguage()
+    val doNotShowLanguageDialog = getDoNotShowLanguageDialog()
 
     val codeforcesSettings = CodeforcesSettings.getInstance()
-    codeforcesSettings.codeforcesPreferableTextLanguage = textLanguage
-    codeforcesSettings.codeforcesPreferableLanguage = language
+    codeforcesSettings.preferableTaskTextLanguage = textLanguage
+    codeforcesSettings.preferableLanguage = language
+    codeforcesSettings.doNotShowLanguageDialog = doNotShowLanguageDialog
 
     state.textLanguage = textLanguage
     state.language = language
+    state.doNotShowLanguageDialog = doNotShowLanguageDialog
   }
 
   override fun createComponent(): JComponent? = panel {
@@ -76,16 +86,24 @@ class CodeforcesOptions : OptionsProvider {
     row("Programming language:") {
       languageComboBox()
     }
+    row {
+      doNotShowLanguageDialogCheckBox()
+    }
   }
 
   override fun reset() {
-    textLanguageComboBox.selectedItem = TaskTextLanguage.valueOf(state.textLanguage)
+    textLanguageComboBox.selectedItem = state.textLanguage
     languageComboBox.selectedItem = state.language
+    doNotShowLanguageDialogCheckBox.isSelected = state.doNotShowLanguageDialog
   }
 
-  override fun isModified(): Boolean = state.textLanguage != getTextLanguage() || state.language != getLanguage()
+  override fun isModified(): Boolean = state.textLanguage != getTaskTextLanguage()
+                                       || state.language != getLanguage()
+                                       || state.doNotShowLanguageDialog != getDoNotShowLanguageDialog()
 
-  private fun getTextLanguage() = (textLanguageComboBox.selectedItem as TaskTextLanguage).name
+  private fun getTaskTextLanguage(): TaskTextLanguage = textLanguageComboBox.selectedItem as TaskTextLanguage
 
-  private fun getLanguage() = languageComboBox.selectedItem!!.toString()
+  private fun getLanguage(): String = languageComboBox.selectedItem!!.toString()
+
+  private fun getDoNotShowLanguageDialog(): Boolean = doNotShowLanguageDialogCheckBox.isSelected
 }

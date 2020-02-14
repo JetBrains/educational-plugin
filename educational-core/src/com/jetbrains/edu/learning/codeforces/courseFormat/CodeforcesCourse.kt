@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getConte
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_SUBMIT
-import com.jetbrains.edu.learning.codeforces.ContestURLInfo
+import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import icons.EducationalCoreIcons
@@ -16,10 +16,10 @@ class CodeforcesCourse : Course {
   @Suppress("unused") //used for deserialization
   constructor()
 
-  constructor(contestURLInfo: ContestURLInfo, doc: Document) {
-    id = contestURLInfo.id
-    language = contestURLInfo.languageId
-    languageCode = contestURLInfo.locale
+  constructor(contestParameters: ContestParameters, doc: Document) {
+    id = contestParameters.id
+    language = contestParameters.languageId
+    languageCode = contestParameters.locale
 
     parseResponseToAddContent(doc)
   }
