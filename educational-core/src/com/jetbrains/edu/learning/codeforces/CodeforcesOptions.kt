@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.layout.*
+import com.jetbrains.edu.coursecreator.getDefaultLanguageId
 import com.jetbrains.edu.learning.settings.OptionsProvider
 import javax.swing.JComponent
 
@@ -39,6 +40,12 @@ class CodeforcesOptions : OptionsProvider {
     val preferableLanguage = CodeforcesSettings.getInstance().codeforcesPreferableLanguage
     if (preferableLanguage != null) {
       languageComboBox.selectedItem = preferableLanguage
+    }
+    else {
+      val defaultLanguageId = getDefaultLanguageId()
+      if (defaultLanguageId != null) {
+        languageComboBox.selectedItem = CodeforcesLanguageProvider.getPreferableCodeforcesLanguage(defaultLanguageId)
+      }
     }
   }
 
