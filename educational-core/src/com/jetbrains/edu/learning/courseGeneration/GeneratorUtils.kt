@@ -219,7 +219,8 @@ object GeneratorUtils {
     return candidateName
   }
 
-  private fun String.convertToValidName(): String {
+  @JvmStatic
+  fun String.convertToValidName(): String {
     val invalidSymbols = if (SystemInfo.isWindows) WINDOWS_INVALID_SYMBOLS else UNIX_INVALID_SYMBOLS
     var validName = replace(invalidSymbols, " ").trim()
     if (SystemInfo.isWindows && endsWith(".")) {

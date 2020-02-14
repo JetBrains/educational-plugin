@@ -47,6 +47,26 @@ class CheckiOCourseGenerationTest : EduTestCase() {
     assertEmpty(notSolved)
   }
 
+  @Suppress("deprecation")
+  fun `test station and mission names are computed correctly`() {
+    // `:` was taken because it is forbidden both on Unix & Windows platforms
+    val missions = getSourceMissions()
+    missions.forEach {
+      assertFalse(it.name.contains(':'))
+      assertFalse(it.station.name.contains(':'))
+    }
+
+    // Check if we set custom name for hard names
+    val hardNamesmission = missions.first { it.id == 520 }
+    assertNotNull(hardNamesmission.customPresentableName)
+    assertNotNull(hardNamesmission.station.customPresentableName)
+
+    // Check if we do not set custom name for simple names
+    val simpleNamesMission = missions.first { it.id == 566 }
+    assertNull(simpleNamesMission.customPresentableName)
+    assertNull(simpleNamesMission.station.customPresentableName)
+  }
+
   private fun getSourceMissions() = MockCheckiOApiConnector().missionList
 
   private fun getProcessedMissions(): List<CheckiOMission> {
