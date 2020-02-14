@@ -23,10 +23,7 @@ class ChooseCodeforcesContestLanguagesDialog(private val contestName: String, pr
 
   override fun createCenterPanel(): JComponent? = panel {
     row {
-      cell(isFullWidth = true) {
-        label("Contest:")
-        label(contestName)
-      }
+      label("Contest: $contestName")
     }
     row {
       row("Language:") {
