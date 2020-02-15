@@ -15,8 +15,16 @@ class To14VersionXmlConverter : BaseXmlConverter() {
   }
 
   override fun convertTaskElement(task: Element) {
-    val stepId = getChildWithName(task, STEP_ID)
-    renameElement(stepId, ID)
+    val stepId = getChildWithName(task, STEP_ID, true)
+    if (stepId != null) {
+      renameElement(stepId, ID)
+    }
+
+    // in older versions there was different name
+    val stepicId = getChildWithName(task, "stepicId", true)
+    if (stepicId != null) {
+      renameElement(stepicId, ID)
+    }
   }
 
   override fun convertLessonElement(lesson: Element) {

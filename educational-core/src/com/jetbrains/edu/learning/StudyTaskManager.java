@@ -124,6 +124,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
         return;
       }
       if (myProject != null) {
+        state = state.clone();
         switch (version) {
           case 1:
             state = convertToSecondVersion(myProject, state);

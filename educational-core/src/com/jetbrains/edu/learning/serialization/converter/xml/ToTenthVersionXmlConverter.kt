@@ -6,9 +6,12 @@ import org.jdom.Element
 class ToTenthVersionXmlConverter : BaseXmlConverter() {
 
   override fun convertTaskElement(task: Element) {
-    val additionalFileMap = getChildMap<String, String>(task, ADDITIONAL_FILES)
+    val additionalFileMap = getChildMap<String, String>(task, ADDITIONAL_FILES, true)
       .mapValues { (_, text) -> newAdditionalFileElement(text) }
-    task.removeContent(getChildWithName(task, ADDITIONAL_FILES))
+    val additionalFilesElement = getChildWithName(task, ADDITIONAL_FILES, true)
+    if (additionalFilesElement != null) {
+      task.removeContent(additionalFilesElement)
+    }
     addChildMap(task, ADDITIONAL_FILES, additionalFileMap)
   }
 
