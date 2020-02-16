@@ -98,7 +98,7 @@ private class MultiLineLabelUI : com.intellij.openapi.ui.MultiLineLabelUI() {
     if (str == text) return lines
     val convertedStr = convertTabs(str, 2)
     text = convertedStr
-    lines = StringUtil.splitByLinesDontTrim(convertedStr)
+    lines = convertedStr.lines().toTypedArray()
     return lines
   }
 }
