@@ -65,7 +65,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
       setupProject(course)
       ApplicationManager.getApplication().invokeLater {
         ApplicationManager.getApplication()
-          .runWriteAction { EduCounterUsageCollector.eduProjectOpened(course.courseMode) }
+          .runWriteAction { EduCounterUsageCollector.eduProjectOpened(course) }
       }
     }
 

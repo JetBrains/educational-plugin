@@ -202,7 +202,7 @@ public abstract class CourseProjectGenerator<S> {
           checkIfAvailableOnRemote();
         }
         createAdditionalFiles(project, baseDir);
-        EduCounterUsageCollector.eduProjectCreated(myCourse.getCourseMode());
+        EduCounterUsageCollector.eduProjectCreated(myCourse);
 
         return null; // just to use correct overloading of `runProcessWithProgressSynchronously` method
       }, "Generating Course Structure", false, project);

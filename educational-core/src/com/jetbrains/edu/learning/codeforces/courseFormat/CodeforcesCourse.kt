@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestURLFromID
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_SUBMIT
 import com.jetbrains.edu.learning.codeforces.ContestURLInfo
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -29,7 +30,7 @@ class CodeforcesCourse : Course {
   override fun getCheckAction(): CheckAction = CheckAction(CodeforcesNames.RUN_LOCAL_TESTS)
 
   fun getContestUrl(): String = getContestURLFromID(id)
-  fun getSubmissionUrl(): String = "${getContestUrl()}/submit?locale=$languageCode"
+  fun getSubmissionUrl(): String = "${getContestUrl()}/${CODEFORCES_SUBMIT}?locale=$languageCode"
 
   private fun parseResponseToAddContent(doc: Document) {
     name = doc.selectFirst(".caption").text()

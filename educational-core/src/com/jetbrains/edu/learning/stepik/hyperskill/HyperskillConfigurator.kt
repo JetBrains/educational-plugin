@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.BrowserHyperlinkListener
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -12,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
+import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import javax.swing.Icon
 import javax.swing.JPanel
@@ -30,7 +30,7 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
     if (course is HyperskillCourse && course.isStudy) {
       if (!course.isTaskInProject(currentTask)) return null
       val topicsPanel = AdditionalTabPanel(project)
-      topicsPanel.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
+      topicsPanel.addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
 
       val topics = course.taskToTopics[currentTask.index - 1]
       var descriptionText = "<h3 ${StyleManager().textStyleHeader}>Topics for current stage :</h3>"

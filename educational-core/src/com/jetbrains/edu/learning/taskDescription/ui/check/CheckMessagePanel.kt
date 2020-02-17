@@ -3,12 +3,12 @@ package com.jetbrains.edu.learning.taskDescription.ui.check
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.ui.BrowserHyperlinkListener
 import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
+import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import kotlinx.css.CSSBuilder
@@ -21,7 +21,7 @@ class CheckMessagePanel private constructor(): JPanel() {
 
   private val messagePane: JTextPane = createTextPane().apply {
     border = JBUI.Borders.empty()
-    addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
+    addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
   }
 
   init {

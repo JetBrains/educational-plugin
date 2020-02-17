@@ -22,7 +22,6 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
@@ -42,6 +41,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
+import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
@@ -130,7 +130,7 @@ public class CheckAction extends DumbAwareAction {
         ActionUtil.getUnavailableMessage(EduCoreBundle.message("check.task.checking"), false),
         null,
         UIUtil.getToolTipActionBackground(),
-        BrowserHyperlinkListener.INSTANCE)
+        EduBrowserHyperlinkListener.INSTANCE)
       .createBalloon();
 
     balloon.show(TaskDescriptionView.getInstance(project).checkTooltipPosition(), Balloon.Position.above);

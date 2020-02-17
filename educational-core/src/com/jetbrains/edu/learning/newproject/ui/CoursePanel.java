@@ -9,7 +9,6 @@ import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.ui.FilterComponent;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
@@ -28,6 +27,7 @@ import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
 import com.jetbrains.edu.learning.stepik.course.StepikCourse;
+import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,6 +84,7 @@ public class CoursePanel extends JPanel {
     }
 
     myCourseNameLabel.setBorder(JBUI.Borders.empty(20, leftMargin, 5, HORIZONTAL_MARGIN));
+    //noinspection StaticMethodReferencedViaSubclass it's needed for compilation with 191 branch
     Font labelFont = UIUtil.getLabelFont();
     myCourseNameLabel.setFont(new Font(labelFont.getName(), Font.BOLD, JBUI.scaleFontSize(18.0f)));
 
@@ -105,7 +106,7 @@ public class CoursePanel extends JPanel {
       myLocationField = createLocationComponent();
     }
 
-    myDescriptionTextArea.addHyperlinkListener(new BrowserHyperlinkListener());
+    myDescriptionTextArea.addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE);
   }
 
   public LanguageSettings<?> bindCourse(@NotNull Course course) {

@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink.LinkType.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -24,7 +25,11 @@ class GoToTaskUrlAction : DumbAwareAction(LEAVE_A_COMMENT_ACTION, LEAVE_A_COMMEN
     val task = EduUtils.getCurrentTask(project) ?: return
     val link = getLink(task)
     BrowserUtil.browse(link)
-    EduCounterUsageCollector.leaveFeedback()
+    if (task is CodeforcesTask) {
+      EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.CODEFORCES)
+    } else {
+      EduCounterUsageCollector.leaveFeedback()
+    }
   }
 
   override fun update(e: AnActionEvent) {

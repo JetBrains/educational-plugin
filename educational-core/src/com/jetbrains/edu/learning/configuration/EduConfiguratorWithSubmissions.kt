@@ -9,7 +9,6 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.ui.BrowserHyperlinkListener
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.jetbrains.edu.learning.EduNames
@@ -28,6 +27,7 @@ import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
+import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import icons.EducationalCoreIcons
 import java.net.URL
@@ -76,7 +76,7 @@ abstract class EduConfiguratorWithSubmissions<Settings> : EduConfigurator<Settin
       "<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(hyperlinkColor())} " +
       "href=https://stepik.org/submissions/${currentTask.id}?unit=${currentTask.lesson.unitId}\">View submissions</a>" +
       "<a ${StyleManager().textStyleHeader}> for Quiz tasks on Stepik.org")
-    submissionsPanel.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
+    submissionsPanel.addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
   }
 
   private fun addLoginLink(descriptionText: StringBuilder,

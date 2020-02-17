@@ -25,28 +25,28 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
   }
 
   override fun projectOpened() {
-
-    if (StudyTaskManager.getInstance(myProject).course != null) {
-      initCCProject()
+    val course = StudyTaskManager.getInstance(myProject).course
+    if (course != null) {
+      initCCProject(course)
     }
     else {
       val connection = myProject.messageBus.connect()
       connection.subscribe(StudyTaskManager.COURSE_SET, object : CourseSetListener {
         override fun courseSet(course: Course) {
           connection.disconnect()
-          initCCProject()
+          initCCProject(course)
         }
       })
     }
   }
 
-  private fun initCCProject() {
+  private fun initCCProject(course: Course) {
     if (CCUtils.isCourseCreator(myProject)) {
       if (!ApplicationManager.getApplication().isUnitTestMode) {
         registerListener()
       }
 
-      EduCounterUsageCollector.eduProjectOpened(CCUtils.COURSE_MODE)
+      EduCounterUsageCollector.eduProjectOpened(course)
       startTaskDescriptionFilesSynchronization()
     }
   }

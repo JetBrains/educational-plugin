@@ -18,7 +18,6 @@ package com.jetbrains.edu.learning.taskDescription.ui;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -162,7 +161,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
         return;
       }
 
-      BrowserHyperlinkListener.INSTANCE.hyperlinkUpdate(event);
+      EduBrowserHyperlinkListener.INSTANCE.hyperlinkUpdate(event);
     }
 
     private void toggleHintElement(@NotNull Element sourceElement) {

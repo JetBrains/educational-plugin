@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.statistics
 
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 /**
@@ -21,17 +22,18 @@ object EduCounterUsageCollector {
     reportEvent("navigate.to.task", mapOf(SOURCE to place.toLower()))
 
   @JvmStatic
-  fun eduProjectCreated(mode: String) = reportEvent("edu.project.created", mapOf(MODE to mode))
+  fun eduProjectCreated(course: Course) = reportEvent("edu.project.created", mapOf(MODE to course.courseMode, TYPE to course.itemType,
+                                                                                   LANGUAGE to course.languageID))
 
   @JvmStatic
-  fun eduProjectOpened(mode: String) = reportEvent("edu.project.opened", mapOf(MODE to mode))
+  fun eduProjectOpened(course: Course) = reportEvent("edu.project.opened", mapOf(MODE to course.courseMode, TYPE to course.itemType))
 
   @JvmStatic
   fun studyItemCreated(item: StudyItem) =
     reportEvent("study.item.created", mapOf(MODE to item.course.courseMode, TYPE to item.itemType))
 
   enum class LinkType {
-    IN_COURSE, STEPIK, EXTERNAL, PSI
+    IN_COURSE, STEPIK, EXTERNAL, PSI, CODEFORCES
   }
 
   @JvmStatic
@@ -116,6 +118,9 @@ object EduCounterUsageCollector {
   @JvmStatic
   fun importCourseArchive() = reportEvent("import.course")
 
+  @JvmStatic
+  fun codeforcesSubmitSolution() = reportEvent("codeforces.submit.solution")
+
   private fun Enum<*>.toLower() = this.toString().toLowerCase()
 
   const val GROUP_ID = "educational.counters"
@@ -123,4 +128,5 @@ object EduCounterUsageCollector {
   private const val SOURCE = "source"
   private const val EVENT = "event"
   private const val TYPE = "type"
+  private const val LANGUAGE = "language"
 }
