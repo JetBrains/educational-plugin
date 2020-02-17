@@ -2,11 +2,9 @@ package com.jetbrains.edu.learning.codeforces.courseFormat
 
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestURLFromID
-import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
 import com.jetbrains.edu.learning.codeforces.ContestURLInfo
-import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import icons.EducationalCoreIcons
@@ -32,10 +30,6 @@ class CodeforcesCourse : Course {
 
   fun getContestUrl(): String = getContestURLFromID(id)
   fun getSubmissionUrl(): String = "${getContestUrl()}/submit?locale=$languageCode"
-
-  fun getConfigurator(): EduConfigurator<*>? {
-    return CodeforcesLanguageProvider.getConfigurator(languageID)
-  }
 
   private fun parseResponseToAddContent(doc: Document) {
     name = doc.selectFirst(".caption").text()

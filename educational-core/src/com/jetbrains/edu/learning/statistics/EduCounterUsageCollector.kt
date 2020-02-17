@@ -50,11 +50,11 @@ object EduCounterUsageCollector {
 
   @JvmStatic
   fun loggedIn(platform: String, place: AuthorizationPlace) =
-    authorization(EduCounterUsageCollector.AuthorizationEvent.LOG_IN, platform, place)
+    authorization(AuthorizationEvent.LOG_IN, platform, place)
 
   @JvmStatic
   fun loggedOut(platform: String, place: AuthorizationPlace) =
-    authorization(EduCounterUsageCollector.AuthorizationEvent.LOG_OUT, platform, place)
+    authorization(AuthorizationEvent.LOG_OUT, platform, place)
 
   @JvmStatic
   fun fullOutputShown() = reportEvent("show.full.output")
@@ -81,10 +81,10 @@ object EduCounterUsageCollector {
   private fun hintClicked(event: HintEvent) = reportEvent("hint", mapOf(EVENT to event.toLower()))
 
   @JvmStatic
-  fun hintExpanded() = hintClicked(EduCounterUsageCollector.HintEvent.EXPANDED)
+  fun hintExpanded() = hintClicked(HintEvent.EXPANDED)
 
   @JvmStatic
-  fun hintCollapsed() = hintClicked(EduCounterUsageCollector.HintEvent.COLLAPSED)
+  fun hintCollapsed() = hintClicked(HintEvent.COLLAPSED)
 
   fun createCoursePreview() = reportEvent("create.course.preview")
 
