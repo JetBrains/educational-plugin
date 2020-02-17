@@ -272,13 +272,12 @@ public class StepikSolutionsLoader implements Disposable {
     }
     for (Task task : allTasks) {
       Boolean isSolved = taskStatusesMap.get(getProgressId(task));
-      if (isSolved != null && !(task instanceof TheoryTask) && isLastSubmissionUpToDate(task, isSolved)) {
-        if (isToUpdate(task, isSolved, task.getStatus(), task.getId())) {
-          tasksToUpdate.add(task);
-        }
-        task.setStatus(checkStatus(isSolved));
-        YamlFormatSynchronizer.saveItem(task);
+      if (isSolved == null || !isLastSubmissionUpToDate(task, isSolved)) continue;
+      if (!(task instanceof TheoryTask) && isToUpdate(task, isSolved, task.getStatus(), task.getId())) {
+        tasksToUpdate.add(task);
       }
+      task.setStatus(checkStatus(isSolved));
+      YamlFormatSynchronizer.saveItem(task);
     }
     return tasksToUpdate;
   }

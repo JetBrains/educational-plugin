@@ -15,6 +15,10 @@ import com.jetbrains.edu.learning.stepik.featuredCourses
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.setCourseLanguageEnvironment
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import java.io.BufferedReader
+import java.io.IOException
+import java.net.URL
 
 private val LOG = Logger.getInstance(StepikConnector::class.java.name)
 
@@ -44,13 +48,13 @@ fun postTheory(task: Task, project: Project) {
   ProgressManager.getInstance().run(
     object : Backgroundable(project, "Posting Theory to Stepik", false) {
       override fun run(progressIndicator: ProgressIndicator) {
-        markStepAsViewed(task.lesson.id, task.id)
+        markStepAsSolved(task.lesson.id, task)
       }
     })
 }
 
-private fun markStepAsViewed(lessonId: Int, stepId: Int) {
-  if (lessonId == 0 || stepId == 0) {
+private fun markStepAsSolved(lessonId: Int, task: Task) {
+  if (lessonId == 0 || task.id == 0) {
     return
   }
   val unit = StepikConnector.getInstance().getLessonUnit(lessonId)
@@ -61,8 +65,15 @@ private fun markStepAsViewed(lessonId: Int, stepId: Int) {
   }
   val assignments = StepikConnector.getInstance().getAssignments(assignmentsIds)
   assignments
-    .filter { it.step == stepId }
-    .forEach { StepikConnector.getInstance().postView(it.id, stepId) }
+    .filter { it.step == task.id }
+    .forEach { StepikConnector.getInstance().postView(it.id, task.id) }
+
+  val attempt = StepikConnector.getInstance().postAttempt(task.id)
+  val submission = attempt?.let { StepikConnector.getInstance().postSubmission(true, attempt, ArrayList(), task) }
+  if (submission == null) {
+    LOG.warn("Post submission failed for task ${task.name} (id=${task.id})")
+  }
+  saveItem(task)
 }
 
 fun loadAndFillLessonAdditionalInfo(lesson: Lesson, course: Course? = null) {
