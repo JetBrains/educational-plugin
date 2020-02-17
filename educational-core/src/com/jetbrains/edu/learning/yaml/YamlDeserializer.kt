@@ -94,23 +94,22 @@ object YamlDeserializer {
     return course
   }
 
-  @VisibleForTesting
-  fun ObjectMapper.deserializeSection(configFileText: String): Section {
-    val jsonNode = when (val tree = readTree(configFileText)) {
+  private fun ObjectMapper.readNode(configFileText: String): JsonNode =
+    when (val tree = readTree(configFileText)) {
       null -> JsonNodeFactory.instance.objectNode()
       is MissingNode -> JsonNodeFactory.instance.objectNode()
       else -> tree
     }
+
+  @VisibleForTesting
+  fun ObjectMapper.deserializeSection(configFileText: String): Section {
+    val jsonNode = readNode(configFileText)
     return treeToValue(jsonNode, Section::class.java)
   }
 
   @VisibleForTesting
   fun ObjectMapper.deserializeLesson(configFileText: String): Lesson {
-    val treeNode = when (val tree = readTree(configFileText)) {
-      null -> JsonNodeFactory.instance.objectNode()
-      is MissingNode -> JsonNodeFactory.instance.objectNode()
-      else -> tree
-    }
+    val treeNode = readNode(configFileText)
     val type = asText(treeNode.get("type"))
     val clazz = when (type) {
       FrameworkLesson().itemType -> FrameworkLesson::class.java
