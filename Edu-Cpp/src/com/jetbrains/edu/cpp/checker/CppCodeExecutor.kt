@@ -2,7 +2,6 @@ package com.jetbrains.edu.cpp.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -17,38 +16,30 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class CppCodeExecutor : DefaultCodeExecutor() {
-  override fun createTestConfiguration(
-    project: Project,
-    task: Task
-  ): RunnerAndConfigurationSettings? {
-    return runReadAction {
-      val mainFunction = task.taskFiles
-        .mapNotNull { (_, taskFile) ->
-          val file = taskFile.getVirtualFile(project)
-          if (file == null) {
-            LOG.warn("Cannot get a virtual file from the task file '${taskFile.name}'")
-          }
-          file
+  override fun createRunConfiguration(project: Project, task: Task): RunnerAndConfigurationSettings? {
+    val mainFunction = task.taskFiles
+      .mapNotNull { (_, taskFile) ->
+        val file = taskFile.getVirtualFile(project)
+        if (file == null) {
+          LOG.warn("Cannot get a virtual file from the task file '${taskFile.name}'")
         }
-        .mapNotNull { file -> findMainFunction(file, project) }
-        .firstOrNull()
-
-      if (mainFunction == null) {
-        return@runReadAction null
+        file
       }
+      .mapNotNull { file -> findMainFunction(file, project) }
+      .firstOrNull()
 
-      val context = ConfigurationContext(mainFunction)
-
-      val configuration = CidrTargetRunConfigurationProducer.getInstance(project)?.findOrCreateConfigurationFromContext(context)
-      if (configuration == null) {
-        LOG.warn(
-          "Failed to create a configuration from main function in the file '${mainFunction.containingFile.name}'"
-        )
-        return@runReadAction null
-      }
-
-      return@runReadAction configuration.configurationSettings
+    if (mainFunction == null) {
+      return null
     }
+
+    val context = ConfigurationContext(mainFunction)
+
+    val configuration = CidrTargetRunConfigurationProducer.getInstance(project)?.findOrCreateConfigurationFromContext(context)
+    if (configuration == null) {
+      LOG.warn("Failed to create a configuration from main function in the file '${mainFunction.containingFile.name}'")
+      return null
+    }
+    return configuration.configurationSettings
   }
 
   private fun findMainFunction(virtualFile: VirtualFile, project: Project): PsiElement? {

@@ -21,16 +21,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFocusManager
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.messages.MessageBusConnection
-import com.jetbrains.edu.learning.EduState
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.editor.EduSingleFileEditor
 import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToFirstFailedAnswerPlaceholder
-import com.jetbrains.edu.learning.runReadActionInSmartMode
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -90,7 +86,7 @@ object CheckUtils {
   fun createDefaultRunConfiguration(project: Project): RunnerAndConfigurationSettings? {
     return runReadAction {
       val editor = EduUtils.getSelectedEditor(project) ?: return@runReadAction null
-      val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return@runReadAction null
+      val psiFile = editor.document.toPsiFile(project) ?: return@runReadAction null
       ConfigurationContext(psiFile).configuration
     }
   }

@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.runReadActionInSmartMode
 import java.io.BufferedWriter
 import java.io.OutputStreamWriter
 import java.nio.charset.StandardCharsets
@@ -20,7 +21,7 @@ import java.util.*
 
 open class DefaultCodeExecutor : CodeExecutor {
   override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, String> {
-    val configuration = createTestConfiguration(project, task)
+    val configuration = runReadActionInSmartMode(project) { createRunConfiguration(project, task) }
     if (configuration == null) {
       return Err("Run configuration can't be created")
     }

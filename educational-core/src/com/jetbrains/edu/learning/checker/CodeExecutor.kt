@@ -24,7 +24,7 @@ interface CodeExecutor {
     input: String? = null
   ): Result<String, String>
 
-  fun createTestConfiguration(
+  fun createRunConfiguration(
     project: Project,
     task: Task
   ): RunnerAndConfigurationSettings? = CheckUtils.createDefaultRunConfiguration(project)
