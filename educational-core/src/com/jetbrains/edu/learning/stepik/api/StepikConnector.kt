@@ -21,7 +21,10 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.apache.http.HttpStatus
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.io.BufferedReader
 import java.util.*
+import java.io.IOException
+import java.net.URL
 
 abstract class StepikConnector {
 
@@ -200,7 +203,8 @@ abstract class StepikConnector {
         FileDocumentManager.getInstance().saveAllDocuments()
         stepSourceData = StepSourceData(project, task, lessonId)
       }
-    } catch (e: RuntimeException) {
+    }
+    catch (e: RuntimeException) {
       val cause = e.cause as? BrokenPlaceholderException
       LOG.info("${e.message}\n${cause?.placeholderInfo}")
       return null
@@ -452,6 +456,18 @@ abstract class StepikConnector {
       .forEach { progresses.addAll(it) }
 
     return progresses.associate { it.id to it.isPassed }
+  }
+
+  // attachments
+  open fun loadAttachment(attachmentLink: String): String? {
+    try {
+      val conn = URL(attachmentLink).openConnection()
+      return conn.getInputStream().bufferedReader().use(BufferedReader::readText)
+    }
+    catch (e: IOException) {
+      LOG.info("No attachments found $attachmentLink")
+    }
+    return null
   }
 
   companion object {

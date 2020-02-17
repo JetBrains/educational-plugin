@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.stepik.hyperskill
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runInEdt
@@ -38,15 +39,19 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
     if (lessonId != null && lessonId.isNotEmpty()) {
       ProgressManager.getInstance().run(object : Task.Modal(project, "Loading Course", true) {
         override fun run(indicator: ProgressIndicator) {
-          createCourse(lessonId)
+          val course = createCourse(lessonId)
+          runInEdt {
+            CCNewCourseDialog("Get Hyperskill Lesson from Stepik", "Create", course).show()
+          }
         }
       })
     }
   }
 
-  private fun createCourse(lessonId: String) {
+  @VisibleForTesting
+  fun createCourse(lessonId: String): HyperskillCourse? {
     val course = HyperskillCourse()
-    val lesson = StepikConnector.getInstance().getLesson(Integer.valueOf(lessonId)) ?: return
+    val lesson = StepikConnector.getInstance().getLesson(Integer.valueOf(lessonId)) ?: return null
     val allStepSources = StepikConnector.getInstance().getStepSources(lesson.steps)
     val tasks = StepikCourseLoader.getTasks(course, lesson, allStepSources)
     for (task in tasks) {
@@ -60,11 +65,9 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
     val hyperskillLesson = FrameworkLesson(lesson)
     course.addItem(hyperskillLesson, 0)
     loadAndFillAdditionalCourseInfo(course)
-    loadAndFillLessonAdditionalInfo(lesson)
+    loadAndFillLessonAdditionalInfo(lesson, course)
 
-    runInEdt {
-      CCNewCourseDialog("Get Hyperskill Lesson from Stepik", "Create", course).show()
-    }
+    return course
   }
 
   private fun getLanguage(lesson: Lesson): String {

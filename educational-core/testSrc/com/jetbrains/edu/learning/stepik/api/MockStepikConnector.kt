@@ -12,6 +12,8 @@ class MockStepikConnector : StepikConnector() {
 
   private var _baseUrl: String? = null
 
+  private val attachments: MutableMap<String, String> = mutableMapOf()
+
   public override val baseUrl: String
     get() {
       return _baseUrl ?: helper.baseUrl
@@ -31,5 +33,15 @@ class MockStepikConnector : StepikConnector() {
   fun withResponseHandler(disposable: Disposable, handler: ResponseHandler): MockStepikConnector {
     helper.addResponseHandler(disposable, handler)
     return this
+  }
+
+  fun withAttachments(attachments: Map<String, String>) {
+    for ((link, content) in attachments) {
+      this.attachments[link] = content
+    }
+  }
+
+  override fun loadAttachment(attachmentLink: String): String? {
+    return if (attachments.isEmpty()) super.loadAttachment(attachmentLink) else attachments[attachmentLink]
   }
 }

@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "lessons": [
+    {
+      "id": 278738129,
+      "steps": [
+        111
+      ],
+      "actions": {
+        "learn_lesson": "#",
+        "assist_lesson": "#",
+        "view_all_submissions": "#"
+      },
+      "progress": "76-268504",
+      "subscriptions": [
+        "31-76-268504",
+        "30-76-268504"
+      ],
+      "viewed_by": 65,
+      "passed_by": 6,
+      "time_to_complete": 22631,
+      "cover_url": null,
+      "is_comments_enabled": true,
+      "is_exam_without_progress": false,
+      "owner": 92275206,
+      "language": "en",
+      "is_featured": false,
+      "is_public": false,
+      "title": "Hypercar Service Center",
+      "slug": "Hypercar-Service-Center-268504",
+      "create_date": "2019-10-24T19:26:16Z",
+      "update_date": "2020-01-10T18:05:45Z",
+      "learners_group": null,
+      "testers_group": null,
+      "moderators_group": null,
+      "assistants_group": null,
+      "teachers_group": null,
+      "admins_group": null,
+      "discussions_count": 0,
+      "discussion_proxy": "76-268504-1",
+      "discussion_threads": [
+        "76-268504-1"
+      ],
+      "epic_count": 0,
+      "abuse_count": 0,
+      "vote_delta": 0,
+      "vote": "76-268504",
+      "lti_consumer_key": "",
+      "lti_secret_key": "",
+      "lti_private_profile": false
+    }
+  ]
+}

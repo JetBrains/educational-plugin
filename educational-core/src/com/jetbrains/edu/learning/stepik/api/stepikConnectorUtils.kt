@@ -13,10 +13,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.featuredCourses
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.setCourseLanguageEnvironment
-import java.io.BufferedReader
-import java.io.IOException
-import java.net.URL
 
 private val LOG = Logger.getInstance(StepikConnector::class.java.name)
 
@@ -67,9 +65,9 @@ private fun markStepAsViewed(lessonId: Int, stepId: Int) {
     .forEach { StepikConnector.getInstance().postView(it.id, stepId) }
 }
 
-fun loadAndFillLessonAdditionalInfo(lesson: Lesson) {
+fun loadAndFillLessonAdditionalInfo(lesson: Lesson, course: Course? = null) {
   val attachmentLink = "${StepikNames.STEPIK_URL}/media/attachments/lesson/${lesson.id}/${StepikNames.ADDITIONAL_INFO}"
-  val infoText = loadAttachment(attachmentLink) ?: return
+  val infoText = StepikConnector.getInstance().loadAttachment(attachmentLink) ?: return
   val lessonInfo = HyperskillConnector.getInstance().objectMapper.readValue(infoText, LessonAdditionalInfo::class.java)
 
   lesson.customPresentableName = lessonInfo.customName
@@ -80,24 +78,17 @@ fun loadAndFillLessonAdditionalInfo(lesson: Lesson) {
       taskFiles = task.taskFiles.associateBy(TaskFile::getName) { it }
     }
   }
+
+  if (course is HyperskillCourse && lessonInfo.additionalFiles != null) {
+    course.additionalFiles = lessonInfo.additionalFiles
+  }
 }
 
 fun loadAndFillAdditionalCourseInfo(course: Course, attachmentLink: String? = null) {
   val link = attachmentLink ?: "${StepikNames.STEPIK_URL}/media/attachments/course/${course.id}/${StepikNames.ADDITIONAL_INFO}"
-  val infoText = loadAttachment(link) ?: return
+  val infoText = StepikConnector.getInstance().loadAttachment(link) ?: return
   val courseInfo = HyperskillConnector.getInstance().objectMapper.readValue(infoText, CourseAdditionalInfo::class.java)
 
   course.additionalFiles = courseInfo.additionalFiles
   course.solutionsHidden = courseInfo.solutionsHidden
-}
-
-private fun loadAttachment(attachmentLink: String): String? {
-  try {
-    val conn = URL(attachmentLink).openConnection()
-    return conn.getInputStream().bufferedReader().use(BufferedReader::readText)
-  }
-  catch (e: IOException) {
-    LOG.info("No attachments found $attachmentLink")
-  }
-  return null
 }
