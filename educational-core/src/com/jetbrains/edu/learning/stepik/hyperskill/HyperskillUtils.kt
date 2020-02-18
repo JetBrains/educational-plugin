@@ -15,6 +15,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -99,10 +100,7 @@ fun canShowHyperskillSolution(task: Task): Boolean {
 
 fun stepLink(stepId: Int) = "${HYPERSKILL_URL}learn/step/$stepId"
 
-fun isHyperskillSupportAvailable(): Boolean {
-  return Language.findLanguageByID(EduNames.JAVA) != null || Language.findLanguageByID(EduNames.PYTHON) != null ||
-         Language.findLanguageByID(EduNames.KOTLIN) != null
-}
+fun isHyperskillSupportAvailable(): Boolean = EduConfiguratorManager.allExtensions().any { it.courseType == HYPERSKILL_TYPE }
 
 fun showFailedToPostNotification() {
   val notification = Notification(HYPERSKILL_GROUP_ID, "Failed to post submission to ${EduNames.JBA}",
