@@ -55,7 +55,7 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
     val course = HyperskillCourse()
     val lesson = StepikConnector.getInstance().getLesson(Integer.valueOf(lessonId))
     if (lesson == null) {
-      showErrorMessage(lessonId)
+      showErrorMessage()
       return null
     }
     val allStepSources = StepikConnector.getInstance().getStepSources(lesson.steps)
@@ -76,7 +76,7 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
     return course
   }
 
-  private fun showErrorMessage(lessonId: String) {
+  private fun showErrorMessage() {
     val stepikUser = EduSettings.getInstance().user
 
     val message = if (stepikUser == null) {
