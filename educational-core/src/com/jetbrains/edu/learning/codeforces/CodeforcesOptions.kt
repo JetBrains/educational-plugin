@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.layout.*
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.getDefaultLanguageId
 import com.jetbrains.edu.learning.settings.OptionsProvider
 import javax.swing.JComponent
@@ -9,6 +10,7 @@ import javax.swing.JComponent
 class CodeforcesOptions : OptionsProvider {
   private val textLanguageComboBox: ComboBox<TaskTextLanguage> = ComboBox()
   private val languageComboBox: ComboBox<String> = ComboBox()
+  private val comboBoxesWidth: Int = JBUI.scale(130)
   private val state: State
 
   init {
@@ -28,6 +30,8 @@ class CodeforcesOptions : OptionsProvider {
     if (preferableTextLanguage != null) {
       textLanguageComboBox.selectedItem = TaskTextLanguage.valueOf(preferableTextLanguage)
     }
+
+    textLanguageComboBox.setMinimumAndPreferredWidth(comboBoxesWidth)
   }
 
   private fun initLanguageComboBox() {
@@ -47,6 +51,8 @@ class CodeforcesOptions : OptionsProvider {
         languageComboBox.selectedItem = CodeforcesLanguageProvider.getPreferableCodeforcesLanguage(defaultLanguageId)
       }
     }
+
+    languageComboBox.setMinimumAndPreferredWidth(comboBoxesWidth)
   }
 
   override fun getDisplayName(): String = "Codeforces"
