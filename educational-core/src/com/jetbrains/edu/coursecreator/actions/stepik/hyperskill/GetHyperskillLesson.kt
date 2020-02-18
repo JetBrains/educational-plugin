@@ -14,9 +14,11 @@ import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.loadAndFillAdditionalCourseInfo
@@ -39,7 +41,7 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
     if (lessonId != null && lessonId.isNotEmpty()) {
       ProgressManager.getInstance().run(object : Task.Modal(project, "Loading Course", true) {
         override fun run(indicator: ProgressIndicator) {
-          val course = createCourse(lessonId)
+          val course = createCourse(lessonId) ?: return
           runInEdt {
             CCNewCourseDialog("Get Hyperskill Lesson from Stepik", "Create", course).show()
           }
@@ -51,7 +53,11 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
   @VisibleForTesting
   fun createCourse(lessonId: String): HyperskillCourse? {
     val course = HyperskillCourse()
-    val lesson = StepikConnector.getInstance().getLesson(Integer.valueOf(lessonId)) ?: return null
+    val lesson = StepikConnector.getInstance().getLesson(Integer.valueOf(lessonId))
+    if (lesson == null) {
+      showErrorMessage(lessonId)
+      return null
+    }
     val allStepSources = StepikConnector.getInstance().getStepSources(lesson.steps)
     val tasks = StepikCourseLoader.getTasks(course, lesson, allStepSources)
     for (task in tasks) {
@@ -68,6 +74,21 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
     loadAndFillLessonAdditionalInfo(lesson, course)
 
     return course
+  }
+
+  private fun showErrorMessage(lessonId: String) {
+    val stepikUser = EduSettings.getInstance().user
+
+    val message = if (stepikUser == null) {
+      "Log in to ${StepikNames.STEPIK} in Settings/Education to access the lesson"
+    }
+    else {
+      "Check that ${StepikNames.STEPIK} account `${stepikUser.name}` has access to the lesson"
+    }
+
+    runInEdt {
+      Messages.showErrorDialog(message, "Failed to Get Lesson")
+    }
   }
 
   private fun getLanguage(lesson: Lesson): String {
