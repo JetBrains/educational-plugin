@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
 import com.jetbrains.edu.learning.stepik.course.StepikCourse;
@@ -59,7 +60,7 @@ public class CoursePanel extends JPanel {
 
   private AdvancedSettings myAdvancedSettings;
   private JPanel myCourseDescriptionPanel;
-  private LanguageSettings<?> myLanguageSettings;
+  @Nullable private LanguageSettings<?> myLanguageSettings;
   @Nullable
   private FilterComponent mySearchField;
 
@@ -129,6 +130,9 @@ public class CoursePanel extends JPanel {
   }
 
   public Object getProjectSettings() {
+    if (myLanguageSettings == null) {
+      return new Object();
+    }
     return myLanguageSettings.getSettings();
   }
 
@@ -143,6 +147,9 @@ public class CoursePanel extends JPanel {
 
   @Nullable
   public ValidationMessage validateSettings(@Nullable Course course) {
+    if (myLanguageSettings == null) {
+      return null;
+    }
     ValidationMessage validationMessage = myLanguageSettings.validate(course, getLocationString());
     if (validationMessage != null) {
       myAdvancedSettings.setOn(true);
@@ -216,6 +223,11 @@ public class CoursePanel extends JPanel {
   }
 
   private void updateAdvancedSettings(@NotNull Course course, boolean showLanguageSettings) {
+    if (course instanceof JetBrainsAcademyCourse) {
+      myAdvancedSettings.setVisible(false);
+      return;
+    }
+
     EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
     if (configurator == null) {
       return;

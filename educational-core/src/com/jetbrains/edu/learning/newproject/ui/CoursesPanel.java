@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseLoading.CourseLoader;
+import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse;
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer;
@@ -83,7 +84,9 @@ public class CoursesPanel extends JPanel {
                       @Nullable DefaultActionGroup customToolbarActions,
                       Function<Boolean, Unit> enableCourseViewAsEducator) {
     myCourses = courses;
-    myCoursesComparator = Comparator.comparing(Course::getVisibility).thenComparing(Course::getName);
+    myCoursesComparator =
+      Comparator.comparingInt((Course element) -> element instanceof JetBrainsAcademyCourse ? 0 : 1).thenComparing(Course::getVisibility)
+        .thenComparing(Course::getName);
     setLayout(new BorderLayout());
     add(myMainPanel, BorderLayout.CENTER);
     myCustomToolbarActions = customToolbarActions;
@@ -100,7 +103,7 @@ public class CoursesPanel extends JPanel {
     updateModel(myCourses, null);
     myErrorLabel.setVisible(false);
 
-    ColoredListCellRenderer<Course> renderer = getCourseRenderer();
+    ColoredListCellRenderer<Course> renderer = new CourseColoredListCellRenderer();
     myCoursesList.setCellRenderer(renderer);
     myCoursesList.addListSelectionListener(e -> processSelectionChanged());
 
@@ -134,7 +137,8 @@ public class CoursesPanel extends JPanel {
         //for Checkio course name matches platform name
         EduCounterUsageCollector.loggedIn(course.getName(), EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG);
       }
-      else if (myErrorState == ErrorState.HyperskillLoginRequired.INSTANCE) {
+      else if (myErrorState == ErrorState.HyperskillLoginRequired.INSTANCE ||
+               myErrorState == ErrorState.JetBrainsAcademyLoginRecommended.INSTANCE) {
         addHyperskillLoginListener();
         EduCounterUsageCollector.loggedIn(HyperskillNamesKt.HYPERSKILL, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG);
       }
@@ -249,26 +253,17 @@ public class CoursesPanel extends JPanel {
     notifyListeners(true);
   }
 
-  @NotNull
-  private ColoredListCellRenderer<Course> getCourseRenderer() {
-    return new ColoredListCellRenderer<Course>() {
-        @Override
-        protected void customizeCellRenderer(@NotNull JList<? extends Course> jList, Course course, int i, boolean b, boolean b1) {
-          Icon logo = getLogo(course);
-          setBorder(JBUI.Borders.empty(5, 0));
-          append(course.getName(), course.getVisibility().getTextAttributes());
-          setIcon(CourseExt.getDecoratedLogo(course, logo));
-          setToolTipText(CourseExt.getTooltipText(course));
-        }
-      };
-  }
-
   private void processSelectionChanged() {
     Course selectedCourse = myCoursesList.getSelectedValue();
     if (selectedCourse != null) {
-      myCoursePanel.bindCourse(selectedCourse).addSettingsChangeListener(() -> doValidation(selectedCourse));
-      myEnableCourseViewAsEducator.apply(ApplicationManager.getApplication().isInternal() ||
-                                         !(selectedCourse instanceof StepikCourse) && !(selectedCourse instanceof CheckiOCourse));
+      boolean isViewAsEducatorEnabled = !(selectedCourse instanceof StepikCourse) && !(selectedCourse instanceof CheckiOCourse);
+      myEnableCourseViewAsEducator
+        .apply(!(selectedCourse instanceof JetBrainsAcademyCourse) && (ApplicationManager.getApplication().isInternal() ||
+                                                                       isViewAsEducatorEnabled));
+      LanguageSettings<?> settings = myCoursePanel.bindCourse(selectedCourse);
+      if (settings != null) {
+        settings.addSettingsChangeListener(() -> doValidation(selectedCourse));
+      }
     }
     doValidation(selectedCourse);
   }
@@ -292,7 +287,8 @@ public class CoursesPanel extends JPanel {
     if (message != null) {
       myErrorLabel.setVisible(true);
       myErrorLabel.setHyperlinkText(message.getBeforeLink(), message.getLinkText(), message.getAfterLink());
-    } else {
+    }
+    else {
       myErrorLabel.setVisible(false);
     }
     myErrorLabel.setForeground(errorState.getForegroundColor());
@@ -320,16 +316,17 @@ public class CoursesPanel extends JPanel {
     myCoursesList.setModel(listModel);
     if (myCoursesList.getItemsCount() > 0) {
       myCoursesList.setSelectedIndex(0);
-    } else {
+    }
+    else {
       myCoursePanel.hideContent();
     }
     if (courseToSelect == null) {
       return;
     }
     myCourses.stream()
-        .filter(course -> course.equals(courseToSelect))
-        .findFirst()
-        .ifPresent(newCourseToSelect -> myCoursesList.setSelectedValue(newCourseToSelect, true));
+      .filter(course -> course.equals(courseToSelect))
+      .findFirst()
+      .ifPresent(newCourseToSelect -> myCoursesList.setSelectedValue(newCourseToSelect, true));
   }
 
   @Nullable
@@ -366,8 +363,9 @@ public class CoursesPanel extends JPanel {
     final String courseName = course.getName().toLowerCase(Locale.getDefault());
 
     for (String filterPart : filterParts) {
-      if (courseName.contains(filterPart))
+      if (courseName.contains(filterPart)) {
         return true;
+      }
 
       for (Tag tag : course.getTags()) {
         if (tag.accept(filterPart)) {
@@ -456,7 +454,7 @@ public class CoursesPanel extends JPanel {
               if (!EduSettings.isLoggedIn()) {
                 int result = Messages.showOkCancelDialog("Stepik authorization is required to import courses", "Log in to Stepik", "Log in", "Cancel", null);
                 if (result == Messages.OK) {
-                  addLoginListener(CoursesPanel.this::updateCoursesList,  () -> importStepikCourse());
+                  addLoginListener(CoursesPanel.this::updateCoursesList, () -> importStepikCourse());
                   StepikAuthorizer.doAuthorize(EduUtils::showOAuthDialog);
                 }
               }
@@ -503,6 +501,17 @@ public class CoursesPanel extends JPanel {
       }
       myCourses.add(course);
       updateModel(myCourses, course);
+    }
+  }
+
+  private static class CourseColoredListCellRenderer extends ColoredListCellRenderer<Course> {
+    @Override
+    protected void customizeCellRenderer(@NotNull JList<? extends Course> jList, Course course, int i, boolean b, boolean b1) {
+      Icon logo = getLogo(course);
+      setBorder(JBUI.Borders.empty(5, 0));
+      append(course.getName(), course.getVisibility().getTextAttributes());
+      setIcon(CourseExt.getDecoratedLogo(course, logo));
+      setToolTipText(CourseExt.getTooltipText(course));
     }
   }
 }

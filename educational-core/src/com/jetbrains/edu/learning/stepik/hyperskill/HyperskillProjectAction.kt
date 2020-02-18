@@ -16,6 +16,7 @@ import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -35,36 +36,7 @@ class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") 
       showBalloon(e, "Please <a href=\"\">login to ${EduNames.JBA}</a> and select a project.", true)
     }
     else {
-      val hyperskillProject = ProgressManager.getInstance().run(
-        object : Task.WithResult<HyperskillProject?, Exception>(null, "Loading Selected Project", false) {
-          override fun compute(indicator: ProgressIndicator): HyperskillProject? {
-            val currentUser = HyperskillConnector.getInstance().getCurrentUser(account)
-            if (currentUser != null) {
-              account.userInfo = currentUser
-            }
-            val projectId = account.userInfo.hyperskillProjectId ?: return null
-            return HyperskillConnector.getInstance().getProject(projectId)
-          }
-        })
-      if (hyperskillProject == null) {
-        showBalloon(e, "Please <a href=\"$HYPERSKILL_PROJECTS_URL\">select a project</a> ", false)
-      }
-      else if (!hyperskillProject.useIde) {
-        showBalloon(e, HYPERSKILL_PROJECT_NOT_SUPPORTED, false)
-      }
-      else {
-        val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language]
-        if (languageId == null) {
-          showBalloon(e, "Unsupported language ${hyperskillProject.language}", false)
-          return
-        }
-        val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
-        if (hyperskillCourse.configurator == null) {
-          showBalloon(e, HYPERSKILL_PROJECT_NOT_SUPPORTED, false)
-        } else {
-          HyperskillJoinCourseDialog(hyperskillCourse).show()
-        }
-      }
+      openHyperskillProject(account) { error -> showBalloon(e, error, false) }
     }
   }
 
@@ -81,6 +53,42 @@ class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") 
     else {
       val relativePoint = JBPopupFactory.getInstance().guessBestPopupLocation(e.dataContext)
       balloon.show(relativePoint, Balloon.Position.above)
+    }
+  }
+
+  companion object {
+    fun openHyperskillProject(account: HyperskillAccount, showError: (String) -> Unit) {
+      val hyperskillProject = ProgressManager.getInstance().run(
+        object : Task.WithResult<HyperskillProject?, Exception>(null, "Loading Selected Project", false) {
+          override fun compute(indicator: ProgressIndicator): HyperskillProject? {
+            val currentUser = HyperskillConnector.getInstance().getCurrentUser(account)
+            if (currentUser != null) {
+              account.userInfo = currentUser
+            }
+            val projectId = account.userInfo.hyperskillProjectId ?: return null
+            return HyperskillConnector.getInstance().getProject(projectId)
+          }
+        })
+      if (hyperskillProject == null) {
+        showError("Please <a href=\"$HYPERSKILL_PROJECTS_URL\">select a project</a> on ${EduNames.JBA}")
+      }
+      else if (!hyperskillProject.useIde) {
+        showError(HYPERSKILL_PROJECT_NOT_SUPPORTED)
+      }
+      else {
+        val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language]
+        if (languageId == null) {
+          showError("Unsupported language ${hyperskillProject.language}")
+          return
+        }
+        val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
+        if (hyperskillCourse.configurator == null) {
+          showError(HYPERSKILL_PROJECT_NOT_SUPPORTED)
+        }
+        else {
+          HyperskillJoinCourseDialog(hyperskillCourse).show()
+        }
+      }
     }
   }
 }
