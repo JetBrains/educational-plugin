@@ -68,7 +68,7 @@ private fun markStepAsSolved(lessonId: Int, task: Task) {
     .filter { it.step == task.id }
     .forEach { StepikConnector.getInstance().postView(it.id, task.id) }
 
-  val attempt = StepikConnector.getInstance().postAttempt(task.id)
+  val attempt = StepikConnector.getInstance().postAttempt(task.id, true)
   val submission = attempt?.let { StepikConnector.getInstance().postSubmission(true, attempt, ArrayList(), task) }
   if (submission == null) {
     LOG.warn("Post submission failed for task ${task.name} (id=${task.id})")

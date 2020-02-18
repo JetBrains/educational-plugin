@@ -231,8 +231,9 @@ abstract class StepikConnector {
     return submissions.firstOrNull()
   }
 
-  fun postAttempt(id: Int): Attempt? {
-    val response = service.attempt(AttemptData(id)).executeHandlingExceptions()
+  @JvmOverloads
+  fun postAttempt(id: Int, omitErrors: Boolean = false): Attempt? {
+    val response = service.attempt(AttemptData(id)).executeHandlingExceptions(omitErrors)
     val attempt = response?.body()?.attempts?.firstOrNull()
     if (response?.code() != HttpStatus.SC_CREATED) {
       LOG.warn("Failed to make attempt $id")

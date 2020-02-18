@@ -78,12 +78,12 @@ val eduToolsUserAgent: String
                          PlatformUtils.getPlatformPrefix())
   }
 
-fun <T> Call<T>.executeHandlingExceptions(optional: Boolean = false): Response<T>? {
+fun <T> Call<T>.executeHandlingExceptions(omitErrors: Boolean = false): Response<T>? {
   try {
     return this.execute().also {
       val errorBody = it.errorBody() ?: return@also
       when {
-        optional -> LOG.warn(errorBody.string())
+        omitErrors -> LOG.warn(errorBody.string())
         else -> LOG.error(errorBody.string())
       }
     }
