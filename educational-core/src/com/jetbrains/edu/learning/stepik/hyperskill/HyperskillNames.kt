@@ -23,7 +23,8 @@ var CLIENT_SECRET = HyperskillOAuthBundle.valueOrDefault("clientSecret", "")
 const val HYPERSKILL_PROJECT_NOT_SUPPORTED = "Selected project is not supported yet. " +
                                              "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select another project</a> "
 
-val HYPERSKILL_LANGUAGES = mapOf("java" to "${EduNames.JAVA} 11", "kotlin" to EduNames.KOTLIN, "python" to EduNames.PYTHON)
+val HYPERSKILL_LANGUAGES = mapOf("java" to "${EduNames.JAVA} 11", "kotlin" to EduNames.KOTLIN, "python" to EduNames.PYTHON,
+                                 "javascript" to EduNames.JAVASCRIPT)
 
 const val CONTINUE_ON_HYPERSKILL = "Continue on <a href=\"https://hyperskill.org/learning-path\">${EduNames.JBA}</a>."
 

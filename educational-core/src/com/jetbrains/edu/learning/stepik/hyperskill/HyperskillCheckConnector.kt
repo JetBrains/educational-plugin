@@ -100,6 +100,7 @@ enum class HyperskillLanguages (val id: String?, val langName: String?) {
   JAVA(EduNames.JAVA, "java11"),
   KOTLIN(EduNames.KOTLIN, "kotlin"),
   PYTHON(EduNames.PYTHON, "python3"),
+  JAVASCRIPT(EduNames.JAVASCRIPT, "javascript"),
   INVALID(null, null);
 
   companion object {
