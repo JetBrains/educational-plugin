@@ -72,10 +72,13 @@ fun resourceUrl(name: String): String {
 
 internal fun resourceFileName(): String {
   return when {
-    isHighcontrast() -> "highcontrast"
+    isHighContrast() -> "highcontrast"
     UIUtil.isUnderDarcula() -> "darcula"
     else -> "light"
   }
 }
 
-internal fun isHighcontrast() = LafManager.getInstance().currentLookAndFeel is UIThemeBasedLookAndFeelInfo
+internal fun isHighContrast(): Boolean {
+  val lookAndFeel = LafManager.getInstance().currentLookAndFeel as? UIThemeBasedLookAndFeelInfo ?: return false
+  return lookAndFeel.theme.id == "JetBrainsHighContrastTheme"
+}
