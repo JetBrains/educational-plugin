@@ -5,6 +5,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.PlatformUtils
 import com.intellij.util.net.HttpConfigurable
 import com.intellij.util.net.ssl.CertificateManager
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
@@ -17,6 +18,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import java.io.IOException
 import java.io.InterruptedIOException
+import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.URI
@@ -79,25 +81,49 @@ val eduToolsUserAgent: String
   }
 
 fun <T> Call<T>.executeHandlingExceptions(omitErrors: Boolean = false): Response<T>? {
-  try {
-    return this.execute().also {
-      val errorBody = it.errorBody() ?: return@also
-      when {
-        omitErrors -> LOG.warn(errorBody.string())
-        else -> LOG.error(errorBody.string())
+  return when (val response = executeParsingErrors(omitErrors)) {
+    is Ok -> response.value
+    is Err -> null
+  }
+}
+
+fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Response<T>, String> {
+  fun log(title: String, message: String?, optional: Boolean) {
+    val fullText = "$title. $message"
+    if (optional) LOG.warn(fullText) else LOG.error(fullText)
+  }
+
+  return try {
+    val response = this.execute()
+    val error = response.errorBody()?.string() ?: return Ok(response)
+    log(error, "Code ${response.code()}", omitErrors)
+
+    when (response.code()) {
+      HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_CREATED -> Ok(response) // 200, 201
+      HttpURLConnection.HTTP_UNAVAILABLE, HttpURLConnection.HTTP_BAD_GATEWAY ->
+        Err("${EduCoreBundle.message("error.service.maintenance")}\n\n$error") // 502, 503
+      in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION ->
+        Err("${EduCoreBundle.message("error.service.down")}\n\n$error") // 500x
+      in HttpURLConnection.HTTP_BAD_REQUEST..HttpURLConnection.HTTP_UNSUPPORTED_TYPE ->
+        Err(EduCoreBundle.message("error.unexpected", error)) // 400x
+      else -> {
+        LOG.warn("Code ${response.code()} is not handled")
+        Err(EduCoreBundle.message("error.unexpected", error))
       }
     }
   }
   catch (e: InterruptedIOException) {
-    LOG.warn("Connection to server was interrupted. ${e.message}")
+    log("Connection to server was interrupted", e.message, omitErrors)
+    Err("${EduCoreBundle.message("error.interrupted")}\n\n${e.message}")
   }
   catch (e: IOException) {
-    LOG.error("Failed to connect to server. ${e.message}")
+    log("Failed to connect to server", e.message, omitErrors)
+    Err("${EduCoreBundle.message("error.failed.to.connect")}\n\n${e.message}")
   }
   catch (e: RuntimeException) {
-    LOG.error("Failed to connect to server. ${e.message}")
+    log("Failed to connect to server", e.message, omitErrors)
+    Err("${EduCoreBundle.message("error.failed.to.connect")}\n\n${e.message}")
   }
-  return null
 }
 
 fun <T> Response<T>.checkStatusCode(): Response<T>? {

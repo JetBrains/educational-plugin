@@ -9,15 +9,13 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduLogInListener
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.createRetrofitBuilder
-import com.jetbrains.edu.learning.executeHandlingExceptions
-import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.*
@@ -26,7 +24,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillT
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import okhttp3.ConnectionPool
-import org.apache.http.HttpStatus
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.*
 
@@ -229,8 +226,11 @@ abstract class HyperskillConnector {
     return service.submission(userId, stepId, page).executeHandlingExceptions()?.body()?.submissions?.firstOrNull()
   }
 
-  fun getSubmissionById(submissionId: Int): Submission? {
-    return service.submission(submissionId).executeHandlingExceptions()?.body()?.submissions?.firstOrNull()
+  fun getSubmissionById(submissionId: Int): Result<Submission, String> {
+    return service.submission(submissionId).executeParsingErrors(true).flatMap {
+      val result = it.body()?.submissions?.firstOrNull()
+      if (result == null) Err(EduCoreBundle.message("error.failed.to.load.solution", EduNames.JBA)) else Ok(result)
+    }
   }
 
   fun getSolution(stepId: Int): Solution? {
@@ -239,18 +239,18 @@ abstract class HyperskillConnector {
 
   // Post requests:
 
-  fun postSubmission(submission: Submission): Submission? {
-    val response = service.submission(submission).executeHandlingExceptions()
-    if (response == null || response.code() != HttpStatus.SC_CREATED) {
-      showFailedToPostNotification()
-      LOG.error("Failed to make submission")
+  fun postSubmission(submission: Submission): Result<Submission, String> {
+    return service.submission(submission).executeParsingErrors(true).flatMap {
+      val result = it.body()?.submissions?.firstOrNull()
+      if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA)) else Ok(result)
     }
-    return response?.body()?.submissions?.firstOrNull()
   }
 
-  fun postAttempt(step: Int): Attempt? {
-    val response = service.attempt(Attempt(step)).executeHandlingExceptions()
-    return response?.body()?.attempts?.firstOrNull()
+  fun postAttempt(step: Int): Result<Attempt, String> {
+    return service.attempt(Attempt(step)).executeParsingErrors(true).flatMap {
+      val result = it.body()?.attempts?.firstOrNull()
+      if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA)) else Ok(result)
+    }
   }
 
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {

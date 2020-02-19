@@ -7,16 +7,19 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.CONTINUE_ON_HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.showFailedToPostNotification
+import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
 import java.util.concurrent.TimeUnit
 
 object HyperskillCheckConnector {
@@ -24,17 +27,23 @@ object HyperskillCheckConnector {
   private const val MAX_FILE_SIZE_FOR_PUBLISH = 5 * 1024 * 1024 // 5 Mb
 
   fun postSolution(task: Task, project: Project, result: CheckResult) {
-    val attempt = HyperskillConnector.getInstance().postAttempt(task.id)
-    if (attempt == null) {
-      showFailedToPostNotification()
-      return LOG.error("Failed to post attempt for stage ${task.id}")
+    when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task.id)) {
+      is Err -> showErrorDetails(project, attemptResponse.error)
+      is Ok -> {
+        val feedback = if (result.details == null) result.message else "${result.message}\n${result.details}"
+        postEduSubmission(attemptResponse.value, project, task, feedback)
+      }
     }
-    val feedback = if (result.details == null) result.message else "${result.message}\n${result.details}"
-    postEduSubmission(attempt, project, task, feedback)
   }
 
   private fun postEduSubmission(attempt: Attempt, project: Project, task: Task, feedback: String) {
-    val taskDir = task.getTaskDir(project) ?: return LOG.error("Failed to find stage directory ${task.name}")
+    val taskDir = task.getTaskDir(project)
+    if (taskDir == null) {
+      val error = EduCoreBundle.message("error.failed.to.find.dir", task.name)
+      LOG.error(error)
+      showErrorDetails(project, EduCoreBundle.message("error.unexpected", error))
+      return
+    }
 
     val files = ArrayList<SolutionFile>()
     for (taskFile in task.taskFiles.values) {
@@ -50,8 +59,9 @@ object HyperskillCheckConnector {
       }
     }
 
-    val submission = createEduSubmission(task, attempt, files, feedback)
-    HyperskillConnector.getInstance().postSubmission(submission)
+    when (val submissionResponse = HyperskillConnector.getInstance().postSubmission(createEduSubmission(task, attempt, files, feedback))) {
+      is Err -> showErrorDetails(project, submissionResponse.error)
+    }
   }
 
   private fun createEduSubmission(task: Task, attempt: Attempt, files: List<SolutionFile>, feedback: String): Submission {
@@ -66,41 +76,48 @@ object HyperskillCheckConnector {
       return CheckResult(CheckStatus.Unchecked, message, needEscape = false)
     }
     val connector = HyperskillConnector.getInstance()
-    val attempt = connector.postAttempt(task.id) ?: return CheckResult.FAILED_TO_CHECK
+    val attempt = when (val attemptResponse = connector.postAttempt(task.id)) {
+      is Err -> return CheckResult(CheckStatus.Unchecked, attemptResponse.error)
+      is Ok -> attemptResponse.value
+    }
+
     val course = task.lesson.course
     val courseLanguage = course.languageById
     val editor = EduUtils.getSelectedEditor(project)
-    if (editor != null) {
-      val defaultLanguage = HyperskillLanguages.langOfId(courseLanguage.id).langName
-                            ?: return CheckResult(CheckStatus.Unchecked, "Language not found for: " + courseLanguage.displayName)
-      val answer = editor.document.text
+    if (editor == null) return CheckResult.FAILED_TO_CHECK
 
-      val codeSubmission = StepikCheckerConnector.createCodeSubmission(attempt.id, defaultLanguage, answer)
-      var submission : Submission? = connector.postSubmission(codeSubmission) ?: return CheckResult.FAILED_TO_CHECK
-      if (submission == null) return CheckResult.FAILED_TO_CHECK
+    val defaultLanguage = HyperskillLanguages.langOfId(courseLanguage.id).langName
+                          ?: return CheckResult(CheckStatus.Unchecked, "Language not found for: " + courseLanguage.displayName)
+    val answer = editor.document.text
 
-      val submissionId = submission.id ?: return CheckResult.FAILED_TO_CHECK
-      while (submission != null && "evaluation" == submission.status) {
-        TimeUnit.MILLISECONDS.sleep(500)
-        submission = connector.getSubmissionById(submissionId)
-      }
-      if (submission == null) return CheckResult.FAILED_TO_CHECK
-      val status = submission.status ?: return CheckResult.FAILED_TO_CHECK
-      val isSolved = status != "wrong"
-      var message = submission.hint
-      if (message == null || message.isEmpty()) {
-        message = StringUtil.capitalize(status) + " solution"
-      }
-      if (isSolved) {
-        message = "<html> $message <br/><br/> $CONTINUE_ON_HYPERSKILL</html>"
-      }
-      return CheckResult(if (isSolved) CheckStatus.Solved else CheckStatus.Failed, message, needEscape = false)
+    val codeSubmission = StepikCheckerConnector.createCodeSubmission(attempt.id, defaultLanguage, answer)
+    var submission: Submission = when (val submissionResponse = connector.postSubmission(codeSubmission)) {
+      is Err -> return CheckResult(CheckStatus.Unchecked, submissionResponse.error)
+      is Ok -> submissionResponse.value
     }
-    return CheckResult.FAILED_TO_CHECK
+
+    val submissionId = submission.id ?: return CheckResult.FAILED_TO_CHECK
+    while (submission.status == "evaluation") {
+      TimeUnit.MILLISECONDS.sleep(500)
+      submission = when (val response = connector.getSubmissionById(submissionId)) {
+        is Err -> return CheckResult(CheckStatus.Unchecked, response.error)
+        is Ok -> response.value
+      }
+    }
+    val status = submission.status ?: return CheckResult.FAILED_TO_CHECK
+    val isSolved = status != "wrong"
+    var message = submission.hint
+    if (message == null || message.isEmpty()) {
+      message = StringUtil.capitalize(status) + " solution"
+    }
+    if (isSolved) {
+      message = "<html> $message <br/><br/> $CONTINUE_ON_HYPERSKILL</html>"
+    }
+    return CheckResult(if (isSolved) CheckStatus.Solved else CheckStatus.Failed, message, needEscape = false)
   }
 }
 
-enum class HyperskillLanguages (val id: String?, val langName: String?) {
+enum class HyperskillLanguages(val id: String?, val langName: String?) {
   JAVA(EduNames.JAVA, "java11"),
   KOTLIN(EduNames.KOTLIN, "kotlin"),
   PYTHON(EduNames.PYTHON, "python3"),

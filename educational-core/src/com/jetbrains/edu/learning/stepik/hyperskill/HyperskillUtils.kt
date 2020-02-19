@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.icons.AllIcons
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -14,6 +12,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
+import com.jetbrains.edu.learning.checker.details.CheckDetailsView
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -21,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -31,7 +31,6 @@ import javax.swing.JPanel
 
 val HYPERSKILL_SELECTED_STAGE: Key<Int> = Key.create("HYPERSKILL_SELECTED_STAGE")
 val HYPERSKILL_SELECTED_PROBLEM: Key<Int> = Key.create("HYPERSKILL_SELECTED_PROBLEM")
-const val HYPERSKILL_GROUP_ID = "Hyperskill.post"
 
 fun openSelectedStage(course: Course, project: Project) {
   if (course !is HyperskillCourse) {
@@ -116,12 +115,6 @@ fun stepLink(stepId: Int) = "${HYPERSKILL_URL}learn/step/$stepId"
 
 fun isHyperskillSupportAvailable(): Boolean = EduConfiguratorManager.allExtensions().any { it.courseType == HYPERSKILL_TYPE }
 
-fun showFailedToPostNotification() {
-  val notification = Notification(HYPERSKILL_GROUP_ID, "Failed to post submission to ${EduNames.JBA}",
-                                  "Please, try to check again", NotificationType.WARNING)
-  notification.notify(null)
-}
-
 fun getSelectedProjectIdUnderProgress(account: HyperskillAccount): Int? {
   return computeUnderProgress(null, SYNCHRONIZE_JBA_ACCOUNT, false) {
     val currentUser = HyperskillConnector.getInstance().getCurrentUser(account)
@@ -130,4 +123,9 @@ fun getSelectedProjectIdUnderProgress(account: HyperskillAccount): Int? {
     }
     account.userInfo.hyperskillProjectId
   }
+}
+
+fun showErrorDetails(project: Project, error: String) {
+  val message = "${EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA)}\n\n$error"
+  CheckDetailsView.getInstance(project).showCheckResultDetails(EduCoreBundle.message("error.solution.not.posted"), message)
 }

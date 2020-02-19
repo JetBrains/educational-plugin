@@ -10,3 +10,10 @@ fun <T, S, E> Result<T, E>.map(func: (T) -> S): Result<S, E> {
     is Ok -> Ok(func(value))
   }
 }
+
+fun <T, S, E> Result<T, E>.flatMap(func: (T) -> Result<S, E>): Result<S, E> {
+  return when (this) {
+    is Err -> this
+    is Ok -> func(value)
+  }
+}
