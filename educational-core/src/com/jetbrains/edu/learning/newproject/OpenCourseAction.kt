@@ -50,7 +50,8 @@ abstract class OpenCourseActionBase(
   private fun joinJetBrainsAcademy(course: JetBrainsAcademyCourse) {
     val account = HyperskillSettings.INSTANCE.account
     if (account == null) {
-      BrowserUtil.browse("${HYPERSKILL_DEFAULT_URL}onboarding/?track=${StringUtil.toLowerCase(course.language)}")
+      BrowserUtil.browse(
+        "${HYPERSKILL_DEFAULT_URL}onboarding/?track=${StringUtil.toLowerCase(course.language)}&utm_source=ide&utm_content=browse-courses")
     }
     else {
       HyperskillProjectAction.openHyperskillProject(account) { errorMessage ->
