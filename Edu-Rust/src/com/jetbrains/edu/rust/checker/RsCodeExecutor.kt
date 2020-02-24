@@ -23,13 +23,11 @@ import org.rust.openapiext.isSuccess
 
 class RsCodeExecutor : CodeExecutor {
   override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, CheckResult> {
-    val taskDir = task.getTaskDir(project) ?: return Err(CheckResult(CheckStatus.Unchecked, "Failed to find task dir"))
-    val mainVFile = task.findSourceDir(taskDir)?.findChild(MAIN_RS_FILE)
-                    ?: return Err(CheckResult(CheckStatus.Unchecked, "Failed to find `$MAIN_RS_FILE`"))
+    val taskDir = task.getTaskDir(project) ?: return resultUnchecked("Failed to find task dir")
+    val mainVFile = task.findSourceDir(taskDir)?.findChild(MAIN_RS_FILE) ?: return resultUnchecked("Failed to find `$MAIN_RS_FILE`")
     val target = runReadAction { PsiManager.getInstance(project).findFile(mainVFile)?.rustFile?.containingCargoTarget }
-                 ?: return Err(CheckResult(CheckStatus.Unchecked, "Failed to find target for `$MAIN_RS_FILE`"))
-    val cargo = project.rustSettings.toolchain?.rawCargo()
-                ?: return Err(CheckResult(CheckStatus.Unchecked, "Failed to find Rust toolchain"))
+                 ?: return resultUnchecked("Failed to find target for `$MAIN_RS_FILE`")
+    val cargo = project.rustSettings.toolchain?.rawCargo() ?: return resultUnchecked("Failed to find Rust toolchain")
     val cmd = CargoCommandLine.forTarget(target, "run")
 
     val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(project, stdIn = input?.toByteArray())
@@ -41,5 +39,9 @@ class RsCodeExecutor : CodeExecutor {
         Err(CheckResult(CheckStatus.Failed, COMPILATION_FAILED_MESSAGE, output))
       else -> Err(CheckResult.FAILED_TO_CHECK)
     }
+  }
+
+  companion object {
+    private fun resultUnchecked(msg: String) = Err(CheckResult(CheckStatus.Unchecked, msg))
   }
 }

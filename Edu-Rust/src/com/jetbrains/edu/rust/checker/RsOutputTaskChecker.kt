@@ -25,8 +25,8 @@ class RsOutputTaskChecker(
       }
     }
 
-    val output = outputBuffer.toString().removeLastLineBreaks()
-    val trimExpected = expected.removeLastLineBreaks()
+    val output = outputBuffer.toString().prepareToCheck()
+    val trimExpected = expected.prepareToCheck()
     return if (trimExpected != output) {
       val diff = CheckResultDiff(expected = trimExpected, actual = output)
       CheckResult(CheckStatus.Failed, "Expected output:\n<$trimExpected>\nActual output:\n<$output>", diff = diff)
