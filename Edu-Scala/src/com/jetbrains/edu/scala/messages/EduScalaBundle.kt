@@ -13,5 +13,5 @@ object EduScalaBundle : EduBundle() {
   }
 
   @NonNls
-  private const val BUNDLE = "messages.EduScala"
+  private const val BUNDLE = "messages.EduScalaBundle"
 }
