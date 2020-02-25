@@ -1,5 +1,6 @@
 package com.jetbrains.edu.python.slow.checker
 
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil.setDirectoryProjectSdk
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckResultDiffMatcher
@@ -87,11 +88,11 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
         "OutputTestsFailed" ->
           Triple(equalTo("""
           |Expected output:
-          |Hello, World!
-          | 
+          |<Hello, World!
+          |>
           |Actual output:
-          |Hello, World
-          |""".trimMargin()),
+          |<Hello, World
+          |>""".trimMargin()),
                  CheckResultDiffMatcher.diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n")), nullValue())
         "SyntaxErrorFromUnittest" -> Triple(containsString("Syntax Error"), nullValue(),
                                             containsString("SyntaxError: invalid syntax"))
@@ -100,6 +101,16 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
       assertThat("Checker output for ${task.name} doesn't match", checkResult.message, matcher.first)
       assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, matcher.second)
       assertThat("Checker output for ${task.name} doesn't match", checkResult.details, matcher.third)
+    }
+    doTest()
+  }
+
+  fun `test no sdk`() {
+    setDirectoryProjectSdk(project, null)
+
+    CheckActionListener.setCheckResultVerifier { task, checkResult ->
+      assertEquals("Status for ${task.name} doesn't match", CheckStatus.Unchecked, checkResult.status)
+      assertThat("Checker output for ${task.name} doesn't match", checkResult.message, containsString("No tests have run"))
     }
     doTest()
   }

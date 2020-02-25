@@ -1,6 +1,5 @@
 package com.jetbrains.edu.python.learning.run;
 
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunProfileState;
@@ -21,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PyCCRunTestConfiguration extends PythonRunConfiguration {
-
   public static final String PATH_ATTR = "studyTest";
   private Project myProject;
   private String myPathToTest;
@@ -33,8 +31,8 @@ public class PyCCRunTestConfiguration extends PythonRunConfiguration {
 
   @Nullable
   @Override
-  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) throws ExecutionException {
-    return new PyCCCommandLineState(this, environment);
+  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) {
+    return PyCCCommandLineState.createInstance(this, environment);
   }
 
   @Override

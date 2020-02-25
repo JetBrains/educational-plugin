@@ -11,6 +11,7 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -22,20 +23,13 @@ import com.jetbrains.edu.python.learning.getCurrentTaskFilePath
 import com.jetbrains.python.run.CommandLinePatcher
 import com.jetbrains.python.run.PythonCommandLineState
 
-class PyCCCommandLineState(
+class PyCCCommandLineState private constructor(
   private val runConfiguration: PyCCRunTestConfiguration,
-  env: ExecutionEnvironment
-) : PythonCommandLineState(runConfiguration, env) {
-
-  private val project: Project = runConfiguration.project
+  env: ExecutionEnvironment,
+  private val task: Task,
   private val taskDir: VirtualFile
-  private val task: Task
-
+) : PythonCommandLineState(runConfiguration, env) {
   init {
-    val testsFile = LocalFileSystem.getInstance().findFileByPath(runConfiguration.pathToTest)
-                    ?: error("Failed to find ${runConfiguration.pathToTest}")
-    task = EduUtils.getTaskForFile(project, testsFile) ?: error("Failed to find task for `${testsFile.path}`")
-    taskDir = task.getTaskDir(project) ?: error("Failed to get task dir for `${task.name}` task")
     consoleBuilder = PyCCConsoleBuilder(runConfiguration, env.executor)
   }
 
@@ -77,5 +71,28 @@ class PyCCCommandLineState(
       }
     })
     return handler
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(PyCCCommandLineState::class.java)
+
+    @JvmStatic
+    fun createInstance(configuration: PyCCRunTestConfiguration, environment: ExecutionEnvironment): PyCCCommandLineState? {
+      fun logAndQuit(error: String): PyCCCommandLineState? {
+        LOG.warn(error)
+        return null
+      }
+
+      val testsFile = LocalFileSystem.getInstance().findFileByPath(configuration.pathToTest)
+                      ?: return logAndQuit("Failed to find ${configuration.pathToTest}")
+
+      val task = EduUtils.getTaskForFile(configuration.project, testsFile)
+                 ?: return logAndQuit("Failed to find task for `${testsFile.path}`")
+
+      val taskDir = task.getTaskDir(configuration.project) ?: return logAndQuit("Failed to get task dir for `${task.name}` task")
+
+      if (configuration.sdk == null) return logAndQuit("Python SDK should not be null while creating instance of PyCCCommandLineState")
+      return PyCCCommandLineState(configuration, environment, task, taskDir)
+    }
   }
 }

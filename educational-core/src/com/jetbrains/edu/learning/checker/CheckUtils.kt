@@ -109,6 +109,9 @@ object CheckUtils {
     }
   }
 
+  /**
+   * @return true if execution finished successfully, false otherwise
+   */
   fun executeRunConfigurations(
     project: Project,
     configurations: List<RunnerAndConfigurationSettings>,
@@ -116,10 +119,10 @@ object CheckUtils {
     executionListener: ExecutionListener? = null,
     processListener: ProcessListener? = null,
     testEventsListener: SMTRunnerEventsListener? = null
-  ) {
+  ): Boolean {
     val connection = project.messageBus.connect()
     try {
-      executeRunConfigurations(connection, configurations, indicator, executionListener, processListener, testEventsListener)
+      return executeRunConfigurations(connection, configurations, indicator, executionListener, processListener, testEventsListener)
     }
     finally {
       connection.disconnect()
@@ -133,11 +136,12 @@ object CheckUtils {
     executionListener: ExecutionListener?,
     processListener: ProcessListener?,
     testEventsListener: SMTRunnerEventsListener?
-  ) {
+  ): Boolean {
     testEventsListener?.let { connection.subscribe(SMTRunnerEventsListener.TEST_STATUS, it) }
 
     val rootDisposable = Disposer.newDisposable()
     val latch = CountDownLatch(configurations.size)
+    var isConfigurationBroken = false
 
     runInEdt {
       val environments = mutableListOf<ExecutionEnvironment>()
@@ -145,12 +149,22 @@ object CheckUtils {
                            CheckExecutionListener(DefaultRunExecutor.EXECUTOR_ID, environments, latch, executionListener))
 
       for (configuration in configurations) {
+        if (isConfigurationBroken) {
+          latch.countDown()
+          continue
+        }
         val runner = ProgramRunner.getRunner(DefaultRunExecutor.EXECUTOR_ID, configuration.configuration)
         val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configuration).activeTarget().build()
+
+        if (runner == null || env.state == null) {
+          latch.countDown()
+          isConfigurationBroken = true
+          continue
+        }
         environments.add(env)
         // BACKCOMPAT: 2019.3
         @Suppress("DEPRECATION")
-        runner?.execute(env) { descriptor ->
+        runner.execute(env) { descriptor ->
           // Descriptor can be null in some cases.
           // For example, IntelliJ Rust's test runner provides null here if compilation fails
           if (descriptor == null) {
@@ -181,6 +195,7 @@ object CheckUtils {
     if (indicator.isCanceled) {
       Disposer.dispose(rootDisposable)
     }
+    return !isConfigurationBroken
   }
 
   private class CheckExecutionListener(

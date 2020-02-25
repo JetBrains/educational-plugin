@@ -56,13 +56,16 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
       }
     }
 
-    CheckUtils.executeRunConfigurations(
-      project,
-      configurations,
-      indicator,
-      processListener = processListener,
-      testEventsListener = testEventsListener
-    )
+    if (!CheckUtils.executeRunConfigurations(
+        project,
+        configurations,
+        indicator,
+        processListener = processListener,
+        testEventsListener = testEventsListener
+      )) {
+      LOG.warn("Execution failed because the configuration is broken")
+      return NO_TESTS_RUN
+    }
 
     // We need to invoke all current pending EDT actions to get proper states of test roots.
     invokeAndWaitIfNeeded {}

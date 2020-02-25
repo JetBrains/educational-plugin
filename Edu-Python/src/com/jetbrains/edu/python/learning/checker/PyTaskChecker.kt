@@ -81,11 +81,8 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
       }
     }
 
-    try {
-      CheckUtils.executeRunConfigurations(project, listOf(configuration), indicator, processListener = processListener)
-    }
-    catch (e: Exception) {
-      LOG.error(e)
+    if (!CheckUtils.executeRunConfigurations(project, listOf(configuration), indicator, processListener = processListener)) {
+      LOG.warn("Execution was failed while trying to obtain syntax error for user message")
     }
 
     return errorOutput.toString().nullize()
