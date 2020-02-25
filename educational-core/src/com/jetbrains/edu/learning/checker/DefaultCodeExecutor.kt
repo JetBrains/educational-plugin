@@ -12,9 +12,11 @@ import com.intellij.openapi.util.Key
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.checker.CodeExecutor.Companion.LOG
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 import java.io.BufferedWriter
+import java.io.IOException
 import java.io.OutputStreamWriter
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -35,10 +37,14 @@ open class DefaultCodeExecutor : CodeExecutor {
 
       override fun processStarted(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {
         if (input != null) {
-          val out = BufferedWriter(OutputStreamWriter(handler.processInput!!, StandardCharsets.UTF_8))
-          out.write(input)
-          out.write("\n")
-          out.flush()
+          try {
+            val out = BufferedWriter(OutputStreamWriter(handler.processInput!!, StandardCharsets.UTF_8))
+            out.write(input)
+            out.write("\n")
+            out.flush()
+          } catch (e: IOException) {
+            LOG.error("Failed to write input", e)
+          }
         }
       }
     }

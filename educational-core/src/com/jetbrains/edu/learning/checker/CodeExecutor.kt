@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.Result
@@ -28,4 +29,8 @@ interface CodeExecutor {
     project: Project,
     task: Task
   ): RunnerAndConfigurationSettings? = CheckUtils.createDefaultRunConfiguration(project)
+
+  companion object {
+    val LOG = Logger.getInstance(CodeExecutor::class.java)
+  }
 }
