@@ -1,11 +1,13 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.settings.OauthOptions
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillUserInfo
 import org.jetbrains.annotations.Nls
 import javax.swing.event.HyperlinkEvent
 
@@ -43,5 +45,17 @@ class HyperskillOptions : OauthOptions<HyperskillAccount>() {
         })
       }
     }
+  }
+
+  override fun getProfileUrl(userInfo: Any): String {
+    val userId = try {
+      (userInfo as HyperskillUserInfo).id
+    }
+    catch (e: ClassCastException) {
+      Logger.getInstance(HyperskillOptions::class.java).error(e.message)
+      ""
+    }
+
+    return "${HYPERSKILL_PROFILE_PATH}${userId}"
   }
 }

@@ -15,4 +15,9 @@ public class PyCheckiOOptions extends CheckiOOptions {
   public String getDisplayName() {
     return PyCheckiONames.PY_CHECKIO;
   }
+
+  @Override
+  protected String getApiHost() {
+    return PyCheckiONames.PY_CHECKIO_API_HOST;
+  }
 }

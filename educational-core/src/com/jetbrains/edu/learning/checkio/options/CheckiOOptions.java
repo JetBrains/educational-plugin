@@ -1,9 +1,12 @@
 package com.jetbrains.edu.learning.checkio.options;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.messages.MessageBus;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
+import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.settings.OauthOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +21,8 @@ public abstract class CheckiOOptions extends OauthOptions<CheckiOAccount> {
     myOAuthConnector = oauthConnector;
     initAccounts();
   }
+
+  protected abstract String getApiHost();
 
   @Nullable
   @Override
@@ -48,5 +53,19 @@ public abstract class CheckiOOptions extends OauthOptions<CheckiOAccount> {
         });
       }
     };
+  }
+
+  @NotNull
+  @Override
+  public String getProfileUrl(@NotNull Object userInfo) {
+    String userName;
+    try {
+      userName = ((CheckiOUserInfo)userInfo).getUsername();
+    }
+    catch (ClassCastException e) {
+      Logger.getInstance(CheckiOOptions.class).error(e.getMessage());
+      userName = "";
+    }
+    return getApiHost() + CheckiONames.CHECKIO_USER + userName;
   }
 }

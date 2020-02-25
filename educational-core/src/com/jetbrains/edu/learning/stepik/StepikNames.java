@@ -9,6 +9,7 @@ public class StepikNames {
   public static final String STEPIK_URL = ApplicationManager.getApplication().isUnitTestMode() ? "https://release.stepik.org" : "https://stepik.org" ;
   public static final String TOKEN_URL = STEPIK_URL + "/oauth2/token/";
   public static final String STEPIK_API_URL = STEPIK_URL + "/api/";
+  public static final String STEPIK_PROFILE_PATH = STEPIK_URL + "/users/";
 
   public static final String PYCHARM_PREFIX = "pycharm";
   public static final String EDU_STEPIK_SERVICE_NAME = "edu/stepik";

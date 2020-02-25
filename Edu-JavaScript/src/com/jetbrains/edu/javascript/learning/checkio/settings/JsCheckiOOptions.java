@@ -15,4 +15,9 @@ public class JsCheckiOOptions extends CheckiOOptions {
   public String getDisplayName() {
     return JsCheckiONames.JS_CHECKIO;
   }
+
+  @Override
+  protected String getApiHost() {
+    return JsCheckiONames.JS_CHECKIO_API_HOST;
+  }
 }

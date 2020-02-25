@@ -1,20 +1,22 @@
 package com.jetbrains.edu.learning.settings
 
+import com.intellij.ui.BrowserHyperlinkListener
 import com.intellij.ui.HoverHyperlinkLabel
 import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.IdeBorderFactory
-import com.intellij.ui.components.JBLabel
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.event.HyperlinkEvent
 
 // Implement this class to show oauth settings with login/logout link
 abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
-  private var loginLabel = JBLabel()
+  private var browseProfileLabel = createTextPane()
   private var loginLink = HoverHyperlinkLabel("")
   private var panel = JPanel()
   private var loginListener: HyperlinkAdapter? = null
@@ -28,11 +30,12 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
 
   abstract fun getCurrentAccount(): T?
   abstract fun setCurrentAccount(lastSavedAccount: T?)
+  abstract fun getProfileUrl(userInfo: Any): String
   protected abstract fun createAuthorizeListener(): LoginListener
 
   private fun initUI() {
     panel = JPanel(GridLayoutManager(1, 2))
-    addLoginLabel()
+    addBrowseProfileLabel()
     addLoginLink()
     panel.border = IdeBorderFactory.createTitledBorder(displayName)
   }
@@ -42,14 +45,16 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
     lastSavedAccount = getCurrentAccount()
   }
 
-  private fun addLoginLabel() {
-    loginLabel = JBLabel()
+  private fun addBrowseProfileLabel() {
+    browseProfileLabel = createTextPane()
+    browseProfileLabel.background = UIUtil.getPanelBackground()
     val constraints = GridConstraints()
     constraints.row = 0
     constraints.column = 0
     constraints.anchor = GridConstraints.ANCHOR_WEST
     constraints.hSizePolicy = GridConstraints.SIZEPOLICY_FIXED
-    panel.add(loginLabel, constraints)
+    browseProfileLabel.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
+    panel.add(browseProfileLabel, constraints)
   }
 
   private fun addLoginLink() {
@@ -89,14 +94,14 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
     }
 
     if (lastSavedAccount == null) {
-      loginLabel.text = "You're not logged in"
+      browseProfileLabel.text = "You're not logged in"
       loginLink.text = "Log in to $displayName"
 
       loginListener = createAuthorizeListener()
     }
     else {
       val info = lastSavedAccount!!.userInfo
-      loginLabel.text = "You're logged in as $info"
+      browseProfileLabel.text = "You're logged in as <a href=${getProfileUrl(info)}>${info}</a>"
       loginLink.text = "Log out"
       loginListener = createLogoutListener()
     }

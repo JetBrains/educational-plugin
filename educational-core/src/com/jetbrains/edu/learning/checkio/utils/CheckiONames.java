@@ -21,6 +21,7 @@ public final class CheckiONames {
   public static final String CHECKIO_OAUTH_SERVICE_PREFIX = "/api";
   public static final String CHECKIO_OAUTH_SERVICE_NAME = "edu/checkio/oauth";
   public static final String CHECKIO_OAUTH_SERVICE_PATH = CHECKIO_OAUTH_SERVICE_PREFIX + "/" + CHECKIO_OAUTH_SERVICE_NAME;
+  public static final String CHECKIO_USER = "/user/";
 
   public static final String CHECKIO_TEST_FORM_URL = "/checkio/checkioTestForm.html";
   public static final String CHECKIO_TEST_FORM_TARGET_PATH = "/mission/check-html-output";
