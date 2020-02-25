@@ -228,7 +228,7 @@
     <renameHandler implementation="com.jetbrains.edu.learning.handlers.EduCourseItemRenameHandler"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
     <statistics.applicationUsagesCollector implementation="com.jetbrains.edu.learning.statistics.EduStateUsagesCollector"/>
-    <statistics.counterUsagesCollector groupId="educational.counters" version="1"/>
+    <statistics.counterUsagesCollector groupId="educational.counters" version="2"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.coursera.CourseraSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.codeforces.CodeforcesSettings"/>
