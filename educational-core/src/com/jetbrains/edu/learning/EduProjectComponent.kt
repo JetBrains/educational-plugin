@@ -89,7 +89,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
       }
     })
 
-    connection.subscribe(AppLifecycleListener.TOPIC, object : AppLifecycleListenerAdapter {
+    connection.subscribe(AppLifecycleListener.TOPIC, object : AppLifecycleListener {
       override fun appWillBeClosed(isRestart: Boolean) {
         val projects = ProjectManager.getInstance().openProjects
         for (project in projects) {

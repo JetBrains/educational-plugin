@@ -2,6 +2,8 @@ package com.jetbrains.edu.android
 
 import com.android.ide.common.repository.GradleCoordinate
 import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
+import com.android.tools.idea.sdk.AndroidSdks
+import com.android.tools.idea.templates.RepositoryUrlManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -100,7 +102,8 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
   private fun getLibraryVersion(project: Project, groupId: String, artifactId: String, defaultVersion: String): String {
     val gradleCoordinate = GradleCoordinate(groupId, artifactId, "+")
-    return resolveDynamicCoordinateVersion(gradleCoordinate, project) ?: return defaultVersion
+    val sdkHandler = AndroidSdks.getInstance().tryToChooseSdkHandler()
+    return RepositoryUrlManager.get().resolveDynamicCoordinateVersion(gradleCoordinate, project, sdkHandler) ?: defaultVersion
   }
 
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = AndroidLanguageSettings()

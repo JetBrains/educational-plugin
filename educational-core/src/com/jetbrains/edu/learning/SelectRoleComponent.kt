@@ -26,8 +26,8 @@ class SelectRoleComponent : BaseComponent {
     }
 
     val connection = ApplicationManager.getApplication().messageBus.connect()
-    connection.subscribe(AppLifecycleListener.TOPIC, object : AppLifecycleListenerAdapter {
-      override fun appFrameCreated() {
+    connection.subscribe(AppLifecycleListener.TOPIC, object : AppLifecycleListener {
+      override fun appFrameCreated(commandLineArgs: MutableList<String>) {
         showInitialConfigurationDialog()
       }
     })

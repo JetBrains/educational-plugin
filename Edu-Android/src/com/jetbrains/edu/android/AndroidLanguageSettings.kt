@@ -3,6 +3,7 @@ package com.jetbrains.edu.android
 import com.android.tools.idea.sdk.IdeSdks
 import com.android.tools.idea.ui.ApplicationUtils
 import com.android.tools.idea.welcome.config.FirstRunWizardMode
+import com.android.tools.idea.welcome.install.getInitialSdkLocation
 import com.android.tools.idea.welcome.wizard.deprecated.ConsolidatedProgressStep
 import com.android.tools.idea.welcome.wizard.deprecated.InstallComponentsPath
 import com.android.tools.idea.wizard.WizardConstants
