@@ -276,7 +276,7 @@ public class StepikSolutionsLoader implements Disposable {
       if (!(task instanceof TheoryTask) && isToUpdate(task, isSolved, task.getStatus(), task.getId())) {
         tasksToUpdate.add(task);
       }
-      task.setStatus(checkStatus(isSolved));
+      task.setStatus(checkStatus(task, isSolved));
       YamlFormatSynchronizer.saveItem(task);
     }
     return tasksToUpdate;
@@ -287,8 +287,8 @@ public class StepikSolutionsLoader implements Disposable {
     return PROGRESS_ID_PREFIX + task.getId();
   }
 
-  private static CheckStatus checkStatus(boolean solved) {
-    return solved ? CheckStatus.Solved : CheckStatus.Failed;
+  private static CheckStatus checkStatus(@Nullable Task task, boolean solved) {
+    return solved ? CheckStatus.Solved : task instanceof TheoryTask ? CheckStatus.Unchecked : CheckStatus.Failed;
   }
 
   private void addFileOpenListener() {
@@ -413,7 +413,7 @@ public class StepikSolutionsLoader implements Disposable {
 
     String serializedTask = reply.getEduTask();
     if (serializedTask == null) {
-      task.setStatus(checkStatus(isSolved));
+      task.setStatus(checkStatus(null, isSolved));
       return new TaskSolutions(loadSolutionTheOldWay(task, reply));
     }
 
@@ -430,7 +430,7 @@ public class StepikSolutionsLoader implements Disposable {
       return TaskSolutions.EMPTY;
     }
 
-    task.setStatus(checkStatus(isSolved));
+    task.setStatus(checkStatus(task, isSolved));
 
     Map<String, String> taskFileToText = new HashMap<>();
     for (SolutionFile file : reply.getSolution()) {

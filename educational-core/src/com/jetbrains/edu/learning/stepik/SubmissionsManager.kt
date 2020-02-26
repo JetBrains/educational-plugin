@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.Submission
@@ -64,6 +65,7 @@ object SubmissionsManager {
 
   @JvmStatic
   fun isLastSubmissionUpToDate(task: Task, isSolved: Boolean): Boolean {
+    if (task is TheoryTask) return true
     val submission = getLastSubmission(task.id, isSolved) ?: return false
     return submission.time?.after(task.updateDate) ?: false
   }
