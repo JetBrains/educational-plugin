@@ -5,7 +5,6 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.util.io.IOUtil
-import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.*
 import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.LanguageSettings
@@ -25,8 +24,8 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
 
   override fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
     val standards = when (course) {
-      is StepikCourse -> arrayOf(CPP11.standard, languageStandard)
-      is CodeforcesCourse -> arrayOf(CPP11.standard, languageStandard, CPP17.standard)
+      is StepikCourse -> arrayOf(CPP11.standard, CPP14.standard)
+      is CodeforcesCourse -> arrayOf(CPP11.standard, CPP14.standard, CPP17.standard)
       else -> languageVersions.toTypedArray()
     }
 
@@ -50,13 +49,6 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
   }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? = when {
-    course != null && course.languageVersion != null -> {
-      val courseLanguage = course.languageVersion!!.toInt()
-      if (courseLanguage > languageStandard.toInt()) {
-        ValidationMessage("Required $courseLanguage standard minimum")
-      }
-      else null
-    }
     courseLocation != null && SystemInfo.isWindows && !IOUtil.isAscii(courseLocation) ->
       ValidationMessage(EduCppBundle.message("non.ascii.warning"), type = WARNING)
     else -> null
