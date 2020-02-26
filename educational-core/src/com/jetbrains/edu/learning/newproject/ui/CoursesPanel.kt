@@ -47,7 +47,6 @@ import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikCoursesProvider
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector.Companion.getInstance
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView.Companion.getTaskDescriptionBackgroundColor
 import org.jetbrains.annotations.NonNls
@@ -72,17 +71,15 @@ class CoursesPanel(courses: List<Course>,
     dialog.setError(errorState)
   }
   private val myContentPanel: JPanel = JPanel(BorderLayout())
-  private var myCourses: MutableList<Course>
+  private val myCourses: MutableList<Course>
   private var myCoursesComparator: Comparator<Course>
   private val myListeners: MutableList<CourseValidationListener> = ArrayList()
   private var myBusConnection: MessageBusConnection? = null
   private var myErrorState: ErrorState? = NothingSelected
   private var myCoursesList: JBList<Course> = JBList()
-  var selectedCourse: Course
+
   val projectSettings: Any
-    get() {
-      return myCoursePanel.projectSettings()
-    }
+    get() = myCoursePanel.projectSettings()
 
   private fun initUI() {
     GuiUtils.replaceJSplitPaneWithIDEASplitter(mySplitPaneRoot, true)
@@ -222,19 +219,11 @@ class CoursesPanel(courses: List<Course>,
   }
 
   private fun processSelectionChanged() {
-    val course = myCoursesList.selectedValue
+    val course = selectedCourse
     if (course != null) {
       myCoursePanel.bindCourse(course).addSettingsChangeListener { doValidation(course) }
-      enableCourseViewAsEducator(ApplicationManager.getApplication().isInternal ||
-                                 course !is StepikCourse && course !is CheckiOCourse)
-      selectedCourse = course
-      val isViewAsEducatorEnabled = selectedCourse !is StepikCourse && selectedCourse !is CheckiOCourse
-      enableCourseViewAsEducator.apply {
-        selectedCourse !is JetBrainsAcademyCourse &&
-        (ApplicationManager.getApplication().isInternal || isViewAsEducatorEnabled)
-      }
-
-      val languageSettings = myCoursePanel.bindCourse(selectedCourse)
+      enableCourseViewAsEducator.apply { course.isViewAsEducatorEnabled }
+      val languageSettings = myCoursePanel.bindCourse(course)
       languageSettings.addSettingsChangeListener { doValidation(course) }
     }
     doValidation(course)
@@ -262,15 +251,6 @@ class CoursesPanel(courses: List<Course>,
       myErrorLabel.isVisible = false
     }
     myErrorLabel.foreground = errorState.foregroundColor
-  }
-
-  fun setCoursesComparator(comparator: Comparator<Course>) {
-    myCoursesComparator = comparator
-    updateModel(myCourses, null)
-  }
-
-  fun setEmptyText(text: String) {
-    myCoursesList.setEmptyText(text)
   }
 
   private fun sortCourses(courses: List<Course>): List<Course> {
@@ -461,12 +441,9 @@ class CoursesPanel(courses: List<Course>,
     updateModel(myCourses, null)
 
     mySearchField = createSearchField()
-
-    selectedCourse = myCoursesList.selectedValue
-
     myCourseListPanel.add(mySearchField, BorderLayout.NORTH)
 
-    myCoursePanel.bindCourse(selectedCourse)
+    myCoursePanel.bindCourse(selectedCourse ?: myCourses.first())
     myCoursePanel.bindSearchField(mySearchField)
 
     mySplitPane.leftComponent = myCourseListPanel
@@ -482,6 +459,9 @@ class CoursesPanel(courses: List<Course>,
     initUI()
   }
 
+  val selectedCourse: Course?
+    get() = myCoursesList.selectedValue
+
   val locationString: String
     get() {
       // We use `myCoursePanel` with location field
@@ -492,7 +472,6 @@ class CoursesPanel(courses: List<Course>,
   private fun createSearchField(): FilterComponent {
     val searchField = object : FilterComponent("Edu.NewCourse", 5, true) {
       override fun filter() {
-        val selectedCourse = myCoursesList.selectedValue
         val filter = filter
         val filtered: MutableList<Course> = ArrayList()
         for (course in myCourses) {

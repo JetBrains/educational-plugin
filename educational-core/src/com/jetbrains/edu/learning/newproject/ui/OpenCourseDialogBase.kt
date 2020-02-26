@@ -8,7 +8,6 @@ import javax.swing.Action
 private const val CANCEL_BUTTON_TEXT = "Close"
 
 abstract class OpenCourseDialogBase : DialogWrapper(true) {
-  protected open val allowViewAsEducatorAction: Boolean get() = true
   protected open val openCourseActionName: String get() = "Join"
 
   abstract val courseInfo: CourseInfo
@@ -19,7 +18,7 @@ abstract class OpenCourseDialogBase : DialogWrapper(true) {
     super.createDefaultActions()
     myCancelAction.putValue(Action.NAME, CANCEL_BUTTON_TEXT)
     myCancelAction.putValue(Action.DEFAULT, true)
-    myOKAction = OpenCourseAction(openCourseActionName, this, allowViewAsEducatorAction)
+    myOKAction = OpenCourseAction(openCourseActionName, this, true)
   }
 
   fun setEnabledViewAsEducator(enabled: Boolean) {

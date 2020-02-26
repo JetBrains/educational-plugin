@@ -29,8 +29,6 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
     object : JoinCourseDialogBase(course, CourseDisplaySettings(showTagsPanel = false,
                                                                 showInstructorField = false,
                                                                 showLanguageSettings = showLanguageSettings)) {
-      override val allowViewAsEducatorAction: Boolean get() = false
-
       init {
         init()
       }

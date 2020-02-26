@@ -6,8 +6,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 
 class HyperskillJoinCourseDialog(course: HyperskillCourse) : JoinCourseDialogBase(course, CourseDisplaySettings(showTagsPanel = false,
                                                                                                                 showInstructorField = false)) {
-
-  override val allowViewAsEducatorAction: Boolean get() = false
   override val openCourseActionName: String get() = "Continue"
 
   init { init() }

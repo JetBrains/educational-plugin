@@ -14,6 +14,7 @@ class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: Defau
     panel.addCourseValidationListener(object : CoursesPanel.CourseValidationListener {
       override fun validationStatusChanged(canStartCourse: Boolean) {
         isOKActionEnabled = canStartCourse
+        setEnabledViewAsEducator(panel.selectedCourse?.isViewAsEducatorEnabled ?: true)
       }
     })
   }
@@ -23,19 +24,11 @@ class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: Defau
   }
 
   override val courseInfo: CourseInfo
-    get() = CourseInfo(panel.selectedCourse, panel.locationString, panel.projectSettings)
+    get() = CourseInfo(panel.selectedCourse ?: error("The course was not selected"), panel.locationString, panel.projectSettings)
 
   override fun createCenterPanel(): JComponent = panel
 
   override fun setError(error: ErrorState) {
     panel.updateErrorInfo(error)
-  }
-
-  fun setCoursesComparator(comparator: Comparator<Course>) {
-    panel.setCoursesComparator(comparator)
-  }
-
-  fun setEmptyText(text: String) {
-    panel.setEmptyText(text)
   }
 }

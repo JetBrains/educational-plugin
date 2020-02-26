@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.lang.Language;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -300,5 +301,9 @@ public abstract class Course extends LessonContainer {
   @NotNull
   public Icon getIcon() {
     return EducationalCoreIcons.CourseTree;
+  }
+
+  public boolean isViewAsEducatorEnabled() {
+    return ApplicationManager.getApplication().isInternal();
   }
 }

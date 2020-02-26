@@ -191,4 +191,9 @@ public class EduCourse extends Course {
   public void setUpToDate(boolean isUpToDateValue) {
     isUpToDate.resetCachedValue(isUpToDateValue);
   }
+
+  @Override
+  public boolean isViewAsEducatorEnabled() {
+    return true;
+  }
 }
