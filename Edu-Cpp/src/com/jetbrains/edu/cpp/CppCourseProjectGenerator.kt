@@ -42,7 +42,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     GeneratorUtils.createChildFile(
       baseDir,
       mainCMakeTemplateInfo.generatedFileName,
-      mainCMakeTemplateInfo.getText(FileUtil.sanitizeFileName(baseDir.name))
+      mainCMakeTemplateInfo.getText(FileUtil.sanitizeFileName(baseDir.name), myCourse.languageVersion ?: "")
     )
 
     getCppTemplates(myCourse).extraTopLevelFiles.forEach { templateInfo ->

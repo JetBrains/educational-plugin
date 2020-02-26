@@ -1,10 +1,14 @@
 package com.jetbrains.edu.cpp.codeforces
 
+import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.cpp.CppBaseConfigurator
 import com.jetbrains.edu.cpp.CppProjectSettings
+import com.jetbrains.edu.cpp.addCMakeList
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> =
@@ -21,4 +25,10 @@ class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider {
       in listOf("Clang++17 Diagnostics", "GNU C++17", "MS C++ 2017") -> "17"
       else -> null
     }
+
+  override fun createTaskFiles(task: Task): List<TaskFile> {
+    val moduleName = FileUtil.sanitizeFileName(task.name)
+    task.addCMakeList(moduleName)
+    return super.createTaskFiles(task)
+  }
 }

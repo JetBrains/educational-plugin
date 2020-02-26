@@ -8,10 +8,10 @@ import com.jetbrains.cidr.cpp.toolchains.CMake
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
-import java.lang.IllegalStateException
 
 private const val GTEST_VERSION = "release-1.8.1"
 const val TEST_FRAMEWORK_DIR = "test-framework"
@@ -63,7 +63,13 @@ fun getCppTemplates(course: Course): CppTemplates =
       CppTemplates(TemplateInfo("StepikMainCMakeList.txt", CMakeListsFileType.FILE_NAME),
                    TemplateInfo("StepikTaskCMakeList.txt", CMakeListsFileType.FILE_NAME),
                    listOf(
-                     TemplateInfo("stepik_cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
+                     TemplateInfo("simple_cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
+                   ))
+    course is CodeforcesCourse ->
+      CppTemplates(TemplateInfo("codeforces.MainCMakeLists.txt", CMakeListsFileType.FILE_NAME),
+                   TemplateInfo("codeforces.TaskCMakeLists.txt", CMakeListsFileType.FILE_NAME),
+                   listOf(
+                     TemplateInfo("simple_cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
                    ))
     course.environment == "GoogleTest" ->
       CppTemplates(TemplateInfo("EduMainCMakeList.txt", CMakeListsFileType.FILE_NAME),

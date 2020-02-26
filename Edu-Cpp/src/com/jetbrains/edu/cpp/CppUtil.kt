@@ -1,10 +1,10 @@
 package com.jetbrains.edu.cpp
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.cmake.CMakeLanguage
-import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.lang.OCLanguage
+import com.jetbrains.cmake.CMakeLanguage
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.cmake.psi.CMakeCommand
 import com.jetbrains.edu.learning.EduNames
@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
  *
  * @return created taskFile
  */
-fun Task.addCMakeList(projectName: String, cppStandard: String): TaskFile {
+fun Task.addCMakeList(projectName: String, cppStandard: String = ""): TaskFile {
   val templateInfo = getCppTemplates(course).taskCMakeList
 
   val taskFile = TaskFile(CMakeListsFileType.FILE_NAME, templateInfo.getText(projectName, cppStandard))
