@@ -2,8 +2,10 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.layout.*
+import com.intellij.util.PlatformUtils
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.getDefaultLanguageId
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.settings.OptionsProvider
 import javax.swing.JCheckBox
 import javax.swing.JComponent
@@ -49,7 +51,7 @@ class CodeforcesOptions : OptionsProvider {
       languageComboBox.selectedItem = preferableLanguage
     }
     else {
-      val defaultLanguageId = getDefaultLanguageId()
+      val defaultLanguageId = if (PlatformUtils.isCLion()) EduNames.PYTHON else getDefaultLanguageId()
       if (defaultLanguageId != null) {
         languageComboBox.selectedItem = CodeforcesLanguageProvider.getPreferableCodeforcesLanguage(defaultLanguageId)
       }

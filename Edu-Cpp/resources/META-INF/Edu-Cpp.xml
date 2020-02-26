@@ -10,7 +10,6 @@
                   displayName="C++ (Catch 2.0)" environment="Catch"/>
     <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppBaseConfigurator"
                   courseType="Stepik"/>
-    <codeforcesLanguageProvider implementation="com.jetbrains.edu.cpp.codeforces.CppCodeforcesLanguageProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
