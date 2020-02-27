@@ -24,8 +24,8 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.NavigatablePsiElement
+import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
@@ -33,7 +33,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.net.URLDecoder
 import javax.swing.JComponent
 
 
@@ -111,9 +110,7 @@ abstract class TaskDescriptionToolWindow {
       // }
       // ```
       //
-      // BACKCOMPAT: 2019.1. use com.intellij.util.io.URLUtil#decode(java.lang.String) instead
-      @Suppress("DEPRECATION")
-      val qualifiedName = URLDecoder.decode(urlEncodedName)
+      val qualifiedName = URLUtil.decode(urlEncodedName)
 
       val application = ApplicationManager.getApplication()
       application.invokeLater {

@@ -171,8 +171,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
     return course(name, language, description, environment, courseMode, courseProducer, buildCourse).apply {
-      // BACKCOMPAT: 2019.1. Use `module` instead of `myFixture.module`
-      createCourseFiles(project, myFixture.module, settings = settings)
+      createCourseFiles(project, module, settings = settings)
       if (createYamlConfigs) {
         createConfigFiles(project)
       }

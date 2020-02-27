@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
 import javax.swing.ButtonGroup
 import javax.swing.JComponent
-import javax.swing.JLabel
 
 class CCOptions : OptionsProvider {
 
@@ -31,8 +30,6 @@ class CCOptions : OptionsProvider {
   )
 
   init {
-    // BACKCOMPAT: 2019.1. use radio button dsl
-    //  https://www.jetbrains.org/intellij/sdk/docs/user_interface_components/kotlin_ui_dsl.html#radio-buttons
     val buttonGroup = ButtonGroup()
     buttonGroup.add(htmlRadioButton)
     buttonGroup.add(markdownRadioButton)
@@ -46,8 +43,7 @@ class CCOptions : OptionsProvider {
     return panel {
       row {
         cell {
-          // BACKCOMPAT: 2019.1. Use `label` method instead
-          JLabel(EduCoreBundle.message("ccoptions.task.description.format"))()
+          label(EduCoreBundle.message("ccoptions.task.description.format"))
           htmlRadioButton()
           markdownRadioButton()
         }

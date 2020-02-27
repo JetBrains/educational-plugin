@@ -70,8 +70,7 @@ object EduGradleUtils {
 
     // Java 13 requires gradle 6.0.
     // If the current bundled gradle version is less than 6.0, let's delegate selection of `gradleJvm` to IDE itself.
-    // BACKCOMPAT: 2019.1. Don't use `JavaSdkVersion.JDK_13` here because it's available since 2019.2
-    if ((javaVersion == null || javaVersion > JavaSdkVersion.JDK_12) && GradleVersion.current() < GradleVersion.version("6.0")) {
+    if ((javaVersion == null || javaVersion >= JavaSdkVersion.JDK_13) && GradleVersion.current() < GradleVersion.version("6.0")) {
       projectSettings.gradleJvm = null
     }
   }

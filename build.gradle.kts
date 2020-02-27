@@ -45,7 +45,6 @@ val webStormSandbox = "${project.buildDir.absolutePath}/webstorm-sandbox"
 val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 
-val isAtLeast192 = environmentName.toInt() >= 192
 val isAtLeast193 = environmentName.toInt() >= 193
 
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
@@ -222,14 +221,10 @@ project(":") {
     )
     pluginsList += listOfNotNull(pythonPlugin)
     if (isJvmCenteredIDE) {
-      pluginsList += listOf("junit", "Kotlin", scalaPlugin)
-      if (isAtLeast192) {
-        pluginsList += "java"
-      }
+      pluginsList += listOf("java", "junit", "Kotlin", scalaPlugin)
     }
     if (baseIDE == "idea") {
-      // BACKCOMPAT: 2019.1 - use bundled nodeJS plugin
-      pluginsList += listOf(nodeJsPlugin, "JavaScriptLanguage", goPlugin)
+      pluginsList += listOf("NodeJS", "JavaScriptLanguage", goPlugin)
     }
 
     setPlugins(*pluginsList.toTypedArray())
@@ -341,13 +336,6 @@ project(":") {
 
 project(":educational-core") {
 
-  intellij {
-    // Temporary fix to launch tests
-    if (isAtLeast192 && isJvmCenteredIDE) {
-      setPlugins("java")
-    }
-  }
-
   task<Download>("downloadColorFile") {
     overwrite(false)
     src("https://raw.githubusercontent.com/ozh/github-colors/master/colors.json")
@@ -368,14 +356,12 @@ project(":jvm-core") {
       version = ideaVersion
     }
     val plugins = mutableListOf(
+      "java",
       "junit",
       "properties",
       "gradle",
       "Groovy"
     )
-    if (isAtLeast192) {
-      plugins += "java"
-    }
     if (isAtLeast193) {
       plugins += "gradle-java"
     }
@@ -394,13 +380,7 @@ project(":jvm-core") {
 
 project(":Edu-YAML") {
   intellij {
-    // remove java dependency added for tests
-    if (isJvmCenteredIDE && isAtLeast192) {
-      setPlugins("java", "yaml")
-    }
-    else {
       setPlugins("yaml")
-    }
   }
 
   dependencies {
@@ -415,14 +395,12 @@ project(":Edu-Java") {
     localPath = null
     version = ideaVersion
     val plugins = mutableListOf(
+      "java",
       "junit",
       "properties",
       "gradle",
       "Groovy"
     )
-    if (isAtLeast192) {
-      plugins += "java"
-    }
     if (isAtLeast193) {
       plugins += "gradle-java"
     }
@@ -445,14 +423,12 @@ project(":Edu-Kotlin") {
     }
     val plugins = mutableListOf(
       "Kotlin",
+      "java",
       "junit",
       "properties",
       "gradle",
       "Groovy"
     )
-    if (isAtLeast192) {
-      plugins += "java"
-    }
     if (isAtLeast193) {
       plugins += "gradle-java"
     }
@@ -473,14 +449,12 @@ project(":Edu-Scala") {
     version = ideaVersion
     val plugins = mutableListOf(
       scalaPlugin,
+      "java",
       "junit",
       "properties",
       "gradle",
       "Groovy"
     )
-    if (isAtLeast192) {
-      plugins += "java"
-    }
     if (isAtLeast193) {
       plugins += "gradle-java"
     }
@@ -498,10 +472,18 @@ project(":Edu-Scala") {
 project(":Edu-Android") {
   intellij {
     localPath = studioPath
-    val plugins = mutableListOf("android", "junit", "properties", "gradle", "Groovy", "IntelliLang", "smali", "Kotlin")
-    if (isAtLeast192) {
-      plugins += listOf("java", "android-layoutlib")
-    }
+    val plugins = mutableListOf(
+      "android",
+      "junit",
+      "properties",
+      "gradle",
+      "Groovy",
+      "IntelliLang",
+      "smali",
+      "Kotlin",
+      "java",
+      "android-layoutlib"
+    )
     if (isAtLeast193) {
       plugins += "gradle-java"
     }
@@ -523,11 +505,7 @@ project(":Edu-Python") {
       version = ideaVersion
     }
     // python pro plugin has mandatory dependency on yaml plugin
-    val plugins = mutableListOf("yaml")
-    plugins += listOfNotNull(pythonPlugin)
-    if (isAtLeast192 && isJvmCenteredIDE) {
-      plugins += "java"
-    }
+    val plugins = listOfNotNull(pythonPlugin, "yaml")
     setPlugins(*plugins.toTypedArray())
   }
 
@@ -545,12 +523,13 @@ project(":Edu-Python:Idea") {
       localPath = null
       version = ideaVersion
     }
-    // python pro plugin has mandatory dependency on yaml plugin
-    val plugins = mutableListOf("yaml")
-    plugins += listOfNotNull(if (!isJvmCenteredIDE) pythonIDEAPlugin else pythonPlugin)
-    if (isAtLeast192) {
-      plugins += "java"
-    }
+
+    val plugins = listOfNotNull(
+      if (!isJvmCenteredIDE) pythonIDEAPlugin else pythonPlugin,
+      // python pro plugin has mandatory dependency on yaml plugin
+      "yaml",
+      "java"
+    )
     setPlugins(*plugins.toTypedArray())
   }
 
@@ -568,11 +547,7 @@ project(":Edu-Python:PyCharm") {
       version = ideaVersion
     }
     // python pro plugin has mandatory dependency on yaml plugin
-    val plugins = mutableListOf("yaml")
-    plugins += listOfNotNull(pythonPlugin)
-    if (isAtLeast192 && isJvmCenteredIDE) {
-      plugins += "java"
-    }
+    val plugins = listOfNotNull(pythonPlugin, "yaml")
     setPlugins(*plugins.toTypedArray())
   }
 
@@ -587,12 +562,7 @@ project(":Edu-JavaScript") {
   intellij {
     localPath = null
     version = ideaVersion
-    // BACKCOMPAT: 2019.1 - use bundled nodeJS plugin
-    val plugins = mutableListOf(nodeJsPlugin, "JavaScriptLanguage", "CSS", "JavaScriptDebugger")
-    if (isAtLeast192) {
-      plugins += "java"
-    }
-    setPlugins(*plugins.toTypedArray())
+    setPlugins("NodeJS", "JavaScriptLanguage", "CSS", "JavaScriptDebugger")
   }
   dependencies {
     compile(project(":educational-core"))
@@ -602,11 +572,7 @@ project(":Edu-JavaScript") {
 
 project(":Edu-Rust") {
   intellij {
-    val plugins = mutableListOf(rustPlugin, tomlPlugin)
-    if (isAtLeast192 && isJvmCenteredIDE) {
-      plugins += "java"
-    }
-    setPlugins(*plugins.toTypedArray())
+    setPlugins(rustPlugin, tomlPlugin)
   }
 
   dependencies {
@@ -631,12 +597,7 @@ project(":Edu-Go") {
   intellij {
     localPath = null
     version = ideaVersion
-
-    val plugins = mutableListOf(goPlugin)
-    if (isAtLeast192) {
-      plugins += "java"
-    }
-    setPlugins(*plugins.toTypedArray())
+    setPlugins(goPlugin)
   }
 
   dependencies {

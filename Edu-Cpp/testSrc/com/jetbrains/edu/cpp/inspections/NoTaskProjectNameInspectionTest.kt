@@ -1,8 +1,6 @@
 package com.jetbrains.edu.cpp.inspections
 
-import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.util.BuildNumber
 import com.intellij.testFramework.EditorTestUtil
 import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.cmake.CMakeListsFileType
@@ -13,14 +11,6 @@ import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.EduTestCase
 
 class NoTaskProjectNameInspectionTest : EduTestCase() {
-
-  // BACKCOMPAT: 2019.1. We skip tests in build 191 because of file inspection doesn't work correctly in test mode.
-  override fun runTest() {
-    val build192: BuildNumber = BuildNumber.fromString("192")
-    if (ApplicationInfo.getInstance().build >= build192) {
-      super.runTest()
-    }
-  }
 
   private fun addDeletedTaskProjectNameToCMakeListsTestBase(beforeWithHighlighting: String, after: String) {
     courseWithFiles(

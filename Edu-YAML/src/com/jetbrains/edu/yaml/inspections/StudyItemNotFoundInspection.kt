@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.parentOfType
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
 import com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
@@ -24,7 +25,6 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlLoader
 import com.jetbrains.edu.yaml.ItemContainerContentReferenceProvider
-import com.jetbrains.edu.yaml.parentOfType
 import org.jetbrains.yaml.psi.YAMLScalar
 import org.jetbrains.yaml.psi.YAMLSequenceItem
 
