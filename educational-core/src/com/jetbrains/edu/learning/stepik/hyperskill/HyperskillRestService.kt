@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*
 import org.jetbrains.io.send
@@ -126,7 +127,6 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       }) ?: return sendErrorResponse(request, context, "Could not find get step source for the task")
 
     val task = findOrCreateTask(course, lesson, stepSource, lessonDir, project)
-
     runInEdt {
       NavigationUtils.navigateToTask(project, task)
       requestFocus()
@@ -159,6 +159,10 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
       GeneratorUtils.createTask(task, lessonDir)
 
+      YamlFormatSynchronizer.saveItem(lesson)
+      YamlFormatSynchronizer.saveItem(task)
+      YamlFormatSynchronizer.saveRemoteInfo(task)
+
       course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
     }
     return task
@@ -178,6 +182,8 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       course.addLesson(lesson)
       lesson.init(course, null, false)
       GeneratorUtils.createLesson(lesson, course.getDir(project))
+      YamlFormatSynchronizer.saveItem(lesson)
+      YamlFormatSynchronizer.saveItem(course)
     }
     return lesson
   }
