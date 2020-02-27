@@ -60,6 +60,11 @@ object HyperskillCheckConnector {
   }
 
   fun checkCodeTask(project: Project, task: Task): CheckResult {
+    if (task.id == 0) {
+      val link = task.feedbackLink.link ?: return CheckResult.FAILED_TO_CHECK
+      val message = """Corrupted task (no id): please, click "Solve in IDE" on <a href="$link">${EduNames.JBA}</a> one more time"""
+      return CheckResult(CheckStatus.Unchecked, message, needEscape = false)
+    }
     val connector = HyperskillConnector.getInstance()
     val attempt = connector.postAttempt(task.id) ?: return CheckResult.FAILED_TO_CHECK
     val course = task.lesson.course
