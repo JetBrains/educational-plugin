@@ -15,8 +15,6 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.projectView.CourseViewPane
@@ -25,6 +23,7 @@ import org.jetbrains.sbt.project.SbtProjectSystem
 class ScalaSbtCourseBuilder : EduCourseBuilder<JdkProjectSettings> {
 
   override val taskTemplateName: String = ScalaSbtConfigurator.TASK_SCALA
+  override val mainTemplateName: String = ScalaSbtConfigurator.MAIN_SCALA
   override val testTemplateName: String = ScalaSbtConfigurator.TEST_SCALA
 
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = JdkLanguageSettings()
@@ -33,11 +32,23 @@ class ScalaSbtCourseBuilder : EduCourseBuilder<JdkProjectSettings> {
     return ScalaSbtCourseProjectGenerator(this, course)
   }
 
-  override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
-    super.initNewTask(project, lesson, task, info)
-    val templateInfo = TemplateFileInfo(TASK_BUILD_SBT, BUILD_SBT, false)
-    val taskFile = templateInfo.toTaskFile(mapOf("TASK_NAME" to info.name.replace(" ", "-"))) ?: return
-    task.addTaskFile(taskFile)
+  override fun extractInitializationParams(project: Project, info: NewStudyItemInfo): Map<String, String> {
+    return mapOf("TASK_NAME" to info.name.replace(" ", "-"))
+  }
+
+  override fun getDefaultTaskTemplates(
+    course: Course,
+    info: NewStudyItemInfo,
+    withSources: Boolean,
+    withTests: Boolean
+  ): List<TemplateFileInfo> {
+    val templates = super.getDefaultTaskTemplates(course, info, withSources, withTests)
+    return if (withSources) {
+      templates + TemplateFileInfo(TASK_BUILD_SBT, BUILD_SBT, false)
+    }
+    else {
+      templates
+    }
   }
 
   override fun refreshProject(project: Project, cause: RefreshCause) {

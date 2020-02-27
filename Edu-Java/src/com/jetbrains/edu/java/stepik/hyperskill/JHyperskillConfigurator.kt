@@ -21,7 +21,7 @@ class JHyperskillConfigurator : HyperskillConfigurator<JdkProjectSettings>(JConf
     get() = JHyperskillCourseBuilder(JCourseBuilder())
 
   override val testDirs: List<String>
-    get() = listOf("${EduNames.TEST}/stageTest", EduNames.TEST)
+    get() = listOf(EduNames.TEST, "${EduNames.TEST}/stageTest")
 
   private class JHyperskillCourseBuilder(private val gradleCourseBuilder: GradleCourseBuilderBase) :
     HyperskillCourseBuilder<JdkProjectSettings>(gradleCourseBuilder) {

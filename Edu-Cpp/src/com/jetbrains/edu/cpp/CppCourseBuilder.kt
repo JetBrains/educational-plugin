@@ -8,19 +8,19 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiUtilBase
-import com.intellij.util.IncorrectOperationException
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.RefreshCause
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class CppCourseBuilder(
@@ -30,16 +30,14 @@ class CppCourseBuilder(
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CppProjectSettings>? =
     CppCourseProjectGenerator(this, course)
 
-  override fun createDefaultTestFile(task: Task): TaskFile? =
-    super.createDefaultTestFile(task)?.apply { name = GeneratorUtils.joinPaths(EduNames.TEST, CppBaseConfigurator.TEST_CPP) }
-
   override fun getLanguageSettings(): LanguageSettings<CppProjectSettings> = CppLanguageSettings()
 
-  override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
-    super.initNewTask(project, lesson, task, info)
-
-    val cMakeProjectName = getCMakeProjectUniqueName(task) { FileUtil.sanitizeFileName(it.name, true) }
-    task.addCMakeList(cMakeProjectName, getLanguageSettings().settings.languageStandard)
+  override fun initNewTask(project: Project, course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) {
+    super.initNewTask(project, course, task, info, withSources)
+    if (withSources) {
+      val cMakeProjectName = getCMakeProjectUniqueName(task) { FileUtil.sanitizeFileName(it.name, true) }
+      task.addCMakeList(cMakeProjectName, getLanguageSettings().settings.languageStandard)
+    }
   }
 
   override fun getTextForNewTask(taskFile: TaskFile, taskDir: VirtualFile, newTask: Task): String? {

@@ -3,12 +3,12 @@ package com.jetbrains.edu.python.learning
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.python.learning.PyConfigurator.Companion.MAIN_PY
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
 import com.jetbrains.edu.python.learning.PyNewConfigurator.Companion.TEST_FILE_NAME
 import com.jetbrains.edu.python.learning.PyNewConfigurator.Companion.TEST_FOLDER
@@ -19,6 +19,7 @@ import com.jetbrains.python.newProject.PyNewProjectSettings
 
 class PyNewCourseBuilder : EduCourseBuilder<PyNewProjectSettings> {
   override val taskTemplateName: String = TASK_PY
+  override val mainTemplateName: String = MAIN_PY
   override val testTemplateName: String = TEST_FILE_NAME
 
   override fun getLanguageSettings(): LanguageSettings<PyNewProjectSettings> = PyLanguageSettings()
@@ -29,11 +30,19 @@ class PyNewCourseBuilder : EduCourseBuilder<PyNewProjectSettings> {
     }
   }
 
-  override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
-    if (task.taskFiles.isEmpty()) {
-      super.initNewTask(project, lesson, task, info)
-      task.addTaskFile(PyNames.INIT_DOT_PY, false)
-      task.addTaskFile("$TEST_FOLDER/${PyNames.INIT_DOT_PY}", false)
+  override fun getDefaultTaskTemplates(
+    course: Course,
+    info: NewStudyItemInfo,
+    withSources: Boolean,
+    withTests: Boolean
+  ): List<TemplateFileInfo> {
+    val templates = ArrayList(super.getDefaultTaskTemplates(course, info, withSources, withTests))
+    if (withSources) {
+      templates += TemplateFileInfo(PyNames.INIT_DOT_PY, PyNames.INIT_DOT_PY, false)
     }
+    if (withTests) {
+      templates += TemplateFileInfo(PyNames.INIT_DOT_PY, "$TEST_FOLDER/${PyNames.INIT_DOT_PY}", false)
+    }
+    return templates
   }
 }

@@ -49,6 +49,7 @@ class ScalaSbtConfigurator : EduConfiguratorWithSubmissions<JdkProjectSettings>(
   companion object {
     const val TEST_SCALA = "TestSpec.scala"
     const val TASK_SCALA = "Task.scala"
+    const val MAIN_SCALA = "Main.scala"
     const val MOCK_SCALA = "Mock.scala"
   }
 }

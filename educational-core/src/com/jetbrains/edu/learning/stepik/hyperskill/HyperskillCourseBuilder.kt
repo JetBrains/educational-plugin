@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
+import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
@@ -45,16 +46,38 @@ open class HyperskillCourseBuilder<T>(private val baseCourseBuilder: EduCourseBu
 
   override fun createInitialLesson(project: Project, course: Course): Lesson? = baseCourseBuilder.createInitialLesson(project, course)
 
-  override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) =
-    baseCourseBuilder.initNewTask(project, lesson, task, info)
+  override fun getTestTaskTemplates(course: Course, info: NewStudyItemInfo, withSources: Boolean): List<TemplateFileInfo> {
+    return baseCourseBuilder.getTestTaskTemplates(course, info, withSources)
+  }
+
+  override fun getExecutableTaskTemplates(course: Course, info: NewStudyItemInfo, withSources: Boolean): List<TemplateFileInfo> {
+    return baseCourseBuilder.getExecutableTaskTemplates(course, info, withSources)
+  }
+
+  override fun getDefaultTaskTemplates(
+    course: Course,
+    info: NewStudyItemInfo,
+    withSources: Boolean,
+    withTests: Boolean
+  ): List<TemplateFileInfo> {
+    return baseCourseBuilder.getDefaultTaskTemplates(course, info, withSources, withTests)
+  }
+
+  override fun extractInitializationParams(project: Project, info: NewStudyItemInfo): Map<String, String> {
+    return baseCourseBuilder.extractInitializationParams(project, info)
+  }
+
+  override fun initNewTask(project: Project, course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) =
+    baseCourseBuilder.initNewTask(project, course, task, info, withSources)
 
   override fun getTextForNewTask(taskFile: TaskFile, taskDir: VirtualFile, newTask: Task): String? =
     baseCourseBuilder.getTextForNewTask(taskFile, taskDir, newTask)
 
-  override fun createDefaultTestFile(task: Task): TaskFile? = baseCourseBuilder.createDefaultTestFile(task)
-
   override val taskTemplateName: String?
     get() = baseCourseBuilder.taskTemplateName
+
+  override val mainTemplateName: String?
+    get() = baseCourseBuilder.mainTemplateName
 
   override val testTemplateName: String?
     get() = baseCourseBuilder.testTemplateName

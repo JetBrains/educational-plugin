@@ -10,12 +10,13 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import icons.EducationalCoreIcons.IdeTask
 import icons.EducationalCoreIcons.Task
 import java.util.*
-import kotlin.collections.LinkedHashMap
 
 class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Task) {
 
@@ -65,11 +66,12 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Task)
     }
     item.lesson = parentItem
     item.addDefaultTaskDescription()
+
     if (parentItem is FrameworkLesson) {
       val prevTask = parentItem.getTaskList().getOrNull(info.index - 2)
       val prevTaskDir = prevTask?.getTaskDir(project)
       if (prevTask == null || prevTaskDir == null) {
-        initTask(project, course, parentItem, item, info)
+        initTask(project, course, item, info)
         return
       }
       FileDocumentManager.getInstance().saveAllDocuments()
@@ -88,10 +90,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Task)
       item.taskFiles = newTaskFiles
 
       if (!needCopyTests) {
-        val defaultTestFile = course.configurator?.courseBuilder?.createDefaultTestFile(item)
-        if (defaultTestFile != null) {
-          newTaskFiles[defaultTestFile.name] = defaultTestFile
-        }
+        initTask(project, course, item, info, withSources = false)
       }
 
       // If we insert new task between `task1` and `task2`
@@ -107,7 +106,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Task)
         }
       item.init(course, parentItem, false)
     } else {
-      initTask(project, course, parentItem, item, info)
+      initTask(project, course, item, info)
     }
   }
 
@@ -116,13 +115,20 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Task)
       StudyItemVariant(message("action.new.study.item.task.edu.name"), message("action.new.study.item.task.edu.description"), Task, ::EduTask),
       StudyItemVariant(message("action.new.study.item.task.output.name"), message("action.new.study.item.task.output.description"), Task, ::OutputTask),
       StudyItemVariant(message("action.new.study.item.task.theory.name"), message("action.new.study.item.task.theory.description"), Task, ::TheoryTask),
-      StudyItemVariant(message("action.new.study.item.task.choice.name"), message("action.new.study.item.task.choice.description"), Task, ::ChoiceTask),
+      StudyItemVariant(message("action.new.study.item.task.choice.name"), message("action.new.study.item.task.choice.description"), Task) {
+        val task = ChoiceTask()
+        task.choiceOptions = listOf(
+          ChoiceOption("Correct", ChoiceOptionStatus.CORRECT),
+          ChoiceOption("Incorrect", ChoiceOptionStatus.INCORRECT)
+        )
+        task
+      },
       StudyItemVariant(message("action.new.study.item.task.ide.name"), message("action.new.study.item.task.ide.description"), IdeTask, ::IdeTask)
     )
 
-  private fun initTask(project: Project, course: Course, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
+  private fun initTask(project: Project, course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean = true) {
     if (!course.isStudy) {
-      course.configurator?.courseBuilder?.initNewTask(project, lesson, task, info)
+      course.configurator?.courseBuilder?.initNewTask(project, course, task, info, withSources)
     }
   }
 

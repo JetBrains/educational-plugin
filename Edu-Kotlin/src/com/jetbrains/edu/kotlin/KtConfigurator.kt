@@ -28,6 +28,7 @@ class KtConfigurator : GradleConfiguratorBase() {
   companion object {
     const val TESTS_KT = "Tests.kt"
     const val TASK_KT = "Task.kt"
+    const val MAIN_KT = "Main.kt"
     const val MOCK_KT = "Mock.kt"
   }
 }

@@ -12,48 +12,48 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames.TEST
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.joinPaths
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
-  override val taskTemplateName: String = TASK_GO
-  override val testTemplateName: String = TEST_GO
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<GoProjectSettings> =
     GoCourseProjectGenerator(this, course)
 
   override fun getLanguageSettings(): LanguageSettings<GoProjectSettings> = GoLanguageSettings()
 
-  override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
-    if (task.taskFiles.isNotEmpty()) return
-    val moduleName = task.name.replace(" ", "_").toLowerCase()
+  override fun getTestTaskTemplates(course: Course, info: NewStudyItemInfo, withSources: Boolean): List<TemplateFileInfo> {
+    val templates = mutableListOf(TemplateFileInfo(TEST_GO, joinPaths(TEST, TEST_GO), false))
+    if (withSources) {
+      templates += TemplateFileInfo(EDU_TASK_TEMPLATE, TASK_GO, true)
+      templates += TemplateFileInfo(EDU_MAIN_TEMPLATE, joinPaths("main", MAIN_GO), true)
+      templates += TemplateFileInfo(GO_MOD, GO_MOD, false)
+    }
+    return templates
+  }
+
+  override fun getExecutableTaskTemplates(course: Course, info: NewStudyItemInfo, withSources: Boolean): List<TemplateFileInfo> {
+    if (!withSources) return emptyList()
+    return listOf(
+      TemplateFileInfo(MAIN_GO, MAIN_GO, true),
+      TemplateFileInfo(GO_MOD, GO_MOD, false)
+    )
+  }
+
+  override fun extractInitializationParams(project: Project, info: NewStudyItemInfo): Map<String, String> {
+    val moduleName = info.name.replace(" ", "_").toLowerCase()
     val moduleQuoted = "\"$moduleName\""
-    val params = mapOf(
+    return mapOf(
       "MODULE_NAME" to moduleName,
       "MAIN_IMPORTS" to createImportsSection(FMT, "task $moduleQuoted"),
       "TEST_IMPORTS" to createImportsSection(TESTING, "task $moduleQuoted")
     )
-
-    for (templateInfo in defaultTaskFiles) {
-      val taskFile = templateInfo.toTaskFile(params) ?: continue
-      task.addTaskFile(taskFile)
-    }
   }
 
   // https://golang.org/ref/spec#Import_declarations
   override fun validateItemName(name: String, itemType: StudyItemType): String? {
     return if (itemType == StudyItemType.TASK && name.contains(FORBIDDEN_SYMBOLS)) "Name contains forbidden symbols" else null
   }
-
-  private val defaultTaskFiles: List<TemplateFileInfo>
-    get() = listOf(
-      TemplateFileInfo(TASK_GO, TASK_GO, true),
-      TemplateFileInfo(MAIN_GO, joinPaths("main", MAIN_GO), true),
-      TemplateFileInfo(TEST_GO, joinPaths(TEST, TEST_GO), false),
-      TemplateFileInfo(GO_MOD, GO_MOD, false)
-    )
 
   /**
    * We have 2 types of imports in Go:
@@ -68,5 +68,8 @@ class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
     val FORBIDDEN_SYMBOLS = """[!"#$%&'()*,:;<=>?\[\]^`{|}~]+""".toRegex()
     private const val TESTING = "\"testing\""
     private const val FMT = "\"fmt\""
+
+    private const val EDU_TASK_TEMPLATE = "edu_task.go"
+    private const val EDU_MAIN_TEMPLATE = "edu_main.go"
   }
 }

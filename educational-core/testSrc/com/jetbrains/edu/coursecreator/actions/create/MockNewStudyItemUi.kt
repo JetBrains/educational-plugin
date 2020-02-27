@@ -8,7 +8,11 @@ import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel.Companion.AFTER_DE
 import com.jetbrains.edu.coursecreator.ui.NewStudyItemUi
 import com.jetbrains.edu.learning.courseFormat.Course
 
-open class MockNewStudyItemUi(private val name: String? = null, private val index: Int? = null): NewStudyItemUi {
+open class MockNewStudyItemUi(
+  private val name: String? = null,
+  private val index: Int? = null,
+  private val itemType: String? = null
+): NewStudyItemUi {
   override fun show(
     project: Project,
     course: Course,
@@ -16,10 +20,17 @@ open class MockNewStudyItemUi(private val name: String? = null, private val inde
     additionalPanels: List<AdditionalPanel>,
     studyItemCreator: (NewStudyItemInfo) -> Unit
   ) {
+    val itemVariant = if (itemType != null) {
+      model.studyItemVariants.find { it.type == itemType } ?: error("Can't find `$itemType` in `${model.studyItemVariants.map { it.type }}`")
+    }
+    else {
+      model.studyItemVariants.first()
+    }
+
     val info = NewStudyItemInfo(
       name ?: model.suggestedName,
       index ?: model.baseIndex + AFTER_DELTA,
-      model.studyItemVariants.first().producer
+      itemVariant.producer
     )
     studyItemCreator(info)
   }

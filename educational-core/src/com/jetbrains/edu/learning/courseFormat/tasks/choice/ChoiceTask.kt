@@ -8,9 +8,9 @@ import java.util.*
 
 class ChoiceTask : Task {
 
-  var choiceOptions = listOf<ChoiceOption>()
+  var choiceOptions: List<ChoiceOption> = listOf()
   var isMultipleChoice: Boolean = false
-  var selectedVariants = mutableListOf<Int>()
+  var selectedVariants: MutableList<Int> = mutableListOf()
   var messageCorrect: String = CheckUtils.CONGRATULATIONS
   var messageIncorrect: String = "Incorrect solution"
 

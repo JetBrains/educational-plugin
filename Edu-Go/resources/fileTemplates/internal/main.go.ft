@@ -1,9 +1,10 @@
 package main
 
 import (
-	${MAIN_IMPORTS}
+	"fmt"
 )
 
 func main() {
-	fmt.Println(task.Sum(2, 3))
+	// Write your solution here
+	fmt.Println()
 }

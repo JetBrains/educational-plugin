@@ -6,6 +6,7 @@ class ScalaGradleCourseBuilder : GradleCourseBuilderBase() {
 
   override val buildGradleTemplateName: String = SCALA_BUILD_GRADLE_TEMPLATE_NAME
   override val taskTemplateName: String = ScalaGradleConfigurator.TASK_SCALA
+  override val mainTemplateName: String = ScalaGradleConfigurator.MAIN_SCALA
   override val testTemplateName: String = ScalaGradleConfigurator.TEST_SCALA
 
   companion object {

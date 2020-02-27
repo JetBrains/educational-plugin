@@ -3,23 +3,22 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils.loadText
 import com.jetbrains.edu.coursecreator.actions.*
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
+import com.jetbrains.edu.learning.checker.OutputTaskChecker.Companion.OUTPUT_PATTERN_NAME
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createDefaultFile
+import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTask
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.joinPaths
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import java.io.IOException
@@ -113,30 +112,101 @@ interface EduCourseBuilder<Settings> {
   }
 
   /**
+   * Returns list of templates to create files in new task that supposed to be checked by tests launch.
+   *
+   * @param info general information about new task
+   * @param withSources determines if returning template list should contain task source files (non test files).
+   * Can be `false` if parent item is [FrameworkLesson]
+   *
+   * @see EduTask
+   */
+  fun getTestTaskTemplates(course: Course, info: NewStudyItemInfo, withSources: Boolean): List<TemplateFileInfo> =
+    getDefaultTaskTemplates(course, info, withSources, true)
+
+  /**
+   * Returns list of templates to create files in new task that supposed to be run by user.
+   * In compiled languages it means that task should have `main` function
+   *
+   * @param info general information about new task
+   * @param withSources determines if returning template list should contain task source files (non test files).
+   * Can be `false` if parent item is [FrameworkLesson]
+   *
+   * @see OutputTask
+   * @see ChoiceTask
+   * @see TheoryTask
+   * @see IdeTask
+   */
+  fun getExecutableTaskTemplates(course: Course, info: NewStudyItemInfo, withSources: Boolean): List<TemplateFileInfo> =
+    getDefaultTaskTemplates(course, info, withSources, false)
+
+  /**
+   * Returns default list of templates to create files in new task.
+   *
+   * If you need to specify different templates for test and executable tasks,
+   * override [getTestTaskTemplates] and [getExecutableTaskTemplates] methods respectively.
+   *
+   * @param info general information about new task
+   * @param withSources determines if returning template list should contain source files (non test files).
+   * Can be `false` if parent item is [FrameworkLesson]
+   * @param withTests determines if returning template list should contain test files
+   */
+  fun getDefaultTaskTemplates(
+    course: Course,
+    info: NewStudyItemInfo,
+    withSources: Boolean,
+    withTests: Boolean
+  ): List<TemplateFileInfo> {
+    val configurator = course.configurator ?: return emptyList()
+    val templates = mutableListOf<TemplateFileInfo>()
+
+    if (withSources) {
+      val taskTemplate = if (withTests) taskTemplateName else mainTemplateName
+      if (taskTemplate != null) {
+        templates += TemplateFileInfo(taskTemplate, joinPaths(configurator.sourceDir, taskTemplate), true)
+      }
+    }
+
+    if (withTests) {
+      val testTemplate = testTemplateName
+      if (testTemplate != null) {
+        val testFileName = configurator.testFileName.takeIf { it.isNotEmpty() } ?: testTemplate
+        templates += TemplateFileInfo(testTemplate, joinPaths(configurator.testDirs.firstOrNull(), testFileName), false)
+      }
+    }
+
+    return templates
+  }
+
+  fun extractInitializationParams(project: Project, info: NewStudyItemInfo): Map<String, String> = emptyMap()
+
+  /**
    * Add initial content for a new task: task and tests files if the corresponding files don't exist.
    * Supposed to use in course creator mode
    *
    * @param task initializing task
    */
-  fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
-    if (task.taskFiles.isEmpty()) {
-      val sourceDir = task.sourceDir
-      val taskFile = TaskFile()
-      val taskTemplateName = taskTemplateName
-      if (taskTemplateName != null) {
-        taskFile.name = joinPaths(sourceDir, taskTemplateName)
-        taskFile.setText(StringUtil.notNullize(getInternalTemplateText(taskTemplateName)))
+  fun initNewTask(project: Project, course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) {
+    val templates = when (task) {
+      is EduTask -> getTestTaskTemplates(course, info, withSources)
+      is OutputTask -> {
+        val outputTemplate = TemplateFileInfo(
+          OUTPUT_PATTERN_NAME,
+          joinPaths(course.testDirs.firstOrNull(), OUTPUT_PATTERN_NAME),
+          false
+        )
+        getExecutableTaskTemplates(course, info, withSources) + outputTemplate
       }
-      else {
-        val (name, text) = createDefaultFile(task.lesson.course, "Task", "type task text here")
-        taskFile.name = joinPaths(sourceDir, name)
-        taskFile.setText(text)
-      }
+      is ChoiceTask -> getExecutableTaskTemplates(course, info, withSources)
+      is TheoryTask -> getExecutableTaskTemplates(course, info, withSources)
+      is IdeTask -> getExecutableTaskTemplates(course, info, withSources)
+      else -> return
+    }
+
+    val params = extractInitializationParams(project, info)
+
+    for (template in templates) {
+      val taskFile = template.toTaskFile(params)
       task.addTaskFile(taskFile)
-      val defaultTestFile = createDefaultTestFile(task)
-      if (defaultTestFile != null) {
-        task.addTaskFile(defaultTestFile)
-      }
     }
   }
 
@@ -164,23 +234,8 @@ interface EduCourseBuilder<Settings> {
     return null
   }
 
-  fun createDefaultTestFile(task: Task): TaskFile? {
-    val testDirs = task.testDirs
-    var testDir = ""
-    if (!testDirs.isEmpty()) {
-      testDir = testDirs[0]
-    }
-    val testTemplateName = testTemplateName
-    if (testTemplateName != null) {
-      val testText = getInternalTemplateText(testTemplateName)
-      val test = TaskFile(joinPaths(testDir, testTemplateName), testText)
-      test.isVisible = false
-      return test
-    }
-    return null
-  }
-
   val taskTemplateName: String? get() = null
+  val mainTemplateName: String? get() = taskTemplateName
   val testTemplateName: String? get() = null
 
   /**

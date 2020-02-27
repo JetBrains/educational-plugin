@@ -11,8 +11,9 @@ import com.jetbrains.edu.learning.courseFormat.Course
 class MockAndroidNewStudyUi(
   name: String,
   private val packageName: String,
-  index: Int? = null
-) : MockNewStudyItemUi(name, index) {
+  index: Int? = null,
+  itemType: String? = null
+) : MockNewStudyItemUi(name, index, itemType) {
   override fun show(
     project: Project,
     course: Course,

@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PlatformUtils.isCommunityEdition
 import com.intellij.util.PlatformUtils.isPyCharmEducational
 import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils.isAndroidStudio
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
@@ -22,7 +23,7 @@ open class JsConfigurator : EduConfiguratorWithSubmissions<JsNewProjectSettings>
   override fun getMockFileName(text: String): String = TASK_JS
 
   override val testDirs: List<String>
-    get() = listOf("test")
+    get() = listOf(EduNames.TEST)
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = JsTaskCheckerProvider()
@@ -41,5 +42,6 @@ open class JsConfigurator : EduConfiguratorWithSubmissions<JsNewProjectSettings>
 
   companion object {
     const val TASK_JS = "task.js"
+    const val TEST_JS = "test.js"
   }
 }

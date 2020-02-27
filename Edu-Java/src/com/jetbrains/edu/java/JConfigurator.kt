@@ -34,6 +34,7 @@ class JConfigurator : GradleConfiguratorBase() {
   companion object {
     const val TEST_JAVA = "Tests.java"
     const val TASK_JAVA = "Task.java"
+    const val MAIN_JAVA = "Main.java"
     const val MOCK_JAVA = "Mock.java"
   }
 }

@@ -36,5 +36,6 @@ open class PyConfigurator : EduConfiguratorWithSubmissions<PyNewProjectSettings>
   companion object {
     const val TESTS_PY = "tests.py"
     const val TASK_PY = "task.py"
+    const val MAIN_PY = "main.py"
   }
 }

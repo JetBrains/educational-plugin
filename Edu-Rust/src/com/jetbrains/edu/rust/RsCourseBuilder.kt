@@ -11,8 +11,6 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.rust.cargo.CargoConstants
 import org.rust.cargo.project.model.CargoProject
@@ -84,21 +82,28 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
         cargoProjects.refreshAllProjects()
     }
 
-    override fun initNewTask(project: Project, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
-        if (task.taskFiles.isNotEmpty()) return
-        val params = mapOf("PACKAGE_NAME" to info.name.toPackageName())
-        for (templateInfo in defaultTaskFiles()) {
-            val taskFile = templateInfo.toTaskFile(params) ?: continue
-            task.addTaskFile(taskFile)
+    override fun getTestTaskTemplates(course: Course, info: NewStudyItemInfo, withSources: Boolean): List<TemplateFileInfo> {
+        val templates = mutableListOf<TemplateFileInfo>()
+        if (withSources) {
+            templates += TemplateFileInfo(LIB_RS, "src/$LIB_RS", true)
+            templates +=TemplateFileInfo(MAIN_RS, "src/$MAIN_RS", true)
+            templates +=TemplateFileInfo(CargoConstants.MANIFEST_FILE, CargoConstants.MANIFEST_FILE, true)
         }
+        templates += TemplateFileInfo(TESTS_RS, "tests/$TESTS_RS", false)
+        return templates
     }
 
-    private fun defaultTaskFiles(): List<TemplateFileInfo> = listOf(
-      TemplateFileInfo(LIB_RS, "src/$LIB_RS", true),
-      TemplateFileInfo(MAIN_RS, "src/$MAIN_RS", true),
-      TemplateFileInfo(TESTS_RS, "tests/$TESTS_RS", false),
-      TemplateFileInfo(CargoConstants.MANIFEST_FILE, CargoConstants.MANIFEST_FILE, true)
-    )
+    override fun getExecutableTaskTemplates(course: Course, info: NewStudyItemInfo, withSources: Boolean): List<TemplateFileInfo> {
+        if (!withSources) return emptyList()
+        return listOf(
+          TemplateFileInfo(MAIN_RS, "src/$MAIN_RS", true),
+          TemplateFileInfo(CargoConstants.MANIFEST_FILE, CargoConstants.MANIFEST_FILE, true)
+        )
+    }
+
+    override fun extractInitializationParams(project: Project, info: NewStudyItemInfo): Map<String, String> {
+        return mapOf("PACKAGE_NAME" to info.name.toPackageName())
+    }
 
     override fun validateItemName(name: String, itemType: StudyItemType): String? =
       if (itemType == StudyItemType.TASK) RsPackageNameValidator.validate(name.toPackageName(), true) else null

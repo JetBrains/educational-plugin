@@ -1,0 +1,9 @@
+package main
+
+import (
+	${MAIN_IMPORTS}
+)
+
+func main() {
+	fmt.Println(task.Sum(2, 3))
+}

@@ -6,6 +6,7 @@ open class JCourseBuilder : GradleCourseBuilderBase() {
 
   override val buildGradleTemplateName: String = JAVA_BUILD_GRADLE_TEMPLATE_NAME
   override val taskTemplateName: String = JConfigurator.TASK_JAVA
+  override val mainTemplateName: String = JConfigurator.MAIN_JAVA
   override val testTemplateName: String = JConfigurator.TEST_JAVA
   override fun getLanguageSettings() = JLanguageSettings()
 
