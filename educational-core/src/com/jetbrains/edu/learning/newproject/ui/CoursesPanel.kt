@@ -43,6 +43,7 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.importCour
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.loggedIn
 import com.jetbrains.edu.learning.stepik.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
+import com.jetbrains.edu.learning.stepik.StepikCoursesProvider
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
@@ -212,10 +213,12 @@ class CoursesPanel(courses: List<Course>,
 
   private fun updateCoursesList() {
     val selectedCourse = myCoursesList.selectedValue
-    val courses = getCourseInfosUnderProgress(
-      "Getting Available Courses"
-    ) { CoursesProvider.loadAllCourses() }
-    myCourses = courses?.toMutableList() ?: mutableListOf()
+    val privateCourses = getCourseInfosUnderProgress("Getting Available Courses") { StepikCoursesProvider.loadPrivateCourses() }
+    privateCourses?.let { courses ->
+      val coursesIds = myCourses.map { it.id }.toSet()
+      myCourses.addAll(courses.filter { !coursesIds.contains(it.id) })
+    }
+
     updateModel(myCourses, selectedCourse)
     myErrorLabel.isVisible = false
     notifyListeners(true)

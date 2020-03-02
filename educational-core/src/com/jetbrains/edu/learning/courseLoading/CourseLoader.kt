@@ -14,7 +14,7 @@ object CourseLoader {
    */
   @JvmStatic
   fun getCourseInfosUnderProgress(progressTitle: String = "Getting Available Courses",
-                                  loadCourses: () -> MutableList<Course>): List<Course>? {
+                                  loadCourses: () -> List<Course>): List<Course>? {
     try {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<Course>, RuntimeException>(
         {
