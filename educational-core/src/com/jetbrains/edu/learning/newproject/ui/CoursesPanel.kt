@@ -34,6 +34,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDecoratedLogo
 import com.jetbrains.edu.learning.courseFormat.ext.tooltipText
 import com.jetbrains.edu.learning.courseLoading.CourseLoader.getCourseInfosUnderProgress
+import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.*
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.Companion.forCourse
@@ -83,17 +84,12 @@ class CoursesPanel(courses: List<Course>,
       return myCoursePanel.projectSettings()
     }
 
-
   private fun initUI() {
     GuiUtils.replaceJSplitPaneWithIDEASplitter(mySplitPaneRoot, true)
     mySplitPane.setDividerLocation(0.5)
     mySplitPane.resizeWeight = 0.5
     myErrorLabel.isVisible = false
-    myCoursesList.setEmptyText(NO_COURSES)
-    updateModel(myCourses, null)
-    val renderer = courseRenderer
-    myCoursesList.cellRenderer = renderer
-    myCoursesList.addListSelectionListener { processSelectionChanged() }
+
     val toolbarDecorator = ToolbarDecorator.createDecorator(myCoursesList)
       .disableAddAction()
       .disableRemoveAction()
@@ -128,7 +124,8 @@ class CoursesPanel(courses: List<Course>,
         loggedIn(course.name,
                  EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
       }
-      else if (myErrorState === HyperskillLoginRequired) {
+      else if (myErrorState === HyperskillLoginRequired ||
+               myErrorState === JetBrainsAcademyLoginRecommended) {
         addHyperskillLoginListener()
         loggedIn(HYPERSKILL,
                  EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
@@ -224,21 +221,6 @@ class CoursesPanel(courses: List<Course>,
     notifyListeners(true)
   }
 
-  private val courseRenderer: ColoredListCellRenderer<Course>
-    get() = object : ColoredListCellRenderer<Course>() {
-      override fun customizeCellRenderer(jList: JList<out Course>,
-                                         course: Course,
-                                         i: Int,
-                                         b: Boolean,
-                                         b1: Boolean) {
-        val logo = getLogo(course)
-        border = JBUI.Borders.empty(5, 0)
-        append(course.name, course.visibility.textAttributes)
-        icon = course.getDecoratedLogo(logo)
-        toolTipText = course.tooltipText
-      }
-    }
-
   private fun processSelectionChanged() {
     val course = myCoursesList.selectedValue
     if (course != null) {
@@ -246,6 +228,14 @@ class CoursesPanel(courses: List<Course>,
       enableCourseViewAsEducator(ApplicationManager.getApplication().isInternal ||
                                  course !is StepikCourse && course !is CheckiOCourse)
       selectedCourse = course
+      val isViewAsEducatorEnabled = selectedCourse !is StepikCourse && selectedCourse !is CheckiOCourse
+      enableCourseViewAsEducator.apply {
+        selectedCourse !is JetBrainsAcademyCourse &&
+        (ApplicationManager.getApplication().isInternal || isViewAsEducatorEnabled)
+      }
+
+      val languageSettings = myCoursePanel.bindCourse(selectedCourse)
+      languageSettings.addSettingsChangeListener { doValidation(course) }
     }
     doValidation(course)
   }
@@ -458,10 +448,12 @@ class CoursesPanel(courses: List<Course>,
     myErrorPanel.border = JBUI.Borders.emptyTop(20)
 
     myCourses = courses.toMutableList()
-    myCoursesComparator = Comparator.comparing { obj: Course -> obj.visibility }.thenComparing { obj: Course -> obj.name }
+    myCoursesComparator = Comparator.comparingInt { element: Course -> if (element is JetBrainsAcademyCourse) 0 else 1 }
+      .thenComparing(Course::getVisibility)
+      .thenComparing(Course::getName)
 
     myCoursesList.setEmptyText(NO_COURSES)
-    val renderer = courseRenderer
+    val renderer = CourseColoredListCellRenderer()
     myCoursesList.cellRenderer = renderer
     myCoursesList.addListSelectionListener { processSelectionChanged() }
     myCoursesList.border = null
@@ -516,4 +508,19 @@ class CoursesPanel(courses: List<Course>,
 
     return searchField
   }
+
+  private class CourseColoredListCellRenderer : ColoredListCellRenderer<Course?>() {
+
+    override fun customizeCellRenderer(list: JList<out Course?>, course: Course?, index: Int, selected: Boolean, hasFocus: Boolean) {
+      course?.let {
+        val logo = getLogo(course)
+        border = JBUI.Borders.empty(5, 0)
+        append(course.name, course.visibility.textAttributes)
+        icon = course.getDecoratedLogo(logo)
+        toolTipText = course.tooltipText
+      }
+    }
+  }
 }
+
+
