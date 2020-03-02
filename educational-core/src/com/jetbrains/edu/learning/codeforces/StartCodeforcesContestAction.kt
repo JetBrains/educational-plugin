@@ -10,8 +10,6 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider.Companion.getLanguageIdAndVersion
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.newproject.ui.CoursePanel.CourseDisplaySettings
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 
