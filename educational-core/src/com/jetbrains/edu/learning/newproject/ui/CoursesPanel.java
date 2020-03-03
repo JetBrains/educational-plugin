@@ -71,6 +71,8 @@ public class CoursesPanel extends JPanel {
   private JPanel mySplitPaneRoot;
   private JBList<Course> myCoursesList;
   private CoursePanel myCoursePanel;
+  private JPanel myContentPanel;
+  private JPanel myErrorPanel;
   private List<Course> myCourses;
   private Comparator<Course> myCoursesComparator;
   private List<CourseValidationListener> myListeners = new ArrayList<>();
@@ -83,6 +85,42 @@ public class CoursesPanel extends JPanel {
   public CoursesPanel(@NotNull List<Course> courses,
                       @Nullable DefaultActionGroup customToolbarActions,
                       Function<Boolean, Unit> enableCourseViewAsEducator) {
+
+    myMainPanel = new JPanel(new BorderLayout());
+
+    myErrorPanel = new JPanel(new BorderLayout());
+    myErrorLabel = new HyperlinkLabel();
+    myErrorPanel.add(myErrorLabel, BorderLayout.CENTER);
+
+    myContentPanel = new JPanel(new BorderLayout());
+    mySplitPaneRoot = new JPanel(new BorderLayout());
+    mySplitPane = new JSplitPane();
+    mySplitPaneRoot.add(mySplitPane, BorderLayout.CENTER);
+    myCourseListPanel = new JPanel(new BorderLayout());
+    mySearchField = new FilterComponent("Edu.NewCourse", 5, true) {
+      @Override
+      public void filter() {
+        Course selectedCourse = myCoursesList.getSelectedValue();
+        String filter = getFilter();
+        List<Course> filtered = new ArrayList<>();
+        for (Course course : myCourses) {
+          if (accept(filter, course)) {
+            filtered.add(course);
+          }
+        }
+        updateModel(filtered, selectedCourse);
+      }
+    };
+    UIUtil.setBackgroundRecursively(mySearchField, UIUtil.getTextFieldBackground());
+    myCourseListPanel.add(mySearchField, BorderLayout.NORTH);
+
+    mySplitPane.setLeftComponent(myCourseListPanel);
+
+    myCoursePanel = new CoursePanel(false, true);
+    myCoursePanel.bindSearchField(mySearchField);
+    mySplitPane.setRightComponent(myCoursePanel);
+    myContentPanel.add(mySplitPaneRoot, BorderLayout.CENTER);
+
     myCourses = courses;
     myCoursesComparator =
       Comparator.comparingInt((Course element) -> element instanceof JetBrainsAcademyCourse ? 0 : 1).thenComparing(Course::getVisibility)
@@ -91,6 +129,9 @@ public class CoursesPanel extends JPanel {
     add(myMainPanel, BorderLayout.CENTER);
     myCustomToolbarActions = customToolbarActions;
     myEnableCourseViewAsEducator = enableCourseViewAsEducator;
+
+    myMainPanel.add(myContentPanel, BorderLayout.CENTER);
+    myMainPanel.add(myErrorPanel, BorderLayout.SOUTH);
     initUI();
   }
 
@@ -332,26 +373,6 @@ public class CoursesPanel extends JPanel {
   @Nullable
   public Course getSelectedCourse() {
     return myCoursesList.getSelectedValue();
-  }
-
-  private void createUIComponents() {
-    myCoursePanel = new CoursePanel(false, true);
-    mySearchField = new FilterComponent("Edu.NewCourse", 5, true) {
-      @Override
-      public void filter() {
-        Course selectedCourse = myCoursesList.getSelectedValue();
-        String filter = getFilter();
-        List<Course> filtered = new ArrayList<>();
-        for (Course course : myCourses) {
-          if (accept(filter, course)) {
-            filtered.add(course);
-          }
-        }
-        updateModel(filtered, selectedCourse);
-      }
-    };
-    myCoursePanel.bindSearchField(mySearchField);
-    UIUtil.setBackgroundRecursively(mySearchField, UIUtil.getTextFieldBackground());
   }
 
   private static boolean accept(@NonNls String filter, Course course) {
