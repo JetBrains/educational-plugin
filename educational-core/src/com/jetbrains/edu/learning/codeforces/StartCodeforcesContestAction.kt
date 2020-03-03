@@ -11,7 +11,9 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider.Companio
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.newproject.ui.CoursePanel.CourseDisplaySettings
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 
 class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest") {
 
@@ -26,7 +28,9 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
     // Decided to do it well by adding toolchain select field
     val showLanguageSettings = course.languageID != EduNames.CPP
 
-    object : JoinCourseDialogBase(course, CourseDisplaySettings(false, false, showLanguageSettings)) {
+    object : JoinCourseDialogBase(course, CourseDisplaySettings(showTagsPanel = false,
+                                                                showInstructorField = false,
+                                                                showLanguageSettings = showLanguageSettings)) {
       override val allowViewAsEducatorAction: Boolean get() = false
 
       init {

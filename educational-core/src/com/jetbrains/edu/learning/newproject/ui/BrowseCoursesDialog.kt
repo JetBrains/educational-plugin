@@ -5,12 +5,16 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.JComponent
 
 class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: DefaultActionGroup? = null) : OpenCourseDialogBase() {
-  val panel = CoursesPanel(courses, customToolbarActions) { setEnabledViewAsEducator(it) }
+  val panel = CoursesPanel(courses, this, customToolbarActions) { setEnabledViewAsEducator(it) }
 
   init {
     title = "Select Course"
     init()
-    panel.addCourseValidationListener(this::setOKActionEnabled)
+    panel.addCourseValidationListener(object : CoursesPanel.CourseValidationListener {
+      override fun validationStatusChanged(canStartCourse: Boolean) {
+        isOKActionEnabled = canStartCourse
+      }
+    })
   }
 
   override fun getPreferredFocusedComponent(): JComponent? {

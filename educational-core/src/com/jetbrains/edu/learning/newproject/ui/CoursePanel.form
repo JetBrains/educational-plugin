@@ -26,6 +26,7 @@
                 <constraints border-constraint="North"/>
                 <properties>
                   <horizontalAlignment value="2"/>
+                  <labelFor value="5fbab"/>
                 </properties>
               </component>
               <grid id="97d3d" binding="myTagsPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
@@ -51,7 +52,7 @@
               </component>
             </children>
           </scrollpane>
-          <component id="e1c40" class="com.jetbrains.edu.learning.newproject.ui.AdvancedSettings" binding="myAdvancedSettings">
+          <component id="e1c40" class="com.jetbrains.edu.learning.newproject.ui.CourseSettings" binding="myCourseSettings">
             <constraints border-constraint="South"/>
             <properties/>
           </component>

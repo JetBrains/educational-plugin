@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.enablePlugins
 import com.jetbrains.edu.learning.getDisabledPlugins
-import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
+import com.jetbrains.edu.learning.newproject.ui.CourseSettings
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.ui.EduColors
@@ -51,7 +51,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
   private val myTitleField: CourseTitleField = CourseTitleField()
   private val myDescriptionTextArea: JTextArea = JTextArea()
 
-  private val myAdvancedSettings: AdvancedSettings = AdvancedSettings()
+  private val myAdvancedSettings: CourseSettings = CourseSettings()
   private val myPathField: PathField = PathField()
   private val myLocationField: LabeledComponent<TextFieldWithBrowseButton> = createLocationField()
 

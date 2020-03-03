@@ -10,17 +10,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class AdvancedSettings extends JPanel {
+public class CourseSettings extends JPanel {
 
   private final JPanel myAdvancedSettings = new JPanel();
   private final HideableDecorator myDecorator;
 
-  public AdvancedSettings() {
+  public CourseSettings() {
     super(new BorderLayout());
     myAdvancedSettings.setLayout(new BoxLayout(myAdvancedSettings, BoxLayout.Y_AXIS));
     add(myAdvancedSettings, BorderLayout.CENTER);
 
-    myDecorator = new HideableDecorator(this, "Advanced Settings", false);
+    myDecorator = new HideableDecorator(this, "Settings", false);
     myDecorator.setContentComponent(myAdvancedSettings);
     myAdvancedSettings.setBorder(JBUI.Borders.empty(0, IdeBorderFactory.TITLED_BORDER_INDENT, 5, 0));
   }

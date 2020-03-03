@@ -9,6 +9,7 @@ import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.ui.FilterComponent;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
@@ -23,11 +24,10 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse;
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
 import com.jetbrains.edu.learning.stepik.course.StepikCourse;
-import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,9 +58,9 @@ public class CoursePanel extends JPanel {
   private JBScrollPane myInfoScroll;
   private JEditorPane myDescriptionTextArea;
 
-  private AdvancedSettings myAdvancedSettings;
+  private CourseSettings myCourseSettings;
   private JPanel myCourseDescriptionPanel;
-  @Nullable private LanguageSettings<?> myLanguageSettings;
+  private LanguageSettings<?> myLanguageSettings;
   @Nullable
   private FilterComponent mySearchField;
 
@@ -84,7 +84,6 @@ public class CoursePanel extends JPanel {
     }
 
     myCourseNameLabel.setBorder(JBUI.Borders.empty(20, leftMargin, 5, HORIZONTAL_MARGIN));
-    //noinspection StaticMethodReferencedViaSubclass it's needed for compilation with 191 branch
     Font labelFont = UIUtil.getLabelFont();
     myCourseNameLabel.setFont(new Font(labelFont.getName(), Font.BOLD, JBUI.scaleFontSize(18.0f)));
 
@@ -100,13 +99,13 @@ public class CoursePanel extends JPanel {
     Border border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, leftBorder, 1, 1);
     myCoursePanel.setBorder(border);
 
-    myAdvancedSettings.setVisible(false);
+    myCourseSettings.setVisible(false);
 
     if (isLocationFieldNeeded) {
       myLocationField = createLocationComponent();
     }
 
-    myDescriptionTextArea.addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE);
+    myDescriptionTextArea.addHyperlinkListener(new BrowserHyperlinkListener());
   }
 
   public LanguageSettings<?> bindCourse(@NotNull Course course) {
@@ -115,7 +114,7 @@ public class CoursePanel extends JPanel {
 
   public LanguageSettings<?> bindCourse(@NotNull Course course, @Nullable CourseDisplaySettings settings) {
     myCourseDescriptionPanel.setVisible(true);
-    CourseDisplaySettings exactSettings = settings == null ? CourseDisplaySettings.DEFAULT : settings;
+    CourseDisplaySettings exactSettings = settings == null ? new CourseDisplaySettings() : settings;
     updateCourseDescriptionPanel(course, exactSettings);
     updateAdvancedSettings(course, exactSettings.showLanguageSettings);
     return myLanguageSettings;
@@ -131,9 +130,6 @@ public class CoursePanel extends JPanel {
   }
 
   public Object getProjectSettings() {
-    if (myLanguageSettings == null) {
-      return new Object();
-    }
     return myLanguageSettings.getSettings();
   }
 
@@ -148,12 +144,9 @@ public class CoursePanel extends JPanel {
 
   @Nullable
   public ValidationMessage validateSettings(@Nullable Course course) {
-    if (myLanguageSettings == null) {
-      return null;
-    }
     ValidationMessage validationMessage = myLanguageSettings.validate(course, getLocationString());
     if (validationMessage != null) {
-      myAdvancedSettings.setOn(true);
+      myCourseSettings.setOn(true);
     }
     return validationMessage;
   }
@@ -224,11 +217,6 @@ public class CoursePanel extends JPanel {
   }
 
   private void updateAdvancedSettings(@NotNull Course course, boolean showLanguageSettings) {
-    if (course instanceof JetBrainsAcademyCourse) {
-      myAdvancedSettings.setVisible(false);
-      return;
-    }
-
     EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
     if (configurator == null) {
       return;
@@ -249,10 +237,10 @@ public class CoursePanel extends JPanel {
     }
 
     if (settingsComponents.isEmpty()) {
-      myAdvancedSettings.setVisible(false);
+      myCourseSettings.setVisible(false);
     } else {
-      myAdvancedSettings.setVisible(true);
-      myAdvancedSettings.setSettingsComponents(settingsComponents);
+      myCourseSettings.setVisible(true);
+      myCourseSettings.setSettingsComponents(settingsComponents);
     }
   }
 
@@ -289,7 +277,7 @@ public class CoursePanel extends JPanel {
 
   @NotNull
   private JComponent createTagLabel(Tag tag) {
-    JComponent tagComponent = tag.createComponent(isTagSelected(tag));
+    JComponent tagComponent = tag.createComponent();
     if (mySearchField != null) {
       tagComponent.addMouseListener(new MouseAdapter() {
         @Override
@@ -325,24 +313,5 @@ public class CoursePanel extends JPanel {
 
   public void bindSearchField(@NotNull FilterComponent searchField) {
     mySearchField = searchField;
-  }
-
-  public static class CourseDisplaySettings {
-
-    public static final CourseDisplaySettings DEFAULT = new CourseDisplaySettings(true, true);
-
-    public final boolean showTagsPanel;
-    public final boolean showInstructorField;
-    public final boolean showLanguageSettings;
-
-    public CourseDisplaySettings(boolean showTagsPanel, boolean showInstructorField) {
-      this(showTagsPanel, showInstructorField, true);
-    }
-
-    public CourseDisplaySettings(boolean showTagsPanel, boolean showInstructorField, boolean showLanguageSettings) {
-      this.showTagsPanel = showTagsPanel;
-      this.showInstructorField = showInstructorField;
-      this.showLanguageSettings = showLanguageSettings;
-    }
   }
 }

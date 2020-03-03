@@ -37,6 +37,7 @@ import com.jetbrains.edu.learning.courseLoading.CourseLoader.getCourseInfosUnder
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.*
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.Companion.forCourse
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.importCourseArchive
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.loggedIn
@@ -53,57 +54,65 @@ import java.awt.Dimension
 import java.awt.Point
 import java.util.*
 import javax.swing.*
-import javax.swing.event.HyperlinkEvent
-import javax.swing.event.ListSelectionEvent
 
 class CoursesPanel(courses: List<Course>,
-                   customToolbarActions: DefaultActionGroup?,
-                   enableCourseViewAsEducator: (Boolean) -> Unit) : JPanel() {
-  private val myMainPanel: JPanel
-  private val myCourseListPanel: JPanel
+                   dialog: BrowseCoursesDialog,
+                   private val customToolbarActions: DefaultActionGroup?,
+                   private val enableCourseViewAsEducator: (Boolean) -> Unit) : JPanel(BorderLayout()) {
+  private val myErrorPanel: JPanel = JPanel(BorderLayout())
+  private val myMainPanel: JPanel = JPanel(BorderLayout())
+  private val myErrorLabel: HyperlinkLabel = HyperlinkLabel()
+  private val myCourseListPanel: JPanel = JPanel(BorderLayout())
   private val mySearchField: FilterComponent
-  private val myErrorLabel: HyperlinkLabel
-  private val mySplitPane: JSplitPane
-  private val mySplitPaneRoot: JPanel
-  private var myCoursesList: JBList<Course>? = null
-  private val myCoursePanel = CoursePanel(false, true)
-  private val myContentPanel: JPanel
-  private val myErrorPanel: JPanel
-  private lateinit var myCourses: MutableList<Course>
+  private val mySplitPane: JSplitPane = JSplitPane()
+  private val mySplitPaneRoot: JPanel = JPanel(BorderLayout())
+  private var myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false, isLocationFieldNeeded = true) {
+    dialog.setError(it.error)
+  }
+  private val myContentPanel: JPanel = JPanel(BorderLayout())
+  private var myCourses: MutableList<Course>
   private var myCoursesComparator: Comparator<Course>
   private val myListeners: MutableList<CourseValidationListener> = ArrayList()
   private var myBusConnection: MessageBusConnection? = null
-  private val myCustomToolbarActions: ActionGroup?
-  private val myEnableCourseViewAsEducator: (Boolean) -> Unit
   private var myErrorState: ErrorState? = NothingSelected
+  private var myCoursesList: JBList<Course> = JBList()
+  var selectedCourse: Course
+  val projectSettings: Any
+    get() {
+      return myCoursePanel.projectSettings()
+    }
+
+
   private fun initUI() {
     GuiUtils.replaceJSplitPaneWithIDEASplitter(mySplitPaneRoot, true)
     mySplitPane.setDividerLocation(0.5)
     mySplitPane.resizeWeight = 0.5
-    myCoursesList = JBList()
-    myCoursesList!!.setEmptyText(NO_COURSES)
-    updateModel(myCourses, null)
     myErrorLabel.isVisible = false
+    myCoursesList.setEmptyText(NO_COURSES)
+    updateModel(myCourses, null)
     val renderer = courseRenderer
-    myCoursesList!!.cellRenderer = renderer
-    myCoursesList!!.addListSelectionListener { e: ListSelectionEvent? -> processSelectionChanged() }
-    val toolbarDecorator = ToolbarDecorator.createDecorator(
-      myCoursesList!!).disableAddAction().disableRemoveAction().disableUpDownActions().setToolbarPosition(
-      ActionToolbarPosition.BOTTOM)
-    val group = myCustomToolbarActions ?: DefaultActionGroup(ImportCourseAction())
+    myCoursesList.cellRenderer = renderer
+    myCoursesList.addListSelectionListener { processSelectionChanged() }
+    val toolbarDecorator = ToolbarDecorator.createDecorator(myCoursesList)
+      .disableAddAction()
+      .disableRemoveAction()
+      .disableUpDownActions()
+      .setToolbarPosition(ActionToolbarPosition.BOTTOM)
+    myCoursesList.border = null
+    myCoursesList.background = getTaskDescriptionBackgroundColor()
+    val group = customToolbarActions ?: DefaultActionGroup(ImportCourseAction())
     toolbarDecorator.setActionGroup(group)
     val toolbarDecoratorPanel = toolbarDecorator.createPanel()
     toolbarDecoratorPanel.border = null
-    myCoursesList!!.border = null
     myCourseListPanel.add(toolbarDecoratorPanel, BorderLayout.CENTER)
     myCourseListPanel.border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, 1, 1, 1)
-    myCoursesList!!.background = getTaskDescriptionBackgroundColor()
     addErrorStateListener()
+
     processSelectionChanged()
   }
 
-  fun addErrorStateListener() {
-    myErrorLabel.addHyperlinkListener { e: HyperlinkEvent? ->
+  private fun addErrorStateListener() {
+    myErrorLabel.addHyperlinkListener {
       if (myErrorState === NotLoggedIn || myErrorState === StepikLoginRequired) {
         addLoginListener(Runnable { updateCoursesList() })
         StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
@@ -111,7 +120,7 @@ class CoursesPanel(courses: List<Course>,
                  EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
       }
       else if (myErrorState is CheckiOLoginRequired) {
-        val course = myCoursesList!!.selectedValue as CheckiOCourse
+        val course = myCoursesList.selectedValue as CheckiOCourse
         addCheckiOLoginListener(course)
 
         //for Checkio course name matches platform name
@@ -202,7 +211,7 @@ class CoursesPanel(courses: List<Course>,
   }
 
   private fun updateCoursesList() {
-    val selectedCourse = myCoursesList!!.selectedValue
+    val selectedCourse = myCoursesList.selectedValue
     val courses = getCourseInfosUnderProgress(
       "Getting Available Courses"
     ) { CoursesProvider.loadAllCourses() }
@@ -215,10 +224,10 @@ class CoursesPanel(courses: List<Course>,
   private val courseRenderer: ColoredListCellRenderer<Course>
     get() = object : ColoredListCellRenderer<Course>() {
       override fun customizeCellRenderer(jList: JList<out Course>,
-                                                   course: Course,
-                                                   i: Int,
-                                                   b: Boolean,
-                                                   b1: Boolean) {
+                                         course: Course,
+                                         i: Int,
+                                         b: Boolean,
+                                         b1: Boolean) {
         val logo = getLogo(course)
         border = JBUI.Borders.empty(5, 0)
         append(course.name, course.visibility.textAttributes)
@@ -228,13 +237,14 @@ class CoursesPanel(courses: List<Course>,
     }
 
   private fun processSelectionChanged() {
-    val selectedCourse = myCoursesList!!.selectedValue
-    if (selectedCourse != null) {
-      myCoursePanel.bindCourse(selectedCourse).addSettingsChangeListener { doValidation(selectedCourse) }
-      myEnableCourseViewAsEducator(ApplicationManager.getApplication().isInternal ||
-                                         selectedCourse !is StepikCourse && selectedCourse !is CheckiOCourse)
+    val course = myCoursesList.selectedValue
+    if (course != null) {
+      myCoursePanel.bindCourse(course).addSettingsChangeListener { doValidation(course) }
+      enableCourseViewAsEducator(ApplicationManager.getApplication().isInternal ||
+                                 course !is StepikCourse && course !is CheckiOCourse)
+      selectedCourse = course
     }
-    doValidation(selectedCourse)
+    doValidation(course)
   }
 
   private fun doValidation(course: Course?) {
@@ -243,8 +253,7 @@ class CoursesPanel(courses: List<Course>,
       val languageSettingsMessage = myCoursePanel.validateSettings(course)
       languageError = languageSettingsMessage?.let { LanguageSettingsError(it) } ?: None
     }
-    val errorState = forCourse(
-      course).merge(languageError)
+    val errorState = forCourse(course).merge(languageError)
     updateErrorInfo(errorState)
     notifyListeners(errorState.courseCanBeStarted)
   }
@@ -268,7 +277,7 @@ class CoursesPanel(courses: List<Course>,
   }
 
   fun setEmptyText(text: String) {
-    myCoursesList!!.setEmptyText(text)
+    myCoursesList.setEmptyText(text)
   }
 
   private fun sortCourses(courses: List<Course>): List<Course> {
@@ -281,9 +290,9 @@ class CoursesPanel(courses: List<Course>,
     for (course in sortedCourses) {
       listModel.addElement(course)
     }
-    myCoursesList!!.model = listModel
-    if (myCoursesList!!.itemsCount > 0) {
-      myCoursesList!!.setSelectedIndex(0)
+    myCoursesList.model = listModel
+    if (myCoursesList.itemsCount > 0) {
+      myCoursesList.setSelectedIndex(0)
     }
     else {
       myCoursePanel.hideContent()
@@ -294,19 +303,11 @@ class CoursesPanel(courses: List<Course>,
     myCourses.stream()
       .filter { course: Course -> course == courseToSelect }
       .findFirst()
-      .ifPresent { newCourseToSelect: Course? -> myCoursesList!!.setSelectedValue(newCourseToSelect, true) }
+      .ifPresent { newCourseToSelect: Course? -> myCoursesList.setSelectedValue(newCourseToSelect, true) }
   }
 
-  val selectedCourse: Course?
-    get() = myCoursesList!!.selectedValue
-
-  val locationString: String? = myCoursePanel.locationString ?: ""
-
-  val projectSettings: Any
-    get() = myCoursePanel.projectSettings
-
   override fun getPreferredSize(): Dimension {
-    return JBUI.size(600, 400)
+    return JBUI.size(750, 400)
   }
 
   fun addCourseValidationListener(listener: CourseValidationListener) {
@@ -332,8 +333,7 @@ class CoursesPanel(courses: List<Course>,
       val stepikCourseOption = "Import Stepik course"
       val popupStep: BaseListPopupStep<String> = object : BaseListPopupStep<String>(
         null, listOf(localCourseOption, stepikCourseOption)) {
-        override fun onChosen(selectedValue: String,
-                              finalChoice: Boolean): PopupStep<*> {
+        override fun onChosen(selectedValue: String, finalChoice: Boolean): PopupStep<*>? {
           return doFinalStep {
             if (localCourseOption == selectedValue) {
               importLocalCourse()
@@ -356,12 +356,10 @@ class CoursesPanel(courses: List<Course>,
           }
         }
       }
-      val listPopup = JBPopupFactory.getInstance().createListPopup(
-        popupStep)
+      val listPopup = JBPopupFactory.getInstance().createListPopup(popupStep)
       val icon = templatePresentation.icon
       val component = e.inputEvent.component
-      val relativePoint = RelativePoint(component,
-                                        Point(icon.iconWidth + 6, 0))
+      val relativePoint = RelativePoint(component, Point(icon.iconWidth + 6, 0))
       listPopup.show(relativePoint)
     }
 
@@ -370,17 +368,19 @@ class CoursesPanel(courses: List<Course>,
       ) { file: VirtualFile ->
         val fileName = file.path
         val course = EduUtils.getLocalCourse(fileName)
-        if (course == null) {
-          showInvalidCourseDialog()
-        }
-        else if (course.configurator == null) {
-          showUnsupportedCourseDialog(course)
-        }
-        else {
-          saveLastImportLocation(file)
-          importCourseArchive()
-          myCourses.add(course)
-          updateModel(myCourses, course)
+        when {
+          course == null -> {
+            showInvalidCourseDialog()
+          }
+          course.configurator == null -> {
+            showUnsupportedCourseDialog(course)
+          }
+          else -> {
+            saveLastImportLocation(file)
+            importCourseArchive()
+            myCourses.add(course)
+            updateModel(myCourses, course)
+          }
         }
       }
     }
@@ -441,24 +441,63 @@ class CoursesPanel(courses: List<Course>,
 
     @JvmStatic
     fun getFilterParts(@NonNls filter: String): Set<String> {
-      return HashSet(
-        Arrays.asList(*filter.toLowerCase().split(" ".toRegex()).toTypedArray()))
+      return HashSet(listOf(*filter.toLowerCase().split(" ".toRegex()).toTypedArray()))
     }
   }
 
   init {
-    myMainPanel = JPanel(BorderLayout())
-    myErrorPanel = JPanel(BorderLayout())
-    myErrorLabel = HyperlinkLabel()
+    addCourseValidationListener(object : CourseValidationListener {
+      override fun validationStatusChanged(canStartCourse: Boolean) {
+        myCoursePanel.setButtonsEnabled(canStartCourse)
+      }
+    })
     myErrorPanel.add(myErrorLabel, BorderLayout.CENTER)
-    myContentPanel = JPanel(BorderLayout())
-    mySplitPaneRoot = JPanel(BorderLayout())
-    mySplitPane = JSplitPane()
+    myErrorPanel.border = JBUI.Borders.emptyTop(20)
+
+    myCourses = courses.toMutableList()
+    myCoursesComparator = Comparator.comparing { obj: Course -> obj.visibility }.thenComparing { obj: Course -> obj.name }
+
+    myCoursesList.setEmptyText(NO_COURSES)
+    val renderer = courseRenderer
+    myCoursesList.cellRenderer = renderer
+    myCoursesList.addListSelectionListener { processSelectionChanged() }
+    myCoursesList.border = null
+    myCoursesList.background = getTaskDescriptionBackgroundColor()
+    updateModel(myCourses, null)
+
+    mySearchField = createSearchField()
+
+    selectedCourse = myCoursesList.selectedValue
+
+    myCourseListPanel.add(mySearchField, BorderLayout.NORTH)
+
+    myCoursePanel.bindCourse(selectedCourse)
+    myCoursePanel.bindSearchField(mySearchField)
+
+    mySplitPane.leftComponent = myCourseListPanel
+    mySplitPane.rightComponent = myCoursePanel
+
     mySplitPaneRoot.add(mySplitPane, BorderLayout.CENTER)
-    myCourseListPanel = JPanel(BorderLayout())
-    mySearchField = object : FilterComponent("Edu.NewCourse", 5, true) {
+    myContentPanel.add(mySplitPaneRoot, BorderLayout.CENTER)
+
+    myMainPanel.add(myContentPanel, BorderLayout.CENTER)
+    myMainPanel.add(myErrorPanel, BorderLayout.SOUTH)
+
+    add(myMainPanel, BorderLayout.CENTER)
+    initUI()
+  }
+
+  val locationString: String
+    get() {
+      // We use `myCoursePanel` with location field
+      // so `myCoursePanel.getLocationString()` must return not null value
+      return myCoursePanel.locationString()!!
+    }
+
+  private fun createSearchField(): FilterComponent {
+    val searchField = object : FilterComponent("Edu.NewCourse", 5, true) {
       override fun filter() {
-        val selectedCourse = myCoursesList!!.selectedValue
+        val selectedCourse = myCoursesList.selectedValue
         val filter = filter
         val filtered: MutableList<Course> = ArrayList()
         for (course in myCourses) {
@@ -469,20 +508,9 @@ class CoursesPanel(courses: List<Course>,
         updateModel(filtered, selectedCourse)
       }
     }
-    UIUtil.setBackgroundRecursively(mySearchField, UIUtil.getTextFieldBackground())
-    myCourseListPanel.add(mySearchField, BorderLayout.NORTH)
-    mySplitPane.leftComponent = myCourseListPanel
-    myCoursePanel.bindSearchField(mySearchField)
-    mySplitPane.rightComponent = myCoursePanel
-    myContentPanel.add(mySplitPaneRoot, BorderLayout.CENTER)
-    myCourses = courses.toMutableList()
-    myCoursesComparator = Comparator.comparing { obj: Course -> obj.visibility }.thenComparing { obj: Course -> obj.name }
-    layout = BorderLayout()
-    add(myMainPanel, BorderLayout.CENTER)
-    myCustomToolbarActions = customToolbarActions
-    myEnableCourseViewAsEducator = enableCourseViewAsEducator
-    myMainPanel.add(myContentPanel, BorderLayout.CENTER)
-    myMainPanel.add(myErrorPanel, BorderLayout.SOUTH)
-    initUI()
+
+    UIUtil.setBackgroundRecursively(searchField, UIUtil.getTextFieldBackground())
+
+    return searchField
   }
 }

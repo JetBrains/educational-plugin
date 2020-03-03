@@ -6,13 +6,14 @@ import com.intellij.ui.HyperlinkLabel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel.Companion.browseHyperlink
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.io.File
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
-class JoinCoursePanel(private val settings: CoursePanel.CourseDisplaySettings) : JPanel(BorderLayout()) {
+class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(BorderLayout()) {
 
   private val myCoursePanel: CoursePanel = CoursePanel(true, true)
   private val myErrorLabel: HyperlinkLabel = HyperlinkLabel()
