@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -13,11 +12,4 @@ class CCCreateLesson : CCCreateLessonBase<Lesson>(StudyItemType.LESSON, Lesson) 
       StudyItemVariant(StringUtil.toTitleCase(EduCoreBundle.message("study.item.lesson")), "", Lesson, ::Lesson),
       StudyItemVariant(StringUtil.toTitleCase(EduCoreBundle.message("study.item.framework.lesson")), "", Lesson, ::FrameworkLesson)
     )
-
-  override fun initItem(project: Project, course: Course, parentItem: StudyItem?, item: Lesson, info: NewStudyItemInfo) {
-    item.course = course
-    if (parentItem is Section) {
-      item.section = parentItem
-    }
-  }
 }

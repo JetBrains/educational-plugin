@@ -9,10 +9,7 @@ import com.intellij.util.Function
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ItemContainer
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import javax.swing.Icon
@@ -58,6 +55,13 @@ abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: 
   override fun sortSiblings(course: Course, parentItem: StudyItem?) {
     if (parentItem is ItemContainer) {
       parentItem.sortItems()
+    }
+  }
+
+  override fun initItem(project: Project, course: Course, parentItem: StudyItem?, item: Item, info: NewStudyItemInfo) {
+    item.course = course
+    if (parentItem is Section) {
+      item.section = parentItem
     }
   }
 
