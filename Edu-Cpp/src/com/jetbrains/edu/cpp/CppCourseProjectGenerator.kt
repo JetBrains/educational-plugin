@@ -5,8 +5,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vcs.VcsConfiguration
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cmake.CMakeListsFileType
-import com.jetbrains.edu.cpp.constants.TestFrameworks
-import com.jetbrains.edu.cpp.constants.TestFrameworks.GTest
+import com.jetbrains.edu.cpp.TestFrameworks.GTest
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem

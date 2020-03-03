@@ -1,10 +1,8 @@
 package com.jetbrains.edu.cpp
 
 import com.jetbrains.cmake.CMakeListsFileType
-import com.jetbrains.edu.cpp.constants.CMakeConstants
-import com.jetbrains.edu.cpp.constants.TestFrameworks
-import com.jetbrains.edu.cpp.constants.TestFrameworks.Catch
-import com.jetbrains.edu.cpp.constants.TestFrameworks.GTest
+import com.jetbrains.edu.cpp.TestFrameworks.Catch
+import com.jetbrains.edu.cpp.TestFrameworks.GTest
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils

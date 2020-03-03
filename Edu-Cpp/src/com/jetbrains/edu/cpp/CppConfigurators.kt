@@ -4,7 +4,6 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.cpp.checker.CppTaskCheckerProvider
-import com.jetbrains.edu.cpp.constants.TestFrameworks
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider

@@ -4,7 +4,6 @@ import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener
-import com.jetbrains.edu.cpp.constants.TestFrameworks
 import com.jetbrains.edu.learning.courseDir
 
 // BACKCOMPAT: 2019.2. Delete this class. In 2019.3 all files are refreshed correctly.
