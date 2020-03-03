@@ -1,37 +1,14 @@
 package com.jetbrains.edu.cpp
 
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
-import com.jetbrains.cidr.cpp.cmake.projectWizard.CLionProjectWizardUtils
-import com.jetbrains.cidr.cpp.toolchains.CMake
-import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cmake.CMakeListsFileType
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.cpp.constants.CMakeConstants
+import com.jetbrains.edu.cpp.constants.TestFrameworks
+import com.jetbrains.edu.cpp.constants.TestFrameworks.Catch
+import com.jetbrains.edu.cpp.constants.TestFrameworks.GTest
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
-
-private const val GTEST_VERSION = "release-1.8.1"
-const val TEST_FRAMEWORK_DIR = "test-framework"
-
-private val cMakeMinimumRequired: String by lazy {
-  val cMakeVersionExtractor = {
-    CLionProjectWizardUtils.getCMakeMinimumRequiredLine(CMake.readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
-  }
-
-  val progressManager = ProgressManager.getInstance()
-
-  if (progressManager.hasProgressIndicator()) {
-    progressManager.runProcess(cMakeVersionExtractor, null)
-  }
-  else {
-    progressManager.run(object : Task.WithResult<String, Nothing>(null, "Getting CMake Minimum Required Version", false) {
-      override fun compute(indicator: ProgressIndicator) = cMakeVersionExtractor()
-    })
-  }
-}
 
 /** Provides CMake file template information, where:
  * [mainCMakeList] - configures the course project, e.g. find all tasks `CMakeList.txt` files and adds them.
@@ -46,11 +23,17 @@ data class CppTemplates(
 
 data class TemplateInfo(private val templateName: String, val generatedFileName: String) {
   private fun getTemplateVariables(projectName: String, cppStandardLine: String) = mapOf(
-    "CMAKE_MINIMUM_REQUIRED_LINE" to cMakeMinimumRequired,
-    "GTEST_VERSION" to GTEST_VERSION,
-    "TEST_FRAMEWORK_DIR" to TEST_FRAMEWORK_DIR,
-    EduNames.PROJECT_NAME to projectName,
-    "CPP_STANDARD" to cppStandardLine
+    CMakeConstants.minimumRequiredLine.toPair(),
+    CMakeConstants.makeProjectNameConstant(projectName).toPair(),
+    CMakeConstants.makeCppStandardLineConstant(cppStandardLine).toPair(),
+
+    GTest.version.toPair(),
+    GTest.sourceDir.toPair(),
+    GTest.buildDir.toPair(),
+
+    Catch.headerUrl.toPair(),
+
+    TestFrameworks.baseDir.toPair()
   )
 
   fun getText(projectName: String = "", cppStandardLine: String = ""): String =

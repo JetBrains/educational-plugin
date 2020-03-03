@@ -5,6 +5,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vcs.VcsConfiguration
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cmake.CMakeListsFileType
+import com.jetbrains.edu.cpp.constants.TestFrameworks
+import com.jetbrains.edu.cpp.constants.TestFrameworks.GTest
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -65,7 +67,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
       myCourse.items.forEach { addCMakeListToTasks(it, project, projectSettings) }
     }
 
-    val googleTestSrc = FileUtil.join(myCourse.getDir(project).path, TEST_FRAMEWORK_DIR, "googletest-src")
+    val googleTestSrc = FileUtil.join(myCourse.getDir(project).path, TestFrameworks.baseDir.value, GTest.sourceDir.value)
     VcsConfiguration.getInstance(project).addIgnoredUnregisteredRoots(listOf(googleTestSrc))
 
     super.afterProjectGenerated(project, projectSettings)
