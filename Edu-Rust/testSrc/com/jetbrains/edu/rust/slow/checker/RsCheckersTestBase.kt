@@ -1,7 +1,6 @@
 package com.jetbrains.edu.rust.slow.checker
 
-import com.jetbrains.edu.learning.isFeatureEnabled
-import com.jetbrains.edu.learning.setFeatureEnabled
+import com.jetbrains.edu.learning.withFeature
 import com.jetbrains.edu.rust.RsProjectSettings
 import com.jetbrains.edu.slow.checker.CheckersTestBase
 import com.jetbrains.edu.slow.checker.EduCheckerFixture
@@ -16,18 +15,6 @@ abstract class RsCheckersTestBase : CheckersTestBase<RsProjectSettings>() {
     // Cargo build tool window is not essential here
     // but IntelliJ Rust plugin doesn't dispose console editor without it
     // and tests fail at platform assertion
-    withCargoBuildToolWindow { super.doTest() }
+    withFeature(RsExperiments.BUILD_TOOL_WINDOW, true) { super.doTest() }
   }
-
-  private fun withCargoBuildToolWindow(action: () -> Unit) {
-    val currentValue = isFeatureEnabled(RsExperiments.BUILD_TOOL_WINDOW)
-    try {
-      setFeatureEnabled(RsExperiments.BUILD_TOOL_WINDOW, true)
-      action()
-    }
-    finally {
-      setFeatureEnabled(RsExperiments.BUILD_TOOL_WINDOW, currentValue)
-    }
-  }
-
 }

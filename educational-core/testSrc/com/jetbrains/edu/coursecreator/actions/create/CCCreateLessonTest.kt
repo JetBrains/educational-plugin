@@ -3,10 +3,13 @@ package com.jetbrains.edu.coursecreator.actions.create
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.actions.CCCreateFrameworkLesson
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
-import junit.framework.TestCase
+import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.withFeature
 
 class CCCreateLessonTest : EduActionTestCase() {
 
@@ -21,7 +24,24 @@ class CCCreateLessonTest : EduActionTestCase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
       testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateLesson())
     }
-    TestCase.assertEquals(2, course.lessons.size)
+    assertEquals(2, course.lessons.size)
+  }
+
+  fun `test create framework lesson in course`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+    }
+    withFeature(EduExperimentalFeatures.NEW_ITEM_POPUP_UI, false) {
+      withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
+        testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateFrameworkLesson())
+      }
+    }
+    assertEquals(2, course.lessons.size)
+    assertInstanceOf(course.lessons[1], FrameworkLesson::class.java)
   }
 
   fun `test create lesson in section`() {
@@ -39,7 +59,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
       testAction(dataContext(sectionFile), CCCreateLesson())
     }
-    TestCase.assertEquals(2, course.getSection(sectionName)!!.lessons.size)
+    assertEquals(2, course.getSection(sectionName)!!.lessons.size)
   }
 
   fun `test create lesson between lessons in course`() {
@@ -59,10 +79,10 @@ class CCCreateLessonTest : EduActionTestCase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2", 2)) {
       testAction(dataContext(lessonFile), CCCreateLesson())
     }
-    TestCase.assertEquals(3, course.lessons.size)
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, course.getLesson("lesson2")!!.index)
-    TestCase.assertEquals(3, course.getLesson("lesson3")!!.index)
+    assertEquals(3, course.lessons.size)
+    assertEquals(1, course.getLesson("lesson1")!!.index)
+    assertEquals(2, course.getLesson("lesson2")!!.index)
+    assertEquals(3, course.getLesson("lesson3")!!.index)
   }
 
   fun `test create lesson before lesson in course`() {
@@ -82,10 +102,10 @@ class CCCreateLessonTest : EduActionTestCase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson12", 2)) {
       testAction(dataContext(lessonFile), CCCreateLesson())
     }
-    TestCase.assertEquals(3, course.items.size)
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, course.getLesson("lesson12")!!.index)
-    TestCase.assertEquals(3, course.getLesson("lesson2")!!.index)
+    assertEquals(3, course.items.size)
+    assertEquals(1, course.getLesson("lesson1")!!.index)
+    assertEquals(2, course.getLesson("lesson12")!!.index)
+    assertEquals(3, course.getLesson("lesson2")!!.index)
   }
 
   fun `test create lesson after lesson in course`() {
@@ -105,10 +125,10 @@ class CCCreateLessonTest : EduActionTestCase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson11", 2)) {
       testAction(dataContext(lessonFile), CCCreateLesson())
     }
-    TestCase.assertEquals(3, course.items.size)
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, course.getLesson("lesson11")!!.index)
-    TestCase.assertEquals(3, course.getLesson("lesson2")!!.index)
+    assertEquals(3, course.items.size)
+    assertEquals(1, course.getLesson("lesson1")!!.index)
+    assertEquals(2, course.getLesson("lesson11")!!.index)
+    assertEquals(3, course.getLesson("lesson2")!!.index)
   }
 
   fun `test create lesson between lessons in section`() {
@@ -132,10 +152,10 @@ class CCCreateLessonTest : EduActionTestCase() {
       testAction(dataContext(lessonFile), CCCreateLesson())
     }
     val section = course.getSection(sectionName)
-    TestCase.assertEquals(3, section!!.items.size)
-    TestCase.assertEquals(1, section.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, section.getLesson("lesson2")!!.index)
-    TestCase.assertEquals(3, section.getLesson("lesson3")!!.index)
+    assertEquals(3, section!!.items.size)
+    assertEquals(1, section.getLesson("lesson1")!!.index)
+    assertEquals(2, section.getLesson("lesson2")!!.index)
+    assertEquals(3, section.getLesson("lesson3")!!.index)
   }
 
   fun `test create lesson not available inside lesson`() {
@@ -150,7 +170,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     val action = CCCreateLesson()
     val event = TestActionEvent(dataContext(sourceVFile), action)
     action.beforeActionPerformedUpdate(event)
-    TestCase.assertFalse(event.presentation.isEnabledAndVisible)
+    assertFalse(event.presentation.isEnabledAndVisible)
   }
 
   fun `test create lesson not available on top level with section on top level`() {
@@ -172,6 +192,6 @@ class CCCreateLessonTest : EduActionTestCase() {
     val action = CCCreateLesson()
     val event = TestActionEvent(dataContext(sourceVFile), action)
     action.beforeActionPerformedUpdate(event)
-    TestCase.assertFalse(event.presentation.isEnabledAndVisible)
+    assertFalse(event.presentation.isEnabledAndVisible)
   }
 }
