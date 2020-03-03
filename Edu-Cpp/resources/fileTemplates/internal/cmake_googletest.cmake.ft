@@ -22,7 +22,7 @@
 
     # adds the targers: gtest, gtest_main, gmock, gmock_main
     add_subdirectory(
-            ${_download_root}/googletest-src
-            ${_download_root}/googletest-build
+            ${_download_root}/]]#${GTEST_SOURCE_DIR}#[[
+            ${_download_root}/]]#${GTEST_BUILD_DIR}#[[
     )
 endmacro()]]#
