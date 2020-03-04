@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -93,7 +94,7 @@ open class StepikTaskBuilder(
       val timeLimit = options.executionTimeLimit
       if (memoryLimit != null && timeLimit != null) {
         append("<br><font color=\"gray\">Memory limit: $memoryLimit MB</font>")
-        append("<br><font color=\"gray\">Time limit: ${timeLimit}s</font><br><br>")
+        append("<br><font color=\"gray\">Time limit: ${timeLimit} ${StringUtil.pluralize("second", timeLimit)}</font><br><br>")
       }
     }
 
