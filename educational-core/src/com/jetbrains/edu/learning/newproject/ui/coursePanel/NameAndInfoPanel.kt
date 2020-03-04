@@ -7,6 +7,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
 import java.awt.Color
@@ -25,7 +26,7 @@ private const val INFO_PANEL_TOP_OFFSET = 5
 private const val FONT_SIZE = 26.0f
 private val GRAY_TEXT_FOREGROUND: Color = JBColor.namedColor("Plugins.tagForeground", JBColor(0x787878, 0x999999))
 
-class NameAndInfoPanel(errorHandler: CourseStartErrorHandler) : JPanel() {
+class NameAndInfoPanel(errorHandler: (ErrorState) -> Unit) : JPanel() {
   private var nameHtmlPanel: CourseNameHtmlPanel = CourseNameHtmlPanel()
   private val infoPanel = InfoPanel()
   private var tagsPanel: TagsPanel = TagsPanel()
@@ -50,12 +51,13 @@ class NameAndInfoPanel(errorHandler: CourseStartErrorHandler) : JPanel() {
     UIUtil.setBackgroundRecursively(this, UIUtil.getEditorPaneBackground())
   }
 
-  fun update(course: Course, settings: CourseDisplaySettings, location: String, projectSettings: Any) {
+  fun update(courseInfo: CourseInfo, settings: CourseDisplaySettings) {
+    val course = courseInfo.course
     nameHtmlPanel.bind(course)
     infoPanel.bind(course, settings)
     tagsPanel.update(course, settings)
-    startButton.update(course, location, projectSettings)
-    editButton.update(course, location, projectSettings)
+    startButton.update(courseInfo)
+    editButton.update(courseInfo)
 
     revalidate()
     repaint()

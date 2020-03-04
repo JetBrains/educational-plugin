@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import javax.swing.JComponent
 

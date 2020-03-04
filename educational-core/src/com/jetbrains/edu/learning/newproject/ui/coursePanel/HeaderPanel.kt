@@ -9,6 +9,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import java.awt.BorderLayout
 import javax.swing.Icon
 import javax.swing.JPanel
@@ -20,7 +21,7 @@ private const val ICON_TOP_OFFSET = 10
 private const val HEADER_HGAP = 20
 private const val TOP_OFFSET = 15
 
-class HeaderPanel(leftMargin: Int, errorHandler: CourseStartErrorHandler) : NonOpaquePanel() {
+class HeaderPanel(leftMargin: Int, errorHandler: (ErrorState) -> Unit) : NonOpaquePanel() {
   private var nameAndInfoPanel = NameAndInfoPanel(errorHandler)
   private var iconPanel = IconPanel()
 
@@ -37,9 +38,9 @@ class HeaderPanel(leftMargin: Int, errorHandler: CourseStartErrorHandler) : NonO
     nameAndInfoPanel.setButtonsEnabled(isEnabled)
   }
 
-  fun update(course: Course, settings: CourseDisplaySettings, location: String, projectSettings: Any) {
-    iconPanel.bind(course)
-    nameAndInfoPanel.update(course, settings, location, projectSettings)
+  fun update(courseInfo: CourseInfo, settings: CourseDisplaySettings) {
+    iconPanel.bind(courseInfo.course)
+    nameAndInfoPanel.update(courseInfo, settings)
   }
 
   private class IconPanel : JPanel(VerticalFlowLayout(VerticalFlowLayout.TOP, false, false)) {

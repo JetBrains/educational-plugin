@@ -68,8 +68,8 @@ class CoursesPanel(courses: List<Course>,
   private val mySearchField: FilterComponent
   private val mySplitPane: JSplitPane = JSplitPane()
   private val mySplitPaneRoot: JPanel = JPanel(BorderLayout())
-  private var myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false, isLocationFieldNeeded = true) {
-    dialog.setError(it.error)
+  private var myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false, isLocationFieldNeeded = true) { errorState ->
+    dialog.setError(errorState)
   }
   private val myContentPanel: JPanel = JPanel(BorderLayout())
   private var myCourses: MutableList<Course>

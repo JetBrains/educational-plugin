@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import javax.swing.JComponent
 
 class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: DefaultActionGroup? = null) : OpenCourseDialogBase() {

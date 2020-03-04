@@ -12,6 +12,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import java.awt.Dimension
 import java.io.File
 import java.text.DateFormat
@@ -30,7 +31,7 @@ private val DIALOG_SIZE = JBUI.size(400, 600)
 class NewCoursePanel(
   val isStandalonePanel: Boolean,
   val isLocationFieldNeeded: Boolean,
-  errorHandler: CourseStartErrorHandler
+  errorHandler: (ErrorState) -> Unit
 ) : JPanel() {
   private var header = HeaderPanel(leftMargin, errorHandler)
   private var description = CourseDescriptionPanel(leftMargin)
@@ -82,7 +83,7 @@ class NewCoursePanel(
       // TODO: set error
       return
     }
-    header.update(course, settings, location, projectSettings())
+    header.update(CourseInfo(course, location, projectSettings()), settings)
     description.bind(course)
   }
 

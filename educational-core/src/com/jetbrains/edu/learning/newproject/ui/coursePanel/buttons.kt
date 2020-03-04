@@ -7,12 +7,12 @@ import com.intellij.util.NotNullProducer
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.newproject.joinCourse
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import java.awt.Color
 import java.awt.event.ActionListener
-typealias CourseStartErrorHandler = (CourseCantBeStartedException) -> Unit
+
 
 private val MAIN_BG_COLOR: Color = JBColor.namedColor("Edu.CourseDialog.background", JBColor(
   NotNullProducer { if (JBColor.isBright()) UIUtil.getListBackground() else Color(0x313335) }))
@@ -26,7 +26,8 @@ private val FocusedBackground: Color = JBColor.namedColor("Edu.CourseDialog.Butt
 private val BorderColor: Color = JBColor.namedColor("Edu.CourseDialog.Button.installBorderColor", GreenColor)
 
 
-class StartCourseButton(errorHandler: CourseStartErrorHandler) : StartCourseButtonBase(errorHandler) {
+class StartCourseButton(errorHandler: (ErrorState) -> Unit) : StartCourseButtonBase(errorHandler) {
+  override val courseMode = EduNames.STUDY
 
   init {
     text = "Start"
@@ -35,13 +36,12 @@ class StartCourseButton(errorHandler: CourseStartErrorHandler) : StartCourseButt
     setWidth72(this)
   }
 
-  override val courseMode = EduNames.STUDY
-
   override fun isVisible(course: Course): Boolean = true
 
 }
 
-class EditCourseButton(errorHandler: CourseStartErrorHandler) : StartCourseButtonBase(errorHandler) {
+class EditCourseButton(errorHandler: (ErrorState) -> Unit) : StartCourseButtonBase(errorHandler) {
+  override val courseMode = CCUtils.COURSE_MODE
 
   init {
     text = "Edit"
@@ -51,16 +51,16 @@ class EditCourseButton(errorHandler: CourseStartErrorHandler) : StartCourseButto
     setWidth72(this)
   }
 
-  override val courseMode = CCUtils.COURSE_MODE
-
   override fun isVisible(course: Course) = false
 
 }
+
 /**
  * inspired by [com.intellij.ide.plugins.newui.InstallButton]
  */
-abstract class StartCourseButtonBase(private val errorHandler: CourseStartErrorHandler) : ColorButton() {
+abstract class StartCourseButtonBase(private val errorHandler: (ErrorState) -> Unit) : ColorButton() {
   private var listener: ActionListener? = null
+  abstract val courseMode: String
 
   init {
     setFocusedBgColor(FocusedBackground)
@@ -68,37 +68,22 @@ abstract class StartCourseButtonBase(private val errorHandler: CourseStartErrorH
     setFocusedBorderColor(BorderColor)
   }
 
-  private fun actionListener(course: Course, location: String, projectSettings: Any) = ActionListener {
-    val configurator = course.configurator
-    if (configurator != null) {
-      try {
-        configurator.beforeCourseStarted(course)
-        course.courseMode = courseMode
-        val projectGenerator = configurator
-          .courseBuilder
-          .getCourseProjectGenerator(course)
-        projectGenerator?.doCreateCourseProject(location, projectSettings)
-      }
-      catch (e: CourseCantBeStartedException) {
-        errorHandler(e)
-      }
-    }
+  private fun actionListener(courseInfo: CourseInfo) = ActionListener {
+    joinCourse(courseInfo, courseMode, errorHandler)
   }
 
-  abstract val courseMode: String
-
-  fun update(course: Course, location: String, projectSettings: Any) {
+  fun update(courseInfo: CourseInfo) {
     listener?.let { removeActionListener(listener) }
-    isVisible = isVisible(course)
+    isVisible = isVisible(courseInfo.course)
     if (isVisible) {
-      addListener(course, location, projectSettings)
+      addListener(courseInfo)
     }
   }
 
   abstract fun isVisible(course: Course): Boolean
 
-  private fun addListener(course: Course, location: String, projectSettings: Any) {
-    listener = actionListener(course, location, projectSettings)
+  private fun addListener(courseInfo: CourseInfo) {
+    listener = actionListener(courseInfo)
     addActionListener(listener)
   }
 }
