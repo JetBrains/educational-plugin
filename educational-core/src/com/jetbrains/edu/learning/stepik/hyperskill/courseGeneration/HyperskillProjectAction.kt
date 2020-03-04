@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.Notification
@@ -16,10 +16,12 @@ import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import javax.swing.event.HyperlinkEvent

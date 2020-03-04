@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.stepik.hyperskill.SUCCESS_MESSAGE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvider) : TaskCheckerProvider {

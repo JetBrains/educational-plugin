@@ -1,13 +1,15 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.settings
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.settings.OauthOptions
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROFILE_PATH
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillUserInfo
+import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
 import org.jetbrains.annotations.Nls
 import javax.swing.event.HyperlinkEvent
 

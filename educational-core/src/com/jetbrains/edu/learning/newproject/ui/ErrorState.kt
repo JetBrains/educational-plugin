@@ -18,8 +18,8 @@ import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.ERROR
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.ui.EduColors.errorTextForeground
 import com.jetbrains.edu.learning.ui.EduColors.warningTextForeground
 import java.awt.Color

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -8,8 +8,9 @@ import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCheckConnector.checkCodeTask
+import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.checkCodeTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 
 class HyperskillRemoteTaskChecker : RemoteTaskChecker {
   override fun canCheck(project: Project, task: Task): Boolean {

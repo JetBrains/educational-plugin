@@ -31,6 +31,9 @@ import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HSHyperlinkListener
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillJoinCourseDialog
+import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*

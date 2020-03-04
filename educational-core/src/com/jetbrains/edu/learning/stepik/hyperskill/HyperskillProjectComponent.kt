@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader.Companion.IS_HYPERSKILL_SOLUTION_LOADING_STARTED
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 
 @Suppress("ComponentNotRegistered") // Hyperskill.xml
 class HyperskillProjectComponent(private val project: Project) : ProjectComponent, SolutionLoaderBase.SolutionLoadingListener {

@@ -1,8 +1,9 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.widget
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.LoginWidgetProvider
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class HyperskillWidgetProvider : LoginWidgetProvider() {

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.widget
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduLogInListener
@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LoginWidget
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 

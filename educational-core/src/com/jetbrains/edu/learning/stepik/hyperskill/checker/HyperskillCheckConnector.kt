@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.lang.LanguageCommenters
@@ -14,7 +14,9 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
 import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.stepik.hyperskill.CONTINUE_ON_HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.showFailedToPostNotification
 import java.util.concurrent.TimeUnit
 
 object HyperskillCheckConnector {

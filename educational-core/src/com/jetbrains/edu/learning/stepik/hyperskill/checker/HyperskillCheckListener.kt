@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -9,7 +9,9 @@ import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.projectView.ProgressUtil
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 
 class HyperskillCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {

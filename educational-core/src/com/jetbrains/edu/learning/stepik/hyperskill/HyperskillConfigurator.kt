@@ -9,7 +9,9 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
+import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseBuilder
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager

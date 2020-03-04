@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile

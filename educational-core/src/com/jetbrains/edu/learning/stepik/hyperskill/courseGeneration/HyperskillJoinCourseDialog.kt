@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
