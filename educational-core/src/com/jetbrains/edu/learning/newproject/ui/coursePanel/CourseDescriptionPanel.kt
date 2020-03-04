@@ -61,12 +61,18 @@ private class CourseDescriptionHtmlPanel : CourseHtmlPanel() {
       setText("")
     }
     else {
-      setText("""<html><head> <style>
-        ${createStylesheet()}
-        </style>
-              </head><body> 
-              $text
-              "</body></html>""")
+      setText("""
+        <html>
+        <head>
+          <style>
+            ${createStylesheet()}
+          </style>
+        </head>
+        <body>
+        $text
+        </body>
+        </html>
+      """.trimIndent())
     }
   }
 
