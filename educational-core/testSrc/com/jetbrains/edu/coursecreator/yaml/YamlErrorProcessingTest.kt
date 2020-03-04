@@ -1,8 +1,8 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.intellij.lang.Language
 import com.intellij.openapi.application.runWriteAction
@@ -162,7 +162,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     assertNotNull(Language.getRegisteredLanguages().find {it.displayName == programmingLanguage})
 
     // check exception as there's no configurator for this language
-    assertException(object : AbstractExceptionCase<InvalidDefinitionException>() {
+    assertException(object : AbstractExceptionCase<ValueInstantiationException>() {
       override fun tryClosure() {
         val yamlContent = """
       |title: $name
@@ -178,7 +178,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
         MAPPER.deserializeCourse(yamlContent)
       }
 
-      override fun getExpectedExceptionClass(): Class<InvalidDefinitionException> = InvalidDefinitionException::class.java
+      override fun getExpectedExceptionClass(): Class<ValueInstantiationException> = ValueInstantiationException::class.java
     })
   }
 
