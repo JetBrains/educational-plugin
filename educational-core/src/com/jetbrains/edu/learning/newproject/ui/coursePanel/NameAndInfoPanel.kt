@@ -12,6 +12,7 @@ import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Font
 import java.text.SimpleDateFormat
+import java.util.*
 import javax.swing.JLabel
 import javax.swing.JPanel
 
@@ -113,7 +114,11 @@ private class InfoPanel : JPanel(HorizontalLayout(HORIZONTAL_OFFSET)) {
     if (authorsLabel.isVisible) {
       authorsLabel.text = course.allAuthors
     }
-    dateLabel.text = course.formattedDate
+
+    dateLabel.isVisible = course.updateDate != Date(0)
+    if (dateLabel.isVisible) {
+      dateLabel.text = course.formattedDate
+    }
   }
 }
 
