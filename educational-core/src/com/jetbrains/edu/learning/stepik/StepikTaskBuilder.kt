@@ -92,7 +92,7 @@ open class StepikTaskBuilder(
       val memoryLimit = options.executionMemoryLimit
       val timeLimit = options.executionTimeLimit
       if (memoryLimit != null && timeLimit != null) {
-        append("<br><font color=\"gray\">Memory limit: $memoryLimit Mb</font>")
+        append("<br><font color=\"gray\">Memory limit: $memoryLimit MB</font>")
         append("<br><font color=\"gray\">Time limit: ${timeLimit}s</font><br><br>")
       }
     }
