@@ -14,13 +14,13 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.hyperskill.*
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -60,36 +60,24 @@ class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") 
 
   companion object {
     fun openHyperskillProject(account: HyperskillAccount, showError: (String) -> Unit) {
-      val hyperskillProject = ProgressManager.getInstance().run(
-        object : Task.WithResult<HyperskillProject?, Exception>(null, "Loading Selected Project", false) {
-          override fun compute(indicator: ProgressIndicator): HyperskillProject? {
+      val projectId = ProgressManager.getInstance().run(
+        object : Task.WithResult<Int?, Exception>(null, "Synchronizing ${EduNames.JBA} account", false) {
+          override fun compute(indicator: ProgressIndicator): Int? {
             val currentUser = HyperskillConnector.getInstance().getCurrentUser(account)
             if (currentUser != null) {
               account.userInfo = currentUser
             }
-            val projectId = account.userInfo.hyperskillProjectId ?: return null
-            return HyperskillConnector.getInstance().getProject(projectId)
+            return account.userInfo.hyperskillProjectId
           }
         })
-      if (hyperskillProject == null) {
+      if (projectId == null) {
         showError("Please <a href=\"$HYPERSKILL_PROJECTS_URL\">select a project</a> on ${EduNames.JBA}")
+        return
       }
-      else if (!hyperskillProject.useIde) {
-        showError(HYPERSKILL_PROJECT_NOT_SUPPORTED)
-      }
-      else {
-        val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language]
-        if (languageId == null) {
-          showError("Unsupported language ${hyperskillProject.language}")
-          return
-        }
-        val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
-        if (hyperskillCourse.configurator == null) {
-          showError(HYPERSKILL_PROJECT_NOT_SUPPORTED)
-        }
-        else {
-          HyperskillJoinCourseDialog(hyperskillCourse).show()
-        }
+
+      val result = HyperskillProjectOpener.openProject(projectId, null)
+      if (result is Err) {
+        showError(result.error)
       }
     }
   }

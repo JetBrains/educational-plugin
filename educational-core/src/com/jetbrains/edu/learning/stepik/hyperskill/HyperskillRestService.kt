@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
@@ -10,8 +12,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.RefreshCause
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
@@ -21,11 +22,11 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.ui.CoursePanel.nameToLocation
-import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HSHyperlinkListener
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -190,15 +191,25 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val projectId = getStringParameter("project_id", decoder)?.toInt() ?: return "The project_id parameter was not found"
     LOG.info("Opening a stage $stageId from project $projectId")
 
-    if (HyperskillProjectOpener.openProject(projectId, stageId)) {
-      sendOk(request, context)
-      LOG.info("${EduNames.JBA} project opened: $projectId")
-      return null
+    return when (val result = HyperskillProjectOpener.openProject(projectId, stageId)) {
+      is Ok -> {
+        sendOk(request, context)
+        LOG.info("${EduNames.JBA} project opened: $projectId")
+        null
+      }
+      is Err -> {
+        val message = result.error
+        LOG.warn(message)
+        showError(message)
+        sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
+        message
+      }
     }
-    sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
-    val message = "A project wasn't found or created"
-    LOG.info(message)
-    return message
+  }
+
+  private fun showError(message: String) {
+    Notification(HYPERSKILL, HYPERSKILL, message, NotificationType.WARNING,
+                 HSHyperlinkListener(false)).notify(null)
   }
 
   private fun createProject(): Pair<Project, Course>? {
@@ -206,10 +217,17 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     if (account == null) return null
     val projectId = account.userInfo.hyperskillProjectId ?: return null
 
-    val hyperskillCourse = HyperskillProjectOpener.getHyperskillCourseUnderProgress(projectId) ?: return null
-    val project: Project = createProjectFromCourse(hyperskillCourse) ?: return null
-
-    return Pair(project, hyperskillCourse)
+    return when (val result = HyperskillProjectOpener.getHyperskillCourseUnderProgress(projectId)) {
+      is Err -> {
+        showError(result.error)
+        null
+      }
+      is Ok -> {
+        val hyperskillCourse = result.value
+        val project = createProjectFromCourse(hyperskillCourse) ?: return null
+        return Pair(project, hyperskillCourse)
+      }
+    }
   }
 
   private fun createProjectFromCourse(hyperskillCourse: HyperskillCourse): Project? {

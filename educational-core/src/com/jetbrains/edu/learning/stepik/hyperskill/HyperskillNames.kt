@@ -23,6 +23,7 @@ var CLIENT_ID = HyperskillOAuthBundle.valueOrDefault("clientId", "")
 var CLIENT_SECRET = HyperskillOAuthBundle.valueOrDefault("clientSecret", "")
 const val HYPERSKILL_PROJECT_NOT_SUPPORTED = "Selected project is not supported yet. " +
                                              "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select another project</a> "
+const val FAILED_TO_CREATE_PROJECT = "A project wasn't found or created"
 
 val HYPERSKILL_LANGUAGES = mapOf("java" to "${EduNames.JAVA} 11", "kotlin" to EduNames.KOTLIN, "python" to EduNames.PYTHON,
                                  "javascript" to EduNames.JAVASCRIPT)
