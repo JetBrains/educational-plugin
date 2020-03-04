@@ -120,10 +120,6 @@ public abstract class Course extends LessonContainer {
     myEnvironment = environment;
   }
 
-  public static String getAuthorsString(@NotNull List<StepikUserInfo> authors) {
-    return StringUtil.join(authors, StepikUserInfo::getName, ", ");
-  }
-
   @Transient
   public void setAuthorsAsString(String[] authors) {
     this.authors = new ArrayList<>();
