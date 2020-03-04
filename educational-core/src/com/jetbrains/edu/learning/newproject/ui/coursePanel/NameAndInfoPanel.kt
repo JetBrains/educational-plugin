@@ -104,7 +104,7 @@ private class InfoPanel : JPanel(HorizontalLayout(HORIZONTAL_OFFSET)) {
   }
 
   private val Course.formattedDate: String
-    get() = SimpleDateFormat("MMM d, yyyy").format(course.updateDate)
+    get() = SimpleDateFormat("MMM d, yyyy", Locale(languageCode)).format(course.updateDate)
 
   private val Course.allAuthors: String  // TODO: max size
     get() = course.authorFullNames.joinToString()

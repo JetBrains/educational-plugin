@@ -273,7 +273,6 @@ public abstract class Course extends LessonContainer {
     return loc.getDisplayName();
   }
 
-  @SuppressWarnings("unused") // used for serialization
   public String getLanguageCode() {
     return myLanguageCode;
   }
