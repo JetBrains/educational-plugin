@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 
 /**
  * To introduce new course it's required to:
- *  - Extend Course class
- *  - Update {@link SerializationUtils.Xml#COURSE_ELEMENT_TYPES} to handle xml migrations and deserialization
- *  - Update CourseBuilder#build() in {@link com.jetbrains.edu.coursecreator.yaml.format.CourseYamlUtil} to handle course loading from YAML
- *  - Override {@link Course#getItemType}, that's how we find appropriate {@link com.jetbrains.edu.learning.configuration.EduConfigurator}
+ * - Extend Course class
+ * - Update {@link SerializationUtils.Xml#COURSE_ELEMENT_TYPES} to handle xml migrations and deserialization
+ * - Update CourseBuilder#build() in {@link com.jetbrains.edu.learning.yaml.format.CourseYamlUtil} to handle course loading from YAML
+ * - Override {@link Course#getItemType}, that's how we find appropriate {@link com.jetbrains.edu.learning.configuration.EduConfigurator}
  */
 public abstract class Course extends LessonContainer {
   transient private List<StepikUserInfo> authors = new ArrayList<>();
