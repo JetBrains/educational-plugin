@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
@@ -12,9 +10,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.wm.IdeFrame
-import com.intellij.openapi.wm.WindowManager
-import com.intellij.ui.AppIcon
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
@@ -31,8 +26,7 @@ import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HSHyperlinkListener
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillJoinCourseDialog
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import io.netty.channel.ChannelHandlerContext
@@ -114,7 +108,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val stepId = getIntParameter("step_id", urlDecoder)
     val (project, course) = openOrCreateProject() ?: return sendErrorResponse(request, context,
                                                                               "Failed to create or open ${EduNames.JBA} project")
-    runInEdt { requestFocus() }
+    runInEdt { HyperskillProjectOpener.requestFocus() }
 
     if (course !is HyperskillCourse) return sendErrorResponse(request, context, "Failed to create or open ${EduNames.JBA} project")
 
@@ -132,7 +126,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val task = findOrCreateTask(course, lesson, stepSource, lessonDir, project)
     runInEdt {
       NavigationUtils.navigateToTask(project, task)
-      requestFocus()
+      HyperskillProjectOpener.requestFocus()
     }
     sendOk(request, context)
     return null
@@ -196,7 +190,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val projectId = getStringParameter("project_id", decoder)?.toInt() ?: return "The project_id parameter was not found"
     LOG.info("Opening a stage $stageId from project $projectId")
 
-    if (focusOpenProject(projectId, stageId) || openRecentProject(projectId, stageId) || createProject(projectId, stageId)) {
+    if (HyperskillProjectOpener.openProject(projectId, stageId)) {
       sendOk(request, context)
       LOG.info("${EduNames.JBA} project opened: $projectId")
       return null
@@ -207,27 +201,12 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     return message
   }
 
-  private fun focusOpenProject(courseId: Int, stageId: Int): Boolean {
-    val (project, course) = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
-                            ?: return false
-    course.putUserData(HYPERSKILL_STAGE, stageId)
-    runInEdt { openSelectedStage(course, project) }
-    return true
-  }
-
-  private fun openRecentProject(courseId: Int, stageId: Int): Boolean {
-    val (_, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
-                      ?: return false
-    course.putUserData(HYPERSKILL_STAGE, stageId)
-    return true
-  }
-
   private fun createProject(): Pair<Project, Course>? {
     val account = HyperskillSettings.INSTANCE.account
     if (account == null) return null
     val projectId = account.userInfo.hyperskillProjectId ?: return null
 
-    val hyperskillCourse = getHyperskillCourseUnderProgress(projectId) ?: return null
+    val hyperskillCourse = HyperskillProjectOpener.getHyperskillCourseUnderProgress(projectId) ?: return null
     val project: Project = createProjectFromCourse(hyperskillCourse) ?: return null
 
     return Pair(project, hyperskillCourse)
@@ -247,53 +226,6 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       }
     }
     return project
-  }
-
-  private fun getHyperskillCourseUnderProgress(projectId: Int): HyperskillCourse? {
-    return ProgressManager.getInstance().run(object : Task.WithResult<HyperskillCourse?, Exception>
-                                                      (null, "Loading project", true) {
-      override fun compute(indicator: ProgressIndicator): HyperskillCourse? {
-        val hyperskillProject = HyperskillConnector.getInstance().getProject(projectId) ?: return null
-
-        if (!hyperskillProject.useIde) {
-          LOG.warn("Project in not supported yet $projectId")
-          Notification(HYPERSKILL, HYPERSKILL, HYPERSKILL_PROJECT_NOT_SUPPORTED, NotificationType.WARNING,
-                       HSHyperlinkListener(false)).notify(project)
-          return null
-        }
-        val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language]
-        if (languageId == null) {
-          LOG.warn("Language in not supported yet ${hyperskillProject.language}")
-          Notification(HYPERSKILL, HYPERSKILL, "Unsupported language ${hyperskillProject.language}",
-                       NotificationType.WARNING).notify(project)
-          return null
-        }
-        val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
-        val stages = HyperskillConnector.getInstance().getStages(projectId) ?: return null
-        hyperskillCourse.stages = stages
-        return hyperskillCourse
-      }
-    })
-  }
-
-  private fun createProject(projectId: Int, stageId: Int): Boolean {
-    val hyperskillCourse = getHyperskillCourseUnderProgress(projectId) ?: return false
-    runInEdt {
-      requestFocus()
-      hyperskillCourse.putUserData(HYPERSKILL_STAGE, stageId)
-      HyperskillJoinCourseDialog(hyperskillCourse).show()
-    }
-    return true
-  }
-
-  // We have to use visible frame here because project is not yet created
-  // See `com.intellij.ide.impl.ProjectUtil.focusProjectWindow` implementation for more details
-  private fun requestFocus() {
-    val frame = WindowManager.getInstance().findVisibleFrame()
-    if (frame is IdeFrame) {
-      AppIcon.getInstance().requestFocus(frame)
-    }
-    frame.toFront()
   }
 
   override fun isAccessible(request: HttpRequest): Boolean = isHyperskillSupportAvailable()
