@@ -63,7 +63,7 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   }
 
   @NotNull
-  public JComponent createTaskSpecificPanel(@NotNull Project project, @Nullable Task task) {
+  public JComponent createTaskSpecificPanel(@NotNull Project project) {
     taskSpecificBrowserWindow = new BrowserWindow(project, true);
     taskSpecificBrowserWindow.getPanel().setPreferredSize(JBUI.size(Integer.MAX_VALUE, 0));
     return taskSpecificBrowserWindow.getPanel();

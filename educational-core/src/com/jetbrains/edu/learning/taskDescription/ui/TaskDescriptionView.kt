@@ -25,7 +25,7 @@ abstract class TaskDescriptionView {
   abstract fun readyToCheck()
   abstract fun checkStarted()
   abstract fun checkFinished(task: Task, checkResult: CheckResult)
-  abstract fun checkTooltipPosition(): RelativePoint
+  abstract fun checkTooltipPosition(): RelativePoint?
 
   companion object {
 

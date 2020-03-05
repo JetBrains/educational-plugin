@@ -43,7 +43,7 @@ abstract class TaskDescriptionToolWindow {
 
   abstract fun createTaskInfoPanel(project: Project): JComponent
 
-  abstract fun createTaskSpecificPanel(project: Project, currentTask: Task?): JComponent
+  abstract fun createTaskSpecificPanel(project: Project): JComponent
 
   open fun updateTaskSpecificPanel(task: Task?) {}
 

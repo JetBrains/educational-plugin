@@ -81,7 +81,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
   }
 
   @NotNull
-  public JComponent createTaskSpecificPanel(@NotNull Project project, Task currentTask) {
+  public JComponent createTaskSpecificPanel(@NotNull Project project) {
     myTaskSpecificPanel = new JPanel(new BorderLayout());
     return myTaskSpecificPanel;
   }
