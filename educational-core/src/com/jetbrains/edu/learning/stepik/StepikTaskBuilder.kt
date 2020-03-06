@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.VideoTaskResourcesManager
 import org.jetbrains.annotations.NonNls
@@ -90,11 +91,20 @@ open class StepikTaskBuilder(
           }
         }
       }
-      val memoryLimit = options.executionMemoryLimit
-      val timeLimit = options.executionTimeLimit
+
+      var memoryLimit = options.executionMemoryLimit
+      var timeLimit = options.executionTimeLimit
+      val languageSpecificLimits = options.limits
+      val stepikLanguageName = StepikLanguages.langOfName(language.id).langName
+      if (languageSpecificLimits != null && stepikLanguageName != null) {
+        languageSpecificLimits[stepikLanguageName]?.let {
+          memoryLimit = it.memory
+          timeLimit = it.time
+        }
+      }
       if (memoryLimit != null && timeLimit != null) {
-        append("<br><font color=\"gray\">Memory limit: $memoryLimit MB</font>")
-        append("<br><font color=\"gray\">Time limit: ${timeLimit} ${StringUtil.pluralize("second", timeLimit)}</font><br><br>")
+        append("""<br><font color="gray">${EduCoreBundle.message("stepik.memory.limit", memoryLimit!!)}</font>""")
+        append("""<br><font color="gray">${EduCoreBundle.message("stepik.time.limit", timeLimit!!)}</font><br><br>""")
       }
     }
 

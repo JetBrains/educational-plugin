@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "block": {
+        "name": "code",
+        "text": "<div><span>Write a collector that partitions all words in a stream into two groups: </span><b>palindromes (true)</b><span> and</span><b> usual words (false)</b><span>. The collector should return </span><b>Map&lt;Boolean, List&lt;String&gt;&gt;</b><span>. All input words will be in the same case (lower).</span><br></div><br>Let's remind, a <b>palindrome</b> is a word or phrase which reads the same backward or forward, such as <i>noon</i> or <i>level</i>. In our case, a palindrome is always a word. For details, see <a href=\"https://en.wikipedia.org/wiki/Palindrome\" rel=\"nofollow noopener noreferrer\">https://en.wikipedia.org/wiki/Palindrome</a><br><div><br><b>Hint:</b> the method <b>reverse() </b>of StringBuilder<b></b> may help you.<br><br><div><b>Important.</b> You should write only the collector in <b>any valid formats but without ; on the end.</b><br></div><div><b></b>It will be passed as an argument to the <b>collect()</b> method of a stream as shown below.<b><br></b></div><div><br></div><div><pre><code class=\"language-java\">String[] words = ...\nMap&lt;Boolean, List&lt;String&gt;&gt; palindromeOrNoMap = \n        Arrays.stream(words)\n              .collect(...your_collector_will_be_passed_here...);</code></pre> </div><br><b>Examples</b> of the valid solution formats: <b>Collectors.reducing(...)</b> or <b><b>reducing(...)</b></b><div><div><b></b></div></div></div>",
+        "video": null,
+        "options": {
+          "execution_time_limit": 5,
+          "execution_memory_limit": 256,
+          "limits": {
+            "TEXT": {
+              "time": 8,
+              "memory": 256
+            }
+          },
+          "code_templates": {
+            "java11": "// write your collector here"
+          },
+          "code_templates_options": {},
+          "samples": [
+            [
+              "aaaa aaa a aa\n",
+              "{false=[], true=[aaaa, aaa, a, aa]}"
+            ],
+            [
+              "level bbaa ac\n",
+              "{false=[bbaa, ac], true=[level]}"
+            ]
+          ],
+          "is_run_user_code_allowed": true,
+          "code_templates_header_lines_count": {
+            "java11": 15
+          },
+          "language": ""
+        },
+        "subtitle_files": []
+      },
+      "bloom_level": 2,
+      "can_abandon": true,
+      "can_skip": true,
+      "check_profile": "",
+      "comments_statistics": [
+        {
+          "thread": "comment",
+          "total_count": 0
+        },
+        {
+          "thread": "hint",
+          "total_count": 1
+        },
+        {
+          "thread": "useful link",
+          "total_count": 0
+        },
+        {
+          "thread": "solutions",
+          "total_count": 1
+        }
+      ],
+      "created_at": "2017-09-20T18:33:39Z",
+      "id": 2458,
+      "is_abandoned": false,
+      "is_completed": false,
+      "is_cribbed": false,
+      "is_recommended": false,
+      "is_skipped": false,
+      "last_completed_at": "2020-03-04T16:08:10Z",
+      "likes_statistics": [
+        {
+          "subject": "",
+          "value": 0,
+          "total_count": 1
+        },
+        {
+          "subject": "",
+          "value": 1,
+          "total_count": 3
+        },
+        {
+          "subject": "",
+          "value": 2,
+          "total_count": 8
+        },
+        {
+          "subject": "skip",
+          "value": 100,
+          "total_count": 2
+        },
+        {
+          "subject": "skip",
+          "value": 102,
+          "total_count": 3
+        }
+      ],
+      "lesson_stepik_id": 57151,
+      "position": 1,
+      "seconds_to_complete": 230.0,
+      "solved_by": 92,
+      "stepik_id": 223440,
+      "success_rate": 0.3384146341463415,
+      "title": "Palindrome or not",
+      "topic": 58,
+      "topic_theory": 3613,
+      "type": "practice",
+      "updated_at": "2018-11-01T16:07:29Z",
+      "progress_updated_at": "2020-03-06T08:44:09.405222Z"
+    }
+  ]
+}

@@ -10,12 +10,14 @@ import com.jetbrains.edu.learning.EduNames
  */
 enum class StepikLanguages(val id: String?, val langName: String?) {
   JAVA(EduNames.JAVA, "java8"),
+  JAVA11(EduNames.JAVA, "java11"),
   KOTLIN(EduNames.KOTLIN, "kotlin"),
   PYTHON(EduNames.PYTHON, "python3"),
   JAVASCRIPT(EduNames.JAVASCRIPT, "javascript"),
   SCALA(EduNames.SCALA, "scala"),
   CPP(EduNames.CPP, "c++"),
   GO(EduNames.GO, "go"),
+  PLAINTEXT("TEXT", "TEXT"), // added for tests
   INVALID(null, null);
 
 

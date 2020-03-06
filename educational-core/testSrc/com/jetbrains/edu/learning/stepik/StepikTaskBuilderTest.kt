@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepsList
 import org.hamcrest.CoreMatchers
@@ -61,6 +62,32 @@ class StepikTaskBuilderTest : EduTestCase() {
 
     assertInstanceOf(options, PyCharmStepOptions::class.java)
     assertEquals((options as PyCharmStepOptions).descriptionText, task.descriptionText)
+  }
+
+  fun `test code task language specific limits`() {
+    val stepSource = loadStepSource()
+    val task = buildTask(stepSource, PlainTextLanguage.INSTANCE)
+
+    val block = stepSource.block
+    assertNotNull(block)
+    val options = block!!.options
+
+    assertInstanceOf(options, PyCharmStepOptions::class.java)
+    assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.memory.limit", 256)));
+    assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.time.limit", 8)));
+  }
+
+  fun `test code task no language specific limits`() {
+    val stepSource = loadStepSource()
+    val task = buildTask(stepSource, PlainTextLanguage.INSTANCE)
+
+    val block = stepSource.block
+    assertNotNull(block)
+    val options = block!!.options
+
+    assertInstanceOf(options, PyCharmStepOptions::class.java)
+    assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.memory.limit", 256)));
+    assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.time.limit", 5)));
   }
 
   private inline fun <reified T : Task> doTest(language: Language) {

@@ -383,6 +383,24 @@ public class StepikFormatTest extends EduTestCase {
     assertEquals("custom name", options.getCustomPresentableName());
   }
 
+  public void testCode() throws IOException {
+    String jsonText = loadJsonText();
+    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
+    final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
+    assertNotNull(stepContainer);
+    Step block = stepContainer.steps.get(0).getBlock();
+    assertNotNull(block);
+    PyCharmStepOptions options = (PyCharmStepOptions)block.getOptions();
+    assertNotNull(options);
+    Map<String, ExecutionLimit> limits = options.getLimits();
+    assertNotNull(limits);
+    assertEquals(1, limits.size());
+    ExecutionLimit java11Limit = limits.get("java11");
+    assertNotNull(java11Limit);
+    assertEquals(8, (int)java11Limit.getTime());
+    assertEquals(256, (int)java11Limit.getMemory());
+  }
+
   @NotNull
   private String loadJsonText() throws IOException {
     return loadJsonText(getTestFile());
