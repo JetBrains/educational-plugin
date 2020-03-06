@@ -43,7 +43,7 @@ object SubmissionsManager {
   }
 
   @JvmStatic
-  fun getLastSubmissionReply(taskId: Int, isSolved: Boolean): Reply? {
+  fun getLastSubmissonReply(taskId: Int, isSolved: Boolean): Reply? {
     return getLastSubmission(taskId, isSolved)?.reply
   }
 
