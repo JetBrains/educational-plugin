@@ -54,6 +54,7 @@ const val ADDITIONAL_FILES = "additional_files"
 const val TASK_FILES = "task_files"
 const val TASKS_INFO = "tasks_info"
 const val TIME = "time"
+const val MEMORY = "memory"
 
 // List wrappers for GET requests:
 

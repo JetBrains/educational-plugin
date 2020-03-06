@@ -36,6 +36,7 @@ const val FEEDBACK_LINK = "feedback_link"
 const val SAMPLES = "samples"
 const val EXECUTION_MEMORY_LIMIT = "execution_memory_limit"
 const val EXECUTION_TIME_LIMIT = "execution_time_limit"
+const val LIMITS = "limits"
 const val CODE_TEMPLATES = "code_templates"
 const val IS_ALWAYS_CORRECT = "is_always_correct"
 const val SAMPLE_SIZE = "sample_size"
@@ -153,6 +154,9 @@ open class PyCharmStepOptions : StepOptions {
 
   @JsonProperty(EXECUTION_TIME_LIMIT)
   var executionTimeLimit: Int? = null
+
+  @JsonProperty(LIMITS)
+  var limits: Map<String, ExecutionLimit>? = null
 
   @JsonProperty(CODE_TEMPLATES)
   var codeTemplates: Map<String, String>? = null
@@ -329,4 +333,12 @@ class UrlsMap {
 
   @JsonProperty(URL)
   var url: String = ""
+}
+
+class ExecutionLimit {
+  @JsonProperty(TIME)
+  var time: Int? = null
+
+  @JsonProperty(MEMORY)
+  var memory: Int? = null
 }
