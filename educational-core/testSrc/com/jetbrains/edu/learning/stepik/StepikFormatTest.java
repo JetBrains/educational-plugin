@@ -30,7 +30,7 @@ public class StepikFormatTest extends EduTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return "testData/stepik";
+    return "testData/stepik/format";
   }
 
   public void testFirstVersion() throws IOException {
