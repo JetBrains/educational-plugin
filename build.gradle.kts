@@ -64,7 +64,6 @@ val pythonPlugin = when (baseIDE) {
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
 val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
-val nodeJsPlugin = "NodeJS:${prop("nodeJsPluginVersion")}"
 val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
 val tomlPlugin = "org.toml.lang:${prop("tomlPluginVersion")}"
 val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
