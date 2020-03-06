@@ -10,6 +10,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.CourseSettings
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import java.awt.BorderLayout
@@ -60,7 +61,7 @@ class NewCourseSettings(isLocationFieldNeeded: Boolean, leftMargin: Int) : Cours
       settingsComponents.addAll(components)
     }
 
-    if (settingsComponents.isNotEmpty()) {
+    if (settingsComponents.isNotEmpty() && course !is JetBrainsAcademyCourse) {
       isVisible = true
       setSettingsComponents(settingsComponents)
     }
