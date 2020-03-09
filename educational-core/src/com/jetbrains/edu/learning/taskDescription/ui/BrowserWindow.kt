@@ -54,9 +54,9 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
       }
       val scene = Scene(myPane)
       panel.scene = scene
-      panel.isVisible = true
       updateLaf()
     }
+    panel.isVisible = true
   }
 
   fun updateLaf() {
