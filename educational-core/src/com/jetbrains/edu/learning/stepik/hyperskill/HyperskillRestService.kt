@@ -107,8 +107,11 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
   private fun openStep(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val stepId = getIntParameter("step_id", urlDecoder)
-    val (project, course) = openOrCreateProject() ?: return sendErrorResponse(request, context,
-                                                                              "Failed to create or open ${EduNames.JBA} project")
+    val account = HyperskillSettings.INSTANCE.account ?: error("Attempt to open step for unauthorized user")
+    val projectId = getSelectedProjectIdUnderProgress(account)
+
+    val (project, course) = openOrCreateProject(projectId) ?: return sendErrorResponse(request, context,
+                                                                                       "Failed to create or open ${EduNames.JBA} project")
     runInEdt { HyperskillProjectOpener.requestFocus() }
 
     if (course !is HyperskillCourse) return sendErrorResponse(request, context, "Failed to create or open ${EduNames.JBA} project")
@@ -133,10 +136,14 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     return null
   }
 
-  private fun openOrCreateProject(): Pair<Project, Course>? {
-    var projectCourse = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse }
+  private fun openOrCreateProject(projectId: Int?): Pair<Project, Course>? {
+    var projectCourse = EduBuiltInServerUtils.focusOpenProject {
+      it is HyperskillCourse && projectId != null && it.hyperskillProject?.id == projectId
+    }
     if (projectCourse != null) return projectCourse
-    projectCourse = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse }
+    projectCourse = EduBuiltInServerUtils.openRecentProject {
+      it is HyperskillCourse && projectId != null && it.hyperskillProject?.id == projectId
+    }
     if (projectCourse != null) return projectCourse
     return createProject()
   }

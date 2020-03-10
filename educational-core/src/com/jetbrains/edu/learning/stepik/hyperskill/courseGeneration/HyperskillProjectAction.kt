@@ -5,9 +5,6 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
@@ -20,6 +17,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.getSelectedProjectIdUnderProgress
 import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import java.awt.event.ActionEvent
@@ -60,16 +58,7 @@ class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") 
 
   companion object {
     fun openHyperskillProject(account: HyperskillAccount, showError: (String) -> Unit) {
-      val projectId = ProgressManager.getInstance().run(
-        object : Task.WithResult<Int?, Exception>(null, "Synchronizing ${EduNames.JBA} account", false) {
-          override fun compute(indicator: ProgressIndicator): Int? {
-            val currentUser = HyperskillConnector.getInstance().getCurrentUser(account)
-            if (currentUser != null) {
-              account.userInfo = currentUser
-            }
-            return account.userInfo.hyperskillProjectId
-          }
-        })
+      val projectId = getSelectedProjectIdUnderProgress(account)
       if (projectId == null) {
         showError("Please <a href=\"$HYPERSKILL_PROJECTS_URL\">select a project</a> on ${EduNames.JBA}")
         return

@@ -21,11 +21,13 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import java.awt.BorderLayout
 import javax.swing.JPanel
+import com.intellij.openapi.progress.Task as ProgressTask
 
 val HYPERSKILL_STAGE: Key<Int> = Key.create("HYPERSKILL_STAGE")
 const val HYPERSKILL_GROUP_ID = "Hyperskill.post"
@@ -105,4 +107,17 @@ fun showFailedToPostNotification() {
   val notification = Notification(HYPERSKILL_GROUP_ID, "Failed to post submission to ${EduNames.JBA}",
                                   "Please, try to check again", NotificationType.WARNING)
   notification.notify(null)
+}
+
+fun getSelectedProjectIdUnderProgress(account: HyperskillAccount): Int? {
+  return ProgressManager.getInstance().run(
+    object : ProgressTask.WithResult<Int?, Exception>(null, "Synchronizing ${EduNames.JBA} account", false) {
+      override fun compute(indicator: ProgressIndicator): Int? {
+        val currentUser = HyperskillConnector.getInstance().getCurrentUser(account)
+        if (currentUser != null) {
+          account.userInfo = currentUser
+        }
+        return account.userInfo.hyperskillProjectId
+      }
+    })
 }
