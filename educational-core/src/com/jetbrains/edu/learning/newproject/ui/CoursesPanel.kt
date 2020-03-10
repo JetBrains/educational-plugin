@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileChooser.FileChooser
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.OnePixelDivider
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -36,8 +37,10 @@ import com.jetbrains.edu.learning.courseFormat.ext.tooltipText
 import com.jetbrains.edu.learning.courseLoading.CourseLoader.getCourseInfosUnderProgress
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
+import com.jetbrains.edu.learning.newproject.joinCourse
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.*
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.Companion.forCourse
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.importCourseArchive
@@ -67,9 +70,9 @@ class CoursesPanel(courses: List<Course>,
   private val mySearchField: FilterComponent
   private val mySplitPane: JSplitPane = JSplitPane()
   private val mySplitPaneRoot: JPanel = JPanel(BorderLayout())
-  private var myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false, isLocationFieldNeeded = true) { errorState ->
-    dialog.setError(errorState)
-  }
+  private var myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false,
+                                                             isLocationFieldNeeded = true,
+                                                             joinCourseAction = joinCourseAction(dialog))
   private val myContentPanel: JPanel = JPanel(BorderLayout())
   private val myCourses: MutableList<Course>
   private var myCoursesComparator: Comparator<Course>
@@ -103,6 +106,15 @@ class CoursesPanel(courses: List<Course>,
     addErrorStateListener()
 
     processSelectionChanged()
+  }
+
+  private fun joinCourseAction(dialog: BrowseCoursesDialog): (CourseInfo, String) -> Unit {
+    return { courseInfo, courseMode ->
+      joinCourse(courseInfo,
+                 courseMode,
+                 errorHandler = { errorState -> dialog.setError(errorState) },
+                 closeDialogAction = { dialog.close(DialogWrapper.OK_EXIT_CODE) })
+    }
   }
 
   private fun addErrorStateListener() {

@@ -70,6 +70,10 @@ fun joinCourse(courseInfo: CourseInfo,
     return
   }
 
+  // location is null for course preview dialog only
+  if (location == null) {
+    return
+  }
   val configurator = course.configurator
   if (configurator != null) {
     try {

@@ -12,7 +12,6 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import java.awt.Dimension
 import java.io.File
 import java.text.DateFormat
@@ -31,9 +30,9 @@ private val DIALOG_SIZE = JBUI.size(400, 600)
 class NewCoursePanel(
   val isStandalonePanel: Boolean,
   val isLocationFieldNeeded: Boolean,
-  errorHandler: (ErrorState) -> Unit
+  joinCourseAction: (CourseInfo, String) -> Unit
 ) : JPanel() {
-  private var header = HeaderPanel(leftMargin, errorHandler)
+  private var header = HeaderPanel(leftMargin, joinCourseAction)
   private var description = CourseDescriptionPanel(leftMargin)
   private var advancedSettings = NewCourseSettings(isLocationFieldNeeded, leftMargin)
 
@@ -79,7 +78,7 @@ class NewCoursePanel(
 
   private fun updateCourseDescriptionPanel(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()) {
     val location = locationString()
-    if (location == null) {
+    if (location == null && isLocationFieldNeeded) {
       // TODO: set error
       return
     }
@@ -94,7 +93,7 @@ class NewCoursePanel(
     return advancedSettings.languageSettings
   }
 
-  fun validateSettings(course: Course) = advancedSettings.validateSettings(course)
+  fun validateSettings(course: Course?) = advancedSettings.validateSettings(course)
 
   fun hideContent() {
     isVisible = false

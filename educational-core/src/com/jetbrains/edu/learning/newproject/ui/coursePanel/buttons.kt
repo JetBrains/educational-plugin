@@ -8,8 +8,6 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.joinCourse
-import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import java.awt.Color
 import java.awt.event.ActionListener
 
@@ -26,7 +24,7 @@ private val FocusedBackground: Color = JBColor.namedColor("Edu.CourseDialog.Butt
 private val BorderColor: Color = JBColor.namedColor("Edu.CourseDialog.Button.installBorderColor", GreenColor)
 
 
-class StartCourseButton(errorHandler: (ErrorState) -> Unit) : StartCourseButtonBase(errorHandler) {
+class StartCourseButton(joinCourse: (CourseInfo, String) -> Unit) : StartCourseButtonBase(joinCourse) {
   override val courseMode = EduNames.STUDY
 
   init {
@@ -40,7 +38,7 @@ class StartCourseButton(errorHandler: (ErrorState) -> Unit) : StartCourseButtonB
 
 }
 
-class EditCourseButton(errorHandler: (ErrorState) -> Unit) : StartCourseButtonBase(errorHandler) {
+class EditCourseButton(joinCourse: (CourseInfo, String) -> Unit) : StartCourseButtonBase(joinCourse) {
   override val courseMode = CCUtils.COURSE_MODE
 
   init {
@@ -58,7 +56,7 @@ class EditCourseButton(errorHandler: (ErrorState) -> Unit) : StartCourseButtonBa
 /**
  * inspired by [com.intellij.ide.plugins.newui.InstallButton]
  */
-abstract class StartCourseButtonBase(private val errorHandler: (ErrorState) -> Unit) : ColorButton() {
+abstract class StartCourseButtonBase(private val joinCourse: (CourseInfo, String) -> Unit) : ColorButton() {
   private var listener: ActionListener? = null
   abstract val courseMode: String
 
@@ -69,7 +67,7 @@ abstract class StartCourseButtonBase(private val errorHandler: (ErrorState) -> U
   }
 
   private fun actionListener(courseInfo: CourseInfo) = ActionListener {
-    joinCourse(courseInfo, courseMode, errorHandler)
+    joinCourse(courseInfo, courseMode)
   }
 
   fun update(courseInfo: CourseInfo) {
