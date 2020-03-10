@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.CoursePanel
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import java.io.IOException
 import javax.swing.JComponent
@@ -25,14 +25,15 @@ class CCCreateCoursePreviewDialog(
   private val myConfigurator: EduConfigurator<*>
 ) : DialogWrapper(true) {
 
-  private val myPanel: CoursePanel = CoursePanel(true, false).apply {
-    preferredSize = JBUI.size(WIDTH, HEIGHT)
-    minimumSize = JBUI.size(WIDTH, HEIGHT)
-  }
+  private val myPanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = true,
+                                                       isLocationFieldNeeded = false,
+                                                       joinCourseAction = { _, _ -> createCoursePreview() })
 
   init {
     title = "Course Preview"
     setOKButtonText("Create")
+    myPanel.preferredSize = JBUI.size(WIDTH, HEIGHT)
+    myPanel.minimumSize = JBUI.size(WIDTH, HEIGHT)
     myPanel.bindCourse(myCourse)
     init()
   }
@@ -40,6 +41,10 @@ class CCCreateCoursePreviewDialog(
   override fun createCenterPanel(): JComponent = myPanel
 
   override fun doOKAction() {
+    createCoursePreview()
+  }
+
+  private fun createCoursePreview() {
     val folder = CCUtils.getGeneratedFilesFolder(myProject)
     if (folder == null) {
       LOG.info(TMP_DIR_ERROR)

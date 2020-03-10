@@ -1,12 +1,15 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.joinCourse
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import javax.swing.JComponent
 
 open class JoinCourseDialogBase(private val course: Course, settings: CourseDisplaySettings) : OpenCourseDialogBase() {
-  private val panel: JoinCoursePanel = JoinCoursePanel(settings)
+  private val panel: JoinCoursePanel = JoinCoursePanel(settings) { courseInfo, mode ->
+    joinCourse(courseInfo, mode, errorHandler = { setError(it) }, closeDialogAction = { this.close(OK_EXIT_CODE) })
+  }
 
   init {
     title = course.name

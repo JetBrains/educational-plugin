@@ -82,7 +82,7 @@ class CoursesPanel(courses: List<Course>,
   private var myCoursesList: JBList<Course> = JBList()
 
   val projectSettings: Any
-    get() = myCoursePanel.projectSettings()
+    get() = myCoursePanel.projectSettings
 
   private fun initUI() {
     GuiUtils.replaceJSplitPaneWithIDEASplitter(mySplitPaneRoot, true)
@@ -478,7 +478,7 @@ class CoursesPanel(courses: List<Course>,
     get() {
       // We use `myCoursePanel` with location field
       // so `myCoursePanel.getLocationString()` must return not null value
-      return myCoursePanel.locationString()!!
+      return myCoursePanel.locationString!!
     }
 
   private fun createSearchField(): FilterComponent {

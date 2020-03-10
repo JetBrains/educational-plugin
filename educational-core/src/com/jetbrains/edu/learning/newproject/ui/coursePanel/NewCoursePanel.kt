@@ -77,12 +77,12 @@ class NewCoursePanel(
 
 
   private fun updateCourseDescriptionPanel(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()) {
-    val location = locationString()
+    val location = locationString
     if (location == null && isLocationFieldNeeded) {
       // TODO: set error
       return
     }
-    header.update(CourseInfo(course, location, projectSettings()), settings)
+    header.update(CourseInfo(course, location, projectSettings), settings)
     description.bind(course)
   }
 
@@ -99,9 +99,11 @@ class NewCoursePanel(
     isVisible = false
   }
 
-  fun locationString() = advancedSettings.locationString
+  val locationString: String?
+    get() = advancedSettings.locationString
 
-  fun projectSettings() = advancedSettings.getProjectSettings()
+  val projectSettings: Any
+    get() = advancedSettings.getProjectSettings()
 
   fun bindSearchField(searchField: FilterComponent) {
     mySearchField = searchField

@@ -7,15 +7,21 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel.Companion.browseHyperlink
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.io.File
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
-class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(BorderLayout()) {
+class JoinCoursePanel(
+  private val settings: CourseDisplaySettings,
+  joinCourseAction: (CourseInfo, String) -> Unit
+) : JPanel(BorderLayout()) {
 
-  private val myCoursePanel: CoursePanel = CoursePanel(true, true)
+  private val myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = true, isLocationFieldNeeded = true,
+                                                             joinCourseAction = joinCourseAction)
   private val myErrorLabel: HyperlinkLabel = HyperlinkLabel()
   private var myValidationMessage: ValidationMessage? = null
   private var myValidationListener: ValidationListener? = null
@@ -58,7 +64,8 @@ class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(Bord
   private fun doValidation(course: Course?) {
     val message = when {
       locationString.isBlank() -> ValidationMessage("Enter course location")
-      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage("Can't create course at this location")
+      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage(
+        "Can't create course at this location")
       else -> myCoursePanel.validateSettings(course)
     }
     myValidationMessage = message
@@ -80,7 +87,7 @@ class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(Bord
   }
 
   companion object {
-    private const val WIDTH: Int = 370
-    private const val HEIGHT: Int = 330
+    private const val WIDTH: Int = 500
+    private const val HEIGHT: Int = 570
   }
 }
