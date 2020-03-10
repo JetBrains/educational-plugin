@@ -22,8 +22,19 @@ class HyperskillProjectComponent(private val project: Project) : ProjectComponen
 
     StartupManager.getInstance(project).runWhenProjectIsInitialized {
       project.messageBus.connect().subscribe(HyperskillSolutionLoader.SOLUTION_TOPIC, this)
+      synchronizeHyperskillProject(project)
+    }
+  }
 
-      val course = StudyTaskManager.getInstance(project).course as? HyperskillCourse ?: return@runWhenProjectIsInitialized
+  override fun solutionLoaded(course: Course) {
+    if (course is HyperskillCourse) {
+      HyperskillCourseUpdater.updateCourse(project, course)
+    }
+  }
+
+  companion object {
+    fun synchronizeHyperskillProject(project: Project) {
+      val course = StudyTaskManager.getInstance(project).course as? HyperskillCourse ?: return
       if (course.taskToTopics.isEmpty()) {
         ApplicationManager.getApplication().executeOnPooledThread {
           HyperskillConnector.getInstance().fillTopics(course, project)
@@ -34,12 +45,6 @@ class HyperskillProjectComponent(private val project: Project) : ProjectComponen
       if (HyperskillSettings.INSTANCE.account != null && !isSolutionLoadingStarted) {
         HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground()
       }
-    }
-  }
-
-  override fun solutionLoaded(course: Course) {
-    if (course is HyperskillCourse) {
-      HyperskillCourseUpdater.updateCourse(project, course)
     }
   }
 }

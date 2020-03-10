@@ -145,7 +145,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       it is HyperskillCourse && projectId != null && it.hyperskillProject?.id == projectId
     }
     if (projectCourse != null) return projectCourse
-    return createProject()
+    return createProject(projectId)
   }
 
   private fun findOrCreateTask(course: HyperskillCourse, lesson: Lesson, stepSource: HyperskillStepSource,
@@ -183,7 +183,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     if (lesson == null) {
       lesson = Lesson()
       lesson.name = HYPERSKILL_PROBLEMS
-      lesson.index = 2
+      lesson.index = course.items.size + 1
       course.addLesson(lesson)
       lesson.init(course, null, false)
       GeneratorUtils.createLesson(lesson, course.getDir(project))
@@ -219,12 +219,12 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
                  HSHyperlinkListener(false)).notify(null)
   }
 
-  private fun createProject(): Pair<Project, Course>? {
-    val account = HyperskillSettings.INSTANCE.account
-    if (account == null) return null
-    val projectId = account.userInfo.hyperskillProjectId ?: return null
+  private fun createProject(projectId: Int?): Pair<Project, Course>? {
+    if (projectId == null) {
+      return null
+    }
 
-    return when (val result = HyperskillProjectOpener.getHyperskillCourseUnderProgress(projectId)) {
+    return when (val result = HyperskillProjectOpener.getHyperskillCourseUnderProgress(projectId, false)) {
       is Err -> {
         showError(result.error)
         null

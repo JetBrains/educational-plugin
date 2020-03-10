@@ -49,6 +49,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
       |  id: ${hyperskillProject.id}
       |  ide_files: ${hyperskillProject.ideFiles}
       |  is_template_based: ${hyperskillProject.isTemplateBased}
+      |  use_ide: true
       |stages:
       |- id: 1
       |  step: 11

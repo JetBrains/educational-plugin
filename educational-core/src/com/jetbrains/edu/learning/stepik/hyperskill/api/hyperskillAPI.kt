@@ -82,8 +82,9 @@ class HyperskillProject {
   @JsonProperty(IDE_FILES)
   var ideFiles: String = ""
 
+  // some projects might not support IDE
   @JsonProperty(USE_IDE)
-  var useIde: Boolean = false
+  var useIde: Boolean = true
 
   @JsonProperty(LANGUAGE)
   var language: String = ""

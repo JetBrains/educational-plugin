@@ -50,7 +50,7 @@ object HyperskillProjectOpener {
     return true
   }
 
-  fun getHyperskillCourseUnderProgress(projectId: Int): Result<HyperskillCourse, String> {
+  fun getHyperskillCourseUnderProgress(projectId: Int, withStages: Boolean = true): Result<HyperskillCourse, String> {
     return ProgressManager.getInstance().run(object : Task.WithResult<Result<HyperskillCourse, String>, Exception>
                                                       (null, "Loading project", true) {
       override fun compute(indicator: ProgressIndicator): Result<HyperskillCourse, String> {
@@ -68,8 +68,10 @@ object HyperskillProjectOpener {
           return Err("The project isn't supported (language: ${hyperskillProject.language}). " +
                      "Check if all needed plugins are installed and enabled")
         }
-        val stages = HyperskillConnector.getInstance().getStages(projectId) ?: return Err(FAILED_TO_CREATE_PROJECT)
-        hyperskillCourse.stages = stages
+        if (withStages) {
+          val stages = HyperskillConnector.getInstance().getStages(projectId) ?: return Err(FAILED_TO_CREATE_PROJECT)
+          hyperskillCourse.stages = stages
+        }
         return Ok(hyperskillCourse)
       }
     })

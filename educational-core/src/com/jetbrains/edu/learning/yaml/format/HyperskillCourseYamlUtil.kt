@@ -23,7 +23,7 @@ abstract class HyperskillCourseMixin {
 }
 
 @Suppress("unused")
-@JsonPropertyOrder(ID, IDE_FILES, IS_TEMPLATE_BASED)
+@JsonPropertyOrder(ID, IDE_FILES, IS_TEMPLATE_BASED, USE_IDE)
 abstract class HyperskillProjectMixin {
   @JsonIgnore
   private var myId: Int = 0
@@ -43,7 +43,7 @@ abstract class HyperskillProjectMixin {
   @JsonProperty(IDE_FILES)
   var ideFiles: String = ""
 
-  @JsonIgnore
+  @JsonProperty(USE_IDE)
   var useIde: Boolean = false
 
   @JsonIgnore

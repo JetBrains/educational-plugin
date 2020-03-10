@@ -35,6 +35,10 @@ object HyperskillCourseUpdater {
 
       override fun run(indicator: ProgressIndicator) {
         val localHyperskillProject = course.hyperskillProject ?: error("Disconnected ${EduNames.JBA} project")
+        if (course.getProjectLesson() == null) {
+          LOG.info("No project stages loaded: update cancelled")
+          return
+        }
         val projectId = localHyperskillProject.id
         val connector = HyperskillConnector.getInstance()
         val hyperskillProject = connector.getProject(projectId) ?: return

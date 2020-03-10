@@ -157,6 +157,7 @@ abstract class HyperskillConnector {
     val progressIndicator = ProgressManager.getInstance().progressIndicator
 
     val lesson = FrameworkLesson()
+    lesson.index = 1
     lesson.course = course
     progressIndicator?.checkCanceled()
     progressIndicator?.text2 = "Loading project stages"
@@ -222,7 +223,13 @@ abstract class HyperskillConnector {
           }
           lesson.name = hyperskillProject.title
 
+          if (hyperskillCourse.lessons.isNotEmpty()) {
+            for (existingLesson in hyperskillCourse.lessons) {
+              existingLesson.index += 1
+            }
+          }
           hyperskillCourse.addLesson(lesson)
+          hyperskillCourse.sortItems()
           return true
         }
       })
