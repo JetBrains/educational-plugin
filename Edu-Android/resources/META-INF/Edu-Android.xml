@@ -1,8 +1,10 @@
-<idea-plugin>
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
     <depends>com.intellij.modules.lang</depends>
     <depends>org.jetbrains.android</depends>
     <depends>org.jetbrains.plugins.gradle</depends>
     <depends>JUnit</depends>
+
+    <xi:include href="/META-INF/Hyperskill-Android.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
     <extensions defaultExtensionNs="Educational">
         <gradleRefresher implementation="com.jetbrains.edu.gradle.StudioGradleCourseRefresher"/>
