@@ -54,8 +54,11 @@ class ChoiceTaskResourcesManager {
         textAlign = TextAlign.left
         paddingLeft = 8.px
       }
+      "#choiceOptions .text"{
+        marginBottom = 7.px
+      }
       "#choiceOptions .checkbox, .radio"{
-        marginTop = (-1).px
+        marginTop = 2.px
         marginRight = 9.px
         verticalAlign = VerticalAlign("middle")
         position = Position.relative
@@ -108,7 +111,9 @@ class ChoiceTaskResourcesManager {
       "#choiceOptions .radio:focus, .radio:before, .radio:hover, .checkbox:focus, .checkbox:before, .checkbox:hover" {
         boxShadow += BoxShadow(false, 0.px, 0.px, 2.px, 2.px, getFocusColor())
       }
-    }.toString().plus("#choiceOptions .checkbox, .radio { -webkit-appearance: none; }").plus(getSystemSpecificCss())
+    }.toString()
+      .plus("#choiceOptions .checkbox, .radio { -webkit-appearance: none; }")
+      .plus(getSystemSpecificCss())
   }
 
   private fun getBackgroundColor() = if (UIUtil.isUnderDarcula()) Color(

@@ -2,7 +2,7 @@
   ${choice_options_style}
 </style>
 <div id='choiceOptions'>
-  ${text}
+  <div class="text">${text}</div>
 </div>
 <script>
   var parentElement = document.getElementById('choiceOptions');
@@ -13,8 +13,8 @@
 
   function createCheckboxes(options) {
     for (var count in options) { //make sure that order is preserved
-      var br = document.createElement('br');
-      parentElement.appendChild(br);
+      let div = document.createElement('div');
+      div.className = 'labeled_input'
       var inputElement = document.createElement('input');
       inputElement.className = inputType
       inputElement.type = inputType;
@@ -30,8 +30,9 @@
       var label = document.createElement('label')
       label.htmlFor = inputElement.id;
       label.innerHTML = options[count];
-      parentElement.appendChild(inputElement);
-      parentElement.appendChild(label);
+      div.appendChild(inputElement)
+      div.appendChild(label)
+      parentElement.appendChild(div);
     }
   }
 
