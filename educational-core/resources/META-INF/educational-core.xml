@@ -269,7 +269,7 @@
     <experimentalFeature id="edu.course.creator.split.editor" percentOfUsers="100" internalFeature="true">
       <description>Enables previous task view for framework lessons</description>
     </experimentalFeature>
-    <experimentalFeature id="edu.course.creator.new.popup.ui" percentOfUsers="100" internalFeature="true">
+    <experimentalFeature id="edu.course.creator.new.popup.ui" percentOfUsers="100">
       <description>Use popup UI instead of modal dialog for new item (task, lesson, section) creation</description>
     </experimentalFeature>
     <defaultLiveTemplatesProvider implementation="com.jetbrains.edu.coursecreator.HintTemplateProvider"/>
