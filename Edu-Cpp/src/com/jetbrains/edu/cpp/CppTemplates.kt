@@ -1,8 +1,6 @@
 package com.jetbrains.edu.cpp
 
 import com.jetbrains.cmake.CMakeListsFileType
-import com.jetbrains.edu.cpp.TestFrameworks.Catch
-import com.jetbrains.edu.cpp.TestFrameworks.GTest
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -21,17 +19,17 @@ data class CppTemplates(
 
 data class TemplateInfo(private val templateName: String, val generatedFileName: String) {
   private fun getTemplateVariables(projectName: String, cppStandardLine: String) = mapOf(
-    CMakeConstants.minimumRequiredLine.toPair(),
-    CMakeConstants.makeProjectNameConstant(projectName).toPair(),
-    CMakeConstants.makeCppStandardLineConstant(cppStandardLine).toPair(),
+    CMAKE_MINIMUM_REQUIRED_LINE_KEY to CMAKE_MINIMUM_REQUIRED_LINE_VALUE,
+    CMAKE_PROJECT_NAME_KEY to projectName,
+    CMAKE_CPP_STANDARD_KEY to cppStandardLine,
 
-    GTest.version.toPair(),
-    GTest.sourceDir.toPair(),
-    GTest.buildDir.toPair(),
+    GTEST_VERSION_KEY to GTEST_VERSION_VALUE,
+    GTEST_SOURCE_DIR_KEY to GTEST_SOURCE_DIR_VALUE,
+    GTEST_BUILD_DIR_KEY to GTEST_BUILD_DIR_VALUE,
 
-    Catch.headerUrl.toPair(),
+    CATCH_HEADER_URL_KEY to CATCH_HEADER_URL_VALUE,
 
-    TestFrameworks.baseDir.toPair()
+    TEST_FRAMEWORKS_BASE_DIR_KEY to TEST_FRAMEWORKS_BASE_DIR_VALUE
   )
 
   fun getText(projectName: String = "", cppStandardLine: String = ""): String =

@@ -65,7 +65,7 @@ open class CppBaseConfigurator : EduConfiguratorWithSubmissions<CppProjectSettin
     // we could use it how indicator because CLion generate build dirs with names `cmake-build-*`
     // @see com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace.getProfileGenerationDirNames
     val buildDirPrefix = GeneratorUtils.joinPaths(courseDir.path, "cmake-build-")
-    val googleTestDirPrefix = GeneratorUtils.joinPaths(courseDir.path, TestFrameworks.baseDir.value)
+    val googleTestDirPrefix = GeneratorUtils.joinPaths(courseDir.path, TEST_FRAMEWORKS_BASE_DIR_VALUE)
 
     return file.path.startsWith(buildDirPrefix) || file.path.startsWith(googleTestDirPrefix)
   }

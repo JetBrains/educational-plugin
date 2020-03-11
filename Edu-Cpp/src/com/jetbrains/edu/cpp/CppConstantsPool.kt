@@ -7,81 +7,39 @@ import com.jetbrains.cidr.cpp.cmake.projectWizard.CLionProjectWizardUtils
 import com.jetbrains.cidr.cpp.toolchains.CMake
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 
-interface TemplateConstant {
-  val key: String
-  val value: String
+const val GTEST_VERSION_KEY: String = "GTEST_VERSION"
+const val GTEST_VERSION_VALUE: String = "release-1.8.1"
 
-  fun toPair(): Pair<String, String> = key to value
+const val GTEST_SOURCE_DIR_KEY: String = "GTEST_SOURCE_DIR"
+const val GTEST_SOURCE_DIR_VALUE: String = "googletest-src"
 
-  companion object {
-    operator fun invoke(key: String, value: String): TemplateConstant =
-      object : TemplateConstant {
-        override val key: String = key
-        override val value: String = value
-      }
+const val GTEST_BUILD_DIR_KEY : String = "GTEST_BUILD_DIR"
+const val GTEST_BUILD_DIR_VALUE : String = "googletest-build"
+
+const val CATCH_HEADER_URL_KEY : String = "CATCH_URL"
+const val CATCH_HEADER_URL_VALUE : String = "https://raw.githubusercontent.com/catchorg/Catch2/master/single_include/catch2/catch.hpp"
+
+const val TEST_FRAMEWORKS_BASE_DIR_KEY : String = "TEST_FRAMEWORK_DIR"
+const val TEST_FRAMEWORKS_BASE_DIR_VALUE : String = "test-framework"
+
+const val CMAKE_MINIMUM_REQUIRED_LINE_KEY: String = "CMAKE_MINIMUM_REQUIRED_LINE"
+val CMAKE_MINIMUM_REQUIRED_LINE_VALUE: String by lazy {
+  val cMakeVersionExtractor = {
+    CLionProjectWizardUtils.getCMakeMinimumRequiredLine(CMake.readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
+  }
+
+  val progressManager = ProgressManager.getInstance()
+
+  if (progressManager.hasProgressIndicator()) {
+    progressManager.runProcess(cMakeVersionExtractor, null)
+  }
+  else {
+    progressManager.run(object : Task.WithResult<String, Nothing>(null, "Getting CMake Minimum Required Version", false) {
+      override fun compute(indicator: ProgressIndicator) = cMakeVersionExtractor()
+    })
   }
 }
 
-object TestFrameworks {
-  object GTest {
-    val version = TemplateConstant(
-      key = "GTEST_VERSION",
-      value = "release-1.8.1"
-    )
+const val CMAKE_PROJECT_NAME_KEY: String = "PROJECT_NAME"
 
-    val sourceDir = TemplateConstant(
-      key = "GTEST_SOURCE_DIR",
-      value = "googletest-src"
-    )
-
-    val buildDir = TemplateConstant(
-      key = "GTEST_BUILD_DIR",
-      value = "googletest-build"
-    )
-  }
-
-  object Catch {
-    val headerUrl = TemplateConstant(
-      key = "CATCH_URL",
-      value = "https://raw.githubusercontent.com/catchorg/Catch2/master/single_include/catch2/catch.hpp"
-    )
-  }
-
-  val baseDir = TemplateConstant(
-    key = "TEST_FRAMEWORK_DIR",
-    value = "test-framework"
-  )
-}
-
-object CMakeConstants {
-  val minimumRequiredLine: TemplateConstant = object : TemplateConstant {
-    override val key: String = "CMAKE_MINIMUM_REQUIRED_LINE"
-
-    override val value: String by lazy {
-      val cMakeVersionExtractor = {
-        CLionProjectWizardUtils.getCMakeMinimumRequiredLine(CMake.readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
-      }
-
-      val progressManager = ProgressManager.getInstance()
-
-      if (progressManager.hasProgressIndicator()) {
-        progressManager.runProcess(cMakeVersionExtractor, null)
-      }
-      else {
-        progressManager.run(object : Task.WithResult<String, Nothing>(null, "Getting CMake Minimum Required Version", false) {
-          override fun compute(indicator: ProgressIndicator) = cMakeVersionExtractor()
-        })
-      }
-    }
-  }
-
-  fun makeProjectNameConstant(projectName: String): TemplateConstant = TemplateConstant(
-    key = "PROJECT_NAME",
-    value = projectName
-  )
-
-  fun makeCppStandardLineConstant(cppStandardLine: String): TemplateConstant = TemplateConstant(
-    key = "CPP_STANDARD",
-    value = cppStandardLine
-  )
-}
+const val CMAKE_CPP_STANDARD_KEY: String = "CPP_STANDARD"
