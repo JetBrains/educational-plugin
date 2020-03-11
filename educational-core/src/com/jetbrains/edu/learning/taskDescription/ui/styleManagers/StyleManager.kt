@@ -24,7 +24,7 @@ class StyleManager {
   val bodyColor = bodyColor()
   val linkColor = JBUI.CurrentTheme.Link.linkColor().asCssColor()
   val bodyBackground = JBColor.background().asCssColor()
-  val codeBackground = if (EduSettings.getInstance().shouldUseJavaFx()) bodyBackground
+  val codeBackground = if (EduSettings.getInstance().shouldUseJavaFx()) codeBackground()
   else ColorUtil.dimmer(UIUtil.getPanelBackground()).asCssColor()
 
   val textStyleHeader = "style=font-size:${bodyFontSize}"
@@ -46,6 +46,11 @@ class StyleManager {
 
   private fun bodyColor(): Color {
     return if (UIUtil.isUnderDarcula()) Color((TaskDescriptionBundle.message("darcula.body.color"))) else JBColor.foreground().asCssColor()
+  }
+
+  private fun codeBackground(): Color {
+    return if (UIUtil.isUnderDarcula()) Color((TaskDescriptionBundle.message("darcula.code.background")))
+    else Color(TaskDescriptionBundle.message("code.background"))
   }
 
   companion object {

@@ -46,6 +46,12 @@ class ChoiceTaskResourcesManager {
   private fun choiceOptionsStylesheet(): String {
     val styleManager = StyleManager()
     return CSSBuilder().apply {
+      "code" {
+        fontFamily = styleManager.codeFont
+        backgroundColor = styleManager.codeBackground
+        padding = "4 4 4 4"
+        borderRadius = 5.px
+      }
       "#choiceOptions" {
         fontFamily = styleManager.bodyFont
         fontSize = if (EduSettings.getInstance().shouldUseJavaFx()) styleManager.bodyFontSize.px else styleManager.bodyFontSize.pt

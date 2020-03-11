@@ -35,7 +35,7 @@ internal class StyleResourcesManager(taskText: String = "") {
 
   private fun resourcePair(name: String, path: String) = name to resourceUrl(path)
 
-  fun typographyAndColorStylesheet(): String {
+  private fun typographyAndColorStylesheet(): String {
     val styleManager = StyleManager()
     return CSSBuilder().apply {
       body {
@@ -50,6 +50,8 @@ internal class StyleResourcesManager(taskText: String = "") {
         fontFamily = styleManager.codeFont
         backgroundColor = styleManager.codeBackground
         fontSize = if (EduSettings.getInstance().shouldUseJavaFx()) styleManager.codeFontSize.px else styleManager.codeFontSize.pt
+        padding = "4 4 4 4"
+        borderRadius = 5.px
       }
 
       ".code-block" {
