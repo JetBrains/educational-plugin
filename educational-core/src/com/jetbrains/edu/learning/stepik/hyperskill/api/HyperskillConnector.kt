@@ -221,8 +221,7 @@ abstract class HyperskillConnector {
             task.feedbackLink = feedbackLink(projectId, stages[index])
             task.name = stages[index].title
           }
-          lesson.name = hyperskillProject.title
-
+          lesson.name = hyperskillCourse.name
           if (hyperskillCourse.lessons.isNotEmpty()) {
             for (existingLesson in hyperskillCourse.lessons) {
               existingLesson.index += 1

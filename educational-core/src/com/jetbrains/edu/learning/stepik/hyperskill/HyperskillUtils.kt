@@ -34,17 +34,15 @@ import com.intellij.openapi.progress.Task as ProgressTask
 val HYPERSKILL_STAGE: Key<Int> = Key.create("HYPERSKILL_STAGE")
 const val HYPERSKILL_GROUP_ID = "Hyperskill.post"
 
-fun openSelectedStage(course: Course, project: Project) {
+fun openSelectedStage(course: Course, project: Project, fillProject: Boolean = false) {
+  if (course !is HyperskillCourse) {
+    return
+  }
+  if (course.getProjectLesson() == null && fillProject) {
+    loadProjectStages(course, project)
+  }
   val stageId = course.getUserData(HYPERSKILL_STAGE) ?: computeSelectedStage(course)
-  if (course is HyperskillCourse && stageId > 0) {
-    if (course.getProjectLesson() == null) {
-      HyperskillConnector.getInstance().fillHyperskillCourse(course)
-      val projectLesson = course.getProjectLesson()!!
-      course.init(null, null, false)
-      GeneratorUtils.createLesson(projectLesson, course.getDir(project))
-      YamlFormatSynchronizer.saveAll(project)
-      HyperskillProjectComponent.synchronizeHyperskillProject(project)
-    }
+  if (stageId > 0) {
     val index = course.stages.indexOfFirst { stage -> stage.id == stageId }
     if (course.lessons.isNotEmpty()) {
       val lesson = course.lessons[0]
@@ -55,6 +53,15 @@ fun openSelectedStage(course: Course, project: Project) {
       }
     }
   }
+}
+
+private fun loadProjectStages(course: HyperskillCourse, project: Project) {
+  HyperskillConnector.getInstance().fillHyperskillCourse(course)
+  val projectLesson = course.getProjectLesson()!!
+  course.init(null, null, false)
+  GeneratorUtils.createLesson(projectLesson, course.getDir(project))
+  YamlFormatSynchronizer.saveAll(project)
+  HyperskillProjectComponent.synchronizeHyperskillProject(project)
 }
 
 private fun computeSelectedStage(course: Course): Int {

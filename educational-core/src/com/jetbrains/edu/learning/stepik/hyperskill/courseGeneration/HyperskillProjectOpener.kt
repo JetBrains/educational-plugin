@@ -26,9 +26,10 @@ object HyperskillProjectOpener {
   }
 
   private fun openRecentProject(courseId: Int, stageId: Int?): Boolean {
-    val (_, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
+    val (project, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
                       ?: return false
     course.putUserData(HYPERSKILL_STAGE, stageId)
+    runInEdt { openSelectedStage(course, project, true) }
     return true
   }
 
@@ -46,7 +47,7 @@ object HyperskillProjectOpener {
     val (project, course) = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
                             ?: return false
     course.putUserData(HYPERSKILL_STAGE, stageId)
-    runInEdt { openSelectedStage(course, project) }
+    runInEdt { openSelectedStage(course, project, true) }
     return true
   }
 
