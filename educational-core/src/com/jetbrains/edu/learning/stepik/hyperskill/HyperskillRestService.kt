@@ -50,26 +50,12 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     }
     val matcher = OPEN_COURSE_PATTERN.matcher(uri)
     if (matcher.matches()) {
-      val account = HyperskillSettings.INSTANCE.account
-      return if (account == null) {
-        HyperskillConnector.getInstance().doAuthorize(Runnable { openStage(urlDecoder, request, context) })
-        null
-      }
-      else {
-        openStage(urlDecoder, request, context)
-      }
+      return withHyperskillAuthorization { openStage(urlDecoder, request, context) }
     }
 
     val openStepMatcher = OPEN_STEP_PATTERN.matcher(uri)
     if (openStepMatcher.matches()) {
-      val account = HyperskillSettings.INSTANCE.account
-      return if (account == null) {
-        HyperskillConnector.getInstance().doAuthorize(Runnable { openProblem(urlDecoder, request, context) })
-        null
-      }
-      else {
-        openProblem(urlDecoder, request, context)
-      }
+      return withHyperskillAuthorization { openProblem(urlDecoder, request, context) }
     }
 
     if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
@@ -87,6 +73,17 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
     sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
     return "Unknown command: $uri"
+  }
+
+  private fun withHyperskillAuthorization(action: () -> String?): String? {
+    val account = HyperskillSettings.INSTANCE.account
+    return if (account == null) {
+      HyperskillConnector.getInstance().doAuthorize(Runnable { action() } )
+      null
+    }
+    else {
+      action()
+    }
   }
 
   private fun openProblem(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
