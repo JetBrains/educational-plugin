@@ -97,8 +97,8 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   }
 
   private fun openStage(decoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
-    val stageId = getStringParameter("stage_id", decoder)?.toInt() ?: return "The stage_id parameter was not found"
-    val projectId = getStringParameter("project_id", decoder)?.toInt() ?: return "The project_id parameter was not found"
+    val stageId = getIntParameter("stage_id", decoder)
+    val projectId = getIntParameter("project_id", decoder)
     return openInIDE(projectId, stageId, null, request, context)
   }
 
