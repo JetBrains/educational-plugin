@@ -6,10 +6,6 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
-import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.Err
@@ -18,12 +14,10 @@ import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
-import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.ui.CoursePanel.nameToLocation
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HSHyperlinkListener
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
@@ -106,32 +100,44 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   private fun openStep(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val stepId = getIntParameter("step_id", urlDecoder)
     val account = HyperskillSettings.INSTANCE.account ?: error("Attempt to open step for unauthorized user")
-    val projectId = getSelectedProjectIdUnderProgress(account)
+    val projectId = getSelectedProjectIdUnderProgress(account) ?: error("No selected project id")
 
-    val (project, course) = openOrCreateProject(projectId) ?: return sendErrorResponse(request, context,
-                                                                                       "Failed to create or open ${EduNames.JBA} project")
-    runInEdt { HyperskillProjectOpener.requestFocus() }
-
-    if (course !is HyperskillCourse) return sendErrorResponse(request, context, "Failed to create or open ${EduNames.JBA} project")
-
-    val lesson = HyperskillProjectOpener.findOrCreateProblemsLesson(course, project)
-    val lessonDir = lesson.getLessonDir(project)
-                    ?: return sendErrorResponse(request, context, "Could not find Problems directory")
-
-    val stepSource = ProgressManager.getInstance().run(
-      object : Task.WithResult<HyperskillStepSource?, Exception>(null, "Loading ${EduNames.JBA} problem", true) {
-        override fun compute(indicator: ProgressIndicator): HyperskillStepSource? {
-          return HyperskillConnector.getInstance().getStepSource(stepId)
-        }
-      }) ?: return sendErrorResponse(request, context, "Could not find get step source for the task")
-
-    val task = HyperskillProjectOpener.findOrCreateTask(course, lesson, stepSource, lessonDir, project)
-    runInEdt {
-      NavigationUtils.navigateToTask(project, task)
-      HyperskillProjectOpener.requestFocus()
+//    val (project, course) = openOrCreateProject(projectId) ?: return sendErrorResponse(request, context,
+//                                                                                       "Failed to create or open ${EduNames.JBA} project")
+//    runInEdt { HyperskillProjectOpener.requestFocus() }
+//
+//    if (course !is HyperskillCourse) return sendErrorResponse(request, context, "Failed to create or open ${EduNames.JBA} project")
+//
+//    val lesson = HyperskillProjectOpener.findOrCreateProblemsLesson(course, project)
+//    val lessonDir = lesson.getLessonDir(project)
+//                    ?: return sendErrorResponse(request, context, "Could not find Problems directory")
+//
+//    val stepSource = ProgressManager.getInstance().run(
+//      object : Task.WithResult<HyperskillStepSource?, Exception>(null, "Loading ${EduNames.JBA} problem", true) {
+//        override fun compute(indicator: ProgressIndicator): HyperskillStepSource? {
+//          return HyperskillConnector.getInstance().getStepSource(stepId)
+//        }
+//      }) ?: return sendErrorResponse(request, context, "Could not find get step source for the task")
+//
+//    val task = HyperskillProjectOpener.findOrCreateTask(course, lesson, stepSource, lessonDir, project)
+//    runInEdt {
+//      NavigationUtils.navigateToTask(project, task)
+//      HyperskillProjectOpener.requestFocus()
+//    }
+    return when (val result = HyperskillProjectOpener.openProject(projectId, stepId = stepId)) {
+      is Ok -> {
+        sendOk(request, context)
+        LOG.info("${EduNames.JBA} project opened: $projectId")
+        null
+      }
+      is Err -> {
+        val message = result.error
+        LOG.warn(message)
+        showError(message)
+        sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
+        message
+      }
     }
-    sendOk(request, context)
-    return null
   }
 
   private fun openOrCreateProject(projectId: Int?): Pair<Project, Course>? {

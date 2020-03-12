@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.courseFormat.tasks.Task as EduTask
 
 object HyperskillProjectOpener {
 
@@ -73,16 +74,13 @@ object HyperskillProjectOpener {
                      "Check if all needed plugins are installed and enabled")
         }
         if (stepId != null) {
-          val lesson = findOrCreateProblemsLesson(hyperskillCourse, project)
-          val lessonDir = lesson.getLessonDir(project)
-                          ?: return Err("Could not find Problems directory")
-
+          val lesson = findOrCreateProblemsLesson(hyperskillCourse)
           val stepSource = HyperskillConnector.getInstance().getStepSource(stepId)!!
-          findOrCreateTask(hyperskillCourse, lesson, stepSource, lessonDir, project)
+          findOrCreateTask(hyperskillCourse, lesson, stepSource)
+        } else {
+          HyperskillConnector.getInstance().fillHyperskillCourse(hyperskillCourse)
+          hyperskillCourse.putUserData(HYPERSKILL_STAGE, stageId)
         }
-
-        HyperskillConnector.getInstance().fillHyperskillCourse(hyperskillCourse)
-        hyperskillCourse.putUserData(HYPERSKILL_STAGE, stageId)
 
         return Ok(hyperskillCourse)
       }
@@ -97,6 +95,17 @@ object HyperskillProjectOpener {
       AppIcon.getInstance().requestFocus(frame)
     }
     frame.toFront()
+  }
+
+  private fun findOrCreateProblemsLesson(course: HyperskillCourse): Lesson {
+    var lesson = course.getLesson(HYPERSKILL_PROBLEMS)
+    if (lesson == null) {
+      lesson = Lesson()
+      lesson.name = HYPERSKILL_PROBLEMS
+      lesson.index = course.items.size + 1
+      course.addLesson(lesson)
+    }
+    return lesson
   }
 
   fun findOrCreateProblemsLesson(course: HyperskillCourse, project: Project): Lesson {
@@ -114,8 +123,23 @@ object HyperskillProjectOpener {
     return lesson
   }
 
+  private fun findOrCreateTask(course: HyperskillCourse, lesson: Lesson, stepSource: HyperskillStepSource): EduTask {
+    var task = lesson.getTask(stepSource.id)
+    if (task == null) {
+      task = HyperskillConnector.getInstance().getTasks(course, lesson, listOf(stepSource)).first()
+      task.name = stepSource.title
+      task.feedbackLink = FeedbackLink(stepLink(task.id))
+      task.index = lesson.taskList.size + 1
+      task.descriptionText = "<b>${task.name}</b> ${openOnHyperskillLink(task.id)}" +
+                             "<br/><br/>${task.descriptionText}" +
+                             "<br/>${openTheoryLink(stepSource.topicTheory)}"
+      lesson.addTask(task)
+    }
+    return task
+  }
+
   fun findOrCreateTask(course: HyperskillCourse, lesson: Lesson, stepSource: HyperskillStepSource,
-                       lessonDir: VirtualFile, project: Project): com.jetbrains.edu.learning.courseFormat.tasks.Task {
+                               lessonDir: VirtualFile, project: Project): com.jetbrains.edu.learning.courseFormat.tasks.Task {
     var task = lesson.getTask(stepSource.id)
     if (task == null) {
       task = HyperskillConnector.getInstance().getTasks(course, lesson, listOf(stepSource)).first()
