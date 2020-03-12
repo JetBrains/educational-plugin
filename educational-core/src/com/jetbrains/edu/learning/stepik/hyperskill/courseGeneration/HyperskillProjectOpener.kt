@@ -53,7 +53,6 @@ object HyperskillProjectOpener {
         val projectLesson = hyperskillCourse.getProjectLesson()!!
         GeneratorUtils.createLesson(projectLesson, hyperskillCourse.getDir(project))
         YamlFormatSynchronizer.saveAll(project)
-        hyperskillCourse.putUserData(HyperskillSolutionLoader.IS_HYPERSKILL_SOLUTION_LOADING_STARTED, false)
         HyperskillProjectComponent.synchronizeHyperskillProject(project)
       }
       hyperskillCourse.putUserData(HYPERSKILL_STAGE, stageId)

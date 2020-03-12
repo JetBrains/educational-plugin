@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader.Companion.IS_HYPERSKILL_SOLUTION_LOADING_STARTED
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -41,8 +40,7 @@ class HyperskillProjectComponent(private val project: Project) : ProjectComponen
           YamlFormatSynchronizer.saveRemoteInfo(course)
         }
       }
-      val isSolutionLoadingStarted = IS_HYPERSKILL_SOLUTION_LOADING_STARTED.getRequired(course)
-      if (HyperskillSettings.INSTANCE.account != null && !isSolutionLoadingStarted) {
+      if (HyperskillSettings.INSTANCE.account != null) {
         HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground()
       }
     }
