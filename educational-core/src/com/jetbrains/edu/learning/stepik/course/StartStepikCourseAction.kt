@@ -68,14 +68,14 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
 
   private fun isCompatibleEduCourse(course: EduCourse): Boolean {
     return when (course.compatibility) {
-      COMPATIBLE -> true
+      Compatible -> true
 
-      UNSUPPORTED -> {
+      Unsupported -> {
         showFailedImportCourseMessage("Looks like the programming language of '${course.name}' is not supported yet.")
         false
       }
 
-      INCOMPATIBLE_VERSION -> {
+      IncompatibleVersion -> {
         showFailedImportCourseMessage("'${course.name}' is supported in the latest plugin version only. Please, update the plugin.")
         false
       }

@@ -81,13 +81,13 @@ object StepikCourseLoader {
     return courses.mapNotNull { course ->
       val courseId = course.id
       featuredStepikCourses[courseId]?.let { course.language = it }
-      if (course.compatibility == CourseCompatibility.UNSUPPORTED) return@mapNotNull null
+      if (course.compatibility == CourseCompatibility.Unsupported) return@mapNotNull null
       val remoteCourse = stepikCourseFromRemote(course) ?: return@mapNotNull null
       if (inProgressCourses.contains(courseId)) {
         remoteCourse.visibility = CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(courseId))
       }
       remoteCourse
-    }.filter { it.compatibility == CourseCompatibility.COMPATIBLE }
+    }.filter { it.compatibility == CourseCompatibility.Compatible }
   }
 
   @JvmStatic

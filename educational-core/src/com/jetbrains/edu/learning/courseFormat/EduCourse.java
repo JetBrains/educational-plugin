@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
@@ -140,35 +139,7 @@ public class EduCourse extends Course {
 
   @NotNull
   protected CourseCompatibility courseCompatibility(@NotNull EduCourse courseInfo) {
-    final List<String> supportedLanguages = EduConfiguratorManager.getSupportedEduLanguages();
-
-    String courseFormat = courseInfo.getType();
-    final List<String> typeLanguage = StringUtil.split(courseFormat, " ");
-    if (typeLanguage.size() < 2) {
-      return CourseCompatibility.UNSUPPORTED;
-    }
-    String prefix = typeLanguage.get(0);
-    if (!supportedLanguages.contains(courseInfo.getLanguageID())) return CourseCompatibility.UNSUPPORTED;
-    if (!prefix.startsWith(StepikNames.PYCHARM_PREFIX)) {
-      return CourseCompatibility.UNSUPPORTED;
-    }
-    String versionString = prefix.substring(StepikNames.PYCHARM_PREFIX.length());
-    if (versionString.isEmpty()) {
-      return CourseCompatibility.COMPATIBLE;
-    }
-    try {
-      Integer version = Integer.valueOf(versionString);
-      if (version <= EduVersions.JSON_FORMAT_VERSION) {
-        return CourseCompatibility.COMPATIBLE;
-      }
-      else {
-        return CourseCompatibility.INCOMPATIBLE_VERSION;
-      }
-    }
-    catch (NumberFormatException e) {
-      LOG.info("Wrong version format", e);
-      return CourseCompatibility.UNSUPPORTED;
-    }
+    return CourseCompatibilityUtils.isCourseCompatibility(courseInfo);
   }
 
   public boolean isRemote() {

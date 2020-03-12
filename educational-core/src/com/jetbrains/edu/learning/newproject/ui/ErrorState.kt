@@ -61,7 +61,7 @@ sealed class ErrorState(
         course == null -> NothingSelected
         course.configurator == null -> UnsupportedCourse(course.unsupportedCourseMessage)
         course is JetBrainsAcademyCourse -> if (HyperskillSettings.INSTANCE.account == null) JetBrainsAcademyLoginRecommended else None
-        course.compatibility !== CourseCompatibility.COMPATIBLE -> IncompatibleVersion
+        course.compatibility !== CourseCompatibility.Compatible -> IncompatibleVersion
         disabledPlugins.isNotEmpty() -> RequiredPluginsDisabled(disabledPlugins)
         course is CourseraCourse -> None
         course is CheckiOCourse -> getCheckiOError(course)

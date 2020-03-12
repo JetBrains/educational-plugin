@@ -45,7 +45,7 @@ public abstract class Course extends LessonContainer {
   private boolean solutionsHidden;
 
   protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
-  protected CourseCompatibility myCompatibility = CourseCompatibility.COMPATIBLE;
+  protected CourseCompatibility myCompatibility = CourseCompatibility.Compatible.INSTANCE;
 
   @Transient protected List<TaskFile> additionalFiles = new ArrayList<>();
 

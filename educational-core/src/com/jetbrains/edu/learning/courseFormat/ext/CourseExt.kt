@@ -33,7 +33,7 @@ val Course.project: Project? get() {
 }
 
 val Course.tooltipText: String? get() {
-  return if (compatibility != CourseCompatibility.COMPATIBLE) {
+  return if (compatibility != CourseCompatibility.Compatible) {
     "Course version is incompatible with plugin version"
   } else {
     visibility.tooltipText
@@ -42,7 +42,7 @@ val Course.tooltipText: String? get() {
 
 fun Course.getDecoratedLogo(icon: Icon?): Icon? {
   if (icon == null) return null
-  return if (compatibility != CourseCompatibility.COMPATIBLE) {
+  return if (compatibility != CourseCompatibility.Compatible) {
     LayeredIcon(2).apply {
       setIcon(icon, 0, 0, 0)
       setIcon(AllIcons.General.ExclMark, 1, JBUI.scale(7), JBUI.scale(7))

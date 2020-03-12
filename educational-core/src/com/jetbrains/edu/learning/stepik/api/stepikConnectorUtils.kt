@@ -16,9 +16,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.setCourseLanguageEnvironment
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
-import java.io.BufferedReader
-import java.io.IOException
-import java.net.URL
 
 private val LOG = Logger.getInstance(StepikConnector::class.java.name)
 
@@ -27,8 +24,7 @@ fun getAvailableCourses(coursesList: CoursesList): List<EduCourse> {
     setCourseLanguageEnvironment(info)
   }
   val availableCourses = coursesList.courses.filter {
-    !StringUtil.isEmptyOrSpaces(it.type)
-    && it.compatibility != CourseCompatibility.UNSUPPORTED
+    !StringUtil.isEmptyOrSpaces(it.type) && it.compatibility != CourseCompatibility.Unsupported
   }
 
   availableCourses.forEach { it.visibility = getVisibility(it) }
