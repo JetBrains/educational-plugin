@@ -126,44 +126,36 @@ class CoursesPanel(courses: List<Course>,
 
   private fun addErrorStateListener() {
     myErrorLabel.addHyperlinkListener {
-      if (myErrorState === NotLoggedIn || myErrorState === StepikLoginRequired) {
-        addLoginListener(Runnable { updateCoursesList() })
-        StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
-        loggedIn(StepikNames.STEPIK,
-                 EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
-      }
-      else if (myErrorState is CheckiOLoginRequired) {
-        val course = myCoursesList.selectedValue as CheckiOCourse
-        addCheckiOLoginListener(course)
+      when (val state = myErrorState) {
+        NotLoggedIn, StepikLoginRequired -> {
+          addLoginListener(Runnable { updateCoursesList() })
+          StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
+          loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
+        }
+        is CheckiOLoginRequired -> {
+          val course = myCoursesList.selectedValue as CheckiOCourse
+          addCheckiOLoginListener(course)
 
-        //for Checkio course name matches platform name
-        loggedIn(course.name,
-                 EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
-      }
-      else if (myErrorState === HyperskillLoginRequired ||
-               myErrorState === JetBrainsAcademyLoginRecommended) {
-        addHyperskillLoginListener()
-        loggedIn(HYPERSKILL,
-                 EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
-      }
-      else if (myErrorState === JavaFXRequired) {
-        invokeSwitchBootJdk()
-      }
-      else if (myErrorState === IncompatibleVersion) {
-        // BACKCOMPAT: 2019.3
-        @Suppress("DEPRECATION")
-        PluginsAdvertiser.installAndEnablePlugins(setOf(EduNames.PLUGIN_ID)) {}
-      }
-      else if (myErrorState is RequiredPluginsDisabled) {
-        val disabledPluginIds = (myErrorState as RequiredPluginsDisabled).disabledPluginIds
-        enablePlugins(disabledPluginIds)
-      }
-      else if (myErrorState is CustomSevereError) {
-        val action = (myErrorState as CustomSevereError).action
-        action?.run()
-      }
-      else if (myErrorState != null) {
-        browseHyperlink(myErrorState!!.message)
+          //for Checkio course name matches platform name
+          loggedIn(course.name, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
+        }
+        HyperskillLoginRequired, JetBrainsAcademyLoginRecommended -> {
+          addHyperskillLoginListener()
+          loggedIn(HYPERSKILL, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
+        }
+        JavaFXRequired -> invokeSwitchBootJdk()
+        IncompatibleVersion -> {
+          // BACKCOMPAT: 2019.3
+          @Suppress("DEPRECATION")
+          PluginsAdvertiser.installAndEnablePlugins(setOf(EduNames.PLUGIN_ID)) {}
+        }
+        is RequiredPluginsDisabled -> {
+          val disabledPluginIds = state.disabledPluginIds
+          enablePlugins(disabledPluginIds)
+        }
+        is CustomSevereError -> state.action?.run()
+        null -> Unit
+        else -> browseHyperlink(state.message)
       }
     }
   }
