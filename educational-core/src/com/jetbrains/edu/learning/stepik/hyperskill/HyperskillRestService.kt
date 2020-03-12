@@ -93,32 +93,21 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val stepId = getIntParameter("step_id", urlDecoder)
     val account = HyperskillSettings.INSTANCE.account ?: error("Attempt to open step for unauthorized user")
     val projectId = getSelectedProjectIdUnderProgress(account) ?: error("No selected project id")
-
-    return when (val result = HyperskillProjectOpener.openProject(projectId, stepId = stepId)) {
-      is Ok -> {
-        sendOk(request, context)
-        LOG.info("${EduNames.JBA} project opened: $projectId")
-        null
-      }
-      is Err -> {
-        val message = result.error
-        LOG.warn(message)
-        showError(message)
-        sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
-        message
-      }
-    }
+    return openInIDE(projectId, null, stepId, request, context)
   }
 
   private fun openStage(decoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val stageId = getStringParameter("stage_id", decoder)?.toInt() ?: return "The stage_id parameter was not found"
     val projectId = getStringParameter("project_id", decoder)?.toInt() ?: return "The project_id parameter was not found"
-    LOG.info("Opening a stage $stageId from project $projectId")
+    return openInIDE(projectId, stageId, null, request, context)
+  }
 
-    return when (val result = HyperskillProjectOpener.openProject(projectId, stageId)) {
+  private fun openInIDE(projectId: Int, stageId: Int?, stepId: Int?, request: FullHttpRequest, context: ChannelHandlerContext): String? {
+    LOG.info("Opening ${EduNames.JBA} project: id=$projectId stageId=${stageId ?: "no stage"} stepId=${stepId ?: "no step"}")
+    return when (val result = HyperskillProjectOpener.openProject(projectId, stageId, stepId)) {
       is Ok -> {
         sendOk(request, context)
-        LOG.info("${EduNames.JBA} project opened: $projectId")
+        LOG.info("${EduNames.JBA} project opened: id=$projectId stageId=${stageId ?: "no stage"} stepId=${stepId ?: "no step"}")
         null
       }
       is Err -> {
