@@ -48,13 +48,11 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
         .send(context.channel(), request)
       return null
     }
-    val matcher = OPEN_COURSE_PATTERN.matcher(uri)
-    if (matcher.matches()) {
+    if (OPEN_COURSE_PATTERN.matcher(uri).matches()) {
       return withHyperskillAuthorization { openStage(urlDecoder, request, context) }
     }
 
-    val openStepMatcher = OPEN_STEP_PATTERN.matcher(uri)
-    if (openStepMatcher.matches()) {
+    if (OPEN_STEP_PATTERN.matcher(uri).matches()) {
       return withHyperskillAuthorization { openProblem(urlDecoder, request, context) }
     }
 
