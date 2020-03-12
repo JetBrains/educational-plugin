@@ -64,7 +64,7 @@ class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") 
         return
       }
 
-      val result = HyperskillProjectOpener.openProject(projectId, null)
+      val result = HyperskillProjectOpener.openProject(projectId)
       if (result is Err) {
         showError(result.error)
       }

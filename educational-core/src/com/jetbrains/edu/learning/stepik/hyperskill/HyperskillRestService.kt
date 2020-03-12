@@ -11,17 +11,16 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
-import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.ui.CoursePanel.nameToLocation
+import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
@@ -29,7 +28,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HSHyperlinkListener
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*
 import org.jetbrains.io.send
@@ -116,7 +114,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
     if (course !is HyperskillCourse) return sendErrorResponse(request, context, "Failed to create or open ${EduNames.JBA} project")
 
-    val lesson = findOrCreateProblemsLesson(course, project)
+    val lesson = HyperskillProjectOpener.findOrCreateProblemsLesson(course, project)
     val lessonDir = lesson.getLessonDir(project)
                     ?: return sendErrorResponse(request, context, "Could not find Problems directory")
 
@@ -127,7 +125,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
         }
       }) ?: return sendErrorResponse(request, context, "Could not find get step source for the task")
 
-    val task = findOrCreateTask(course, lesson, stepSource, lessonDir, project)
+    val task = HyperskillProjectOpener.findOrCreateTask(course, lesson, stepSource, lessonDir, project)
     runInEdt {
       NavigationUtils.navigateToTask(project, task)
       HyperskillProjectOpener.requestFocus()
@@ -146,51 +144,6 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     }
     if (projectCourse != null) return projectCourse
     return createProject(projectId)
-  }
-
-  private fun findOrCreateTask(course: HyperskillCourse, lesson: Lesson, stepSource: HyperskillStepSource,
-                               lessonDir: VirtualFile, project: Project): com.jetbrains.edu.learning.courseFormat.tasks.Task {
-    var task = lesson.getTask(stepSource.id)
-    if (task == null) {
-      task = HyperskillConnector.getInstance().getTasks(course, lesson, listOf(stepSource)).first()
-      task.name = stepSource.title
-      task.feedbackLink = FeedbackLink(stepLink(task.id))
-      task.index = lesson.taskList.size + 1
-      task.descriptionText = "<b>${task.name}</b> ${openOnHyperskillLink(task.id)}" +
-                             "<br/><br/>${task.descriptionText}" +
-                             "<br/>${openTheoryLink(stepSource.topicTheory)}"
-      lesson.addTask(task)
-      task.init(course, lesson, false)
-
-      GeneratorUtils.createTask(task, lessonDir)
-
-      YamlFormatSynchronizer.saveItem(lesson)
-      YamlFormatSynchronizer.saveItem(task)
-      YamlFormatSynchronizer.saveRemoteInfo(task)
-
-      course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
-    }
-    return task
-  }
-
-  private fun openTheoryLink(stepId: Int?) =
-    if (stepId != null) "<a href=\"${stepLink(stepId)}\">Show topic summary</a>" else ""
-
-  private fun openOnHyperskillLink(stepId: Int) = "<a class=\"right\" href=\"${stepLink(stepId)}\">Open on ${EduNames.JBA}</a>"
-
-  private fun findOrCreateProblemsLesson(course: HyperskillCourse, project: Project): Lesson {
-    var lesson = course.getLesson(HYPERSKILL_PROBLEMS)
-    if (lesson == null) {
-      lesson = Lesson()
-      lesson.name = HYPERSKILL_PROBLEMS
-      lesson.index = course.items.size + 1
-      course.addLesson(lesson)
-      lesson.init(course, null, false)
-      GeneratorUtils.createLesson(lesson, course.getDir(project))
-      YamlFormatSynchronizer.saveItem(lesson)
-      YamlFormatSynchronizer.saveItem(course)
-    }
-    return lesson
   }
 
   private fun openProject(decoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
@@ -224,7 +177,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       return null
     }
 
-    return when (val result = HyperskillProjectOpener.getHyperskillCourseUnderProgress(projectId, false)) {
+    return when (val result = HyperskillProjectOpener.getHyperskillCourseUnderProgress(projectId, null, null)) {
       is Err -> {
         showError(result.error)
         null

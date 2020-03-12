@@ -222,6 +222,8 @@ abstract class HyperskillConnector {
             task.name = stages[index].title
           }
           lesson.name = hyperskillCourse.name
+
+          // todo: check if we need this
           if (hyperskillCourse.lessons.isNotEmpty()) {
             for (existingLesson in hyperskillCourse.lessons) {
               existingLesson.index += 1
