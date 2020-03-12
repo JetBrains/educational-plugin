@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -40,7 +39,8 @@ object HyperskillProjectOpener {
         requestFocus()
         EduUtils.navigateToStep(project, hyperskillCourse, stepId)
       }
-    } else {
+    }
+    else {
       if (hyperskillCourse.getProjectLesson() == null) {
         ProgressManager.getInstance().run(object : Task.WithResult<Boolean, Exception>
                                                    (null, "Loading project stages", true) {
@@ -159,22 +159,26 @@ object HyperskillProjectOpener {
   }
 
   private fun findOrCreateTask(course: HyperskillCourse, lesson: Lesson, stepSource: HyperskillStepSource): EduTask {
+    fun EduTask.description(theoryId: Int?): String = buildString {
+      appendln("""<b>$name</b> <a class="right" href="${stepLink(id)}">Open on ${EduNames.JBA}</a>""")
+      appendln("<br><br>")
+      appendln(descriptionText)
+      if (theoryId != null) {
+        append("""<a href="${stepLink(theoryId)}">Show topic summary</a>""")
+      }
+    }
+
     var task = lesson.getTask(stepSource.id)
     if (task == null) {
       task = HyperskillConnector.getInstance().getTasks(course, lesson, listOf(stepSource)).first()
-      task.name = stepSource.title
-      task.feedbackLink = FeedbackLink(stepLink(task.id))
-      task.index = lesson.taskList.size + 1
-      task.descriptionText = "<b>${task.name}</b> ${openOnHyperskillLink(task.id)}" +
-                             "<br/><br/>${task.descriptionText}" +
-                             "<br/>${openTheoryLink(stepSource.topicTheory)}"
+      task.apply {
+        name = stepSource.title
+        feedbackLink = FeedbackLink(stepLink(task.id))
+        index = lesson.taskList.size + 1
+        descriptionText = description(stepSource.topicTheory)
+      }
       lesson.addTask(task)
     }
     return task
   }
-
-  private fun openTheoryLink(stepId: Int?) =
-    if (stepId != null) "<a href=\"${stepLink(stepId)}\">Show topic summary</a>" else ""
-
-  private fun openOnHyperskillLink(stepId: Int) = "<a class=\"right\" href=\"${stepLink(stepId)}\">Open on ${EduNames.JBA}</a>"
 }
