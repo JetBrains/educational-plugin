@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -27,27 +28,50 @@ object HyperskillProjectOpener {
     runInEdt {
       requestFocus()
     }
-    if (focusOpenProject(projectId, stageId)) return Ok(Unit)
+    if (focusOpenProject(projectId, stageId, stepId)) return Ok(Unit)
     if (openRecentProject(projectId, stageId, stepId)) return Ok(Unit)
     return openNewProject(projectId, stageId, stepId)
   }
 
-  private fun openRecentProject(courseId: Int, stageId: Int?, stepId: Int?): Boolean {
-    val (project, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
-                            ?: return false
-    if (stageId != null) {
-      course.putUserData(HYPERSKILL_STAGE, stageId)
-      runInEdt { openSelectedStage(course, project, true) }
-    }
-    else if (stepId != null) {
-      val hyperskillCourse = course as HyperskillCourse
+  private fun openInExistingProject(project: Project, hyperskillCourse: HyperskillCourse, stageId: Int?, stepId: Int?): Boolean {
+    if (stepId != null) {
       hyperskillCourse.addProblemWithFiles(project, stepId)
       runInEdt {
         requestFocus()
         EduUtils.navigateToStep(project, hyperskillCourse, stepId)
       }
+    } else {
+      if (hyperskillCourse.getProjectLesson() == null) {
+        ProgressManager.getInstance().run(object : Task.WithResult<Boolean, Exception>
+                                                   (null, "Loading project stages", true) {
+          override fun compute(indicator: ProgressIndicator): Boolean {
+            val hyperskillProject = hyperskillCourse.hyperskillProject!!
+            return HyperskillConnector.getInstance().loadStages(hyperskillCourse, hyperskillProject.id, hyperskillProject)
+          }
+        })
+        hyperskillCourse.init(null, null, false)
+        val projectLesson = hyperskillCourse.getProjectLesson()!!
+        GeneratorUtils.createLesson(projectLesson, hyperskillCourse.getDir(project))
+        YamlFormatSynchronizer.saveAll(project)
+        hyperskillCourse.putUserData(HyperskillSolutionLoader.IS_HYPERSKILL_SOLUTION_LOADING_STARTED, false)
+        HyperskillProjectComponent.synchronizeHyperskillProject(project)
+      }
+      hyperskillCourse.putUserData(HYPERSKILL_STAGE, stageId)
+      runInEdt { openSelectedStage(hyperskillCourse, project, true) }
     }
     return true
+  }
+
+  private fun focusOpenProject(courseId: Int, stageId: Int?, stepId: Int?): Boolean {
+    val (project, course) = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
+                            ?: return false
+    return openInExistingProject(project, course as HyperskillCourse, stageId, stepId)
+  }
+
+  private fun openRecentProject(courseId: Int, stageId: Int?, stepId: Int?): Boolean {
+    val (project, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
+                            ?: return false
+    return openInExistingProject(project, course as HyperskillCourse, stageId, stepId)
   }
 
   private fun openNewProject(projectId: Int, stageId: Int?, stepId: Int?): Result<Unit, String> {
@@ -57,14 +81,6 @@ object HyperskillProjectOpener {
         HyperskillJoinCourseDialog(hyperskillCourse).show()
       }
     }
-  }
-
-  private fun focusOpenProject(courseId: Int, stageId: Int?): Boolean {
-    val (project, course) = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
-                            ?: return false
-    course.putUserData(HYPERSKILL_STAGE, stageId)
-    runInEdt { openSelectedStage(course, project, true) }
-    return true
   }
 
   private fun getHyperskillCourseUnderProgress(projectId: Int, stageId: Int?, stepId: Int?): Result<HyperskillCourse, String> {
@@ -124,7 +140,7 @@ object HyperskillProjectOpener {
 
   // We have to use visible frame here because project is not yet created
   // See `com.intellij.ide.impl.ProjectUtil.focusProjectWindow` implementation for more details
-  fun requestFocus() {
+  private fun requestFocus() {
     val frame = WindowManager.getInstance().findVisibleFrame()
     if (frame is IdeFrame) {
       AppIcon.getInstance().requestFocus(frame)

@@ -201,37 +201,7 @@ abstract class HyperskillConnector {
             return false
           }
           val projectId = hyperskillProject.id
-
-          if (hyperskillCourse.stages.isEmpty()) {
-            val stages = getStages(projectId) ?: return false
-            hyperskillCourse.stages = stages
-          }
-          val stages = hyperskillCourse.stages
-          val lesson = getLesson(hyperskillCourse, hyperskillProject.ideFiles)
-          if (lesson == null) {
-            LOG.warn("Project doesn't contain framework lesson")
-            return false
-          }
-          if (lesson.taskList.size != stages.size) {
-            LOG.warn("Course has ${stages.size} stages, but ${lesson.taskList.size} tasks")
-            return false
-          }
-
-          lesson.taskList.forEachIndexed { index, task ->
-            task.feedbackLink = feedbackLink(projectId, stages[index])
-            task.name = stages[index].title
-          }
-          lesson.name = hyperskillCourse.name
-
-          // todo: check if we need this
-          if (hyperskillCourse.lessons.isNotEmpty()) {
-            for (existingLesson in hyperskillCourse.lessons) {
-              existingLesson.index += 1
-            }
-          }
-          hyperskillCourse.addLesson(lesson)
-          hyperskillCourse.sortItems()
-          return true
+          return loadStages(hyperskillCourse, projectId, hyperskillProject)
         }
       })
     }
@@ -239,6 +209,39 @@ abstract class HyperskillConnector {
       LOG.warn(e)
       false
     }
+  }
+
+  fun loadStages(hyperskillCourse: HyperskillCourse, projectId: Int, hyperskillProject: HyperskillProject): Boolean {
+    if (hyperskillCourse.stages.isEmpty()) {
+      val stages = getStages(projectId) ?: return false
+      hyperskillCourse.stages = stages
+    }
+    val stages = hyperskillCourse.stages
+    val lesson = getLesson(hyperskillCourse, hyperskillProject.ideFiles)
+    if (lesson == null) {
+      LOG.warn("Project doesn't contain framework lesson")
+      return false
+    }
+    if (lesson.taskList.size != stages.size) {
+      LOG.warn("Course has ${stages.size} stages, but ${lesson.taskList.size} tasks")
+      return false
+    }
+
+    lesson.taskList.forEachIndexed { index, task ->
+      task.feedbackLink = feedbackLink(projectId, stages[index])
+      task.name = stages[index].title
+    }
+    lesson.name = hyperskillCourse.name
+
+    // todo: check if we need this
+    if (hyperskillCourse.lessons.isNotEmpty()) {
+      for (existingLesson in hyperskillCourse.lessons) {
+        existingLesson.index += 1
+      }
+    }
+    hyperskillCourse.addLesson(lesson)
+    hyperskillCourse.sortItems()
+    return true
   }
 
   fun feedbackLink(project: Int, stage: HyperskillStage): FeedbackLink {
