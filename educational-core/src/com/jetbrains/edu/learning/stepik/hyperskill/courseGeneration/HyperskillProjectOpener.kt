@@ -5,7 +5,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.AppIcon
@@ -25,16 +24,29 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task as EduTask
 object HyperskillProjectOpener {
 
   fun openProject(projectId: Int, stageId: Int? = null, stepId: Int? = null): Result<Unit, String> {
+    runInEdt {
+      requestFocus()
+    }
     if (focusOpenProject(projectId, stageId)) return Ok(Unit)
-    if (openRecentProject(projectId, stageId)) return Ok(Unit)
+    if (openRecentProject(projectId, stageId, stepId)) return Ok(Unit)
     return openNewProject(projectId, stageId, stepId)
   }
 
-  private fun openRecentProject(courseId: Int, stageId: Int?): Boolean {
+  private fun openRecentProject(courseId: Int, stageId: Int?, stepId: Int?): Boolean {
     val (project, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
                             ?: return false
-    course.putUserData(HYPERSKILL_STAGE, stageId)
-    runInEdt { openSelectedStage(course, project, true) }
+    if (stageId != null) {
+      course.putUserData(HYPERSKILL_STAGE, stageId)
+      runInEdt { openSelectedStage(course, project, true) }
+    }
+    else if (stepId != null) {
+      val hyperskillCourse = course as HyperskillCourse
+      hyperskillCourse.addProblemWithFiles(project, stepId)
+      runInEdt {
+        requestFocus()
+        EduUtils.navigateToStep(project, hyperskillCourse, stepId)
+      }
+    }
     return true
   }
 
@@ -55,7 +67,7 @@ object HyperskillProjectOpener {
     return true
   }
 
-  fun getHyperskillCourseUnderProgress(projectId: Int, stageId: Int?, stepId: Int?): Result<HyperskillCourse, String> {
+  private fun getHyperskillCourseUnderProgress(projectId: Int, stageId: Int?, stepId: Int?): Result<HyperskillCourse, String> {
     return ProgressManager.getInstance().run(object : Task.WithResult<Result<HyperskillCourse, String>, Exception>
                                                       (null, "Loading project", true) {
       override fun compute(indicator: ProgressIndicator): Result<HyperskillCourse, String> {
@@ -74,10 +86,9 @@ object HyperskillProjectOpener {
                      "Check if all needed plugins are installed and enabled")
         }
         if (stepId != null) {
-          val lesson = findOrCreateProblemsLesson(hyperskillCourse)
-          val stepSource = HyperskillConnector.getInstance().getStepSource(stepId)!!
-          findOrCreateTask(hyperskillCourse, lesson, stepSource)
-        } else {
+          hyperskillCourse.addProblem(stepId)
+        }
+        else {
           HyperskillConnector.getInstance().fillHyperskillCourse(hyperskillCourse)
           hyperskillCourse.putUserData(HYPERSKILL_STAGE, stageId)
         }
@@ -85,6 +96,30 @@ object HyperskillProjectOpener {
         return Ok(hyperskillCourse)
       }
     })
+  }
+
+  private fun HyperskillCourse.addProblem(stepId: Int): Pair<Lesson, EduTask> {
+    val stepSource = HyperskillConnector.getInstance().getStepSource(stepId)!!
+    val lesson = findOrCreateProblemsLesson(this)
+    val task = findOrCreateTask(this, lesson, stepSource)
+    return lesson to task
+  }
+
+  private fun HyperskillCourse.addProblemWithFiles(project: Project, stepId: Int) {
+    val (lesson, task) = addProblem(stepId)
+    lesson.init(course, null, false)
+    val lessonDir = lesson.getDir(project)
+    if (lessonDir == null) {
+      GeneratorUtils.createLesson(lesson, course.getDir(project))
+      YamlFormatSynchronizer.saveAll(project)
+    }
+    else if (task.getDir(project) == null) {
+      GeneratorUtils.createTask(task, lessonDir)
+      YamlFormatSynchronizer.saveItem(lesson)
+      YamlFormatSynchronizer.saveItem(task)
+      YamlFormatSynchronizer.saveRemoteInfo(task)
+      course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
+    }
   }
 
   // We have to use visible frame here because project is not yet created
@@ -108,21 +143,6 @@ object HyperskillProjectOpener {
     return lesson
   }
 
-  fun findOrCreateProblemsLesson(course: HyperskillCourse, project: Project): Lesson {
-    var lesson = course.getLesson(HYPERSKILL_PROBLEMS)
-    if (lesson == null) {
-      lesson = Lesson()
-      lesson.name = HYPERSKILL_PROBLEMS
-      lesson.index = course.items.size + 1
-      course.addLesson(lesson)
-      lesson.init(course, null, false)
-      GeneratorUtils.createLesson(lesson, course.getDir(project))
-      YamlFormatSynchronizer.saveItem(lesson)
-      YamlFormatSynchronizer.saveItem(course)
-    }
-    return lesson
-  }
-
   private fun findOrCreateTask(course: HyperskillCourse, lesson: Lesson, stepSource: HyperskillStepSource): EduTask {
     var task = lesson.getTask(stepSource.id)
     if (task == null) {
@@ -134,31 +154,6 @@ object HyperskillProjectOpener {
                              "<br/><br/>${task.descriptionText}" +
                              "<br/>${openTheoryLink(stepSource.topicTheory)}"
       lesson.addTask(task)
-    }
-    return task
-  }
-
-  fun findOrCreateTask(course: HyperskillCourse, lesson: Lesson, stepSource: HyperskillStepSource,
-                               lessonDir: VirtualFile, project: Project): com.jetbrains.edu.learning.courseFormat.tasks.Task {
-    var task = lesson.getTask(stepSource.id)
-    if (task == null) {
-      task = HyperskillConnector.getInstance().getTasks(course, lesson, listOf(stepSource)).first()
-      task.name = stepSource.title
-      task.feedbackLink = FeedbackLink(stepLink(task.id))
-      task.index = lesson.taskList.size + 1
-      task.descriptionText = "<b>${task.name}</b> ${openOnHyperskillLink(task.id)}" +
-                             "<br/><br/>${task.descriptionText}" +
-                             "<br/>${openTheoryLink(stepSource.topicTheory)}"
-      lesson.addTask(task)
-      task.init(course, lesson, false)
-
-      GeneratorUtils.createTask(task, lessonDir)
-
-      YamlFormatSynchronizer.saveItem(lesson)
-      YamlFormatSynchronizer.saveItem(task)
-      YamlFormatSynchronizer.saveRemoteInfo(task)
-
-      course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
     }
     return task
   }

@@ -3,22 +3,14 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
-import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
-import com.jetbrains.edu.learning.newproject.ui.CoursePanel.nameToLocation
 import com.jetbrains.edu.learning.pluginVersion
-import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HSHyperlinkListener
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
@@ -60,11 +52,11 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     if (matcher.matches()) {
       val account = HyperskillSettings.INSTANCE.account
       return if (account == null) {
-        HyperskillConnector.getInstance().doAuthorize(Runnable { openProject(urlDecoder, request, context) })
+        HyperskillConnector.getInstance().doAuthorize(Runnable { openStage(urlDecoder, request, context) })
         null
       }
       else {
-        openProject(urlDecoder, request, context)
+        openStage(urlDecoder, request, context)
       }
     }
 
@@ -72,11 +64,11 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     if (openStepMatcher.matches()) {
       val account = HyperskillSettings.INSTANCE.account
       return if (account == null) {
-        HyperskillConnector.getInstance().doAuthorize(Runnable { openStep(urlDecoder, request, context) })
+        HyperskillConnector.getInstance().doAuthorize(Runnable { openProblem(urlDecoder, request, context) })
         null
       }
       else {
-        openStep(urlDecoder, request, context)
+        openProblem(urlDecoder, request, context)
       }
     }
 
@@ -97,33 +89,11 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     return "Unknown command: $uri"
   }
 
-  private fun openStep(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
+  private fun openProblem(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val stepId = getIntParameter("step_id", urlDecoder)
     val account = HyperskillSettings.INSTANCE.account ?: error("Attempt to open step for unauthorized user")
     val projectId = getSelectedProjectIdUnderProgress(account) ?: error("No selected project id")
 
-//    val (project, course) = openOrCreateProject(projectId) ?: return sendErrorResponse(request, context,
-//                                                                                       "Failed to create or open ${EduNames.JBA} project")
-//    runInEdt { HyperskillProjectOpener.requestFocus() }
-//
-//    if (course !is HyperskillCourse) return sendErrorResponse(request, context, "Failed to create or open ${EduNames.JBA} project")
-//
-//    val lesson = HyperskillProjectOpener.findOrCreateProblemsLesson(course, project)
-//    val lessonDir = lesson.getLessonDir(project)
-//                    ?: return sendErrorResponse(request, context, "Could not find Problems directory")
-//
-//    val stepSource = ProgressManager.getInstance().run(
-//      object : Task.WithResult<HyperskillStepSource?, Exception>(null, "Loading ${EduNames.JBA} problem", true) {
-//        override fun compute(indicator: ProgressIndicator): HyperskillStepSource? {
-//          return HyperskillConnector.getInstance().getStepSource(stepId)
-//        }
-//      }) ?: return sendErrorResponse(request, context, "Could not find get step source for the task")
-//
-//    val task = HyperskillProjectOpener.findOrCreateTask(course, lesson, stepSource, lessonDir, project)
-//    runInEdt {
-//      NavigationUtils.navigateToTask(project, task)
-//      HyperskillProjectOpener.requestFocus()
-//    }
     return when (val result = HyperskillProjectOpener.openProject(projectId, stepId = stepId)) {
       is Ok -> {
         sendOk(request, context)
@@ -140,19 +110,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     }
   }
 
-  private fun openOrCreateProject(projectId: Int?): Pair<Project, Course>? {
-    var projectCourse = EduBuiltInServerUtils.focusOpenProject {
-      it is HyperskillCourse && projectId != null && it.hyperskillProject?.id == projectId
-    }
-    if (projectCourse != null) return projectCourse
-    projectCourse = EduBuiltInServerUtils.openRecentProject {
-      it is HyperskillCourse && projectId != null && it.hyperskillProject?.id == projectId
-    }
-    if (projectCourse != null) return projectCourse
-    return createProject(projectId)
-  }
-
-  private fun openProject(decoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
+  private fun openStage(decoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val stageId = getStringParameter("stage_id", decoder)?.toInt() ?: return "The stage_id parameter was not found"
     val projectId = getStringParameter("project_id", decoder)?.toInt() ?: return "The project_id parameter was not found"
     LOG.info("Opening a stage $stageId from project $projectId")
@@ -176,40 +134,6 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   private fun showError(message: String) {
     Notification(HYPERSKILL, HYPERSKILL, message, NotificationType.WARNING,
                  HSHyperlinkListener(false)).notify(null)
-  }
-
-  private fun createProject(projectId: Int?): Pair<Project, Course>? {
-    if (projectId == null) {
-      return null
-    }
-
-    return when (val result = HyperskillProjectOpener.getHyperskillCourseUnderProgress(projectId, null, null)) {
-      is Err -> {
-        showError(result.error)
-        null
-      }
-      is Ok -> {
-        val hyperskillCourse = result.value
-        val project = createProjectFromCourse(hyperskillCourse) ?: return null
-        return Pair(project, hyperskillCourse)
-      }
-    }
-  }
-
-  private fun createProjectFromCourse(hyperskillCourse: HyperskillCourse): Project? {
-    val configurator = hyperskillCourse.configurator ?: return null
-    val projectGenerator = configurator.courseBuilder.getCourseProjectGenerator(hyperskillCourse) ?: return null
-    val location = nameToLocation(hyperskillCourse)
-
-    var project: Project? = null
-    ApplicationManager.getApplication().invokeAndWait {
-      TransactionGuard.getInstance().submitTransactionAndWait {
-        val settings = configurator.courseBuilder.getLanguageSettings().settings
-                       ?: error("Settings should not be null while creating the project")
-        project = projectGenerator.doCreateCourseProject(location, settings)
-      }
-    }
-    return project
   }
 
   override fun isAccessible(request: HttpRequest): Boolean = isHyperskillSupportAvailable()

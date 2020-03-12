@@ -540,7 +540,7 @@ public class EduUtils {
         taskRef.set(task);
       }
     });
-    return null;
+    return taskRef.get();
   }
 
   public static void showOAuthDialog() {
