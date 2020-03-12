@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
@@ -12,6 +11,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.*
@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import com.jetbrains.edu.learning.courseFormat.tasks.Task as EduTask
+import com.intellij.openapi.progress.Task as ProgressTask
 
 object HyperskillProjectOpener {
 
@@ -42,7 +42,7 @@ object HyperskillProjectOpener {
     }
     else {
       if (hyperskillCourse.getProjectLesson() == null) {
-        ProgressManager.getInstance().run(object : Task.WithResult<Boolean, Exception>
+        ProgressManager.getInstance().run(object : ProgressTask.WithResult<Boolean, Exception>
                                                    (null, "Loading project stages", true) {
           override fun compute(indicator: ProgressIndicator): Boolean {
             val hyperskillProject = hyperskillCourse.hyperskillProject!!
@@ -83,7 +83,7 @@ object HyperskillProjectOpener {
   }
 
   private fun getHyperskillCourseUnderProgress(projectId: Int, stageId: Int?, stepId: Int?): Result<HyperskillCourse, String> {
-    return ProgressManager.getInstance().run(object : Task.WithResult<Result<HyperskillCourse, String>, Exception>
+    return ProgressManager.getInstance().run(object : ProgressTask.WithResult<Result<HyperskillCourse, String>, Exception>
                                                       (null, "Loading project", true) {
       override fun compute(indicator: ProgressIndicator): Result<HyperskillCourse, String> {
         val hyperskillProject = HyperskillConnector.getInstance().getProject(projectId) ?: return Err(FAILED_TO_CREATE_PROJECT)
@@ -113,7 +113,7 @@ object HyperskillProjectOpener {
     })
   }
 
-  private fun HyperskillCourse.addProblem(stepId: Int): Pair<Lesson, EduTask> {
+  private fun HyperskillCourse.addProblem(stepId: Int): Pair<Lesson, Task> {
     val stepSource = HyperskillConnector.getInstance().getStepSource(stepId)!!
     val lesson = findOrCreateProblemsLesson(this)
     val task = findOrCreateTask(this, lesson, stepSource)
@@ -158,8 +158,8 @@ object HyperskillProjectOpener {
     return lesson
   }
 
-  private fun findOrCreateTask(course: HyperskillCourse, lesson: Lesson, stepSource: HyperskillStepSource): EduTask {
-    fun EduTask.description(theoryId: Int?): String = buildString {
+  private fun findOrCreateTask(course: HyperskillCourse, lesson: Lesson, stepSource: HyperskillStepSource): Task {
+    fun Task.description(theoryId: Int?): String = buildString {
       appendln("""<b>$name</b> <a class="right" href="${stepLink(id)}">Open on ${EduNames.JBA}</a>""")
       appendln("<br><br>")
       appendln(descriptionText)
