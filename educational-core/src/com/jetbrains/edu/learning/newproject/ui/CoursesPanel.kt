@@ -433,7 +433,7 @@ class CoursesPanel(courses: List<Course>,
     updateModel(myCourses, null)
 
     mySearchField = createSearchField()
-    myCourseListPanel.add(mySearchField, BorderLayout.NORTH)
+    myMainPanel.add(mySearchField, BorderLayout.NORTH)
 
     myCoursePanel.bindCourse(selectedCourse ?: myCourses.first())
     myCoursePanel.bindSearchField(mySearchField)
