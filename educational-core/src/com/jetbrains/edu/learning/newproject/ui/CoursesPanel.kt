@@ -474,6 +474,8 @@ class CoursesPanel(courses: List<Course>,
         updateModel(filtered, selectedCourse)
       }
     }
+    searchField.textEditor.border = null
+    searchField.border = JBUI.Borders.emptyBottom(5)
 
     UIUtil.setBackgroundRecursively(searchField, UIUtil.getEditorPaneBackground())
 
