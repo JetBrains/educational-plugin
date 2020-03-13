@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
@@ -129,6 +130,7 @@ private fun TaskFile.canShowSolution() =
   answerPlaceholders.isNotEmpty() && answerPlaceholders.all { it.possibleAnswer.isNotEmpty() }
 
 fun Task.canShowSolution(): Boolean {
+  if (course is HyperskillCourse) return status == CheckStatus.Solved
   val solutionIsHidden = solutionHidden ?: course.solutionsHidden
   return !solutionIsHidden && taskFiles.values.any { it.canShowSolution() }
 }

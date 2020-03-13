@@ -1,9 +1,8 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.icons.AllIcons
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -18,7 +17,6 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -85,30 +83,15 @@ private class NavigateToProjectAction(private val project: Project, private val 
 }
 
 class HSPeekSolutionAction : CompareWithAnswerAction() {
-  override fun getSolution(taskFile: TaskFile): String? {
-    val task = taskFile.task
-    return ProgressManager.getInstance().run(
-      object : com.intellij.openapi.progress.Task.WithResult<String?, Exception>(null, "Loading solution", true) {
-        override fun compute(indicator: ProgressIndicator): String? {
-          return HyperskillConnector.getInstance().getSolution(task.id)?.reply
-        }
-      })
+  override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project ?: return
+    val task = getEduState(project)?.task ?: return
+    BrowserUtil.browse("${stepLink(task.id)}#solutions")
   }
-
-  override fun canShowSolution(task: Task): Boolean {
-    return canShowHyperskillSolution(task)
-  }
-
-  override fun getTaskFiles(task: Task) = task.taskFiles.values.toMutableList()
 
   companion object {
     const val ACTION_ID = "Hyperskill.PeekSolution"
   }
-}
-
-fun canShowHyperskillSolution(task: Task): Boolean {
-  val course = task.course
-  return course is HyperskillCourse && task.status == CheckStatus.Solved && !course.isTaskInProject(task)
 }
 
 fun stepLink(stepId: Int) = "${HYPERSKILL_URL}learn/step/$stepId"

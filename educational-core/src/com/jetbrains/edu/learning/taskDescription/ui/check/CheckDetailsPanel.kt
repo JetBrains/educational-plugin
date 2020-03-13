@@ -21,9 +21,9 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.HSPeekSolutionAction
-import com.jetbrains.edu.learning.stepik.hyperskill.canShowHyperskillSolution
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
@@ -93,8 +93,9 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       panel
     }
 
-    if (EduUtils.isStudentProject(project) && (task.canShowSolution() || canShowHyperskillSolution(task))) {
-      val peekSolution = LightColoredActionLink("Peek Solution...", ActionManager.getInstance().getAction(getPeekSolutionAction(task)))
+    if (EduUtils.isStudentProject(project) && task.canShowSolution()) {
+      val peekSolution = LightColoredActionLink(EduCoreBundle.message("action.peek.solution"),
+                                                ActionManager.getInstance().getAction(getPeekSolutionAction(task)))
       answerHintsPanel.value.add(peekSolution)
     }
 

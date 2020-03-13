@@ -8,6 +8,7 @@ import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -31,13 +32,7 @@ open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.message("comp
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-
-    val studyEditor = EduUtils.getSelectedEduEditor(project)
-    val studyState = EduState(studyEditor)
-    if (!studyState.isValid) {
-      return
-    }
-
+    val studyState = getEduState(project) ?: return
     val task = studyState.task
 
     val taskFiles = getTaskFiles(task)
@@ -61,10 +56,16 @@ open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.message("comp
     EduCounterUsageCollector.solutionPeeked()
   }
 
-  protected open fun getTaskFiles(task: Task) =
+  protected fun getEduState(project: Project): EduState? {
+    val studyEditor = EduUtils.getSelectedEduEditor(project)
+    val studyState = EduState(studyEditor)
+    return if (studyState.isValid) studyState else null
+  }
+
+  private fun getTaskFiles(task: Task) =
     task.taskFiles.values.filter { it.answerPlaceholders.isNotEmpty() }.toMutableList()
 
-  protected open fun getSolution(taskFile: TaskFile): String? {
+  private fun getSolution(taskFile: TaskFile): String? {
     val fullAnswer = StringBuilder(taskFile.text)
 
     taskFile.answerPlaceholders?.sortedBy { it.offset }?.reversed()?.forEach { placeholder ->
@@ -84,8 +85,6 @@ open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.message("comp
       return
     }
     val task = EduUtils.getCurrentTask(project) ?: return
-    presentation.isEnabledAndVisible = canShowSolution(task)
+    presentation.isEnabledAndVisible = task.canShowSolution()
   }
-
-  protected open fun canShowSolution(task: Task) = task.canShowSolution()
 }
