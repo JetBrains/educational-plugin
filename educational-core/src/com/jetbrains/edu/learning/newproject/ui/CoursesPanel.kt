@@ -475,7 +475,7 @@ class CoursesPanel(courses: List<Course>,
       }
     }
 
-    UIUtil.setBackgroundRecursively(searchField, UIUtil.getTextFieldBackground())
+    UIUtil.setBackgroundRecursively(searchField, UIUtil.getEditorPaneBackground())
 
     return searchField
   }
