@@ -90,7 +90,7 @@ fun loadAndFillLessonAdditionalInfo(lesson: Lesson, course: Course? = null) {
     }
   }
 
-  if (course is HyperskillCourse && lessonInfo.additionalFiles != null) {
+  if (course is HyperskillCourse && lessonInfo.additionalFiles.isNotEmpty()) {
     course.additionalFiles = lessonInfo.additionalFiles
   }
 }

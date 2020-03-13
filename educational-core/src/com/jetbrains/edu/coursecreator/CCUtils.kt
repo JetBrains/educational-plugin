@@ -32,6 +32,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo
 import com.jetbrains.edu.learning.stepik.api.TaskAdditionalInfo
 import com.jetbrains.edu.learning.stepik.collectTaskFiles
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
@@ -166,14 +167,14 @@ object CCUtils {
   }
 
   @JvmStatic
+  @Suppress("deprecation")
   fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): LessonAdditionalInfo {
     val nonPluginTasks = lesson.taskList.filter { !it.isPluginTaskType }
     val taskInfo = nonPluginTasks.associateBy(Task::getId) {
-      @Suppress("deprecation")
       TaskAdditionalInfo(it.name, it.customPresentableName, collectTaskFiles(project, it))
     }
-    @Suppress("deprecation")
-    return LessonAdditionalInfo(lesson.customPresentableName, taskInfo)
+    val courseFiles: List<TaskFile> = if (lesson.course is HyperskillCourse) collectAdditionalFiles(lesson.course, project) else listOf()
+    return LessonAdditionalInfo(lesson.customPresentableName, taskInfo, courseFiles)
   }
 
   @JvmStatic

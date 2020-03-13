@@ -1,17 +1,33 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.util.io.FileUtil
+import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.CCUtils.collectAdditionalLessonInfo
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLesson
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.io.File
 
-class GetHyperskillLessonTest : EduTestCase() {
+class HyperskillLessonTest : EduTestCase() {
+  fun `test collecting course additional files`() {
+    val course = courseWithFiles(courseProducer = ::HyperskillCourse, courseMode = CCUtils.COURSE_MODE) {
+      frameworkLesson {
+        eduTask {}
+      }
+      additionalFile("package.json", "My cool dependencies")
+    }
+    val info = collectAdditionalLessonInfo(course.lessons.first(), project)
 
-  fun `test additional files`() {
+    assertEquals(1, info.additionalFiles.size)
+    assertEquals("package.json", info.additionalFiles[0].name)
+    assertEquals("My cool dependencies", info.additionalFiles[0].text)
+  }
+
+  fun `test receiving course additional files`() {
     val lessonId = 278738129
     val mockConnector = StepikConnector.getInstance() as MockStepikConnector
 

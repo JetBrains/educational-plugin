@@ -427,7 +427,7 @@ class CourseAdditionalInfo : AdditionalInfo {
 class LessonAdditionalInfo : AdditionalInfo {
   // needed for com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLesson
   @JsonProperty(ADDITIONAL_FILES)
-  var additionalFiles: List<TaskFile>? = null
+  var additionalFiles: List<TaskFile> = listOf()
 
   @JsonProperty(CUSTOM_NAME)
   var customName: String? = null
@@ -443,13 +443,13 @@ class LessonAdditionalInfo : AdditionalInfo {
 
   constructor()
 
-  constructor(customName: String?, tasksInfo: Map<Int, TaskAdditionalInfo>, additionalFiles: List<TaskFile>? = null) {
+  constructor(customName: String?, tasksInfo: Map<Int, TaskAdditionalInfo>, additionalFiles: List<TaskFile>) {
     this.customName = customName
     this.tasksInfo = tasksInfo
     this.additionalFiles = additionalFiles
   }
 
-  val isEmpty: Boolean get() = customName.isNullOrEmpty() && tasksInfo.isEmpty()
+  val isEmpty: Boolean get() = customName.isNullOrEmpty() && tasksInfo.isEmpty() && additionalFiles.isEmpty()
 }
 
 // Not inherited from AdditionalInfo because Stepik does not support Attachments for tasks
