@@ -11,8 +11,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HSHyperlinkListener
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.*
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*
@@ -76,7 +75,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   private fun withHyperskillAuthorization(action: () -> String?): String? {
     val account = HyperskillSettings.INSTANCE.account
     return if (account == null) {
-      HyperskillConnector.getInstance().doAuthorize(Runnable { action() } )
+      HyperskillConnector.getInstance().doAuthorize(Runnable { action() })
       null
     }
     else {
@@ -87,22 +86,28 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   private fun openProblem(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val stepId = getIntParameter("step_id", urlDecoder)
     val account = HyperskillSettings.INSTANCE.account ?: error("Attempt to open step for unauthorized user")
-    val projectId = getSelectedProjectIdUnderProgress(account) ?: error("No selected project id")
-    return openInIDE(projectId, null, stepId, request, context)
+    val projectId = getSelectedProjectIdUnderProgress(account)
+    if (projectId == null) {
+      showError(SELECT_PROJECT)
+      return SELECT_PROJECT
+    }
+    return openInIDE(HyperskillOpenStepRequest(projectId, stepId), request, context)
   }
 
   private fun openStage(decoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val stageId = getIntParameter("stage_id", decoder)
     val projectId = getIntParameter("project_id", decoder)
-    return openInIDE(projectId, stageId, null, request, context)
+    return openInIDE(HyperskillOpenStageRequest(projectId, stageId), request, context)
   }
 
-  private fun openInIDE(projectId: Int, stageId: Int?, stepId: Int?, request: FullHttpRequest, context: ChannelHandlerContext): String? {
-    LOG.info("Opening ${EduNames.JBA} project: id=$projectId stageId=${stageId ?: "no stage"} stepId=${stepId ?: "no step"}")
-    return when (val result = HyperskillProjectOpener.openProject(projectId, stageId, stepId)) {
+  private fun openInIDE(openInProjectRequest: HyperskillOpenInProjectRequest,
+                        request: FullHttpRequest,
+                        context: ChannelHandlerContext): String? {
+    LOG.info("Opening ${EduNames.JBA} project: $request")
+    return when (val result = HyperskillProjectOpener.open(openInProjectRequest)) {
       is Ok -> {
         sendOk(request, context)
-        LOG.info("${EduNames.JBA} project opened: id=$projectId stageId=${stageId ?: "no stage"} stepId=${stepId ?: "no step"}")
+        LOG.info("${EduNames.JBA} project opened: $request")
         null
       }
       is Err -> {

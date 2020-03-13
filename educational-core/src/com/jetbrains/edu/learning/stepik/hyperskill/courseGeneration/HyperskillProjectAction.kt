@@ -13,12 +13,9 @@ import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
+import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.getSelectedProjectIdUnderProgress
-import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -60,11 +57,11 @@ class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") 
     fun openHyperskillProject(account: HyperskillAccount, showError: (String) -> Unit) {
       val projectId = getSelectedProjectIdUnderProgress(account)
       if (projectId == null) {
-        showError("Please <a href=\"$HYPERSKILL_PROJECTS_URL\">select a project</a> on ${EduNames.JBA}")
+        showError(SELECT_PROJECT)
         return
       }
 
-      val result = HyperskillProjectOpener.openProject(projectId)
+      val result = HyperskillProjectOpener.open(HyperskillOpenStageRequest(projectId, null))
       if (result is Err) {
         showError(result.error)
       }
