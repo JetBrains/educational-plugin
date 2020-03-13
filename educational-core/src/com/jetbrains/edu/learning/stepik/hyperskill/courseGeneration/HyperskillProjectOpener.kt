@@ -59,14 +59,14 @@ object HyperskillProjectOpener {
     return true
   }
 
-  private fun openInOpenedProject(courseId: Int, stageId: Int?, stepId: Int?): Boolean {
-    val (project, course) = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
+  private fun openInOpenedProject(projectId: Int, stageId: Int?, stepId: Int?): Boolean {
+    val (project, course) = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillProject?.id == projectId }
                             ?: return false
     return openInExistingProject(project, course as HyperskillCourse, stageId, stepId)
   }
 
-  private fun openInRecentProject(courseId: Int, stageId: Int?, stepId: Int?): Boolean {
-    val (project, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
+  private fun openInRecentProject(projectId: Int, stageId: Int?, stepId: Int?): Boolean {
+    val (project, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject?.id == projectId }
                             ?: return false
     return openInExistingProject(project, course as HyperskillCourse, stageId, stepId)
   }
