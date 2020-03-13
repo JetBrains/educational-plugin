@@ -111,13 +111,12 @@ object HyperskillProjectOpener {
   }
 
   private fun HyperskillCourse.addProblem(stepId: Int): Pair<Lesson, Task> {
-    val stepSource = computeUnderProgress(title = "Loading ${EduNames.JBA} Code Challenge") {
-      HyperskillConnector.getInstance().getStepSource(stepId)
-    } ?: error("Failed to load problem: id = $stepId")
-
     fun Lesson.addProblem(): Task {
-      var task = getTask(stepSource.id)
+      var task = getTask(stepId)
       if (task == null) {
+        val stepSource = computeUnderProgress(title = "Loading ${EduNames.JBA} Code Challenge") {
+          HyperskillConnector.getInstance().getStepSource(stepId)
+        } ?: error("Failed to load problem: id = $stepId")
         task = HyperskillConnector.getInstance().getTasks(course, this, listOf(stepSource)).first().apply {
           index = taskList.size + 1
         }
