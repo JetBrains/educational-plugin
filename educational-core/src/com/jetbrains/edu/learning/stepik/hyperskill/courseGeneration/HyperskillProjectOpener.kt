@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
 import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
@@ -18,7 +16,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import com.intellij.openapi.progress.Task as ProgressTask
 
 object HyperskillProjectOpener {
 
@@ -47,13 +44,10 @@ object HyperskillProjectOpener {
     }
     else {
       if (hyperskillCourse.getProjectLesson() == null) {
-        ProgressManager.getInstance().run(object : ProgressTask.WithResult<Boolean, Exception>
-                                                   (null, "Loading project stages", true) {
-          override fun compute(indicator: ProgressIndicator): Boolean {
-            val hyperskillProject = hyperskillCourse.hyperskillProject!!
-            return HyperskillConnector.getInstance().loadStages(hyperskillCourse, hyperskillProject.id, hyperskillProject)
-          }
-        })
+        computeUnderProgress(project, "Loading Project Stages") {
+          val hyperskillProject = hyperskillCourse.hyperskillProject!!
+          HyperskillConnector.getInstance().loadStages(hyperskillCourse, hyperskillProject.id, hyperskillProject)
+        }
         hyperskillCourse.init(null, null, false)
         val projectLesson = hyperskillCourse.getProjectLesson()!!
         GeneratorUtils.createLesson(projectLesson, hyperskillCourse.getDir(project))
@@ -83,34 +77,32 @@ object HyperskillProjectOpener {
   }
 
   private fun getHyperskillCourseUnderProgress(projectId: Int, stageId: Int?, stepId: Int?): Result<HyperskillCourse, String> {
-    return ProgressManager.getInstance().run(object : ProgressTask.WithResult<Result<HyperskillCourse, String>, Exception>
-                                                      (null, "Loading project", true) {
-      override fun compute(indicator: ProgressIndicator): Result<HyperskillCourse, String> {
-        val hyperskillProject = HyperskillConnector.getInstance().getProject(projectId) ?: return Err(FAILED_TO_CREATE_PROJECT)
+    return computeUnderProgress(title = "Loading ${EduNames.JBA} Project") { indicator ->
+      val hyperskillProject = HyperskillConnector.getInstance().getProject(projectId) ?: return@computeUnderProgress Err(
+        FAILED_TO_CREATE_PROJECT)
 
-        if (!hyperskillProject.useIde) {
-          return Err(HYPERSKILL_PROJECT_NOT_SUPPORTED)
-        }
-        val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language]
-        if (languageId == null) {
-          return Err("Unsupported language ${hyperskillProject.language}")
-        }
-        val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
-        if (hyperskillCourse.configurator == null) {
-          return Err("The project isn't supported (language: ${hyperskillProject.language}). " +
-                     "Check if all needed plugins are installed and enabled")
-        }
-        if (stepId != null) {
-          hyperskillCourse.addProblem(stepId)
-        }
-        else {
-          HyperskillConnector.getInstance().fillHyperskillCourse(hyperskillCourse)
-          hyperskillCourse.putUserData(HYPERSKILL_STAGE, stageId)
-        }
-
-        return Ok(hyperskillCourse)
+      if (!hyperskillProject.useIde) {
+        Err(HYPERSKILL_PROJECT_NOT_SUPPORTED)
       }
-    })
+      val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language]
+      if (languageId == null) {
+        return@computeUnderProgress Err("Unsupported language ${hyperskillProject.language}")
+      }
+      val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
+      if (hyperskillCourse.configurator == null) {
+        Err("The project isn't supported (language: ${hyperskillProject.language}). " +
+            "Check if all needed plugins are installed and enabled")
+      }
+      if (stepId != null) {
+        hyperskillCourse.addProblem(stepId)
+      }
+      else {
+        indicator.text2 = "Loading Project Stages"
+        HyperskillConnector.getInstance().loadStages(hyperskillCourse, projectId, hyperskillProject)
+        hyperskillCourse.putUserData(HYPERSKILL_STAGE, stageId)
+      }
+      Ok(hyperskillCourse)
+    }
   }
 
   private fun HyperskillCourse.addProblem(stepId: Int): Pair<Lesson, Task> {

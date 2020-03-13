@@ -7,11 +7,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduLogInListener
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -160,7 +158,6 @@ abstract class HyperskillConnector {
     lesson.index = 1
     lesson.course = course
     progressIndicator?.checkCanceled()
-    progressIndicator?.text2 = "Loading project stages"
     val stepSources = getStepSources(course.stages.map { it.stepId }) ?: emptyList()
 
     progressIndicator?.checkCanceled()
@@ -186,31 +183,6 @@ abstract class HyperskillConnector {
     return tasks
   }
 
-  fun fillHyperskillCourse(hyperskillCourse: HyperskillCourse): Boolean {
-    return try {
-      ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.WithResult<Boolean, Exception>(null, "Loading ${EduNames.JBA} project", true) {
-        override fun compute(indicator: ProgressIndicator): Boolean {
-          val hyperskillAccount = HyperskillSettings.INSTANCE.account
-          if (hyperskillAccount == null) {
-            LOG.error("User is not logged in to ${EduNames.JBA}")
-            return false
-          }
-          val hyperskillProject = hyperskillCourse.hyperskillProject ?: error("Disconnected ${EduNames.JBA} project")
-          if (!hyperskillProject.useIde) {
-            LOG.error("Selected project is not supported")
-            return false
-          }
-          val projectId = hyperskillProject.id
-          return loadStages(hyperskillCourse, projectId, hyperskillProject)
-        }
-      })
-    }
-    catch (e: Exception) {
-      LOG.warn(e)
-      false
-    }
-  }
-
   fun loadStages(hyperskillCourse: HyperskillCourse, projectId: Int, hyperskillProject: HyperskillProject): Boolean {
     if (hyperskillCourse.stages.isEmpty()) {
       val stages = getStages(projectId) ?: return false
@@ -233,7 +205,6 @@ abstract class HyperskillConnector {
     }
     lesson.name = hyperskillCourse.name
 
-    // todo: check if we need this
     if (hyperskillCourse.lessons.isNotEmpty()) {
       for (existingLesson in hyperskillCourse.lessons) {
         existingLesson.index += 1
