@@ -14,6 +14,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
+import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -27,7 +28,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import java.awt.BorderLayout
 import javax.swing.JPanel
-import com.intellij.openapi.progress.Task as ProgressTask
 
 val HYPERSKILL_SELECTED_STAGE: Key<Int> = Key.create("HYPERSKILL_SELECTED_STAGE")
 val HYPERSKILL_SELECTED_PROBLEM: Key<Int> = Key.create("HYPERSKILL_SELECTED_PROBLEM")
@@ -119,14 +119,11 @@ fun showFailedToPostNotification() {
 }
 
 fun getSelectedProjectIdUnderProgress(account: HyperskillAccount): Int? {
-  return ProgressManager.getInstance().run(
-    object : ProgressTask.WithResult<Int?, Exception>(null, "Synchronizing ${EduNames.JBA} account", false) {
-      override fun compute(indicator: ProgressIndicator): Int? {
-        val currentUser = HyperskillConnector.getInstance().getCurrentUser(account)
-        if (currentUser != null) {
-          account.userInfo = currentUser
-        }
-        return account.userInfo.hyperskillProjectId
-      }
-    })
+  return computeUnderProgress(null, "Synchronizing ${EduNames.JBA} Account", false) {
+    val currentUser = HyperskillConnector.getInstance().getCurrentUser(account)
+    if (currentUser != null) {
+      account.userInfo = currentUser
+    }
+    account.userInfo.hyperskillProjectId
+  }
 }
