@@ -103,11 +103,11 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   private fun openInIDE(openInProjectRequest: HyperskillOpenInProjectRequest,
                         request: FullHttpRequest,
                         context: ChannelHandlerContext): String? {
-    LOG.info("Opening ${EduNames.JBA} project: $request")
+    LOG.info("Opening ${EduNames.JBA} project: $openInProjectRequest")
     return when (val result = HyperskillProjectOpener.open(openInProjectRequest)) {
       is Ok -> {
         sendOk(request, context)
-        LOG.info("${EduNames.JBA} project opened: $request")
+        LOG.info("${EduNames.JBA} project opened: $openInProjectRequest")
         null
       }
       is Err -> {
