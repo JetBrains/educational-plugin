@@ -32,7 +32,7 @@ import com.intellij.openapi.progress.Task as ProgressTask
 val HYPERSKILL_STAGE: Key<Int> = Key.create("HYPERSKILL_STAGE")
 const val HYPERSKILL_GROUP_ID = "Hyperskill.post"
 
-fun openSelectedStage(course: Course, project: Project, fillProject: Boolean = false) {
+fun openSelectedStage(course: Course, project: Project) {
   if (course !is HyperskillCourse) {
     return
   }

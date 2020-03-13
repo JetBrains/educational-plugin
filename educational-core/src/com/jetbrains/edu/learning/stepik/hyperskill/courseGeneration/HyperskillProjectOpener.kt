@@ -55,7 +55,7 @@ object HyperskillProjectOpener {
           HyperskillProjectComponent.synchronizeHyperskillProject(project)
         }
         hyperskillCourse.putUserData(HYPERSKILL_STAGE, request.stageId)
-        runInEdt { openSelectedStage(hyperskillCourse, project, true) }
+        runInEdt { openSelectedStage(hyperskillCourse, project) }
       }
     }
     return true
