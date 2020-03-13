@@ -20,13 +20,11 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.awt.BorderLayout
 import javax.swing.JPanel
 import com.intellij.openapi.progress.Task as ProgressTask
@@ -37,9 +35,6 @@ const val HYPERSKILL_GROUP_ID = "Hyperskill.post"
 fun openSelectedStage(course: Course, project: Project, fillProject: Boolean = false) {
   if (course !is HyperskillCourse) {
     return
-  }
-  if (course.getProjectLesson() == null && fillProject) {
-    loadProjectStages(course, project)
   }
   val stageId = course.getUserData(HYPERSKILL_STAGE) ?: computeSelectedStage(course)
   if (stageId > 0) {
@@ -53,15 +48,6 @@ fun openSelectedStage(course: Course, project: Project, fillProject: Boolean = f
       }
     }
   }
-}
-
-private fun loadProjectStages(course: HyperskillCourse, project: Project) {
-  HyperskillConnector.getInstance().fillHyperskillCourse(course)
-  val projectLesson = course.getProjectLesson()!!
-  course.init(null, null, false)
-  GeneratorUtils.createLesson(projectLesson, course.getDir(project))
-  YamlFormatSynchronizer.saveAll(project)
-  HyperskillProjectComponent.synchronizeHyperskillProject(project)
 }
 
 private fun computeSelectedStage(course: Course): Int {
