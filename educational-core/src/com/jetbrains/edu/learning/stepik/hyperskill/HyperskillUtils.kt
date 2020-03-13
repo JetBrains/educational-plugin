@@ -29,14 +29,15 @@ import java.awt.BorderLayout
 import javax.swing.JPanel
 import com.intellij.openapi.progress.Task as ProgressTask
 
-val HYPERSKILL_STAGE: Key<Int> = Key.create("HYPERSKILL_STAGE")
+val HYPERSKILL_SELECTED_STAGE: Key<Int> = Key.create("HYPERSKILL_SELECTED_STAGE")
+val HYPERSKILL_SELECTED_PROBLEM: Key<Int> = Key.create("HYPERSKILL_SELECTED_PROBLEM")
 const val HYPERSKILL_GROUP_ID = "Hyperskill.post"
 
 fun openSelectedStage(course: Course, project: Project) {
   if (course !is HyperskillCourse) {
     return
   }
-  val stageId = course.getUserData(HYPERSKILL_STAGE) ?: computeSelectedStage(course)
+  val stageId = course.getUserData(HYPERSKILL_SELECTED_STAGE) ?: computeSelectedStage(course)
   if (stageId > 0) {
     val index = course.stages.indexOfFirst { stage -> stage.id == stageId }
     if (course.lessons.isNotEmpty()) {
@@ -51,6 +52,11 @@ fun openSelectedStage(course: Course, project: Project) {
 }
 
 private fun computeSelectedStage(course: Course): Int {
+  // do not switch selected stage if a user opened only a single problem
+  val stepId = course.getUserData(HYPERSKILL_SELECTED_PROBLEM)
+  if (stepId != null) {
+    return 0
+  }
   val projectLesson = (course as HyperskillCourse).getProjectLesson() ?: return 0
   val firstUnsolvedTask = projectLesson.taskList.indexOfFirst { task -> task.status != CheckStatus.Solved }
   return course.stages[if (firstUnsolvedTask != -1) firstUnsolvedTask else projectLesson.taskList.size - 1].id

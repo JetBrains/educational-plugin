@@ -37,6 +37,7 @@ object HyperskillProjectOpener {
       is HyperskillOpenStepRequest -> {
         val stepId = request.stepId
         hyperskillCourse.addProblemWithFiles(project, stepId)
+        hyperskillCourse.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
         runInEdt {
           requestFocus()
           EduUtils.navigateToStep(project, hyperskillCourse, stepId)
@@ -54,7 +55,7 @@ object HyperskillProjectOpener {
           YamlFormatSynchronizer.saveAll(project)
           HyperskillProjectComponent.synchronizeHyperskillProject(project)
         }
-        hyperskillCourse.putUserData(HYPERSKILL_STAGE, request.stageId)
+        hyperskillCourse.putUserData(HYPERSKILL_SELECTED_STAGE, request.stageId)
         runInEdt { openSelectedStage(hyperskillCourse, project) }
       }
     }
@@ -97,11 +98,12 @@ object HyperskillProjectOpener {
       when (request) {
         is HyperskillOpenStepRequest -> {
           hyperskillCourse.addProblem(request.stepId)
+          hyperskillCourse.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
         }
         is HyperskillOpenStageRequest -> {
           indicator.text2 = LOADING_PROJECT_STAGES
           HyperskillConnector.getInstance().loadStages(hyperskillCourse, request.projectId, hyperskillProject)
-          hyperskillCourse.putUserData(HYPERSKILL_STAGE, request.stageId)
+          hyperskillCourse.putUserData(HYPERSKILL_SELECTED_STAGE, request.stageId)
         }
       }
       Ok(hyperskillCourse)
