@@ -25,9 +25,9 @@ object HyperskillProjectOpener {
     runInEdt {
       requestFocus()
     }
-    if (focusOpenProject(projectId, stageId, stepId)) return Ok(Unit)
-    if (openRecentProject(projectId, stageId, stepId)) return Ok(Unit)
-    return openNewProject(projectId, stageId, stepId)
+    if (openInOpenedProject(projectId, stageId, stepId)) return Ok(Unit)
+    if (openInRecentProject(projectId, stageId, stepId)) return Ok(Unit)
+    return openInNewProject(projectId, stageId, stepId)
   }
 
   private fun openInExistingProject(project: Project, hyperskillCourse: HyperskillCourse, stageId: Int?, stepId: Int?): Boolean {
@@ -59,19 +59,19 @@ object HyperskillProjectOpener {
     return true
   }
 
-  private fun focusOpenProject(courseId: Int, stageId: Int?, stepId: Int?): Boolean {
+  private fun openInOpenedProject(courseId: Int, stageId: Int?, stepId: Int?): Boolean {
     val (project, course) = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
                             ?: return false
     return openInExistingProject(project, course as HyperskillCourse, stageId, stepId)
   }
 
-  private fun openRecentProject(courseId: Int, stageId: Int?, stepId: Int?): Boolean {
+  private fun openInRecentProject(courseId: Int, stageId: Int?, stepId: Int?): Boolean {
     val (project, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject?.id == courseId }
                             ?: return false
     return openInExistingProject(project, course as HyperskillCourse, stageId, stepId)
   }
 
-  private fun openNewProject(projectId: Int, stageId: Int?, stepId: Int?): Result<Unit, String> {
+  private fun openInNewProject(projectId: Int, stageId: Int?, stepId: Int?): Result<Unit, String> {
     return getHyperskillCourseUnderProgress(projectId, stageId, stepId).map { hyperskillCourse ->
       runInEdt {
         requestFocus()
