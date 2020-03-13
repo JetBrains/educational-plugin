@@ -8,6 +8,7 @@ import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.AppIcon
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -30,7 +31,13 @@ object HyperskillProjectOpener {
     return openInNewProject(projectId, stageId, stepId)
   }
 
-  private fun openInExistingProject(project: Project, hyperskillCourse: HyperskillCourse, stageId: Int?, stepId: Int?): Boolean {
+  private fun openInExistingProject(projectId: Int,
+                                    stageId: Int?,
+                                    stepId: Int?,
+                                    findProject: ((Course) -> Boolean) -> Pair<Project, Course>?): Boolean {
+    val (project, course) = findProject { it is HyperskillCourse && it.hyperskillProject?.id == projectId }
+                            ?: return false
+    val hyperskillCourse = course as HyperskillCourse
     if (stepId != null) {
       hyperskillCourse.addProblemWithFiles(project, stepId)
       runInEdt {
@@ -59,17 +66,12 @@ object HyperskillProjectOpener {
     return true
   }
 
-  private fun openInOpenedProject(projectId: Int, stageId: Int?, stepId: Int?): Boolean {
-    val (project, course) = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillProject?.id == projectId }
-                            ?: return false
-    return openInExistingProject(project, course as HyperskillCourse, stageId, stepId)
-  }
+  private fun openInOpenedProject(projectId: Int, stageId: Int?, stepId: Int?): Boolean =
+    openInExistingProject(projectId, stageId, stepId, EduBuiltInServerUtils::focusOpenProject)
 
-  private fun openInRecentProject(projectId: Int, stageId: Int?, stepId: Int?): Boolean {
-    val (project, course) = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillProject?.id == projectId }
-                            ?: return false
-    return openInExistingProject(project, course as HyperskillCourse, stageId, stepId)
-  }
+  private fun openInRecentProject(projectId: Int, stageId: Int?, stepId: Int?): Boolean =
+    openInExistingProject(projectId, stageId, stepId, EduBuiltInServerUtils::openRecentProject)
+
 
   private fun openInNewProject(projectId: Int, stageId: Int?, stepId: Int?): Result<Unit, String> {
     return getHyperskillCourseUnderProgress(projectId, stageId, stepId).map { hyperskillCourse ->
