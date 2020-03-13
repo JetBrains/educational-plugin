@@ -3,8 +3,10 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseFormat
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
@@ -38,4 +40,17 @@ class HyperskillCourse : Course {
     "<br/><br/>Learn more at <a href=\"https://hyperskill.org\">https://hyperskill.org/projects/$projectId</a>"
 
   override fun getItemType(): String = HYPERSKILL
+
+  fun findOrCreateProblemsLesson(): Lesson {
+    var lesson = getLesson(HYPERSKILL_PROBLEMS)
+    if (lesson == null) {
+      lesson = Lesson().apply {
+        name = HYPERSKILL_PROBLEMS
+        index = this@HyperskillCourse.items.size + 1
+        course = this@HyperskillCourse
+      }
+      addLesson(lesson)
+    }
+    return lesson
+  }
 }

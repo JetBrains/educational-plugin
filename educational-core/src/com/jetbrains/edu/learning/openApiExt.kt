@@ -2,6 +2,9 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
@@ -40,3 +43,11 @@ fun String.toTitleCase(): String {
 fun Document.toPsiFile(project: Project): PsiFile? {
   return PsiDocumentManager.getInstance(project).getPsiFile(this)
 }
+
+fun <T> computeUnderProgress(project: Project? = null, title: String,
+                             computation: () -> T): T =
+  ProgressManager.getInstance().run(object : Task.WithResult<T, Exception>(project, title, true) {
+    override fun compute(indicator: ProgressIndicator): T {
+      return computation()
+    }
+  })

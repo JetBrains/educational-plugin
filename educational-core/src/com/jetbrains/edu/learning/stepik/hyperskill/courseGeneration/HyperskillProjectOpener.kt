@@ -8,7 +8,6 @@ import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.AppIcon
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -16,7 +15,6 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.intellij.openapi.progress.Task as ProgressTask
@@ -114,10 +112,23 @@ object HyperskillProjectOpener {
   }
 
   private fun HyperskillCourse.addProblem(stepId: Int): Pair<Lesson, Task> {
-    val stepSource = HyperskillConnector.getInstance().getStepSource(stepId)!!
-    val lesson = findOrCreateProblemsLesson(this)
-    val task = findOrCreateTask(this, lesson, stepSource)
-    return lesson to task
+    val stepSource = computeUnderProgress(title = "Loading ${EduNames.JBA} Code Challenge") {
+      HyperskillConnector.getInstance().getStepSource(stepId)
+    } ?: error("Failed to load problem: id = $stepId")
+
+    fun Lesson.addProblem(): Task {
+      var task = getTask(stepSource.id)
+      if (task == null) {
+        task = HyperskillConnector.getInstance().getTasks(course, this, listOf(stepSource)).first().apply {
+          index = taskList.size + 1
+        }
+        addTask(task)
+      }
+      return task
+    }
+
+    val lesson = findOrCreateProblemsLesson()
+    return lesson to lesson.addProblem()
   }
 
   private fun HyperskillCourse.addProblemWithFiles(project: Project, stepId: Int) {
@@ -145,40 +156,5 @@ object HyperskillProjectOpener {
       AppIcon.getInstance().requestFocus(frame)
     }
     frame.toFront()
-  }
-
-  private fun findOrCreateProblemsLesson(course: HyperskillCourse): Lesson {
-    var lesson = course.getLesson(HYPERSKILL_PROBLEMS)
-    if (lesson == null) {
-      lesson = Lesson()
-      lesson.name = HYPERSKILL_PROBLEMS
-      lesson.index = course.items.size + 1
-      course.addLesson(lesson)
-    }
-    return lesson
-  }
-
-  private fun findOrCreateTask(course: HyperskillCourse, lesson: Lesson, stepSource: HyperskillStepSource): Task {
-    fun Task.description(theoryId: Int?): String = buildString {
-      appendln("""<b>$name</b> <a class="right" href="${stepLink(id)}">Open on ${EduNames.JBA}</a>""")
-      appendln("<br><br>")
-      appendln(descriptionText)
-      if (theoryId != null) {
-        append("""<a href="${stepLink(theoryId)}">Show topic summary</a>""")
-      }
-    }
-
-    var task = lesson.getTask(stepSource.id)
-    if (task == null) {
-      task = HyperskillConnector.getInstance().getTasks(course, lesson, listOf(stepSource)).first()
-      task.apply {
-        name = stepSource.title
-        feedbackLink = FeedbackLink(stepLink(task.id))
-        index = lesson.taskList.size + 1
-        descriptionText = description(stepSource.topicTheory)
-      }
-      lesson.addTask(task)
-    }
-    return task
   }
 }

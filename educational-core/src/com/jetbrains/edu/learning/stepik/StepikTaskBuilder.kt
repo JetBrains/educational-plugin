@@ -65,7 +65,7 @@ open class StepikTaskBuilder(
     "theory" to { name: String -> TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) }
   )
 
-  fun createTask(type: String): Task? {
+  open fun createTask(type: String): Task? {
     val taskName = DEFAULT_NAMES[type] ?: UNKNOWN_TASK_NAME
     return stepikTaskTypes[type]?.invoke(taskName)
   }
