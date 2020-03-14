@@ -74,6 +74,39 @@ class HyperskillLoadingTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  fun `test solution loading first stage solved on web interface`() {
+    configureResponse(SUBMISSION_REQUEST_RE, mapOf(1 to "submissions_response_1_no_edu_task.json",
+                                                   2 to "submissions_response_2_wrong.json"))
+    val course = createHyperskillCourse()
+    HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          dir("src") {
+            file("Task.kt", "fun userFoo() {}")
+            file("Baz.kt", "fun userBaz() {}")
+          }
+          dir("test") {
+            file("Tests2.kt", "fun tests2() {}")
+          }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
   fun `test solution loading all stages solved`() {
     configureResponse(SUBMISSION_REQUEST_RE, mapOf(1 to "submissions_response_1.json",
                                                    2 to "submissions_response_2_correct.json",
