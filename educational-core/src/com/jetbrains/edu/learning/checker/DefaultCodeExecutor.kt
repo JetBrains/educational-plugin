@@ -9,11 +9,10 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.checker.CodeExecutor.Companion.resultUnchecked
 import com.jetbrains.edu.learning.checker.CodeExecutor.Companion.LOG
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 import java.io.BufferedWriter
@@ -26,7 +25,7 @@ open class DefaultCodeExecutor : CodeExecutor {
   override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, CheckResult> {
     val configuration = runReadActionInSmartMode(project) { createRunConfiguration(project, task) }
     if (configuration == null) {
-      return Err(CheckResult(CheckStatus.Unchecked, "Run configuration can't be created"))
+      return resultUnchecked("Run configuration can't be created")
     }
     configuration.isActivateToolWindowBeforeRun = false
 
@@ -67,10 +66,10 @@ open class DefaultCodeExecutor : CodeExecutor {
       processListener = processListener
     )
 
-    if (indicator.isCanceled) return Err(CheckResult(CheckStatus.Unchecked,"Canceled"))
+    if (indicator.isCanceled) return resultUnchecked("Canceled")
 
     if (processNotStarted) {
-      return Err(CheckResult(CheckStatus.Unchecked,"Process isn't started"))
+      return resultUnchecked("Process isn't started")
     }
 
     var outputString = output.joinToString("")

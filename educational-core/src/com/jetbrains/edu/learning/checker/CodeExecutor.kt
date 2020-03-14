@@ -4,7 +4,9 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 /**
@@ -32,5 +34,7 @@ interface CodeExecutor {
 
   companion object {
     val LOG = Logger.getInstance(CodeExecutor::class.java)
+
+    fun resultUnchecked(msg: String) = Err(CheckResult(CheckStatus.Unchecked, msg))
   }
 }

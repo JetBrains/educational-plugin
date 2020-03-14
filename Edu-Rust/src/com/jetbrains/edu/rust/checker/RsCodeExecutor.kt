@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.checker.CodeExecutor
+import com.jetbrains.edu.learning.checker.CodeExecutor.Companion.resultUnchecked
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -39,9 +40,5 @@ class RsCodeExecutor : CodeExecutor {
         Err(CheckResult(CheckStatus.Failed, COMPILATION_FAILED_MESSAGE, output))
       else -> Err(CheckResult.FAILED_TO_CHECK)
     }
-  }
-
-  companion object {
-    private fun resultUnchecked(msg: String) = Err(CheckResult(CheckStatus.Unchecked, msg))
   }
 }
