@@ -101,7 +101,7 @@ class CoursesPanel(courses: List<Course>,
     val toolbarDecoratorPanel = toolbarDecorator.createPanel()
     toolbarDecoratorPanel.border = null
     myCourseListPanel.add(toolbarDecoratorPanel, BorderLayout.CENTER)
-    myCourseListPanel.border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, 1, 1, 1)
+    myCourseListPanel.border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, 0, 1, 1)
     addErrorStateListener()
 
     processSelectionChanged()

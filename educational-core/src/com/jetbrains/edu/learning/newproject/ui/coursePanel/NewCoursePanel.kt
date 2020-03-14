@@ -27,7 +27,6 @@ class NewCoursePanel(
   private var header = HeaderPanel(leftMargin, joinCourseAction)
   private var description = CourseDescriptionPanel(leftMargin)
   private var advancedSettings = NewCourseSettings(isLocationFieldNeeded, leftMargin)
-
   private var mySearchField: FilterComponent? = null
 
   init {
@@ -35,8 +34,7 @@ class NewCoursePanel(
 
     // We want to show left part of border only if panel is independent
     val leftBorder = if (isStandalonePanel) LINE_BORDER_THICKNESS else 0
-    border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, LINE_BORDER_THICKNESS, leftBorder, LINE_BORDER_THICKNESS,
-                                     LINE_BORDER_THICKNESS)
+    border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, LINE_BORDER_THICKNESS, leftBorder, LINE_BORDER_THICKNESS, 0)
 
     add(header)
     add(description)
