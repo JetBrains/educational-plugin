@@ -26,7 +26,7 @@ open class OutputTaskChecker(
   final override fun check(indicator: ProgressIndicator): CheckResult {
     try {
       val outputString = when (val result = codeExecutor.execute(project, task, indicator)) {
-        is Ok -> result.value
+        is Ok -> result.value.prepareToCheck()
         is Err -> return result.error
       }
 
@@ -44,27 +44,17 @@ open class OutputTaskChecker(
     }
   }
 
-  /**
-   * By default, this method trims last line separators from actual and expected strings
-   * and then compare them.
-   *
-   * @param actual - output of program that [codeExecutor] return as [Ok] result
-   * @param expected - text from output file
-   */
-  protected open fun checkOutput(actual: String, expected: String): CheckResult {
-    val trimActual = actual.prepareToCheck()
-    val trimExpected = expected.prepareToCheck()
-    return if (trimActual == trimExpected) {
+  protected open fun String.prepareToCheck(): String = this
+
+  private fun checkOutput(actual: String, expected: String): CheckResult {
+    return if (actual == expected) {
       CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
     }
     else {
-      val diff = CheckResultDiff(expected = trimExpected, actual = trimActual)
-      CheckResult(CheckStatus.Failed, "Expected output:\n<$trimExpected>\nActual output:\n<$trimActual>", diff = diff)
+      val diff = CheckResultDiff(expected = expected, actual = actual)
+      CheckResult(CheckStatus.Failed, "Expected output:\n<$expected>\nActual output:\n<$actual>", diff = diff)
     }
   }
-
-  protected fun String.prepareToCheck(): String =
-    replace(System.getProperty("line.separator"), "\n").trimEnd('\n')
 
   private fun getOutputFile(): VirtualFile? {
     val outputFile = task.findTestDirs(project)

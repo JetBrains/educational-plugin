@@ -1,8 +1,9 @@
 package com.jetbrains.edu.rust.checker
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.checker.*
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.learning.checker.CodeExecutor
+import com.jetbrains.edu.learning.checker.OutputTaskChecker
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 
 class RsOutputTaskChecker(
@@ -11,10 +12,11 @@ class RsOutputTaskChecker(
   codeExecutor: CodeExecutor
 ) : OutputTaskChecker(task, project, codeExecutor) {
 
-  override fun checkOutput(actual: String, expected: String): CheckResult {
+  override fun String.prepareToCheck(): String {
     var programOutputStarted = false
     val outputBuffer = StringBuilder()
-    for (line in actual.lineSequence()) {
+
+    for (line in lineSequence()) {
       if (programOutputStarted) {
         outputBuffer.appendln(line)
       }
@@ -25,14 +27,6 @@ class RsOutputTaskChecker(
       }
     }
 
-    val output = outputBuffer.toString().prepareToCheck()
-    val trimExpected = expected.prepareToCheck()
-    return if (trimExpected != output) {
-      val diff = CheckResultDiff(expected = trimExpected, actual = output)
-      CheckResult(CheckStatus.Failed, "Expected output:\n<$trimExpected>\nActual output:\n<$output>", diff = diff)
-    }
-    else {
-      CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
-    }
+    return CheckUtils.postProcessOutput(outputBuffer.toString())
   }
 }
