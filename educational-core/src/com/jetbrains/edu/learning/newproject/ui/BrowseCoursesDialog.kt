@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import javax.swing.JComponent
 
 class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: DefaultActionGroup? = null) : OpenCourseDialogBase() {
@@ -12,7 +13,7 @@ class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: Defau
   init {
     title = "Select Course"
     init()
-    UIUtil.setBackgroundRecursively(rootPane, UIUtil.getEditorPaneBackground())
+    UIUtil.setBackgroundRecursively(rootPane, TaskDescriptionView.getTaskDescriptionBackgroundColor())
     panel.addCourseValidationListener(object : CoursesPanel.CourseValidationListener {
       override fun validationStatusChanged(canStartCourse: Boolean) {
         isOKActionEnabled = canStartCourse

@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.DataManager
+import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
@@ -21,7 +22,6 @@ import com.intellij.ui.components.JBList
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction.Companion.importLocation
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction.Companion.saveLastImportLocation
@@ -41,6 +41,8 @@ import com.jetbrains.edu.learning.newproject.ui.ErrorState.Companion.forCourse
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
+import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
+import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.importCourseArchive
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.loggedIn
@@ -66,7 +68,7 @@ class CoursesPanel(courses: List<Course>,
   private val myMainPanel: JPanel = JPanel(BorderLayout())
   private val myErrorLabel: HyperlinkLabel = HyperlinkLabel()
   private val myCourseListPanel: JPanel = JPanel(BorderLayout())
-  private val mySearchField: FilterComponent
+  private lateinit var mySearchField: FilterComponent
   private val mySplitPane: JSplitPane = JSplitPane()
   private val mySplitPaneRoot: JPanel = JPanel(BorderLayout())
   private var myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false,
@@ -79,6 +81,8 @@ class CoursesPanel(courses: List<Course>,
   private var myBusConnection: MessageBusConnection? = null
   private var myErrorState: ErrorState? = NothingSelected
   private var myCoursesList: JBList<Course> = JBList()
+  private lateinit var myProgrammingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
+  private lateinit var myHumanLanguagesFilterDropdown: HumanLanguageFilterDropdown
 
   val projectSettings: Any?
     get() = myCoursePanel.projectSettings
@@ -266,8 +270,14 @@ class CoursesPanel(courses: List<Course>,
     return ContainerUtil.sorted(courses, myCoursesComparator)
   }
 
+  private fun filterCourses(courses: List<Course>): List<Course> {
+    var filteredCourses = myProgrammingLanguagesFilterDropdown.filter(courses)
+    filteredCourses = myHumanLanguagesFilterDropdown.filter(filteredCourses)
+    return filteredCourses
+  }
+
   private fun updateModel(courses: List<Course>, courseToSelect: Course?) {
-    val sortedCourses = sortCourses(courses)
+    val sortedCourses = sortCourses(filterCourses(courses))
     val listModel = DefaultListModel<Course>()
     for (course in sortedCourses) {
       listModel.addElement(course)
@@ -282,10 +292,14 @@ class CoursesPanel(courses: List<Course>,
     if (courseToSelect == null) {
       return
     }
+
     myCourses.stream()
       .filter { course: Course -> course == courseToSelect }
       .findFirst()
       .ifPresent { newCourseToSelect: Course? -> myCoursesList.setSelectedValue(newCourseToSelect, true) }
+
+    myHumanLanguagesFilterDropdown.allItems = humanLanguages(courses)
+    myProgrammingLanguagesFilterDropdown.allItems = programmingLanguages(courses)
   }
 
   override fun getPreferredSize(): Dimension {
@@ -430,10 +444,11 @@ class CoursesPanel(courses: List<Course>,
     myCoursesList.addListSelectionListener { processSelectionChanged() }
     myCoursesList.border = null
     myCoursesList.background = getTaskDescriptionBackgroundColor()
+
+    val searchPanel = createSearchPanel()
     updateModel(myCourses, null)
 
-    mySearchField = createSearchField()
-    myMainPanel.add(mySearchField, BorderLayout.NORTH)
+    myMainPanel.add(searchPanel, BorderLayout.NORTH)
 
     myCoursePanel.bindCourse(selectedCourse ?: myCourses.first())
     myCoursePanel.bindSearchField(mySearchField)
@@ -451,6 +466,10 @@ class CoursesPanel(courses: List<Course>,
     initUI()
   }
 
+  private fun humanLanguages(courses: List<Course>): Set<String> = courses.map { it.humanLanguage }.toSet()
+
+  private fun programmingLanguages(courses: List<Course>): Set<String> = courses.mapNotNull { it.languageById?.displayName }.toSet()
+
   val selectedCourse: Course?
     get() = myCoursesList.selectedValue
 
@@ -461,25 +480,41 @@ class CoursesPanel(courses: List<Course>,
       return myCoursePanel.locationString!!
     }
 
-  private fun createSearchField(): FilterComponent {
-    val searchField = object : FilterComponent("Edu.NewCourse", 5, true) {
-      override fun filter() {
-        val filter = filter
-        val filtered: MutableList<Course> = ArrayList()
-        for (course in myCourses) {
-          if (accept(filter, course)) {
-            filtered.add(course)
-          }
-        }
-        updateModel(filtered, selectedCourse)
-      }
+  private fun createSearchPanel(): JComponent {
+    val searchPanel = JPanel(BorderLayout())
+    mySearchField = LanguagesFilterComponent()
+    searchPanel.add(mySearchField, BorderLayout.CENTER)
+
+    myProgrammingLanguagesFilterDropdown = ProgrammingLanguageFilterDropdown(programmingLanguages(myCourses)) {
+      updateModel(myCourses, selectedCourse)
     }
-    searchField.textEditor.border = null
-    searchField.border = JBUI.Borders.emptyBottom(5)
+    myHumanLanguagesFilterDropdown = HumanLanguageFilterDropdown(humanLanguages(myCourses)) { updateModel(myCourses, selectedCourse) }
+    val filtersPanel = JPanel(HorizontalLayout(0))
+    filtersPanel.add(myProgrammingLanguagesFilterDropdown)
+    filtersPanel.add(myHumanLanguagesFilterDropdown)
 
-    UIUtil.setBackgroundRecursively(searchField, UIUtil.getEditorPaneBackground())
+    searchPanel.add(filtersPanel, BorderLayout.LINE_END)
+    searchPanel.border = JBUI.Borders.emptyBottom(8)
 
-    return searchField
+    return searchPanel
+  }
+
+  inner class LanguagesFilterComponent : FilterComponent("Edu.NewCourse", 5, true) {
+
+    init {
+      textEditor.border = null
+    }
+
+    override fun filter() {
+      val filter = filter
+      val filtered = ArrayList<Course>()
+      for (course in myCourses) {
+        if (accept(filter, course)) {
+          filtered.add(course)
+        }
+      }
+      updateModel(filtered, selectedCourse)
+    }
   }
 
   private class CourseColoredListCellRenderer : ColoredListCellRenderer<Course?>() {
