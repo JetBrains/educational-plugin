@@ -91,7 +91,7 @@ class Step {
 
   constructor(project: Project, task: Task) {
     CourseArchiveCreator.addDescriptions(project, task)
-    text = if (task.descriptionFormat == DescriptionFormat.MD) {
+    text = if (task.descriptionFormat == DescriptionFormat.MD && task.course !is HyperskillCourse) {
       // convert to html because Stepik web site can't display markdown
       EduUtils.convertToHtml(task.descriptionText)
     }

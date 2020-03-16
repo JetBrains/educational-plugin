@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -17,6 +16,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.VideoTaskResourcesManager
 import org.jetbrains.annotations.NonNls
 import org.jsoup.Jsoup
@@ -212,7 +212,7 @@ open class StepikTaskBuilder(
     task.customPresentableName = stepOptions.customPresentableName
     task.solutionHidden = stepOptions.solutionHidden
 
-    task.descriptionText = if (!stepOptions.descriptionText.isNullOrEmpty()) stepOptions.descriptionText.orEmpty() else step.text
+    task.descriptionText = if (!stepOptions.descriptionText.isNullOrEmpty() && courseType != HYPERSKILL_TYPE) stepOptions.descriptionText.orEmpty() else step.text
     task.descriptionFormat = stepOptions.descriptionFormat
     task.feedbackLink = stepOptions.myFeedbackLink
 

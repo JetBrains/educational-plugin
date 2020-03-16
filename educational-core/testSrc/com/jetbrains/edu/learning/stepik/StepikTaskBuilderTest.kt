@@ -6,6 +6,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -13,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepsList
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 import org.junit.Assert.assertThat
@@ -64,6 +66,17 @@ class StepikTaskBuilderTest : EduTestCase() {
     assertEquals((options as PyCharmStepOptions).descriptionText, task.descriptionText)
   }
 
+  // EDU-3080 the old way for hyperskill: task text from step
+  fun `test hyperskill edu task text from step`() {
+    val stepSource = loadStepSource()
+    val task = buildTask(stepSource, PlainTextLanguage.INSTANCE, HyperskillCourse())
+
+    val block = stepSource.block
+    assertNotNull(block)
+
+    assertEquals(block!!.text, task.descriptionText)
+  }
+
   fun `test code task language specific limits`() {
     val stepSource = loadStepSource()
     val task = buildTask(stepSource, PlainTextLanguage.INSTANCE)
@@ -112,8 +125,7 @@ class StepikTaskBuilderTest : EduTestCase() {
     return mapper.readValue(response, StepsList::class.java).steps[0]
   }
 
-  private fun buildTask(stepSource: StepSource, language: Language): Task {
-    val course = EduCourse()
+  private fun buildTask(stepSource: StepSource, language: Language, course: Course = EduCourse()): Task {
     course.language = language.id
     val lesson = Lesson()
     return StepikTaskBuilder(course, lesson, stepSource, -1, -1).createTask(stepSource.block?.name!!) ?: error("")
