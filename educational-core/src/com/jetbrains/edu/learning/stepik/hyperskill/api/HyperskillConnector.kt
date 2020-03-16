@@ -118,8 +118,13 @@ abstract class HyperskillConnector {
     return response?.body()?.projects?.firstOrNull()
   }
 
+  private fun getStepSources(stepIds: List<Int>): List<HyperskillStepSource>? {
+    val response = service.steps(stepIds.joinToString(separator = ",")).executeHandlingExceptions()
+    return response?.body()?.steps
+  }
+
   fun getStepSource(stepId: Int): HyperskillStepSource? {
-    val response = service.step(stepId).executeHandlingExceptions()
+    val response = service.steps(stepId.toString()).executeHandlingExceptions()
     return response?.body()?.steps?.firstOrNull()
   }
 
@@ -155,7 +160,7 @@ abstract class HyperskillConnector {
     lesson.course = course
     progressIndicator?.checkCanceled()
     progressIndicator?.text2 = "Loading project stages"
-    val stepSources = course.stages.mapNotNull { getStepSource(it.stepId) }
+    val stepSources = getStepSources(course.stages.map { it.stepId }) ?: emptyList()
 
     progressIndicator?.checkCanceled()
     val tasks = getTasks(course, lesson, stepSources)
