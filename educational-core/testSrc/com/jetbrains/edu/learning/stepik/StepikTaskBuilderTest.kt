@@ -39,8 +39,8 @@ class StepikTaskBuilderTest : EduTestCase() {
   fun `test output task python`() = doTest<OutputTask>(PlainTextLanguage.INSTANCE)
   fun `test ide task python`() = doTest<IdeTask>(PlainTextLanguage.INSTANCE)
 
-  // EDU-2730 old way: task text is get from `text` filed that is displayed on Stepik
-  fun `test edu task text from step option`() {
+  // EDU-2730 old way: task text is get from `text` field that is displayed on Stepik
+  fun `test edu task text from block`() {
     val stepSource = loadStepSource()
     val task = buildTask(stepSource, PlainTextLanguage.INSTANCE)
 
@@ -54,7 +54,7 @@ class StepikTaskBuilderTest : EduTestCase() {
   }
 
   // EDU-2730 new way: task text from option
-  fun `test edu task text from block`() {
+  fun `test edu task text from step option`() {
     val stepSource = loadStepSource()
     val task = buildTask(stepSource, PlainTextLanguage.INSTANCE)
 
