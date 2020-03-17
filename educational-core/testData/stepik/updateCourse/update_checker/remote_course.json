@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "courses": [
+    {
+      "id": 1,
+      "summary": "Test Course",
+      "course_format": "pycharm11 Python",
+      "description": "<p>Test Course Description</p>\n",
+      "language": "en",
+      "title": "Test course",
+      "create_date": "2020-03-03T08:53:14Z",
+      "update_date": "2020-03-31T10:27:21Z"
+    }
+  ]
+}

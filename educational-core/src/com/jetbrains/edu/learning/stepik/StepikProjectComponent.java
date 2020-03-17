@@ -80,7 +80,8 @@ public class StepikProjectComponent implements ProjectComponent {
               public void userLoggedOut() { }
             });
           }
-          StepikUtils.updateCourseIfNeeded(myProject, (EduCourse)course);
+          IsCourseUpToDateChecker upToDateChecker = new IsCourseUpToDateChecker((EduCourse)course, myProject);
+          upToDateChecker.check();
 
           final StepikUser currentUser = EduSettings.getInstance().getUser();
           if (currentUser == null) {

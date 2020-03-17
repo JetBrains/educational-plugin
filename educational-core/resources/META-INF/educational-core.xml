@@ -238,11 +238,16 @@
     <applicationService serviceImplementation="com.jetbrains.edu.learning.codeforces.CodeforcesSettings"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
-    <editorNotificationProvider implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
+    <editorNotificationProvider
+        implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.stepik.UpdateCourseNotificationProvider"/>
+    <registryKey key="edu.course.update.check.interval"
+                 description="Sets is course up to date check interval in seconds"
+                 defaultValue="18000"/>
 
     <!--for educators-->
-    <xml.xmlSuppressionProvider implementation="com.jetbrains.edu.coursecreator.taskDescription.ShortcutInTaskDescriptionSuppressionProvider"/>
+    <xml.xmlSuppressionProvider
+        implementation="com.jetbrains.edu.coursecreator.taskDescription.ShortcutInTaskDescriptionSuppressionProvider"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCSectionMoveHandlerDelegate"
                              order="first"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCLessonMoveHandlerDelegate"

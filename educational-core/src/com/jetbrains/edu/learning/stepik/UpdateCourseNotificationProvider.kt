@@ -24,7 +24,7 @@ class UpdateCourseNotificationProvider(val project: Project) :
   companion object {
     @VisibleForTesting
     val KEY: Key<EditorNotificationPanel> = Key.create("Edu.updateCourse")
-    private val NOTIFICATION_TEXT: String = EduCoreBundle.message("update.course.notification.text")
+    private val NOTIFICATION_TEXT: String = EduCoreBundle.message("update.course.editor.notification.text")
   }
 
   override fun getKey() = KEY

@@ -22,13 +22,13 @@ import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.io.IOException
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.net.URL
 
 private const val PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt"
@@ -65,23 +65,6 @@ fun getStepikLink(task: Task, lesson: Lesson): String {
   return "${StepikNames.STEPIK_URL}/lesson/${lesson.id}/step/${task.index}"
 }
 
-fun updateCourseIfNeeded(project: Project, course: EduCourse) {
-  if (!course.isRemote || !course.isStudy) {
-    return
-  }
-
-  ProgressManager.getInstance().run(
-    object : com.intellij.openapi.progress.Task.Backgroundable(project, "Checking for Course Updates") {
-      override fun run(indicator: ProgressIndicator) {
-        if (!course.isUpToDate) {
-          showUpdateAvailableNotification(project) {
-            updateCourse(project, course)
-          }
-        }
-      }
-    })
-}
-
 fun updateCourse(project: Project, course: EduCourse) {
   StepikCourseUpdater(course, project).updateCourse()
   SubmissionsManager.loadMissingSubmissions(course)
@@ -90,7 +73,7 @@ fun updateCourse(project: Project, course: EduCourse) {
 
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {
   val notification = Notification(UPDATE_NOTIFICATION_GROUP_ID, "Course Updates",
-                                  "Course is ready to <a href=\"update\">update</a>",
+                                  EduCoreBundle.message("update.course.popup.notification.content"),
                                   NotificationType.INFORMATION,
                                   NotificationListener { notification, _ ->
                                     FileEditorManagerEx.getInstanceEx(project).closeAllFiles()

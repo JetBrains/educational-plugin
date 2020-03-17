@@ -3,8 +3,6 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.application.ex.ApplicationUtil
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.Time
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -12,47 +10,39 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.isReadAccessAllowed
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.fillItems
 import java.util.*
 
-fun EduCourse.checkIsUpToDateNotBlocking(): Boolean {
-  return if (isReadAccessAllowed) {
-    ApplicationUtil.runWithCheckCanceled({ checkIsUpToDate() }, ProgressManager.getInstance().progressIndicator)
-  }
-  else {
-    checkIsUpToDate()
-  }
-}
-
-private fun EduCourse.checkIsUpToDate(): Boolean {
-  check(!isReadAccessAllowed)
+fun EduCourse.checkIsUpToDate(): CourseUpdateInfo {
   // disable update for courses with framework lessons as now it's unsupported
+
+  val isUpToDate = CourseUpdateInfo(isUpToDate = true)
   if (lessons.any { it is FrameworkLesson } || sections.any { it -> it.lessons.any { it is FrameworkLesson } }) {
-    return true
+    return isUpToDate
   }
 
   if (updateDate == null || id == 0) {
-    return true
+    return isUpToDate
   }
 
-  val courseInfo = StepikConnector.getInstance().getCourseInfo(id) ?: return true
+  val courseInfo = StepikConnector.getInstance().getCourseInfo(id) ?: return isUpToDate
   courseInfo.language = language
-  return isUpToDate(courseInfo)
+
+  return CourseUpdateInfo(courseInfo, isUpToDate(courseInfo))
 }
 
 @VisibleForTesting
 fun EduCourse.isUpToDate(courseFromStepik: EduCourse): Boolean {
   val dateFromServer = courseFromStepik.updateDate ?: return true
 
-  if (dateFromServer.isSignificantlyAfter(updateDate)) {
-    return false
-  }
-
   if (!isUnitTestMode) {
     fillItems(courseFromStepik)
+  }
+
+  if (dateFromServer.isSignificantlyAfter(updateDate)) {
+    return false
   }
 
   if (hasNewOrRemovedSections(courseFromStepik) || hasNewOrRemovedTopLevelLessons(courseFromStepik)) {
@@ -158,6 +148,8 @@ private fun Lesson.setUpdated(lessonFromServer: Lesson) {
   taskList.forEach {
     val taskFromServer = tasksById[it.id] ?: error("Task with id ${it.id} not found")
     it.updateDate = taskFromServer.updateDate
+    it.isUpToDate = true
   }
 }
 
+data class CourseUpdateInfo(val remoteCourseInfo: EduCourse? = null, val isUpToDate: Boolean)

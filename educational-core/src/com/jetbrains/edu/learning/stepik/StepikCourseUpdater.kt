@@ -8,7 +8,6 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotifications
@@ -69,7 +68,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     course.setUpdated(courseFromServer)
 
     //remove editor notification, suggesting to update course
-    updateNotifications(project)
+    EditorNotifications.getInstance(project).updateAllNotifications()
   }
 
   private fun updateLessons(courseFromServer: Course) {
@@ -405,12 +404,6 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
         courseFromServer.addLessons(courseFromServer.sections[0].lessons)
       }
     }
-  }
-
-  private fun updateNotifications(project: Project?) {
-    if (project == null) return
-    val currentVirtualFile = FileEditorManager.getInstance(project).selectedEditor?.file ?: return
-    EditorNotifications.getInstance(project).updateNotifications(currentVirtualFile)
   }
 
 }
