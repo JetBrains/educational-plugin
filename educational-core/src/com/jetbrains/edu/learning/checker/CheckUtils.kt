@@ -99,7 +99,7 @@ object CheckUtils {
   }
 
   fun postProcessOutput(output: String): String {
-    return output.replace(System.getProperty("line.separator"), "\n").removeSuffix("\n")
+    return output.replace(System.getProperty("line.separator"), "\n")
   }
 
   fun createRunConfiguration(project: Project, taskFile: VirtualFile?): RunnerAndConfigurationSettings? {

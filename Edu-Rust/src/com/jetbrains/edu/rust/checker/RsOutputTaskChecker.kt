@@ -27,6 +27,6 @@ class RsOutputTaskChecker(
       }
     }
 
-    return CheckUtils.postProcessOutput(outputBuffer.toString())
+    return outputBuffer.toString().removeSuffix("\n")
   }
 }
