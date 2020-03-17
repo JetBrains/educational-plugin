@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning.authUtils;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import com.intellij.openapi.util.io.StreamUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
@@ -19,6 +21,9 @@ import java.nio.charset.Charset;
 // Should be implemented to handle oauth redirect to localhost:<port>
 // and get the authorization code for different oauth providers
 public abstract class OAuthRestService extends RestService {
+
+  private static final String IS_REST_SERVICES_ENABLED = "Edu.Stepik.RestServicesEnabled";
+
   protected final String myPlatformName;
 
   protected OAuthRestService(@NotNull String platformName) {
@@ -74,7 +79,20 @@ public abstract class OAuthRestService extends RestService {
   }
 
   @Override
+  public boolean isSupported(@NotNull FullHttpRequest request) {
+    return isRestServicesEnabled() && super.isSupported(request);
+  }
+
+  @Override
   protected boolean isMethodSupported(@NotNull HttpMethod method) {
     return method == HttpMethod.GET;
+  }
+
+  public static boolean isRestServicesEnabled() {
+    return PropertiesComponent.getInstance().getBoolean(IS_REST_SERVICES_ENABLED, true);
+  }
+
+  public static void setRestServicesEnabled(boolean enabled) {
+    PropertiesComponent.getInstance().setValue(IS_REST_SERVICES_ENABLED, enabled, true);
   }
 }

@@ -91,6 +91,10 @@
 
     <action id="Educational.LearnAndTeach" class="com.jetbrains.edu.learning.newproject.LearnAndTeachAction"/>
 
+    <action id="Educational.ToggleRestServices"
+            class="com.jetbrains.edu.learning.actions.ToggleRestServicesAction"
+            internal="true"/>
+
     <!--educator actions-->
     <action id="Educational.Educator.InsertShortcut" class="com.jetbrains.edu.coursecreator.actions.InsertShortcutAction">
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
