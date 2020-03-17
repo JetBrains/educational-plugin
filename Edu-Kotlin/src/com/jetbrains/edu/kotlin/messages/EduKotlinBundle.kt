@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.messages.EduBundle
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 
-object EduKtBundle : EduBundle() {
+object EduKotlinBundle : EduBundle() {
 
   @JvmStatic
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String {
@@ -13,5 +13,5 @@ object EduKtBundle : EduBundle() {
   }
 
   @NonNls
-  private const val BUNDLE = "messages.EduKtBundle"
+  private const val BUNDLE = "messages.EduKotlinBundle"
 }

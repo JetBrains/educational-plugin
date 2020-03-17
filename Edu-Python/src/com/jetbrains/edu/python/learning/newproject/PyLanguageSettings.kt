@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.python.learning.homePaths
-import com.jetbrains.edu.python.learning.messages.EduPyBundle
+import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.PythonSdkType
@@ -38,7 +38,7 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
       combo.putClientProperty("JButton.buttonType", null)
     }
     combo.setButtonIcon(AllIcons.General.GearPlain)
-    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(combo, EduPyBundle.message("python.interpreter"), BorderLayout.WEST))
+    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(combo, EduPythonBundle.message("python.interpreter"), BorderLayout.WEST))
   }
 
   override fun getSettings(): PyNewProjectSettings = mySettings

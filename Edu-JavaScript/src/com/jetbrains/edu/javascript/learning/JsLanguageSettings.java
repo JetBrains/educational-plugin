@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.util.UserDataHolder;
-import com.jetbrains.edu.javascript.learning.messages.EduJsBundle;
+import com.jetbrains.edu.javascript.learning.messages.EduJavaScriptBundle;
 import com.jetbrains.edu.learning.LanguageSettings;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage;
@@ -47,7 +47,7 @@ public class JsLanguageSettings extends LanguageSettings<JsNewProjectSettings> {
   @NotNull
   @Override
   public List<LabeledComponent<JComponent>> getLanguageSettingsComponents(@NotNull Course course, @Nullable UserDataHolder context) {
-    return Collections.singletonList(LabeledComponent.create(myInterpreterField, EduJsBundle.message("node.interpreter"), BorderLayout.WEST));
+    return Collections.singletonList(LabeledComponent.create(myInterpreterField, EduJavaScriptBundle.message("node.interpreter"), BorderLayout.WEST));
   }
 
   @Nullable

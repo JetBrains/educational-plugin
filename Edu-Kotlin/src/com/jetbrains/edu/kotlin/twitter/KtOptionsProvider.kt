@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.layout.*
-import com.jetbrains.edu.kotlin.messages.EduKtBundle
+import com.jetbrains.edu.kotlin.messages.EduKotlinBundle
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.settings.OptionsProvider
 import org.jetbrains.annotations.Nls
@@ -13,7 +13,7 @@ import javax.swing.JComponent
 class KtOptionsProvider(private val project: Project) : OptionsProvider {
 
   private val askToTweetCheckBox: JBCheckBox = JBCheckBox(
-    EduKtBundle.message("ktoptions.ask.to.tweet"),
+    EduKotlinBundle.message("ktoptions.ask.to.tweet"),
     KtTwitterSettings.getInstance(project).askToTweet()
   )
 
