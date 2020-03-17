@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import javax.swing.JComponent
@@ -11,6 +12,7 @@ class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: Defau
   init {
     title = "Select Course"
     init()
+    UIUtil.setBackgroundRecursively(rootPane, UIUtil.getEditorPaneBackground())
     panel.addCourseValidationListener(object : CoursesPanel.CourseValidationListener {
       override fun validationStatusChanged(canStartCourse: Boolean) {
         isOKActionEnabled = canStartCourse
