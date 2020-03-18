@@ -26,6 +26,7 @@ const val HYPERSKILL_PROJECT_NOT_SUPPORTED = "Selected project is not supported 
 const val FAILED_TO_CREATE_PROJECT = "A project wasn't found or created"
 const val LOADING_PROJECT_STAGES = "Loading Project Stages"
 const val SELECT_PROJECT = "Please <a href=\"$HYPERSKILL_PROJECTS_URL\">select a project</a> on ${EduNames.JBA}"
+const val SYNCHRONIZE_JBA_ACCOUNT = "Synchronizing ${EduNames.JBA} Account"
 
 val HYPERSKILL_LANGUAGES = mapOf("java" to "${EduNames.JAVA} 11", "kotlin" to EduNames.KOTLIN, "python" to EduNames.PYTHON,
                                  "javascript" to EduNames.JAVASCRIPT)

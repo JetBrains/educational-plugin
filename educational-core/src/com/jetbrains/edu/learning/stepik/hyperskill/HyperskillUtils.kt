@@ -123,7 +123,7 @@ fun showFailedToPostNotification() {
 }
 
 fun getSelectedProjectIdUnderProgress(account: HyperskillAccount): Int? {
-  return computeUnderProgress(null, "Synchronizing ${EduNames.JBA} Account", false) {
+  return computeUnderProgress(null, SYNCHRONIZE_JBA_ACCOUNT, false) {
     val currentUser = HyperskillConnector.getInstance().getCurrentUser(account)
     if (currentUser != null) {
       account.userInfo = currentUser
