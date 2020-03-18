@@ -207,6 +207,9 @@ abstract class HyperskillConnector {
     }
     lesson.name = hyperskillCourse.name
 
+    // We want project lesson to be the first
+    // It's possible to open Problems in IDE without loading project lesson (stages)
+    // So we need to update indices of existing Problems in this case
     if (hyperskillCourse.lessons.isNotEmpty()) {
       for (existingLesson in hyperskillCourse.lessons) {
         existingLesson.index += 1
