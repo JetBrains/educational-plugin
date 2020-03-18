@@ -55,6 +55,9 @@ class CCCourseNode(
     return CCSectionNode(myProject, settings, section, directory)
   }
 
+  override val additionalInfo: String?
+    get() = "(Course Creation)"
+
   companion object {
     private val NAMES_TO_IGNORE: Collection<String> = ContainerUtil.newHashSet(
       SETTINGS_GRADLE, LOCAL_PROPERTIES, GRADLE_WRAPPER_UNIX, GRADLE_WRAPPER_WIN)

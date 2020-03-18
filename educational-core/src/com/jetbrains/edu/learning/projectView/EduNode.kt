@@ -30,12 +30,15 @@ abstract class EduNode<T : StudyItem>(
     val name = item.presentableName
     val icon = CourseViewUtils.getIcon(item)
     data.addText(name, SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, JBColor.BLACK))
-    val additionalInfo = CourseViewUtils.getAdditionalInformation(item)
-    if (additionalInfo != null) {
-      data.addText(" $additionalInfo", SimpleTextAttributes.GRAYED_ATTRIBUTES)
-    }
+    additionalInfo?.let { data.addText(" $additionalInfo", SimpleTextAttributes.GRAYED_ATTRIBUTES) }
     data.setIcon(icon)
   }
+
+  open val additionalInfo: String?
+    get() {
+      val item = item ?: return null
+      return if (!item.course.isStudy && item.presentableName != item.name) "(${item.name})" else null
+    }
 
   override fun hasProblemFileBeneath(): Boolean = false
 

@@ -102,23 +102,6 @@ object CourseViewUtils {
   }
 
   @JvmStatic
-  fun getAdditionalInformation(item: StudyItem): String? {
-    if (item is Course) {
-      return if (item.course.isStudy) {
-        val progress = ProgressUtil.countProgress(item)
-        val tasksSolved = progress.first
-        val tasksTotal = progress.second
-        " $tasksSolved/$tasksTotal"
-      }
-      else {
-        "(Course Creation)"
-      }
-    }
-
-    return if (!item.course.isStudy && item.presentableName != item.name) "(${item.name})" else null
-  }
-
-  @JvmStatic
   fun getIcon(item: StudyItem): Icon {
     return when (item) {
       is Course -> item.icon

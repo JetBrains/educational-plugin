@@ -6,6 +6,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class FrameworkLessonNode private constructor(
   project: Project,
@@ -21,6 +23,19 @@ class FrameworkLessonNode private constructor(
     val task = item.currentTask()
     return CourseViewUtils.modifyTaskChildNode(myProject, childNode, task) { dir -> DirectoryNode(myProject, dir, settings, task) }
   }
+
+  override val additionalInfo: String?
+    get() {
+      val course = item.course
+      return if (course is HyperskillCourse && course.isStudy && item == course.getProjectLesson()) {
+        val (tasksSolved, tasksTotal) = ProgressUtil.countProgress(item)
+        if (tasksTotal == 0) {
+          return null
+        }
+        return EduCoreBundle.message("hyperskill.course.view.progress", tasksSolved, tasksTotal)
+      }
+      else super.additionalInfo
+    }
 
   companion object {
 

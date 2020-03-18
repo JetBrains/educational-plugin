@@ -6,6 +6,8 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class NodesTest : CourseViewTestBase() {
 
@@ -408,5 +410,36 @@ class NodesTest : CourseViewTestBase() {
       |    CCStudentInvisibleFileNode task.html
       |  CCNode non-lesson
     """.trimMargin("|"))
+  }
+
+  fun `test hyperskill course`() {
+    courseWithFiles(courseProducer = ::HyperskillCourse) {
+      frameworkLesson  {
+        eduTask {
+          taskFile("file1.txt")
+        }
+        eduTask {
+          taskFile("file2.txt")
+        }
+      }
+
+      lesson {
+        eduTask {
+          taskFile("task1.txt")
+        }
+      }
+    }
+
+    findTask(0, 0).status = CheckStatus.Solved
+
+    assertCourseView("""
+      |-Project
+      | -CourseNode Test Course
+      |  -FrameworkLessonNode lesson1 1 of 2 stages completed
+      |   file1.txt
+      |  -LessonNode lesson2
+      |   -TaskNode task1
+      |    task1.txt
+    """.trimMargin())
   }
 }

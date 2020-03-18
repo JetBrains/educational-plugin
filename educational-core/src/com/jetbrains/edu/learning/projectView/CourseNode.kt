@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.projectView.FrameworkLessonNode.Companion.createFrameworkLessonNode
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 open class CourseNode(
   project: Project,
@@ -42,6 +43,15 @@ open class CourseNode(
       LessonNode(myProject, directory, settings, lesson)
     }
   }
+
+  override val additionalInfo: String?
+    get() {
+      if (item is HyperskillCourse) {
+        return null
+      }
+      val (tasksSolved, tasksTotal) = ProgressUtil.countProgress(item)
+      return " $tasksSolved/$tasksTotal"
+    }
 
   override val item: Course get() = super.item!!
 }
