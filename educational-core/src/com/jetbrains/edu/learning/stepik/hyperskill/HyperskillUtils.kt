@@ -51,13 +51,13 @@ fun openSelectedStage(course: Course, project: Project) {
   }
 }
 
-private fun computeSelectedStage(course: Course): Int {
+private fun computeSelectedStage(course: HyperskillCourse): Int {
   // do not switch selected stage if a user opened only a single problem
   val stepId = course.getUserData(HYPERSKILL_SELECTED_PROBLEM)
   if (stepId != null) {
     return 0
   }
-  val projectLesson = (course as HyperskillCourse).getProjectLesson() ?: return 0
+  val projectLesson = course.getProjectLesson() ?: return 0
   val firstUnsolvedTask = projectLesson.taskList.indexOfFirst { task -> task.status != CheckStatus.Solved }
   return course.stages[if (firstUnsolvedTask != -1) firstUnsolvedTask else projectLesson.taskList.size - 1].id
 }
