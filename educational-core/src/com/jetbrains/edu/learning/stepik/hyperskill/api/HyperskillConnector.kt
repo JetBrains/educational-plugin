@@ -183,7 +183,9 @@ abstract class HyperskillConnector {
     return tasks
   }
 
-  fun loadStages(hyperskillCourse: HyperskillCourse, projectId: Int, hyperskillProject: HyperskillProject): Boolean {
+  fun loadStages(hyperskillCourse: HyperskillCourse): Boolean {
+    val hyperskillProject = hyperskillCourse.hyperskillProject ?: error("No Hyperskill project")
+    val projectId = hyperskillProject.id
     if (hyperskillCourse.stages.isEmpty()) {
       val stages = getStages(projectId) ?: return false
       hyperskillCourse.stages = stages

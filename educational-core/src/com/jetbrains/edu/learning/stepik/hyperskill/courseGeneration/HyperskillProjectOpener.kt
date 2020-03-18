@@ -46,8 +46,7 @@ object HyperskillProjectOpener {
       is HyperskillOpenStageRequest -> {
         if (hyperskillCourse.getProjectLesson() == null) {
           computeUnderProgress(project, LOADING_PROJECT_STAGES) {
-            val hyperskillProject = hyperskillCourse.hyperskillProject!!
-            HyperskillConnector.getInstance().loadStages(hyperskillCourse, hyperskillProject.id, hyperskillProject)
+            HyperskillConnector.getInstance().loadStages(hyperskillCourse)
           }
           hyperskillCourse.init(null, null, false)
           val projectLesson = hyperskillCourse.getProjectLesson()!!
@@ -102,7 +101,7 @@ object HyperskillProjectOpener {
         }
         is HyperskillOpenStageRequest -> {
           indicator.text2 = LOADING_PROJECT_STAGES
-          HyperskillConnector.getInstance().loadStages(hyperskillCourse, request.projectId, hyperskillProject)
+          HyperskillConnector.getInstance().loadStages(hyperskillCourse)
           hyperskillCourse.putUserData(HYPERSKILL_SELECTED_STAGE, request.stageId)
         }
       }
