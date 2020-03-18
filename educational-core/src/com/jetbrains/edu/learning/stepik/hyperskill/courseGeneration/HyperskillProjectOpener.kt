@@ -80,11 +80,11 @@ object HyperskillProjectOpener {
 
   private fun getHyperskillCourseUnderProgress(request: HyperskillOpenInProjectRequest): Result<HyperskillCourse, String> {
     return computeUnderProgress(title = "Loading ${EduNames.JBA} Project") { indicator ->
-      val hyperskillProject = HyperskillConnector.getInstance().getProject(request.projectId) ?: return@computeUnderProgress Err(
-        FAILED_TO_CREATE_PROJECT)
+      val hyperskillProject = HyperskillConnector.getInstance().getProject(request.projectId)
+                              ?: return@computeUnderProgress Err(FAILED_TO_CREATE_PROJECT)
 
       if (!hyperskillProject.useIde) {
-        Err(HYPERSKILL_PROJECT_NOT_SUPPORTED)
+        return@computeUnderProgress Err(HYPERSKILL_PROJECT_NOT_SUPPORTED)
       }
       val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language]
       if (languageId == null) {
@@ -92,8 +92,8 @@ object HyperskillProjectOpener {
       }
       val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
       if (hyperskillCourse.configurator == null) {
-        Err("The project isn't supported (language: ${hyperskillProject.language}). " +
-            "Check if all needed plugins are installed and enabled")
+        return@computeUnderProgress Err("The project isn't supported (language: ${hyperskillProject.language}). " +
+                                        "Check if all needed plugins are installed and enabled")
       }
       when (request) {
         is HyperskillOpenStepRequest -> {
