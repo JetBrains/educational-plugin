@@ -38,7 +38,7 @@ object HyperskillProjectOpener {
     when (request) {
       is HyperskillOpenStepRequest -> {
         val stepId = request.stepId
-        hyperskillCourse.addProblemWithFiles(project, stepId)
+        hyperskillCourse.addProblemTaskWithFiles(project, stepId)
         hyperskillCourse.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
         runInEdt {
           requestFocus()
@@ -98,7 +98,7 @@ object HyperskillProjectOpener {
       }
       when (request) {
         is HyperskillOpenStepRequest -> {
-          hyperskillCourse.addProblem(request.stepId)
+          hyperskillCourse.addProblemTask(request.stepId)
           hyperskillCourse.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
         }
         is HyperskillOpenStageRequest -> {
@@ -111,8 +111,8 @@ object HyperskillProjectOpener {
     }
   }
 
-  private fun HyperskillCourse.addProblem(stepId: Int): Pair<Lesson, Task> {
-    fun Lesson.addProblem(): Task {
+  private fun HyperskillCourse.addProblemTask(stepId: Int): Pair<Lesson, Task> {
+    fun Lesson.addProblemTask(): Task {
       var task = getTask(stepId)
       if (task == null) {
         val stepSource = computeUnderProgress(title = "Loading ${EduNames.JBA} Code Challenge") {
@@ -127,11 +127,11 @@ object HyperskillProjectOpener {
     }
 
     val lesson = findOrCreateProblemsLesson()
-    return lesson to lesson.addProblem()
+    return lesson to lesson.addProblemTask()
   }
 
-  private fun HyperskillCourse.addProblemWithFiles(project: Project, stepId: Int) {
-    val (lesson, task) = addProblem(stepId)
+  private fun HyperskillCourse.addProblemTaskWithFiles(project: Project, stepId: Int) {
+    val (lesson, task) = addProblemTask(stepId)
     lesson.init(course, null, false)
     val lessonDir = lesson.getDir(project)
     if (lessonDir == null) {
