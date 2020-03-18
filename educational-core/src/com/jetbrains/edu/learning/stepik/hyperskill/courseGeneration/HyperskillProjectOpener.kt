@@ -21,6 +21,8 @@ object HyperskillProjectOpener {
 
   fun open(request: HyperskillOpenInProjectRequest): Result<Unit, String> {
     runInEdt {
+      // We might perform heavy operations (including network access)
+      // So we want to request focus and show progress bar so as it won't seem that IDE doesn't respond
       requestFocus()
     }
     if (openInOpenedProject(request)) return Ok(Unit)
