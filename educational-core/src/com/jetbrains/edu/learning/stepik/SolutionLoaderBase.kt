@@ -63,6 +63,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     val tasksToUpdate = tasks.filter { task -> task !is TheoryTask }
     var finishedTaskCount = 0
     val futures = HashMap<Int, Future<Boolean>>(tasks.size)
+    LOG.info("Started loading solutions")
+    val startTime = System.currentTimeMillis()
     for (task in tasksToUpdate) {
       invokeAndWaitIfNeeded {
         if (project.isDisposed) return@invokeAndWaitIfNeeded
@@ -111,6 +113,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
     try {
       waitAllTasks(futures.values)
+      LOG.info("Finished loading solutions (${System.currentTimeMillis() - startTime} ms)")
     }
     finally {
       connection.disconnect()
