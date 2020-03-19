@@ -4,15 +4,14 @@ import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.components.service
-import com.jetbrains.edu.learning.checkStatusCode
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestName
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_URL
 import com.jetbrains.edu.learning.codeforces.ContestInformation
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.createRetrofitBuilder
-import com.jetbrains.edu.learning.executeHandlingExceptions
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import okhttp3.ConnectionPool
 import org.jsoup.Jsoup
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -43,25 +42,21 @@ class CodeforcesConnector {
       ?.checkStatusCode()
       ?.body()
 
-  fun getContest(contestParameters: ContestParameters): CodeforcesCourse? {
-    val response = service.problems(contestParameters.id, contestParameters.locale)
-                     .executeHandlingExceptions()
-                     ?.checkStatusCode()
-                     ?.body() ?: return null
-    val doc = Jsoup.parse(response.string())
-    return CodeforcesCourse(contestParameters, doc)
-  }
+  fun getContest(contestParameters: ContestParameters): Result<CodeforcesCourse, String> =
+    service.problems(contestParameters.id, contestParameters.locale).executeParsingErrors().flatMap {
+      val responseBody = it.body() ?: return@flatMap Err(EduCoreBundle.message("codeforces.failed.to.parse.response"))
+      val doc = Jsoup.parse(responseBody.string())
+      Ok(CodeforcesCourse(contestParameters, doc))
+    }
 
-  fun getContestInformation(contestId: Int): ContestInformation? {
-    val response = service.status(contestId)
-                     .executeHandlingExceptions()
-                     ?.checkStatusCode()
-                     ?.body() ?: return null
-    val doc = Jsoup.parse(response.string())
-    val contestName = getContestName(doc) ?: return null
-    val contestLanguage = getLanguages(doc) ?: return null
-    return ContestInformation(contestId, contestName, contestLanguage)
-  }
+  fun getContestInformation(contestId: Int): Result<ContestInformation, String> =
+    service.status(contestId).executeParsingErrors().flatMap {
+      val responseBody = it.body() ?: return@flatMap Err(EduCoreBundle.message("codeforces.failed.to.parse.response"))
+      val doc = Jsoup.parse(responseBody.string())
+      val contestName = getContestName(doc) ?: return@flatMap Err(EduCoreBundle.message("codeforces.failed.to.get.contest.name"))
+      val contestLanguage = getLanguages(doc) ?: return@flatMap Err(EduCoreBundle.message("codeforces.failed.to.get.contest.language"))
+      Ok(ContestInformation(contestId, contestName, contestLanguage))
+    }
 
   companion object {
     @JvmStatic

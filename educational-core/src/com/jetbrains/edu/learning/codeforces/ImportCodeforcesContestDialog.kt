@@ -8,6 +8,7 @@ import com.intellij.ui.HyperlinkLabel
 import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseLoading.CourseLoader
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.awt.BorderLayout
 import java.awt.event.ActionEvent
 import java.awt.event.MouseAdapter
@@ -53,8 +54,8 @@ class ImportCodeforcesContestDialog : DialogWrapper(false) {
     if (courses.isEmpty()) {
       // TODO make it clickable
       // TODO also check other places
-      Messages.showErrorDialog("Cannot find contests on Codeforces, please check if site is working: ${CodeforcesNames.CODEFORCES_URL}",
-                               "Failed to Load Codeforces Contest")
+      Messages.showErrorDialog(EduCoreBundle.message("codeforces.failed.to.load.contests.message", CodeforcesNames.CODEFORCES_URL),
+                               EduCoreBundle.message("codeforces.failed.to.load.contests.title"))
       return
     }
 

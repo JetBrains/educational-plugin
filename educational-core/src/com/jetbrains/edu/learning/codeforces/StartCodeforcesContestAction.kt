@@ -5,11 +5,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider.Companion.getLanguageIdAndVersion
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 
@@ -38,9 +38,14 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
   private fun importCodeforcesContest(): CodeforcesCourse? {
     val contestId = showDialogAndGetContestId() ?: return null
     val contestParameters = getContestParameters(contestId) ?: return null
-    val codeforcesContest = getCodeforcesContestUnderProgress(contestParameters)
-    if (codeforcesContest == null) showFailedToLoadContestInfoNotification(contestId)
-    return codeforcesContest
+
+    return when (val contest = getContestUnderProgress(contestParameters)) {
+      is Err -> {
+        showFailedToGetContestInfoNotification(contestId, contest.error)
+        null
+      }
+      is Ok -> contest.value
+    }
   }
 
   private fun showDialogAndGetContestId(): Int? {
@@ -53,22 +58,23 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
 
   private fun getContestParameters(contestId: Int): ContestParameters? {
     val contestInfo = getContestInfoUnderProgress(contestId)
-    if (contestInfo == null) {
-      showFailedToFindContestNotification(contestId)
+    if (contestInfo is Err) {
+      showFailedToGetContestInfoNotification(contestId, contestInfo.error)
       return null
     }
+    val contest = (contestInfo as Ok).value
 
     val codeforcesSettings = CodeforcesSettings.getInstance()
     var contestParameters: ContestParameters?
     if (codeforcesSettings.doNotShowLanguageDialog && codeforcesSettings.isSet()) {
       contestParameters = getContestParametersFromSettings(contestId)
 
-      if (contestParameters != null && contestParameters.codeforcesLanguageRepresentation in contestInfo.availableLanguages) {
+      if (contestParameters != null && contestParameters.codeforcesLanguageRepresentation in contest.availableLanguages) {
         return contestParameters
       }
     }
 
-    contestParameters = showDialogAndGetContestParameters(contestInfo)
+    contestParameters = showDialogAndGetContestParameters(contest)
     return contestParameters
   }
 
@@ -82,14 +88,14 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
     return ContestParameters(contestId, locale, language, languageIdAndVersion)
   }
 
-  private fun getContestInfoUnderProgress(contestId: Int): ContestInformation? =
-    ProgressManager.getInstance().runProcessWithProgressSynchronously<ContestInformation?, RuntimeException>(
+  private fun getContestInfoUnderProgress(contestId: Int): Result<ContestInformation, String> =
+    ProgressManager.getInstance().runProcessWithProgressSynchronously<Result<ContestInformation, String>, RuntimeException>(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
         EduUtils.execCancelable {
           CodeforcesConnector.getInstance().getContestInformation(contestId)
         }
-      }, "Getting Available Languages", true, null)
+      }, EduCoreBundle.message("codeforces.getting.available.languages"), true, null)
 
   private fun showDialogAndGetContestParameters(contestInformation: ContestInformation): ContestParameters? {
     val contestName = contestInformation.name
@@ -119,31 +125,26 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
     return ContestParameters(contestInformation.id, taskTextLanguage.locale, language, languageIdAndVersion)
   }
 
-  private fun showFailedToLoadContestInfoNotification(contestId: Int) {
-    Messages.showErrorDialog("Cannot get contest information on Codeforces, contest ID: $contestId",
-                             "Failed to Load Available Contest Languages")
-  }
-
-  private fun showFailedToFindContestNotification(contestId: Int) {
+  private fun showFailedToGetContestInfoNotification(contestId: Int, error: String) {
     val contestUrl = CodeforcesContestConnector.getContestURLFromID(contestId)
-    Messages.showErrorDialog("Cannot find contest on Codeforces, please check if the link is correct: $contestUrl",
-                             "Failed to Load Codeforces Contest")
+    Messages.showErrorDialog(EduCoreBundle.message("codeforces.failed.to.get.contest.information", error.toLowerCase(), contestUrl),
+                             EduCoreBundle.message("codeforces.failed.to.load.contest.title"))
   }
 
   private fun showNoSupportedLanguagesForContestNotification(contestName: String) {
-    Messages.showErrorDialog("No supported languages for `$contestName` contest, please choose another one",
-                             "Failed to Load Codeforces Contest")
+    Messages.showErrorDialog(EduCoreBundle.message("codeforces.no.supported.languages", contestName),
+                             EduCoreBundle.message("codeforces.failed.to.load.contest.title"))
   }
 
   companion object {
     @VisibleForTesting
-    fun getCodeforcesContestUnderProgress(contestParameters: ContestParameters): CodeforcesCourse? =
-      ProgressManager.getInstance().runProcessWithProgressSynchronously<CodeforcesCourse?, RuntimeException>(
+    fun getContestUnderProgress(contestParameters: ContestParameters): Result<CodeforcesCourse, String> =
+      ProgressManager.getInstance().runProcessWithProgressSynchronously<Result<CodeforcesCourse, String>, RuntimeException>(
         {
           ProgressManager.getInstance().progressIndicator.isIndeterminate = true
           EduUtils.execCancelable {
             CodeforcesConnector.getInstance().getContest(contestParameters)
           }
-        }, "Getting Contest Information", true, null)
+        }, EduCoreBundle.message("codeforces.getting.contest.information"), true, null)
   }
 }
