@@ -52,7 +52,9 @@ object HyperskillProjectOpener {
           }
           hyperskillCourse.init(null, null, false)
           val projectLesson = hyperskillCourse.getProjectLesson()!!
-          GeneratorUtils.createLesson(projectLesson, hyperskillCourse.getDir(project))
+          val courseDir = hyperskillCourse.getDir(project)
+          GeneratorUtils.createLesson(projectLesson, courseDir)
+          GeneratorUtils.createAdditionalFiles(course, courseDir)
           YamlFormatSynchronizer.saveAll(project)
           HyperskillProjectComponent.synchronizeHyperskillProject(project)
         }

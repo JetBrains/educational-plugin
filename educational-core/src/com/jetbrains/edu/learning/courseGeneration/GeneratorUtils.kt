@@ -139,7 +139,7 @@ object GeneratorUtils {
   }
 
   @Throws(IOException::class)
-  private fun createAdditionalFiles(course: Course, courseDir: VirtualFile) {
+  fun createAdditionalFiles(course: Course, courseDir: VirtualFile) {
     for (file in course.additionalFiles) {
       if (courseDir.findFileByRelativePath(file.name) == null) {
         createChildFile(courseDir, file.name, file.text)
