@@ -1,7 +1,10 @@
 package com.jetbrains.edu.python.learning
 
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootManager
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator
@@ -16,4 +19,11 @@ open class PyCourseBuilder : EduCourseBuilder<PyNewProjectSettings> {
   override fun getLanguageSettings(): LanguageSettings<PyNewProjectSettings> = PyLanguageSettings()
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings>? =
     PyCourseProjectGenerator(this, course)
+
+  override fun refreshProject(project: Project, cause: RefreshCause) {
+    if (cause == RefreshCause.DEPENDENCIES_UPDATED) {
+      val projectSdk = ProjectRootManager.getInstance(project).projectSdk ?: return
+      installRequiredPackages(project, projectSdk)
+    }
+  }
 }

@@ -57,6 +57,7 @@ object HyperskillProjectOpener {
           GeneratorUtils.createAdditionalFiles(course, courseDir)
           YamlFormatSynchronizer.saveAll(project)
           HyperskillProjectComponent.synchronizeHyperskillProject(project)
+          course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.DEPENDENCIES_UPDATED)
         }
         hyperskillCourse.putUserData(HYPERSKILL_SELECTED_STAGE, request.stageId)
         runInEdt { openSelectedStage(hyperskillCourse, project) }
