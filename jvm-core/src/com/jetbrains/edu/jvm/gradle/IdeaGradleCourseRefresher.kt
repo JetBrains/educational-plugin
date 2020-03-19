@@ -24,39 +24,19 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 class IdeaGradleCourseRefresher : GradleCourseRefresher {
   override fun isAvailable(): Boolean = PlatformUtils.isIntelliJ()
 
-  override fun refresh(project: Project, cause: RefreshCause, listener: EduCourseBuilder.ProjectRefreshListener?) {
+  override fun refresh(project: Project, cause: RefreshCause) {
     // Gradle projects are refreshed by IDEA itself on (re)opening since 2019.3
     // BACKCOMPAT: 2019.2
     if (cause == RefreshCause.PROJECT_CREATED && ApplicationInfo.getInstance().build >= BUILD_193 && !isUnitTestMode) return
 
-    val projectBasePath = project.basePath
-    if (projectBasePath == null) {
-      listener?.onFailure("Project path is null")
-      return
-    }
+    val projectBasePath = project.basePath ?: return
 
     val builder = ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
       .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC)
       .dontReportRefreshErrors()
-    if (listener == null) {
-      builder.useDefaultCallback()
-    } else {
-      builder.callback(object : ExternalProjectRefreshCallback {
-        override fun onSuccess(externalProject: DataNode<ProjectData>?) {
-          // We have to import data manually because we use custom callback
-          // but default callback code is private.
-          // See `com.intellij.openapi.externalSystem.importing.ImportSpecBuilder#build`
-          if (externalProject != null) {
-            ServiceManager.getService(ProjectDataManager::class.java).importData(externalProject, project, false)
-          }
-          listener.onSuccess()
-        }
 
-        override fun onFailure(errorMessage: String, errorDetails: String?) {
-          listener.onFailure(errorMessage)
-        }
-      })
-    }
+    builder.useDefaultCallback()
+
     // Build toolwindow will be opened if `ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT` is true while sync
     project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, null)
     ExternalSystemUtil.refreshProject(projectBasePath, builder.build())

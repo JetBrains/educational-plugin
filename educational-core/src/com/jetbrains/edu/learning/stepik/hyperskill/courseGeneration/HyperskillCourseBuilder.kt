@@ -41,9 +41,6 @@ open class HyperskillCourseBuilder<T>(private val baseCourseBuilder: EduCourseBu
 
   override fun refreshProject(project: Project, cause: RefreshCause) = baseCourseBuilder.refreshProject(project, cause)
 
-  override fun refreshProject(project: Project, cause: RefreshCause, listener: EduCourseBuilder.ProjectRefreshListener?) =
-    baseCourseBuilder.refreshProject(project, cause, listener)
-
   override fun createInitialLesson(project: Project, course: Course): Lesson? = baseCourseBuilder.createInitialLesson(project, course)
 
   override fun getTestTaskTemplates(course: Course, info: NewStudyItemInfo, withSources: Boolean): List<TemplateFileInfo> {

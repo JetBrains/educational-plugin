@@ -94,13 +94,7 @@ interface EduCourseBuilder<Settings> {
   /**
    * Allows to update project modules and the whole project structure
    */
-  fun refreshProject(project: Project, cause: RefreshCause) {
-    refreshProject(project, cause, null)
-  }
-
-  fun refreshProject(project: Project, cause: RefreshCause, listener: ProjectRefreshListener?) {
-    listener?.onSuccess()
-  }
+  fun refreshProject(project: Project, cause: RefreshCause) { }
 
   fun createInitialLesson(project: Project, course: Course): Lesson? {
     val lessonInfo = NewStudyItemInfo(EduNames.LESSON + 1, 1, ::Lesson)
@@ -254,11 +248,6 @@ interface EduCourseBuilder<Settings> {
    */
   fun validateItemName(name: String, itemType: StudyItemType): String? {
     return null
-  }
-
-  interface ProjectRefreshListener {
-    fun onSuccess() {}
-    fun onFailure(errorMessage: String) {}
   }
 
   companion object {

@@ -29,14 +29,8 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
     return mapOf(PROJECT_NAME to GeneratorUtils.sanitizeName(project.name))
   }
 
-  override fun refreshProject(project: Project, cause: RefreshCause, listener: EduCourseBuilder.ProjectRefreshListener?) {
-    val refresher = GradleCourseRefresher.firstAvailable()
-    if (refresher != null) {
-      refresher.refresh(project, cause, listener)
-    }
-    else {
-      listener?.onFailure("Failed to find proper course refresher")
-    }
+  override fun refreshProject(project: Project, cause: RefreshCause) {
+    GradleCourseRefresher.firstAvailable()?.refresh(project, cause)
   }
 
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = JdkLanguageSettings()

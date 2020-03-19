@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane
 class StudioGradleCourseRefresher : GradleCourseRefresher {
   override fun isAvailable(): Boolean = EduUtils.isAndroidStudio()
 
-  override fun refresh(project: Project, cause: RefreshCause, listener: EduCourseBuilder.ProjectRefreshListener?) {
+  override fun refresh(project: Project, cause: RefreshCause) {
     if (cause == RefreshCause.PROJECT_CREATED && !isUnitTestMode) return
 
     val syncListener = object : GradleSyncListener {
@@ -25,11 +25,6 @@ class StudioGradleCourseRefresher : GradleCourseRefresher {
         ExternalSystemUtil.invokeLater(project, ModalityState.NON_MODAL) {
           ProjectView.getInstance(project).changeViewCB(CourseViewPane.ID, null)
         }
-        listener?.onSuccess()
-      }
-
-      override fun syncFailed(project: Project, errorMessage: String) {
-        listener?.onFailure(errorMessage)
       }
     }
     val request = GradleSyncInvoker.Request(GradleSyncStats.Trigger.TRIGGER_PROJECT_MODIFIED)
