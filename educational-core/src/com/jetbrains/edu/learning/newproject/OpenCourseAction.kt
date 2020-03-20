@@ -4,14 +4,13 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.OptionAction
 import com.intellij.openapi.util.text.StringUtil
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.OpenCourseDialogBase
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
@@ -29,7 +28,7 @@ private fun MatchGroupCollection.valueOrEmpty(groupName: String): String = this[
 abstract class OpenCourseActionBase(
   name: String,
   private val dialog: OpenCourseDialogBase,
-  private val courseMode: String
+  private val courseMode: CourseMode
 ) : AbstractAction(name) {
 
   override fun actionPerformed(e: ActionEvent) {
@@ -40,13 +39,13 @@ abstract class OpenCourseActionBase(
   }
 }
 
-class ViewAsEducatorAction(dialog: OpenCourseDialogBase) : OpenCourseActionBase("View as Educator", dialog, CCUtils.COURSE_MODE)
+class ViewAsEducatorAction(dialog: OpenCourseDialogBase) : OpenCourseActionBase("View as Educator", dialog, CourseMode.COURSE_CREATOR)
 
 class OpenCourseAction(
   name: String,
   dialog: OpenCourseDialogBase,
   allowViewAsEducatorAction: Boolean
-) : OpenCourseActionBase(name, dialog, EduNames.STUDY), OptionAction {
+) : OpenCourseActionBase(name, dialog, CourseMode.STUDY), OptionAction {
 
   val viewAsEducatorAction: ViewAsEducatorAction? = if (allowViewAsEducatorAction && CCPluginToggleAction.isCourseCreatorFeaturesEnabled) {
     ViewAsEducatorAction(dialog)
@@ -60,7 +59,7 @@ class OpenCourseAction(
 }
 
 fun joinCourse(courseInfo: CourseInfo,
-               courseMode: String,
+               courseMode: CourseMode,
                errorHandler: (ErrorState) -> Unit,
                closeDialogAction: () -> Unit = {}) {
   val (course, location, projectSettings) = courseInfo
@@ -79,7 +78,7 @@ fun joinCourse(courseInfo: CourseInfo,
     try {
       configurator.beforeCourseStarted(course)
       closeDialogAction()
-      course.courseMode = courseMode
+      course.courseMode = courseMode.toString()
       val projectGenerator = configurator
         .courseBuilder
         .getCourseProjectGenerator(course)

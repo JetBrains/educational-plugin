@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel.Companion.browseHyperlink
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
@@ -17,7 +18,7 @@ import javax.swing.event.DocumentEvent
 
 class JoinCoursePanel(
   private val settings: CourseDisplaySettings,
-  joinCourseAction: (CourseInfo, String) -> Unit
+  joinCourseAction: (CourseInfo, CourseMode) -> Unit
 ) : JPanel(BorderLayout()) {
 
   private val myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = true, isLocationFieldNeeded = true,

@@ -30,7 +30,7 @@ private val DIALOG_SIZE = JBUI.size(400, 600)
 class NewCoursePanel(
   val isStandalonePanel: Boolean,
   val isLocationFieldNeeded: Boolean,
-  joinCourseAction: (CourseInfo, String) -> Unit
+  joinCourseAction: (CourseInfo, CourseMode) -> Unit
 ) : JPanel() {
   private var header = HeaderPanel(leftMargin, joinCourseAction)
   private var description = CourseDescriptionPanel(leftMargin)

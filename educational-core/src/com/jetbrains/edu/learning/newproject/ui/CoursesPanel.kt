@@ -41,6 +41,7 @@ import com.jetbrains.edu.learning.newproject.joinCourse
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.*
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.Companion.forCourse
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.importCourseArchive
@@ -108,7 +109,7 @@ class CoursesPanel(courses: List<Course>,
     processSelectionChanged()
   }
 
-  private fun joinCourseAction(dialog: BrowseCoursesDialog): (CourseInfo, String) -> Unit {
+  private fun joinCourseAction(dialog: BrowseCoursesDialog): (CourseInfo, CourseMode) -> Unit {
     return { courseInfo, courseMode ->
       joinCourse(courseInfo,
                  courseMode,

@@ -22,7 +22,7 @@ private const val TOP_OFFSET = 15
 
 class HeaderPanel(
   leftMargin: Int,
-  joinCourseAction: (CourseInfo, String) -> Unit
+  joinCourseAction: (CourseInfo, CourseMode) -> Unit
 ) : NonOpaquePanel() {
   private var nameAndInfoPanel = NameAndInfoPanel(joinCourseAction)
   private var iconPanel = IconPanel()

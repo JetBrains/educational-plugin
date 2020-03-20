@@ -24,8 +24,8 @@ private val FocusedBackground: Color = JBColor.namedColor("Edu.CourseDialog.Butt
 private val BorderColor: Color = JBColor.namedColor("Edu.CourseDialog.Button.installBorderColor", GreenColor)
 
 
-class StartCourseButton(joinCourse: (CourseInfo, String) -> Unit) : StartCourseButtonBase(joinCourse) {
-  override val courseMode = EduNames.STUDY
+class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit) : StartCourseButtonBase(joinCourse) {
+  override val courseMode = CourseMode.STUDY
 
   init {
     text = "Start"
@@ -38,8 +38,8 @@ class StartCourseButton(joinCourse: (CourseInfo, String) -> Unit) : StartCourseB
 
 }
 
-class EditCourseButton(joinCourse: (CourseInfo, String) -> Unit) : StartCourseButtonBase(joinCourse) {
-  override val courseMode = CCUtils.COURSE_MODE
+class EditCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit) : StartCourseButtonBase(joinCourse) {
+  override val courseMode = CourseMode.COURSE_CREATOR
 
   init {
     text = "Edit"
@@ -56,9 +56,9 @@ class EditCourseButton(joinCourse: (CourseInfo, String) -> Unit) : StartCourseBu
 /**
  * inspired by [com.intellij.ide.plugins.newui.InstallButton]
  */
-abstract class StartCourseButtonBase(private val joinCourse: (CourseInfo, String) -> Unit) : ColorButton() {
+abstract class StartCourseButtonBase(private val joinCourse: (CourseInfo, CourseMode) -> Unit) : ColorButton() {
   private var listener: ActionListener? = null
-  abstract val courseMode: String
+  abstract val courseMode: CourseMode
 
   init {
     setFocusedBgColor(FocusedBackground)
@@ -84,5 +84,14 @@ abstract class StartCourseButtonBase(private val joinCourse: (CourseInfo, String
     listener = actionListener(courseInfo)
     addActionListener(listener)
   }
+}
+
+enum class CourseMode {
+  STUDY {
+    override fun toString(): String = EduNames.STUDY
+  },
+  COURSE_CREATOR {
+    override fun toString(): String = CCUtils.COURSE_MODE
+  };
 }
 

@@ -25,7 +25,7 @@ private const val INFO_PANEL_TOP_OFFSET = 5
 private const val FONT_SIZE = 26.0f
 private val GRAY_TEXT_FOREGROUND: Color = JBColor.namedColor("Plugins.tagForeground", JBColor(0x787878, 0x999999))
 
-class NameAndInfoPanel(joinCourse: (CourseInfo, String) -> Unit) : JPanel() {
+class NameAndInfoPanel(joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel() {
   private var nameHtmlPanel: CourseNameHtmlPanel = CourseNameHtmlPanel()
   private val infoPanel = InfoPanel()
   private var tagsPanel: TagsPanel = TagsPanel()
