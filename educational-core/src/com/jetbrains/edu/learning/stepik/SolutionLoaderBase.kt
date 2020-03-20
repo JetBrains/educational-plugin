@@ -206,8 +206,13 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
 
 
-    val serializedTask = reply.eduTask ?: return TaskSolutions.EMPTY
-
+    val serializedTask = reply.eduTask
+    if (serializedTask == null) {
+      return TaskSolutions(lastSubmission.status.toCheckStatus(), reply.solution!!.associate {
+        @Suppress("RemoveExplicitTypeArguments") //it's required by compiler
+        it.name to (it.text to emptyList<AnswerPlaceholder>())
+      })
+    }
     val module = SimpleModule()
     module.addDeserializer(Task::class.java, JacksonSubmissionDeserializer(reply.version, language))
     val objectMapper = StepikConnector.getInstance().objectMapper.copy()
@@ -310,20 +315,20 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
       @JvmStatic
       fun from(status: String, task: Task, solutionList: List<SolutionFile>): TaskSolutions {
-        val checkStatus = when (status) {
-          EduNames.WRONG -> CheckStatus.Failed
-          EduNames.CORRECT -> CheckStatus.Solved
-          else -> CheckStatus.Unchecked
-        }
-
         val solutions = mutableMapOf<String, Pair<String, List<AnswerPlaceholder>>>()
         for (file in solutionList) {
           val taskFile = task.getTaskFile(file.name) ?: continue
           solutions[file.name] = file.text to taskFile.answerPlaceholders
         }
 
-        return TaskSolutions(checkStatus, solutions)
+        return TaskSolutions(status.toCheckStatus(), solutions)
       }
     }
   }
+}
+
+private fun String?.toCheckStatus(): CheckStatus = when (this) {
+  EduNames.WRONG -> CheckStatus.Failed
+  EduNames.CORRECT -> CheckStatus.Solved
+  else -> CheckStatus.Unchecked
 }

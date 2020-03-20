@@ -41,7 +41,6 @@ abstract class HyperskillConnector {
   init {
     val module = SimpleModule()
     module.addDeserializer(PyCharmStepOptions::class.java, JacksonStepOptionsDeserializer())
-    module.addDeserializer(Reply::class.java, StepikReplyDeserializer())
     objectMapper = StepikConnector.createMapper(module)
     converterFactory = JacksonConverterFactory.create(objectMapper)
   }
