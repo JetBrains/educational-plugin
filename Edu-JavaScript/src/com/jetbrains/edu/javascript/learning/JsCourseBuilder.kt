@@ -1,7 +1,11 @@
 package com.jetbrains.edu.javascript.learning
 
+import com.intellij.lang.javascript.ui.NodeModuleNamesUtil.PACKAGE_JSON
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.RefreshCause
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
@@ -12,4 +16,12 @@ class JsCourseBuilder : EduCourseBuilder<JsNewProjectSettings> {
   override fun getLanguageSettings(): LanguageSettings<JsNewProjectSettings> = JsLanguageSettings()
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<JsNewProjectSettings> =
     JsCourseProjectGenerator(this, course)
+
+  override fun refreshProject(project: Project, cause: RefreshCause) {
+    if (cause == RefreshCause.DEPENDENCIES_UPDATED) {
+      val baseDir = project.course?.getDir(project) ?: return
+      val packageJson = baseDir.findChild(PACKAGE_JSON) ?: return
+      installNodeDependencies(project, packageJson)
+    }
+  }
 }

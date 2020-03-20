@@ -3,7 +3,6 @@ package com.jetbrains.edu.javascript.learning;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable;
-import com.intellij.lang.javascript.modules.InstallNodeLocalDependenciesAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
@@ -19,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
+import static com.intellij.lang.javascript.ui.NodeModuleNamesUtil.PACKAGE_JSON;
 import static com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText;
 
 public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjectSettings> {
@@ -49,20 +49,14 @@ public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjec
 
   @Override
   public void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {
-    String packageJson = "package.json";
-    VirtualFile packageJsonFile = baseDir.findChild(packageJson);
+    VirtualFile packageJsonFile = baseDir.findChild(PACKAGE_JSON);
     if (packageJsonFile == null && !myCourse.isStudy()) {
-      final String templateText = getInternalTemplateText(packageJson);
-      packageJsonFile = GeneratorUtils.createChildFile(baseDir, packageJson, templateText);
+      final String templateText = getInternalTemplateText(PACKAGE_JSON);
+      packageJsonFile = GeneratorUtils.createChildFile(baseDir, PACKAGE_JSON, templateText);
     }
 
     if (packageJsonFile != null && !OpenApiExtKt.isUnitTestMode()) {
-      installNodeDependencies(project, packageJsonFile);
+      JsUtils.installNodeDependencies(project, packageJsonFile);
     }
-  }
-
-  private static void installNodeDependencies(@NotNull Project project, @NotNull VirtualFile packageJsonFile) {
-    ApplicationManager.getApplication().invokeLater(
-      () -> InstallNodeLocalDependenciesAction.runAndShowConsole(project, packageJsonFile));
   }
 }
