@@ -11,8 +11,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HSHyperlinkListener
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.*
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*
