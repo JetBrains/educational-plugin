@@ -340,7 +340,7 @@ class Submission {
 
   constructor()
 
-  constructor(score: String, attemptId: Int, files: ArrayList<SolutionFile>, serializedTask: String, feedback: String? = null) {
+  constructor(score: String, attemptId: Int, files: List<SolutionFile>, serializedTask: String?, feedback: String? = null) {
     reply = Reply(files, score, serializedTask, feedback)
     this.attempt = attemptId
   }
@@ -373,7 +373,7 @@ class Reply {
 
   constructor()
 
-  constructor(files: List<SolutionFile>, score: String, serializedTask: String, feedback: String? = null) {
+  constructor(files: List<SolutionFile>, score: String, serializedTask: String?, feedback: String? = null) {
     this.score = score
     solution = files
     eduTask = serializedTask

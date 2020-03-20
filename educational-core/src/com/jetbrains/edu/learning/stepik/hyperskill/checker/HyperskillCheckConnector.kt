@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
-import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -12,7 +11,9 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
-import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.stepik.api.Attempt
+import com.jetbrains.edu.learning.stepik.api.SolutionFile
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.CONTINUE_ON_HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.showFailedToPostNotification
@@ -53,11 +54,9 @@ object HyperskillCheckConnector {
     HyperskillConnector.getInstance().postSubmission(submission)
   }
 
-  private fun createEduSubmission(task: Task, attempt: Attempt, files: ArrayList<SolutionFile>, feedback: String): Submission {
+  private fun createEduSubmission(task: Task, attempt: Attempt, files: List<SolutionFile>, feedback: String): Submission {
     val score = if (task.status == CheckStatus.Solved) "1" else "0"
-    val objectMapper = StepikConnector.createMapper(SimpleModule())
-    val serializedTask = objectMapper.writeValueAsString(TaskData(task))
-    return Submission(score, attempt.id, files, serializedTask, feedback)
+    return Submission(score, attempt.id, files, null, feedback)
   }
 
   fun checkCodeTask(project: Project, task: Task): CheckResult {
