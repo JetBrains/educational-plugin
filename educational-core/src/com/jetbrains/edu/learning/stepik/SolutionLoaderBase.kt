@@ -18,8 +18,10 @@ import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.joinPaths
 import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.isUnitTestMode
@@ -141,7 +143,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     for (task in tasks) {
       if (isUnitTestMode) {
         EduUtils.waitAndDispatchInvocationEvents(task)
-      } else {
+      }
+      else {
         try {
           task.get()
         }
@@ -203,6 +206,14 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
     private const val NOTIFICATION_TITLE = "Outdated EduTools Plugin"
     private const val NOTIFICATION_CONTENT = "<html>Your version of EduTools plugin is outdated to apply all solutions.\n" + "<a href=\"\">Update plugin</a> to avoid compatibility problems.\n"
+
+    @JvmStatic
+    val Task.mockTaskFileName: String?
+      get() {
+        val configurator = course.configurator ?: return null
+        val fileName = configurator.getMockFileName(configurator.mockTemplate) ?: return null
+        return joinPaths(configurator.sourceDir, fileName)
+      }
 
     private fun updatePlaceholders(taskFile: TaskFile, updatedPlaceholders: List<AnswerPlaceholder>) {
       val answerPlaceholders = taskFile.answerPlaceholders
@@ -266,9 +277,15 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     val hasIncompatibleSolutions: Boolean = false
   ) {
     companion object {
-
       val EMPTY = TaskSolutions(CheckStatus.Unchecked)
       val INCOMPATIBLE = TaskSolutions(CheckStatus.Unchecked, hasIncompatibleSolutions = true)
+
+      fun withEmptyPlaceholders(checkStatus: CheckStatus, taskFiles: Map<String, String>): TaskSolutions {
+        return TaskSolutions(checkStatus, taskFiles.mapValues {
+          @Suppress("RemoveExplicitTypeArguments") // type required by compiler
+          it.value to emptyList<AnswerPlaceholder>()
+        })
+      }
     }
   }
 }

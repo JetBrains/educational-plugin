@@ -2,13 +2,20 @@ package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
+import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.hyperskill.openSelectedStage
 
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
@@ -18,12 +25,26 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
   override fun loadSolution(task: Task): TaskSolutions {
     val lastSubmission = HyperskillConnector.getInstance().getSubmission(task.id)
     val reply = lastSubmission?.reply ?: return TaskSolutions.EMPTY
-    val solution = reply.solution ?: return TaskSolutions.EMPTY
 
-    return TaskSolutions(lastSubmission.status.toCheckStatus(), solution.associate {
-      @Suppress("RemoveExplicitTypeArguments") //it's required by compiler
-      it.name to (it.text to emptyList<AnswerPlaceholder>())
-    })
+    val files: Map<String, String> = when (task) {
+      is EduTask -> reply.eduTaskFiles
+      is CodeTask -> reply.codeTaskFiles(task)
+      else -> {
+        LOG.warn("Solutions for task ${task.name} of type ${task::class.simpleName} not loaded")
+        emptyMap()
+      }
+    }
+
+    return if (files.isEmpty()) TaskSolutions.EMPTY else TaskSolutions.withEmptyPlaceholders(lastSubmission.status.toCheckStatus(), files)
+  }
+
+  private val Reply.eduTaskFiles: Map<String, String>
+    get() = solution?.associate { it.name to it.text } ?: emptyMap()
+
+  private fun Reply.codeTaskFiles(task: CodeTask): Map<String, String> {
+    val codeFromServer = code ?: return emptyMap()
+    val taskFileName = task.mockTaskFileName ?: return emptyMap()
+    return mapOf(taskFileName to codeFromServer)
   }
 
   override fun provideTasksToUpdate(course: Course): List<Task> {
@@ -54,6 +75,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     fun getInstance(project: Project): HyperskillSolutionLoader = ServiceManager.getService(project, HyperskillSolutionLoader::class.java)
 
     val SOLUTION_TOPIC: Topic<SolutionLoadingListener> = Topic.create("Hyperskill solutions loaded", SolutionLoadingListener::class.java)
+    private val LOG = Logger.getInstance(HyperskillSolutionLoader::class.java)
   }
 }
 

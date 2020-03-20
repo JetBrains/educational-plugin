@@ -27,13 +27,10 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -373,7 +370,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static TaskSolutions getStepikTaskSolutions(@NotNull Task task, boolean isSolved) {
-    String taskFileName = getTaskFileName(task);
+    String taskFileName = SolutionLoaderBase.getMockTaskFileName(task);
     String solution = getSolutionTextForStepikAssignment(task, isSolved);
     if (solution != null && taskFileName != null) {
       task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
@@ -381,15 +378,6 @@ public class StepikSolutionsLoader implements Disposable {
       return new TaskSolutions(Collections.singletonMap(taskFileName, solution));
     }
     return TaskSolutions.EMPTY;
-  }
-
-  @Nullable
-  private static String getTaskFileName(@NotNull Task task) {
-    EduConfigurator<?> configurator = CourseExt.getConfigurator(task.getCourse());
-    if (configurator == null) return null;
-    String fileName = configurator.getMockFileName(configurator.getMockTemplate());
-    if (fileName == null) return null;
-    return GeneratorUtils.joinPaths(configurator.getSourceDir(), fileName);
   }
 
   private static TaskSolutions getEduTaskSolutions(@NotNull Task task, boolean isSolved) {
