@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.ide.projectView.ProjectView
@@ -16,13 +15,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.update.UpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
@@ -185,55 +185,12 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     return taskSolutions.hasIncompatibleSolutions
   }
 
-  protected open fun loadSolution(task: Task): TaskSolutions {
-    val language = task.course.languageID
-    val lastSubmission = loadLastSubmission(task.id)
-    val reply = lastSubmission?.reply
-    val solution = reply?.solution
-    if (solution == null || solution.isEmpty()) {
-      // https://youtrack.jetbrains.com/issue/EDU-1449
-      if (reply != null && reply.solution == null) {
-        LOG.warn(String.format("`solution` field of reply object is null for task `%s`", task.name))
-      }
-      return TaskSolutions.EMPTY
-    }
-
-    if (reply.version > JSON_FORMAT_VERSION) {
-      // TODO: show notification with suggestion to update plugin
-      LOG.warn(String.format("The plugin supports versions of submission reply not greater than %d. The current version is `%d`",
-                             JSON_FORMAT_VERSION, reply.version))
-      return TaskSolutions.INCOMPATIBLE
-    }
-
-
-    val serializedTask = reply.eduTask
-    if (serializedTask == null) {
-      return TaskSolutions(lastSubmission.status.toCheckStatus(), reply.solution!!.associate {
-        @Suppress("RemoveExplicitTypeArguments") //it's required by compiler
-        it.name to (it.text to emptyList<AnswerPlaceholder>())
-      })
-    }
-    val module = SimpleModule()
-    module.addDeserializer(Task::class.java, JacksonSubmissionDeserializer(reply.version, language))
-    val objectMapper = StepikConnector.getInstance().objectMapper.copy()
-    objectMapper.registerModule(module)
-    val updatedTaskData = try {
-      objectMapper.readValue(serializedTask, TaskData::class.java)
-    }
-    catch (e: IOException) {
-      LOG.error(e.message)
-      return TaskSolutions.EMPTY
-    }
-
-    return TaskSolutions.from(lastSubmission.status ?: "", updatedTaskData.task, reply.solution.orEmpty())
-  }
-
   override fun dispose() {
     cancelUnfinishedTasks()
   }
 
   protected abstract val loadingTopic: Topic<SolutionLoadingListener>
-  protected abstract fun loadLastSubmission(stepId: Int): Submission?
+  protected abstract fun loadSolution(task: Task): TaskSolutions
   protected abstract fun provideTasksToUpdate(course: Course): List<Task>
 
   interface SolutionLoadingListener {
@@ -312,23 +269,6 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
       val EMPTY = TaskSolutions(CheckStatus.Unchecked)
       val INCOMPATIBLE = TaskSolutions(CheckStatus.Unchecked, hasIncompatibleSolutions = true)
-
-      @JvmStatic
-      fun from(status: String, task: Task, solutionList: List<SolutionFile>): TaskSolutions {
-        val solutions = mutableMapOf<String, Pair<String, List<AnswerPlaceholder>>>()
-        for (file in solutionList) {
-          val taskFile = task.getTaskFile(file.name) ?: continue
-          solutions[file.name] = file.text to taskFile.answerPlaceholders
-        }
-
-        return TaskSolutions(status.toCheckStatus(), solutions)
-      }
     }
   }
-}
-
-private fun String?.toCheckStatus(): CheckStatus = when (this) {
-  EduNames.WRONG -> CheckStatus.Failed
-  EduNames.CORRECT -> CheckStatus.Solved
-  else -> CheckStatus.Unchecked
 }
