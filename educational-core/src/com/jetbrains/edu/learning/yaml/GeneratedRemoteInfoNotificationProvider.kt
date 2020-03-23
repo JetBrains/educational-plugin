@@ -5,12 +5,12 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
+import com.jetbrains.edu.learning.GeneratedRemoteInfoNotificationPanel
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isRemoteConfigFile
 
 class GeneratedRemoteInfoNotificationProvider(val project: Project) :
-  EditorNotifications.Provider<GeneratedRemoteInfoNotificationProvider.GeneratedRemoteInfoNotificationPanel>(), DumbAware {
+  EditorNotifications.Provider<GeneratedRemoteInfoNotificationPanel>(), DumbAware {
 
   companion object {
     val KEY: Key<GeneratedRemoteInfoNotificationPanel> = Key.create("Edu.generatedRemoteInfo")
@@ -24,12 +24,7 @@ class GeneratedRemoteInfoNotificationProvider(val project: Project) :
       val panel = GeneratedRemoteInfoNotificationPanel()
       panel.setText(NOTIFICATION_TEXT)
       return panel
-
     }
     return null
-  }
-
-  class GeneratedRemoteInfoNotificationPanel : EditorNotificationPanel() {
-    val text: String? = myLabel.text
   }
 }

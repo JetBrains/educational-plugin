@@ -51,6 +51,8 @@ val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 
 val isAtLeast193 = environmentName.toInt() >= 193
 val isAtLeast201 = environmentName.toInt() >= 201
+// TODO remove when 202 EAPs will be available
+val is202 = environmentName.toInt() == 202
 
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
 val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
@@ -73,7 +75,7 @@ val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
 plugins {
   idea
   kotlin("jvm") version "1.3.61"
-  id("org.jetbrains.intellij") version "0.4.17"
+  id("org.jetbrains.intellij") version "0.4.19"
   id("de.undercouch.download") version "3.4.3"
   id("net.saliman.properties") version "1.4.6"
   id("org.openjfx.javafxplugin") version "0.0.8"
@@ -122,6 +124,14 @@ allprojects {
   }
 
   tasks {
+    withProp("customJbr") {
+      if (it.isNotBlank()) {
+        runIde {
+          setJbrVersion(it)
+        }
+      }
+    }
+
     withType<Test> {
       withProp(secretProperties, "stepikTestClientSecret") { environment("STEPIK_TEST_CLIENT_SECRET", it) }
       withProp(secretProperties, "stepikTestClientId") { environment("STEPIK_TEST_CLIENT_ID", it) }
@@ -234,24 +244,31 @@ project(":") {
       pluginsList += listOf("NodeJS", "JavaScriptLanguage", goPlugin)
     }
 
-    setPlugins(*pluginsList.toTypedArray())
+    if (is202) {
+      setPlugins(*listOf("java", "junit", "Kotlin").toTypedArray())
+    } else {
+      setPlugins(*pluginsList.toTypedArray())
+    }
   }
 
   dependencies {
     compile(project(":educational-core"))
     compile(project(":jvm-core"))
-    compile(project(":Edu-Python"))
-    compile(project(":Edu-Python:Idea"))
-    compile(project(":Edu-Python:PyCharm"))
-    compile(project(":Edu-Kotlin"))
-    compile(project(":Edu-Java"))
-    compile(project(":Edu-Scala"))
-    compile(project(":Edu-Android"))
-    compile(project(":Edu-JavaScript"))
-    compile(project(":Edu-Rust"))
-    compile(project(":Edu-Cpp"))
-    compile(project(":Edu-Go"))
     compile(project(":Edu-YAML"))
+    compile(project(":Edu-Java"))
+    compile(project(":Edu-Kotlin"))
+
+    if (!is202) {
+      compile(project(":Edu-Python"))
+      compile(project(":Edu-Python:Idea"))
+      compile(project(":Edu-Python:PyCharm"))
+      compile(project(":Edu-Scala"))
+      compile(project(":Edu-Android"))
+      compile(project(":Edu-JavaScript"))
+      compile(project(":Edu-Rust"))
+      compile(project(":Edu-Cpp"))
+      compile(project(":Edu-Go"))
+    }
   }
 
   val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
@@ -448,179 +465,181 @@ project(":Edu-Kotlin") {
   }
 }
 
-project(":Edu-Scala") {
-  intellij {
-    localPath = null
-    version = ideaVersion
-    val plugins = mutableListOf(
-      scalaPlugin,
-      "java",
-      "junit",
-      "properties",
-      "gradle",
-      "Groovy"
-    )
-    if (isAtLeast193) {
-      plugins += "gradle-java"
-    }
-    setPlugins(*plugins.toTypedArray())
-  }
-
-  dependencies {
-    compile(project(":educational-core"))
-    compile(project(":jvm-core"))
-    testCompile(project(":educational-core", "testOutput"))
-    testCompile(project(":jvm-core", "testOutput"))
-  }
-}
-
-project(":Edu-Android") {
-  intellij {
-    localPath = studioPath
-    val plugins = mutableListOf(
-      "android",
-      "junit",
-      "properties",
-      "gradle",
-      "Groovy",
-      "IntelliLang",
-      "smali",
-      "Kotlin",
-      "java",
-      "android-layoutlib"
-    )
-    if (isAtLeast193) {
-      plugins += "gradle-java"
-    }
-    setPlugins(*plugins.toTypedArray())
-  }
-
-  dependencies {
-    compile(project(":educational-core"))
-    compile(project(":jvm-core"))
-    testCompile(project(":educational-core", "testOutput"))
-    testCompile(project(":jvm-core", "testOutput"))
-  }
-}
-
-project(":Edu-Python") {
-  intellij {
-    val plugins = listOfNotNull(
-      pythonPlugin,
-      // python pro plugin has mandatory dependency on yaml plugin
-      "yaml",
-      if (isJvmCenteredIDE) "java" else null
-    )
-    setPlugins(*plugins.toTypedArray())
-  }
-
-  dependencies {
-    compile(project(":educational-core"))
-    testCompile(project(":educational-core", "testOutput"))
-    testCompile(project(":Edu-Python:Idea"))
-    testCompile(project(":Edu-Python:PyCharm"))
-  }
-}
-
-project(":Edu-Python:Idea") {
-  intellij {
-    if (!isJvmCenteredIDE || isAtLeast193 && baseIDE == "studio") {
+if (!is202) {
+  project(":Edu-Scala") {
+    intellij {
       localPath = null
       version = ideaVersion
+      val plugins = mutableListOf(
+        scalaPlugin,
+        "java",
+        "junit",
+        "properties",
+        "gradle",
+        "Groovy"
+      )
+      if (isAtLeast193) {
+        plugins += "gradle-java"
+      }
+      setPlugins(*plugins.toTypedArray())
     }
 
-    val plugins = listOfNotNull(
-      if (!isJvmCenteredIDE) pythonIDEAPlugin else pythonPlugin,
+    dependencies {
+      compile(project(":educational-core"))
+      compile(project(":jvm-core"))
+      testCompile(project(":educational-core", "testOutput"))
+      testCompile(project(":jvm-core", "testOutput"))
+    }
+  }
+
+  project(":Edu-Android") {
+    intellij {
+      localPath = studioPath
+      val plugins = mutableListOf(
+        "android",
+        "junit",
+        "properties",
+        "gradle",
+        "Groovy",
+        "IntelliLang",
+        "smali",
+        "Kotlin",
+        "java",
+        "android-layoutlib"
+      )
+      if (isAtLeast193) {
+        plugins += "gradle-java"
+      }
+      setPlugins(*plugins.toTypedArray())
+    }
+
+    dependencies {
+      compile(project(":educational-core"))
+      compile(project(":jvm-core"))
+      testCompile(project(":educational-core", "testOutput"))
+      testCompile(project(":jvm-core", "testOutput"))
+    }
+  }
+
+  project(":Edu-Python") {
+    intellij {
+      val plugins = listOfNotNull(
+        pythonPlugin,
+        // python pro plugin has mandatory dependency on yaml plugin
+        "yaml",
+        if (isJvmCenteredIDE) "java" else null
+      )
+      setPlugins(*plugins.toTypedArray())
+    }
+
+    dependencies {
+      compile(project(":educational-core"))
+      testCompile(project(":educational-core", "testOutput"))
+      testCompile(project(":Edu-Python:Idea"))
+      testCompile(project(":Edu-Python:PyCharm"))
+    }
+  }
+
+  project(":Edu-Python:Idea") {
+    intellij {
+      if (!isJvmCenteredIDE || isAtLeast193 && baseIDE == "studio") {
+        localPath = null
+        version = ideaVersion
+      }
+
+      val plugins = listOfNotNull(
+        if (!isJvmCenteredIDE) pythonIDEAPlugin else pythonPlugin,
+        // python pro plugin has mandatory dependency on yaml plugin
+        "yaml",
+        "java"
+      )
+      setPlugins(*plugins.toTypedArray())
+    }
+
+    dependencies {
+      compile(project(":educational-core"))
+      compileOnly(project(":Edu-Python"))
+      testCompile(project(":educational-core", "testOutput"))
+    }
+  }
+
+  project(":Edu-Python:PyCharm") {
+    intellij {
+      if (isAtLeast193 && baseIDE == "studio") {
+        localPath = null
+        version = ideaVersion
+      }
       // python pro plugin has mandatory dependency on yaml plugin
-      "yaml",
-      "java"
-    )
-    setPlugins(*plugins.toTypedArray())
+      val plugins = listOfNotNull(pythonPlugin, "yaml")
+      setPlugins(*plugins.toTypedArray())
+    }
+
+    dependencies {
+      compile(project(":educational-core"))
+      compileOnly(project(":Edu-Python"))
+      testCompile(project(":educational-core", "testOutput"))
+    }
   }
 
-  dependencies {
-    compile(project(":educational-core"))
-    compileOnly(project(":Edu-Python"))
-    testCompile(project(":educational-core", "testOutput"))
-  }
-}
-
-project(":Edu-Python:PyCharm") {
-  intellij {
-    if (isAtLeast193 && baseIDE == "studio") {
+  project(":Edu-JavaScript") {
+    intellij {
       localPath = null
       version = ideaVersion
+      val plugins = mutableListOf(
+        "NodeJS",
+        "JavaScriptLanguage",
+        "CSS",
+        "JavaScriptDebugger"
+      )
+      if (isAtLeast201) {
+        // Internal CSS plugin dependency
+        plugins += "platform-images"
+      }
+      setPlugins(*plugins.toTypedArray())
     }
-    // python pro plugin has mandatory dependency on yaml plugin
-    val plugins = listOfNotNull(pythonPlugin, "yaml")
-    setPlugins(*plugins.toTypedArray())
-  }
-
-  dependencies {
-    compile(project(":educational-core"))
-    compileOnly(project(":Edu-Python"))
-    testCompile(project(":educational-core", "testOutput"))
-  }
-}
-
-project(":Edu-JavaScript") {
-  intellij {
-    localPath = null
-    version = ideaVersion
-    val plugins = mutableListOf(
-      "NodeJS",
-      "JavaScriptLanguage",
-      "CSS",
-      "JavaScriptDebugger"
-    )
-    if (isAtLeast201) {
-      // Internal CSS plugin dependency
-      plugins += "platform-images"
+    dependencies {
+      compile(project(":educational-core"))
+      testCompile(project(":educational-core", "testOutput"))
     }
-    setPlugins(*plugins.toTypedArray())
-  }
-  dependencies {
-    compile(project(":educational-core"))
-    testCompile(project(":educational-core", "testOutput"))
-  }
-}
-
-project(":Edu-Rust") {
-  intellij {
-    setPlugins(rustPlugin, tomlPlugin)
   }
 
-  dependencies {
-    compile(project(":educational-core"))
-    testCompile(project(":educational-core", "testOutput"))
-  }
-}
+  project(":Edu-Rust") {
+    intellij {
+      setPlugins(rustPlugin, tomlPlugin)
+    }
 
-project(":Edu-Cpp") {
-  intellij {
-    localPath = null
-    version = clionVersion
+    dependencies {
+      compile(project(":educational-core"))
+      testCompile(project(":educational-core", "testOutput"))
+    }
+  }
+
+  project(":Edu-Cpp") {
+    intellij {
+      localPath = null
+      version = clionVersion
     if (isAtLeast193) {
       setPlugins("clion-test-google", "clion-test-catch")
     }
   }
 
-  dependencies {
-    compile(project(":educational-core"))
-    testCompile(project(":educational-core", "testOutput"))
-  }
-}
-
-project(":Edu-Go") {
-  intellij {
-    localPath = null
-    version = ideaVersion
-    setPlugins(goPlugin)
+    dependencies {
+      compile(project(":educational-core"))
+      testCompile(project(":educational-core", "testOutput"))
+    }
   }
 
-  dependencies {
-    compile(project(":educational-core"))
-    testCompile(project(":educational-core", "testOutput"))
+  project(":Edu-Go") {
+    intellij {
+      localPath = null
+      version = ideaVersion
+      setPlugins(goPlugin)
+    }
+
+    dependencies {
+      compile(project(":educational-core"))
+      testCompile(project(":educational-core", "testOutput"))
+    }
   }
 }
 
@@ -684,7 +703,7 @@ fun inJetBrainsNetwork(): Boolean {
   var inJetBrainsNetwork = false
   try {
     inJetBrainsNetwork = InetAddress.getByName("repo.labs.intellij.net").isReachable(1000)
-    if (!inJetBrainsNetwork && org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+    if (!inJetBrainsNetwork && org.gradle.internal.os.OperatingSystem.current().isWindows) {
       inJetBrainsNetwork = Runtime.getRuntime().exec("ping -n 1 repo.labs.intellij.net").waitFor() == 0
     }
   } catch (ignored: UnknownHostException) {}

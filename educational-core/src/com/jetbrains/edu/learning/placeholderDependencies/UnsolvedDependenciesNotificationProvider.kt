@@ -7,15 +7,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.UnsolvedDependenciesNotificationPanel
 import com.jetbrains.edu.learning.courseFormat.ext.getUnsolvedTaskDependencies
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import org.jetbrains.annotations.TestOnly
 
-class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNotifications.Provider<UnsolvedDependenciesNotificationProvider.UnsolvedDependenciesNotificationPanel>(), DumbAware {
+class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNotifications.Provider<UnsolvedDependenciesNotificationPanel>(), DumbAware {
   companion object {
     val KEY: Key<UnsolvedDependenciesNotificationPanel> = Key.create("Edu.unsolvedDependencies")
 
@@ -44,12 +43,6 @@ class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNot
       EduCounterUsageCollector.taskNavigation(EduCounterUsageCollector.TaskNavigationPlace.UNRESOLVED_DEPENDENCY_NOTIFICATION)
     }
     return panel
-  }
-
-
-  class UnsolvedDependenciesNotificationPanel : EditorNotificationPanel() {
-    @TestOnly
-    fun getText(): String = myLabel.text
   }
 
 }

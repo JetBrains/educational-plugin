@@ -161,6 +161,6 @@ object HyperskillProjectOpener {
     if (frame is IdeFrame) {
       AppIcon.getInstance().requestFocus(frame)
     }
-    frame.toFront()
+    frame?.toFront()
   }
 }
