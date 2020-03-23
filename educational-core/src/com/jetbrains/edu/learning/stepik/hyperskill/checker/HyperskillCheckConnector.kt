@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -73,10 +72,9 @@ object HyperskillCheckConnector {
     val courseLanguage = course.languageById
     val editor = EduUtils.getSelectedEditor(project)
     if (editor != null) {
-      val commentPrefix = LanguageCommenters.INSTANCE.forLanguage(courseLanguage!!).lineCommentPrefix
-      val answer = commentPrefix + StepikCheckerConnector.EDU_TOOLS_COMMENT + editor.document.text
       val defaultLanguage = HyperskillLanguages.langOfId(courseLanguage.id).langName
                             ?: return CheckResult(CheckStatus.Unchecked, "Language not found for: " + courseLanguage.displayName)
+      val answer = editor.document.text
 
       val codeSubmission = StepikCheckerConnector.createCodeSubmission(attempt.id, defaultLanguage, answer)
       var submission : Submission? = connector.postSubmission(codeSubmission) ?: return CheckResult.FAILED_TO_CHECK
