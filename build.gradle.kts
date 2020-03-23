@@ -73,7 +73,7 @@ val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
 plugins {
   idea
   kotlin("jvm") version "1.3.61"
-  id("org.jetbrains.intellij") version "0.4.16"
+  id("org.jetbrains.intellij") version "0.4.17"
   id("de.undercouch.download") version "3.4.3"
   id("net.saliman.properties") version "1.4.6"
 }
