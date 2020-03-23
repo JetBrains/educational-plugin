@@ -11,11 +11,13 @@
       </option>
       <option name="taskNames">
         <list>
+          <option value="configureIdea" />
           <option value="runIde" />
         </list>
       </option>
       <option name="vmOptions" value="" />
     </ExternalSystemSettings>
-    <method />
+    <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+    <method v="2" />
   </configuration>
 </component>

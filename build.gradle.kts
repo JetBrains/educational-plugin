@@ -39,6 +39,7 @@ val studioPath: String
 
 val jacksonVersion = "2.10.0"
 
+val ideaSandbox = "${project.buildDir.absolutePath}/idea-sandbox"
 val pycharmSandbox = "${project.buildDir.absolutePath}/pycharm-sandbox"
 val studioSandbox = "${project.buildDir.absolutePath}/studio-sandbox"
 val webStormSandbox = "${project.buildDir.absolutePath}/webstorm-sandbox"
@@ -281,6 +282,15 @@ project(":") {
     }
     buildSearchableOptions {
       enabled = findProperty("enableBuildSearchableOptions") != "false"
+    }
+  }
+
+  task("configureIdea") {
+    doLast {
+      intellij.sandboxDirectory = ideaSandbox
+      withProp("ideaPath") {
+        intellij.alternativeIdePath = it
+      }
     }
   }
 
