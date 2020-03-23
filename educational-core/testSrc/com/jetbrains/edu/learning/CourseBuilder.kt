@@ -251,6 +251,15 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     videoTask.thumbnail = thumbnail
     videoTask.sources = sources.map { VideoSource(it.key, it.value) }
   }
+
+  fun codeTask(
+    name: String? = null,
+    taskDescription: String? = null,
+    taskDescriptionFormat: DescriptionFormat? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) = task(CodeTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
 }
 
 class TaskBuilder(val lesson: Lesson, val task: Task) {

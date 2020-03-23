@@ -107,6 +107,61 @@ class HyperskillLoadingTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  fun `test solution loading code task`() {
+    configureResponse(SUBMISSION_REQUEST_RE, mapOf(1 to "submissions_response_1.json",
+                                                   4 to "submissions_response_4.json"))
+
+    val course = courseWithFiles(
+      language = FakeGradleBasedLanguage,
+      courseProducer = ::HyperskillCourse
+    ) {
+      frameworkLesson("lesson1") {
+        eduTask("task1", stepId = 1) {
+          taskFile("src/Task.kt", "fun foo() {}")
+          taskFile("src/Baz.kt", "fun baz() {}")
+          taskFile("test/Tests1.kt", "fun tests1() {}")
+        }
+      }
+      lesson("Problems") {
+        codeTask ("task1", stepId = 4) {
+          taskFile("src/Task.kt", "fun foo() {}")
+        }
+      }
+    } as HyperskillCourse
+    course.hyperskillProject = HyperskillProject()
+    course.stages = listOf(HyperskillStage(1, "", 1))
+
+    HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          dir("src") {
+            file("Task.kt", "fun userFoo() {}")
+            file("Baz.kt", "fun userBaz() {}")
+          }
+          dir("test") {
+            file("Tests1.kt", "fun tests1() {}")
+          }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+      }
+      dir("Problems") {
+        dir("task1") {
+          dir("src") {
+            file("Task.kt", "user code")
+          }
+          file("task.html")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
   fun `test solution loading all stages solved`() {
     configureResponse(SUBMISSION_REQUEST_RE, mapOf(1 to "submissions_response_1.json",
                                                    2 to "submissions_response_2_correct.json",
