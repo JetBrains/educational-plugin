@@ -72,13 +72,13 @@ fun getTopPanelForProblem(project: Project, course: HyperskillCourse, task: Task
   }
   val panel = JPanel(BorderLayout())
   panel.background = UIUtil.getListBackground()
-  panel.add(LightColoredActionLink("Return to project \"${course.presentableName}\"",
-                                   OpenProjectAction(project, course), AllIcons.Actions.Back), BorderLayout.WEST)
+  panel.add(LightColoredActionLink("""Navigate to project "${course.presentableName}"""",
+                                   NavigateToProjectAction(project, course), AllIcons.Actions.Back), BorderLayout.WEST)
   panel.border = JBUI.Borders.empty(0, 0, 10, 0)
   return panel
 }
 
-class OpenProjectAction(private val project: Project, private val course: HyperskillCourse) : DumbAwareAction(null as String?) {
+private class NavigateToProjectAction(private val project: Project, private val course: HyperskillCourse) : DumbAwareAction(null as String?) {
   override fun actionPerformed(e: AnActionEvent) {
     val lesson = course.getProjectLesson() ?: return
     NavigationUtils.navigateToTask(project, lesson.currentTask())
