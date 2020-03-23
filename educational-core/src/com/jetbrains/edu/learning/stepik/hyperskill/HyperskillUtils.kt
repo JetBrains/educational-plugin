@@ -67,7 +67,7 @@ private fun computeSelectedStage(course: HyperskillCourse): Int? {
 }
 
 fun getTopPanelForProblem(project: Project, course: HyperskillCourse, task: Task?): JPanel? {
-  if (task == null || course.isTaskInProject(task) || CCUtils.isCourseCreator(project)) {
+  if (task == null || course.isTaskInProject(task) || CCUtils.isCourseCreator(project) || course.getProjectLesson() == null) {
     return null
   }
   val panel = JPanel(BorderLayout())
