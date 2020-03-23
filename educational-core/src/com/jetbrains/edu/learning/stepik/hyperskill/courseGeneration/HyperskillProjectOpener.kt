@@ -63,6 +63,7 @@ object HyperskillProjectOpener {
         runInEdt { openSelectedStage(hyperskillCourse, project) }
       }
     }
+    HyperskillProjectComponent.synchronizeHyperskillProject(project)
     return true
   }
 
