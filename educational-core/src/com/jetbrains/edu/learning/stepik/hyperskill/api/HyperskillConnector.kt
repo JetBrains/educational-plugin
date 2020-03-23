@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.createRetrofitBuilder
 import com.jetbrains.edu.learning.executeHandlingExceptions
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.*
@@ -59,8 +60,8 @@ abstract class HyperskillConnector {
   private val service: HyperskillService
     get() = service(HyperskillSettings.INSTANCE.account)
 
-  private fun service(account: HyperskillAccount?) : HyperskillService {
-    if (account != null && !account.tokenInfo.isUpToDate()) {
+  private fun service(account: HyperskillAccount?): HyperskillService {
+    if (!isUnitTestMode && account != null && !account.tokenInfo.isUpToDate()) {
       account.refreshTokens()
     }
 
@@ -225,7 +226,8 @@ abstract class HyperskillConnector {
   }
 
   fun getSubmission(stepId: Int, page: Int = 1): Submission? {
-    return service.submission(stepId, page).executeHandlingExceptions()?.body()?.submissions?.firstOrNull()
+    val userId = HyperskillSettings.INSTANCE.account?.userInfo?.id ?: error("Attempt to get submission for non authorized user")
+    return service.submission(userId, stepId, page).executeHandlingExceptions()?.body()?.submissions?.firstOrNull()
   }
 
   fun getSubmissionById(submissionId: Int): Submission? {
@@ -256,7 +258,7 @@ abstract class HyperskillConnector {
     authorizationBusConnection.disconnect()
     authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
     authorizationBusConnection.subscribe(AUTHORIZATION_TOPIC, object : EduLogInListener {
-      override fun userLoggedOut() { }
+      override fun userLoggedOut() {}
 
       override fun userLoggedIn() {
         for (action in postLoginActions) {

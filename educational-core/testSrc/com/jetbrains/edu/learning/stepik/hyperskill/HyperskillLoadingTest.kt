@@ -5,14 +5,29 @@ import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
+import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.withTestDialog
 import okhttp3.mockwebserver.MockResponse
 
 class HyperskillLoadingTest : NavigationTestBase() {
+  override fun setUp() {
+    super.setUp()
+    loginFakeUser()
+  }
+
+  private fun loginFakeUser() {
+    val fakeToken = TokenInfo().apply { accessToken = "faketoken" }
+    HyperskillSettings.INSTANCE.account = HyperskillAccount().apply {
+      userInfo = HyperskillUserInfo()
+      userInfo.id = 1
+      tokenInfo = fakeToken
+    }
+  }
 
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
