@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.taskDescription.ui;
 
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
@@ -24,6 +25,13 @@ public class EduFileEditorManagerListener implements FileEditorManagerListener {
     }
     if (task != null) {
       TaskDescriptionView.getInstance(myProject).setCurrentTask(task);
+    }
+  }
+
+  @Override
+  public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+    if (FileEditorManager.getInstance(myProject).getOpenFiles().length == 0) {
+      TaskDescriptionView.getInstance(myProject).setCurrentTask(null);
     }
   }
 }
