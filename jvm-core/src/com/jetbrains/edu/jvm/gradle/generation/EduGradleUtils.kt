@@ -1,5 +1,8 @@
 package com.jetbrains.edu.jvm.gradle.generation
 
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.USE_INTERNAL_JAVA
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.USE_PROJECT_JDK
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
@@ -9,7 +12,6 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtilRt
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createFileFromTemplate
-import org.gradle.util.GradleVersion
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -68,12 +70,17 @@ object EduGradleUtils {
   }
 
   private fun setUpGradleJvm(projectSettings: GradleProjectSettings, sdk: Sdk?) {
-    val javaVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk)
+    val projectSdkVersion = sdk?.javaSdkVersion
+    val internalJdk = ExternalSystemJdkUtil.resolveJdkName(null, USE_INTERNAL_JAVA)
+    val internalSdkVersion = internalJdk?.javaSdkVersion
 
-    // Java 13 requires gradle 6.0.
-    // If the current bundled gradle version is less than 6.0, let's delegate selection of `gradleJvm` to IDE itself.
-    if ((javaVersion == null || javaVersion >= JavaSdkVersion.JDK_13) && GradleVersion.current() < GradleVersion.version("6.0")) {
-      projectSettings.gradleJvm = null
+    // Try to avoid incompatibility between gradle and jdk versions
+    projectSettings.gradleJvm = when {
+      internalSdkVersion == null -> USE_PROJECT_JDK
+      projectSdkVersion == null -> USE_INTERNAL_JAVA
+      else -> if (internalSdkVersion < projectSdkVersion) USE_INTERNAL_JAVA else USE_PROJECT_JDK
     }
   }
+
+  private val Sdk.javaSdkVersion: JavaSdkVersion? get() = JavaSdk.getInstance().getVersion(this)
 }
