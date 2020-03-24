@@ -37,6 +37,7 @@ open class StepikTaskBuilder(
   private val courseType: String = course.itemType
   private val courseEnvironment: String = course.environment
   private val language: Language = course.languageById ?: Language.ANY
+  private val languageVersion: String = course.languageVersion ?: ""
   private val step: Step = stepSource.block ?: error("Step is empty")
   private val updateDate = stepSource.updateDate ?: Date(0)
 
@@ -95,7 +96,7 @@ open class StepikTaskBuilder(
       var memoryLimit = options.executionMemoryLimit
       var timeLimit = options.executionTimeLimit
       val languageSpecificLimits = options.limits
-      val stepikLanguageName = StepikLanguages.langOfId(language.id).langName
+      val stepikLanguageName = StepikLanguages.langOfId(language.id, languageVersion).langName
       if (languageSpecificLimits != null && stepikLanguageName != null) {
         languageSpecificLimits[stepikLanguageName]?.let {
           memoryLimit = it.memory
@@ -264,12 +265,12 @@ open class StepikTaskBuilder(
   }
 
   private fun getCodeTemplateForTask(codeTemplates: Map<String, String>?): String? {
-    val languageString = getLanguageName(language)
+    val languageString = getLanguageName(language, languageVersion)
     return codeTemplates?.get(languageString)
   }
 
-  protected open fun getLanguageName(language: Language): String? {
-    return StepikLanguages.langOfId(language.id).langName
+  protected open fun getLanguageName(language: Language, laguageVersion: String): String? {
+    return StepikLanguages.langOfId(language.id, languageVersion).langName
   }
 
   companion object {

@@ -52,15 +52,16 @@ object StepikCourseConnector {
     return null
   }
 
-  fun getSupportedLanguages(remoteCourse: StepikCourse): List<Language> {
-    val languages = ArrayList<Language>()
+  fun getSupportedLanguages(remoteCourse: StepikCourse): List<StepikLanguages> {
+    val languages = ArrayList<StepikLanguages>()
     try {
       val codeTemplates = getFirstCodeTemplates(remoteCourse)
       for (languageName in codeTemplates.keys) {
-        val id = StepikLanguages.langOfName(languageName).id
+        val stepikLanguage = StepikLanguages.langOfName(languageName)
+        val id = stepikLanguage.id
         val language = Language.findLanguageByID(id) ?: continue
         if (language.id in EduConfiguratorManager.supportedEduLanguages) {
-          languages.add(language)
+          languages.add(stepikLanguage)
         }
       }
     }

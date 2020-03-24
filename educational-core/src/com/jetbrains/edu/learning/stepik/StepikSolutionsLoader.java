@@ -540,14 +540,16 @@ public class StepikSolutionsLoader implements Disposable {
       return null;
     }
 
-    Language language = task.getLesson().getCourse().getLanguageById();
+    Course course = task.getLesson().getCourse();
+    Language language = course.getLanguageById();
     if (language == null) return null;
-    return findStepikSolutionForLanguage(submissions, language);
+    String version = course.getLanguageVersion();
+    return findStepikSolutionForLanguage(submissions, language, version);
   }
 
   @Nullable
-  private static String findStepikSolutionForLanguage(List<Submission> submissions, Language language) {
-    String stepikLanguage = StepikLanguages.langOfId(language.getID()).getLangName();
+  private static String findStepikSolutionForLanguage(List<Submission> submissions, Language language, String version) {
+    String stepikLanguage = StepikLanguages.langOfId(language.getID(), version).getLangName();
     if (stepikLanguage == null) {
       return null;
     }

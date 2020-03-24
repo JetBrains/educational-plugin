@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.course
 
-import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAwareAction
@@ -11,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
+import com.jetbrains.edu.learning.stepik.StepikLanguages
 import com.jetbrains.edu.learning.stepik.StepikNames
 
 class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
@@ -36,7 +36,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
       val language = getLanguageForStepikCourse(course)
       language?.let {
         course.type = "${StepikNames.PYCHARM_PREFIX}${JSON_FORMAT_VERSION} ${language.id}"
-        course.language = language.id
+        course.language = "${language.id} ${language.version}".trim()
         return course
       }
     }
@@ -47,7 +47,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     return null
   }
 
-  private fun getLanguageForStepikCourse(course: StepikCourse): Language? {
+  private fun getLanguageForStepikCourse(course: StepikCourse): StepikLanguages? {
     val languages = getLanguagesUnderProgress(course)
 
     if (languages.isEmpty()) {
@@ -84,7 +84,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
 
   private fun showFailedImportCourseMessage(message: String) = Messages.showErrorDialog(message, "Failed to Import Course")
 
-  private fun chooseLanguageIfNeeded(languages: List<Language>, course: StepikCourse): Language? {
+  private fun chooseLanguageIfNeeded(languages: List<StepikLanguages>, course: StepikCourse): StepikLanguages? {
     return if (languages.size == 1) {
       languages[0]
     }
@@ -103,8 +103,8 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     Messages.showErrorDialog("Cannot find course on Stepik, please check if link is correct: $courseLink", "Failed to Load Stepik Course")
   }
 
-  private fun getLanguagesUnderProgress(course: StepikCourse): List<Language> {
-    return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<Language>, RuntimeException>(
+  private fun getLanguagesUnderProgress(course: StepikCourse): List<StepikLanguages> {
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<StepikLanguages>, RuntimeException>(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
         EduUtils.execCancelable {

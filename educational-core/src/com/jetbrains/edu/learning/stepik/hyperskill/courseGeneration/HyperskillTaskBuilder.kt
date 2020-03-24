@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.taskDescription.link
 
 class HyperskillTaskBuilder(course: Course, lesson: Lesson, private val stepSource: HyperskillStepSource, private val stepId: Int)
   : StepikTaskBuilder(course, lesson, stepSource, stepId, -1) {
-  override fun getLanguageName(language: Language): String? {
+  override fun getLanguageName(language: Language, languageVersion: String): String? {
     return HyperskillLanguages.langOfId(language.id).langName
   }
 
