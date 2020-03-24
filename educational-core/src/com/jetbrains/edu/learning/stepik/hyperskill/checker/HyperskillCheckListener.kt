@@ -18,6 +18,9 @@ import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 class HyperskillCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
     val course = task.lesson.course as? HyperskillCourse ?: return
+    if (!course.isStudy) {
+      return
+    }
 
     if (course.isTaskInProject(task)) {
       if (HyperskillSettings.INSTANCE.account == null) {
