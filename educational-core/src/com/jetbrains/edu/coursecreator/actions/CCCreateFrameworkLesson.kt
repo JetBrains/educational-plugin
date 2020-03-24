@@ -29,6 +29,7 @@ class CCCreateFrameworkLesson :
     )
 
   companion object {
-    private val BUILD_193: BuildNumber = BuildNumber.fromString("193")
+    // BACKCOMPAT: 2019.3
+    private val BUILD_193: BuildNumber = BuildNumber.fromString("193")!!
   }
 }

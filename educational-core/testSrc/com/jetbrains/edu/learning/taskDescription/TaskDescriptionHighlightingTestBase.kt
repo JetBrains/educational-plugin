@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.taskDescription
 
-import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.util.BuildNumber
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow
@@ -12,12 +10,6 @@ abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
   protected abstract val language: com.intellij.lang.Language
   open val environment: String = ""
   protected abstract val settings: Any
-
-  override fun doRunTests() {
-    if (ApplicationInfo.getInstance().build >= BUILD_183) {
-      super.doRunTests()
-    }
-  }
 
   protected fun doHtmlTest(@Language("HTML") taskDescription: String, @Language("HTML") expectedText: String) =
     doTest(taskDescription, DescriptionFormat.HTML, expectedText)
@@ -47,6 +39,5 @@ abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
 
   companion object {
     private val SPAN_REGEX = Regex("""<span style=".*?">""")
-    private val BUILD_183 = BuildNumber.fromString("183")
   }
 }
