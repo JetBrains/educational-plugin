@@ -232,11 +232,7 @@ class CoursesPanel(courses: List<Course>,
   private fun processSelectionChanged() {
     val course = selectedCourse
     if (course != null) {
-      // What's going on here?
       myCoursePanel.bindCourse(course)?.addSettingsChangeListener { doValidation(course) }
-      enableCourseViewAsEducator.apply { course.isViewAsEducatorEnabled }
-      val languageSettings = myCoursePanel.bindCourse(course)
-      languageSettings?.addSettingsChangeListener { doValidation(course) }
     }
     doValidation(course)
   }
