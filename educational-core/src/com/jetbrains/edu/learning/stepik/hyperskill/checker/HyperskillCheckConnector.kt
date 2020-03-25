@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
@@ -82,12 +83,15 @@ object HyperskillCheckConnector {
     }
 
     val course = task.lesson.course
-    val courseLanguage = course.languageById
     val editor = EduUtils.getSelectedEditor(project)
     if (editor == null) return CheckResult.FAILED_TO_CHECK
 
-    val defaultLanguage = HyperskillLanguages.langOfId(courseLanguage.id).langName
-                          ?: return CheckResult(CheckStatus.Unchecked, "Language not found for: " + courseLanguage.displayName)
+    val defaultLanguage = HyperskillLanguages.langOfId(course.languageID).langName
+    if (defaultLanguage == null) {
+      val languageDisplayName = course.languageDisplayName
+      return CheckResult(CheckStatus.Unchecked,
+                         """Unknown language "$languageDisplayName". Check if support for "$languageDisplayName" is enabled.""")
+    }
     val answer = editor.document.text
 
     val codeSubmission = StepikCheckerConnector.createCodeSubmission(attempt.id, defaultLanguage, answer)

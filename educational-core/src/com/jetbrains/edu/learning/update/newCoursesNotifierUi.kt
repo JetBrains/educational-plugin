@@ -87,7 +87,8 @@ object NotificationNewCourseNotifierUi : NewCoursesNotifierUi {
     override fun createCenterPanel(): JComponent = panel
 
     override fun doOKAction() {
-      val settings = panel.projectSettings
+      // `panel.projectSettings` should be not null because course configurator is not null
+      val settings = panel.projectSettings ?: error("Project settings should be not null")
       val location = panel.locationString ?: error("Location should be not null")
       configurator.courseBuilder
         .getCourseProjectGenerator(course)

@@ -47,7 +47,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val course = deserializeNotNull(yamlContent)
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
-    assertEquals(programmingLanguage, course.languageById.displayName)
+    assertEquals(programmingLanguage, course.languageById!!.displayName)
     assertEquals(solutionsHidden, course.solutionsHidden)
     assertNull(course.languageVersion)
     assertNotNull(course.description)
@@ -108,7 +108,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val course = deserializeNotNull(yamlContent) as CourseraCourse
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
-    assertEquals(programmingLanguage, course.languageById.displayName)
+    assertEquals(programmingLanguage, course.languageById!!.displayName)
     assertFalse(course.submitManually)
     assertNotNull(course.description)
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
@@ -135,7 +135,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val course = MAPPER.deserializeCourse(yamlContent)
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
-    assertEquals(programmingLanguage, course.languageById.displayName)
+    assertEquals(programmingLanguage, course.languageById!!.displayName)
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
   }
 
@@ -154,7 +154,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |programming_language_version: $programmingLanguageVersion
       |""".trimMargin()
     val course = deserializeNotNull(yamlContent)
-    assertEquals(programmingLanguage, course.languageById.displayName)
+    assertEquals(programmingLanguage, course.languageById!!.displayName)
     assertEquals(programmingLanguageVersion, course.languageVersion)
   }
 

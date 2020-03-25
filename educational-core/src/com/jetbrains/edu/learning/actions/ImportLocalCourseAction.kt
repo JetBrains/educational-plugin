@@ -8,10 +8,8 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -21,15 +19,14 @@ open class ImportLocalCourseAction(text: String = "Import Local Course") : DumbA
     FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()) { file ->
       val fileName = file.path
       var course = EduUtils.getLocalCourse(fileName)
-      when {
-        course == null -> showInvalidCourseDialog()
-        course.configurator == null -> showUnsupportedCourseDialog(course)
-        else -> {
-          saveLastImportLocation(file)
-          course = initCourse(course)
-          EduCounterUsageCollector.importCourseArchive()
-          JoinCourseDialog(course).show()
-        }
+      if (course == null) {
+        showInvalidCourseDialog()
+      }
+      else {
+        saveLastImportLocation(file)
+        course = initCourse(course)
+        EduCounterUsageCollector.importCourseArchive()
+        JoinCourseDialog(course).show()
       }
     }
   }
@@ -58,23 +55,6 @@ open class ImportLocalCourseAction(text: String = "Import Local Course") : DumbA
     @JvmStatic
     fun showInvalidCourseDialog() {
       Messages.showErrorDialog("Selected archive doesn't contain a valid course", IMPORT_ERROR_DIALOG_TITLE)
-    }
-
-    @JvmStatic
-    fun showUnsupportedCourseDialog(course: Course) {
-      val environment = course.environment
-      val type = when (environment) {
-        EduNames.ANDROID -> environment
-        EduNames.DEFAULT_ENVIRONMENT -> course.languageById?.displayName
-        else -> null
-      }
-      val message = if (type != null) {
-        "$type courses are not supported"
-      } else {
-        """Selected "${course.name}" course is unsupported"""
-      }
-
-      Messages.showErrorDialog(message, IMPORT_ERROR_DIALOG_TITLE)
     }
   }
 }

@@ -74,7 +74,9 @@ fun joinCourse(courseInfo: CourseInfo,
     return
   }
   val configurator = course.configurator
-  if (configurator != null) {
+  // If `configurator != null` than `projectSettings` is always not null
+  // because project settings are produced by configurator itself
+  if (configurator != null && projectSettings != null) {
     try {
       configurator.beforeCourseStarted(course)
       closeDialogAction()

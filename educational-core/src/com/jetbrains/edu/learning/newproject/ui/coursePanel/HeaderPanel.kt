@@ -8,7 +8,7 @@ import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.newproject.ui.logo
 import java.awt.BorderLayout
 import javax.swing.Icon
 import javax.swing.JPanel
@@ -57,20 +57,14 @@ class HeaderPanel(
     }
 
     fun bind(course: Course) {
-      iconLabel.icon = course.logo
+      iconLabel.icon = course.scaledLogo
       revalidate()
       repaint()
     }
 
-    private val Course.logo: Icon?
+    private val Course.scaledLogo: Icon?
       get() {
-        val language = course.languageById
-        val configurator = course.configurator
-        if (configurator == null) {
-          LOG.info(String.format("configurator is null, language: %s course type: %s", language.displayName, course.itemType))
-          return null
-        }
-        val logo = configurator.logo
+        val logo = logo ?: return null
         val scaleFactor = LOGO_SIZE / INITIAL_LOGO_SIZE
         val scaledIcon = IconUtil.scale(logo, this@IconPanel, scaleFactor)
         return IconUtil.toSize(scaledIcon, JBUI.scale(LOGO_SIZE), JBUI.scale(LOGO_SIZE))

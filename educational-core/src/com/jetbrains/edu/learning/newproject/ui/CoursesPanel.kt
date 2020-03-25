@@ -15,7 +15,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.*
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBList
@@ -27,7 +26,6 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction.Companion.importLocation
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction.Companion.saveLastImportLocation
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction.Companion.showInvalidCourseDialog
-import com.jetbrains.edu.learning.actions.ImportLocalCourseAction.Companion.showUnsupportedCourseDialog
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -82,7 +80,7 @@ class CoursesPanel(courses: List<Course>,
   private var myErrorState: ErrorState? = NothingSelected
   private var myCoursesList: JBList<Course> = JBList()
 
-  val projectSettings: Any
+  val projectSettings: Any?
     get() = myCoursePanel.projectSettings
 
   private fun initUI() {
@@ -234,10 +232,11 @@ class CoursesPanel(courses: List<Course>,
   private fun processSelectionChanged() {
     val course = selectedCourse
     if (course != null) {
-      myCoursePanel.bindCourse(course).addSettingsChangeListener { doValidation(course) }
+      // What's going on here?
+      myCoursePanel.bindCourse(course)?.addSettingsChangeListener { doValidation(course) }
       enableCourseViewAsEducator.apply { course.isViewAsEducatorEnabled }
       val languageSettings = myCoursePanel.bindCourse(course)
-      languageSettings.addSettingsChangeListener { doValidation(course) }
+      languageSettings?.addSettingsChangeListener { doValidation(course) }
     }
     doValidation(course)
   }
@@ -350,23 +349,17 @@ class CoursesPanel(courses: List<Course>,
     }
 
     private fun importLocalCourse() {
-      FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()
-      ) { file: VirtualFile ->
+      FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()) { file ->
         val fileName = file.path
         val course = EduUtils.getLocalCourse(fileName)
-        when {
-          course == null -> {
-            showInvalidCourseDialog()
-          }
-          course.configurator == null -> {
-            showUnsupportedCourseDialog(course)
-          }
-          else -> {
-            saveLastImportLocation(file)
-            importCourseArchive()
-            myCourses.add(course)
-            updateModel(myCourses, course)
-          }
+        if (course == null) {
+          showInvalidCourseDialog()
+        }
+        else {
+          saveLastImportLocation(file)
+          importCourseArchive()
+          myCourses.add(course)
+          updateModel(myCourses, course)
         }
       }
     }
@@ -412,17 +405,6 @@ class CoursesPanel(courses: List<Course>,
         }
       }
       return false
-    }
-
-    private fun getLogo(course: Course): Icon? {
-      val language = course.languageById
-      val configurator = course.configurator
-      if (configurator == null) {
-        LOG.info(
-          String.format("configurator is null, language: %s course type: %s", language.displayName, course.itemType))
-        return null
-      }
-      return configurator.logo
     }
 
     @JvmStatic
@@ -505,7 +487,7 @@ class CoursesPanel(courses: List<Course>,
 
     override fun customizeCellRenderer(list: JList<out Course?>, course: Course?, index: Int, selected: Boolean, hasFocus: Boolean) {
       course?.let {
-        val logo = getLogo(course)
+        val logo = course.logo
         border = JBUI.Borders.empty(5, 0)
         append(course.name, course.visibility.textAttributes)
         icon = course.getDecoratedLogo(logo)

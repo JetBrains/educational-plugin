@@ -1,21 +1,13 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
-import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.ui.OnePixelDivider
 import com.intellij.openapi.ui.VerticalFlowLayout
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.FilterComponent
-import com.intellij.util.PathUtil
-import com.intellij.util.io.IOUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import java.awt.Dimension
-import java.io.File
-import java.text.DateFormat
-import java.util.*
 import javax.swing.JPanel
 import javax.swing.event.DocumentListener
 
@@ -86,8 +78,8 @@ class NewCoursePanel(
     description.bind(course)
   }
 
-  fun bindCourse(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()): LanguageSettings<*> {
-    this@NewCoursePanel.isVisible = true
+  fun bindCourse(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()): LanguageSettings<*>? {
+    isVisible = true
     advancedSettings.update(course, settings.showLanguageSettings)
     updateCourseDescriptionPanel(course, settings)
     return advancedSettings.languageSettings
@@ -102,28 +94,10 @@ class NewCoursePanel(
   val locationString: String?
     get() = advancedSettings.locationString
 
-  val projectSettings: Any
+  val projectSettings: Any?
     get() = advancedSettings.getProjectSettings()
 
   fun bindSearchField(searchField: FilterComponent) {
     mySearchField = searchField
   }
 }
-
-fun nameToLocation(course: Course): String {
-  val courseName = course.name
-  val language = course.languageById.displayName
-  val humanLanguage = course.humanLanguage
-  var name = courseName
-  if (!IOUtil.isAscii(name!!)) {
-    //there are problems with venv creation for python course
-    name = "${EduNames.COURSE} $language $humanLanguage".capitalize()
-  }
-  if (!PathUtil.isValidFileName(name)) {
-    DateFormat.getDateInstance(DateFormat.DATE_FIELD,
-                               Locale.getDefault()).format(course.updateDate)
-    name = FileUtil.sanitizeFileName(name)
-  }
-  return FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), name, "").absolutePath
-}
-

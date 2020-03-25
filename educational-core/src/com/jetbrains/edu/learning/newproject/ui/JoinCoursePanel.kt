@@ -5,6 +5,7 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel.Companion.browseHyperlink
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
@@ -42,10 +43,10 @@ class JoinCoursePanel(
 
   // '!!' is safe here because `myCoursePanel` has location field
   val locationString: String get() = myCoursePanel.locationString!!
-  val projectSettings: Any get() = myCoursePanel.projectSettings
+  val projectSettings: Any? get() = myCoursePanel.projectSettings
 
   fun bindCourse(course: Course) {
-    myCoursePanel.bindCourse(course, settings).addSettingsChangeListener { doValidation(course) }
+    myCoursePanel.bindCourse(course, settings)?.addSettingsChangeListener { doValidation(course) }
   }
 
   fun setValidationListener(course: Course, listener: ValidationListener?) {
@@ -64,9 +65,10 @@ class JoinCoursePanel(
 
   private fun doValidation(course: Course?) {
     val message = when {
+      course != null && course.configurator == null -> ValidationMessage(course.unsupportedCourseMessage)
       locationString.isBlank() -> ValidationMessage("Enter course location")
-      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage(
-        "Can't create course at this location")
+      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) ->
+        ValidationMessage("Can't create course at this location")
       else -> myCoursePanel.validateSettings(course)
     }
     myValidationMessage = message

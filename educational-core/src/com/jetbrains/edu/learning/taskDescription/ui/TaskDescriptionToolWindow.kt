@@ -93,7 +93,9 @@ abstract class TaskDescriptionToolWindow {
           if (task is VideoTask) {
             return taskText
           }
-          return EduCodeHighlighter.highlightCodeFragments(project, taskText, task.course.languageById!!)
+
+          val language = task.course.languageById ?: return taskText
+          return EduCodeHighlighter.highlightCodeFragments(project, taskText, language)
         }
       }
       return EMPTY_TASK_TEXT

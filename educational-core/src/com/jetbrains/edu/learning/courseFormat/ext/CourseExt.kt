@@ -61,3 +61,5 @@ val Course.allTasks: List<Task> get() {
   course.visitTasks { allTasks += it }
   return allTasks
 }
+
+val Course.languageDisplayName: String get() = course.languageById?.displayName ?: course.languageID

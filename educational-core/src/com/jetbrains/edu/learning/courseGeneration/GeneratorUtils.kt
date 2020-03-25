@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.courseGeneration
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.fileTemplates.FileTemplateUtil
-import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
@@ -240,18 +239,6 @@ object GeneratorUtils {
     return runInWriteActionAndWait(ThrowableComputable {
       VfsUtil.createDirectoryIfMissing(parentDir, uniqueDirName)
     })
-  }
-
-  @JvmStatic
-  fun createDefaultFile(course: Course, baseName: String, baseText: String): DefaultFileProperties {
-    val language = course.languageById
-    val extensionSuffix = language?.associatedFileType?.defaultExtension?.let { ".$it" } ?: ""
-    val lineCommentPrefix = if (language != null) {
-      LanguageCommenters.INSTANCE.forLanguage(language)?.lineCommentPrefix ?: ""
-    } else {
-      ""
-    }
-    return DefaultFileProperties("$baseName$extensionSuffix", "$lineCommentPrefix$baseText")
   }
 
   @JvmStatic

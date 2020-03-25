@@ -160,6 +160,7 @@ public abstract class Course extends LessonContainer {
     this.description = description;
   }
 
+  @Nullable
   public Language getLanguageById() {
     return Language.findLanguageByID(getLanguageID());
   }
@@ -260,7 +261,12 @@ public abstract class Course extends LessonContainer {
   @NotNull
   public List<Tag> getTags() {
     List<Tag> tags = new ArrayList<>();
-    tags.add(new ProgrammingLanguageTag(getLanguageById()));
+
+    Language language = getLanguageById();
+    // TODO: use some predefined list for supported languages
+    if (language != null) {
+      tags.add(new ProgrammingLanguageTag(language));
+    }
     tags.add(new HumanLanguageTag(getHumanLanguage()));
     return tags;
   }

@@ -40,6 +40,8 @@ sealed class ErrorState(
   //TODO: remove it?
   object HyperskillLoginRequired : LoginRequired(EduNames.JBA)
   object IncompatibleVersion : ErrorState(3, ValidationMessage("", "Update", " plugin to start this course"), errorTextForeground, false)
+  // TODO: it should be converted to something related to uninstalled plugins eventually
+  class UnsupportedCourse(message: String) : ErrorState(3, ValidationMessage(message), errorTextForeground, false)
   data class RequiredPluginsDisabled(val disabledPluginIds: List<String>) :
     ErrorState(3, errorMessage(disabledPluginIds), errorTextForeground, false)
   class LanguageSettingsError(message: ValidationMessage) : ErrorState(3, message, errorTextForeground, false)
@@ -57,6 +59,7 @@ sealed class ErrorState(
       val disabledPlugins = getDisabledPlugins(pluginRequirements)
       return when {
         course == null -> NothingSelected
+        course.configurator == null -> UnsupportedCourse(course.unsupportedCourseMessage)
         course is JetBrainsAcademyCourse -> if (HyperskillSettings.INSTANCE.account == null) JetBrainsAcademyLoginRecommended else None
         course.compatibility !== CourseCompatibility.COMPATIBLE -> IncompatibleVersion
         disabledPlugins.isNotEmpty() -> RequiredPluginsDisabled(disabledPlugins)
