@@ -9,6 +9,8 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -34,6 +36,9 @@ import javax.swing.JPanel
  *
  * @see EduConfiguratorManager
  * @see EducationalExtensionPoint
+ *
+ * If you want to advertise courses supported by the configurator even when
+ * required plugins are not installed, implement [CourseCompatibilityProvider] and register it via [CourseCompatibilityProviderEP]
  *
  * If you add any new methods here, please do not forget to add it also to
  * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator

@@ -10,6 +10,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.actions.CheckAction;
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import icons.EducationalCoreIcons;

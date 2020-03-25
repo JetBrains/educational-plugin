@@ -26,6 +26,11 @@
     <extensionPoint qualifiedName="Educational.configurator" beanClass="com.jetbrains.edu.learning.configuration.EducationalExtensionPoint">
       <with attribute="implementationClass" implements="com.jetbrains.edu.learning.configuration.EduConfigurator"/>
     </extensionPoint>
+    <extensionPoint qualifiedName="Educational.compatibilityProvider"
+                    beanClass="com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider"/>
+    </extensionPoint>
+
     <extensionPoint qualifiedName="Educational.twitterPluginConfigurator"
                     interface="com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator"/>
     <extensionPoint qualifiedName="Educational.remoteTaskChecker" interface="com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker"/>

@@ -61,6 +61,7 @@ import java.awt.Dimension
 import java.awt.Point
 import java.util.*
 import javax.swing.*
+import kotlin.collections.HashSet
 
 
 class CoursesPanel(courses: List<Course>,
@@ -144,14 +145,14 @@ class CoursesPanel(courses: List<Course>,
           loggedIn(HYPERSKILL, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
         }
         JavaFXRequired -> invokeSwitchBootJdk()
-        IncompatibleVersion -> {
-          // BACKCOMPAT: 2019.3
+        // BACKCOMPAT: 2019.3. Use `PluginsAdvertiser.installAndEnable`
+        IncompatibleVersion -> @Suppress("DEPRECATION") PluginsAdvertiser.installAndEnablePlugins(setOf(EduNames.PLUGIN_ID)) {}
+        is RequirePlugins -> {
+          // BACKCOMPAT: 2019.3. just use `state.pluginIds`
+          val pluginStringIds = state.pluginIds.mapTo(HashSet()) { it.idString }
+          // BACKCOMPAT: 2019.3. Use `PluginsAdvertiser.installAndEnable`
           @Suppress("DEPRECATION")
-          PluginsAdvertiser.installAndEnablePlugins(setOf(EduNames.PLUGIN_ID)) {}
-        }
-        is RequiredPluginsDisabled -> {
-          val disabledPluginIds = state.disabledPluginIds
-          enablePlugins(disabledPluginIds)
+          PluginsAdvertiser.installAndEnablePlugins(pluginStringIds) {}
         }
         is CustomSevereError -> state.action?.run()
         null -> Unit

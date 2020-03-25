@@ -1,8 +1,10 @@
-package com.jetbrains.edu.learning.courseFormat
+package com.jetbrains.edu.learning.compatibility
 
-// Order of items is important here because it uses for comparison
+import com.intellij.openapi.extensions.PluginId
+
 sealed class CourseCompatibility {
   object Compatible : CourseCompatibility()
   object IncompatibleVersion : CourseCompatibility()
   object Unsupported : CourseCompatibility()
+  class PluginsRequired(val pluginIds: Set<PluginId>) : CourseCompatibility()
 }

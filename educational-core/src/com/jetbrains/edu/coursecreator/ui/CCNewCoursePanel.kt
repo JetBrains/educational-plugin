@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.ui
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.LabeledComponent
@@ -165,7 +166,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
       myDescriptionTextArea.text.isNullOrBlank() -> ValidationMessage("Enter course description")
       locationString.isBlank() -> ValidationMessage("Enter course location")
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage("Can't create course at this location")
-      myRequiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(myRequiredAndDisabledPlugins)
+      myRequiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(myRequiredAndDisabledPlugins.map { PluginId.getId(it) })
       else -> {
         val validationMessage = myLanguageSettings.validate(null, locationString)
         if (validationMessage != null) myAdvancedSettings.setOn(true)

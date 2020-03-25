@@ -4,7 +4,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility;
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityUtils;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 
@@ -139,7 +140,7 @@ public class EduCourse extends Course {
 
   @NotNull
   protected CourseCompatibility courseCompatibility(@NotNull EduCourse courseInfo) {
-    return CourseCompatibilityUtils.isCourseCompatibility(courseInfo);
+    return CourseCompatibilityUtils.getCourseCompatibility(courseInfo);
   }
 
   public boolean isRemote() {

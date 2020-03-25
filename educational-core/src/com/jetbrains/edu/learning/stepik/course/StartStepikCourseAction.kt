@@ -7,7 +7,7 @@ import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.CourseCompatibility.*
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.StepikLanguage
@@ -69,14 +69,13 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
   private fun isCompatibleEduCourse(course: EduCourse): Boolean {
     return when (course.compatibility) {
       Compatible -> true
-
-      Unsupported -> {
-        showFailedImportCourseMessage("Looks like the programming language of '${course.name}' is not supported yet.")
-        false
-      }
-
       IncompatibleVersion -> {
         showFailedImportCourseMessage("'${course.name}' is supported in the latest plugin version only. Please, update the plugin.")
+        false
+      }
+      // TODO: allow to install/enable plugins here
+      else -> {
+        showFailedImportCourseMessage("Looks like the programming language of '${course.name}' is not supported yet.")
         false
       }
     }

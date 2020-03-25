@@ -9,11 +9,10 @@ import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.codeforces.api.ContestInfo
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.coursera.CourseraCourse
-import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.ERROR
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.WARNING
@@ -40,10 +39,9 @@ sealed class ErrorState(
   //TODO: remove it?
   object HyperskillLoginRequired : LoginRequired(EduNames.JBA)
   object IncompatibleVersion : ErrorState(3, ValidationMessage("", "Update", " plugin to start this course"), errorTextForeground, false)
-  // TODO: it should be converted to something related to uninstalled plugins eventually
   class UnsupportedCourse(message: String) : ErrorState(3, ValidationMessage(message), errorTextForeground, false)
-  data class RequiredPluginsDisabled(val disabledPluginIds: List<String>) :
-    ErrorState(3, errorMessage(disabledPluginIds), errorTextForeground, false)
+  data class RequirePlugins(val pluginIds: Set<PluginId>) :
+    ErrorState(3, errorMessage(pluginIds), errorTextForeground, false)
   class LanguageSettingsError(message: ValidationMessage) : ErrorState(3, message, errorTextForeground, false)
   object JavaFXRequired : ErrorState(4, ValidationMessage("No JavaFX found. Please ", "switch", " to JetBrains Runtime to start the course"), errorTextForeground, false)
   class CustomSevereError(beforeLink: String, link: String = "", afterLink: String = "", val action: Runnable? = null) :
@@ -55,14 +53,13 @@ sealed class ErrorState(
   companion object {
     @JvmStatic
     fun forCourse(course: Course?): ErrorState {
-      val pluginRequirements = getPluginRequirements(course)
-      val disabledPlugins = getDisabledPlugins(pluginRequirements)
+      val courseCompatibility = course?.compatibility
       return when {
         course == null -> NothingSelected
-        course.configurator == null -> UnsupportedCourse(course.unsupportedCourseMessage)
         course is JetBrainsAcademyCourse -> if (HyperskillSettings.INSTANCE.account == null) JetBrainsAcademyLoginRecommended else None
-        course.compatibility !== CourseCompatibility.Compatible -> IncompatibleVersion
-        disabledPlugins.isNotEmpty() -> RequiredPluginsDisabled(disabledPlugins)
+        courseCompatibility is CourseCompatibility.PluginsRequired -> RequirePlugins(courseCompatibility.pluginIds)
+        courseCompatibility == CourseCompatibility.IncompatibleVersion -> IncompatibleVersion
+        courseCompatibility == CourseCompatibility.Unsupported -> UnsupportedCourse(course.unsupportedCourseMessage)
         course is CourseraCourse -> None
         course is CheckiOCourse -> getCheckiOError(course)
         course is HyperskillCourse -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginRequired else None
@@ -79,23 +76,19 @@ sealed class ErrorState(
       return if (isCheckiOLoginRequired(course)) CheckiOLoginRequired(course.name) else None
     }
 
-    private fun getPluginRequirements(course: Course?): List<String> {
-      return course?.configurator?.pluginRequirements.orEmpty()
-    }
-
     @JvmStatic
-    fun errorMessage(disabledPluginIds: List<String>): ValidationMessage {
+    fun errorMessage(disabledPluginIds: Collection<PluginId>): ValidationMessage {
       val pluginName = if (disabledPluginIds.size == 1) {
-        PluginManager.getPlugin(PluginId.getId(disabledPluginIds[0]))?.name
+        PluginManager.getPlugin(disabledPluginIds.first())?.name
       } else {
         null
       }
       val beforeLink = if (pluginName != null) {
         "Required \"$pluginName\" plugin is disabled. "
       } else {
-        "Some required plugins are disabled. "
+        "Some required plugins are not installed or disabled. "
       }
-      return ValidationMessage(beforeLink, "Enable", "")
+      return ValidationMessage(beforeLink, "Install and Enable", "")
     }
 
     private fun isLoggedInToStepik(): Boolean = EduSettings.isLoggedIn()
