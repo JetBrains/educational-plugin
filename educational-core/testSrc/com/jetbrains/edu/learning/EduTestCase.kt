@@ -12,6 +12,7 @@ import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl
 import com.intellij.openapi.fileEditor.impl.text.TextEditorPsiDataProvider
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -35,6 +36,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.coursera.CourseraNames
+import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
@@ -78,6 +81,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
         connection.disconnect()
       }
     })
+    val frameworkLessonManagerImpl = FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl
+    frameworkLessonManagerImpl.storage = FrameworkLessonManagerImpl.createStorage(project)
     createCourse()
   }
 
@@ -90,6 +95,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
       }
 
       (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
+      val storage = (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).storage
+      Disposer.dispose(storage)
     }
     finally {
       super.tearDown()

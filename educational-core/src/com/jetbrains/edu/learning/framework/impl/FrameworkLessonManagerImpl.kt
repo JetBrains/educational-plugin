@@ -21,7 +21,8 @@ import java.io.IOException
 
 class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLessonManager {
 
-  private val storage: FrameworkStorage = FrameworkStorage(constructStoragePath(project))
+  @VisibleForTesting
+  var storage: FrameworkStorage = createStorage(project)
 
   override fun prepareNextTask(lesson: FrameworkLesson, taskDir: VirtualFile, showDialogIfConflict: Boolean) {
     applyTargetTaskChanges(lesson, 1, taskDir, showDialogIfConflict)
@@ -284,6 +285,9 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     @VisibleForTesting
     fun constructStoragePath(project: Project): String =
       FileUtil.join(project.basePath!!, Project.DIRECTORY_STORE_FOLDER, "frameworkLessonHistory", "storage")
+
+    @VisibleForTesting
+    fun createStorage(project: Project): FrameworkStorage = FrameworkStorage(constructStoragePath(project))
   }
 }
 

@@ -1,28 +1,21 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.util.io.storage.AbstractStorage
 import com.intellij.util.xmlb.XmlSerializer
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
+import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.util.*
 
-class HyperskillCourseUpdateTest : EduTestCase() {
-
-  override fun tearDown() {
-    AbstractStorage.deleteFiles(FrameworkLessonManagerImpl.constructStoragePath(project))
-    super.tearDown()
-  }
+class HyperskillCourseUpdateTest : NavigationTestBase() {
 
   private lateinit var course: HyperskillCourse
 
