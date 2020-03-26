@@ -5,13 +5,12 @@ import com.jetbrains.edu.learning.messages.EduBundle
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 
-object EduScalaBundle : EduBundle() {
+@NonNls
+private const val BUNDLE = "messages.EduScalaBundle"
 
+object EduScalaBundle : EduBundle(BUNDLE) {
   @JvmStatic
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String {
-    return CommonBundle.message(getBundle(BUNDLE), key, *params)
+    return getMessage(key, *params)
   }
-
-  @NonNls
-  private const val BUNDLE = "messages.EduScalaBundle"
 }

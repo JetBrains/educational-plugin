@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.messages.EDU_CORE_BUNDLE_NAME
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.PropertyKey
@@ -43,7 +44,7 @@ data class StudyItemVariant(
   val producer: () -> StudyItem
 )
 
-enum class StudyItemType(@PropertyKey(resourceBundle = EduCoreBundle.BUNDLE) private val bundleKey: String) {
+enum class StudyItemType(@PropertyKey(resourceBundle = EDU_CORE_BUNDLE_NAME) private val bundleKey: String) {
   COURSE("study.item.course"),
   SECTION("study.item.section"),
   LESSON("study.item.lesson"),
