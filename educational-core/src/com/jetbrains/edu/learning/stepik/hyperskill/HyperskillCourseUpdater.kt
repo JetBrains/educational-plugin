@@ -82,7 +82,8 @@ object HyperskillCourseUpdater {
           val file = courseDir.findFileByRelativePath(remoteFile.name) ?: return@runWriteAction true
           val text = try {
             CCUtils.loadText(file)
-          } catch (e: IOException) {
+          }
+          catch (e: IOException) {
             LOG.warn("Failed to load text of `${remoteFile.name}` additional file", e)
             return@runWriteAction true
           }
@@ -101,52 +102,14 @@ object HyperskillCourseUpdater {
     val lesson = currentCourse.lessons.firstOrNull() as? FrameworkLesson ?: return
     val remoteLesson = remoteCourse.lessons.firstOrNull() as? FrameworkLesson ?: return
 
-    fun updateTaskFiles(
-      task: Task,
-      remoteTaskFiles: Map<String, TaskFile>,
-      updateInLocalFS: Boolean
-    ) {
-      val taskFiles = task.taskFiles
-      for ((path, remoteTaskFile) in remoteTaskFiles) {
-        val taskFile = taskFiles[path]
-        val currentTaskFile = if (taskFile != null) {
-          taskFile.setText(remoteTaskFile.text)
-          taskFile
-        } else {
-          task.addTaskFile(remoteTaskFile)
-          remoteTaskFile
-        }
-
-        if (updateInLocalFS) {
-          val taskDir = task.getTaskDir(project)
-          if (taskDir != null) {
-            GeneratorUtils.createChildFile(taskDir, path, currentTaskFile.text)
-          }
-        }
-      }
-      task.init(currentCourse, lesson, false)
-    }
-
     invokeAndWaitIfNeeded {
       if (project.isDisposed) return@invokeAndWaitIfNeeded
-      val flm = FrameworkLessonManager.getInstance(project)
 
       for ((task, remoteTask) in lesson.taskList.zip(remoteLesson.taskList)) {
         if (!task.updateDate.before(remoteTask.updateDate)) continue
 
-        if (task.status == CheckStatus.Solved) continue
-
-        if (lesson.currentTaskIndex != task.index - 1) {
-          updateTaskFiles(task, remoteTask.testFiles, false)
-          flm.updateUserChanges(task, task.taskFiles.mapValues { (_, taskFile) -> taskFile.text } )
-        } else {
-          // With current logic of next/prev action for hyperskill tasks
-          // update of non test files makes sense only for first task
-          if (task.index == 1 && !task.hasChangedFiles(project)) {
-            updateTaskFiles(task, remoteTask.taskFiles, true)
-          } else {
-            updateTaskFiles(task, remoteTask.testFiles, true)
-          }
+        if (task.status != CheckStatus.Solved) {
+          updateFiles(currentCourse, lesson, task, remoteTask, project)
         }
 
         task.descriptionText = remoteTask.descriptionText
@@ -162,10 +125,56 @@ object HyperskillCourseUpdater {
     }
   }
 
+  private fun updateFiles(currentCourse: HyperskillCourse, lesson: FrameworkLesson, task: Task, remoteTask: Task, project: Project) {
+    fun updateTaskFiles(
+      task: Task,
+      remoteTaskFiles: Map<String, TaskFile>,
+      updateInLocalFS: Boolean
+    ) {
+      val taskFiles = task.taskFiles
+      for ((path, remoteTaskFile) in remoteTaskFiles) {
+        val taskFile = taskFiles[path]
+        val currentTaskFile = if (taskFile != null) {
+          taskFile.setText(remoteTaskFile.text)
+          taskFile
+        }
+        else {
+          task.addTaskFile(remoteTaskFile)
+          remoteTaskFile
+        }
+
+        if (updateInLocalFS) {
+          val taskDir = task.getTaskDir(project)
+          if (taskDir != null) {
+            GeneratorUtils.createChildFile(taskDir, path, currentTaskFile.text)
+          }
+        }
+      }
+      task.init(currentCourse, lesson, false)
+    }
+
+    val flm = FrameworkLessonManager.getInstance(project)
+
+    if (lesson.currentTaskIndex != task.index - 1) {
+      updateTaskFiles(task, remoteTask.testFiles, false)
+      flm.updateUserChanges(task, task.taskFiles.mapValues { (_, taskFile) -> taskFile.text })
+    }
+    else {
+      // With current logic of next/prev action for hyperskill tasks
+      // update of non test files makes sense only for first task
+      if (task.index == 1 && !task.hasChangedFiles(project)) {
+        updateTaskFiles(task, remoteTask.taskFiles, true)
+      }
+      else {
+        updateTaskFiles(task, remoteTask.testFiles, true)
+      }
+    }
+  }
 }
 
-private val Task.testFiles: Map<String, TaskFile> get() {
-  val testDirs = lesson.course.testDirs
-  val defaultTestName = lesson.course.configurator?.testFileName ?: ""
-  return taskFiles.filterKeys { path -> path == defaultTestName || testDirs.any { path.startsWith(it) } }
-}
+private val Task.testFiles: Map<String, TaskFile>
+  get() {
+    val testDirs = lesson.course.testDirs
+    val defaultTestName = lesson.course.configurator?.testFileName ?: ""
+    return taskFiles.filterKeys { path -> path == defaultTestName || testDirs.any { path.startsWith(it) } }
+  }

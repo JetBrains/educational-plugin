@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseUpdater.canBeUpdated
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.util.*
@@ -325,11 +326,17 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   }
 
   private fun updateCourse(changeCourse: HyperskillCourse.() -> Unit) {
+    val remoteCourse = changeCourse(changeCourse)
+    HyperskillCourseUpdater.updateCourse(project, course, remoteCourse)
+    assertFalse("Course is not up-to-date after update", course.canBeUpdated(project, remoteCourse))
+  }
+
+  private fun changeCourse(changeCourse: HyperskillCourse.() -> Unit): HyperskillCourse {
     val element = XmlSerializer.serialize(course)
     val remoteCourse = XmlSerializer.deserialize(element, HyperskillCourse::class.java)
     remoteCourse.init(null, null, false)
     remoteCourse.changeCourse()
-    HyperskillCourseUpdater.updateCourse(project, course, remoteCourse)
+    return remoteCourse
   }
 
   private fun createHyperskillCourse() {
