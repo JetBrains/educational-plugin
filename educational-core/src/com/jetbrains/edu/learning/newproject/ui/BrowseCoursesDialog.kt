@@ -24,7 +24,7 @@ class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: Defau
   }
 
   override val courseInfo: CourseInfo
-    get() = CourseInfo(panel.selectedCourse ?: error("The course was not selected"), panel.locationString, panel.projectSettings)
+    get() = CourseInfo(panel.selectedCourse ?: error("The course was not selected"), { panel.locationString }, { panel.projectSettings })
 
   override fun createCenterPanel(): JComponent = panel
 

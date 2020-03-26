@@ -81,6 +81,7 @@ abstract class StartCourseButtonBase(private val joinCourse: (CourseInfo, Course
   abstract fun isVisible(course: Course): Boolean
 
   private fun addListener(courseInfo: CourseInfo) {
+    listener?.apply { removeActionListener(listener) }
     listener = actionListener(courseInfo)
     addActionListener(listener)
   }

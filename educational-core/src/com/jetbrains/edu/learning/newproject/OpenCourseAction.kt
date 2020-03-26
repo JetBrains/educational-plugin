@@ -62,7 +62,7 @@ fun joinCourse(courseInfo: CourseInfo,
                courseMode: CourseMode,
                errorHandler: (ErrorState) -> Unit,
                closeDialogAction: () -> Unit = {}) {
-  val (course, location, projectSettings) = courseInfo
+  val (course, getLocation, getProjectSettings) = courseInfo
 
   if (course is JetBrainsAcademyCourse) {
     joinJetBrainsAcademy(course, errorHandler)
@@ -70,12 +70,14 @@ fun joinCourse(courseInfo: CourseInfo,
   }
 
   // location is null for course preview dialog only
+  val location = getLocation()
   if (location == null) {
     return
   }
   val configurator = course.configurator
   // If `configurator != null` than `projectSettings` is always not null
   // because project settings are produced by configurator itself
+  val projectSettings = getProjectSettings()
   if (configurator != null && projectSettings != null) {
     try {
       configurator.beforeCourseStarted(course)

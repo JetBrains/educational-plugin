@@ -74,7 +74,7 @@ class NewCoursePanel(
       // TODO: set error
       return
     }
-    header.update(CourseInfo(course, location, projectSettings), settings)
+    header.update(CourseInfo(course, { location }, { projectSettings }), settings)
     description.bind(course)
   }
 
