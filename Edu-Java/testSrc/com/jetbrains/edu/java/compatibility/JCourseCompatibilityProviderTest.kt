@@ -1,0 +1,6 @@
+package com.jetbrains.edu.java.compatibility
+
+import com.jetbrains.edu.jvm.compatibility.JCourseCompatibilityProvider
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderTestBase
+
+class JCourseCompatibilityProviderTest : CourseCompatibilityProviderTestBase(JCourseCompatibilityProvider::class)

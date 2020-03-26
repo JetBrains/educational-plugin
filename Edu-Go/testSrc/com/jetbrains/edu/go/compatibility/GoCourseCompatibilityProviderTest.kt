@@ -1,0 +1,6 @@
+package com.jetbrains.edu.go.compatibility
+
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderTestBase
+import com.jetbrains.edu.learning.compatibility.GoCourseCompatibilityProvider
+
+class GoCourseCompatibilityProviderTest : CourseCompatibilityProviderTestBase(GoCourseCompatibilityProvider::class)

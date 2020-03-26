@@ -1,0 +1,6 @@
+package com.jetbrains.edu.javascript.compatibility
+
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderTestBase
+import com.jetbrains.edu.learning.compatibility.JsCourseCompatibilityProvider
+
+class JsCourseCompatibilityProviderTest : CourseCompatibilityProviderTestBase(JsCourseCompatibilityProvider::class)

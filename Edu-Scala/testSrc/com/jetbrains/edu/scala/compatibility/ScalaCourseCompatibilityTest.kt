@@ -1,0 +1,8 @@
+package com.jetbrains.edu.scala.compatibility
+
+import com.jetbrains.edu.jvm.compatibility.ScalaGradleCourseCompatibilityProvider
+import com.jetbrains.edu.jvm.compatibility.ScalaSbtCourseCompatibilityProvider
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderTestBase
+
+class ScalaGradleCourseCompatibilityProviderTest : CourseCompatibilityProviderTestBase(ScalaGradleCourseCompatibilityProvider::class)
+class ScalaSbtCourseCompatibilityProviderTest : CourseCompatibilityProviderTestBase(ScalaSbtCourseCompatibilityProvider::class)

@@ -1,0 +1,6 @@
+package com.jetbrains.edu.python.compatibility
+
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderTestBase
+import com.jetbrains.edu.learning.compatibility.PyCourseCompatibilityProvider
+
+class PyCourseCompatibilityProviderTest : CourseCompatibilityProviderTestBase(PyCourseCompatibilityProvider::class)

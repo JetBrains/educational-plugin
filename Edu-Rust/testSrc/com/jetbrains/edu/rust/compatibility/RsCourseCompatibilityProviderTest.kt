@@ -1,0 +1,6 @@
+package com.jetbrains.edu.rust.compatibility
+
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderTestBase
+import com.jetbrains.edu.learning.compatibility.RsCourseCompatibilityProvider
+
+class RsCourseCompatibilityProviderTest : CourseCompatibilityProviderTestBase(RsCourseCompatibilityProvider::class)
