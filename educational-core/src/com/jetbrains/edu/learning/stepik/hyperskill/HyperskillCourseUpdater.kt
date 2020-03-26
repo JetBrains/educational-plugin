@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -23,6 +24,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.getConfigDir
 import java.io.IOException
 
 object HyperskillCourseUpdater {
@@ -112,8 +114,7 @@ object HyperskillCourseUpdater {
           updateFiles(currentCourse, lesson, task, remoteTask, project)
         }
 
-        task.descriptionText = remoteTask.descriptionText
-        task.descriptionFormat = remoteTask.descriptionFormat
+        updateTaskDescription(task, remoteTask, project)
         task.updateDate = remoteTask.updateDate
         YamlFormatSynchronizer.saveItem(task)
       }
@@ -121,6 +122,21 @@ object HyperskillCourseUpdater {
       val courseDir = project.courseDir
       for (additionalFile in remoteCourse.additionalFiles) {
         GeneratorUtils.createChildFile(courseDir, additionalFile.name, additionalFile.text)
+      }
+    }
+  }
+
+  private fun updateTaskDescription(task: Task,
+                                    remoteTask: Task,
+                                    project: Project) {
+    task.descriptionText = remoteTask.descriptionText
+    task.descriptionFormat = remoteTask.descriptionFormat
+
+    // Task Description file needs to be regenerated as it already exists
+    val descriptionFile = GeneratorUtils.createDescriptionFile(task.getConfigDir(project), task) ?: return
+    runWriteAction {
+      FileDocumentManager.getInstance().getDocument(descriptionFile)?.let {
+        FileDocumentManager.getInstance().saveDocument(it)
       }
     }
   }

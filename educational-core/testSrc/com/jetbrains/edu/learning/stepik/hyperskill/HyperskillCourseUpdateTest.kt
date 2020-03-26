@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.xmlb.XmlSerializer
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
@@ -323,6 +324,21 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
       file("build.gradle", buildGradleText)
       file("settings.gradle")
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  fun `test task description updated`() {
+    createHyperskillCourse()
+
+    val newDescription = "new description"
+    updateCourse {
+      taskList[0].apply {
+        descriptionText = newDescription
+        updateDate = Date(100)
+      }
+    }
+
+    val taskDescription = EduUtils.getTaskTextFromTask(project, findTask(0, 0))!!
+    assertTrue(taskDescription.contains(newDescription))
   }
 
   private fun updateCourse(changeCourse: HyperskillCourse.() -> Unit) {
