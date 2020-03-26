@@ -11,6 +11,14 @@
     <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppBaseConfigurator"
                   courseType="Stepik"/>
     <codeforcesLanguageProvider implementation="com.jetbrains.edu.cpp.codeforces.CppCodeforcesLanguageProvider"/>
+
+    <compatibilityProvider language="ObjectiveC"
+                           environment="GoogleTest"
+                           implementationClass="com.jetbrains.edu.cpp.compatibility.CppGTestCourseCompatibilityProvider"/>
+    <compatibilityProvider language="ObjectiveC"
+                           environment="Catch"
+                           implementationClass="com.jetbrains.edu.cpp.compatibility.CppCatchCourseCompatibilityProvider"/>
+
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">

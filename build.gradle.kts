@@ -136,6 +136,7 @@ allprojects {
         jvmTarget = "1.8"
         languageVersion = "1.3"
         apiVersion = "1.3"
+        freeCompilerArgs = listOf("-Xjvm-default=enable")
       }
     }
   }
@@ -592,6 +593,7 @@ project(":Edu-Cpp") {
   intellij {
     localPath = null
     version = clionVersion
+    setPlugins("clion-test-google", "clion-test-catch")
   }
 
   dependencies {

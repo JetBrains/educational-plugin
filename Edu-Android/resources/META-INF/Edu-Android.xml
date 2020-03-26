@@ -1,20 +1,24 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-    <depends>com.intellij.modules.lang</depends>
-    <depends>org.jetbrains.android</depends>
-    <depends>org.jetbrains.plugins.gradle</depends>
-    <depends>JUnit</depends>
+  <depends>com.intellij.modules.lang</depends>
+  <depends>org.jetbrains.android</depends>
+  <depends>org.jetbrains.plugins.gradle</depends>
+  <depends>JUnit</depends>
 
-    <xi:include href="/META-INF/Hyperskill-Android.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/Hyperskill-Android.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
-    <extensions defaultExtensionNs="Educational">
-        <gradleRefresher implementation="com.jetbrains.edu.gradle.StudioGradleCourseRefresher"/>
-        <configurator implementationClass="com.jetbrains.edu.android.AndroidConfigurator" language="kotlin" environment="Android" displayName="Android"/>
-    </extensions>
+  <extensions defaultExtensionNs="Educational">
+    <gradleRefresher implementation="com.jetbrains.edu.gradle.StudioGradleCourseRefresher"/>
+    <configurator implementationClass="com.jetbrains.edu.android.AndroidConfigurator" language="kotlin" environment="Android"
+                  displayName="Android"/>
+    <compatibilityProvider language="kotlin"
+                           environment="Android"
+                           implementationClass="com.jetbrains.edu.android.compatibility.AndroidCourseCompatibilityProvider"/>
+  </extensions>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <experimentalFeature id="com.jetbrains.edu.android" percentOfUsers="100" internalFeature="true">
-            <description>Enables support of Android courses</description>
-        </experimentalFeature>
-    </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <experimentalFeature id="com.jetbrains.edu.android" percentOfUsers="100" internalFeature="true">
+      <description>Enables support of Android courses</description>
+    </experimentalFeature>
+  </extensions>
 
 </idea-plugin>

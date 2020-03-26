@@ -306,6 +306,20 @@
     <coursesProvider implementation="com.jetbrains.edu.learning.stepik.StepikCoursesProvider"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.checker.StepikRemoteTaskChecker"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.coursera.CourseraTaskChecker"/>
+
+    <!-- Course compatibility providers   -->
+    <compatibilityProvider language="Python"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.PyCourseCompatibilityProvider"/>
+    <compatibilityProvider language="Python"
+                           environment="unittest"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.PyCourseCompatibilityProvider"/>
+    <compatibilityProvider language="JavaScript"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.JsCourseCompatibilityProvider"/>
+    <compatibilityProvider language="Rust"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.RsCourseCompatibilityProvider"/>
+    <compatibilityProvider language="go"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.GoCourseCompatibilityProvider"/>
+
     <!--educator-->
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
   </extensions>
