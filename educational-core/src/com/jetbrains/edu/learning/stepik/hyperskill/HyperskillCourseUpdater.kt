@@ -58,7 +58,7 @@ object HyperskillCourseUpdater {
     })
   }
 
-  private fun HyperskillCourse.canBeUpdated(project: Project, remoteCourse: HyperskillCourse): Boolean {
+  fun HyperskillCourse.canBeUpdated(project: Project, remoteCourse: HyperskillCourse): Boolean {
     val lesson = lessons.firstOrNull() as? FrameworkLesson ?: return false
     val remoteLesson = remoteCourse.lessons.firstOrNull() as? FrameworkLesson ?: return false
     val tasks = lesson.taskList

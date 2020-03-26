@@ -20,6 +20,8 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   private lateinit var course: HyperskillCourse
 
   fun `test update`() {
+    createHyperskillCourse()
+
     updateCourse {
       taskList[0].apply {
         updateDate = Date(100)
@@ -39,6 +41,8 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   }
 
   fun `test update unmodified current task`() {
+    createHyperskillCourse()
+
     val taskText = "fun foo2() {}"
     val testText = """
       fun test1() {}
@@ -80,6 +84,8 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   }
 
   fun `test update modified current task`() {
+    createHyperskillCourse()
+
     val taskText = "fun foo2() {}"
     val testText = """
       fun test1() {}
@@ -128,6 +134,8 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   }
 
   fun `test update solved current task`() {
+    createHyperskillCourse()
+
     val task = course.taskList[0]
     task.status = CheckStatus.Solved
 
@@ -169,6 +177,8 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   }
 
   fun `test update unmodified non current task`() {
+    createHyperskillCourse()
+
     val task1 = course.taskList[0]
     val task2 = course.taskList[1]
 
@@ -222,6 +232,8 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   }
 
   fun `test update modified non current task`() {
+    createHyperskillCourse()
+
     val task1 = course.taskList[0]
     val task2 = course.taskList[1]
 
@@ -279,6 +291,8 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   }
 
   fun `test update additional files`() {
+    createHyperskillCourse()
+
     val buildGradleText = """
       apply plugin: "java"
       sourceCompatibility = '1.8'
@@ -318,7 +332,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     HyperskillCourseUpdater.updateCourse(project, course, remoteCourse)
   }
 
-  override fun createCourse() {
+  private fun createHyperskillCourse() {
     course = courseWithFiles(
       language = FakeGradleBasedLanguage,
       courseProducer = ::HyperskillCourse
