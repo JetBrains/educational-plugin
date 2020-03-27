@@ -33,6 +33,7 @@ import java.net.URL
 private const val PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt"
 private const val IN_PROGRESS_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/in_progress_courses.txt"
 private const val FEATURED_STEPIK_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_stepik_courses.txt"
+const val UPDATE_NOTIFICATION_GROUP_ID = "Update.course"
 
 private val LOG = Logger.getInstance(StepikAuthorizer::class.java)
 
@@ -87,7 +88,7 @@ fun updateCourse(project: Project, course: EduCourse) {
 }
 
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {
-  val notification = Notification("Update.course", "Course Updates",
+  val notification = Notification(UPDATE_NOTIFICATION_GROUP_ID, "Course Updates",
                                   "Course is ready to <a href=\"update\">update</a>",
                                   NotificationType.INFORMATION,
                                   NotificationListener { notification, _ ->

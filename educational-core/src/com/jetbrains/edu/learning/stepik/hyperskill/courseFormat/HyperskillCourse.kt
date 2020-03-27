@@ -34,6 +34,8 @@ class HyperskillCourse : Course {
 
   fun getProjectLesson(): FrameworkLesson? = lessons.firstOrNull() as? FrameworkLesson
 
+  fun getProblemsLesson(): Lesson? = getLesson(HYPERSKILL_PROBLEMS)
+
   fun isTaskInProject(task: Task): Boolean = task.lesson == getProjectLesson()
 
   private fun descriptionNote(projectId: Int): String =
@@ -42,7 +44,7 @@ class HyperskillCourse : Course {
   override fun getItemType(): String = HYPERSKILL
 
   fun findOrCreateProblemsLesson(): Lesson {
-    var lesson = getLesson(HYPERSKILL_PROBLEMS)
+    var lesson = getProblemsLesson()
     if (lesson == null) {
       lesson = Lesson().apply {
         name = HYPERSKILL_PROBLEMS

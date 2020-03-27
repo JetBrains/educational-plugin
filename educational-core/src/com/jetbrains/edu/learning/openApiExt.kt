@@ -44,9 +44,18 @@ fun Document.toPsiFile(project: Project): PsiFile? {
   return PsiDocumentManager.getInstance(project).getPsiFile(this)
 }
 
-fun <T> computeUnderProgress(project: Project? = null, title: String, canBeCalled: Boolean = true, computation: (ProgressIndicator) -> T): T =
-  ProgressManager.getInstance().run(object : Task.WithResult<T, Exception>(project, title, canBeCalled) {
+fun <T> computeUnderProgress(project: Project? = null,
+                             title: String,
+                             canBeCancelled: Boolean = true,
+                             computation: (ProgressIndicator) -> T): T =
+  ProgressManager.getInstance().run(object : Task.WithResult<T, Exception>(project, title, canBeCancelled) {
     override fun compute(indicator: ProgressIndicator): T {
       return computation(indicator)
     }
   })
+
+fun runInBackground(project: Project? = null, title: String, canBeCancelled: Boolean = true, task: (ProgressIndicator) -> Unit) =
+  ProgressManager.getInstance().run(object : Task.Backgroundable(project, title, canBeCancelled) {
+    override fun run(indicator: ProgressIndicator) = task(indicator)
+  })
+

@@ -114,11 +114,9 @@ object GeneratorUtils {
   }
 
   @Throws(IOException::class)
-  private fun createTaskContent(task: Task, taskDir: VirtualFile) {
+  fun createTaskContent(task: Task, taskDir: VirtualFile) {
     for ((path, file) in task.taskFiles) {
-      if (taskDir.findFileByRelativePath(path) == null) {
-        createChildFile(taskDir, path, file.text)
-      }
+      createChildFile(taskDir, path, file.text)
     }
   }
 
@@ -163,11 +161,13 @@ object GeneratorUtils {
         val virtualTaskFile = dir.findOrCreateChildData(parentDir, fileName)
         if (EduUtils.isImage(path)) {
           virtualTaskFile.setBinaryContent(Base64.decodeBase64(text))
-        } else {
+        }
+        else {
           VfsUtil.saveText(virtualTaskFile, text)
         }
         virtualTaskFile
-      } else {
+      }
+      else {
         null
       }
     })
@@ -183,14 +183,16 @@ object GeneratorUtils {
       application.runWriteAction {
         try {
           resultRef.set(action.compute())
-        } catch (e: IOException) {
+        }
+        catch (e: IOException) {
           exceptionRef.set(e)
         }
       }
     }
     return if (exceptionRef.get() != null) {
       throw IOException(exceptionRef.get())
-    } else {
+    }
+    else {
       resultRef.get()
     }
   }

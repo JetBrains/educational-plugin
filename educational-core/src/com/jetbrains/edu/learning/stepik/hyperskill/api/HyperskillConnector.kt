@@ -148,7 +148,7 @@ abstract class HyperskillConnector {
     return topics
   }
 
-  fun getLesson(course: HyperskillCourse, attachmentLink: String): Lesson? {
+  fun getLesson(course: HyperskillCourse, attachmentLink: String): Lesson {
     val progressIndicator = ProgressManager.getInstance().progressIndicator
 
     val lesson = FrameworkLesson()
@@ -180,6 +180,11 @@ abstract class HyperskillConnector {
     return tasks
   }
 
+  fun getCodeChallenges(course: Course, lesson: Lesson, steps: List<Int>): List<Task> {
+    val stepSources = getStepSources(steps) ?: return emptyList()
+    return getTasks(course, lesson, stepSources)
+  }
+
   fun loadStages(hyperskillCourse: HyperskillCourse): Boolean {
     val hyperskillProject = hyperskillCourse.hyperskillProject ?: error("No Hyperskill project")
     val projectId = hyperskillProject.id
@@ -189,10 +194,6 @@ abstract class HyperskillConnector {
     }
     val stages = hyperskillCourse.stages
     val lesson = getLesson(hyperskillCourse, hyperskillProject.ideFiles)
-    if (lesson == null) {
-      LOG.warn("Project doesn't contain framework lesson")
-      return false
-    }
     if (lesson.taskList.size != stages.size) {
       LOG.warn("Course has ${stages.size} stages, but ${lesson.taskList.size} tasks")
       return false

@@ -196,6 +196,12 @@ object YamlFormatSynchronizer {
   }
 
   @JvmStatic
+  fun saveItemWithRemoteInfo(item: StudyItem) {
+    saveItem(item)
+    saveRemoteInfo(item)
+  }
+
+  @JvmStatic
   private fun saveItemRemoteInfo(item: StudyItem) {
     // we don't want to create remote info files in local courses
     if (item.id > 0 || item is HyperskillCourse) {

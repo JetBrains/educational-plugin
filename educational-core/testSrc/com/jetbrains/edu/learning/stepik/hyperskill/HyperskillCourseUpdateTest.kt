@@ -10,9 +10,10 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseUpdater.canBeUpdated
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseUpdater.shouldBeUpdated
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.util.*
@@ -201,12 +202,13 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     assertEquals(testText, task2.taskFiles["test/Tests2.kt"]!!.text)
 
     try {
-    withVirtualFileListener(course) {
-      task1.openTaskFileInEditor("src/Task.kt")
-      task1.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      withVirtualFileListener(course) {
+        task1.openTaskFileInEditor("src/Task.kt")
+        task1.status = CheckStatus.Solved
+        myFixture.testAction(NextTaskAction())
+      }
     }
-    } catch (e: Exception) {
+    catch (e: Exception) {
       throw  e
     }
 
@@ -337,17 +339,56 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
       }
     }
 
-    val taskDescription = EduUtils.getTaskTextFromTask(project, findTask(0, 0))!!
-    assertTrue(taskDescription.contains(newDescription))
+    checkDescriptionUpdated(findTask(0, 0), newDescription)
   }
 
-  private fun updateCourse(changeCourse: HyperskillCourse.() -> Unit) {
-    val remoteCourse = changeCourse(changeCourse)
-    HyperskillCourseUpdater.updateCourse(project, course, remoteCourse)
-    assertFalse("Course is not up-to-date after update", course.canBeUpdated(project, remoteCourse))
+  private fun checkDescriptionUpdated(task: Task, @Suppress("SameParameterValue") newDescription: String) {
+    val taskDescription = EduUtils.getTaskTextFromTask(project, task)!!
+    assertTrue("Task Description not updated", taskDescription.contains(newDescription))
   }
 
-  private fun changeCourse(changeCourse: HyperskillCourse.() -> Unit): HyperskillCourse {
+  fun `test coding tasks updated`() {
+    course = courseWithFiles(
+      language = FakeGradleBasedLanguage,
+      courseProducer = ::HyperskillCourse
+    ) {
+      frameworkLesson("lesson1") {
+        eduTask("task1", stepId = 1, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile("src/Task.kt", "fun foo() {}")
+          taskFile("src/Baz.kt", "fun baz() {}")
+          taskFile("test/Tests1.kt", "fun test1() {}")
+
+        }
+      }
+      lesson("Problems") {
+        codeTask(taskDescription = "old text") {
+          taskFile("Task.txt", "blabla")
+        }
+      }
+      additionalFile("build.gradle", "apply plugin: \"java\"")
+    } as HyperskillCourse
+    course.hyperskillProject = HyperskillProject()
+
+    val localTask = findTask(1, 0)
+
+    val newDescription = "new description"
+    val remoteTask = (findTask(1, 0) as CodeTask).apply {
+      descriptionText = newDescription
+      updateDate = Date(100)
+    }
+    updateCourse(listOf(HyperskillCourseUpdater.TaskUpdate(localTask, remoteTask)))
+    checkDescriptionUpdated(findTask(1, 0), newDescription)
+  }
+
+  private fun updateCourse(codeChallengesUpdates: List<HyperskillCourseUpdater.TaskUpdate> = emptyList(),
+                           changeCourse: (HyperskillCourse.() -> Unit)? = null) {
+    val remoteCourse = changeCourse?.let {  toRemoteCourse(changeCourse) }
+    HyperskillCourseUpdater.doUpdate(project, course, remoteCourse, codeChallengesUpdates)
+    val isProjectUpToDate = remoteCourse == null || course.getProjectLesson()?.shouldBeUpdated(project, remoteCourse) == false
+    assertTrue("Project is not up-to-date after update", isProjectUpToDate)
+  }
+
+  private fun toRemoteCourse(changeCourse: HyperskillCourse.() -> Unit): HyperskillCourse {
     val element = XmlSerializer.serialize(course)
     val remoteCourse = XmlSerializer.deserialize(element, HyperskillCourse::class.java)
     remoteCourse.init(null, null, false)
