@@ -5,7 +5,8 @@ import java.lang.ref.Reference
 import java.lang.ref.SoftReference
 import java.util.*
 
-// HACK: It will shadow realisation from education-core module
+// HACK: It shadows an implementation from education-core module.
+// We need it to avoid using [DynamicBundle] that isn't supported in Android studio yet.
 abstract class EduBundle(private val pathToBundle: String) {
   private var bundle: Reference<ResourceBundle>? = null
 
