@@ -35,10 +35,28 @@ class RsCodeExecutor : CodeExecutor {
     val output = processOutput.stdout
 
     return when {
-      processOutput.isSuccess -> Ok(output)
+      processOutput.isSuccess -> Ok(output.prepareToCheck())
       output.contains(COMPILATION_ERROR_MESSAGE, true) ->
         Err(CheckResult(CheckStatus.Failed, COMPILATION_FAILED_MESSAGE, output))
       else -> Err(CheckResult.FAILED_TO_CHECK)
     }
+  }
+
+  private fun String.prepareToCheck(): String {
+    var programOutputStarted = false
+    val outputBuffer = StringBuilder()
+
+    for (line in lineSequence()) {
+      if (programOutputStarted) {
+        outputBuffer.appendln(line)
+      }
+      else {
+        if (line.trimStart().startsWith("Running")) {
+          programOutputStarted = true
+        }
+      }
+    }
+
+    return outputBuffer.toString().removeSuffix("\n")
   }
 }

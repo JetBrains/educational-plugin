@@ -26,7 +26,7 @@ open class OutputTaskChecker(
   final override fun check(indicator: ProgressIndicator): CheckResult {
     try {
       val outputString = when (val result = codeExecutor.execute(project, task, indicator)) {
-        is Ok -> CheckUtils.postProcessOutput(result.value).prepareToCheck()
+        is Ok -> CheckUtils.postProcessOutput(result.value)
         is Err -> return result.error
       }
 
@@ -43,8 +43,6 @@ open class OutputTaskChecker(
       return FAILED_TO_CHECK
     }
   }
-
-  protected open fun String.prepareToCheck(): String = this
 
   private fun checkOutput(actual: String, expected: String): CheckResult {
     return if (actual == expected) {
