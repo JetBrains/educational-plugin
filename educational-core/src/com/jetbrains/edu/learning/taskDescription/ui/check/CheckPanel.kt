@@ -101,7 +101,8 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   }
 
   private fun updateBackground() {
-    UIUtil.setBackgroundRecursively(this, TaskDescriptionView.getTaskDescriptionBackgroundColor())
+    UIUtil.setBackgroundRecursively(checkFinishedPanel, TaskDescriptionView.getTaskDescriptionBackgroundColor())
+    UIUtil.setBackgroundRecursively(checkDetailsPlaceholder, TaskDescriptionView.getTaskDescriptionBackgroundColor())
   }
 
   private fun getResultPanel(task: Task, result: CheckResult): JComponent {
