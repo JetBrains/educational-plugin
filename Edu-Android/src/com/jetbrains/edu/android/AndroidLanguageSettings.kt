@@ -17,6 +17,7 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.io.FileUtil
+import com.jetbrains.edu.android.messages.EduAndroidBundle
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
@@ -37,12 +38,12 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
   }
 
   override fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
-    val androidSdkLocation = LabeledComponent.create<JComponent>(locationField, "Android SDK Location", BorderLayout.WEST)
+    val androidSdkLocation = LabeledComponent.create<JComponent>(locationField, EduAndroidBundle.message("android.sdk.location"), BorderLayout.WEST)
     return super.getLanguageSettingsComponents(course, context) + androidSdkLocation
   }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    return if (locationField.text.isEmpty()) ValidationMessage("Specify Android SDK location") else null
+    return if (locationField.text.isEmpty()) ValidationMessage(EduAndroidBundle.message("specify.android.sdk.location")) else null
   }
 
   // Inspired by [com.android.tools.idea.updater.configure.SdkUpdaterConfigPanel#setUpSingleSdkChooser]
@@ -80,8 +81,8 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
         }
       }
 
-      override fun getProgressTitle(): String = "Setting up SDK..."
-      override fun getWizardActionDescription(): String = "Setting up SDK..."
+      override fun getProgressTitle(): String = EduAndroidBundle.message("setting.up.sdk")
+      override fun getWizardActionDescription(): String = EduAndroidBundle.message("setting.up.sdk")
     }
     wizard.init()
     wizard.show()

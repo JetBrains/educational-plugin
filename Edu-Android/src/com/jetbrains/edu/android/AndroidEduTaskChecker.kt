@@ -76,8 +76,11 @@ class AndroidChecker(task: EduTask, envChecker: EnvironmentChecker, project: Pro
     val future = startEmulatorIfExists()
     if (future != null) return future
 
-    Messages.showInfoMessage(project, "Android emulator is required to check tasks. New emulator will be created and launched.",
-                             "Android Emulator not Found")
+    Messages.showInfoMessage(
+      project,
+      EduAndroidBundle.message("android.emulator.not.found.message"),
+      EduAndroidBundle.message("android.emulator.not.found.title")
+    )
 
     val avdOptionsModel = AvdOptionsModel(null)
     val dialog = AvdWizardUtils.createAvdWizard(null, project, avdOptionsModel)

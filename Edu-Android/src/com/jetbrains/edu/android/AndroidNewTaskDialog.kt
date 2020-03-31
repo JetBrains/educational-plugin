@@ -7,6 +7,7 @@ import com.android.tools.idea.npw.platform.AndroidVersionsInfo
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
+import com.jetbrains.edu.android.messages.EduAndroidBundle
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialogBase
@@ -58,13 +59,13 @@ class AndroidNewTaskAfterPopupDialog(
       comboBoxWrapper.combobox.isEnabled = true
     })
     addTextValidator(packageNameField) { text ->
-      if (text == null) return@addTextValidator "Empty package"
+      if (text == null) return@addTextValidator EduAndroidBundle.message("empty.package")
       AndroidUtils.validateAndroidPackageName(text)
     }
 
     with(builder) {
-      row("Package:") { packageNameField() }
-      row("Min Sdk:") { comboBoxWrapper.combobox(CCFlags.growX) }
+      row(EduAndroidBundle.message("package.row")) { packageNameField() }
+      row(EduAndroidBundle.message("min.sdk.row")) { comboBoxWrapper.combobox(CCFlags.growX) }
     }
   }
 
@@ -84,7 +85,7 @@ private class LoadingRenderer<E>(private val delegate: ListCellRenderer<E>) : Li
   override fun getListCellRendererComponent(list: JList<out E>?, value: E?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
     val component = delegate.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
     if (value == null && component is JLabel) {
-      component.text = "Loading..."
+      component.text = EduAndroidBundle.message("loading")
     }
     return component
   }
