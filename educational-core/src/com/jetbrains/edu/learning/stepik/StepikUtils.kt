@@ -64,7 +64,6 @@ fun getStepikLink(task: Task, lesson: Lesson): String {
 }
 
 fun updateCourseIfNeeded(project: Project, course: EduCourse) {
-  val id = course.id
   if (!course.isRemote || !course.isStudy) {
     return
   }

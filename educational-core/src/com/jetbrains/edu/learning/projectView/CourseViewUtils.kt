@@ -79,7 +79,7 @@ object CourseViewUtils {
       return baseDir
     }
     val vFile = baseDir.virtualFile
-    val sourceVFile = vFile.findFileByRelativePath(sourceDirName!!) ?: return baseDir
+    val sourceVFile = vFile.findFileByRelativePath(sourceDirName) ?: return baseDir
 
     if (task.hasVisibleTaskFilesNotInsideSourceDir(project)) {
       return baseDir

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -363,20 +364,17 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   ) = taskFile(name, text, visible, buildTaskFile)
 
   fun taskFileFromResources(
+    disposable: Disposable,
     name: String,
     path: String,
     visible: Boolean = true,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) {
     val ioFile = File(path)
-    try {
-      VfsRootAccess.allowRootAccess(ioFile.absolutePath)
-      val file = LocalFileSystem.getInstance().findFileByIoFile(ioFile) ?: error("Can't find `$path`")
-      val text = CCUtils.loadText(file)
-      taskFile(name, text, visible, buildTaskFile)
-    } finally {
-      VfsRootAccess.disallowRootAccess(ioFile.absolutePath)
-    }
+    VfsRootAccess.allowRootAccess(disposable, ioFile.absolutePath)
+    val file = LocalFileSystem.getInstance().findFileByIoFile(ioFile) ?: error("Can't find `$path`")
+    val text = CCUtils.loadText(file)
+    taskFile(name, text, visible, buildTaskFile)
   }
 
   fun dir(dirName: String, buildTask: TaskBuilder.() -> Unit) {

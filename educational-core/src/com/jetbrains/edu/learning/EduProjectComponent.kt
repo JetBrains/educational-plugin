@@ -78,7 +78,6 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
     // that's why can't use `ProjectComponent#projectClosed`
     connection.subscribe(ProjectManager.TOPIC, object : ProjectManagerListener {
       override fun projectClosing(project: Project) {
-        val course = StudyTaskManager.getInstance(project).course
         if (!isUnitTestMode && isStudentProject(project)) {
           saveAll(project)
         }

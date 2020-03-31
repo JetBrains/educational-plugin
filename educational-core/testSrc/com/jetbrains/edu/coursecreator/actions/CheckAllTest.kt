@@ -83,6 +83,8 @@ class CheckAllTest : EduActionTestCase() {
 
   private fun doTestWithNotification(checkNotification: (Notification) -> Unit) {
     var notificationShown = false
+    // BACKCOMPAT: 2019.2
+    @Suppress("DEPRECATION")
     connection.subscribe(Notifications.TOPIC, object: NotificationsAdapter() {
       override fun notify(notification: Notification) {
         notificationShown = true

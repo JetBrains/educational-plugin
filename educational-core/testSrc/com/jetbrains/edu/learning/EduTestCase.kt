@@ -4,7 +4,6 @@ import com.google.common.collect.Lists
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
@@ -13,14 +12,11 @@ import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl
 import com.intellij.openapi.fileEditor.impl.text.TextEditorPsiDataProvider
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import com.intellij.ui.docking.DockContainer
-import com.intellij.ui.docking.DockManager
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
@@ -45,7 +41,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import java.io.IOException
 
-abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
+abstract class EduTestCase : BasePlatformTestCase() {
   private lateinit var myManager: FileEditorManagerImpl
 
   @Throws(Exception::class)
@@ -294,8 +290,6 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     extension.implementationClass = configuratorClass.name
     extension.courseType = courseType
     extension.environment = environment
-    ExtensionPointName.create<EducationalExtensionPoint<*>>(EducationalExtensionPoint.EP_NAME)
-      .getPoint(null)
-      .registerExtension(extension, disposable)
+    EducationalExtensionPoint.EP_NAME.getPoint(null).registerExtension(extension, disposable)
   }
 }

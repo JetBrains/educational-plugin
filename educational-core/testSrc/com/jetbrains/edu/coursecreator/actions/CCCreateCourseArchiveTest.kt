@@ -325,6 +325,7 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
   }
 
   private fun generateJson(): String {
+    @Suppress("DEPRECATION")
     val baseDir = myFixture.project.baseDir
     VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
     val errorMessage = CCCreateCourseArchive.createCourseArchive(myFixture.project, "course",

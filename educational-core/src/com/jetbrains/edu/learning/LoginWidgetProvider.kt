@@ -1,3 +1,6 @@
+// BACKCOMPAT: 2019.3
+@file:Suppress("DEPRECATION")
+
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.project.Project

@@ -1,3 +1,6 @@
+// BACKCOMPAT: 2019.3
+@file:Suppress("DEPRECATION")
+
 package com.jetbrains.edu.coursecreator
 
 import com.intellij.codeInsight.template.TemplateContextType

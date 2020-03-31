@@ -41,6 +41,8 @@ class JLanguageSettings : JdkLanguageSettings() {
                               ?: return ValidationMessage("Unsupported Java versions: $courseJavaVersionDescription")
 
       val jdkItem = myJdkSettings.jdkItem
+      // BACKCOMPAT: 2019.3
+      @Suppress("DEPRECATION")
       if (jdkItem !is JdkComboBox.SuggestedJdkItem) {
         val providedJavaVersion = jdkItem?.jdk?.versionString ?: return ValidationMessage("No Java sdk")
 

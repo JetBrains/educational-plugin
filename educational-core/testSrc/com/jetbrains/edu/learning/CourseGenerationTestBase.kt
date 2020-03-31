@@ -35,6 +35,8 @@ abstract class CourseGenerationTestBase<Settings> : PlatformTestCase() {
 
   override fun setUp() {
     super.setUp()
+    // BACKCOMPAT: 2019.2
+    @Suppress("USELESS_ELVIS")
     rootDir = tempDir.createTempVDir() ?: error("Failed to create root dir for test")
   }
 

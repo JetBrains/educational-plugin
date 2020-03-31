@@ -21,7 +21,7 @@ class CCGetCourseFromStepik : DumbAwareAction("Get Course From Stepik", "Get Cou
     if (!courseId.isNullOrEmpty()) {
       ProgressManager.getInstance().run(object : Task.Modal(project, "Loading Course", true) {
         override fun run(indicator: ProgressIndicator) {
-          createCourse(courseId!!)
+          createCourse(courseId)
         }
       })
     }

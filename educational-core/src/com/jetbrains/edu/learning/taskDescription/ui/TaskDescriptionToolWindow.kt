@@ -38,6 +38,8 @@ import javax.swing.JComponent
 
 abstract class TaskDescriptionToolWindow {
   init {
+    // BACKCOMPAT: 2019.2
+    @Suppress("DEPRECATION")
     LafManager.getInstance().addLafManagerListener(StudyLafManagerListener())
   }
 

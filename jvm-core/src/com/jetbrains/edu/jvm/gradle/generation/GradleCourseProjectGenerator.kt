@@ -73,6 +73,8 @@ open class GradleCourseProjectGenerator(
 
   protected open fun getJdk(settings: JdkProjectSettings): Sdk? {
     val selectedItem = settings.jdkItem ?: return null
+    // BACKCOMPAT: 2019.3. Drop it
+    @Suppress("DEPRECATION")
     if (selectedItem is JdkComboBox.SuggestedJdkItem) {
       val type = selectedItem.sdkType
       val path = selectedItem.path

@@ -24,7 +24,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   override fun getServiceName(): String = EDU_HYPERSKILL_SERVICE_NAME
 
   @Throws(InterruptedException::class, InvocationTargetException::class)
-  override fun isHostTrusted(request: FullHttpRequest): Boolean {
+  override fun isHostTrusted(request: FullHttpRequest, urlDecoder: QueryStringDecoder): Boolean {
     val uri = request.uri()
     val codeMatcher = OAUTH_CODE_PATTERN.matcher(uri)
     val openCourseMatcher = OPEN_COURSE_PATTERN.matcher(uri)
@@ -34,7 +34,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
                                                        pluginInfo.matches())) {
       true
     }
-    else super.isHostTrusted(request)
+    else super.isHostTrusted(request, urlDecoder)
   }
 
   @Throws(IOException::class)

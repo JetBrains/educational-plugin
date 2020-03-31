@@ -1,8 +1,7 @@
 package com.jetbrains.edu.learning.format
 
 import com.intellij.openapi.util.JDOMUtil
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import com.intellij.util.loadElement
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.serialization.SerializationUtils
@@ -10,7 +9,7 @@ import junit.framework.ComparisonFailure
 import org.jdom.Element
 import java.nio.file.Paths
 
-class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
+class StudyMigrationTest : BasePlatformTestCase() {
 
   fun testFromThirdToForth() = doTest(3)
 
@@ -27,7 +26,7 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
   fun testFromEighthToNinth() {
     myFixture.copyDirectoryToProject("toNinth/lesson1", "lesson1")
 
-    val element = loadElement(Paths.get(testDataPath).resolve("${getTestName(true)}.xml"))
+    val element = JDOMUtil.load(Paths.get(testDataPath).resolve("${getTestName(true)}.xml"))
     val converted = SerializationUtils.Xml.convertToNinthVersion(project, element)
 
     val expectedFileTree = fileTree {
@@ -45,7 +44,7 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
     expectedFileTree.assertEquals(project.courseDir)
 
     val expected = Paths.get(testDataPath).resolve("${getTestName(true)}.after.xml")
-    checkEquals(loadElement(expected), converted)
+    checkEquals(JDOMUtil.load(expected), converted)
   }
 
   fun test9to10() = doTest(9)
@@ -70,7 +69,7 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
     val name = getTestName(true)
     val before = Paths.get(testDataPath).resolve("$name.xml")
     val after = Paths.get(testDataPath).resolve("$name.after.xml")
-    val element = loadElement(before)
+    val element = JDOMUtil.load(before)
     var converted = element
     when (version) {
       1 -> converted = SerializationUtils.Xml.convertToSecondVersion(project, element)
@@ -85,7 +84,7 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
       14 -> converted = SerializationUtils.Xml.convertTo15Version(project, element)
       15 -> converted = SerializationUtils.Xml.convertTo16Version(project, element)
     }
-    checkEquals(loadElement(after), converted)
+    checkEquals(JDOMUtil.load(after), converted)
   }
 
   private fun checkEquals(expected: Element, actual: Element) {

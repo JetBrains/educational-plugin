@@ -215,6 +215,7 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
   fun testBrokenJdk() {
     UIUtil.dispatchAllInvocationEvents()
 
+    @Suppress("DEPRECATION")
     val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), myProject.baseDir, JavaSdk.getInstance(), true, null, "Broken JDK")!!
     runWriteAction {
       ProjectRootManager.getInstance(myProject).projectSdk = jdk

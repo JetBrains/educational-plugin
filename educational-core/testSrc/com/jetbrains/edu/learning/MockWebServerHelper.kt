@@ -3,11 +3,11 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.ThreadTracker
-import junit.framework.Assert.assertEquals
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
+import org.junit.Assert.assertEquals
 
 typealias ResponseHandler = (RecordedRequest) -> MockResponse?
 

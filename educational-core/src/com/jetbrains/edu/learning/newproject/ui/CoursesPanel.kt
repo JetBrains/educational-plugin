@@ -142,8 +142,9 @@ class CoursesPanel(courses: List<Course>,
         invokeSwitchBootJdk()
       }
       else if (myErrorState === IncompatibleVersion) {
-        PluginsAdvertiser.installAndEnablePlugins(
-          setOf(EduNames.PLUGIN_ID)) {}
+        // BACKCOMPAT: 2019.3
+        @Suppress("DEPRECATION")
+        PluginsAdvertiser.installAndEnablePlugins(setOf(EduNames.PLUGIN_ID)) {}
       }
       else if (myErrorState is RequiredPluginsDisabled) {
         val disabledPluginIds = (myErrorState as RequiredPluginsDisabled).disabledPluginIds

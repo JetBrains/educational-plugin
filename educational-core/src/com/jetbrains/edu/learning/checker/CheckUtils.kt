@@ -148,6 +148,8 @@ object CheckUtils {
         val runner = ProgramRunner.getRunner(DefaultRunExecutor.EXECUTOR_ID, configuration.configuration)
         val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configuration).activeTarget().build()
         environments.add(env)
+        // BACKCOMPAT: 2019.3
+        @Suppress("DEPRECATION")
         runner?.execute(env) { descriptor ->
           // Descriptor can be null in some cases.
           // For example, IntelliJ Rust's test runner provides null here if compilation fails

@@ -80,7 +80,7 @@ object EduBuiltInServerUtils {
 
   @JvmStatic
   fun openRecentProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? {
-    val state = recentProjectsManagerInstance.state ?: return null
+    val state = recentProjectsManagerInstance.state
 
     val recentPaths = state.recentPaths
     val parser = SAXBuilder()

@@ -12,6 +12,8 @@ class UpdateNotification(title: String, content: String) :
 
 private object UpdateNotificationListener : NotificationListener.Adapter() {
   override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
+    // BACKCOMPAT: 2019.3
+    @Suppress("DEPRECATION")
     PluginsAdvertiser.installAndEnablePlugins(setOf(EduNames.PLUGIN_ID)) {
       notification.expire()
     }

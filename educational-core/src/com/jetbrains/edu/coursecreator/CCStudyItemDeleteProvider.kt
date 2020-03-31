@@ -67,6 +67,8 @@ class CCStudyItemDeleteProvider : DeleteProvider {
       }
     }
 
+    // BACKCOMPAT: 2019.3
+    @Suppress("DEPRECATION")
     val result = showOkCancelDialog(project, message, title, OK_BUTTON, CANCEL_BUTTON, getQuestionIcon())
     if (result != OK) return
 

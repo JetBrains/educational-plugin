@@ -30,6 +30,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
       changeType(project, existingItem, deserializedItem)
       return
     }
+    @Suppress("DEPRECATION")
     existingItem.customPresentableName = deserializedItem.customPresentableName
     updateChildren(deserializedItem, existingItem)
   }

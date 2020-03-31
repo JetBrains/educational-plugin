@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.AbstractPainter
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.IdeGlassPaneUtil
-import com.intellij.util.ui.JBUI
+import com.intellij.ui.scale.JBUIScale
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getEduEditors
@@ -21,7 +21,7 @@ import java.awt.Shape
 
 object PlaceholderPainter {
 
-  val STROKE_WIDTH: Float = JBUI.scale(2f)
+  val STROKE_WIDTH: Float = JBUIScale.scale(2f)
 
   private val disposables: MutableMap<AnswerPlaceholder, MutableSet<Disposable>> = HashMap()
 

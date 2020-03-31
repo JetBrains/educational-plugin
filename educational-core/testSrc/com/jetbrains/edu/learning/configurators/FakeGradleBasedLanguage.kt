@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.configurators
 
 import com.intellij.lang.Language
-import com.intellij.openapi.fileTypes.FileTypeConsumer
-import com.intellij.openapi.fileTypes.FileTypeFactory
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -26,15 +24,9 @@ object FakeGradleBasedLanguage : Language("FakeGradleBasedLanguage")
 
 object FakeGradleFileType : LanguageFileType(FakeGradleBasedLanguage) {
   override fun getIcon(): Icon? = null
-  override fun getName(): String = FakeGradleBasedLanguage.displayName
+  override fun getName(): String = "FakeGradleFileType"
   override fun getDefaultExtension(): String = "kt"
   override fun getDescription(): String = "File type for fake gradle based language"
-}
-
-class FakeGradleTypeFactory : FileTypeFactory() {
-  override fun createFileTypes(consumer: FileTypeConsumer) {
-    consumer.consume(FakeGradleFileType)
-  }
 }
 
 class FakeGradleConfigurator : EduConfigurator<Unit> {

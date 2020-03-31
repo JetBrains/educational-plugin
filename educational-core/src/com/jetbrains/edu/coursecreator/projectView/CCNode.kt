@@ -34,7 +34,7 @@ class CCNode(
       val psiFile = value.containingFile
       val virtualFile = psiFile.virtualFile
       val course = StudyTaskManager.getInstance(myProject).course ?: return null
-      val configurator = course.configurator ?: return CCStudentInvisibleFileNode(myProject, psiFile, settings)
+      if (course.configurator == null) return CCStudentInvisibleFileNode(myProject, psiFile, settings)
       if (EduUtils.isTaskDescriptionFile(virtualFile.name)) {
         return null
       }

@@ -157,7 +157,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
       frameworkLesson(lessonName) {
         eduTask {
           taskFile("Task.kt")
-          taskFileFromResources(imageName, "$testDataPath/$imageName")
+          taskFileFromResources(testRootDisposable, imageName, "$testDataPath/$imageName")
         }
       }
     }

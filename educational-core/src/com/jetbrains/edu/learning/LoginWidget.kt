@@ -29,6 +29,8 @@ abstract class LoginWidget(val project: Project,
   abstract val icon: Icon
   open val disabledIcon: Icon
     get() {
+      // BACKCOMPAT: 2019.2
+      @Suppress("USELESS_ELVIS")
       return IconUtil.desaturate(icon) ?: error("IconUtil.desaturate failed")
     }
 
@@ -111,7 +113,9 @@ abstract class LoginWidget(val project: Project,
 
   override fun getComponent(): JComponent = component
 
-  override fun getPresentation(type: StatusBarWidget.PlatformType): StatusBarWidget.WidgetPresentation? = null
+  // BACKCOMPAT: 2019.2. Drop it
+  @Suppress("DEPRECATION")
+  override fun getPresentation( type: StatusBarWidget.PlatformType): StatusBarWidget.WidgetPresentation? = null
 
   override fun install(statusBar: StatusBar) {}
 

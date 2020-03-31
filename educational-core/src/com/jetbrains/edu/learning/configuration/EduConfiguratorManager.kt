@@ -43,8 +43,7 @@ object EduConfiguratorManager {
    */
   @JvmStatic
   fun allExtensions(): List<EducationalExtensionPoint<EduConfigurator<*>>> =
-    Extensions.getExtensions<EducationalExtensionPoint<EduConfigurator<*>>>(EducationalExtensionPoint.EP_NAME, null)
-      .filter { it.instance.isEnabled }
+    EducationalExtensionPoint.EP_NAME.extensions.filter { it.instance.isEnabled }
 
   /**
    * Returns all languages with enabled [EduConfigurator] for [EduNames.PYCHARM] course type

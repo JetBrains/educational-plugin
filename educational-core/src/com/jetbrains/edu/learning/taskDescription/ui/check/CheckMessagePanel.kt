@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.taskDescription.ui.check
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -58,7 +59,7 @@ class CheckMessagePanel private constructor(): JPanel() {
       // `JBUI.Fonts.create` implementation scales font size.
       // Also, at the same time `font.size` returns scaled size.
       // So we have to pass non scaled font size to create font with correct size
-      font = JBUI.Fonts.create(Font.MONOSPACED, Math.round(font.size / JBUI.scale(1f)))
+      font = JBUI.Fonts.create(Font.MONOSPACED, Math.round(font.size / JBUIScale.scale(1f)))
       verticalAlignment = JLabel.TOP
     }
     val labeledComponent = LabeledComponent.create<JComponent>(textPane, labelText, BorderLayout.WEST)

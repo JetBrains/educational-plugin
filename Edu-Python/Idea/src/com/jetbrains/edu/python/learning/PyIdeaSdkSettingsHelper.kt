@@ -42,6 +42,8 @@ class PyIdeaSdkSettingsHelper : PySdkSettingsHelper {
 
     val sdkTypeIdFilter = Condition<SdkTypeId> { it == PythonSdkType.getInstance() || it == PyFakeSdkType }
     val sdkFilter = JdkComboBox.getSdkFilter(sdkTypeIdFilter)
+    // BACKCOMPAT: 2019.3
+    @Suppress("DEPRECATION")
     val comboBox = JdkComboBox(model, sdkTypeIdFilter, sdkFilter, sdkTypeIdFilter, true)
     comboBox.addActionListener { onSdkSelected(comboBox, onSdkSelected) }
 
@@ -54,6 +56,8 @@ class PyIdeaSdkSettingsHelper : PySdkSettingsHelper {
 
     val comboBoxWithBrowseButton = ComboboxWithBrowseButton(comboBox)
     val setupButton = comboBoxWithBrowseButton.button
+    // BACKCOMPAT: 2019.3
+    @Suppress("DEPRECATION")
     comboBox.setSetupButton(setupButton, null, model, comboBox.model.selectedItem as JdkComboBox.JdkComboBoxItem?, null, false)
     return comboBoxWithBrowseButton
   }

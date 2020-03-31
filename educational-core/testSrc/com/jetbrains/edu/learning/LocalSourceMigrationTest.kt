@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.io.File
 
-class LocalSourceMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
+class LocalSourceMigrationTest : BasePlatformTestCase() {
 
   private val beforeFileName: String get() = getTestName(true).trim().replace(" ", "_") + ".json"
   private val afterFileName: String get() = getTestName(true).trim().replace(" ", "_") + ".after.json"

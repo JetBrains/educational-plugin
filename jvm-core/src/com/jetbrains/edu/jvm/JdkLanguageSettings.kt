@@ -37,10 +37,14 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   override fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
     val sdkTypeFilter = Condition<SdkTypeId> { sdkTypeId -> sdkTypeId is JavaSdkType && !(sdkTypeId as JavaSdkType).isDependent }
     val sdkFilter = Condition<Sdk> { sdk -> sdkTypeFilter.value(sdk.sdkType) }
+    // BACKCOMPAT: 2019.3
+    @Suppress("DEPRECATION")
     val jdkComboBox = JdkComboBox(myModel, sdkTypeFilter, sdkFilter, sdkTypeFilter, true)
     preselectJdk(course, jdkComboBox, myModel)
     val comboboxWithBrowseButton = ComboboxWithBrowseButton(jdkComboBox)
     val setupButton = comboboxWithBrowseButton.button
+    // BACKCOMPAT: 2019.3
+    @Suppress("DEPRECATION")
     jdkComboBox.setSetupButton(setupButton, null, myModel, jdkComboBox.selectedItem, null, false)
     myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.selectedItem)
     jdkComboBox.addItemListener {
