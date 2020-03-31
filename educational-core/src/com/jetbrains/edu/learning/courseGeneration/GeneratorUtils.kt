@@ -315,6 +315,4 @@ object GeneratorUtils {
    * Also removes leading and trailing dots, because gradle project name must not start or end with a '.'
    */
   fun sanitizeName(name: String): String = name.replace(INVALID_SYMBOLS, "_").replace(LEADING_AND_TRAILING_DOTS, "")
-
-  data class DefaultFileProperties(val name: String, val text: String)
 }
