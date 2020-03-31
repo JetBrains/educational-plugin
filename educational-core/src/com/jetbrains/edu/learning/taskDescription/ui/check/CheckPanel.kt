@@ -55,15 +55,6 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
     return rightActionsToolbar
   }
 
-  @Suppress("SameParameterValue")
-  private fun createButtonToolbar(actionId: String): JComponent {
-    val action = ActionManager.getInstance().getAction(actionId)
-    return createButtonToolbar(action)
-  }
-
-  private fun createButtonToolbar(action: AnAction) =
-    ActionManager.getInstance().createButtonToolbar(ACTION_PLACE, DefaultActionGroup(action))
-
   private fun createSingleActionToolbar(actionId: String): JComponent {
     val action = ActionManager.getInstance().getAction(actionId)
     return createSingleActionToolbar(action)
@@ -126,7 +117,7 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   private fun createNextTaskButtonPanel(task: Task): JPanel {
     val panel = JPanel(BorderLayout())
     if (NavigationUtils.nextTask(task) != null) {
-      val nextButton = createButtonToolbar(NextTaskAction.ACTION_ID)
+      val nextButton = CheckPanelButtonComponent(ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID))
       nextButton.border = JBUI.Borders.empty(0, 12, 0, 0)
       panel.add(nextButton, BorderLayout.WEST)
     }
@@ -144,7 +135,7 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
 
   private fun updateCheckButtonWrapper(task: Task) {
     checkButtonWrapper.removeAll()
-    checkButtonWrapper.add(createButtonToolbar(CheckAction.createCheckAction(task)), BorderLayout.WEST)
+    checkButtonWrapper.add(CheckPanelButtonComponent(CheckAction.createCheckAction(task), true), BorderLayout.WEST)
     if (task is TheoryTask || task.status == CheckStatus.Solved) {
       addResultPanel(task)
     }
