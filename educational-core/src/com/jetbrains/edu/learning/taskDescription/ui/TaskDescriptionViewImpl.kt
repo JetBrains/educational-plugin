@@ -127,8 +127,13 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val panel = JPanel(BorderLayout())
     panel.border = JBUI.Borders.empty(0, 15, 15, 0)
 
-    val taskTextTW = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JavaFxToolWindow() else SwingToolWindow()
-    val taskTextPanel = taskTextTW.createTaskInfoPanel(project)
+    val taskTextTW = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
+      JavaFxToolWindow(project)
+    }
+    else {
+      SwingToolWindow(project)
+    }
+    val taskTextPanel = taskTextTW.createTaskInfoPanel()
     val topPanel = JPanel(BorderLayout())
 
     panel.add(topPanel, BorderLayout.NORTH)
@@ -143,7 +148,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     separatorPanel.add(separator, BorderLayout.CENTER)
     bottomPanel.add(separatorPanel, BorderLayout.NORTH)
 
-    val taskSpecificPanel = taskTextTW.createTaskSpecificPanel(project)
+    val taskSpecificPanel = taskTextTW.createTaskSpecificPanel()
     taskSpecificPanel.border = JBUI.Borders.emptyRight(15)
     bottomPanel.add(taskSpecificPanel, BorderLayout.CENTER)
 

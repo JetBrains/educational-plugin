@@ -47,24 +47,22 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
                                                              " %s" +
                                                              "  </div>";
 
-  private Project myProject;
   private BrowserWindow taskSpecificBrowserWindow;
 
-  public JavaFxToolWindow() {
-    super();
+  public JavaFxToolWindow(@NotNull Project project) {
+    super(project);
   }
 
   @NotNull
   @Override
-  public JComponent createTaskInfoPanel(@NotNull Project project) {
-    myProject = project;
-    myBrowserWindow = new BrowserWindow(project, true);
+  public JComponent createTaskInfoPanel() {
+    myBrowserWindow = new BrowserWindow(getProject(), true);
     return myBrowserWindow.getPanel();
   }
 
   @NotNull
-  public JComponent createTaskSpecificPanel(@NotNull Project project) {
-    taskSpecificBrowserWindow = new BrowserWindow(project, true);
+  public JComponent createTaskSpecificPanel() {
+    taskSpecificBrowserWindow = new BrowserWindow(getProject(), true);
     taskSpecificBrowserWindow.getPanel().setPreferredSize(JBUI.size(Integer.MAX_VALUE, 0));
     return taskSpecificBrowserWindow.getPanel();
   }
@@ -109,7 +107,7 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   @NotNull
   @Override
   protected String wrapHint(@NotNull Element hintElement, @NotNull String displayedHintNumber) {
-    Course course = StudyTaskManager.getInstance(myProject).getCourse();
+    Course course = StudyTaskManager.getInstance(getProject()).getCourse();
     String hintText = hintElement.html();
     if (course == null) {
       return String.format(HINT_BLOCK_TEMPLATE, displayedHintNumber, hintText);

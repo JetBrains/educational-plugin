@@ -58,16 +58,14 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
   private static final String HINT_TEXT_PATTERN = "<div class='hint_text'>%s</div>";
   private JTextPane myTaskTextPane;
   private JPanel myTaskSpecificPanel;
-  private Project myProject;
 
-  public SwingToolWindow() {
-    super();
+  public SwingToolWindow(@NotNull Project project) {
+    super(project);
   }
 
   @NotNull
   @Override
-  public JComponent createTaskInfoPanel(@NotNull Project project) {
-    myProject = project;
+  public JComponent createTaskInfoPanel() {
     final JPanel panel = new JPanel(new BorderLayout());
 
     myTaskTextPane = SwingTaskUtil.createTextPane();
@@ -75,13 +73,13 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
     scrollPane.setBorder(null);
     panel.add(scrollPane, BorderLayout.CENTER);
     myTaskTextPane.setBorder(JBUI.Borders.empty(20, 0, 0, 10));
-    myTaskTextPane.addHyperlinkListener(new EduHyperlinkListener(project));
+    myTaskTextPane.addHyperlinkListener(new EduHyperlinkListener(getProject()));
 
     return panel;
   }
 
   @NotNull
-  public JComponent createTaskSpecificPanel(@NotNull Project project) {
+  public JComponent createTaskSpecificPanel() {
     myTaskSpecificPanel = new JPanel(new BorderLayout());
     return myTaskSpecificPanel;
   }
@@ -99,7 +97,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
   }
 
   public void setText(@NotNull String text, @Nullable Task task) {
-    myTaskTextPane.setText(JavaFxTaskUtil.htmlWithResources(myProject, wrapHints(text, task)));
+    myTaskTextPane.setText(JavaFxTaskUtil.htmlWithResources(getProject(), wrapHints(text, task)));
   }
 
   @NotNull
@@ -111,7 +109,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
       hintElement.wrap("<div class='top'></div>");
     }
 
-    Course course = StudyTaskManager.getInstance(myProject).getCourse();
+    Course course = StudyTaskManager.getInstance(getProject()).getCourse();
     if (course != null && !course.isStudy()) {
       String downIcon = getIconFullPath("/style/hint/swing/swing_icons/retina_down.png", "/style/hint/swing/swing_icons/down.png");
       return String.format(HINT_EXPANDED_BLOCK_TEMPLATE, bulbIcon, displayedHintNumber, hintText, displayedHintNumber, downIcon, hintText);
@@ -137,7 +135,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
   }
 
   class EduHyperlinkListener implements HyperlinkListener {
-    private Project myProject;
+    private final Project myProject;
 
     public EduHyperlinkListener(@NotNull Project project) {
       myProject = project;

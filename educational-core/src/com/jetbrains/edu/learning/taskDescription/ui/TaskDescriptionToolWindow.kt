@@ -36,16 +36,16 @@ import org.jsoup.nodes.Element
 import javax.swing.JComponent
 
 
-abstract class TaskDescriptionToolWindow {
+abstract class TaskDescriptionToolWindow(protected val project: Project) {
   init {
     // BACKCOMPAT: 2019.2
     @Suppress("DEPRECATION")
-    LafManager.getInstance().addLafManagerListener(StudyLafManagerListener())
+    LafManager.getInstance().addLafManagerListener(StudyLafManagerListener(), project)
   }
 
-  abstract fun createTaskInfoPanel(project: Project): JComponent
+  abstract fun createTaskInfoPanel(): JComponent
 
-  abstract fun createTaskSpecificPanel(project: Project): JComponent
+  abstract fun createTaskSpecificPanel(): JComponent
 
   open fun updateTaskSpecificPanel(task: Task?) {}
 
