@@ -41,7 +41,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
       notifyListeners()
     }
 
-    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(langStandardComboBox, "C++ Standard", BorderLayout.WEST))
+    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(langStandardComboBox, EduCppBundle.message("cpp.standard"), BorderLayout.WEST))
   }
 
   override fun getLanguageVersions(): List<String> {

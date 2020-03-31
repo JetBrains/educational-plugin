@@ -12,6 +12,7 @@ import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
+import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.RefreshCause
@@ -78,7 +79,7 @@ class CppCourseBuilder(
   }
 
   override fun validateItemName(name: String, itemType: StudyItemType): String? =
-    if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else "Name should contain only latin letters, digits, spaces or '_' symbols."
+    if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else EduCppBundle.message("validate.item.name.message")
 
   companion object {
     private val LOG: Logger = Logger.getInstance(CppCourseBuilder::class.java)
