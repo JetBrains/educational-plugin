@@ -8,6 +8,7 @@ import com.jetbrains.edu.go.GoConfigurator.Companion.GO_MOD
 import com.jetbrains.edu.go.GoConfigurator.Companion.MAIN_GO
 import com.jetbrains.edu.go.GoConfigurator.Companion.TASK_GO
 import com.jetbrains.edu.go.GoConfigurator.Companion.TEST_GO
+import com.jetbrains.edu.go.messages.EduGoBundle
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames.TEST
 import com.jetbrains.edu.learning.LanguageSettings
@@ -52,7 +53,7 @@ class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
 
   // https://golang.org/ref/spec#Import_declarations
   override fun validateItemName(name: String, itemType: StudyItemType): String? {
-    return if (itemType == StudyItemType.TASK && name.contains(FORBIDDEN_SYMBOLS)) "Name contains forbidden symbols" else null
+    return if (itemType == StudyItemType.TASK && name.contains(FORBIDDEN_SYMBOLS)) EduGoBundle.message("invalid.item.name.message") else null
   }
 
   /**
