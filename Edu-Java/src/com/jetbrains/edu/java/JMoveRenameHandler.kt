@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.jetbrains.edu.java.messages.EduJavaBundle
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.handlers.EduMoveDelegate
 import com.jetbrains.edu.learning.handlers.EduRenameHandler
@@ -35,7 +36,10 @@ class JMoveRenameHandler : EduMoveDelegate(), EduRenameHandler {
   }
 
   override fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?, dataContext: DataContext) {
-    Messages.showInfoMessage("This rename operation can break the course", "Invalid Rename Operation")
+    Messages.showInfoMessage(
+      EduJavaBundle.message("invalid.rename.operation.message"),
+      EduJavaBundle.message("invalid.rename.operation.title")
+    )
   }
 
   override fun invoke(project: Project, psiElements: Array<PsiElement>, dataContext: DataContext) {
