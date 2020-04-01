@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseUpdater.shouldBeUpdated
@@ -348,41 +347,52 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   }
 
   fun `test coding tasks updated`() {
-    course = courseWithFiles(
-      language = FakeGradleBasedLanguage,
-      courseProducer = ::HyperskillCourse
-    ) {
-      frameworkLesson("lesson1") {
-        eduTask("task1", stepId = 1, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-          taskFile("src/Task.kt", "fun foo() {}")
-          taskFile("src/Baz.kt", "fun baz() {}")
-          taskFile("test/Tests1.kt", "fun test1() {}")
+    val taskFileName = "Task.txt"
+    val oldText = "old text"
+    val newText = "new text"
 
-        }
-      }
+    course = courseWithFiles(courseProducer = ::HyperskillCourse) {
       lesson("Problems") {
-        codeTask(taskDescription = "old text") {
-          taskFile("Task.txt", "blabla")
+        codeTask(taskDescription = oldText) {
+          taskFile(taskFileName, oldText)
+        }
+        codeTask(taskDescription = oldText) {
+          taskFile(taskFileName, oldText)
         }
       }
-      additionalFile("build.gradle", "apply plugin: \"java\"")
     } as HyperskillCourse
     course.hyperskillProject = HyperskillProject()
+    findTask(0, 0).status = CheckStatus.Solved
 
-    val localTask = findTask(1, 0)
-
-    val newDescription = "new description"
-    val remoteTask = (findTask(1, 0) as CodeTask).apply {
-      descriptionText = newDescription
+    updateCourse(findLesson(0).taskList.map { it.toTaskUpdate {
+      descriptionText = newText
       updateDate = Date(100)
-    }
-    updateCourse(listOf(HyperskillCourseUpdater.TaskUpdate(localTask, remoteTask)))
-    checkDescriptionUpdated(findTask(1, 0), newDescription)
+      getTaskFile(taskFileName)!!.setText(newText)
+    } })
+
+    fileTree {
+      dir("Problems") {
+        dir("task1") {
+          file(taskFileName, oldText)
+          file("task.html", newText)
+        }
+        dir("task2") {
+          file(taskFileName, newText)
+          file("task.html", newText)
+        }
+      }
+    }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  private fun Task.toTaskUpdate(changeTask: Task.() -> Unit): HyperskillCourseUpdater.TaskUpdate {
+    val remoteTask = this.copy()
+    remoteTask.changeTask()
+    return HyperskillCourseUpdater.TaskUpdate(this, remoteTask)
   }
 
   private fun updateCourse(codeChallengesUpdates: List<HyperskillCourseUpdater.TaskUpdate> = emptyList(),
                            changeCourse: (HyperskillCourse.() -> Unit)? = null) {
-    val remoteCourse = changeCourse?.let {  toRemoteCourse(changeCourse) }
+    val remoteCourse = changeCourse?.let { toRemoteCourse(changeCourse) }
     HyperskillCourseUpdater.doUpdate(project, course, remoteCourse, codeChallengesUpdates)
     val isProjectUpToDate = remoteCourse == null || course.getProjectLesson()?.shouldBeUpdated(project, remoteCourse) == false
     assertTrue("Project is not up-to-date after update", isProjectUpToDate)
