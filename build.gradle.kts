@@ -514,8 +514,12 @@ project(":Edu-Python") {
       localPath = null
       version = ideaVersion
     }
-    // python pro plugin has mandatory dependency on yaml plugin
-    val plugins = listOfNotNull(pythonPlugin, "yaml")
+    val plugins = listOfNotNull(
+      pythonPlugin,
+      // python pro plugin has mandatory dependency on yaml plugin
+      "yaml",
+      if (isJvmCenteredIDE) "java" else null
+    )
     setPlugins(*plugins.toTypedArray())
   }
 
