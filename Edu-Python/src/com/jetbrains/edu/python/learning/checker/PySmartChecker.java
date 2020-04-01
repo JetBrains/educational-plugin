@@ -34,13 +34,13 @@ class PySmartChecker {
   private static final Logger LOG = Logger.getInstance(PySmartChecker.class);
 
   private static void smartCheck(@NotNull final AnswerPlaceholder placeholder,
-                                @NotNull final Project project,
-                                @NotNull final VirtualFile answerFile,
-                                @NotNull final TaskFile answerTaskFile,
-                                @NotNull final TaskFile usersTaskFile,
-                                @NotNull final PyTestRunner testRunner,
-                                @NotNull final VirtualFile virtualFile,
-                                @NotNull final Document usersDocument) {
+                                 @NotNull final Project project,
+                                 @NotNull final VirtualFile answerFile,
+                                 @NotNull final TaskFile answerTaskFile,
+                                 @NotNull final TaskFile usersTaskFile,
+                                 @NotNull final PyTestRunner testRunner,
+                                 @NotNull final VirtualFile virtualFile,
+                                 @NotNull final Document usersDocument) {
     VirtualFile fileWindows = null;
     VirtualFile windowCopy = null;
     try {

@@ -11,6 +11,7 @@ import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.util.PlatformUtils;
+import com.jetbrains.edu.python.learning.messages.EduPythonBundle;
 
 @SuppressWarnings("ComponentNotRegistered") // Edu-Python.xml
 public class PyShowTutorial implements ProjectComponent {
@@ -29,10 +30,13 @@ public class PyShowTutorial implements ProjectComponent {
     }
     ApplicationManager.getApplication().invokeLater((DumbAwareRunnable)() -> ApplicationManager.getApplication().runWriteAction(
       (DumbAwareRunnable)() -> {
-        final String content = "<html>If you'd like to learn more about PyCharm Edu, " +
-                               "click <a href=\"https://www.jetbrains.com/pycharm-edu/quickstart/\">here</a> to access tutorials</html>";
-        final Notification notification = new Notification("Watch Tutorials!", "", content, NotificationType.INFORMATION,
-                                                           new NotificationListener.UrlOpeningListener(true));
+        final Notification notification = new Notification(
+          EduPythonBundle.message("watch.tutorials.title"),
+          "",
+          EduPythonBundle.message("watch.tutorials.message.html", "https://www.jetbrains.com/pycharm-edu/quickstart/"),
+          NotificationType.INFORMATION,
+          new NotificationListener.UrlOpeningListener(true)
+        );
         StartupManager.getInstance(myProject).registerPostStartupActivity(() -> {
           Notifications.Bus.notify(notification);
           PropertiesComponent.getInstance().setValue(POPUP_SHOWN, true);

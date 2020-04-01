@@ -4,6 +4,7 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.icons.AllIcons;
+import com.jetbrains.edu.python.learning.messages.EduPythonBundle;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -12,12 +13,12 @@ public class PyCCRunTestsConfigurationType implements ConfigurationType {
   @NotNull
   @Override
   public String getDisplayName() {
-    return "Run Study Tests";
+    return EduPythonBundle.message("run.study.tests");
   }
 
   @Override
   public String getConfigurationTypeDescription() {
-    return "Study Test Runner";
+    return EduPythonBundle.message("run.study.tests");
   }
 
   @Override

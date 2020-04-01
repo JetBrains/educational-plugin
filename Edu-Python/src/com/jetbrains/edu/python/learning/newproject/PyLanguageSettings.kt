@@ -50,7 +50,7 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     course ?: return null
-    val sdk = mySettings.sdk ?: return ValidationMessage("Please specify Python interpreter")
+    val sdk = mySettings.sdk ?: return ValidationMessage(EduPythonBundle.message("ask.specify.interpreter"))
     return (isSdkApplicable(course, sdk.languageLevel) as? Err)?.error?.let { ValidationMessage(it) }
   }
 
@@ -112,8 +112,8 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
       }
     }
 
-    private class NoApplicablePythonError(requiredVersion: Int) : Err<String>("Required Python $requiredVersion")
-    private class SpecificPythonRequiredError(requiredVersion: String) : Err<String>("Required at least Python $requiredVersion")
+    private class NoApplicablePythonError(requiredVersion: Int) : Err<String>(EduPythonBundle.message("require.python.version", requiredVersion))
+    private class SpecificPythonRequiredError(requiredVersion: String) : Err<String>(EduPythonBundle.message("require.at.least.python.version", requiredVersion))
 
     private fun createFakeSdk(course: Course, context: UserDataHolder?): ProjectJdkImpl? {
       val fakeSdkPath = getBaseSdk(course, context) ?: return null

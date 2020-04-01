@@ -28,6 +28,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.python.learning.messages.EduPythonBundle;
 import com.jetbrains.python.inspections.PyInspection;
 import com.jetbrains.python.inspections.PyInspectionVisitor;
 import com.jetbrains.python.psi.LanguageLevel;
@@ -46,7 +47,7 @@ public class PyEduInterpreterInspection extends PyInspection {
   @Nls
   @NotNull
   public String getDisplayName() {
-    return "Wrong python interpreter";
+    return EduPythonBundle.message("wrong.python.interpreter.title");
   }
 
   @NotNull
@@ -88,19 +89,18 @@ public class PyEduInterpreterInspection extends PyInspection {
           final String version = course.getLanguageVersion();
           if (PYTHON_2_VERSION.equals(version)) {
             if (projectLanguageLevel.isPy3K()) {
-              registerProblem(node, "Course is available for Python 2, but Python 3 is selected as project interpreter", new ConfigureInterpreterFix());
+              registerProblem(node, EduPythonBundle.message("wrong.python.interpreter.message", 2, 3), new ConfigureInterpreterFix());
             }
           }
           else if (PYTHON_3_VERSION.equals(version)) {
             if (!projectLanguageLevel.isPy3K()) {
-              registerProblem(node, "Course is available for Python 3, but Python 2 is selected as project interpreter", new ConfigureInterpreterFix());
+              registerProblem(node, EduPythonBundle.message("wrong.python.interpreter.message", 3, 2), new ConfigureInterpreterFix());
             }
           }
           else if (version != null) {
             final LanguageLevel level = LanguageLevel.fromPythonVersion(version);
             if (!level.equals(projectLanguageLevel)) {
-              registerProblem(node, "Course is available for Python " + level.toString() + ", but Python " + projectLanguageLevel.toString()
-                                    + " is selected as project interpreter", new ConfigureInterpreterFix());
+              registerProblem(node, EduPythonBundle.message("wrong.python.interpreter.message", level, projectLanguageLevel), new ConfigureInterpreterFix());
             }
           }
         }

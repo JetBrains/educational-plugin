@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
+import com.jetbrains.edu.python.learning.messages.EduPythonBundle;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.sdk.PyDetectedSdk;
@@ -69,9 +70,10 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
     if (baseSdkPath != null) {
       final PyDetectedSdk baseSdk = new PyDetectedSdk(baseSdkPath);
       final String virtualEnvPath = project.getBasePath() + "/.idea/VirtualEnvironment";
-      final Sdk sdk = PySdkExtKt.createSdkByGenerateTask(new Task.WithResult<String, ExecutionException>(project,
-              "Creating Virtual Environment",
-              false) {
+      final Sdk sdk = PySdkExtKt.createSdkByGenerateTask(new Task.WithResult<String, ExecutionException>(
+        project,
+        EduPythonBundle.message("creating.virtual.environment"),
+        false) {
         @Override
         protected String compute(@NotNull ProgressIndicator indicator) throws ExecutionException {
           indicator.setIndeterminate(true);
