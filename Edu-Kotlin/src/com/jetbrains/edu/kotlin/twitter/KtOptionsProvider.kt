@@ -18,7 +18,7 @@ class KtOptionsProvider(private val project: Project) : OptionsProvider {
   )
 
   @Nls
-  override fun getDisplayName(): String = "Twitter Settings"
+  override fun getDisplayName(): String = EduKotlinBundle.message("twitter.settings")
 
   override fun isModified(): Boolean {
     return KtTwitterSettings.getInstance(project).askToTweet() != askToTweetCheckBox.isSelected

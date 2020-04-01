@@ -2,6 +2,7 @@ package com.jetbrains.edu.kotlin.twitter;
 
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.util.ui.UIUtil;
+import com.jetbrains.edu.kotlin.messages.EduKotlinBundle;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.twitter.TwitterUtils;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ public class KtTwitterDialogPanel extends TwitterUtils.TwitterDialogPanel {
     }
 
     public void create(@NotNull Task solvedTask) {
-        add(new JLabel(UIUtil.toHtml("<b>Post your achievements to twitter!<b>\n")));
+        add(new JLabel(UIUtil.toHtml(EduKotlinBundle.message("post.achievements.html"))));
         myImageUrl = getMediaSourceForTask(solvedTask);
         addImageLabel();
 
@@ -58,8 +59,8 @@ public class KtTwitterDialogPanel extends TwitterUtils.TwitterDialogPanel {
 
     private static String getMessageForTask(@NotNull final Task task) {
         int solvedTaskNumber = KtTwitterConfigurator.calculateTaskNumber(task);
-        return "Hey, I just completed level " + solvedTaskNumber / 8 
-                +" of Kotlin Koans. https://kotlinlang.org/docs/tutorials/koans.html #kotlinkoans";
+        return EduKotlinBundle.message("complete.kotlin.koans.level",
+                                       solvedTaskNumber / 8, "https://kotlinlang.org/docs/tutorials/koans.html");
     }
 
     @Nullable
