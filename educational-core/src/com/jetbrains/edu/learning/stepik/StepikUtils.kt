@@ -28,6 +28,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import java.io.IOException
 import java.net.URL
 
 private const val PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt"
@@ -105,8 +106,7 @@ fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) 
 }
 
 private fun getCourseIdsWithLanguage(link: String): Map<Int, String> {
-  val url = URL(link)
-  val text = url.readText()
+  val text = getTextFromLink(link) ?: return emptyMap()
   return text.lines().associate {
     val partWithoutComment = it.split("#")[0]
     val idWithLanguage = partWithoutComment.split(" ")
@@ -115,8 +115,18 @@ private fun getCourseIdsWithLanguage(link: String): Map<Int, String> {
 }
 
 private fun getCoursesIds(link: String): List<Int> {
-  val url = URL(link)
-  val text = url.readText()
+  val text = getTextFromLink(link) ?: return emptyList()
   return text.lines().map { it.split("#")[0].trim().toInt() }
+}
+
+private fun getTextFromLink(link: String): String? {
+  val url = URL(link)
+  return try {
+    url.readText()
+  }
+  catch (e: IOException) {
+    LOG.warn("Failed to retrieve content of '$link'", e)
+    null
+  }
 }
 

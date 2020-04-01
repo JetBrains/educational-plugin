@@ -119,7 +119,7 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
   }
   catch (e: IOException) {
     log("Failed to connect to server", e.message, omitErrors)
-    Err("${EduCoreBundle.message("error.failed.to.connect")}\n\n${e.message}")
+    Err("${EduCoreBundle.message("error.failed.to.connect")} \n\n${e.message}")
   }
   catch (e: RuntimeException) {
     log("Failed to connect to server", e.message, omitErrors)

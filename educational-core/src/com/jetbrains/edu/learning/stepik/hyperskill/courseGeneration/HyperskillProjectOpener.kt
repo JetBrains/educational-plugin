@@ -85,8 +85,10 @@ object HyperskillProjectOpener {
 
   private fun getHyperskillCourseUnderProgress(request: HyperskillOpenInProjectRequest): Result<HyperskillCourse, String> {
     return computeUnderProgress(title = "Loading ${EduNames.JBA} Project") { indicator ->
-      val hyperskillProject = HyperskillConnector.getInstance().getProject(request.projectId)
-                              ?: return@computeUnderProgress Err(FAILED_TO_CREATE_PROJECT)
+      val hyperskillProject = when (val result = HyperskillConnector.getInstance().getProject(request.projectId)) {
+        is Err -> return@computeUnderProgress Err(result.error)
+        is Ok -> result.value
+      }
 
       if (!hyperskillProject.useIde) {
         return@computeUnderProgress Err(HYPERSKILL_PROJECT_NOT_SUPPORTED)

@@ -8,8 +8,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -21,7 +20,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.stepik.UPDATE_NOTIFICATION_GROUP_ID
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -37,7 +35,10 @@ object HyperskillCourseUpdater {
 
   private fun HyperskillProject.getCourseFromServer(): HyperskillCourse? {
     val connector = HyperskillConnector.getInstance()
-    val hyperskillProject = connector.getProject(id) ?: return null
+    val hyperskillProject = when (val response = connector.getProject(id)) {
+      is Err -> return null
+      is Ok -> response.value
+    }
     val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language] ?: return null
     val eduEnvironment = eduEnvironment ?: return null
     val stagesFromServer = connector.getStages(id) ?: return null

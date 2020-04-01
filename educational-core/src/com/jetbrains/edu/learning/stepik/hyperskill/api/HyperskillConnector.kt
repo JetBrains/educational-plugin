@@ -109,9 +109,11 @@ abstract class HyperskillConnector {
     return response?.body()?.stages
   }
 
-  fun getProject(projectId: Int): HyperskillProject? {
-    val response = service.project(projectId).executeHandlingExceptions()
-    return response?.body()?.projects?.firstOrNull()
+  fun getProject(projectId: Int): Result<HyperskillProject, String> {
+    return service.project(projectId).executeParsingErrors(true).flatMap {
+      val result = it.body()?.projects?.firstOrNull()
+      if (result == null) Err(it.message()) else Ok(result)
+    }
   }
 
   private fun getStepSources(stepIds: List<Int>): List<HyperskillStepSource>? {

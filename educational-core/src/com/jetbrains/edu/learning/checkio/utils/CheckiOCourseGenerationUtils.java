@@ -4,9 +4,11 @@ import com.intellij.ide.BrowserUtil;
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import com.jetbrains.edu.learning.checkio.api.exceptions.HttpException;
+import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.newproject.ui.ErrorState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +35,9 @@ public final class CheckiOCourseGenerationUtils {
         ((HttpException)e).getResponse().code() == 401 && account != null) {
       return new ErrorState.CustomSevereError("", "Open", " CheckiO to verify account and try again",
                                               () -> BrowserUtil.browse(link + "/login/checkio/"));
+    }
+    else if (e instanceof NetworkException) {
+      return new ErrorState.CustomSevereError(EduCoreBundle.message("error.failed.to.connect"), "", "", null);
     }
     return new ErrorState.CustomSevereError(e.getMessage(), "", "", null);
   }

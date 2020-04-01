@@ -6,6 +6,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -105,9 +107,14 @@ object YamlDeepLoader {
     val projectId = matchResult.groupValues[1].toInt()
 
     ApplicationManager.getApplication().executeOnPooledThread {
-      HyperskillConnector.getInstance().getProject(projectId)?.let {
-        hyperskillProject = it
-        LOG.info("Current project successfully reconnected to Hyperskill")
+      HyperskillConnector.getInstance().getProject(projectId).let {
+        when (it) {
+          is Err -> return@executeOnPooledThread
+          is Ok -> {
+            hyperskillProject = it.value
+            LOG.info("Current project successfully reconnected to Hyperskill")
+          }
+        }
       }
 
       HyperskillConnector.getInstance().getStages(projectId)?.let {
