@@ -391,6 +391,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   private fun toRemoteCourse(changeCourse: HyperskillCourse.() -> Unit): HyperskillCourse {
     val element = XmlSerializer.serialize(course)
     val remoteCourse = XmlSerializer.deserialize(element, HyperskillCourse::class.java)
+    remoteCourse.getProblemsLesson()?.let { remoteCourse.removeLesson(it) }
     remoteCourse.init(null, null, false)
     remoteCourse.changeCourse()
     return remoteCourse
