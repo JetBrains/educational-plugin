@@ -28,6 +28,7 @@ hs_err_pid*
 !.idea/inspectionProfiles/*
 !.idea/codeStyles/*
 !.idea/vcs.xml
+!.idea/dictionaries/educational.xml
 !educational-core/testData/coursera/*
 .idea/
 build/
