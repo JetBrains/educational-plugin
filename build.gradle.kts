@@ -59,10 +59,7 @@ val pythonPlugin = when (baseIDE) {
   "clion" -> if (isAtLeast193) "python-ce" else "python"
   // PyCharm has separate python plugin since 2019.3. Previously it was part of PyCharm core code
   "pycharm" -> if (isAtLeast193) "python-ce" else null
-  // AS 2019.3 doesn't have `com.intellij.modules.python-core-capable` module.
-  // So we use IDEA Ultimate as IDEA dependency for python modules instead of AS for 2019.3 and above
-  // TODO: recheck on release AS 3.6
-  "studio" -> if (isAtLeast193) pythonProPlugin else pythonCommunityPlugin
+  "studio" -> pythonCommunityPlugin
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
 val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
@@ -510,10 +507,6 @@ project(":Edu-Android") {
 
 project(":Edu-Python") {
   intellij {
-    if (isAtLeast193 && baseIDE == "studio") {
-      localPath = null
-      version = ideaVersion
-    }
     val plugins = listOfNotNull(
       pythonPlugin,
       // python pro plugin has mandatory dependency on yaml plugin
