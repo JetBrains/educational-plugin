@@ -11,8 +11,8 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="configureGoLand" />
-          <option value="runIde" />
+          <option value=":configureGoLand" />
+          <option value=":runIde" />
         </list>
       </option>
       <option name="vmOptions" value="" />
