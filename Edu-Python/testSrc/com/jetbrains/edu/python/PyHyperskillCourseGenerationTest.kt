@@ -3,6 +3,7 @@ package com.jetbrains.edu.python
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.FileTreeBuilder
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator.Companion.HYPERSKILL_TEST_DIR
@@ -14,6 +15,13 @@ import com.jetbrains.python.newProject.PyNewProjectSettings
 
 
 class PyHyperskillCourseGenerationTest : EduTestCase() {
+
+  override fun runTest() {
+    if (!EduUtils.isAndroidStudio()) {
+      super.runTest()
+    }
+  }
+
   fun `test course structure creation`() {
     courseWithFiles(courseProducer = ::HyperskillCourse, language = PythonLanguage.INSTANCE, courseMode = CCUtils.COURSE_MODE,
                     settings = PyNewProjectSettings()) {}
