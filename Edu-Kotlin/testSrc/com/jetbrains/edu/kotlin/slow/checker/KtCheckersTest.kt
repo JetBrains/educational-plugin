@@ -44,7 +44,9 @@ class KtCheckersTest : JdkCheckerTestBase() {
               println("OK")
           }
         """)
-        taskFile("test/output.txt", "OK")
+        taskFile("test/output.txt") {
+          withText("OK\n")
+        }
       }
       outputTask("OutputTaskWithSeveralFiles") {
         kotlinTaskFile("src/utils.kt", """
@@ -55,7 +57,9 @@ class KtCheckersTest : JdkCheckerTestBase() {
               println(ok())
           }
         """)
-        taskFile("test/output.txt", "OK")
+        taskFile("test/output.txt") {
+          withText("OK\n")
+        }
       }
       outputTask("OutputTask:With;Special&Symbols?()") {
         kotlinTaskFile("src/Task.kt", """
@@ -63,7 +67,9 @@ class KtCheckersTest : JdkCheckerTestBase() {
               println("OK")
           }
         """)
-        taskFile("test/output.txt", "OK")
+        taskFile("test/output.txt") {
+          withText("OK\n")
+        }
       }
     }
   }

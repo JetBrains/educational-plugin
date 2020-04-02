@@ -43,7 +43,7 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
     }
   }
 
-  fun testErrors() {
+  fun `test errors`() {
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { task ->
       when (task.name) {

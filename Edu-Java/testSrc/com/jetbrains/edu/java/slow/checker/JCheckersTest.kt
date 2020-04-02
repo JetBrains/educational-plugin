@@ -50,7 +50,9 @@ class JCheckersTest : JdkCheckerTestBase() {
             }
           }
         """)
-        taskFile("test/output.txt", "OK")
+        taskFile("test/output.txt") {
+          withText("OK\n")
+        }
       }
       outputTask("OutputTaskWithSeveralFiles") {
         javaTaskFile("src/Utils.java", """
@@ -67,12 +69,14 @@ class JCheckersTest : JdkCheckerTestBase() {
             }
           }
         """)
-        taskFile("test/output.txt", "OK")
+        taskFile("test/output.txt") {
+          withText("OK\n")
+        }
       }
     }
   }
 
-  fun testJavaCourse() {
+  fun `test java course`() {
     CheckActionListener.expectedMessage { task ->
       when (task) {
         is OutputTask, is EduTask -> CheckUtils.CONGRATULATIONS

@@ -164,7 +164,9 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
               println("OK")
           }
         """)
-        taskFile("test/output.txt", "OK!")
+        taskFile("test/output.txt") {
+          withText("OK!\n")
+        }
       }
       outputTask("multilineOutputTaskFail") {
         kotlinTaskFile("src/Task.kt", """
@@ -173,12 +175,14 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
               println("World")
           }
         """)
-        taskFile("test/output.txt", "Hello,\nWorld!")
+        taskFile("test/output.txt") {
+          withText("Hello,\nWorld!\n")
+        }
       }
     }
   }
 
-  fun testErrors() {
+  fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("${task.name} should be failed", CheckStatus.Failed, checkResult.status)
       val (messageMatcher, diffMatcher) = when (task.name) {
@@ -199,11 +203,11 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
           // TODO: find out why test framework doesn't provide diff for this case
           equalTo("expected: Foo<(0, 0)> but was: Bar<(0, 0)>") to nullValue()
         "outputTaskFail" ->
-          equalTo("Expected output:\n<OK!>\nActual output:\n<OK>") to
-            diff(CheckResultDiff(expected = "OK!", actual = "OK"))
+          equalTo("Expected output:\n<OK!\n>\nActual output:\n<OK\n>") to
+            diff(CheckResultDiff(expected = "OK!\n", actual = "OK\n"))
         "multilineOutputTaskFail" ->
-          equalTo("Expected output:\n<Hello,\nWorld!>\nActual output:\n<Hello\nWorld>".trimIndent()) to
-            diff(CheckResultDiff(expected = "Hello,\nWorld!", actual = "Hello\nWorld"))
+          equalTo("Expected output:\n<Hello,\nWorld!\n>\nActual output:\n<Hello\nWorld\n>".trimIndent()) to
+            diff(CheckResultDiff(expected = "Hello,\nWorld!\n", actual = "Hello\nWorld\n"))
         else -> error("Unexpected task `${task.name}`")
       }
       assertThat("Checker message for ${task.name} doesn't match", checkResult.message, messageMatcher)
@@ -212,7 +216,7 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
     doTest()
   }
 
-  fun testBrokenJdk() {
+  fun `test broken jdk`() {
     UIUtil.dispatchAllInvocationEvents()
 
     @Suppress("DEPRECATION")
