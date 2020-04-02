@@ -70,7 +70,8 @@ object EduGradleUtils {
   }
 
   private fun setUpGradleJvm(projectSettings: GradleProjectSettings, sdk: Sdk?) {
-    val projectSdkVersion = sdk?.javaSdkVersion
+    if (sdk == null) return
+    val projectSdkVersion = sdk.javaSdkVersion
     val internalJdk = ExternalSystemJdkUtil.resolveJdkName(null, USE_INTERNAL_JAVA)
     val internalSdkVersion = internalJdk?.javaSdkVersion
 
