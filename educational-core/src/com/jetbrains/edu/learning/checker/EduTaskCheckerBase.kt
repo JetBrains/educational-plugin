@@ -17,7 +17,9 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 
-abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
+abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: EnvironmentChecker, project: Project) :
+  TaskChecker<EduTask>(task, project) {
+
   var activateRunToolWindow: Boolean = !task.course.isStudy
 
   override fun check(indicator: ProgressIndicator): CheckResult {
@@ -26,6 +28,9 @@ abstract class EduTaskCheckerBase(task: EduTask, project: Project) : TaskChecker
         ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
       }
     }
+
+    val possibleError = envChecker.checkEnvironment(project)
+    if (possibleError != null) return CheckResult(CheckStatus.Unchecked, possibleError)
 
     val configurations = runReadActionInSmartMode(project) { createTestConfigurations() }
     configurations.forEach {

@@ -9,10 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.CheckResultDiff
-import com.jetbrains.edu.learning.checker.CodeExecutor
-import com.jetbrains.edu.learning.checker.TaskChecker
+import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TEST_DATA_FOLDER
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
@@ -22,6 +19,7 @@ import java.awt.datatransfer.StringSelection
 
 class CodeforcesTaskChecker(
   task: CodeforcesTask,
+  private val envChecker: EnvironmentChecker,
   project: Project,
   private val codeExecutor: CodeExecutor
 ) : TaskChecker<CodeforcesTask>(task, project) {
@@ -47,6 +45,9 @@ class CodeforcesTaskChecker(
       indicator.text2 = "Running test $testNumber of ${testFolders.size}"
 
       val input = runReadAction { inputDocument.text }
+
+      val possibleError = envChecker.checkEnvironment(project)
+      if (possibleError != null) return CheckResult(CheckStatus.Unchecked, possibleError)
 
       val result = withRunProcessesWithPtyOff {
         codeExecutor.execute(project, task, indicator, input)

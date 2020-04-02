@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtElement
 class KtTaskCheckerProvider : GradleTaskCheckerProvider() {
 
   override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
-    return KtNewGradleTaskChecker(task, project)
+    return KtNewGradleTaskChecker(task, envChecker, project)
   }
 
   override fun mainClassForFile(project: Project, file: VirtualFile): String? {

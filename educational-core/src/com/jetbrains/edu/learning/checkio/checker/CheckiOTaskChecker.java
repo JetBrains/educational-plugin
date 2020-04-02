@@ -5,6 +5,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.checker.CheckResult;
+import com.jetbrains.edu.learning.checker.EnvironmentChecker;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
@@ -14,9 +15,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class CheckiOTaskChecker extends TaskChecker<EduTask> {
   private final CheckiOMissionCheck myMissionCheck;
+  private final EnvironmentChecker myEnvChecker;
 
   public CheckiOTaskChecker(
     @NotNull EduTask task,
+    @NotNull EnvironmentChecker envChecker,
     @NotNull Project project,
     @NotNull CheckiOOAuthConnector oAuthConnector,
     @NotNull String interpreterName,
@@ -31,12 +34,16 @@ public class CheckiOTaskChecker extends TaskChecker<EduTask> {
       interpreterName,
       testFormTargetUrl
     );
+    myEnvChecker = envChecker;
   }
 
   @NotNull
   @Override
   public CheckResult check(@NotNull ProgressIndicator indicator) {
     try {
+      String possibleError = myEnvChecker.checkEnvironment(project);
+      if (possibleError != null) return new CheckResult(CheckStatus.Unchecked, possibleError);
+
       final CheckResult checkResult =
         ApplicationUtil.runWithCheckCanceled(myMissionCheck, ProgressManager.getInstance().getProgressIndicator());
 

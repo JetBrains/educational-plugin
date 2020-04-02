@@ -32,12 +32,16 @@ open class DefaultCodeExecutor : CodeExecutor {
     }
 
     val configuration = runReadActionInSmartMode(project) { createRunConfiguration(project, task) }
-                        ?: return logAndQuit(EduCoreBundle.message("error.unable.to.create.configuration"))
+    if (configuration == null) {
+      return logAndQuit(EduCoreBundle.message("error.unable.to.create.configuration"))
+    }
+
     try {
       configuration.checkSettings()
     }
     catch (e: RuntimeConfigurationException) {
-      return logAndQuit("${EduCoreBundle.message("check.task.no.tests")}\n${e.message}")
+      LOG.warn(e)
+      return logAndQuit(EduCoreBundle.message("error.unable.to.create.configuration"))
     }
 
     configuration.isActivateToolWindowBeforeRun = false
@@ -55,7 +59,8 @@ open class DefaultCodeExecutor : CodeExecutor {
             out.write(input)
             out.write("\n")
             out.flush()
-          } catch (e: IOException) {
+          }
+          catch (e: IOException) {
             LOG.error("Failed to write input", e)
           }
         }

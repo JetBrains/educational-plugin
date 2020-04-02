@@ -7,8 +7,7 @@ import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
 class AndroidTaskCheckerProvider : GradleTaskCheckerProvider() {
-
-  override fun getEduTaskChecker(task: EduTask, project: Project): GradleEduTaskChecker = AndroidChecker(task, project)
+  override fun getEduTaskChecker(task: EduTask, project: Project): GradleEduTaskChecker = AndroidChecker(task, envChecker, project)
 
   override fun mainClassForFile(project: Project, file: VirtualFile): String? = null
 }

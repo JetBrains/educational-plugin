@@ -26,7 +26,9 @@ class ScalaSbtConfigurator : EduConfiguratorWithSubmissions<JdkProjectSettings>(
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = object : TaskCheckerProvider {
-      override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> = ScalaSbtEduTaskChecker(task, project)
+      // TODO implement envChecker validation
+      override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> =
+        ScalaSbtEduTaskChecker(task, envChecker, project)
     }
 
   override val mockTemplate: String
