@@ -17,18 +17,22 @@ import com.jetbrains.edu.jvm.gradle.checker.GradleCommandLine
 import com.jetbrains.edu.jvm.gradle.checker.GradleEduTaskChecker
 import com.jetbrains.edu.jvm.gradle.checker.getGradleProjectName
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import org.jetbrains.android.sdk.AndroidSdkUtils
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 
-class AndroidChecker(task: EduTask, project: Project) : GradleEduTaskChecker(task, project) {
+class AndroidChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : GradleEduTaskChecker(task, envChecker, project) {
 
   @Volatile
   private var deviceLaunching: Future<IDevice>? = null
 
   override fun check(indicator: ProgressIndicator): CheckResult {
+    val possibleError = envChecker.checkEnvironment(project)
+    if (possibleError != null) return CheckResult(CheckStatus.Unchecked, possibleError)
+
     indicator.isIndeterminate = true
 
     val taskModuleName = getGradleProjectName(task)

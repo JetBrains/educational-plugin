@@ -4,13 +4,19 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.FAILED_TO_CHECK
+import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
-open class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
+open class GradleEduTaskChecker(task: EduTask, protected val envChecker: EnvironmentChecker, project: Project) :
+  TaskChecker<EduTask>(task, project) {
+
   override fun check(indicator: ProgressIndicator): CheckResult {
+    val possibleError = envChecker.checkEnvironment(project)
+    if (possibleError != null) return CheckResult(CheckStatus.Unchecked, possibleError)
+
     val (taskName, params) = getGradleTask()
 
     val testDirs = task.course.configurator?.testDirs ?: return FAILED_TO_CHECK

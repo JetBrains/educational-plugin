@@ -20,12 +20,14 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.createRunConfiguration
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
+import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.editor.ACTION_TEXT
 import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_END
 import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_START
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.python.learning.getCurrentTaskVirtualFile
 import com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer
 
@@ -34,7 +36,7 @@ import com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer
  * @see com.jetbrains.edu.python.learning.PyConfigurator
  * @see fileTemplates.internal (test_helper.py)
  */
-open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(task, project) {
+open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : EduTaskCheckerBase(task, envChecker, project) {
 
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
     val producer = RunConfigurationProducer.getInstance(PyCCRunTestsConfigurationProducer::class.java)
@@ -115,6 +117,6 @@ open class PyTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(t
      * 2. Second error could appear if educator uses third-party testing frameworks (e.g. unittest in Coursera Algorithmic Toolbox)
      * @see com.jetbrains.edu.python.checker.PyCheckErrorsTest (SyntaxErrorFromUnittest)
      */
-    private val SYNTAX_ERRORS = listOf("The file contains syntax errors", CheckUtils.NO_TESTS_HAVE_RUN)
+    private val SYNTAX_ERRORS = listOf("The file contains syntax errors", EduCoreBundle.message("check.task.no.tests"))
   }
 }

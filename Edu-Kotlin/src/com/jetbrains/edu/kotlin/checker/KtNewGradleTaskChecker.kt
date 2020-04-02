@@ -9,12 +9,14 @@ import com.jetbrains.edu.jvm.gradle.checker.NewGradleEduTaskChecker
 import com.jetbrains.edu.jvm.gradle.checker.hasSeparateModule
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import org.jetbrains.kotlin.idea.run.KotlinJUnitRunConfigurationProducer
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 
-class KtNewGradleTaskChecker(task: EduTask, project: Project) : NewGradleEduTaskChecker(task, project) {
+class KtNewGradleTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) :
+  NewGradleEduTaskChecker(task, envChecker, project) {
 
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult {
     return if (task.hasSeparateModule(project)) {

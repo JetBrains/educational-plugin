@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 
 open class OutputTaskChecker(
   task: OutputTask,
+  private val envChecker: EnvironmentChecker,
   project: Project,
   private val codeExecutor: CodeExecutor
 ) : TaskChecker<OutputTask>(task, project) {
@@ -25,6 +26,9 @@ open class OutputTaskChecker(
    */
   final override fun check(indicator: ProgressIndicator): CheckResult {
     try {
+      val possibleError = envChecker.checkEnvironment(project)
+      if (possibleError != null) return CheckResult(CheckStatus.Unchecked, possibleError)
+
       val outputString = when (val result = codeExecutor.execute(project, task, indicator)) {
         is Ok -> CheckUtils.postProcessOutput(result.value)
         is Err -> return result.error

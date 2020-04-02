@@ -10,6 +10,9 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.successMessage
 
 class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvider) : TaskCheckerProvider {
+  override val envChecker: EnvironmentChecker
+    get() = baseProvider.envChecker
+
   override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
     val checker = baseProvider.getEduTaskChecker(task, project)
 
@@ -29,8 +32,11 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
     }
   }
 
-  override fun getOutputTaskChecker(task: OutputTask, project: Project, codeExecutor: CodeExecutor): OutputTaskChecker =
-    baseProvider.getOutputTaskChecker(task, project, codeExecutor)
+  override fun getOutputTaskChecker(
+    task: OutputTask,
+    project: Project,
+    codeExecutor: CodeExecutor
+  ): OutputTaskChecker = baseProvider.getOutputTaskChecker(task, project, codeExecutor)
 
   override fun getTheoryTaskChecker(task: TheoryTask, project: Project): TheoryTaskChecker =
     baseProvider.getTheoryTaskChecker(task, project)

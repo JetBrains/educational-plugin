@@ -30,7 +30,8 @@ class GoConfigurator : EduConfiguratorWithSubmissions<GoProjectSettings>() {
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = object : TaskCheckerProvider {
-      override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> = GoEduTaskChecker(project, task)
+      // TODO implement envChecker validation
+      override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> = GoEduTaskChecker(project, envChecker, task)
       override fun getCodeExecutor(): CodeExecutor = GoCodeExecutor()
     }
 

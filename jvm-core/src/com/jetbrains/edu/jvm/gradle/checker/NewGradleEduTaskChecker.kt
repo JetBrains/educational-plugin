@@ -8,10 +8,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
+import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
-open class NewGradleEduTaskChecker(task: EduTask, project: Project) : EduTaskCheckerBase(task, project) {
+open class NewGradleEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) :
+  EduTaskCheckerBase(task, envChecker, project) {
 
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult {
     return GradleCommandLine.create(project, "${getGradleProjectName(task)}:testClasses")?.launchAndCheck(indicator)

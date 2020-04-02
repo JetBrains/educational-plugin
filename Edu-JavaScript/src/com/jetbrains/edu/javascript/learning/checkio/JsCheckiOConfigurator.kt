@@ -3,9 +3,11 @@ package com.jetbrains.edu.javascript.learning.checkio
 import com.intellij.lang.javascript.JavaScriptFileType
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.javascript.learning.JsConfigurator
+import com.jetbrains.edu.javascript.learning.JsEnvironmentChecker
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOApiConnector
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector
 import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames.*
+import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
@@ -21,8 +23,12 @@ import javax.swing.Icon
 
 class JsCheckiOConfigurator : JsConfigurator(), CheckiOConnectorProvider {
   override val taskCheckerProvider: TaskCheckerProvider = object : TaskCheckerProvider {
+    override val envChecker: EnvironmentChecker
+      get() = JsEnvironmentChecker()
+
     override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> =
-      CheckiOTaskChecker(task, project, JsCheckiOOAuthConnector.getInstance(), JS_CHECKIO_INTERPRETER, JS_CHECKIO_TEST_FORM_TARGET_URL)
+      CheckiOTaskChecker(task, envChecker, project, JsCheckiOOAuthConnector.getInstance(),
+                         JS_CHECKIO_INTERPRETER, JS_CHECKIO_TEST_FORM_TARGET_URL)
   }
 
   override fun getOAuthConnector(): CheckiOOAuthConnector = JsCheckiOOAuthConnector.getInstance()

@@ -13,10 +13,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
  * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillTaskCheckerProvider
  */
 interface TaskCheckerProvider {
+  val envChecker: EnvironmentChecker
+    get() = EnvironmentChecker()
+
   fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask>
 
   fun getOutputTaskChecker(task: OutputTask, project: Project, codeExecutor: CodeExecutor): OutputTaskChecker {
-    return OutputTaskChecker(task, project, codeExecutor)
+    return OutputTaskChecker(task, envChecker, project, codeExecutor)
   }
 
   fun getTheoryTaskChecker(task: TheoryTask, project: Project): TheoryTaskChecker = TheoryTaskChecker(task, project)
@@ -41,7 +44,7 @@ interface TaskCheckerProvider {
       is ChoiceTask -> getChoiceTaskChecker(task, project)
       is IdeTask -> getIdeTaskChecker(task, project)
       is CodeforcesTaskWithFileIO -> CodeforcesTaskWithFileIOTaskChecker(task, project)
-      is CodeforcesTask -> CodeforcesTaskChecker(task, project, getCodeExecutor())
+      is CodeforcesTask -> CodeforcesTaskChecker(task, envChecker, project, getCodeExecutor())
       else -> throw IllegalStateException("Unknown task type: " + task.itemType)
     }
   }

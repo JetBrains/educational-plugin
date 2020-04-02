@@ -1,5 +1,7 @@
 package com.jetbrains.edu.python.slow.checker
 
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckResultDiffMatcher.Companion.diff
@@ -7,6 +9,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.nullValue
 import com.jetbrains.python.PythonLanguage
 import org.hamcrest.CoreMatchers.containsString
@@ -79,11 +82,11 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
                                 containsString("SyntaxError: invalid syntax"))
         "OutputTestsFailed" -> Result(CheckStatus.Failed, equalTo("""
           |Expected output:
-          |Hello, World!
-          | 
+          |<Hello, World!
+          |>
           |Actual output:
-          |Hello, World
-          |""".trimMargin()), diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n")), nullValue())
+          |<Hello, World
+          |>""".trimMargin()), diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n")), nullValue())
         else -> error("Unexpected task name: ${task.name}")
       }
 
@@ -91,6 +94,17 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
       assertThat("Checker message for ${task.name} doesn't match", checkResult.message, matcher.message)
       assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, matcher.diff)
       assertThat("Checker details for ${task.name} doesn't match", checkResult.details, matcher.details)
+    }
+    doTest()
+  }
+
+  fun `test no interpreter`() {
+    SdkConfigurationUtil.setDirectoryProjectSdk(project, null)
+
+    CheckActionListener.setCheckResultVerifier { task, checkResult ->
+      assertEquals("Status for ${task.name} doesn't match", CheckStatus.Unchecked, checkResult.status)
+      assertThat("Checker output for ${task.name} doesn't match", checkResult.message,
+                 containsString(EduCoreBundle.message("error.no.interpreter", EduNames.PYTHON)))
     }
     doTest()
   }

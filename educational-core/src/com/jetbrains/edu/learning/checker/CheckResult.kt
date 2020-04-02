@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.checker
 
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.event.HyperlinkListener
 
 class CheckResult @JvmOverloads constructor(
@@ -26,7 +27,7 @@ class CheckResult @JvmOverloads constructor(
     @JvmField val LOGIN_NEEDED = CheckResult(CheckStatus.Unchecked, CheckUtils.LOGIN_NEEDED_MESSAGE)
     @JvmField val CONNECTION_FAILED = CheckResult(CheckStatus.Unchecked, "Connection failed")
     @JvmField val SOLVED = CheckResult(CheckStatus.Solved, "")
-    @JvmField val NO_TESTS_RUN = CheckResult(CheckStatus.Unchecked, CheckUtils.NO_TESTS_HAVE_RUN)
+    @JvmField val NO_TESTS_RUN = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.task.no.tests"))
     @JvmField val CANCELED = CheckResult(CheckStatus.Unchecked, "Canceled")
   }
 }
