@@ -15,6 +15,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
@@ -152,7 +153,7 @@ fun runGradleRunTask(
   mainClassForFile: (Project, VirtualFile) -> String?
 ): Result<String, CheckResult> {
   val mainClassName = findMainClass(project, task, mainClassForFile)
-                      ?: return CodeExecutor.resultUnchecked("Unable to execute task ${task.name}, main method is missing")
+                      ?: return CodeExecutor.resultUnchecked(EduJVMBundle.message("unable.execute.task.no.main", task.name))
   val taskName = if (task.hasSeparateModule(project)) "${getGradleProjectName(task)}:run" else "run"
 
   val gradleOutput = GradleCommandLine.create(project, taskName, "$MAIN_CLASS_PROPERTY_PREFIX$mainClassName")
