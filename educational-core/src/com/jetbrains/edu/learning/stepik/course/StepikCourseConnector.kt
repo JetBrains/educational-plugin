@@ -5,7 +5,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
-import com.jetbrains.edu.learning.stepik.StepikLanguages
+import com.jetbrains.edu.learning.stepik.StepikLanguage
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import java.io.IOException
@@ -52,12 +52,12 @@ object StepikCourseConnector {
     return null
   }
 
-  fun getSupportedLanguages(remoteCourse: StepikCourse): List<StepikLanguages> {
-    val languages = ArrayList<StepikLanguages>()
+  fun getSupportedLanguages(remoteCourse: StepikCourse): List<StepikLanguage> {
+    val languages = ArrayList<StepikLanguage>()
     try {
       val codeTemplates = getFirstCodeTemplates(remoteCourse)
       for (languageName in codeTemplates.keys) {
-        val stepikLanguage = StepikLanguages.langOfName(languageName)
+        val stepikLanguage = StepikLanguage.langOfName(languageName)
         val id = stepikLanguage.id
         val language = Language.findLanguageByID(id) ?: continue
         if (language.id in EduConfiguratorManager.supportedEduLanguages) {

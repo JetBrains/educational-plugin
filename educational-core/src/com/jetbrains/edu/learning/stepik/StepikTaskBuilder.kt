@@ -96,7 +96,7 @@ open class StepikTaskBuilder(
       var memoryLimit = options.executionMemoryLimit
       var timeLimit = options.executionTimeLimit
       val languageSpecificLimits = options.limits
-      val stepikLanguageName = StepikLanguages.langOfId(language.id, languageVersion).langName
+      val stepikLanguageName = StepikLanguage.langOfId(language.id, languageVersion).langName
       if (languageSpecificLimits != null && stepikLanguageName != null) {
         languageSpecificLimits[stepikLanguageName]?.let {
           memoryLimit = it.memory
@@ -270,7 +270,7 @@ open class StepikTaskBuilder(
   }
 
   protected open fun getLanguageName(language: Language, laguageVersion: String): String? {
-    return StepikLanguages.langOfId(language.id, languageVersion).langName
+    return StepikLanguage.langOfId(language.id, languageVersion).langName
   }
 
   companion object {

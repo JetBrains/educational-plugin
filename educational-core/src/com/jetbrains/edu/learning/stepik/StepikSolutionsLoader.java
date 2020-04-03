@@ -549,7 +549,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   @Nullable
   private static String findStepikSolutionForLanguage(List<Submission> submissions, Language language, String version) {
-    String stepikLanguage = StepikLanguages.langOfId(language.getID(), version).getLangName();
+    String stepikLanguage = StepikLanguage.langOfId(language.getID(), version).getLangName();
     if (stepikLanguage == null) {
       return null;
     }

@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.stepik.StepikLanguages
+import com.jetbrains.edu.learning.stepik.StepikLanguage
 import com.jetbrains.edu.learning.stepik.StepikNames
 
 class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
@@ -47,7 +47,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     return null
   }
 
-  private fun getLanguageForStepikCourse(course: StepikCourse): StepikLanguages? {
+  private fun getLanguageForStepikCourse(course: StepikCourse): StepikLanguage? {
     val languages = getLanguagesUnderProgress(course)
 
     if (languages.isEmpty()) {
@@ -84,7 +84,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
 
   private fun showFailedImportCourseMessage(message: String) = Messages.showErrorDialog(message, "Failed to Import Course")
 
-  private fun chooseLanguageIfNeeded(languages: List<StepikLanguages>, course: StepikCourse): StepikLanguages? {
+  private fun chooseLanguageIfNeeded(languages: List<StepikLanguage>, course: StepikCourse): StepikLanguage? {
     return if (languages.size == 1) {
       languages[0]
     }
@@ -103,8 +103,8 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     Messages.showErrorDialog("Cannot find course on Stepik, please check if link is correct: $courseLink", "Failed to Load Stepik Course")
   }
 
-  private fun getLanguagesUnderProgress(course: StepikCourse): List<StepikLanguages> {
-    return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<StepikLanguages>, RuntimeException>(
+  private fun getLanguagesUnderProgress(course: StepikCourse): List<StepikLanguage> {
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<StepikLanguage>, RuntimeException>(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
         EduUtils.execCancelable {

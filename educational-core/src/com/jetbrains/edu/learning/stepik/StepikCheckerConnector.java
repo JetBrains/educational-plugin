@@ -130,7 +130,7 @@ public class StepikCheckerConnector {
       if (editor != null) {
         String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(courseLanguage).getLineCommentPrefix();
         final String answer = commentPrefix + EDU_TOOLS_COMMENT + editor.getDocument().getText();
-        String defaultLanguage = StepikLanguages.langOfId(courseLanguage.getID(), course.getLanguageVersion()).getLangName();
+        String defaultLanguage = StepikLanguage.langOfId(courseLanguage.getID(), course.getLanguageVersion()).getLangName();
         assert defaultLanguage != null : ("Default Stepik language not found for: " + courseLanguage.getDisplayName());
 
         final SubmissionData submissionData = createCodeSubmissionData(attemptId, defaultLanguage, answer);

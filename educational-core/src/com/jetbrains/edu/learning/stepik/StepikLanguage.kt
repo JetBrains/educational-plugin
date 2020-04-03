@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.EduNames
 
 private const val DEFAULT_VERSION = ""
 
-enum class StepikLanguages(val id: String?, val version: String = DEFAULT_VERSION, val langName: String?, val isDefault: Boolean = true) {
+enum class StepikLanguage(val id: String?, val version: String = DEFAULT_VERSION, val langName: String?, val isDefault: Boolean = true) {
   JAVA(EduNames.JAVA, "8", "java8"),
   JAVA11(EduNames.JAVA, "11", "java11", isDefault = false),
   KOTLIN(EduNames.KOTLIN, langName = "kotlin"),
@@ -27,28 +27,28 @@ enum class StepikLanguages(val id: String?, val version: String = DEFAULT_VERSIO
   override fun toString(): String = id ?: ""
 
   companion object {
-    private val nameMap: Map<String?, StepikLanguages> by lazy {
+    private val NAME_MAP: Map<String?, StepikLanguage> by lazy {
       values().associateBy { it.langName }
     }
 
-    private val titleMap: Map<Pair<String?, String>, StepikLanguages> by lazy {
+    private val TITLE_MAP: Map<Pair<String?, String>, StepikLanguage> by lazy {
       values().associateBy { it.id to it.version }
     }
 
-    private val defaultTitleMap: Map<String?, StepikLanguages> by lazy {
+    private val DEFAULT_TITLE_MAP: Map<String?, StepikLanguage> by lazy {
       values().filter { it.isDefault }.associateBy { it.id }
     }
 
     @JvmStatic
-    fun langOfName(lang: String): StepikLanguages = nameMap.getOrElse(lang, { INVALID })
+    fun langOfName(lang: String): StepikLanguage = NAME_MAP.getOrElse(lang, { INVALID })
 
     @JvmStatic
-    fun langOfId(lang: String, version: String?): StepikLanguages {
+    fun langOfId(lang: String, version: String?): StepikLanguage {
       return if (version.isNullOrEmpty()) {
-        defaultTitleMap.getOrElse(lang, { INVALID })
+        DEFAULT_TITLE_MAP.getOrElse(lang, { INVALID })
       }
       else {
-        titleMap.getOrElse(lang to version, { INVALID })
+        TITLE_MAP.getOrElse(lang to version, { INVALID })
       }
     }
   }

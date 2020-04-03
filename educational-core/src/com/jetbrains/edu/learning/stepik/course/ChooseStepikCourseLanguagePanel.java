@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.stepik.course;
 import com.intellij.lang.Language;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.util.ui.JBUI;
-import com.jetbrains.edu.learning.stepik.StepikLanguages;
+import com.jetbrains.edu.learning.stepik.StepikLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -11,11 +11,11 @@ import java.awt.*;
 import java.util.List;
 
 public class ChooseStepikCourseLanguagePanel {
-  private JComboBox<StepikLanguages> languageCombobox;
+  private JComboBox<StepikLanguage> languageCombobox;
   private JLabel courseNameLabel;
   private JPanel mainPanel;
 
-  public ChooseStepikCourseLanguagePanel(@NotNull List<StepikLanguages> languages, @NotNull String courseName) {
+  public ChooseStepikCourseLanguagePanel(@NotNull List<StepikLanguage> languages, @NotNull String courseName) {
     setLanguages(languages);
     setCourseNameLabel(courseName);
     mainPanel.setPreferredSize(JBUI.size(new Dimension(400, 50)));
@@ -26,22 +26,22 @@ public class ChooseStepikCourseLanguagePanel {
   }
 
 
-  public StepikLanguages getSelectedLanguage() {
-    return (StepikLanguages) languageCombobox.getSelectedItem();
+  public StepikLanguage getSelectedLanguage() {
+    return (StepikLanguage) languageCombobox.getSelectedItem();
   }
 
-  private void setLanguages(@NotNull List<StepikLanguages> languages) {
-    languageCombobox.setRenderer(new ListCellRendererWrapper<StepikLanguages>() {
+  private void setLanguages(@NotNull List<StepikLanguage> languages) {
+    languageCombobox.setRenderer(new ListCellRendererWrapper<StepikLanguage>() {
 
       @Override
-      public void customize(JList list, StepikLanguages value, int index, boolean selected, boolean hasFocus) {
+      public void customize(JList list, StepikLanguage value, int index, boolean selected, boolean hasFocus) {
         Language language = Language.findLanguageByID(value.getId());
         if (language != null) {
           setText(language.getDisplayName() + " " + value.getVersion());
         }
       }
     });
-    for (StepikLanguages language: languages) {
+    for (StepikLanguage language: languages) {
       languageCombobox.addItem(language);
     }
   }
