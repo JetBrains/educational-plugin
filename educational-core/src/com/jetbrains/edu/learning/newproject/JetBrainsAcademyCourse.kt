@@ -23,7 +23,7 @@ class JetBrainsAcademyCourse(language: Language) : Course() {
      
      JetBrains Academy experience starts in your browser 
      
-     <a href="https://hi.hyperskill.org?utm_source=ide&utm_content=browse-courses">Learn more</a>
+     <a href="https://www.jetbrains.com/academy/?utm_source=ide&utm_content=browse-courses">Learn more</a>
    """.trimIndent()
   }
 }
