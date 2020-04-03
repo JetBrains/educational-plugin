@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.checker.CodeExecutor.Companion.resultUnchecked
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.rust.messages.EduRustBundle
 import org.rust.cargo.project.settings.rustSettings
 import org.rust.cargo.toolchain.CargoCommandLine
 import org.rust.lang.RsConstants.MAIN_RS_FILE
@@ -24,11 +25,11 @@ import org.rust.openapiext.isSuccess
 
 class RsCodeExecutor : CodeExecutor {
   override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, CheckResult> {
-    val taskDir = task.getTaskDir(project) ?: return resultUnchecked("Failed to find task dir")
-    val mainVFile = task.findSourceDir(taskDir)?.findChild(MAIN_RS_FILE) ?: return resultUnchecked("Failed to find `$MAIN_RS_FILE`")
+    val taskDir = task.getTaskDir(project) ?: return resultUnchecked(EduRustBundle.message("failed.find.task.dir"))
+    val mainVFile = task.findSourceDir(taskDir)?.findChild(MAIN_RS_FILE) ?: return resultUnchecked(EduRustBundle.message("failed.find", MAIN_RS_FILE))
     val target = runReadAction { PsiManager.getInstance(project).findFile(mainVFile)?.rustFile?.containingCargoTarget }
-                 ?: return resultUnchecked("Failed to find target for `$MAIN_RS_FILE`")
-    val cargo = project.rustSettings.toolchain?.rawCargo() ?: return resultUnchecked("Failed to find Rust toolchain")
+                 ?: return resultUnchecked(EduRustBundle.message("failed.find.target.for", MAIN_RS_FILE))
+    val cargo = project.rustSettings.toolchain?.rawCargo() ?: return resultUnchecked(EduRustBundle.message("failed.find.rust.toolchain"))
     val cmd = CargoCommandLine.forTarget(target, "run")
 
     val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(project, stdIn = input?.toByteArray())
