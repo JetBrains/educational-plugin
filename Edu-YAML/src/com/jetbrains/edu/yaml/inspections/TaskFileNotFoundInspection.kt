@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlLoader
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 import com.jetbrains.edu.yaml.EduYamlTaskFilePathReferenceProvider
+import com.jetbrains.edu.yaml.messages.EduYAMLBundle
 import org.jetbrains.yaml.psi.YAMLMapping
 import org.jetbrains.yaml.psi.YAMLScalar
 import org.jetbrains.yaml.psi.YAMLSequenceItem
@@ -32,14 +33,14 @@ class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
   override fun registerProblem(holder: ProblemsHolder, element: YAMLScalar) {
     val fix = if (isValidFilePath(element.textValue)) CreateTaskFileFix(element) else null
     // TODO: shouldn't be reported if path is invalid
-    holder.registerProblem(element, "Cannot find '${element.textValue}' file",
+    holder.registerProblem(element, EduYAMLBundle.message("cannot.find.file", element.textValue),
                            ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, *listOfNotNull(fix).toTypedArray())
   }
 
   private class CreateTaskFileFix(element: YAMLScalar) : LocalQuickFixOnPsiElement(element) {
 
     override fun getFamilyName(): String = "Create file"
-    override fun getText(): String = familyName
+    override fun getText(): String = EduYAMLBundle.message("create.file")
 
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
       val scalar = startElement as YAMLScalar
@@ -67,7 +68,7 @@ class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
         // Remove added task file to keep correct task structure
         task.taskFiles.remove(path)
         ApplicationManager.getApplication().invokeLater {
-          Messages.showErrorDialog("Failed to create `$path` file", "Failed to create file")
+          Messages.showErrorDialog(EduYAMLBundle.message("failed.create.file.message", path), EduYAMLBundle.message("failed.create.file.title"))
         }
       }
     }

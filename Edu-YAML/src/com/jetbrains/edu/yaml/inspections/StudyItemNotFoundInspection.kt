@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlLoader
 import com.jetbrains.edu.yaml.ItemContainerContentReferenceProvider
+import com.jetbrains.edu.yaml.messages.EduYAMLBundle
 import org.jetbrains.yaml.psi.YAMLScalar
 import org.jetbrains.yaml.psi.YAMLSequenceItem
 
@@ -43,7 +44,7 @@ class StudyItemNotFoundInspection : UnresolvedFileReferenceInspection() {
       else -> return
     }
 
-    val message = "Cannot find '${element.textValue}' ${childType.presentableName}"
+    val message = EduYAMLBundle.message("cannot.find.element", element.textValue, childType.presentableName)
     val fix = if (isValidFilePath(element.textValue)) CreateStudyItemQuickFix(element, childType) else null
     holder.registerProblem(element, message, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, *listOfNotNull(fix).toTypedArray())
   }
@@ -60,7 +61,7 @@ class StudyItemNotFoundInspection : UnresolvedFileReferenceInspection() {
   private class CreateStudyItemQuickFix(element: YAMLScalar, private val itemType: StudyItemType) : LocalQuickFixOnPsiElement(element) {
 
     override fun getFamilyName(): String = "Create study item"
-    override fun getText(): String = "Create ${itemType.presentableName}"
+    override fun getText(): String = EduYAMLBundle.message("create.item", itemType.presentableName)
     // We show dialog in `invoke` so quick have to be launched not in write action
     // otherwise, this dialog will block all codeinsight in whole IDE
     override fun startInWriteAction(): Boolean = false
