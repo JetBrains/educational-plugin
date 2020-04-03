@@ -67,7 +67,7 @@ class TokenInfo {
   var expiresIn: Long = -1
 
   fun isUpToDate(): Boolean {
-    return currentTimeSeconds() < expiresIn - 600 // subtract 10 minutes to avoid boundary case
+    return currentTimeSeconds() < expiresIn - 600 // refresh token before it's expired to avoid failed requests
   }
 
   private fun currentTimeSeconds(): Long {
