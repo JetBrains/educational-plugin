@@ -232,10 +232,6 @@ abstract class HyperskillConnector {
     return service.submission(submissionId).executeAndExtractFirst(SubmissionsList::submissions)
   }
 
-  fun getSolution(stepId: Int): Solution? {
-    return service.solutions(stepId).executeHandlingExceptions()?.body()?.solutions?.firstOrNull()
-  }
-
   // Post requests:
 
   fun postSubmission(submission: Submission): Result<Submission, String> {
