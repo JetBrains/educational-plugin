@@ -12,9 +12,6 @@ import com.jetbrains.edu.learning.EduSettings
  * See `docs/statisticsRules.md` for more information
  */
 class EduStateUsagesCollector : ApplicationUsagesCollector() {
-  private enum class TaskDescriptionPanel {
-    SWING, JAVAFX
-  }
 
   private enum class EduRole {
     STUDENT, EDUCATOR
@@ -25,8 +22,7 @@ class EduStateUsagesCollector : ApplicationUsagesCollector() {
   override fun getMetrics(): MutableSet<MetricEvent> {
     val metrics = HashSet<MetricEvent>()
 
-    val taskPanel =
-      if (EduSettings.getInstance().shouldUseJavaFx()) TaskDescriptionPanel.JAVAFX else TaskDescriptionPanel.SWING
+    val taskPanel = EduSettings.getInstance().javaUiLibrary
     metrics.add(newMetric("task.panel", taskPanel))
 
     val role = if (CCPluginToggleAction.isCourseCreatorFeaturesEnabled) EduRole.EDUCATOR else EduRole.STUDENT

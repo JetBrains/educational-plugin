@@ -31,7 +31,7 @@ public class EduSettings implements PersistentStateComponent<Element> {
   @Nullable
   private StepikUser myUser;
   private long myLastTimeChecked;
-  @Property private boolean myShouldUseJavaFx = EduUtils.hasJavaFx();
+  @NotNull @Property private JavaUILibrary javaUiLibrary = initialJavaUiLibrary();
 
   private Set<Integer> myShownCourseIds;
 
@@ -118,12 +118,44 @@ public class EduSettings implements PersistentStateComponent<Element> {
     ApplicationManager.getApplication().getMessageBus().syncPublisher(SETTINGS_CHANGED).userLoggedIn();
   }
 
+  //TODO get rid of this later
+  /**
+   * Method is deprecated. Use {@link EduSettings#getJavaUiLibraryWithCheck()} instead
+   */
+  @Deprecated
   public boolean shouldUseJavaFx() {
-    return myShouldUseJavaFx;
+    return javaUiLibrary == JavaUILibrary.JAVAFX ||  EduUtils.hasJavaFx();
   }
 
-  public void setShouldUseJavaFx(boolean shouldUseJavaFx) {
-    this.myShouldUseJavaFx = shouldUseJavaFx;
+  private JavaUILibrary initialJavaUiLibrary() {
+    if (javaUiLibrary != null) return javaUiLibrary;
+    if (EduUtils.hasJavaFx()) {
+      return JavaUILibrary.JAVAFX;
+    } else if (EduUtils.hasJCEF()) {
+      return JavaUILibrary.JCEF;
+    }
+    return JavaUILibrary.SWING;
+  }
+
+  @NotNull
+  public JavaUILibrary getJavaUiLibrary() {
+    return javaUiLibrary;
+  }
+
+  @NotNull
+  public JavaUILibrary getJavaUiLibraryWithCheck() {
+    switch (javaUiLibrary) {
+      case JAVAFX:
+        if (EduUtils.hasJavaFx()) return JavaUILibrary.JAVAFX;
+      case JCEF:
+        if (EduUtils.hasJCEF()) return JavaUILibrary.JCEF;
+      default:
+        return JavaUILibrary.SWING;
+    }
+  }
+
+  public void setJavaUiLibrary(@NotNull JavaUILibrary javaUiLibrary) {
+    this.javaUiLibrary = javaUiLibrary;
   }
 
   public static boolean isLoggedIn() {

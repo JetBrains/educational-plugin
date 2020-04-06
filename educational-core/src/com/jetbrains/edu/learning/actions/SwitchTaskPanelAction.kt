@@ -8,6 +8,8 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.JavaUILibrary
+import com.jetbrains.edu.learning.JavaUILibrary.*
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import javax.swing.DefaultComboBoxModel
@@ -32,9 +34,7 @@ class SwitchTaskPanelAction : DumbAwareAction() {
   private fun createDialog(): DialogWrapper = MyDialog(false)
 
   class MyDialog(canBeParent: Boolean) : DialogWrapper(null, canBeParent) {
-    private val JAVAFX_ITEM = "JavaFX"
-    private val SWING_ITEM = "Swing"
-    private val myComboBox: ComboBox<String> = ComboBox()
+    private val myComboBox: ComboBox<JavaUILibrary> = ComboBox()
 
     override fun createCenterPanel(): JComponent? = myComboBox
 
@@ -44,17 +44,21 @@ class SwitchTaskPanelAction : DumbAwareAction() {
 
     override fun doOKAction() {
       super.doOKAction()
-      EduSettings.getInstance().setShouldUseJavaFx(myComboBox.selectedItem == JAVAFX_ITEM)
+      val selectedUILibrary = myComboBox.selectedItem as JavaUILibrary?
+      EduSettings.getInstance().javaUiLibrary = selectedUILibrary ?: SWING
     }
 
     init {
-      val comboBoxModel = DefaultComboBoxModel<String>()
+      val comboBoxModel = DefaultComboBoxModel<JavaUILibrary>()
+      comboBoxModel.addElement(SWING)
       if (EduUtils.hasJavaFx()) {
-        comboBoxModel.addElement(JAVAFX_ITEM)
+        comboBoxModel.addElement(JAVAFX)
       }
-      comboBoxModel.addElement(SWING_ITEM)
-      comboBoxModel.selectedItem =
-          if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JAVAFX_ITEM else SWING_ITEM
+      if (EduUtils.hasJCEF()) {
+        comboBoxModel.addElement(JCEF)
+      }
+
+      comboBoxModel.selectedItem = EduSettings.getInstance().javaUiLibraryWithCheck
       myComboBox.model = comboBoxModel
       title = "Switch Task Description Panel"
       myComboBox.setMinimumAndPreferredWidth(250)

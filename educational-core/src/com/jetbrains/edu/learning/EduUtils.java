@@ -348,6 +348,16 @@ public class EduUtils {
     }
   }
 
+  public static boolean hasJCEF() {
+    try {
+      Class.forName("org.cef.browser.CefBrowser");
+      return true;
+    }
+    catch (ClassNotFoundException e) {
+      return false;
+    }
+  }
+
   @Nullable
   public static VirtualFile getTaskDir(Project project, @NotNull Course course, @NotNull VirtualFile taskFile) {
     VirtualFile file = taskFile.getParent();
