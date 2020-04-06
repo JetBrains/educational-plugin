@@ -22,6 +22,10 @@ class RemoteStudyItem : StudyItem() {
     throw NotImplementedError()
   }
 
+  override fun getUIName(): String {
+    throw NotImplementedError()
+  }
+
   override fun getName(): String {
     throw NotImplementedError()
   }

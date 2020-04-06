@@ -9,6 +9,7 @@ import com.intellij.ui.content.ContentManager
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.*
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
@@ -45,7 +46,7 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel() {
     }
     layout = BorderLayout()
     add(LightColoredActionLink(
-      "Back to the task description",
+      EduCoreBundle.message("action.back.to.description"),
       CheckDetailsPanel.SwitchTaskTabAction(project, 0),
       AllIcons.Actions.Back), BorderLayout.NORTH)
     add(panel, BorderLayout.CENTER)

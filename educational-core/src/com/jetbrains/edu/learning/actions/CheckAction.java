@@ -52,17 +52,13 @@ import java.util.concurrent.Future;
 
 public class CheckAction extends DumbAwareAction {
   public static final String ACTION_ID = "Educational.Check";
-  private static final String CHECK_TASK = "Check";
-  private static final String RUN_TASK = "Run";
-  private static final String RUN_DESCRIPTION = "Run current task";
-  private static final String CHECK_DESCRIPTION = "Check current task";
-
   private static final Logger LOG = Logger.getInstance(CheckAction.class);
 
   protected final Ref<Boolean> myCheckInProgress = new Ref<>(false);
 
   public CheckAction() {
-    super(CHECK_TASK, CHECK_DESCRIPTION, null);
+    super(EduCoreBundle.message("action.check"),
+          EduCoreBundle.message("action.check.item", EduCoreBundle.message("study.item.task")), null);
   }
 
   public CheckAction(String text) {
@@ -75,7 +71,7 @@ public class CheckAction extends DumbAwareAction {
 
   public static CheckAction createCheckAction(@NotNull Task task) {
     if (task instanceof TheoryTask) {
-      return new CheckAction(RUN_TASK, RUN_DESCRIPTION);
+      return new CheckAction(EduCoreBundle.message("action.run"), EduCoreBundle.message("action.check.item", task.getUIName()));
     }
     return task.getCheckAction();
   }
@@ -127,7 +123,7 @@ public class CheckAction extends DumbAwareAction {
   private static void showCheckUnavailablePopup(Project project) {
     Balloon balloon = JBPopupFactory.getInstance()
       .createHtmlTextBalloonBuilder(
-        ActionUtil.getUnavailableMessage(EduCoreBundle.message("check.task.checking"), false),
+        ActionUtil.getUnavailableMessage(EduCoreBundle.message("action.checking", ""), false),
         null,
         UIUtil.getToolTipActionBackground(),
         EduBrowserHyperlinkListener.INSTANCE)
@@ -156,12 +152,12 @@ public class CheckAction extends DumbAwareAction {
     if (studyEditor != null) {
       final Task task = studyEditor.getTaskFile().getTask();
       if (task instanceof TheoryTask) {
-        presentation.setText(RUN_TASK);
-        presentation.setDescription(RUN_DESCRIPTION);
+        presentation.setText(EduCoreBundle.message("action.run"));
+        presentation.setDescription(EduCoreBundle.message("action.run.item", task.getUIName()));
       }
       else {
-        presentation.setText(CHECK_TASK);
-        presentation.setDescription(CHECK_DESCRIPTION);
+        presentation.setText(EduCoreBundle.message("action.check"));
+        presentation.setDescription(EduCoreBundle.message("action.check.item", task.getUIName()));
       }
     }
     if (presentation.isEnabled()) {
@@ -188,7 +184,7 @@ public class CheckAction extends DumbAwareAction {
     private String TEST_RESULTS_DISPLAY_ID = "Test Results: Run";
 
     public StudyCheckTask(@NotNull Project project, @NotNull Task task) {
-      super(project, "Checking Task", true);
+      super(project, EduCoreBundle.message("action.checking", task.getUIName()), true);
       myProject = project;
       myTask = task;
       final Course course = task.getLesson().getCourse();

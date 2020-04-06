@@ -13,18 +13,17 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.util.ui.EmptyIcon;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
@@ -39,23 +38,24 @@ import static com.jetbrains.edu.learning.courseFormat.ext.TaskExt.revertTaskPara
 public class RevertTaskAction extends DumbAwareAction implements RightAlignedToolbarAction {
   public static final String ACTION_ID = "Educational.RefreshTask";
   private static final Logger LOG = Logger.getInstance(RevertTaskAction.class.getName());
-  private static final String RESET_TASK = "Reset Task";
 
   public RevertTaskAction() {
-    super(RESET_TASK, "Revert current task to the initial state", EducationalCoreIcons.ResetTask);
+    super(EduCoreBundle.message("action.reset.item", StringUtil.capitalize(EduCoreBundle.message("study.item.task"))),
+          EduCoreBundle.message("action.reset.item.to.initial.state", EduCoreBundle.message("study.item.task")),
+          EducationalCoreIcons.ResetTask);
   }
 
   public static void revert(@NotNull final Project project) {
-    final Task currentTask = EduUtils.getCurrentTask(project);
-    if (currentTask == null) return;
+    final Task task = EduUtils.getCurrentTask(project);
+    if (task == null) return;
 
-    revertTaskFiles(currentTask, project);
-    revertTaskParameters(currentTask, project);
+    revertTaskFiles(task, project);
+    revertTaskParameters(task, project);
 
-    PlaceholderDependencyManager.updateDependentPlaceholders(project, currentTask);
+    PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
     validateEditors(project);
-    String message =
-      String.format("<b>%s</b> task  of <b>%s</b> lesson is reset.", currentTask.getName(), currentTask.getLesson().getName());
+    final Lesson lesson = task.getLesson();
+    String message = EduCoreBundle.message("action.item.is.reset", task.getName(), task.getUIName(), lesson.getName(), lesson.getUIName());
     Notification notification = new Notification("reset.task", EmptyIcon.ICON_16, "", "", message, NotificationType.INFORMATION, null);
     notification.notify(project);
     ProjectView.getInstance(project).refresh();
@@ -113,11 +113,13 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
 
   public void actionPerformed(@NotNull AnActionEvent event) {
     final Project project = event.getProject();
-    if (project == null) {
-      return;
-    }
-    int result =
-      showOkCancelDialog(project, "Your task progress will be dropped", "Reset Task?", OK_BUTTON, CANCEL_BUTTON, getQuestionIcon());
+    if (project == null) return;
+    Task task = EduUtils.getCurrentTask(project);
+    if (task == null) return;
+
+    int result = showOkCancelDialog(project, EduCoreBundle.message("action.progress.dropped"),
+                                    EduCoreBundle.message("action.reset.item", StringUtil.capitalize(task.getUIName())),
+                                    OK_BUTTON, CANCEL_BUTTON, getQuestionIcon());
     if (result != OK) return;
     revert(project);
     EduCounterUsageCollector.revertTask();
@@ -141,6 +143,9 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     if (task == null) {
       return;
     }
+    presentation.setText(EduCoreBundle.message("action.reset.item", StringUtil.capitalize(task.getUIName())));
+    presentation.setDescription(EduCoreBundle.message("action.reset.item.to.initial.state", task.getUIName()));
+
     if (!course.isStudy()) {
       presentation.setEnabledAndVisible(false);
     }

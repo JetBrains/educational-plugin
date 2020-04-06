@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import icons.EducationalCoreIcons;
@@ -311,5 +312,11 @@ public abstract class Course extends LessonContainer {
 
   public boolean isViewAsEducatorEnabled() {
     return ApplicationManager.getApplication().isInternal();
+  }
+
+  @NotNull
+  @Override
+  public String getUIName() {
+    return EduCoreBundle.message("study.item.course");
   }
 }

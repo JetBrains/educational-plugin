@@ -21,6 +21,10 @@ class TitledStudyItem(title: String) : StudyItem(title) {
     throw NotImplementedError()
   }
 
+  override fun getUIName(): String {
+    throw NotImplementedError()
+  }
+
   override fun setName(name: String?) {
     throw NotImplementedError()
   }

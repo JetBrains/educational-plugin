@@ -105,4 +105,7 @@ public abstract class StudyItem extends UserDataHolderBase {
 
   // used in json/yaml serialization/deserialization
   public abstract String getItemType();
+
+  @NotNull
+  public abstract String getUIName();
 }

@@ -53,8 +53,7 @@ object HyperskillCourseUpdater {
 
   @JvmStatic
   fun updateCourse(project: Project, course: HyperskillCourse) {
-    runInBackground(project,
-                    EduCoreBundle.message("hyperskill.checking.updates", EduCoreBundle.message("hyperskill.project"))) { indicator ->
+    runInBackground(project, EduCoreBundle.message("action.checking.updates")) { indicator ->
       val projectLesson = course.getProjectLesson()
       val courseFromServer = course.hyperskillProject?.getCourseFromServer()
       val projectLessonShouldBeUpdated = courseFromServer != null && projectLesson?.shouldBeUpdated(project, courseFromServer) ?: false
@@ -62,7 +61,7 @@ object HyperskillCourseUpdater {
       val problemsLesson = course.getProblemsLesson()
 
       val codeChallengesUpdates = if (problemsLesson != null) {
-        indicator.text = EduCoreBundle.message("hyperskill.checking.updates", EduCoreBundle.message("hyperskill.code.challenges", 2))
+        indicator.text = EduCoreBundle.message("action.checking.updates")
         problemsLesson.getCodeChallengesUpdates()
       }
       else {

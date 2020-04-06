@@ -121,7 +121,7 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
         application.runReadAction {
           val dumbService = DumbService.getInstance(project)
           if (dumbService.isDumb) {
-            val message = ActionUtil.getUnavailableMessage(EduCoreBundle.message("task.description.psi.link.navigation"), false)
+            val message = ActionUtil.getUnavailableMessage(EduCoreBundle.message("label.navigation"), false)
             dumbService.showDumbModeNotification(message)
           }
           else {

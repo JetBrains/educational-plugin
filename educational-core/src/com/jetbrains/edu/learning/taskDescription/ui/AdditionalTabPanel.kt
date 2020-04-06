@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
@@ -44,7 +45,7 @@ class AdditionalTabPanel(val project: Project) : JPanel() {
 
   private fun getBackLinkPanel(project: Project): JPanel {
     val backLink = LightColoredActionLink(
-      "Back to the task description",
+      EduCoreBundle.message("action.back.to.description"),
       CheckDetailsPanel.SwitchTaskTabAction(project, 0),
       AllIcons.Actions.Back)
     backLink.border = JBUI.Borders.emptyBottom(8)

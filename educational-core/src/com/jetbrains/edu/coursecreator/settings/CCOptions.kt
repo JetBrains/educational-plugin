@@ -43,7 +43,7 @@ class CCOptions : OptionsProvider {
     return panel {
       row {
         cell {
-          label(EduCoreBundle.message("ccoptions.task.description.format"))
+          label(EduCoreBundle.message("ccoptions.description.format"))
           htmlRadioButton()
           markdownRadioButton()
         }

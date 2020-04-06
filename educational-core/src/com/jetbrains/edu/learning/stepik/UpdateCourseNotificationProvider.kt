@@ -26,7 +26,6 @@ class UpdateCourseNotificationProvider(val project: Project) :
   companion object {
     @VisibleForTesting
     val KEY: Key<EditorNotificationPanel> = Key.create("Edu.updateCourse")
-    private val NOTIFICATION_TEXT: String = EduCoreBundle.message("update.course.editor.notification.text")
   }
 
   override fun getKey() = KEY
@@ -38,11 +37,11 @@ class UpdateCourseNotificationProvider(val project: Project) :
     val course = project.course as? EduCourse ?: return null
     if (course.isRemote && !course.isUpToDate && file.isTaskFile) {
       val panel = EditorNotificationPanel()
-      panel.setText(NOTIFICATION_TEXT)
-      panel.createActionLabel("Update Course") {
+      panel.setText(EduCoreBundle.message("stepik.update.course.notification"))
+      panel.createActionLabel(EduCoreBundle.message("action.update.content")) {
         if (isUpdateRunning.get()) return@createActionLabel
         ProgressManager.getInstance().run(
-          object : com.intellij.openapi.progress.Task.Backgroundable(project, EduCoreBundle.message("updating.course")) {
+          object : com.intellij.openapi.progress.Task.Backgroundable(project, EduCoreBundle.message("action.update.content")) {
             override fun run(indicator: ProgressIndicator) {
               isUpdateRunning.set(true)
               updateCourse(project, course)

@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions.C
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
@@ -161,10 +162,9 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
     uiContent = UiContent(contentManager, topPanel, taskTextTW, checkPanel, separator)
 
-    val course = StudyTaskManager.getInstance(project).course
-    val displayNamePrefix = if (course is HyperskillCourse) "Stage" else "Task"
-    val content = ContentFactory.SERVICE.getInstance().createContent(panel, "$displayNamePrefix Description", false)
-    content.isCloseable = false
+    val content = ContentFactory.SERVICE.getInstance()
+      .createContent(panel, EduCoreBundle.message("label.description"), false)
+      .apply { isCloseable = false }
     contentManager.addContent(content)
 
     currentTask = EduUtils.getCurrentTask(project)
