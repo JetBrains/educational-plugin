@@ -12,17 +12,33 @@ import java.awt.Color
 import java.awt.event.ActionListener
 
 
-private val MAIN_BG_COLOR: Color = JBColor.namedColor("Edu.CourseDialog.background", JBColor(
-  NotNullProducer { if (JBColor.isBright()) UIUtil.getListBackground() else Color(0x313335) }))
+private val MAIN_BG_COLOR: Color = JBColor(NotNullProducer { if (JBColor.isBright()) UIUtil.getListBackground() else Color(0x313335) })
 private val WhiteForeground: Color = JBColor(Color.white, Color(0xBBBBBB))
 private val GreenColor: Color = JBColor(0x5D9B47, 0x2B7B50)
-private val FillForegroundColor: Color = JBColor.namedColor("Edu.CourseDialog.Button.installFillForeground", WhiteForeground)
-private val FillBackgroundColor: Color = JBColor.namedColor("Edu.CourseDialog.Button.installFillBackground", GreenColor)
-private val ForegroundColor: Color = JBColor.namedColor("Edu.CourseDialog.Button.installForeground", GreenColor)
-private val BackgroundColor: Color = JBColor.namedColor("Edu.CourseDialog.Button.installBackground", MAIN_BG_COLOR)
-private val FocusedBackground: Color = JBColor.namedColor("Edu.CourseDialog.Button.installFocusedBackground", Color(0xE1F6DA))
-private val BorderColor: Color = JBColor.namedColor("Edu.CourseDialog.Button.installBorderColor", GreenColor)
+private val FillForegroundColor: Color = WhiteForeground
+private val FillBackgroundColor: Color = GreenColor
+private val ForegroundColor: Color = GreenColor
+private val BackgroundColor: Color = MAIN_BG_COLOR
+private val FocusedBackground: Color = Color(0xE1F6DA)
+private val BorderColor: Color = GreenColor
 
+
+// TODO: use proper button action and text. Problem: location and properties from info panel is needed
+class OpenCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit) : StartCourseButtonBase(joinCourse) {
+  override val courseMode = CourseMode.STUDY
+
+  init {
+    text = "Open"
+    setTextColor(ForegroundColor)
+    setFocusedTextColor(ForegroundColor)
+    setBgColor(BackgroundColor)
+    setWidth72(this)
+  }
+
+  override fun isVisible(course: Course): Boolean = true
+
+  override fun isVisible(): Boolean = false  // TODO: remove working on open button
+}
 
 class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit) : StartCourseButtonBase(joinCourse) {
   override val courseMode = CourseMode.STUDY

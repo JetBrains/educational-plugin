@@ -81,6 +81,9 @@ interface StepikService {
   @GET("api/step-sources/{id}")
   fun choiceStepSource(@Path("id") stepId: Int): Call<ChoiceStepSourcesList>
 
+  @GET("api/course-review-summaries")
+  fun courseReviewSummaries(@Query("ids[]") vararg ids: Int): Call<CourseReviewSummariesList>
+
   // POST requests:
 
   @POST("api/courses")

@@ -35,29 +35,29 @@ class BaselinePanel : NonOpaquePanel() {
 }
 
 private class BaselineLayout(
-  private val myButtonComponents: MutableList<Component> = ArrayList()
+  private val buttonComponents: MutableList<Component> = ArrayList()
 ) : AbstractLayoutManager() {
-  private val myOffset: JBValue = JBValue.Float(8f)
-  private val myBeforeButtonOffset: JBValue = JBValue.Float(40f)
-  private val myButtonOffset: JBValue = JBValue.Float(6f)
+  private val offset: JBValue = JBValue.Float(8f)
+  private val beforeButtonOffset: JBValue = JBValue.Float(40f)
+  private val buttonOffset: JBValue = JBValue.Float(6f)
   var yOffset = 0
   lateinit var baseComponent: Component
 
   override fun preferredLayoutSize(parent: Container): Dimension {
     val baseSize = baseComponent.preferredSize
     var width = baseSize.width
-    val size = myButtonComponents.size
+    val size = buttonComponents.size
     if (size > 0) {
       var visibleCount = 0
-      for (component in myButtonComponents) {
+      for (component in buttonComponents) {
         if (component.isVisible) {
           width += component.preferredSize.width
           visibleCount++
         }
       }
       if (visibleCount > 0) {
-        width += myBeforeButtonOffset.get()
-        width += (visibleCount - 1) * myButtonOffset.get()
+        width += beforeButtonOffset.get()
+        width += (visibleCount - 1) * buttonOffset.get()
       }
     }
     val insets = parent.insets
@@ -67,15 +67,15 @@ private class BaselineLayout(
   private fun calculateBaseWidth(parent: Container): Int {
     var parentWidth = parent.width
     var visibleCount = 0
-    for (component in myButtonComponents) {
+    for (component in buttonComponents) {
       if (component.isVisible) {
         parentWidth -= component.preferredSize.width
         visibleCount++
       }
     }
-    parentWidth -= myButtonOffset.get() * (visibleCount - 1)
+    parentWidth -= buttonOffset.get() * (visibleCount - 1)
     if (visibleCount > 0) {
-      parentWidth -= myOffset.get()
+      parentWidth -= offset.get()
     }
     return parentWidth
   }
@@ -93,15 +93,15 @@ private class BaselineLayout(
     baseSize.width = baseSize.width.coerceAtMost(calcBaseWidth)
     baseComponent.setBounds(x, top, baseSize.width, baseSize.height)
     var lastX = parent.width
-    for (i in myButtonComponents.indices.reversed()) {
-      val component = myButtonComponents[i]
+    for (i in buttonComponents.indices.reversed()) {
+      val component = buttonComponents[i]
       if (!component.isVisible) {
         continue
       }
       val size = component.preferredSize
       lastX -= size.width
       setBaselineBounds(lastX, y - yOffset, component, size)
-      lastX -= myButtonOffset.get()
+      lastX -= buttonOffset.get()
     }
   }
 

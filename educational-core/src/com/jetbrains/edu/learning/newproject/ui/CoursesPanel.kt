@@ -15,7 +15,10 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser
-import com.intellij.ui.*
+import com.intellij.ui.FilterComponent
+import com.intellij.ui.GuiUtils
+import com.intellij.ui.HyperlinkLabel
+import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBList
 import com.intellij.util.containers.ContainerUtil
@@ -29,14 +32,13 @@ import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.getDecoratedLogo
-import com.jetbrains.edu.learning.courseFormat.ext.tooltipText
 import com.jetbrains.edu.learning.courseLoading.CourseLoader.getCourseInfosUnderProgress
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.joinCourse
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.*
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.Companion.forCourse
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
@@ -54,6 +56,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector.Comp
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView.Companion.getTaskDescriptionBackgroundColor
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
+import java.awt.Component
 import java.awt.Dimension
 import java.awt.Point
 import java.util.*
@@ -521,16 +524,15 @@ class CoursesPanel(courses: List<Course>,
     }
   }
 
-  private class CourseColoredListCellRenderer : ColoredListCellRenderer<Course?>() {
-
-    override fun customizeCellRenderer(list: JList<out Course?>, course: Course?, index: Int, selected: Boolean, hasFocus: Boolean) {
-      course?.let {
-        val logo = course.logo
-        border = JBUI.Borders.empty(5, 0)
-        append(course.name, course.visibility.textAttributes)
-        icon = course.getDecoratedLogo(logo)
-        toolTipText = course.tooltipText
-      }
+  private class CourseColoredListCellRenderer : ListCellRenderer<Course?> {
+    override fun getListCellRendererComponent(list: JList<out Course?>?,
+                                              value: Course?,
+                                              index: Int,
+                                              isSelected: Boolean,
+                                              cellHasFocus: Boolean): Component {
+      val courseCardComponent = CourseCardComponent(value)
+      courseCardComponent.updateColors(isSelected)
+      return courseCardComponent
     }
   }
 }

@@ -30,6 +30,10 @@ public class EduCourse extends Course {
   @Transient private boolean isUpToDate = true;
   boolean isPublic;
   @Transient private String myAdminsGroup;
+  private int learnersCount = 0;
+
+  private int reviewSummary;
+  private double reviewScore;
 
   public String getType() {
     return myType;
@@ -194,5 +198,29 @@ public class EduCourse extends Course {
   @Override
   public boolean isViewAsEducatorEnabled() {
     return true;
+  }
+
+  public int getLearnersCount() {
+    return learnersCount;
+  }
+
+  public void setLearnersCount(int learnersCount) {
+    this.learnersCount = learnersCount;
+  }
+
+  public double getReviewScore() {
+    return reviewScore;
+  }
+
+  public void setReviewScore(double reviewScore) {
+    this.reviewScore = reviewScore;
+  }
+
+  public int getReviewSummary() {
+    return reviewSummary;
+  }
+
+  public void setReviewSummary(int reviewSummary) {
+    this.reviewSummary = reviewSummary;
   }
 }

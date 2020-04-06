@@ -50,11 +50,13 @@ const val CODE = "code"
 const val EDU_TASK = "edu_task"
 const val VERSION = "version"
 const val ATTACHMENTS = "attachments"
+const val COURSE_REVIEW_SUMMARIES = "course-review-summaries"
 const val ADDITIONAL_FILES = "additional_files"
 const val TASK_FILES = "task_files"
 const val TASKS_INFO = "tasks_info"
 const val TIME = "time"
 const val MEMORY = "memory"
+const val AVERAGE = "average"
 
 // List wrappers for GET requests:
 
@@ -127,6 +129,11 @@ class AssignmentsList {
 class AttachmentsList {
   @JsonProperty(ATTACHMENTS)
   lateinit var attachments: List<Attachment>
+}
+
+class CourseReviewSummariesList {
+  @JsonProperty(COURSE_REVIEW_SUMMARIES)
+  lateinit var courseReviewSummaries: List<CourseReviewSummary>
 }
 
 // Data wrappers for POST requests:
@@ -404,6 +411,14 @@ class Attachment {
 
   @JsonProperty(NAME)
   lateinit var name: String
+}
+
+class CourseReviewSummary {
+  @JsonProperty(AVERAGE)
+  var average: Double = 0.0
+
+  @JsonProperty(COURSE)
+  var courseId: Int = 0
 }
 
 open class AdditionalInfo

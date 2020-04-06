@@ -25,6 +25,8 @@ const val TITLE = "title"
 const val PROGRAMMING_LANGUAGE = "programming_language"
 const val LANGUAGE = "language"
 const val ADMINS_GROUP = "admins_group"
+const val lEARNERS_COUNT = "learners_count"
+const val REVIEW_SUMMARY = "review_summary"
 const val UNITS = "units"
 const val COURSE = "course"
 const val POSITION = "position"
@@ -97,6 +99,12 @@ abstract class StepikEduCourseMixin {
 
   @JsonProperty(ADMINS_GROUP)
   lateinit var myAdminsGroup: String
+
+  @JsonProperty(lEARNERS_COUNT)
+  var learnersCount: Int = 0
+
+  @JsonProperty(REVIEW_SUMMARY)
+  var reviewSummary: Int = 0
 }
 
 class StepikSectionMixin {

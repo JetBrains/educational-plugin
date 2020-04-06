@@ -1,24 +1,20 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.NonOpaquePanel
-import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.logo
+import com.jetbrains.edu.learning.newproject.ui.getScaledLogo
 import java.awt.BorderLayout
-import javax.swing.Icon
 import javax.swing.JPanel
 import javax.swing.SwingConstants
 
-private const val LOGO_SIZE = 80
-private const val INITIAL_LOGO_SIZE = 16f
 private const val ICON_TOP_OFFSET = 10
 private const val HEADER_HGAP = 20
 private const val TOP_OFFSET = 15
+private const val LOGO_SIZE = 80
 
 class HeaderPanel(
   leftMargin: Int,
@@ -57,22 +53,10 @@ class HeaderPanel(
     }
 
     fun bind(course: Course) {
-      iconLabel.icon = course.scaledLogo
+      iconLabel.icon = course.getScaledLogo(LOGO_SIZE, this@IconPanel)
       revalidate()
       repaint()
     }
-
-    private val Course.scaledLogo: Icon?
-      get() {
-        val logo = logo ?: return null
-        val scaleFactor = LOGO_SIZE / INITIAL_LOGO_SIZE
-        val scaledIcon = IconUtil.scale(logo, this@IconPanel, scaleFactor)
-        return IconUtil.toSize(scaledIcon, JBUI.scale(LOGO_SIZE), JBUI.scale(LOGO_SIZE))
-      }
-  }
-
-  companion object {
-    private val LOG: Logger = Logger.getInstance(HeaderPanel::class.java)
   }
 }
 

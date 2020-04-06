@@ -1,9 +1,15 @@
 package com.jetbrains.edu.learning.projectView
 
+import com.intellij.ide.ui.laf.darcula.ui.DarculaProgressBarUI
+import com.intellij.openapi.progress.util.ColorProgressBar
+import com.intellij.ui.Gray
+import com.intellij.ui.JBColor
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import java.awt.Color
+import javax.swing.JProgressBar
 
 object ProgressUtil {
   /**
@@ -37,5 +43,20 @@ object ProgressUtil {
     return lesson.taskList
       .filter { it.status == CheckStatus.Solved }
       .count()
+  }
+
+  fun createProgressBar() : JProgressBar {
+    val progressBar = JProgressBar()
+
+    @Suppress("UsePropertyAccessSyntax") // for compatibility with JDK11
+    progressBar.setUI(object : DarculaProgressBarUI() {
+      override fun getRemainderColor(): Color {
+        return JBColor(Gray._237, Color(76, 77, 79))
+      }
+    })
+    progressBar.foreground = ColorProgressBar.GREEN
+    progressBar.isIndeterminate = false
+    progressBar.putClientProperty("ProgressBar.flatEnds", java.lang.Boolean.TRUE)
+    return progressBar
   }
 }

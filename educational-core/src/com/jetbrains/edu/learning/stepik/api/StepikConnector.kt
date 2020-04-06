@@ -179,6 +179,18 @@ abstract class StepikConnector {
     return response?.body()?.attempts
   }
 
+  fun getCourseReviewSummaries(ids: List<Int>): List<CourseReviewSummary> {
+    val courseIdsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
+    val allReviewSummaries = mutableListOf<CourseReviewSummary>()
+    courseIdsChunks
+      .mapNotNull {
+        val response = service.courseReviewSummaries(*it.toIntArray()).executeHandlingExceptions()
+        response?.body()?.courseReviewSummaries
+      }
+      .forEach { allReviewSummaries.addAll(it) }
+    return allReviewSummaries
+  }
+
   // Post requests:
 
   fun postCourse(course: EduCourse): EduCourse? {

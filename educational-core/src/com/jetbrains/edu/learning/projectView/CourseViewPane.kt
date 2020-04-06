@@ -51,6 +51,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.projectView.ProgressUtil.createProgressBar
 import icons.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
@@ -104,17 +105,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   private fun createProgressPanel(): JPanel {
     val panel = JPanel(BorderLayout())
 
-    progressBar = JProgressBar()
-
-    @Suppress("UsePropertyAccessSyntax") // for compatibility with JDK11
-    progressBar.setUI(object : DarculaProgressBarUI() {
-      override fun getRemainderColor(): Color {
-        return JBColor(Gray._237, Color(76, 77, 79))
-      }
-    })
-    progressBar.foreground = ColorProgressBar.GREEN
-    progressBar.isIndeterminate = false
-    progressBar.putClientProperty("ProgressBar.flatEnds", java.lang.Boolean.TRUE)
+    progressBar = createProgressBar()
     panel.background = UIUtil.getTreeBackground()
     panel.add(progressBar, BorderLayout.NORTH)
     panel.border = EmptyBorder(0, 0, 5, 0)

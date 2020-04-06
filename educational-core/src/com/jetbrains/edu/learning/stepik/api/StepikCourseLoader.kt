@@ -35,6 +35,7 @@ object StepikCourseLoader {
       .forEach { result.addAll(it) }
 
     setAuthors(result)
+    setReviews(result)
 
     LOG.info("Loading courses finished...Took " + (System.currentTimeMillis() - startTime) + " ms")
     return result
@@ -47,6 +48,14 @@ object StepikCourseLoader {
     for (course in result) {
       val authors = course.instructors.mapNotNull { usersById[it] }
       course.authors = authors
+    }
+  }
+
+  private fun setReviews(courses: List<EduCourse>) {
+    val summaryIds = courses.map { it.reviewSummary }
+    val reviewsByCourseId = StepikConnector.getInstance().getCourseReviewSummaries(summaryIds).associateBy { it.courseId }
+    for (course in courses) {
+      course.reviewScore = reviewsByCourseId[course.id]?.average ?: 0.0
     }
   }
 
