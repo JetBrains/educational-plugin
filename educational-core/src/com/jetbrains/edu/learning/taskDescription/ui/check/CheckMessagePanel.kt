@@ -17,12 +17,12 @@ import kotlinx.css.body
 import java.awt.BorderLayout
 import java.awt.Font
 import javax.swing.*
+import javax.swing.event.HyperlinkListener
 
 class CheckMessagePanel private constructor(): JPanel() {
 
   private val messagePane: JTextPane = createTextPane().apply {
     border = JBUI.Borders.empty()
-    addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
   }
 
   init {
@@ -40,6 +40,10 @@ class CheckMessagePanel private constructor(): JPanel() {
       displayMessage = displayMessage.monospaced()
     }
     messagePane.text = displayMessage
+  }
+
+  private fun setHyperlinkListener(listener: HyperlinkListener) {
+    messagePane.addHyperlinkListener(listener)
   }
 
   private fun setDiff(diff: CheckResultDiff) {
@@ -79,6 +83,7 @@ class CheckMessagePanel private constructor(): JPanel() {
     fun create(checkResult: CheckResult): CheckMessagePanel {
       val messagePanel = CheckMessagePanel()
       messagePanel.setMessage(checkResult.escapedMessage)
+      messagePanel.setHyperlinkListener(checkResult.hyperlinkListener ?: EduBrowserHyperlinkListener.INSTANCE)
       if (checkResult.diff != null) {
         messagePanel.setDiff(checkResult.diff)
       }

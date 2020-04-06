@@ -2,10 +2,14 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.ui.HyperlinkAdapter
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -23,9 +27,11 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import java.awt.BorderLayout
 import javax.swing.JPanel
+import javax.swing.event.HyperlinkEvent
 
 val HYPERSKILL_SELECTED_STAGE: Key<Int> = Key.create("HYPERSKILL_SELECTED_STAGE")
 val HYPERSKILL_SELECTED_PROBLEM: Key<Int> = Key.create("HYPERSKILL_SELECTED_PROBLEM")
@@ -109,6 +115,27 @@ fun getSelectedProjectIdUnderProgress(account: HyperskillAccount): Int? {
 }
 
 fun showErrorDetails(project: Project, error: String) {
+  if (error == EduCoreBundle.message("error.forbidden")) {
+    Notification(EduNames.JBA, EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA).capitalize(),
+                 EduCoreBundle.message("error.forbidden.with.link"), NotificationType.ERROR, object : NotificationListener.Adapter() {
+      override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
+        notification.expire()
+        HyperskillLoginListener.hyperlinkUpdate(e)
+      }
+    }).notify(project)
+    return
+  }
   val message = "${EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA)}\n\n$error"
   CheckDetailsView.getInstance(project).showCheckResultDetails(EduCoreBundle.message("error.solution.not.posted"), message)
+}
+
+object HyperskillLoginListener : HyperlinkAdapter() {
+  override fun hyperlinkActivated(e: HyperlinkEvent?) {
+    val fullName = HyperskillSettings.INSTANCE.account?.userInfo?.fullname ?: return
+    HyperskillConnector.getInstance().doAuthorize(Runnable {
+      Notification(EduNames.JBA, EduCoreBundle.message("login.successful"),
+                   EduCoreBundle.message("logged.in.as", fullName),
+                   NotificationType.INFORMATION).notify(null)
+    })
+  }
 }

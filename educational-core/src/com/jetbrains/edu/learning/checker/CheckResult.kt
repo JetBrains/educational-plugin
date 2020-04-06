@@ -2,13 +2,15 @@ package com.jetbrains.edu.learning.checker
 
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import javax.swing.event.HyperlinkListener
 
 class CheckResult @JvmOverloads constructor(
   val status: CheckStatus,
   val message: String,
   val details: String? = null,
   val diff: CheckResultDiff? = null,
-  private val needEscape: Boolean = true
+  private val needEscape: Boolean = true, // false if there are html tags to display, ex.links
+  val hyperlinkListener: HyperlinkListener? = null
 ) {
 
   val escapedMessage: String get() = message.escaped

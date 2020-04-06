@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.CONTINUE_ON_HYPERSKILL
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
 import java.util.concurrent.TimeUnit
@@ -70,6 +71,17 @@ object HyperskillCheckConnector {
     return Submission(score, attempt.id, files, null, feedback)
   }
 
+  private fun Err<String>.toCheckResult(): CheckResult {
+    return if (error == EduCoreBundle.message("error.forbidden")) {
+      CheckResult(CheckStatus.Unchecked,
+                  EduCoreBundle.message("error.forbidden.with.link"),
+                  needEscape = false,
+                  hyperlinkListener = HyperskillLoginListener
+      )
+    }
+    else CheckResult(CheckStatus.Unchecked, error)
+  }
+
   fun checkCodeTask(project: Project, task: Task): CheckResult {
     if (task.id == 0) {
       val link = task.feedbackLink.link ?: return CheckResult.FAILED_TO_CHECK
@@ -78,7 +90,7 @@ object HyperskillCheckConnector {
     }
     val connector = HyperskillConnector.getInstance()
     val attempt = when (val attemptResponse = connector.postAttempt(task.id)) {
-      is Err -> return CheckResult(CheckStatus.Unchecked, attemptResponse.error)
+      is Err -> return attemptResponse.toCheckResult()
       is Ok -> attemptResponse.value
     }
 
@@ -96,7 +108,7 @@ object HyperskillCheckConnector {
 
     val codeSubmission = StepikCheckerConnector.createCodeSubmission(attempt.id, defaultLanguage, answer)
     var submission: Submission = when (val submissionResponse = connector.postSubmission(codeSubmission)) {
-      is Err -> return CheckResult(CheckStatus.Unchecked, submissionResponse.error)
+      is Err -> return submissionResponse.toCheckResult()
       is Ok -> submissionResponse.value
     }
 
@@ -104,7 +116,7 @@ object HyperskillCheckConnector {
     while (submission.status == "evaluation") {
       TimeUnit.MILLISECONDS.sleep(500)
       submission = when (val response = connector.getSubmissionById(submissionId)) {
-        is Err -> return CheckResult(CheckStatus.Unchecked, response.error)
+        is Err -> return response.toCheckResult()
         is Ok -> response.value
       }
     }
