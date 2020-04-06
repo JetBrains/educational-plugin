@@ -229,17 +229,17 @@ abstract class HyperskillConnector {
   }
 
   fun getSubmissionById(submissionId: Int): Result<Submission, String> {
-    return service.submission(submissionId).executeAndExtractFirst(SubmissionsList::submissions)
+    return withTokenRefreshIfNeeded { service.submission(submissionId).executeAndExtractFirst(SubmissionsList::submissions) }
   }
 
   // Post requests:
 
   fun postSubmission(submission: Submission): Result<Submission, String> {
-    return service.submission(submission).executeAndExtractFirst(SubmissionsList::submissions)
+    return withTokenRefreshIfNeeded { service.submission(submission).executeAndExtractFirst(SubmissionsList::submissions) }
   }
 
   fun postAttempt(step: Int): Result<Attempt, String> {
-    return service.attempt(Attempt(step)).executeAndExtractFirst(AttemptsList::attempts)
+    return withTokenRefreshIfNeeded { service.attempt(Attempt(step)).executeAndExtractFirst(AttemptsList::attempts) }
   }
 
   private fun <T, R> Call<T>.executeAndExtractFirst(extractResult: T.() -> List<R>): Result<R, String> {
@@ -247,6 +247,16 @@ abstract class HyperskillConnector {
       val result = it.body()?.extractResult()?.firstOrNull()
       if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA)) else Ok(result)
     }
+  }
+
+  private fun <T> withTokenRefreshIfNeeded(call: () -> Result<T, String>): Result<T, String> {
+    val result = call()
+    if (!isUnitTestMode && !ApplicationManager.getApplication().isInternal
+        && result is Err && result.error == EduCoreBundle.message("error.forbidden")) {
+      HyperskillSettings.INSTANCE.account?.refreshTokens()
+      return call()
+    }
+    return result
   }
 
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
