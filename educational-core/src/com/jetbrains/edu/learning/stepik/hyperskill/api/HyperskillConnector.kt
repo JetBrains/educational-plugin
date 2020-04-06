@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillT
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import okhttp3.ConnectionPool
+import retrofit2.Call
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.*
 
@@ -228,10 +229,7 @@ abstract class HyperskillConnector {
   }
 
   fun getSubmissionById(submissionId: Int): Result<Submission, String> {
-    return service.submission(submissionId).executeParsingErrors(true).flatMap {
-      val result = it.body()?.submissions?.firstOrNull()
-      if (result == null) Err(EduCoreBundle.message("error.failed.to.load.solution", EduNames.JBA)) else Ok(result)
-    }
+    return service.submission(submissionId).executeAndExtractFirst(SubmissionsList::submissions)
   }
 
   fun getSolution(stepId: Int): Solution? {
@@ -241,15 +239,16 @@ abstract class HyperskillConnector {
   // Post requests:
 
   fun postSubmission(submission: Submission): Result<Submission, String> {
-    return service.submission(submission).executeParsingErrors(true).flatMap {
-      val result = it.body()?.submissions?.firstOrNull()
-      if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA)) else Ok(result)
-    }
+    return service.submission(submission).executeAndExtractFirst(SubmissionsList::submissions)
   }
 
   fun postAttempt(step: Int): Result<Attempt, String> {
-    return service.attempt(Attempt(step)).executeParsingErrors(true).flatMap {
-      val result = it.body()?.attempts?.firstOrNull()
+    return service.attempt(Attempt(step)).executeAndExtractFirst(AttemptsList::attempts)
+  }
+
+  private fun <T, R> Call<T>.executeAndExtractFirst(extractResult: T.() -> List<R>): Result<R, String> {
+    return executeParsingErrors(true).flatMap {
+      val result = it.body()?.extractResult()?.firstOrNull()
       if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA)) else Ok(result)
     }
   }
