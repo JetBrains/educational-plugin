@@ -15,10 +15,12 @@ class HyperskillHttpErrorsTest : EduTestCase() {
   fun `test service is under maintenance`() = doTest(HTTP_BAD_GATEWAY, EduCoreBundle.message("error.service.maintenance"))
   fun `test service is down`() = doTest(HTTP_GATEWAY_TIMEOUT, EduCoreBundle.message("error.service.down"))
   fun `test unexpected error occurred`() = doTest(HTTP_BAD_REQUEST, EduCoreBundle.message("error.unexpected", ""))
+  fun `test forbidden`() = doTest(HTTP_FORBIDDEN, EduCoreBundle.message("error.forbidden"))
 
-  private fun doTest(code: Int, error: String) {
+  private fun doTest(code: Int, expectedError: String) {
     mockConnector.withResponseHandler(testRootDisposable) { MockResponse().setResponseCode(code) }
     val response = mockConnector.postSubmission(Submission())
-    assertTrue((response as Err).error.startsWith(error))
+    val actualError = (response as Err).error
+    assertTrue("Unexpected error message: `$actualError`", actualError.startsWith(expectedError))
   }
 }

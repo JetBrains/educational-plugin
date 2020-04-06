@@ -104,6 +104,7 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
         Err("${EduCoreBundle.message("error.service.maintenance")}\n\n$error") // 502, 503
       in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION ->
         Err("${EduCoreBundle.message("error.service.down")}\n\n$error") // 500x
+      HttpURLConnection.HTTP_FORBIDDEN -> Err(EduCoreBundle.message("error.forbidden"))
       in HttpURLConnection.HTTP_BAD_REQUEST..HttpURLConnection.HTTP_UNSUPPORTED_TYPE ->
         Err(EduCoreBundle.message("error.unexpected", error)) // 400x
       else -> {
