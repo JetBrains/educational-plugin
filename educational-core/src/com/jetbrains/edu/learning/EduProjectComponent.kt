@@ -119,7 +119,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
       return
     }
 
-    if (project.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED) == true) {
+    if (!isUnitTestMode && project.getUserData (CourseProjectGenerator.EDU_PROJECT_CREATED) == true) {
       configurator.courseBuilder.refreshProject(project, RefreshCause.PROJECT_CREATED)
     }
 

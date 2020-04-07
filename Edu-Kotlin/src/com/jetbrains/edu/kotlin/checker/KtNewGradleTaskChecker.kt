@@ -27,7 +27,7 @@ class KtNewGradleTaskChecker(task: EduTask, project: Project) : NewGradleEduTask
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
     val testConfigurations = super.createTestConfigurations()
     // Android Studio produces configurations that correctly work even in one module project
-    if (EduUtils.isAndroidStudio() || task.hasSeparateModule (project) || testConfigurations.size != 1) {
+    if (EduUtils.isAndroidStudio() || task.hasSeparateModule(project) || testConfigurations.size != 1) {
       return testConfigurations
     }
 

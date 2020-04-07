@@ -19,6 +19,7 @@ import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduDocumentListener
+import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckListener
@@ -59,6 +60,7 @@ abstract class CheckersTestBase<Settings> : PlatformTestCase() {
     }
 
     protected open fun doTest() {
+        refreshProject()
         UIUtil.dispatchAllInvocationEvents()
 
         val exceptions = arrayListOf<AssertionError>()
@@ -71,6 +73,10 @@ abstract class CheckersTestBase<Settings> : PlatformTestCase() {
         if (exceptions.isNotEmpty()) {
             throw MultipleCauseException(exceptions)
         }
+    }
+
+    protected fun refreshProject() {
+        myCourse.configurator!!.courseBuilder.refreshProject(project, RefreshCause.PROJECT_CREATED)
     }
 
     protected open fun checkTask(currentTask: Task): List<AssertionError> {
@@ -134,6 +140,7 @@ abstract class CheckersTestBase<Settings> : PlatformTestCase() {
                             ?: error("Failed to get `CourseProjectGenerator`")
             myProject = generator.doCreateCourseProject(rootDir.absolutePath, settings as Any)
                         ?: error("Cannot create project with name ${projectName()}")
+
         } finally {
             Messages.setTestDialog(prevDialog)
         }

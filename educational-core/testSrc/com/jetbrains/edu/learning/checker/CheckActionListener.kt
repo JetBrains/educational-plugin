@@ -30,6 +30,13 @@ class CheckActionListener : CheckListener {
       println("Checking status for $taskName: passes as expected")
     }
 
+    private val SHOULD_SKIP: (Task, CheckResult) -> Unit = { task, result ->
+      val taskName = getTaskName(task)
+      assertFalse("Check Task Action passed for $taskName", result.status == CheckStatus.Solved)
+      assertFalse("Check Task Action failed for $taskName", result.status == CheckStatus.Failed)
+      println("Checking status for $taskName: skipped as expected")
+    }
+
     private fun getTaskName(task: Task): String {
       val sectionPrefix = task.lesson.section?.let { "${it.name}/" } ?: ""
       return "$sectionPrefix${task.lesson.name}/${task.name}"
@@ -48,6 +55,11 @@ class CheckActionListener : CheckListener {
     @JvmStatic
     fun shouldFail() {
       setCheckResultVerifier(SHOULD_FAIL)
+    }
+
+    @JvmStatic
+    fun shouldSkip() {
+      setCheckResultVerifier(SHOULD_SKIP)
     }
 
     @JvmStatic

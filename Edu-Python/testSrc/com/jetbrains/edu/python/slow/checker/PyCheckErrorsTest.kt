@@ -4,6 +4,7 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil.setDirectoryP
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckResultDiffMatcher
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -82,7 +83,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
       assertEquals("Status for ${task.name} doesn't match", CheckStatus.Failed, checkResult.status)
       val matcher: Triple<Matcher<String>, Matcher<CheckResultDiff?>, Matcher<String?>> = when (task.name) {
         "EduTestsFailed" -> Triple(containsString("error happened"), nullValue(), nullValue())
-        "EduNoTestsRun" -> Triple(containsString("No tests have run"), nullValue(), nullValue())
+        "EduNoTestsRun" -> Triple(containsString(CheckUtils.NO_TESTS_HAVE_RUN), nullValue(), nullValue())
         "SyntaxError" -> Triple(containsString("Syntax Error"), nullValue(),
                                 containsString("SyntaxError: invalid syntax"))
         "OutputTestsFailed" ->
@@ -110,7 +111,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
 
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("Status for ${task.name} doesn't match", CheckStatus.Unchecked, checkResult.status)
-      assertThat("Checker output for ${task.name} doesn't match", checkResult.message, containsString("No tests have run"))
+      assertThat("Checker output for ${task.name} doesn't match", checkResult.message, containsString(CheckUtils.NO_TESTS_HAVE_RUN))
     }
     doTest()
   }

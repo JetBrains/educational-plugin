@@ -3,6 +3,7 @@ package com.jetbrains.edu.python.slow.checker
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckResultDiffMatcher.Companion.diff
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -73,7 +74,7 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
         "EduTestsFailed" -> Result(CheckStatus.Failed, equalTo("error\n3 != 4\n"),
                                    diff(CheckResultDiff(expected = "4", actual = "3", title = "Comparison Failure (test_add)",
                                                         message = "error\n3 != 4\n")), nullValue())
-        "EduNoTestsRun" -> Result(CheckStatus.Unchecked, containsString("No tests have run"), nullValue(), nullValue())
+        "EduNoTestsRun" -> Result(CheckStatus.Unchecked, containsString(CheckUtils.NO_TESTS_HAVE_RUN), nullValue(), nullValue())
         "SyntaxError" -> Result(CheckStatus.Failed, containsString("Syntax Error"), nullValue(),
                                 containsString("SyntaxError: invalid syntax"))
         "OutputTestsFailed" -> Result(CheckStatus.Failed, equalTo("""

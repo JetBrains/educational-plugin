@@ -42,6 +42,7 @@ object CheckUtils {
   const val LOGIN_NEEDED_MESSAGE = "Please, login to Stepik to check the task"
   const val FAILED_TO_CHECK_MESSAGE = "Failed to launch checking"
   const val SYNTAX_ERROR_MESSAGE = "Syntax Error"
+  const val NO_TESTS_HAVE_RUN = "No tests have run"
   val ERRORS = listOf(COMPILATION_FAILED_MESSAGE, FAILED_TO_CHECK_MESSAGE, SYNTAX_ERROR_MESSAGE)
 
   fun navigateToFailedPlaceholder(eduState: EduState, task: Task, taskDir: VirtualFile, project: Project) {

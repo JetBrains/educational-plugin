@@ -1,6 +1,12 @@
 package com.jetbrains.edu.java.slow.checker
 
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckUtils
@@ -53,5 +59,26 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
       }
     }
     doTest()
+  }
+
+  fun `test broken jdk`() {
+    UIUtil.dispatchAllInvocationEvents()
+
+    @Suppress("DEPRECATION")
+    val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), myProject.baseDir, JavaSdk.getInstance(), true, null, "Broken JDK")!!
+    runWriteAction {
+      ProjectRootManager.getInstance(myProject).projectSdk = jdk
+      ProjectJdkTable.getInstance().addJdk(jdk)
+    }
+
+    CheckActionListener.shouldSkip()
+    CheckActionListener.expectedMessage { CheckUtils.NO_TESTS_HAVE_RUN }
+
+    try {
+      doTest()
+    }
+    finally {
+      SdkConfigurationUtil.removeSdk(jdk)
+    }
   }
 }
