@@ -19,11 +19,12 @@ class HyperskillCourse : Course {
   var stages: List<HyperskillStage> = mutableListOf()
   var hyperskillProject: HyperskillProject? = null
 
-  constructor(hyperskillProject: HyperskillProject, languageID: String) {
+  constructor(hyperskillProject: HyperskillProject, languageID: String, environment: String) {
     this.hyperskillProject = hyperskillProject
     name = hyperskillProject.title
     description = hyperskillProject.description + descriptionNote(hyperskillProject.id)
     language = languageID
+    this.environment = environment
   }
 
   val isTemplateBased: Boolean

@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
@@ -139,3 +140,12 @@ object HyperskillLoginListener : HyperlinkAdapter() {
     })
   }
 }
+
+val HyperskillProject.eduEnvironment: String?
+  get() {
+    val hyperskillEnvironment = environment
+    if (hyperskillEnvironment == null) {
+      return EduNames.DEFAULT_ENVIRONMENT
+    }
+    return HYPERSKILL_ENVIRONMENTS[hyperskillEnvironment]
+  }

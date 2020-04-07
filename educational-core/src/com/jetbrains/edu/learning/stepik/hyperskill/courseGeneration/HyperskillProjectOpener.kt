@@ -95,7 +95,11 @@ object HyperskillProjectOpener {
       if (languageId == null) {
         return@computeUnderProgress Err("Unsupported language ${hyperskillProject.language}")
       }
-      val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
+      val eduEnvironment = hyperskillProject.eduEnvironment
+      if (eduEnvironment == null) {
+        return@computeUnderProgress Err("Unsupported environment ${hyperskillProject.environment}")
+      }
+      val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId, eduEnvironment)
       if (hyperskillCourse.configurator == null) {
         return@computeUnderProgress Err("The project isn't supported (language: ${hyperskillProject.language}). " +
                                         "Check if all needed plugins are installed and enabled")

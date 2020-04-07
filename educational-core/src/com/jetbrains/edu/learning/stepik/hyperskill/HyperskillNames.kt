@@ -31,6 +31,8 @@ const val SYNCHRONIZE_JBA_ACCOUNT = "Synchronizing ${EduNames.JBA} Account"
 val HYPERSKILL_LANGUAGES = mapOf("java" to "${EduNames.JAVA} 11", "kotlin" to EduNames.KOTLIN, "python" to EduNames.PYTHON,
                                  "javascript" to EduNames.JAVASCRIPT)
 
+val HYPERSKILL_ENVIRONMENTS = mapOf("android" to EduNames.ANDROID)
+
 const val CONTINUE_ON_HYPERSKILL = "Continue on <a href=\"https://hyperskill.org/learning-path\">${EduNames.JBA}</a>."
 
 const val SUCCESS_MESSAGE = "<html>${CheckUtils.CONGRATULATIONS} $CONTINUE_ON_HYPERSKILL</html>"

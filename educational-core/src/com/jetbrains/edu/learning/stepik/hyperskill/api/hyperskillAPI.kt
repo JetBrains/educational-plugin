@@ -21,6 +21,7 @@ const val DESCRIPTION = "description"
 const val IDE_FILES = "ide_files"
 const val USE_IDE = "use_ide"
 const val LANGUAGE = "language"
+const val ENVIRONMENT = "environment"
 const val THEORY_ID = "theory"
 const val STEP_ID = "step"
 const val TOPIC_THEORY = "topic_theory"
@@ -88,6 +89,9 @@ class HyperskillProject {
 
   @JsonProperty(LANGUAGE)
   var language: String = ""
+
+  @JsonProperty(ENVIRONMENT)
+  var environment: String? = null
 
   @JsonProperty(IS_TEMPLATE_BASED)
   var isTemplateBased: Boolean = false
