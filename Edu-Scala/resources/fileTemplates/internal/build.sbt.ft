@@ -4,7 +4,7 @@ val list = ListBuffer[ProjectReference]()
 
 val subFolders = file(".").listFiles.filter(_.isDirectory).filter(isNotIgnored).foreach { f =>
   f.listFiles.filter(_.isDirectory).filter(isTaskDir).foreach { folder =>
-    list += ProjectRef(folder, folder.getName.replace(" ", "-"))
+    list += ProjectRef(folder, folder.getName.replace(" ", "-").toLowerCase())
   }
 }
 
