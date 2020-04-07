@@ -11,7 +11,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.ui.OnePixelDivider
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
@@ -60,6 +59,7 @@ import java.awt.Point
 import java.util.*
 import javax.swing.*
 
+
 class CoursesPanel(courses: List<Course>,
                    dialog: BrowseCoursesDialog,
                    private val customToolbarActions: DefaultActionGroup?,
@@ -104,8 +104,9 @@ class CoursesPanel(courses: List<Course>,
     toolbarDecorator.setActionGroup(group)
     val toolbarDecoratorPanel = toolbarDecorator.createPanel()
     toolbarDecoratorPanel.border = null
+    (toolbarDecorator as ToolbarDecorator).actionsPanel.border = JBUI.Borders.customLine(NewCoursePanel.DIVIDER_COLOR, 1, 0, 0, 0)
     myCourseListPanel.add(toolbarDecoratorPanel, BorderLayout.CENTER)
-    myCourseListPanel.border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, 0, 1, 1)
+    myCourseListPanel.border = JBUI.Borders.customLine(NewCoursePanel.DIVIDER_COLOR, 1, 0, 1, 1)
     addErrorStateListener()
 
     processSelectionChanged()

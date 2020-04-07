@@ -1,8 +1,9 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
-import com.intellij.openapi.ui.OnePixelDivider
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.FilterComponent
+import com.intellij.ui.Gray
+import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.LanguageSettings
@@ -34,7 +35,7 @@ class NewCoursePanel(
 
     // We want to show left part of border only if panel is independent
     val leftBorder = if (isStandalonePanel) LINE_BORDER_THICKNESS else 0
-    border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, LINE_BORDER_THICKNESS, leftBorder, LINE_BORDER_THICKNESS, 0)
+    border = JBUI.Borders.customLine(DIVIDER_COLOR, LINE_BORDER_THICKNESS, leftBorder, LINE_BORDER_THICKNESS, 0)
 
     add(header)
     add(description)
@@ -97,5 +98,10 @@ class NewCoursePanel(
 
   fun bindSearchField(searchField: FilterComponent) {
     mySearchField = searchField
+  }
+
+  companion object {
+    // default divider's color too dart in Darcula, so use the same color as in plugins dialog
+    val DIVIDER_COLOR = JBColor(Gray._192, Gray._81)
   }
 }
