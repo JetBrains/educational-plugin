@@ -2,5 +2,7 @@
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.python.learning.stepik.hyperskill.PyHyperskillConfigurator"
                   language="Python" courseType="Hyperskill"/>
+    <configurator implementationClass="com.jetbrains.edu.python.learning.stepik.hyperskill.PyUnittestHyperskillConfigurator"
+                  language="Python" courseType="Hyperskill" environment="unittest"/>
   </extensions>
 </idea-plugin>
