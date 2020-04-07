@@ -25,7 +25,7 @@ class AndroidConfigurator : GradleConfiguratorBase() {
   override val testFileName: String
     get() = "ExampleUnitTest.kt"
 
-  override val isEnabled: Boolean
+  override val isCourseCreatorEnabled: Boolean
     get() = isFeatureEnabled(EduExperimentalFeatures.ANDROID_COURSES) || isUnitTestMode
 
   override val logo: Icon
