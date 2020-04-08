@@ -55,6 +55,7 @@ public abstract class Task extends StudyItem {
   private Boolean solutionHidden;
   private int myRecord = -1;
   @Transient private Lesson myLesson;
+  private boolean isUpToDate = true;
 
   public Task() {} //use only for deserialization
 
@@ -104,6 +105,14 @@ public abstract class Task extends StudyItem {
 
   public void setDescriptionFormat(DescriptionFormat descriptionFormat) {
     this.descriptionFormat = descriptionFormat;
+  }
+
+  public boolean isUpToDate() {
+    return isUpToDate;
+  }
+
+  public void setUpToDate(boolean upToDate) {
+    isUpToDate = upToDate;
   }
 
   @Nullable
