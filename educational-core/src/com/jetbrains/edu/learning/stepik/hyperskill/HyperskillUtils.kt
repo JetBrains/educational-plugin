@@ -144,7 +144,7 @@ object HyperskillLoginListener : HyperlinkAdapter() {
 val HyperskillProject.eduEnvironment: String?
   get() {
     val hyperskillEnvironment = environment
-    if (hyperskillEnvironment == null) {
+    if (hyperskillEnvironment.isNullOrEmpty()) {
       return EduNames.DEFAULT_ENVIRONMENT
     }
     return HYPERSKILL_ENVIRONMENTS[hyperskillEnvironment]
