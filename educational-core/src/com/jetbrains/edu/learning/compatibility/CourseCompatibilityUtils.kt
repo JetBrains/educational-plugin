@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.compatibility
 
+import com.intellij.ide.plugins.InstalledPluginsState
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
@@ -35,15 +36,18 @@ object CourseCompatibilityUtils {
     if (requiredPlugins != null) {
       // TODO: O(requiredPlugins * loadedPlugins) because PluginManager.isPluginInstalled(it) takes O(loadedPlugins).
       //  Can be improved at least to O(requiredPlugins * log(loadedPlugins))
-      val toInstallOrEnable = requiredPlugins
+      val notLoadedPlugins = requiredPlugins
         .map(PluginId::getId)
         .filter {
           // BACKCOMPAT: 2019.3. Use `PluginManagerCore#getPlugin` instead
           @Suppress("DEPRECATION")
           val plugin = PluginManager.getPlugin(it)
           plugin == null || !plugin.isEnabled
-        }.toHashSet()
-      if (toInstallOrEnable.isNotEmpty()) return CourseCompatibility.PluginsRequired(toInstallOrEnable)
+        }
+
+      val pluginsState = InstalledPluginsState.getInstance()
+      val toInstallOrEnable = notLoadedPlugins.filterTo(HashSet(), { !pluginsState.wasInstalled(it) })
+      if (notLoadedPlugins.isNotEmpty()) return CourseCompatibility.PluginsRequired(toInstallOrEnable)
     }
     else if (courseInfo.configurator == null) return CourseCompatibility.Unsupported
 

@@ -42,6 +42,7 @@ sealed class ErrorState(
   class UnsupportedCourse(message: String) : ErrorState(3, ValidationMessage(message), errorTextForeground, false)
   data class RequirePlugins(val pluginIds: Set<PluginId>) :
     ErrorState(3, errorMessage(pluginIds), errorTextForeground, false)
+  object RestartNeeded : ErrorState(3, ValidationMessage("", "Restart", " to activate plugin updates"), errorTextForeground, false)
   class LanguageSettingsError(message: ValidationMessage) : ErrorState(3, message, errorTextForeground, false)
   object JavaFXRequired : ErrorState(4, ValidationMessage("No JavaFX found. Please ", "switch", " to JetBrains Runtime to start the course"), errorTextForeground, false)
   class CustomSevereError(beforeLink: String, link: String = "", afterLink: String = "", val action: Runnable? = null) :
@@ -57,7 +58,9 @@ sealed class ErrorState(
       return when {
         course == null -> NothingSelected
         course is JetBrainsAcademyCourse -> if (HyperskillSettings.INSTANCE.account == null) JetBrainsAcademyLoginRecommended else None
-        courseCompatibility is CourseCompatibility.PluginsRequired -> RequirePlugins(courseCompatibility.pluginIds)
+        courseCompatibility is CourseCompatibility.PluginsRequired -> {
+          if (courseCompatibility.toInstallOrEnable.isEmpty()) RestartNeeded else RequirePlugins(courseCompatibility.toInstallOrEnable)
+        }
         courseCompatibility == CourseCompatibility.IncompatibleVersion -> IncompatibleVersion
         courseCompatibility == CourseCompatibility.Unsupported -> UnsupportedCourse(course.unsupportedCourseMessage)
         course is CourseraCourse -> None

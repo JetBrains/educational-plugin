@@ -7,6 +7,7 @@ import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.ui.DialogWrapper
@@ -154,6 +155,7 @@ class CoursesPanel(courses: List<Course>,
           @Suppress("DEPRECATION")
           PluginsAdvertiser.installAndEnablePlugins(pluginStringIds) {}
         }
+        RestartNeeded -> ApplicationManagerEx.getApplicationEx().restart(true)
         is CustomSevereError -> state.action?.run()
         null -> Unit
         else -> browseHyperlink(state.message)

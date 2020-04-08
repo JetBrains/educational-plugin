@@ -6,5 +6,5 @@ sealed class CourseCompatibility {
   object Compatible : CourseCompatibility()
   object IncompatibleVersion : CourseCompatibility()
   object Unsupported : CourseCompatibility()
-  class PluginsRequired(val pluginIds: Set<PluginId>) : CourseCompatibility()
+  class PluginsRequired(val toInstallOrEnable: Set<PluginId>) : CourseCompatibility()
 }
