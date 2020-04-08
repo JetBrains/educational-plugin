@@ -5,7 +5,6 @@ import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
-import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import org.jetbrains.ide.BuiltInServerManager
 
@@ -31,10 +30,6 @@ val HYPERSKILL_LANGUAGES = mapOf("java" to "${EduNames.JAVA} 11", "kotlin" to Ed
                                  "javascript" to EduNames.JAVASCRIPT)
 
 val HYPERSKILL_ENVIRONMENTS = mapOf("android" to EduNames.ANDROID)
-
-const val CONTINUE_ON_HYPERSKILL = "Continue on <a href=\"https://hyperskill.org/learning-path\">${EduNames.JBA}</a>."
-
-const val SUCCESS_MESSAGE = "<html>${CheckUtils.CONGRATULATIONS} $CONTINUE_ON_HYPERSKILL</html>"
 
 val HYPERSKILL_URL: String
   get() = PropertiesComponent.getInstance().getValue(HYPERSKILL_URL_PROPERTY, HYPERSKILL_DEFAULT_URL)

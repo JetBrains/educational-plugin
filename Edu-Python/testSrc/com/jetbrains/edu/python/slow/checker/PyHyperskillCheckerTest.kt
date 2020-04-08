@@ -5,8 +5,8 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.stepik.hyperskill.SUCCESS_MESSAGE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.successMessage
 import com.jetbrains.python.PythonLanguage
 
 class PyHyperskillCheckerTest : PyCheckersTestBase() {
@@ -28,7 +28,7 @@ class PyHyperskillCheckerTest : PyCheckersTestBase() {
   }
 
   fun testPythonCourse() {
-    CheckActionListener.expectedMessage { SUCCESS_MESSAGE }
+    CheckActionListener.expectedMessage { it.successMessage }
     doTest()
   }
 }

@@ -5,8 +5,8 @@ import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.stepik.hyperskill.SUCCESS_MESSAGE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.successMessage
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class KtHyperskillCheckerTest : JdkCheckerTestBase() {
@@ -34,7 +34,7 @@ class KtHyperskillCheckerTest : JdkCheckerTestBase() {
   }
 
   fun testKotlinCourse() {
-    CheckActionListener.expectedMessage { SUCCESS_MESSAGE }
+    CheckActionListener.expectedMessage { it.successMessage }
     doTest()
   }
 }

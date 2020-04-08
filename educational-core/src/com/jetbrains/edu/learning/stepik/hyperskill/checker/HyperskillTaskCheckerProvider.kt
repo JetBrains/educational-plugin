@@ -6,8 +6,8 @@ import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.stepik.hyperskill.SUCCESS_MESSAGE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.successMessage
 
 class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvider) : TaskCheckerProvider {
   override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
@@ -18,7 +18,7 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
         val checkResult = checker.check(indicator)
         val course = task.course
         if (checkResult.status == CheckStatus.Solved && course is HyperskillCourse) {
-          return CheckResult(checkResult.status, SUCCESS_MESSAGE, needEscape = false)
+          return CheckResult(checkResult.status, task.successMessage, needEscape = false)
         }
         return checkResult
       }

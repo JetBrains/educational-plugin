@@ -15,6 +15,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
@@ -148,4 +149,12 @@ val HyperskillProject.eduEnvironment: String?
       return EduNames.DEFAULT_ENVIRONMENT
     }
     return HYPERSKILL_ENVIRONMENTS[hyperskillEnvironment]
+  }
+
+val Task.successMessage: String
+  get() {
+    val hyperskillCourse = this.course as HyperskillCourse
+    val stageId = hyperskillCourse.stages[this.index - 1].id
+    val link = "${HYPERSKILL_PROJECTS_URL}/${hyperskillCourse.hyperskillProject!!.id}/stages/$stageId/implement"
+    return "${CheckUtils.CONGRATULATIONS} ${EduCoreBundle.message("hyperskill.continue", link, EduNames.JBA)}"
   }
