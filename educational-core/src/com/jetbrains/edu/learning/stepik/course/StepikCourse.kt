@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
  */
 class StepikCourse : EduCourse() {
   // FIXME: do something with compatibility here
-  override fun courseCompatibility(courseInfo: EduCourse): CourseCompatibility = CourseCompatibility.Compatible
+  override fun getCompatibility(): CourseCompatibility = CourseCompatibility.Compatible
   override fun getItemType(): String = StepikNames.STEPIK_TYPE
   override fun isViewAsEducatorEnabled(): Boolean = ApplicationManager.getApplication().isInternal
 }

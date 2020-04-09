@@ -46,7 +46,6 @@ public abstract class Course extends LessonContainer {
   private boolean solutionsHidden;
 
   protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
-  protected CourseCompatibility myCompatibility = CourseCompatibility.Compatible.INSTANCE;
 
   @Transient protected List<TaskFile> additionalFiles = new ArrayList<>();
 
@@ -298,7 +297,7 @@ public abstract class Course extends LessonContainer {
   @Transient
   @NotNull
   public CourseCompatibility getCompatibility() {
-    return myCompatibility;
+    return CourseCompatibility.Compatible.INSTANCE;
   }
 
   public void addItem(@NotNull StudyItem item, int index) {

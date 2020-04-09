@@ -109,7 +109,12 @@ public class EduCourse extends Course {
 
   public void setType(String type) {
     myType = type;
-    myCompatibility = courseCompatibility(this);
+  }
+
+  @NotNull
+  @Override
+  public CourseCompatibility getCompatibility() {
+    return CourseCompatibilityUtils.getCourseCompatibility(this);
   }
 
   public boolean isPublic() {
@@ -136,11 +141,6 @@ public class EduCourse extends Course {
   @Transient
   public void setAdminsGroup(String adminsGroup) {
     myAdminsGroup = adminsGroup;
-  }
-
-  @NotNull
-  protected CourseCompatibility courseCompatibility(@NotNull EduCourse courseInfo) {
-    return CourseCompatibilityUtils.getCourseCompatibility(courseInfo);
   }
 
   public boolean isRemote() {
