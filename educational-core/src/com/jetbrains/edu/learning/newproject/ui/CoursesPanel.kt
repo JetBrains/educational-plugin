@@ -3,6 +3,11 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.DataManager
+import com.intellij.ide.plugins.IdeaPluginDescriptor
+import com.intellij.ide.plugins.PluginManagerConfigurable
+import com.intellij.notification.Notification
+import com.intellij.notification.Notifications
+import com.intellij.notification.NotificationsAdapter
 import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
@@ -15,6 +20,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
+import com.intellij.openapi.updateSettings.impl.UpdateChecker
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser
 import com.intellij.ui.FilterComponent
 import com.intellij.ui.GuiUtils
@@ -43,6 +49,8 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
+import com.jetbrains.edu.learning.plugins.DynamicPluginListener
+import com.jetbrains.edu.learning.plugins.subscribeOnDynamicPluginTopic
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
 import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -64,11 +72,11 @@ import java.util.*
 import javax.swing.*
 import kotlin.collections.HashSet
 
-
-class CoursesPanel(courses: List<Course>,
-                   dialog: BrowseCoursesDialog,
-                   private val customToolbarActions: DefaultActionGroup?,
-                   private val enableCourseViewAsEducator: (Boolean) -> Unit) : JPanel(BorderLayout()) {
+class CoursesPanel(
+  courses: List<Course>,
+  dialog: BrowseCoursesDialog,
+  private val customToolbarActions: DefaultActionGroup?
+) : JPanel(BorderLayout()) {
   private val myErrorPanel: JPanel = JPanel(BorderLayout())
   private val myMainPanel: JPanel = JPanel(BorderLayout())
   private val myErrorLabel: HyperlinkLabel = HyperlinkLabel()
@@ -466,6 +474,26 @@ class CoursesPanel(courses: List<Course>,
 
     add(myMainPanel, BorderLayout.CENTER)
     initUI()
+
+    val connection = ApplicationManager.getApplication().messageBus.connect(dialog.disposable)
+    connection.subscribeOnDynamicPluginTopic(object : DynamicPluginListener {
+      override fun onPluginLoaded(pluginDescriptor: IdeaPluginDescriptor) {
+        val course = myCoursesList.selectedValue
+        doValidation(course)
+      }
+    })
+    connection
+      // TODO: find out a better way to be notified when plugin installation finishes
+      // BACKCOMPAT: 2019.2
+      .subscribe(Notifications.TOPIC, @Suppress("DEPRECATION") object : NotificationsAdapter() {
+        override fun notify(notification: Notification) {
+          if (notification.groupId == EduUtils.getUpdateNotificationGroup().displayId) {
+            val course = myCoursesList.selectedValue
+            doValidation(course)
+            PluginManagerConfigurable.shutdownOrRestartApp()
+          }
+        }
+      })
   }
 
   private fun humanLanguages(courses: List<Course>): Set<String> = courses.map { it.humanLanguage }.toSet()

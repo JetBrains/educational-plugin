@@ -12,6 +12,7 @@ interface EduEditor : TextEditor {
 
   fun validateTaskFile()
 
+  @JvmDefault
   override fun getState(level: FileEditorStateLevel): EduEditorState
 }
 

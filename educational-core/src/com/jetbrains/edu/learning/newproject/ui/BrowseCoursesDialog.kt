@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import javax.swing.JComponent
 
 class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: DefaultActionGroup? = null) : OpenCourseDialogBase() {
-  val panel = CoursesPanel(courses, this, customToolbarActions) { setEnabledViewAsEducator(it) }
+  val panel = CoursesPanel(courses, this, customToolbarActions)
 
   init {
     title = "Select Course"
