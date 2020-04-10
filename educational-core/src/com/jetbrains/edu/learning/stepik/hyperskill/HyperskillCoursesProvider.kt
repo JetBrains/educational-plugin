@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 class HyperskillCoursesProvider : CoursesProvider {
   override fun loadCourses(): List<Course> {
     val supportedLanguages = EduConfiguratorManager.allExtensions()
-      .filter { it.courseType == HYPERSKILL_TYPE && it.language != EduNames.JAVASCRIPT }
+      .filter { it.courseType == HYPERSKILL_TYPE && it.language != EduNames.JAVASCRIPT && it.environment == EduNames.DEFAULT_ENVIRONMENT }
       .mapNotNull { Language.findLanguageByID(it.language) }
     return supportedLanguages.map { JetBrainsAcademyCourse(it) }
   }
