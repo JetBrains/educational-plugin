@@ -7,7 +7,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import org.jetbrains.plugins.scala.lang.psi.api.ScalaFile
 import org.jetbrains.plugins.scala.lang.psi.api.toplevel.typedef.ScObject
-import org.jetbrains.plugins.scala.util.ScalaMainMethodUtil
 
 class ScalaGradleTaskCheckerProvider : GradleTaskCheckerProvider() {
 
@@ -16,7 +15,7 @@ class ScalaGradleTaskCheckerProvider : GradleTaskCheckerProvider() {
     if (psiFile !is ScalaFile) return null
 
     PsiTreeUtil.findChildrenOfType(psiFile, ScObject::class.java).forEach {
-      val mainMethod = ScalaMainMethodUtil.findMainMethod(it)
+      val mainMethod = findMainMethod(it)
       if (mainMethod.isDefined) return mainMethod.get().name
     }
     return null
