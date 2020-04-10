@@ -93,8 +93,11 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
 
   private fun getLanguage(lesson: Lesson): String {
     for (task in lesson.taskList) {
-      for (taskFile in task.taskFiles.keys) {
-        val extension = FileUtilRt.getExtension(taskFile)
+      for (taskFile in task.taskFiles.values) {
+        if (!taskFile.isVisible) {
+          continue
+        }
+        val extension = FileUtilRt.getExtension(taskFile.name)
         if (extension == "py")
           return EduNames.PYTHON
         if (extension == "kt") {
