@@ -17,6 +17,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.setCourseLanguageEnvironment
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.min
 
 private val LOG = Logger.getInstance(StepikConnector::class.java.name)
 
@@ -30,6 +32,28 @@ fun getAvailableCourses(coursesList: CoursesList): List<EduCourse> {
 
   availableCourses.forEach { it.visibility = getVisibility(it) }
   return availableCourses
+}
+
+fun addCoursesFromStepik(courses: MutableList<EduCourse>,
+                         isPublic: Boolean,
+                         currentPage: Int,
+                         enrolled: Boolean?,
+                         minEmptyPage: AtomicInteger): Boolean {
+  val coursesFromStepik = StepikConnector.getInstance().getCourses(isPublic, currentPage, enrolled)
+  if (coursesFromStepik == null) {
+    minEmptyPage.compareAndUpdateValue(currentPage)
+    return false
+  }
+  courses.addAll(getAvailableCourses(coursesFromStepik))
+  val hasNext = coursesFromStepik.meta.containsKey("has_next")
+  if (!hasNext) {
+    minEmptyPage.compareAndUpdateValue(currentPage + 1)
+  }
+  return hasNext
+}
+
+private fun AtomicInteger.compareAndUpdateValue(newPage: Int) {
+  getAndUpdate { currentValue -> min(currentValue, newPage) }
 }
 
 private fun getVisibility(course: EduCourse): CourseVisibility {

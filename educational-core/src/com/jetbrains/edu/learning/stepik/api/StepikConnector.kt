@@ -99,7 +99,7 @@ abstract class StepikConnector {
   }
 
   fun getCourses(isPublic: Boolean, currentPage: Int, enrolled: Boolean?): CoursesList? {
-    val response = service.courses(true, isPublic, currentPage, enrolled).executeHandlingExceptions()
+    val response = service.courses(true, isPublic, currentPage, enrolled).executeHandlingExceptions(true)
     return response?.body()
   }
 
