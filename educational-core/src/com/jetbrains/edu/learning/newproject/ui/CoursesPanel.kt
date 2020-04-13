@@ -451,7 +451,10 @@ class CoursesPanel(courses: List<Course>,
 
     myMainPanel.add(searchPanel, BorderLayout.NORTH)
 
-    myCoursePanel.bindCourse(selectedCourse ?: myCourses.first())
+    val courseToBind = selectedCourse ?: myCourses.firstOrNull()
+    if (courseToBind != null) {
+      myCoursePanel.bindCourse(courseToBind)
+    }
     myCoursePanel.bindSearchField(mySearchField)
 
     mySplitPane.leftComponent = myCourseListPanel
