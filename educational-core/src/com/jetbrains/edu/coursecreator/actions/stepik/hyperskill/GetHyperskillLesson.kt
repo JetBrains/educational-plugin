@@ -103,7 +103,7 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
         if (extension == "kt") {
           return EduNames.KOTLIN
         }
-        if (extension == "js") {
+        if (extension == "js" || extension == "html") {
           return EduNames.JAVASCRIPT
         }
       }

@@ -18,7 +18,14 @@ import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import javax.swing.Icon
 import javax.swing.JPanel
 
+/**
+ * Hyperskill contractors edit existing Hyperskill projects as Stepik lessons.
+ * These lessons don't have language/environment inside, so we need to detect them.
+ *
+ * @see com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLesson
+ */
 abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfigurator<T>) : EduConfigurator<T> {
+
   override val taskCheckerProvider: TaskCheckerProvider
     get() = HyperskillTaskCheckerProvider(baseConfigurator.taskCheckerProvider)
 
