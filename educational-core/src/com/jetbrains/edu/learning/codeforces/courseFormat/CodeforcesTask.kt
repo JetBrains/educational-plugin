@@ -75,7 +75,11 @@ open class CodeforcesTask : Task() {
       CodeforcesLanguageProvider.generateTaskFiles(task)?.forEach {
         task.addTaskFile(it)
       }
-      task.addSampleTests(htmlElement.selectFirst("div.sample-test"))
+
+      val sampleTests = htmlElement.selectFirst("div.sample-test")
+      if (sampleTests != null) {
+        task.addSampleTests(sampleTests)
+      }
       return task
     }
 
