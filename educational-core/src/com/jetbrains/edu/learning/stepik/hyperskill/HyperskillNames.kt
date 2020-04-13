@@ -29,7 +29,7 @@ const val SYNCHRONIZE_JBA_ACCOUNT = "Synchronizing ${EduNames.JBA} Account"
 val HYPERSKILL_LANGUAGES = mapOf("java" to "${EduNames.JAVA} 11", "kotlin" to EduNames.KOTLIN, "python" to EduNames.PYTHON,
                                  "javascript" to EduNames.JAVASCRIPT)
 
-val HYPERSKILL_ENVIRONMENTS = mapOf("android" to EduNames.ANDROID)
+val HYPERSKILL_ENVIRONMENTS = mapOf("android" to EduNames.ANDROID, "unittest" to EduNames.UNITTEST)
 
 val HYPERSKILL_URL: String
   get() = PropertiesComponent.getInstance().getValue(HYPERSKILL_URL_PROPERTY, HYPERSKILL_DEFAULT_URL)

@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -37,11 +38,20 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
-    val lessonId = Messages.showInputDialog("Please, enter lesson id", "Get Hyperskill Lesson from Stepik", EducationalCoreIcons.JB_ACADEMY_ENABLED)
+    val lessonId = Messages.showInputDialog("Please, enter lesson id", "Get Hyperskill Lesson from Stepik",
+                                            EducationalCoreIcons.JB_ACADEMY_ENABLED)
     if (lessonId != null && lessonId.isNotEmpty()) {
       ProgressManager.getInstance().run(object : Task.Modal(project, "Loading Course", true) {
         override fun run(indicator: ProgressIndicator) {
           val course = createCourse(lessonId) ?: return
+          val configurator = course.configurator
+          if (configurator == null) {
+            val environment = if (course.environment == EduNames.DEFAULT_ENVIRONMENT) "default" else course.environment
+            showError(
+              "Failed to find configurator (${course.language}, $environment), check if all required plugins are enabled",
+              "Failed to Create Lesson")
+            return
+          }
           runInEdt {
             CCNewCourseDialog("Get Hyperskill Lesson from Stepik", "Create", course).show()
           }
@@ -55,7 +65,7 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
     val course = HyperskillCourse()
     val lesson = StepikConnector.getInstance().getLesson(Integer.valueOf(lessonId))
     if (lesson == null) {
-      showErrorMessage()
+      showIncorrectCredentialsError()
       return null
     }
     val allStepSources = StepikConnector.getInstance().getStepSources(lesson.steps)
@@ -64,9 +74,19 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
       lesson.addTask(task)
     }
 
-    course.name = "Hyperskill lesson $lessonId"
-    course.description = "Hyperskill lesson $lessonId"
-    course.language = getLanguage(lesson)
+    val languageAndEnvironment = getLanguageAndEnvironment(lesson)
+    if (languageAndEnvironment == null) {
+      showError("Failed to determine language", "Failed to Create Lesson")
+      return null
+    }
+
+    val hyperskillLessonName = "Hyperskill lesson $lessonId"
+    course.apply {
+      name = hyperskillLessonName
+      description = hyperskillLessonName
+      language = languageAndEnvironment.first
+      environment = languageAndEnvironment.second
+    }
 
     val hyperskillLesson = FrameworkLesson(lesson)
     course.addItem(hyperskillLesson, 0)
@@ -76,7 +96,7 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
     return course
   }
 
-  private fun showErrorMessage() {
+  private fun showIncorrectCredentialsError() {
     val stepikUser = EduSettings.getInstance().user
 
     val message = if (stepikUser == null) {
@@ -85,29 +105,37 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
     else {
       "Check that ${StepikNames.STEPIK} account `${stepikUser.name}` has access to the lesson"
     }
+    showError(message, "Failed to Get Lesson")
+  }
 
+  private fun showError(message: String, title: String) {
     runInEdt {
-      Messages.showErrorDialog(message, "Failed to Get Lesson")
+      Messages.showErrorDialog(message, title)
     }
   }
 
-  private fun getLanguage(lesson: Lesson): String {
+  private fun getLanguageAndEnvironment(lesson: Lesson): Pair<String, String>? {
     for (task in lesson.taskList) {
-      for (taskFile in task.taskFiles.values) {
+      val taskFiles = task.taskFiles.values
+      if (taskFiles.any { it.name.contains("androidTest") }) {
+        return EduNames.KOTLIN to EduNames.ANDROID
+      }
+      if (taskFiles.any { it.name == "tests.py" }) {
+        return EduNames.PYTHON to EduNames.DEFAULT_ENVIRONMENT
+      }
+      for (taskFile in taskFiles) {
         if (!taskFile.isVisible) {
           continue
         }
-        val extension = FileUtilRt.getExtension(taskFile.name)
-        if (extension == "py")
-          return EduNames.PYTHON
-        if (extension == "kt") {
-          return EduNames.KOTLIN
-        }
-        if (extension == "js" || extension == "html") {
-          return EduNames.JAVASCRIPT
+        return when (FileUtilRt.getExtension(taskFile.name)) {
+          "java" -> EduNames.JAVA to EduNames.DEFAULT_ENVIRONMENT
+          "py" -> EduNames.PYTHON to EduNames.UNITTEST //legacy environment was handled earlier
+          "kt" -> EduNames.KOTLIN to EduNames.DEFAULT_ENVIRONMENT
+          "js", "html" -> EduNames.JAVASCRIPT to EduNames.DEFAULT_ENVIRONMENT
+          else -> null
         }
       }
     }
-    return EduNames.JAVA
+    return null
   }
 }

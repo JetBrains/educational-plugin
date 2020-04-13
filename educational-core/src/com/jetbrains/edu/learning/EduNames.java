@@ -53,6 +53,7 @@ public class EduNames {
   public static final String PYCHARM = "PyCharm";
   public static final String EDU = "Edu";
   public static final String ANDROID = "Android";
+  public static final String UNITTEST = "unittest";
 
   public static final String STUDY = "Study";
 
