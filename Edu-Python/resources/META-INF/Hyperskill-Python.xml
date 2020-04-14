@@ -3,6 +3,6 @@
     <configurator implementationClass="com.jetbrains.edu.python.learning.stepik.hyperskill.PyHyperskillConfigurator"
                   language="Python" courseType="Hyperskill"/>
     <configurator implementationClass="com.jetbrains.edu.python.learning.stepik.hyperskill.PyUnittestHyperskillConfigurator"
-                  language="Python" courseType="Hyperskill" environment="unittest"/>
+                  language="Python" courseType="Hyperskill" environment="unittest" displayName="Hyperskill Python (unittest)"/>
   </extensions>
 </idea-plugin>
