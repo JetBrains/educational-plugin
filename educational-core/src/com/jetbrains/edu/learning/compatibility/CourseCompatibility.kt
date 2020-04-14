@@ -32,43 +32,53 @@ sealed class CourseCompatibility {
         return Unsupported
       }
 
-      val compatibilityProvider = CourseCompatibilityProviderEP.EP_NAME.extensions.find {
-        it.language == courseInfo.languageID &&
-        it.courseType == courseInfo.itemType &&
-        it.environment == courseInfo.environment
-      }?.instance
+      val versionString = prefix.substring(StepikNames.PYCHARM_PREFIX.length)
+      if (versionString.isEmpty()) return Compatible
+      try {
+        val version = Integer.valueOf(versionString)
+        if (version > JSON_FORMAT_VERSION) IncompatibleVersion
+      }
+      catch (e: NumberFormatException) {
+        LOG.info("Wrong version format", e)
+        return Unsupported
+      }
 
-      val requiredPlugins = compatibilityProvider?.requiredPlugins()
-      if (requiredPlugins != null) {
-        // TODO: O(requiredPlugins * loadedPlugins) because PluginManager.isPluginInstalled(it) takes O(loadedPlugins).
-        //  Can be improved at least to O(requiredPlugins * log(loadedPlugins))
-        val notLoadedPlugins = requiredPlugins
-          .map(PluginId::getId)
-          .filter {
-            // BACKCOMPAT: 2019.3. Use `PluginManagerCore#getPlugin` instead
-            @Suppress("DEPRECATION")
-            val plugin = PluginManager.getPlugin(it)
-            plugin == null || !plugin.isEnabled
-          }
+      val data = courseInfo.requiredPlugins()
 
-        val pluginsState = InstalledPluginsState.getInstance()
-        val toInstallOrEnable = notLoadedPlugins.filterTo(HashSet(), { !pluginsState.wasInstalled(it) })
-        if (notLoadedPlugins.isNotEmpty()) return PluginsRequired(toInstallOrEnable)
+      if (data != null) {
+        if (data.notLoadedPlugins.isNotEmpty()) return PluginsRequired(data.toInstallOrEnable)
       }
       else if (courseInfo.configurator == null) {
         return Unsupported
       }
 
-      val versionString = prefix.substring(StepikNames.PYCHARM_PREFIX.length)
-      if (versionString.isEmpty()) return Compatible
-      return try {
-        val version = Integer.valueOf(versionString)
-        if (version <= JSON_FORMAT_VERSION) Compatible else IncompatibleVersion
-      }
-      catch (e: NumberFormatException) {
-        LOG.info("Wrong version format", e)
-        Unsupported
-      }
+      return Compatible
     }
+
+    private fun EduCourse.requiredPlugins(): RequiredPluginsData? {
+      val compatibilityProvider = CourseCompatibilityProviderEP.EP_NAME.extensions.find {
+        it.language == languageID &&
+        it.courseType == itemType &&
+        it.environment == environment
+      }?.instance
+
+      val requiredPlugins = compatibilityProvider?.requiredPlugins() ?: return null
+      // TODO: O(requiredPlugins * loadedPlugins) because PluginManager.isPluginInstalled(it) takes O(loadedPlugins).
+      //  Can be improved at least to O(requiredPlugins * log(loadedPlugins))
+      val notLoadedPlugins = requiredPlugins
+        .map(PluginId::getId)
+        .filter {
+          // BACKCOMPAT: 2019.3. Use `PluginManagerCore#getPlugin` instead
+          @Suppress("DEPRECATION")
+          val plugin = PluginManager.getPlugin(it)
+          plugin == null || !plugin.isEnabled
+        }
+
+      val pluginsState = InstalledPluginsState.getInstance()
+      val toInstallOrEnable = notLoadedPlugins.filterTo(HashSet(), { !pluginsState.wasInstalled(it) })
+      return RequiredPluginsData(notLoadedPlugins, toInstallOrEnable)
+    }
+
+    private data class RequiredPluginsData(val notLoadedPlugins: List<PluginId>, val toInstallOrEnable: Set<PluginId>)
   }
 }
