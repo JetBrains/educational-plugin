@@ -399,6 +399,8 @@ open class StepikIntegrationTest : StepikTestCase() {
 
     val courseFromStepik = getCourseFromStepik(sourceCourse.id)
     checkCourseUploaded(sourceCourse)
+
+    courseFromStepik.courseMode = CCUtils.COURSE_MODE
     StepikCourseLoader.fillItems(courseFromStepik)
 
     val task = (courseFromStepik.items[0] as Lesson).taskList[0]

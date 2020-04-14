@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning.stepik
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.diagnostic.Logger
+import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -35,6 +37,7 @@ open class StepikTaskBuilder(
   private val userId: Int
 ) {
   private val courseType: String = course.itemType
+  private val courseMode: String = course.courseMode
   private val courseEnvironment: String = course.environment
   private val language: Language = course.languageById ?: Language.ANY
   private val languageVersion: String = course.languageVersion ?: ""
@@ -128,7 +131,7 @@ open class StepikTaskBuilder(
     val task = ChoiceTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
     task.descriptionText = clearCodeBlockFromTags()
 
-    val choiceStep: ChoiceStep? = if (!isUnitTestMode || stepId > 0)
+    val choiceStep: ChoiceStep? = if (courseMode == CCUtils.COURSE_MODE && stepId > 0)
       StepikConnector.getInstance().getChoiceStepSource(stepId)
     else null
 
