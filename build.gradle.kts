@@ -73,11 +73,12 @@ plugins {
   id("org.jetbrains.intellij") version "0.4.17"
   id("de.undercouch.download") version "3.4.3"
   id("net.saliman.properties") version "1.4.6"
+  id("org.openjfx.javafxplugin") version "0.0.8"
 }
 
 idea {
   project {
-    jdkName = "1.8"
+    jdkName = "11"
     languageLevel = IdeaLanguageLevel("1.8")
     vcs = "Git"
   }
@@ -89,6 +90,7 @@ allprojects {
     plugin("java")
     plugin("kotlin")
     plugin("net.saliman.properties")
+    plugin("org.openjfx.javafxplugin")
   }
 
   repositories {
@@ -100,6 +102,12 @@ allprojects {
   configure<JavaPluginConvention> {
     sourceCompatibility = VERSION_1_8
     targetCompatibility = VERSION_1_8
+  }
+
+  javafx {
+    version = "11.0.2"
+    modules = listOf("javafx.web", "javafx.swing")
+    configuration = "compileOnly"
   }
 
   intellij {
@@ -157,9 +165,6 @@ allprojects {
     compile("com.squareup.retrofit2:converter-jackson:2.3.0")
     compile("com.squareup.retrofit2:converter-gson:2.4.0")
     compile("com.squareup.okhttp3:logging-interceptor:3.14.0")
-
-    compileOnly(fileTree("${rootProject.buildDir}/javafx/jre/lib/ext"))
-
     compile("org.jetbrains:kotlin-css-jvm:1.0.0-pre.58-kotlin-1.3.0") {
       excludeKotlinDeps()
     }
@@ -244,21 +249,6 @@ project(":") {
     compile(project(":Edu-Go"))
     compile(project(":Edu-YAML"))
   }
-
-  val downloadJavaFx = task<Download>("downloadJavaFx") {
-    overwrite(true)
-    src("http://download.jetbrains.com/idea/open-jfx/javafx-sdk-overlay.zip")
-    dest("${project.buildDir}/javafx.zip")
-  }
-
-  val prepareJavaFx = task<Copy>("prepareJavaFx") {
-    val javafxFile = file("${project.buildDir}/javafx.zip")
-    onlyIf { javafxFile.exists() }
-    from(zipTree(javafxFile))
-    into(file("${project.buildDir}/javafx"))
-  }
-
-  prepareJavaFx.dependsOn(downloadJavaFx)
 
   val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
 
