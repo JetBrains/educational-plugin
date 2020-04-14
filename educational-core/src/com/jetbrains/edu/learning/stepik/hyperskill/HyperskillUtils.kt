@@ -153,6 +153,9 @@ val HyperskillProject.eduEnvironment: String?
 
 val Task.successMessage: String
   get() {
+    if (!course.isStudy) {
+      return CheckUtils.CONGRATULATIONS
+    }
     val hyperskillCourse = this.course as HyperskillCourse
     val stageId = hyperskillCourse.stages[this.index - 1].id
     val link = "${HYPERSKILL_PROJECTS_URL}/${hyperskillCourse.hyperskillProject!!.id}/stages/$stageId/implement"
