@@ -200,10 +200,9 @@ public class CheckAction extends DumbAwareAction {
 
     @Override
     public void run(@NotNull ProgressIndicator indicator) {
-      indicator.setIndeterminate(true);
+      ApplicationManager.getApplication().executeOnPooledThread(() -> showFakeProgress(indicator));
       myCheckInProgress.set(true);
       TaskDescriptionView.getInstance(myProject).checkStarted();
-
       long start = System.currentTimeMillis();
       NotificationSettings notificationSettings = turnOffTestRunnerNotifications();
       CheckResult localCheckResult = myChecker == null ? CheckResult.NO_LOCAL_CHECK : myChecker.check(indicator);
@@ -217,6 +216,20 @@ public class CheckAction extends DumbAwareAction {
       }
       RemoteTaskChecker remoteChecker = RemoteTaskCheckerManager.remoteCheckerForTask(myProject, myTask);
       myResult = remoteChecker == null ? localCheckResult : remoteChecker.check(myProject, myTask, indicator);
+    }
+
+    private void showFakeProgress(ProgressIndicator indicator) {
+      indicator.setIndeterminate(false);
+      indicator.setFraction(0.01);
+      try {
+        while (indicator.isRunning()) {
+          Thread.sleep(1000);
+          double fraction = indicator.getFraction();
+          indicator.setFraction(fraction + (1 - fraction) * 0.2);
+        }
+      }
+      catch (InterruptedException ignore) {
+      }
     }
 
     @Override
