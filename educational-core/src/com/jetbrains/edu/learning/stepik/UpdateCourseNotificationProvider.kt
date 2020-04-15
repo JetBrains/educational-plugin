@@ -14,12 +14,14 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import java.util.concurrent.atomic.AtomicBoolean
 
 class UpdateCourseNotificationProvider(val project: Project) :
   EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
 
   private val VirtualFile.isTaskFile: Boolean
     get() = EduUtils.getTaskFile(project, this) != null
+  private var isUpdateRunning: AtomicBoolean = AtomicBoolean(false)
 
   companion object {
     @VisibleForTesting
@@ -38,10 +40,13 @@ class UpdateCourseNotificationProvider(val project: Project) :
       val panel = EditorNotificationPanel()
       panel.setText(NOTIFICATION_TEXT)
       panel.createActionLabel("Update Course") {
+        if (isUpdateRunning.get()) return@createActionLabel
         ProgressManager.getInstance().run(
           object : com.intellij.openapi.progress.Task.Backgroundable(project, EduCoreBundle.message("updating.course")) {
             override fun run(indicator: ProgressIndicator) {
+              isUpdateRunning.set(true)
               updateCourse(project, course)
+              isUpdateRunning.set(false)
             }
           })
       }
