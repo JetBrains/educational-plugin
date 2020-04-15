@@ -16,11 +16,16 @@
   <xi:include href="/META-INF/Edu-Python-PyCharm.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="com.intellij">
-    <localInspection shortName="PyEduInterpreterInspection" bundle="com.jetbrains.python.PyBundle" key="INSP.NAME.invalid.interpreter" groupKey="INSP.GROUP.python" enabledByDefault="true"  level="WARNING" implementationClass="com.jetbrains.edu.python.learning.PyEduInterpreterInspection"/>
-
+    <localInspection shortName="PyEduInterpreterInspection"
+                     bundle="messages.EduPythonBundle"
+                     groupKey="python.inspection.group.name"
+                     key="python.inspection.invalid.interpreter.display.name"
+                     groupPath="EduTools"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.jetbrains.edu.python.learning.PyEduInterpreterInspection"/>
     <configurationType implementation="com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer"/>
-
   </extensions>
 
   <extensions defaultExtensionNs="Pythonid">
