@@ -10,9 +10,6 @@
     <gradleRefresher implementation="com.jetbrains.edu.gradle.StudioGradleCourseRefresher"/>
     <configurator implementationClass="com.jetbrains.edu.android.AndroidConfigurator" language="kotlin" environment="Android"
                   displayName="Android"/>
-    <compatibilityProvider language="kotlin"
-                           environment="Android"
-                           implementationClass="com.jetbrains.edu.android.compatibility.AndroidCourseCompatibilityProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">

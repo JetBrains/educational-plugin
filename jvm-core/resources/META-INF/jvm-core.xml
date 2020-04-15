@@ -15,16 +15,5 @@
 
   <extensions defaultExtensionNs="Educational">
     <gradleRefresher implementation="com.jetbrains.edu.jvm.gradle.IdeaGradleCourseRefresher"/>
-
-    <compatibilityProvider language="JAVA"
-                           implementationClass="com.jetbrains.edu.jvm.compatibility.JCourseCompatibilityProvider"/>
-    <compatibilityProvider language="kotlin"
-                           implementationClass="com.jetbrains.edu.jvm.compatibility.KtCourseCompatibilityProvider"/>
-    <compatibilityProvider language="Scala"
-                           environment="Gradle"
-                           implementationClass="com.jetbrains.edu.jvm.compatibility.ScalaGradleCourseCompatibilityProvider"/>
-    <compatibilityProvider language="Scala"
-                           environment="sbt"
-                           implementationClass="com.jetbrains.edu.jvm.compatibility.ScalaSbtCourseCompatibilityProvider"/>
   </extensions>
 </idea-plugin>

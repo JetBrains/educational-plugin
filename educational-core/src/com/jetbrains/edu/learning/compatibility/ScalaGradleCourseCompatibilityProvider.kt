@@ -1,12 +1,11 @@
-package com.jetbrains.edu.jvm.compatibility
+package com.jetbrains.edu.learning.compatibility
 
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
+import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.plugins.PluginInfo
 
 class ScalaGradleCourseCompatibilityProvider : CourseCompatibilityProvider {
   override fun requiredPlugins(): List<PluginInfo>? {
-    if (EduUtils.isAndroidStudio()) return null
+    if (!PlatformUtils.isIntelliJ()) return null
     return listOf(
       PluginInfo.SCALA,
       PluginInfo.JAVA,

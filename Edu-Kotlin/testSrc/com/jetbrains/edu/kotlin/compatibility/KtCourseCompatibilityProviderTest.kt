@@ -1,6 +1,6 @@
 package com.jetbrains.edu.kotlin.compatibility
 
-import com.jetbrains.edu.jvm.compatibility.KtCourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderTestBase
+import com.jetbrains.edu.learning.compatibility.KtCourseCompatibilityProvider
 
 class KtCourseCompatibilityProviderTest : CourseCompatibilityProviderTestBase(KtCourseCompatibilityProvider::class)

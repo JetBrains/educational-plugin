@@ -1,11 +1,13 @@
-package com.jetbrains.edu.jvm.compatibility
+package com.jetbrains.edu.learning.compatibility
 
-import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
+import com.intellij.util.PlatformUtils
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.plugins.PluginInfo
 
 class KtCourseCompatibilityProvider : CourseCompatibilityProvider {
 
   override fun requiredPlugins(): List<PluginInfo>? {
+    if (!PlatformUtils.isIntelliJ() && !EduUtils.isAndroidStudio()) return null
     return listOf(
       PluginInfo.KOTLIN,
       PluginInfo.JAVA,

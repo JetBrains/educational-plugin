@@ -308,6 +308,19 @@
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.coursera.CourseraTaskChecker"/>
 
     <!-- Course compatibility providers   -->
+    <compatibilityProvider language="JAVA"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.JCourseCompatibilityProvider"/>
+    <compatibilityProvider language="kotlin"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.KtCourseCompatibilityProvider"/>
+    <compatibilityProvider language="Scala"
+                           environment="Gradle"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.ScalaGradleCourseCompatibilityProvider"/>
+    <compatibilityProvider language="Scala"
+                           environment="sbt"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.ScalaSbtCourseCompatibilityProvider"/>
+    <compatibilityProvider language="kotlin"
+                           environment="Android"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.AndroidCourseCompatibilityProvider"/>
     <compatibilityProvider language="Python"
                            implementationClass="com.jetbrains.edu.learning.compatibility.PyCourseCompatibilityProvider"/>
     <compatibilityProvider language="Python"
