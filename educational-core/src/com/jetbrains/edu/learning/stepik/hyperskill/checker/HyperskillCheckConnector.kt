@@ -11,7 +11,10 @@ import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.ext.getText
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
+import com.jetbrains.edu.learning.courseFormat.ext.mockTaskFileName
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
@@ -81,7 +84,7 @@ object HyperskillCheckConnector {
     else CheckResult(CheckStatus.Unchecked, error)
   }
 
-  fun checkCodeTask(project: Project, task: Task): CheckResult {
+  fun checkCodeTask(project: Project, task: CodeTask): CheckResult {
     if (task.id == 0) {
       val link = task.feedbackLink.link ?: return CheckResult.FAILED_TO_CHECK
       val message = """Corrupted task (no id): please, click "Solve in IDE" on <a href="$link">${EduNames.JBA}</a> one more time"""
@@ -93,17 +96,24 @@ object HyperskillCheckConnector {
       is Ok -> attemptResponse.value
     }
 
-    val course = task.lesson.course
-    val editor = EduUtils.getSelectedEditor(project)
-    if (editor == null) return CheckResult.FAILED_TO_CHECK
-
+    val course = task.course
     val defaultLanguage = HyperskillLanguages.langOfId(course.languageID).langName
     if (defaultLanguage == null) {
       val languageDisplayName = course.languageDisplayName
       return CheckResult(CheckStatus.Unchecked,
                          """Unknown language "$languageDisplayName". Check if support for "$languageDisplayName" is enabled.""")
     }
-    val answer = editor.document.text
+
+    val fileName = task.mockTaskFileName
+    if (fileName == null) {
+      LOG.error("Unable to create submission: could not retreive mockTaskFileName from course ${course.name} for the task ${task.name}")
+      return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA))
+    }
+    val answer = task.getTaskFile(fileName)?.getText(project)
+    if (answer == null) {
+      LOG.warn("Unable to create submission: file with code ${fileName} is not found for the task ${task.name}")
+      return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("error.failed.to.post.solution.no.file", EduNames.JBA, fileName))
+    }
 
     val codeSubmission = StepikCheckerConnector.createCodeSubmission(attempt.id, defaultLanguage, answer)
     var submission: Submission = when (val submissionResponse = connector.postSubmission(codeSubmission)) {

@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
@@ -370,7 +371,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static TaskSolutions getStepikTaskSolutions(@NotNull Task task, boolean isSolved) {
-    String taskFileName = SolutionLoaderBase.getMockTaskFileName(task);
+    String taskFileName = TaskExt.getMockTaskFileName(task);
     String solution = getSolutionTextForStepikAssignment(task, isSolved);
     if (solution != null && taskFileName != null) {
       task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);

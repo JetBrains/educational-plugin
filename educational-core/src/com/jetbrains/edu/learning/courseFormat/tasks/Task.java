@@ -116,7 +116,7 @@ public abstract class Task extends StudyItem {
   }
 
   @Nullable
-  public TaskFile getTaskFile(final String name) {
+  public TaskFile getTaskFile(@Nullable final String name) {
     return name != null ? myTaskFiles.get(name) : null;
   }
 

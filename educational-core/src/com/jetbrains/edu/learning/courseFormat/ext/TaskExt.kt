@@ -98,6 +98,13 @@ fun Task.hasChangedFiles(project: Project): Boolean {
   return false
 }
 
+val Task.mockTaskFileName: String?
+  get() {
+    val configurator = course.configurator ?: return null
+    val fileName = configurator.getMockFileName(configurator.mockTemplate) ?: return null
+    return GeneratorUtils.joinPaths(configurator.sourceDir, fileName)
+  }
+
 fun Task.saveStudentAnswersIfNeeded(project: Project) {
   if (lesson !is FrameworkLesson) return
 

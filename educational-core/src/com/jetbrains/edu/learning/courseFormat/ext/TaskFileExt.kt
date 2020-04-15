@@ -43,3 +43,5 @@ fun TaskFile.getEduEditors(project: Project): List<EduEditor> {
     .filter { it.file == file }
     .toList()
 }
+
+fun TaskFile.getText(project: Project): String? = getDocument(project)?.text
