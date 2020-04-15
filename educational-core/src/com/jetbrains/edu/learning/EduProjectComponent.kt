@@ -21,14 +21,12 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
-import com.jetbrains.edu.learning.EduUtils.isEduProject
-import com.jetbrains.edu.learning.EduUtils.isStudentProject
+import com.jetbrains.edu.learning.EduUtils.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.taskDescriptionHintBlocks
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -119,7 +117,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
       return
     }
 
-    if (!isUnitTestMode && project.getUserData (CourseProjectGenerator.EDU_PROJECT_CREATED) == true) {
+    if (!isUnitTestMode && isNewlyCreated(project)) {
       configurator.courseBuilder.refreshProject(project, RefreshCause.PROJECT_CREATED)
     }
 

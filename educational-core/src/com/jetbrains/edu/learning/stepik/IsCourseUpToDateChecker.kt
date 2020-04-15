@@ -8,6 +8,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.EditorNotifications
 import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
+import com.jetbrains.edu.learning.EduUtils.isNewlyCreated
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.isUnitTestMode
@@ -25,7 +26,12 @@ class IsCourseUpToDateChecker(private val course: EduCourse, private val project
     if (!course.isRemote || !course.isStudy) {
       return
     }
-    checkRunnable.run()
+    if (isNewlyCreated(project)) {
+      queueNextCheck(getCheckInterval())
+    }
+    else {
+      checkRunnable.run()
+    }
   }
 
   private fun queueNextCheck(interval: Long) {
