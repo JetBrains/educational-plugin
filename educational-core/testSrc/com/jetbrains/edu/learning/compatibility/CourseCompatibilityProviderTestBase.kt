@@ -29,10 +29,10 @@ abstract class CourseCompatibilityProviderTestBase(private val clazz: KClass<out
       if (requiredPlugins != null) {
         check(configurator != null) { "Cannot find configurator for ${clazz.qualifiedName}" }
 
-        for (pluginId in requiredPlugins) {
+        for (info in requiredPlugins) {
           // BACKCOMPAT: 2019.3
           @Suppress("DEPRECATION")
-          check(PluginManager.getPlugin(PluginId.getId(pluginId)) != null) { "Cannot find plugin with `$pluginId` id" }
+          check(PluginManager.getPlugin(info.id) != null) { "Cannot find plugin with `${info.stringId}` id" }
         }
       }
       else {

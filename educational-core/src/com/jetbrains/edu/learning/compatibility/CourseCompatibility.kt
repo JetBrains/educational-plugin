@@ -8,13 +8,14 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.stepik.StepikNames
 
 sealed class CourseCompatibility {
   object Compatible : CourseCompatibility()
   object IncompatibleVersion : CourseCompatibility()
   object Unsupported : CourseCompatibility()
-  class PluginsRequired(val toInstallOrEnable: Set<PluginId>) : CourseCompatibility()
+  class PluginsRequired(val toInstallOrEnable: List<PluginInfo>) : CourseCompatibility()
 
   companion object {
 
@@ -66,19 +67,18 @@ sealed class CourseCompatibility {
       // TODO: O(requiredPlugins * loadedPlugins) because PluginManager.isPluginInstalled(it) takes O(loadedPlugins).
       //  Can be improved at least to O(requiredPlugins * log(loadedPlugins))
       val notLoadedPlugins = requiredPlugins
-        .map(PluginId::getId)
         .filter {
           // BACKCOMPAT: 2019.3. Use `PluginManagerCore#getPlugin` instead
           @Suppress("DEPRECATION")
-          val plugin = PluginManager.getPlugin(it)
+          val plugin = PluginManager.getPlugin(it.id)
           plugin == null || !plugin.isEnabled
         }
 
       val pluginsState = InstalledPluginsState.getInstance()
-      val toInstallOrEnable = notLoadedPlugins.filterTo(HashSet(), { !pluginsState.wasInstalled(it) })
+      val toInstallOrEnable = notLoadedPlugins.filter { !pluginsState.wasInstalled(it.id) }
       return RequiredPluginsData(notLoadedPlugins, toInstallOrEnable)
     }
 
-    private data class RequiredPluginsData(val notLoadedPlugins: List<PluginId>, val toInstallOrEnable: Set<PluginId>)
+    private data class RequiredPluginsData(val notLoadedPlugins: List<PluginInfo>, val toInstallOrEnable: List<PluginInfo>)
   }
 }

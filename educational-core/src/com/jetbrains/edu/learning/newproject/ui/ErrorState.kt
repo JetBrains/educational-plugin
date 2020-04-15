@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
@@ -13,9 +14,11 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.ERROR
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.WARNING
+import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
@@ -40,7 +43,7 @@ sealed class ErrorState(
   object HyperskillLoginRequired : LoginRequired(EduNames.JBA)
   object IncompatibleVersion : ErrorState(3, ValidationMessage("", "Update", " plugin to start this course"), errorTextForeground, false)
   class UnsupportedCourse(message: String) : ErrorState(3, ValidationMessage(message), errorTextForeground, false)
-  data class RequirePlugins(val pluginIds: Set<PluginId>) :
+  data class RequirePlugins(val pluginIds: List<PluginInfo>) :
     ErrorState(3, errorMessage(pluginIds), errorTextForeground, false)
   object RestartNeeded : ErrorState(3, ValidationMessage("", "Restart", " to activate plugin updates"), errorTextForeground, false)
   class LanguageSettingsError(message: ValidationMessage) : ErrorState(3, message, errorTextForeground, false)
@@ -79,6 +82,21 @@ sealed class ErrorState(
       return if (isCheckiOLoginRequired(course)) CheckiOLoginRequired(course.name) else None
     }
 
+    private fun errorMessage(plugins: Collection<PluginInfo>, limit: Int = 3): ValidationMessage {
+      require(limit > 1)
+
+      val names = if (plugins.size == 1) {
+        plugins.single().displayName
+      }
+      else {
+        val suffix = if (plugins.size <= limit) " and ${plugins.last().displayName}" else " and ${plugins.size - limit + 1} more"
+        plugins.take(minOf(limit - 1, plugins.size - 1)).joinToString { it.displayName } + suffix
+      }
+
+      val message = "$names ${StringUtil.pluralize("plugin", plugins.size)} required. "
+      return ValidationMessage(message, EduCoreBundle.message("course.dialog.error.plugin.install.and.enable"), "")
+    }
+
     @JvmStatic
     fun errorMessage(disabledPluginIds: Collection<PluginId>): ValidationMessage {
       val pluginName = if (disabledPluginIds.size == 1) {
@@ -91,7 +109,7 @@ sealed class ErrorState(
       } else {
         "Some required plugins are not installed or disabled. "
       }
-      return ValidationMessage(beforeLink, "Install and Enable", "")
+      return ValidationMessage(beforeLink, EduCoreBundle.message("course.dialog.error.plugin.install.and.enable"), "")
     }
 
     private fun isLoggedInToStepik(): Boolean = EduSettings.isLoggedIn()

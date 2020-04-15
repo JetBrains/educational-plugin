@@ -2,14 +2,15 @@ package com.jetbrains.edu.jvm.compatibility
 
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
+import com.jetbrains.edu.learning.plugins.PluginInfo
 
 class ScalaSbtCourseCompatibilityProvider : CourseCompatibilityProvider {
-  override fun requiredPlugins(): List<String>? {
+  override fun requiredPlugins(): List<PluginInfo>? {
     if (EduUtils.isAndroidStudio()) return null
     return listOf(
-      "org.intellij.scala",
-      "com.intellij.java",
-      "JUnit" // Do we really need it?
+      PluginInfo.SCALA,
+      PluginInfo.JAVA,
+      PluginInfo.JUNIT
     )
   }
 }

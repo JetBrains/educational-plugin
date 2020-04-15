@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.compatibility
 
-
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
+import com.jetbrains.edu.learning.plugins.PluginInfo
 
 /**
  * Provides some info about course even if the support of the particular course type is not available.
@@ -21,10 +21,8 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
  */
 interface CourseCompatibilityProvider {
   /**
-   * Provides IDE plugin ids which are required for correct work of the corresponding courses.
+   * Provides info about required IDE plugins for correct work of the corresponding courses.
    * Returns `null` if the corresponding courses are not available in the environment.
-   *
-   * @return list of plugin ids
    */
-  fun requiredPlugins(): List<String>?
+  fun requiredPlugins(): List<PluginInfo>?
 }

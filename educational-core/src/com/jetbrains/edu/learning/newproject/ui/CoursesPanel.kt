@@ -158,7 +158,7 @@ class CoursesPanel(
         IncompatibleVersion -> @Suppress("DEPRECATION") PluginsAdvertiser.installAndEnablePlugins(setOf(EduNames.PLUGIN_ID)) {}
         is RequirePlugins -> {
           // BACKCOMPAT: 2019.3. just use `state.pluginIds`
-          val pluginStringIds = state.pluginIds.mapTo(HashSet()) { it.idString }
+          val pluginStringIds = state.pluginIds.mapTo(HashSet()) { it.stringId }
           // BACKCOMPAT: 2019.3. Use `PluginsAdvertiser.installAndEnable`
           @Suppress("DEPRECATION")
           PluginsAdvertiser.installAndEnablePlugins(pluginStringIds) {}
