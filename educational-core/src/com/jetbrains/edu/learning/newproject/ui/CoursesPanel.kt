@@ -20,7 +20,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
-import com.intellij.openapi.updateSettings.impl.UpdateChecker
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser
 import com.intellij.ui.FilterComponent
 import com.intellij.ui.GuiUtils
@@ -490,7 +489,10 @@ class CoursesPanel(
           if (notification.groupId == EduUtils.getUpdateNotificationGroup().displayId) {
             val course = myCoursesList.selectedValue
             doValidation(course)
-            PluginManagerConfigurable.shutdownOrRestartApp()
+            // TODO: investigate why it leads to IDE freeze when you install python plugin
+            // ApplicationManager.getApplication().invokeLater {
+            //  PluginManagerConfigurable.shutdownOrRestartApp()
+            // }
           }
         }
       })
