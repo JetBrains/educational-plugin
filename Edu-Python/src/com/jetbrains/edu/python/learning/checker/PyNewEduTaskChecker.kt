@@ -28,7 +28,7 @@ class PyNewEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project
     if (SYNTAX_ERRORS.any { it in stderr }) CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE, stderr) else CheckResult.SOLVED
 
   override fun getErrorMessage(node: SMTestProxy): String {
-    return node.stacktrace?.split("\n")?.firstOrNull { it.startsWith(ASSERTION_ERROR) }?.substringAfter(ASSERTION_ERROR)
+    return node.stacktrace?.lineSequence()?.firstOrNull { it.startsWith(ASSERTION_ERROR) }?.substringAfter(ASSERTION_ERROR)
            ?: node.errorMessage
   }
 

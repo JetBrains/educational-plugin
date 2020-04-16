@@ -61,6 +61,18 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
             taskFile("tests.py", test)
           }
         }
+        eduTask("AssertionError") {
+          pythonTaskFile("task.py")
+          dir("tests") {
+            taskFile("__init__.py")
+            taskFile("tests.py", """
+              |import unittest
+              |class TestCase(unittest.TestCase):
+              |    def test_add(self):
+              |        self.assertTrue(False, "My own message")
+              |""".trimMargin())
+          }
+        }
         outputTask("OutputTestsFailed") {
           pythonTaskFile("hello_world.py", """print("Hello, World")""")
           taskFile("output.txt") {
@@ -74,12 +86,13 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val matcher = when (task.name) {
-        "EduTestsFailed" -> Result(CheckStatus.Failed, equalTo("error\n3 != 4\n"),
+        "EduTestsFailed" -> Result(CheckStatus.Failed, equalTo("4 != 3 : error"),
                                    diff(CheckResultDiff(expected = "4", actual = "3", title = "Comparison Failure (test_add)",
-                                                        message = "error\n3 != 4\n")), nullValue())
+                                                        message = "4 != 3 : error")), nullValue())
         "EduNoTestsRun" -> Result(CheckStatus.Unchecked, containsString(CheckUtils.NO_TESTS_HAVE_RUN), nullValue(), nullValue())
         "SyntaxError" -> Result(CheckStatus.Failed, containsString("Syntax Error"), nullValue(),
                                 containsString("SyntaxError: invalid syntax"))
+        "AssertionError" -> Result(CheckStatus.Failed, equalTo("False is not true : My own message"), nullValue(), nullValue())
         "OutputTestsFailed" -> Result(CheckStatus.Failed, equalTo("""
           |Expected output:
           |<Hello, World!
