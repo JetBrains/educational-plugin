@@ -27,8 +27,8 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import java.io.IOException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import java.io.IOException
 import java.net.URL
 
 private const val PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt"
@@ -38,9 +38,9 @@ const val UPDATE_NOTIFICATION_GROUP_ID = "Update.course"
 
 private val LOG = Logger.getInstance(StepikAuthorizer::class.java)
 
-val featuredCourses = getCoursesIds(PROMOTED_COURSES_LINK)
-val inProgressCourses = getCoursesIds(IN_PROGRESS_COURSES_LINK)
-val featuredStepikCourses = getCourseIdsWithLanguage(FEATURED_STEPIK_COURSES_LINK)
+val featuredCourses: List<Int> = getCoursesIds(PROMOTED_COURSES_LINK)
+val inProgressCourses: List<Int> = getCoursesIds(IN_PROGRESS_COURSES_LINK)
+val featuredStepikCourses: Map<Int, String> = getCourseIdsWithLanguage(FEATURED_STEPIK_COURSES_LINK)
 
 fun setCourseLanguageEnvironment(info: EduCourse) {
   val courseFormat = info.type

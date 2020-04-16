@@ -103,7 +103,7 @@ abstract class StepikConnector {
     return response?.body()
   }
 
-  fun getCourses(ids: List<Int>): List<EduCourse>? {
+  fun getCourses(ids: Set<Int>): List<EduCourse>? {
     val response = service.courses(*ids.toIntArray()).executeHandlingExceptions()
     return response?.body()?.courses
   }

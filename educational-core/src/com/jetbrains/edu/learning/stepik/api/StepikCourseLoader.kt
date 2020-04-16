@@ -27,8 +27,7 @@ object StepikCourseLoader {
     val tasks = mutableListOf<Callable<List<EduCourse>>>()
     tasks.add(Callable { getCourseInfos(true) })
     tasks.add(Callable { getCourseInfos(false) })
-    tasks.add(Callable { getFeaturedStepikCourses() })
-    tasks.add(Callable { getInProgressCourses() })
+    tasks.add(Callable { getListedStepikCourses() })
 
     ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)
       .filterNot { it.isCancelled }
@@ -68,26 +67,17 @@ object StepikCourseLoader {
     return result
   }
 
-  private fun getInProgressCourses(): List<StepikCourse> {
-    val result = getListedStepikCourses(inProgressCourses)
-    for (inProgressCourse in result) {
-      inProgressCourse.visibility = CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(inProgressCourse.id))
-    }
-    return result
-  }
-
-  private fun getFeaturedStepikCourses(): List<StepikCourse> {
-    return getListedStepikCourses(featuredStepikCourses.keys.toList(), featuredStepikCourses)
-  }
-
-  private fun getListedStepikCourses(courseIds: List<Int>, languageMap: Map<Int, String>? = null): List<StepikCourse> {
-    val courses = StepikConnector.getInstance().getCourses(courseIds) ?: return emptyList()
-    return courses.mapNotNull {
-      if (languageMap != null) {
-        it.language = languageMap[it.id]
+  private fun getListedStepikCourses(): List<StepikCourse> {
+    val courses = StepikConnector.getInstance().getCourses(featuredStepikCourses.keys.plus(inProgressCourses)) ?: return emptyList()
+    return courses.mapNotNull { course ->
+      val courseId = course.id
+      featuredStepikCourses[courseId]?.let { course.language = it }
+      if (course.compatibility == CourseCompatibility.UNSUPPORTED) return@mapNotNull null
+      val remoteCourse = stepikCourseFromRemote(course) ?: return@mapNotNull null
+      if (inProgressCourses.contains(courseId)) {
+        remoteCourse.visibility = CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(courseId))
       }
-      if (it.compatibility == CourseCompatibility.UNSUPPORTED) return@mapNotNull null
-      stepikCourseFromRemote(it)
+      remoteCourse
     }.filter { it.compatibility == CourseCompatibility.COMPATIBLE }
   }
 
