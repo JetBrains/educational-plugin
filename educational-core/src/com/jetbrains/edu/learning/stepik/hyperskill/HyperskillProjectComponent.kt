@@ -33,11 +33,11 @@ class HyperskillProjectComponent(private val project: Project) : ProjectComponen
 
   companion object {
     fun synchronizeHyperskillProject(project: Project) {
-      val course = StudyTaskManager.getInstance(project).course as? HyperskillCourse ?: return
-      if (course.taskToTopics.isEmpty()) {
-        ApplicationManager.getApplication().executeOnPooledThread {
-          HyperskillConnector.getInstance().fillTopics(course, project)
-          YamlFormatSynchronizer.saveRemoteInfo(course)
+      ApplicationManager.getApplication().executeOnPooledThread {
+        val hyperskillCourse = StudyTaskManager.getInstance(project).course as? HyperskillCourse
+        if (hyperskillCourse != null) {
+          HyperskillConnector.getInstance().fillTopics(hyperskillCourse, project)
+          YamlFormatSynchronizer.saveRemoteInfo(hyperskillCourse)
         }
       }
       if (HyperskillSettings.INSTANCE.account != null) {
