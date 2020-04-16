@@ -2,6 +2,7 @@ package com.jetbrains.edu.python.learning.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -26,7 +27,13 @@ class PyNewEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult =
     if (SYNTAX_ERRORS.any { it in stderr }) CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE, stderr) else CheckResult.SOLVED
 
+  override fun getErrorMessage(node: SMTestProxy): String {
+    return node.stacktrace?.split("\n")?.firstOrNull { it.startsWith(ASSERTION_ERROR) }?.substringAfter(ASSERTION_ERROR)
+           ?: node.errorMessage
+  }
+
   companion object {
     private val SYNTAX_ERRORS = listOf("SyntaxError", "IndentationError", "TabError")
+    private const val ASSERTION_ERROR = "AssertionError: "
   }
 }
