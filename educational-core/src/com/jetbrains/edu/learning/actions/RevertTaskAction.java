@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
+import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
@@ -62,7 +63,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     ProjectView.getInstance(project).refresh();
     TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
     TaskDescriptionView.getInstance(project).readyToCheck();
-    EduUtils.updateCourseProgress(project);
+    ProgressUtil.updateCourseProgress(project);
   }
 
   private static void validateEditors(@NotNull Project project) {

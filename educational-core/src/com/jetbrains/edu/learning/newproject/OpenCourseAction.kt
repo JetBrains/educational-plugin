@@ -5,6 +5,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.OptionAction
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
+import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
@@ -64,16 +65,19 @@ fun joinCourse(courseInfo: CourseInfo,
                closeDialogAction: () -> Unit = {}) {
   val (course, getLocation, getProjectSettings) = courseInfo
 
-  if (course is JetBrainsAcademyCourse) {
-    joinJetBrainsAcademy(course, errorHandler)
-    return
-  }
-
   // location is null for course preview dialog only
   val location = getLocation()
   if (location == null) {
     return
   }
+
+  CoursesStorage.getInstance().addCourse(course, location)
+
+  if (course is JetBrainsAcademyCourse) {
+    joinJetBrainsAcademy(course, errorHandler)
+    return
+  }
+
   val configurator = course.configurator
   // If `configurator != null` than `projectSettings` is always not null
   // because project settings are produced by configurator itself

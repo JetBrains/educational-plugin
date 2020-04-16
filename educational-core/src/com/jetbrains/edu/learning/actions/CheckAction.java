@@ -40,6 +40,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
@@ -239,7 +240,7 @@ public class CheckAction extends DumbAwareAction {
       }
       TaskDescriptionView.getInstance(myProject).checkFinished(myTask, myResult);
       ApplicationManager.getApplication().invokeLater(() -> {
-        EduUtils.updateCourseProgress(myProject);
+        ProgressUtil.updateCourseProgress(myProject);
         ProjectView.getInstance(myProject).refresh();
 
         for (CheckListener listener : CheckListener.EP_NAME.getExtensions()) {

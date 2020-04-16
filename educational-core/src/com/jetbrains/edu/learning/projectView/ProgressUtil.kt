@@ -1,9 +1,16 @@
 package com.jetbrains.edu.learning.projectView
 
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.ui.laf.darcula.ui.DarculaProgressBarUI
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.util.ColorProgressBar
+import com.intellij.openapi.project.Project
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
+import com.jetbrains.edu.learning.CoursesStorage
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -59,4 +66,24 @@ object ProgressUtil {
     progressBar.putClientProperty("ProgressBar.flatEnds", java.lang.Boolean.TRUE)
     return progressBar
   }
+
+  @JvmStatic
+  fun updateCourseProgress(project: Project) {
+    val course = StudyTaskManager.getInstance(project).course
+    if (course == null) {
+      LOG.error("course is null for project at ${project.basePath}")
+      return
+    }
+    val (tasksSolved, tasksTotal) = countProgress(course)
+    val pane = ProjectView.getInstance(project).currentProjectViewPane
+    if (pane is CourseViewPane && EduUtils.isStudentProject(project) && !ApplicationManager.getApplication().isUnitTestMode) {
+      pane.updateCourseProgress(tasksTotal, tasksSolved)
+    }
+    val location = project.basePath
+    if (location != null) {
+      CoursesStorage.getInstance().updateCourseProgress(course, location, tasksSolved, tasksTotal)
+    }
+  }
+
+  private val LOG: Logger = Logger.getInstance(ProgressUtil::class.java)
 }

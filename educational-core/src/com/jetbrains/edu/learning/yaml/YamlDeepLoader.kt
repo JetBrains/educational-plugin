@@ -30,7 +30,7 @@ object YamlDeepLoader {
     val projectDir = project.courseDir
     val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error("Course yaml config cannot be null")
 
-    val deserializedCourse = YamlDeserializer.deserializeItem(project, courseConfig) as? Course ?: return null
+    val deserializedCourse = YamlDeserializer.deserializeItem(courseConfig, project) as? Course ?: return null
     val mapper = deserializedCourse.mapper
 
     deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items, mapper)

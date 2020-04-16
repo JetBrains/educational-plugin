@@ -24,7 +24,7 @@ class VirtualFileListenerTest : VirtualFileListenerTestBase() {
         // after task files is created, changes are saved to config in `invokeLater`
         // we want to check config after it happened, means this event is dispatched
         PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
-        val item = YamlDeserializer.deserializeItem(project, taskConfigFile, YamlFormatSynchronizer.STUDENT_MAPPER) as EduTask
+        val item = YamlDeserializer.deserializeItem(taskConfigFile, project, YamlFormatSynchronizer.STUDENT_MAPPER) as EduTask
         val deserializedTaskFile = item.getTaskFile(taskFile.name) ?: error("Learner config file doesn't contain `${taskFile.name}` task file")
         assertEquals(true, deserializedTaskFile.isLearnerCreated)
       })

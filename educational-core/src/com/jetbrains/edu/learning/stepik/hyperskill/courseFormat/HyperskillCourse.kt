@@ -44,6 +44,10 @@ class HyperskillCourse : Course {
 
   override fun getItemType(): String = HYPERSKILL
 
+  override fun getId(): Int {
+    return hyperskillProject?.id ?: super.getId()
+  }
+
   fun findOrCreateProblemsLesson(): Lesson {
     var lesson = getProblemsLesson()
     if (lesson == null) {

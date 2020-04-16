@@ -188,7 +188,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
                                      expectedExceptionClass: Class<T>) {
     try {
       val configFile = createConfigFile(configName, yamlContent)
-      YamlDeserializer.deserializeItem(project, configFile)
+      YamlDeserializer.deserializeItem(configFile, project)
     }
     catch (e: Exception) {
       assertInstanceOf(e, YamlDeserializer.ProcessedException::class.java)

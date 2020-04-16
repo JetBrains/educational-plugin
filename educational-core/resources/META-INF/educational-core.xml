@@ -249,6 +249,7 @@
     <registryKey key="edu.course.update.check.interval"
                  description="Sets is course up to date check interval in seconds"
                  defaultValue="18000"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.CoursesStorage"/>
 
     <!--for educators-->
     <xml.xmlSuppressionProvider

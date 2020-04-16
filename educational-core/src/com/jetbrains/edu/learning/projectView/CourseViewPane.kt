@@ -128,7 +128,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     actionGroup.add(hideSolvedLessons)
   }
 
-  fun updateCourseProgress() {
+  private fun updateCourseProgress() {
     val course = StudyTaskManager.getInstance(myProject).course
     if (course == null) {
       Logger.getInstance(CourseViewPane::class.java).error("course is null")
@@ -136,6 +136,10 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     }
     val (taskSolved, tasksTotal) = ProgressUtil.countProgress(course)
 
+    updateCourseProgress(tasksTotal, taskSolved)
+  }
+
+  fun updateCourseProgress(tasksTotal: Int, taskSolved: Int) {
     progressBar.maximum = tasksTotal
     progressBar.value = taskSolved
   }

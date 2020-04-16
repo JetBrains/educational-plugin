@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning;
 
 import com.intellij.ide.SaveAndSyncHandler;
-import com.intellij.ide.projectView.ProjectView;
-import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
@@ -54,7 +52,7 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
-import com.jetbrains.edu.learning.projectView.CourseViewPane;
+import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
@@ -154,14 +152,7 @@ public class EduUtils {
 
   public static void updateToolWindows(@NotNull final Project project) {
     TaskDescriptionView.getInstance(project).updateTaskDescription();
-    updateCourseProgress(project);
-  }
-
-  public static void updateCourseProgress(@NotNull Project project) {
-    final AbstractProjectViewPane pane = ProjectView.getInstance(project).getCurrentProjectViewPane();
-    if (pane instanceof CourseViewPane && isStudentProject(project) && !ApplicationManager.getApplication().isUnitTestMode()) {
-      ((CourseViewPane)pane).updateCourseProgress();
-    }
+    ProgressUtil.updateCourseProgress(project);
   }
 
   public static void deleteFile(@Nullable final VirtualFile file) {

@@ -48,7 +48,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
  */
 object YamlDeserializer {
 
-  fun deserializeItem(project: Project, configFile: VirtualFile, mapper: ObjectMapper = MAPPER): StudyItem? {
+  fun deserializeItem(configFile: VirtualFile, project: Project?, mapper: ObjectMapper = MAPPER): StudyItem? {
     val configName = configFile.name
     val configFileText = configFile.document.text
     return try {
@@ -61,7 +61,9 @@ object YamlDeserializer {
       }
     }
     catch (e: Exception) {
-      processErrors(project, configFile, e)
+      if (project != null) {
+        processErrors(project, configFile, e)
+      }
       return null
     }
   }
@@ -72,7 +74,7 @@ object YamlDeserializer {
     val content = mutableListOf<T>()
     for (titledItem in contentList) {
       val configFile: VirtualFile = getConfigFileForChild(project, titledItem.name) ?: continue
-      val deserializeItem = deserializeItem(project, configFile, mapper) as? T ?: continue
+      val deserializeItem = deserializeItem(configFile, project, mapper) as? T ?: continue
       deserializeItem.name = titledItem.name
       deserializeItem.index = titledItem.index
       content.add(deserializeItem)

@@ -49,7 +49,7 @@ object YamlLoader {
     val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: MAPPER
 
     val existingItem = getStudyItemForConfig(project, configFile)
-    val deserializedItem = YamlDeserializer.deserializeItem(project, configFile, mapper) ?: return
+    val deserializedItem = YamlDeserializer.deserializeItem(configFile, project, mapper) ?: return
     deserializedItem.ensureChildrenExist(configFile.parent)
 
     if (existingItem == null) {
@@ -64,7 +64,7 @@ object YamlLoader {
       deserializedItem.name = itemDir.name
       val parentItem = deserializedItem.getParentItem(project, itemDir.parent)
       val parentConfig = parentItem.getDir(project).findChild(parentItem.configFileName) ?: return
-      val deserializedParent = YamlDeserializer.deserializeItem(project, parentConfig, mapper) as? ItemContainer ?: return
+      val deserializedParent = YamlDeserializer.deserializeItem(parentConfig, project, mapper) as? ItemContainer ?: return
       if (deserializedParent.items.map { it.name }.contains(itemDir.name)) {
         parentItem.addItemAsNew(project, deserializedItem)
         reopenEditors(project)
