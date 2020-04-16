@@ -28,6 +28,9 @@ interface StepikService {
   fun courses(@Path("id") courseId: Int,
               @Query("is_idea_compatible") isIdeaCompatible: Boolean?): Call<CoursesList>
 
+  @GET("api/courses")
+  fun courses(@Query("ids[]") vararg ids: Int): Call<CoursesList>
+
   @GET("api/users")
   fun users(@Query("ids[]") vararg ids: Int): Call<UsersList>
 

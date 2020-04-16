@@ -22,9 +22,9 @@ import okhttp3.RequestBody
 import org.apache.http.HttpStatus
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.BufferedReader
-import java.util.*
 import java.io.IOException
 import java.net.URL
+import java.util.*
 
 abstract class StepikConnector {
 
@@ -101,6 +101,11 @@ abstract class StepikConnector {
   fun getCourses(isPublic: Boolean, currentPage: Int, enrolled: Boolean?): CoursesList? {
     val response = service.courses(true, isPublic, currentPage, enrolled).executeHandlingExceptions()
     return response?.body()
+  }
+
+  fun getCourses(ids: List<Int>): List<EduCourse>? {
+    val response = service.courses(*ids.toIntArray()).executeHandlingExceptions()
+    return response?.body()?.courses
   }
 
   @JvmOverloads

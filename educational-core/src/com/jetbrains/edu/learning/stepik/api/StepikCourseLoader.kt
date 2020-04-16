@@ -81,13 +81,13 @@ object StepikCourseLoader {
   }
 
   private fun getListedStepikCourses(courseIds: List<Int>, languageMap: Map<Int, String>? = null): List<StepikCourse> {
-    return courseIds.mapNotNull { courseId ->
-      val info = StepikConnector.getInstance().getCourseInfo(courseId, false) ?: return@mapNotNull null
+    val courses = StepikConnector.getInstance().getCourses(courseIds) ?: return emptyList()
+    return courses.mapNotNull {
       if (languageMap != null) {
-        info.language = languageMap[courseId]
+        it.language = languageMap[it.id]
       }
-      if (info.compatibility == CourseCompatibility.UNSUPPORTED) return@mapNotNull null
-      stepikCourseFromRemote(info)
+      if (it.compatibility == CourseCompatibility.UNSUPPORTED) return@mapNotNull null
+      stepikCourseFromRemote(it)
     }.filter { it.compatibility == CourseCompatibility.COMPATIBLE }
   }
 
