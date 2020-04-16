@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.stepik.UPDATE_NOTIFICATION_GROUP_ID
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.getConfigDir
@@ -52,7 +53,8 @@ object HyperskillCourseUpdater {
 
   @JvmStatic
   fun updateCourse(project: Project, course: HyperskillCourse) {
-    runInBackground(project, EduCoreBundle.message("hyperskill.checking.updates", EduCoreBundle.message("hyperskill.project"))) { indicator ->
+    runInBackground(project,
+                    EduCoreBundle.message("hyperskill.checking.updates", EduCoreBundle.message("hyperskill.project"))) { indicator ->
       val projectLesson = course.getProjectLesson()
       val courseFromServer = course.hyperskillProject?.getCourseFromServer()
       val projectLessonShouldBeUpdated = courseFromServer != null && projectLesson?.shouldBeUpdated(project, courseFromServer) ?: false
@@ -68,8 +70,15 @@ object HyperskillCourseUpdater {
       }
 
       if (projectLessonShouldBeUpdated || codeChallengesUpdates.isNotEmpty()) {
-        showUpdateAvailableNotification(project) {
+        if (HyperskillSettings.INSTANCE.updateAutomatically) {
           doUpdate(project, course, courseFromServer, codeChallengesUpdates)
+        }
+        else {
+          showUpdateAvailableNotification(project) {
+            runInBackground(project, EduCoreBundle.message("hyperskill.updating"), false) {
+              doUpdate(project, course, courseFromServer, codeChallengesUpdates)
+            }
+          }
         }
       }
     }
