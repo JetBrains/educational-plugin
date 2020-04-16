@@ -18,6 +18,8 @@ class HyperskillSettings : PersistentStateComponent<Element> {
   @set:Transient
   var account: HyperskillAccount? = null
 
+  var updateAutomatically: Boolean = true
+
   override fun getState(): Element? {
     val mainElement = Element(serviceName)
     XmlSerializer.serializeInto(this, mainElement)

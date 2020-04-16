@@ -18,15 +18,12 @@ import javax.swing.event.HyperlinkEvent
 abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
   private var browseProfileLabel = createTextPane()
   private var loginLink = HoverHyperlinkLabel("")
-  private var panel = JPanel()
+  private var accountPanel = JPanel()
+  private var mainPanel: JPanel = JPanel()
   private var loginListener: HyperlinkAdapter? = null
 
   protected var lastSavedAccount: T? = null
   private var initialAccount: T? = null
-
-  init {
-    initUI()
-  }
 
   abstract fun getCurrentAccount(): T?
   abstract fun setCurrentAccount(lastSavedAccount: T?)
@@ -34,11 +31,27 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
   protected abstract fun createAuthorizeListener(): LoginListener
 
   private fun initUI() {
-    panel = JPanel(GridLayoutManager(1, 2))
+    val additionalComponents = getAdditionalComponents()
+    mainPanel = JPanel(GridLayoutManager(additionalComponents.size + 1, 1))
+    mainPanel.border = IdeBorderFactory.createTitledBorder(displayName)
+
+    accountPanel = JPanel(GridLayoutManager(1, 2))
     addBrowseProfileLabel()
     addLoginLink()
-    panel.border = IdeBorderFactory.createTitledBorder(displayName)
+
+    fun gridConstraints(row: Int): GridConstraints {
+      return GridConstraints().apply {
+        this.row = row
+        column = 0
+        anchor = GridConstraints.ANCHOR_WEST
+      }
+    }
+
+    mainPanel.add(accountPanel, gridConstraints(0))
+    additionalComponents.forEachIndexed { index, component -> mainPanel.add(component, gridConstraints(index + 1)) }
   }
+
+  protected open fun getAdditionalComponents(): List<JComponent> = emptyList()
 
   protected fun initAccounts() {
     initialAccount = getCurrentAccount()
@@ -54,7 +67,7 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
     constraints.anchor = GridConstraints.ANCHOR_WEST
     constraints.hSizePolicy = GridConstraints.SIZEPOLICY_FIXED
     browseProfileLabel.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
-    panel.add(browseProfileLabel, constraints)
+    accountPanel.add(browseProfileLabel, constraints)
   }
 
   private fun addLoginLink() {
@@ -63,12 +76,13 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
     constraints.row = 0
     constraints.column = 1
     constraints.anchor = GridConstraints.ANCHOR_WEST
-    panel.add(loginLink, constraints)
+    accountPanel.add(loginLink, constraints)
   }
 
   override fun createComponent(): JComponent? {
+    initUI()
     lastSavedAccount = getCurrentAccount()
-    return panel
+    return mainPanel
   }
 
   override fun isModified(): Boolean {
@@ -76,6 +90,10 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
   }
 
   override fun reset() {
+    updateAccounts()
+  }
+
+  private fun updateAccounts() {
     lastSavedAccount = initialAccount
     setCurrentAccount(initialAccount)
     updateLoginLabels()
@@ -85,7 +103,7 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
     if (isModified) {
       initialAccount = lastSavedAccount
     }
-    reset()
+    updateAccounts()
   }
 
   protected fun updateLoginLabels() {
@@ -124,7 +142,7 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
     }
   }
 
-  abstract inner class LoginListener: HyperlinkAdapter() {
+  abstract inner class LoginListener : HyperlinkAdapter() {
     protected abstract fun authorize(e: HyperlinkEvent?)
 
     override fun hyperlinkActivated(e: HyperlinkEvent?) {
