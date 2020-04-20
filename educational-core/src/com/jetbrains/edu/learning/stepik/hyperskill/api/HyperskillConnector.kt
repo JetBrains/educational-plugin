@@ -19,14 +19,17 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.*
+import com.jetbrains.edu.learning.stepik.hyperskill.checker.WebSocketConnectionState
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillTaskBuilder
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import okhttp3.ConnectionPool
+import okhttp3.*
 import retrofit2.Call
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.*
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 abstract class HyperskillConnector {
 
@@ -77,7 +80,8 @@ abstract class HyperskillConnector {
   }
 
   fun login(code: String): Boolean {
-    val response = authorizationService.getTokens(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, code, "authorization_code").executeHandlingExceptions()
+    val response = authorizationService.getTokens(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, code,
+                                                  "authorization_code").executeHandlingExceptions()
     val tokenInfo = response?.body() ?: return false
     val account = HyperskillAccount()
     account.tokenInfo = tokenInfo
@@ -244,12 +248,24 @@ abstract class HyperskillConnector {
     return withTokenRefreshIfNeeded { service.attempt(Attempt(step)).executeAndExtractFirst(AttemptsList::attempts) }
   }
 
+  fun getWebSocketConfiguration(): Result<WebSocketConfiguration, String> {
+    return withTokenRefreshIfNeeded { service.websocket().executeAndExtractFromBody() }
+  }
+
   private fun <T, R> Call<T>.executeAndExtractFirst(extractResult: T.() -> List<R>): Result<R, String> {
     return executeParsingErrors(true).flatMap {
       val result = it.body()?.extractResult()?.firstOrNull()
       if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA)) else Ok(result)
     }
   }
+
+  private fun <T> Call<T>.executeAndExtractFromBody(): Result<T, String> {
+    return executeParsingErrors(true).flatMap {
+      val result = it.body()
+      if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA)) else Ok(result)
+    }
+  }
+
 
   private fun <T> withTokenRefreshIfNeeded(call: () -> Result<T, String>): Result<T, String> {
     val result = call()
@@ -275,8 +291,59 @@ abstract class HyperskillConnector {
     })
   }
 
+  fun connectToWebSocketWithTimeout(timeOutSec: Long, url: String, initialState: WebSocketConnectionState): WebSocketConnectionState {
+
+    fun logEvent(eventName: String, state: WebSocketConnectionState, message: String) =
+      LOG.debug("WS: new event. Event=$eventName, state=${state::class.java.simpleName}, message=${message}")
+
+    val client = OkHttpClient()
+    val latch = CountDownLatch(1)
+    var state = initialState
+    val socket = createWebSocket(client, url, object : WebSocketListener() {
+      private fun handleEvent(eventName: String, webSocket: WebSocket, message: String) {
+        logEvent(eventName, state, message)
+        try {
+          state = state.handleEvent(webSocket, message)
+          if (state.isTerminal) {
+            latch.countDown()
+          }
+        }
+        catch (e: Exception) {
+          LOG.error(e)
+          latch.countDown()
+        }
+      }
+
+      override fun onOpen(webSocket: WebSocket, response: Response) {
+        handleEvent("open", webSocket, response.message())
+      }
+
+      override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+        logEvent("failure", state, response?.message() ?: "no message")
+        latch.countDown()
+      }
+
+      override fun onMessage(webSocket: WebSocket, text: String) {
+        handleEvent("message", webSocket, text)
+      }
+
+      override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+        logEvent("closure", state, reason)
+        latch.countDown()
+      }
+    })
+
+    latch.await(timeOutSec, TimeUnit.SECONDS)
+    socket.close(1000, null)
+    client.dispatcher().executorService().shutdown()
+    return state
+  }
+
+  protected open fun createWebSocket(client: OkHttpClient, url: String, listener: WebSocketListener): WebSocket =
+    client.newWebSocket(Request.Builder().url(url).build(), listener)
+
   companion object {
-    private val LOG = Logger.getInstance(HyperskillConnector::class.java)
+    private val LOG = Logger.getInstance("com.jetbrains.edu.learning.HyperskillConnector")
 
     @JvmStatic
     val AUTHORIZATION_TOPIC = com.intellij.util.messages.Topic.create("Edu.hyperskillLoggedIn", EduLogInListener::class.java)

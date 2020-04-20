@@ -17,3 +17,10 @@ fun <T, S, E> Result<T, E>.flatMap(func: (T) -> Result<S, E>): Result<S, E> {
     is Ok -> func(value)
   }
 }
+
+inline fun <T, E> Result<T, E>.onError(action: (E) -> T): T{
+  return when (this) {
+    is Ok -> value
+    is Err -> action(error)
+  }
+}

@@ -14,6 +14,7 @@ typealias ResponseHandler = (RecordedRequest) -> MockResponse?
 class MockWebServerHelper(parentDisposable: Disposable) {
 
   private val handlers = mutableSetOf<ResponseHandler>()
+  val webSocketMockSever = MockWebServer()
 
   private val mockWebServer = MockWebServer().apply {
     dispatcher = object : Dispatcher() {
@@ -30,6 +31,7 @@ class MockWebServerHelper(parentDisposable: Disposable) {
 
   init {
     Disposer.register(parentDisposable, Disposable { mockWebServer.shutdown() })
+    Disposer.register(parentDisposable, Disposable { webSocketMockSever.shutdown() })
     ThreadTracker.longRunningThreadCreated(parentDisposable, "MockWebServer", "OkHttp ConnectionPool", "Okio Watchdog")
   }
 

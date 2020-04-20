@@ -59,4 +59,7 @@ interface HyperskillService {
 
   @POST("api/submissions")
   fun submission(@Body submission: Submission): Call<SubmissionsList>
+
+  @POST("api/ws")
+  fun websocket(): Call<WebSocketConfiguration>
 }

@@ -28,6 +28,8 @@ const val TOPIC_THEORY = "topic_theory"
 const val SOLUTIONS = "solutions"
 const val IS_TEMPLATE_BASED = "is_template_based"
 const val UPDATED_AT = "updated_at"
+const val TOKEN = "token"
+const val URL = "url"
 
 class HyperskillAccount : OAuthAccount<HyperskillUserInfo>()
 
@@ -161,4 +163,12 @@ class HyperskillStepsList {
 class SolutionsList {
   @JsonProperty(SOLUTIONS)
   lateinit var solutions: List<Solution>
+}
+
+class WebSocketConfiguration {
+  @JsonProperty(TOKEN)
+  lateinit var token: String
+
+  @JsonProperty(URL)
+  lateinit var url: String
 }
