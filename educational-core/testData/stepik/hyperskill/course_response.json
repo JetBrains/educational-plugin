@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "projects": [
+    {
+      "id": 1,
+      "clarity": 3.71,
+      "description": "You suddenly remember you need to call your aunt and wish her a happy birthday, but how do you find her number quickly in a giant phonebook? Write a program that will solve this problem once and for all. Create a phonebook that allows you to find the information you need quickly and easily. Names and numbers, here we come.",
+      "environment": "",
+      "feedback_count": 34,
+      "fun": 3.79,
+      "ide_files": "https://stepik.org/media/attachments/lesson/270527/additional_files.json",
+      "is_beta": false,
+      "is_completed": false,
+      "is_template_based": false,
+      "language": "kotlin",
+      "learning_goals": [
+        347
+      ],
+      "lesson_stepik_id": 270527,
+      "level": 3,
+      "preview_step": null,
+      "results": "You will learn a variety of sorting and search algorithms, one of which is recursive. If it’s algorithm competence that you’re after, this project is definitely for you.",
+      "score": -57.0,
+      "seconds_to_complete": null,
+      "short_description": "You suddenly remember you need to call your aunt and wish her a happy birthday, but how do you find her number quickly in a giant phonebook? Write a program that will solve this problem once and for all. Create a phonebook that allows you to find the information you need quickly and easily. Names and numbers, here we come.",
+      "stages_count": 4,
+      "title": "Phone Book",
+      "use_ide": true,
+      "usefulness": 4.35
+    }
+  ]
+}

@@ -27,7 +27,7 @@ class HyperskillProjectComponent(private val project: Project) : ProjectComponen
 
   override fun solutionLoaded(course: Course) {
     if (course is HyperskillCourse) {
-      HyperskillCourseUpdater.updateCourse(project, course)
+      HyperskillCourseUpdateChecker(project, course).check()
     }
   }
 

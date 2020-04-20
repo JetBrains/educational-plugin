@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
+import com.jetbrains.edu.learning.stepik.hyperskill.EduCourseUpdateChecker;
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
@@ -80,7 +81,7 @@ public class StepikProjectComponent implements ProjectComponent {
               public void userLoggedOut() { }
             });
           }
-          IsCourseUpToDateChecker upToDateChecker = new IsCourseUpToDateChecker((EduCourse)course, myProject);
+          EduCourseUpdateChecker upToDateChecker = new EduCourseUpdateChecker(myProject, (EduCourse)course);
           upToDateChecker.check();
 
           final StepikUser currentUser = EduSettings.getInstance().getUser();

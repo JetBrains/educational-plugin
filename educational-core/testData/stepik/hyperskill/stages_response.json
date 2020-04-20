@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "stages": [
+    {
+      "description": "Start with linear search: find data in an unordered database.",
+      "goal": 505,
+      "id": 1,
+      "is_abandoned": false,
+      "is_completed": false,
+      "is_cribbed": false,
+      "is_reviewed": false,
+      "language": "kotlin",
+      "project": 86,
+      "results": "",
+      "seconds_to_complete": null,
+      "project_stages_count": 4,
+      "step": 7748,
+      "step_index": 1,
+      "preview_step": 7748,
+      "title": "A needle in the hay",
+      "all_prerequisites": [
+        412,
+        432,
+        259,
+        260,
+        439,
+        464
+      ],
+      "prerequisites": [
+        412,
+        432,
+        259,
+        260,
+        439,
+        464
+      ]
+    }
+  ]
+}

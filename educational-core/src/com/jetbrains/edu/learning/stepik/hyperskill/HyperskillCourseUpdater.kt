@@ -52,7 +52,7 @@ object HyperskillCourseUpdater {
   }
 
   @JvmStatic
-  fun updateCourse(project: Project, course: HyperskillCourse) {
+  fun updateCourse(project: Project, course: HyperskillCourse, onFinish: () -> Unit) {
     runInBackground(project, EduCoreBundle.message("update.check")) {
       val projectLesson = course.getProjectLesson()
       val courseFromServer = course.hyperskillProject?.getCourseFromServer()
@@ -71,6 +71,7 @@ object HyperskillCourseUpdater {
           }
         }
       }
+      onFinish()
     }
   }
 
