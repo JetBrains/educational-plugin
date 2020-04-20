@@ -37,10 +37,10 @@ class PostSolutionCheckListener : CheckListener {
   }
 
   private fun showSubmissionNotPostedNotification(project: Project, course: EduCourse, taskName: String) {
-    val notificationGroup = NotificationGroup(EduCoreBundle.message("submission.not.posted"), NotificationDisplayType.NONE, true)
+    val notificationGroup = NotificationGroup(EduCoreBundle.message("error.solution.not.posted"), NotificationDisplayType.NONE, true)
     val notification = Notification(notificationGroup.displayId,
-                                    EduCoreBundle.message("submission.not.posted"),
-                                    EduCoreBundle.message("task.was.updated", taskName),
+                                    EduCoreBundle.message("error.solution.not.posted"),
+                                    EduCoreBundle.message("stepik.task.was.updated", taskName),
                                     NotificationType.INFORMATION,
                                     notificationListener(project) { updateCourse(project, course) })
     notification.notify(project)

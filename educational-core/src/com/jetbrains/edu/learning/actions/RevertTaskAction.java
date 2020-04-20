@@ -13,13 +13,15 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.util.ui.EmptyIcon;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
@@ -40,8 +42,8 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
   private static final Logger LOG = Logger.getInstance(RevertTaskAction.class.getName());
 
   public RevertTaskAction() {
-    super(EduCoreBundle.message("action.reset.item", StringUtil.capitalize(EduCoreBundle.message("study.item.task"))),
-          EduCoreBundle.message("action.reset.item.to.initial.state", EduCoreBundle.message("study.item.task")),
+    super(EduCoreBundle.message("action.reset.request"),
+          EduCoreBundle.message("action.reset.to.initial.state"),
           EducationalCoreIcons.ResetTask);
   }
 
@@ -54,9 +56,8 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
 
     PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
     validateEditors(project);
-    final Lesson lesson = task.getLesson();
-    String message = EduCoreBundle.message("action.item.is.reset", task.getName(), task.getUIName(), lesson.getName(), lesson.getUIName());
-    Notification notification = new Notification("reset.task", EmptyIcon.ICON_16, "", "", message, NotificationType.INFORMATION, null);
+    Notification notification = new Notification("reset.task", EmptyIcon.ICON_16, "", "",
+                                                 EduCoreBundle.message("action.reset.result"), NotificationType.INFORMATION, null);
     notification.notify(project);
     ProjectView.getInstance(project).refresh();
     TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
@@ -114,12 +115,9 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
   public void actionPerformed(@NotNull AnActionEvent event) {
     final Project project = event.getProject();
     if (project == null) return;
-    Task task = EduUtils.getCurrentTask(project);
-    if (task == null) return;
 
-    int result = showOkCancelDialog(project, EduCoreBundle.message("action.progress.dropped"),
-                                    EduCoreBundle.message("action.reset.item", StringUtil.capitalize(task.getUIName())),
-                                    OK_BUTTON, CANCEL_BUTTON, getQuestionIcon());
+    int result = showOkCancelDialog(project, EduCoreBundle.message("action.reset.progress.dropped"),
+                                    EduCoreBundle.message("action.reset.request"), OK_BUTTON, CANCEL_BUTTON, getQuestionIcon());
     if (result != OK) return;
     revert(project);
     EduCounterUsageCollector.revertTask();
@@ -143,9 +141,6 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     if (task == null) {
       return;
     }
-    presentation.setText(EduCoreBundle.message("action.reset.item", StringUtil.capitalize(task.getUIName())));
-    presentation.setDescription(EduCoreBundle.message("action.reset.item.to.initial.state", task.getUIName()));
-
     if (!course.isStudy()) {
       presentation.setEnabledAndVisible(false);
     }

@@ -117,6 +117,6 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
      * 2. Second error could appear if educator uses third-party testing frameworks (e.g. unittest in Coursera Algorithmic Toolbox)
      * @see com.jetbrains.edu.python.checker.PyCheckErrorsTest (SyntaxErrorFromUnittest)
      */
-    private val SYNTAX_ERRORS = listOf("The file contains syntax errors", EduCoreBundle.message("check.task.no.tests"))
+    private val SYNTAX_ERRORS = listOf("The file contains syntax errors", EduCoreBundle.message("check.no.tests"))
   }
 }

@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.EDU_PROJECT_
 import com.jetbrains.edu.learning.stepik.IsCourseUpToDateChecker
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import junit.framework.Assert
 import java.util.*
 
 class IsUpToDateCheckerTest : EduTestCase() {
@@ -80,7 +79,7 @@ class IsUpToDateCheckerTest : EduTestCase() {
       }
       else {
         assertTrue("Notification wasn't shown", notificationShown)
-        assertEquals(EduCoreBundle.message("update.course.popup.notification.content"), notificationText)
+        assertEquals(EduCoreBundle.message("update.content.request"), notificationText)
       }
       assertEquals(notificationShown, !isCourseUpToDate)
     }

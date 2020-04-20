@@ -46,7 +46,7 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel() {
     }
     layout = BorderLayout()
     add(LightColoredActionLink(
-      EduCoreBundle.message("action.back.to.description"),
+      EduCoreBundle.message("label.back.to.description"),
       CheckDetailsPanel.SwitchTaskTabAction(project, 0),
       AllIcons.Actions.Back), BorderLayout.NORTH)
     add(panel, BorderLayout.CENTER)

@@ -94,7 +94,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     }
 
     if (EduUtils.isStudentProject(project) && task.canShowSolution()) {
-      val peekSolution = LightColoredActionLink(EduCoreBundle.message("action.peek.solution"),
+      val peekSolution = LightColoredActionLink(EduCoreBundle.message("label.peek.solution"),
                                                 ActionManager.getInstance().getAction(getPeekSolutionAction(task)))
       answerHintsPanel.value.add(peekSolution)
     }

@@ -45,7 +45,7 @@ class AdditionalTabPanel(val project: Project) : JPanel() {
 
   private fun getBackLinkPanel(project: Project): JPanel {
     val backLink = LightColoredActionLink(
-      EduCoreBundle.message("action.back.to.description"),
+      EduCoreBundle.message("label.back.to.description"),
       CheckDetailsPanel.SwitchTaskTabAction(project, 0),
       AllIcons.Actions.Back)
     backLink.border = JBUI.Borders.emptyBottom(8)

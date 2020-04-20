@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,11 +79,5 @@ public class Section extends LessonContainer {
   @Override
   public String getItemType() {
     return "section";
-  }
-
-  @NotNull
-  @Override
-  public String getUIName() {
-    return EduCoreBundle.message("study.item.section");
   }
 }

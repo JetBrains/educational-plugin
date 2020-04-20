@@ -6,7 +6,6 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.visitors.TaskVisitor;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.yaml.YamlDeserializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,12 +66,6 @@ public class Lesson extends ItemContainer {
   @Override
   public String getItemType() {
     return "lesson";
-  }
-
-  @NotNull
-  @Override
-  public String getUIName() {
-    return EduCoreBundle.message("study.item.lesson");
   }
 
   @Transient

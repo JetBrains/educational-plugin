@@ -27,7 +27,7 @@ class CheckResult @JvmOverloads constructor(
     @JvmField val LOGIN_NEEDED = CheckResult(CheckStatus.Unchecked, CheckUtils.LOGIN_NEEDED_MESSAGE)
     @JvmField val CONNECTION_FAILED = CheckResult(CheckStatus.Unchecked, "Connection failed")
     @JvmField val SOLVED = CheckResult(CheckStatus.Solved, "")
-    @JvmField val NO_TESTS_RUN = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.task.no.tests"))
+    @JvmField val NO_TESTS_RUN = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.no.tests"))
     @JvmField val CANCELED = CheckResult(CheckStatus.Unchecked, "Canceled")
   }
 }

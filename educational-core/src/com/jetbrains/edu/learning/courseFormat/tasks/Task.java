@@ -316,9 +316,7 @@ public abstract class Task extends StudyItem {
     myRecord = record;
   }
 
-
   @NotNull
-  @Override
   public String getUIName() {
     if (getCourse() instanceof HyperskillCourse) {
       if (this instanceof CodeTask) return EduCoreBundle.message("study.item.challenge");
