@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning.compatibility
 
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.plugins.PluginInfo
+import icons.EducationalCoreIcons
+import javax.swing.Icon
 
 class AndroidCourseCompatibilityProvider : CourseCompatibilityProvider {
   override fun requiredPlugins(): List<PluginInfo>? {
@@ -16,4 +18,5 @@ class AndroidCourseCompatibilityProvider : CourseCompatibilityProvider {
   }
 
   override val technologyName: String get() = "Android"
+  override val logo: Icon get() = EducationalCoreIcons.AndroidLogo
 }

@@ -5,6 +5,8 @@ import com.intellij.openapi.util.BuildNumber
 import com.intellij.util.PlatformUtils.*
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.plugins.PluginInfo
+import icons.EducationalCoreIcons
+import javax.swing.Icon
 
 class PyCourseCompatibilityProvider : CourseCompatibilityProvider {
 
@@ -20,6 +22,7 @@ class PyCourseCompatibilityProvider : CourseCompatibilityProvider {
   }
 
   override val technologyName: String get() = "Python"
+  override val logo: Icon get() = EducationalCoreIcons.PythonLogo
 
   companion object {
     // BACKCOMPAT: 2019.3

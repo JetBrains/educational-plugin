@@ -10,9 +10,14 @@ public class EducationalCoreIcons {
   }
 
   public static final Icon JavaLogo = load("/icons/com/jetbrains/edu/learning/JavaLogo.svg"); // 16x16
+  public static final Icon KotlinLogo = load("/icons/com/jetbrains/edu/learning/KotlinLogo.svg"); // 16x16
   public static final Icon ScalaLogo = load("/icons/com/jetbrains/edu/learning/ScalaLogo.svg"); // 16x16
-  public static final Icon JsLogo = load("/icons/com/jetbrains/edu/learning/JavaScript.svg"); // 16x16
-  public static final Icon CppLogo = load("/icons/com/jetbrains/edu/learning/cAndC++.svg"); // 16x16
+  public static final Icon AndroidLogo = load("/icons/com/jetbrains/edu/learning/AndroidLogo.svg"); // 16x16
+  public static final Icon PythonLogo = load("/icons/com/jetbrains/edu/learning/PythonLogo.svg"); // 16x16
+  public static final Icon JsLogo = load("/icons/com/jetbrains/edu/learning/JavaScriptLogo.svg"); // 16x16
+  public static final Icon RustLogo = load("/icons/com/jetbrains/edu/learning/RustLogo.svg"); // 16x16
+  public static final Icon CppLogo = load("/icons/com/jetbrains/edu/learning/CAndC++Logo.svg"); // 16x16
+  public static final Icon GoLogo = load("/icons/com/jetbrains/edu/learning/GoLogo.svg"); // 16x16
 
   public static final Icon WatchInput = load("/icons/com/jetbrains/edu/learning/WatchInput.png"); // 24x24
 

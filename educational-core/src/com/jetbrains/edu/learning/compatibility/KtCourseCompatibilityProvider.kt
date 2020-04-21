@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning.compatibility
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.plugins.PluginInfo
+import icons.EducationalCoreIcons
+import javax.swing.Icon
 
 class KtCourseCompatibilityProvider : CourseCompatibilityProvider {
 
@@ -17,4 +19,5 @@ class KtCourseCompatibilityProvider : CourseCompatibilityProvider {
   }
 
   override val technologyName: String get() = "Kotlin"
+  override val logo: Icon get() = EducationalCoreIcons.KotlinLogo
 }

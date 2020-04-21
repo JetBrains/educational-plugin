@@ -5,6 +5,7 @@ import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import java.awt.Component
@@ -15,13 +16,13 @@ private const val INITIAL_LOGO_SIZE = 16f
 
 val Course.logo: Icon?
   get() {
-    val configurator = course.configurator
-    if (configurator == null) {
-      val languageName = course.languageDisplayName
-      LOG.info(String.format("configurator is null, language: %s course type: %s", languageName, course.itemType))
-      return null
+    val logo = configurator?.logo ?: compatibilityProvider?.logo
+    if (logo == null) {
+      val language = languageDisplayName
+      LOG.info("configurator and compatibilityProvider are null. language: $language, course type: $itemType, environment: $environment")
     }
-    return configurator.logo
+
+    return logo
   }
 
 fun Course.getScaledLogo(logoSize: Int, ancestor: Component): Icon? {

@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.compatibility
 
+import com.intellij.util.ui.EmptyIcon
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.plugins.PluginInfo
+import javax.swing.Icon
 
 /**
  * Provides some info about course even if the support of the particular course type is not available.
@@ -30,4 +32,7 @@ interface CourseCompatibilityProvider {
    * Display name of the corresponding language or framework
    */
   val technologyName: String
+
+  @JvmDefault
+  val logo: Icon get() = EmptyIcon.ICON_16
 }

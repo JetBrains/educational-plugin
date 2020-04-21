@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning.compatibility
 
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.plugins.PluginInfo
+import icons.EducationalCoreIcons
+import javax.swing.Icon
 
 class ScalaGradleCourseCompatibilityProvider : CourseCompatibilityProvider {
   override fun requiredPlugins(): List<PluginInfo>? {
@@ -15,4 +17,5 @@ class ScalaGradleCourseCompatibilityProvider : CourseCompatibilityProvider {
   }
 
   override val technologyName: String get() = "Scala"
+  override val logo: Icon get() = EducationalCoreIcons.ScalaLogo
 }
