@@ -47,7 +47,7 @@ public class PyEduInterpreterInspection extends PyInspection {
   @Nls
   @NotNull
   public String getDisplayName() {
-    return EduPythonBundle.message("wrong.python.interpreter.title");
+    return EduPythonBundle.message("error.wrong.interpreter.title");
   }
 
   @NotNull
@@ -89,18 +89,18 @@ public class PyEduInterpreterInspection extends PyInspection {
           final String version = course.getLanguageVersion();
           if (PYTHON_2_VERSION.equals(version)) {
             if (projectLanguageLevel.isPy3K()) {
-              registerProblem(node, EduPythonBundle.message("wrong.python.interpreter.message", 2, 3), new ConfigureInterpreterFix());
+              registerProblem(node, EduPythonBundle.message("error.wrong.interpreter.message", 2, 3), new ConfigureInterpreterFix());
             }
           }
           else if (PYTHON_3_VERSION.equals(version)) {
             if (!projectLanguageLevel.isPy3K()) {
-              registerProblem(node, EduPythonBundle.message("wrong.python.interpreter.message", 3, 2), new ConfigureInterpreterFix());
+              registerProblem(node, EduPythonBundle.message("error.wrong.interpreter.message", 3, 2), new ConfigureInterpreterFix());
             }
           }
           else if (version != null) {
             final LanguageLevel level = LanguageLevel.fromPythonVersion(version);
             if (!level.equals(projectLanguageLevel)) {
-              registerProblem(node, EduPythonBundle.message("wrong.python.interpreter.message", level, projectLanguageLevel), new ConfigureInterpreterFix());
+              registerProblem(node, EduPythonBundle.message("error.wrong.interpreter.message", level, projectLanguageLevel), new ConfigureInterpreterFix());
             }
           }
         }

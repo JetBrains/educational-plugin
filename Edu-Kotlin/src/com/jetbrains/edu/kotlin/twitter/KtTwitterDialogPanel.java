@@ -5,6 +5,7 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.kotlin.messages.EduKotlinBundle;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.twitter.TwitterUtils;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +17,12 @@ import java.net.URL;
 
 @SuppressWarnings("WeakerAccess")
 public class KtTwitterDialogPanel extends TwitterUtils.TwitterDialogPanel {
+    @NonNls
+    private final static String POST_ACHIEVEMENT_HTML = "<b>Post your achievements to twitter!<b>\n";
+    @NonNls
+    private final static String COMPLETE_KOTLIN_KOANS_LEVEL =
+        "Hey, I just completed level %d of Kotlin Koans. https://kotlinlang.org/docs/tutorials/koans.html #kotlinkoans";
+
     private final JTextArea myTwitterTextField;
     private final JLabel myRemainSymbolsLabel;
     private URL myImageUrl;
@@ -30,7 +37,7 @@ public class KtTwitterDialogPanel extends TwitterUtils.TwitterDialogPanel {
     }
 
     public void create(@NotNull Task solvedTask) {
-        add(new JLabel(UIUtil.toHtml(EduKotlinBundle.message("post.achievements.html"))));
+        add(new JLabel(UIUtil.toHtml(POST_ACHIEVEMENT_HTML)));
         myImageUrl = getMediaSourceForTask(solvedTask);
         addImageLabel();
 
@@ -59,8 +66,7 @@ public class KtTwitterDialogPanel extends TwitterUtils.TwitterDialogPanel {
 
     private static String getMessageForTask(@NotNull final Task task) {
         int solvedTaskNumber = KtTwitterConfigurator.calculateTaskNumber(task);
-        return EduKotlinBundle.message("complete.kotlin.koans.level",
-                                       solvedTaskNumber / 8, "https://kotlinlang.org/docs/tutorials/koans.html");
+        return String.format(COMPLETE_KOTLIN_KOANS_LEVEL, solvedTaskNumber / 8);
     }
 
     @Nullable

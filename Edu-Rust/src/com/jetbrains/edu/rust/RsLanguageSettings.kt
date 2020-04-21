@@ -51,8 +51,8 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
     override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
         val toolchain = rustToolchain
         return when {
-            toolchain == null -> ValidationMessage(EduRustBundle.message("ask.specify.rust.toolchain.location"))
-            !toolchain.looksLikeValidToolchain() -> ValidationMessage(EduRustBundle.message("failed.find.rust.specified.toolchain"))
+            toolchain == null -> ValidationMessage(EduRustBundle.message("error.no.toolchain.location"))
+            !toolchain.looksLikeValidToolchain() -> ValidationMessage(EduRustBundle.message("error.incorrect.toolchain.location"))
             else -> null
         }
     }

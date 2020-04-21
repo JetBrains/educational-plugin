@@ -33,7 +33,7 @@ public class PyShowTutorial implements ProjectComponent {
         final Notification notification = new Notification(
           EduPythonBundle.message("watch.tutorials.title"),
           "",
-          EduPythonBundle.message("watch.tutorials.message.html", "https://www.jetbrains.com/pycharm-edu/quickstart/"),
+          "<html>" + EduPythonBundle.message("watch.tutorials.message.html") + "</html>",
           NotificationType.INFORMATION,
           new NotificationListener.UrlOpeningListener(true)
         );

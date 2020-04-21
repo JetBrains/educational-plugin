@@ -37,8 +37,8 @@ class JMoveRenameHandler : EduMoveDelegate(), EduRenameHandler {
 
   override fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?, dataContext: DataContext) {
     Messages.showInfoMessage(
-      EduJavaBundle.message("invalid.rename.operation.message"),
-      EduJavaBundle.message("invalid.rename.operation.title")
+      EduJavaBundle.message("error.invalid.rename.message"),
+      EduJavaBundle.message("error.invalid.rename.title")
     )
   }
 

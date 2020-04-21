@@ -61,7 +61,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     if (myJdkSettings.jdkItem == null) {
-      return ValidationMessage(EduJVMBundle.message("jdk.is.not.selected"))
+      return ValidationMessage(EduJVMBundle.message("error.no.jdk"))
     }
     return super.validate(course, courseLocation)
   }

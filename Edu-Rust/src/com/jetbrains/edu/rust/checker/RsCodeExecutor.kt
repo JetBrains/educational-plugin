@@ -25,11 +25,11 @@ import org.rust.openapiext.isSuccess
 
 class RsCodeExecutor : CodeExecutor {
   override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, CheckResult> {
-    val taskDir = task.getTaskDir(project) ?: return resultUnchecked(EduRustBundle.message("failed.find.task.dir"))
-    val mainVFile = task.findSourceDir(taskDir)?.findChild(MAIN_RS_FILE) ?: return resultUnchecked(EduRustBundle.message("failed.find", MAIN_RS_FILE))
+    val taskDir = task.getTaskDir(project) ?: return resultUnchecked(EduRustBundle.message("error.no.task.dir"))
+    val mainVFile = task.findSourceDir(taskDir)?.findChild(MAIN_RS_FILE) ?: return resultUnchecked(EduRustBundle.message("error.failed.find.0", MAIN_RS_FILE))
     val target = runReadAction { PsiManager.getInstance(project).findFile(mainVFile)?.rustFile?.containingCargoTarget }
-                 ?: return resultUnchecked(EduRustBundle.message("failed.find.target.for", MAIN_RS_FILE))
-    val cargo = project.rustSettings.toolchain?.rawCargo() ?: return resultUnchecked(EduRustBundle.message("failed.find.rust.toolchain"))
+                 ?: return resultUnchecked(EduRustBundle.message("error.failed.find.target.for.0", MAIN_RS_FILE))
+    val cargo = project.rustSettings.toolchain?.rawCargo() ?: return resultUnchecked(EduRustBundle.message("error.no.toolchain"))
     val cmd = CargoCommandLine.forTarget(target, "run")
 
     val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(project, stdIn = input?.toByteArray())

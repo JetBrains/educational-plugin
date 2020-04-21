@@ -29,10 +29,10 @@ class GoLanguageSettings : LanguageSettings<GoProjectSettings>() {
   }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    if (sdkChooser.sdk == GoSdk.NULL) return ValidationMessage(EduGoBundle.message("ask.specify", SDK_TYPE_ID))
-    if (!sdkChooser.sdk.isValid) return ValidationMessage(EduGoBundle.message("ask.specify.correct", SDK_TYPE_ID))
+    if (sdkChooser.sdk == GoSdk.NULL) return ValidationMessage(EduGoBundle.message("error.no.sdk", SDK_TYPE_ID))
+    if (!sdkChooser.sdk.isValid) return ValidationMessage(EduGoBundle.message("error.invalid.sdk", SDK_TYPE_ID))
     if (courseLocation != null && isAncestor(courseLocation, sdkChooser.sdk.homePath, false))
-      return ValidationMessage(EduGoBundle.message("ask.specify.another", SDK_TYPE_ID))
+      return ValidationMessage(EduGoBundle.message("error.invalid.sdk.location", SDK_TYPE_ID))
     return null
   }
 }

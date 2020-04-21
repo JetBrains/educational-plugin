@@ -23,9 +23,9 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
 
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult {
     val taskDir = task.getTaskDir(project) ?: error("Failed to find directory of `${task.name}` task")
-    val cargo = project.rustSettings.toolchain?.rawCargo() ?: return CheckResult(CheckStatus.Failed, message("checker.fail.toolchain"))
+    val cargo = project.rustSettings.toolchain?.rawCargo() ?: return CheckResult(CheckStatus.Failed, message("error.no.toolchain"))
     val pkg = runReadAction { project.cargoProjects.findPackageForFile(taskDir) } ?:
-              return CheckResult(CheckStatus.Failed, message("checker.fail.package", task.name))
+              return CheckResult(CheckStatus.Failed, message("error.no.package.for.task", task.name))
     val cmd = CargoCommandLine.forPackage(pkg, "test", listOf("--no-run"))
     val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(project)
     for (line in processOutput.stdoutLines) {

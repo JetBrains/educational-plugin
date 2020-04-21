@@ -153,7 +153,7 @@ fun runGradleRunTask(
   mainClassForFile: (Project, VirtualFile) -> String?
 ): Result<String, CheckResult> {
   val mainClassName = findMainClass(project, task, mainClassForFile)
-                      ?: return CodeExecutor.resultUnchecked(EduJVMBundle.message("unable.execute.task.no.main", task.name))
+                      ?: return CodeExecutor.resultUnchecked(EduJVMBundle.message("error.no.main", task.name))
   val taskName = if (task.hasSeparateModule(project)) "${getGradleProjectName(task)}:run" else "run"
 
   val gradleOutput = GradleCommandLine.create(project, taskName, "$MAIN_CLASS_PROPERTY_PREFIX$mainClassName")
