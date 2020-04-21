@@ -593,7 +593,9 @@ project(":Edu-Cpp") {
   intellij {
     localPath = null
     version = clionVersion
-    setPlugins("clion-test-google", "clion-test-catch")
+    if (isAtLeast193) {
+      setPlugins("clion-test-google", "clion-test-catch")
+    }
   }
 
   dependencies {
