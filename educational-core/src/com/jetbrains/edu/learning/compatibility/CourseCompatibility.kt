@@ -3,10 +3,10 @@ package com.jetbrains.edu.learning.compatibility
 import com.intellij.ide.plugins.InstalledPluginsState
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -57,12 +57,6 @@ sealed class CourseCompatibility {
     }
 
     private fun EduCourse.requiredPlugins(): RequiredPluginsData? {
-      val compatibilityProvider = CourseCompatibilityProviderEP.EP_NAME.extensions.find {
-        it.language == languageID &&
-        it.courseType == itemType &&
-        it.environment == environment
-      }?.instance
-
       val requiredPlugins = compatibilityProvider?.requiredPlugins() ?: return null
       // TODO: O(requiredPlugins * loadedPlugins) because PluginManager.isPluginInstalled(it) takes O(loadedPlugins).
       //  Can be improved at least to O(requiredPlugins * log(loadedPlugins))

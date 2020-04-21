@@ -20,7 +20,7 @@ open class Tag @JvmOverloads constructor(val text: String, private val searchOpt
   fun createComponent(): JComponent = TagComponent(text)
 }
 
-class ProgrammingLanguageTag(language: Language) : Tag(language.displayName, "programming_language")
+class ProgrammingLanguageTag(language: String) : Tag(language, "programming_language")
 
 class HumanLanguageTag(languageName: String) : Tag(languageName, searchOption = "language")
 

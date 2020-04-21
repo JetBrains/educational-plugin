@@ -12,4 +12,6 @@ class ScalaSbtCourseCompatibilityProvider : CourseCompatibilityProvider {
       PluginInfo.JUNIT
     )
   }
+
+  override val technologyName: String get() = "Scala"
 }

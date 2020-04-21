@@ -15,4 +15,6 @@ class JsCourseCompatibilityProvider : CourseCompatibilityProvider {
       null
     }
   }
+
+  override val technologyName: String get() = "JavaScript"
 }

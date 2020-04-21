@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.newproject.ui.filters
 
-import com.intellij.lang.Language
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.awt.Dimension
 
@@ -19,5 +19,5 @@ class ProgrammingLanguageFilterDropdown(
 
   override fun defaultTitle() = EduCoreBundle.message("course.dialog.filter.programming.languages")
 
-  override fun isAccepted(course: Course): Boolean = Language.findLanguageByID(course.languageID)?.displayName in selectedItems
+  override fun isAccepted(course: Course): Boolean = course.technologyName in selectedItems
 }

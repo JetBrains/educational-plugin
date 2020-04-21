@@ -12,6 +12,8 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import javax.swing.Icon
 
@@ -19,6 +21,15 @@ val Course.configurator: EduConfigurator<*>? get() {
   val language = languageById ?: return null
   return EduConfiguratorManager.findConfigurator(itemType, environment, language)
 }
+
+val Course.compatibilityProvider: CourseCompatibilityProvider?
+  get() {
+    return CourseCompatibilityProviderEP.EP_NAME.extensions.find {
+      it.language == languageID &&
+      it.courseType == itemType &&
+      it.environment == environment
+    }?.instance
+  }
 
 val Course.sourceDir: String? get() = configurator?.sourceDir
 val Course.testDirs: List<String> get() = configurator?.testDirs.orEmpty()
@@ -62,4 +73,7 @@ val Course.allTasks: List<Task> get() {
   return allTasks
 }
 
-val Course.languageDisplayName: String get() = course.languageById?.displayName ?: course.languageID
+val Course.languageDisplayName: String get() = languageById?.displayName ?: languageID
+
+val Course.technologyName: String?
+  get() = compatibilityProvider?.technologyName ?: languageById?.displayName

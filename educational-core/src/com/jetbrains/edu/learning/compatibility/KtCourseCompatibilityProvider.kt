@@ -15,4 +15,6 @@ class KtCourseCompatibilityProvider : CourseCompatibilityProvider {
       PluginInfo.JUNIT
     )
   }
+
+  override val technologyName: String get() = "Kotlin"
 }

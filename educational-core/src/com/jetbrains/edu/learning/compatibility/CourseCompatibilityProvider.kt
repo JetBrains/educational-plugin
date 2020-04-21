@@ -25,4 +25,9 @@ interface CourseCompatibilityProvider {
    * Returns `null` if the corresponding courses are not available in the environment.
    */
   fun requiredPlugins(): List<PluginInfo>?
+
+  /**
+   * Display name of the corresponding language or framework
+   */
+  val technologyName: String
 }

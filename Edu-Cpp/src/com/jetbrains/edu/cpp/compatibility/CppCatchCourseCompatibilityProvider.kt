@@ -9,6 +9,8 @@ class CppCatchCourseCompatibilityProvider : CourseCompatibilityProvider {
   override fun requiredPlugins(): List<PluginInfo>? =
     if (ApplicationInfo.getInstance().build < BUILD_193) emptyList() else listOf(PluginInfo.CATCH)
 
+  override val technologyName: String get() = "C/C++"
+
   companion object {
     private val BUILD_193: BuildNumber = BuildNumber.fromString("193")!!
   }

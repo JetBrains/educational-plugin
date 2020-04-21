@@ -10,4 +10,6 @@ class RsCourseCompatibilityProvider : CourseCompatibilityProvider {
       PluginInfo.TOML
     )
   }
+
+  override val technologyName: String get() = "Rust"
 }

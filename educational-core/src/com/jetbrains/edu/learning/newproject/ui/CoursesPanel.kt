@@ -38,6 +38,7 @@ import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.courseLoading.CourseLoader.getCourseInfosUnderProgress
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
@@ -500,7 +501,7 @@ class CoursesPanel(
 
   private fun humanLanguages(courses: List<Course>): Set<String> = courses.map { it.humanLanguage }.toSet()
 
-  private fun programmingLanguages(courses: List<Course>): Set<String> = courses.mapNotNull { it.languageById?.displayName }.toSet()
+  private fun programmingLanguages(courses: List<Course>): Set<String> = courses.mapNotNull { it.technologyName }.toSet()
 
   val selectedCourse: Course?
     get() = myCoursesList.selectedValue

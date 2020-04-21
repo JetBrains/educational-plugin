@@ -19,6 +19,8 @@ class PyCourseCompatibilityProvider : CourseCompatibilityProvider {
     }
   }
 
+  override val technologyName: String get() = "Python"
+
   companion object {
     // BACKCOMPAT: 2019.3
     private val BUILD_193: BuildNumber = BuildNumber.fromString("193")!!

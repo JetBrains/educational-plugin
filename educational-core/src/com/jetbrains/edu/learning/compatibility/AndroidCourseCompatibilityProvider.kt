@@ -14,4 +14,6 @@ class AndroidCourseCompatibilityProvider : CourseCompatibilityProvider {
       PluginInfo.JUNIT
     )
   }
+
+  override val technologyName: String get() = "Android"
 }

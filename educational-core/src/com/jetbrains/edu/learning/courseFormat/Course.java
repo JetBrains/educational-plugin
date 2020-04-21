@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import icons.EducationalCoreIcons;
@@ -262,10 +263,9 @@ public abstract class Course extends LessonContainer {
   public List<Tag> getTags() {
     List<Tag> tags = new ArrayList<>();
 
-    Language language = getLanguageById();
-    // TODO: use some predefined list for supported languages
-    if (language != null) {
-      tags.add(new ProgrammingLanguageTag(language));
+    String technologyName = CourseExt.getTechnologyName(this);
+    if (technologyName != null) {
+      tags.add(new ProgrammingLanguageTag(technologyName));
     }
     tags.add(new HumanLanguageTag(getHumanLanguage()));
     return tags;
