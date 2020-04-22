@@ -58,19 +58,30 @@ sealed class CourseCompatibility {
 
     private fun EduCourse.requiredPlugins(): RequiredPluginsData? {
       val requiredPlugins = compatibilityProvider?.requiredPlugins() ?: return null
-      // TODO: O(requiredPlugins * loadedPlugins) because PluginManager.isPluginInstalled(it) takes O(loadedPlugins).
-      //  Can be improved at least to O(requiredPlugins * log(loadedPlugins))
+      // TODO: O(requiredPlugins * allPlugins) because PluginManager.getPlugin takes O(allPlugins).
+      //  Can be improved at least to O(requiredPlugins * log(allPlugins))
+      val loadedPlugins = PluginManager.getLoadedPlugins()
       val notLoadedPlugins = requiredPlugins
-        .filter {
+        .mapNotNull {
           // BACKCOMPAT: 2019.3. Use `PluginManagerCore#getPlugin` instead
           @Suppress("DEPRECATION")
-          val plugin = PluginManager.getPlugin(it.id)
-          plugin == null || !plugin.isEnabled
+          val pluginDescriptor = PluginManager.getPlugin(it.id)
+          if (pluginDescriptor == null || pluginDescriptor !in loadedPlugins) {
+            it to pluginDescriptor
+          }
+          else {
+            null
+          }
         }
 
       val pluginsState = InstalledPluginsState.getInstance()
-      val toInstallOrEnable = notLoadedPlugins.filter { !pluginsState.wasInstalled(it.id) }
-      return RequiredPluginsData(notLoadedPlugins, toInstallOrEnable)
+      val toInstallOrEnable = notLoadedPlugins.filter { (info, pluginDescriptor) ->
+        // Plugin is just installed and not loaded by IDE (i.e. it requires restart)
+        pluginDescriptor == null && !pluginsState.wasInstalled(info.id) ||
+        // Plugin is installed but disabled
+        pluginDescriptor?.isEnabled == false
+      }
+      return RequiredPluginsData(notLoadedPlugins.map { it.first }, toInstallOrEnable.map { it.first })
     }
 
     private data class RequiredPluginsData(val notLoadedPlugins: List<PluginInfo>, val toInstallOrEnable: List<PluginInfo>)

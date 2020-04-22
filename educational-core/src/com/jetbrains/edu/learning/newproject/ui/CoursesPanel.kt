@@ -4,10 +4,12 @@ import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.DataManager
 import com.intellij.ide.plugins.IdeaPluginDescriptor
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.notification.NotificationsAdapter
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
@@ -20,6 +22,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.FilterComponent
 import com.intellij.ui.GuiUtils
 import com.intellij.ui.HyperlinkLabel
@@ -248,6 +251,11 @@ class CoursesPanel(
     if (course != null) {
       myCoursePanel.bindCourse(course)?.addSettingsChangeListener { doValidation(course) }
     }
+    doValidation(course)
+  }
+
+  private fun doValidation() {
+    val course = myCoursesList.selectedValue
     doValidation(course)
   }
 
@@ -481,8 +489,7 @@ class CoursesPanel(
     val connection = ApplicationManager.getApplication().messageBus.connect(dialog.disposable)
     connection.subscribeOnDynamicPluginTopic(object : DynamicPluginListener {
       override fun onPluginLoaded(pluginDescriptor: IdeaPluginDescriptor) {
-        val course = myCoursesList.selectedValue
-        doValidation(course)
+        doValidation()
       }
     })
     connection
@@ -491,8 +498,7 @@ class CoursesPanel(
       .subscribe(Notifications.TOPIC, @Suppress("DEPRECATION") object : NotificationsAdapter() {
         override fun notify(notification: Notification) {
           if (notification.groupId == EduUtils.getUpdateNotificationGroup().displayId) {
-            val course = myCoursesList.selectedValue
-            doValidation(course)
+            doValidation()
             // TODO: investigate why it leads to IDE freeze when you install python plugin
             // ApplicationManager.getApplication().invokeLater {
             //  PluginManagerConfigurable.shutdownOrRestartApp()
@@ -500,6 +506,16 @@ class CoursesPanel(
           }
         }
       })
+
+    val disablePluginListener = Runnable { ApplicationManager.getApplication().invokeLater { doValidation() } }
+    Disposer.register(dialog.disposable, Disposable {
+      // BACKCOMPAT: 2019.3
+      @Suppress("DEPRECATION")
+      PluginManagerCore.removeDisablePluginListener(disablePluginListener)
+    })
+    // BACKCOMPAT: 2019.3
+    @Suppress("DEPRECATION")
+    PluginManagerCore.addDisablePluginListener(disablePluginListener)
   }
 
   private fun humanLanguages(courses: List<Course>): Set<String> = courses.map { it.humanLanguage }.toSet()
