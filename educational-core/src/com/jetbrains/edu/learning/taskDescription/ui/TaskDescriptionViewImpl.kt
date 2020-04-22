@@ -15,6 +15,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.addTabToTaskDescription
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.JavaUILibrary.*
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions.Companion.SUBMISSIONS_TAB_NAME
@@ -128,11 +129,10 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val panel = JPanel(BorderLayout())
     panel.border = JBUI.Borders.empty(0, 15, 15, 0)
 
-    val taskTextTW = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
-      JavaFxToolWindow(project)
-    }
-    else {
-      SwingToolWindow(project)
+    val taskTextTW = when(EduSettings.getInstance().javaUiLibraryWithCheck) {
+      SWING -> SwingToolWindow(project)
+      JAVAFX -> JavaFxToolWindow(project)
+      JCEF -> getJCEFToolWindow(project) ?: SwingToolWindow(project)
     }
     val taskTextPanel = taskTextTW.createTaskInfoPanel()
     val topPanel = JPanel(BorderLayout())
