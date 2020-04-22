@@ -486,7 +486,11 @@ class CoursesPanel(
     add(myMainPanel, BorderLayout.CENTER)
     initUI()
 
-    val connection = ApplicationManager.getApplication().messageBus.connect(dialog.disposable)
+    setupPluginListeners(dialog.disposable)
+  }
+
+  private fun setupPluginListeners(disposable: Disposable) {
+    val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
     connection.subscribeOnDynamicPluginTopic(object : DynamicPluginListener {
       override fun onPluginLoaded(pluginDescriptor: IdeaPluginDescriptor) {
         doValidation()
@@ -508,7 +512,7 @@ class CoursesPanel(
       })
 
     val disablePluginListener = Runnable { ApplicationManager.getApplication().invokeLater { doValidation() } }
-    Disposer.register(dialog.disposable, Disposable {
+    Disposer.register(disposable, Disposable {
       // BACKCOMPAT: 2019.3
       @Suppress("DEPRECATION")
       PluginManagerCore.removeDisablePluginListener(disablePluginListener)
