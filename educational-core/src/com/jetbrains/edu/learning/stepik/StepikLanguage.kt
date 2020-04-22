@@ -15,7 +15,7 @@ enum class StepikLanguage(val id: String?, val version: String = DEFAULT_VERSION
   JAVA(EduNames.JAVA, "8", "java8"),
   JAVA11(EduNames.JAVA, "11", "java11", isDefault = false),
   KOTLIN(EduNames.KOTLIN, langName = "kotlin"),
-  PYTHON(EduNames.PYTHON, "3", langName = "python3"),
+  PYTHON(EduNames.PYTHON, EduNames.PYTHON_3_VERSION, langName = "python3"),
   JAVASCRIPT(EduNames.JAVASCRIPT, langName = "javascript"),
   SCALA(EduNames.SCALA, langName = "scala"),
   CPP(EduNames.CPP, langName = "c++"),
