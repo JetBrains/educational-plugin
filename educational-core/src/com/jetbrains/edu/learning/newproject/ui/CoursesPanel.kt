@@ -4,11 +4,10 @@ import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.DataManager
 import com.intellij.ide.plugins.IdeaPluginDescriptor
-import com.intellij.ide.plugins.PluginManagerConfigurable
+import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.notification.NotificationsAdapter
-import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
@@ -30,7 +29,10 @@ import com.intellij.ui.components.JBList
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduLogInListener
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction.Companion.importLocation
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction.Companion.saveLastImportLocation
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction.Companion.showInvalidCourseDialog
@@ -49,10 +51,10 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
-import com.jetbrains.edu.learning.plugins.DynamicPluginListener
-import com.jetbrains.edu.learning.plugins.subscribeOnDynamicPluginTopic
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
 import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
+import com.jetbrains.edu.learning.plugins.DynamicPluginListener
+import com.jetbrains.edu.learning.plugins.subscribeOnDynamicPluginTopic
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.importCourseArchive
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.loggedIn
@@ -283,8 +285,9 @@ class CoursesPanel(
     return filteredCourses
   }
 
-  private fun updateModel(courses: List<Course>, courseToSelect: Course?) {
-    val sortedCourses = sortCourses(filterCourses(courses))
+  private fun updateModel(courses: List<Course>, courseToSelect: Course?, filterCourses: Boolean = true) {
+    val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
+    val sortedCourses = sortCourses(coursesToAdd)
     val listModel = DefaultListModel<Course>()
     for (course in sortedCourses) {
       listModel.addElement(course)
@@ -377,7 +380,7 @@ class CoursesPanel(
           saveLastImportLocation(file)
           importCourseArchive()
           myCourses.add(course)
-          updateModel(myCourses, course)
+          updateModel(myCourses, course, false)
         }
       }
     }
@@ -385,7 +388,7 @@ class CoursesPanel(
     private fun importStepikCourse() {
       val course = StartStepikCourseAction().importStepikCourse() ?: return
       myCourses.add(course)
-      updateModel(myCourses, course)
+      updateModel(myCourses, course, false)
     }
   }
 
