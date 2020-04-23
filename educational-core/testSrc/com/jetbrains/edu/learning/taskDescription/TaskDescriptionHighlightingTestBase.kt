@@ -17,25 +17,26 @@ abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
   protected fun doMarkdownTest(@Language("Markdown") taskDescription: String, @Language("HTML") expectedText: String) =
     doTest(taskDescription, DescriptionFormat.MD, expectedText)
 
-  protected fun doTest(
-    taskDescription: String,
-    format: DescriptionFormat,
-    @Language("HTML") expectedText: String
-  ) {
-    val course = courseWithFiles(language = language, environment = environment, settings = settings) {
+  protected open fun createCourseWithTestTask(taskDescription: String, format: DescriptionFormat) {
+    courseWithFiles(language = language, environment = environment, settings = settings) {
       lesson("lesson1") {
         eduTask("task1", taskDescription.trimIndent(), format)
       }
     }
+  }
 
-    val task = course.findTask("lesson1", "task1")
+  private fun doTest(taskDescription: String,
+                     format: DescriptionFormat,
+                     @Language("HTML") expectedText: String) {
+    createCourseWithTestTask(taskDescription, format)
+    val task = findTask(0, 0)
     val actualText = TaskDescriptionToolWindow.getTaskDescriptionWithCodeHighlighting(project, task)
     assertEquals(expectedText.trimIndent(), actualText.dropSpecificValues())
   }
 
   private fun String.dropSpecificValues(): String = lines()
     .joinToString("\n", transform = String::trimEnd)
-    .replace (SPAN_REGEX, """<span style="...">""")
+    .replace(SPAN_REGEX, """<span style="...">""")
 
   companion object {
     private val SPAN_REGEX = Regex("""<span style=".*?">""")

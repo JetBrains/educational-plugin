@@ -46,15 +46,17 @@ class EduCodeHighlighter {
     }
 
     private fun Element.language(): Language? {
+      val noHighlight = "no-highlight"
+
       val lang = when {
         hasAttr("data-lang") -> attr("data-lang").removePrefix("text/x-")
         attr("class").startsWith("language-") -> attr("class").removePrefix("language-")
-        attr("class") == "no-highlight" -> return PlainTextLanguage.INSTANCE
+        attr("class") == noHighlight -> return PlainTextLanguage.INSTANCE
         else -> return null
       }
       if (lang.isEmpty()) return null
 
-      return Language.getRegisteredLanguages().find { it.id.toLowerCase() == lang }
+      return if (lang == noHighlight) PlainTextLanguage.INSTANCE else Language.getRegisteredLanguages().find { it.id.toLowerCase() == lang }
     }
   }
 }

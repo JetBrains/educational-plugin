@@ -1,4 +1,4 @@
-package com.jetbrains.edu.python
+package com.jetbrains.edu.python.hyperskill
 
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils

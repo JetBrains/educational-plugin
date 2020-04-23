@@ -1,4 +1,4 @@
-package com.jetbrains.edu.python.actions
+package com.jetbrains.edu.python.hyperskill
 
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase

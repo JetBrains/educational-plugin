@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin
+package com.jetbrains.edu.kotlin.hyperskill
 
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils

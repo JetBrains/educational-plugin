@@ -1,29 +1,31 @@
-package com.jetbrains.edu.javascript.actions
+package com.jetbrains.edu.java.hyperskill
 
 import com.intellij.lang.Language
-import com.intellij.lang.javascript.JavascriptLanguage
+import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
-import com.jetbrains.edu.javascript.learning.JsNewProjectSettings
+import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
-class JsHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
-  override val language: Language get() = JavascriptLanguage.INSTANCE
-  override val settings: Any get() = JsNewProjectSettings()
+class JHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
+  override val language: Language get() = JavaLanguage.INSTANCE
+  override val settings: Any get() = JdkProjectSettings.emptySettings()
   override val courseProducer: () -> Course = ::HyperskillCourse
 
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
       file("task.html")
-      file("task.js")
-      dir("hstest") {
-        file("test.js")
+      dir("src") {
+        file("Task.java")
+      }
+      dir("test") {
+        file("Tests.java")
       }
     },
     taskStructureWithoutSources = {
       file("task.html")
-      dir("hstest") {
-        file("test.js")
+      dir("test") {
+        file("Tests.java")
       }
     }
   )
@@ -31,14 +33,16 @@ class JsHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
       file("task.html")
-      file("task.js")
-      dir("hstest") {
+      dir("src") {
+        file("Main.java")
+      }
+      dir("test") {
         file("output.txt")
       }
     },
     taskStructureWithoutSources = {
       file("task.html")
-      dir("hstest") {
+      dir("test") {
         file("output.txt")
       }
     }
@@ -47,7 +51,9 @@ class JsHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
       file("task.html")
-      file("task.js")
+      dir("src") {
+        file("Main.java")
+      }
     },
     taskStructureWithoutSources = {
       file("task.html")
@@ -57,7 +63,9 @@ class JsHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
       file("task.html")
-      file("task.js")
+      dir("src") {
+        file("Main.java")
+      }
     },
     taskStructureWithoutSources = {
       file("task.html")
@@ -67,7 +75,9 @@ class JsHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
       file("task.html")
-      file("task.js")
+      dir("src") {
+        file("Main.java")
+      }
     },
     taskStructureWithoutSources = {
       file("task.html")

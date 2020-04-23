@@ -22,6 +22,7 @@ import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.NavigatablePsiElement
@@ -31,6 +32,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import javax.swing.JComponent
@@ -96,7 +98,8 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
             return taskText
           }
 
-          val language = task.course.languageById ?: return taskText
+          val course = task.course
+          val language = if (course is HyperskillCourse) PlainTextLanguage.INSTANCE else course.languageById ?: return taskText
           return EduCodeHighlighter.highlightCodeFragments(project, taskText, language)
         }
       }

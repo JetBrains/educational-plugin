@@ -1,14 +1,14 @@
-package com.jetbrains.edu.java.actions
+package com.jetbrains.edu.kotlin.hyperskill
 
 import com.intellij.lang.Language
-import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import org.jetbrains.kotlin.idea.KotlinLanguage
 
-class JHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
-  override val language: Language get() = JavaLanguage.INSTANCE
+class KtHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
+  override val language: Language get() = KotlinLanguage.INSTANCE
   override val settings: Any get() = JdkProjectSettings.emptySettings()
   override val courseProducer: () -> Course = ::HyperskillCourse
 
@@ -16,16 +16,16 @@ class JHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     fullTaskStructure = {
       file("task.html")
       dir("src") {
-        file("Task.java")
+        file("Task.kt")
       }
       dir("test") {
-        file("Tests.java")
+        file("Tests.kt")
       }
     },
     taskStructureWithoutSources = {
       file("task.html")
       dir("test") {
-        file("Tests.java")
+        file("Tests.kt")
       }
     }
   )
@@ -34,7 +34,7 @@ class JHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     fullTaskStructure = {
       file("task.html")
       dir("src") {
-        file("Main.java")
+        file("Main.kt")
       }
       dir("test") {
         file("output.txt")
@@ -52,7 +52,7 @@ class JHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     fullTaskStructure = {
       file("task.html")
       dir("src") {
-        file("Main.java")
+        file("Main.kt")
       }
     },
     taskStructureWithoutSources = {
@@ -64,7 +64,7 @@ class JHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     fullTaskStructure = {
       file("task.html")
       dir("src") {
-        file("Main.java")
+        file("Main.kt")
       }
     },
     taskStructureWithoutSources = {
@@ -76,7 +76,7 @@ class JHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     fullTaskStructure = {
       file("task.html")
       dir("src") {
-        file("Main.java")
+        file("Main.kt")
       }
     },
     taskStructureWithoutSources = {
