@@ -21,7 +21,7 @@ abstract class TaskDescriptionView {
   abstract fun updateTopPanel(task: Task?)
   abstract fun updateTaskDescription(task: Task?)
   abstract fun updateTaskDescription()
-  abstract fun updateAdditionalTaskTab()
+  abstract fun updateAdditionalTaskTabs()
 
   abstract fun readyToCheck()
   abstract fun checkStarted(task: Task)
@@ -46,7 +46,7 @@ abstract class TaskDescriptionView {
     @JvmStatic
     fun updateAllTabs(taskDescription: TaskDescriptionView) {
       taskDescription.updateTaskDescription()
-      taskDescription.updateAdditionalTaskTab()
+      taskDescription.updateAdditionalTaskTabs()
     }
   }
 }

@@ -150,7 +150,7 @@ public class StepikProjectComponent implements ProjectComponent {
             SubmissionsManager.getAllSubmissions(task.getId());
           }
         }
-        ApplicationManager.getApplication().invokeLater(() -> TaskDescriptionView.getInstance(myProject).updateAdditionalTaskTab());
+        ApplicationManager.getApplication().invokeLater(() -> TaskDescriptionView.getInstance(myProject).updateAdditionalTaskTabs());
       });
     }
   }

@@ -9,6 +9,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.content.ContentManager
+import com.intellij.util.containers.addIfNotNull
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.addTabToTaskDescription
@@ -44,39 +45,54 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
         updateCheckPanel(value)
         updateTopPanel(value)
         ui.taskTextTW.updateTaskSpecificPanel(value)
-        updateAdditionalTaskTab(value)
+        updateAdditionalTaskTabs(value)
       }
       field = value
     }
 
-  override fun updateAdditionalTaskTab() {
-    updateAdditionalTaskTab(currentTask)
+  override fun updateAdditionalTaskTabs() {
+    updateAdditionalTaskTabs(currentTask)
   }
 
-  private fun updateAdditionalTaskTab(task: Task?) {
+  private fun updateAdditionalTaskTabs(task: Task?) {
     val contentManager = uiContent?.contentManager ?: return
-    val additionalTab = StudyTaskManager.getInstance(project).course?.configurator?.additionalTaskTab(task, project)
-    if (additionalTab != null) {
-      val currentContent = contentManager.selectedContent
-      val isAdditionalTabSelected = currentContent?.let { contentManager.getIndexOfContent(it) } == 1
-      val content = contentManager.findContent(additionalTab.second)
-      content?.let { contentManager.removeContent(it, true) }
-      val topicsContent = ContentFactory.SERVICE.getInstance().createContent(additionalTab.first, additionalTab.second, false)
-      topicsContent.isCloseable = false
-      contentManager.addContent(topicsContent, 1)
-      if (isAdditionalTabSelected) {
-        contentManager.setSelectedContent(topicsContent)
-      }
+    val submissionsTab = StudyTaskManager.getInstance(project).course?.configurator?.submissionsTaskTab(task, project)
+    val topicsTab = StudyTaskManager.getInstance(project).course?.configurator?.topicsTaskTab(task, project)
+//    val topicsTab = if(submissionsTab != null) {Pair(submissionsTab.first, "Topics")}
+//      else null
+    val tabsList = mutableListOf<Pair<JPanel, String>>()
+    tabsList.addIfNotNull(topicsTab)
+    tabsList.addIfNotNull(submissionsTab)
+    tabsList.sortedByDescending { it.second }
+    for (tab in tabsList) {
+      addTab(tab, contentManager, tabsList.indexOf(tab) + 1)
     }
-    else {
-      val contents = contentManager.contents
-      val submissionsContent = contents.find { it.tabName == SUBMISSIONS_TAB_NAME }
-      if (submissionsContent != null) {
-        contentManager.removeContent(submissionsContent, true)
-      }
+    if (tabsList.find { it.second == SUBMISSIONS_TAB_NAME } == null) {
+      removeSubmissionsContent(contentManager)
     }
 
     addYamlTab()
+  }
+
+  private fun removeSubmissionsContent(contentManager: ContentManager) {
+    val contents = contentManager.contents
+    val submissionsContent = contents.find { it.tabName == SUBMISSIONS_TAB_NAME }
+    if (submissionsContent != null) {
+      contentManager.removeContent(submissionsContent, true)
+    }
+  }
+
+  private fun addTab(additionalTab: Pair<JPanel, String>, contentManager: ContentManager, placement: Int) {
+    val currentContent = contentManager.selectedContent
+    val isAdditionalTabSelected = currentContent?.let { contentManager.getIndexOfContent(it) } == placement
+    val content = contentManager.findContent(additionalTab.second)
+    content?.let { contentManager.removeContent(it, true) }
+    val topicsContent = ContentFactory.SERVICE.getInstance().createContent(additionalTab.first, additionalTab.second, false)
+    topicsContent.isCloseable = false
+    contentManager.addContent(topicsContent, placement)
+    if (isAdditionalTabSelected) {
+      contentManager.setSelectedContent(topicsContent)
+    }
   }
 
   private fun addYamlTab() {
@@ -167,7 +183,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     contentManager.addContent(content)
 
     currentTask = EduUtils.getCurrentTask(project)
-    updateAdditionalTaskTab(currentTask)
+    updateAdditionalTaskTabs(currentTask)
 
     // TODO: provide correct parent disposable here to correctly unload the plugin
     val connection = project.messageBus.connect()

@@ -41,7 +41,7 @@ import kotlin.math.roundToInt
 
 abstract class EduConfiguratorWithSubmissions<Settings> : EduConfigurator<Settings> {
   
-  override fun additionalTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
+  override fun submissionsTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
     if (currentTask == null || !currentTask.supportSubmissions()) return null
     val course = currentTask.course
     if (course !is EduCourse || !course.isStudy || !course.isRemote) return null

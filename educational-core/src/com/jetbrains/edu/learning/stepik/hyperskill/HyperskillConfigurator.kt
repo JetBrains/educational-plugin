@@ -32,7 +32,7 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
   override val courseBuilder: EduCourseBuilder<T>
     get() = HyperskillCourseBuilder(baseConfigurator.courseBuilder)
 
-  override fun additionalTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
+  override fun topicsTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
     if (currentTask == null) return null
 
     val course = currentTask.lesson.course

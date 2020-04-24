@@ -171,5 +171,7 @@ interface EduConfigurator<Settings> {
    *
    * @see com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
    */
-  fun additionalTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? = null
+  fun topicsTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? = null
+
+  fun submissionsTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? = null
 }

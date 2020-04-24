@@ -138,7 +138,7 @@ abstract class HyperskillConnector {
       course.taskToTopics[taskIndex] = topics
       runInEdt {
         if (project.isDisposed) return@runInEdt
-        TaskDescriptionView.getInstance(project).updateAdditionalTaskTab()
+        TaskDescriptionView.getInstance(project).updateAdditionalTaskTabs()
       }
     }
   }

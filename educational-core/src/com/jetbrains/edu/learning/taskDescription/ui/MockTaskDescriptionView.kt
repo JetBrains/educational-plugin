@@ -15,7 +15,7 @@ class MockTaskDescriptionView : TaskDescriptionView() {
   override fun updateTopPanel(task: Task?) {}
   override fun updateTaskDescription(task: Task?) {}
   override fun updateTaskDescription() {}
-  override fun updateAdditionalTaskTab() {}
+  override fun updateAdditionalTaskTabs() {}
   override fun readyToCheck() {}
   override fun checkStarted(task: Task) {}
   override fun checkFinished(task: Task, checkResult: CheckResult) {}
