@@ -9,6 +9,7 @@ import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler.Companion.eduResourceUrl
 import kotlinx.css.Color
 
 class StyleManager {
@@ -30,16 +31,16 @@ class StyleManager {
   val textStyleHeader = "style=font-size:${bodyFontSize}"
 
   val scrollBarStylesheets = getScrollBarStylesheetsUrls()
-  val baseStylesheet = resourceUrl("/style/browser.css")
+  val baseStylesheet = eduResourceUrl("/style/browser.css")
 
   fun resources(content: String) = StyleResourcesManager(content).resources
 
   private fun getScrollBarStylesheetsUrls(): List<String> {
-    return listOf(resourceUrl("/style/scrollbars/base.css"),
-                  if (SystemInfo.isWindows) resourceUrl(
+    return listOf(eduResourceUrl("/style/scrollbars/base.css"),
+                  if (SystemInfo.isWindows) eduResourceUrl(
                     "/style/scrollbars/winShape.css")
-                  else resourceUrl("/style/scrollbars/macLinuxShape.css"),
-                  resourceUrl("/style/scrollbars/${resourceFileName()}.css"))
+                  else eduResourceUrl("/style/scrollbars/macLinuxShape.css"),
+                  eduResourceUrl("/style/scrollbars/${resourceFileName()}.css"))
   }
 
   private fun java.awt.Color.asCssColor(): Color = Color("#${ColorUtil.toHex(this)}")
@@ -56,17 +57,6 @@ class StyleManager {
   companion object {
     internal val LOG = Logger.getInstance(this::class.java)
     const val FONT_FACTOR_PROPERTY = "edu.task.description.font.factor"
-  }
-}
-
-fun resourceUrl(name: String): String {
-  val resource = object {}.javaClass.getResource(name)?.toExternalForm()
-  return if (resource != null) {
-    resource
-  }
-  else {
-    StyleManager.LOG.warn("Cannot find resource: $name")
-    ""
   }
 }
 

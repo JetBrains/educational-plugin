@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler.Companion.eduResourceUrl
 import com.jetbrains.edu.learning.taskDescription.ui.loadText
 import kotlinx.css.*
 import kotlinx.css.properties.lh
@@ -33,7 +34,7 @@ internal class StyleResourcesManager(taskText: String = "") {
     }
   }
 
-  private fun resourcePair(name: String, path: String) = name to resourceUrl(path)
+  private fun resourcePair(name: String, path: String) = name to eduResourceUrl(path)
 
   private fun typographyAndColorStylesheet(): String {
     val styleManager = StyleManager()
