@@ -271,3 +271,7 @@ div .problem-statement-overlay {
     position: relative;
     bottom: 2px;
 }
+
+.tex-graphics {
+    display: block;
+}
