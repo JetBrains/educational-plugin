@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 
-import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
 import com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler.Companion.eduResourceUrl
 import com.jetbrains.edu.learning.taskDescription.ui.loadText
 import kotlinx.css.*
@@ -21,13 +21,13 @@ internal class StyleResourcesManager(taskText: String = "") {
     .plus(ChoiceTaskResourcesManager().choiceTaskResources)
 
   private fun panelSpecificHintFiles(): Array<Pair<String, String>> {
-    val isJavaFx = EduSettings.getInstance().shouldUseJavaFx()
-    return if (isJavaFx) {
+    return if (isJavaFxOrJCEF()) {
       arrayOf(
         resourcePair("jquery", ("/style/hint/javafx/jquery-1.9.1.js")),
         resourcePair("hint_base", "/style/hint/javafx/base.css"),
         resourcePair("hint_laf_specific", "/style/hint/javafx/${resourceFileName()}.css"),
-        resourcePair("toggle_hint_script", "/style/hint/javafx/toggleHint.js"))
+        resourcePair("toggle_hint_script", "/style/hint/javafx/toggleHint.js")
+      )
     }
     else {
       arrayOf(resourcePair("hint_base", "/style/hint/swing/base.css"))
@@ -41,7 +41,7 @@ internal class StyleResourcesManager(taskText: String = "") {
     return CSSBuilder().apply {
       body {
         fontFamily = styleManager.bodyFont
-        fontSize = if (EduSettings.getInstance().shouldUseJavaFx()) styleManager.bodyFontSize.px else styleManager.bodyFontSize.pt
+        fontSize = if (isJavaFxOrJCEF()) styleManager.bodyFontSize.px else styleManager.bodyFontSize.pt
         lineHeight = styleManager.bodyLineHeight.px.lh
         color = styleManager.bodyColor
         backgroundColor = styleManager.bodyBackground
@@ -50,13 +50,13 @@ internal class StyleResourcesManager(taskText: String = "") {
       ".code" {
         fontFamily = styleManager.codeFont
         backgroundColor = styleManager.codeBackground
-        fontSize = if (EduSettings.getInstance().shouldUseJavaFx()) styleManager.codeFontSize.px else styleManager.codeFontSize.pt
+        fontSize = if (isJavaFxOrJCEF()) styleManager.codeFontSize.px else styleManager.codeFontSize.pt
         padding = "4 4 4 4"
         borderRadius = 5.px
       }
 
       ".code-block" {
-        fontSize = if (EduSettings.getInstance().shouldUseJavaFx()) styleManager.bodyFontSize.px else styleManager.bodyFontSize.pt
+        fontSize = if (isJavaFxOrJCEF()) styleManager.bodyFontSize.px else styleManager.bodyFontSize.pt
         lineHeight = styleManager.codeLineHeight.px.lh
       }
 

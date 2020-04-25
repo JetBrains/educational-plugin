@@ -121,15 +121,6 @@ public class EduSettings implements PersistentStateComponent<Element> {
     ApplicationManager.getApplication().getMessageBus().syncPublisher(SETTINGS_CHANGED).userLoggedIn();
   }
 
-  //TODO get rid of this later
-  /**
-   * Method is deprecated. Use {@link EduSettings#getJavaUiLibraryWithCheck()} instead
-   */
-  @Deprecated
-  public boolean shouldUseJavaFx() {
-    return javaUiLibrary == JavaUILibrary.JAVAFX ||  EduUtils.hasJavaFx();
-  }
-
   private JavaUILibrary initialJavaUiLibrary() {
     if (javaUiLibrary != null) return javaUiLibrary;
     if (EduUtils.hasJavaFx()) {

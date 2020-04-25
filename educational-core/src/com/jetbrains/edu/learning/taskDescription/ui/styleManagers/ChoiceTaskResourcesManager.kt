@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 import com.google.gson.Gson
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.getStepikLink
@@ -54,7 +54,7 @@ class ChoiceTaskResourcesManager {
       }
       "#choiceOptions" {
         fontFamily = styleManager.bodyFont
-        fontSize = if (EduSettings.getInstance().shouldUseJavaFx()) styleManager.bodyFontSize.px else styleManager.bodyFontSize.pt
+        fontSize = if (isJavaFxOrJCEF()) styleManager.bodyFontSize.px else styleManager.bodyFontSize.pt
         lineHeight = (styleManager.bodyLineHeight * 1.1).px.lh
         color = styleManager.bodyColor
         textAlign = TextAlign.left

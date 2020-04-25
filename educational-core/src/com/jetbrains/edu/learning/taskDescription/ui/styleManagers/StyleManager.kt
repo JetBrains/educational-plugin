@@ -8,7 +8,7 @@ import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
 import com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler.Companion.eduResourceUrl
 import kotlinx.css.Color
 
@@ -25,7 +25,7 @@ class StyleManager {
   val bodyColor = bodyColor()
   val linkColor = JBUI.CurrentTheme.Link.linkColor().asCssColor()
   val bodyBackground = JBColor.background().asCssColor()
-  val codeBackground = if (EduSettings.getInstance().shouldUseJavaFx()) codeBackground()
+  val codeBackground = if (isJavaFxOrJCEF()) codeBackground()
   else ColorUtil.dimmer(UIUtil.getPanelBackground()).asCssColor()
 
   val textStyleHeader = "style=font-size:${bodyFontSize}"
@@ -37,9 +37,8 @@ class StyleManager {
 
   private fun getScrollBarStylesheetsUrls(): List<String> {
     return listOf(eduResourceUrl("/style/scrollbars/base.css"),
-                  if (SystemInfo.isWindows) eduResourceUrl(
-                    "/style/scrollbars/winShape.css")
-                  else eduResourceUrl("/style/scrollbars/macLinuxShape.css"),
+                  if (SystemInfo.isWindows) eduResourceUrl("/style/scrollbars/winShape.css")
+                      else eduResourceUrl("/style/scrollbars/macLinuxShape.css"),
                   eduResourceUrl("/style/scrollbars/${resourceFileName()}.css"))
   }
 

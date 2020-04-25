@@ -9,6 +9,7 @@ import com.intellij.ui.content.ContentManager
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.*
 import com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler.Companion.eduResourceUrl
@@ -16,6 +17,7 @@ import com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import org.apache.commons.lang.text.StrSubstitutor
 import java.awt.BorderLayout
+import javax.swing.JComponent
 import javax.swing.JPanel
 
 private const val NAME = "YAML Help"
@@ -31,19 +33,28 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel() {
     templateText = templateText.replace("\${yaml-base-css}", eduResourceUrl(yamlCss))
     templateText = templateText.replace("\${base-css}", styleManager.baseStylesheet)
 
-
-    val panel = if (EduSettings.getInstance().shouldUseJavaFx()) {
-      val browserWindow = BrowserWindow(project, false)
-      browserWindow.loadContent(templateText)
-      browserWindow.panel
-    }
-    else {
+    val defaultSwingPanel: (String) -> JComponent = {
       val textPane = createTextPane()
       textPane.text = templateText
       val scrollPane = JBScrollPane(textPane)
       scrollPane.border = JBUI.Borders.empty(20, 0, 0, 10)
       scrollPane
     }
+
+    val panel = when (EduSettings.getInstance().javaUiLibraryWithCheck) {
+      JavaUILibrary.JAVAFX -> {
+        val browserWindow = BrowserWindow(project, false)
+        browserWindow.loadContent(templateText)
+        browserWindow.panel
+      }
+      JavaUILibrary.JCEF -> {
+        getJCEFComponent(templateText) ?: defaultSwingPanel(templateText)
+      }
+      else -> {
+        defaultSwingPanel(templateText)
+      }
+    }
+
     layout = BorderLayout()
     add(LightColoredActionLink(
       EduCoreBundle.message("label.back.to.description"),

@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.FontPreferences
-import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
 
 internal class TypographyManager {
   private val editorFontSize = EditorColorsManager.getInstance().globalScheme.editorFontSize
@@ -14,7 +14,7 @@ internal class TypographyManager {
   val codeLineHeight = (codeFontSize * lineHeightScaleFactor("code.line.height")).toInt()
 
   val bodyFont = TaskDescriptionBundle.getOsDependentParameter(
-    if (EduSettings.getInstance().shouldUseJavaFx()) "body.font" else "swing.body.font")
+    if (isJavaFxOrJCEF()) "body.font" else "swing.body.font")
   val codeFont = TaskDescriptionBundle.getOsDependentParameter("code.font")
 
   private fun fontScaleFactor(parameterName: String): Float {
