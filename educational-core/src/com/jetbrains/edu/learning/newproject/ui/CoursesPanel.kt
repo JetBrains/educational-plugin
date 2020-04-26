@@ -580,10 +580,10 @@ class CoursesPanel(
 
   private inner class CourseMouseMotionListener : MouseMotionAdapter() {
     override fun mouseMoved(event: MouseEvent) {
-      val hoveredIndex = this@CoursesPanel.myCoursesList.locationToIndex(event.point)
-      if (hoveredIndex != this@CoursesPanel.hoveredIndex) {
+      val hoveredIndex = myCoursesList.locationToIndex(event.point)
+      if (hoveredIndex != hoveredIndex) {
         this@CoursesPanel.hoveredIndex = hoveredIndex
-        this@CoursesPanel.myCoursesList.repaint()
+        myCoursesList.repaint()
       }
     }
   }
@@ -595,7 +595,7 @@ class CoursesPanel(
                                               isSelected: Boolean,
                                               cellHasFocus: Boolean): Component {
       val courseCardComponent = CourseCardComponent(value)
-      courseCardComponent.updateColors(isSelected || this@CoursesPanel.hoveredIndex == index)
+      courseCardComponent.updateColors(isSelected || hoveredIndex == index)
       return courseCardComponent
     }
   }
