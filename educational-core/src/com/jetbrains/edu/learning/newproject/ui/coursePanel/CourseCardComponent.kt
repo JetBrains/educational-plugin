@@ -58,10 +58,11 @@ class CourseCardComponent(course: Course?) : JPanel(BorderLayout()) {
 
     preferredSize = JBUI.size(CARD_WIDTH, CARD_HEIGHT)
     maximumSize = JBUI.size(CARD_WIDTH, CARD_HEIGHT)
+
+    toolTipText = course?.name
     updateColors(false)
   }
 
-  // TODO: change background on hover
   fun updateColors(isSelectedOrHover: Boolean) {
     updateColors(if (!isSelectedOrHover) TaskDescriptionView.getTaskDescriptionBackgroundColor() else HOVER_COLOR)
   }
@@ -83,17 +84,17 @@ class CourseNameInfoComponent(course: Course?) : JPanel(BorderLayout()) {
 }
 
 class CourseNameComponent(course: Course?) : JPanel(BorderLayout()) {
-  private val nameComponent: JLabel = JLabel()
+  private val nameLabel: JLabel = JLabel()
 
   private val openStartLoginButton: StartCourseButtonBase = OpenCourseButton { courseInfo, mode ->
     joinCourse(courseInfo, mode, {}, {})
   }
 
   init {
-    nameComponent.text = course?.name
-    nameComponent.font = Font(TypographyManager().bodyFont, Font.BOLD, FONT_SIZE)
+    nameLabel.text = course?.name
+    nameLabel.font = Font(TypographyManager().bodyFont, Font.BOLD, FONT_SIZE)
 
-    add(nameComponent, BorderLayout.CENTER)
+    add(nameLabel, BorderLayout.CENTER)
     add(openStartLoginButton, BorderLayout.EAST)
   }
 }
