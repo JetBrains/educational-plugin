@@ -73,6 +73,8 @@ import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Point
+import java.awt.event.MouseEvent
+import java.awt.event.MouseMotionAdapter
 import java.util.*
 import javax.swing.*
 import kotlin.collections.HashSet
@@ -101,6 +103,8 @@ class CoursesPanel(
   private var myCoursesList: JBList<Course> = JBList()
   private lateinit var myProgrammingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   private lateinit var myHumanLanguagesFilterDropdown: HumanLanguageFilterDropdown
+
+  private var hoveredIndex: Int = -1
 
   val projectSettings: Any?
     get() = myCoursePanel.projectSettings
@@ -462,6 +466,7 @@ class CoursesPanel(
     myCoursesList.addListSelectionListener { processSelectionChanged() }
     myCoursesList.border = null
     myCoursesList.background = getTaskDescriptionBackgroundColor()
+    myCoursesList.addMouseMotionListener(CourseMouseMotionListener())
 
     val searchPanel = createSearchPanel()
     updateModel(myCourses, null)
@@ -573,14 +578,24 @@ class CoursesPanel(
     }
   }
 
-  private class CourseColoredListCellRenderer : ListCellRenderer<Course?> {
+  private inner class CourseMouseMotionListener : MouseMotionAdapter() {
+    override fun mouseMoved(event: MouseEvent) {
+      val hoveredIndex = this@CoursesPanel.myCoursesList.locationToIndex(event.point)
+      if (hoveredIndex != this@CoursesPanel.hoveredIndex) {
+        this@CoursesPanel.hoveredIndex = hoveredIndex
+        this@CoursesPanel.myCoursesList.repaint()
+      }
+    }
+  }
+
+  private inner class CourseColoredListCellRenderer : ListCellRenderer<Course?> {
     override fun getListCellRendererComponent(list: JList<out Course?>?,
                                               value: Course?,
                                               index: Int,
                                               isSelected: Boolean,
                                               cellHasFocus: Boolean): Component {
       val courseCardComponent = CourseCardComponent(value)
-      courseCardComponent.updateColors(isSelected)
+      courseCardComponent.updateColors(isSelected || this@CoursesPanel.hoveredIndex == index)
       return courseCardComponent
     }
   }
