@@ -26,7 +26,7 @@ class PostSolutionCheckListener : CheckListener {
         ApplicationManager.getApplication().executeOnPooledThread {
           val submission: Submission? = StepikSolutionsLoader.postSolution(task, task.status == CheckStatus.Solved, project)
           submission?.status = if (task.status == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
-          SubmissionsManager.addToSubmissions(task.id, submission)
+          StepikSubmissionsManager.addToSubmissions(task.id, submission)
           runInEdt { TaskDescriptionView.getInstance(project).updateAdditionalTaskTabs() }
         }
       }

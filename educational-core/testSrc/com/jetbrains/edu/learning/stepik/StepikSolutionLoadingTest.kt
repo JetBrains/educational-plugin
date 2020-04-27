@@ -265,7 +265,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
   private fun getTestFile(fileName: String) = testDataPath + fileName
 
   override fun tearDown() {
-    SubmissionsManager.clear()
+    StepikSubmissionsManager.clear()
     super.tearDown()
   }
 

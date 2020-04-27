@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.stepik.*
+import com.jetbrains.edu.learning.stepik.StepikSubmissionsManager
 import okhttp3.ConnectionPool
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -158,7 +159,7 @@ abstract class StepikConnector {
       val submissions = submissionsList.submissions
       allSubmissions.addAll(submissions)
       if (submissions.isEmpty() || !submissionsList.meta.containsKey("has_next") || submissionsList.meta["has_next"] == false) {
-        SubmissionsManager.putToSubmissions(stepId, allSubmissions)
+        StepikSubmissionsManager.putToSubmissions(stepId, allSubmissions)
         break
       }
       currentPage += 1

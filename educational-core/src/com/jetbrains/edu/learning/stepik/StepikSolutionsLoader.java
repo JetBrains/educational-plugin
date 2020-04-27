@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.jetbrains.edu.learning.stepik.StepikCheckerConnector.EDU_TOOLS_COMMENT;
-import static com.jetbrains.edu.learning.stepik.SubmissionsManager.isLastSubmissionUpToDate;
+import static com.jetbrains.edu.learning.stepik.StepikSubmissionsManager.isLastSubmissionUpToDate;
 
 public class StepikSolutionsLoader implements Disposable {
   public static final String PROGRESS_ID_PREFIX = "77-";
@@ -337,7 +337,7 @@ public class StepikSolutionsLoader implements Disposable {
     }
 
     if (task instanceof EduTask) {
-      Reply reply = SubmissionsManager.getLastSubmissionReply(stepId, false);
+      Reply reply = StepikSubmissionsManager.getLastSubmissionReply(stepId, false);
       if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
         return true;
       }
@@ -385,7 +385,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static TaskSolutions getEduTaskSolutions(@NotNull Task task, boolean isSolved) {
     String language = task.getCourse().getLanguageID();
-    Reply reply = SubmissionsManager.getLastSubmissionReply(task.getId(), isSolved);
+    Reply reply = StepikSubmissionsManager.getLastSubmissionReply(task.getId(), isSolved);
     if (reply == null || reply.getSolution() == null || reply.getSolution().isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449
       if (reply != null && reply.getSolution() == null) {
@@ -538,7 +538,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   @Nullable
   static String getSolutionTextForStepikAssignment(@NotNull Task task, boolean isSolved) {
-    final List<Submission> submissions = SubmissionsManager.getSubmissions(task.getId(), isSolved);
+    final List<Submission> submissions = StepikSubmissionsManager.getSubmissions(task.getId(), isSolved);
     if (submissions.isEmpty()) {
       return null;
     }

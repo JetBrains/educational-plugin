@@ -147,7 +147,7 @@ public class StepikProjectComponent implements ProjectComponent {
         List<Task> allTasks = CourseExt.getAllTasks(course);
         for (Task task : allTasks) {
           if (task instanceof CodeTask || task instanceof ChoiceTask || task instanceof EduTask) {
-            SubmissionsManager.getAllSubmissions(task.getId());
+            StepikSubmissionsManager.getAllSubmissions(task.getId());
           }
         }
         ApplicationManager.getApplication().invokeLater(() -> TaskDescriptionView.getInstance(myProject).updateAdditionalTaskTabs());

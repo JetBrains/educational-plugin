@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
-import com.jetbrains.edu.learning.stepik.SubmissionsManager;
+import com.jetbrains.edu.learning.stepik.StepikSubmissionsManager;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +34,7 @@ public class SyncStepikCourseAction extends SyncCourseAction {
         assert course instanceof EduCourse;
         updateCourseStructure(project, (EduCourse)course);
         if (EduUtils.isStudentProject(project)) {
-          SubmissionsManager.loadMissingSubmissions(course);
+          StepikSubmissionsManager.loadMissingSubmissions(course);
           StepikSolutionsLoader.getInstance(project).loadSolutions(course, indicator);
         }
       }
