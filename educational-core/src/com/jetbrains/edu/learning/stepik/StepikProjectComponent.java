@@ -40,7 +40,7 @@ import java.util.List;
 
 import static com.jetbrains.edu.learning.EduUtils.isEduProject;
 import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
-import static com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions.SUBMISSIONS_TAB_NAME;
+import static com.jetbrains.edu.learning.configuration.SubmissionsUtilKt.SUBMISSIONS_TAB_NAME;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class StepikProjectComponent implements ProjectComponent {

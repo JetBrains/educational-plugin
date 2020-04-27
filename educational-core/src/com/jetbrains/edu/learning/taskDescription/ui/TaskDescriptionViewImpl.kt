@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JavaUILibrary.*
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions.Companion.SUBMISSIONS_TAB_NAME
+import com.jetbrains.edu.learning.configuration.SUBMISSIONS_TAB_NAME
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -56,14 +56,9 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
   private fun updateAdditionalTaskTabs(task: Task?) {
     val contentManager = uiContent?.contentManager ?: return
-    val submissionsTab = StudyTaskManager.getInstance(project).course?.configurator?.submissionsTaskTab(task, project)
-    val topicsTab = StudyTaskManager.getInstance(project).course?.configurator?.topicsTaskTab(task, project)
-//    val topicsTab = if(submissionsTab != null) {Pair(submissionsTab.first, "Topics")}
-//      else null
-    val tabsList = mutableListOf<Pair<JPanel, String>>()
-    tabsList.addIfNotNull(topicsTab)
-    tabsList.addIfNotNull(submissionsTab)
-    tabsList.sortedByDescending { it.second }
+    val tabsList = StudyTaskManager.getInstance(project)
+                     .course?.configurator?.additionalTaskTabs(task, project)?.sortedByDescending { it.second } ?: return
+
     for (tab in tabsList) {
       addTab(tab, contentManager, tabsList.indexOf(tab) + 1)
     }

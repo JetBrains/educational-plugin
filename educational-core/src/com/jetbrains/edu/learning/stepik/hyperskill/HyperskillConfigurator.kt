@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.containers.addIfNotNull
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -32,9 +33,19 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
   override val courseBuilder: EduCourseBuilder<T>
     get() = HyperskillCourseBuilder(baseConfigurator.courseBuilder)
 
-  override fun topicsTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
-    if (currentTask == null) return null
+  override fun additionalTaskTabs(currentTask: Task?, project: Project): List<Pair<JPanel, String>> {
+    if (currentTask == null) return emptyList()
+    val tabsList = mutableListOf<Pair<JPanel, String>>()
+    tabsList.addIfNotNull(createTopicsTab(currentTask, project))
+    tabsList.addIfNotNull(createSubmissionsTab(currentTask, project))
+    return tabsList
+  }
 
+  private fun createSubmissionsTab(currentTask: Task, project: Project): Pair<JPanel, String>? {
+    return null
+  }
+
+  private fun createTopicsTab(currentTask: Task, project: Project): Pair<JPanel, String>? {
     val course = currentTask.lesson.course
     if (course is HyperskillCourse && course.isStudy) {
       if (!course.isTaskInProject(currentTask)) return null
