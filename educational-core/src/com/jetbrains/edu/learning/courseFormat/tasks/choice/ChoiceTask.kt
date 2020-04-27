@@ -30,7 +30,7 @@ class ChoiceTask : Task {
 
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name, id, position, updateDate, status)
 
-  override fun getItemType(): String = "choice"
+  override fun getItemType(): String = CHOICE_TASK_TYPE
 
   override fun supportSubmissions(): Boolean = true
 
@@ -52,5 +52,9 @@ class ChoiceTask : Task {
   @Suppress("unused")
   fun clearSelectedVariants() {
     selectedVariants.clear()
+  }
+
+  companion object {
+    const val CHOICE_TASK_TYPE: String = "choice"
   }
 }
