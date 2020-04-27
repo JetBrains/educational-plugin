@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.update.UpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
@@ -34,7 +35,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   fun loadSolutionsInBackground() {
     val course = StudyTaskManager.getInstance(project).course ?: return
-    ProgressManager.getInstance().run(object : Backgroundable(project, "Getting Tasks to Update") {
+    ProgressManager.getInstance().run(object : Backgroundable(project, EduCoreBundle.message("update.process")) {
       override fun run(progressIndicator: ProgressIndicator) {
         loadAndApplySolutions(course, progressIndicator)
       }

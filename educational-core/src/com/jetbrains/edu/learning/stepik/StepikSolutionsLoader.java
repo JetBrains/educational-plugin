@@ -34,6 +34,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.api.*;
@@ -130,7 +131,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   public void loadSolutionsInBackground() {
-    ProgressManager.getInstance().run(new Backgroundable(myProject, "Getting Tasks to Update") {
+    ProgressManager.getInstance().run(new Backgroundable(myProject, EduCoreBundle.message("update.process")) {
       @Override
       public void run(@NotNull ProgressIndicator progressIndicator) {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();

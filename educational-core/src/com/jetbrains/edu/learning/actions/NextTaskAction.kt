@@ -3,10 +3,15 @@ package com.jetbrains.edu.learning.actions
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
 
-class NextTaskAction : TaskNavigationAction("Next", "Navigate to the next task", AllIcons.Actions.Forward) {
+class NextTaskAction : TaskNavigationAction(
+  EduCoreBundle.message("action.navigation.next"),
+  EduCoreBundle.message("action.navigation.next.description"),
+  AllIcons.Actions.Forward
+) {
 
   override fun getTargetTask(sourceTask: Task): Task? = NavigationUtils.nextTask(sourceTask)
 
@@ -16,7 +21,7 @@ class NextTaskAction : TaskNavigationAction("Next", "Navigate to the next task",
       //no project in event in this case, so just enable it
       return
     }
-    e.presentation.text = "Next Task"
+    e.presentation.text = EduCoreBundle.message("action.navigation.next")
     super.update(e)
   }
 

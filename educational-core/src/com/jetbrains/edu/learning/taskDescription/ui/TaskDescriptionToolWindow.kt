@@ -86,7 +86,6 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
   }
 
   companion object {
-    private const val EMPTY_TASK_TEXT = "Please, open any task to see task description"
     const val PSI_ELEMENT_PROTOCOL = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL
 
     @VisibleForTesting
@@ -103,7 +102,7 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
           return EduCodeHighlighter.highlightCodeFragments(project, taskText, language)
         }
       }
-      return EMPTY_TASK_TEXT
+      return EduCoreBundle.message("label.open.assignment")
     }
 
     @JvmStatic
