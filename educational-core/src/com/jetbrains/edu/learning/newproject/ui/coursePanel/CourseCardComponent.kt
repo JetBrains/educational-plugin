@@ -40,7 +40,7 @@ private const val NO_TASKS_COMPLETED_YET = "No tasks completed yet"
 @Suppress("unused") // TODO: Use when "my courses" implemented
 private const val COMPLETED = "Completed"
 
-private val HOVER_COLOR: Color = JBColor(0xF5F9FF, 0x36393B)
+private val HOVER_COLOR: Color = JBColor.namedColor("BrowseCourses.lightSelectionBackground", JBColor(0xE9EEF5, 0x36393B))
 private val GRAY_COLOR: Color = JBColor(Gray._120, Gray._135)
 
 class CourseCardComponent(course: Course?) : JPanel(BorderLayout()) {
