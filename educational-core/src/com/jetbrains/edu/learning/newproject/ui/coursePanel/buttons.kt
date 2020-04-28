@@ -4,16 +4,16 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel
 import com.intellij.ide.plugins.newui.ColorButton
 import com.intellij.ui.JBColor
 import com.intellij.util.NotNullProducer
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.Color
 import java.awt.event.ActionListener
 
-
+// TODO: use this everywhere in browse courses
 private val MAIN_BG_COLOR: Color = JBColor.namedColor("BrowseCourses.background", JBColor(
-  (NotNullProducer { if (JBColor.isBright()) UIUtil.getListBackground() else Color(0x313335) })))
+  (NotNullProducer { if (JBColor.isBright()) TaskDescriptionView.getTaskDescriptionBackgroundColor() else Color(0x313335) })))
 private val WhiteForeground: Color = JBColor(Color.white, Color(0xBBBBBB))
 private val GreenColor: Color = JBColor(0x5D9B47, 0x2B7B50)
 private val FillForegroundColor: Color = JBColor.namedColor("BrowseCourses.Button.installFillForeground", WhiteForeground)
