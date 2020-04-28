@@ -17,13 +17,13 @@ public class KtTwitterConfigurator implements TwitterPluginConfigurator {
   @NotNull
   @Override
   public String getConsumerKey(@NotNull Project project) {
-    return KtTwitterBundle.message("consumerKey");
+    return KtTwitterBundle.message("twitterConsumerKey");
   }
 
   @NotNull
   @Override
   public String getConsumerSecret(@NotNull Project project) {
-    return KtTwitterBundle.message("consumerSecret");
+    return KtTwitterBundle.message("twitterConsumerSecret");
   }
 
   @Override

@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.InetAddress
 import java.net.UnknownHostException
+import java.util.Properties
+
+val secretProperties = "secret.properties"
 
 val environmentName: String by project
 val baseIDE: String by project
@@ -120,8 +123,8 @@ allprojects {
 
   tasks {
     withType<Test> {
-      withProp("stepikTestClientSecret") { environment("STEPIK_TEST_CLIENT_SECRET", it) }
-      withProp("stepikTestClientId") { environment("STEPIK_TEST_CLIENT_ID", it) }
+      withProp(secretProperties, "stepikTestClientSecret") { environment("STEPIK_TEST_CLIENT_SECRET", it) }
+      withProp(secretProperties, "stepikTestClientId") { environment("STEPIK_TEST_CLIENT_ID", it) }
       withProp("excludeTests") { exclude(it) }
 
       ignoreFailures = true
@@ -271,6 +274,10 @@ project(":") {
     buildSearchableOptions {
       enabled = findProperty("enableBuildSearchableOptions") != "false"
     }
+  }
+
+  afterEvaluate {
+    configureSecretProperties()
   }
 
   task("configureIdea") {
@@ -617,6 +624,29 @@ project(":Edu-Go") {
   }
 }
 
+fun configureSecretProperties() {
+  if (inJetBrainsNetwork()) {
+    download {
+      src("https://repo.labs.intellij.net/edu-tools/secret.properties")
+      dest(secretProperties)
+    }
+  }
+  else {
+    val secretProperties = file(secretProperties)
+    if (!secretProperties.exists()) {
+      secretProperties.createNewFile()
+    }
+  }
+
+  val secretProperties = loadProperties(secretProperties)
+
+  secretProperties.extractAndStore("educational-core/resources/stepik/stepik.properties", "stepikClientId", "stepikClientSecret")
+  secretProperties.extractAndStore("educational-core/resources/hyperskill/hyperskill-oauth.properties", "hyperskillClientId", "hyperskillClientSecret")
+  secretProperties.extractAndStore("Edu-Python/resources/checkio/py-checkio-oauth.properties", "pyCheckioClientId", "pyCheckioClientSecret")
+  secretProperties.extractAndStore("Edu-JavaScript/resources/checkio/js-checkio-oauth.properties", "jsCheckioClientId", "jsCheckioClientSecret")
+  secretProperties.extractAndStore("Edu-Kotlin/resources/twitter/kotlin_koans/oauth_twitter.properties", "twitterConsumerKey", "twitterConsumerSecret")
+}
+
 fun downloadStudioIfNeededAndGetPath(): String {
   if (!rootProject.hasProperty("studioVersion")) error("studioVersion is unspecified")
   if (!rootProject.hasProperty("studioBuildVersion")) error("studioBuildVersion is unspecified")
@@ -704,6 +734,13 @@ fun withProp(name: String, action: (String) -> Unit) {
   }
 }
 
+fun withProp(filePath: String, name: String, action: (String) -> Unit) {
+  if (!file(filePath).exists()) return
+  val properties = loadProperties(filePath)
+  val value = properties.getProperty(name) ?: return
+  action(value)
+}
+
 fun <T : ModuleDependency> T.excludeKotlinDeps() {
   exclude(module = "kotlin-runtime")
   exclude(module = "kotlin-reflect")
@@ -718,4 +755,18 @@ fun download(configure: DownloadSpec.() -> Unit) {
     configure()
     execute()
   }
+}
+
+fun loadProperties(path: String): Properties {
+  val properties = Properties()
+  file(path).bufferedReader().use { properties.load(it) }
+  return properties
+}
+
+fun Properties.extractAndStore(path: String, vararg keys: String) {
+  val properties = Properties()
+  for (key in keys) {
+    properties[key] = getProperty(key) ?: ""
+  }
+  file(path).bufferedWriter().use { properties.store(it, "") }
 }
