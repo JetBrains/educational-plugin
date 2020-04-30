@@ -768,5 +768,7 @@ fun Properties.extractAndStore(path: String, vararg keys: String) {
   for (key in keys) {
     properties[key] = getProperty(key) ?: ""
   }
-  file(path).bufferedWriter().use { properties.store(it, "") }
+  val file = file(path)
+  file.parentFile?.mkdirs()
+  file.bufferedWriter().use { properties.store(it, "") }
 }
