@@ -13,6 +13,16 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import okhttp3.WebSocket
 
+/**
+ * Communication protocol with Hyperskill WS is the following:
+ *
+ * 1. Retrieve token needed to authorize via API
+ * 2. Send token to server when connection opens: {"params":{"token":"<actual token>"},"id":1}
+ * 3. Receive OK message: {"id":1,"result":{"client":"<clientId>","version":"2.3.1","expires":true,"ttl":899}}
+ * 4. Send message to subscribe to submission events: {"method":1,"params":{"channel":"submission#<userId>-0"},"id":2}
+ * 5. Receive OK message: {"id":2,"result":{}}
+ * 6. Start receiving messages with submission events: {"result":{"channel":"submission#6242591-0","data":{"data": <submissionsData>}}}
+ */
 abstract class WebSocketConnectionState(protected val project: Project, protected val task: CodeTask, val isTerminal: Boolean = false) {
   abstract fun handleEvent(webSocket: WebSocket, message: String): WebSocketConnectionState
 
