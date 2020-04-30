@@ -49,10 +49,7 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
             LOG.error("Failed to get local course from $link")
             return@Callable null
           }
-          if (courseraCourse.configurator == null) {
-            return@Callable null
-          }
-          return@Callable courseraCourse
+          courseraCourse
         }))
       }
 

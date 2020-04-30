@@ -26,6 +26,9 @@ public final class CheckiONames {
   public static final String CHECKIO_TEST_FORM_URL = "/checkio/checkioTestForm.html";
   public static final String CHECKIO_TEST_FORM_TARGET_PATH = "/mission/check-html-output";
 
+  public static final String PY_CHECKIO = "Py " + CHECKIO;
+  public static final String JS_CHECKIO = "Js " + CHECKIO;
+
   @NotNull
   public static String getSolutionsLink(@NotNull String languageId, @NotNull String slug) {
     return HTTPS + languageId + "." + CHECKIO_URL + "/mission/" + slug + "/publications/category/clear";

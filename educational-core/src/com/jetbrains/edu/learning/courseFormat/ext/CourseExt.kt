@@ -24,11 +24,7 @@ val Course.configurator: EduConfigurator<*>? get() {
 
 val Course.compatibilityProvider: CourseCompatibilityProvider?
   get() {
-    return CourseCompatibilityProviderEP.EP_NAME.extensions.find {
-      it.language == languageID &&
-      it.courseType == itemType &&
-      it.environment == environment
-    }?.instance
+    return CourseCompatibilityProviderEP.find(languageID, environment)
   }
 
 val Course.sourceDir: String? get() = configurator?.sourceDir

@@ -1,16 +1,15 @@
 package com.jetbrains.edu.learning.newproject
 
-import com.intellij.lang.Language
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 
 /**
  * Fake course type for advertising JBA
  */
-class JetBrainsAcademyCourse(language: Language) : Course() {
+class JetBrainsAcademyCourse(languageId: String, trackName: String) : Course() {
   init {
-    course.language = language.id
-    course.name = "JetBrains Academy ${language.displayName} Track"
+    course.language = languageId
+    course.name = "JetBrains Academy $trackName Track"
     visibility = CourseVisibility.FeaturedVisibility(1)
     description = """
      Learn to program by creating working applications:

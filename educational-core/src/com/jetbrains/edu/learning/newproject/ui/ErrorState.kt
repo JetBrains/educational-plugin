@@ -141,7 +141,7 @@ sealed class ErrorState(
       selectedCourse.isRemote && !selectedCourse.isCompatible
 
     private fun isCheckiOLoginRequired(selectedCourse: CheckiOCourse): Boolean {
-      val checkiOConnectorProvider = selectedCourse.configurator as CheckiOConnectorProvider
+      val checkiOConnectorProvider = selectedCourse.configurator as? CheckiOConnectorProvider ?: return false
       val checkiOAccount = checkiOConnectorProvider.oAuthConnector.account
       return checkiOAccount == null
     }

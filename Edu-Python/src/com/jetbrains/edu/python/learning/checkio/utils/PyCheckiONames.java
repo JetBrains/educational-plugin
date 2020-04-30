@@ -5,8 +5,6 @@ import static com.jetbrains.edu.learning.checkio.utils.CheckiONames.*;
 public final class PyCheckiONames {
   private PyCheckiONames() {}
 
-  public static final String PY_CHECKIO = "Py " + CHECKIO;
-
   public static final String PY_CHECKIO_URL = "py." + CHECKIO_URL;
 
   public static final String PY_CHECKIO_API_HOST = "https://" + PY_CHECKIO_URL;

@@ -5,12 +5,12 @@ import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.LoginWidget
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector
-import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
-class PyCheckiOWidget(project: Project) : LoginWidget(project, CheckiOOAuthConnector.getAuthorizationTopic(), PyCheckiONames.PY_CHECKIO) {
+class PyCheckiOWidget(project: Project) : LoginWidget(project, CheckiOOAuthConnector.getAuthorizationTopic(), CheckiONames.PY_CHECKIO) {
   override val account: OAuthAccount<out Any>?
     get() = PyCheckiOSettings.INSTANCE.account
   override val icon: Icon

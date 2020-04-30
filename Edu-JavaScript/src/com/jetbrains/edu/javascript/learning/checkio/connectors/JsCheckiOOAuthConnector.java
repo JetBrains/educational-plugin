@@ -5,6 +5,7 @@ import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames;
 import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiOOAuthBundle;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +37,7 @@ public class JsCheckiOOAuthConnector extends CheckiOOAuthConnector {
   @NotNull
   @Override
   protected String getPlatformName() {
-    return JsCheckiONames.JS_CHECKIO;
+    return CheckiONames.JS_CHECKIO;
   }
 
 

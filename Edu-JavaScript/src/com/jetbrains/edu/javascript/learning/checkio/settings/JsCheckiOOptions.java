@@ -3,6 +3,7 @@ package com.jetbrains.edu.javascript.learning.checkio.settings;
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector;
 import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames;
 import com.jetbrains.edu.learning.checkio.options.CheckiOOptions;
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import org.jetbrains.annotations.Nls;
 
 public class JsCheckiOOptions extends CheckiOOptions {
@@ -13,7 +14,7 @@ public class JsCheckiOOptions extends CheckiOOptions {
   @Nls
   @Override
   public String getDisplayName() {
-    return JsCheckiONames.JS_CHECKIO;
+    return CheckiONames.JS_CHECKIO;
   }
 
   @Override

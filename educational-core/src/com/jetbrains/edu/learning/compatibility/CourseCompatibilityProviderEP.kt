@@ -17,9 +17,6 @@ class CourseCompatibilityProviderEP : AbstractExtensionPointBean() {
   @RequiredElement
   var language: String = ""
 
-  @Attribute("courseType")
-  var courseType: String = EduNames.PYCHARM
-
   @Attribute("environment")
   var environment: String = ""
 
@@ -32,5 +29,10 @@ class CourseCompatibilityProviderEP : AbstractExtensionPointBean() {
   companion object {
     @JvmStatic
     val EP_NAME: ExtensionPointName<CourseCompatibilityProviderEP> = ExtensionPointName.create("Educational.compatibilityProvider")
+
+    @JvmStatic
+    fun find(languageId: String, environment: String): CourseCompatibilityProvider? {
+      return EP_NAME.extensions.find { it.language == languageId && it.environment == environment }?.instance
+    }
   }
 }

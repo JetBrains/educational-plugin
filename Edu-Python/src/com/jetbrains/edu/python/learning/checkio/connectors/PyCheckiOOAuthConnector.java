@@ -2,6 +2,7 @@ package com.jetbrains.edu.python.learning.checkio.connectors;
 
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.python.learning.checkio.PyCheckiOSettings;
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames;
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiOOAuthBundle;
@@ -36,7 +37,7 @@ public final class PyCheckiOOAuthConnector extends CheckiOOAuthConnector {
   @NotNull
   @Override
   protected String getPlatformName() {
-    return PyCheckiONames.PY_CHECKIO;
+    return CheckiONames.PY_CHECKIO;
   }
 
   private static class Holder {

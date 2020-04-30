@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseLoading.BundledCoursesProvider;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +51,7 @@ public interface CoursesProvider {
        courses.addAll(providedCourses);
       }
     }
-    return courses;
+    return ContainerUtil.filter(courses, course -> course.getCompatibility() != CourseCompatibility.Unsupported.INSTANCE);
   }
 
   static List<Course> loadRemoteCourses() {

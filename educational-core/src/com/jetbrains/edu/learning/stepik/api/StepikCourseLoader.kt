@@ -121,7 +121,10 @@ object StepikCourseLoader {
         remoteCourse.visibility = CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(courseId))
       }
       remoteCourse
-    }.filter { it.compatibility == CourseCompatibility.Compatible }
+    }.filter {
+      val compatibility = it.compatibility
+      compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
+    }
   }
 
   @JvmStatic
