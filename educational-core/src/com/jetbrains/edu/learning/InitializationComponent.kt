@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning
 
-import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.util.PropertiesComponent
@@ -17,6 +16,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.builtInServer.createServerBootstrap
+import com.jetbrains.edu.learning.builtInServer.recentProjectsManagerInstance
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService
@@ -89,7 +89,10 @@ class InitializationComponent : BaseComponent {
   }
 
   private fun fillRecentCourses() {
-    val recentPathsInfo = RecentProjectsManagerBase.instanceEx.state.additionalInfo
+    // BACKCOMPAT: 2019.2
+    @Suppress("USELESS_ELVIS")
+    val state = recentProjectsManagerInstance.state ?: return
+    val recentPathsInfo = state.additionalInfo
     recentPathsInfo.forEach {
       val projectPath = it.key
       val course = deserializeCourse(projectPath)

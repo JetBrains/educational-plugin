@@ -8,7 +8,18 @@ import com.jetbrains.edu.learning.courseFormat.Course
 
 @State(name = "CoursesStorage", storages = [Storage("coursesStorage.xml")])
 @Service
-class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCoursesState()) {
+// BACKCOMPAT: 2019.2
+// Use `SimplePersistentStateComponent` instead
+class CoursesStorage : PersistentStateComponent<UserCoursesState>, PersistentStateComponentWithModificationTracker<UserCoursesState> {
+  private var state: UserCoursesState = UserCoursesState()
+
+  override fun getState() = state
+
+  override fun loadState(state: UserCoursesState) {
+    this.state = state
+  }
+
+  override fun getStateModificationCount() = state.modificationCount
 
   fun addCourse(course: Course, location: String, tasksSolved: Int = 0, tasksTotal: Int = 0) {
     state.addCourse(course, location, tasksSolved, tasksTotal)
