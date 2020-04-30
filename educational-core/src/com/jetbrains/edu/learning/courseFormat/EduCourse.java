@@ -4,7 +4,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 
@@ -108,12 +107,6 @@ public class EduCourse extends Course {
 
   public void setType(String type) {
     myType = type;
-  }
-
-  @NotNull
-  @Override
-  public CourseCompatibility getCompatibility() {
-    return CourseCompatibility.forCourse(this);
   }
 
   public boolean isPublic() {

@@ -297,7 +297,7 @@ public abstract class Course extends LessonContainer {
   @Transient
   @NotNull
   public CourseCompatibility getCompatibility() {
-    return CourseCompatibility.Compatible.INSTANCE;
+    return CourseCompatibility.forCourse(this);
   }
 
   public void addItem(@NotNull StudyItem item, int index) {

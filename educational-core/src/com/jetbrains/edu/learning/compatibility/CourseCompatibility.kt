@@ -5,6 +5,7 @@ import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -22,9 +23,19 @@ sealed class CourseCompatibility {
     private val LOG: Logger = Logger.getInstance(CourseCompatibility::class.java)
 
     @JvmStatic
-    fun forCourse(courseInfo: EduCourse): CourseCompatibility {
-      val courseFormat: String = courseInfo.type
-      val typeLanguage = StringUtil.split(courseFormat, " ")
+    fun forCourse(courseInfo: Course): CourseCompatibility {
+      // @formatter:off
+      return courseInfo.versionCompatibility() ?:
+             courseInfo.pluginCompatibility() ?:
+             courseInfo.configuratorCompatibility() ?:
+             Compatible
+      // @formatter:on
+    }
+
+    private fun Course.versionCompatibility(): CourseCompatibility? {
+      if (this !is EduCourse) return null
+
+      val typeLanguage = StringUtil.split(type, " ")
       if (typeLanguage.size < 2) {
         return Unsupported
       }
@@ -34,7 +45,7 @@ sealed class CourseCompatibility {
       }
 
       val versionString = prefix.substring(StepikNames.PYCHARM_PREFIX.length)
-      if (versionString.isEmpty()) return Compatible
+      if (versionString.isEmpty()) return null
       try {
         val version = Integer.valueOf(versionString)
         if (version > JSON_FORMAT_VERSION) IncompatibleVersion
@@ -44,19 +55,10 @@ sealed class CourseCompatibility {
         return Unsupported
       }
 
-      val data = courseInfo.requiredPlugins()
-
-      if (data != null) {
-        if (data.notLoadedPlugins.isNotEmpty()) return PluginsRequired(data.toInstallOrEnable)
-      }
-      else if (courseInfo.configurator == null) {
-        return Unsupported
-      }
-
-      return Compatible
+      return null
     }
 
-    private fun EduCourse.requiredPlugins(): RequiredPluginsData? {
+    private fun Course.pluginCompatibility(): CourseCompatibility? {
       val requiredPlugins = compatibilityProvider?.requiredPlugins() ?: return null
       // TODO: O(requiredPlugins * allPlugins) because PluginManager.getPlugin takes O(allPlugins).
       //  Can be improved at least to O(requiredPlugins * log(allPlugins))
@@ -81,9 +83,12 @@ sealed class CourseCompatibility {
         // Plugin is installed but disabled
         pluginDescriptor?.isEnabled == false
       }
-      return RequiredPluginsData(notLoadedPlugins.map { it.first }, toInstallOrEnable.map { it.first })
+
+      return if (notLoadedPlugins.isNotEmpty())  PluginsRequired(toInstallOrEnable.map { it.first }) else null
     }
 
-    private data class RequiredPluginsData(val notLoadedPlugins: List<PluginInfo>, val toInstallOrEnable: List<PluginInfo>)
+    private fun Course.configuratorCompatibility(): CourseCompatibility? {
+      return if (configurator == null) Unsupported else null
+    }
   }
 }

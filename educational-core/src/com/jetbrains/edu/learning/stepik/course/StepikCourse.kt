@@ -11,8 +11,6 @@ import com.jetbrains.edu.learning.stepik.StepikNames
  * Stepik courses do not contain pycharm tasks.
  */
 class StepikCourse : EduCourse() {
-  // FIXME: do something with compatibility here
-  override fun getCompatibility(): CourseCompatibility = CourseCompatibility.Compatible
   override fun getItemType(): String = StepikNames.STEPIK_TYPE
   override fun isViewAsEducatorEnabled(): Boolean = ApplicationManager.getApplication().isInternal
 }

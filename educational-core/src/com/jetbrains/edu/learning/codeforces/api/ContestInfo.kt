@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.codeforces.api
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSetter
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import java.time.Duration
 import java.time.ZonedDateTime
@@ -63,6 +64,8 @@ class ContestInfo : Course() {
   val relativeTime: Duration
     @JsonIgnore
     get() = relativeTimeSeconds.toDuration()
+
+  override fun getCompatibility(): CourseCompatibility = CourseCompatibility.Compatible
 
   // TODO some more
 }
