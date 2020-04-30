@@ -37,8 +37,10 @@ public class EduSettings implements PersistentStateComponent<Element> {
   private Set<Integer> myShownCourseIds;
 
   public EduSettings() {
-    // TODO remove it later
-    Registry.get("ide.browser.jcef.enabled").setValue(true);
+    if (ApplicationManager.getApplication().isInternal() && EduUtils.hasJavaFx()) {
+      // TODO remove it later
+      Registry.get("ide.browser.jcef.enabled").setValue(true);
+    }
     init();
   }
 

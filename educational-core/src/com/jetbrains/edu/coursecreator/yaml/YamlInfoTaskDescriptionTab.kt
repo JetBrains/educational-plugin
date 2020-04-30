@@ -12,9 +12,9 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.*
-import com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler.Companion.eduResourceUrl
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.resourceUrl
 import org.apache.commons.lang.text.StrSubstitutor
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -30,7 +30,7 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel() {
 
     templateText = StrSubstitutor(styleManager.resources(templateText)).replace(templateText)
     val yamlCss = if (UIUtil.isUnderDarcula()) "/yaml-tab/yaml-base-darcula.css" else "/yaml-tab/yaml-base.css"
-    templateText = templateText.replace("\${yaml-base-css}", eduResourceUrl(yamlCss))
+    templateText = templateText.replace("\${yaml-base-css}", resourceUrl(yamlCss))
     templateText = templateText.replace("\${base-css}", styleManager.baseStylesheet)
 
     val defaultSwingPanel: (String) -> JComponent = {
