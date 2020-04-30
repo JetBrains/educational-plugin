@@ -15,6 +15,20 @@ import org.intellij.lang.annotations.Language
 
 class HyperskillCheckCodeTaskTest : EduTestCase() {
 
+  override fun setUp() {
+    super.setUp()
+    courseWithFiles(courseProducer = ::HyperskillCourse) {
+      lesson("Problems") {
+        codeTask("task1", stepId = 4) {
+          taskFile("Task.txt", "fun foo() {}")
+        }
+      }
+    } as HyperskillCourse
+
+    loginFakeUser()
+    NavigationUtils.navigateToTask(project, findTask(0, 0))
+  }
+
   private enum class MockWebSocketState {
     INITIAL, CONNECTION_CONFIRMED
   }
@@ -80,6 +94,28 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
     doTest()
   }
 
+  fun `test failed to get submission status via API`() {
+    mockConnector.withResponseHandler(testRootDisposable) { request ->
+      MockResponseFactory.fromString(
+        when (val path = request.path) {
+          "/api/ws" -> webSocketConfiguration
+          "/api/attempts" -> attempt
+          "/api/submissions" -> submission
+          else -> if (path.startsWith("/api/submissions/")) submissionWithEvaluationStatus else "{}"
+        }
+      )
+    }
+
+    mockConnector.withWebSocketListener(object : WebSocketListener() {
+      override fun onMessage(webSocket: WebSocket, text: String) {
+        webSocket.cancel() // close violently
+      }
+    })
+
+    CheckActionListener.shouldSkip()
+    launchAction()
+  }
+
   private fun configureResponses() {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
@@ -94,17 +130,6 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
   }
 
   private fun doTest() {
-    courseWithFiles(courseProducer = ::HyperskillCourse) {
-      lesson("Problems") {
-        codeTask("task1", stepId = 4) {
-          taskFile("Task.txt", "fun foo() {}")
-        }
-      }
-    } as HyperskillCourse
-
-    loginFakeUser()
-    NavigationUtils.navigateToTask(project, findTask(0, 0))
-
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { "Failed" }
     launchAction()
@@ -143,6 +168,34 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
             "code": "fun main() {\n    TODO(\"Remove this line and write your solution here\")\n}\n"
           },
           "status": "wrong",
+          "step": 4368,
+          "time": "2020-04-29T13:39:55Z"
+        }
+      ]
+    }
+  """
+
+  @Language("JSON")
+  private val submissionWithEvaluationStatus = """
+    {
+      "meta": {
+        "page": 1,
+        "has_next": false,
+        "has_previous": false
+      },
+      "submissions": [
+        {
+          "id": 7565000,
+          "attempt": 7565799,
+          "feedback": {
+            "message": "Failed"
+          },
+          "hint": "Failed",
+          "reply": {
+            "language": "kotlin",
+            "code": "fun main() {\n    TODO(\"Remove this line and write your solution here\")\n}\n"
+          },
+          "status": "evaluation",
           "step": 4368,
           "time": "2020-04-29T13:39:55Z"
         }

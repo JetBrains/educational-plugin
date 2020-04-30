@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.api.SubmissionsList
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.EVALUATION_STATUS
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import okhttp3.WebSocket
 
@@ -62,7 +63,7 @@ private class ReceivingSubmissionsState(project: Project, task: CodeTask, val su
     val dataKey = "data"
     val data = objectMapper.readTree(message).get("result").get(dataKey)?.get(dataKey) ?: return this
     for (receivedSubmission in objectMapper.treeToValue(data, SubmissionsList::class.java).submissions) {
-      if (receivedSubmission.status == "evaluation") continue
+      if (receivedSubmission.status == EVALUATION_STATUS) continue
       if (submission.id == receivedSubmission.id) {
         return SubmissionReceivedState(project, task, receivedSubmission)
       }

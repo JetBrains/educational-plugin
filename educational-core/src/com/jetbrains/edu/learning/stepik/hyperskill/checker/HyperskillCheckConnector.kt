@@ -27,6 +27,7 @@ object HyperskillCheckConnector {
   private val LOG = Logger.getInstance(HyperskillCheckConnector::class.java)
   private const val MAX_FILE_SIZE_FOR_PUBLISH = 5 * 1024 * 1024 // 5 Mb
   private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(1)
+  const val EVALUATION_STATUS = "evaluation"
 
   fun postSolution(task: Task, project: Project, result: CheckResult) {
     when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task.id)) {
@@ -150,13 +151,18 @@ object HyperskillCheckConnector {
 
     var lastSubmission = submission
     var delay = 1L
-    while (delay < CODE_TASK_CHECK_TIMEOUT && lastSubmission.status == "evaluation") {
+    val timeout = if (isUnitTestMode) 5L else CODE_TASK_CHECK_TIMEOUT
+    while (delay < timeout && lastSubmission.status == EVALUATION_STATUS) {
       TimeUnit.SECONDS.sleep(delay)
       delay *= 2
       lastSubmission = connector.getSubmissionById(submissionId).onError { return it.toCheckResult() }
     }
 
-    return lastSubmission.toCheckResult(task)
+    if (lastSubmission.status != EVALUATION_STATUS) {
+      return lastSubmission.toCheckResult(task)
+    }
+
+    return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("hyperskill.failed.to.check.code", EduNames.JBA))
   }
 }
 
