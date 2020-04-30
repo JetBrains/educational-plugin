@@ -28,6 +28,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -39,6 +40,15 @@ import javax.swing.JComponent
 
 
 abstract class TaskDescriptionToolWindow(protected val project: Project) {
+  private val HINT_BLOCK_TEMPLATE = "<div class='" + HINT_HEADER + "'>Hint %s</div>" +
+                                    "  <div class='hint_content'>" +
+                                    " %s" +
+                                    "  </div>"
+  private val HINT_EXPANDED_BLOCK_TEMPLATE = "<div class='" + HINT_HEADER_EXPANDED + "'>Hint %s</div>" +
+                                             "  <div class='hint_content'>" +
+                                             " %s" +
+                                             "  </div>"
+
   init {
     // BACKCOMPAT: 2019.2
     @Suppress("DEPRECATION")
@@ -69,7 +79,21 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
     return document.html()
   }
 
-  protected abstract fun wrapHint(hintText: Element, displayedHintNumber: String): String
+  protected open fun wrapHint(hintElement: Element, displayedHintNumber: String): String {
+    val course = StudyTaskManager.getInstance(project).course
+    val hintText: String = hintElement.html()
+    if (course == null) {
+      return String.format(HINT_BLOCK_TEMPLATE, displayedHintNumber, hintText)
+    }
+
+    val study = course.isStudy
+    return if (study) {
+      String.format(HINT_BLOCK_TEMPLATE, displayedHintNumber, hintText)
+    }
+    else {
+      String.format(HINT_EXPANDED_BLOCK_TEMPLATE, displayedHintNumber, hintText)
+    }
+  }
 
   fun setTaskText(project: Project, task: Task?) {
     setText(getTaskDescriptionWithCodeHighlighting(project, task), task)
@@ -86,7 +110,9 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
   }
 
   companion object {
-    const val PSI_ELEMENT_PROTOCOL = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL
+    const val HINT_HEADER: String = "hint_header"
+    const val HINT_HEADER_EXPANDED: String = "${HINT_HEADER} checked"
+    const val PSI_ELEMENT_PROTOCOL: String = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL
 
     @VisibleForTesting
     fun getTaskDescriptionWithCodeHighlighting(project: Project, task: Task?): String {

@@ -8,6 +8,8 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow.Companion.HINT_HEADER
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow.Companion.HINT_HEADER_EXPANDED
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.sun.javafx.application.PlatformImpl
 import com.sun.webkit.dom.DocumentImpl
@@ -98,7 +100,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
       }
       // listener is added only for collapsed hints so as not to have stats for educator
       // in educator projects expanded is default state for hints
-      val hints = (doc as DocumentImpl).getElementsByClassName(JavaFxToolWindow.HINT_HEADER)
+      val hints = (doc as DocumentImpl).getElementsByClassName(HINT_HEADER)
       for (i in 0 until hints.length) {
         (hints.item(i) as EventTarget).addEventListener(EVENT_TYPE_CLICK, listener, false)
       }
@@ -114,10 +116,10 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
           val target = ev.target as Element
           if (target is HTMLDivElement) {
             val className = target.className
-            if (className == JavaFxToolWindow.HINT_HEADER) {
+            if (className == HINT_HEADER) {
               EduCounterUsageCollector.hintExpanded()
             }
-            else if (className == JavaFxToolWindow.HINT_HEADER_EXPANDED) {
+            else if (className == HINT_HEADER_EXPANDED) {
               EduCounterUsageCollector.hintCollapsed()
             }
             return

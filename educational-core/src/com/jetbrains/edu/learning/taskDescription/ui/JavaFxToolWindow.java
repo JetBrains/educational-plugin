@@ -17,8 +17,6 @@ package com.jetbrains.edu.learning.taskDescription.ui;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.JBUI;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.ChoiceTaskResourcesManager;
@@ -29,23 +27,12 @@ import javafx.embed.swing.JFXPanel;
 import netscape.javascript.JSObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jsoup.nodes.Element;
 import org.w3c.dom.Document;
 
 import javax.swing.*;
 
 public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   private BrowserWindow myBrowserWindow;
-  public static final String HINT_HEADER = "hint_header";
-  public static final String HINT_HEADER_EXPANDED = HINT_HEADER + " checked";
-  private static final String HINT_BLOCK_TEMPLATE = "<div class='" + HINT_HEADER + "'>Hint %s</div>" +
-                                                    "  <div class='hint_content'>" +
-                                                    " %s" +
-                                                    "  </div>";
-  private static final String HINT_EXPANDED_BLOCK_TEMPLATE = "<div class='" + HINT_HEADER_EXPANDED + "'>Hint %s</div>" +
-                                                             "  <div class='hint_content'>" +
-                                                             " %s" +
-                                                             "  </div>";
 
   private BrowserWindow taskSpecificBrowserWindow;
 
@@ -102,24 +89,6 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
         taskSpecificBrowserWindow.getEngine().documentProperty().removeListener(this);
       }
     });
-  }
-
-  @NotNull
-  @Override
-  protected String wrapHint(@NotNull Element hintElement, @NotNull String displayedHintNumber) {
-    Course course = StudyTaskManager.getInstance(getProject()).getCourse();
-    String hintText = hintElement.html();
-    if (course == null) {
-      return String.format(HINT_BLOCK_TEMPLATE, displayedHintNumber, hintText);
-    }
-
-    boolean study = course.isStudy();
-    if (study) {
-      return String.format(HINT_BLOCK_TEMPLATE, displayedHintNumber, hintText);
-    }
-    else {
-      return String.format(HINT_EXPANDED_BLOCK_TEMPLATE, displayedHintNumber, hintText);
-    }
   }
 
   @Override

@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.taskDescription.ui
 import com.intellij.openapi.project.Project
 import com.intellij.ui.jcef.JBCefBrowser
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import org.jsoup.nodes.Element
 import javax.swing.JComponent
 
 class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
@@ -17,10 +16,6 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   override fun createTaskSpecificPanel(): JComponent {
     // TODO Later
     return taskSpecificJBCefBrowser.component
-  }
-
-  override fun wrapHint(hintText: Element, displayedHintNumber: String): String {
-    TODO("Not yet implemented")
   }
 
   override fun setText(text: String, task: Task?) {
