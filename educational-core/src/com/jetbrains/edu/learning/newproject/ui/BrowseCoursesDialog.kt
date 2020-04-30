@@ -31,7 +31,7 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
   init {
     title = "Select Course"
     init()
-    UIUtil.setBackgroundRecursively(rootPane, TaskDescriptionView.getTaskDescriptionBackgroundColor())
+    rootPane.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
     panel.setSidePaneBackground()
 
     Disposer.register(disposable, Disposable { job.cancel() })

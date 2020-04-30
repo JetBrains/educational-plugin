@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
@@ -19,6 +20,7 @@ import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.FlowLayout
 import java.awt.Font
+import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JProgressBar
@@ -42,7 +44,7 @@ private const val COMPLETED = "Completed"
 private val HOVER_COLOR: Color = JBColor.namedColor("BrowseCourses.lightSelectionBackground", JBColor(0xE9EEF5, 0x36393B))
 val GRAY_COLOR: Color = JBColor.namedColor("BrowseCourses.infoForeground", JBColor(Gray._120, Gray._135))
 
-class CourseCardComponent(course: Course?) : JPanel(BorderLayout()) {
+class CourseCardComponent(val course: Course?) : JPanel(BorderLayout()) {
   private val logoComponent: JLabel = JLabel()
   private var courseNameInfoComponent: CourseNameInfoComponent = CourseNameInfoComponent(course)
 
@@ -50,7 +52,7 @@ class CourseCardComponent(course: Course?) : JPanel(BorderLayout()) {
     border = JBUI.Borders.empty(CARD_GAP)
     logoComponent.isOpaque = false
     logoComponent.icon = course?.getScaledLogo(LOGO_SIZE, this@CourseCardComponent)
-    logoComponent.border = JBUI.Borders.empty(0, 0, 0, CARD_GAP)
+    logoComponent.border = JBUI.Borders.emptyRight(CARD_GAP)
 
     add(logoComponent, BorderLayout.LINE_START)
     add(courseNameInfoComponent, BorderLayout.CENTER)
@@ -64,11 +66,30 @@ class CourseCardComponent(course: Course?) : JPanel(BorderLayout()) {
   }
 
   fun updateColors(isSelectedOrHover: Boolean) {
-    updateColors(if (!isSelectedOrHover) TaskDescriptionView.getTaskDescriptionBackgroundColor() else HOVER_COLOR)
+    updateColors(if (isSelectedOrHover) HOVER_COLOR else TaskDescriptionView.getTaskDescriptionBackgroundColor())
   }
 
   private fun updateColors(background: Color) {
     UIUtil.setBackgroundRecursively(this, background)
+  }
+
+  fun setSelection(isSelectedOrHover: Boolean, scrollAndFocus: Boolean = false) {
+    if (scrollAndFocus) {
+      scrollToVisible()
+      if (parent != null && isSelectedOrHover) {
+        IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown { IdeFocusManager.getGlobalInstance().requestFocus(this, true) }
+      }
+    }
+    updateColors(isSelectedOrHover)
+    repaint()
+  }
+
+  private fun scrollToVisible() {
+    val parent = parent as JComponent
+    val bounds = bounds
+    if (!parent.visibleRect.contains(bounds)) {
+      parent.scrollRectToVisible(bounds)
+    }
   }
 }
 
@@ -169,7 +190,7 @@ class MyCourseInfoComponent(course: Course) : JPanel(FlowLayout()) {
     val (taskSolved, tasksTotal) = ProgressUtil.countProgress(course)
 
     progressBar = ProgressUtil.createProgressBar()
-    progressBar.border = JBUI.Borders.empty(0, 0, 0, H_GAP)
+    progressBar.border = JBUI.Borders.emptyRight(H_GAP)
     progressBar.maximum = tasksTotal
     progressBar.value = taskSolved
 

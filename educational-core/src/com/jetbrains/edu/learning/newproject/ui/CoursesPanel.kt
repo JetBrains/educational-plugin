@@ -9,6 +9,7 @@ import com.intellij.ui.JBCardLayout
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBPanelWithEmptyText
+import com.intellij.ui.tabs.TabInfo
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduNames
@@ -18,6 +19,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.*
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.Companion.forCourse
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
 import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
 import org.jetbrains.annotations.NonNls
@@ -37,7 +39,8 @@ private const val NO_COURSES = "NO_COURSES"
 abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel() {
   protected var coursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false, isLocationFieldNeeded = true)
   private var courses: MutableList<Course> = mutableListOf()
-  protected lateinit var coursesListPanel: CoursesListPanel
+  private val coursesListPanel: CoursesListPanel = CoursesListPanel(::processSelectionChanged, ImportCourseAction())
+  private val myCourseListPanel: JPanel = JPanel(BorderLayout())
   private lateinit var myProgrammingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   private lateinit var myHumanLanguagesFilterDropdown: HumanLanguageFilterDropdown
   private val cardLayout = JBCardLayout()
