@@ -32,6 +32,7 @@ class HyperskillCheckListener : CheckListener {
         return
       }
       ApplicationManager.getApplication().executeOnPooledThread {
+        //add to submissions Manager here
         HyperskillCheckConnector.postSolution(task, project, result)
       }
       showChooseNewProjectNotification(course, project)

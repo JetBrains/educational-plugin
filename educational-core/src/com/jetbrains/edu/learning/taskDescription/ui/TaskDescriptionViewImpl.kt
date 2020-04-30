@@ -9,7 +9,6 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.content.ContentManager
-import com.intellij.util.containers.addIfNotNull
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.addTabToTaskDescription
@@ -55,18 +54,34 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   }
 
   private fun updateAdditionalTaskTabs(task: Task?) {
-    val contentManager = uiContent?.contentManager ?: return
-    val tabsList = StudyTaskManager.getInstance(project)
-                     .course?.configurator?.additionalTaskTabs(task, project)?.sortedByDescending { it.second } ?: return
+    updateSubmissionsTab(task)
+    updateTopicsTab(task)
+    addYamlTab()
+  }
 
-    for (tab in tabsList) {
-      addTab(tab, contentManager, tabsList.indexOf(tab) + 1)
+  override fun updateSubmissionsTab() {
+    updateSubmissionsTab(currentTask)
+  }
+
+  private fun updateSubmissionsTab(task: Task?) {
+    val contentManager = uiContent?.contentManager ?: return
+    val submissionsTab = StudyTaskManager.getInstance(project).course?.configurator?.submissionsTab(task, project)
+    if (submissionsTab != null) {
+      addTab(submissionsTab, contentManager, 1)
     }
-    if (tabsList.find { it.second == SUBMISSIONS_TAB_NAME } == null) {
+    else {
       removeSubmissionsContent(contentManager)
     }
+  }
 
-    addYamlTab()
+  override fun updateTopicsTab() {
+    updateTopicsTab(currentTask)
+  }
+
+  private fun updateTopicsTab(task: Task?) {
+    val contentManager = uiContent?.contentManager ?: return
+    val topicsTab = StudyTaskManager.getInstance(project).course?.configurator?.topicsTab(task, project) ?: return
+    addTab(topicsTab, contentManager, 1)
   }
 
   private fun removeSubmissionsContent(contentManager: ContentManager) {
@@ -77,14 +92,14 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     }
   }
 
-  private fun addTab(additionalTab: Pair<JPanel, String>, contentManager: ContentManager, placement: Int) {
+  private fun addTab(additionalTab: Pair<JPanel, String>, contentManager: ContentManager, tabIndex: Int) {
     val currentContent = contentManager.selectedContent
-    val isAdditionalTabSelected = currentContent?.let { contentManager.getIndexOfContent(it) } == placement
+    val isAdditionalTabSelected = currentContent?.let { contentManager.getIndexOfContent(it) } == tabIndex
     val content = contentManager.findContent(additionalTab.second)
     content?.let { contentManager.removeContent(it, true) }
     val topicsContent = ContentFactory.SERVICE.getInstance().createContent(additionalTab.first, additionalTab.second, false)
     topicsContent.isCloseable = false
-    contentManager.addContent(topicsContent, placement)
+    contentManager.addContent(topicsContent, tabIndex)
     if (isAdditionalTabSelected) {
       contentManager.setSelectedContent(topicsContent)
     }

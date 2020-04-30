@@ -17,6 +17,8 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
+import com.jetbrains.edu.learning.stepik.StepikSubmissionsManager
+import com.jetbrains.edu.learning.stepik.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.WebSocketConnectionState
@@ -138,7 +140,7 @@ abstract class HyperskillConnector {
       course.taskToTopics[taskIndex] = topics
       runInEdt {
         if (project.isDisposed) return@runInEdt
-        TaskDescriptionView.getInstance(project).updateAdditionalTaskTabs()
+        TaskDescriptionView.getInstance(project).updateTopicsTab()
       }
     }
   }

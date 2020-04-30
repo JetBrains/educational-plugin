@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.stepik.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
@@ -42,19 +43,29 @@ import kotlin.math.roundToInt
 
 const val SUBMISSIONS_TAB_NAME = "Submissions"
 
-fun createSubmissionsTab(currentTask: Task?, project: Project, submissionsManager: SubmissionsManager): Pair<JPanel, String>? {
+fun createSubmissionsTab(currentTask: Task?,
+                         project: Project,
+                         submissionsManager: SubmissionsManager,
+                         resourceName: String,
+                         isLoggedIn: Boolean,
+                         doAuthorize: () -> Unit): Pair<JPanel, String>? {
+  if (submissionsManager is HyperskillSubmissionsManager) {
+    submissionsManager.fillSubmissions()
+  }
   if (currentTask == null || !currentTask.supportSubmissions()) return null
   val course = currentTask.course
-  if (course !is EduCourse || !course.isStudy || !course.isRemote) return null
+  //course !is EduCourse || !course.isStudy || !course.isRemote
+  if (!course.isStudy) return null
 
   val descriptionText = StringBuilder()
   val submissionsPanel = AdditionalTabPanel(project)
   val submissions = submissionsManager.getSubmissionsFromMemory(currentTask.id)
 
-  if (EduSettings.isLoggedIn() || submissions != null) {
+  if (isLoggedIn || submissions != null) {
     if (submissions == null) return null
     when {
       submissions.isEmpty() -> descriptionText.append("<a ${StyleManager().textStyleHeader}>You have no submissions yet")
+      //ChoiceTask exist only for Edu Courses, that's why view on Stepik is ok for them
       currentTask is ChoiceTask -> addViewOnStepikLink(descriptionText, currentTask, submissionsPanel)
       else -> {
         addSubmissionsToText(submissions, descriptionText)
@@ -63,7 +74,7 @@ fun createSubmissionsTab(currentTask: Task?, project: Project, submissionsManage
     }
   }
   else {
-    addLoginLink(descriptionText, submissionsPanel)
+    addLoginLink(descriptionText, submissionsPanel, resourceName) { doAuthorize() }
   }
 
   submissionsPanel.setText(descriptionText.toString())
@@ -81,13 +92,13 @@ private fun addViewOnStepikLink(descriptionText: StringBuilder,
 }
 
 private fun addLoginLink(descriptionText: StringBuilder,
-                         submissionsPanel: AdditionalTabPanel) {
+                         submissionsPanel: AdditionalTabPanel,
+                         resourceName: String, doAuthorize: () -> Unit) {
   descriptionText.append("<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(hyperlinkColor())}" +
-                         " href=>Log in to Stepik.org</a><a ${StyleManager().textStyleHeader}> to view submissions")
+                         " href=>Log in to $resourceName</a><a ${StyleManager().textStyleHeader}> to view submissions")
   submissionsPanel.addHyperlinkListener(HyperlinkListener { e ->
     if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-      StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
-      EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.SUBMISSIONS_TAB)
+      doAuthorize()
     }
   })
 }

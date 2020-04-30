@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik
 
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
@@ -10,14 +11,6 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.Submission
 
 object StepikSubmissionsManager : SubmissionsManager() {
-
-  override fun getSubmissionsFromMemory(taskId: Int): List<Submission>? {
-    return submissions[taskId]
-  }
-
-  fun putToSubmissions(taskId: Int, submissionsToAdd: MutableList<Submission>) {
-    submissions[taskId] = submissionsToAdd
-  }
 
   @JvmStatic
   fun loadMissingSubmissions(course: Course) {
@@ -50,13 +43,7 @@ object StepikSubmissionsManager : SubmissionsManager() {
 
   @JvmStatic
   fun addToSubmissions(taskId: Int, submission: Submission?) {
-    if (submission == null) return
-    val submissionsList = submissions.getOrPut(taskId) { mutableListOf(submission) }
-    if (!submissionsList.contains(submission)) {
-      submissionsList.add(submission)
-      submissionsList.sortByDescending { it.time }
-      //potential race when loading submissions and checking task at one time
-    }
+    super.addToSubmissionsMap(taskId, submission)
   }
 
   @JvmStatic
@@ -67,4 +54,8 @@ object StepikSubmissionsManager : SubmissionsManager() {
     return submission.time?.after(task.updateDate) ?: false
   }
 
+  @JvmStatic
+  fun prepareSubmissionsContent(project: Project, course: Course, loadSubmissionsFromStepik: () -> Unit) {
+    super.prepareSubmissionsContent(project, course) { loadSubmissionsFromStepik() }
+  }
 }
