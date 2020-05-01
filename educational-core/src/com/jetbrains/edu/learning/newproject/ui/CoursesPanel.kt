@@ -581,7 +581,7 @@ class CoursesPanel(
   private inner class CourseMouseMotionListener : MouseMotionAdapter() {
     override fun mouseMoved(event: MouseEvent) {
       val hoveredIndex = myCoursesList.locationToIndex(event.point)
-      if (hoveredIndex != hoveredIndex) {
+      if (this@CoursesPanel.hoveredIndex != hoveredIndex) {
         this@CoursesPanel.hoveredIndex = hoveredIndex
         myCoursesList.repaint()
       }
