@@ -38,7 +38,7 @@ class UpdateCourseNotificationProvider(val project: Project) :
     if (course.isRemote && !course.isUpToDate && file.isTaskFile) {
       val panel = EditorNotificationPanel()
       panel.setText(EduCoreBundle.message("update.notification"))
-      panel.createActionLabel(EduCoreBundle.message("update.content")) {
+      panel.createActionLabel(EduCoreBundle.message("update.action")) {
         if (isUpdateRunning.get()) return@createActionLabel
         ProgressManager.getInstance().run(
           object : com.intellij.openapi.progress.Task.Backgroundable(project, EduCoreBundle.message("update.content")) {
