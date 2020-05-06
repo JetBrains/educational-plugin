@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 import com.intellij.ide.AppLifecycleListener
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.BaseComponent
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.util.PlatformUtils
@@ -28,7 +29,9 @@ class SelectRoleComponent : BaseComponent {
     val connection = ApplicationManager.getApplication().messageBus.connect()
     connection.subscribe(AppLifecycleListener.TOPIC, object : AppLifecycleListener {
       override fun appFrameCreated(commandLineArgs: MutableList<String>) {
-        showInitialConfigurationDialog()
+        runInEdt {
+          showInitialConfigurationDialog()
+        }
       }
     })
   }
