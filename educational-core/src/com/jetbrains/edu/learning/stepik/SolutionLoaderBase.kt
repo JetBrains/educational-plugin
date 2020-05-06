@@ -37,7 +37,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   fun loadSolutionsInBackground() {
     val course = StudyTaskManager.getInstance(project).course ?: return
-    ProgressManager.getInstance().run(object : Backgroundable(project, EduCoreBundle.message("update.process")) {
+    ProgressManager.getInstance().run(object : Backgroundable(project, EduCoreBundle.message("update.loading.solutions")) {
       override fun run(progressIndicator: ProgressIndicator) {
         loadAndApplySolutions(course, progressIndicator)
       }
