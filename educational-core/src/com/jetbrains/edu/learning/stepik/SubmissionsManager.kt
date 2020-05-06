@@ -32,7 +32,7 @@ abstract class SubmissionsManager {
     }
   }
 
-  fun prepareSubmissionsContent(project: Project, course: Course, loadSubmissions: (course: Course) -> Unit) {
+  fun prepareSubmissionsContent(project: Project, course: Course, platformName: String, loadSubmissions: (course: Course) -> Unit) {
     val window = ToolWindowManager.getInstance(project).getToolWindow(
       TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
     if (window != null) {
@@ -40,7 +40,7 @@ abstract class SubmissionsManager {
       if (submissionsContent != null) {
         val submissionsPanel = submissionsContent.component
         if (submissionsPanel is AdditionalTabPanel) {
-          ApplicationManager.getApplication().invokeLater { submissionsPanel.addLoadingPanel() }
+          ApplicationManager.getApplication().invokeLater { submissionsPanel.addLoadingPanel(platformName) }
         }
       }
     }

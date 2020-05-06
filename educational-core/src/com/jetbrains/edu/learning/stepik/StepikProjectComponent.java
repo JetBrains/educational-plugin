@@ -27,8 +27,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.hyperskill.EduCourseUpdateChecker;
-import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel;
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;

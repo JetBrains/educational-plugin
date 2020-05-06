@@ -56,6 +56,6 @@ object StepikSubmissionsManager : SubmissionsManager() {
 
   @JvmStatic
   fun prepareSubmissionsContent(project: Project, course: Course, loadSubmissionsFromStepik: () -> Unit) {
-    super.prepareSubmissionsContent(project, course) { loadSubmissionsFromStepik() }
+    super.prepareSubmissionsContent(project, course, StepikNames.STEPIK) { loadSubmissionsFromStepik() }
   }
 }

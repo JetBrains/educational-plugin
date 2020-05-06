@@ -12,21 +12,16 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.StepikAuthorizer
-import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
@@ -46,7 +41,7 @@ const val SUBMISSIONS_TAB_NAME = "Submissions"
 fun createSubmissionsTab(currentTask: Task?,
                          project: Project,
                          submissionsManager: SubmissionsManager,
-                         resourceName: String,
+                         platformName: String,
                          isLoggedIn: Boolean,
                          doAuthorize: () -> Unit): Pair<JPanel, String>? {
   if (currentTask == null || !currentTask.supportSubmissions()) return null
@@ -61,7 +56,7 @@ fun createSubmissionsTab(currentTask: Task?,
   if (isLoggedIn || submissions != null) {
     if (submissions == null) return null
     when {
-      submissions.isEmpty() -> descriptionText.append("<a ${StyleManager().textStyleHeader}>You have no submissions yet")
+      submissions.isEmpty() -> descriptionText.append("<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.empty")}")
       //ChoiceTask exist only for Edu Courses, that's why view on Stepik is ok for them
       currentTask is ChoiceTask -> addViewOnStepikLink(descriptionText, currentTask, submissionsPanel)
       else -> {
@@ -71,7 +66,7 @@ fun createSubmissionsTab(currentTask: Task?,
     }
   }
   else {
-    addLoginLink(descriptionText, submissionsPanel, resourceName) { doAuthorize() }
+    addLoginLink(descriptionText, submissionsPanel, platformName) { doAuthorize() }
   }
 
   submissionsPanel.setText(descriptionText.toString())
@@ -83,16 +78,16 @@ private fun addViewOnStepikLink(descriptionText: StringBuilder,
                                 submissionsPanel: AdditionalTabPanel) {
   descriptionText.append(
     "<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(hyperlinkColor())} " +
-    "href=https://stepik.org/submissions/${currentTask.id}?unit=${currentTask.lesson.unitId}\">View submissions</a>" +
-    "<a ${StyleManager().textStyleHeader}> for Quiz tasks on Stepik.org")
+    "href=https://stepik.org/submissions/${currentTask.id}?unit=${currentTask.lesson.unitId}\">" +
+    EduCoreBundle.message("submissions.view.quiz.on.stepik", "</a><a ${StyleManager().textStyleHeader}>"))
   submissionsPanel.addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
 }
 
 private fun addLoginLink(descriptionText: StringBuilder,
                          submissionsPanel: AdditionalTabPanel,
-                         resourceName: String, doAuthorize: () -> Unit) {
+                         platformName: String, doAuthorize: () -> Unit) {
   descriptionText.append("<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(hyperlinkColor())}" +
-                         " href=>Log in to $resourceName</a><a ${StyleManager().textStyleHeader}> to view submissions")
+                         " href=>${EduCoreBundle.message("submissions.login", platformName, "</a><a ${StyleManager().textStyleHeader}>")}")
   submissionsPanel.addHyperlinkListener(HyperlinkListener { e ->
     if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
       doAuthorize()
@@ -120,8 +115,11 @@ private fun showDiff(project: Project, task: Task, reply: Reply) {
     else {
       val submissionFileContent = DiffContentFactory.getInstance().create(StepikSolutionsLoader.removeAllTags(submissionText),
                                                                           virtualFile.fileType)
-      SimpleDiffRequest("Compare your solution with submission", currentFileContent, submissionFileContent, "Local",
-                        "Submission")
+      SimpleDiffRequest(EduCoreBundle.message("submissions.compare"),
+                        currentFileContent,
+                        submissionFileContent,
+                        EduCoreBundle.message("submissions.local"),
+                        EduCoreBundle.message("submissions.submission"))
     }
   }
 

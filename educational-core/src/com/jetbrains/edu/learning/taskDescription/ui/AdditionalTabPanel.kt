@@ -6,7 +6,6 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import java.awt.BorderLayout
@@ -58,13 +57,13 @@ class AdditionalTabPanel(val project: Project) : JPanel() {
     return backLinkPanel
   }
 
-  fun addLoadingPanel() {
+  fun addLoadingPanel(platformName: String) {
     removeAll()
     val asyncProcessIcon = AsyncProcessIcon("Loading submissions")
     val iconPanel = JPanel(FlowLayout(FlowLayout.LEADING))
     iconPanel.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
     iconPanel.add(asyncProcessIcon)
-    setText("<a ${StyleManager().textStyleHeader}>Loading submissions from ${StepikNames.STEPIK}")
+    setText("<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.loading", platformName)}")
     iconPanel.add(textPane)
     add(iconPanel, Component.LEFT_ALIGNMENT)
     revalidate()
