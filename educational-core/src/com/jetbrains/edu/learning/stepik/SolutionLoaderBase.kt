@@ -5,6 +5,7 @@ import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.*
+import com.intellij.openapi.application.ex.ApplicationUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
@@ -47,19 +48,16 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   @VisibleForTesting
   @JvmOverloads
   fun loadAndApplySolutions(course: Course, progressIndicator: ProgressIndicator? = null) {
-    val tasksToUpdate = EduUtils.execCancelable { provideTasksToUpdate(course) }
-    if (tasksToUpdate != null) {
-      val submissions: List<Submission>? = ApplicationManager.getApplication().executeOnPooledThread(
-        Callable { loadSubmissions(tasksToUpdate) }).get()
-      if (submissions != null) {
-        updateTasks(course, tasksToUpdate, submissions, progressIndicator)
-      }
-      else {
-        LOG.warn("Can't get submissions")
-      }
+    val tasksToUpdate = provideTasksToUpdate(course)
+    val submissions = if (progressIndicator != null)
+      ApplicationUtil.runWithCheckCanceled(Callable { loadSubmissions(tasksToUpdate) }, progressIndicator)
+    else loadSubmissions(tasksToUpdate)
+
+    if (submissions != null) {
+      updateTasks(course, tasksToUpdate, submissions, progressIndicator)
     }
     else {
-      LOG.warn("Can't get a list of tasks to update")
+      LOG.warn("Can't get submissions")
     }
     runReadAction {
       if (project.isDisposed) return@runReadAction
