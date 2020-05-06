@@ -49,9 +49,6 @@ fun createSubmissionsTab(currentTask: Task?,
                          resourceName: String,
                          isLoggedIn: Boolean,
                          doAuthorize: () -> Unit): Pair<JPanel, String>? {
-  if (submissionsManager is HyperskillSubmissionsManager) {
-    submissionsManager.fillSubmissions()
-  }
   if (currentTask == null || !currentTask.supportSubmissions()) return null
   val course = currentTask.course
   //course !is EduCourse || !course.isStudy || !course.isRemote
