@@ -17,14 +17,15 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.stepik.api.Reply
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.openSelectedStage
 
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
   override val loadingTopic: Topic<SolutionLoadingListener> = SOLUTION_TOPIC
 
-  override fun loadSolution(task: Task): TaskSolutions {
-    val lastSubmission = HyperskillConnector.getInstance().getSubmission(task.id)
+  override fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions {
+    val lastSubmission = submissions.firstOrNull { it.step == task.id }
     val reply = lastSubmission?.reply ?: return TaskSolutions.EMPTY
 
     val files: Map<String, String> = when (task) {
@@ -37,6 +38,10 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     }
 
     return if (files.isEmpty()) TaskSolutions.EMPTY else TaskSolutions.withEmptyPlaceholders(lastSubmission.status.toCheckStatus(), files)
+  }
+
+  override fun loadSubmissions(tasks: List<Task>): List<Submission>? {
+    return HyperskillConnector.getInstance().getSubmissions(tasks.map { it.id }.toSet())
   }
 
   private val Reply.eduTaskFiles: Map<String, String>
@@ -58,8 +63,8 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     }.flatMap { it.taskList.asSequence() }.toList()
   }
 
-  override fun updateTasks(course: Course, tasks: List<Task>, progressIndicator: ProgressIndicator?) {
-    super.updateTasks(course, tasks, progressIndicator)
+  override fun updateTasks(course: Course, tasks: List<Task>, submissions: List<Submission>, progressIndicator: ProgressIndicator?) {
+    super.updateTasks(course, tasks, submissions, progressIndicator)
     runInEdt {
       openSelectedStage(course, project)
     }

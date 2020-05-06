@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "submissions": [
+    {
+      "attempt": 503037,
+      "can_download_test_set": false,
+      "eta": 0,
+      "feedback": "",
+      "hint": "",
+      "id": 1457792,
+      "next_test_available_at": null,
+      "reply": {
+        "choices": null,
+        "score": null,
+        "solution": [
+          {
+            "name": "src/Task.kt",
+            "text": "fun userFoo() {}"
+          },
+          {
+            "name": "src/Baz.kt",
+            "text": "fun userBaz() {}"
+          },
+          {
+            "name": "test/Tests1.kt",
+            "text": "fun userTests1() {}"
+          }
+        ],
+        "language": null,
+        "code": null,
+        "edu_task": "{\"task\":{\"name\":\"task1\",\"stepic_id\":1,\"status\":\"Unchecked\",\"files\":{\"src/Task.kt\":{\"name\":\"src/Task.kt\",\"placeholders\":[],\"is_visible\":true,\"text\":\"fun userFoo() {}\"},\"src/Baz.kt\":{\"name\":\"src/Baz.kt\",\"placeholders\":[],\"is_visible\":true,\"text\":\"fun userBaz() {}\"},\"test/Tests1.kt\":{\"name\":\"test/Tests1.kt\",\"placeholders\":[],\"is_visible\":true,\"text\":\"fun userTests1() {}\"}},\"task_type\":\"edu\"}}",
+        "version": 11
+      },
+      "status": "correct",
+      "step": 1,
+      "time": "2019-07-04T12:43:01Z"
+    },
+    {
+      "id": 6900202,
+      "attempt": 4868978,
+      "eta": 0,
+      "feedback": {
+        "message": "",
+        "code_style": {
+          "quality": {
+            "code": "EXCELLENT",
+            "text": "Code quality (beta): EXCELLENT"
+          },
+          "errors": []
+        }
+      },
+      "hint": "",
+      "reply": {
+        "code": "user code"
+      },
+      "status": "correct",
+      "step": 4,
+      "time": "2020-03-23T09:25:21Z",
+      "can_download_test_set": false,
+      "is_downloaded_test": false,
+      "is_free_test": false,
+      "next_free_test_available_at": null,
+      "is_samples_test": false,
+      "failed_test_number": null,
+      "is_confirmed": true
+    }
+  ]
+}

@@ -330,6 +330,9 @@ class Submission {
   @JsonProperty(REPLY)
   var reply: Reply? = null
 
+  @JsonProperty(STEP)
+  var step: Int = -1
+
   @JsonProperty(ID)
   var id: Int? = null
 

@@ -24,9 +24,11 @@ import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.update.UpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
+import java.util.concurrent.Callable
 import java.util.concurrent.Future
 
 abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
@@ -47,7 +49,14 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   fun loadAndApplySolutions(course: Course, progressIndicator: ProgressIndicator? = null) {
     val tasksToUpdate = EduUtils.execCancelable { provideTasksToUpdate(course) }
     if (tasksToUpdate != null) {
-      updateTasks(course, tasksToUpdate, progressIndicator)
+      val submissions: List<Submission>? = ApplicationManager.getApplication().executeOnPooledThread(
+        Callable { loadSubmissions(tasksToUpdate) }).get()
+      if (submissions != null) {
+        updateTasks(course, tasksToUpdate, submissions, progressIndicator)
+      }
+      else {
+        LOG.warn("Can't get submissions")
+      }
     }
     else {
       LOG.warn("Can't get a list of tasks to update")
@@ -58,7 +67,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
   }
 
-  protected open fun updateTasks(course: Course, tasks: List<Task>, progressIndicator: ProgressIndicator?) {
+  protected open fun updateTasks(course: Course, tasks: List<Task>, submissions: List<Submission>, progressIndicator: ProgressIndicator?) {
     progressIndicator?.isIndeterminate = false
     cancelUnfinishedTasks()
     val tasksToUpdate = tasks.filter { task -> task !is TheoryTask }
@@ -76,7 +85,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       futures[task.id] = ApplicationManager.getApplication().executeOnPooledThread<Boolean> {
         try {
           ProgressManager.checkCanceled()
-          updateTask(project, task)
+          updateTask(project, task, submissions)
         }
         finally {
           if (progressIndicator != null) {
@@ -178,8 +187,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   /**
    * @return true if solutions for given task are incompatible with current plugin version, false otherwise
    */
-  private fun updateTask(project: Project, task: Task): Boolean {
-    val taskSolutions = loadSolution(task)
+  private fun updateTask(project: Project, task: Task, submissions: List<Submission>): Boolean {
+    val taskSolutions = loadSolution(task, submissions)
     ProgressManager.checkCanceled()
     if (!taskSolutions.hasIncompatibleSolutions && taskSolutions.solutions.isNotEmpty()) {
       applySolutions(project, task, taskSolutions)
@@ -192,7 +201,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   }
 
   protected abstract val loadingTopic: Topic<SolutionLoadingListener>
-  protected abstract fun loadSolution(task: Task): TaskSolutions
+  protected abstract fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions
+  protected abstract fun loadSubmissions(tasks: List<Task>): List<Submission>?
   protected abstract fun provideTasksToUpdate(course: Course): List<Task>
 
   interface SolutionLoadingListener {

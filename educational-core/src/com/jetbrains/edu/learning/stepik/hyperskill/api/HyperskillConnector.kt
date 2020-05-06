@@ -229,9 +229,9 @@ abstract class HyperskillConnector {
     return FeedbackLink("$HYPERSKILL_PROJECTS_URL/$project/stages/${stage.id}/implement")
   }
 
-  fun getSubmission(stepId: Int, page: Int = 1): Submission? {
+  fun getSubmissions(stepIds: Set<Int>, page: Int = 1): List<Submission>? {
     val userId = HyperskillSettings.INSTANCE.account?.userInfo?.id ?: error("Attempt to get submission for non authorized user")
-    return service.submission(userId, stepId, page).executeHandlingExceptions()?.body()?.submissions?.firstOrNull()
+    return service.submission(userId, stepIds.joinToString(separator = ","), page).executeHandlingExceptions()?.body()?.submissions
   }
 
   fun getSubmissionById(submissionId: Int): Result<Submission, String> {
