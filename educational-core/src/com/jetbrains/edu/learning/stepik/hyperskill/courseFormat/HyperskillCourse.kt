@@ -47,17 +47,4 @@ class HyperskillCourse : Course {
   override fun getId(): Int {
     return hyperskillProject?.id ?: super.getId()
   }
-
-  fun findOrCreateProblemsLesson(): Lesson {
-    var lesson = getProblemsLesson()
-    if (lesson == null) {
-      lesson = Lesson().apply {
-        name = HYPERSKILL_PROBLEMS
-        index = this@HyperskillCourse.items.size + 1
-        course = this@HyperskillCourse
-      }
-      addLesson(lesson)
-    }
-    return lesson
-  }
 }

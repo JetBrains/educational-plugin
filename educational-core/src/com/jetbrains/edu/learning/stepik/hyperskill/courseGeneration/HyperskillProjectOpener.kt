@@ -121,33 +121,59 @@ object HyperskillProjectOpener {
     }
   }
 
-  private fun HyperskillCourse.addProblemTask(stepId: Int): Pair<Lesson, Task> {
-    fun Lesson.addProblemTask(): Task {
-      var task = getTask(stepId)
-      if (task == null) {
-        task = computeUnderProgress(title = "Loading ${EduNames.JBA} Code Challenge") {
-          HyperskillConnector.getInstance().getCodeChallenges(course, this, listOf(stepId))
-        }.firstOrNull() ?: error("Failed to load problem: id = $stepId")
-        addTask(task)
-      }
-      return task
+  private fun HyperskillCourse.addProblemTask(stepId: Int) {
+    var lesson = getProblemsLesson()
+    if (lesson == null) {
+      lesson = createProblemsLesson()
     }
 
-    val lesson = findOrCreateProblemsLesson()
-    return lesson to lesson.addProblemTask()
+    val task = lesson.getTask(stepId)
+    if (task == null) {
+      lesson.createProblemTask(stepId)
+    }
+  }
+
+  private fun HyperskillCourse.createProblemsLesson(): Lesson {
+    val lesson = Lesson()
+    lesson.name = HYPERSKILL_PROBLEMS
+    lesson.index = this.items.size + 1
+    lesson.course = this
+    addLesson(lesson)
+    return lesson
+  }
+
+  private fun Lesson.createProblemTask(stepId: Int): Task {
+    val task = computeUnderProgress(title = "Loading ${EduNames.JBA} Code Challenge") {
+      HyperskillConnector.getInstance().getCodeChallenges(course, this, listOf(stepId))
+    }.firstOrNull() ?: error("Failed to load problem: id = $stepId")
+    addTask(task)
+    return task
   }
 
   private fun HyperskillCourse.addProblemTaskWithFiles(project: Project, stepId: Int) {
-    val (lesson, task) = addProblemTask(stepId)
-    lesson.init(course, null, false)
-    val lessonDir = lesson.getDir(project)
-    if (lessonDir == null) {
-      GeneratorUtils.createLesson(lesson, course.getDir(project))
+    var problemsLesson = getProblemsLesson()
+    var createLessonDir = false
+    if (problemsLesson == null) {
+      problemsLesson = createProblemsLesson()
+      createLessonDir = true
+    }
+
+    var task = problemsLesson.getTask(stepId)
+    var createTaskDir = false
+    if (task == null) {
+      task = problemsLesson.createProblemTask(stepId)
+      createTaskDir = true
+    }
+
+    problemsLesson.init(course, null, false)
+
+    if (createLessonDir) {
+      GeneratorUtils.createLesson(problemsLesson, course.getDir(project))
       YamlFormatSynchronizer.saveAll(project)
     }
-    else if (task.getDir(project) == null) {
-      GeneratorUtils.createTask(task, lessonDir)
-      YamlFormatSynchronizer.saveItem(lesson)
+    else if (createTaskDir) {
+      GeneratorUtils.createTask(task, problemsLesson.getDir(project)!!)
+      YamlFormatSynchronizer.saveItem(problemsLesson)
       YamlFormatSynchronizer.saveItem(task)
       YamlFormatSynchronizer.saveRemoteInfo(task)
       course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
