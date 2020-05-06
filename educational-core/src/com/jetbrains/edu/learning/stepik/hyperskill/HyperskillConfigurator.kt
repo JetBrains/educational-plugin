@@ -55,12 +55,12 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
 
   override fun submissionsTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
     val isLoggedIn = HyperskillSettings.INSTANCE.account != null
-    return createSubmissionsTab(currentTask, project, HyperskillSubmissionsManager, "Hyperskill.org", isLoggedIn) { doAuthorize() }
+    return createSubmissionsTab(currentTask, project, HyperskillSubmissionsManager, EduNames.JBA, isLoggedIn) { doAuthorize() }
   }
 
   private fun getSubmissionsTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
     val isLoggedIn = HyperskillSettings.INSTANCE.account != null
-    return createSubmissionsTab(currentTask, project, HyperskillSubmissionsManager, "Hyperskill.org", isLoggedIn) { doAuthorize() }
+    return createSubmissionsTab(currentTask, project, HyperskillSubmissionsManager, EduNames.JBA, isLoggedIn) { doAuthorize() }
   }
 
   private fun doAuthorize() {
