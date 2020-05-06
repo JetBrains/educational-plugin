@@ -18,13 +18,20 @@ abstract class SubmissionsManager {
     return submissions[taskId]
   }
 
+  fun getLastSubmission(taskId: Int): Submission? {
+    val submissionsList = submissions[taskId] ?: return null
+    if(submissionsList.isEmpty()) return null
+    submissionsList.sortedByDescending { it.time }
+    return submissionsList[0]
+  }
+
   fun putToSubmissions(taskId: Int, submissionsToAdd: MutableList<Submission>) {
     submissions[taskId] = submissionsToAdd
   }
 
   fun addToSubmissionsMap(taskId: Int, submission: Submission?) {
     if (submission == null) return
-    val submissionsList = StepikSubmissionsManager.submissions.getOrPut(taskId) { mutableListOf(submission) }
+    val submissionsList = submissions.getOrPut(taskId) { mutableListOf(submission) }
     if (!submissionsList.contains(submission)) {
       submissionsList.add(submission)
       submissionsList.sortByDescending { it.time }
