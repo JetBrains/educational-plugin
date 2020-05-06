@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
@@ -54,8 +55,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   }
 
   private fun updateAdditionalTaskTabs(task: Task?) {
-    updateSubmissionsTab(task)
     updateTopicsTab(task)
+    updateSubmissionsTab(task)
     addYamlTab()
   }
 
@@ -67,7 +68,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val contentManager = uiContent?.contentManager ?: return
     val submissionsTab = StudyTaskManager.getInstance(project).course?.configurator?.submissionsTab(task, project)
     if (submissionsTab != null) {
-      addTab(submissionsTab, contentManager, 1)
+      val tabIndex = getSubmissionsTabIndex(contentManager)
+      addTab(submissionsTab, contentManager, tabIndex)
     }
     else {
       removeSubmissionsContent(contentManager)
@@ -82,6 +84,12 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val contentManager = uiContent?.contentManager ?: return
     val topicsTab = StudyTaskManager.getInstance(project).course?.configurator?.topicsTab(task, project) ?: return
     addTab(topicsTab, contentManager, 1)
+  }
+
+  private fun getSubmissionsTabIndex(contentManager: ContentManager): Int {
+    val contents = contentManager.contents
+    val topicsContent = contents.find { it.tabName == HyperskillConfigurator.TOPICS_TAB_NAME }
+    return if (topicsContent == null) 1 else 2
   }
 
   private fun removeSubmissionsContent(contentManager: ContentManager) {

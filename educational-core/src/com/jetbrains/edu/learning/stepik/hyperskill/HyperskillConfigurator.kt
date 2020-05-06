@@ -88,7 +88,7 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
       }
       topicsPanel.setText(descriptionText)
 
-      return Pair(topicsPanel, "Topics")
+      return Pair(topicsPanel, TOPICS_TAB_NAME)
     }
     return null
   }
@@ -132,5 +132,6 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
 
   companion object {
     const val HYPERSKILL_TEST_DIR = "hstest"
+    const val TOPICS_TAB_NAME = "Topics"
   }
 }
