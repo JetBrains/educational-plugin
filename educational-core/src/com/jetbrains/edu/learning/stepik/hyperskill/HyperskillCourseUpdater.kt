@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
+import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.getConfigDir
@@ -82,7 +83,7 @@ object HyperskillCourseUpdater {
     return when {
       localTasks.size > tasksFromServer.size -> false
       localTasks.zip(tasksFromServer).any { (task, remoteTask) -> task.id != remoteTask.id } -> false
-      localTasks.zip(tasksFromServer).any { (task, remoteTask) -> task.updateDate.before(remoteTask.updateDate) } -> true
+      localTasks.zip(tasksFromServer).any { (task, remoteTask) -> remoteTask.updateDate.isSignificantlyAfter(task.updateDate) } -> true
       needUpdateCourseAdditionalFiles(project, remoteCourse.additionalFiles) -> true
       else -> false
     }
@@ -93,7 +94,7 @@ object HyperskillCourseUpdater {
     val result = mutableListOf<TaskUpdate>()
     for (taskFromServer in tasksFromServer) {
       val localTask = getTask(taskFromServer.id) ?: continue
-      if (localTask.updateDate.before(taskFromServer.updateDate)) {
+      if (taskFromServer.updateDate.isSignificantlyAfter(localTask.updateDate)) {
         result.add(TaskUpdate(localTask, taskFromServer))
       }
     }
