@@ -167,13 +167,16 @@ interface EduConfigurator<Settings> {
     get() = EmptyIcon.ICON_16
 
   /**
-   * Tab next to the task description.
+   * Tab next to the task description, contains hyperskill topics.
    *
    * @see com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
    */
-  fun additionalTaskTabs(currentTask: Task?, project: Project): List<Pair<JPanel, String>> = emptyList()
-
   fun topicsTab(currentTask: Task?, project: Project): Pair<JPanel, String>? = null
 
+  /**
+   * Tab next to the topics tab (if present) or task description, contains submissions.
+   *
+   * @see com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+   */
   fun submissionsTab(currentTask: Task?, project: Project): Pair<JPanel, String>? = null
 }

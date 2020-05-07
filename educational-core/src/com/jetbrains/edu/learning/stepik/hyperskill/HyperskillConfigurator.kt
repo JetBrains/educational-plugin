@@ -41,14 +41,6 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
   override val courseBuilder: EduCourseBuilder<T>
     get() = HyperskillCourseBuilder(baseConfigurator.courseBuilder)
 
-  override fun additionalTaskTabs(currentTask: Task?, project: Project): List<Pair<JPanel, String>> {
-    if (currentTask == null) return emptyList()
-    val tabsList = mutableListOf<Pair<JPanel, String>>()
-    tabsList.addIfNotNull(getTopicsTab(currentTask, project))
-    tabsList.addIfNotNull(getSubmissionsTab(currentTask, project))
-    return tabsList
-  }
-
   override fun topicsTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
     return getTopicsTab(currentTask, project)
   }
