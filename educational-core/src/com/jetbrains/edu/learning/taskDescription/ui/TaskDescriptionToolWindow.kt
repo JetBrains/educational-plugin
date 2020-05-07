@@ -102,7 +102,7 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
           return EduCodeHighlighter.highlightCodeFragments(project, taskText, language)
         }
       }
-      return EduCoreBundle.message("label.open.assignment")
+      return EduCoreBundle.message("label.open.task")
     }
 
     @JvmStatic
