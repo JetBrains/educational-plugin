@@ -1,26 +1,17 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.containers.addIfNotNull
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
-import com.jetbrains.edu.learning.configuration.createSubmissionsTab
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikSubmissionsManager
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseBuilder
-import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
@@ -43,20 +34,6 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
 
   override fun topicsTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
     return getTopicsTab(currentTask, project)
-  }
-
-  override fun submissionsTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
-    val isLoggedIn = HyperskillSettings.INSTANCE.account != null
-    return createSubmissionsTab(currentTask, project, HyperskillSubmissionsManager, EduNames.JBA, isLoggedIn) { doAuthorize() }
-  }
-
-  private fun getSubmissionsTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
-    val isLoggedIn = HyperskillSettings.INSTANCE.account != null
-    return createSubmissionsTab(currentTask, project, HyperskillSubmissionsManager, EduNames.JBA, isLoggedIn) { doAuthorize() }
-  }
-
-  private fun doAuthorize() {
-    HyperskillConnector.getInstance().doAuthorize()
   }
 
   private fun getTopicsTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {

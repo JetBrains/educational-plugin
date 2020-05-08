@@ -8,12 +8,12 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils.isAndroidStudio
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
-import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 
-open class JsConfigurator : EduConfiguratorWithSubmissions<JsNewProjectSettings>() {
+open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
   override val courseBuilder: EduCourseBuilder<JsNewProjectSettings>
     get() = JsCourseBuilder()
 

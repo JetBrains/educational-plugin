@@ -8,13 +8,13 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
-import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
-class ScalaSbtConfigurator : EduConfiguratorWithSubmissions<JdkProjectSettings>() {
+class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
   override val courseBuilder: EduCourseBuilder<JdkProjectSettings>
     get() = ScalaSbtCourseBuilder()
 

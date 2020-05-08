@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_JAR
@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.gradle.GradleConstants.SETTINGS_GRADLE
 import java.io.File
 import java.io.IOException
 
-abstract class GradleConfiguratorBase : EduConfiguratorWithSubmissions<JdkProjectSettings>() {
+abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
   abstract override val courseBuilder: GradleCourseBuilderBase
 
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {

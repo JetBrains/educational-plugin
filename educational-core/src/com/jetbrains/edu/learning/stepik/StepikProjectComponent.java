@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -20,21 +19,13 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.hyperskill.EduCourseUpdateChecker;
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
-import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 import static com.jetbrains.edu.learning.EduUtils.isEduProject;
 import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
@@ -61,10 +52,7 @@ public class StepikProjectComponent implements ProjectComponent {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
         if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
           if (EduSettings.getInstance().getUser() != null) {
-            StepikSubmissionsManager.prepareSubmissionsContent(myProject, course, () -> {
-              loadSubmissionsFromStepik(course);
-              return Unit.INSTANCE;
-            });
+            StepikSubmissionsManager.prepareStepikSubmissionsContent(myProject, course);
           }
           else {
             MessageBusConnection busConnection = myProject.getMessageBus().connect(myProject);
@@ -74,10 +62,7 @@ public class StepikProjectComponent implements ProjectComponent {
                 if (EduSettings.getInstance().getUser() == null) {
                   return;
                 }
-                StepikSubmissionsManager.prepareSubmissionsContent(myProject, course, () -> {
-                  loadSubmissionsFromStepik(course);
-                  return Unit.INSTANCE;
-                });
+                StepikSubmissionsManager.prepareStepikSubmissionsContent(myProject, course);
               }
 
               @Override
@@ -93,28 +78,13 @@ public class StepikProjectComponent implements ProjectComponent {
           }
           if (currentUser != null && !course.getAuthors().contains(currentUser.userInfo) && !CCUtils.isCourseCreator(myProject)) {
             loadSolutionsFromStepik(course);
-            loadSubmissionsFromStepik(course);
+            StepikSubmissionsManager.loadAllStepikSubmissions(myProject, course);
           }
           selectStep(course);
         }
       }
     );
   }
-
-  //private void prepareSubmissionsContent(@NotNull Course course) {
-  //  ToolWindow window = ToolWindowManager.getInstance(myProject).getToolWindow(
-  //    TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
-  //  if (window != null) {
-  //    Content submissionsContent = window.getContentManager().findContent(SUBMISSIONS_TAB_NAME);
-  //    if (submissionsContent != null) {
-  //      JComponent submissionsPanel = submissionsContent.getComponent();
-  //      if (submissionsPanel instanceof AdditionalTabPanel) {
-  //        ApplicationManager.getApplication().invokeLater(() -> ((AdditionalTabPanel)submissionsPanel).addLoadingPanel());
-  //      }
-  //    }
-  //  }
-  //  loadSubmissionsFromStepik(course);
-  //}
 
   private void showBalloon() {
     IdeFrame frame = WindowManager.getInstance().getIdeFrame(myProject);
@@ -142,21 +112,6 @@ public class StepikProjectComponent implements ProjectComponent {
     builder.setHideOnCloseClick(true);
     Balloon balloon = builder.createBalloon();
     balloon.showInCenterOf(widgetComponent);
-  }
-
-  private void loadSubmissionsFromStepik(@NotNull Course course) {
-    if (course instanceof EduCourse && ((EduCourse)course).isRemote() && EduSettings.isLoggedIn()) {
-      ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        List<Task> allTasks = CourseExt.getAllTasks(course);
-        for (Task task : allTasks) {
-          if (task instanceof CodeTask || task instanceof ChoiceTask || task instanceof EduTask) {
-            StepikSubmissionsManager.getAllSubmissions(task.getId());
-          }
-        }
-        //update only submissions tab here???
-        ApplicationManager.getApplication().invokeLater(() -> TaskDescriptionView.getInstance(myProject).updateAdditionalTaskTabs());
-      });
-    }
   }
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
