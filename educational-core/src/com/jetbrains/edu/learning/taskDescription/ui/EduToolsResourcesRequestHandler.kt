@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.openapi.diagnostic.Logger
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.getResource
 import io.netty.channel.Channel
 import io.netty.channel.ChannelFutureListener
@@ -25,7 +26,9 @@ class EduToolsResourcesRequestHandler : HttpRequestHandler() {
       return false
     }
 
-    val url = getResource(uri.split(EDU_RESOURCES)[1]) ?: return false
+    val resourceRelativePath = uri.split(EDU_RESOURCES)[1]
+    if (resourceRelativePath !in StyleResourcesManager.resourcesList) return false
+    val url = getResource(resourceRelativePath) ?: return false
     val bytes = url.readBytes()
     return sendData(bytes, url.file, request, context.channel())
   }

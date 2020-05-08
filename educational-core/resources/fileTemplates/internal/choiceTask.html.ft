@@ -70,4 +70,10 @@
     }
     return type;
   }
+
+  function getSelectedVariants() {
+    let htmlCollection = document.getElementsByTagName('input');
+    let checkedItems = [].slice.call(htmlCollection).filter(it => it.checked);
+    return checkedItems.map(it => it.id).join();
+  }
 </script>

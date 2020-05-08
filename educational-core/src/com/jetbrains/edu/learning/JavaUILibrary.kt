@@ -5,7 +5,7 @@ enum class JavaUILibrary {
     override fun toString() = "Swing"
   },
   JAVAFX {
-    override fun toString() = "JavaFx"
+    override fun toString() = "JavaFX"
   },
   JCEF {
     override fun toString() = "JCEF"

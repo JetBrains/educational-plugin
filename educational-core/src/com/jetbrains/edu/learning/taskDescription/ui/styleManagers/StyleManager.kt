@@ -12,6 +12,13 @@ import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
 import com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler.Companion.resourceWebUrl
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager.Companion.LOG
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.Companion.BROWSER_CSS
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.Companion.SCROLL_BARS_BASE_CSS
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.Companion.SCROLL_BARS_DARCULA_CSS
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.Companion.SCROLL_BARS_HIGH_CONTRAST_CSS
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.Companion.SCROLL_BARS_LIGHT_CSS
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.Companion.SCROLL_BARS_MAC_LINUX_SHAPE_CSS
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.Companion.SCROLL_BARS_WIN_SHAPE_CSS
 import kotlinx.css.Color
 import java.net.URL
 
@@ -34,15 +41,15 @@ class StyleManager {
   val textStyleHeader = "style=font-size:${bodyFontSize}"
 
   val scrollBarStylesheets = getScrollBarStylesheetsUrls()
-  val baseStylesheet = resourceUrl("/style/browser.css")
+  val baseStylesheet = resourceUrl(BROWSER_CSS)
 
   fun resources(content: String) = StyleResourcesManager(content).resources
 
   private fun getScrollBarStylesheetsUrls(): List<String> {
-    return listOf(resourceUrl("/style/scrollbars/base.css"),
-                  if (SystemInfo.isWindows) resourceUrl("/style/scrollbars/winShape.css")
-                      else resourceUrl("/style/scrollbars/macLinuxShape.css"),
-                  resourceUrl("/style/scrollbars/${resourceFileName()}.css"))
+    return listOf(resourceUrl(SCROLL_BARS_BASE_CSS),
+                  if (SystemInfo.isWindows) resourceUrl(SCROLL_BARS_WIN_SHAPE_CSS)
+                  else resourceUrl(SCROLL_BARS_MAC_LINUX_SHAPE_CSS),
+                  resourceUrl(scrollBarsCssFileName()))
   }
 
   private fun java.awt.Color.asCssColor(): Color = Color("#${ColorUtil.toHex(this)}")
@@ -54,6 +61,12 @@ class StyleManager {
   private fun codeBackground(): Color {
     return if (UIUtil.isUnderDarcula()) Color((TaskDescriptionBundle.message("darcula.code.background")))
     else Color(TaskDescriptionBundle.message("code.background"))
+  }
+
+  private fun scrollBarsCssFileName(): String = when {
+    isHighContrast() -> SCROLL_BARS_HIGH_CONTRAST_CSS
+    UIUtil.isUnderDarcula() -> SCROLL_BARS_DARCULA_CSS
+    else -> SCROLL_BARS_LIGHT_CSS
   }
 
   companion object {
@@ -83,14 +96,6 @@ private fun resourceFileUrl(name: String): String {
   else {
     LOG.warn("Cannot find resource: $name")
     ""
-  }
-}
-
-internal fun resourceFileName(): String {
-  return when {
-    isHighContrast() -> "highcontrast"
-    UIUtil.isUnderDarcula() -> "darcula"
-    else -> "light"
   }
 }
 
