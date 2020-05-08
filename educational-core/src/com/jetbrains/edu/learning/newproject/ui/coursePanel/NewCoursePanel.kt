@@ -52,12 +52,12 @@ private fun MatchGroupCollection.valueOrEmpty(groupName: String): String = this[
 class NewCoursePanel(
   val isStandalonePanel: Boolean,
   val isLocationFieldNeeded: Boolean,
-  startCourse: ((CourseInfo, CourseMode) -> Unit)? = null
+  val joinCourseAction: ((CourseInfo, CourseMode) -> Unit)? = null
 ) : JPanel() {
   var errorState: ErrorState = ErrorState.NothingSelected
   var course: Course? = null
 
-  private var header = HeaderPanel(leftMargin, startCourse ?: { course, mode -> joinCourse(course, mode) })
+  private var header = HeaderPanel(leftMargin, joinCourseAction ?: { course, mode -> joinCourse(course, mode) })
   private var description = CourseDescriptionPanel(leftMargin)
   private var advancedSettings = CourseSettings(isLocationFieldNeeded, leftMargin)
   private val errorLabel: HyperlinkLabel = HyperlinkLabel().apply { isVisible = false }

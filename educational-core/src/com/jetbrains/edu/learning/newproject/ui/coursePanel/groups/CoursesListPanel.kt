@@ -4,6 +4,8 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -12,9 +14,9 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.ScrollPaneConstants
 
-class CoursesListPanel(selectionChanged: () -> Unit, importCourseAction: AnAction) : JPanel(BorderLayout()) {
+class CoursesListPanel(selectionChanged: () -> Unit, joinCourse: (CourseInfo, CourseMode) -> Unit, importCourseAction: AnAction) : JPanel(BorderLayout()) {
   var bottomPanel: JPanel = JPanel(BorderLayout())
-  private val groupsComponent: GroupsComponent = GroupsComponent(selectionChanged)
+  private val groupsComponent: GroupsComponent = GroupsComponent(selectionChanged, joinCourse)
 
   init {
     background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
@@ -41,8 +43,8 @@ class CoursesListPanel(selectionChanged: () -> Unit, importCourseAction: AnActio
     return pane
   }
 
-  fun addGroup(titleString: String, courses: List<Course>) {
-    groupsComponent.addGroup(titleString, courses)
+  fun addGroup(titleString: String, courseInfos: List<CourseInfo>) {
+    groupsComponent.addGroup(titleString, courseInfos)
   }
 
   fun clear() {

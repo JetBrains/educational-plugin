@@ -39,7 +39,7 @@ private const val NO_COURSES = "NO_COURSES"
 abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel() {
   protected var coursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false, isLocationFieldNeeded = true)
   private var courses: MutableList<Course> = mutableListOf()
-  private val coursesListPanel: CoursesListPanel = CoursesListPanel(::processSelectionChanged, ImportCourseAction())
+  private val coursesListPanel: CoursesListPanel = CoursesListPanel(::processSelectionChanged, ::joinCourse, ImportCourseAction())
   private val myCourseListPanel: JPanel = JPanel(BorderLayout())
   private lateinit var myProgrammingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   private lateinit var myHumanLanguagesFilterDropdown: HumanLanguageFilterDropdown

@@ -1,12 +1,21 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 
+import com.intellij.ide.impl.ProjectUtil
 import com.intellij.ide.plugins.newui.ColorButton
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.runInEdt
 import com.intellij.ui.JBColor
 import com.intellij.util.NotNullProducer
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.joinJetBrainsAcademy
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
+import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.Color
 import java.awt.event.ActionListener
@@ -24,30 +33,46 @@ private val FocusedBackground: Color = JBColor.namedColor("EBrowseCourses.Button
 private val BorderColor: Color = JBColor.namedColor("BrowseCourses.Button.installBorderColor", GreenColor)
 
 
-// TODO: use proper button action and text. Problem: location and properties from info panel is needed
-class OpenCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit) : StartCourseButtonBase(joinCourse) {
-  override val courseMode = CourseMode.STUDY
+class OpenCourseButton(coursePath: String) : CourseButtonBase() {
 
   init {
     text = "Open"
-    setTextColor(ForegroundColor)
-    setFocusedTextColor(ForegroundColor)
-    setBgColor(BackgroundColor)
     setWidth72(this)
+
+    addActionListener {
+      ApplicationManager.getApplication().invokeAndWait {
+        val project = ProjectUtil.openProject(coursePath, null, true)
+        ProjectUtil.focusProjectWindow(project, true)
+      }
+    }
   }
-
-  override fun isVisible(course: Course): Boolean = true
-
-  override fun isVisible(): Boolean = false  // TODO: remove working on open button
 }
 
-class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit) : StartCourseButtonBase(joinCourse) {
+class JBAcademyCourseButton(course: JetBrainsAcademyCourse, fill: Boolean = true) : CourseButtonBase(fill) {
+
+  init {
+    text = if (HyperskillSettings.INSTANCE.account == null) "Log In" else "Start"
+    setWidth72(this)
+
+    addActionListener {
+      if (HyperskillSettings.INSTANCE.account == null) {
+        HyperskillConnector.getInstance().doAuthorize(
+          Runnable { runInEdt(ModalityState.stateForComponent(this)) { HyperskillProjectOpener.requestFocus() } },
+          Runnable { text = "Start" }
+        )
+      }
+      else {
+        joinJetBrainsAcademy(course) {}  // TODO: error handling
+      }
+    }
+  }
+}
+
+class StartCourseButton(fill: Boolean = true, joinCourse: (CourseInfo, CourseMode) -> Unit) : StartCourseButtonBase(joinCourse, fill) {
   override val courseMode = CourseMode.STUDY
 
   init {
     text = "Start"
-    setTextColor(FillForegroundColor)
-    setBgColor(FillBackgroundColor)
     setWidth72(this)
   }
 
@@ -60,9 +85,6 @@ class EditCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit) : StartCour
 
   init {
     text = "Edit"
-    setTextColor(ForegroundColor)
-    setFocusedTextColor(ForegroundColor)
-    setBgColor(BackgroundColor)
     setWidth72(this)
   }
 
@@ -73,15 +95,10 @@ class EditCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit) : StartCour
 /**
  * inspired by [com.intellij.ide.plugins.newui.InstallButton]
  */
-abstract class StartCourseButtonBase(private val joinCourse: (CourseInfo, CourseMode) -> Unit) : ColorButton() {
+abstract class StartCourseButtonBase(private val joinCourse: (CourseInfo, CourseMode) -> Unit,
+                                     fill: Boolean = false) : CourseButtonBase(fill) {
   private var listener: ActionListener? = null
   abstract val courseMode: CourseMode
-
-  init {
-    setFocusedBgColor(FocusedBackground)
-    setBorderColor(BorderColor)
-    setFocusedBorderColor(BorderColor)
-  }
 
   private fun actionListener(courseInfo: CourseInfo) = ActionListener {
     joinCourse(courseInfo, courseMode)
@@ -101,6 +118,17 @@ abstract class StartCourseButtonBase(private val joinCourse: (CourseInfo, Course
     listener?.apply { removeActionListener(listener) }
     listener = actionListener(courseInfo)
     addActionListener(listener)
+  }
+}
+
+abstract class CourseButtonBase(fill: Boolean = false) : ColorButton() {
+  init {
+    setTextColor(if (fill) FillForegroundColor else ForegroundColor)
+    setBgColor(if (fill) FillBackgroundColor else BackgroundColor)
+    setFocusedBgColor(FocusedBackground)
+    setBorderColor(BorderColor)
+    setFocusedBorderColor(BorderColor)
+    setFocusedTextColor(ForegroundColor)
   }
 }
 

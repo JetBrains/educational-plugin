@@ -3,8 +3,9 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseCardComponent
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.Color
 import javax.swing.JLabel
@@ -16,7 +17,8 @@ const val TOP_BOTTOM = 4
 const val LEFT_RIGHT = 10
 
 class CoursesGroupPanel(titleString: String,
-                        courses: List<Course>,
+                        courseInfos: List<CourseInfo>,
+                        joinCourse: (CourseInfo, CourseMode) -> Unit,
                         updateModel: (courseCardComponent: CourseCardComponent) -> Unit) : JPanel(VerticalFlowLayout(0, 0)) {
   init {
     background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
@@ -30,8 +32,8 @@ class CoursesGroupPanel(titleString: String,
 
     add(titleLabel)
 
-    for (course in courses) {
-      val courseCardComponent = CourseCardComponent(course)
+    for (courseInfo in courseInfos) {
+      val courseCardComponent = CourseCardComponent(courseInfo, joinCourse)
       updateModel(courseCardComponent)
       courseCardComponent.updateColors(false)
       add(courseCardComponent)

@@ -14,6 +14,14 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
     state.addCourse(course, location, tasksSolved, tasksTotal)
   }
 
+  fun getCoursePath(course: Course) : String? {
+    return state.courses.find { it.name == course.name && it.id == course.id }?.location
+  }
+
+  fun getCourseMetaInfo(course: Course) : CourseMetaInfo? {
+    return state.courses.find { it.name == course.name && it.id == course.id }
+  }
+
   fun updateCourseProgress(course: Course, location: String, tasksSolved: Int, tasksTotal: Int) {
     state.updateCourseProgress(course, location, tasksSolved, tasksTotal)
   }

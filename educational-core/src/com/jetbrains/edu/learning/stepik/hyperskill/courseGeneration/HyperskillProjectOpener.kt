@@ -185,7 +185,7 @@ object HyperskillProjectOpener {
 
   // We have to use visible frame here because project is not yet created
   // See `com.intellij.ide.impl.ProjectUtil.focusProjectWindow` implementation for more details
-  private fun requestFocus() {
+  fun requestFocus() {
     val frame = WindowManager.getInstance().findVisibleFrame()
     if (frame is IdeFrame) {
       AppIcon.getInstance().requestFocus(frame)

@@ -30,7 +30,7 @@ class NameAndInfoPanel(joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel() 
   private val infoPanel = InfoPanel()
   private var tagsPanel: TagsPanel = TagsPanel()
   private var baselinePanel: BaselinePanel = BaselinePanel()
-  private val startButton: StartCourseButtonBase = StartCourseButton(joinCourse)
+  private val startButton: StartCourseButtonBase = StartCourseButton(true, joinCourse)
   private val editButton: StartCourseButtonBase = EditCourseButton(joinCourse)
 
   init {

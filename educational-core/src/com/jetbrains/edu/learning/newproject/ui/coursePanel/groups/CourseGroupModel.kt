@@ -90,7 +90,7 @@ class CourseGroupModel(private var selectionListener: () -> Unit) {
   fun setSelection(courseToSelect: Course?) {
     if (courseToSelect == null) return
 
-    val component = courseCards.firstOrNull { it.course == courseToSelect }
+    val component = courseCards.firstOrNull { it.courseInfo.course == courseToSelect }
     setSelection(component)
   }
 
