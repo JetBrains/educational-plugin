@@ -5,6 +5,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -169,10 +170,7 @@ object HyperskillCheckConnector {
 fun Submission.toCheckResult(task: Task): CheckResult {
   val status = status ?: return CheckResult.FAILED_TO_CHECK
   val isSolved = status != "wrong"
-  var message = hint
-  if (message == null || message.isEmpty()) {
-    message = StringUtil.capitalize(status) + " solution"
-  }
+  var message = hint.nullize() ?: "${StringUtil.capitalize(status)} solution"
   if (isSolved) {
     message = "<html>$message<br/><br/>${EduCoreBundle.message("hyperskill.continue", task.feedbackLink.link!!, EduNames.JBA)}</html>"
   }
