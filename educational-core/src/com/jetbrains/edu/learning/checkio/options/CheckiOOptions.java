@@ -19,7 +19,6 @@ public abstract class CheckiOOptions extends OauthOptions<CheckiOAccount> {
   protected CheckiOOptions(@NotNull CheckiOOAuthConnector oauthConnector) {
     super();
     myOAuthConnector = oauthConnector;
-    initAccounts();
   }
 
   protected abstract String getApiHost();
@@ -31,10 +30,10 @@ public abstract class CheckiOOptions extends OauthOptions<CheckiOAccount> {
   }
 
   @Override
-  public void setCurrentAccount(@Nullable CheckiOAccount lastSavedAccount) {
-    myOAuthConnector.setAccount(lastSavedAccount);
+  public void setCurrentAccount(@Nullable CheckiOAccount account) {
+    myOAuthConnector.setAccount(account);
     MessageBus messageBus = ApplicationManager.getApplication().getMessageBus();
-    if (lastSavedAccount != null) {
+    if (account != null) {
       messageBus.syncPublisher(CheckiOOAuthConnector.getAuthorizationTopic()).userLoggedIn();
     }
     else {

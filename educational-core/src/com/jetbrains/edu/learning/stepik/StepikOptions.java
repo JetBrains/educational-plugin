@@ -27,10 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.event.HyperlinkEvent;
 
 public class StepikOptions extends OauthOptions<StepikUser> {
-  public StepikOptions() {
-    initAccounts();
-  }
-
   @Nullable
   @Override
   public StepikUser getCurrentAccount() {
@@ -38,8 +34,8 @@ public class StepikOptions extends OauthOptions<StepikUser> {
   }
 
   @Override
-  public void setCurrentAccount(@Nullable StepikUser lastSavedAccount) {
-    EduSettings.getInstance().setUser(lastSavedAccount);
+  public void setCurrentAccount(@Nullable StepikUser stepikUser) {
+    EduSettings.getInstance().setUser(stepikUser);
   }
 
   @NotNull

@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill.settings
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.ui.components.JBCheckBox
-import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OauthOptions
@@ -19,22 +18,18 @@ import javax.swing.event.HyperlinkEvent
 class HyperskillOptions : OauthOptions<HyperskillAccount>() {
   private var automaticUpdateCheckBox: JBCheckBox = JBCheckBox(EduCoreBundle.message("hyperskill.settings.auto.update"), HyperskillSettings.INSTANCE.updateAutomatically)
 
-  init {
-    initAccounts()
-  }
-
   override fun getCurrentAccount() : HyperskillAccount? = HyperskillSettings.INSTANCE.account
 
   override fun isAvailable(): Boolean = isHyperskillSupportAvailable()
 
-  override fun setCurrentAccount(lastSavedAccount: HyperskillAccount?) {
-    HyperskillSettings.INSTANCE.account = lastSavedAccount
+  override fun setCurrentAccount(account: HyperskillAccount?) {
+    HyperskillSettings.INSTANCE.account = account
     val messageBus = ApplicationManager.getApplication().messageBus
-    if (lastSavedAccount != null) {
-      messageBus.syncPublisher<EduLogInListener>(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedIn()
+    if (account != null) {
+      messageBus.syncPublisher(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedIn()
     }
     else {
-      messageBus.syncPublisher<EduLogInListener>(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedOut()
+      messageBus.syncPublisher(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedOut()
     }
   }
 

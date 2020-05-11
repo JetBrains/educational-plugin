@@ -26,7 +26,7 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
   private var initialAccount: T? = null
 
   abstract fun getCurrentAccount(): T?
-  abstract fun setCurrentAccount(lastSavedAccount: T?)
+  abstract fun setCurrentAccount(account: T?)
   abstract fun getProfileUrl(userInfo: Any): String
   protected abstract fun createAuthorizeListener(): LoginListener
 
@@ -53,7 +53,7 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
 
   protected open fun getAdditionalComponents(): List<JComponent> = emptyList()
 
-  protected fun initAccounts() {
+  private fun initAccounts() {
     initialAccount = getCurrentAccount()
     lastSavedAccount = getCurrentAccount()
   }
@@ -81,7 +81,7 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
 
   override fun createComponent(): JComponent? {
     initUI()
-    lastSavedAccount = getCurrentAccount()
+    initAccounts()
     return mainPanel
   }
 
@@ -90,20 +90,19 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
   }
 
   override fun reset() {
-    updateAccounts()
-  }
-
-  private fun updateAccounts() {
+    if (lastSavedAccount != initialAccount) {
+      setCurrentAccount(initialAccount)
+    }
     lastSavedAccount = initialAccount
-    setCurrentAccount(initialAccount)
     updateLoginLabels()
   }
 
   override fun apply() {
     if (isModified) {
       initialAccount = lastSavedAccount
+      setCurrentAccount(initialAccount)
+      updateLoginLabels()
     }
-    updateAccounts()
   }
 
   protected fun updateLoginLabels() {
@@ -125,10 +124,6 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
     }
 
     loginLink.addHyperlinkListener(loginListener)
-  }
-
-  override fun disposeUIResources() {
-    setCurrentAccount(initialAccount)
   }
 
   protected open fun createLogoutListener(): HyperlinkAdapter {
