@@ -243,7 +243,7 @@ abstract class HyperskillConnector {
       }
       currentPage += 1
     }
-    HyperskillSubmissionsManager.putToSubmissions(allSubmissions)
+    HyperskillSubmissionsManager.putToSubmissions(stepIds, allSubmissions)
     return allSubmissions
   }
 

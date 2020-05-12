@@ -14,10 +14,12 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
 object HyperskillSubmissionsManager : SubmissionsManager() {
 
-  fun putToSubmissions(submissionsList: List<Submission>?) {
+  fun putToSubmissions(stepIds: Set<Int>, submissionsList: List<Submission>?) {
     if(submissionsList == null) return
-    //problem here
-    submissionsList.forEach { addToSubmissionsMap(it.step, it) }
+    for(stepId in stepIds) {
+      val submissionsToStep = submissionsList.filter { it.step == stepId }
+      putToSubmissions(stepId, submissionsToStep.toMutableList())
+    }
   }
 
   fun getLastSubmission(taskId: Int): Submission? {
@@ -33,11 +35,14 @@ object HyperskillSubmissionsManager : SubmissionsManager() {
 
   private fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
     val submissionsFromMemory = mutableListOf<Submission>()
-    for(stepId in stepIds) {
-      val submissionsByStep = submissions[stepId] ?: return null
+    for (stepId in stepIds) {
+      val submissionsByStep = submissions[stepId] ?: continue
       submissionsFromMemory.addAll(submissionsByStep)
     }
-    return submissionsFromMemory.sortedByDescending { it.time }.toList()
+    return if (submissionsFromMemory.isEmpty()) null
+    else {
+      submissionsFromMemory.sortedByDescending { it.time }.toList()
+    }
   }
 
   public override fun loadAllSubmissions(project: Project, course: Course?) {
