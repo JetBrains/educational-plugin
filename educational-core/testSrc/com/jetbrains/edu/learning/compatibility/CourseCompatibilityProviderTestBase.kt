@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.compatibility
 
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.lang.Language
-import com.intellij.openapi.extensions.PluginId
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import kotlin.reflect.KClass
@@ -17,17 +16,20 @@ abstract class CourseCompatibilityProviderTestBase(private val clazz: KClass<out
 
     for (extensionPoint in extensionPoints) {
       val languageId = extensionPoint.language
-      val courseType = extensionPoint.courseType
       val environment = extensionPoint.environment
 
-      val lang = Language.findLanguageByID(extensionPoint.language) ?: error("Cannot find language with `$languageId` id")
+      if (Language.findLanguageByID(extensionPoint.language) == null) {
+        error("Cannot find language with `$languageId` id")
+      }
 
       val compatibilityProvider = extensionPoint.instance
       val requiredPlugins = compatibilityProvider.requiredPlugins()
-      val configurator = EduConfiguratorManager.findExtension(courseType, environment, lang)
+      val configurators = EduConfiguratorManager.allExtensions()
+        .filter { it.language == languageId && it.environment == environment }
+        .map { it.instance }
 
       if (requiredPlugins != null) {
-        check(configurator != null) { "Cannot find configurator for ${clazz.qualifiedName}" }
+        check(configurators.isNotEmpty()) { "Cannot find configurator for ${clazz.qualifiedName}" }
 
         for (info in requiredPlugins) {
           // BACKCOMPAT: 2019.3
@@ -36,8 +38,8 @@ abstract class CourseCompatibilityProviderTestBase(private val clazz: KClass<out
         }
       }
       else {
-        check(configurator == null) {
-          """Unexpected `${configurator!!.javaClass.simpleName}` configurator for (languageId: "$languageId", environment: "$environment", courseType: "$courseType")"""
+        check(configurators.isEmpty()) {
+          """Unexpected `$configurators` configurators for (languageId: "$languageId", environment: "$environment")"""
         }
       }
     }
