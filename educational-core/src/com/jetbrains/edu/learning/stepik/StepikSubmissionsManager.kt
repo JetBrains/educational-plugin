@@ -42,11 +42,6 @@ object StepikSubmissionsManager : SubmissionsManager() {
   }
 
   @JvmStatic
-  fun getAllStepikSubmissions(taskId: Int): MutableList<Submission> {
-    return super.getAllSubmissions(taskId)
-  }
-
-  @JvmStatic
   fun getLastSubmissionReply(taskId: Int, isSolved: Boolean): Reply? {
     return getLastSubmission(taskId, isSolved)?.reply
   }
@@ -59,8 +54,7 @@ object StepikSubmissionsManager : SubmissionsManager() {
   @JvmStatic
   fun isLastSubmissionUpToDate(task: Task, isSolved: Boolean): Boolean {
     if (task is TheoryTask) return true
-    val submission = getLastSubmission(task.id, isSolved)
-                     ?: return false
+    val submission = getLastSubmission(task.id, isSolved) ?: return false
     return submission.time?.after(task.updateDate) ?: false
   }
 
@@ -74,13 +68,20 @@ object StepikSubmissionsManager : SubmissionsManager() {
     return loadAllSubmissions(project, course)
   }
 
+  private fun getAllSubmissions(stepId: Int): MutableList<Submission> {
+    return submissions.getOrPut(stepId) {StepikConnector.getInstance().getAllSubmissions(stepId) }
+  }
+
   override fun loadAllSubmissions(project: Project, course: Course?) {
-    if (course is EduCourse && course.isRemote && !isLoggedIn()) {
+    if (course is EduCourse && course.isRemote && isLoggedIn()) {
       ApplicationManager.getApplication().executeOnPooledThread {
         val allTasks: List<Task> = course.allTasks
         for (task in allTasks) {
-          if (task is CodeTask || task is ChoiceTask || task is EduTask) {
-            getAllStepikSubmissions(task.id)
+          if(task is ChoiceTask) {
+            putToSubmissions(task.id, mutableListOf())
+          }
+          else if (task is CodeTask || task is EduTask) {
+            getAllSubmissions(task.id)
           }
         }
         ApplicationManager.getApplication().invokeLater {
@@ -90,15 +91,11 @@ object StepikSubmissionsManager : SubmissionsManager() {
     }
   }
 
-  override fun loadAllSubmissions(stepId: Int): MutableList<Submission> {
-     return StepikConnector.getInstance().getAllSubmissions(stepId)
-  }
-
   override fun submissionsCanBeShown(course: Course): Boolean {
-    return course !is EduCourse || !course.isStudy || !course.isRemote
+    return course is EduCourse && course.isStudy && course.isRemote
   }
 
-  override fun platformName(): String = STEPIK
+  override fun getPlatformName(): String = STEPIK
 
   override fun isLoggedIn(): Boolean = EduSettings.isLoggedIn()
 
