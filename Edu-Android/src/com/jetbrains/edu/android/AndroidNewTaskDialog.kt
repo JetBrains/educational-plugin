@@ -59,13 +59,13 @@ class AndroidNewTaskAfterPopupDialog(
       comboBoxWrapper.combobox.isEnabled = true
     })
     addTextValidator(packageNameField) { text ->
-      if (text == null) return@addTextValidator EduAndroidBundle.message("empty.package")
+      if (text == null) return@addTextValidator EduAndroidBundle.message("error.no.package")
       AndroidUtils.validateAndroidPackageName(text)
     }
 
     with(builder) {
-      row(EduAndroidBundle.message("package.row")) { packageNameField() }
-      row(EduAndroidBundle.message("min.sdk.row")) { comboBoxWrapper.combobox(CCFlags.growX) }
+      row(EduAndroidBundle.message("package.colon")) { packageNameField() }
+      row(EduAndroidBundle.message("min.sdk.colon")) { comboBoxWrapper.combobox(CCFlags.growX) }
     }
   }
 

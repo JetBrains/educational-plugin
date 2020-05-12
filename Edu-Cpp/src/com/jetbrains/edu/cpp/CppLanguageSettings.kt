@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
@@ -41,7 +42,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
       notifyListeners()
     }
 
-    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(langStandardComboBox, EduCppBundle.message("cpp.standard"), BorderLayout.WEST))
+    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(langStandardComboBox, CPP_STANDARD_PREFIX, BorderLayout.WEST))
   }
 
   override fun getLanguageVersions(): List<String> {
@@ -50,7 +51,12 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? = when {
     courseLocation != null && SystemInfo.isWindows && !IOUtil.isAscii(courseLocation) ->
-      ValidationMessage(EduCppBundle.message("non.ascii.warning"), type = WARNING)
+      ValidationMessage(EduCppBundle.message("error.non.ascii"), type = WARNING)
     else -> null
+  }
+
+  companion object {
+    @NonNls
+    private const val CPP_STANDARD_PREFIX = "C++ Standard"
   }
 }

@@ -43,7 +43,7 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
   }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    return if (locationField.text.isEmpty()) ValidationMessage(EduAndroidBundle.message("specify.android.sdk.location")) else null
+    return if (locationField.text.isEmpty()) ValidationMessage(EduAndroidBundle.message("error.no.sdk")) else null
   }
 
   // Inspired by [com.android.tools.idea.updater.configure.SdkUpdaterConfigPanel#setUpSingleSdkChooser]

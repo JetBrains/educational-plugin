@@ -53,7 +53,7 @@ class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
 
   // https://golang.org/ref/spec#Import_declarations
   override fun validateItemName(name: String, itemType: StudyItemType): String? {
-    return if (itemType == StudyItemType.TASK && name.contains(FORBIDDEN_SYMBOLS)) EduGoBundle.message("invalid.item.name.message") else null
+    return if (itemType == StudyItemType.TASK && name.contains(FORBIDDEN_SYMBOLS)) EduGoBundle.message("error.invalid.name") else null
   }
 
   /**

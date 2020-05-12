@@ -79,7 +79,7 @@ class CppCourseBuilder(
   }
 
   override fun validateItemName(name: String, itemType: StudyItemType): String? =
-    if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else EduCppBundle.message("validate.item.name.message")
+    if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else EduCppBundle.message("error.invalid.name")
 
   companion object {
     private val LOG: Logger = Logger.getInstance(CppCourseBuilder::class.java)

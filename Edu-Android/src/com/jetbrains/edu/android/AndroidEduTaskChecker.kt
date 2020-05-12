@@ -78,8 +78,8 @@ class AndroidChecker(task: EduTask, envChecker: EnvironmentChecker, project: Pro
 
     Messages.showInfoMessage(
       project,
-      EduAndroidBundle.message("android.emulator.not.found.message"),
-      EduAndroidBundle.message("android.emulator.not.found.title")
+      EduAndroidBundle.message("error.no.emulator.message"),
+      EduAndroidBundle.message("error.no.emulator.title")
     )
 
     val avdOptionsModel = AvdOptionsModel(null)

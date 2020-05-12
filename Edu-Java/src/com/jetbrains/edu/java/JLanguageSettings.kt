@@ -47,7 +47,7 @@ class JLanguageSettings : JdkLanguageSettings() {
         val providedJavaVersion = jdkItem?.jdk?.versionString ?: return ValidationMessage(EduJavaBundle.message("error.no.jdk"))
 
         val javaSdkVersion = JavaSdkVersion.fromVersionString(providedJavaVersion)
-                             ?: return ValidationMessage(EduJavaBundle.message("failed.to.get.java.version"))
+                             ?: return ValidationMessage(EduJavaBundle.message("failed.determine.java.version"))
         if (javaSdkVersion.isAtLeast(courseJavaVersion)) {
           return null
         }
