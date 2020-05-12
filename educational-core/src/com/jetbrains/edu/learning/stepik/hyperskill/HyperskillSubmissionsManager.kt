@@ -14,6 +14,12 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
 object HyperskillSubmissionsManager : SubmissionsManager() {
 
+  fun putToSubmissions(submissionsList: List<Submission>?) {
+    if(submissionsList == null) return
+    //problem here
+    submissionsList.forEach { addToSubmissionsMap(it.step, it) }
+  }
+
   fun getLastSubmission(taskId: Int): Submission? {
     val submissionsList = submissions[taskId] ?: return null
     if(submissionsList.isEmpty()) return null
@@ -21,28 +27,35 @@ object HyperskillSubmissionsManager : SubmissionsManager() {
     return submissionsList[0]
   }
 
+  fun getAllSubmissions(stepIds: Set<Int>): List<Submission>? {
+    return getSubmissionsFromMemory(stepIds) ?: HyperskillConnector.getInstance().getSubmissions(stepIds)
+  }
+
+  private fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
+    val submissionsFromMemory = mutableListOf<Submission>()
+    for(stepId in stepIds) {
+      val submissionsByStep = submissions[stepId] ?: return null
+      submissionsFromMemory.addAll(submissionsByStep)
+    }
+    return submissionsFromMemory.sortedByDescending { it.time }.toList()
+  }
+
   public override fun loadAllSubmissions(project: Project, course: Course?) {
     if (course !is HyperskillCourse || !isLoggedIn()) return
     if (course.isStudy && HyperskillSettings.INSTANCE.account != null) {
       ApplicationManager.getApplication().executeOnPooledThread {
-        val stages = course.stages
-        for (stage in stages) {
-          getAllSubmissions(stage.stepId)
-        }
+        val stepIds = course.stages.map { it.stepId }.toSet()
+        getAllSubmissions(stepIds)
         ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
       }
     }
-  }
-
-  override fun loadAllSubmissions(stepId: Int): MutableList<Submission> {
-    return HyperskillConnector.getInstance().getAllSubmissions(stepId)
   }
 
   override fun submissionsCanBeShown(course: Course): Boolean {
     return course is HyperskillCourse && course.isStudy
   }
 
-  override fun platformName(): String = EduNames.JBA
+  override fun getPlatformName(): String = EduNames.JBA
 
   override fun isLoggedIn(): Boolean = HyperskillSettings.INSTANCE.account != null
 

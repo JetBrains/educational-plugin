@@ -57,10 +57,6 @@ abstract class SubmissionsManager {
     }
   }
 
-  fun getAllSubmissions(stepId: Int): MutableList<Submission> {
-    return submissions.getOrPut(stepId) { loadAllSubmissions(stepId) }
-  }
-
   private fun getSubmissionsFromMemory(taskId: Int): List<Submission>? {
     return submissions[taskId]
   }
@@ -100,7 +96,7 @@ abstract class SubmissionsManager {
       if (submissionsContent != null) {
         val submissionsPanel = submissionsContent.component
         if (submissionsPanel is AdditionalTabPanel) {
-          ApplicationManager.getApplication().invokeLater { submissionsPanel.addLoadingPanel(platformName()) }
+          ApplicationManager.getApplication().invokeLater { submissionsPanel.addLoadingPanel(getPlatformName()) }
         }
       }
     }
@@ -111,11 +107,9 @@ abstract class SubmissionsManager {
 
   protected abstract fun loadAllSubmissions(project: Project, course: Course?)
 
-  protected abstract fun loadAllSubmissions(stepId: Int): MutableList<Submission>
-
   protected abstract fun submissionsCanBeShown(course: Course): Boolean
 
-  protected abstract fun platformName(): String
+  protected abstract fun getPlatformName(): String
 
   protected abstract fun isLoggedIn(): Boolean
 
@@ -124,7 +118,7 @@ abstract class SubmissionsManager {
   private fun addLoginLink(descriptionText: StringBuilder,
                            submissionsPanel: AdditionalTabPanel) {
     descriptionText.append("<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(hyperlinkColor())}" +
-                           " href=>${EduCoreBundle.message("submissions.login", platformName(), "</a><a ${StyleManager().textStyleHeader}>")}")
+                           " href=>${EduCoreBundle.message("submissions.login", getPlatformName(), "</a><a ${StyleManager().textStyleHeader}>")}")
     submissionsPanel.addHyperlinkListener(HyperlinkListener { e ->
       if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
         doAuthorize()
