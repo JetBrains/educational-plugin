@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.projectView.ProgressUtil
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
@@ -36,6 +37,7 @@ class HyperskillCheckListener : CheckListener {
       }
       ApplicationManager.getApplication().executeOnPooledThread {
         val submission = HyperskillCheckConnector.postSolution(task, project, result)
+        submission?.status = if (task.status == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
         HyperskillSubmissionsManager.addToSubmissionsMap(task.id,submission)
         runInEdt { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
       }
