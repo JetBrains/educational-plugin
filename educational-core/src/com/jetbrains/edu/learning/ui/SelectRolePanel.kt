@@ -54,7 +54,7 @@ class SelectRolePanel : JPanel() {
     teacherPanel.add(teacher)
     teacherPanel.add(JLabel("Educator", SwingConstants.CENTER))
     teacher.addMouseListener(object : MouseAdapter() {
-      override fun mouseClicked(e: MouseEvent?) {
+      override fun mousePressed(e: MouseEvent?) {
         PropertiesComponent.getInstance().setValue(CCPluginToggleAction.COURSE_CREATOR_ENABLED, true)
         myStudent.icon = EducationalCoreIcons.Student
         teacher.icon = EducationalCoreIcons.TeacherHover
