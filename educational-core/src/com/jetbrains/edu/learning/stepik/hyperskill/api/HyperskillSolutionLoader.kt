@@ -37,7 +37,8 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
       }
     }
 
-    return if (files.isEmpty()) TaskSolutions.EMPTY else TaskSolutions.withEmptyPlaceholders(lastSubmission.status.toCheckStatus(), files)
+    return if (files.isEmpty()) TaskSolutions.EMPTY
+    else TaskSolutions.withEmptyPlaceholders(lastSubmission.time, lastSubmission.status.toCheckStatus(), files)
   }
 
   override fun loadSubmissions(tasks: List<Task>): List<Submission>? {

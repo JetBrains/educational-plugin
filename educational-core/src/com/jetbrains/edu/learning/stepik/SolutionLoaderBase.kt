@@ -29,8 +29,10 @@ import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.update.UpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
+import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
+import kotlin.collections.HashMap
 
 abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
@@ -246,6 +248,12 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
           for (taskFile in task.taskFiles.values) {
             val (solutionText, placeholders) = taskSolutions.solutions[taskFile.name] ?: continue
             val vFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
+            val solutionDate = taskSolutions.date
+            val vFileModificationDate = Date(vFile.timeStamp)
+            if (!EduUtils.isNewlyCreated(project) && solutionDate != null && vFileModificationDate.isSignificantlyAfter(solutionDate)) {
+              //means that file was modified locally since solution was made
+              continue
+            }
             if (EduUtils.isTestsFile(project, vFile)) continue
             updatePlaceholders(taskFile, placeholders)
             try {
@@ -268,16 +276,17 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   }
 
   protected class TaskSolutions @JvmOverloads constructor(
+    val date: Date?,
     val checkStatus: CheckStatus,
     val solutions: Map<String, Pair<String, List<AnswerPlaceholder>>> = emptyMap(),
     val hasIncompatibleSolutions: Boolean = false
   ) {
     companion object {
-      val EMPTY = TaskSolutions(CheckStatus.Unchecked)
-      val INCOMPATIBLE = TaskSolutions(CheckStatus.Unchecked, hasIncompatibleSolutions = true)
+      val EMPTY = TaskSolutions(null, CheckStatus.Unchecked)
+      val INCOMPATIBLE = TaskSolutions(null, CheckStatus.Unchecked, hasIncompatibleSolutions = true)
 
-      fun withEmptyPlaceholders(checkStatus: CheckStatus, taskFiles: Map<String, String>): TaskSolutions {
-        return TaskSolutions(checkStatus, taskFiles.mapValues {
+      fun withEmptyPlaceholders(date: Date?, checkStatus: CheckStatus, taskFiles: Map<String, String>): TaskSolutions {
+        return TaskSolutions(date, checkStatus, taskFiles.mapValues {
           @Suppress("RemoveExplicitTypeArguments") // type required by compiler
           it.value to emptyList<AnswerPlaceholder>()
         })
