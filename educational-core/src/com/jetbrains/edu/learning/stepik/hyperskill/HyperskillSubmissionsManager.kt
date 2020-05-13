@@ -23,13 +23,6 @@ object HyperskillSubmissionsManager : SubmissionsManager() {
     }
   }
 
-  fun getLastSubmission(taskId: Int): Submission? {
-    val submissionsList = submissions[taskId] ?: return null
-    if(submissionsList.isEmpty()) return null
-    submissionsList.sortedByDescending { it.time }
-    return submissionsList[0]
-  }
-
   fun getAllSubmissions(stepIds: Set<Int>): List<Submission>? {
     return getSubmissionsFromMemory(stepIds) ?: HyperskillConnector.getInstance().getSubmissions(stepIds)
   }
