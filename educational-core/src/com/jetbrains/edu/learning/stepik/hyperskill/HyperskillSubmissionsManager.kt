@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -36,7 +37,7 @@ object HyperskillSubmissionsManager : SubmissionsManager() {
   private fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
     val submissionsFromMemory = mutableListOf<Submission>()
     for (stepId in stepIds) {
-      val submissionsByStep = submissions[stepId] ?: continue
+      val submissionsByStep = submissions[stepId] ?: return null
       submissionsFromMemory.addAll(submissionsByStep)
     }
     return if (submissionsFromMemory.isEmpty()) null
@@ -48,7 +49,8 @@ object HyperskillSubmissionsManager : SubmissionsManager() {
   public override fun loadAllSubmissions(project: Project, course: Course?) {
     if (!submissionsCanBeShown(course)|| !isLoggedIn()) return
       ApplicationManager.getApplication().executeOnPooledThread {
-        val stepIds = (course as HyperskillCourse).stages.map { it.stepId }.toSet()
+        val stepIds = HyperskillSolutionLoader.getInstance(project).provideTasksToUpdate(course!!).map { it.id }.toSet()
+//        val stepIds = (course as HyperskillCourse).stages.map { it.stepId }.toSet()
         getAllSubmissions(stepIds)
         ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
       }

@@ -200,7 +200,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   protected abstract val loadingTopic: Topic<SolutionLoadingListener>
   protected abstract fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions
   protected abstract fun loadSubmissions(tasks: List<Task>): List<Submission>?
-  protected abstract fun provideTasksToUpdate(course: Course): List<Task>
+  abstract fun provideTasksToUpdate(course: Course): List<Task>
 
   interface SolutionLoadingListener {
     fun solutionLoaded(course: Course)
