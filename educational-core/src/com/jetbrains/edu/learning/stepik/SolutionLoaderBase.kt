@@ -32,7 +32,6 @@ import java.io.IOException
 import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
-import kotlin.collections.HashMap
 
 abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
