@@ -73,8 +73,8 @@ import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Point
+import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.awt.event.MouseMotionAdapter
 import java.util.*
 import javax.swing.*
 import kotlin.collections.HashSet
@@ -466,6 +466,7 @@ class CoursesPanel(
     myCoursesList.addListSelectionListener { processSelectionChanged() }
     myCoursesList.border = null
     myCoursesList.background = getTaskDescriptionBackgroundColor()
+    myCoursesList.addMouseListener(CourseMouseMotionListener())
     myCoursesList.addMouseMotionListener(CourseMouseMotionListener())
 
     val searchPanel = createSearchPanel()
@@ -578,11 +579,18 @@ class CoursesPanel(
     }
   }
 
-  private inner class CourseMouseMotionListener : MouseMotionAdapter() {
+  private inner class CourseMouseMotionListener : MouseAdapter() {
     override fun mouseMoved(event: MouseEvent) {
       val hoveredIndex = myCoursesList.locationToIndex(event.point)
       if (this@CoursesPanel.hoveredIndex != hoveredIndex) {
         this@CoursesPanel.hoveredIndex = hoveredIndex
+        myCoursesList.repaint()
+      }
+    }
+
+    override fun mouseExited(event: MouseEvent?) {
+      if (this@CoursesPanel.hoveredIndex != -1) {
+        this@CoursesPanel.hoveredIndex = -1
         myCoursesList.repaint()
       }
     }
