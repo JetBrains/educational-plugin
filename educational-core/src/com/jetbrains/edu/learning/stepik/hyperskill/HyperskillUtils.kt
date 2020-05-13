@@ -94,7 +94,10 @@ class HSPeekSolutionAction : CompareWithAnswerAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = getEduState(project)?.task ?: return
-    BrowserUtil.browse("${stepLink(task.id)}#solutions")
+    val course = task.course as? HyperskillCourse ?: return
+    val url = if (course.isTaskInProject(task)) task.feedbackLink.link else stepLink(task.id)
+    if (url.isNullOrEmpty()) return
+    BrowserUtil.browse("$url#solutions")
   }
 
   companion object {

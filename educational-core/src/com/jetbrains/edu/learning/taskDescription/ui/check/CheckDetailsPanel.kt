@@ -107,11 +107,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
   }
 
   private fun getPeekSolutionAction(task: Task): String {
-    val course = task.course
-    if (course is HyperskillCourse && !course.isTaskInProject(task)) {
-      return HSPeekSolutionAction.ACTION_ID
-    }
-    return CompareWithAnswerAction.ACTION_ID
+    return if (task.course is HyperskillCourse) HSPeekSolutionAction.ACTION_ID else CompareWithAnswerAction.ACTION_ID
   }
 
   private class ShowFullOutputAction(private val project: Project, private val text: String) : DumbAwareAction(null as String?) {
