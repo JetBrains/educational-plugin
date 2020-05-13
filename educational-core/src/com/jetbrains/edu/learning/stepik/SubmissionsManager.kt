@@ -107,7 +107,7 @@ abstract class SubmissionsManager {
 
   protected abstract fun loadAllSubmissions(project: Project, course: Course?)
 
-  protected abstract fun submissionsCanBeShown(course: Course): Boolean
+  protected abstract fun submissionsCanBeShown(course: Course?): Boolean
 
   protected abstract fun getPlatformName(): String
 

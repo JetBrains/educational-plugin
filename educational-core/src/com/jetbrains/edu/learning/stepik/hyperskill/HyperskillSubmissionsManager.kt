@@ -46,17 +46,15 @@ object HyperskillSubmissionsManager : SubmissionsManager() {
   }
 
   public override fun loadAllSubmissions(project: Project, course: Course?) {
-    if (course !is HyperskillCourse || !isLoggedIn()) return
-    if (course.isStudy && HyperskillSettings.INSTANCE.account != null) {
+    if (!submissionsCanBeShown(course)|| !isLoggedIn()) return
       ApplicationManager.getApplication().executeOnPooledThread {
-        val stepIds = course.stages.map { it.stepId }.toSet()
+        val stepIds = (course as HyperskillCourse).stages.map { it.stepId }.toSet()
         getAllSubmissions(stepIds)
         ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
       }
-    }
   }
 
-  override fun submissionsCanBeShown(course: Course): Boolean {
+  override fun submissionsCanBeShown(course: Course?): Boolean {
     return course is HyperskillCourse && course.isStudy
   }
 

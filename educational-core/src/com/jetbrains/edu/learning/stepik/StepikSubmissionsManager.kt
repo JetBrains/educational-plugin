@@ -91,7 +91,7 @@ object StepikSubmissionsManager : SubmissionsManager() {
     }
   }
 
-  override fun submissionsCanBeShown(course: Course): Boolean {
+  override fun submissionsCanBeShown(course: Course?): Boolean {
     return course is EduCourse && course.isStudy && course.isRemote
   }
 
