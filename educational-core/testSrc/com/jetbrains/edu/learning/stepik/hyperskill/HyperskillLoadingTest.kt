@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.NextTaskAction
@@ -37,6 +40,48 @@ class HyperskillLoadingTest : NavigationTestBase() {
         dir("task") {
           dir("src") {
             file("Task.kt", "fun userFoo() {}")
+            file("Baz.kt", "fun userBaz() {}")
+          }
+          dir("test") {
+            file("Tests2.kt", "fun tests2() {}")
+          }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
+  fun `test local changes are not lost`() {
+    configureResponse("submission_stage2_failed.json")
+
+    val course = createHyperskillCourse()
+    HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
+
+    val file = findFileInTask(0, 1, "src/Task.kt")
+    val newText = "lalala"
+
+    // hack: timestamps don't change in tests
+    runWriteAction { VfsUtil.saveText(file, newText) }
+    (file as VirtualFileSystemEntry).timeStamp = System.currentTimeMillis()
+
+    HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          dir("src") {
+            file("Task.kt", newText)
             file("Baz.kt", "fun userBaz() {}")
           }
           dir("test") {
