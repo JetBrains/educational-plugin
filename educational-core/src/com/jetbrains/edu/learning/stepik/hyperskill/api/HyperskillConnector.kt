@@ -169,6 +169,7 @@ abstract class HyperskillConnector {
     for (task in tasks) {
       lesson.addTask(task)
     }
+    lesson.sortItems()
     loadAndFillAdditionalCourseInfo(course, attachmentLink)
     loadAndFillLessonAdditionalInfo(lesson)
     return lesson
