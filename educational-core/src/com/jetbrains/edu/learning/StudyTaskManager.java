@@ -282,7 +282,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   public static StudyTaskManager getInstance(@NotNull final Project project) {
     StudyTaskManager manager = ServiceManager.getService(project, StudyTaskManager.class);
     if (!project.isDefault() &&
-        OpenApiExtCompatibility.isLight(project) &&
+        !OpenApiExtCompatibility.isLight(project) &&
         manager != null &&
         manager.getCourse() == null &&
         YamlFormatSettings.isEduYamlProject(project)) {
