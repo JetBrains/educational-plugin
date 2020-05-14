@@ -18,6 +18,7 @@ public class EduCourse extends Course {
 
   // Fields from stepik:
   private boolean isCompatible = true;
+  private boolean isAdaptive = false;
   //course type in format "pycharm<version> <language> <version>$ENVIRONMENT_SEPARATOR<environment>"
   protected String myType =
     String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
@@ -123,6 +124,14 @@ public class EduCourse extends Course {
 
   public void setCompatible(boolean compatible) {
     isCompatible = compatible;
+  }
+
+  public boolean isAdaptive() {
+    return isAdaptive;
+  }
+
+  public void setAdaptive(boolean adaptive) {
+    isAdaptive = adaptive;
   }
 
   @Transient

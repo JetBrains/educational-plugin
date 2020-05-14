@@ -4,11 +4,14 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Compatible
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility.IncompatibleVersion
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.StepikLanguage
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -29,6 +32,10 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     val course = StepikCourseConnector.getCourseInfoByLink(courseLink)
     if (course == null) {
       showFailedToAddCourseNotification(courseLink)
+      return null
+    }
+    if (course.isAdaptive) {
+      showAdaptiveCoursesAreNotSupportedNotification(course.name)
       return null
     }
 
@@ -96,6 +103,11 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
         null
       }
     }
+  }
+
+  private fun showAdaptiveCoursesAreNotSupportedNotification(courseName: String) {
+    Messages.showErrorDialog("<html>${EduCoreBundle.message("error.adaptive.courses.not.supported.message", courseName, EduNames.JBA)}<html>",
+                             EduCoreBundle.message("error.adaptive.courses.not.supported.title"))
   }
 
   private fun showFailedToAddCourseNotification(courseLink: String) {

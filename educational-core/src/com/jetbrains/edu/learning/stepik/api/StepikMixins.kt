@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import java.util.*
 
 const val IS_IDEA_COMPATIBLE = "is_idea_compatible"
+const val IS_ADAPTIVE = "is_adaptive"
 const val COURSE_FORMAT = "course_format"
 const val SECTIONS = "sections"
 const val INSTRUCTORS = "instructors"
@@ -63,6 +64,9 @@ private const val TASK_TYPE = "task_type"
 abstract class StepikEduCourseMixin {
   @JsonProperty(IS_IDEA_COMPATIBLE)
   var isCompatible = true
+
+  @JsonProperty(IS_ADAPTIVE)
+  var isAdaptive = false
 
   @JsonProperty(COURSE_FORMAT)
   lateinit var myType: String
