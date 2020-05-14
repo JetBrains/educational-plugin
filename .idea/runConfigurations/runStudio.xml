@@ -17,6 +17,7 @@
       </option>
       <option name="vmOptions" value="" />
     </ExternalSystemSettings>
+    <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
     <method v="2" />
   </configuration>
 </component>
