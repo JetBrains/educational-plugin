@@ -23,9 +23,6 @@ import kotlin.math.min
 private val LOG = Logger.getInstance(StepikConnector::class.java.name)
 
 fun getAvailableCourses(coursesList: CoursesList): List<EduCourse> {
-  coursesList.courses.forEach { info ->
-    setCourseLanguageEnvironment(info)
-  }
   val availableCourses = coursesList.courses.filter {
     !StringUtil.isEmptyOrSpaces(it.type) && it.compatibility != CourseCompatibility.Unsupported
   }

@@ -100,18 +100,26 @@ abstract class StepikConnector {
 
   fun getCourses(isPublic: Boolean, currentPage: Int, enrolled: Boolean?): CoursesList? {
     val response = service.courses(true, isPublic, currentPage, enrolled).executeHandlingExceptions(true)
-    return response?.body()
+    return response?.body()?.apply { courses.withLanguageEnvironment() }
   }
 
   fun getCourses(ids: Set<Int>): List<EduCourse>? {
     val response = service.courses(*ids.toIntArray()).executeHandlingExceptions()
-    return response?.body()?.courses
+    return response?.body()?.courses?.withLanguageEnvironment()
   }
 
   @JvmOverloads
   fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean? = null, optional: Boolean = false): EduCourse? {
     val response = service.courses(courseId, isIdeaCompatible).executeHandlingExceptions(optional)
-    return response?.body()?.courses?.firstOrNull()?.apply { setCourseLanguageEnvironment(this) }
+    return response?.body()?.courses?.withLanguageEnvironment()?.firstOrNull()
+  }
+
+  // TODO: move this logic into custom deserializer
+  private fun List<EduCourse>.withLanguageEnvironment(): List<EduCourse> {
+    for (course in this) {
+      setCourseLanguageEnvironment(course)
+    }
+    return this
   }
 
   fun getSection(sectionId: Int): Section? {
