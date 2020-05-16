@@ -5,7 +5,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow.Companion.HINT_HEADER
@@ -29,7 +28,6 @@ import org.w3c.dom.events.EventListener
 import org.w3c.dom.events.EventTarget
 import org.w3c.dom.html.HTMLDivElement
 import java.util.*
-import java.util.regex.Pattern
 
 class BrowserWindow(private val myProject: Project, private val myLinkInNewBrowser: Boolean) : Disposable {
   var panel: JFXPanel = JFXPanel()
@@ -127,28 +125,8 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
           val hrefAttribute = getElementWithATag(target).getAttribute("href")
 
           if (hrefAttribute != null) {
-            val matcher = IN_COURSE_LINK.matcher(hrefAttribute)
-            if (matcher.matches()) {
-              EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.IN_COURSE)
-              var sectionName: String? = null
-              val lessonName: String
-              val taskName: String
-              if (matcher.group(3) != null) {
-                sectionName = matcher.group(1)
-                lessonName = matcher.group(2)
-                taskName = matcher.group(4)
-              }
-              else {
-                lessonName = matcher.group(1)
-                taskName = matcher.group(2)
-              }
-              NavigationUtils.navigateToTask(myProject, sectionName, lessonName, taskName)
-            }
-            else {
-              if (hrefAttribute.startsWith(TaskDescriptionToolWindow.PSI_ELEMENT_PROTOCOL)) {
-                TaskDescriptionToolWindow.navigateToPsiElement(myProject, hrefAttribute)
-              }
-              else {
+            object : LinkInToolWindowHandler(myProject) {
+              override fun externalLinkHandler(url: String) {
                 EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)
                 myEngine.isJavaScriptEnabled = true
                 myEngine.loadWorker.cancel()
@@ -161,13 +139,9 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
                   EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.STEPIK)
                 }
               }
-            }
+            }.process(hrefAttribute)
           }
         }
-      }
-
-      private fun isRelativeLink(href: String): Boolean {
-        return !href.startsWith("http")
       }
 
       private fun getElementWithATag(element: Element): Element {
@@ -203,7 +177,6 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
 
   companion object {
     private const val EVENT_TYPE_CLICK = "click"
-    private val IN_COURSE_LINK = Pattern.compile("#(\\w+)#(\\w+)#((\\w+)#)?")
 
     @TestOnly
     fun processContent(content: String, project: Project): String {

@@ -1,21 +1,19 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.ChoiceTaskResourcesManager
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
-import org.cef.handler.CefFocusHandlerAdapter
 import org.cef.handler.CefLoadHandlerAdapter
 import org.cef.handler.CefRequestHandlerAdapter
 import org.cef.network.CefRequest
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
+import java.util.regex.Matcher
 import javax.swing.JComponent
 
 @Suppress("UnstableApiUsage")
@@ -104,26 +102,44 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
 
   override fun updateLaf() {}
 
-  private class TaskInfoRequestHandler(val project: Project): CefRequestHandlerAdapter() {
+  private class TaskInfoRequestHandler(val project: Project) : CefRequestHandlerAdapter() {
     override fun onBeforeBrowse(browser: CefBrowser?,
                                 frame: CefFrame?,
                                 request: CefRequest?,
                                 user_gesture: Boolean,
                                 is_redirect: Boolean): Boolean {
-      val url = request?.url
-      if (url == null) return false
-      if (url.startsWith("http")) {
-        BrowserUtil.browse(url)
-        return true
+      var url = request?.url ?: return false
+      if (url.contains("about:blank")) return false
+
+      var result = false
+
+      val a = "file:///intellij/jbcefbrowser/"
+      if (url.contains(a)) {
+        url = url.substringAfter(a)
       }
-      else if (url.contains(PSI_ELEMENT_PROTOCOL)) {
-        // URL here looks like
-        // file:///intellij/jbcefbrowser/psi_element://java.lang.String#contains
-        val psiElement = url.substringAfterLast(PSI_ELEMENT_PROTOCOL)
-        navigateToPsiElement(project, "$PSI_ELEMENT_PROTOCOL$psiElement")
-        return true
-      }
-      return false
+
+      object : LinkInToolWindowHandler(project) {
+        override fun inCourseLinkHandler(matcher: Matcher) {
+          super.inCourseLinkHandler(matcher)
+          result = true
+        }
+
+        override fun psiElementLinkHandler(url: String) {
+          super.psiElementLinkHandler(url)
+          result = true
+        }
+
+        override fun externalLinkHandler(url: String) {
+          var urlToOpen = url
+          if (url.startsWith("file://")) {
+            urlToOpen = STEPIK_URL + url.substringAfter("file://")
+          }
+          super.externalLinkHandler(urlToOpen)
+          result = true
+        }
+      }.process(url)
+
+      return result
     }
   }
 }

@@ -148,8 +148,8 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
       }
 
       String url = event.getDescription();
-      if (url.startsWith(TaskDescriptionToolWindow.PSI_ELEMENT_PROTOCOL)) {
-        TaskDescriptionToolWindow.navigateToPsiElement(myProject, url);
+      if (url.startsWith(LinkInToolWindowHandler.PSI_ELEMENT_PROTOCOL)) {
+        LinkInToolWindowHandler.navigateToPsiElement(myProject, url);
         return;
       }
 

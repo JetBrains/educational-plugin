@@ -7,7 +7,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.FileTreeBuilder
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow
+import com.jetbrains.edu.learning.taskDescription.ui.LinkInToolWindowHandler
 import junit.framework.TestCase
 
 abstract class TaskDescriptionPsiLinksTestBase : EduTestCase() {
@@ -16,7 +16,7 @@ abstract class TaskDescriptionPsiLinksTestBase : EduTestCase() {
 
   protected fun doTest(linkText: String, expectedText: String, fileTreeBlock: FileTreeBuilder.() -> Unit) {
     fileTree(fileTreeBlock).create(LightPlatformTestCase.getSourceRoot())
-    TaskDescriptionToolWindow.navigateToPsiElement(project, "${TaskDescriptionToolWindow.PSI_ELEMENT_PROTOCOL}$linkText")
+    LinkInToolWindowHandler(project).process("${LinkInToolWindowHandler.PSI_ELEMENT_PROTOCOL}$linkText")
     UIUtil.dispatchAllInvocationEvents()
     val openedEditor = EditorFactory.getInstance().allEditors.single()
 

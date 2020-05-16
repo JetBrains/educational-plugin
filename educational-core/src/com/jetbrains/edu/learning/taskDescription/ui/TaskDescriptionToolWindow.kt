@@ -16,23 +16,15 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.codeInsight.documentation.DocumentationManagerProtocol
-import com.intellij.ide.actions.QualifiedNameProvider
 import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.LafManagerListener
-import com.intellij.openapi.actionSystem.ex.ActionUtil
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.psi.NavigatablePsiElement
-import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -112,7 +104,6 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
   companion object {
     const val HINT_HEADER: String = "hint_header"
     const val HINT_HEADER_EXPANDED: String = "${HINT_HEADER} checked"
-    const val PSI_ELEMENT_PROTOCOL: String = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL
 
     @VisibleForTesting
     fun getTaskDescriptionWithCodeHighlighting(project: Project, task: Task?): String {
@@ -129,43 +120,6 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
         }
       }
       return EduCoreBundle.message("label.open.task")
-    }
-
-    @JvmStatic
-    fun navigateToPsiElement(project: Project, url: String) {
-      val urlEncodedName = url.replace(PSI_ELEMENT_PROTOCOL, "")
-      // Sometimes a user has to encode element reference because it contains invalid symbols like ` `.
-      // For example, Java support produces `Foo#foo(int, int)` as reference for `foo` method in the following `Foo` class
-      // ```
-      // class Foo {
-      //     public void foo(int bar, int baz) {}
-      // }
-      // ```
-      //
-      val qualifiedName = URLUtil.decode(urlEncodedName)
-
-      val application = ApplicationManager.getApplication()
-      application.invokeLater {
-        application.runReadAction {
-          val dumbService = DumbService.getInstance(project)
-          if (dumbService.isDumb) {
-            val message = ActionUtil.getUnavailableMessage(EduCoreBundle.message("label.navigation"), false)
-            dumbService.showDumbModeNotification(message)
-          }
-          else {
-            for (provider in QualifiedNameProvider.EP_NAME.extensionList) {
-              val element = provider.qualifiedNameToElement(qualifiedName, project)
-              if (element is NavigatablePsiElement) {
-                if (element.canNavigate()) {
-                  element.navigate(true)
-                }
-                break
-              }
-            }
-          }
-        }
-      }
-      EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.PSI)
     }
   }
 }
