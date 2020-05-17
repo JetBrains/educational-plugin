@@ -34,8 +34,6 @@ class EduToolsResourcesRequestHandler : HttpRequestHandler() {
   }
 
   private fun sendData(content: ByteArray, name: String, request: FullHttpRequest, channel: Channel): Boolean {
-    // TODO check file name in expected list of resources
-
     val response = DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK)
     response.addCommonHeaders()
     response.headers().set(HttpHeaderNames.CONTENT_TYPE, FileResponses.getContentType(name))
