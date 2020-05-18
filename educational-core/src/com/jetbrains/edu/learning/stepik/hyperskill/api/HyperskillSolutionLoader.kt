@@ -16,9 +16,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
+import com.jetbrains.edu.learning.stepik.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.Submission
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSubmissionsManager
 import com.jetbrains.edu.learning.stepik.hyperskill.openSelectedStage
 
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
@@ -42,8 +42,8 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     else TaskSolutions.withEmptyPlaceholders(lastSubmission.time, lastSubmission.status.toCheckStatus(), files)
   }
 
-  override fun loadSubmissions(tasks: List<Task>): List<Submission>? {
-    return HyperskillSubmissionsManager.getAllSubmissions(tasks.map { it.id }.toSet())
+  override fun loadSubmissions(tasks: List<Task>, course: Course): List<Submission>? {
+    return SubmissionsManager.getSubmissionsManagerForCourse(course)?.getAllSubmissions(tasks.map { it.id }.toSet())
   }
 
   private val Reply.eduTaskFiles: Map<String, String>

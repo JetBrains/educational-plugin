@@ -52,8 +52,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   fun loadAndApplySolutions(course: Course, progressIndicator: ProgressIndicator? = null) {
     val tasksToUpdate = provideTasksToUpdate(course)
     val submissions = if (progressIndicator != null)
-      ApplicationUtil.runWithCheckCanceled(Callable { loadSubmissions(tasksToUpdate) }, progressIndicator)
-    else loadSubmissions(tasksToUpdate)
+      ApplicationUtil.runWithCheckCanceled(Callable { loadSubmissions(tasksToUpdate, course) }, progressIndicator)
+    else loadSubmissions(tasksToUpdate, course)
 
     if (submissions != null) {
       updateTasks(course, tasksToUpdate, submissions, progressIndicator)
@@ -199,7 +199,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   protected abstract val loadingTopic: Topic<SolutionLoadingListener>
   protected abstract fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions
-  protected abstract fun loadSubmissions(tasks: List<Task>): List<Submission>?
+  protected abstract fun loadSubmissions(tasks: List<Task>, course: Course): List<Submission>?
   abstract fun provideTasksToUpdate(course: Course): List<Task>
 
   interface SolutionLoadingListener {

@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
-object HyperskillSubmissionsManager : SubmissionsManager() {
+class HyperskillSubmissionsManager : SubmissionsManager() {
 
   fun putToSubmissions(stepIds: Set<Int>, submissionsList: List<Submission>?) {
     if(submissionsList == null) return
@@ -23,8 +23,8 @@ object HyperskillSubmissionsManager : SubmissionsManager() {
     }
   }
 
-  fun getAllSubmissions(stepIds: Set<Int>): List<Submission>? {
-    return getSubmissionsFromMemory(stepIds) ?: HyperskillConnector.getInstance().getSubmissions(stepIds)
+  override fun getAllSubmissions(stepIds: Set<Int>): List<Submission>? {
+    return getSubmissionsFromMemory(stepIds) ?: HyperskillConnector.getInstance().getSubmissions(stepIds, this)
   }
 
   private fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
@@ -43,10 +43,13 @@ object HyperskillSubmissionsManager : SubmissionsManager() {
     if (!submissionsCanBeShown(course)|| !isLoggedIn()) return
       ApplicationManager.getApplication().executeOnPooledThread {
         val stepIds = HyperskillSolutionLoader.getInstance(project).provideTasksToUpdate(course!!).map { it.id }.toSet()
-//        val stepIds = (course as HyperskillCourse).stages.map { it.stepId }.toSet()
         getAllSubmissions(stepIds)
         ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
       }
+  }
+
+  override fun getAllSubmissions(stepId: Int): MutableList<Submission> {
+    return getAllSubmissions(setOf(stepId))?.toMutableList() ?: mutableListOf()
   }
 
   override fun submissionsCanBeShown(course: Course?): Boolean {

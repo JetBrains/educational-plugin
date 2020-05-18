@@ -42,6 +42,9 @@
     <extensionPoint qualifiedName="Educational.checkListener"
                     interface="com.jetbrains.edu.learning.checker.CheckListener"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.submissionsManager"
+                    interface="com.jetbrains.edu.learning.stepik.SubmissionsManager
+                    dynamic="true""/>
     <extensionPoint qualifiedName="Educational.optionsProvider"
                     beanClass="com.intellij.openapi.options.ConfigurableEP"
                     dynamic="true">
@@ -308,6 +311,7 @@
 
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.checker.StepikRemoteTaskChecker"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.coursera.CourseraTaskChecker"/>
+    <submissionsManager implementation="com.jetbrains.edu.learning.stepik.StepikSubmissionsManager"/>
 
     <!-- Course compatibility providers   -->
     <compatibilityProvider language="JAVA"

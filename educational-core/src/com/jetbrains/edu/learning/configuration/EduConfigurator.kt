@@ -182,7 +182,7 @@ interface EduConfigurator<Settings> {
   fun submissionsTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
     if(currentTask == null || !currentTask.supportSubmissions()) return null
     val course = currentTask.course
-    val submissionsManager = SubmissionsManager.getInstance(course.itemType) ?: return null
+    val submissionsManager = SubmissionsManager.getSubmissionsManagerForCourse(course) ?: return null
     return submissionsManager.createSubmissionsTab(currentTask, course, project)
   }
 }

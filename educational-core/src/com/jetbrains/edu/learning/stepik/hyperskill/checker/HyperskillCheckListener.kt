@@ -12,9 +12,9 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.projectView.ProgressUtil
+import com.jetbrains.edu.learning.stepik.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSubmissionsManager
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -38,7 +38,7 @@ class HyperskillCheckListener : CheckListener {
       ApplicationManager.getApplication().executeOnPooledThread {
         val submission = HyperskillCheckConnector.postSolution(task, project, result)
         submission?.status = if (task.status == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
-        HyperskillSubmissionsManager.addToSubmissionsMap(task.id,submission)
+        SubmissionsManager.getSubmissionsManagerForCourse(task.course)?.addToSubmissionsMap(task.id, submission)
         runInEdt { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
       }
       showChooseNewProjectNotification(course, project)

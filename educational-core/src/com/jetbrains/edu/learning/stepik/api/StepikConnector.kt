@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.stepik.*
-import com.jetbrains.edu.learning.stepik.StepikSubmissionsManager
 import okhttp3.ConnectionPool
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -151,7 +150,7 @@ abstract class StepikConnector {
     return stepSource?.block
   }
 
-  fun getAllSubmissions(stepId: Int): MutableList<Submission> {
+  fun getAllSubmissions(stepId: Int, submissionsManager: StepikSubmissionsManager): MutableList<Submission> {
     var currentPage = 1
     val allSubmissions = mutableListOf<Submission>()
     while (true) {
@@ -159,7 +158,7 @@ abstract class StepikConnector {
       val submissions = submissionsList.submissions
       allSubmissions.addAll(submissions)
       if (submissions.isEmpty() || !submissionsList.meta.containsKey("has_next") || submissionsList.meta["has_next"] == false) {
-        StepikSubmissionsManager.putToSubmissions(stepId, allSubmissions)
+        submissionsManager.putToSubmissions(stepId, allSubmissions)
         break
       }
       currentPage += 1

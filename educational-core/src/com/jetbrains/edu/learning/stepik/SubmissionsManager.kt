@@ -8,6 +8,7 @@ import com.intellij.diff.chains.SimpleDiffRequestChain
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.vfs.VfsUtil
@@ -19,13 +20,12 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
@@ -41,7 +41,6 @@ import javax.swing.event.HyperlinkListener
 import kotlin.math.roundToInt
 
 abstract class SubmissionsManager {
-  val submissions = ConcurrentHashMap<Int, MutableList<Submission>>()
 
   fun putToSubmissions(taskId: Int, submissionsToAdd: MutableList<Submission>) {
     submissions[taskId] = submissionsToAdd
@@ -62,20 +61,19 @@ abstract class SubmissionsManager {
   }
 
   fun createSubmissionsTab(currentTask: Task, course: Course, project: Project): Pair<JPanel, String>? {
-
     if (!submissionsCanBeShown(course)) return null
 
     val descriptionText = StringBuilder()
     val submissionsPanel = AdditionalTabPanel(project)
-    val submissions = getSubmissionsFromMemory(currentTask.id)
+    val submissionsList = getSubmissionsFromMemory(currentTask.id)
 
-    if (isLoggedIn() || submissions != null) {
-      if (submissions == null) return null
+    if (isLoggedIn() || submissionsList != null) {
+      if (submissionsList == null) return null
       when {
-        submissions.isEmpty() -> descriptionText.append("<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.empty")}")
-        currentTask is ChoiceTask -> addViewOnStepikLink(descriptionText, currentTask, submissionsPanel)
+        currentTask is ChoiceTask -> addViewOnPlatformLink(descriptionText, currentTask, submissionsPanel)
+        submissionsList.isEmpty() -> descriptionText.append("<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.empty")}")
         else -> {
-          addSubmissionsToText(submissions, descriptionText)
+          addSubmissionsToText(submissionsList, descriptionText)
           submissionsPanel.addHyperlinkListener(getSubmissionsListener(currentTask, project, this))
         }
       }
@@ -103,7 +101,31 @@ abstract class SubmissionsManager {
     loadAllSubmissions(project, course)
   }
 
-  protected open fun addViewOnStepikLink(descriptionText: StringBuilder, currentTask: ChoiceTask, submissionsPanel: AdditionalTabPanel) {}
+  private fun getLastSubmission(taskId: Int, isSolved: Boolean): Submission? {
+    val submissions = getSubmissions(taskId, isSolved)
+    return submissions.firstOrNull()
+  }
+
+  fun getSubmissions(taskId: Int, isSolved: Boolean): List<Submission> {
+    val status = if (isSolved) EduNames.CORRECT else EduNames.WRONG
+    return getAllSubmissions(taskId).filter { it.status == status }
+  }
+
+  fun isLastSubmissionUpToDate(task: Task, isSolved: Boolean): Boolean {
+    if (task is TheoryTask) return true
+    val submission = getLastSubmission(task.id, isSolved) ?: return false
+    return submission.time?.after(task.updateDate) ?: false
+  }
+
+  fun getLastSubmissionReply(taskId: Int, isSolved: Boolean): Reply? {
+    return getLastSubmission(taskId, isSolved)?.reply
+  }
+
+  protected open fun addViewOnPlatformLink(descriptionText: StringBuilder, currentTask: ChoiceTask, submissionsPanel: AdditionalTabPanel) {}
+
+  abstract fun getAllSubmissions(stepIds: Set<Int>): List<Submission>?
+
+  abstract fun getAllSubmissions(stepId: Int): MutableList<Submission>
 
   protected abstract fun loadAllSubmissions(project: Project, course: Course?)
 
@@ -208,21 +230,26 @@ abstract class SubmissionsManager {
            "<a ${StyleManager().textStyleHeader};color:${getLinkColor(submission)} href=${submission.id}> ${text}</a>"
   }
 
-  @VisibleForTesting
-  fun clear() {
-    submissions.clear()
-  }
-
   companion object{
+    val submissions = ConcurrentHashMap<Int, MutableList<Submission>>()
     const val SUBMISSIONS_TAB_NAME = "Submissions"
+    private val EP_NAME = ExtensionPointName.create<SubmissionsManager>("Educational.submissionsManager")
 
-    fun getInstance(courseType: String): SubmissionsManager? {
-      return when(courseType.toLowerCase()) {
-        HYPERSKILL -> HyperskillSubmissionsManager
-        STEPIK.toLowerCase() -> StepikSubmissionsManager
-        PYCHARM -> StepikSubmissionsManager
-        else -> null
+    fun getSubmissionsManagerForCourse(course: Course?): SubmissionsManager? {
+      if(course == null) return null
+      val submissionsManagers = EP_NAME.extensionList.filter { it.submissionsCanBeShown(course) }
+      if (submissionsManagers.isEmpty()) {
+        return null
       }
+      if (submissionsManagers.size > 1) {
+        error("Several submissionsManagers available for ${course.name}: $submissionsManagers")
+      }
+      return submissionsManagers[0]
+    }
+
+    @VisibleForTesting
+    fun clear() {
+      submissions.clear()
     }
   }
 }

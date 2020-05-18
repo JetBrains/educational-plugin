@@ -13,7 +13,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.wm.*;
 import com.intellij.util.messages.MessageBusConnection;
-import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduLogInListener;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -50,9 +49,10 @@ public class StepikProjectComponent implements ProjectComponent {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(
       () -> {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
-        if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
+        SubmissionsManager submissionsManager = SubmissionsManager.Companion.getSubmissionsManagerForCourse(course);
+        if (course instanceof EduCourse && submissionsManager != null) {
           if (EduSettings.getInstance().getUser() != null) {
-            StepikSubmissionsManager.prepareStepikSubmissionsContent(myProject, course);
+            submissionsManager.prepareSubmissionsContent(myProject, course);
           }
           else {
             MessageBusConnection busConnection = myProject.getMessageBus().connect(myProject);
@@ -62,7 +62,7 @@ public class StepikProjectComponent implements ProjectComponent {
                 if (EduSettings.getInstance().getUser() == null) {
                   return;
                 }
-                StepikSubmissionsManager.prepareStepikSubmissionsContent(myProject, course);
+                submissionsManager.prepareSubmissionsContent(myProject, course);
               }
 
               @Override
@@ -76,9 +76,9 @@ public class StepikProjectComponent implements ProjectComponent {
           if (currentUser == null) {
             showBalloon();
           }
-          if (currentUser != null && !course.getAuthors().contains(currentUser.userInfo) && !CCUtils.isCourseCreator(myProject)) {
+          if (currentUser != null && !course.getAuthors().contains(currentUser.userInfo)) {
             loadSolutionsFromStepik(course);
-            StepikSubmissionsManager.loadAllStepikSubmissions(myProject, course);
+            submissionsManager.loadAllSubmissions(myProject, course);
           }
           selectStep(course);
         }

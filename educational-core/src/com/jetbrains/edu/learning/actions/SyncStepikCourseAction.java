@@ -9,13 +9,16 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
-import com.jetbrains.edu.learning.stepik.StepikSubmissionsManager;
+import com.jetbrains.edu.learning.stepik.SubmissionsManager;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
 
@@ -34,7 +37,10 @@ public class SyncStepikCourseAction extends SyncCourseAction {
         assert course instanceof EduCourse;
         updateCourseStructure(project, (EduCourse)course);
         if (EduUtils.isStudentProject(project)) {
-          StepikSubmissionsManager.loadMissingSubmissions(course);
+          SubmissionsManager submissionsManager = SubmissionsManager.Companion.getSubmissionsManagerForCourse(course);
+            if(submissionsManager != null) {
+              submissionsManager.getAllSubmissions(CourseExt.getAllTasks(course).stream().map(it -> it.getId()).collect(Collectors.toSet()));
+            }
           StepikSolutionsLoader.getInstance(project).loadSolutions(course, indicator);
         }
       }
