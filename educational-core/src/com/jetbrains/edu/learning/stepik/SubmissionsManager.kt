@@ -31,7 +31,7 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFa
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import icons.EducationalCoreIcons
 import java.net.URL
-import java.text.SimpleDateFormat
+import java.text.DateFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Collectors
@@ -87,8 +87,7 @@ abstract class SubmissionsManager {
   }
 
   fun prepareSubmissionsContent(project: Project, course: Course) {
-    val window = ToolWindowManager.getInstance(project).getToolWindow(
-      TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
+    val window = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
     if (window != null) {
       val submissionsContent = window.contentManager.findContent(SUBMISSIONS_TAB_NAME)
       if (submissionsContent != null) {
@@ -188,7 +187,7 @@ abstract class SubmissionsManager {
   private fun formatDate(time: Date): String {
     val calendar = GregorianCalendar()
     calendar.time = time
-    val formatter = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
+    val formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault())
     return formatter.format(calendar.time)
   }
 
