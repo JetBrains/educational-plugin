@@ -107,6 +107,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     val targetTask = lesson.taskList[targetTaskIndex]
 
     lesson.currentTaskIndex = targetTaskIndex
+    YamlFormatSynchronizer.saveItem(lesson)
 
     val currentRecord = currentTask.record
     val targetRecord = targetTask.record
