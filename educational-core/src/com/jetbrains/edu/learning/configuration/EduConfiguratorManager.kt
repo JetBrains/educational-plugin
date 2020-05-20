@@ -49,9 +49,10 @@ object EduConfiguratorManager {
    * Returns all languages with enabled [EduConfigurator] for [EduNames.PYCHARM] course type
    */
   @JvmStatic
-  val supportedEduLanguages: List<String> by lazy {
-    allExtensions().filter { it.courseType == EduNames.PYCHARM }.map { it.language }
-  }
+  val supportedEduLanguages: List<String>
+    get() {
+      return allExtensions().filter { it.courseType == EduNames.PYCHARM }.map { it.language }
+    }
 
   private val compatibleCourseTypes: List<String> = listOf(CourseraNames.COURSE_TYPE, StepikNames.STEPIK_TYPE)
 

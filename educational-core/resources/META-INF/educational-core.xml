@@ -23,7 +23,9 @@
   </application-components>
 
   <extensionPoints>
-    <extensionPoint qualifiedName="Educational.configurator" beanClass="com.jetbrains.edu.learning.configuration.EducationalExtensionPoint">
+    <extensionPoint qualifiedName="Educational.configurator"
+                    beanClass="com.jetbrains.edu.learning.configuration.EducationalExtensionPoint"
+                    dynamic="true">
       <with attribute="implementationClass" implements="com.jetbrains.edu.learning.configuration.EduConfigurator"/>
     </extensionPoint>
     <extensionPoint qualifiedName="Educational.compatibilityProvider"
