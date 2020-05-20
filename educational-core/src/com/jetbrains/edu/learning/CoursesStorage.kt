@@ -6,10 +6,9 @@ import com.intellij.util.xmlb.annotations.Tag
 import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.learning.courseFormat.Course
 
-@State(name = "CoursesStorage", storages = [Storage("coursesStorage.xml")])
+@State(name = "CoursesStorage", storages = [Storage("coursesStorage.xml", roamingType = RoamingType.DISABLED)])
 @Service
 class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCoursesState()) {
-  private var state: UserCoursesState = UserCoursesState()
 
   fun addCourse(course: Course, location: String, tasksSolved: Int = 0, tasksTotal: Int = 0) {
     state.addCourse(course, location, tasksSolved, tasksTotal)
