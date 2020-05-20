@@ -42,10 +42,6 @@
       <with attribute="instance" implements="com.jetbrains.edu.learning.settings.OptionsProvider"/>
     </extensionPoint>
 
-    <extensionPoint qualifiedName="Educational.languageDecorator" beanClass="com.intellij.lang.LanguageExtensionPoint">
-      <with attribute="implementationClass" implements="com.jetbrains.edu.learning.EduLanguageDecorator"/>
-    </extensionPoint>
-
     <extensionPoint qualifiedName="Educational.coursesProvider"
                     interface="com.jetbrains.edu.learning.CoursesProvider"/>
 

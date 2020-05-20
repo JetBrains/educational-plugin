@@ -358,12 +358,6 @@ project(":") {
 
 project(":educational-core") {
 
-  task<Download>("downloadColorFile") {
-    overwrite(false)
-    src("https://raw.githubusercontent.com/ozh/github-colors/master/colors.json")
-    dest("${projectDir}/resources/languageColors/colors.json")
-  }
-
   val testOutput = configurations.create("testOutput")
 
   dependencies {
