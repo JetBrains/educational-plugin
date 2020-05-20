@@ -3,13 +3,9 @@ package com.jetbrains.edu.coursecreator.actions.create
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCCreateFrameworkLesson
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.withFeature
 
 class CCCreateLessonTest : EduActionTestCase() {
 
@@ -25,23 +21,6 @@ class CCCreateLessonTest : EduActionTestCase() {
       testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateLesson())
     }
     assertEquals(2, course.lessons.size)
-  }
-
-  fun `test create framework lesson in course`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-      lesson {
-        eduTask {
-          taskFile("taskFile1.txt")
-        }
-      }
-    }
-    withFeature(EduExperimentalFeatures.NEW_ITEM_POPUP_UI, false) {
-      withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
-        testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateFrameworkLesson())
-      }
-    }
-    assertEquals(2, course.lessons.size)
-    assertInstanceOf(course.lessons[1], FrameworkLesson::class.java)
   }
 
   fun `test create lesson in section`() {

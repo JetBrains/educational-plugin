@@ -67,12 +67,3 @@ abstract class CCCreateStudyItemDialogBase(
     const val TEXT_FIELD_COLUMNS: Int = 30
   }
 }
-
-class CCCreateStudyItemDialog(
-  project: Project,
-  course: Course,
-  model: NewStudyItemUiModel,
-  additionalPanels: List<AdditionalPanel>
-) : CCCreateStudyItemDialogBase(project, course, model, additionalPanels) {
-  init { init() }
-}

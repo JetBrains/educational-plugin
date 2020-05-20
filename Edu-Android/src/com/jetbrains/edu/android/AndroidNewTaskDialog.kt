@@ -9,7 +9,6 @@ import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
-import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialogBase
 import com.jetbrains.edu.learning.courseFormat.Course
 import org.jetbrains.android.util.AndroidUtils
@@ -19,33 +18,14 @@ import javax.swing.JLabel
 import javax.swing.JList
 import javax.swing.ListCellRenderer
 
-class AndroidNewTaskDialog(
-  project: Project,
-  course: Course,
-  model: NewStudyItemUiModel,
-  additionalPanels: List<AdditionalPanel>
-) : AndroidNewTaskDialogBase(project, course, model, additionalPanels) {
-  init { init() }
-}
-
 class AndroidNewTaskAfterPopupDialog(
   project: Project,
   course: Course,
   model: NewStudyItemUiModel,
   private val currentInfo: NewStudyItemInfo
-) : AndroidNewTaskDialogBase(project, course, model, emptyList()) {
+) : CCCreateStudyItemDialogBase(project, course, model, emptyList()) {
+
   init { init() }
-
-  override fun showNameField(): Boolean = false
-  override fun createNewStudyItemInfo(): NewStudyItemInfo = currentInfo
-}
-
-abstract class AndroidNewTaskDialogBase(
-  project: Project,
-  course: Course,
-  model: NewStudyItemUiModel,
-  additionalPanels: List<AdditionalPanel>
-) : CCCreateStudyItemDialogBase(project, course, model, additionalPanels) {
 
   private val packageNameField: JBTextField = JBTextField(TEXT_FIELD_COLUMNS).apply {
     val userName = System.getProperty("user.name")
@@ -63,6 +43,9 @@ abstract class AndroidNewTaskDialogBase(
   }
 
   private var compileSdkVersion: Int = SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
+
+  override fun showNameField(): Boolean = false
+  override fun createNewStudyItemInfo(): NewStudyItemInfo = currentInfo
 
   override fun createAdditionalFields(builder: LayoutBuilder) {
     val androidVersionsInfo = AndroidVersionsInfo()

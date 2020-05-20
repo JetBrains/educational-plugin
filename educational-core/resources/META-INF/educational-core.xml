@@ -112,7 +112,6 @@
       <action id="Educational.Educator.CreateTask" class="com.jetbrains.edu.coursecreator.actions.CCCreateTask"/>
       <action id="Educational.Educator.CreateLesson"
               class="com.jetbrains.edu.coursecreator.actions.CCCreateLesson"/>
-      <action id="Educational.Educator.CreateFrameworkLesson" class="com.jetbrains.edu.coursecreator.actions.CCCreateFrameworkLesson" />
       <action id="Educational.Educator.CreateSection"
               class="com.jetbrains.edu.coursecreator.actions.sections.CCCreateSection"/>
       <separator/>
@@ -283,9 +282,6 @@
     <editorActionHandler action="EditorDeleteLine" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
     <experimentalFeature id="edu.course.creator.split.editor" percentOfUsers="100" internalFeature="true">
       <description>Enables previous task view for framework lessons</description>
-    </experimentalFeature>
-    <experimentalFeature id="edu.course.creator.new.popup.ui" percentOfUsers="100">
-      <description>Use popup UI instead of modal dialog for new item (task, lesson, section) creation</description>
     </experimentalFeature>
     <defaultLiveTemplatesProvider implementation="com.jetbrains.edu.coursecreator.HintTemplateProvider"/>
     <liveTemplateContext implementation="com.jetbrains.edu.coursecreator.HintTemplateContentType"/>

@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.learning.EduUtils
@@ -12,12 +13,18 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
-import javax.swing.Icon
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import icons.EducationalCoreIcons.Lesson
 
-abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: Icon) :
-  CCCreateStudyItemActionBase<Item>(itemType, icon) {
+class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(StudyItemType.LESSON, Lesson) {
 
-  override fun addItem(course: Course, item: Item) {
+  override val studyItemVariants: List<StudyItemVariant>
+    get() = listOf(
+      StudyItemVariant(StringUtil.toTitleCase(EduCoreBundle.message("study.item.lesson")), "", Lesson, ::Lesson),
+      StudyItemVariant(StringUtil.toTitleCase(EduCoreBundle.message("study.item.framework.lesson")), "", Lesson, ::FrameworkLesson)
+    )
+
+  override fun addItem(course: Course, item: Lesson) {
     val itemContainer = item.container
     itemContainer.addLesson(item)
   }
@@ -26,7 +33,7 @@ abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: 
     return Function { file -> (item as? Lesson)?.container?.getItem(file.name) }
   }
 
-  override fun createItemDir(project: Project, course: Course, item: Item, parentDirectory: VirtualFile): VirtualFile? {
+  override fun createItemDir(project: Project, course: Course, item: Lesson, parentDirectory: VirtualFile): VirtualFile? {
     val configurator = course.configurator
     if (configurator == null) {
       LOG.info("Failed to get configurator for " + course.languageID)
@@ -58,7 +65,7 @@ abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: 
     }
   }
 
-  override fun initItem(project: Project, course: Course, parentItem: StudyItem?, item: Item, info: NewStudyItemInfo) {
+  override fun initItem(project: Project, course: Course, parentItem: StudyItem?, item: Lesson, info: NewStudyItemInfo) {
     item.course = course
     if (parentItem is Section) {
       item.section = parentItem
@@ -79,6 +86,6 @@ abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: 
   }
 
   companion object {
-    private val LOG: Logger = Logger.getInstance(CCCreateLessonBase::class.java)
+    private val LOG: Logger = Logger.getInstance(CCCreateLesson::class.java)
   }
 }

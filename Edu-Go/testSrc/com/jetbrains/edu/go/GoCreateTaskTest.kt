@@ -19,7 +19,6 @@ class GoCreateTaskTest : EduActionTestCase() {
     /**
      * CCCreateTask does not validate names.
      * TODO: find the way to write integration tests (validate names & create StudyItem)
-     * @see com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialog
      */
     val taskName = "Good Task 666 пробелы и кириллица"
     assertNull(GoCourseBuilder().validateItemName(taskName, StudyItemType.TASK))
