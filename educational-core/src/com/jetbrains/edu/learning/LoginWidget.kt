@@ -8,7 +8,6 @@ import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.IconLikeCustomStatusBarWidget
 import com.intellij.openapi.wm.StatusBar
-import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.ui.ClickListener
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.IconUtil
@@ -28,11 +27,7 @@ abstract class LoginWidget(val project: Project,
   abstract val account: OAuthAccount<out Any>?
   abstract val icon: Icon
   open val disabledIcon: Icon
-    get() {
-      // BACKCOMPAT: 2019.2
-      @Suppress("USELESS_ELVIS")
-      return IconUtil.desaturate(icon) ?: error("IconUtil.desaturate failed")
-    }
+    get() = IconUtil.desaturate(icon)
 
   open val syncStep: SynchronizationStep? = null
   val component: JLabel = JLabel(getWidgetIcon())
@@ -112,10 +107,6 @@ abstract class LoginWidget(val project: Project,
   }
 
   override fun getComponent(): JComponent = component
-
-  // BACKCOMPAT: 2019.2. Drop it
-  @Suppress("DEPRECATION")
-  override fun getPresentation( type: StatusBarWidget.PlatformType): StatusBarWidget.WidgetPresentation? = null
 
   override fun install(statusBar: StatusBar) {}
 

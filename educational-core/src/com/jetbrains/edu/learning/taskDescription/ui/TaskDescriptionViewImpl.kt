@@ -170,12 +170,12 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     currentTask = EduUtils.getCurrentTask(project)
     updateAdditionalTaskTab(currentTask)
 
-    // BACKCOMPAT: 2019.2
-    @Suppress("DEPRECATION")
-    LafManager.getInstance().addLafManagerListener(LafManagerListener {
+    // TODO: provide correct parent disposable here to correctly unload the plugin
+    val connection = project.messageBus.connect()
+    connection.subscribe(LafManagerListener.TOPIC, LafManagerListener {
       UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
-    }, project)
-    project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
+    })
+    connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
   }
 
   override fun checkStarted() {

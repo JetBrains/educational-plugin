@@ -1,6 +1,3 @@
-// BACKCOMPAT: 2019.2. Use HeavyPlatformTestCase instead of PlatformTestCase
-@file:Suppress("DEPRECATION")
-
 package com.jetbrains.edu.slow.checker
 
 import com.intellij.openapi.actionSystem.AnAction
@@ -14,8 +11,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.MapDataContext
-import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduDocumentListener
@@ -32,7 +29,7 @@ import com.jetbrains.edu.learning.registerComponent
 import org.junit.Assert
 import org.junit.ComparisonFailure
 
-abstract class CheckersTestBase<Settings> : PlatformTestCase() {
+abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
     private lateinit var myManager: FileEditorManagerImpl
 
     protected lateinit var myCourse: Course

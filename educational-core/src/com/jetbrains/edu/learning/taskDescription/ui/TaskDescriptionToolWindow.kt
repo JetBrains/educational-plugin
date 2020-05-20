@@ -42,9 +42,8 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
                                              "  </div>"
 
   init {
-    // BACKCOMPAT: 2019.2
-    @Suppress("DEPRECATION")
-    LafManager.getInstance().addLafManagerListener(StudyLafManagerListener(), project)
+    // TODO: provide correct parent disposable here to correctly unload the plugin
+    project.messageBus.connect().subscribe(LafManagerListener.TOPIC, StudyLafManagerListener())
   }
 
   abstract fun createTaskInfoPanel(): JComponent

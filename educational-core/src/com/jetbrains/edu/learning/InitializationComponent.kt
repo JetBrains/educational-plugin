@@ -89,9 +89,7 @@ class InitializationComponent : BaseComponent {
   }
 
   private fun fillRecentCourses() {
-    // BACKCOMPAT: 2019.2
-    @Suppress("USELESS_ELVIS")
-    val state = RecentProjectsManagerBase.instanceEx.state ?: return
+    val state = RecentProjectsManagerBase.instanceEx.state
     val recentPathsInfo = state.additionalInfo
     recentPathsInfo.forEach {
       val projectPath = it.key

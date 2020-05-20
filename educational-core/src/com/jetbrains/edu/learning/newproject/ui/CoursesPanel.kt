@@ -10,7 +10,6 @@ import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
-import com.intellij.notification.NotificationsAdapter
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
@@ -504,8 +503,7 @@ class CoursesPanel(
     })
     connection
       // TODO: find out a better way to be notified when plugin installation finishes
-      // BACKCOMPAT: 2019.2
-      .subscribe(Notifications.TOPIC, @Suppress("DEPRECATION") object : NotificationsAdapter() {
+      .subscribe(Notifications.TOPIC, object : Notifications {
         override fun notify(notification: Notification) {
           if (notification.groupId == EduUtils.getUpdateNotificationGroup().displayId) {
             doValidation()

@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
-import com.intellij.notification.NotificationsAdapter
 import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
@@ -83,9 +82,7 @@ class CheckAllTest : EduActionTestCase() {
 
   private fun doTestWithNotification(checkNotification: (Notification) -> Unit) {
     var notificationShown = false
-    // BACKCOMPAT: 2019.2
-    @Suppress("DEPRECATION")
-    connection.subscribe(Notifications.TOPIC, object: NotificationsAdapter() {
+    connection.subscribe(Notifications.TOPIC, object: Notifications {
       override fun notify(notification: Notification) {
         notificationShown = true
         checkNotification(notification)

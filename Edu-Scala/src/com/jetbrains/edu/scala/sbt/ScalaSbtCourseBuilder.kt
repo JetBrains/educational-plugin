@@ -54,9 +54,6 @@ class ScalaSbtCourseBuilder : EduCourseBuilder<JdkProjectSettings> {
   override fun refreshProject(project: Project, cause: RefreshCause) {
     val projectBasePath = project.basePath ?: return
     val builder = ImportSpecBuilder(project, SbtProjectSystem.Id()).use(ProgressExecutionMode.IN_BACKGROUND_ASYNC).dontReportRefreshErrors()
-    // BACKCOMPAT: 2019.2. Drop it
-    @Suppress("DEPRECATION")
-    builder.useDefaultCallback()
 
     // Build toolwindow will be opened if `ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT` is true while sync
     project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, null)

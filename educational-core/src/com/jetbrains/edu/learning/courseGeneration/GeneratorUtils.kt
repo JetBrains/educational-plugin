@@ -11,7 +11,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.impl.ProjectImpl
+import com.intellij.openapi.project.ex.ProjectEx
 import com.intellij.openapi.project.modifyModules
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.ThrowableComputable
@@ -283,8 +283,7 @@ object GeneratorUtils {
    * and initial base module is unexpected while import
    */
   fun removeModule(project: Project, module: Module) {
-    // BACKCOMPAT: 2019.2. use `ProjectEx` instead of `ProjectImpl`
-    if (!isUnitTestMode || (project as? ProjectImpl)?.isLight == false) {
+    if (!isUnitTestMode || (project as? ProjectEx)?.isLight == false) {
       project.modifyModules { disposeModule(module) }
     }
   }

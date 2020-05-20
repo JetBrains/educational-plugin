@@ -65,9 +65,7 @@ object EduBuiltInServerUtils {
 
   @JvmStatic
   fun openRecentProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? {
-    // BACKCOMPAT: 2019.2
-    @Suppress("USELESS_ELVIS")
-    val state = RecentProjectsManagerBase.instanceEx.state ?: return null
+    val state = RecentProjectsManagerBase.instanceEx.state
 
     val recentPaths = state.recentPaths
     val parser = SAXBuilder()

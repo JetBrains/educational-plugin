@@ -21,9 +21,7 @@ class CourseCompatibilityProviderEP : AbstractExtensionPointBean() {
   var environment: String = ""
 
   val instance: CourseCompatibilityProvider by lazy {
-    // BACKCOMPAT: 2019.2. Use `instantiateClass`
-    @Suppress("DEPRECATION")
-    instantiate<CourseCompatibilityProvider>(implementationClass!!, ApplicationManager.getApplication().picoContainer)
+    instantiateClass<CourseCompatibilityProvider>(implementationClass!!, ApplicationManager.getApplication().picoContainer)
   }
 
   companion object {

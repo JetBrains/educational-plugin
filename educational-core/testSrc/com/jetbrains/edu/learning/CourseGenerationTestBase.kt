@@ -1,15 +1,12 @@
-// BACKCOMPAT: 2019.2. Use HeavyPlatformTestCase instead of PlatformTestCase
-@file:Suppress("DEPRECATION")
-
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.PlatformTestCase
+import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 
-abstract class CourseGenerationTestBase<Settings> : PlatformTestCase() {
+abstract class CourseGenerationTestBase<Settings> : HeavyPlatformTestCase() {
 
   abstract val defaultSettings: Settings
 
@@ -35,9 +32,7 @@ abstract class CourseGenerationTestBase<Settings> : PlatformTestCase() {
 
   override fun setUp() {
     super.setUp()
-    // BACKCOMPAT: 2019.2
-    @Suppress("USELESS_ELVIS")
-    rootDir = tempDir.createTempVDir() ?: error("Failed to create root dir for test")
+    rootDir = tempDir.createTempVDir()
   }
 
   /**

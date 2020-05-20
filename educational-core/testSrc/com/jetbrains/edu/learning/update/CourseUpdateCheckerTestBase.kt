@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.update
 
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
-import com.intellij.notification.NotificationsAdapter
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
@@ -80,8 +79,7 @@ abstract class CourseUpdateCheckerTestBase : EduTestCase() {
     private val connection = project.messageBus.connect(disposable)
 
     init {
-      // BACKCOMPAT: 2019.2
-      connection.subscribe(Notifications.TOPIC, object : NotificationsAdapter() {
+      connection.subscribe(Notifications.TOPIC, object : Notifications {
         override fun notify(notification: Notification) {
           notificationShown = true
           notificationText = notification.content
