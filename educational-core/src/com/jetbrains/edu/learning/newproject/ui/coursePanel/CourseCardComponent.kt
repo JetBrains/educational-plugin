@@ -7,6 +7,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.joinCourse
 import com.jetbrains.edu.learning.newproject.ui.getScaledLogo
@@ -25,8 +26,6 @@ import javax.swing.JProgressBar
 private const val CARD_GAP = 10
 private const val CARD_WIDTH = 80
 private const val CARD_HEIGHT = 70
-private const val RATING_WIDTH = 50
-private const val DEFAULT_HEIGHT = 16
 private const val H_GAP = 10
 private const val LOGO_SIZE = 40
 private const val FONT_SIZE = 13
@@ -109,16 +108,20 @@ class CommunityCourseInfoComponent(course: EduCourse) : JPanel() {
     (layout as FlowLayout).hgap = 0
 
     rating.foreground = GRAY_COLOR
-    rating.icon = AllIcons.Plugins.Rating
-    rating.text = if (course.reviewScore != 0.0) "%.${1}f".format(course.reviewScore) else "New"
-    rating.preferredSize = JBUI.size(RATING_WIDTH, DEFAULT_HEIGHT)
-    rating.maximumSize = JBUI.size(RATING_WIDTH, DEFAULT_HEIGHT)
+    rating.border = JBUI.Borders.emptyRight(H_GAP)
+    if (course.reviewScore != 0.0) {
+      rating.icon = AllIcons.Plugins.Rating
+      rating.text = "%.${1}f".format(course.reviewScore)
+    }
+    else {
+      rating.text = EduCoreBundle.message("course.dialog.card.not.rated")
+    }
     rating.font = Font(TypographyManager().bodyFont, Font.PLAIN, SMALL_FONT_SIZE)
 
     downloads.foreground = GRAY_COLOR
     downloads.icon = EducationalCoreIcons.User
     downloads.text = course.learnersCount.toString()
-    downloads.border = JBUI.Borders.empty(0, 0, 0, H_GAP)
+    downloads.border = JBUI.Borders.emptyRight(H_GAP)
     downloads.font = Font(TypographyManager().bodyFont, Font.PLAIN, SMALL_FONT_SIZE)
 
     val authors = course.authorFullNames.joinToString()
