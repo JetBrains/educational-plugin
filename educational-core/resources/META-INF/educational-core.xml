@@ -27,15 +27,19 @@
       <with attribute="implementationClass" implements="com.jetbrains.edu.learning.configuration.EduConfigurator"/>
     </extensionPoint>
     <extensionPoint qualifiedName="Educational.compatibilityProvider"
-                    beanClass="com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP">
+                    beanClass="com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP"
+                    dynamic="true">
       <with attribute="implementationClass" implements="com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider"/>
     </extensionPoint>
 
     <extensionPoint qualifiedName="Educational.twitterPluginConfigurator"
                     interface="com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator"/>
-    <extensionPoint qualifiedName="Educational.remoteTaskChecker" interface="com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker"/>
+    <extensionPoint qualifiedName="Educational.remoteTaskChecker"
+                    interface="com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker"
+                    dynamic="true"/>
     <extensionPoint qualifiedName="Educational.checkListener"
-                    interface="com.jetbrains.edu.learning.checker.CheckListener"/>
+                    interface="com.jetbrains.edu.learning.checker.CheckListener"
+                    dynamic="true"/>
     <extensionPoint qualifiedName="Educational.optionsProvider"
                     beanClass="com.intellij.openapi.options.ConfigurableEP"
                     area="IDEA_PROJECT">
@@ -43,7 +47,8 @@
     </extensionPoint>
 
     <extensionPoint qualifiedName="Educational.coursesProvider"
-                    interface="com.jetbrains.edu.learning.CoursesProvider"/>
+                    interface="com.jetbrains.edu.learning.CoursesProvider"
+                    dynamic="true"/>
 
     <extensionPoint qualifiedName="Educational.codeforcesLanguageProvider"
                     interface="com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider"/>

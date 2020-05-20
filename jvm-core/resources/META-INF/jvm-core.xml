@@ -4,7 +4,9 @@
   <depends>JUnit</depends>
 
   <extensionPoints>
-    <extensionPoint qualifiedName="Educational.gradleRefresher" interface="com.jetbrains.edu.jvm.gradle.GradleCourseRefresher"/>
+    <extensionPoint qualifiedName="Educational.gradleRefresher"
+                    interface="com.jetbrains.edu.jvm.gradle.GradleCourseRefresher"
+                    dynamic="true"/>
   </extensionPoints>
 
   <project-components>
