@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
-import com.jetbrains.edu.python.learning.homePaths
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.psi.LanguageLevel
@@ -101,7 +100,7 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
     @JvmStatic
     fun getBaseSdk(course: Course, context: UserDataHolder? = null): String? {
       val flavor = PythonSdkFlavor.getApplicableFlavors(false)[0]
-      val sdkPaths = flavor.homePaths(null, context)
+      val sdkPaths = flavor.suggestHomePaths(null, context)
 
       if (sdkPaths.isEmpty()) {
         return null

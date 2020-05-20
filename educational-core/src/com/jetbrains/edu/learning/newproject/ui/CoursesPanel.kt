@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.DataManager
+import com.intellij.ide.plugins.DynamicPluginListener
+import com.intellij.ide.plugins.DynamicPluginListener.Companion.TOPIC
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.plugins.newui.HorizontalLayout
@@ -56,8 +58,6 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
 import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
-import com.jetbrains.edu.learning.plugins.DynamicPluginListener
-import com.jetbrains.edu.learning.plugins.subscribeOnDynamicPluginTopic
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.importCourseArchive
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.loggedIn
@@ -497,8 +497,8 @@ class CoursesPanel(
 
   private fun setupPluginListeners(disposable: Disposable) {
     val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
-    connection.subscribeOnDynamicPluginTopic(object : DynamicPluginListener {
-      override fun onPluginLoaded(pluginDescriptor: IdeaPluginDescriptor) {
+    connection.subscribe(TOPIC, object : DynamicPluginListener {
+      override fun pluginLoaded(pluginDescriptor: IdeaPluginDescriptor) {
         doValidation()
       }
     })

@@ -32,6 +32,7 @@ import com.jetbrains.python.inspections.PyInspection;
 import com.jetbrains.python.inspections.PyInspectionVisitor;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.sdk.PythonSdkUtil;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +73,7 @@ public class PyEduInterpreterInspection extends PyInspection {
 
         final Module module = ModuleUtilCore.findModuleForPsiElement(node);
         if (module != null) {
-          final Sdk sdk = CompatUtils.findPythonSdk(module);
+          final Sdk sdk = PythonSdkUtil.findPythonSdk(module);
           if (sdk == null) return;
           final PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(sdk);
           if (flavor == null) return;

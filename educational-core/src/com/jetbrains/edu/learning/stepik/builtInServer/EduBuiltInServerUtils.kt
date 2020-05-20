@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.builtInServer
 
+import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
@@ -15,7 +16,6 @@ import com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH
 import com.jetbrains.edu.learning.EduUtils.execCancelable
 import com.jetbrains.edu.learning.EduUtils.navigateToStep
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.builtInServer.recentProjectsManagerInstance
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -67,7 +67,7 @@ object EduBuiltInServerUtils {
   fun openRecentProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? {
     // BACKCOMPAT: 2019.2
     @Suppress("USELESS_ELVIS")
-    val state = recentProjectsManagerInstance.state ?: return null
+    val state = RecentProjectsManagerBase.instanceEx.state ?: return null
 
     val recentPaths = state.recentPaths
     val parser = SAXBuilder()
