@@ -125,21 +125,8 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
           val hrefAttribute = getElementWithATag(target).getAttribute("href")
 
           if (hrefAttribute != null) {
-            object : LinkInToolWindowHandler(myProject) {
-              override fun externalLinkHandler(url: String) {
-                EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)
-                myEngine.isJavaScriptEnabled = true
-                myEngine.loadWorker.cancel()
-                var href: String? = getLink(target) ?: return
-                if (isRelativeLink(href!!)) {
-                  href = STEPIK_URL + href
-                }
-                BrowserUtil.browse(href)
-                if (href.startsWith(STEPIK_URL)) {
-                  EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.STEPIK)
-                }
-              }
-            }.process(hrefAttribute)
+            val url = getLink(target) ?: return
+            JavaFXToolWindowLinkHandler().process(url)
           }
         }
       }
@@ -172,6 +159,20 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
   override fun dispose() {
     Platform.runLater {
       myEngine.load(null)
+    }
+  }
+
+  inner class JavaFXToolWindowLinkHandler : ToolWindowLinkHandler(myProject) {
+    override fun processExternalLink(url: String): Boolean {
+      EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)
+      myEngine.isJavaScriptEnabled = true
+      myEngine.loadWorker.cancel()
+      val urlToOpen = if (isRelativeLink(url)) STEPIK_URL + url else url
+      BrowserUtil.browse(urlToOpen)
+      if (urlToOpen.startsWith(STEPIK_URL)) {
+        EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.STEPIK)
+      }
+      return true
     }
   }
 

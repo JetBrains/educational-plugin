@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol
-import com.intellij.ide.BrowserUtil
 import com.intellij.ide.actions.QualifiedNameProvider
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.NavigatablePsiElement
@@ -12,63 +12,60 @@ import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.StepikNames
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-open class LinkInToolWindowHandler(val project: Project) {
-  fun process(url: String) {
-    if (url.startsWith(PSI_ELEMENT_PROTOCOL)) {
-      psiElementLinkHandler(url)
-      return
-    }
-
+abstract class ToolWindowLinkHandler(val project: Project) {
+  fun process(url: String): Boolean {
     val matcher = IN_COURSE_LINK.matcher(url)
-    if (matcher.matches()) {
-      inCourseLinkHandler(matcher)
-      return
-    }
-
-    externalLinkHandler(url)
-  }
-
-  open fun inCourseLinkHandler(matcher: Matcher) {
-    EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.IN_COURSE)
-    var sectionName: String? = null
-    val lessonName: String
-    val taskName: String
-    if (matcher.group(3) != null) {
-      sectionName = matcher.group(1)
-      lessonName = matcher.group(2)
-      taskName = matcher.group(4)
-    }
-    else {
-      lessonName = matcher.group(1)
-      taskName = matcher.group(2)
-    }
-    NavigationUtils.navigateToTask(project, sectionName, lessonName, taskName)
-  }
-
-  open fun psiElementLinkHandler(url: String) {
-    navigateToPsiElement(project, url)
-  }
-
-  open fun externalLinkHandler(url: String) {
-    EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)
-    var urlToOpen = url
-    if (isRelativeLink(urlToOpen)) {
-      urlToOpen = StepikNames.STEPIK_URL + urlToOpen
-    }
-    BrowserUtil.browse(urlToOpen)
-    if (urlToOpen.contains(StepikNames.STEPIK_URL)) {
-      EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.STEPIK)
+    return when {
+      url.startsWith(PSI_ELEMENT_PROTOCOL) -> processPsiElementLink(url)
+      matcher.matches() -> processInCourseLink(matcher)
+      else -> processExternalLink(url)
     }
   }
+
+  private fun processInCourseLink(matcher: Matcher): Boolean {
+    try {
+      EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.IN_COURSE)
+      var sectionName: String? = null
+      val lessonName: String
+      val taskName: String
+      if (matcher.group(3) != null) {
+        sectionName = matcher.group(1)
+        lessonName = matcher.group(2)
+        taskName = matcher.group(4)
+      }
+      else {
+        lessonName = matcher.group(1)
+        taskName = matcher.group(2)
+      }
+      NavigationUtils.navigateToTask(project, sectionName, lessonName, taskName)
+      return true
+    } catch (e: Exception) {
+      LOG.error(e)
+      return false
+    }
+  }
+
+  private fun processPsiElementLink(url: String): Boolean {
+    return try {
+      navigateToPsiElement(project, url)
+      true
+    } catch (e: Exception) {
+      LOG.error(e)
+      false
+    }
+  }
+
+  abstract fun processExternalLink(url: String): Boolean
 
   companion object {
     const val PSI_ELEMENT_PROTOCOL: String = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL
     private val IN_COURSE_LINK: Pattern = Pattern.compile("#(\\w+)#(\\w+)#((\\w+)#)?")
+    private val LOG = Logger.getInstance(this::class.java)
 
+    @JvmStatic
     fun isRelativeLink(href: String): Boolean {
       return !href.startsWith("http")
     }

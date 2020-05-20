@@ -1,11 +1,14 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems.FILE_PROTOCOL_PREFIX
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.ChoiceTaskResourcesManager
 import org.cef.browser.CefBrowser
@@ -13,7 +16,6 @@ import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandlerAdapter
 import org.cef.handler.CefRequestHandlerAdapter
 import org.cef.network.CefRequest
-import java.util.regex.Matcher
 import javax.swing.JComponent
 
 @Suppress("UnstableApiUsage")
@@ -26,29 +28,8 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   private val jsQuerySetScrollHeight = JBCefJSQuery.create(taskSpecificJBCefBrowser)
 
   init {
-    taskInfoJBCefBrowser.jbCefClient.addRequestHandler(TaskInfoRequestHandler(project), taskInfoJBCefBrowser.cefBrowser)
-
-    taskSpecificJBCefBrowser.jbCefClient.addLoadHandler(object : CefLoadHandlerAdapter() {
-      override fun onLoadEnd(browser: CefBrowser, frame: CefFrame?, httpStatusCode: Int) {
-        browser.mainFrame.executeJavaScript(
-          "var height = document.getElementById('choiceOptions').scrollHeight;" +
-          jsQuerySetScrollHeight.inject("height"),
-          browser.url, 0
-        )
-
-        browser.mainFrame.executeJavaScript(
-          """
-          inputs = document.getElementsByTagName('input');
-          [].slice.call(inputs).forEach(input => {
-            input.addEventListener('change', function (event) {
-              let value = getSelectedVariants();
-              ${jsQueryGetChosenTasks.inject("value")}
-            })
-          })
-          """.trimIndent(), taskSpecificJBCefBrowser.cefBrowser.url, 0
-        )
-      }
-    }, taskSpecificJBCefBrowser.cefBrowser)
+    taskInfoJBCefBrowser.jbCefClient.addRequestHandler(TaskInfoRequestHandler(), taskInfoJBCefBrowser.cefBrowser)
+    taskSpecificJBCefBrowser.jbCefClient.addLoadHandler(TaskSpecificLoadHandler(), taskSpecificJBCefBrowser.cefBrowser)
 
     jsQuerySetScrollHeight.addHandler { height ->
       try {
@@ -102,44 +83,64 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
 
   override fun updateLaf() {}
 
-  private class TaskInfoRequestHandler(val project: Project) : CefRequestHandlerAdapter() {
+  private class TaskInfoRequestHandler : CefRequestHandlerAdapter() {
+    private val jcefLinkInToolWindowHandler by lazy {
+      JCefToolWindowLinkHandler()
+    }
+
     override fun onBeforeBrowse(browser: CefBrowser?,
                                 frame: CefFrame?,
                                 request: CefRequest?,
                                 user_gesture: Boolean,
                                 is_redirect: Boolean): Boolean {
       var url = request?.url ?: return false
-      if (url.contains("about:blank")) return false
-
-      var result = false
-
-      val a = "file:///intellij/jbcefbrowser/"
-      if (url.contains(a)) {
-        url = url.substringAfter(a)
+      when {
+        url.contains("about:blank") -> return false
+        url.startsWith(JCEF_URL_PREFIX) -> url = url.substringAfter(JCEF_URL_PREFIX)
       }
 
-      object : LinkInToolWindowHandler(project) {
-        override fun inCourseLinkHandler(matcher: Matcher) {
-          super.inCourseLinkHandler(matcher)
-          result = true
-        }
-
-        override fun psiElementLinkHandler(url: String) {
-          super.psiElementLinkHandler(url)
-          result = true
-        }
-
-        override fun externalLinkHandler(url: String) {
-          var urlToOpen = url
-          if (url.startsWith("file://")) {
-            urlToOpen = STEPIK_URL + url.substringAfter("file://")
-          }
-          super.externalLinkHandler(urlToOpen)
-          result = true
-        }
-      }.process(url)
-
-      return result
+      return jcefLinkInToolWindowHandler.process(url)
     }
+  }
+
+  private class TaskSpecificLoadHandler : CefLoadHandlerAdapter() {
+    override fun onLoadEnd(browser: CefBrowser, frame: CefFrame?, httpStatusCode: Int) {
+      browser.mainFrame.executeJavaScript(
+        "var height = document.getElementById('choiceOptions').scrollHeight;" +
+        jsQuerySetScrollHeight.inject("height"),
+        browser.url, 0
+      )
+
+      browser.mainFrame.executeJavaScript(
+        """
+          inputs = document.getElementsByTagName('input');
+          [].slice.call(inputs).forEach(input => {
+            input.addEventListener('change', function (event) {
+              let value = getSelectedVariants();
+              ${jsQueryGetChosenTasks.inject("value")}
+            })
+          })
+          """.trimIndent(), taskSpecificJBCefBrowser.cefBrowser.url, 0
+      )
+    }
+  }
+
+  private class JCefToolWindowLinkHandler : ToolWindowLinkHandler(project) {
+    override fun processExternalLink(url: String): Boolean {
+      EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)
+      val urlToOpen = when {
+        url.startsWith(FILE_PROTOCOL_PREFIX) -> STEPIK_URL + url.substringAfter(FILE_PROTOCOL_PREFIX)
+        else -> url
+      }
+      BrowserUtil.browse(urlToOpen)
+      if (urlToOpen.startsWith(STEPIK_URL)) {
+        EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.STEPIK)
+      }
+      return true
+    }
+  }
+
+  companion object {
+    private const val JCEF_URL_PREFIX = "file:///intellij/jbcefbrowser/"
   }
 }
