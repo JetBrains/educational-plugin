@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin.twitter;
+package com.jetbrains.edu.learning.twitter;
 
 import com.intellij.CommonBundle;
 import org.jetbrains.annotations.NonNls;
@@ -9,16 +9,16 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.ResourceBundle;
 
-public class KtTwitterBundle {
+public class TwitterBundle {
     public static String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull Object... params) {
         return CommonBundle.message(getBundle(), key, params);
     }
 
     private static Reference<ResourceBundle> ourBundle;
     @NonNls
-    public static final String BUNDLE = "twitter.kotlin_koans.oauth_twitter";
+    public static final String BUNDLE = "twitter.oauth_twitter";
 
-    private KtTwitterBundle() {
+    private TwitterBundle() {
     }
 
     private static ResourceBundle getBundle() {

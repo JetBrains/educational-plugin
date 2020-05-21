@@ -4,11 +4,6 @@
   <depends>org.jetbrains.plugins.gradle</depends>
   <depends>JUnit</depends>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <projectService serviceInterface="com.jetbrains.edu.kotlin.twitter.KtTwitterSettings"
-                    serviceImplementation="com.jetbrains.edu.kotlin.twitter.KtTwitterSettings"/>
-  </extensions>
-
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.kotlin.KtConfigurator" language="kotlin"/>
     <twitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>

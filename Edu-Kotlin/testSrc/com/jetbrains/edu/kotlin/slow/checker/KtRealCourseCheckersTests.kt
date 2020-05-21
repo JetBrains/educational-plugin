@@ -2,7 +2,7 @@ package com.jetbrains.edu.kotlin.slow.checker
 
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.slow.checker.JdkCheckerFixture
-import com.jetbrains.edu.kotlin.twitter.KtTwitterSettings
+import com.jetbrains.edu.learning.twitter.TwitterSettings
 import com.jetbrains.edu.slow.checker.EduCheckerFixture
 import com.jetbrains.edu.slow.checker.RealCourseCheckersTestBase
 
@@ -11,7 +11,7 @@ abstract class KtRealCourseCheckersTestBase(courseId: Int) : RealCourseCheckersT
   override fun createCheckerFixture(): EduCheckerFixture<JdkProjectSettings> = JdkCheckerFixture()
 
   override fun `test course`() {
-    val settings = KtTwitterSettings.getInstance(myProject)
+    val settings = TwitterSettings.getInstance(myProject)
     val oldValue = settings.askToTweet()
     try {
       settings.setAskToTweet(false)

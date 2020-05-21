@@ -7,6 +7,8 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.twitter.TwitterBundle;
+import com.jetbrains.edu.learning.twitter.TwitterSettings;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.twitter.TwitterUtils;
 import org.jetbrains.annotations.NotNull;
@@ -17,18 +19,18 @@ public class KtTwitterConfigurator implements TwitterPluginConfigurator {
   @NotNull
   @Override
   public String getConsumerKey(@NotNull Project project) {
-    return KtTwitterBundle.message("twitterConsumerKey");
+    return TwitterBundle.message("twitterConsumerKey");
   }
 
   @NotNull
   @Override
   public String getConsumerSecret(@NotNull Project project) {
-    return KtTwitterBundle.message("twitterConsumerSecret");
+    return TwitterBundle.message("twitterConsumerSecret");
   }
 
   @Override
   public void storeTwitterTokens(@NotNull Project project, @NotNull String accessToken, @NotNull String tokenSecret) {
-    KtTwitterSettings ktTwitterSettings = KtTwitterSettings.getInstance(project);
+    TwitterSettings ktTwitterSettings = TwitterSettings.getInstance(project);
     ktTwitterSettings.setAccessToken(accessToken);
     ktTwitterSettings.setTokenSecret(tokenSecret);
   }
@@ -36,14 +38,14 @@ public class KtTwitterConfigurator implements TwitterPluginConfigurator {
   @NotNull
   @Override
   public String getTwitterTokenSecret(@NotNull Project project) {
-    KtTwitterSettings ktTwitterSettings = KtTwitterSettings.getInstance(project);
+    TwitterSettings ktTwitterSettings = TwitterSettings.getInstance(project);
     return ktTwitterSettings.getTokenSecret();
   }
 
   @NotNull
   @Override
   public String getTwitterAccessToken(@NotNull Project project) {
-    KtTwitterSettings ktTwitterSettings = KtTwitterSettings.getInstance(project);
+    TwitterSettings ktTwitterSettings = TwitterSettings.getInstance(project);
     return ktTwitterSettings.getAccessToken();
   }
 
@@ -52,7 +54,7 @@ public class KtTwitterConfigurator implements TwitterPluginConfigurator {
     StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
     Course course = studyTaskManager.getCourse();
     if (course != null && course.getName().equals("Kotlin Koans")) {
-      KtTwitterSettings ktTwitterSettings = KtTwitterSettings.getInstance(project);
+      TwitterSettings ktTwitterSettings = TwitterSettings.getInstance(project);
       return ktTwitterSettings.askToTweet()
              && solvedTask.getStatus() == CheckStatus.Solved
              && (statusBeforeCheck == CheckStatus.Unchecked || statusBeforeCheck == CheckStatus.Failed)
@@ -69,7 +71,7 @@ public class KtTwitterConfigurator implements TwitterPluginConfigurator {
 
   @Override
   public void setAskToTweet(@NotNull final Project project, boolean askToTweet) {
-    KtTwitterSettings.getInstance(project).setAskToTweet(askToTweet);
+    TwitterSettings.getInstance(project).setAskToTweet(askToTweet);
   }
 
   @Override

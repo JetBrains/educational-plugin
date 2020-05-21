@@ -210,6 +210,7 @@
     <applicationService serviceInterface="com.intellij.refactoring.rename.RenameHandlerRegistry"
                         serviceImplementation="com.jetbrains.edu.learning.handlers.EduRenameHandlerRegistry"
                         overrides="true"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.coursecreator.settings.CCSettings"/>
 
     <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.StepikWidgetProvider"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView"
@@ -220,6 +221,10 @@
                     testServiceImplementation="com.jetbrains.edu.learning.checker.details.MockCheckDetailsView"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.framework.FrameworkLessonManager"
                     serviceImplementation="com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl"/>
+    <projectService serviceImplementation="com.jetbrains.edu.learning.twitter.TwitterSettings"/>
+    <projectService serviceImplementation="com.jetbrains.edu.learning.StudyTaskManager"/>
+    <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
+
     <projectConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
                          id="Educational" displayName="Education"/>
     <projectConfigurable groupId="Educational" instance="com.jetbrains.edu.learning.codeforces.CodeforcesOptions"
@@ -234,8 +239,6 @@
     <fileEditorProvider implementation="com.jetbrains.edu.learning.editor.EduFileEditorProvider"/>
     <!-- should be last, otherwise project tree will be changed with GradleTreeStructureProvider -->
     <highlightErrorFilter implementation="com.jetbrains.edu.learning.editor.EduHighlightErrorFilter"/>
-    <projectService serviceInterface="com.jetbrains.edu.learning.StudyTaskManager"
-                    serviceImplementation="com.jetbrains.edu.learning.StudyTaskManager"/>
     <renameHandler implementation="com.jetbrains.edu.learning.handlers.EduCourseItemRenameHandler"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
     <statistics.applicationUsagesCollector implementation="com.jetbrains.edu.learning.statistics.EduStateUsagesCollector"/>
@@ -245,7 +248,6 @@
     <applicationService serviceImplementation="com.jetbrains.edu.learning.codeforces.CodeforcesSettings"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler"/>
-    <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
     <editorNotificationProvider
         implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.stepik.UpdateCourseNotificationProvider"/>
@@ -266,8 +268,6 @@
     <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCLessonRenameHandler" order="first"/>
     <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCSectionRenameHandler" order="first"/>
     <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCDescriptionFileRenameHandler" order="first"/>
-    <applicationService serviceInterface="com.jetbrains.edu.coursecreator.settings.CCSettings"
-                        serviceImplementation="com.jetbrains.edu.coursecreator.settings.CCSettings"/>
     <highlightErrorFilter implementation="com.jetbrains.edu.coursecreator.CCHighlightErrorFilter"/>
 
     <projectViewPane implementation="com.jetbrains.edu.learning.projectView.CourseViewPane"/>

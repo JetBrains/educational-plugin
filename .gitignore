@@ -45,6 +45,8 @@ Edu-Python/classes/
 secret.properties
 Edu-Python/resources/checkio/py-checkio-oauth.properties
 Edu-JavaScript/resources/checkio/js-checkio-oauth.properties
+# old location of twitter properties
 Edu-Kotlin/resources/twitter/kotlin_koans/oauth_twitter.properties
+educational-core/resources/twitter/oauth_twitter.properties
 educational-core/resources/stepik/stepik.properties
 educational-core/resources/hyperskill/hyperskill-oauth.properties

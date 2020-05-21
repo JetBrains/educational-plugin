@@ -660,9 +660,9 @@ fun configureSecretProperties() {
 
   secretProperties.extractAndStore("educational-core/resources/stepik/stepik.properties", "stepikClientId", "stepikClientSecret")
   secretProperties.extractAndStore("educational-core/resources/hyperskill/hyperskill-oauth.properties", "hyperskillClientId", "hyperskillClientSecret")
+  secretProperties.extractAndStore("educational-core/resources/twitter/oauth_twitter.properties", "twitterConsumerKey", "twitterConsumerSecret")
   secretProperties.extractAndStore("Edu-Python/resources/checkio/py-checkio-oauth.properties", "pyCheckioClientId", "pyCheckioClientSecret")
   secretProperties.extractAndStore("Edu-JavaScript/resources/checkio/js-checkio-oauth.properties", "jsCheckioClientId", "jsCheckioClientSecret")
-  secretProperties.extractAndStore("Edu-Kotlin/resources/twitter/kotlin_koans/oauth_twitter.properties", "twitterConsumerKey", "twitterConsumerSecret")
 }
 
 fun downloadStudioIfNeededAndGetPath(): String {

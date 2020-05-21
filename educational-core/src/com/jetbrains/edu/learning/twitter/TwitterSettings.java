@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin.twitter;
+package com.jetbrains.edu.learning.twitter;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -8,9 +8,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("MethodMayBeStatic")
 @State(name = "KotlinStudyTwitterSettings", storages = @Storage("kotlin_study_twitter_settings.xml"))
-public class KtTwitterSettings implements PersistentStateComponent<KtTwitterSettings.State> {
+public class TwitterSettings implements PersistentStateComponent<TwitterSettings.State> {
 
     private State myState = new State();
 
@@ -21,8 +20,8 @@ public class KtTwitterSettings implements PersistentStateComponent<KtTwitterSett
         public String tokenSecret = "";
     }
 
-    public static KtTwitterSettings getInstance(@NotNull final Project project) {
-        return ServiceManager.getService(project, KtTwitterSettings.class);
+    public static TwitterSettings getInstance(@NotNull final Project project) {
+        return ServiceManager.getService(project, TwitterSettings.class);
     }
     @Nullable
     @Override
@@ -44,20 +43,20 @@ public class KtTwitterSettings implements PersistentStateComponent<KtTwitterSett
     }
 
     @NotNull
-    String getAccessToken() {
+    public String getAccessToken() {
         return myState.accessToken;
     }
 
-    void setAccessToken(@NotNull String accessToken) {
+    public void setAccessToken(@NotNull String accessToken) {
         myState.accessToken = accessToken;
     }
 
     @NotNull
-    String getTokenSecret() {
+    public String getTokenSecret() {
         return myState.tokenSecret;
     }
 
-    void setTokenSecret(@NotNull String tokenSecret) {
+    public void setTokenSecret(@NotNull String tokenSecret) {
         myState.tokenSecret = tokenSecret;
     }
 }
