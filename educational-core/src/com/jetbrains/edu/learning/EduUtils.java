@@ -299,17 +299,6 @@ public class EduUtils {
   }
 
   @Nullable
-  public static TwitterPluginConfigurator getTwitterConfigurator(@NotNull final Project project) {
-    TwitterPluginConfigurator[] extensions = TwitterPluginConfigurator.EP_NAME.getExtensions();
-    for (TwitterPluginConfigurator extension : extensions) {
-      if (extension.accept(project)) {
-        return extension;
-      }
-    }
-    return null;
-  }
-
-  @Nullable
   public static Task getCurrentTask(@NotNull final Project project) {
     VirtualFile[] files = FileEditorManager.getInstance(project).getSelectedFiles();
     for (VirtualFile file : files) {

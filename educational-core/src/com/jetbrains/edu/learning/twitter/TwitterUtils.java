@@ -11,7 +11,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBScrollPane;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.NotNull;
@@ -42,10 +41,10 @@ public class TwitterUtils {
    * @return Twitter instance with consumer key and secret set.
    */
   @NotNull
-  public static Twitter getTwitter(@NotNull final String consumerKey, @NotNull final String consumerSecret) {
+  public static Twitter getTwitter() {
     ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-    configurationBuilder.setOAuthConsumerKey(consumerKey);
-    configurationBuilder.setOAuthConsumerSecret(consumerSecret);
+    configurationBuilder.setOAuthConsumerKey(TwitterBundle.message("twitterConsumerKey"));
+    configurationBuilder.setOAuthConsumerSecret(TwitterBundle.message("twitterConsumerSecret"));
     return new TwitterFactory(configurationBuilder.build()).getInstance();
   }
 
@@ -62,7 +61,7 @@ public class TwitterUtils {
                                                 @NotNull final TwitterPluginConfigurator configurator,
                                                 @NotNull Task task) {
     ApplicationManager.getApplication().invokeLater(() -> {
-      DialogWrapper.DoNotAskOption doNotAskOption = createDoNotAskOption(project, configurator);
+      DialogWrapper.DoNotAskOption doNotAskOption = createDoNotAskOption();
       TwitterUtils.TwitterDialogPanel panel = configurator.getTweetDialogPanel(task);
       if (panel != null) {
         TwitterDialogWrapper wrapper = new TwitterDialogWrapper(project, panel, doNotAskOption);
@@ -70,20 +69,21 @@ public class TwitterUtils {
         panel.addTextFieldVerifier(createTextFieldLengthDocumentListener(wrapper, panel));
 
         if (wrapper.showAndGet()) {
+          TwitterSettings settings = TwitterSettings.getInstance();
           try {
-            boolean isAuthorized = !configurator.getTwitterAccessToken(project).isEmpty();
-            Twitter twitter = getTwitter(configurator.getConsumerKey(project), configurator.getConsumerSecret(project));
+            boolean isAuthorized = !settings.getAccessToken().isEmpty();
+            Twitter twitter = getTwitter();
             if (!isAuthorized) {
-              authorizeAndUpdateStatus(project, twitter, panel);
+              authorizeAndUpdateStatus(twitter, panel);
             }
             else {
-              setAuthInfoInTwitter(twitter, configurator.getTwitterAccessToken(project), configurator.getTwitterTokenSecret(project));
+              setAuthInfoInTwitter(twitter, settings.getAccessToken(), settings.getTokenSecret());
               updateStatus(panel, twitter);
             }
           }
           catch (TwitterException | IOException e) {
             LOG.warn(e.getMessage());
-            Messages.showErrorDialog("Status wasn\'t updated. Please, check internet connection and try again", "Twitter");
+            Messages.showErrorDialog("Status wasn't updated. Please, check internet connection and try again", "Twitter");
           }
         }
         else {
@@ -94,8 +94,7 @@ public class TwitterUtils {
   }
 
 
-  private static DialogWrapper.DoNotAskOption createDoNotAskOption(@NotNull final Project project,
-                                                                   @NotNull final TwitterPluginConfigurator configurator) {
+  private static DialogWrapper.DoNotAskOption createDoNotAskOption() {
     return new DialogWrapper.DoNotAskOption() {
       @Override
       public boolean isToBeShown() {
@@ -105,7 +104,7 @@ public class TwitterUtils {
       @Override
       public void setToBeShown(boolean toBeShown, int exitCode) {
         if (exitCode == DialogWrapper.CANCEL_EXIT_CODE || exitCode == DialogWrapper.OK_EXIT_CODE) {
-          configurator.setAskToTweet(project, toBeShown);
+          TwitterSettings.getInstance().setAskToTweet(toBeShown);
         }
       }
 
@@ -149,7 +148,7 @@ public class TwitterUtils {
    * media and text. 
    * As a result of succeeded tweet twitter website is opened in default browser.
    */
-  public static void authorizeAndUpdateStatus(@NotNull final Project project, @NotNull final Twitter twitter,
+  public static void authorizeAndUpdateStatus(@NotNull final Twitter twitter,
                                               @NotNull final TwitterUtils.TwitterDialogPanel panel) throws TwitterException {
     RequestToken requestToken = twitter.getOAuthRequestToken();
     BrowserUtil.browse(requestToken.getAuthorizationURL());
@@ -159,14 +158,10 @@ public class TwitterUtils {
       if (pin != null) {
         try {
           AccessToken token = twitter.getOAuthAccessToken(requestToken, pin);
-          TwitterPluginConfigurator configurator = EduUtils.getTwitterConfigurator(project);
-          if (configurator != null) {
-            configurator.storeTwitterTokens(project, token.getToken(), token.getTokenSecret());
-            updateStatus(panel, twitter);
-          }
-          else {
-            LOG.warn("No twitter configurator is provided for the plugin");
-          }
+          TwitterSettings settings = TwitterSettings.getInstance();
+          settings.setAccessToken(token.getToken());
+          settings.setTokenSecret(token.getTokenSecret());
+          updateStatus(panel, twitter);
         }
         catch (TwitterException e) {
           if (e.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
@@ -216,6 +211,7 @@ public class TwitterUtils {
       }
     });
   }
+
 
   /**
    * Listener updates label indicating remaining symbols number like in twitter.
