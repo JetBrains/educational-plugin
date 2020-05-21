@@ -1,62 +1,53 @@
-package com.jetbrains.edu.learning.twitter;
+package com.jetbrains.edu.learning.twitter
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.project.Project
 
-@State(name = "KotlinStudyTwitterSettings", storages = @Storage("kotlin_study_twitter_settings.xml"))
-public class TwitterSettings implements PersistentStateComponent<TwitterSettings.State> {
+@State(name = "KotlinStudyTwitterSettings", storages = [Storage("kotlin_study_twitter_settings.xml")])
+class TwitterSettings : PersistentStateComponent<TwitterSettings.State> {
+  private var myState = State()
 
-    private State myState = new State();
+  class State {
+    var askToTweet = true
+    var accessToken = ""
+    var tokenSecret = ""
+  }
 
+  override fun getState(): State? {
+    return myState
+  }
 
-    public static class State {
-        public boolean askToTweet = true;
-        public String accessToken = "";
-        public String tokenSecret = "";
+  override fun loadState(state: State) {
+    myState = state
+  }
+
+  fun askToTweet(): Boolean {
+    return myState.askToTweet
+  }
+
+  fun setAskToTweet(askToTweet: Boolean) {
+    myState.askToTweet = askToTweet
+  }
+
+  var accessToken: String
+    get() = myState.accessToken
+    set(accessToken) {
+      myState.accessToken = accessToken
     }
 
-    public static TwitterSettings getInstance(@NotNull final Project project) {
-        return ServiceManager.getService(project, TwitterSettings.class);
-    }
-    @Nullable
-    @Override
-    public State getState() {
-        return myState;
+  var tokenSecret: String
+    get() = myState.tokenSecret
+    set(tokenSecret) {
+      myState.tokenSecret = tokenSecret
     }
 
-    @Override
-    public void loadState(@NotNull State state) {
-        myState = state;
+  companion object {
+    @JvmStatic
+    fun getInstance(project: Project): TwitterSettings {
+      return ServiceManager.getService(project, TwitterSettings::class.java)
     }
-
-    public boolean askToTweet() {
-        return myState.askToTweet;
-    }
-
-    public void setAskToTweet(final boolean askToTweet) {
-        myState.askToTweet = askToTweet;
-    }
-
-    @NotNull
-    public String getAccessToken() {
-        return myState.accessToken;
-    }
-
-    public void setAccessToken(@NotNull String accessToken) {
-        myState.accessToken = accessToken;
-    }
-
-    @NotNull
-    public String getTokenSecret() {
-        return myState.tokenSecret;
-    }
-
-    public void setTokenSecret(@NotNull String tokenSecret) {
-        myState.tokenSecret = tokenSecret;
-    }
+  }
 }
