@@ -11,7 +11,7 @@ abstract class KtRealCourseCheckersTestBase(courseId: Int) : RealCourseCheckersT
   override fun createCheckerFixture(): EduCheckerFixture<JdkProjectSettings> = JdkCheckerFixture()
 
   override fun `test course`() {
-    val settings = TwitterSettings.getInstance(myProject)
+    val settings = TwitterSettings.getInstance()
     val oldValue = settings.askToTweet()
     try {
       settings.setAskToTweet(false)

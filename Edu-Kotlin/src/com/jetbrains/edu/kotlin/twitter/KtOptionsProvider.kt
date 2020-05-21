@@ -15,22 +15,22 @@ class KtOptionsProvider(private val project: Project) : OptionsProvider {
 
   private val askToTweetCheckBox: JBCheckBox = JBCheckBox(
     EduKotlinBundle.message("ktoptions.ask.to.tweet"),
-    TwitterSettings.getInstance(project).askToTweet()
+    TwitterSettings.getInstance().askToTweet()
   )
 
   @Nls
   override fun getDisplayName(): String = EduKotlinBundle.message("twitter.settings")
 
   override fun isModified(): Boolean {
-    return TwitterSettings.getInstance(project).askToTweet() != askToTweetCheckBox.isSelected
+    return TwitterSettings.getInstance().askToTweet() != askToTweetCheckBox.isSelected
   }
 
   override fun apply() {
-    TwitterSettings.getInstance(project).setAskToTweet(askToTweetCheckBox.isSelected)
+    TwitterSettings.getInstance().setAskToTweet(askToTweetCheckBox.isSelected)
   }
 
   override fun reset() {
-    askToTweetCheckBox.isSelected = TwitterSettings.getInstance(project).askToTweet()
+    askToTweetCheckBox.isSelected = TwitterSettings.getInstance().askToTweet()
   }
 
   override fun createComponent(): JComponent? {

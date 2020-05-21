@@ -30,7 +30,7 @@ public class KtTwitterConfigurator implements TwitterPluginConfigurator {
 
   @Override
   public void storeTwitterTokens(@NotNull Project project, @NotNull String accessToken, @NotNull String tokenSecret) {
-    TwitterSettings ktTwitterSettings = TwitterSettings.getInstance(project);
+    TwitterSettings ktTwitterSettings = TwitterSettings.getInstance();
     ktTwitterSettings.setAccessToken(accessToken);
     ktTwitterSettings.setTokenSecret(tokenSecret);
   }
@@ -38,14 +38,14 @@ public class KtTwitterConfigurator implements TwitterPluginConfigurator {
   @NotNull
   @Override
   public String getTwitterTokenSecret(@NotNull Project project) {
-    TwitterSettings ktTwitterSettings = TwitterSettings.getInstance(project);
+    TwitterSettings ktTwitterSettings = TwitterSettings.getInstance();
     return ktTwitterSettings.getTokenSecret();
   }
 
   @NotNull
   @Override
   public String getTwitterAccessToken(@NotNull Project project) {
-    TwitterSettings ktTwitterSettings = TwitterSettings.getInstance(project);
+    TwitterSettings ktTwitterSettings = TwitterSettings.getInstance();
     return ktTwitterSettings.getAccessToken();
   }
 
@@ -54,7 +54,7 @@ public class KtTwitterConfigurator implements TwitterPluginConfigurator {
     StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
     Course course = studyTaskManager.getCourse();
     if (course != null && course.getName().equals("Kotlin Koans")) {
-      TwitterSettings ktTwitterSettings = TwitterSettings.getInstance(project);
+      TwitterSettings ktTwitterSettings = TwitterSettings.getInstance();
       return ktTwitterSettings.askToTweet()
              && solvedTask.getStatus() == CheckStatus.Solved
              && (statusBeforeCheck == CheckStatus.Unchecked || statusBeforeCheck == CheckStatus.Failed)
@@ -71,7 +71,7 @@ public class KtTwitterConfigurator implements TwitterPluginConfigurator {
 
   @Override
   public void setAskToTweet(@NotNull final Project project, boolean askToTweet) {
-    TwitterSettings.getInstance(project).setAskToTweet(askToTweet);
+    TwitterSettings.getInstance().setAskToTweet(askToTweet);
   }
 
   @Override

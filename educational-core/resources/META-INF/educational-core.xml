@@ -221,7 +221,6 @@
                     testServiceImplementation="com.jetbrains.edu.learning.checker.details.MockCheckDetailsView"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.framework.FrameworkLessonManager"
                     serviceImplementation="com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl"/>
-    <projectService serviceImplementation="com.jetbrains.edu.learning.twitter.TwitterSettings"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.StudyTaskManager"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
 
