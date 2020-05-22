@@ -139,7 +139,8 @@ abstract class SubmissionsManager {
   private fun addLoginLink(descriptionText: StringBuilder,
                            submissionsPanel: AdditionalTabPanel) {
     descriptionText.append("<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(hyperlinkColor())}" +
-                           " href=>${EduCoreBundle.message("submissions.login", getPlatformName(), "</a><a ${StyleManager().textStyleHeader}>")}")
+                           " href=>${EduCoreBundle.message("submissions.login", getPlatformName())}" +
+                           "</a><a ${StyleManager().textStyleHeader}>")
     submissionsPanel.addHyperlinkListener(HyperlinkListener { e ->
       if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
         doAuthorize()
