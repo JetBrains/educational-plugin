@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 class HyperskillSubmissionsManager : SubmissionsManager() {
 
   fun putToSubmissions(stepIds: Set<Int>, submissionsList: List<Submission>?) {
-    if(submissionsList == null) return
+    if (submissionsList == null) return
     for(stepId in stepIds) {
       val submissionsToStep = submissionsList.filter { it.step == stepId }
       putToSubmissions(stepId, submissionsToStep.toMutableList())

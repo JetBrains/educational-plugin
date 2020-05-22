@@ -236,7 +236,7 @@ abstract class SubmissionsManager {
     private val EP_NAME = ExtensionPointName.create<SubmissionsManager>("Educational.submissionsManager")
 
     fun getSubmissionsManagerForCourse(course: Course?): SubmissionsManager? {
-      if(course == null) return null
+      if (course == null) return null
       val submissionsManagers = EP_NAME.extensionList.filter { it.submissionsCanBeShown(course) }
       if (submissionsManagers.isEmpty()) {
         return null

@@ -33,7 +33,7 @@ class StepikSubmissionsManager : SubmissionsManager() {
       ApplicationManager.getApplication().executeOnPooledThread {
         val allTasks: List<Task> = course.allTasks
         for (task in allTasks) {
-          if(task is ChoiceTask) {
+          if (task is ChoiceTask) {
             putToSubmissions(task.id, mutableListOf())
           }
           else if (task is CodeTask || task is EduTask) {

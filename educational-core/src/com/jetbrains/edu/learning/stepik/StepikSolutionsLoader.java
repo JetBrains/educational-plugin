@@ -270,7 +270,7 @@ public class StepikSolutionsLoader implements Disposable {
       return tasksToUpdate;
     }
     SubmissionsManager submissionsManager = SubmissionsManager.Companion.getSubmissionsManagerForCourse(course);
-    if(submissionsManager != null){
+    if (submissionsManager != null) {
       for (Task task : allTasks) {
         Boolean isSolved = taskStatusesMap.get(getProgressId(task));
         if (isSolved == null || !submissionsManager.isLastSubmissionUpToDate(task, isSolved)) continue;
@@ -546,7 +546,7 @@ public class StepikSolutionsLoader implements Disposable {
   @Nullable
   static String getSolutionTextForStepikAssignment(@NotNull Task task, boolean isSolved) {
     SubmissionsManager submissionsManager = SubmissionsManager.Companion.getSubmissionsManagerForCourse(task.getCourse());
-    if(submissionsManager == null) return null;
+    if (submissionsManager == null) return null;
     final List<Submission> submissions = submissionsManager.getSubmissions(task.getId(), isSolved);
     if (submissions.isEmpty()) {
       return null;
