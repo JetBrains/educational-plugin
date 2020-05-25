@@ -168,21 +168,16 @@ interface EduConfigurator<Settings> {
     get() = EmptyIcon.ICON_16
 
   /**
-   * Tab next to the task description, contains hyperskill topics.
+   * Tabs next to the task description.
    *
    * @see com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
    */
-  fun topicsTab(currentTask: Task?, project: Project): Pair<JPanel, String>? = null
-
-  /**
-   * Tab next to the topics tab (if present) or task description, contains submissions.
-   *
-   * @see com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-   */
-  fun submissionsTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
-    if (currentTask == null || !currentTask.supportSubmissions()) return null
+  fun additionalTaskTabs(currentTask: Task?, project: Project): List<Pair<JPanel, String>> {
+    if (currentTask == null || !currentTask.supportSubmissions()) return emptyList()
     val course = currentTask.course
-    val submissionsManager = SubmissionsManager.getSubmissionsManagerForCourse(course) ?: return null
-    return submissionsManager.createSubmissionsTab(currentTask, course, project)
+    val submissionsManager = SubmissionsManager.getSubmissionsManagerForCourse(course) ?: return emptyList()
+    val submissionsTab = submissionsManager.createSubmissionsTab(currentTask, course, project)
+    return if (submissionsTab == null) emptyList()
+    else listOf(submissionsTab)
   }
 }

@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.SubmissionsManager.Companion.SUBMISSIONS_TAB_NAME
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator.Companion.TOPICS_TAB_NAME
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
@@ -55,20 +55,32 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   }
 
   private fun updateAdditionalTaskTabs(task: Task?) {
-    updateTopicsTab(task)
-    updateSubmissionsTab(task)
+    val contentManager = uiContent?.contentManager ?: return
+    val additionalTabs = StudyTaskManager.getInstance(project).course?.configurator?.additionalTaskTabs(task, project) ?: return
+    val topicsTab = additionalTabs.find { it.second == TOPICS_TAB_NAME }
+    addTab(topicsTab, contentManager, 1)
+    val submissionsTab = additionalTabs.find { it.second == SUBMISSIONS_TAB_NAME }
+    val submissionsTabIndex = if (topicsTab == null) 1 else 2
+    updateSubmissionsTab(contentManager, submissionsTab, submissionsTabIndex)
     addYamlTab()
   }
 
   override fun updateSubmissionsTab() {
-    updateSubmissionsTab(currentTask)
+    val contentManager = uiContent?.contentManager ?: return
+    val submissionsTab = StudyTaskManager.getInstance(project).course?.configurator?.additionalTaskTabs(currentTask,
+                                                                                                        project)?.find { it.second == SUBMISSIONS_TAB_NAME }
+    updateSubmissionsTab(contentManager, submissionsTab, getSubmissionsTabIndex(contentManager))
   }
 
-  private fun updateSubmissionsTab(task: Task?) {
+  override fun updateTopicsTab() {
     val contentManager = uiContent?.contentManager ?: return
-    val submissionsTab = StudyTaskManager.getInstance(project).course?.configurator?.submissionsTab(task, project)
+    val topicsTab = StudyTaskManager.getInstance(project).course?.configurator?.additionalTaskTabs(currentTask,
+                                                                                                   project)?.find { it.second == TOPICS_TAB_NAME }
+    addTab(topicsTab, contentManager, 1)
+  }
+
+  private fun updateSubmissionsTab(contentManager: ContentManager, submissionsTab: Pair<JPanel, String>?, tabIndex: Int) {
     if (submissionsTab != null) {
-      val tabIndex = getSubmissionsTabIndex(contentManager)
       addTab(submissionsTab, contentManager, tabIndex)
     }
     else {
@@ -76,19 +88,9 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     }
   }
 
-  override fun updateTopicsTab() {
-    updateTopicsTab(currentTask)
-  }
-
-  private fun updateTopicsTab(task: Task?) {
-    val contentManager = uiContent?.contentManager ?: return
-    val topicsTab = StudyTaskManager.getInstance(project).course?.configurator?.topicsTab(task, project) ?: return
-    addTab(topicsTab, contentManager, 1)
-  }
-
   private fun getSubmissionsTabIndex(contentManager: ContentManager): Int {
     val contents = contentManager.contents
-    val topicsContent = contents.find { it.tabName == HyperskillConfigurator.TOPICS_TAB_NAME }
+    val topicsContent = contents.find { it.tabName == TOPICS_TAB_NAME }
     return if (topicsContent == null) 1 else 2
   }
 
@@ -100,7 +102,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     }
   }
 
-  private fun addTab(additionalTab: Pair<JPanel, String>, contentManager: ContentManager, tabIndex: Int) {
+  private fun addTab(additionalTab: Pair<JPanel, String>?, contentManager: ContentManager, tabIndex: Int) {
+    if (additionalTab == null) return
     val currentContent = contentManager.selectedContent
     val isAdditionalTabSelected = currentContent?.let { contentManager.getIndexOfContent(it) } == tabIndex
     val content = contentManager.findContent(additionalTab.second)
