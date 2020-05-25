@@ -90,8 +90,8 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
     return errorOutput.toString().nullize()
   }
 
-  override fun onTaskFailed(message: String, details: String?) {
-    super.onTaskFailed(message, details)
+  override fun onTaskFailed() {
+    super.onTaskFailed()
     ApplicationManager.getApplication().invokeLater {
       val taskDir = task.getTaskDir(project)
       if (taskDir == null) return@invokeLater

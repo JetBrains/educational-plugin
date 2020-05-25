@@ -45,7 +45,10 @@ import java.util.*;
  */
 public abstract class Task extends StudyItem {
   private static final Logger LOG = Logger.getInstance(Task.class);
+  @NotNull
   protected CheckStatus myStatus = CheckStatus.Unchecked;
+  @Nullable
+  protected Feedback myFeedback;
   private Map<String, TaskFile> myTaskFiles = new LinkedHashMap<>();
   @NotNull
   private String descriptionText = "";
@@ -215,17 +218,20 @@ public abstract class Task extends StudyItem {
     return result;
   }
 
-  public CheckStatus getStatus() {
+  public @NotNull CheckStatus getStatus() {
     return myStatus;
   }
 
-  public void setStatus(CheckStatus status) {
+  public void setStatus(@NotNull CheckStatus status) {
     for (TaskFile taskFile : myTaskFiles.values()) {
       for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
         placeholder.setStatus(status);
       }
     }
     myStatus = status;
+    if (status == CheckStatus.Unchecked) {
+      myFeedback = null;
+    }
   }
 
   public Task copy() {
@@ -314,6 +320,15 @@ public abstract class Task extends StudyItem {
 
   public void setRecord(int record) {
     myRecord = record;
+  }
+
+  @Nullable
+  public Feedback getFeedback() {
+    return myFeedback;
+  }
+
+  public void setFeedback(@Nullable Feedback feedback) {
+    myFeedback = feedback;
   }
 
   @NotNull

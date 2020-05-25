@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
-import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.PlatformDataKeys
@@ -129,7 +128,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val panel = JPanel(BorderLayout())
     panel.border = JBUI.Borders.empty(0, 15, 15, 0)
 
-    val taskTextTW = when(EduSettings.getInstance().javaUiLibraryWithCheck) {
+    val taskTextTW = when (EduSettings.getInstance().javaUiLibraryWithCheck) {
       SWING -> SwingToolWindow(project)
       JAVAFX -> JavaFxToolWindow(project)
       JCEF -> getJCEFToolWindow(project) ?: SwingToolWindow(project)
@@ -178,12 +177,14 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
   }
 
-  override fun checkStarted() {
+  override fun checkStarted(task: Task) {
+    if (task != currentTask) return
     uiContent?.checkPanel?.checkStarted()
   }
 
   override fun checkFinished(task: Task, checkResult: CheckResult) {
-    uiContent?.checkPanel?.checkFinished(task, checkResult)
+    if (task != currentTask) return
+    uiContent?.checkPanel?.updateCheckResult(task, checkResult)
     if (checkResult.status == CheckStatus.Failed) {
       updateTaskSpecificPanel()
     }
@@ -207,7 +208,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   companion object {
     private const val HELP_ID = "task.description"
   }
-  
+
   private class UiContent(
     val contentManager: ContentManager,
     val topPanel: JPanel,

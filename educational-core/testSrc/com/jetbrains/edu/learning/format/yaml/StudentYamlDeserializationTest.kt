@@ -146,6 +146,38 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CheckStatus.Solved, task.status)
   }
 
+  fun `test task check result`() {
+    val message = "My error message"
+    val yamlContent = """
+    |type: edu
+    |status: Failed
+    |feedback:
+    |  message: $message
+    |""".trimMargin()
+    val task = deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    assertEquals(CheckStatus.Failed, task.status)
+    assertEquals(message, task.feedback?.message)
+    assertNull(task.feedback?.time)
+  }
+
+  fun `test task check result with time`() {
+    val message = "My error message"
+    val timestamp = 1589220000000
+    val yamlContent = """
+    |type: edu
+    |status: Failed
+    |feedback:
+    |  message: $message
+    |  time: $timestamp
+    |""".trimMargin()
+    val task = deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    assertEquals(CheckStatus.Failed, task.status)
+    assertEquals(message, task.feedback?.message)
+    assertEquals(timestamp, task.feedback?.time?.time)
+  }
+
   fun `test selected variants`() {
     val yamlContent = """
     |type: choice

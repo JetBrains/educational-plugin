@@ -152,6 +152,7 @@ object YamlFormatSynchronizer {
     addMixIn(TaskFile::class.java, StudentTaskFileYamlMixin::class.java)
     addMixIn(AnswerPlaceholder::class.java, StudentAnswerPlaceholderYamlMixin::class.java)
     addMixIn(AnswerPlaceholder.MyInitialState::class.java, InitialStateMixin::class.java)
+    addMixIn(Feedback::class.java, FeedbackYamlMixin::class.java)
   }
 
   @JvmStatic

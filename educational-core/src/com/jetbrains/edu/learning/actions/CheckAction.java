@@ -35,6 +35,7 @@ import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Feedback;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
@@ -49,6 +50,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Date;
 import java.util.concurrent.Future;
 
 public class CheckAction extends DumbAwareAction {
@@ -181,7 +183,7 @@ public class CheckAction extends DumbAwareAction {
     private final Task myTask;
     @Nullable private final TaskChecker myChecker;
     private CheckResult myResult;
-    private String TEST_RESULTS_DISPLAY_ID = "Test Results: Run";
+    private final String TEST_RESULTS_DISPLAY_ID = "Test Results: Run";
 
     public StudyCheckTask(@NotNull Project project, @NotNull Task task) {
       super(project, EduCoreBundle.message("checking.solution"), true);
@@ -202,7 +204,7 @@ public class CheckAction extends DumbAwareAction {
     public void run(@NotNull ProgressIndicator indicator) {
       ApplicationManager.getApplication().executeOnPooledThread(() -> showFakeProgress(indicator));
       myCheckInProgress.set(true);
-      TaskDescriptionView.getInstance(myProject).checkStarted();
+      TaskDescriptionView.getInstance(myProject).checkStarted(myTask);
       long start = System.currentTimeMillis();
       NotificationSettings notificationSettings = turnOffTestRunnerNotifications();
       CheckResult localCheckResult = myChecker == null ? CheckResult.NO_LOCAL_CHECK : myChecker.check(indicator);
@@ -236,19 +238,17 @@ public class CheckAction extends DumbAwareAction {
     public void onSuccess() {
       String message = myResult.getMessage();
       CheckStatus status = myResult.getStatus();
-      final String details = myResult.getDetails();
       if (myTask.getCourse().isStudy()) {
         myTask.setStatus(status);
+        myTask.setFeedback(new Feedback(message, new Date()));
         YamlFormatSynchronizer.saveItem(myTask);
       }
-      if (status == CheckStatus.Failed) {
-        if (myChecker != null) {
-          myChecker.onTaskFailed(message, details);
+      if (myChecker != null) {
+        if (status == CheckStatus.Failed) {
+          myChecker.onTaskFailed();
         }
-      }
-      else if (status == CheckStatus.Solved) {
-        if (myChecker != null) {
-          myChecker.onTaskSolved(message);
+        else if (status == CheckStatus.Solved) {
+          myChecker.onTaskSolved();
         }
       }
       TaskDescriptionView.getInstance(myProject).checkFinished(myTask, myResult);

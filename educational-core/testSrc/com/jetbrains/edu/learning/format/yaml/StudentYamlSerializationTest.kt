@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import java.util.*
 
 class StudentYamlSerializationTest : EduTestCase() {
 
@@ -126,6 +127,28 @@ class StudentYamlSerializationTest : EduTestCase() {
     |record: 1
     |selected_options:
     |- 1
+    |""".trimMargin())
+  }
+
+  fun `test task with feedback and time`() {
+    val message = "My error message"
+    val timestamp = 1589220000000
+    val task = courseWithFiles {
+      lesson {
+        eduTask()
+      }
+    }.findTask("lesson1", "task1")
+    task.status = CheckStatus.Failed
+    task.feedback = Feedback(message, Date(timestamp))
+    task.record = 1
+
+    doTest(task, """
+    |type: edu
+    |status: Failed
+    |feedback:
+    |  message: $message
+    |  time: $timestamp
+    |record: 1
     |""".trimMargin())
   }
 

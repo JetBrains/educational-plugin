@@ -23,7 +23,7 @@ abstract class TaskDescriptionView {
   abstract fun updateAdditionalTaskTab()
 
   abstract fun readyToCheck()
-  abstract fun checkStarted()
+  abstract fun checkStarted(task: Task)
   abstract fun checkFinished(task: Task, checkResult: CheckResult)
   abstract fun checkTooltipPosition(): RelativePoint?
 

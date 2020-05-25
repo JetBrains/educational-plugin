@@ -6,35 +6,46 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.Feedback
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
-import com.jetbrains.edu.learning.yaml.format.TaskChangeApplier
-import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin
+import com.jetbrains.edu.learning.yaml.format.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.MESSAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.RECORD
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STATUS
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
+import java.util.*
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, STATUS, RECORD)
+@JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, STATUS, FEEDBACK, RECORD)
 abstract class StudentTaskYamlMixin : TaskYamlMixin() {
 
   @JsonProperty(STATUS)
   private lateinit var myStatus: CheckStatus
 
+  @JsonProperty(FEEDBACK)
+  private lateinit var myFeedback: Feedback
+
   @JsonProperty(RECORD)
   protected open var myRecord: Int = -1
+}
 
-  companion object {
-    const val STATUS = "status"
-    const val RECORD = "record"
-  }
+@JsonPropertyOrder(MESSAGE, TIME)
+abstract class FeedbackYamlMixin {
+  @JsonProperty(MESSAGE)
+  private var message: String = ""
+
+  @JsonProperty(TIME)
+  private var time: Date? = null
 }
 
 class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {

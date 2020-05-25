@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoSource
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CURRENT_TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LABEL
@@ -18,7 +19,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VIDEO_TYPE
 import com.jetbrains.edu.learning.yaml.format.student.StudentTaskYamlMixin
 
-@JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, THUMBNAIL, SOURCES, CURRENT_TIME, STATUS, RECORD)
+@JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, THUMBNAIL, SOURCES, CURRENT_TIME, STATUS, FEEDBACK, RECORD)
 abstract class VideoTaskYamlMixin : StudentTaskYamlMixin() {
   @JsonProperty(THUMBNAIL)
   private var thumbnail: String = ""

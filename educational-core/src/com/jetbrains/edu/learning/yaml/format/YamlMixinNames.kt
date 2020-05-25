@@ -36,6 +36,7 @@ object YamlMixinNames {
   // task
   const val FILES = "files"
   const val FEEDBACK_LINK = "feedback_link"
+  const val FEEDBACK = "feedback"
   const val STATUS = "status"
   const val RECORD = "record"
   const val SOLUTION_HIDDEN = "solution_hidden"
@@ -64,6 +65,10 @@ object YamlMixinNames {
   // codeforces task with file IO
   const val INPUT_FILE = "input_file"
   const val OUTPUT_FILE = "output_file"
+
+  // feedback
+  const val MESSAGE = "message"
+  const val TIME = "time"
 
   // task file
   const val NAME = "name"

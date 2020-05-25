@@ -16,7 +16,7 @@ class MockTaskDescriptionView : TaskDescriptionView() {
   override fun updateTaskDescription() {}
   override fun updateAdditionalTaskTab() {}
   override fun readyToCheck() {}
-  override fun checkStarted() {}
+  override fun checkStarted(task: Task) {}
   override fun checkFinished(task: Task, checkResult: CheckResult) {}
   override fun checkTooltipPosition(): RelativePoint? = RelativePoint(Point(0, 0))
 }

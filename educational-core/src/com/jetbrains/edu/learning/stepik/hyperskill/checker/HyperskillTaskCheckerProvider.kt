@@ -26,8 +26,8 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
         return checkResult
       }
 
-      override fun onTaskSolved(message: String) = checker.onTaskSolved(message)
-      override fun onTaskFailed(message: String, details: String?) = checker.onTaskFailed(message, details)
+      override fun onTaskSolved() = checker.onTaskSolved()
+      override fun onTaskFailed() = checker.onTaskFailed()
       override fun clearState() = checker.clearState()
     }
   }

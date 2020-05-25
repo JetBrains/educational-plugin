@@ -11,10 +11,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
  * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillTaskCheckerProvider
  */
 open class TaskChecker<out T : Task>(@JvmField val task: T, @JvmField val project: Project) {
-  open fun onTaskSolved(message: String) {
+  open fun onTaskSolved() {
   }
 
-  open fun onTaskFailed(message: String, details: String?) {
+  open fun onTaskFailed() {
   }
 
   open fun check(indicator: ProgressIndicator) = CheckResult(CheckStatus.Unchecked, "Check for ${task.itemType} task isn't available")
