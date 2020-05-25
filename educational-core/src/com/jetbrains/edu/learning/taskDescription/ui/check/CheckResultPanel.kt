@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import icons.EducationalCoreIcons
 
-class CheckResultLabel(task: Task, checkResult: CheckResult) : JBLabel() {
+class CheckResultPanel(task: Task, checkResult: CheckResult) : JBLabel() {
   init {
     val status = checkResult.status
     iconTextGap = JBUI.scale(4)
