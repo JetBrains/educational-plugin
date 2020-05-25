@@ -24,8 +24,8 @@ import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 
 class StepikSubmissionsManager : SubmissionsManager() {
 
-  override fun getAllSubmissions(stepId: Int): MutableList<Submission> {
-    return submissions.getOrPut(stepId) {StepikConnector.getInstance().getAllSubmissions(stepId, this) }
+  override fun getAllSubmissions(stepId: Int): List<Submission> {
+    return submissions.getOrPut(stepId) { StepikConnector.getInstance().getAllSubmissions(stepId, this).toMutableList() }
   }
 
   override fun loadAllSubmissions(project: Project, course: Course?) {

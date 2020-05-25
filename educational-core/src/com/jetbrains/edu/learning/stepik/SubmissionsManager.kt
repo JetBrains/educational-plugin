@@ -124,7 +124,7 @@ abstract class SubmissionsManager {
 
   abstract fun getAllSubmissions(stepIds: Set<Int>): List<Submission>?
 
-  abstract fun getAllSubmissions(stepId: Int): MutableList<Submission>
+  abstract fun getAllSubmissions(stepId: Int): List<Submission>
 
   protected abstract fun loadAllSubmissions(project: Project, course: Course?)
 

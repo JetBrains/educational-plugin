@@ -40,16 +40,16 @@ class HyperskillSubmissionsManager : SubmissionsManager() {
   }
 
   public override fun loadAllSubmissions(project: Project, course: Course?) {
-    if (!submissionsCanBeShown(course)|| !isLoggedIn()) return
-      ApplicationManager.getApplication().executeOnPooledThread {
-        val stepIds = HyperskillSolutionLoader.getInstance(project).provideTasksToUpdate(course!!).map { it.id }.toSet()
-        getAllSubmissions(stepIds)
-        ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
-      }
+    if (!submissionsCanBeShown(course) || !isLoggedIn()) return
+    ApplicationManager.getApplication().executeOnPooledThread {
+      val stepIds = HyperskillSolutionLoader.getInstance(project).provideTasksToUpdate(course!!).map { it.id }.toSet()
+      getAllSubmissions(stepIds)
+      ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
+    }
   }
 
-  override fun getAllSubmissions(stepId: Int): MutableList<Submission> {
-    return getAllSubmissions(setOf(stepId))?.toMutableList() ?: mutableListOf()
+  override fun getAllSubmissions(stepId: Int): List<Submission> {
+    return getAllSubmissions(setOf(stepId)) ?: mutableListOf()
   }
 
   override fun submissionsCanBeShown(course: Course?): Boolean {
