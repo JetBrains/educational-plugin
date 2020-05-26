@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.ide.AppLifecycleListener
-import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
@@ -11,8 +9,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.colors.EditorColorsListener
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
-import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -20,7 +16,6 @@ import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduUtils.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -30,7 +25,6 @@ import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveAll
 import java.io.IOException
 
 // educational-core.xml
@@ -72,42 +66,7 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
       TaskDescriptionView.updateAllTabs(TaskDescriptionView.getInstance(project))
     })
 
-    // we need opened project to get project for a course using `CourseExt.getProject`,
-    // that's why can't use `ProjectComponent#projectClosed`
-    connection.subscribe(ProjectManager.TOPIC, object : ProjectManagerListener {
-      override fun projectClosing(project: Project) {
-        if (!isUnitTestMode && isStudentProject(project)) {
-          saveAll(project)
-        }
-
-        if (PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW)) {
-          removeProjectFromRecentProjects(project)
-        }
-      }
-    })
-
-    connection.subscribe(AppLifecycleListener.TOPIC, object : AppLifecycleListener {
-      override fun appWillBeClosed(isRestart: Boolean) {
-        val projects = ProjectManager.getInstance().openProjects
-        for (project in projects) {
-          if (PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW)) {
-            // force closing project -> IDE will not try to reopen course preview in the next session
-            ProjectManager.getInstance().closeProject(project)
-            removeProjectFromRecentProjects(project)
-          }
-        }
-      }
-    })
-
     busConnection = connection
-  }
-
-  private fun removeProjectFromRecentProjects(project: Project) {
-    val basePath = project.basePath
-    if (basePath != null) {
-      RecentProjectsManager.getInstance().removePath(basePath)
-      RecentProjectsManager.getInstance().updateLastProjectPath()
-    }
   }
 
   private fun setupProject(course: Course) {
