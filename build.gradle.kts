@@ -519,6 +519,11 @@ if (!is202) {
       testCompile(project(":educational-core", "testOutput"))
       testCompile(project(":jvm-core", "testOutput"))
     }
+
+    //BACKCOMPAT: enable when 201 studio is available
+    tasks.withType(Test::class.java) {
+      enabled = environmentName.toInt() == 193
+    }
   }
 
   project(":Edu-Python") {
