@@ -15,15 +15,14 @@
  */
 package com.jetbrains.edu.learning.settings
 
-import com.intellij.openapi.options.CompositeConfigurable
 import com.intellij.openapi.options.ex.ConfigurableWrapper
 import com.intellij.openapi.ui.VerticalFlowLayout
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class EduConfigurable : CompositeConfigurable<OptionsProvider>() {
-  private val mainPanel = JPanel(VerticalFlowLayout())
+class EduConfigurable : EduConfigurableBase() {
+  private val mainPanel: JPanel = JPanel(VerticalFlowLayout())
 
   @Nls
   override fun getDisplayName(): String = "Education"
