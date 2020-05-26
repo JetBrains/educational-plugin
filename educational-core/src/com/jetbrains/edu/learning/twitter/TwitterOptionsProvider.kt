@@ -1,25 +1,24 @@
-package com.jetbrains.edu.kotlin.twitter
+package com.jetbrains.edu.learning.twitter
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.layout.*
-import com.jetbrains.edu.kotlin.messages.EduKotlinBundle
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
-import com.jetbrains.edu.learning.twitter.TwitterSettings
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 
-class KtOptionsProvider(private val project: Project) : OptionsProvider {
+class TwitterOptionsProvider(private val project: Project) : OptionsProvider {
 
   private val askToTweetCheckBox: JBCheckBox = JBCheckBox(
-    EduKotlinBundle.message("ktoptions.ask.to.tweet"),
+    EduCoreBundle.message("twitter.ask.to.tweet"),
     TwitterSettings.getInstance().askToTweet()
   )
 
   @Nls
-  override fun getDisplayName(): String = EduKotlinBundle.message("twitter.settings")
+  override fun getDisplayName(): String = EduCoreBundle.message("twitter.configurable.name")
 
   override fun isModified(): Boolean {
     return TwitterSettings.getInstance().askToTweet() != askToTweetCheckBox.isSelected
@@ -42,7 +41,7 @@ class KtOptionsProvider(private val project: Project) : OptionsProvider {
     return panel {
       row { askToTweetCheckBox() }
     }.apply {
-      border = IdeBorderFactory.createTitledBorder("Kotlin")
+      border = IdeBorderFactory.createTitledBorder(EduCoreBundle.message("twitter.configurable.name"))
     }
   }
 }

@@ -7,7 +7,6 @@
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.kotlin.KtConfigurator" language="kotlin"/>
     <twitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>
-    <optionsProvider instance="com.jetbrains.edu.kotlin.twitter.KtOptionsProvider"/>
     <coursesProvider implementation="com.jetbrains.edu.kotlin.KtBundledCoursesProvider"/>
     <codeforcesLanguageProvider implementation="com.jetbrains.edu.kotlin.codeforces.KtCodeforcesLanguageProvider"/>
 

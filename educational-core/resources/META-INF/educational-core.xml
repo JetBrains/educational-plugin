@@ -335,6 +335,7 @@
 
     <!--educator-->
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
+    <optionsProvider instance="com.jetbrains.edu.learning.twitter.TwitterOptionsProvider"/>
   </extensions>
 
   <xi:include href="/META-INF/ide-specific-actions.xml" xpointer="xpointer(/idea-plugin/*)"/>
