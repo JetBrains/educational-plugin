@@ -17,14 +17,12 @@ package com.jetbrains.edu.learning.settings
 
 import com.intellij.openapi.options.CompositeConfigurable
 import com.intellij.openapi.options.ex.ConfigurableWrapper
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.VerticalFlowLayout
 import org.jetbrains.annotations.Nls
-import java.util.*
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class EduConfigurable(private val myProject: Project) : CompositeConfigurable<OptionsProvider>() {
+class EduConfigurable : CompositeConfigurable<OptionsProvider>() {
   private val mainPanel = JPanel(VerticalFlowLayout())
 
   @Nls
@@ -41,20 +39,7 @@ class EduConfigurable(private val myProject: Project) : CompositeConfigurable<Op
   }
 
   override fun createConfigurables(): List<OptionsProvider> {
-    val extensions = OptionsProvider.EP_NAME.getExtensions(myProject)
-    val result: MutableList<OptionsProvider> = ArrayList(extensions.size)
-    for (extension in extensions) {
-      if (extension == null) {
-        continue
-      }
-      val wrappedConfigurable = ConfigurableWrapper.wrapConfigurable(
-        extension) ?: continue
-      if (!wrappedConfigurable.isAvailable) {
-        continue
-      }
-      result.add(wrappedConfigurable)
-    }
-    return result
+    return ConfigurableWrapper.createConfigurables(OptionsProvider.EP_NAME).filter { it.isAvailable }
   }
 
   companion object {

@@ -43,8 +43,7 @@
                     interface="com.jetbrains.edu.learning.checker.CheckListener"
                     dynamic="true"/>
     <extensionPoint qualifiedName="Educational.optionsProvider"
-                    beanClass="com.intellij.openapi.options.ConfigurableEP"
-                    area="IDEA_PROJECT">
+                    beanClass="com.intellij.openapi.options.ConfigurableEP">
       <with attribute="instance" implements="com.jetbrains.edu.learning.settings.OptionsProvider"/>
     </extensionPoint>
 

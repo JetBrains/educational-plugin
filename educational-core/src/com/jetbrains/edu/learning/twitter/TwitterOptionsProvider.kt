@@ -1,16 +1,14 @@
 package com.jetbrains.edu.learning.twitter
 
-import com.intellij.openapi.project.Project
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.layout.*
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 
-class TwitterOptionsProvider(private val project: Project) : OptionsProvider {
+class TwitterOptionsProvider : OptionsProvider {
 
   private val askToTweetCheckBox: JBCheckBox = JBCheckBox(
     EduCoreBundle.message("twitter.ask.to.tweet"),
@@ -33,11 +31,6 @@ class TwitterOptionsProvider(private val project: Project) : OptionsProvider {
   }
 
   override fun createComponent(): JComponent? {
-    // Default project can be passed here while building searchable options
-    if (project.isDefault) return null
-    if (!EduUtils.isEduProject(project)) return null
-    if (EduUtils.getTwitterConfigurator(project) == null) return null
-
     return panel {
       row { askToTweetCheckBox() }
     }.apply {
