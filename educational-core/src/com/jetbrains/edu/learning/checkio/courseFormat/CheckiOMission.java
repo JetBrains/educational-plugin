@@ -75,7 +75,7 @@ public class CheckiOMission extends EduTask {
   }
 
   @Override
-  public void setStatus(CheckStatus status) {
+  public void setStatus(@NotNull CheckStatus status) {
     if (myStatus == CheckStatus.Unchecked) {
       myStatus = status;
     }

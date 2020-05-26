@@ -184,7 +184,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
   override fun checkFinished(task: Task, checkResult: CheckResult) {
     if (task != currentTask) return
-    uiContent?.checkPanel?.updateCheckResult(task, checkResult)
+    uiContent?.checkPanel?.updateFeedback(task, checkResult)
     if (checkResult.status == CheckStatus.Failed) {
       updateTaskSpecificPanel()
     }

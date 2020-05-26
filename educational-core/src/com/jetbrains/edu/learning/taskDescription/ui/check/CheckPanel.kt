@@ -48,7 +48,8 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   private fun createRightActionsToolbar(): JPanel {
     if (task is CodeforcesTask) {
       rightActionsToolbar.add(createActionLink(OPEN_ON_CODEFORCES_ACTION, GoToTaskUrlAction.ACTION_ID))
-    } else {
+    }
+    else {
       rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
       rightActionsToolbar.add(createSingleActionToolbar(GoToTaskUrlAction.ACTION_ID))
     }
@@ -91,12 +92,13 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
     updateBackground()
   }
 
-  fun checkFinished(task: Task, result: CheckResult) {
+  fun updateFeedback(task: Task, result: CheckResult? = null) {
     checkFinishedPanel.removeAll()
-    val resultPanel = getResultPanel(task, result)
-    checkFinishedPanel.add(resultPanel, BorderLayout.WEST)
-    checkFinishedPanel.add(JPanel(), BorderLayout.CENTER)
-    checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, result))
+    checkFinishedPanel.addNextTaskButton(task)
+    checkFinishedPanel.add(FeedbackPanel(task), BorderLayout.WEST)
+    if (result != null) {
+      checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, result))
+    }
     updateBackground()
   }
 
@@ -105,41 +107,16 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
     UIUtil.setBackgroundRecursively(checkDetailsPlaceholder, TaskDescriptionView.getTaskDescriptionBackgroundColor())
   }
 
-  private fun getResultPanel(task: Task, result: CheckResult): JComponent {
-    val resultLabel = CheckResultLabel(task, result)
-    if (result.status != CheckStatus.Solved) {
-      return resultLabel
-    }
-    val panel = createNextTaskButtonPanel(task)
-    panel.add(resultLabel, BorderLayout.CENTER)
-    return panel
-  }
-
-  private fun createNextTaskButtonPanel(task: Task): JPanel {
-    val panel = JPanel(BorderLayout())
-    if (NavigationUtils.nextTask(task) != null) {
-      val nextButton = CheckPanelButtonComponent(ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID))
-      nextButton.border = JBUI.Borders.empty(0, 12, 0, 0)
-      panel.add(nextButton, BorderLayout.WEST)
-    }
-    return panel
-  }
-
-  private fun addResultPanel(task: Task) {
-    checkFinishedPanel.add(createNextTaskButtonPanel(task))
-  }
-
   fun updateCheckPanel(task: Task) {
     updateCheckButtonWrapper(task)
     updateRightActionsToolbar()
+    updateFeedback(task)
   }
 
   private fun updateCheckButtonWrapper(task: Task) {
     checkButtonWrapper.removeAll()
     checkButtonWrapper.add(CheckPanelButtonComponent(CheckAction.createCheckAction(task), true), BorderLayout.WEST)
-    if (task is TheoryTask || task.status == CheckStatus.Solved) {
-      addResultPanel(task)
-    }
+    checkFinishedPanel.addNextTaskButton(task)
   }
 
   private fun updateRightActionsToolbar() {
@@ -153,5 +130,13 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
 
   companion object {
     const val ACTION_PLACE = "CheckPanel"
+
+    private fun JPanel.addNextTaskButton(task: Task) {
+      if ((task.status == CheckStatus.Solved || task is TheoryTask) && NavigationUtils.nextTask(task) != null) {
+        val nextButton = CheckPanelButtonComponent(ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID))
+        nextButton.border = JBUI.Borders.empty(0, 12, 0, 0)
+        add(nextButton, BorderLayout.WEST)
+      }
+    }
   }
 }

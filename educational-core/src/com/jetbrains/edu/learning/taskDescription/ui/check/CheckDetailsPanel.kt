@@ -77,7 +77,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
     }
 
-    if (course !is CourseraCourse) {
+    if (course !is CourseraCourse && task.showAnswerHints) {
       val answerHintsPanel = createAnswerHintsPanel(project, task, checkResult)
       if (answerHintsPanel != null) {
         linksPanel.add(answerHintsPanel, BorderLayout.CENTER)
@@ -85,6 +85,9 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     }
     return linksPanel
   }
+
+  private val Task.showAnswerHints: Boolean
+    get() = status != CheckStatus.Unchecked || feedback?.time != null
 
   private fun createAnswerHintsPanel(project: Project, task: Task, checkResult: CheckResult): JPanel? {
     val answerHintsPanel = lazy(LazyThreadSafetyMode.NONE) {
