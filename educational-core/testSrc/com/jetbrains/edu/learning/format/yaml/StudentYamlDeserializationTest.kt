@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.STUDENT_MAPPER
+import java.util.*
 
 class StudentYamlDeserializationTest : EduTestCase() {
 
@@ -146,36 +147,21 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CheckStatus.Solved, task.status)
   }
 
-  fun `test task check result`() {
+  fun `test task feedback with time`() {
     val message = "My error message"
+    val time = Date(1589220000000)
     val yamlContent = """
     |type: edu
     |status: Failed
     |feedback:
     |  message: $message
+    |  time: Mon, 11 May 2020 18:00:00 UTC
     |""".trimMargin()
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     assertEquals(CheckStatus.Failed, task.status)
     assertEquals(message, task.feedback?.message)
-    assertNull(task.feedback?.time)
-  }
-
-  fun `test task check result with time`() {
-    val message = "My error message"
-    val timestamp = 1589220000000
-    val yamlContent = """
-    |type: edu
-    |status: Failed
-    |feedback:
-    |  message: $message
-    |  time: $timestamp
-    |""".trimMargin()
-    val task = deserializeTask(yamlContent)
-    assertTrue(task is EduTask)
-    assertEquals(CheckStatus.Failed, task.status)
-    assertEquals(message, task.feedback?.message)
-    assertEquals(timestamp, task.feedback?.time?.time)
+    assertEquals(time, task.feedback?.time)
   }
 
   fun `test selected variants`() {

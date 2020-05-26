@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.components.panels.HorizontalLayout
@@ -32,6 +33,7 @@ import javax.swing.JPanel
 class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   private val checkFinishedPanel: JPanel = JPanel(BorderLayout())
   private val checkActionsPanel: JPanel = JPanel(BorderLayout())
+  private var feedbackPanel: FeedbackPanel? = null
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
   private val checkButtonWrapper = JPanel(BorderLayout())
   private val rightActionsToolbar = JPanel(HorizontalLayout(10))
@@ -95,11 +97,21 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   fun updateFeedback(task: Task, result: CheckResult? = null) {
     checkFinishedPanel.removeAll()
     checkFinishedPanel.addNextTaskButton(task)
-    checkFinishedPanel.add(FeedbackPanel(task), BorderLayout.WEST)
-    if (result != null) {
-      checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, result))
+    feedbackPanel?.apply { Disposer.dispose(this) }
+    val newFeedbackPanel = FeedbackPanel(task, project)
+    checkFinishedPanel.add(newFeedbackPanel, BorderLayout.WEST)
+    feedbackPanel = newFeedbackPanel
+
+    val checkResult = result ?: restoreSavedResult(task)
+    if (checkResult != null) {
+      checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, checkResult))
     }
     updateBackground()
+  }
+
+  private fun restoreSavedResult(task: Task) : CheckResult? {
+    val message = task.feedback?.message ?: return null
+    return CheckResult(task.status, message)
   }
 
   private fun updateBackground() {

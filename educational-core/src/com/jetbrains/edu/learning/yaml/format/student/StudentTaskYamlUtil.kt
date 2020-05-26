@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.yaml.format.student
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.intellij.openapi.application.ApplicationManager
@@ -13,7 +14,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
-import com.jetbrains.edu.learning.yaml.format.*
+import com.jetbrains.edu.learning.yaml.format.TaskChangeApplier
+import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
@@ -39,11 +41,13 @@ abstract class StudentTaskYamlMixin : TaskYamlMixin() {
   protected open var myRecord: Int = -1
 }
 
+@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonPropertyOrder(MESSAGE, TIME)
 abstract class FeedbackYamlMixin {
   @JsonProperty(MESSAGE)
   private var message: String = ""
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEE, dd MMM yyyy HH:mm:ss zzz")
   @JsonProperty(TIME)
   private var time: Date? = null
 }

@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.taskDescription.ui.check
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.Alarm
@@ -13,15 +15,20 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import icons.EducationalCoreIcons
 import java.awt.BorderLayout
+import java.util.*
 import javax.swing.JPanel
 
-class FeedbackPanel(task: Task) : JPanel(BorderLayout()) {
+class FeedbackPanel(task: Task, parent: Disposable) : JPanel(BorderLayout()), Disposable {
   init {
+    Disposer.register(parent, this)
     add(ResultLabel(task), BorderLayout.CENTER)
-    val checkTime = task.feedback?.time?.time
+    val checkTime = task.feedback?.time
     if (checkTime != null) {
-      add(TimeLabel(checkTime), BorderLayout.EAST)
+      add(TimeLabel(checkTime, this), BorderLayout.EAST)
     }
+  }
+
+  override fun dispose() {
   }
 
   private class ResultLabel(task: Task) : JBLabel() {
@@ -52,17 +59,18 @@ class FeedbackPanel(task: Task) : JPanel(BorderLayout()) {
     }
   }
 
-  private class TimeLabel(time: Long) : JBLabel() {
+  private class TimeLabel(private val time: Date, disposable: Disposable) : JBLabel(), Runnable {
+    private val alarm = Alarm(disposable)
+
     init {
       border = JBUI.Borders.empty(8, 16, 0, 0)
       foreground = UIUtil.getLabelDisabledForeground()
-      val alarm = Alarm()
-      object : Runnable {
-        override fun run() {
-          text = DateFormatUtil.formatPrettyDateTime(time)
-          alarm.addRequest(this, DateFormatUtil.MINUTE)
-        }
-      }.run()
+      run()
+    }
+
+    override fun run() {
+      text = DateFormatUtil.formatPrettyDateTime(time)
+      alarm.addRequest(this, DateFormatUtil.MINUTE)
     }
   }
 }
