@@ -13,76 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jetbrains.edu.learning.settings;
+package com.jetbrains.edu.learning.settings
 
-import com.intellij.openapi.options.CompositeConfigurable;
-import com.intellij.openapi.options.ConfigurableEP;
-import com.intellij.openapi.options.ex.ConfigurableWrapper;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.VerticalFlowLayout;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.options.CompositeConfigurable
+import com.intellij.openapi.options.ex.ConfigurableWrapper
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.VerticalFlowLayout
+import org.jetbrains.annotations.Nls
+import java.util.*
+import javax.swing.JComponent
+import javax.swing.JPanel
 
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
-
-public class EduConfigurable extends CompositeConfigurable<OptionsProvider> {
-  public static final String ID = "com.jetbrains.edu.learning.stepik.EduConfigurable";
-  private final JPanel myMainPanel;
-  @NotNull private final Project myProject;
-
-  public EduConfigurable(@NotNull final Project project) {
-    myProject = project;
-    myMainPanel = new JPanel(new VerticalFlowLayout());
-  }
+class EduConfigurable(private val myProject: Project) : CompositeConfigurable<OptionsProvider>() {
+  private val mainPanel = JPanel(VerticalFlowLayout())
 
   @Nls
-  @Override
-  public String getDisplayName() {
-    return "Education";
-  }
+  override fun getDisplayName(): String = "Education"
+  override fun getHelpTopic(): String = ID
 
-  @NotNull
-  @Override
-  public String getHelpTopic() {
-    return ID;
-  }
-
-  @Nullable
-  @Override
-  public JComponent createComponent() {
-    myMainPanel.removeAll();
-    for (int i = 0; i < getConfigurables().size(); i++) {
-      OptionsProvider provider = getConfigurables().get(i);
-      JComponent component = provider.createComponent();
-      if (component != null) {
-        myMainPanel.add(component);
-      }
+  override fun createComponent(): JComponent? {
+    mainPanel.removeAll()
+    for (provider in configurables) {
+      val component = provider.createComponent() ?: continue
+      mainPanel.add(component)
     }
-    return myMainPanel;
+    return mainPanel
   }
 
-  @NotNull
-  @Override
-  protected List<OptionsProvider> createConfigurables() {
-    final ConfigurableEP<OptionsProvider>[] extensions = OptionsProvider.EP_NAME.getExtensions(myProject);
-    List<OptionsProvider> result = new ArrayList<>(extensions.length);
-    for (ConfigurableEP<OptionsProvider> extension : extensions) {
+  override fun createConfigurables(): List<OptionsProvider> {
+    val extensions = OptionsProvider.EP_NAME.getExtensions(myProject)
+    val result: MutableList<OptionsProvider> = ArrayList(extensions.size)
+    for (extension in extensions) {
       if (extension == null) {
-        continue;
+        continue
       }
-      OptionsProvider wrappedConfigurable = ConfigurableWrapper.wrapConfigurable(extension);
-      if (wrappedConfigurable == null) {
-        continue;
+      val wrappedConfigurable = ConfigurableWrapper.wrapConfigurable(
+        extension) ?: continue
+      if (!wrappedConfigurable.isAvailable) {
+        continue
       }
-      if (!wrappedConfigurable.isAvailable()) {
-        continue;
-      }
-      result.add(wrappedConfigurable);
+      result.add(wrappedConfigurable)
     }
-    return result;
+    return result
+  }
+
+  companion object {
+    const val ID = "com.jetbrains.edu.learning.stepik.EduConfigurable"
   }
 }
-
