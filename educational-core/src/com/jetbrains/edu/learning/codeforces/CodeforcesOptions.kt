@@ -4,11 +4,10 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.getDefaultLanguageId
-import com.jetbrains.edu.learning.settings.OptionsProvider
 import javax.swing.JCheckBox
 import javax.swing.JComponent
 
-class CodeforcesOptions : OptionsProvider {
+class CodeforcesOptions : CodeforcesOptionsBase() {
   private val textLanguageComboBox: ComboBox<TaskTextLanguage> = ComboBox()
   private val languageComboBox: ComboBox<String> = ComboBox()
   private val doNotShowLanguageDialogCheckBox: JCheckBox = JCheckBox("Do not ask if selected languages are available")

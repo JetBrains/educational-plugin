@@ -28,15 +28,11 @@ interface CodeforcesLanguageProvider {
   }
 
   companion object {
-    private val EP_NAME: ExtensionPointName<CodeforcesLanguageProvider> =
+    val EP_NAME: ExtensionPointName<CodeforcesLanguageProvider> =
       ExtensionPointName.create("Educational.codeforcesLanguageProvider")
 
     fun getSupportedLanguages(): List<String> {
-      val languages = mutableListOf<String>()
-      EP_NAME.extensions.forEach {
-        languages.addAll(it.codeforcesLanguageNamings)
-      }
-      return languages
+      return EP_NAME.extensions.flatMap { it.codeforcesLanguageNamings }
     }
 
     fun getPreferableCodeforcesLanguage(languageId: String): String? {
