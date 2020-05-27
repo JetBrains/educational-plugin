@@ -3,7 +3,6 @@ package com.jetbrains.edu.android
 import com.android.ide.common.repository.GradleCoordinate
 import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
 import com.android.tools.idea.sdk.AndroidSdks
-import com.android.tools.idea.templates.RepositoryUrlManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
