@@ -1,4 +1,3 @@
-import de.undercouch.gradle.tasks.download.Download
 import de.undercouch.gradle.tasks.download.DownloadAction
 import de.undercouch.gradle.tasks.download.DownloadSpec
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -51,21 +50,18 @@ val webStormSandbox = "${project.buildDir.absolutePath}/webstorm-sandbox"
 val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 
-val isAtLeast193 = environmentName.toInt() >= 193
+// BACKCOMPAT: 2019.3. Drop it
 val isAtLeast201 = environmentName.toInt() >= 201
 // TODO remove when 202 EAPs will be available
 val is202 = environmentName.toInt() == 202
 
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
 val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
-// python community plugin is not compatible with IDEA Ultimate since 2019.3
-val pythonIDEAPlugin = if (isAtLeast193) pythonProPlugin else pythonCommunityPlugin
 
 val pythonPlugin = when (baseIDE) {
-  "idea" -> pythonIDEAPlugin
-  "clion" -> if (isAtLeast193) "python-ce" else "python"
-  // PyCharm has separate python plugin since 2019.3. Previously it was part of PyCharm core code
-  "pycharm" -> if (isAtLeast193) "python-ce" else null
+  "idea" -> pythonProPlugin
+  "clion" -> "python-ce"
+  "pycharm" -> "python-ce"
   "studio" -> pythonCommunityPlugin
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
@@ -385,11 +381,9 @@ project(":jvm-core") {
       "junit",
       "properties",
       "gradle",
-      "Groovy"
+      "Groovy",
+      "gradle-java"
     )
-    if (isAtLeast193) {
-      plugins += "gradle-java"
-    }
     setPlugins(*plugins.toTypedArray())
   }
 
@@ -424,11 +418,9 @@ project(":Edu-Java") {
       "junit",
       "properties",
       "gradle",
-      "Groovy"
+      "Groovy",
+      "gradle-java"
     )
-    if (isAtLeast193) {
-      plugins += "gradle-java"
-    }
     setPlugins(*plugins.toTypedArray())
   }
 
@@ -452,11 +444,9 @@ project(":Edu-Kotlin") {
       "junit",
       "properties",
       "gradle",
-      "Groovy"
+      "Groovy",
+      "gradle-java"
     )
-    if (isAtLeast193) {
-      plugins += "gradle-java"
-    }
     setPlugins(*plugins.toTypedArray())
   }
 
@@ -479,11 +469,9 @@ if (!is202) {
         "junit",
         "properties",
         "gradle",
-        "Groovy"
+        "Groovy",
+        "gradle-java"
       )
-      if (isAtLeast193) {
-        plugins += "gradle-java"
-      }
       setPlugins(*plugins.toTypedArray())
     }
 
@@ -504,15 +492,13 @@ if (!is202) {
         "properties",
         "gradle",
         "Groovy",
+        "gradle-java",
         "IntelliLang",
         "smali",
         "Kotlin",
         "java",
         "android-layoutlib"
       )
-      if (isAtLeast193) {
-        plugins += "gradle-java"
-      }
       setPlugins(*plugins.toTypedArray())
     }
 
@@ -550,13 +536,13 @@ if (!is202) {
 
   project(":Edu-Python:Idea") {
     intellij {
-      if (!isJvmCenteredIDE || isAtLeast193 && baseIDE == "studio") {
+      if (!isJvmCenteredIDE || baseIDE == "studio") {
         localPath = null
         version = ideaVersion
       }
 
       val plugins = listOfNotNull(
-        if (!isJvmCenteredIDE) pythonIDEAPlugin else pythonPlugin,
+        if (!isJvmCenteredIDE) pythonProPlugin else pythonPlugin,
         // python pro plugin has mandatory dependency on yaml plugin
         "yaml",
         "java"
@@ -573,7 +559,7 @@ if (!is202) {
 
   project(":Edu-Python:PyCharm") {
     intellij {
-      if (isAtLeast193 && baseIDE == "studio") {
+      if (baseIDE == "studio") {
         localPath = null
         version = ideaVersion
       }
@@ -626,9 +612,7 @@ if (!is202) {
     intellij {
       localPath = null
       version = clionVersion
-    if (isAtLeast193) {
       setPlugins("clion-test-google", "clion-test-catch")
-    }
   }
 
     dependencies {
