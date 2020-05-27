@@ -42,9 +42,8 @@
     <extensionPoint qualifiedName="Educational.checkListener"
                     interface="com.jetbrains.edu.learning.checker.CheckListener"
                     dynamic="true"/>
-    <extensionPoint qualifiedName="Educational.submissionsManager"
-                    interface="com.jetbrains.edu.learning.stepik.SubmissionsManager
-                    dynamic="true""/>
+    <extensionPoint qualifiedName="Educational.submissionsProvider"
+                    interface="com.jetbrains.edu.learning.stepik.SubmissionsProvider"/>
     <extensionPoint qualifiedName="Educational.optionsProvider"
                     beanClass="com.intellij.openapi.options.ConfigurableEP"
                     dynamic="true">
@@ -219,6 +218,7 @@
     <projectService serviceImplementation="com.jetbrains.edu.learning.StudyTaskManager"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
 
+    <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.SubmissionsManager"/>
     <postStartupActivity implementation="com.jetbrains.edu.learning.EduStartupActivity"/>
 
     <projectConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
@@ -311,7 +311,7 @@
 
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.checker.StepikRemoteTaskChecker"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.coursera.CourseraTaskChecker"/>
-    <submissionsManager implementation="com.jetbrains.edu.learning.stepik.StepikSubmissionsManager"/>
+    <submissionsProvider implementation="com.jetbrains.edu.learning.stepik.StepikSubmissionsProvider"/>
 
     <!-- Course compatibility providers   -->
     <compatibilityProvider language="JAVA"

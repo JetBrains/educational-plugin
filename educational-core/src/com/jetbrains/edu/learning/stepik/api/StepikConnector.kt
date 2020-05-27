@@ -150,7 +150,7 @@ abstract class StepikConnector {
     return stepSource?.block
   }
 
-  fun getAllSubmissions(stepId: Int, submissionsManager: StepikSubmissionsManager): List<Submission> {
+  fun getAllSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
     var currentPage = 1
     val allSubmissions = mutableListOf<Submission>()
     while (true) {

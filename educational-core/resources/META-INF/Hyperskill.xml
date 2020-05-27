@@ -22,7 +22,7 @@
     <checkListener implementation="com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckListener"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillRemoteTaskChecker"/>
     <coursesProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCoursesProvider"/>
-    <submissionsManager implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSubmissionsManager"/>
+    <submissionsProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSubmissionsProvider"/>
   </extensions>
 
   <actions>

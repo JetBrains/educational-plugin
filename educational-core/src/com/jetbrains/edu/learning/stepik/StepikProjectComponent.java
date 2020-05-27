@@ -49,10 +49,10 @@ public class StepikProjectComponent implements ProjectComponent {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(
       () -> {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
-        SubmissionsManager submissionsManager = SubmissionsManager.Companion.getSubmissionsManagerForCourse(course);
-        if (course instanceof EduCourse && submissionsManager != null) {
-          if (EduSettings.getInstance().getUser() != null) {
-            submissionsManager.prepareSubmissionsContent(myProject, course);
+        if (course instanceof EduCourse) {
+          SubmissionsProvider submissionsProvider = SubmissionsProvider.Companion.getSubmissionsProviderForCourse(course);
+          if (EduSettings.getInstance().getUser() != null && submissionsProvider != null) {
+            submissionsProvider.prepareSubmissionsContent(myProject, course);
           }
           else {
             MessageBusConnection busConnection = myProject.getMessageBus().connect(myProject);
@@ -62,7 +62,7 @@ public class StepikProjectComponent implements ProjectComponent {
                 if (EduSettings.getInstance().getUser() == null) {
                   return;
                 }
-                submissionsManager.prepareSubmissionsContent(myProject, course);
+                submissionsProvider.prepareSubmissionsContent(myProject, course);
               }
 
               @Override
@@ -78,7 +78,7 @@ public class StepikProjectComponent implements ProjectComponent {
           }
           if (currentUser != null && !course.getAuthors().contains(currentUser.userInfo)) {
             loadSolutionsFromStepik(course);
-            submissionsManager.loadAllSubmissions(myProject, course);
+            submissionsProvider.loadAllSubmissions(myProject, course);
           }
           selectStep(course);
         }

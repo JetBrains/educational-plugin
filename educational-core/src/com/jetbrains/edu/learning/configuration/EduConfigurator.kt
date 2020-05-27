@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.SubmissionsManager
+import com.jetbrains.edu.learning.stepik.SubmissionsUiProvider
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isConfigFile
 import org.jetbrains.annotations.SystemIndependent
 import javax.swing.Icon
@@ -175,8 +175,7 @@ interface EduConfigurator<Settings> {
   fun additionalTaskTabs(currentTask: Task?, project: Project): List<Pair<JPanel, String>> {
     if (currentTask == null || !currentTask.supportSubmissions()) return emptyList()
     val course = currentTask.course
-    val submissionsManager = SubmissionsManager.getSubmissionsManagerForCourse(course) ?: return emptyList()
-    val submissionsTab = submissionsManager.createSubmissionsTab(currentTask, course, project)
+    val submissionsTab = SubmissionsUiProvider.createSubmissionsTab(currentTask, course, project)
     return if (submissionsTab == null) emptyList()
     else listOf(submissionsTab)
   }

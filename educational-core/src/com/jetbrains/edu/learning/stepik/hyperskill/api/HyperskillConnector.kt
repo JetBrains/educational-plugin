@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
+import com.jetbrains.edu.learning.stepik.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.WebSocketConnectionState
@@ -230,12 +231,13 @@ abstract class HyperskillConnector {
     return FeedbackLink("$HYPERSKILL_PROJECTS_URL/$project/stages/${stage.id}/implement")
   }
 
-  fun getSubmissions(stepIds: Set<Int>, submissionsManager: HyperskillSubmissionsManager): List<Submission>? {
+  fun getSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission>? {
     val userId = HyperskillSettings.INSTANCE.account?.userInfo?.id ?: error("Attempt to get submission for non authorized user")
     var currentPage = 1
     val allSubmissions = mutableListOf<Submission>()
-    while(true) {
-      val submissionsList = service.submission(userId, stepIds.joinToString(separator = ","), currentPage).executeHandlingExceptions()?.body() ?: break
+    while (true) {
+      val submissionsList = service.submission(userId, stepIds.joinToString(separator = ","),
+                                               currentPage).executeHandlingExceptions()?.body() ?: break
       val submissions = submissionsList.submissions
       allSubmissions.addAll(submissions)
       if (submissions.isEmpty() || !submissionsList.meta.containsKey("has_next") || submissionsList.meta["has_next"] == false) {

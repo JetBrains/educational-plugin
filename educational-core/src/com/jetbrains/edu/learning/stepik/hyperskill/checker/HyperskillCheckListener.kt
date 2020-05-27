@@ -38,7 +38,7 @@ class HyperskillCheckListener : CheckListener {
       ApplicationManager.getApplication().executeOnPooledThread {
         val submission = HyperskillCheckConnector.postSolution(task, project, result)
         submission?.status = if (task.status == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
-        SubmissionsManager.getSubmissionsManagerForCourse(task.course)?.addToSubmissionsMap(task.id, submission)
+        SubmissionsManager.getInstance(project).addToSubmissionsMap(task.id, submission)
         runInEdt { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
       }
       showChooseNewProjectNotification(course, project)
