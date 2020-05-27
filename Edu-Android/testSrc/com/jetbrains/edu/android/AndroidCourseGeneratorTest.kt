@@ -26,11 +26,13 @@ class AndroidCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>(
 
     val gradleProperties = findFile("gradle.properties")
     val text = VfsUtil.loadText(gradleProperties)
-    assertThat(text, CoreMatchers.containsString("""
-      android.enableJetifier=true
-      android.useAndroidX=true
-      org.gradle.jvmargs=-Xmx1536m
-    """.trimIndent()))
+    listOf(
+      "android.enableJetifier=true",
+      "android.useAndroidX=true",
+      "org.gradle.jvmargs=-Xmx1536m"
+    ).forEach { line ->
+      assertThat(text, CoreMatchers.containsString(line))
+    }
   }
 
   fun `test do not rewrite already created additional files`() {
