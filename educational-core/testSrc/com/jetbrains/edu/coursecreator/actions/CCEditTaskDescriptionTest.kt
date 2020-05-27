@@ -1,13 +1,12 @@
 package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.openapi.actionSystem.Presentation
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
@@ -55,17 +54,16 @@ class CCEditTaskDescriptionTest : EduTestCase() {
   }
 
   fun `test synchronization`() {
-    doOpenTaskDescription()
+    EditorFactory.getInstance().eventMulticaster.addDocumentListener(SynchronizeTaskDescription(project), testRootDisposable)
 
-    //need this because opening file with FileEditorManager#open doesn't set fixture's selected editor
     val taskDescriptionFile = findTaskDescriptionFile()
-    myFixture.openFileInEditor(taskDescriptionFile)
-    myFixture.editor.caretModel.moveToOffset(0)
 
-    WriteCommandAction.runWriteCommandAction(myFixture.project) {
-      FileDocumentManager.getInstance().getDocument(taskDescriptionFile)!!.insertString(0, "Do not ")
-      assertEquals("Do not solve task", findTask(0, 0).descriptionText)
+    val newText = "new text"
+    runWriteAction {
+      FileDocumentManager.getInstance().getDocument(taskDescriptionFile)!!.setText(newText)
     }
+
+    assertEquals(newText, findTask(0, 0).descriptionText)
   }
 
   private fun getCurrentlyOpenedText() = FileEditorManager.getInstance(project).selectedTextEditor?.document?.text ?: error(

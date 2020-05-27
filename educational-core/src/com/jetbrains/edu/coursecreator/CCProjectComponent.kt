@@ -44,10 +44,9 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
     if (CCUtils.isCourseCreator(myProject)) {
       if (!ApplicationManager.getApplication().isUnitTestMode) {
         registerListener()
+        EduCounterUsageCollector.eduProjectOpened(course)
+        startTaskDescriptionFilesSynchronization()
       }
-
-      EduCounterUsageCollector.eduProjectOpened(course)
-      startTaskDescriptionFilesSynchronization()
     }
   }
 
