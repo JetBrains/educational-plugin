@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.InetAddress
 import java.net.UnknownHostException
-import java.util.Properties
+import java.util.*
 
 val secretProperties = "secret.properties"
 
 val environmentName: String by project
+val pluginVersion: String by project
+val platformVersion: String = "20${StringBuilder(environmentName).insert(environmentName.length - 1, '.')}"
 val baseIDE: String by project
 val isJvmCenteredIDE = baseIDE in listOf("idea", "studio")
 
@@ -211,7 +213,14 @@ subprojects {
 
 project(":") {
   val buildNumber = System.getenv("BUILD_NUMBER") ?: "SNAPSHOT"
-  version = "${prop("pluginVersion")}-$buildNumber"
+
+  if (hasProp("setTCBuildNumber")) {
+    // Specify build number at building plugin running configuration on TC
+    // with heading plugin version: e.g. `3.8.BUILD_NUMBER` instead of `BUILD_NUMBER`
+    println("##teamcity[buildNumber '$pluginVersion.$buildNumber']")
+  }
+
+  version = "$pluginVersion-$platformVersion-$buildNumber"
 
   sourceSets {
     main {
