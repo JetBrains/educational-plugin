@@ -60,7 +60,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val topicsTab = additionalTabs.find { it.second == TOPICS_TAB_NAME }
     addTab(topicsTab, contentManager, 1)
     val submissionsTab = additionalTabs.find { it.second == SUBMISSIONS_TAB_NAME }
-    val submissionsTabIndex = if (topicsTab == null) 1 else 2
+    val submissionsTabIndex = if (topicsTab != null) 2 else getSubmissionsTabIndex(contentManager)
     updateSubmissionsTab(contentManager, submissionsTab, submissionsTabIndex)
     addYamlTab()
   }
