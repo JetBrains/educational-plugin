@@ -19,7 +19,7 @@ class StudyItemNotFoundInspectionTest : YamlInspectionsTestBase(StudyItemNotFoun
     doTest(lesson, "Create task", """
       |content:
       |- task1
-      |- <error descr="Cannot find 'task2' task">task2<caret></error>
+      |- <error descr="Cannot find `task2` task">task2<caret></error>
     """.trimMargin("|"), """
       |content:
       |- task1
@@ -38,7 +38,7 @@ class StudyItemNotFoundInspectionTest : YamlInspectionsTestBase(StudyItemNotFoun
     val expectedItems = listOf("lesson0", "lesson1")
     doTest(section, "Create lesson", """
       |content:
-      |- <error descr="Cannot find 'lesson0' lesson">lesson0<caret></error>
+      |- <error descr="Cannot find `lesson0` lesson">lesson0<caret></error>
       |- lesson1
     """.trimMargin("|"), """
       |content:
@@ -101,7 +101,7 @@ class StudyItemNotFoundInspectionTest : YamlInspectionsTestBase(StudyItemNotFoun
     val section = course.getSection("section1")!!
     testQuickFixIsUnavailable(section, "Create lesson", """
       |content:
-      |- <error descr="Cannot find 'les\son1' lesson">les\son1<caret></error>
+      |- <error descr="Cannot find `les\son1` lesson">les\son1<caret></error>
     """.trimMargin("|"))
   }
 
