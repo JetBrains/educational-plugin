@@ -18,7 +18,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     doTest(task, "Create file", """
       |type: edu
       |files:
-      |- name: <error descr="Cannot find 'src/taskfile1.txt' file">src/taskfile1.txt<caret></error>
+      |- name: <error descr="Cannot find `src/taskfile1.txt` file">src/taskfile1.txt<caret></error>
       |  visible: true
     """.trimMargin("|"), """
       |type: edu
@@ -41,7 +41,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     doTest(task, "Create file", """
       |type: edu
       |files:
-      |- name: <error descr="Cannot find 'src/taskfile1.txt' file">src/taskfile1.txt<caret></error>
+      |- name: <error descr="Cannot find `src/taskfile1.txt` file">src/taskfile1.txt<caret></error>
       |  visible: false
     """.trimMargin("|"), """
       |type: edu
@@ -66,7 +66,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     doTest(task, "Create file", """
       |type: edu
       |files:
-      |- name: <error descr="Cannot find 'src/taskfile0.txt' file">src/taskfile0.txt<caret></error>
+      |- name: <error descr="Cannot find `src/taskfile0.txt` file">src/taskfile0.txt<caret></error>
       |  visible: true
       |- name: src/taskfile1.txt
       |  visible: true
@@ -92,7 +92,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     testQuickFixIsUnavailable(task, "Create file", """
       |type: edu
       |files:
-      |- name: <error descr="Cannot find 'src\taskfile1.txt' file">src\taskfile1.txt</error>
+      |- name: <error descr="Cannot find `src\taskfile1.txt` file">src\taskfile1.txt</error>
       |  visible: true
     """.trimMargin("|"))
   }
@@ -109,7 +109,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     testQuickFixIsUnavailable(task, "Create file", """
       |type: edu
       |files:
-      |- name: <error descr="Cannot find 'src//taskfile1.txt' file">src//taskfile1.txt</error>
+      |- name: <error descr="Cannot find `src//taskfile1.txt` file">src//taskfile1.txt</error>
       |  visible: true
     """.trimMargin("|"))
   }
