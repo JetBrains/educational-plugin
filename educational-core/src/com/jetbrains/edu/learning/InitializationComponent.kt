@@ -7,14 +7,12 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.BaseComponent
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.builtInServer.createServerBootstrap
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -46,9 +44,6 @@ class InitializationComponent : BaseComponent {
         startCustomServer()
       }
     }
-
-    //Register placeholder size listener
-    EditorFactory.getInstance().addEditorFactoryListener(EduEditorFactoryListener(), ApplicationManager.getApplication())
 
     if (isUnitTestMode) return
 
