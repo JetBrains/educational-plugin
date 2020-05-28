@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.update.UpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
@@ -57,6 +58,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
     if (submissions != null) {
       updateTasks(course, tasksToUpdate, submissions, progressIndicator)
+      ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
     }
     else {
       LOG.warn("Can't get submissions")
