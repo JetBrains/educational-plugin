@@ -30,7 +30,7 @@ class HyperskillSubmissionsProvider : SubmissionsProvider() {
     }
   }
 
-  override fun loadAllSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
+  override fun loadSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
     return HyperskillConnector.getInstance().getSubmissions(setOf(stepId), submissionsManager) ?: emptyList()
   }
 
