@@ -116,6 +116,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
         }
       }
     }
+    course.id = 1
     StepikSolutionsLoader.getInstance(project).loadSolutions(null, course)
     UIUtil.dispatchAllInvocationEvents()
 
@@ -180,6 +181,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
         }
       }
     }
+    course.id = 1
 
     StepikSolutionsLoader.getInstance(project).loadSolutions(null, course)
 
@@ -244,6 +246,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
       }
     } as EduCourse
     setUpdateDate(course)
+    course.id = 1
     return course
   }
 
@@ -265,7 +268,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
   private fun getTestFile(fileName: String) = testDataPath + fileName
 
   override fun tearDown() {
-    SubmissionsManager.clear()
+    SubmissionsManager.getInstance(project).clear()
     super.tearDown()
   }
 
