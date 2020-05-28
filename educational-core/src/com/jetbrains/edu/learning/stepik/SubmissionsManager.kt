@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.stepik.api.Reply
@@ -35,6 +36,12 @@ class SubmissionsManager {
       val submissionsToStep = submissionsList.filter { it.step == stepId }
       putToSubmissions(stepId, submissionsToStep.toMutableList())
     }
+  }
+
+  fun addToSubmissionsMapWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {
+    if (submission == null) return
+    submission.status = if (checkStatus == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
+    addToSubmissionsMap(taskId, submission)
   }
 
   fun addToSubmissionsMap(taskId: Int, submission: Submission?) {
