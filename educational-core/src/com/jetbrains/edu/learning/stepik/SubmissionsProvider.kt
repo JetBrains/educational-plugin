@@ -26,14 +26,14 @@ abstract class SubmissionsProvider {
   }
 
   fun getAllSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
-    return submissionsManager.getOrPut(stepId) { loadAllSubmissions(stepId, submissionsManager) }
+    return submissionsManager.getOrPut(stepId) { loadSubmissions(stepId, submissionsManager) }
   }
 
   abstract fun getAllSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission>?
 
   abstract fun loadAllSubmissions(project: Project, course: Course?)
 
-  abstract fun loadAllSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission>
+  abstract fun loadSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission>
 
   abstract fun submissionsCanBeShown(course: Course?): Boolean
 
@@ -44,7 +44,7 @@ abstract class SubmissionsProvider {
   abstract fun doAuthorize()
 
   companion object {
-    private val EP_NAME = ExtensionPointName.create<SubmissionsProvider>("Educational.submissionsLoader")
+    private val EP_NAME = ExtensionPointName.create<SubmissionsProvider>("Educational.submissionsProvider")
 
     fun getSubmissionsProviderForCourse(course: Course?): SubmissionsProvider? {
       if (course == null) return null

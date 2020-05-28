@@ -39,16 +39,14 @@ class StepikSubmissionsProvider : SubmissionsProvider() {
   }
 
   override fun getAllSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission>? {
-    val loadedSubmissions = mutableListOf<Submission>()
-    val newStepIds = stepIds.filter { !submissionsManager.contains(it) }
-    for (stepId in newStepIds) {
-      loadedSubmissions.addAll(getAllSubmissions(stepId, submissionsManager))
+    val allSubmissions = mutableListOf<Submission>()
+    for (stepId in stepIds) {
+      allSubmissions.addAll(submissionsManager.getOrPut(stepId) { loadSubmissions(stepId, submissionsManager) })
     }
-    //can be confusing - should return submissions for all stepIds, not only for newly loaded
-    return loadedSubmissions
+    return allSubmissions
   }
 
-  override fun loadAllSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
+  override fun loadSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
     return StepikConnector.getInstance().getAllSubmissions(stepId, submissionsManager)
   }
 
