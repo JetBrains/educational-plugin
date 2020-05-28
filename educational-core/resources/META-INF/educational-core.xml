@@ -15,12 +15,16 @@
 
   <application-components>
     <component>
-      <implementation-class>com.jetbrains.edu.learning.InitializationComponent</implementation-class>
-    </component>
-    <component>
       <implementation-class>com.jetbrains.edu.learning.SelectRoleComponent</implementation-class>
     </component>
   </application-components>
+
+  <!--suppress PluginXmlValidity -->
+  <!-- https://youtrack.jetbrains.com/issue/IDEA-241994 -->
+  <applicationListeners>
+    <listener class="com.jetbrains.edu.learning.InitializationListener" topic="com.intellij.ide.AppLifecycleListener"/>
+    <listener class="com.jetbrains.edu.learning.InitializationListener" topic="com.intellij.ide.plugins.DynamicPluginListener"/>
+  </applicationListeners>
 
   <extensionPoints>
     <extensionPoint qualifiedName="Educational.configurator"
