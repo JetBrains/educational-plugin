@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.builtInServer.createServerBootstrap
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService
-import com.jetbrains.edu.learning.update.NewCoursesNotifier
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import io.netty.channel.Channel
@@ -34,8 +33,6 @@ import java.net.InetAddress
 
 @Suppress("ComponentNotRegistered") // registered in educational-core.xml
 class InitializationComponent : BaseComponent {
-
-  private val newCoursesNotifier = NewCoursesNotifier(ApplicationManager.getApplication())
 
   override fun initComponent() {
     if (EduUtils.isAndroidStudio()) {
@@ -59,8 +56,6 @@ class InitializationComponent : BaseComponent {
       fillRecentCourses()
       PropertiesComponent.getInstance().setValue(RECENT_COURSES_FILLED, true)
     }
-
-    newCoursesNotifier.scheduleNotification()
   }
 
   private fun fillRecentCourses() {
