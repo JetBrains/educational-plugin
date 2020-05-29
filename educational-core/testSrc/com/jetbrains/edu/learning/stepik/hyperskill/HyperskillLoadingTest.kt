@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.withTestDialog
@@ -74,6 +75,9 @@ class HyperskillLoadingTest : NavigationTestBase() {
     // hack: timestamps don't change in tests
     runWriteAction { VfsUtil.saveText(file, newText) }
     (file as VirtualFileSystemEntry).timeStamp = System.currentTimeMillis()
+
+    //explicitly mark as existing project
+    project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, false)
 
     HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
 

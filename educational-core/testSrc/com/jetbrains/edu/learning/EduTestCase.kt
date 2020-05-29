@@ -39,6 +39,7 @@ import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -84,6 +85,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     val frameworkLessonManagerImpl = FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl
     frameworkLessonManagerImpl.storage = FrameworkLessonManagerImpl.createStorage(project)
     createCourse()
+    project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, true)
   }
 
   override fun tearDown() {
