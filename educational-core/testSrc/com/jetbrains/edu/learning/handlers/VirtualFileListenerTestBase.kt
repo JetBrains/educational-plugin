@@ -31,8 +31,8 @@ abstract class VirtualFileListenerTestBase : EduTestCase() {
   }
 
   override fun tearDown() {
-    super.tearDown()
     VirtualFileManager.getInstance().removeVirtualFileListener(listener)
+    super.tearDown()
   }
   
   protected fun doAddFileTest(filePathInTask: String, checksProducer: (Task) -> List<FileCheck>) {
