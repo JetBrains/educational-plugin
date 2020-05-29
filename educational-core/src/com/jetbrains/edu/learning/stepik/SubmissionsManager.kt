@@ -39,7 +39,7 @@ class SubmissionsManager {
   }
 
   fun addToSubmissionsMapWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {
-    if (submission == null) return
+    if (submission == null || checkStatus == CheckStatus.Unchecked) return
     submission.status = if (checkStatus == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
     addToSubmissionsMap(taskId, submission)
   }
