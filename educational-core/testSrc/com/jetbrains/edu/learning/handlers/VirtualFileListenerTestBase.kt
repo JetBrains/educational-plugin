@@ -18,21 +18,12 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.withTestDialog
 
 abstract class VirtualFileListenerTestBase : EduTestCase() {
-
-  private lateinit var listener: EduVirtualFileListener
-
   protected abstract val courseMode: String
   protected abstract fun createListener(project: Project): EduVirtualFileListener
 
   override fun setUp() {
     super.setUp()
-    listener = createListener(project)
-    VirtualFileManager.getInstance().addVirtualFileListener(listener)
-  }
-
-  override fun tearDown() {
-    VirtualFileManager.getInstance().removeVirtualFileListener(listener)
-    super.tearDown()
+    VirtualFileManager.getInstance().addVirtualFileListener(createListener(project), testRootDisposable)
   }
   
   protected fun doAddFileTest(filePathInTask: String, checksProducer: (Task) -> List<FileCheck>) {
