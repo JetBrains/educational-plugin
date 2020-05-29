@@ -27,7 +27,7 @@ import okhttp3.WebSocket
 abstract class WebSocketConnectionState(protected val project: Project, protected val task: CodeTask, val isTerminal: Boolean = false) {
   abstract fun handleEvent(webSocket: WebSocket, message: String): WebSocketConnectionState
 
-  open fun getResult(): Result<CheckResult, SubmissionError> {
+  open fun getResult(): Result<Pair<Submission, CheckResult>, SubmissionError> {
     return Err(SubmissionError.NoSubmission("Submission result check via web sockets failed"))
   }
 }
@@ -71,7 +71,7 @@ private class ReceivingSubmissionsState(project: Project, task: CodeTask, val su
     return this
   }
 
-  override fun getResult(): Result<CheckResult, SubmissionError> {
+  override fun getResult(): Result<Pair<Submission, CheckResult>, SubmissionError> {
     return Err(SubmissionError.WithSubmission(submission, "No check result received"))
   }
 }
@@ -82,8 +82,8 @@ private class SubmissionReceivedState(project: Project, task: CodeTask, private 
     return this
   }
 
-  override fun getResult(): Result<CheckResult, SubmissionError> {
-    return Ok(submission.toCheckResult(task))
+  override fun getResult(): Result<Pair<Submission, CheckResult>, SubmissionError> {
+    return Ok(Pair(submission, submission.toCheckResult(task)))
   }
 }
 

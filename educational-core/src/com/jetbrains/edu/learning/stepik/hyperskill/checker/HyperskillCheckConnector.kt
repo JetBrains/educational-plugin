@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -16,12 +17,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
+import com.jetbrains.edu.learning.stepik.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.util.concurrent.TimeUnit
 
 object HyperskillCheckConnector {
@@ -120,7 +123,7 @@ object HyperskillCheckConnector {
   }
 
 
-  private fun checkCodeTaskWithWebSockets(project: Project, task: CodeTask): Result<CheckResult, SubmissionError> {
+  private fun checkCodeTaskWithWebSockets(project: Project, task: CodeTask): Result<Pair<Submission, CheckResult>, SubmissionError> {
     val connector = HyperskillConnector.getInstance()
     val webSocketConfiguration = connector.getWebSocketConfiguration().onError { error ->
       return Err(SubmissionError.NoSubmission(error))
@@ -141,18 +144,24 @@ object HyperskillCheckConnector {
       return CheckResult(CheckStatus.Unchecked, message)
     }
 
-    return checkCodeTaskWithWebSockets(project, task).onError { submissionError ->
+    val submissionCheckResultPair = checkCodeTaskWithWebSockets(project, task).onError { submissionError ->
       LOG.info(submissionError.error)
       val submission = when (submissionError) {
         is SubmissionError.NoSubmission -> submitCodeTask(project, task).onError { return it.toCheckResult() }
         is SubmissionError.WithSubmission -> submissionError.submission
       }
 
-      return periodicallyCheckSubmissionResult(submission, task)
+      periodicallyCheckSubmissionResult(submission, task)
     }
+
+    val submission = submissionCheckResultPair.first
+    SubmissionsManager.getInstance(project).addToSubmissionsMapWithStatus(task.id, task.status, submission)
+    runInEdt { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
+
+    return submissionCheckResultPair.second
   }
 
-  private fun periodicallyCheckSubmissionResult(submission: Submission, task: CodeTask): CheckResult {
+  private fun periodicallyCheckSubmissionResult(submission: Submission, task: CodeTask): Pair<Submission?, CheckResult> {
     val submissionId = submission.id!!
     val connector = HyperskillConnector.getInstance()
 
@@ -162,14 +171,14 @@ object HyperskillCheckConnector {
     while (delay < timeout && lastSubmission.status == EVALUATION_STATUS) {
       TimeUnit.SECONDS.sleep(delay)
       delay *= 2
-      lastSubmission = connector.getSubmissionById(submissionId).onError { return it.toCheckResult() }
+      lastSubmission = connector.getSubmissionById(submissionId).onError { return Pair(null, it.toCheckResult()) }
     }
 
     if (lastSubmission.status != EVALUATION_STATUS) {
-      return lastSubmission.toCheckResult(task)
+      return Pair(lastSubmission, lastSubmission.toCheckResult(task))
     }
 
-    return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("hyperskill.failed.to.check.code", EduNames.JBA))
+    return Pair(null, CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("hyperskill.failed.to.check.code", EduNames.JBA)))
   }
 }
 
