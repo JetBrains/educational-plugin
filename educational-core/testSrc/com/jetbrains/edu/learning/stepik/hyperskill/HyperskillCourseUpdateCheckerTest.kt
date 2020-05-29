@@ -2,7 +2,9 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import com.jetbrains.edu.learning.stepik.hyperskill.api.*
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.update.CourseUpdateCheckerTestBase
@@ -67,12 +69,7 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     val course = HyperskillCourse().apply {
       name = "Test Course"
       id = 1
-      if (isNewlyCreated) {
-        project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, true)
-      }
-      else {
-        project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, false)
-      }
+      project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, isNewlyCreated)
     }
     course.hyperskillProject = HyperskillProject()
     return course

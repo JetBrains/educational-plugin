@@ -55,9 +55,7 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     name = "Test Course"
     id = 1
     updateDate = date
-    if (isNewlyCreated) {
-      project.putUserData(EDU_PROJECT_CREATED, true)
-    }
+    project.putUserData(EDU_PROJECT_CREATED, isNewlyCreated)
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "updateCourse/update_checker/"
