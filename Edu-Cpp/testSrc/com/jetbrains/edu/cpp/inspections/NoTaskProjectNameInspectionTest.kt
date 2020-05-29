@@ -31,7 +31,7 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
   fun `test add deleted project name to CMakeList with set minimum required`() =
     addDeletedTaskProjectNameToCMakeListsTestBase(
       """
-        |<warning descr="Project name isn't set. It could break project structure.">cmake_minimum_required(VERSION 3.15)
+        |<warning descr="${EduCppBundle.message("project.name.not.set.warning")}">cmake_minimum_required(VERSION 3.15)
         |# some text<caret></warning>
       """.trimMargin(),
       """
@@ -43,7 +43,7 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
 
   fun `test add deleted project name to CMakeList without minimum required`() =
     addDeletedTaskProjectNameToCMakeListsTestBase(
-      """<warning descr="Project name isn't set. It could break project structure."># some text<caret></warning>""",
+      """<warning descr="${EduCppBundle.message("project.name.not.set.warning")}"># some text<caret></warning>""",
       """
         |project(global-lesson-task)
         |# some text
