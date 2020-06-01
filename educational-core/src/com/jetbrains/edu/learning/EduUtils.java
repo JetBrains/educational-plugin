@@ -25,6 +25,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
+import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -617,7 +618,7 @@ public class EduUtils {
     String extension = FileUtilRt.getExtension(fileName);
     FileType fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension);
 
-    return fileType.isBinary();
+    return !(fileType instanceof UnknownFileType) && fileType.isBinary();
   }
 
   @Nullable
