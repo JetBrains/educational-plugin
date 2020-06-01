@@ -159,7 +159,7 @@ object GeneratorUtils {
       }
       if (dir != null) {
         val virtualTaskFile = dir.findOrCreateChildData(parentDir, fileName)
-        if (EduUtils.isBinary(fileName)) {
+        if (EduUtils.isToEncodeContent(virtualTaskFile)) {
           virtualTaskFile.setBinaryContent(Base64.decodeBase64(text))
         }
         else {

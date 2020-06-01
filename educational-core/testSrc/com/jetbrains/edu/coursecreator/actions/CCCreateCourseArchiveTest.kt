@@ -319,6 +319,58 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     assertEquals(expectedCourseJson, generatedJsonFile)
   }
 
+  fun `test mp3 audio file in archive`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+      additionalFile("test.mp4")
+    }
+    val generatedJsonFile = generateJson()
+    val expectedCourseJson = loadExpectedJson()
+    assertEquals(expectedCourseJson, generatedJsonFile)
+
+  }
+
+  fun `test mp4 video file in archive`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+      additionalFile("test.mp4")
+    }
+    val generatedJsonFile = generateJson()
+    val expectedCourseJson = loadExpectedJson()
+    assertEquals(expectedCourseJson, generatedJsonFile)
+  }
+
+  fun `test img file in archive`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+      additionalFile("test.img")
+    }
+
+    val generatedJsonFile = generateJson()
+    val expectedCourseJson = loadExpectedJson()
+    assertEquals(expectedCourseJson, generatedJsonFile)
+  }
+
+  // EDU-2765
+  fun `test pdf file in archive`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+      additionalFile("test.pdf")
+    }
+
+    val generatedJsonFile = generateJson()
+    val expectedCourseJson = loadExpectedJson()
+    assertEquals(expectedCourseJson, generatedJsonFile)
+  }
+
   private fun loadExpectedJson(): String {
     val fileName = getTestFile()
     return FileUtil.loadFile(File(testDataPath, fileName))

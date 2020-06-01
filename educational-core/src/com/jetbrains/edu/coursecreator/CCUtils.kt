@@ -180,7 +180,7 @@ object CCUtils {
   @JvmStatic
   @Throws(IOException::class)
   fun loadText(file: VirtualFile): String {
-    return if (EduUtils.isBinary(file.name)) {
+    return if (EduUtils.isToEncodeContent(file)) {
       Base64.encodeBase64URLSafeString(VfsUtilCore.loadBytes(file))
     }
     else {

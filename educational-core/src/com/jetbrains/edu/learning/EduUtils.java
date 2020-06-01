@@ -73,6 +73,8 @@ import org.jetbrains.annotations.SystemIndependent;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -555,7 +557,7 @@ public class EduUtils {
       if (taskFile == null) {
         return null;
       }
-      if (isBinary(taskFile.getName())) {
+      if (isToEncodeContent(answerFile)) {
         taskFile.setText(Base64.encodeBase64String(answerFile.contentsToByteArray()));
         return taskFile;
       }
@@ -614,11 +616,41 @@ public class EduUtils {
     runUndoableAction(project, name, action, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
   }
 
-  public static boolean isBinary(String fileName) {
-    String extension = FileUtilRt.getExtension(fileName);
+  public static boolean isToEncodeContent(VirtualFile file) {
+    String extension = FileUtilRt.getExtension(file.getName());
     FileType fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension);
 
-    return !(fileType instanceof UnknownFileType) && fileType.isBinary();
+    if (!(fileType instanceof UnknownFileType)) {
+      return fileType.isBinary();
+    }
+
+    String mimeType = getMimeType(file);
+    return isToEncodeContent(mimeType);
+  }
+
+  private static String getMimeType(VirtualFile file) {
+    String mimeType = null;
+    try {
+      mimeType = Files.probeContentType(Paths.get(file.getPath()));
+    }
+    catch (IOException e) {
+      LOG.error(e);
+    }
+    return mimeType;
+  }
+
+  public static boolean isToEncodeContent(@Nullable String contentType) {
+    if (contentType == null) {
+      return false;
+    }
+
+    if (contentType.startsWith("image") ||
+        contentType.startsWith("audio") ||
+        contentType.startsWith("video")) {
+      return true;
+    }
+
+    return false;
   }
 
   @Nullable
