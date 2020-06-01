@@ -22,7 +22,7 @@ import javax.swing.event.HyperlinkListener
 class CheckMessagePanel private constructor(): JPanel() {
 
   private val messagePane: JTextPane = createTextPane().apply {
-    border = JBUI.Borders.empty()
+    border = JBUI.Borders.emptyTop(16)
   }
 
   init {
@@ -31,7 +31,8 @@ class CheckMessagePanel private constructor(): JPanel() {
     add(messagePane)
   }
 
-  val isEmpty: Boolean get() = messagePane.document.getText(0, messagePane.document.length).isEmpty() && componentCount == 1
+  override fun isVisible(): Boolean =
+    componentCount > 1 || messagePane.document.getText(0, messagePane.document.length).isNotEmpty()
 
   private fun setMessage(message: String) {
     var displayMessage = if (message.length > MAX_MESSAGE_LENGTH) message.substring(0, MAX_MESSAGE_LENGTH) + "..." else message
@@ -74,7 +75,7 @@ class CheckMessagePanel private constructor(): JPanel() {
   }
 
   companion object {
-    private val FOCUS_BORDER_WIDTH = if (SystemInfo.isMac) 3 else if (SystemInfo.isWindows) 0 else 2
+    val FOCUS_BORDER_WIDTH = if (SystemInfo.isMac) 3 else if (SystemInfo.isWindows) 0 else 2
 
     const val MAX_MESSAGE_LENGTH = 400
     const val MAX_EXPECTED_ACTUAL_LENGTH = 150

@@ -149,13 +149,13 @@ class StudentYamlDeserializationTest : EduTestCase() {
 
   fun `test task feedback with time`() {
     val message = "My error message"
-    val time = Date(1589220000000)
+    val time = Date(0)
     val yamlContent = """
     |type: edu
     |status: Failed
     |feedback:
     |  message: $message
-    |  time: Mon, 11 May 2020 18:00:00 UTC
+    |  time: Thu, 01 Jan 1970 00:00:00 UTC
     |""".trimMargin()
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)

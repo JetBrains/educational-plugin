@@ -54,7 +54,7 @@ open class OutputTaskChecker(
     }
     else {
       val diff = CheckResultDiff(expected = expected, actual = actual)
-      CheckResult(CheckStatus.Failed, "", diff = diff)
+      CheckResult(CheckStatus.Failed, "Incorrect", diff = diff)
     }
   }
 

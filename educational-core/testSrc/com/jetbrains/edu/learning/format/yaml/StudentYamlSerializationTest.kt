@@ -132,14 +132,14 @@ class StudentYamlSerializationTest : EduTestCase() {
 
   fun `test task with feedback and time`() {
     val message = "My error message"
-    val time = Date(1589220000000)
+    val time = Date(0)
     val task = courseWithFiles {
       lesson {
         eduTask()
       }
     }.findTask("lesson1", "task1")
     task.status = CheckStatus.Failed
-    task.feedback = Feedback(message, time)
+    task.feedback = CheckFeedback(message, time)
     task.record = 1
 
     doTest(task, """
@@ -147,7 +147,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |status: Failed
     |feedback:
     |  message: $message
-    |  time: Mon, 11 May 2020 18:00:00 UTC
+    |  time: Thu, 01 Jan 1970 00:00:00 UTC
     |record: 1
     |""".trimMargin())
   }

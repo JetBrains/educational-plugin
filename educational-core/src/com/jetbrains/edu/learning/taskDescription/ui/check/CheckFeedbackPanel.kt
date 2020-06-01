@@ -1,39 +1,39 @@
 package com.jetbrains.edu.learning.taskDescription.ui.check
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
 import icons.EducationalCoreIcons
 import java.awt.BorderLayout
 import java.util.*
 import javax.swing.JPanel
 
-class FeedbackPanel(task: Task, parent: Disposable) : JPanel(BorderLayout()), Disposable {
+class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : JPanel(BorderLayout()) {
   init {
-    Disposer.register(parent, this)
-    add(ResultLabel(task), BorderLayout.CENTER)
+    if (checkResult.status != CheckStatus.Unchecked) {
+      add(ResultLabel(task, checkResult), BorderLayout.WEST)
+    }
     val checkTime = task.feedback?.time
     if (checkTime != null) {
-      add(TimeLabel(checkTime, this), BorderLayout.EAST)
+      add(TimeLabel(checkTime, alarm), BorderLayout.CENTER)
     }
   }
 
-  override fun dispose() {
-  }
+  override fun isVisible(): Boolean = componentCount > 0
 
-  private class ResultLabel(task: Task) : JBLabel() {
+  private class ResultLabel(task: Task, checkResult: CheckResult) : JBLabel() {
     init {
-      val status = task.status
+      val status = checkResult.status
 
       iconTextGap = JBUI.scale(4)
       icon = when (status) {
@@ -55,22 +55,22 @@ class FeedbackPanel(task: Task, parent: Disposable) : JPanel(BorderLayout()), Di
         }
         else -> ""
       }
-      border = JBUI.Borders.empty(8, 16, 0, 0)
+      border = JBUI.Borders.empty(16, FOCUS_BORDER_WIDTH, 0, 16 - FOCUS_BORDER_WIDTH)
     }
   }
 
-  private class TimeLabel(private val time: Date, disposable: Disposable) : JBLabel(), Runnable {
-    private val alarm = Alarm(disposable)
-
+  private class TimeLabel(private val time: Date, private val alarm: Alarm) : JBLabel() {
     init {
-      border = JBUI.Borders.empty(8, 16, 0, 0)
+      border = JBUI.Borders.empty(16, FOCUS_BORDER_WIDTH, 0, 0)
       foreground = UIUtil.getLabelDisabledForeground()
-      run()
-    }
 
-    override fun run() {
-      text = DateFormatUtil.formatPrettyDateTime(time)
-      alarm.addRequest(this, DateFormatUtil.MINUTE)
+      val timeUpdater = object : Runnable {
+        override fun run() {
+          text = DateFormatUtil.formatPrettyDateTime(time)
+          alarm.addRequest(this, DateFormatUtil.MINUTE)
+        }
+      }
+      timeUpdater.run()
     }
   }
 }

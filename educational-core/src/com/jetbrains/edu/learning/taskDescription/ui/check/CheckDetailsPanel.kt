@@ -10,6 +10,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.content.Content
+import com.intellij.util.Alarm
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
@@ -33,17 +34,24 @@ import java.awt.BorderLayout
 import javax.swing.BoxLayout
 import javax.swing.JPanel
 
-class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) : JPanel(BorderLayout()) {
+class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, alarm: Alarm) : JPanel(BorderLayout()) {
   init {
+    val feedbackPanel = CheckFeedbackPanel(task, checkResult, alarm)
     val linksPanel = createLinksPanel(project, checkResult, task)
     val messagePanel = createMessagePanel(project, checkResult, linksPanel)
 
-    // hack to hide empty border if there are no check details to show
-    isVisible = !messagePanel.isEmpty || linksPanel.components.isNotEmpty()
-    border = JBUI.Borders.empty(20, 0, 0, 0)
-    add(messagePanel, BorderLayout.CENTER)
-    add(linksPanel, BorderLayout.SOUTH)
+    if (feedbackPanel.isVisible) {
+      add(feedbackPanel, BorderLayout.NORTH)
+    }
+    if (messagePanel.isVisible) {
+      add(messagePanel, BorderLayout.CENTER)
+    }
+    if (linksPanel.isVisible) {
+      add(linksPanel, BorderLayout.SOUTH)
+    }
   }
+
+  override fun isVisible(): Boolean = componentCount > 0
 
   private fun createMessagePanel(project: Project, checkResult: CheckResult, linksPanel: JPanel): CheckMessagePanel {
     val messagePanel = CheckMessagePanel.create(checkResult)
@@ -54,7 +62,8 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
 
     val expectedActualTextLength = if (checkResult.diff != null) {
       maxOf(checkResult.diff.actual.length, checkResult.diff.expected.length)
-    } else {
+    }
+    else {
       0
     }
 
@@ -83,6 +92,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
         linksPanel.add(answerHintsPanel, BorderLayout.CENTER)
       }
     }
+    linksPanel.isVisible = linksPanel.componentCount > 0
     return linksPanel
   }
 

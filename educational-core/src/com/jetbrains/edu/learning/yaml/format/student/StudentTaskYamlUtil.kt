@@ -7,7 +7,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.Feedback
+import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -35,7 +35,7 @@ abstract class StudentTaskYamlMixin : TaskYamlMixin() {
   private lateinit var myStatus: CheckStatus
 
   @JsonProperty(FEEDBACK)
-  private lateinit var myFeedback: Feedback
+  private lateinit var myFeedback: CheckFeedback
 
   @JsonProperty(RECORD)
   protected open var myRecord: Int = -1

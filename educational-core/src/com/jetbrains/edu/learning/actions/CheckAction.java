@@ -35,7 +35,7 @@ import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Feedback;
+import com.jetbrains.edu.learning.courseFormat.CheckFeedback;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
@@ -240,7 +240,7 @@ public class CheckAction extends DumbAwareAction {
       CheckStatus status = myResult.getStatus();
       if (myTask.getCourse().isStudy()) {
         myTask.setStatus(status);
-        myTask.setFeedback(new Feedback(message, new Date()));
+        myTask.setFeedback(new CheckFeedback(message, new Date()));
         YamlFormatSynchronizer.saveItem(myTask);
       }
       if (myChecker != null) {

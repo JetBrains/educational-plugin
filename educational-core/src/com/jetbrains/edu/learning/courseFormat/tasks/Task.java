@@ -48,7 +48,7 @@ public abstract class Task extends StudyItem {
   @NotNull
   protected CheckStatus myStatus = CheckStatus.Unchecked;
   @Nullable
-  protected Feedback myFeedback;
+  private CheckFeedback myFeedback;
   private Map<String, TaskFile> myTaskFiles = new LinkedHashMap<>();
   @NotNull
   private String descriptionText = "";
@@ -323,11 +323,11 @@ public abstract class Task extends StudyItem {
   }
 
   @Nullable
-  public Feedback getFeedback() {
+  public CheckFeedback getFeedback() {
     return myFeedback;
   }
 
-  public void setFeedback(@Nullable Feedback feedback) {
+  public void setFeedback(@Nullable CheckFeedback feedback) {
     myFeedback = feedback;
   }
 
