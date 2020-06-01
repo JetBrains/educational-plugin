@@ -23,7 +23,9 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
+import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.updateSettings.impl.UpdateChecker;
@@ -31,6 +33,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -57,16 +60,17 @@ import com.jetbrains.edu.learning.stepik.OAuthDialog;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
-import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import kotlin.Unit;
 import org.apache.commons.codec.binary.Base64;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.markdown.parser.MarkdownParser;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.SystemIndependent;
+import org.jetbrains.annotations.TestOnly;
 
-import javax.imageio.ImageIO;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -550,7 +554,7 @@ public class EduUtils {
       if (taskFile == null) {
         return null;
       }
-      if (isImage(taskFile.getName())) {
+      if (isBinary(taskFile.getName())) {
         taskFile.setText(Base64.encodeBase64String(answerFile.contentsToByteArray()));
         return taskFile;
       }
@@ -609,15 +613,11 @@ public class EduUtils {
     runUndoableAction(project, name, action, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
   }
 
-  public static boolean isImage(String fileName) {
-    final String[] readerFormatNames = ImageIO.getReaderFormatNames();
-    for (@NonNls String format : readerFormatNames) {
-      final String ext = format.toLowerCase();
-      if (fileName.endsWith(ext)) {
-        return true;
-      }
-    }
-    return false;
+  public static boolean isBinary(String fileName) {
+    String extension = FileUtilRt.getExtension(fileName);
+    FileType fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension);
+
+    return fileType.isBinary();
   }
 
   @Nullable
