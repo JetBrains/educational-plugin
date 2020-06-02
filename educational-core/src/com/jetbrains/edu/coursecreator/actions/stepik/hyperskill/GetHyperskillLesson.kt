@@ -127,12 +127,16 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
         if (!taskFile.isVisible) {
           continue
         }
-        return when (FileUtilRt.getExtension(taskFile.name)) {
+        val languageAndEnvironment = when (FileUtilRt.getExtension(taskFile.name)) {
           "java" -> EduNames.JAVA to EduNames.DEFAULT_ENVIRONMENT
           "py" -> EduNames.PYTHON to EduNames.UNITTEST //legacy environment was handled earlier
           "kt" -> EduNames.KOTLIN to EduNames.DEFAULT_ENVIRONMENT
           "js", "html" -> EduNames.JAVASCRIPT to EduNames.DEFAULT_ENVIRONMENT
           else -> null
+        }
+
+        if (languageAndEnvironment != null) {
+          return languageAndEnvironment
         }
       }
     }
