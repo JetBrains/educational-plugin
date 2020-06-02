@@ -634,7 +634,7 @@ if (!is202) {
 }
 
 fun configureSecretProperties() {
-  if (inJetBrainsNetwork()) {
+  if (inJetBrainsNetwork() || System.getenv("TEAMCITY_VERSION") != null) {
     download {
       src("https://repo.labs.intellij.net/edu-tools/secret.properties")
       dest(secretProperties)
