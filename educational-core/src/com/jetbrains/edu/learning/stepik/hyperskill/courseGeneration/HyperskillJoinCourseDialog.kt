@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
 class HyperskillJoinCourseDialog(course: HyperskillCourse) : JoinCourseDialogBase(course, CourseDisplaySettings(showTagsPanel = false,
                                                                                                                 showInstructorField = false)) {
-  override val openCourseActionName: String get() = "Continue"
 
   init {
     init()
