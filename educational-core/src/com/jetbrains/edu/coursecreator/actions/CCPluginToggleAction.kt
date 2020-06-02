@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
+import com.jetbrains.edu.learning.isUnitTestMode
 
 class CCPluginToggleAction : ToggleAction() {
   override fun isSelected(e: AnActionEvent): Boolean = isCourseCreatorFeaturesEnabled
@@ -15,6 +16,7 @@ class CCPluginToggleAction : ToggleAction() {
     const val COURSE_CREATOR_ENABLED = "Edu.CourseCreator.Enabled"
 
     @JvmStatic
-    val isCourseCreatorFeaturesEnabled: Boolean get() = PropertiesComponent.getInstance().getBoolean(COURSE_CREATOR_ENABLED)
+    val isCourseCreatorFeaturesEnabled: Boolean
+      get() = PropertiesComponent.getInstance().getBoolean(COURSE_CREATOR_ENABLED) || isUnitTestMode
   }
 }
