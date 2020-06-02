@@ -184,7 +184,11 @@ class EduProjectComponent(private val project: Project) : ProjectComponent {
 
   override fun initComponent() {
     if (!isUnitTestMode && isStudentProject(project)) {
-      VirtualFileManager.getInstance().addVirtualFileListener(UserCreatedFileListener(project), project)
+      // TODO: use some project service as parent disposable
+      @Suppress("IncorrectParentDisposable")
+      ApplicationManager.getApplication().messageBus
+        .connect(project)
+        .subscribe(VirtualFileManager.VFS_CHANGES, UserCreatedFileListener(project))
     }
   }
 

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.handlers
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.project.Project
@@ -23,7 +24,9 @@ abstract class VirtualFileListenerTestBase : EduTestCase() {
 
   override fun setUp() {
     super.setUp()
-    VirtualFileManager.getInstance().addVirtualFileListener(createListener(project), testRootDisposable)
+    ApplicationManager.getApplication().messageBus
+      .connect(testRootDisposable)
+      .subscribe(VirtualFileManager.VFS_CHANGES, createListener(project))
   }
   
   protected fun doAddFileTest(filePathInTask: String, checksProducer: (Task) -> List<FileCheck>) {

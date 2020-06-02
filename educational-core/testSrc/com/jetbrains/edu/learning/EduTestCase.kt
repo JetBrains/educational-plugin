@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 import com.google.common.collect.Lists
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -234,15 +235,15 @@ abstract class EduTestCase : BasePlatformTestCase() {
   // TODO: set up more items which are enabled in real course project
   // TODO: come up with better name when we set up not only virtual file listeners
   protected inline fun withVirtualFileListener(course: Course, action: () -> Unit) {
-    val virtualFileManager = VirtualFileManager.getInstance()
-
     val listener = if (course.isStudy) UserCreatedFileListener(project) else CCVirtualFileListener(project)
-    virtualFileManager.addVirtualFileListener(listener)
+
+    val connection = ApplicationManager.getApplication().messageBus.connect()
+    connection.subscribe(VirtualFileManager.VFS_CHANGES, listener)
     try {
       action()
     }
     finally {
-      virtualFileManager.removeVirtualFileListener(listener)
+      connection.disconnect()
     }
   }
 

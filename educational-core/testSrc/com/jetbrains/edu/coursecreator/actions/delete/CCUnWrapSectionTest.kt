@@ -1,6 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.delete
 
-import com.intellij.openapi.vfs.VirtualFileListener
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -11,16 +11,12 @@ import com.jetbrains.edu.learning.fileTree
 import junit.framework.TestCase
 
 class CCUnWrapSectionTest : EduActionTestCase() {
-  private lateinit var ccVirtualFileListener : VirtualFileListener
+
   override fun setUp() {
     super.setUp()
-    ccVirtualFileListener = CCVirtualFileListener(project)
-    VirtualFileManager.getInstance().addVirtualFileListener(ccVirtualFileListener)
-  }
-
-  override fun tearDown() {
-    super.tearDown()
-    VirtualFileManager.getInstance().removeVirtualFileListener(ccVirtualFileListener)
+    ApplicationManager.getApplication().messageBus
+      .connect(testRootDisposable)
+      .subscribe(VirtualFileManager.VFS_CHANGES, CCVirtualFileListener(project))
   }
 
   fun `test unwrap lessons`() {

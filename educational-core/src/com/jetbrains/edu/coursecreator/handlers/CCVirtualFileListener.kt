@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.handlers
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
@@ -11,7 +10,6 @@ import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.fileInfo
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
@@ -24,23 +22,20 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     }
   }
 
-  override fun fileDeleted(event: VirtualFileEvent) {
-    val fileInfo = event.file.fileInfo(project) ?: return
-    val removedFile = event.file
-
+  override fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {
     when (fileInfo) {
-      is FileInfo.SectionDirectory -> deleteSection(fileInfo, removedFile)
-      is FileInfo.LessonDirectory -> deleteLesson(fileInfo, removedFile)
-      is FileInfo.TaskDirectory -> deleteTask(fileInfo, removedFile)
-      is FileInfo.FileInTask -> deleteFileInTask(fileInfo, removedFile)
+      is FileInfo.SectionDirectory -> deleteSection(fileInfo, file)
+      is FileInfo.LessonDirectory -> deleteLesson(fileInfo, file)
+      is FileInfo.TaskDirectory -> deleteTask(fileInfo, file)
+      is FileInfo.FileInTask -> deleteFileInTask(fileInfo, file)
     }
   }
 
-  private fun deleteLesson(info: FileInfo.LessonDirectory, removedLessonFile: VirtualFile) {
+  private fun deleteLesson(info: FileInfo.LessonDirectory, file: VirtualFile) {
     val removedLesson = info.lesson
     val course = removedLesson.course
     val section = removedLesson.section
-    val parentDir = removedLessonFile.parent
+    val parentDir = file.parent
     if (section != null) {
       CCUtils.updateHigherElements(parentDir.children, Function { section.getLesson(it.name) }, removedLesson.index, -1)
       section.removeLesson(removedLesson)
@@ -52,19 +47,19 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     }
   }
 
-  private fun deleteSection(info: FileInfo.SectionDirectory, removedFile: VirtualFile) {
+  private fun deleteSection(info: FileInfo.SectionDirectory, file: VirtualFile) {
     val removedSection = info.section
     val course = removedSection.course
-    val parentDir = removedFile.parent
+    val parentDir = file.parent
     CCUtils.updateHigherElements(parentDir.children, Function { course.getItem(it.name) }, removedSection.index, -1)
     course.removeSection(removedSection)
     YamlFormatSynchronizer.saveItem(course)
   }
 
-  private fun deleteTask(info: FileInfo.TaskDirectory, removedTask: VirtualFile) {
+  private fun deleteTask(info: FileInfo.TaskDirectory, file: VirtualFile) {
     val task = info.task
     val course = task.course
-    val lessonDir = removedTask.parent ?: error("`$removedTask` parent shouldn't be null")
+    val lessonDir = file.parent ?: error("`$file` parent shouldn't be null")
     val lesson = task.lesson
     CCUtils.updateHigherElements(lessonDir.children, Function { lesson.getTask(it.name) }, task.index, -1)
     lesson.removeTask(task)
@@ -76,11 +71,11 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     }
   }
 
-  private fun deleteFileInTask(info: FileInfo.FileInTask, removedFile: VirtualFile) {
+  private fun deleteFileInTask(info: FileInfo.FileInTask, file: VirtualFile) {
     val (task, pathInTask) = info
 
     val taskFiles = task.taskFiles
-    if (removedFile.isDirectory) {
+    if (file.isDirectory) {
       val toRemove = taskFiles.keys.filter { it.startsWith(pathInTask) }
       for (path in toRemove) {
         taskFiles.remove(path)
@@ -90,6 +85,4 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     }
     YamlFormatSynchronizer.saveItem(task)
   }
-
-
 }

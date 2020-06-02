@@ -3,18 +3,40 @@ package com.jetbrains.edu.learning.handlers
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.*
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
+import com.intellij.openapi.vfs.newvfs.events.*
 import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.fileInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-abstract class EduVirtualFileListener(protected val project: Project) : VirtualFileListener {
+abstract class EduVirtualFileListener(protected val project: Project) : BulkFileListener {
 
-  override fun fileCreated(event: VirtualFileEvent) {
-    if (event.file.isDirectory) return
-    val fileInfo = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return
-    fileInTaskCreated(fileInfo, event.file)
+  override fun before(events: List<VFileEvent>) {
+    for (event in events) {
+      when (event) {
+        is VFilePropertyChangeEvent -> beforePropertyChange(event)
+        is VFileMoveEvent -> beforeFileMovement(event)
+      }
+    }
+  }
+
+  override fun after(events: List<VFileEvent>) {
+    for (event in events) {
+      when (event) {
+        is VFileCreateEvent -> fileCreated(event)
+        is VFileMoveEvent -> fileMoved(event)
+        is VFileDeleteEvent -> fileDeleted(event)
+      }
+    }
+  }
+
+  private fun fileCreated(event: VFileCreateEvent) {
+    val file = event.file ?: return
+    if (file.isDirectory) return
+    val fileInfo = file.fileInfo(project) as? FileInfo.FileInTask ?: return
+    fileInTaskCreated(fileInfo, file)
   }
 
   /**
@@ -32,7 +54,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
    * In such cases, these checks prevent replacing correct task file
    * with empty (without placeholders, hints, etc.) one.
    */
-  protected open fun fileInTaskCreated(fileInfo: FileInfo.FileInTask, createFile: VirtualFile) {
+  private fun fileInTaskCreated(fileInfo: FileInfo.FileInTask, createFile: VirtualFile) {
     val (task, pathInTask) = fileInfo
     if (task.getTaskFile(pathInTask) == null) {
       val taskFile = task.addTaskFile(pathInTask)
@@ -41,7 +63,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
     }
   }
 
-  override fun beforePropertyChange(event: VirtualFilePropertyEvent) {
+  private fun beforePropertyChange(event: VFilePropertyChangeEvent) {
     if (event.propertyName != VirtualFile.PROP_NAME) return
     val newName = event.newValue as? String ?: return
     val (task, oldPath) = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return
@@ -68,7 +90,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
     YamlFormatSynchronizer.saveItem(task)
   }
 
-  override fun beforeFileMovement(event: VirtualFileMoveEvent) {
+  private fun beforeFileMovement(event: VFileMoveEvent) {
     val (task, oldPath) = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return
     val (oldParentTask, oldParentPath) = event.oldParent.directoryFileInfo(project) ?: return
     val (newParentTask, newParentPath) = event.newParent.directoryFileInfo(project) ?: return
@@ -103,7 +125,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
   /**
    * Handles move events for non course files like drag & drop action produces
    */
-  override fun fileMoved(event: VirtualFileMoveEvent) {
+  protected open fun fileMoved(event: VFileMoveEvent) {
     val movedFile = event.file
     val fileInfo = movedFile.fileInfo(project) as? FileInfo.FileInTask ?: return
     val directoryInfo = event.oldParent.directoryFileInfo(project)
@@ -128,6 +150,11 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
     }
   }
 
+  private fun fileDeleted(event: VFileDeleteEvent) {
+    val fileInfo = event.file.fileInfo(project) ?: return
+    fileDeleted(fileInfo, event.file)
+  }
+
   private fun VirtualFile.directoryFileInfo(project: Project): FileInfo.FileInTask? {
     val info = fileInfo(project) ?: return null
     return when (info) {
@@ -137,6 +164,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
     }
   }
 
+  protected open fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {}
   protected open fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {}
 
   companion object {

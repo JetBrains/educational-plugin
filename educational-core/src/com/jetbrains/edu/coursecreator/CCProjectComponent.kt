@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class CCProjectComponent(private val myProject: Project) : ProjectComponent {
-  private var myTaskFileLifeListener: CCVirtualFileListener? = null
 
   private fun startTaskDescriptionFilesSynchronization() {
     StudyTaskManager.getInstance(myProject).course ?: return
@@ -51,15 +50,10 @@ class CCProjectComponent(private val myProject: Project) : ProjectComponent {
   }
 
   private fun registerListener() {
-    if (myTaskFileLifeListener == null) {
-      myTaskFileLifeListener = CCVirtualFileListener(myProject)
-      VirtualFileManager.getInstance().addVirtualFileListener(myTaskFileLifeListener!!)
-    }
-  }
-
-  override fun projectClosed() {
-    if (myTaskFileLifeListener != null) {
-      VirtualFileManager.getInstance().removeVirtualFileListener(myTaskFileLifeListener!!)
-    }
+    // TODO: use some project service as parent disposable
+    @Suppress("IncorrectParentDisposable")
+    ApplicationManager.getApplication().messageBus
+      .connect(myProject)
+      .subscribe(VirtualFileManager.VFS_CHANGES, CCVirtualFileListener(myProject))
   }
 }
