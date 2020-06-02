@@ -5,6 +5,7 @@ import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import icons.EducationalCoreIcons
 import java.awt.Cursor
 import java.awt.Dimension
@@ -46,13 +47,13 @@ class SelectRolePanel : JPanel() {
       }
     })
     studentPanel.add(myStudent)
-    studentPanel.add(JLabel("Learner", SwingConstants.CENTER))
+    studentPanel.add(JLabel(EduCoreBundle.message("select.role.dialog.learner"), SwingConstants.CENTER))
     add(studentPanel)
 
     teacher.preferredSize = Dimension(iconSize, iconSize)
     val teacherPanel = JPanel(VerticalFlowLayout())
     teacherPanel.add(teacher)
-    teacherPanel.add(JLabel("Educator", SwingConstants.CENTER))
+    teacherPanel.add(JLabel(EduCoreBundle.message("select.role.dialog.educator"), SwingConstants.CENTER))
     teacher.addMouseListener(object : MouseAdapter() {
       override fun mousePressed(e: MouseEvent?) {
         PropertiesComponent.getInstance().setValue(CCPluginToggleAction.COURSE_CREATOR_ENABLED, true)
