@@ -5,12 +5,20 @@ import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.application.AppUIExecutor
+import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
+import com.intellij.util.PlatformUtils
+import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.ui.SelectRolePanel
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class InitializationListener : AppLifecycleListener, DynamicPluginListener {
@@ -37,9 +45,26 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     }
     if (isUnitTestMode) return
 
-    if (!PropertiesComponent.getInstance().isValueSet(RECENT_COURSES_FILLED)) {
+    val propertiesComponent = PropertiesComponent.getInstance()
+    if (!propertiesComponent.isValueSet(RECENT_COURSES_FILLED)) {
       fillRecentCourses()
-      PropertiesComponent.getInstance().setValue(RECENT_COURSES_FILLED, true)
+      propertiesComponent.setValue(RECENT_COURSES_FILLED, true)
+    }
+
+    if (!propertiesComponent.isValueSet(CCPluginToggleAction.COURSE_CREATOR_ENABLED)) {
+      if (!PlatformUtils.isPyCharmEducational() && !PlatformUtils.isIdeaEducational()) {
+        propertiesComponent.setValue(CCPluginToggleAction.COURSE_CREATOR_ENABLED, true)
+      }
+      else {
+        // HACK: ActionManager is instantiated here
+        // otherwise it is instantiated during dialog showing (to render buttons on Mac OS magic touch bar)
+        // which causes assert because one shouldn't instantiate ActionManager in EDT
+        ActionManager.getInstance()
+
+        runBlocking(AppUIExecutor.onUiThread().coroutineDispatchingContext()) {
+          showInitialConfigurationDialog()
+        }
+      }
     }
   }
 
@@ -63,6 +88,15 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     return runReadAction {
       YamlDeserializer.deserializeItem(courseConfig, null) as? Course
     }
+  }
+
+  private fun showInitialConfigurationDialog() {
+    val dialog = DialogBuilder()
+    val panel = SelectRolePanel()
+    dialog.setPreferredFocusComponent(panel.getStudentButton())
+    dialog.title("Are you a Learner or an Educator?").centerPanel(panel)
+    dialog.addOkAction().setText("Start using EduTools")
+    dialog.show()
   }
 
   companion object {

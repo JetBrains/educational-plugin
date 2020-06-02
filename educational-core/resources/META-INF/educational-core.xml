@@ -13,12 +13,6 @@
     </component>
   </project-components>
 
-  <application-components>
-    <component>
-      <implementation-class>com.jetbrains.edu.learning.SelectRoleComponent</implementation-class>
-    </component>
-  </application-components>
-
   <!--suppress PluginXmlValidity -->
   <!-- https://youtrack.jetbrains.com/issue/IDEA-241994 -->
   <applicationListeners>
