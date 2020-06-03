@@ -8,6 +8,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -16,7 +17,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.coursecreator.CCProjectComponent
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduProjectComponent
+import com.jetbrains.edu.learning.EduStartupActivity
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -62,7 +63,7 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
       val toolWindow = getTaskDescriptionToolWindow(project) ?: error("Task Description tool window not found")
       TaskDescriptionToolWindowFactory().createToolWindowContent(project, toolWindow)
     }
-    project.getComponent(EduProjectComponent::class.java).projectOpened()
+    StartupActivity.POST_STARTUP_ACTIVITY.findExtension(EduStartupActivity::class.java)?.runActivity(project)
     project.getComponent(CCProjectComponent::class.java).projectOpened()
     val openFiles = FileEditorManager.getInstance(project).openFiles
     for (file in openFiles) {

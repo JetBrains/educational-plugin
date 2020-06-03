@@ -19,7 +19,7 @@ class HintsToTaskDescriptionMigrationTest : EduTestCase() {
 
     val placeholder = task.taskFiles.values.first().answerPlaceholders.first()
     val hint = placeholder.hints.first()
-    EduProjectComponent.getInstance(project).moveHintsToTaskDescription(course)
+    EduStartupActivity.moveHintsToTaskDescription(project, course)
 
     TestCase.assertEquals("Placeholder hints must be deleted", placeholder.hints.size, 0)
 
@@ -40,7 +40,7 @@ class HintsToTaskDescriptionMigrationTest : EduTestCase() {
 
     val placeholder = task.taskFiles.values.first().answerPlaceholders.first()
     val hints = placeholder.hints
-    EduProjectComponent.getInstance(project).moveHintsToTaskDescription(course)
+    EduStartupActivity.moveHintsToTaskDescription(project, course)
 
     TestCase.assertEquals("Placeholder hints must be deleted", placeholder.hints.size, 0)
 
@@ -64,7 +64,7 @@ class HintsToTaskDescriptionMigrationTest : EduTestCase() {
 
     val answerPlaceholders = task.taskFiles.values.first().answerPlaceholders
     val hints = answerPlaceholders.flatMap { it.hints }
-    EduProjectComponent.getInstance(project).moveHintsToTaskDescription(course)
+    EduStartupActivity.moveHintsToTaskDescription(project, course)
 
     for (placeholder in answerPlaceholders) {
       TestCase.assertEquals("Placeholder hints must be deleted", placeholder.hints.size, 0)

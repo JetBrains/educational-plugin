@@ -120,9 +120,8 @@ class EduDocumentListener private constructor(
   }
 
   companion object {
-    @JvmOverloads
     @JvmStatic
-    fun setGlobalListener(project: Project, disposable: Disposable = project) {
+    fun setGlobalListener(project: Project, disposable: Disposable) {
       EditorFactory.getInstance().eventMulticaster.addDocumentListener(EduDocumentListener(project, null), disposable)
     }
 
