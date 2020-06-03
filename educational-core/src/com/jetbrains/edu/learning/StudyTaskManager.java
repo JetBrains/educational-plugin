@@ -6,6 +6,7 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -50,7 +51,7 @@ import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
  */
 
 @State(name = "StudySettings", storages = @Storage(value = "study_project.xml", roamingType = RoamingType.DISABLED))
-public class StudyTaskManager implements PersistentStateComponent<Element>, DumbAware {
+public class StudyTaskManager implements PersistentStateComponent<Element>, DumbAware, Disposable {
   public static final Topic<CourseSetListener> COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener.class);
   private static final Logger LOG = Logger.getInstance(StudyTaskManager.class);
 
@@ -257,6 +258,9 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     final Element xmlCourse = getChildWithName(taskManagerElement, COURSE);
     return deserializeCourse(xmlCourse);
   }
+
+  @Override
+  public void dispose() {}
 
   private static Course deserializeCourse(Element xmlCourse) {
     for (Class<? extends Course> courseClass : COURSE_ELEMENT_TYPES) {
