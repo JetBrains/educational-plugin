@@ -1,16 +1,12 @@
 <idea-plugin>
 
-  <project-components>
-    <component>
-      <implementation-class>com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProjectComponent</implementation-class>
-    </component>
-  </project-components>
-
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings"/>
     <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector"
                         serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector"/>
+
+    <postStartupActivity implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillStartupActivity"/>
 
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService"/>
     <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.widget.HyperskillWidgetProvider" />

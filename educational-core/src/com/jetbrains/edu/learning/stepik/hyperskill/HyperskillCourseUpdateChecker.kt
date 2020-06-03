@@ -6,9 +6,11 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.CourseUpdateChecker
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
-class HyperskillCourseUpdateChecker(project: Project,
-                                    course: HyperskillCourse,
-                                    disposable: Disposable = project) : CourseUpdateChecker<HyperskillCourse>(project, course, disposable) {
+class HyperskillCourseUpdateChecker(
+  project: Project,
+  course: HyperskillCourse,
+  disposable: Disposable
+) : CourseUpdateChecker<HyperskillCourse>(project, course, disposable) {
 
   override fun Course.canBeUpdated(): Boolean = course.isStudy
 
