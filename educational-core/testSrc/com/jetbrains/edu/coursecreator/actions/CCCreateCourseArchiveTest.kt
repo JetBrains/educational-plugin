@@ -324,7 +324,7 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
       lesson("lesson1") {
         eduTask("task1") {}
       }
-      additionalFile("test.mp4")
+      additionalFile("test.mp3")
     }
     val generatedJsonFile = generateJson()
     val expectedCourseJson = loadExpectedJson()
