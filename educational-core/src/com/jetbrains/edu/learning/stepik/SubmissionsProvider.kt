@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ActionCallback
 import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.api.Submission
@@ -11,7 +12,7 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFa
 
 abstract class SubmissionsProvider {
 
-  fun prepareSubmissionsContent(project: Project, course: Course) {
+  fun prepareSubmissionsContent(project: Project, course: Course): ActionCallback {
     val window = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
     if (window != null) {
       val submissionsContent = window.contentManager.findContent(SubmissionsManager.SUBMISSIONS_TAB_NAME)
@@ -22,7 +23,9 @@ abstract class SubmissionsProvider {
         }
       }
     }
-    loadAllSubmissions(project, course)
+    val actionCallback = ActionCallback()
+    loadAllSubmissions(project, course) { actionCallback.setDone() }
+    return actionCallback
   }
 
   fun getAllSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
@@ -31,7 +34,7 @@ abstract class SubmissionsProvider {
 
   abstract fun getAllSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission>?
 
-  abstract fun loadAllSubmissions(project: Project, course: Course?)
+  abstract fun loadAllSubmissions(project: Project, course: Course?, onFinish: () -> Unit)
 
   abstract fun loadSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission>
 

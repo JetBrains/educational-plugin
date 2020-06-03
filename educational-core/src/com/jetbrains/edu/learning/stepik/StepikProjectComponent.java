@@ -52,7 +52,7 @@ public class StepikProjectComponent implements ProjectComponent {
         SubmissionsProvider submissionsProvider = SubmissionsProvider.Companion.getSubmissionsProviderForCourse(course);
         if (course instanceof EduCourse && submissionsProvider != null) {
           if (EduSettings.getInstance().getUser() != null) {
-            submissionsProvider.prepareSubmissionsContent(myProject, course);
+            submissionsProvider.prepareSubmissionsContent(myProject, course).doWhenDone(() -> loadSolutionsFromStepik(course));
           }
           else {
             MessageBusConnection busConnection = myProject.getMessageBus().connect(myProject);
@@ -75,10 +75,6 @@ public class StepikProjectComponent implements ProjectComponent {
           final StepikUser currentUser = EduSettings.getInstance().getUser();
           if (currentUser == null) {
             showBalloon();
-          }
-          if (currentUser != null && !course.getAuthors().contains(currentUser.userInfo)) {
-            loadSolutionsFromStepik(course);
-            submissionsProvider.loadAllSubmissions(myProject, course);
           }
           selectStep(course);
         }
@@ -115,7 +111,7 @@ public class StepikProjectComponent implements ProjectComponent {
   }
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
-    if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
+    if (!myProject.isDisposed() && course instanceof EduCourse && ((EduCourse)course).isRemote()) {
       if (PropertiesComponent.getInstance(myProject).getBoolean(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
         PropertiesComponent.getInstance(myProject).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
         return;

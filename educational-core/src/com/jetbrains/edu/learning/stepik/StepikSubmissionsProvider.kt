@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
 class StepikSubmissionsProvider : SubmissionsProvider() {
 
-  override fun loadAllSubmissions(project: Project, course: Course?) {
+  override fun loadAllSubmissions(project: Project, course: Course?, onFinish: () -> Unit) {
     if (course is EduCourse && course.isRemote && isLoggedIn()) {
       ApplicationManager.getApplication().executeOnPooledThread {
         val submissionsManager = SubmissionsManager.getInstance(project)
@@ -31,6 +31,7 @@ class StepikSubmissionsProvider : SubmissionsProvider() {
             getAllSubmissions(task.id, submissionsManager)
           }
         }
+        onFinish()
         ApplicationManager.getApplication().invokeLater {
           TaskDescriptionView.getInstance(project).updateSubmissionsTab()
         }

@@ -21,11 +21,12 @@ class HyperskillSubmissionsProvider : SubmissionsProvider() {
                                                                                                                     submissionsManager)
   }
 
-  override fun loadAllSubmissions(project: Project, course: Course?) {
+  override fun loadAllSubmissions(project: Project, course: Course?, onFinish: () -> Unit) {
     if (!submissionsCanBeShown(course) || !isLoggedIn()) return
     ApplicationManager.getApplication().executeOnPooledThread {
       val stepIds = HyperskillSolutionLoader.getInstance(project).provideTasksToUpdate(course!!).map { it.id }.toSet()
       getAllSubmissions(stepIds, SubmissionsManager.getInstance(project))
+      onFinish()
       ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
     }
   }
