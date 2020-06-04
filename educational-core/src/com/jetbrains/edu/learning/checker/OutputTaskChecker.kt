@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.checker.CheckResult.Companion.FAILED_TO_CHECK
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 
 open class OutputTaskChecker(
@@ -54,7 +55,7 @@ open class OutputTaskChecker(
     }
     else {
       val diff = CheckResultDiff(expected = expected, actual = actual)
-      CheckResult(CheckStatus.Failed, "Incorrect", diff = diff)
+      CheckResult(CheckStatus.Failed, EduCoreBundle.message("check.incorrect"), diff = diff)
     }
   }
 

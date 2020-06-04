@@ -183,7 +183,7 @@ public class CheckAction extends DumbAwareAction {
     private final Task myTask;
     @Nullable private final TaskChecker myChecker;
     private CheckResult myResult;
-    private final String TEST_RESULTS_DISPLAY_ID = "Test Results: Run";
+    private static final String TEST_RESULTS_DISPLAY_ID = "Test Results: Run";
 
     public StudyCheckTask(@NotNull Project project, @NotNull Task task) {
       super(project, EduCoreBundle.message("checking.solution"), true);

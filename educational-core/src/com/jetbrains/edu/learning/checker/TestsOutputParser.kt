@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
 import com.jetbrains.edu.learning.checker.CheckUtils.TEST_FAILED
 import com.jetbrains.edu.learning.checker.CheckUtils.TEST_OK
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.util.regex.Pattern
 
 class TestsOutputParser {
@@ -36,7 +37,7 @@ class TestsOutputParser {
     val finalFailedMessage = lastFailedMessage
     return if (finalFailedMessage != null) {
       val diff = finalFailedMessage.diff
-      CheckResult(CheckStatus.Failed, finalFailedMessage.message, needEscape = needEscapeResult, diff = diff)
+      CheckResult(CheckStatus.Failed, EduCoreBundle.message("check.incorrect"), needEscape = needEscapeResult, diff = diff)
     } else {
       CheckResult(CheckStatus.Solved, congratulations, needEscape = needEscapeResult)
     }

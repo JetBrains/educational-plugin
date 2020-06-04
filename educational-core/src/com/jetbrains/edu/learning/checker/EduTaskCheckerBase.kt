@@ -15,6 +15,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.NO_TESTS_RUN
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 
 abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: EnvironmentChecker, project: Project) :
@@ -102,9 +103,8 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     val diff = firstFailedTest.diffViewerProvider?.let {
       CheckResultDiff(it.left, it.right, it.diffTitle, removeAttributes(getComparisonErrorMessage(firstFailedTest)))
     }
-    return CheckResult(CheckStatus.Failed,
-                       message = removeAttributes(getErrorMessage(firstFailedTest)),
-                       diff = diff)
+    val message = if (diff != null) EduCoreBundle.message("check.incorrect") else removeAttributes(getErrorMessage(firstFailedTest))
+    return CheckResult(CheckStatus.Failed, message, diff = diff)
   }
 
   /**
