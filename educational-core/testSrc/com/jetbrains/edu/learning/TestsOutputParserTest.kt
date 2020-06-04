@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils.TEST_FAILED
 import com.jetbrains.edu.learning.checker.CheckUtils.TEST_OK
 import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import junit.framework.TestCase
 
 class TestsOutputParserTest : TestCase() {
@@ -70,6 +71,15 @@ class TestsOutputParserTest : TestCase() {
     assertEquals(CheckStatus.Solved, checkResult.status)
     assertEquals(congrats, checkResult.message.trim())
   }
-  
+
+  fun `test failure message with diff`() {
+    val failedMessage = "expected: A but was: B"
+    val checkResult = getCheckResult("$STUDY_PREFIX $TEST_FAILED $failedMessage")
+    assertEquals(CheckStatus.Failed, checkResult.status)
+    assertEquals("A", checkResult.diff?.expected)
+    assertEquals("B", checkResult.diff?.actual)
+    assertEquals(EduCoreBundle.message("check.incorrect"), checkResult.message.trim())
+  }
+
   private fun getCheckResult(vararg lines: String): CheckResult = TestsOutputParser().getCheckResult(listOf(*lines), false)
 }

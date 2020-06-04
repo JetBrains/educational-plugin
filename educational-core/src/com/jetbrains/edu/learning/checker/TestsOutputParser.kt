@@ -37,7 +37,8 @@ class TestsOutputParser {
     val finalFailedMessage = lastFailedMessage
     return if (finalFailedMessage != null) {
       val diff = finalFailedMessage.diff
-      CheckResult(CheckStatus.Failed, EduCoreBundle.message("check.incorrect"), needEscape = needEscapeResult, diff = diff)
+      val message = if (diff == null) finalFailedMessage.message else EduCoreBundle.message("check.incorrect")
+      CheckResult(CheckStatus.Failed, message, needEscape = needEscapeResult, diff = diff)
     } else {
       CheckResult(CheckStatus.Solved, congratulations, needEscape = needEscapeResult)
     }
