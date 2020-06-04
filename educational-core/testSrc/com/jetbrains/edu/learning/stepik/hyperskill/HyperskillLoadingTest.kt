@@ -346,7 +346,7 @@ class HyperskillLoadingTest : NavigationTestBase() {
       items[stepId]?.let { mockResponse(it) } ?: mockResponse("response_empty.json")
     }
     val course = createHyperskillCourse()
-    mockConnector.fillTopics(course, project)
+    mockConnector.fillAllTopics(course, project)
     assertEquals(3, course.taskToTopics[0]?.size)
   }
 

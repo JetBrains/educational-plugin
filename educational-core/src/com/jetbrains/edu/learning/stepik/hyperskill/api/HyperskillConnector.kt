@@ -131,17 +131,27 @@ abstract class HyperskillConnector {
     return response?.body()?.steps?.firstOrNull()
   }
 
-  fun fillTopics(course: HyperskillCourse, project: Project) {
+  fun fillAllTopics(course: HyperskillCourse, project: Project) {
     for ((taskIndex, stage) in course.stages.withIndex()) {
-      val topics = getAllTopics(stage)
-      if (topics.isEmpty()) continue
-
-      course.taskToTopics[taskIndex] = topics
-      runInEdt {
-        if (project.isDisposed) return@runInEdt
-        TaskDescriptionView.getInstance(project).updateTopicsTab()
-      }
+      fillTopics(project, course, taskIndex, stage)
     }
+  }
+
+  private fun fillTopics(project: Project, course: HyperskillCourse, taskIndex: Int, stage: HyperskillStage) {
+    val topics = getAllTopics(stage)
+    if (topics.isEmpty()) return
+
+    course.taskToTopics[taskIndex] = topics
+    runInEdt {
+      if (project.isDisposed) return@runInEdt
+      TaskDescriptionView.getInstance(project).updateTopicsTab()
+    }
+  }
+
+  fun fillTaskTopics(project: Project, course: HyperskillCourse, stageId: Int?) {
+    val stage = course.stages.find { it.id == stageId } ?: return
+    val taskIndex = course.stages.indexOf(stage)
+    fillTopics(project, course, taskIndex, stage)
   }
 
   private fun getAllTopics(stage: HyperskillStage): List<HyperskillTopic> {

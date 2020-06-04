@@ -48,10 +48,22 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     })
   }
 
+  fun loadSolutionsInBackground(course: Course, tasksToUpdate: List<Task>) {
+    ProgressManager.getInstance().run(object : Backgroundable(project, EduCoreBundle.message("update.loading.solutions")) {
+      override fun run(progressIndicator: ProgressIndicator) {
+        loadAndApplySolutions(course, tasksToUpdate, progressIndicator)
+      }
+    })
+  }
+
   @VisibleForTesting
   @JvmOverloads
   fun loadAndApplySolutions(course: Course, progressIndicator: ProgressIndicator? = null) {
     val tasksToUpdate = provideTasksToUpdate(course)
+    loadAndApplySolutions(course, tasksToUpdate, progressIndicator)
+  }
+
+  private fun loadAndApplySolutions(course: Course, tasksToUpdate: List<Task>, progressIndicator: ProgressIndicator? = null) {
     val submissions = if (progressIndicator != null)
       ApplicationUtil.runWithCheckCanceled(Callable { loadSubmissions(course, tasksToUpdate) }, progressIndicator)
     else loadSubmissions(course, tasksToUpdate)
