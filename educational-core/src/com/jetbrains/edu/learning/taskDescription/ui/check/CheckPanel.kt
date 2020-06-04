@@ -113,9 +113,10 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
      * @see com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission.setStatus
      */
     if (task is CheckiOMission) return null
-    val message = task.feedback?.message
-    if (message == null && task.status == CheckStatus.Unchecked) return null
-    return CheckResult(task.status, message ?: "")
+    if (task.feedback == null && task.status == CheckStatus.Unchecked) return null
+
+    val feedback = task.feedback ?: return CheckResult(task.status, "")
+    return feedback.composeCheckResult(task.status)
   }
 
   private fun updateBackground() {

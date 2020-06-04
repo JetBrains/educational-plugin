@@ -16,7 +16,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
 import com.jetbrains.edu.learning.yaml.format.TaskChangeApplier
 import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ACTUAL
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.EXPECTED
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
@@ -42,7 +44,7 @@ abstract class StudentTaskYamlMixin : TaskYamlMixin() {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(MESSAGE, TIME)
+@JsonPropertyOrder(MESSAGE, TIME, EXPECTED, ACTUAL)
 abstract class FeedbackYamlMixin {
   @JsonProperty(MESSAGE)
   private var message: String = ""
@@ -50,6 +52,12 @@ abstract class FeedbackYamlMixin {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEE, dd MMM yyyy HH:mm:ss zzz")
   @JsonProperty(TIME)
   private var time: Date? = null
+
+  @JsonProperty(EXPECTED)
+  private var expected: String? = null
+
+  @JsonProperty(ACTUAL)
+  private var actual: String? = null
 }
 
 class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {

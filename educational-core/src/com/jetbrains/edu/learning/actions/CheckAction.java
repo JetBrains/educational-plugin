@@ -240,7 +240,7 @@ public class CheckAction extends DumbAwareAction {
       CheckStatus status = myResult.getStatus();
       if (myTask.getCourse().isStudy()) {
         myTask.setStatus(status);
-        myTask.setFeedback(new CheckFeedback(message, new Date()));
+        myTask.setFeedback(new CheckFeedback(message, new Date(), myResult));
         YamlFormatSynchronizer.saveItem(myTask);
       }
       if (myChecker != null) {

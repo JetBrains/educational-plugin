@@ -69,6 +69,8 @@ object YamlMixinNames {
   // feedback
   const val MESSAGE = "message"
   const val TIME = "time"
+  const val EXPECTED = "expected"
+  const val ACTUAL = "actual"
 
   // task file
   const val NAME = "name"

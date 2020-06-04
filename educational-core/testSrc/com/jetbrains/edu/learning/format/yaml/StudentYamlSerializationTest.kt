@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.format.yaml
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
@@ -130,8 +132,10 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
-  fun `test task with feedback and time`() {
+  fun `test task with feedback`() {
     val message = "My error message"
+    val expected = "A"
+    val actual = "B"
     val time = Date(0)
     val task = courseWithFiles {
       lesson {
@@ -139,7 +143,7 @@ class StudentYamlSerializationTest : EduTestCase() {
       }
     }.findTask("lesson1", "task1")
     task.status = CheckStatus.Failed
-    task.feedback = CheckFeedback(message, time)
+    task.feedback = CheckFeedback(message, time, CheckResult(task.status, message, diff = CheckResultDiff(expected, actual)))
     task.record = 1
 
     doTest(task, """
@@ -148,6 +152,8 @@ class StudentYamlSerializationTest : EduTestCase() {
     |feedback:
     |  message: $message
     |  time: Thu, 01 Jan 1970 00:00:00 UTC
+    |  expected: $expected
+    |  actual: $actual
     |record: 1
     |""".trimMargin())
   }

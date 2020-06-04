@@ -147,21 +147,27 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CheckStatus.Solved, task.status)
   }
 
-  fun `test task feedback with time`() {
+  fun `test task feedback`() {
     val message = "My error message"
     val time = Date(0)
+    val expected = "A"
+    val actual = "B"
     val yamlContent = """
     |type: edu
     |status: Failed
     |feedback:
     |  message: $message
     |  time: Thu, 01 Jan 1970 00:00:00 UTC
+    |  expected: $expected
+    |  actual: $actual
     |""".trimMargin()
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     assertEquals(CheckStatus.Failed, task.status)
     assertEquals(message, task.feedback?.message)
     assertEquals(time, task.feedback?.time)
+    assertEquals(expected, task.feedback?.expected)
+    assertEquals(actual, task.feedback?.actual)
   }
 
   fun `test selected variants`() {
