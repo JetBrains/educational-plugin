@@ -1,4 +1,7 @@
 [![official JetBrains project](http://jb.gg/badges/official-flat-square.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+[![JetBrains plugins][plugin-version-svg]][plugin-repo]
+[![JetBrains plugins][plugin-downloads-svg]][plugin-repo]
+[![JetBrains plugins][plugin-rating-svg]][plugin-repo]
 
 ## Educational Plugin
 
@@ -26,3 +29,8 @@ Please submit your issues to [Educational Plugin YouTrack](https://youtrack.jetb
 * Sources of PyCharm Edu and IntelliJ IDEA Edu are stored in [IntelliJ IDEA repository](https://jetbrains.team/p/idea/code/intellij?path=%2Fedu)
 * This plugin comes with integration with [Stepik](http://welcome.stepik.org/) learning platform
 * You can read more about plugin development in [IntelliJ Platform SDK docs](http://www.jetbrains.org/intellij/sdk/docs/index.html)
+
+[plugin-version-svg]: https://img.shields.io/jetbrains/plugin/v/10081-edutools?style=flat-square
+[plugin-downloads-svg]: https://img.shields.io/jetbrains/plugin/d/10081-edutools?style=flat-square
+[plugin-rating-svg]: https://img.shields.io/jetbrains/plugin/r/rating/10081-edutools?style=flat-square
+[plugin-repo]: https://plugins.jetbrains.com/plugin/10081-edutools
