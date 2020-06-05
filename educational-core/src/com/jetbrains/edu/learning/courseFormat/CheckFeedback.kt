@@ -5,14 +5,9 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import java.util.*
 
-class CheckFeedback constructor(
-  val message: String = "",
-  val time: Date? = null,
-  val expected: String? = null,
-  val actual: String? = null
-) {
-  constructor(time: Date?, checkResult: CheckResult?) :
-    this(checkResult?.message ?: "", time, checkResult?.diff?.expected, checkResult?.diff?.actual)
+class CheckFeedback(val message: String, val time: Date?, val expected: String?, val actual: String?) {
+  constructor(time: Date, checkResult: CheckResult) :
+    this(checkResult.message, time, checkResult.diff?.expected, checkResult.diff?.actual)
 
   fun toCheckResult(status: CheckStatus): CheckResult {
     if ((expected == null && actual != null) || (expected != null && actual == null)) {

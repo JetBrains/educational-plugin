@@ -10,9 +10,18 @@ class CheckActionListener : CheckListener {
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
     checkResultVerifier(task, result)
+    checkFeedbackEqualsWithCheckResult(task, result)
     val messageProducer = expectedMessageProducer ?: return
     val expectedMessage = messageProducer(task) ?: error("Unexpected task `${task.name}`")
     assertEquals("Checking output for ${getTaskName(task)} fails", expectedMessage, result.message)
+  }
+
+  private fun checkFeedbackEqualsWithCheckResult(task: Task, checkResult: CheckResult) {
+    val errorMessage = "Check result and saved feedback doesn't match for ${task.name}"
+    val feedback = task.feedback ?: error("CheckFeedback should be filled out for ${task.name}")
+    assertEquals(errorMessage, feedback.message, checkResult.message)
+    assertEquals(errorMessage, feedback.expected, checkResult.diff?.expected)
+    assertEquals(errorMessage, feedback.actual, checkResult.diff?.actual)
   }
 
   companion object {

@@ -5,7 +5,6 @@ import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
@@ -27,8 +26,5 @@ open class NewGradleEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker
     }.orEmpty()
   }
 
-  override fun getComparisonErrorMessage(node: SMTestProxy): String {
-    val index = StringUtil.indexOfIgnoreCase(node.errorMessage, "expected:", 0)
-    return if (index != -1) node.errorMessage.substring(0, index).trim() else node.errorMessage
-  }
+  override fun getComparisonErrorMessage(node: SMTestProxy): String = extractComparisonErrorMessage(node)
 }

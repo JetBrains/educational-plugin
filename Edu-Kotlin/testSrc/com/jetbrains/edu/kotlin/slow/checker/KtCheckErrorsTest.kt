@@ -187,7 +187,7 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
         "testFail" ->
           equalTo("foo() should return 42") to nullValue()
         "comparisonTestFail" ->
-          equalTo("") to
+          equalTo(EduCoreBundle.message("check.incorrect")) to
             diff(CheckResultDiff(expected = "42", actual = "43", title = title))
         "comparisonTestWithMessageFail" ->
           equalTo("foo() should return 42") to

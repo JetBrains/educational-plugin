@@ -10,11 +10,14 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.NO_TESTS_RUN
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 
 abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: EnvironmentChecker, project: Project) :
@@ -101,7 +104,8 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     val firstFailedTest = failedChildren.firstOrNull() ?: error("Testing failed although no failed tests found")
     val diff = firstFailedTest.diffViewerProvider?.let { CheckResultDiff(it.left, it.right, it.diffTitle) }
     val message = if (diff != null) getComparisonErrorMessage(firstFailedTest) else getErrorMessage(firstFailedTest)
-    return CheckResult(CheckStatus.Failed, removeAttributes(message), diff = diff)
+    val nonEmptyMessage = message.nullize(nullizeSpaces = true) ?: EduCoreBundle.message("check.incorrect")
+    return CheckResult(CheckStatus.Failed, removeAttributes(nonEmptyMessage), diff = diff)
   }
 
   /**
@@ -147,4 +151,11 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
    * Returns message for comparison error that will be shown to a user in Check Result panel
    */
   protected open fun getComparisonErrorMessage(node: SMTestProxy): String = getErrorMessage(node)
+
+  companion object {
+    fun extractComparisonErrorMessage(node: SMTestProxy): String {
+      val index = StringUtil.indexOfIgnoreCase(node.errorMessage, "expected:", 0)
+      return if (index != -1) node.errorMessage.substring(0, index).trim() else node.errorMessage
+    }
+  }
 }

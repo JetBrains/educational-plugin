@@ -188,7 +188,7 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
         "EduTestFailed" -> equalTo("assertion failed: foo() == String::from(\"foo\")") to nullValue()
         "EduTestFailedWithMessage" -> equalTo("Test error message") to nullValue()
         "EduTestFailedWithMultilineMessage" -> equalTo("Test\nerror\nmessage") to nullValue()
-        "EduComparisonTestFailed" -> equalTo("") to
+        "EduComparisonTestFailed" -> equalTo(EduCoreBundle.message("check.incorrect")) to
           diff(CheckResultDiff(expected = "12", actual = "123", title = "Comparison Failure (test)"))
         "EduComparisonTestFailedWithMessage" -> equalTo("Test error message") to
           diff(CheckResultDiff(expected = "foo", actual = "bar", title = "Comparison Failure (test)"))

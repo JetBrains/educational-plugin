@@ -47,6 +47,25 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
           }
         """)
       }
+      eduTask("comparisonTestFail") {
+        javaTaskFile("src/Task.java", """
+          public class Task {
+            public static int foo() {
+              return 0;
+            }
+          }
+        """)
+        javaTaskFile("test/Test.java", """
+          import org.junit.Assert;
+
+          public class Test {
+            @org.junit.Test
+            public void test() {
+              Assert.assertEquals(42, Task.foo());
+            }
+          }
+        """)
+      }
     }
   }
 
@@ -56,7 +75,8 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
       when (task.name) {
         "javaCompilationError" -> CheckUtils.COMPILATION_FAILED_MESSAGE
         "testFail" -> "Task.foo() should return 42"
-        else -> null
+        "comparisonTestFail" -> EduCoreBundle.message("check.incorrect")
+        else -> error("Unexpected task name: ${task.name}")
       }
     }
     doTest()
