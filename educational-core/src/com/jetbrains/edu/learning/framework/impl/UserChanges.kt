@@ -88,6 +88,9 @@ sealed class Change {
     constructor(input: DataInput): super(input)
 
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
+      if (task.getTaskFile(path) == null) {
+        task.addLearnerCreatedTaskFile(path, text)
+      }
       try {
         EduDocumentListener.modifyWithoutListener(task, path) {
           GeneratorUtils.createChildFile(taskDir, path, text)
@@ -159,9 +162,7 @@ sealed class Change {
     constructor(input: DataInput): super(input)
 
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
-      val taskFile = TaskFile(path, text)
-      taskFile.isLearnerCreated = true
-      task.addTaskFile(taskFile)
+     task.addLearnerCreatedTaskFile(path, text)
     }
 
 
@@ -216,4 +217,10 @@ sealed class Change {
       }
     }
   }
+
+  protected fun Task.addLearnerCreatedTaskFile(path: String, text: String): TaskFile =
+    addTaskFile(path).apply {
+      isLearnerCreated = true
+      setText(text)
+    }
 }
