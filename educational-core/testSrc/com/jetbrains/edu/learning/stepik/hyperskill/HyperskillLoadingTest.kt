@@ -260,6 +260,39 @@ class HyperskillLoadingTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  fun `test solution loading with new file on the first stage`() {
+    configureResponse("submission_stage1_new_file.json")
+    val course = createHyperskillCourse()
+    HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          dir("src") {
+            file("Task.kt", "fun userFoo() {}")
+            file("Baz.kt", "fun userBaz() {}")
+            file("additional.txt", "additional file")
+          }
+          dir("test") {
+            file("Tests1.kt", "fun tests1() {}")
+          }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
   fun `test navigation after solution loading`() {
     configureResponse("submission_stage2_failed.json")
     val course = createHyperskillCourse()

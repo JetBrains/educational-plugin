@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.DataInputOutputUtil
 import com.jetbrains.edu.learning.EduDocumentListener
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.addLearnerCreatedTaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import java.io.DataInput
@@ -217,10 +217,4 @@ sealed class Change {
       }
     }
   }
-
-  protected fun Task.addLearnerCreatedTaskFile(path: String, text: String): TaskFile =
-    addTaskFile(path).apply {
-      isLearnerCreated = true
-      setText(text)
-    }
 }

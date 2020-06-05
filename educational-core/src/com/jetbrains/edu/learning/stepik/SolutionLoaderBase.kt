@@ -16,11 +16,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.messages.Topic
+import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.addLearnerCreatedTaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.isUnitTestMode
@@ -30,6 +33,7 @@ import com.jetbrains.edu.learning.update.UpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 import java.util.*
+import java.util.Collections.max
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
 
@@ -227,6 +231,11 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       }
     }
 
+    private fun Task.modificationDate(project: Project): Date {
+      val taskDir = getTaskDir(project) ?: return Date(0)
+      return Date(max(taskFiles.values.map { EduUtils.findTaskFileInDir(it, taskDir)?.timeStamp ?: 0 }))
+    }
+
     private fun applySolutions(project: Project, task: Task, taskSolutions: TaskSolutions) {
       invokeAndWaitIfNeeded {
         if (project.isDisposed) return@invokeAndWaitIfNeeded
@@ -244,29 +253,37 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
           }
         }
         else {
-          for (taskFile in task.taskFiles.values) {
-            val (solutionText, placeholders) = taskSolutions.solutions[taskFile.name] ?: continue
-            val vFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
-            val solutionDate = taskSolutions.date
-            val vFileModificationDate = Date(vFile.timeStamp)
-            if (!EduUtils.isNewlyCreated(project) && solutionDate != null && vFileModificationDate.isSignificantlyAfter(solutionDate)) {
-              //means that file was modified locally since solution was made
-              continue
-            }
-            if (EduUtils.isTestsFile(project, vFile)) continue
-            updatePlaceholders(taskFile, placeholders)
-            try {
-              taskFile.isTrackChanges = false
-              runWriteAction {
-                VfsUtil.saveText(vFile, solutionText)
+          val taskModificationDate = task.modificationDate(project)
+          val solutionDate = taskSolutions.date
+          if (!EduUtils.isNewlyCreated(project) && solutionDate != null && taskModificationDate.isSignificantlyAfter(solutionDate)) {
+            //means that we're trying to apply solution after the task has already been modified locally
+            return@invokeAndWaitIfNeeded
+          }
+          for (solutionPath in taskSolutions.solutions.keys) {
+            val (solutionText, placeholders) = taskSolutions.solutions[solutionPath] ?: error("No solution for $solutionPath found")
+            val taskFile = task.getTaskFile(solutionPath) ?: task.addLearnerCreatedTaskFile(solutionPath, solutionText)
+            val vFile = EduUtils.findTaskFileInDir(taskFile, taskDir)
+            if (vFile == null) {
+              EduDocumentListener.modifyWithoutListener(task, taskFile.name) {
+                GeneratorUtils.createChildFile(taskDir, taskFile.name, solutionText)
               }
-              SaveAndSyncHandler.getInstance().refreshOpenFiles()
             }
-            catch (e: IOException) {
-              LOG.warn(e)
-            }
-            finally {
-              taskFile.isTrackChanges = true
+            else {
+              if (EduUtils.isTestsFile(project, vFile)) continue
+              updatePlaceholders(taskFile, placeholders)
+              try {
+                taskFile.isTrackChanges = false
+                runWriteAction {
+                  VfsUtil.saveText(vFile, solutionText)
+                }
+                SaveAndSyncHandler.getInstance().refreshOpenFiles()
+              }
+              catch (e: IOException) {
+                LOG.warn(e)
+              }
+              finally {
+                taskFile.isTrackChanges = true
+              }
             }
           }
         }
