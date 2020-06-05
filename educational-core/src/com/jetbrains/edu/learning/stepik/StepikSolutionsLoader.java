@@ -269,7 +269,7 @@ public class StepikSolutionsLoader implements Disposable {
       LOG.warn("No task statuses loaded for course" + course.getId());
       return tasksToUpdate;
     }
-    SubmissionsManager submissionsManager = SubmissionsManager.Companion.getInstance(myProject);
+    SubmissionsManager submissionsManager = SubmissionsManager.getInstance(myProject);
     for (Task task : allTasks) {
       Boolean isSolved = taskStatusesMap.get(getProgressId(task));
       if (isSolved == null || !submissionsManager.isLastSubmissionUpToDate(task, isSolved)) continue;
@@ -378,7 +378,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static TaskSolutions getStepikTaskSolutions(@NotNull Project project, @NotNull Task task, boolean isSolved) {
     String taskFileName = TaskExt.getMockTaskFileName(task);
-    SubmissionsManager submissionsManager = SubmissionsManager.Companion.getInstance(project);
+    SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
     String solution = getSolutionTextForStepikAssignment(task, submissionsManager, isSolved);
     if (solution != null && taskFileName != null) {
       task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
@@ -390,7 +390,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static TaskSolutions getEduTaskSolutions(@NotNull Project project, @NotNull Task task, boolean isSolved) {
     String language = task.getCourse().getLanguageID();
-    SubmissionsManager submissionsManager = SubmissionsManager.Companion.getInstance(project);
+    SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
     Reply reply = submissionsManager.getLastSubmissionReply(task, isSolved);
     if (reply == null || reply.getSolution() == null || reply.getSolution().isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449

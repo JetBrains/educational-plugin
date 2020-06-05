@@ -148,7 +148,7 @@ public class StepikCheckerConnector {
     Submission submission = postSubmission(submissionData, attemptId, userId);
     if (submission != null) {
       if (task instanceof CodeTask) {
-        SubmissionsManager submissionsManager = SubmissionsManager.Companion.getInstance(project);
+        SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
         submissionsManager.addToSubmissionsMap(task.getId(), submission);
         ApplicationManager.getApplication().invokeLater(() -> TaskDescriptionView.getInstance(project).updateSubmissionsTab());
       }

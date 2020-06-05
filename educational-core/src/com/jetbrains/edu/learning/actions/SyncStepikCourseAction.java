@@ -41,7 +41,7 @@ public class SyncStepikCourseAction extends SyncCourseAction {
           SubmissionsProvider submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course);
           if (submissionsProvider != null) {
             submissionsProvider.getAllSubmissions(CourseExt.getAllTasks(course).stream().map(it -> it.getId()).collect(Collectors.toSet()),
-                                                  SubmissionsManager.Companion.getInstance(project));
+                                                  SubmissionsManager.getInstance(project));
           }
           StepikSolutionsLoader.getInstance(project).loadSolutions(course, indicator);
         }

@@ -96,6 +96,7 @@ class SubmissionsManager {
   companion object {
     const val SUBMISSIONS_TAB_NAME = "Submissions"
 
+    @JvmStatic
     fun getInstance(project: Project): SubmissionsManager = ServiceManager.getService(project, SubmissionsManager::class.java)
   }
 
