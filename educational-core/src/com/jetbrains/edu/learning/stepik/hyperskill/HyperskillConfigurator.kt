@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.stepik.AdditionalTab
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -16,7 +17,6 @@ import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import javax.swing.Icon
-import javax.swing.JPanel
 
 /**
  * Hyperskill contractors edit existing Hyperskill projects as Stepik lessons.
@@ -32,14 +32,15 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
   override val courseBuilder: EduCourseBuilder<T>
     get() = HyperskillCourseBuilder(baseConfigurator.courseBuilder)
 
-  override fun additionalTaskTabs(currentTask: Task?, project: Project): List<Pair<JPanel, String>> {
-    val additionalTabs = super.additionalTaskTabs(currentTask, project).toMutableList()
+  override fun additionalTaskTabs(currentTask: Task?, project: Project): List<AdditionalTab> {
+    val additionalTabs = super.additionalTaskTabs(currentTask, project)
     val topicsTab = getTopicsTab(currentTask, project) ?: return additionalTabs
-    additionalTabs.add(topicsTab)
-    return additionalTabs
+    val additionalTabsWithTopics = mutableListOf(topicsTab)
+    additionalTabsWithTopics.addAll(additionalTabs)
+    return additionalTabsWithTopics
   }
 
-  private fun getTopicsTab(currentTask: Task?, project: Project): Pair<JPanel, String>? {
+  private fun getTopicsTab(currentTask: Task?, project: Project): AdditionalTab? {
     if (currentTask == null) return null
     val course = currentTask.lesson.course
     if (course is HyperskillCourse && course.isStudy) {
@@ -60,7 +61,7 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
       }
       topicsPanel.setText(descriptionText)
 
-      return Pair(topicsPanel, TOPICS_TAB_NAME)
+      return AdditionalTab(topicsPanel, TOPICS_TAB_NAME)
     }
     return null
   }

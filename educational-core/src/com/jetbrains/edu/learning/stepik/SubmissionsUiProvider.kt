@@ -36,7 +36,7 @@ import kotlin.math.roundToInt
 
 object SubmissionsUiProvider {
 
-  fun createSubmissionsTab(currentTask: Task, course: Course, project: Project): Pair<JPanel, String>? {
+  fun createSubmissionsTab(currentTask: Task, course: Course, project: Project): AdditionalTab? {
     val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
     val submissionsManager = SubmissionsManager.getInstance(project)
     if (!submissionsProvider.submissionsCanBeShown(course)) return null
@@ -62,7 +62,7 @@ object SubmissionsUiProvider {
     }
 
     submissionsPanel.setText(descriptionText.toString())
-    return Pair(submissionsPanel, SubmissionsManager.SUBMISSIONS_TAB_NAME)
+    return AdditionalTab(submissionsPanel, SubmissionsManager.SUBMISSIONS_TAB_NAME)
   }
 
   private fun addViewOnStepikLink(descriptionText: StringBuilder, currentTask: ChoiceTask, submissionsPanel: AdditionalTabPanel) {
@@ -167,5 +167,6 @@ object SubmissionsUiProvider {
     return "<h><img src=${getImageUrl(submission.status)} hspace=6 width=${pictureSize} height=${pictureSize}/></h>" +
            "<a ${StyleManager().textStyleHeader};color:${getLinkColor(submission)} href=${submission.id}> ${text}</a>"
   }
-
 }
+
+data class AdditionalTab(val panel: JPanel, val name: String)
