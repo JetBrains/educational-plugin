@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui.courseSettings;
 
 import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.ui.HideableDecorator;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -13,14 +12,14 @@ import java.util.List;
 public class CourseSettings extends JPanel {
 
   private final JPanel myAdvancedSettings = new JPanel();
-  private final HideableDecorator myDecorator;
+  private final HideableNoLineDecorator myDecorator;
 
   public CourseSettings() {
     super(new BorderLayout());
     myAdvancedSettings.setLayout(new BoxLayout(myAdvancedSettings, BoxLayout.Y_AXIS));
     add(myAdvancedSettings, BorderLayout.CENTER);
 
-    myDecorator = new HideableDecorator(this, "Settings", false);
+    myDecorator = new HideableNoLineDecorator(this, "&Settings");
     myDecorator.setContentComponent(myAdvancedSettings);
     myAdvancedSettings.setBorder(JBUI.Borders.empty(0, IdeBorderFactory.TITLED_BORDER_INDENT, 5, 0));
   }
