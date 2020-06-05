@@ -38,7 +38,7 @@ public class SyncStepikCourseAction extends SyncCourseAction {
         assert course instanceof EduCourse;
         updateCourseStructure(project, (EduCourse)course);
         if (EduUtils.isStudentProject(project)) {
-          SubmissionsProvider submissionsProvider = SubmissionsProvider.Companion.getSubmissionsProviderForCourse(course);
+          SubmissionsProvider submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course);
           if (submissionsProvider != null) {
             submissionsProvider.getAllSubmissions(CourseExt.getAllTasks(course).stream().map(it -> it.getId()).collect(Collectors.toSet()),
                                                   SubmissionsManager.Companion.getInstance(project));

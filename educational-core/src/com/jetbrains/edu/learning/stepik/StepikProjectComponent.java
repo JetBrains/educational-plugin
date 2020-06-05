@@ -49,7 +49,7 @@ public class StepikProjectComponent implements ProjectComponent {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(
       () -> {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
-        SubmissionsProvider submissionsProvider = SubmissionsProvider.Companion.getSubmissionsProviderForCourse(course);
+        SubmissionsProvider submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course);
         if (course instanceof EduCourse && submissionsProvider != null) {
           if (EduSettings.getInstance().getUser() != null) {
             submissionsProvider.prepareSubmissionsContent(myProject, course).doWhenDone(() -> loadSolutionsFromStepik(course));

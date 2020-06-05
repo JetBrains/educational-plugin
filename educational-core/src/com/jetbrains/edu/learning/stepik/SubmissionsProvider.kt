@@ -49,6 +49,7 @@ abstract class SubmissionsProvider {
   companion object {
     private val EP_NAME = ExtensionPointName.create<SubmissionsProvider>("Educational.submissionsProvider")
 
+    @JvmStatic
     fun getSubmissionsProviderForCourse(course: Course?): SubmissionsProvider? {
       if (course == null) return null
       val submissionsProviders = EP_NAME.extensionList.filter { it.submissionsCanBeShown(course) }
