@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui.coursePanel
+package com.jetbrains.edu.learning.newproject.ui.courseSettings
 
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
@@ -17,8 +17,8 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.newproject.ui.CourseSettings
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.DESCRIPTION_AND_SETTINGS_TOP_OFFSET
 import java.awt.BorderLayout
 import java.io.File
 import java.text.DateFormat

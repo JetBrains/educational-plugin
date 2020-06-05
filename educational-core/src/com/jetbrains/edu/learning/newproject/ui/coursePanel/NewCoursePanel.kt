@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
+import com.jetbrains.edu.learning.newproject.ui.courseSettings.NewCourseSettings
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.util.*

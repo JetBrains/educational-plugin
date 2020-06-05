@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui;
+package com.jetbrains.edu.learning.newproject.ui.courseSettings;
 
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.ui.HideableDecorator;
