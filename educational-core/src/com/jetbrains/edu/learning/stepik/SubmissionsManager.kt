@@ -30,12 +30,19 @@ class SubmissionsManager {
     }
   }
 
-  fun putToSubmissions(stepIds: Set<Int>, submissionsList: List<Submission>?) {
-    if (submissionsList == null) return
+  fun putToSubmissions(stepIds: Set<Int>, submissionsList: List<Submission>?): List<Submission>? {
+    if (submissionsList == null) return submissionsList
     for (stepId in stepIds) {
-      val submissionsToStep = submissionsList.filter { it.step == stepId }
-      putToSubmissions(stepId, submissionsToStep.toMutableList())
+      putToSubmissions(stepId, submissionsList)
     }
+    return submissionsList
+  }
+
+  fun putToSubmissions(stepId: Int, submissionsList: List<Submission>?): List<Submission>? {
+    if (submissionsList == null) return submissionsList
+    val submissionsToStep = submissionsList.filter { it.step == stepId }
+    putToSubmissions(stepId, submissionsToStep.toMutableList())
+    return submissionsList
   }
 
   fun addToSubmissionsMapWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {
