@@ -80,7 +80,7 @@ class SubmissionsManager {
     val status = if (isSolved) EduNames.CORRECT else EduNames.WRONG
     val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(task.course) ?: error(
       "SubmissionsProvider for course ${task.course.name} not found")
-    return submissionsProvider.getAllSubmissions(task.id, this).filter { it.status == status }
+    return submissionsProvider.getSubmissions(task.id, this).filter { it.status == status }
   }
 
   fun isLastSubmissionUpToDate(task: Task, isSolved: Boolean): Boolean {

@@ -28,11 +28,11 @@ abstract class SubmissionsProvider {
     return actionCallback
   }
 
-  fun getAllSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
+  fun getSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
     return submissionsManager.getOrPut(stepId) { loadSubmissions(stepId, submissionsManager) }
   }
 
-  abstract fun getAllSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission>?
+  abstract fun getSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission>?
 
   abstract fun loadAllSubmissions(project: Project, course: Course?, onFinish: () -> Unit)
 

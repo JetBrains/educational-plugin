@@ -68,8 +68,8 @@ fun getStepikLink(task: Task, lesson: Lesson): String {
 
 fun updateCourse(project: Project, course: EduCourse) {
   StepikCourseUpdater(course, project).updateCourse()
-  SubmissionsProvider.getSubmissionsProviderForCourse(course)?.getAllSubmissions(course.allTasks.map { it.id }.toSet(),
-                                                                                 SubmissionsManager.getInstance(project))
+  SubmissionsProvider.getSubmissionsProviderForCourse(course)?.getSubmissions(course.allTasks.map { it.id }.toSet(),
+                                                                              SubmissionsManager.getInstance(project))
   StepikSolutionsLoader.getInstance(project).loadSolutionsInBackground()
 }
 
