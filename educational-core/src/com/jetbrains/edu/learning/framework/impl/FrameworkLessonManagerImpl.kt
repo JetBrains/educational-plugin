@@ -78,7 +78,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
         is Change.AddFile -> if (it.path in newInitialState) Change.ChangeFile(it.path, it.text) else it
         is Change.RemoveFile -> if (it.path !in newInitialState) null else it
         is Change.ChangeFile -> if (it.path !in newInitialState) Change.AddFile(it.path, it.text) else it
-        is Change.AddUserCreatedTaskFile,
+        is Change.PropagateLearnerCreatedTaskFile,
         is Change.RemoveTaskFile -> it
       }
     }
@@ -173,7 +173,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       for ((path, text) in currentTaskFilesState) {
         val targetText = toRemove.remove(path)
         if (targetText == null) {
-          taskFileChanges += Change.AddUserCreatedTaskFile(path, text)
+          taskFileChanges += Change.PropagateLearnerCreatedTaskFile(path, text)
         }
       }
 

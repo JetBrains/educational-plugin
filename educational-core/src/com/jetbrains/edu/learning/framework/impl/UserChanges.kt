@@ -155,7 +155,7 @@ sealed class Change {
     }
   }
 
-  class AddUserCreatedTaskFile : Change {
+  class PropagateLearnerCreatedTaskFile : Change {
 
     constructor(path: String, text: String): super(path, text)
     @Throws(IOException::class)
@@ -196,7 +196,7 @@ sealed class Change {
         is AddFile -> 0
         is RemoveFile -> 1
         is ChangeFile -> 2
-        is AddUserCreatedTaskFile -> 3
+        is PropagateLearnerCreatedTaskFile -> 3
         is RemoveTaskFile -> 4
       }
       out.writeInt(ordinal)
@@ -211,7 +211,7 @@ sealed class Change {
         0 -> AddFile(input)
         1 -> RemoveFile(input)
         2 -> ChangeFile(input)
-        3 -> AddUserCreatedTaskFile(input)
+        3 -> PropagateLearnerCreatedTaskFile(input)
         4 -> RemoveTaskFile(input)
         else -> error("Unexpected change type: $ordinal")
       }
