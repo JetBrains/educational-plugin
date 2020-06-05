@@ -86,20 +86,16 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val matcher = when (task.name) {
-        "EduTestsFailed" -> Result(CheckStatus.Failed, equalTo("4 != 3 : error"),
-                                   diff(CheckResultDiff(expected = "4", actual = "3", title = "Comparison Failure (test_add)",
-                                                        message = "4 != 3 : error")), nullValue())
+        "EduTestsFailed" ->
+          Result(CheckStatus.Failed, equalTo("4 != 3 : error"),
+                 diff(CheckResultDiff(expected = "4", actual = "3", title = "Comparison Failure (test_add)")), nullValue())
         "EduNoTestsRun" -> Result(CheckStatus.Unchecked, containsString(CheckUtils.NO_TESTS_HAVE_RUN), nullValue(), nullValue())
         "SyntaxError" -> Result(CheckStatus.Failed, containsString("Syntax Error"), nullValue(),
                                 containsString("SyntaxError: invalid syntax"))
         "AssertionError" -> Result(CheckStatus.Failed, equalTo("False is not true : My own message"), nullValue(), nullValue())
-        "OutputTestsFailed" -> Result(CheckStatus.Failed, equalTo("""
-          |Expected output:
-          |<Hello, World!
-          |>
-          |Actual output:
-          |<Hello, World
-          |>""".trimMargin()), diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n")), nullValue())
+        "OutputTestsFailed" ->
+          Result(CheckStatus.Failed, equalTo(EduCoreBundle.message("check.incorrect")),
+                 diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n")), nullValue())
         else -> error("Unexpected task name: ${task.name}")
       }
 

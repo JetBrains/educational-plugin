@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.nullValue
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.assertThat
@@ -188,12 +189,12 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
         "EduTestFailedWithMessage" -> equalTo("Test error message") to nullValue()
         "EduTestFailedWithMultilineMessage" -> equalTo("Test\nerror\nmessage") to nullValue()
         "EduComparisonTestFailed" -> equalTo("") to
-          diff(CheckResultDiff(expected = "12", actual = "123", message = ""))
+          diff(CheckResultDiff(expected = "12", actual = "123", title = "Comparison Failure (test)"))
         "EduComparisonTestFailedWithMessage" -> equalTo("Test error message") to
-          diff(CheckResultDiff(expected = "foo", actual = "bar", message = "Test error message"))
+          diff(CheckResultDiff(expected = "foo", actual = "bar", title = "Comparison Failure (test)"))
         "OutputCompilationFailed" -> equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE) to nullValue()
         "OutputTestsFailed" ->
-          equalTo("Expected output:\n<Hello, World!\n>\nActual output:\n<Hello, World\n>") to
+          equalTo(EduCoreBundle.message("check.incorrect")) to
             diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n"))
         else -> error("Unexpected task name: ${task.name}")
       }

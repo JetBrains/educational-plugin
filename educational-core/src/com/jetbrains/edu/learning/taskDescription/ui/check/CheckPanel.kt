@@ -116,7 +116,7 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
     if (task.feedback == null && task.status == CheckStatus.Unchecked) return null
 
     val feedback = task.feedback ?: return CheckResult(task.status, "")
-    return feedback.composeCheckResult(task.status)
+    return feedback.toCheckResult(task.status)
   }
 
   private fun updateBackground() {

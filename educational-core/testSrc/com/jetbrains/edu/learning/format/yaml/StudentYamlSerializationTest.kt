@@ -143,7 +143,7 @@ class StudentYamlSerializationTest : EduTestCase() {
       }
     }.findTask("lesson1", "task1")
     task.status = CheckStatus.Failed
-    task.feedback = CheckFeedback(message, time, CheckResult(task.status, message, diff = CheckResultDiff(expected, actual)))
+    task.feedback = CheckFeedback(time, CheckResult(task.status, message, diff = CheckResultDiff(expected, actual)))
     task.record = 1
 
     doTest(task, """

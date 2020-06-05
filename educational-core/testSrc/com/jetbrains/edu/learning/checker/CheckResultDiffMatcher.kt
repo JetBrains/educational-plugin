@@ -11,7 +11,7 @@ class CheckResultDiffMatcher(private val expected: CheckResultDiff) : BaseMatche
 
   override fun matches(actual: Any?): Boolean {
     if (actual !is CheckResultDiff) return false
-    return expected.message == actual.message && expected.actual == actual.actual && expected.expected == actual.expected
+    return expected.title == actual.title && expected.actual == actual.actual && expected.expected == actual.expected
   }
 
   companion object {

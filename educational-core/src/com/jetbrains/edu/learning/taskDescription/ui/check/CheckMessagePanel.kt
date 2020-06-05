@@ -11,15 +11,12 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
-import kotlinx.css.CSSBuilder
-import kotlinx.css.body
 import java.awt.BorderLayout
 import java.awt.Font
 import javax.swing.*
 import javax.swing.event.HyperlinkListener
 
-class CheckMessagePanel private constructor(): JPanel() {
+class CheckMessagePanel private constructor() : JPanel() {
 
   private val messagePane: JTextPane = createTextPane().apply {
     border = JBUI.Borders.emptyTop(16)
@@ -35,12 +32,8 @@ class CheckMessagePanel private constructor(): JPanel() {
     componentCount > 1 || messagePane.document.getText(0, messagePane.document.length).isNotEmpty()
 
   private fun setMessage(message: String) {
-    var displayMessage = if (message.length > MAX_MESSAGE_LENGTH) message.substring(0, MAX_MESSAGE_LENGTH) + "..." else message
-    displayMessage = StringUtil.replace(displayMessage, listOf(" ", "\n"), listOf("&nbsp;", "<br>"))
-    if (message.contains("expected", true) && message.contains("actual", true)) {
-      displayMessage = displayMessage.monospaced()
-    }
-    messagePane.text = displayMessage
+    val displayMessage = if (message.length > MAX_MESSAGE_LENGTH) message.substring(0, MAX_MESSAGE_LENGTH) + "..." else message
+    messagePane.text = StringUtil.replace(displayMessage, listOf(" ", "\n"), listOf("&nbsp;", "<br>"))
   }
 
   private fun setHyperlinkListener(listener: HyperlinkListener) {
@@ -48,10 +41,8 @@ class CheckMessagePanel private constructor(): JPanel() {
   }
 
   private fun setDiff(diff: CheckResultDiff) {
-    val (expectedText, actualText, _, message) = diff
-    setMessage(message)
-    val expected = createLabeledComponent(expectedText, "Expected", 16)
-    val actual = createLabeledComponent(actualText, "Actual", 8)
+    val expected = createLabeledComponent(diff.expected, "Expected", 16)
+    val actual = createLabeledComponent(diff.actual, "Actual", 8)
     UIUtil.mergeComponentsWithAnchor(expected, actual)
 
     add(expected)
@@ -114,13 +105,4 @@ private class MultiLineLabel(text: String?) : com.intellij.openapi.ui.ex.MultiLi
   override fun updateUI() {
     setUI(MultiLineLabelUI())
   }
-}
-
-private fun String.monospaced(): String {
-  val fontCss = CSSBuilder().apply {
-    body {
-      fontFamily = StyleManager().codeFont
-    }
-  }.toString()
-  return "<html><head><style>${fontCss}</style></head><body>${this}</body></html>"
 }

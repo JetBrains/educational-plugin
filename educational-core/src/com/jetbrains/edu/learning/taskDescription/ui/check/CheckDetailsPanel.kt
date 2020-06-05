@@ -67,7 +67,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
       0
     }
 
-    val messageLength = (checkResult.diff?.message ?: checkResult.escapedMessage).length
+    val messageLength = checkResult.escapedMessage.length
 
     if (messageLength > MAX_MESSAGE_LENGTH || expectedActualTextLength > MAX_EXPECTED_ACTUAL_LENGTH) {
       linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, details ?: checkResult.message)),

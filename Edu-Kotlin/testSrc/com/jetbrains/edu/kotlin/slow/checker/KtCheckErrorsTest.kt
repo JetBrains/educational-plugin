@@ -1,11 +1,5 @@
 package com.jetbrains.edu.kotlin.slow.checker
 
-import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.projectRoots.ProjectJdkTable
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
-import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckResultDiff
@@ -14,6 +8,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.nullValue
 import org.hamcrest.CoreMatchers.equalTo
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -40,7 +35,7 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
       eduTask("javaCompilationError") {
         javaTaskFile("src/JavaClass.java", """
           public class JavaClass {
-              public static int i = aaa;
+              public static final int i = aaa;
           }
         """)
         kotlinTaskFile("src/Task.kt", """
@@ -160,7 +155,7 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
       }
       outputTask("outputTaskFail") {
         kotlinTaskFile("src/Task.kt", """
-          fun main(args: Array<String>) {
+          fun main() {
               println("OK")
           }
         """)
@@ -170,7 +165,7 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
       }
       outputTask("multilineOutputTaskFail") {
         kotlinTaskFile("src/Task.kt", """
-          fun main(args: Array<String>) {
+          fun main() {
               println("Hello")
               println("World")
           }
@@ -185,28 +180,29 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("${task.name} should be failed", CheckStatus.Failed, checkResult.status)
+      val title = "Comparison Failure (testSolution)"
       val (messageMatcher, diffMatcher) = when (task.name) {
         "kotlinCompilationError", "javaCompilationError", "compilationError()" ->
           equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE) to nullValue()
         "testFail" ->
           equalTo("foo() should return 42") to nullValue()
         "comparisonTestFail" ->
-          equalTo("expected:<42> but was:<43>") to
-            diff(CheckResultDiff(expected = "42", actual = "43"))
+          equalTo("") to
+            diff(CheckResultDiff(expected = "42", actual = "43", title = title))
         "comparisonTestWithMessageFail" ->
-          equalTo("foo() should return 42 expected:<42> but was:<43>") to
-            diff(CheckResultDiff(expected = "42", actual = "43", message = "foo() should return 42"))
+          equalTo("foo() should return 42") to
+            diff(CheckResultDiff(expected = "42", actual = "43", title = title))
         "comparisonMultilineTestFail" ->
-          equalTo("Wrong Answer expected:<Hello[,]\nWorld!> but was:<Hello[]\nWorld!>") to
-            diff(CheckResultDiff(expected = "Hello,\nWorld!", actual = "Hello\nWorld!", message="Wrong Answer"))
+          equalTo("Wrong Answer") to
+            diff(CheckResultDiff(expected = "Hello,\nWorld!", actual = "Hello\nWorld!", title = title))
         "objectComparisonTestFail" ->
           // TODO: find out why test framework doesn't provide diff for this case
           equalTo("expected: Foo<(0, 0)> but was: Bar<(0, 0)>") to nullValue()
         "outputTaskFail" ->
-          equalTo("Expected output:\n<OK!\n>\nActual output:\n<OK\n>") to
+          equalTo(EduCoreBundle.message("check.incorrect")) to
             diff(CheckResultDiff(expected = "OK!\n", actual = "OK\n"))
         "multilineOutputTaskFail" ->
-          equalTo("Expected output:\n<Hello,\nWorld!\n>\nActual output:\n<Hello\nWorld\n>".trimIndent()) to
+          equalTo(EduCoreBundle.message("check.incorrect")) to
             diff(CheckResultDiff(expected = "Hello,\nWorld!\n", actual = "Hello\nWorld\n"))
         else -> error("Unexpected task `${task.name}`")
       }

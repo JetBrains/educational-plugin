@@ -89,13 +89,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
         "SyntaxError" -> Triple(containsString("Syntax Error"), nullValue(),
                                 containsString("SyntaxError: invalid syntax"))
         "OutputTestsFailed" ->
-          Triple(equalTo("""
-          |Expected output:
-          |<Hello, World!
-          |>
-          |Actual output:
-          |<Hello, World
-          |>""".trimMargin()),
+          Triple(equalTo(EduCoreBundle.message("check.incorrect")),
                  CheckResultDiffMatcher.diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n")), nullValue())
         "SyntaxErrorFromUnittest" -> Triple(containsString("Syntax Error"), nullValue(),
                                             containsString("SyntaxError: invalid syntax"))
