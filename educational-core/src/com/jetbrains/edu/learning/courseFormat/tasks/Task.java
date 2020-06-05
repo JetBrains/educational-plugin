@@ -340,10 +340,6 @@ public abstract class Task extends StudyItem {
     return EduCoreBundle.message("study.item.task");
   }
 
-  public boolean supportSubmissions() {
-    return false;
-  }
-
   /**
    * @return null means that behaviour for this particular Task hasn't been configured by a user
    * and {@link Course#getSolutionsHidden()} should be used instead

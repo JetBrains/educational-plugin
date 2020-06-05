@@ -173,7 +173,7 @@ interface EduConfigurator<Settings> {
    * @see com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
    */
   fun additionalTaskTabs(currentTask: Task?, project: Project): List<Pair<JPanel, String>> {
-    if (currentTask == null || !currentTask.supportSubmissions()) return emptyList()
+    if (currentTask == null) return emptyList()
     val course = currentTask.course
     val submissionsTab = SubmissionsUiProvider.createSubmissionsTab(currentTask, course, project)
     return if (submissionsTab == null) emptyList()

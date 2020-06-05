@@ -26,6 +26,4 @@ class OutputTask : Task {
   override fun isToSubmitToStepik(): Boolean {
     return myStatus != CheckStatus.Unchecked
   }
-
-  override fun supportSubmissions(): Boolean = true
 }
