@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
-import com.jetbrains.edu.learning.newproject.ui.courseSettings.NewCourseSettings
+import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettings
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.util.*
@@ -38,7 +38,7 @@ class NewCoursePanel(
 
   private var header = HeaderPanel(leftMargin, joinCourseAction)
   private var description = CourseDescriptionPanel(leftMargin)
-  private var advancedSettings = NewCourseSettings(isLocationFieldNeeded, leftMargin)
+  private var advancedSettings = CourseSettings(isLocationFieldNeeded, leftMargin)
   private val errorLabel: HyperlinkLabel = HyperlinkLabel().apply { isVisible = false }
   private var mySearchField: FilterComponent? = null
   private val listeners: MutableList<CoursesPanel.CourseValidationListener> = ArrayList()
@@ -112,6 +112,8 @@ class NewCoursePanel(
     this.course = course
     advancedSettings.update(course, settings.showLanguageSettings)
     updateCourseDescriptionPanel(course, settings)
+    revalidate()
+    repaint()
     return advancedSettings.languageSettings
   }
 

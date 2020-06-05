@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.ui.IdeBorderFactory
 import com.intellij.util.PathUtil
 import com.intellij.util.io.IOUtil
 import com.intellij.util.ui.JBUI
@@ -16,6 +17,7 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.DESCRIPTION_AND_SETTINGS_TOP_OFFSET
@@ -23,21 +25,47 @@ import java.awt.BorderLayout
 import java.io.File
 import java.text.DateFormat
 import java.util.*
+import javax.swing.BoxLayout
+import javax.swing.JPanel
 import javax.swing.event.DocumentListener
 
-// Merge with base class when new ui is implemented and rename to `CourseSettings`
-class NewCourseSettings(isLocationFieldNeeded: Boolean, leftMargin: Int) : CourseSettings() {
-  private var myLocationField: LabeledComponent<TextFieldWithBrowseButton>? = null
+class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0) : JPanel(BorderLayout()) {
   var languageSettings: LanguageSettings<*>? = null
+  val locationString: String?
+    get() = locationField?.component?.text
+
+  private var locationField: LabeledComponent<TextFieldWithBrowseButton>? = null
   private val context: UserDataHolder = UserDataHolderBase()
+  private val myAdvancedSettings = JPanel()
+  private var decorator: HideableNoLineDecorator
 
   init {
     border = JBUI.Borders.empty(DESCRIPTION_AND_SETTINGS_TOP_OFFSET, leftMargin, 0, 0)
+    myAdvancedSettings.layout = BoxLayout(myAdvancedSettings, BoxLayout.Y_AXIS)
+    myAdvancedSettings.border = JBUI.Borders.empty(0, IdeBorderFactory.TITLED_BORDER_INDENT, 5, 0)
+    add(myAdvancedSettings, BorderLayout.CENTER)
+    decorator = HideableNoLineDecorator(this, EduCoreBundle.message("course.dialog.settings"))
+    decorator.setContentComponent(myAdvancedSettings)
+
     if (isLocationFieldNeeded) {
-      myLocationField = createLocationComponent()
+      locationField = createLocationComponent()
     }
 
     UIUtil.setBackgroundRecursively(this, UIUtil.getEditorPaneBackground())
+  }
+
+  fun setSettingsComponents(settings: List<LabeledComponent<*>>) {
+    myAdvancedSettings.removeAll()
+    for (setting in settings) {
+      myAdvancedSettings.add(setting, BorderLayout.PAGE_END)
+    }
+    UIUtil.mergeComponentsWithAnchor(settings)
+    myAdvancedSettings.revalidate()
+    myAdvancedSettings.repaint()
+  }
+
+  fun setOn(on: Boolean) {
+    decorator.setOn(on)
   }
 
   private fun createLocationComponent(): LabeledComponent<TextFieldWithBrowseButton> {
@@ -49,27 +77,24 @@ class NewCourseSettings(isLocationFieldNeeded: Boolean, leftMargin: Int) : Cours
     return LabeledComponent.create(field, "Location", BorderLayout.WEST)
   }
 
-  val locationString: String?
-    get() = myLocationField?.component?.text
-
   fun addLocationFieldDocumentListener(listener: DocumentListener) {
-    myLocationField?.component?.textField?.document?.addDocumentListener(listener)
+    locationField?.component?.textField?.document?.addDocumentListener(listener)
   }
 
   fun update(course: Course, showLanguageSettings: Boolean) {
     val settingsComponents = mutableListOf<LabeledComponent<*>>()
-    myLocationField?.let {
+    locationField?.let {
       it.component.text = nameToLocation(course)
       settingsComponents.add(it)
     }
 
     val configurator = course.configurator
     if (configurator != null) {
-      val settings = configurator.courseBuilder.getLanguageSettings()
-      languageSettings = settings
-      if (showLanguageSettings) {
-        val components = settings.getLanguageSettingsComponents(course, context)
-        settingsComponents.addAll(components)
+      languageSettings = configurator.courseBuilder.getLanguageSettings().apply {
+        if (showLanguageSettings) {
+          val components = getLanguageSettingsComponents(course, context)
+          settingsComponents.addAll(components)
+        }
       }
     }
 
@@ -102,8 +127,7 @@ class NewCourseSettings(isLocationFieldNeeded: Boolean, leftMargin: Int) : Cours
       name = "${EduNames.COURSE} $language $humanLanguage".capitalize()
     }
     if (!PathUtil.isValidFileName(name)) {
-      DateFormat.getDateInstance(DateFormat.DATE_FIELD,
-                                 Locale.getDefault()).format(course.updateDate)
+      DateFormat.getDateInstance(DateFormat.DATE_FIELD, Locale.getDefault()).format(course.updateDate)
       name = FileUtil.sanitizeFileName(name)
     }
     return FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), name, "").absolutePath
