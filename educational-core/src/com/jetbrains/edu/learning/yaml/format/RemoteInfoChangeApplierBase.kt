@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.yaml.format
 
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -18,7 +19,8 @@ fun <T : StudyItem> getRemoteChangeApplierForItem(item: T): RemoteInfoChangeAppl
   @Suppress("UNCHECKED_CAST") //
   return when (item) {
     is HyperskillCourse -> RemoteHyperskillChangeApplier()
-    is EduCourse -> RemoteCourseChangeApplier()
+    is CodeforcesCourse -> RemoteInfoChangeApplierBase<CodeforcesCourse>()
+    is EduCourse -> RemoteEduCourseChangeApplier()
     is Lesson -> RemoteLessonChangeApplier()
     is RemoteStudyItem -> RemoteInfoChangeApplierBase<T>()
     else -> loadingError(unexpectedItemTypeMessage(item.javaClass.simpleName))

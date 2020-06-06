@@ -17,8 +17,10 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.*
@@ -157,12 +159,16 @@ object YamlDeserializer {
   }
 
   private fun deserializeCourseRemoteInfo(configFileText: String): Course {
-    val tree = REMOTE_MAPPER.readTree(configFileText)
-    val clazz = if (tree.get(YamlMixinNames.HYPERSKILL_PROJECT) != null)
-      HyperskillCourse::class.java
-    else EduCourse::class.java
+    val treeNode = REMOTE_MAPPER.readTree(configFileText)
+    val type = asText(treeNode.get("type"))
 
-    return REMOTE_MAPPER.treeToValue(tree, clazz)
+    val clazz = when {
+      type == CodeforcesNames.CODEFORCES_COURSE_TYPE -> CodeforcesCourse::class.java
+      treeNode.get(YamlMixinNames.HYPERSKILL_PROJECT) != null -> HyperskillCourse::class.java
+      else -> EduCourse::class.java
+    }
+
+    return REMOTE_MAPPER.treeToValue(treeNode, clazz)
   }
 
   private fun asText(node: JsonNode?): String? {

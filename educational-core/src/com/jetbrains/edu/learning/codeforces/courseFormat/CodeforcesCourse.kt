@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import icons.EducationalCoreIcons
 import org.jsoup.nodes.Document
+import java.util.*
 import javax.swing.Icon
 
 class CodeforcesCourse : Course {
@@ -20,6 +21,7 @@ class CodeforcesCourse : Course {
     id = contestParameters.id
     language = contestParameters.languageId
     languageCode = contestParameters.locale
+    updateDate = Date()
 
     parseResponseToAddContent(doc)
   }

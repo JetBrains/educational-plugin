@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.*
@@ -122,6 +123,7 @@ object YamlFormatSynchronizer {
 
   private fun addRemoteMixIns(mapper: ObjectMapper) {
     mapper.addMixIn(EduCourse::class.java, EduCourseRemoteInfoYamlMixin::class.java)
+    mapper.addMixIn(CodeforcesCourse::class.java, CodeforcesCourseRemoteInfoYamlMixin::class.java)
     mapper.addMixIn(Lesson::class.java, RemoteLessonYamlMixin::class.java)
     mapper.addMixIn(Section::class.java, RemoteStudyItemYamlMixin::class.java)
     mapper.addMixIn(Task::class.java, RemoteStudyItemYamlMixin::class.java)

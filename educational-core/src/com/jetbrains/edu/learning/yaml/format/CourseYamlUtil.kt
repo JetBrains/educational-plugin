@@ -132,6 +132,19 @@ abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
   private lateinit var sectionIds: List<Int>
 }
 
+/**
+ * Mixin class is used to deserialize remote information of [CodeforcesCourse] item.
+ */
+@Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
+@JsonPropertyOrder(TYPE, ID, UPDATE_DATE)
+abstract class CodeforcesCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
+
+  @JsonProperty(TYPE)
+  private fun getItemType(): String {
+    throw NotImplementedInMixin()
+  }
+}
+
 private class TopLevelLessonsSectionSerializer : StdConverter<List<Int>, Int?>() {
   override fun convert(value: List<Int>?) = value?.firstOrNull()
 }
@@ -239,14 +252,14 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
   }
 }
 
-class RemoteCourseChangeApplier : RemoteInfoChangeApplierBase<EduCourse>() {
+class RemoteEduCourseChangeApplier : RemoteInfoChangeApplierBase<EduCourse>() {
   override fun applyChanges(existingItem: EduCourse, deserializedItem: EduCourse) {
     super.applyChanges(existingItem, deserializedItem)
     existingItem.sectionIds = deserializedItem.sectionIds
   }
 }
 
-class RemoteHyperskillChangeApplier: RemoteInfoChangeApplierBase<HyperskillCourse>() {
+class RemoteHyperskillChangeApplier : RemoteInfoChangeApplierBase<HyperskillCourse>() {
   override fun applyChanges(existingItem: HyperskillCourse, deserializedItem: HyperskillCourse) {
     existingItem.hyperskillProject = deserializedItem.hyperskillProject
     existingItem.stages = deserializedItem.stages
