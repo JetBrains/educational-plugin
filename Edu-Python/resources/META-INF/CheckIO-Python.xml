@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <extensions defaultExtensionNs="com.intellij">
     <statusBarWidgetProvider implementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOWidgetProvider" />
     <httpRequestHandler implementation="com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthRestService"/>
