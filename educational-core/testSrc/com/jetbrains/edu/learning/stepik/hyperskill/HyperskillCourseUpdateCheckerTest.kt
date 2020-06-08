@@ -62,7 +62,7 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, false)
     HyperskillSettings.INSTANCE.updateAutomatically = false
 
-    doTest(HyperskillCourseUpdateChecker(project, course, testRootDisposable), false, 1, 2) {}
+    doTest(HyperskillCourseUpdateChecker(project, course, testRootDisposable), false, 1, 2, 2) {}
   }
 
   private fun createHyperskillCourse(isNewlyCreated: Boolean = false): HyperskillCourse {

@@ -20,10 +20,11 @@ abstract class CourseUpdateCheckerTestBase : EduTestCase() {
                        isCourseUpToDate: Boolean,
                        invocationNumber: Int,
                        afterTimeoutInvocationNumber: Int,
+                       checkInterval: Int = 1,
                        isCourseUpToDateCheck: () -> Unit
   ) {
     val notificationListener = NotificationListener(project, testRootDisposable)
-    withCustomCheckInterval(1) {
+    withCustomCheckInterval(checkInterval) {
       updateChecker.check()
       assertEquals(invocationNumber, updateChecker.invocationNumber())
       testCheckScheduled(afterTimeoutInvocationNumber, updateChecker)
