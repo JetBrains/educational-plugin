@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.AdditionalTab
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -32,7 +31,7 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
   override val courseBuilder: EduCourseBuilder<T>
     get() = HyperskillCourseBuilder(baseConfigurator.courseBuilder)
 
-  override fun additionalTaskTabs(currentTask: Task?, project: Project): List<AdditionalTab> {
+  override fun additionalTaskTabs(currentTask: Task?, project: Project): List<AdditionalTabPanel> {
     val additionalTabs = super.additionalTaskTabs(currentTask, project)
     val topicsTab = getTopicsTab(currentTask, project) ?: return additionalTabs
     val additionalTabsWithTopics = mutableListOf(topicsTab)
@@ -40,12 +39,12 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
     return additionalTabsWithTopics
   }
 
-  private fun getTopicsTab(currentTask: Task?, project: Project): AdditionalTab? {
+  private fun getTopicsTab(currentTask: Task?, project: Project): AdditionalTabPanel? {
     if (currentTask == null) return null
     val course = currentTask.lesson.course
     if (course is HyperskillCourse && course.isStudy) {
       if (!course.isTaskInProject(currentTask)) return null
-      val topicsPanel = AdditionalTabPanel(project)
+      val topicsPanel = AdditionalTabPanel(project, TOPICS_TAB_NAME)
       topicsPanel.addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
 
       val topics = course.taskToTopics[currentTask.index - 1]
@@ -61,7 +60,7 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
       }
       topicsPanel.setText(descriptionText)
 
-      return AdditionalTab(topicsPanel, TOPICS_TAB_NAME)
+      return topicsPanel
     }
     return null
   }

@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.AdditionalTab
 import com.jetbrains.edu.learning.stepik.SubmissionsManager.Companion.SUBMISSIONS_TAB_NAME
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator.Companion.TOPICS_TAB_NAME
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -80,7 +79,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     addTab(topicsTab, contentManager, 1)
   }
 
-  private fun updateSubmissionsTab(contentManager: ContentManager, submissionsTab: AdditionalTab?, tabIndex: Int) {
+  private fun updateSubmissionsTab(contentManager: ContentManager, submissionsTab: AdditionalTabPanel?, tabIndex: Int) {
     if (submissionsTab != null) {
       addTab(submissionsTab, contentManager, tabIndex)
     }
@@ -103,13 +102,13 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     }
   }
 
-  private fun addTab(additionalTab: AdditionalTab?, contentManager: ContentManager, tabIndex: Int) {
+  private fun addTab(additionalTab: AdditionalTabPanel?, contentManager: ContentManager, tabIndex: Int) {
     if (additionalTab == null) return
     val currentContent = contentManager.selectedContent
     val isAdditionalTabSelected = currentContent?.let { contentManager.getIndexOfContent(it) } == tabIndex
     val content = contentManager.findContent(additionalTab.name)
     content?.let { contentManager.removeContent(it, true) }
-    val topicsContent = ContentFactory.SERVICE.getInstance().createContent(additionalTab.panel, additionalTab.name, false)
+    val topicsContent = ContentFactory.SERVICE.getInstance().createContent(additionalTab, additionalTab.name, false)
     topicsContent.isCloseable = false
     contentManager.addContent(topicsContent, tabIndex)
     if (isAdditionalTabSelected) {

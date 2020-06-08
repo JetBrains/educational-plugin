@@ -30,21 +30,20 @@ import java.net.URL
 import java.text.DateFormat
 import java.util.*
 import java.util.stream.Collectors
-import javax.swing.JPanel
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 import kotlin.math.roundToInt
 
 object SubmissionsUiProvider {
 
-  fun createSubmissionsTab(currentTask: Task, course: Course, project: Project): AdditionalTab? {
+  fun createSubmissionsTab(currentTask: Task, course: Course, project: Project): AdditionalTabPanel? {
     if (currentTask is TheoryTask) return null
     val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
     val submissionsManager = SubmissionsManager.getInstance(project)
     if (!submissionsProvider.submissionsCanBeShown(course)) return null
 
     val descriptionText = StringBuilder()
-    val submissionsPanel = AdditionalTabPanel(project)
+    val submissionsPanel = AdditionalTabPanel(project, SubmissionsManager.SUBMISSIONS_TAB_NAME)
     val submissionsList = submissionsManager.getSubmissionsFromMemory(currentTask.id)
 
     if (submissionsProvider.isLoggedIn() || submissionsList != null) {
@@ -64,7 +63,7 @@ object SubmissionsUiProvider {
     }
 
     submissionsPanel.setText(descriptionText.toString())
-    return AdditionalTab(submissionsPanel, SubmissionsManager.SUBMISSIONS_TAB_NAME)
+    return submissionsPanel
   }
 
   private fun addViewOnStepikLink(descriptionText: StringBuilder, currentTask: ChoiceTask, submissionsPanel: AdditionalTabPanel) {
@@ -170,5 +169,3 @@ object SubmissionsUiProvider {
            "<a ${StyleManager().textStyleHeader};color:${getLinkColor(submission)} href=${submission.id}> ${text}</a>"
   }
 }
-
-data class AdditionalTab(val panel: JPanel, val name: String)

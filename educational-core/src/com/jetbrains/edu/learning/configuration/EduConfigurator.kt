@@ -14,8 +14,8 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.AdditionalTab
 import com.jetbrains.edu.learning.stepik.SubmissionsUiProvider
+import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isConfigFile
 import org.jetbrains.annotations.SystemIndependent
 import javax.swing.Icon
@@ -172,7 +172,7 @@ interface EduConfigurator<Settings> {
    *
    * @see com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
    */
-  fun additionalTaskTabs(currentTask: Task?, project: Project): List<AdditionalTab> {
+  fun additionalTaskTabs(currentTask: Task?, project: Project): List<AdditionalTabPanel> {
     if (currentTask == null) return ArrayList()
     val course = currentTask.course
     val submissionsTab = SubmissionsUiProvider.createSubmissionsTab(currentTask, course, project) ?: return emptyList()

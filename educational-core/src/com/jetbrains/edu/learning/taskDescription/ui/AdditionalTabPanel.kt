@@ -17,11 +17,12 @@ import javax.swing.JSeparator
 import javax.swing.JTextPane
 import javax.swing.event.HyperlinkListener
 
-class AdditionalTabPanel(val project: Project) : JPanel() {
+class AdditionalTabPanel(val project: Project, tabName: String) : JPanel() {
 
   private val textPane: JTextPane = createTextPane()
 
   init {
+    name = tabName
     val scrollPane = JBScrollPane(textPane)
     scrollPane.border = JBUI.Borders.empty()
     val backLinkPanel = getBackLinkPanel(project)
