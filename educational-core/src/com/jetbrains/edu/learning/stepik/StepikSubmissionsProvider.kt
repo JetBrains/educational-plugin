@@ -42,7 +42,7 @@ class StepikSubmissionsProvider : SubmissionsProvider() {
   override fun getSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission> {
     val submissionsForSteps = mutableListOf<Submission>()
     for (stepId in stepIds) {
-      submissionsForSteps.addAll(submissionsManager.getOrPut(stepId) { loadSubmissions(stepId, submissionsManager) })
+      submissionsForSteps.addAll(submissionsManager.getOrLoadSubmissions(stepId) { loadSubmissions(stepId, submissionsManager) })
     }
     return submissionsForSteps
   }

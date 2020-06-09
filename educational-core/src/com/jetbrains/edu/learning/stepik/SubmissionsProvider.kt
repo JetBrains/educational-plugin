@@ -29,7 +29,7 @@ abstract class SubmissionsProvider {
   }
 
   fun getSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
-    return submissionsManager.getOrPut(stepId) { loadSubmissions(stepId, submissionsManager) }
+    return submissionsManager.getOrLoadSubmissions(stepId) { loadSubmissions(stepId, submissionsManager) }
   }
 
   abstract fun getSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission>

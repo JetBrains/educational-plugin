@@ -155,7 +155,7 @@ object HyperskillCheckConnector {
     }
 
     val submission = submissionCheckResultPair.first
-    SubmissionsManager.getInstance(project).addToSubmissionsMapWithStatus(task.id, task.status, submission)
+    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, submission)
     runInEdt { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
 
     return submissionCheckResultPair.second

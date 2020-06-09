@@ -43,7 +43,7 @@ object SubmissionsUiProvider {
 
     val descriptionText = StringBuilder()
     val submissionsPanel = AdditionalTabPanel(project, SubmissionsManager.SUBMISSIONS_TAB_NAME)
-    val submissionsList = submissionsManager.getSubmissionsFromMemory(task.id)
+    val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
 
     if (submissionsProvider.isLoggedIn() || submissionsList != null) {
       if (submissionsList == null) return null
@@ -89,7 +89,7 @@ object SubmissionsUiProvider {
   private fun getSubmissionsListener(task: Task, project: Project, submissionsManager: SubmissionsManager): HyperlinkListener {
     return HyperlinkListener { e ->
       if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-        val submission = submissionsManager.getSubmissionsFromMemory(task.id)?.find { it.id.toString() == e.description }
+        val submission = submissionsManager.getSubmissionsFromMemory(setOf(task.id))?.find { it.id.toString() == e.description }
                          ?: return@HyperlinkListener
         val reply = submission.reply ?: return@HyperlinkListener
         runInEdt {

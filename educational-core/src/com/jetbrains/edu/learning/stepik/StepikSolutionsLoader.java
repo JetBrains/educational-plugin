@@ -554,7 +554,7 @@ public class StepikSolutionsLoader implements Disposable {
                                                    @NotNull SubmissionsManager submissionsManager,
                                                    boolean isSolved) {
     final List<Submission> submissions = submissionsManager.getSubmissions(task, isSolved);
-    if (submissions.isEmpty()) {
+    if (submissions == null || submissions.isEmpty()) {
       return null;
     }
 

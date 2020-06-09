@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap
 class SubmissionsManager {
   private val submissions = ConcurrentHashMap<Int, MutableList<Submission>>()
 
-  fun putToSubmissions(taskId: Int, submissionsToAdd: List<Submission>) {
-    submissions[taskId] = submissionsToAdd.toMutableList()
+  fun putToSubmissions(taskId: Int, submissionsList: List<Submission>) {
+    submissions[taskId] = submissionsList.toMutableList()
   }
 
   fun putToSubmissions(stepIds: Set<Int>, submissionsList: List<Submission>): List<Submission> {
@@ -38,13 +38,22 @@ class SubmissionsManager {
     }
   }
 
-  fun addToSubmissionsMapWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {
-    if (submission == null || checkStatus == CheckStatus.Unchecked) return
-    submission.status = if (checkStatus == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
-    addToSubmissionsMap(taskId, submission)
+  fun getSubmissions(task: Task, isSolved: Boolean): List<Submission>? {
+    val status = if (isSolved) EduNames.CORRECT else EduNames.WRONG
+    val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(task.course) ?: return null
+    return submissionsProvider.getSubmissions(task.id, this).filter { it.status == status }
   }
 
-  fun addToSubmissionsMap(taskId: Int, submission: Submission?) {
+  fun getLastSubmission(task: Task, isSolved: Boolean): Submission? {
+    val submissions = getSubmissions(task, isSolved) ?: return null
+    return submissions.firstOrNull()
+  }
+
+  fun getOrLoadSubmissions(stepId: Int, loadSubmissions: () -> List<Submission>): List<Submission> {
+    return submissions.getOrPut(stepId) { loadSubmissions().toMutableList() }
+  }
+
+  fun addToSubmissions(taskId: Int, submission: Submission?) {
     if (submission == null) return
     val submissionsList = submissions.getOrPut(taskId) { mutableListOf(submission) }
     if (!submissionsList.contains(submission)) {
@@ -54,26 +63,10 @@ class SubmissionsManager {
     }
   }
 
-  fun getSubmissionsFromMemory(taskId: Int): List<Submission>? {
-    return submissions[taskId]
-  }
-
-  fun getOrPut(stepId: Int, loadSubmissions: () -> List<Submission>): List<Submission> {
-    return submissions.getOrPut(stepId) { loadSubmissions().toMutableList() }
-  }
-
-  fun contains(stepId: Int): Boolean = submissions.containsKey(stepId)
-
-  fun getLastSubmission(task: Task, isSolved: Boolean): Submission? {
-    val submissions = getSubmissions(task, isSolved)
-    return submissions.firstOrNull()
-  }
-
-  fun getSubmissions(task: Task, isSolved: Boolean): List<Submission> {
-    val status = if (isSolved) EduNames.CORRECT else EduNames.WRONG
-    val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(task.course) ?: error(
-      "SubmissionsProvider for course ${task.course.name} not found")
-    return submissionsProvider.getSubmissions(task.id, this).filter { it.status == status }
+  fun addToSubmissionsWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {
+    if (submission == null || checkStatus == CheckStatus.Unchecked) return
+    submission.status = if (checkStatus == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
+    addToSubmissions(taskId, submission)
   }
 
   fun isLastSubmissionUpToDate(task: Task, isSolved: Boolean): Boolean {
