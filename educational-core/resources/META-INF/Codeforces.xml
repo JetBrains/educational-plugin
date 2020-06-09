@@ -1,0 +1,20 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector"/>
+    <projectConfigurable groupId="Educational" instance="com.jetbrains.edu.learning.codeforces.CodeforcesOptions"
+                         id="Codeforces" displayName="Codeforces"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.codeforces.CodeforcesSettings"/>
+  </extensions>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.codeforcesLanguageProvider"
+                    interface="com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider"
+                    dynamic="true"/>
+  </extensionPoints>
+
+  <actions>
+    <action id="Educational.StartCodeforcesContest" class="com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction">
+      <add-to-group group-id="Educational.LearnAndTeachFileMenu" relative-to-action="Educational.Educator.NewCourse" anchor="after"/>
+    </action>
+  </actions>
+</idea-plugin>

@@ -52,17 +52,12 @@
                     interface="com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory"
                     dynamic="true"
     />
-
-    <extensionPoint qualifiedName="Educational.codeforcesLanguageProvider"
-                    interface="com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider"
-                    dynamic="true"/>
   </extensionPoints>
 
   <actions>
     <action id="Educational.ImportCourseraAssignment" class="com.jetbrains.edu.learning.coursera.ImportCourseraAssignment"/>
     <action id="Educational.ImportLocalCourse" class="com.jetbrains.edu.learning.actions.ImportLocalCourseAction"/>
     <action id="Educational.StartStepikCourse" class="com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction"/>
-    <action id="Educational.StartCodeforcesContest" class="com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction"/>
     <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
     <action id="Educational.PrevPlaceholder" class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
             text="Previous Answer Placeholder"
@@ -191,7 +186,6 @@
       <reference id="Educational.ImportLocalCourse"/>
       <reference id="Educational.StartStepikCourse"/>
       <reference id="Educational.Educator.NewCourse"/>
-      <reference id="Educational.StartCodeforcesContest"/>
       <add-to-group group-id="FileOpenGroup" relative-to-action="OpenFile" anchor="after"/>
     </group>
     <action id="Educational.WatchTutorial" class="com.jetbrains.edu.learning.actions.LearnMoreAction">
@@ -201,8 +195,6 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <applicationService serviceImplementation="com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector"/>
-
     <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.api.StepikConnector"
                         serviceImplementation="com.jetbrains.edu.learning.stepik.api.StepikConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.stepik.api.MockStepikConnector"/>
@@ -228,8 +220,6 @@
 
     <projectConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
                          id="Educational" displayName="Education"/>
-    <projectConfigurable groupId="Educational" instance="com.jetbrains.edu.learning.codeforces.CodeforcesOptions"
-                         id="Codeforces" displayName="Codeforces"/>
 
     <toolWindow id="Task" anchor="right"
                 factoryClass="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory"
@@ -248,7 +238,6 @@
     <statistics.counterUsagesCollector groupId="educational.counters" version="2"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.coursera.CourseraSettings"/>
-    <applicationService serviceImplementation="com.jetbrains.edu.learning.codeforces.CodeforcesSettings"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler"/>
     <editorNotificationProvider
@@ -352,5 +341,6 @@
   </extensions>
 
   <xi:include href="/META-INF/ide-specific-actions.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/Codeforces.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
 </idea-plugin>
