@@ -5,6 +5,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.stepik.api.Reply
@@ -91,6 +92,11 @@ class SubmissionsManager {
 
   fun getLastSubmissionReply(task: Task, isSolved: Boolean): Reply? {
     return getLastSubmission(task, isSolved)?.reply
+  }
+
+  fun submissionsSupported(course: Course): Boolean {
+    val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return false
+    return submissionsProvider.submissionsCanBeShown(course)
   }
 
   companion object {
