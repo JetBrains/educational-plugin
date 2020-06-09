@@ -32,6 +32,8 @@ class ChoiceTask : Task {
 
   override fun getItemType(): String = "choice"
 
+  override fun supportSubmissions(): Boolean = true
+
   override fun isPluginTaskType() = false
 
   //Is called from choiceTask.html.ft

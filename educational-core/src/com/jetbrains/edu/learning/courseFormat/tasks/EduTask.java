@@ -30,4 +30,9 @@ public class EduTask extends Task {
   public boolean isToSubmitToStepik() {
     return myStatus != CheckStatus.Unchecked;
   }
+
+  @Override
+  public boolean supportSubmissions() {
+    return true;
+  }
 }
