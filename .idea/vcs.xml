@@ -17,6 +17,10 @@
           <option name="issueRegexp" value="EDU-CR-\d+" />
           <option name="linkRegexp" value="https://upsource.jetbrains.com/EDU/review/$0" />
         </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="EDU-MR-(\d+)" />
+          <option name="linkRegexp" value="https://jetbrains.team/p/edu/review/$1" />
+        </IssueNavigationLink>
       </list>
     </option>
   </component>
