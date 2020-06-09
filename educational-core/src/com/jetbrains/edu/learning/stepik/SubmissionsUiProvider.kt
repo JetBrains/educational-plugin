@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Reply
@@ -37,7 +36,7 @@ import kotlin.math.roundToInt
 object SubmissionsUiProvider {
 
   fun createSubmissionsTab(task: Task?, course: Course, project: Project): AdditionalTabPanel? {
-    if (task == null || task is TheoryTask) return null
+    if (task == null || !task.supportSubmissions()) return null
     val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
     val submissionsManager = SubmissionsManager.getInstance(project)
     if (!submissionsProvider.submissionsCanBeShown(course)) return null
