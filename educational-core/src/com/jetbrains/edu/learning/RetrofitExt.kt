@@ -7,9 +7,7 @@ import com.intellij.util.net.HttpConfigurable
 import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
-import okhttp3.ConnectionPool
-import okhttp3.Dispatcher
-import okhttp3.OkHttpClient
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
 import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
@@ -61,9 +59,10 @@ private fun createOkHttpClient(baseUrl: String,
 
   val proxyConfigurable = HttpConfigurable.getInstance()
   val proxies = proxyConfigurable.onlyBySettingsSelector.select(URI.create(baseUrl))
-  val address = if (proxies.size > 0) proxies[0].address() as? InetSocketAddress else null
+  val address = proxies.firstOrNull()?.address() as? InetSocketAddress
   if (address != null) {
     builder.proxy(Proxy(Proxy.Type.HTTP, address))
+    builder.proxyAuthenticator(proxyAuthenticator)
   }
   val trustManager = CertificateManager.getInstance().trustManager
   val sslContext = CertificateManager.getInstance().sslContext
@@ -71,6 +70,22 @@ private fun createOkHttpClient(baseUrl: String,
 
   return builder.build()
 }
+
+val proxyAuthenticator: Authenticator
+  get() = Authenticator { _, response ->
+    val proxyConfigurable = HttpConfigurable.getInstance()
+    if (proxyConfigurable.PROXY_AUTHENTICATION && proxyConfigurable.proxyLogin != null) {
+      val login = proxyConfigurable.proxyLogin ?: return@Authenticator null
+      val password = proxyConfigurable.plainProxyPassword ?: return@Authenticator null
+
+      val credentials = Credentials.basic(login, password)
+      return@Authenticator response.request().newBuilder()
+        .header("Proxy-Authorization", credentials)
+        .build()
+    }
+
+    null
+  }
 
 val eduToolsUserAgent: String
   get() {
