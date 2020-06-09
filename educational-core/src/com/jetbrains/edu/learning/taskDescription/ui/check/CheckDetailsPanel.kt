@@ -18,6 +18,8 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
+import com.jetbrains.edu.learning.codeforces.CodeforcesMarkAsCompletedAction
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -115,6 +117,12 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     if (checkResult.diff != null) {
       val compareOutputs = LightColoredActionLink("Compare Outputs...", CompareOutputsAction(project, checkResult.diff))
       answerHintsPanel.value.add(compareOutputs)
+    }
+
+    if (task is CodeforcesTask && checkResult.diff == null && checkResult.status == CheckStatus.Unchecked) {
+      val markAsCompleted = LightColoredActionLink(EduCoreBundle.message("codeforces.label.mark.as.completed"),
+                                                   ActionManager.getInstance().getAction(CodeforcesMarkAsCompletedAction.ACTION_ID))
+      answerHintsPanel.value.add(markAsCompleted)
     }
     return if (answerHintsPanel.isInitialized()) answerHintsPanel.value else null
   }

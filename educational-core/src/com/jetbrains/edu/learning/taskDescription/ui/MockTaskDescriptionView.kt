@@ -10,6 +10,7 @@ class MockTaskDescriptionView : TaskDescriptionView() {
   override var currentTask: Task? = null
 
   override fun init(toolWindow: ToolWindow) {}
+  override fun updateCheckPanel(task: Task?) {}
   override fun updateTaskSpecificPanel() {}
   override fun updateTopPanel(task: Task?) {}
   override fun updateTaskDescription(task: Task?) {}
