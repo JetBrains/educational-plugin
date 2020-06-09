@@ -15,6 +15,8 @@ import java.awt.BorderLayout
 import java.awt.Font
 import javax.swing.*
 import javax.swing.event.HyperlinkListener
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 class CheckMessagePanel private constructor() : JPanel() {
 
@@ -28,11 +30,23 @@ class CheckMessagePanel private constructor() : JPanel() {
     add(messagePane)
   }
 
+  var messageShortened: Boolean = false
+
   override fun isVisible(): Boolean =
     componentCount > 1 || messagePane.document.getText(0, messagePane.document.length).isNotEmpty()
 
   private fun setMessage(message: String) {
-    val displayMessage = if (message.length > MAX_MESSAGE_LENGTH) message.substring(0, MAX_MESSAGE_LENGTH) + "..." else message
+    val lines = message.lines()
+    val displayMessage = if (message.length > MAX_MESSAGE_LENGTH || lines.size > MAX_LINES_NUMBER) {
+      messageShortened = true
+      // we could potentially cut message in the middle of html tag
+      val messageLinesCut = lines.subList(0, min(lines.size, MAX_LINES_NUMBER)).joinToString("\n")
+      messageLinesCut.substring(0, min(messageLinesCut.length, MAX_MESSAGE_LENGTH)) + "..."
+    }
+    else {
+      messageShortened = false
+      message
+    }
     messagePane.text = StringUtil.replace(displayMessage, listOf(" ", "\n"), listOf("&nbsp;", "<br>"))
   }
 
@@ -41,6 +55,9 @@ class CheckMessagePanel private constructor() : JPanel() {
   }
 
   private fun setDiff(diff: CheckResultDiff) {
+    // User could use "Compare Outputs..." action to compare long output
+    if (diff.actual.lines().size + diff.expected.lines().size > MAX_LINES_NUMBER) return
+
     val expected = createLabeledComponent(diff.expected, "Expected", 16)
     val actual = createLabeledComponent(diff.actual, "Actual", 8)
     UIUtil.mergeComponentsWithAnchor(expected, actual)
@@ -50,12 +67,11 @@ class CheckMessagePanel private constructor() : JPanel() {
   }
 
   private fun createLabeledComponent(resultText: String, labelText: String, topPadding: Int): LabeledComponent<JComponent> {
-    val text = if (resultText.length > MAX_EXPECTED_ACTUAL_LENGTH) resultText.substring(0, MAX_EXPECTED_ACTUAL_LENGTH) + "..." else resultText
-    val textPane = MultiLineLabel(text).apply {
+    val textPane = MultiLineLabel(resultText).apply {
       // `JBUI.Fonts.create` implementation scales font size.
       // Also, at the same time `font.size` returns scaled size.
       // So we have to pass non scaled font size to create font with correct size
-      font = JBUI.Fonts.create(Font.MONOSPACED, Math.round(font.size / JBUIScale.scale(1f)))
+      font = JBUI.Fonts.create(Font.MONOSPACED, (font.size / JBUIScale.scale(1f)).roundToInt())
       verticalAlignment = JLabel.TOP
     }
     val labeledComponent = LabeledComponent.create<JComponent>(textPane, labelText, BorderLayout.WEST)
@@ -68,8 +84,8 @@ class CheckMessagePanel private constructor() : JPanel() {
   companion object {
     val FOCUS_BORDER_WIDTH = if (SystemInfo.isMac) 3 else if (SystemInfo.isWindows) 0 else 2
 
-    const val MAX_MESSAGE_LENGTH = 400
-    const val MAX_EXPECTED_ACTUAL_LENGTH = 150
+    const val MAX_MESSAGE_LENGTH = 300
+    const val MAX_LINES_NUMBER = 5
 
     @JvmStatic
     fun create(checkResult: CheckResult): CheckMessagePanel {

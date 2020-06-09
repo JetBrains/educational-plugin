@@ -13,6 +13,8 @@ class CheckResult @JvmOverloads constructor(
   val hyperlinkListener: HyperlinkListener? = null
 ) {
 
+  val fullMessage: String get() = if (details == null) message else "$message\n\n$details"
+
   val isSolved: Boolean get() = status == CheckStatus.Solved
 
   companion object {

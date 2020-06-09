@@ -30,8 +30,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HSPeekSolutionAction
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
-import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.MAX_EXPECTED_ACTUAL_LENGTH
-import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.MAX_MESSAGE_LENGTH
 import java.awt.BorderLayout
 import javax.swing.BoxLayout
 import javax.swing.JPanel
@@ -63,17 +61,8 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
       CheckDetailsView.getInstance(project).showCheckResultDetails(checkResult.message, details)
     }
 
-    val expectedActualTextLength = if (checkResult.diff != null) {
-      maxOf(checkResult.diff.actual.length, checkResult.diff.expected.length)
-    }
-    else {
-      0
-    }
-
-    val messageLength = checkResult.message.length
-
-    if (messageLength > MAX_MESSAGE_LENGTH || expectedActualTextLength > MAX_EXPECTED_ACTUAL_LENGTH) {
-      linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, details ?: checkResult.message)),
+    if (messagePanel.messageShortened) {
+      linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, checkResult.fullMessage)),
                      BorderLayout.NORTH)
     }
     return messagePanel
