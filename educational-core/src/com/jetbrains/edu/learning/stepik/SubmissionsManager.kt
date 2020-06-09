@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.Submission
 import java.util.concurrent.ConcurrentHashMap
 
@@ -72,7 +71,7 @@ class SubmissionsManager {
 
   fun contains(stepId: Int): Boolean = submissions.containsKey(stepId)
 
-  private fun getLastSubmission(task: Task, isSolved: Boolean): Submission? {
+  fun getLastSubmission(task: Task, isSolved: Boolean): Submission? {
     val submissions = getSubmissions(task, isSolved)
     return submissions.firstOrNull()
   }
@@ -88,10 +87,6 @@ class SubmissionsManager {
     if (task is TheoryTask) return true
     val submission = getLastSubmission(task, isSolved) ?: return false
     return submission.time?.after(task.updateDate) ?: false
-  }
-
-  fun getLastSubmissionReply(task: Task, isSolved: Boolean): Reply? {
-    return getLastSubmission(task, isSolved)?.reply
   }
 
   fun submissionsSupported(course: Course): Boolean {

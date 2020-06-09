@@ -341,9 +341,12 @@ public class StepikSolutionsLoader implements Disposable {
     }
 
     if (task instanceof EduTask) {
-      Reply reply = submissionsManager.getLastSubmissionReply(task, false);
-      if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
-        return true;
+      Submission submission = submissionsManager.getLastSubmission(task, false);
+      if (submission != null) {
+        Reply reply = submission.getReply();
+        if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
+          return true;
+        }
       }
     }
     else {
@@ -391,7 +394,11 @@ public class StepikSolutionsLoader implements Disposable {
   private static TaskSolutions getEduTaskSolutions(@NotNull Project project, @NotNull Task task, boolean isSolved) {
     String language = task.getCourse().getLanguageID();
     SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
-    Reply reply = submissionsManager.getLastSubmissionReply(task, isSolved);
+    Submission submission = submissionsManager.getLastSubmission(task, isSolved);
+    if (submission == null) {
+      return TaskSolutions.EMPTY;
+    }
+    Reply reply = submission.getReply();
     if (reply == null || reply.getSolution() == null || reply.getSolution().isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449
       if (reply != null && reply.getSolution() == null) {
