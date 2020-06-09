@@ -36,25 +36,25 @@ import kotlin.math.roundToInt
 
 object SubmissionsUiProvider {
 
-  fun createSubmissionsTab(currentTask: Task, course: Course, project: Project): AdditionalTabPanel? {
-    if (currentTask is TheoryTask) return null
+  fun createSubmissionsTab(task: Task?, course: Course, project: Project): AdditionalTabPanel? {
+    if (task == null || task is TheoryTask) return null
     val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
     val submissionsManager = SubmissionsManager.getInstance(project)
     if (!submissionsProvider.submissionsCanBeShown(course)) return null
 
     val descriptionText = StringBuilder()
     val submissionsPanel = AdditionalTabPanel(project, SubmissionsManager.SUBMISSIONS_TAB_NAME)
-    val submissionsList = submissionsManager.getSubmissionsFromMemory(currentTask.id)
+    val submissionsList = submissionsManager.getSubmissionsFromMemory(task.id)
 
     if (submissionsProvider.isLoggedIn() || submissionsList != null) {
       if (submissionsList == null) return null
       when {
-        currentTask is ChoiceTask -> addViewOnStepikLink(descriptionText, currentTask, submissionsPanel)
+        task is ChoiceTask -> addViewOnStepikLink(descriptionText, task, submissionsPanel)
         submissionsList.isEmpty() -> descriptionText.append(
           "<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.empty")}")
         else -> {
           addSubmissionsToText(submissionsList, descriptionText)
-          submissionsPanel.addHyperlinkListener(getSubmissionsListener(currentTask, project, submissionsManager))
+          submissionsPanel.addHyperlinkListener(getSubmissionsListener(task, project, submissionsManager))
         }
       }
     }
