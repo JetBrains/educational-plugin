@@ -32,7 +32,7 @@ abstract class SubmissionsProvider {
     return submissionsManager.getOrPut(stepId) { loadSubmissions(stepId, submissionsManager) }
   }
 
-  abstract fun getSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission>?
+  abstract fun getSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission>
 
   abstract fun loadAllSubmissions(project: Project, course: Course?, onFinish: () -> Unit)
 

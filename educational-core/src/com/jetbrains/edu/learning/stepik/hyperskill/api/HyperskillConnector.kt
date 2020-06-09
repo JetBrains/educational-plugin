@@ -240,7 +240,7 @@ abstract class HyperskillConnector {
     return FeedbackLink("$HYPERSKILL_PROJECTS_URL/$project/stages/${stage.id}/implement")
   }
 
-  fun getSubmissions(stepIds: Set<Int>): List<Submission>? {
+  fun getSubmissions(stepIds: Set<Int>): List<Submission> {
     val userId = HyperskillSettings.INSTANCE.account?.userInfo?.id ?: error("Attempt to get submission for non authorized user")
     var currentPage = 1
     val allSubmissions = mutableListOf<Submission>()

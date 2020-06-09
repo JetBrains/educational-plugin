@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
 class HyperskillSubmissionsProvider : SubmissionsProvider() {
 
-  override fun getSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission>? {
+  override fun getSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission> {
     return submissionsManager.getSubmissionsFromMemory(stepIds) ?: submissionsManager.putToSubmissions(stepIds,
                                                                                                        HyperskillConnector.getInstance().getSubmissions(
                                                                                                          stepIds))
@@ -33,7 +33,7 @@ class HyperskillSubmissionsProvider : SubmissionsProvider() {
   }
 
   override fun loadSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
-    return submissionsManager.putToSubmissions(stepId, HyperskillConnector.getInstance().getSubmissions(setOf(stepId))) ?: emptyList()
+    return submissionsManager.putToSubmissions(setOf(stepId), HyperskillConnector.getInstance().getSubmissions(setOf(stepId)))
   }
 
   override fun submissionsCanBeShown(course: Course?): Boolean {

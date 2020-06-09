@@ -14,8 +14,16 @@ import java.util.concurrent.ConcurrentHashMap
 class SubmissionsManager {
   private val submissions = ConcurrentHashMap<Int, MutableList<Submission>>()
 
-  fun putToSubmissions(taskId: Int, submissionsToAdd: MutableList<Submission>) {
-    submissions[taskId] = submissionsToAdd
+  fun putToSubmissions(taskId: Int, submissionsToAdd: List<Submission>) {
+    submissions[taskId] = submissionsToAdd.toMutableList()
+  }
+
+  fun putToSubmissions(stepIds: Set<Int>, submissionsList: List<Submission>): List<Submission> {
+    for (stepId in stepIds) {
+      val submissionsToStep = submissionsList.filter { it.step == stepId }
+      putToSubmissions(stepId, submissionsToStep)
+    }
+    return submissionsList
   }
 
   fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
@@ -28,21 +36,6 @@ class SubmissionsManager {
     else {
       submissionsFromMemory.sortedByDescending { it.time }.toList()
     }
-  }
-
-  fun putToSubmissions(stepIds: Set<Int>, submissionsList: List<Submission>?): List<Submission>? {
-    if (submissionsList == null) return submissionsList
-    for (stepId in stepIds) {
-      putToSubmissions(stepId, submissionsList)
-    }
-    return submissionsList
-  }
-
-  fun putToSubmissions(stepId: Int, submissionsList: List<Submission>?): List<Submission>? {
-    if (submissionsList == null) return submissionsList
-    val submissionsToStep = submissionsList.filter { it.step == stepId }
-    putToSubmissions(stepId, submissionsToStep.toMutableList())
-    return submissionsList
   }
 
   fun addToSubmissionsMapWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {

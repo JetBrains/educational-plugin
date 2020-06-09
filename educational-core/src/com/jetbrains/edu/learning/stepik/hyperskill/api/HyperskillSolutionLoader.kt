@@ -43,7 +43,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     else TaskSolutions.withEmptyPlaceholders(lastSubmission.time, lastSubmission.status.toCheckStatus(), files)
   }
 
-  override fun loadSubmissions(course: Course, tasks: List<Task>): List<Submission>? {
+  override fun loadSubmissions(course: Course, tasks: List<Task>): List<Submission> {
     val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: error(
       "SubmissionsProvider for course ${course.name} not found")
     return submissionsProvider.getSubmissions(tasks.map { it.id }.toSet(), SubmissionsManager.getInstance(project))
