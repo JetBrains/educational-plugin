@@ -14,8 +14,9 @@ import java.util.concurrent.ConcurrentHashMap
 class SubmissionsManager {
   private val submissions = ConcurrentHashMap<Int, MutableList<Submission>>()
 
-  fun putToSubmissions(taskId: Int, submissionsList: List<Submission>) {
+  fun putToSubmissions(taskId: Int, submissionsList: List<Submission>): List<Submission> {
     submissions[taskId] = submissionsList.toMutableList()
+    return submissionsList
   }
 
   fun putToSubmissions(stepIds: Set<Int>, submissionsList: List<Submission>): List<Submission> {

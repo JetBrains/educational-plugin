@@ -48,8 +48,7 @@ class StepikSubmissionsProvider : SubmissionsProvider() {
   }
 
   override fun loadSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
-    //add submissions to SubmissionsManager here, not inside call
-    return StepikConnector.getInstance().getStepSubmissions(stepId, submissionsManager)
+    return submissionsManager.putToSubmissions(stepId, StepikConnector.getInstance().getStepSubmissions(stepId))
   }
 
   override fun submissionsCanBeShown(course: Course?): Boolean {

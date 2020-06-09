@@ -150,7 +150,7 @@ abstract class StepikConnector {
     return stepSource?.block
   }
 
-  fun getStepSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
+  fun getStepSubmissions(stepId: Int): List<Submission> {
     var currentPage = 1
     val allSubmissions = mutableListOf<Submission>()
     while (true) {
@@ -158,7 +158,6 @@ abstract class StepikConnector {
       val submissions = submissionsList.submissions
       allSubmissions.addAll(submissions)
       if (submissions.isEmpty() || !submissionsList.meta.containsKey("has_next") || submissionsList.meta["has_next"] == false) {
-        submissionsManager.putToSubmissions(stepId, allSubmissions)
         break
       }
       currentPage += 1
