@@ -83,7 +83,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
 
   override fun updateLaf() {}
 
-  private class TaskInfoRequestHandler : CefRequestHandlerAdapter() {
+  private inner class TaskInfoRequestHandler : CefRequestHandlerAdapter() {
     private val jcefLinkInToolWindowHandler by lazy {
       JCefToolWindowLinkHandler()
     }
@@ -103,7 +103,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     }
   }
 
-  private class TaskSpecificLoadHandler : CefLoadHandlerAdapter() {
+  private inner class TaskSpecificLoadHandler : CefLoadHandlerAdapter() {
     override fun onLoadEnd(browser: CefBrowser, frame: CefFrame?, httpStatusCode: Int) {
       browser.mainFrame.executeJavaScript(
         "var height = document.getElementById('choiceOptions').scrollHeight;" +
@@ -125,7 +125,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     }
   }
 
-  private class JCefToolWindowLinkHandler : ToolWindowLinkHandler(project) {
+  private inner class JCefToolWindowLinkHandler : ToolWindowLinkHandler(project) {
     override fun processExternalLink(url: String): Boolean {
       EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)
       val urlToOpen = when {

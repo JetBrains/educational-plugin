@@ -58,7 +58,11 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
     get() {
       return if (sdkType === PyFakeSdkType) {
         val pythonVersion = versionString
-        if (pythonVersion == null) LanguageLevel.getDefault() else LanguageLevel.fromPythonVersion(pythonVersion)
+        if (pythonVersion == null) {
+          LanguageLevel.getDefault()
+        } else {
+          LanguageLevel.fromPythonVersion(pythonVersion) ?: LanguageLevel.getDefault()
+        }
       }
       else {
         PythonSdkType.getLanguageLevelForSdk(this)
@@ -88,7 +92,7 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
         else -> {
           val courseLanguageLevel = LanguageLevel.fromPythonVersion(courseLanguageVersion)
           when {
-            courseLanguageLevel.isPython2 != isPython2Sdk -> SpecificPythonRequiredError(courseLanguageVersion)
+            courseLanguageLevel?.isPython2 != isPython2Sdk -> SpecificPythonRequiredError(courseLanguageVersion)
             sdkLanguageLevel.isAtLeast(courseLanguageLevel) -> OK
             else -> SpecificPythonRequiredError(courseLanguageVersion)
           }
