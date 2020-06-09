@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HSPeekSolutionAction
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
+import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
 import java.awt.BorderLayout
 import javax.swing.BoxLayout
 import javax.swing.JPanel
@@ -70,7 +71,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
 
   private fun createLinksPanel(project: Project, checkResult: CheckResult, task: Task): JPanel {
     val linksPanel = JPanel(BorderLayout())
-    linksPanel.border = JBUI.Borders.emptyLeft(2)
+    linksPanel.border = JBUI.Borders.emptyLeft(FOCUS_BORDER_WIDTH)
 
     val course = task.course
     if (course is HyperskillCourse && course.isTaskInProject(task) && checkResult.status == CheckStatus.Failed) {
