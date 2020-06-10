@@ -4,19 +4,16 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.projectView.ProgressUtil
-import com.jetbrains.edu.learning.stepik.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
 class HyperskillCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
@@ -35,9 +32,7 @@ class HyperskillCheckListener : CheckListener {
         return
       }
       ApplicationManager.getApplication().executeOnPooledThread {
-        val submission = HyperskillCheckConnector.postSolution(task, project, result)
-        SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, submission)
-        runInEdt { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
+        HyperskillCheckConnector.postSolution(task, project, result)
       }
       showChooseNewProjectNotification(course, project)
     }

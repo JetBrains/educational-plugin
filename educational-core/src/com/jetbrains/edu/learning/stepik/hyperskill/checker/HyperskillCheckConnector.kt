@@ -41,7 +41,10 @@ object HyperskillCheckConnector {
       }
       is Ok -> {
         val feedback = if (result.details == null) result.message else "${result.message}\n${result.details}"
-        postEduSubmission(attemptResponse.value, project, task, feedback)
+        val submission = postEduSubmission(attemptResponse.value, project, task, feedback)
+        SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, submission)
+        runInEdt { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
+        submission
       }
     }
   }
