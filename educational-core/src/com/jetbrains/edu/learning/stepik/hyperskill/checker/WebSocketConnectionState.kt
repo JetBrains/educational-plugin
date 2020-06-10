@@ -1,17 +1,20 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.stepik.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.api.SubmissionsList
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.EVALUATION_STATUS
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import okhttp3.WebSocket
 
 /**
@@ -65,6 +68,8 @@ private class ReceivingSubmissionsState(project: Project, task: CodeTask, val su
     for (receivedSubmission in objectMapper.treeToValue(data, SubmissionsList::class.java).submissions) {
       if (receivedSubmission.status == EVALUATION_STATUS) continue
       if (submission.id == receivedSubmission.id) {
+        SubmissionsManager.getInstance(project).addToSubmissions(task.id, receivedSubmission)
+        runInEdt { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
         return SubmissionReceivedState(project, task, receivedSubmission)
       }
     }

@@ -65,8 +65,7 @@ class SubmissionsManager {
     return submissions.getOrPut(stepId) { submissionsProvider.loadSubmissions(stepId).toMutableList() }
   }
 
-  fun addToSubmissions(taskId: Int, submission: Submission?) {
-    if (submission == null) return
+  fun addToSubmissions(taskId: Int, submission: Submission) {
     val submissionsList = submissions.getOrPut(taskId) { mutableListOf(submission) }
     if (!submissionsList.contains(submission)) {
       submissionsList.add(submission)
