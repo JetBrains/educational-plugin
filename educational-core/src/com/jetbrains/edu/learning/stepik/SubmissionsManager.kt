@@ -25,12 +25,8 @@ import java.util.concurrent.ConcurrentHashMap
 class SubmissionsManager {
   private val submissions = ConcurrentHashMap<Int, MutableList<Submission>>()
 
-  fun putToSubmissions(stepIds: Set<Int>, submissionsList: List<Submission>): List<Submission> {
-    for (stepId in stepIds) {
-      val submissionsToStep = submissionsList.filter { it.step == stepId }
-      submissions[stepId] = submissionsToStep.toMutableList()
-    }
-    return submissionsList
+  fun putToSubmissions(stepId: Int, submissionsList: List<Submission>) {
+    submissions[stepId] = submissionsList.toMutableList()
   }
 
   fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
@@ -46,11 +42,12 @@ class SubmissionsManager {
   }
 
   fun getSubmissions(course: Course, stepIds: Set<Int>): List<Submission>? {
-    val submissionsForSteps = mutableListOf<Submission>()
-    for (stepId in stepIds) {
-      submissionsForSteps.addAll(getOrLoadSubmissions(course, stepId))
+    val submissionsFromMemory = getSubmissionsFromMemory(stepIds)
+    return if (submissionsFromMemory != null) submissionsFromMemory
+    else {
+      val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
+      submissionsProvider.loadAndPutSubmissions(this, stepIds)
     }
-    return submissionsForSteps
   }
 
   fun getSubmissions(task: Task, isSolved: Boolean): List<Submission>? {

@@ -14,6 +14,8 @@ abstract class SubmissionsProvider {
 
   abstract fun loadAllSubmissions(project: Project, course: Course?, onFinish: () -> Unit)
 
+  abstract fun loadAndPutSubmissions(submissionsManager: SubmissionsManager, stepIds: Set<Int>): List<Submission>
+
   abstract fun loadSubmissions(stepId: Int): List<Submission>
 
   abstract fun submissionsCanBeShown(course: Course?): Boolean

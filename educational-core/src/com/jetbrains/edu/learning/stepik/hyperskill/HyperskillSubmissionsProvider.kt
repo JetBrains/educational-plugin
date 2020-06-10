@@ -26,6 +26,15 @@ class HyperskillSubmissionsProvider : SubmissionsProvider() {
     }
   }
 
+  override fun loadAndPutSubmissions(submissionsManager: SubmissionsManager, stepIds: Set<Int>): List<Submission> {
+    val submissions = HyperskillConnector.getInstance().getSubmissions(stepIds)
+    for (stepId in stepIds) {
+      val submissionsToStep = submissions.filter { it.step == stepId }
+      submissionsManager.putToSubmissions(stepId, submissionsToStep)
+    }
+    return submissions
+  }
+
   override fun loadSubmissions(stepId: Int): List<Submission> {
     return HyperskillConnector.getInstance().getSubmissions(setOf(stepId))
   }
