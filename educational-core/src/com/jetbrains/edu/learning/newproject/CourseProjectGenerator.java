@@ -31,7 +31,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.platform.PlatformProjectOpenProcessor;
 import com.intellij.projectImport.ProjectOpenedCallback;
 import com.intellij.util.PathUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
@@ -158,12 +157,12 @@ public abstract class CourseProjectGenerator<S> {
 
     RecentProjectsManager.getInstance().setLastProjectCreationLocation(PathUtil.toSystemIndependentName(location.getParent()));
 
-    ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, module, baseDir, projectSettings);
-    EnumSet<PlatformProjectOpenProcessor.Option> options = EnumSet.of(PlatformProjectOpenProcessor.Option.FORCE_NEW_FRAME);
     baseDir.putUserData(COURSE_MODE_TO_CREATE, myCourse.getCourseMode());
     baseDir.putUserData(COURSE_TYPE_TO_CREATE, myCourse.getItemType());
     baseDir.putUserData(COURSE_LANGUAGE_ID_TO_CREATE, myCourse.getLanguageID());
-    Project project = PlatformProjectOpenProcessor.doOpenProject(baseDir, null, -1, callback, options);
+
+    ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, module, baseDir, projectSettings);
+    Project project = OpenProjectUtils.openNewProject(location.toPath(), callback);
     if (project != null) {
       project.putUserData(EDU_PROJECT_CREATED, true);
     }
