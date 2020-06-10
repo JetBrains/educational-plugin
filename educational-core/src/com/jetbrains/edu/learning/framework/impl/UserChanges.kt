@@ -89,14 +89,16 @@ sealed class Change {
 
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
       if (task.getTaskFile(path) == null) {
-        task.addLearnerCreatedTaskFile(path, text)
-      }
-      try {
-        EduDocumentListener.modifyWithoutListener(task, path) {
-          GeneratorUtils.createChildFile(taskDir, path, text)
+        GeneratorUtils.createChildFile(taskDir, path, text)
+      } else {
+        try {
+          EduDocumentListener.modifyWithoutListener(task, path) {
+            GeneratorUtils.createChildFile(taskDir, path, text)
+          }
         }
-      } catch (e: IOException) {
-        LOG.error("Failed to create file `${taskDir.path}/$path`", e)
+        catch (e: IOException) {
+          LOG.error("Failed to create file `${taskDir.path}/$path`", e)
+        }
       }
     }
 

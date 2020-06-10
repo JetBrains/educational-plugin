@@ -230,7 +230,10 @@ class HyperskillLoadingTest : NavigationTestBase() {
   fun `test solution loading with new file on the second stage`() {
     configureResponse("submission_stage2_failed_new_file.json")
     val course = createHyperskillCourse()
-    HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
+
+    withVirtualFileListener(course) {
+      HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
+    }
 
     val fileTree = fileTree {
       dir("lesson1") {
