@@ -1,42 +1,20 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ActionCallback
-import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.api.Submission
-import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 
+/**
+ * Base class for loading submissions, should be called only from SubmissionsManager.
+ *
+ * @see com.jetbrains.edu.learning.stepik.SubmissionsManager
+ */
 abstract class SubmissionsProvider {
-
-  fun prepareSubmissionsContent(project: Project, course: Course): ActionCallback {
-    val window = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
-    if (window != null) {
-      val submissionsContent = window.contentManager.findContent(SubmissionsManager.SUBMISSIONS_TAB_NAME)
-      if (submissionsContent != null) {
-        val submissionsPanel = submissionsContent.component
-        if (submissionsPanel is AdditionalTabPanel) {
-          ApplicationManager.getApplication().invokeLater { submissionsPanel.addLoadingPanel(getPlatformName()) }
-        }
-      }
-    }
-    val actionCallback = ActionCallback()
-    loadAllSubmissions(project, course) { actionCallback.setDone() }
-    return actionCallback
-  }
-
-  fun getSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
-    return submissionsManager.getOrLoadSubmissions(stepId) { loadSubmissions(stepId, submissionsManager) }
-  }
-
-  abstract fun getSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission>
 
   abstract fun loadAllSubmissions(project: Project, course: Course?, onFinish: () -> Unit)
 
-  abstract fun loadSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission>
+  abstract fun loadSubmissions(stepId: Int): List<Submission>
 
   abstract fun submissionsCanBeShown(course: Course?): Boolean
 

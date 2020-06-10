@@ -68,8 +68,13 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       ApplicationUtil.runWithCheckCanceled(Callable { loadSubmissions(course, tasksToUpdate) }, progressIndicator)
     else loadSubmissions(course, tasksToUpdate)
 
-    updateTasks(course, tasksToUpdate, submissions, progressIndicator)
-    ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
+    if (submissions != null) {
+      updateTasks(course, tasksToUpdate, submissions, progressIndicator)
+      ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
+    }
+    else {
+      LOG.warn("Can't get submissions")
+    }
 
     runReadAction {
       if (project.isDisposed) return@runReadAction
@@ -209,7 +214,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   protected abstract val loadingTopic: Topic<SolutionLoadingListener>
   protected abstract fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions
-  protected abstract fun loadSubmissions(course: Course, tasks: List<Task>): List<Submission>
+  protected abstract fun loadSubmissions(course: Course, tasks: List<Task>): List<Submission>?
   abstract fun provideTasksToUpdate(course: Course): List<Task>
 
   interface SolutionLoadingListener {

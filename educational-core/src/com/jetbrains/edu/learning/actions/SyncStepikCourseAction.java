@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.SubmissionsManager;
-import com.jetbrains.edu.learning.stepik.SubmissionsProvider;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,12 +36,11 @@ public class SyncStepikCourseAction extends SyncCourseAction {
       public void run(@NotNull ProgressIndicator indicator) {
         assert course instanceof EduCourse;
         updateCourseStructure(project, (EduCourse)course);
-        if (EduUtils.isStudentProject(project)) {
-          SubmissionsProvider submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course);
-          if (submissionsProvider != null) {
-            submissionsProvider.getSubmissions(CourseExt.getAllTasks(course).stream().map(it -> it.getId()).collect(Collectors.toSet()),
-                                               SubmissionsManager.getInstance(project));
-          }
+        SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
+        if (submissionsManager.submissionsSupported(course)) {
+          SubmissionsManager.getInstance(project)
+            .getSubmissions(course, CourseExt.getAllTasks(course).stream().map(it -> it.getId()).collect(
+              Collectors.toSet()));
           StepikSolutionsLoader.getInstance(project).loadSolutions(course, indicator);
         }
       }

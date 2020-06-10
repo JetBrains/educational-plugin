@@ -28,7 +28,7 @@ class StepikSubmissionsProvider : SubmissionsProvider() {
             submissionsManager.putToSubmissions(setOf(task.id), mutableListOf())
           }
           else if (task is CodeTask || task is EduTask) {
-            getSubmissions(task.id, submissionsManager)
+            submissionsManager.getSubmissions(course, setOf(task.id))
           }
         }
         onFinish()
@@ -39,16 +39,8 @@ class StepikSubmissionsProvider : SubmissionsProvider() {
     }
   }
 
-  override fun getSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission> {
-    val submissionsForSteps = mutableListOf<Submission>()
-    for (stepId in stepIds) {
-      submissionsForSteps.addAll(submissionsManager.getOrLoadSubmissions(stepId) { loadSubmissions(stepId, submissionsManager) })
-    }
-    return submissionsForSteps
-  }
-
-  override fun loadSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
-    return submissionsManager.putToSubmissions(stepId, StepikConnector.getInstance().getStepSubmissions(stepId))
+  override fun loadSubmissions(stepId: Int): List<Submission> {
+    return StepikConnector.getInstance().getStepSubmissions(stepId)
   }
 
   override fun submissionsCanBeShown(course: Course?): Boolean {

@@ -1,28 +1,33 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * Stores and returns submissions for courses with submissions support if they are already loaded or delegates loading
+ * to SubmissionsProvider.
+ *
+ * @see com.jetbrains.edu.learning.stepik.SubmissionsProvider
+ */
 class SubmissionsManager {
   private val submissions = ConcurrentHashMap<Int, MutableList<Submission>>()
-
-  fun putToSubmissions(taskId: Int, submissionsList: List<Submission>): List<Submission> {
-    submissions[taskId] = submissionsList.toMutableList()
-    return submissionsList
-  }
 
   fun putToSubmissions(stepIds: Set<Int>, submissionsList: List<Submission>): List<Submission> {
     for (stepId in stepIds) {
       val submissionsToStep = submissionsList.filter { it.step == stepId }
-      putToSubmissions(stepId, submissionsToStep)
+      submissions[stepId] = submissionsToStep.toMutableList()
     }
     return submissionsList
   }
@@ -39,10 +44,17 @@ class SubmissionsManager {
     }
   }
 
+  fun getSubmissions(course: Course, stepIds: Set<Int>): List<Submission>? {
+    val submissionsForSteps = mutableListOf<Submission>()
+    for (stepId in stepIds) {
+      submissionsForSteps.addAll(getOrLoadSubmissions(course, stepId))
+    }
+    return submissionsForSteps
+  }
+
   fun getSubmissions(task: Task, isSolved: Boolean): List<Submission>? {
     val status = if (isSolved) EduNames.CORRECT else EduNames.WRONG
-    val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(task.course) ?: return null
-    return submissionsProvider.getSubmissions(task.id, this).filter { it.status == status }
+    return getOrLoadSubmissions(task.course, task.id).filter { it.status == status }
   }
 
   fun getLastSubmission(task: Task, isSolved: Boolean): Submission? {
@@ -50,8 +62,9 @@ class SubmissionsManager {
     return submissions.firstOrNull()
   }
 
-  fun getOrLoadSubmissions(stepId: Int, loadSubmissions: () -> List<Submission>): List<Submission> {
-    return submissions.getOrPut(stepId) { loadSubmissions().toMutableList() }
+  private fun getOrLoadSubmissions(course: Course, stepId: Int): List<Submission> {
+    val submissionsProvider = course.getSubmissionsProvider() ?: return emptyList()
+    return submissions.getOrPut(stepId) { submissionsProvider.loadSubmissions(stepId).toMutableList() }
   }
 
   fun addToSubmissions(taskId: Int, submission: Submission?) {
@@ -79,6 +92,25 @@ class SubmissionsManager {
   fun submissionsSupported(course: Course): Boolean {
     val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return false
     return submissionsProvider.submissionsCanBeShown(course)
+  }
+
+  fun prepareSubmissionsContent(project: Project, course: Course, loadSolutions: () -> Unit) {
+    val window = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
+    val submissionsProvider = course.getSubmissionsProvider() ?: return
+    if (window != null) {
+      val submissionsContent = window.contentManager.findContent(SUBMISSIONS_TAB_NAME)
+      if (submissionsContent != null) {
+        val submissionsPanel = submissionsContent.component
+        if (submissionsPanel is AdditionalTabPanel) {
+          ApplicationManager.getApplication().invokeLater { submissionsPanel.addLoadingPanel(submissionsProvider.getPlatformName()) }
+        }
+      }
+    }
+    submissionsProvider.loadAllSubmissions(project, course) { loadSolutions() }
+  }
+
+  private fun Course.getSubmissionsProvider(): SubmissionsProvider? {
+    return SubmissionsProvider.getSubmissionsProviderForCourse(this)
   }
 
   companion object {

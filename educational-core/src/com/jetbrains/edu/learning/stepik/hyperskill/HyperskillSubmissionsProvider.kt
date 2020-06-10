@@ -16,24 +16,18 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
 class HyperskillSubmissionsProvider : SubmissionsProvider() {
 
-  override fun getSubmissions(stepIds: Set<Int>, submissionsManager: SubmissionsManager): List<Submission> {
-    return submissionsManager.getSubmissionsFromMemory(stepIds) ?: submissionsManager.putToSubmissions(stepIds,
-                                                                                                       HyperskillConnector.getInstance().getSubmissions(
-                                                                                                         stepIds))
-  }
-
   override fun loadAllSubmissions(project: Project, course: Course?, onFinish: () -> Unit) {
     if (!submissionsCanBeShown(course) || !isLoggedIn()) return
     ApplicationManager.getApplication().executeOnPooledThread {
       val stepIds = HyperskillSolutionLoader.getInstance(project).provideTasksToUpdate(course!!).map { it.id }.toSet()
-      getSubmissions(stepIds, SubmissionsManager.getInstance(project))
+      SubmissionsManager.getInstance(project).getSubmissions(course, stepIds)
       onFinish()
       ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
     }
   }
 
-  override fun loadSubmissions(stepId: Int, submissionsManager: SubmissionsManager): List<Submission> {
-    return submissionsManager.putToSubmissions(setOf(stepId), HyperskillConnector.getInstance().getSubmissions(setOf(stepId)))
+  override fun loadSubmissions(stepId: Int): List<Submission> {
+    return HyperskillConnector.getInstance().getSubmissions(setOf(stepId))
   }
 
   override fun submissionsCanBeShown(course: Course?): Boolean {

@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.hyperskill.EduCourseUpdateChecker;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -49,10 +50,13 @@ public class StepikProjectComponent implements ProjectComponent {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(
       () -> {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
-        SubmissionsProvider submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course);
-        if (course instanceof EduCourse && submissionsProvider != null) {
+        SubmissionsManager submissionsManager = SubmissionsManager.getInstance(myProject);
+        if (course instanceof EduCourse && submissionsManager.submissionsSupported(course)) {
           if (EduSettings.getInstance().getUser() != null) {
-            submissionsProvider.prepareSubmissionsContent(myProject, course).doWhenDone(() -> loadSolutionsFromStepik(course));
+            submissionsManager.prepareSubmissionsContent(myProject, course, () -> {
+              loadSolutionsFromStepik(course);
+              return Unit.INSTANCE;
+            });
           }
           else {
             MessageBusConnection busConnection = myProject.getMessageBus().connect(myProject);
@@ -62,7 +66,7 @@ public class StepikProjectComponent implements ProjectComponent {
                 if (EduSettings.getInstance().getUser() == null) {
                   return;
                 }
-                submissionsProvider.prepareSubmissionsContent(myProject, course);
+                submissionsManager.prepareSubmissionsContent(myProject, course, () -> Unit.INSTANCE);
               }
 
               @Override
