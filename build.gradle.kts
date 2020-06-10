@@ -501,6 +501,11 @@ project(":Edu-Android") {
     testCompile(project(":educational-core", "testOutput"))
     testCompile(project(":jvm-core", "testOutput"))
   }
+
+  // BACKCOMPAT: enable when 202 studio is available
+  tasks.withType<Test> {
+    enabled = environmentName.toInt() < 202
+  }
 }
 
 project(":Edu-Python") {
