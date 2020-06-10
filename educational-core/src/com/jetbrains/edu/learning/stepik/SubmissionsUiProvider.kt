@@ -42,7 +42,7 @@ object SubmissionsUiProvider {
     if (!submissionsProvider.submissionsCanBeShown(course)) return null
 
     val descriptionText = StringBuilder()
-    val submissionsPanel = AdditionalTabPanel(project, SubmissionsManager.SUBMISSIONS_TAB_NAME)
+    val submissionsPanel = AdditionalTabPanel(project, EduCoreBundle.message("submissions.tab.name"))
     val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
 
     if (submissionsProvider.isLoggedIn() || submissionsList != null) {

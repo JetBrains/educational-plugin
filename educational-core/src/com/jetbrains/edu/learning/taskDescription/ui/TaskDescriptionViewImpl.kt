@@ -22,9 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.SubmissionsManager
-import com.jetbrains.edu.learning.stepik.SubmissionsManager.Companion.SUBMISSIONS_TAB_NAME
 import com.jetbrains.edu.learning.stepik.SubmissionsUiProvider
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator.Companion.TOPICS_TAB_NAME
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
@@ -102,13 +100,13 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
   private fun getSubmissionsTabIndex(contentManager: ContentManager): Int {
     val contents = contentManager.contents
-    val topicsContent = contents.find { it.tabName == TOPICS_TAB_NAME }
+    val topicsContent = contents.find { it.tabName == EduCoreBundle.message("hyperskill.topics.tab.name") }
     return if (topicsContent == null) 1 else 2
   }
 
   private fun removeSubmissionsContent(contentManager: ContentManager) {
     val contents = contentManager.contents
-    val submissionsContent = contents.find { it.tabName == SUBMISSIONS_TAB_NAME }
+    val submissionsContent = contents.find { it.tabName == EduCoreBundle.message("submissions.tab.name") }
     if (submissionsContent != null) {
       contentManager.removeContent(submissionsContent, true)
     }

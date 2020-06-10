@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
@@ -98,7 +99,7 @@ class SubmissionsManager {
     val window = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
     val submissionsProvider = course.getSubmissionsProvider() ?: return
     if (window != null) {
-      val submissionsContent = window.contentManager.findContent(SUBMISSIONS_TAB_NAME)
+      val submissionsContent = window.contentManager.findContent(EduCoreBundle.message("submissions.tab.name"))
       if (submissionsContent != null) {
         val submissionsPanel = submissionsContent.component
         if (submissionsPanel is AdditionalTabPanel) {
@@ -114,7 +115,6 @@ class SubmissionsManager {
   }
 
   companion object {
-    const val SUBMISSIONS_TAB_NAME = "Submissions"
 
     @JvmStatic
     fun getInstance(project: Project): SubmissionsManager = ServiceManager.getService(project, SubmissionsManager::class.java)

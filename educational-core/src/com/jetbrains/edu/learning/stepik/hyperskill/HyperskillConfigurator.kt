@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -40,11 +41,11 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
     val course = currentTask.lesson.course
     if (course is HyperskillCourse && course.isStudy) {
       if (!course.isTaskInProject(currentTask)) return null
-      val topicsPanel = AdditionalTabPanel(project, TOPICS_TAB_NAME)
+      val topicsPanel = AdditionalTabPanel(project, EduCoreBundle.message("hyperskill.topics.tab.name"))
       topicsPanel.addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
 
       val topics = course.taskToTopics[currentTask.index - 1]
-      var descriptionText = "<h3 ${StyleManager().textStyleHeader}>Topics for current stage :</h3>"
+      var descriptionText = "<h3 ${StyleManager().textStyleHeader}>${EduCoreBundle.message("hyperskill.topics.for.stage")}</h3>"
       if (topics != null) {
         for (topic in topics) {
           descriptionText += topicLink(topic)
@@ -52,7 +53,7 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
         }
       }
       else {
-        descriptionText += "<a ${StyleManager().textStyleHeader}>No topics found for current stage."
+        descriptionText += "<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("hyperskill.topics.not.found")}"
       }
       topicsPanel.setText(descriptionText)
 
@@ -100,6 +101,5 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
 
   companion object {
     const val HYPERSKILL_TEST_DIR = "hstest"
-    const val TOPICS_TAB_NAME = "Topics"
   }
 }
