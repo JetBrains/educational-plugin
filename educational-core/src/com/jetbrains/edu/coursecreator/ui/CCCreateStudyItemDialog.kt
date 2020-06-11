@@ -25,7 +25,7 @@ abstract class CCCreateStudyItemDialogBase(
   protected val positionPanel: CCItemPositionPanel? = additionalPanels.find { it is CCItemPositionPanel } as? CCItemPositionPanel
 
   init {
-    title = "Create New ${StringUtil.toTitleCase(model.itemType.presentableName)}"
+    title = "Create New ${model.itemType.presentableTitleName}"
   }
 
   override fun postponeValidation(): Boolean = false

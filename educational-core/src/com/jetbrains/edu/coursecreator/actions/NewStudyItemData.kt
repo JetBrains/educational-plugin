@@ -44,12 +44,17 @@ data class StudyItemVariant(
   val producer: () -> StudyItem
 )
 
-enum class StudyItemType(@PropertyKey(resourceBundle = BUNDLE) private val bundleKey: String) {
-  COURSE("study.item.course"),
-  SECTION("study.item.section"),
-  LESSON("study.item.lesson"),
-  FRAMEWORK_LESSON("study.item.framework.lesson"),
-  TASK("study.item.task");
+enum class StudyItemType(
+  @PropertyKey(resourceBundle = BUNDLE) private val nameKey: String,
+  @PropertyKey(resourceBundle = BUNDLE) private val titleNameKey: String
+) {
+  COURSE("study.item.course", "study.item.course.title"),
+  SECTION("study.item.section", "study.item.section.title"),
+  LESSON("study.item.lesson", "study.item.lesson.title"),
+  FRAMEWORK_LESSON("study.item.framework.lesson", "study.item.framework.lesson.title"),
+  TASK("study.item.task", "study.item.task.title");
 
-  val presentableName: String get() = EduCoreBundle.message(bundleKey)
+  val presentableName: String get() = EduCoreBundle.message(nameKey)
+
+  val presentableTitleName: String get() = EduCoreBundle.message(titleNameKey)
 }

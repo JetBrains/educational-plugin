@@ -32,8 +32,8 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   protected val itemType: StudyItemType,
   icon: Icon
 ) : DumbAwareAction(
-  StringUtil.toTitleCase(itemType.presentableName),
-  "Create New " + StringUtil.toTitleCase(itemType.presentableName),
+  itemType.presentableTitleName,
+  "Create New " + itemType.presentableTitleName,
   icon
 ) {
 

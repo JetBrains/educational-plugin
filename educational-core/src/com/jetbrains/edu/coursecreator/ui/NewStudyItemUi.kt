@@ -70,7 +70,7 @@ class NewStudyItemPopupUi : NewStudyItemUi {
     val nameField = contentPanel.textField
     nameField.text = model.suggestedName
     nameField.selectAll()
-    val title = EduCoreBundle.message("action.new.study.item.title", StringUtil.toTitleCase(model.itemType.presentableName))
+    val title = EduCoreBundle.message("action.new.study.item.title", model.itemType.presentableTitleName)
     val popup = NewItemPopupUtil.createNewItemPopup(title, contentPanel, nameField)
     contentPanel.setApplyAction { event ->
       val name = nameField.text
