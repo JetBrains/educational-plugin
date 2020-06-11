@@ -184,9 +184,3 @@ fun Task.revertTaskParameters(project: Project) {
     this.clearSelectedVariants()
   }
 }
-
-fun Task.addLearnerCreatedTaskFile(path: String, text: String): TaskFile =
-  addTaskFile(path).apply {
-    isLearnerCreated = true
-    setText(text)
-  }
