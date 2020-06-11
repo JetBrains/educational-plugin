@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.newproject
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.OptionAction
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
@@ -12,7 +11,6 @@ import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.OpenCourseDialogBase
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import java.awt.event.ActionEvent
@@ -74,7 +72,7 @@ fun joinCourse(courseInfo: CourseInfo,
   CoursesStorage.getInstance().addCourse(course, location)
 
   if (course is JetBrainsAcademyCourse) {
-    joinJetBrainsAcademy(course, errorHandler)
+    joinJetBrainsAcademy(errorHandler)
     return
   }
 
@@ -98,21 +96,16 @@ fun joinCourse(courseInfo: CourseInfo,
   }
 }
 
-private fun joinJetBrainsAcademy(course: JetBrainsAcademyCourse, errorHandler: (ErrorState) -> Unit) {
-  val account = HyperskillSettings.INSTANCE.account
-  if (account == null) {
-    BrowserUtil.browse(
-      "${HYPERSKILL_DEFAULT_URL}onboarding/?track=${StringUtil.toLowerCase(course.language)}&utm_source=ide&utm_content=browse-courses")
-  }
-  else {
-    HyperskillProjectAction.openHyperskillProject(account) { errorMessage ->
-      val groups = LINK_ERROR_PATTERN.matchEntire(errorMessage)?.groups
-      val errorState = if (groups == null) ErrorState.CustomSevereError(errorMessage)
-      else ErrorState.CustomSevereError(groups.valueOrEmpty(BEFORE_LINK),
-                                        groups.valueOrEmpty(LINK_TEXT),
-                                        groups.valueOrEmpty(AFTER_LINK),
-                                        Runnable { BrowserUtil.browse(groups.valueOrEmpty(LINK)) })
-      errorHandler(errorState)
-    }
+private fun joinJetBrainsAcademy(errorHandler: (ErrorState) -> Unit) {
+  val account = HyperskillSettings.INSTANCE.account ?: return
+
+  HyperskillProjectAction.openHyperskillProject(account) { errorMessage ->
+    val groups = LINK_ERROR_PATTERN.matchEntire(errorMessage)?.groups
+    val errorState = if (groups == null) ErrorState.CustomSevereError(errorMessage)
+    else ErrorState.CustomSevereError(groups.valueOrEmpty(BEFORE_LINK),
+                                      groups.valueOrEmpty(LINK_TEXT),
+                                      groups.valueOrEmpty(AFTER_LINK),
+                                      Runnable { BrowserUtil.browse(groups.valueOrEmpty(LINK)) })
+    errorHandler(errorState)
   }
 }
