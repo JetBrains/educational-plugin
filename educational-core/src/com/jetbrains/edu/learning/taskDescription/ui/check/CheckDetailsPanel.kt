@@ -46,7 +46,8 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     if (messagePanel.isVisible) {
       add(messagePanel, BorderLayout.CENTER)
     }
-    if (linksPanel.isVisible) {
+    // TODO rewrite this piece: create separate LinksPanel class, try to get rid of dependencies in messagePanel
+    if (linksPanel.componentCount > 0) {
       add(linksPanel, BorderLayout.SOUTH)
     }
   }
@@ -92,7 +93,6 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
         linksPanel.add(answerHintsPanel, BorderLayout.CENTER)
       }
     }
-    linksPanel.isVisible = linksPanel.componentCount > 0
     return linksPanel
   }
 
