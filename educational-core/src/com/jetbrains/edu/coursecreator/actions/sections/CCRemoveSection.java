@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,10 +27,9 @@ import java.util.List;
 
 public class CCRemoveSection extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCRemoveSection.class);
-  public static final String TITLE = "Unwrap Section";
 
   public CCRemoveSection() {
-    super(TITLE, TITLE, null);
+    super(EduCoreBundle.message("action.remove.section"), EduCoreBundle.message("action.remove.section.description"), null);
   }
 
   @Override
@@ -53,8 +53,8 @@ public class CCRemoveSection extends DumbAwareAction {
     final VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
     for (VirtualFile child : sectionChildren) {
       if (courseDir.findChild(child.getName()) != null) {
-        Messages.showInfoMessage("Can't unwrap lesson " + child.getName() + ". Course contains directory " +
-                                 "with the same name already.", "Unwrap Section Failed");
+        Messages.showInfoMessage(EduCoreBundle.message("error.failed.to.unwrap.section.message", child.getName()),
+                                 EduCoreBundle.message("error.failed.to.unwrap.section"));
         return;
       }
     }
