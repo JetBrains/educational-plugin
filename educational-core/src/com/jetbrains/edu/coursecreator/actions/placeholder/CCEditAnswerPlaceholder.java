@@ -8,13 +8,14 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog.DependencyInfo;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 
 public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
   public CCEditAnswerPlaceholder() {
-    super("Edit", "Edit answer placeholder");
+    super(EduCoreBundle.message("label.edit"), EduCoreBundle.message("action.edit.answer.placeholder.description"));
   }
 
   @Override

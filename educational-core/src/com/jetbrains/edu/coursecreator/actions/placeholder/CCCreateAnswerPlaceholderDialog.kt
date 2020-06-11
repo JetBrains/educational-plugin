@@ -10,10 +10,12 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderPanel.Companion.DEFAULT_PLACEHOLDER_TEXT
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderPanel.Companion.PLACEHOLDER_PANEL_WIDTH
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.JComponent
@@ -26,16 +28,16 @@ open class CCCreateAnswerPlaceholderDialog(
   private val placeholder: AnswerPlaceholder
 ) : DialogWrapper(project, true) {
 
-  private val panel: CCAddAnswerPlaceholderPanel = CCAddAnswerPlaceholderPanel(placeholder.placeholderText ?: "type here")
+  private val panel: CCAddAnswerPlaceholderPanel = CCAddAnswerPlaceholderPanel(placeholder.placeholderText ?: DEFAULT_PLACEHOLDER_TEXT)
   private val dependencyPathField: JBTextField = JBTextField(0)
-  private val visibilityCheckBox: JBCheckBox = JBCheckBox("Visible", placeholder.placeholderDependency?.isVisible == true)
-  private val pathLabel: JLabel = JLabel("[sectionName#]lessonName#taskName#filePath#placeholderIndex")
+  private val visibilityCheckBox: JBCheckBox = JBCheckBox(message("label.visible"), placeholder.placeholderDependency?.isVisible == true)
+  private val pathLabel: JLabel = JLabel(message("ui.dialog.create.answer.placeholder.path.pattern"))
   private val isFirstTask: Boolean = placeholder.taskFile.task.isFirstInCourse
   private val currentText: String get() = dependencyPathField.text ?: ""
 
   init {
-    title = (if (isEdit) "Edit" else "Add") + TITLE_SUFFIX
-    val buttonText = if (isEdit) "OK" else "Add"
+    title = if (isEdit) message("ui.dialog.create.answer.placeholder.edit") else message("ui.dialog.create.answer.placeholder.add")
+    val buttonText = if (isEdit) message("label.ok") else message("label.add")
     setOKButtonText(buttonText)
     super.init()
     initValidation()
@@ -53,7 +55,7 @@ open class CCCreateAnswerPlaceholderDialog(
         row { visibilityCheckBox() }
       }
       contentPanel.border = JBUI.Borders.emptyBottom(5)
-      val decorator = HideableDecorator(dependencyPanel, "Add Answer Placeholder Dependency", true)
+      val decorator = HideableDecorator(dependencyPanel, message("ui.dialog.create.answer.placeholder.dependency"), true)
       decorator.setContentComponent(contentPanel)
       if (placeholder.placeholderDependency != null) {
         decorator.setOn(true)
@@ -76,7 +78,7 @@ open class CCCreateAnswerPlaceholderDialog(
     }
     val errorText = try {
       val dependency = AnswerPlaceholderDependency.create(placeholder, currentText)
-      if (dependency == null) "Invalid dependency" else null
+      if (dependency == null) message("error.invalid.dependency") else null
     }
     catch (e: AnswerPlaceholderDependency.InvalidDependencyException) {
       e.customMessage
@@ -97,10 +99,6 @@ open class CCCreateAnswerPlaceholderDialog(
     else null
 
   data class DependencyInfo(val dependencyPath: String, val isVisible: Boolean)
-
-  companion object {
-    private const val TITLE_SUFFIX = " Answer Placeholder"
-  }
 }
 
 private val Task.isFirstInCourse: Boolean

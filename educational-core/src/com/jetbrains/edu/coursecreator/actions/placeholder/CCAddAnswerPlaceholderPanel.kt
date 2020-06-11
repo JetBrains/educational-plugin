@@ -5,14 +5,16 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
 import javax.swing.*
 
-class CCAddAnswerPlaceholderPanel(placeholderText: String) : JPanel() {
-  private val HELP_TEXT = "Placeholder is shown to a student in place of selected code"
+class CCAddAnswerPlaceholderPanel(@NonNls placeholderText: String) : JPanel() {
+  private val HELP_TEXT = EduCoreBundle.message("ui.panel.add.answer.placeholder.help")
   private val panel: JPanel
   private val textArea: JTextArea = JTextArea(placeholderText, 0, 0)
 
@@ -57,5 +59,8 @@ class CCAddAnswerPlaceholderPanel(placeholderText: String) : JPanel() {
 
   companion object {
     const val PLACEHOLDER_PANEL_WIDTH = 400
+
+    @NonNls
+    const val DEFAULT_PLACEHOLDER_TEXT = "type here"
   }
 }

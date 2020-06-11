@@ -14,14 +14,18 @@ import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderPanel.DEFAULT_PLACEHOLDER_TEXT;
+
 public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
   public CCAddAnswerPlaceholder() {
-    super("Add Answer Placeholder", "Add/Delete answer placeholder");
+    super(EduCoreBundle.message("action.add.answer.placeholder"), EduCoreBundle.message("action.add.answer.placeholder.description"));
   }
 
 
@@ -53,7 +57,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     taskFile.sortAnswerPlaceholders();
     answerPlaceholder.setOffset(offset);
 
-    String defaultPlaceholderText = "type here";
+    @NonNls String defaultPlaceholderText = DEFAULT_PLACEHOLDER_TEXT;
     CCCreateAnswerPlaceholderDialog dlg = createDialog(project, answerPlaceholder);
     if (!dlg.showAndGet()) {
       return;
@@ -76,7 +80,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     }
 
     AddAction action = new AddAction(project, answerPlaceholder, taskFile, editor);
-    EduUtils.runUndoableAction(project, "Add Answer Placeholder", action);
+    EduUtils.runUndoableAction(project, EduCoreBundle.message("action.add.answer.placeholder"), action);
   }
 
   static class AddAction extends TaskFileUndoableAction {

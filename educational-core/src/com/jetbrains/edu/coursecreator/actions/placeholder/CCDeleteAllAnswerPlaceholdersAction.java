@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ import java.util.List;
 
 public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderAction {
 
-  public static final String ACTION_NAME = "Delete All";
-  public static final String ACTION_DESCRIPTION = "Delete all placeholders in current file";
+  public static final String ACTION_NAME = EduCoreBundle.message("action.delete.all.answer.placeholders");
+  public static final String ACTION_DESCRIPTION = EduCoreBundle.message("action.delete.all.answer.placeholders.description");
 
   public CCDeleteAllAnswerPlaceholdersAction() {
     super(ACTION_NAME, ACTION_DESCRIPTION);

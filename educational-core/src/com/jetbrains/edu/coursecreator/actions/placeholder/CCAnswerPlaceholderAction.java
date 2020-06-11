@@ -14,12 +14,14 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.editor.EduEditor;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
 
-  protected CCAnswerPlaceholderAction(@Nullable String text, @Nullable String description) {
+  protected CCAnswerPlaceholderAction(@Nullable @Nls(capitalization = Nls.Capitalization.Title) String text,
+                                      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String description) {
     super(text, description, null);
   }
 
