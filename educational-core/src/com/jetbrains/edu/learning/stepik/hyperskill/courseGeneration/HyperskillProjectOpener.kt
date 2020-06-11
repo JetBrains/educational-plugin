@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFrame
@@ -199,6 +198,6 @@ object HyperskillProjectOpener {
 
   private fun synchronizeProjectOnStageOpening(project: Project, course: HyperskillCourse, tasks: List<Task>) {
     HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks)
-    HyperskillProjectComponent.synchronizeTopics(project, course)
+    HyperskillStartupActivity.synchronizeTopics(project, course)
   }
 }
