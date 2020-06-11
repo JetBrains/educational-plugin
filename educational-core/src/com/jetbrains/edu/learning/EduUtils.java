@@ -60,6 +60,7 @@ import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
+import com.jetbrains.edu.learning.taskDescription.ui.JCEFToolWIndowUtilsKt;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import kotlin.Unit;
 import org.apache.commons.codec.binary.Base64;
@@ -345,13 +346,7 @@ public class EduUtils {
   }
 
   public static boolean hasJCEF() {
-    try {
-      Class.forName("org.cef.browser.CefBrowser");
-      return true;
-    }
-    catch (ClassNotFoundException e) {
-      return false;
-    }
+    return JCEFToolWIndowUtilsKt.isSupported();
   }
 
   @Nullable
