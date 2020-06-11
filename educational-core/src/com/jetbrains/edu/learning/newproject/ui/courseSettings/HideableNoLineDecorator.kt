@@ -22,7 +22,7 @@ import javax.swing.KeyStroke
 /**
  * Inspired by [com.intellij.ui.HideableDecorator]
  */
-class HideableNoLineDecorator(private val myPanel: JPanel, title: @Nls(capitalization = Nls.Capitalization.Title) String) {
+class HideableNoLineDecorator(private val myPanel: JPanel, @Nls(capitalization = Nls.Capitalization.Title) title: String) {
   var isExpanded = false
   var title: String
     get() = myTitledSeparator.text
@@ -108,7 +108,7 @@ class HideableNoLineDecorator(private val myPanel: JPanel, title: @Nls(capitaliz
   /**
    * Inspired by [com.intellij.ui.TitledSeparator]
    */
-  private inner class NoLineTitledSeparator(text: @Nls(capitalization = Nls.Capitalization.Title) String = "") : JPanel() {
+  private inner class NoLineTitledSeparator(@Nls(capitalization = Nls.Capitalization.Title) text: String = "") : JPanel() {
     val label = JBLabel()
     var text: String
       get() = originalText
