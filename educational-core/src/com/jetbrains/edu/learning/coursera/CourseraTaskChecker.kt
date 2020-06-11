@@ -41,7 +41,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
     val course = task.course as CourseraCourse
     if (course.submitManually) {
       val link = getLinkToSubmission(task)
-      return CheckResult(CheckStatus.Unchecked, SUBMIT_MANUALLY.format(link), needEscape = false)
+      return CheckResult(CheckStatus.Unchecked, SUBMIT_MANUALLY.format(link))
     }
     val courseraSettings = CourseraSettings.getInstance()
     var askedForCredentials = false
@@ -73,7 +73,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
     return when (statusCode) {
       HttpStatus.SC_CREATED -> {
         val link = getLinkToSubmission(task)
-        CheckResult(CheckStatus.Unchecked, SUCCESS.format(link), needEscape = false)
+        CheckResult(CheckStatus.Unchecked, SUCCESS.format(link))
       }
       HttpStatus.SC_UNAUTHORIZED -> CheckResult(CheckStatus.Unchecked, "Invalid token or email")
       HttpStatus.SC_BAD_REQUEST -> CheckResult(CheckStatus.Unchecked, "Token is for a different assignment")

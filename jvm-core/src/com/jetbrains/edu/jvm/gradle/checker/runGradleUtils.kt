@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.*
@@ -55,10 +56,10 @@ class GradleCommandLine private constructor(
 
   fun launchAndCheck(indicator: ProgressIndicator): CheckResult {
     val output = launch(indicator) ?: return CheckResult.FAILED_TO_CHECK
-    if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.firstMessage, output.messages.joinToString("\n"))
+    if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.firstMessage.escaped, output.messages.joinToString("\n"))
 
     // TODO: do not use `TestsOutputParser` here
-    return TestsOutputParser().getCheckResult(output.messages.map { STUDY_PREFIX + it })
+    return TestsOutputParser().getCheckResult(output.messages.map { STUDY_PREFIX + it }, needEscapeResult = true)
   }
 
   fun launch(indicator: ProgressIndicator): GradleOutput? {
@@ -162,11 +163,13 @@ fun runGradleRunTask(
 
   if (!gradleOutput.isSuccess) {
     return Err(
-      CheckResult(CheckStatus.Failed, gradleOutput.firstMessage, gradleOutput.messages.joinToString("\n")))
+      CheckResult(CheckStatus.Failed, gradleOutput.firstMessage.escaped, gradleOutput.messages.joinToString("\n")))
   }
 
   return Ok(gradleOutput.firstMessage)
 }
+
+private val String.escaped get() = StringUtil.escapeXmlEntities(this)
 
 private fun findMainClass(project: Project, task: Task, mainClassForFile: (Project, VirtualFile) -> String?): String? =
   runReadAction {

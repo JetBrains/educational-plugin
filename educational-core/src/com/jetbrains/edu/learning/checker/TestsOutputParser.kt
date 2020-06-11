@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.checker
 
+import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATS_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATULATIONS
 import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
@@ -16,7 +17,7 @@ class TestsOutputParser {
   private var congratulations: String = CONGRATULATIONS
 
   @JvmOverloads
-  fun getCheckResult(messages: List<String>, needEscapeResult: Boolean = true): CheckResult {
+  fun getCheckResult(messages: List<String>, needEscapeResult: Boolean = false): CheckResult {
     val processor: (TestMessage) -> Unit = { message ->
       when (message) {
         is TestMessage.Congrats -> {
@@ -37,10 +38,10 @@ class TestsOutputParser {
     val finalFailedMessage = lastFailedMessage
     return if (finalFailedMessage != null) {
       val message = fillWithIncorrect(finalFailedMessage.message)
-      CheckResult(CheckStatus.Failed, message, needEscape = needEscapeResult, diff = finalFailedMessage.diff)
+      CheckResult(CheckStatus.Failed, message, diff = finalFailedMessage.diff)
     }
     else {
-      CheckResult(CheckStatus.Solved, congratulations, needEscape = needEscapeResult)
+      CheckResult(CheckStatus.Solved, congratulations)
     }
   }
 

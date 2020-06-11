@@ -67,7 +67,7 @@ class CodeforcesTaskChecker(
     }
 
     CopyPasteManager.getInstance().setContents(StringSelection(solution))
-    return CheckResult(CheckStatus.Unchecked, "<a href=\"$url\">Submit solution</a> (already copied to clipboard)<br>", needEscape = false)
+    return CheckResult(CheckStatus.Unchecked, "<a href=\"$url\">Submit solution</a> (already copied to clipboard)<br>")
   }
 
   private fun <T> withRunProcessesWithPtyOff(action: () -> T): T {

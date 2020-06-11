@@ -21,7 +21,7 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
         val checkResult = checker.check(indicator)
         val course = task.course
         if (checkResult.status == CheckStatus.Solved && course is HyperskillCourse) {
-          return CheckResult(checkResult.status, task.successMessage, needEscape = false)
+          return CheckResult(checkResult.status, task.successMessage)
         }
         return checkResult
       }

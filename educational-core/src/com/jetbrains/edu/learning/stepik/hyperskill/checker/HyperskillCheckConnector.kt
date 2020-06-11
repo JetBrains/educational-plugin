@@ -77,7 +77,6 @@ object HyperskillCheckConnector {
     return if (this == EduCoreBundle.message("error.forbidden")) {
       CheckResult(CheckStatus.Unchecked,
                   EduCoreBundle.message("error.forbidden.with.link"),
-                  needEscape = false,
                   hyperlinkListener = HyperskillLoginListener
       )
     }
@@ -132,7 +131,7 @@ object HyperskillCheckConnector {
     if (task.id == 0) {
       val link = task.feedbackLink.link ?: return CheckResult.FAILED_TO_CHECK
       val message = """Corrupted task (no id): please, click "Solve in IDE" on <a href="$link">${EduNames.JBA}</a> one more time"""
-      return CheckResult(CheckStatus.Unchecked, message, needEscape = false)
+      return CheckResult(CheckStatus.Unchecked, message)
     }
 
     return checkCodeTaskWithWebSockets(project, task).onError { submissionError ->
@@ -174,7 +173,7 @@ fun Submission.toCheckResult(task: Task): CheckResult {
   if (isSolved) {
     message = "<html>$message<br/><br/>${EduCoreBundle.message("hyperskill.continue", task.feedbackLink.link!!, EduNames.JBA)}</html>"
   }
-  return CheckResult(if (isSolved) CheckStatus.Solved else CheckStatus.Failed, message, needEscape = false)
+  return CheckResult(if (isSolved) CheckStatus.Solved else CheckStatus.Failed, message)
 }
 
 enum class HyperskillLanguages(val id: String?, val langName: String?) {

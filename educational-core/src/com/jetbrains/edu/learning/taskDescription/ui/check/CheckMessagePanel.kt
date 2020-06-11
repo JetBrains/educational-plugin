@@ -74,7 +74,7 @@ class CheckMessagePanel private constructor() : JPanel() {
     @JvmStatic
     fun create(checkResult: CheckResult): CheckMessagePanel {
       val messagePanel = CheckMessagePanel()
-      messagePanel.setMessage(checkResult.escapedMessage)
+      messagePanel.setMessage(checkResult.message)
       messagePanel.setHyperlinkListener(checkResult.hyperlinkListener ?: EduBrowserHyperlinkListener.INSTANCE)
       if (checkResult.diff != null) {
         messagePanel.setDiff(checkResult.diff)

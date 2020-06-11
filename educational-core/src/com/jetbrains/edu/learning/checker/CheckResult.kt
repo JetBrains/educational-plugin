@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.checker
 
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.event.HyperlinkListener
@@ -10,16 +9,10 @@ class CheckResult @JvmOverloads constructor(
   val message: String,
   val details: String? = null,
   val diff: CheckResultDiff? = null,
-  private val needEscape: Boolean = true, // false if there are html tags to display, ex.links
   val hyperlinkListener: HyperlinkListener? = null
 ) {
 
-  val escapedMessage: String get() = message.escaped
-  val escapedDetails: String? get() = details?.escaped
-
   val isSolved: Boolean get() = status == CheckStatus.Solved
-
-  private val String.escaped: String get() = if (needEscape) StringUtil.escapeXmlEntities(this) else this
 
   companion object {
     @JvmField val NO_LOCAL_CHECK = CheckResult(CheckStatus.Unchecked, "Local check isn't available")
