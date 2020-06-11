@@ -46,6 +46,7 @@ object HyperskillProjectOpener {
           requestFocus()
           EduUtils.navigateToStep(project, hyperskillCourse, stepId)
         }
+        synchronizeProjectOnStepOpening(project, hyperskillCourse, stepId)
       }
       is HyperskillOpenStageRequest -> {
         if (hyperskillCourse.getProjectLesson() == null) {
@@ -58,14 +59,13 @@ object HyperskillProjectOpener {
           GeneratorUtils.createLesson(projectLesson, courseDir)
           GeneratorUtils.createAdditionalFiles(course, courseDir)
           YamlFormatSynchronizer.saveAll(project)
-          HyperskillStartupActivity.synchronizeHyperskillProject(project)
           course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.DEPENDENCIES_UPDATED)
+          synchronizeProjectOnStageOpening(project, hyperskillCourse, projectLesson.taskList)
         }
         hyperskillCourse.putUserData(HYPERSKILL_SELECTED_STAGE, request.stageId)
         runInEdt { openSelectedStage(hyperskillCourse, project) }
       }
     }
-    HyperskillStartupActivity.synchronizeHyperskillProject(project)
     return true
   }
 
@@ -190,5 +190,15 @@ object HyperskillProjectOpener {
       AppIcon.getInstance().requestFocus(frame)
     }
     frame?.toFront()
+  }
+
+  private fun synchronizeProjectOnStepOpening(project: Project, course: HyperskillCourse, stepId: Int) {
+    val task = course.getProblemsLesson()?.getTask(stepId) ?: return
+    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, listOf(task))
+  }
+
+  private fun synchronizeProjectOnStageOpening(project: Project, course: HyperskillCourse, tasks: List<Task>) {
+    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks)
+    HyperskillProjectComponent.synchronizeTopics(project, course)
   }
 }
