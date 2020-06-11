@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.addLearnerCreatedTaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -31,7 +30,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.update.UpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import java.io.IOException
 import java.util.*
 import java.util.Collections.max
 import java.util.concurrent.Callable
@@ -261,28 +259,19 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
           }
           for (solutionPath in taskSolutions.solutions.keys) {
             val (solutionText, placeholders) = taskSolutions.solutions[solutionPath] ?: error("No solution for $solutionPath found")
-            val taskFile = task.getTaskFile(solutionPath) ?: task.addLearnerCreatedTaskFile(solutionPath, solutionText)
-            val vFile = EduUtils.findTaskFileInDir(taskFile, taskDir)
-            if (vFile == null) {
-              EduDocumentListener.modifyWithoutListener(task, taskFile.name) {
-                GeneratorUtils.createChildFile(taskDir, taskFile.name, solutionText)
-              }
+            val taskFile = task.getTaskFile(solutionPath)
+            if (taskFile == null) {
+              GeneratorUtils.createChildFile(taskDir, solutionPath, solutionText)
             }
             else {
+              val vFile = taskDir.findFileByRelativePath(solutionPath) ?: continue
               if (EduUtils.isTestsFile(project, vFile)) continue
               updatePlaceholders(taskFile, placeholders)
-              try {
-                taskFile.isTrackChanges = false
+              EduDocumentListener.modifyWithoutListener(task, solutionPath) {
                 runWriteAction {
                   VfsUtil.saveText(vFile, solutionText)
                 }
                 SaveAndSyncHandler.getInstance().refreshOpenFiles()
-              }
-              catch (e: IOException) {
-                LOG.warn(e)
-              }
-              finally {
-                taskFile.isTrackChanges = true
               }
             }
           }
