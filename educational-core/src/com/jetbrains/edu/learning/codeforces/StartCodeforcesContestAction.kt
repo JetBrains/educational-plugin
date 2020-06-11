@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider.Companion.getLanguageIdAndVersion
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
@@ -31,6 +32,7 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
                                                                 showLanguageSettings = showLanguageSettings)) {
       init {
         init()
+        UIUtil.setBackgroundRecursively(rootPane, TaskDescriptionView.getTaskDescriptionBackgroundColor())
       }
     }.show()
   }
