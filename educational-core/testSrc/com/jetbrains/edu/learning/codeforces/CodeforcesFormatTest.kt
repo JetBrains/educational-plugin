@@ -1,16 +1,11 @@
 package com.jetbrains.edu.learning.codeforces
 
-import com.intellij.openapi.util.io.FileUtil
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.codeforces.api.*
-import java.io.File
 import java.io.IOException
 import java.time.Duration
 import java.time.ZonedDateTime
 
-class CodeforcesFormatTest : EduTestCase() {
-  override fun getTestDataPath(): String = "testData/codeforces"
-
+class CodeforcesFormatTest : CodeforcesTestCase() {
   fun testAvailableContests() {
     val responseString = loadJsonText()
     val mapper = CodeforcesConnector.getInstance().objectMapper
@@ -39,12 +34,7 @@ class CodeforcesFormatTest : EduTestCase() {
 
   @Throws(IOException::class)
   private fun loadJsonText(): String {
-    return loadJsonText(getTestFile())
-  }
-
-  @Throws(IOException::class)
-  private fun loadJsonText(fileName: String): String {
-    return FileUtil.loadFile(File(testDataPath, fileName), true)
+    return loadText(getTestFile())
   }
 
   private fun getTestFile(): String {

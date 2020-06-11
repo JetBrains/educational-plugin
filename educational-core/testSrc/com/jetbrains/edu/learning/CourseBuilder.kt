@@ -11,6 +11,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
@@ -170,7 +171,7 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     val taskBuilder = TaskBuilder(lesson, task)
     taskBuilder.task.index = lesson.taskList.size + 1
     val nextTaskIndex = lesson.taskList.size + 1
-    taskBuilder.withName(name?: EduNames.TASK + nextTaskIndex)
+    taskBuilder.withName(name ?: EduNames.TASK + nextTaskIndex)
     taskBuilder.withTaskDescription(taskDescription ?: "solve task", taskDescriptionFormat)
     taskBuilder.withStepId(stepId)
     taskBuilder.withUpdateDate(updateDate)
@@ -261,6 +262,15 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
   ) = task(CodeTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+
+  fun codeforcesTask(
+    name: String? = null,
+    taskDescription: String? = null,
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) {
+    val codeforcesTask = CodeforcesTask()
+    task(codeforcesTask, name, taskDescription, null, buildTask = buildTask)
+  }
 }
 
 class TaskBuilder(val lesson: Lesson, val task: Task) {

@@ -42,13 +42,13 @@ class CourseViewTest : CourseViewTestBase() {
     PlatformTestUtil.waitForAlarm(600)
     waitWhileBusy(pane.tree)
     val structure = "-Project\n" +
-                          " -CourseNode Edu test course  0/4\n" +
-                          "  -LessonNode lesson1\n" +
-                          "   -TaskNode task1\n" +
-                          "    taskFile1.txt\n" +
-                          "   +TaskNode task2\n" +
-                          "   +TaskNode task3\n" +
-                          "   +TaskNode task4\n"
+                    " -CourseNode Edu test course  0/4\n" +
+                    "  -LessonNode lesson1\n" +
+                    "   -TaskNode task1\n" +
+                    "    taskFile1.txt\n" +
+                    "   +TaskNode task2\n" +
+                    "   +TaskNode task3\n" +
+                    "   +TaskNode task4\n"
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
   }
 
@@ -142,12 +142,10 @@ class CourseViewTest : CourseViewTestBase() {
   }
 
   private fun navigateToNextTask() {
-    val eduEditor = EduUtils.getSelectedEduEditor(project)
-    val eduState = EduState.create(eduEditor)
-    TestCase.assertTrue(eduState != null)
-    val targetTask = NavigationUtils.nextTask(eduState!!.task)
-    TestCase.assertNotNull(targetTask)
-    NavigationUtils.navigateToTask(project, targetTask!!)
+    val eduEditor = EduUtils.getSelectedEduEditor(project) ?: error("Can’t get selected edu editor")
+    val eduState = EduState.create(eduEditor) ?: error("Can't create edu state")
+    val targetTask = NavigationUtils.nextTask(eduState.task) ?: error ("Can't navigate to task")
+    NavigationUtils.navigateToTask(project, targetTask)
   }
 
   override fun getTestDataPath(): String {

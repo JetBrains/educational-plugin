@@ -1,18 +1,12 @@
 package com.jetbrains.edu.learning.codeforces
 
-import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import org.jsoup.Jsoup
-import java.io.File
-import java.io.IOException
 
-class CodeforcesParsingTest : EduTestCase() {
-  override fun getTestDataPath(): String = "testData/codeforces"
-
+class CodeforcesParsingTest : CodeforcesTestCase() {
   fun `test codeforces contest Kotlin Heroes Episode 2 task A`() {
     val course = CodeforcesCourse().apply {
       id = 1211
@@ -83,13 +77,7 @@ class CodeforcesParsingTest : EduTestCase() {
     assertEquals("https://codeforces.com/contest/1211/problem/H?locale=en", tasks[7].feedbackLink.link)
   }
 
-  @Throws(IOException::class)
-  private fun loadText(fileName: String): String {
-    return FileUtil.loadFile(File(testDataPath, fileName), true)
-  }
-
   companion object {
-    private const val contest1211 = "Contest 1211.html"
     private val expectedTaskDescriptionFiles = mapOf(
       1211 to mapOf(
         "A" to "Contest 1211 problem A expected task description.html",
