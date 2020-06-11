@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui.coursePanel
+package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.icons.AllIcons
 import com.intellij.ui.Gray
@@ -10,7 +10,8 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.joinCourse
-import com.jetbrains.edu.learning.newproject.ui.getScaledLogo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.OpenCourseButton
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.StartCourseButtonBase
 import com.jetbrains.edu.learning.projectView.ProgressUtil
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
@@ -40,7 +41,7 @@ private const val NO_TASKS_COMPLETED_YET = "No tasks completed yet"
 private const val COMPLETED = "Completed"
 
 private val HOVER_COLOR: Color = JBColor.namedColor("BrowseCourses.lightSelectionBackground", JBColor(0xE9EEF5, 0x36393B))
-private val GRAY_COLOR: Color = JBColor.namedColor("BrowseCourses.infoForeground", JBColor(Gray._120, Gray._135))
+val GRAY_COLOR: Color = JBColor.namedColor("BrowseCourses.infoForeground", JBColor(Gray._120, Gray._135))
 
 class CourseCardComponent(course: Course?) : JPanel(BorderLayout()) {
   private val logoComponent: JLabel = JLabel()
@@ -57,6 +58,7 @@ class CourseCardComponent(course: Course?) : JPanel(BorderLayout()) {
 
     preferredSize = JBUI.size(CARD_WIDTH, CARD_HEIGHT)
     maximumSize = JBUI.size(CARD_WIDTH, CARD_HEIGHT)
+    minimumSize = JBUI.size(CARD_WIDTH, CARD_HEIGHT)
 
     toolTipText = course?.name
     updateColors(false)

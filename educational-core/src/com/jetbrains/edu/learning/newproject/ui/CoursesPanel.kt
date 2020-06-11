@@ -1,8 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui
 
-import com.intellij.icons.AllIcons
-import com.intellij.ide.BrowserUtil
-import com.intellij.ide.DataManager
 import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.DynamicPluginListener.Companion.TOPIC
 import com.intellij.ide.plugins.IdeaPluginDescriptor
@@ -11,487 +8,109 @@ import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.application.ex.ApplicationManagerEx
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.ui.popup.PopupStep
-import com.intellij.openapi.ui.popup.util.BaseListPopupStep
-import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.FilterComponent
-import com.intellij.ui.GuiUtils
-import com.intellij.ui.HyperlinkLabel
-import com.intellij.ui.ToolbarDecorator
-import com.intellij.ui.awt.RelativePoint
-import com.intellij.ui.components.JBList
-import com.intellij.util.containers.ContainerUtil
-import com.intellij.util.messages.MessageBusConnection
+import com.intellij.ui.JBCardLayout
+import com.intellij.ui.OnePixelSplitter
+import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduLogInListener
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.actions.ImportLocalCourseAction.Companion.importLocation
-import com.jetbrains.edu.learning.actions.ImportLocalCourseAction.Companion.saveLastImportLocation
-import com.jetbrains.edu.learning.actions.ImportLocalCourseAction.Companion.showInvalidCourseDialog
-import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
-import com.jetbrains.edu.learning.courseLoading.CourseLoader.getCourseInfosUnderProgress
-import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.joinCourse
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.*
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.Companion.forCourse
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
 import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.importCourseArchive
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.loggedIn
-import com.jetbrains.edu.learning.stepik.HYPERSKILL
-import com.jetbrains.edu.learning.stepik.StepikAuthorizer
-import com.jetbrains.edu.learning.stepik.StepikCoursesProvider
-import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector.Companion.getInstance
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView.Companion.getTaskDescriptionBackgroundColor
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
-import java.awt.Component
 import java.awt.Dimension
-import java.awt.Point
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
+import java.awt.Rectangle
 import java.util.*
-import javax.swing.*
+import javax.swing.JComponent
+import javax.swing.JPanel
 import kotlin.collections.HashSet
 
-class CoursesPanel(
-  courses: List<Course>,
-  dialog: BrowseCoursesDialog,
-  private val customToolbarActions: DefaultActionGroup?
-) : JPanel(BorderLayout()) {
-  private val myErrorPanel: JPanel = JPanel(BorderLayout())
-  private val myMainPanel: JPanel = JPanel(BorderLayout())
-  private val myErrorLabel: HyperlinkLabel = HyperlinkLabel()
-  private val myCourseListPanel: JPanel = JPanel(BorderLayout())
-  private lateinit var mySearchField: FilterComponent
-  private val mySplitPane: JSplitPane = JSplitPane()
-  private val mySplitPaneRoot: JPanel = JPanel(BorderLayout())
-  private var myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false,
-                                                             isLocationFieldNeeded = true,
-                                                             joinCourseAction = joinCourseAction(dialog))
-  private val myContentPanel: JPanel = JPanel(BorderLayout())
-  private val myCourses: MutableList<Course>
-  private var myCoursesComparator: Comparator<Course>
-  private val myListeners: MutableList<CourseValidationListener> = ArrayList()
-  private var myBusConnection: MessageBusConnection? = null
-  private var myErrorState: ErrorState? = NothingSelected
-  private var myCoursesList: JBList<Course> = JBList()
+
+private val PANEL_SIZE = JBUI.size(750, 600)
+
+private const val CONTENT_CARD_NAME = "CONTENT"
+private const val LOADING_CARD_NAME = "PROGRESS"
+
+abstract class CoursesPanel(dialog: BrowseCoursesDialog, coursesProvider: CoursesPlatformProvider) : JPanel() {
+  protected var coursePanel: NewCoursePanel = NewCoursePanel(
+    isStandalonePanel = false,
+    isLocationFieldNeeded = true,
+    joinCourseAction = joinCourseAction(dialog))
+  private var courses: MutableList<Course> = mutableListOf()
+  protected lateinit var coursesListPanel: CoursesListPanel
   private lateinit var myProgrammingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   private lateinit var myHumanLanguagesFilterDropdown: HumanLanguageFilterDropdown
+  private val cardLayout = JBCardLayout()
 
-  private var hoveredIndex: Int = -1
+  val projectSettings get() = coursePanel.projectSettings
 
-  val projectSettings: Any?
-    get() = myCoursePanel.projectSettings
+  val selectedCourse get() = coursesListPanel.selectedCourse
 
-  private fun initUI() {
-    GuiUtils.replaceJSplitPaneWithIDEASplitter(mySplitPaneRoot, true)
-    mySplitPane.setDividerLocation(0.5)
-    mySplitPane.resizeWeight = 0.5
-    myErrorLabel.isVisible = false
+  val locationString: String
+    get() {
+      // We use `coursePanel` with location field
+      // so `coursePanel.locationString` must return not null value
+      return coursePanel.locationString!!
+    }
 
-    val toolbarDecorator = ToolbarDecorator.createDecorator(myCoursesList)
-      .disableAddAction()
-      .disableRemoveAction()
-      .disableUpDownActions()
-      .setToolbarPosition(ActionToolbarPosition.BOTTOM)
-    myCoursesList.border = null
-    myCoursesList.background = getTaskDescriptionBackgroundColor()
-    val group = customToolbarActions ?: DefaultActionGroup(ImportCourseAction())
-    toolbarDecorator.setActionGroup(group)
-    val toolbarDecoratorPanel = toolbarDecorator.createPanel()
-    toolbarDecoratorPanel.border = null
-    (toolbarDecorator as ToolbarDecorator).actionsPanel.border = JBUI.Borders.customLine(NewCoursePanel.DIVIDER_COLOR, 1, 0, 0, 0)
-    myCourseListPanel.add(toolbarDecoratorPanel, BorderLayout.CENTER)
-    myCourseListPanel.border = JBUI.Borders.customLine(NewCoursePanel.DIVIDER_COLOR, 1, 0, 1, 1)
-    addErrorStateListener()
+  init {
+    layout = cardLayout
 
+    addCourseValidationListener(object : CourseValidationListener {
+      override fun validationStatusChanged(canStartCourse: Boolean) {
+        coursePanel.setButtonsEnabled(canStartCourse)
+      }
+    })
+
+    this.add(createContentPanel(coursesProvider), CONTENT_CARD_NAME)
+    this.add(createLoadingPanel(), LOADING_CARD_NAME)
+    showProgressState()
+
+    coursesListPanel.addListener { processSelectionChanged() }
+
+    setupPluginListeners(dialog.disposable)
+  }
+
+  fun hideLoginPanel() = coursesListPanel.hideLoginPanel()
+
+  private fun createContentPanel(coursesProvider: CoursesPlatformProvider): JPanel {
+    val mainPanel = JPanel(BorderLayout())
+    mainPanel.add(createAndBindSearchComponent(), BorderLayout.NORTH)
+    mainPanel.add(createSplitPane(coursesProvider), BorderLayout.CENTER)
+    return mainPanel
+  }
+
+  suspend fun loadCourses() {
+    courses.addAll(coursesListPanel.loadCourses())
+    updateFilters()
+    updateModel(courses, coursesListPanel.selectedCourse)
     processSelectionChanged()
   }
 
-  private fun joinCourseAction(dialog: BrowseCoursesDialog): (CourseInfo, CourseMode) -> Unit {
-    return { courseInfo, courseMode ->
-      joinCourse(courseInfo,
-                 courseMode,
-                 errorHandler = { errorState -> dialog.setError(errorState) },
-                 closeDialogAction = { dialog.close(DialogWrapper.OK_EXIT_CODE) })
-    }
-  }
+  private fun createSplitPane(coursesProvider: CoursesPlatformProvider): JPanel {
+    coursesListPanel = CoursesListPanel(toolbarAction(), coursesProvider, tabInfo())
+    coursesListPanel.addListener { processSelectionChanged() }
 
-  private fun addErrorStateListener() {
-    myErrorLabel.addHyperlinkListener {
-      when (val state = myErrorState) {
-        NotLoggedIn, StepikLoginRequired -> {
-          addLoginListener(Runnable { updateCoursesList() })
-          StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
-          loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
-        }
-        is CheckiOLoginRequired -> {
-          val course = myCoursesList.selectedValue as CheckiOCourse
-          addCheckiOLoginListener(course)
+    val splitPane = OnePixelSplitter()
+    splitPane.firstComponent = coursesListPanel
+    splitPane.secondComponent = coursePanel
 
-          //for Checkio course name matches platform name
-          loggedIn(course.name, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
-        }
-        HyperskillLoginRequired, JetBrainsAcademyLoginRecommended -> {
-          addHyperskillLoginListener()
-          loggedIn(HYPERSKILL, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
-        }
-        JavaFXRequired -> invokeSwitchBootJdk()
-        // BACKCOMPAT: 2019.3. Use `PluginsAdvertiser.installAndEnable`
-        IncompatibleVersion -> @Suppress("DEPRECATION") PluginsAdvertiser.installAndEnablePlugins(setOf(EduNames.PLUGIN_ID)) {}
-        is RequirePlugins -> {
-          // BACKCOMPAT: 2019.3. just use `state.pluginIds`
-          val pluginStringIds = state.pluginIds.mapTo(HashSet()) { it.stringId }
-          // BACKCOMPAT: 2019.3. Use `PluginsAdvertiser.installAndEnable`
-          @Suppress("DEPRECATION")
-          PluginsAdvertiser.installAndEnablePlugins(pluginStringIds) {}
-        }
-        RestartNeeded -> ApplicationManagerEx.getApplicationEx().restart(true)
-        is CustomSevereError -> state.action?.run()
-        null -> Unit
-        else -> browseHyperlink(state.message)
-      }
-    }
-  }
-
-  private fun invokeSwitchBootJdk() {
-    val switchBootJdkId = "SwitchBootJdk"
-    val action = ActionManager.getInstance().getAction(
-      switchBootJdkId)
-    if (action == null) {
-      LOG.error("$switchBootJdkId action not found")
-      return
-    }
-    action.actionPerformed(
-      AnActionEvent.createFromAnAction(action, null,
-                                       ActionPlaces.UNKNOWN,
-                                       DataManager.getInstance().getDataContext(this))
-    )
-  }
-
-  private fun addCheckiOLoginListener(selectedCourse: CheckiOCourse) {
-    val checkiOConnectorProvider = (selectedCourse.configurator as CheckiOConnectorProvider?)!!
-    val checkiOOAuthConnector = checkiOConnectorProvider.oAuthConnector
-    checkiOOAuthConnector.doAuthorize(
-      Runnable { myErrorLabel.isVisible = false },
-      Runnable { doValidation(selectedCourse) }
-    )
-  }
-
-  private fun addHyperskillLoginListener() {
-    getInstance().doAuthorize(
-      Runnable { myErrorLabel.isVisible = false },
-      Runnable { notifyListeners(true) }
-    )
-  }
-
-  private fun addLoginListener(vararg postLoginActions: Runnable) {
-    if (myBusConnection != null) {
-      myBusConnection!!.disconnect()
-    }
-    myBusConnection = ApplicationManager.getApplication().messageBus.connect()
-    myBusConnection!!.subscribe(EduSettings.SETTINGS_CHANGED, object : EduLogInListener {
-      override fun userLoggedOut() {}
-      override fun userLoggedIn() {
-        runPostLoginActions(*postLoginActions)
-      }
-    })
-  }
-
-  private fun runPostLoginActions(vararg postLoginActions: Runnable) {
-    ApplicationManager.getApplication().invokeLater({
-                                                      for (action in postLoginActions) {
-                                                        action.run()
-                                                      }
-                                                      if (myBusConnection != null) {
-                                                        myBusConnection!!.disconnect()
-                                                        myBusConnection = null
-                                                      }
-                                                    },
-                                                    ModalityState.any())
-  }
-
-  private fun updateCoursesList() {
-    val selectedCourse = myCoursesList.selectedValue
-    val privateCourses = getCourseInfosUnderProgress("Getting Available Courses") { StepikCoursesProvider.loadPrivateCourses() }
-    privateCourses?.let { courses ->
-      val coursesIds = myCourses.map { it.id }.toSet()
-      myCourses.addAll(courses.filter { !coursesIds.contains(it.id) })
-    }
-
-    updateModel(myCourses, selectedCourse)
-    myErrorLabel.isVisible = false
-    notifyListeners(true)
-  }
-
-  private fun processSelectionChanged() {
-    val course = selectedCourse
-    if (course != null) {
-      myCoursePanel.bindCourse(course)?.addSettingsChangeListener { doValidation(course) }
-    }
-    doValidation(course)
-  }
-
-  private fun doValidation() {
-    val course = myCoursesList.selectedValue
-    doValidation(course)
-  }
-
-  private fun doValidation(course: Course?) {
-    var languageError: ErrorState = NothingSelected
-    if (course != null) {
-      val languageSettingsMessage = myCoursePanel.validateSettings(course)
-      languageError = languageSettingsMessage?.let { LanguageSettingsError(it) } ?: None
-    }
-    val errorState = forCourse(course).merge(languageError)
-    updateErrorInfo(errorState)
-    notifyListeners(errorState.courseCanBeStarted)
-  }
-
-  fun updateErrorInfo(errorState: ErrorState) {
-    myErrorState = errorState
-    val message = errorState.message
-    if (message != null) {
-      myErrorLabel.isVisible = true
-      myErrorLabel.setHyperlinkText(message.beforeLink, message.linkText, message.afterLink)
-    }
-    else {
-      myErrorLabel.isVisible = false
-    }
-    myErrorLabel.foreground = errorState.foregroundColor
-  }
-
-  private fun sortCourses(courses: List<Course>): List<Course> {
-    return ContainerUtil.sorted(courses, myCoursesComparator)
-  }
-
-  private fun filterCourses(courses: List<Course>): List<Course> {
-    var filteredCourses = myProgrammingLanguagesFilterDropdown.filter(courses)
-    filteredCourses = myHumanLanguagesFilterDropdown.filter(filteredCourses)
-    return filteredCourses
-  }
-
-  private fun updateModel(courses: List<Course>, courseToSelect: Course?, filterCourses: Boolean = true) {
-    val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
-    val sortedCourses = sortCourses(coursesToAdd)
-    val listModel = DefaultListModel<Course>()
-    for (course in sortedCourses) {
-      listModel.addElement(course)
-    }
-    myCoursesList.model = listModel
-    if (myCoursesList.itemsCount > 0) {
-      myCoursesList.setSelectedIndex(0)
-    }
-    else {
-      myCoursePanel.hideContent()
-    }
-    if (courseToSelect == null) {
-      return
-    }
-
-    myCourses.stream()
-      .filter { course: Course -> course == courseToSelect }
-      .findFirst()
-      .ifPresent { newCourseToSelect: Course? -> myCoursesList.setSelectedValue(newCourseToSelect, true) }
-
-    myHumanLanguagesFilterDropdown.allItems = humanLanguages(courses)
-    myProgrammingLanguagesFilterDropdown.allItems = programmingLanguages(courses)
-  }
-
-  override fun getPreferredSize(): Dimension {
-    return JBUI.size(750, 400)
-  }
-
-  fun addCourseValidationListener(listener: CourseValidationListener) {
-    myListeners.add(listener)
-    listener.validationStatusChanged(myErrorState!!.courseCanBeStarted)
-  }
-
-  private fun notifyListeners(canStartCourse: Boolean) {
-    for (listener in myListeners) {
-      listener.validationStatusChanged(canStartCourse)
-    }
-  }
-
-  interface CourseValidationListener {
-    fun validationStatusChanged(canStartCourse: Boolean)
-  }
-
-  internal inner class ImportCourseAction : AnAction("Import Course",
-                                                     "Import local or Stepik course",
-                                                     AllIcons.ToolbarDecorator.Import) {
-    override fun actionPerformed(e: AnActionEvent) {
-      val localCourseOption = "Import local course"
-      val stepikCourseOption = "Import Stepik course"
-      val popupStep: BaseListPopupStep<String> = object : BaseListPopupStep<String>(
-        null, listOf(localCourseOption, stepikCourseOption)) {
-        override fun onChosen(selectedValue: String, finalChoice: Boolean): PopupStep<*>? {
-          return doFinalStep {
-            if (localCourseOption == selectedValue) {
-              importLocalCourse()
-            }
-            else if (stepikCourseOption == selectedValue) {
-              if (!EduSettings.isLoggedIn()) {
-                val result = Messages.showOkCancelDialog(
-                  "Stepik authorization is required to import courses", "Log in to Stepik", "Log in", "Cancel",
-                  null)
-                if (result == Messages.OK) {
-                  addLoginListener(Runnable { updateCoursesList() },
-                                   Runnable { importStepikCourse() })
-                  StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
-                }
-              }
-              else {
-                importStepikCourse()
-              }
-            }
-          }
-        }
-      }
-      val listPopup = JBPopupFactory.getInstance().createListPopup(popupStep)
-      val icon = templatePresentation.icon
-      val component = e.inputEvent.component
-      val relativePoint = RelativePoint(component, Point(icon.iconWidth + 6, 0))
-      listPopup.show(relativePoint)
-    }
-
-    private fun importLocalCourse() {
-      FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()) { file ->
-        val fileName = file.path
-        val course = EduUtils.getLocalCourse(fileName)
-        if (course == null) {
-          showInvalidCourseDialog()
-        }
-        else {
-          saveLastImportLocation(file)
-          importCourseArchive()
-          myCourses.add(course)
-          updateModel(myCourses, course, false)
-        }
-      }
-    }
-
-    private fun importStepikCourse() {
-      val course = StartStepikCourseAction().importStepikCourse() ?: return
-      myCourses.add(course)
-      updateModel(myCourses, course, false)
-    }
-  }
-
-  companion object {
-    private val LOG = Logger.getInstance(CoursesPanel::class.java)
-    private const val NO_COURSES = "No courses found"
-
-    fun browseHyperlink(message: ValidationMessage?) {
-      if (message == null) {
-        return
-      }
-      val hyperlink = message.hyperlinkAddress
-      if (hyperlink != null) {
-        BrowserUtil.browse(hyperlink)
-      }
-    }
-
-    private fun accept(@NonNls filter: String, course: Course): Boolean {
-      if (filter.isEmpty()) {
-        return true
-      }
-      val filterParts = getFilterParts(filter)
-      val courseName = course.name.toLowerCase(Locale.getDefault())
-      for (filterPart in filterParts) {
-        if (courseName.contains(filterPart)) return true
-        for (tag in course.tags) {
-          if (tag.accept(filterPart)) {
-            return true
-          }
-        }
-        for (authorName in course.authorFullNames) {
-          if (authorName.toLowerCase(Locale.getDefault()).contains(filterPart)) {
-            return true
-          }
-        }
-      }
-      return false
-    }
-
-    @JvmStatic
-    fun getFilterParts(@NonNls filter: String): Set<String> {
-      return HashSet(listOf(*filter.toLowerCase().split(" ".toRegex()).toTypedArray()))
-    }
-  }
-
-  init {
-    addCourseValidationListener(object : CourseValidationListener {
-      override fun validationStatusChanged(canStartCourse: Boolean) {
-        myCoursePanel.setButtonsEnabled(canStartCourse)
-      }
-    })
-    myErrorPanel.add(myErrorLabel, BorderLayout.CENTER)
-    myErrorPanel.border = JBUI.Borders.emptyTop(20)
-
-    myCourses = courses.toMutableList()
-    myCoursesComparator = Comparator.comparingInt { element: Course -> if (element is JetBrainsAcademyCourse) 0 else 1 }
-      .thenComparing(Course::getVisibility)
-      .thenComparing(Course::getName)
-
-    myCoursesList.setEmptyText(NO_COURSES)
-    val renderer = CourseColoredListCellRenderer()
-    myCoursesList.cellRenderer = renderer
-    myCoursesList.addListSelectionListener { processSelectionChanged() }
-    myCoursesList.border = null
-    myCoursesList.background = getTaskDescriptionBackgroundColor()
-    myCoursesList.addMouseListener(CourseMouseMotionListener())
-    myCoursesList.addMouseMotionListener(CourseMouseMotionListener())
-
-    val searchPanel = createSearchPanel()
-    updateModel(myCourses, null)
-
-    myMainPanel.add(searchPanel, BorderLayout.NORTH)
-
-    val courseToBind = selectedCourse ?: myCourses.firstOrNull()
-    if (courseToBind != null) {
-      myCoursePanel.bindCourse(courseToBind)
-    }
-    myCoursePanel.bindSearchField(mySearchField)
-
-    mySplitPane.leftComponent = myCourseListPanel
-    mySplitPane.rightComponent = myCoursePanel
-
-    mySplitPaneRoot.add(mySplitPane, BorderLayout.CENTER)
-    myContentPanel.add(mySplitPaneRoot, BorderLayout.CENTER)
-
-    myMainPanel.add(myContentPanel, BorderLayout.CENTER)
-    myMainPanel.add(myErrorPanel, BorderLayout.SOUTH)
-
-    add(myMainPanel, BorderLayout.CENTER)
-    initUI()
-
-    setupPluginListeners(dialog.disposable)
+    val splitPaneRoot = JPanel(BorderLayout()) // needed to set borders
+    splitPaneRoot.add(splitPane, BorderLayout.CENTER)
+    splitPaneRoot.border = JBUI.Borders.customLine(NewCoursePanel.DIVIDER_COLOR, 1, 0, 0, 0)
+    return splitPaneRoot
   }
 
   private fun setupPluginListeners(disposable: Disposable) {
@@ -526,37 +145,111 @@ class CoursesPanel(
     PluginManagerCore.addDisablePluginListener(disablePluginListener)
   }
 
+  protected open fun toolbarAction(): AnAction? = null
+
+  protected open fun tabInfo(): TabInfo? = null
+
+  override fun getPreferredSize(): Dimension = PANEL_SIZE
+
+  interface CourseValidationListener {
+    fun validationStatusChanged(canStartCourse: Boolean)
+  }
+
+  private fun createLoadingPanel() = JPanel(BorderLayout()).apply {
+    add(CenteredIcon(), BorderLayout.CENTER)
+  }
+
+  private fun showProgressState() = cardLayout.show(this, LOADING_CARD_NAME)
+
+  private fun showContent() {
+    coursesListPanel.selectFirstCourse()
+    cardLayout.show(this, CONTENT_CARD_NAME)
+  }
+
+  private fun joinCourseAction(dialog: BrowseCoursesDialog): (CourseInfo, CourseMode) -> Unit {
+    return { courseInfo, courseMode ->
+      joinCourse(courseInfo,
+                 courseMode,
+                 errorHandler = { errorState -> dialog.setError(errorState) },
+                 closeDialogAction = { dialog.close(DialogWrapper.OK_EXIT_CODE) })
+    }
+  }
+
+  private fun updateFilters() {
+    myHumanLanguagesFilterDropdown.updateItems(humanLanguages(courses))
+    myProgrammingLanguagesFilterDropdown.updateItems(programmingLanguages(courses))
+  }
+
+  private fun processSelectionChanged() {
+    val course = selectedCourse
+    if (course != null) {
+      coursePanel.bindCourse(course)?.addSettingsChangeListener { doValidation(course) }
+    }
+    doValidation(course)
+  }
+
+  protected fun doValidation(course: Course? = coursesListPanel.selectedCourse) {
+    var languageError: ErrorState = NothingSelected
+    if (course != null) {
+      val languageSettingsMessage = coursePanel.validateSettings(course)
+      languageError = languageSettingsMessage?.let { LanguageSettingsError(it) } ?: None
+    }
+    val errorState = forCourse(course).merge(languageError)
+    setError(errorState)
+    notifyListeners(errorState.courseCanBeStarted)
+  }
+
+  fun setError(errorState: ErrorState) {
+    coursePanel.setError(errorState)
+  }
+
+  private fun filterCourses(courses: List<Course>): List<Course> {
+    var filteredCourses = myProgrammingLanguagesFilterDropdown.filter(courses)
+    filteredCourses = myHumanLanguagesFilterDropdown.filter(filteredCourses)
+    return filteredCourses
+  }
+
+  protected fun updateModel(courses: List<Course>, courseToSelect: Course?, filterCourses: Boolean = true) {
+    val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
+    coursesListPanel.updateModel(coursesToAdd, courseToSelect)
+    showContent()
+  }
+
+  fun addCourseValidationListener(listener: CourseValidationListener) {
+    coursePanel.addCourseValidationListener(listener)
+  }
+
+  fun notifyListeners(canStartCourse: Boolean) {
+    coursePanel.notifyListeners(canStartCourse)
+  }
+
   private fun humanLanguages(courses: List<Course>): Set<String> = courses.map { it.humanLanguage }.toSet()
 
   private fun programmingLanguages(courses: List<Course>): Set<String> = courses.mapNotNull { it.technologyName }.toSet()
 
-  val selectedCourse: Course?
-    get() = myCoursesList.selectedValue
-
-  val locationString: String
-    get() {
-      // We use `myCoursePanel` with location field
-      // so `myCoursePanel.getLocationString()` must return not null value
-      return myCoursePanel.locationString!!
-    }
-
-  private fun createSearchPanel(): JComponent {
+  private fun createAndBindSearchComponent(): JPanel {
     val searchPanel = JPanel(BorderLayout())
-    mySearchField = LanguagesFilterComponent()
-    searchPanel.add(mySearchField, BorderLayout.CENTER)
+    val searchField = LanguagesFilterComponent()
+    coursePanel.bindSearchField(searchField)
+    searchPanel.add(searchField, BorderLayout.CENTER)
 
-    myProgrammingLanguagesFilterDropdown = ProgrammingLanguageFilterDropdown(programmingLanguages(myCourses)) {
-      updateModel(myCourses, selectedCourse)
+    myProgrammingLanguagesFilterDropdown = ProgrammingLanguageFilterDropdown(programmingLanguages(emptyList())) {
+      updateModel(courses, selectedCourse)
     }
-    myHumanLanguagesFilterDropdown = HumanLanguageFilterDropdown(humanLanguages(myCourses)) { updateModel(myCourses, selectedCourse) }
+    myHumanLanguagesFilterDropdown = HumanLanguageFilterDropdown(humanLanguages(emptyList())) {
+      updateModel(courses, selectedCourse)
+    }
     val filtersPanel = JPanel(HorizontalLayout(0))
     filtersPanel.add(myProgrammingLanguagesFilterDropdown)
     filtersPanel.add(myHumanLanguagesFilterDropdown)
 
     searchPanel.add(filtersPanel, BorderLayout.LINE_END)
-    searchPanel.border = JBUI.Borders.emptyBottom(8)
+    searchPanel.border = JBUI.Borders.empty(8, 0)
 
     return searchPanel
+  }
+
+  open fun updateCourseListAfterLogin() {
   }
 
   inner class LanguagesFilterComponent : FilterComponent("Edu.NewCourse", 5, true) {
@@ -568,43 +261,46 @@ class CoursesPanel(
     override fun filter() {
       val filter = filter
       val filtered = ArrayList<Course>()
-      for (course in myCourses) {
+      for (course in courses) {
         if (accept(filter, course)) {
           filtered.add(course)
         }
       }
       updateModel(filtered, selectedCourse)
     }
-  }
 
-  private inner class CourseMouseMotionListener : MouseAdapter() {
-    override fun mouseMoved(event: MouseEvent) {
-      val hoveredIndex = myCoursesList.locationToIndex(event.point)
-      if (this@CoursesPanel.hoveredIndex != hoveredIndex) {
-        this@CoursesPanel.hoveredIndex = hoveredIndex
-        myCoursesList.repaint()
+    private fun accept(@NonNls filter: String, course: Course): Boolean {
+      if (filter.isEmpty()) {
+        return true
       }
+      val filterParts = getFilterParts(filter)
+      val courseName = course.name.toLowerCase(Locale.getDefault())
+      for (filterPart in filterParts) {
+        if (courseName.contains(filterPart)) return true
+        for (tag in course.tags) {
+          if (tag.accept(filterPart)) {
+            return true
+          }
+        }
+        for (authorName in course.authorFullNames) {
+          if (authorName.toLowerCase(Locale.getDefault()).contains(filterPart)) {
+            return true
+          }
+        }
+      }
+      return false
     }
 
-    override fun mouseExited(event: MouseEvent?) {
-      if (this@CoursesPanel.hoveredIndex != -1) {
-        this@CoursesPanel.hoveredIndex = -1
-        myCoursesList.repaint()
-      }
-    }
-  }
-
-  private inner class CourseColoredListCellRenderer : ListCellRenderer<Course?> {
-    override fun getListCellRendererComponent(list: JList<out Course?>?,
-                                              value: Course?,
-                                              index: Int,
-                                              isSelected: Boolean,
-                                              cellHasFocus: Boolean): Component {
-      val courseCardComponent = CourseCardComponent(value)
-      courseCardComponent.updateColors(isSelected || hoveredIndex == index)
-      return courseCardComponent
+    private fun getFilterParts(@NonNls filter: String): Set<String> {
+      return HashSet(listOf(*filter.toLowerCase().split(" ".toRegex()).toTypedArray()))
     }
   }
 }
 
-
+private class CenteredIcon : AsyncProcessIcon.Big("Loading") {
+  override fun calculateBounds(container: JComponent): Rectangle {
+    val size = container.size
+    val iconSize = preferredSize
+    return Rectangle((size.width - iconSize.width) / 2, (size.height - iconSize.height) / 2, iconSize.width, iconSize.height)
+  }
+}

@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -36,7 +36,7 @@ sealed class ErrorState(
   object None : ErrorState(OK, null, Color.BLACK, true)
 
   object NotLoggedIn : ErrorState(LOGIN_RECOMMENDED, ValidationMessage("", "Log in", " to Stepik to see more courses", type = WARNING), warningTextForeground, true)
-  object JetBrainsAcademyLoginRecommended : ErrorState(LOGIN_RECOMMENDED, ValidationMessage("", linkText = "Log in", afterLink = " to existing ${EduNames.JBA} account to open a project"), warningTextForeground, true)
+  object JetBrainsAcademyLoginNeeded : ErrorState(LOGIN_ERROR, ValidationMessage("", linkText = "Log in", afterLink = " to ${EduNames.JBA} account to open a project"), errorTextForeground, false)
 
   abstract class LoginRequired(platformName: String) : ErrorState(LOGIN_ERROR, ValidationMessage("", "Log in", " to $platformName to start this course"), errorTextForeground, false)
   object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)
@@ -83,7 +83,7 @@ sealed class ErrorState(
       get() {
         return when (this) {
           is CheckiOCourse -> checkiOError
-          is JetBrainsAcademyCourse -> if (HyperskillSettings.INSTANCE.account == null) JetBrainsAcademyLoginRecommended else None
+          is JetBrainsAcademyCourse -> if (HyperskillSettings.INSTANCE.account == null) JetBrainsAcademyLoginNeeded else None
           is HyperskillCourse -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginRequired else None
           is EduCourse -> {
             if (!isLoggedInToStepik()) {

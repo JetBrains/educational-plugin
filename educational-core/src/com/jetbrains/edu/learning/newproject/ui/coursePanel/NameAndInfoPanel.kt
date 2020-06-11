@@ -66,6 +66,10 @@ class NameAndInfoPanel(joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel() 
     startButton.isEnabled = isEnabled
     editButton.isEnabled = isVisible && isEnabled
   }
+
+  fun setButtonToolTip(text: String?) {
+    startButton.toolTipText = text
+  }
 }
 
 private class TagsPanel : JPanel(HorizontalLayout(HORIZONTAL_OFFSET)) {

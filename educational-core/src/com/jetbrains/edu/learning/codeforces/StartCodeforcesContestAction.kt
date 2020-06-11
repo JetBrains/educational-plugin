@@ -13,8 +13,12 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
-class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest") {
+class StartCodeforcesContestAction(
+  title: String = "Start Codeforces Contest",
+  private val showViewAllLabel: Boolean = true
+) : DumbAwareAction(title) {
 
   override fun actionPerformed(e: AnActionEvent) {
     val course = importCodeforcesContest() ?: return
@@ -51,7 +55,7 @@ class StartCodeforcesContestAction : DumbAwareAction("Start Codeforces Contest")
   }
 
   private fun showDialogAndGetContestId(): Int? {
-    val dialog = ImportCodeforcesContestDialog()
+    val dialog = ImportCodeforcesContestDialog(showViewAllLabel)
     if (!dialog.showAndGet()) {
       return null
     }

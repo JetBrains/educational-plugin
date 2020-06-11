@@ -3,21 +3,28 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.FilterComponent
 import com.intellij.ui.Gray
+import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
+import java.awt.BorderLayout
 import java.awt.Dimension
+import java.util.*
 import javax.swing.JPanel
 import javax.swing.event.DocumentListener
 
 const val DESCRIPTION_AND_SETTINGS_TOP_OFFSET = 25
 
+private const val ERROR_LABEL_TOP_GAP = 20
 private const val HORIZONTAL_MARGIN = 10
 private const val LARGE_HORIZONTAL_MARGIN = 15
 private const val LINE_BORDER_THICKNESS = 1
-private val DIALOG_SIZE = JBUI.size(400, 600)
+private val PANEL_SIZE = JBUI.size(400, 600)
 
 // TODO: Rename to CoursePanel after CoursePanel.java is removed
 class NewCoursePanel(
@@ -25,27 +32,21 @@ class NewCoursePanel(
   val isLocationFieldNeeded: Boolean,
   joinCourseAction: (CourseInfo, CourseMode) -> Unit
 ) : JPanel() {
+  var errorState: ErrorState = ErrorState.NothingSelected
+  var course: Course? = null
+
   private var header = HeaderPanel(leftMargin, joinCourseAction)
   private var description = CourseDescriptionPanel(leftMargin)
   private var advancedSettings = NewCourseSettings(isLocationFieldNeeded, leftMargin)
+  private val errorLabel: HyperlinkLabel = HyperlinkLabel().apply { isVisible = false }
   private var mySearchField: FilterComponent? = null
+  private val listeners: MutableList<CoursesPanel.CourseValidationListener> = ArrayList()
 
-  init {
-    layout = VerticalFlowLayout(0, 0)
+  val locationString: String?
+    get() = advancedSettings.locationString
 
-    // We want to show left part of border only if panel is independent
-    val leftBorder = if (isStandalonePanel) LINE_BORDER_THICKNESS else 0
-    border = JBUI.Borders.customLine(DIVIDER_COLOR, LINE_BORDER_THICKNESS, leftBorder, LINE_BORDER_THICKNESS, 0)
-
-    add(header)
-    add(description)
-    add(advancedSettings)
-    background = UIUtil.getEditorPaneBackground()
-  }
-
-  fun setButtonsEnabled(isEnabled: Boolean) {
-    header.setButtonsEnabled(isEnabled)
-  }
+  val projectSettings: Any?
+    get() = advancedSettings.getProjectSettings()
 
   private val leftMargin: Int
     get() {
@@ -57,15 +58,32 @@ class NewCoursePanel(
       }
     }
 
-  override fun getMinimumSize(): Dimension {
-    return DIALOG_SIZE
+  init {
+    layout = VerticalFlowLayout(0, 0)
+
+    // We want to show left part of border only if panel is independent
+    val leftBorder = if (isStandalonePanel) LINE_BORDER_THICKNESS else 0
+    border = JBUI.Borders.customLine(DIVIDER_COLOR, 0, leftBorder, 0, 0)
+
+    add(header)
+    add(description)
+    add(advancedSettings)
+    add(createErrorPanel())
+
+    background = UIUtil.getEditorPaneBackground()
   }
 
-  // to use in JoinCoursePanel
+  fun setButtonsEnabled(isEnabled: Boolean) {
+    header.setButtonsEnabled(isEnabled)
+  }
+
+  override fun getMinimumSize(): Dimension {
+    return PANEL_SIZE
+  }
+
   fun addLocationFieldDocumentListener(listener: DocumentListener) {
     advancedSettings.addLocationFieldDocumentListener(listener)
   }
-
 
   private fun updateCourseDescriptionPanel(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()) {
     val location = locationString
@@ -77,31 +95,74 @@ class NewCoursePanel(
     description.bind(course)
   }
 
+  private fun createErrorPanel(): JPanel {
+    val errorPanel = JPanel(BorderLayout())
+    errorPanel.add(errorLabel, BorderLayout.CENTER)
+    errorPanel.border = JBUI.Borders.empty(ERROR_LABEL_TOP_GAP, leftMargin, 0, 0)
+    addErrorStateListener()
+    return errorPanel
+  }
+
+  private fun addErrorStateListener() {
+    errorLabel.addHyperlinkListener(ErrorStateHyperlinkListener())
+  }
+
   fun bindCourse(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()): LanguageSettings<*>? {
-    isVisible = true
+    this.course = course
     advancedSettings.update(course, settings.showLanguageSettings)
     updateCourseDescriptionPanel(course, settings)
     return advancedSettings.languageSettings
   }
 
-  fun validateSettings(course: Course?) = advancedSettings.validateSettings(course)
-
-  fun hideContent() {
-    isVisible = false
+  fun notifyListeners(canStartCourse: Boolean) {
+    for (listener in listeners) {
+      listener.validationStatusChanged(canStartCourse)
+    }
   }
 
-  val locationString: String?
-    get() = advancedSettings.locationString
+  fun addCourseValidationListener(listener: CoursesPanel.CourseValidationListener) {
+    listeners.add(listener)
+    listener.validationStatusChanged(canStartCourse())
+  }
 
-  val projectSettings: Any?
-    get() = advancedSettings.getProjectSettings()
+  fun validateSettings(course: Course?) = advancedSettings.validateSettings(course)
 
   fun bindSearchField(searchField: FilterComponent) {
     mySearchField = searchField
   }
 
+  fun hideErrorPanel() {
+    errorLabel.isVisible = false
+  }
+
+  fun setError(errorState: ErrorState) {
+    this.errorState = errorState
+    val message = errorState.message
+    header.setButtonToolTip(null)
+    if (message != null) {
+      when (errorState) {
+        is ErrorState.JetBrainsAcademyLoginNeeded -> {
+          errorLabel.isVisible = true
+          errorLabel.setHyperlinkText(message.beforeLink, message.linkText, message.afterLink)
+          header.setButtonToolTip(EduCoreBundle.message("course.dialog.login.required"))
+        }
+        else -> {
+          errorLabel.isVisible = true
+          errorLabel.setHyperlinkText(message.beforeLink, message.linkText, message.afterLink)
+          header.setButtonToolTip(message.beforeLink + message.linkText + message.afterLink)
+        }
+      }
+    }
+    else {
+      errorLabel.isVisible = false
+    }
+    errorLabel.foreground = errorState.foregroundColor
+  }
+
+  private fun canStartCourse(): Boolean = errorState.courseCanBeStarted
+
   companion object {
-    // default divider's color too dart in Darcula, so use the same color as in plugins dialog
+    // default divider's color too dark in Darcula, so use the same color as in plugins dialog
     val DIVIDER_COLOR = JBColor(Gray._192, Gray._81)
   }
 }

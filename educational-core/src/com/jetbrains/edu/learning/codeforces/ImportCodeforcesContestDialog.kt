@@ -1,14 +1,19 @@
 package com.jetbrains.edu.learning.codeforces
 
+import com.intellij.openapi.application.AppUIExecutor
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.HyperlinkLabel
-import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseLoading.CourseLoader
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.awt.BorderLayout
 import java.awt.event.ActionEvent
 import java.awt.event.MouseAdapter
@@ -16,7 +21,7 @@ import java.awt.event.MouseEvent
 import javax.swing.AbstractAction
 import javax.swing.JComponent
 
-class ImportCodeforcesContestDialog : DialogWrapper(false) {
+class ImportCodeforcesContestDialog(private val showViewAllLabel: Boolean) : DialogWrapper(false) {
   private var contestPanel = ImportCodeforcesContestPanel()
   private val contestsList = HyperlinkLabel("View all contests...")
 
@@ -24,7 +29,9 @@ class ImportCodeforcesContestDialog : DialogWrapper(false) {
 
   override fun createSouthPanel(): JComponent {
     val south = super.createSouthPanel()
-    south.add(contestsList, BorderLayout.WEST)
+    if (showViewAllLabel) {
+      south.add(contestsList, BorderLayout.WEST)
+    }
     return south
   }
 
@@ -39,27 +46,27 @@ class ImportCodeforcesContestDialog : DialogWrapper(false) {
 
   init {
     title = "Start Codeforces Contest"
-    contestsList.addHyperlinkListener { codeforcesListPanel() }
+    val scope = CoroutineScope(AppUIExecutor.onUiThread(ModalityState.any()).coroutineDispatchingContext())
+    contestsList.addHyperlinkListener { scope.launch { codeforcesListPanel() } }
 
     init()
   }
 
   fun getContestId(): Int = contestPanel.getContestId()
 
-  private fun codeforcesListPanel() {
-    val courses = CourseLoader.getCourseInfosUnderProgress("Getting Available Contests") {
-      CoursesProvider.loadAllCourses(listOf(CodeforcesContestsProvider))
-    } ?: return
-
-    if (courses.isEmpty()) {
+  private suspend fun codeforcesListPanel() {
+    // TODO: get from extension when it's registered
+    val providers = CodeforcesPlatformProviderFactory().getProviders()
+    val courses = withContext(Dispatchers.IO) { providers.flatMap { it.loadCourses() } }
+    if (courses.isNullOrEmpty()) {
       // TODO make it clickable
       // TODO also check other places
       Messages.showErrorDialog(EduCoreBundle.message("codeforces.failed.to.load.contests.message", CodeforcesNames.CODEFORCES_URL),
                                EduCoreBundle.message("codeforces.failed.to.load.contests.title"))
-      return
     }
-
-    browseContests(courses)
+    else {
+      browseContests(courses)
+    }
   }
 
   private fun browseContests(courses: List<Course>) {

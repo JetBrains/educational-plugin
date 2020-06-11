@@ -41,6 +41,10 @@ class HeaderPanel(
     nameAndInfoPanel.update(courseInfo, settings)
   }
 
+  fun setButtonToolTip(text: String?) {
+    nameAndInfoPanel.setButtonToolTip(text)
+  }
+
   private class IconPanel : JPanel(VerticalFlowLayout(VerticalFlowLayout.TOP, false, false)) {
     var iconLabel = JBLabel()
 

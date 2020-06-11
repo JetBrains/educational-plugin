@@ -9,7 +9,6 @@ import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.NewHyperskillCourseAction
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
-import com.jetbrains.edu.learning.coursera.StartCourseraAssignment
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import icons.EducationalCoreIcons
@@ -21,7 +20,6 @@ class LearnAndTeachAction : WelcomePopupAction() {
 
   override fun fillActions(group: DefaultActionGroup) {
     group.addAll(BrowseCoursesAction(),
-                 StartCourseraAssignment(),
                  HyperskillProjectAction(),
                  ImportLocalCourseAction(),
                  StartStepikCourseAction(),

@@ -23,14 +23,19 @@ public class EducationalCoreIcons {
 
   public static final Icon Stepik = load("/icons/com/jetbrains/edu/learning/Stepik.png"); // 16x16
   public static final Icon StepikRefresh = load("/icons/com/jetbrains/edu/learning/StepikRefresh.png"); // 16x16
+  public static final Icon StepikCourseTab = load("/icons/com/jetbrains/edu/learning/StepikBlack.svg"); // 16x16
 
   public static final Icon CheckiO = load("/icons/com/jetbrains/edu/learning/PyCheckiO.svg");
   public static final Icon JSCheckiO = load("/icons/com/jetbrains/edu/learning/JSCheckiO.svg");
+
   public static final Icon JB_ACADEMY_ENABLED = load("/icons/com/jetbrains/edu/learning/JB_academy_enabled.svg");
   public static final Icon JB_ACADEMY_DISABLED = load("/icons/com/jetbrains/edu/learning/JB_academy_disabled.svg");
+  public static final Icon JB_ACADEMY_TAB = load("/icons/com/jetbrains/edu/learning/JB_academy_course_tab.svg");
 
   public static final Icon Codeforces = load("/icons/com/jetbrains/edu/learning/codeforces.svg");
   public static final Icon CodeforcesGrayed = load("/icons/com/jetbrains/edu/learning/codeforcesGrayed.svg");
+
+  public static final Icon Coursera = load("/icons/com/jetbrains/edu/learning/coursera.svg");
 
   public static final Icon Student = load("/icons/com/jetbrains/edu/Learner.svg"); // 180x180
   public static final Icon StudentHover = load("/icons/com/jetbrains/edu/LearnerActive.svg"); // 180x180

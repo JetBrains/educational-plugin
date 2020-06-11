@@ -48,9 +48,10 @@
       <with attribute="instance" implements="com.jetbrains.edu.learning.settings.OptionsProvider"/>
     </extensionPoint>
 
-    <extensionPoint qualifiedName="Educational.coursesProvider"
-                    interface="com.jetbrains.edu.learning.CoursesProvider"
-                    dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.coursesPlatformProviderFactory"
+                    interface="com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory"
+                    dynamic="true"
+    />
 
     <extensionPoint qualifiedName="Educational.codeforcesLanguageProvider"
                     interface="com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider"
@@ -58,7 +59,6 @@
   </extensionPoints>
 
   <actions>
-    <action id="Educational.StartCourseraAssignment" class="com.jetbrains.edu.learning.coursera.StartCourseraAssignment"/>
     <action id="Educational.ImportCourseraAssignment" class="com.jetbrains.edu.learning.coursera.ImportCourseraAssignment"/>
     <action id="Educational.ImportLocalCourse" class="com.jetbrains.edu.learning.actions.ImportLocalCourseAction"/>
     <action id="Educational.StartStepikCourse" class="com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction"/>
@@ -188,7 +188,6 @@
 
     <group id="Educational.LearnAndTeachFileMenu" class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup" popup="true">
       <reference id="Educational.BrowseCourses"/>
-      <reference id="Educational.StartCourseraAssignment"/>
       <reference id="Educational.ImportLocalCourse"/>
       <reference id="Educational.StartStepikCourse"/>
       <reference id="Educational.Educator.NewCourse"/>
@@ -307,8 +306,17 @@
     <checkListener implementation="com.jetbrains.edu.learning.twitter.TwitterAction"/>
     <checkListener implementation="com.jetbrains.edu.learning.stepik.PostSolutionCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
-    <coursesProvider implementation="com.jetbrains.edu.learning.stepik.StepikCoursesProvider"/>
-    <coursesProvider implementation="com.jetbrains.edu.learning.checkio.CheckiOCoursesProvider"/>
+    <coursesPlatformProviderFactory id="Stepik" order="first"
+                                    implementation="com.jetbrains.edu.learning.stepik.StepikPlatformProviderFactory"/>
+    <coursesPlatformProviderFactory id="Coursera" order="after Stepik"
+                                    implementation="com.jetbrains.edu.learning.coursera.CourseraPlatformProviderFactory"/>
+    <coursesPlatformProviderFactory id="CheckiO" order="after Coursera"
+                                    implementation="com.jetbrains.edu.learning.checkio.CheckiOPlatformProviderFactory"/>
+
+<!--    <coursesPlatformProviderFactory id="Codeforces" order="after Coursera"-->
+<!--                                    implementation="com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProviderFactory"/>-->
+
+
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.checker.StepikRemoteTaskChecker"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.coursera.CourseraTaskChecker"/>
 

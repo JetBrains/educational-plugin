@@ -30,7 +30,7 @@ class AssignmentFormatTest : EduTestCase() {
 
   private fun getCourseraCourse(): CourseraCourse {
     val zipPath = "$testDataPath/${getTestName(true).trim()}.zip"
-    return StartCourseraAssignment.getCourseraCourse(zipPath) ?: error("Failed to import Coursera course from $zipPath")
+    return CourseraPlatformProvider.getCourseraCourse(zipPath) ?: error("Failed to import Coursera course from $zipPath")
   }
 
   fun `test coursera course`() {

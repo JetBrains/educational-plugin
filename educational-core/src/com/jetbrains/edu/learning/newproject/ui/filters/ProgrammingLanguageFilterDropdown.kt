@@ -17,6 +17,14 @@ class ProgrammingLanguageFilterDropdown(
     text = defaultTitle()
   }
 
+  override fun updateItems(items: Set<String>) {
+    val allSelected = allItems.size == selectedItems.size
+    super.updateItems(items)
+    if (allSelected) {
+      selectedItems = items
+    }
+  }
+
   override fun defaultTitle() = EduCoreBundle.message("course.dialog.filter.programming.languages")
 
   override fun isAccepted(course: Course): Boolean = course.technologyName in selectedItems

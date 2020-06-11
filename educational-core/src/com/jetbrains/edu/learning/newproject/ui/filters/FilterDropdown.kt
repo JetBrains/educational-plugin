@@ -43,6 +43,10 @@ abstract class FilterDropdown(
 
   abstract fun isAccepted(course: Course): Boolean
 
+  open fun updateItems(items: Set<String>) {
+    allItems = items
+  }
+
   fun filter(courses: List<Course>): List<Course> {
     return courses.filter { isAccepted(it) }
   }
