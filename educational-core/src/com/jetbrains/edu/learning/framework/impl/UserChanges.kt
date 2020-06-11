@@ -90,7 +90,8 @@ sealed class Change {
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
       if (task.getTaskFile(path) == null) {
         GeneratorUtils.createChildFile(taskDir, path, text)
-      } else {
+      }
+      else {
         try {
           EduDocumentListener.modifyWithoutListener(task, path) {
             GeneratorUtils.createChildFile(taskDir, path, text)
