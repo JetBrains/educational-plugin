@@ -13,11 +13,10 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.NO_TESTS_RUN
+import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 
 abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: EnvironmentChecker, project: Project) :
@@ -104,8 +103,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     val firstFailedTest = failedChildren.firstOrNull() ?: error("Testing failed although no failed tests found")
     val diff = firstFailedTest.diffViewerProvider?.let { CheckResultDiff(it.left, it.right, it.diffTitle) }
     val message = if (diff != null) getComparisonErrorMessage(firstFailedTest) else getErrorMessage(firstFailedTest)
-    val nonEmptyMessage = message.nullize(nullizeSpaces = true) ?: EduCoreBundle.message("check.incorrect")
-    return CheckResult(CheckStatus.Failed, removeAttributes(nonEmptyMessage), diff = diff)
+    return CheckResult(CheckStatus.Failed, removeAttributes(fillWithIncorrect(message)), diff = diff)
   }
 
   /**

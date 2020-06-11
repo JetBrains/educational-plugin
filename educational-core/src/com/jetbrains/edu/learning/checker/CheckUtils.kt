@@ -23,9 +23,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.messages.MessageBusConnection
+import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.editor.EduSingleFileEditor
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToFirstFailedAnswerPlaceholder
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -76,6 +78,9 @@ object CheckUtils {
     }
     navigateToFirstFailedAnswerPlaceholder(editor, taskFileToNavigate)
   }
+
+  fun fillWithIncorrect(message: String): String =
+    message.nullize(nullizeSpaces = true) ?: EduCoreBundle.message("check.incorrect")
 
   fun flushWindows(task: Task, taskDir: VirtualFile) {
     for ((_, taskFile) in task.taskFiles) {

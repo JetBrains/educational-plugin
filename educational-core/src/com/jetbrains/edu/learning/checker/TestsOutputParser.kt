@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATULATIONS
 import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
 import com.jetbrains.edu.learning.checker.CheckUtils.TEST_FAILED
 import com.jetbrains.edu.learning.checker.CheckUtils.TEST_OK
+import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import java.util.regex.Pattern
 
@@ -35,7 +36,8 @@ class TestsOutputParser {
 
     val finalFailedMessage = lastFailedMessage
     return if (finalFailedMessage != null) {
-      CheckResult(CheckStatus.Failed, finalFailedMessage.message, needEscape = needEscapeResult, diff = finalFailedMessage.diff)
+      val message = fillWithIncorrect(finalFailedMessage.message)
+      CheckResult(CheckStatus.Failed, message, needEscape = needEscapeResult, diff = finalFailedMessage.diff)
     }
     else {
       CheckResult(CheckStatus.Solved, congratulations, needEscape = needEscapeResult)
