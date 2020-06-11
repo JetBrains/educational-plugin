@@ -24,4 +24,8 @@ abstract class OpenCourseDialogBase : DialogWrapper(true) {
   fun setEnabledViewAsEducator(enabled: Boolean) {
     (myOKAction as? OpenCourseAction)?.viewAsEducatorAction?.isEnabled = enabled
   }
+
+  override fun getStyle(): DialogStyle {
+    return DialogStyle.COMPACT
+  }
 }
