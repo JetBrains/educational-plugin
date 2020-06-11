@@ -143,9 +143,9 @@ class CourseViewTest : CourseViewTestBase() {
 
   private fun navigateToNextTask() {
     val eduEditor = EduUtils.getSelectedEduEditor(project)
-    val eduState = EduState(eduEditor)
-    TestCase.assertTrue(eduState.isValid)
-    val targetTask = NavigationUtils.nextTask(eduState.task)
+    val eduState = EduState.create(eduEditor)
+    TestCase.assertTrue(eduState != null)
+    val targetTask = NavigationUtils.nextTask(eduState!!.task)
     TestCase.assertNotNull(targetTask)
     NavigationUtils.navigateToTask(project, targetTask!!)
   }

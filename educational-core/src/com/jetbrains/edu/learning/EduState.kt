@@ -1,49 +1,29 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.editor.EduEditor;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.editor.EduEditor
 
-public class EduState {
-  private final EduEditor myEduEditor;
-  private final Editor myEditor;
-  private final TaskFile myTaskFile;
-  private final VirtualFile myVirtualFile;
-  private final Task myTask;
 
-  public EduState(@Nullable final EduEditor eduEditor) {
-    myEduEditor = eduEditor;
-    myEditor = eduEditor != null ? eduEditor.getEditor() : null;
-    myTaskFile = eduEditor != null ? eduEditor.getTaskFile() : null;
-    myVirtualFile = myEditor != null ? FileDocumentManager.getInstance().getFile(myEditor.getDocument()) : null;
-    myTask = myTaskFile != null ? myTaskFile.getTask() : null;
-  }
+class EduState private constructor(eduEditor: EduEditor, val virtualFile: VirtualFile) {
+  val editor: Editor = eduEditor.editor
+  val taskFile: TaskFile = eduEditor.taskFile
+  val task: Task = taskFile.task
 
-  @Nullable
-  public Editor getEditor() {
-    return myEditor;
-  }
+  companion object {
+    @JvmStatic
+    fun create(eduEditor: EduEditor): EduState? {
+      val virtualFile = FileDocumentManager.getInstance().getFile(eduEditor.editor.document) ?: return null
+      return EduState(eduEditor, virtualFile)
+    }
 
-  @Nullable
-  public TaskFile getTaskFile() {
-    return myTaskFile;
-  }
-
-  public VirtualFile getVirtualFile() {
-    return myVirtualFile;
-  }
-
-  public Task getTask() {
-    return myTask;
-  }
-
-  public boolean isValid() {
-    return myEduEditor != null && myEditor != null &&
-           myTaskFile != null && myVirtualFile != null &&
-           myTask != null;
+    fun getEduState(project: Project): EduState? {
+      val studyEditor = EduUtils.getSelectedEduEditor(project) ?: return null
+      return create(studyEditor)
+    }
   }
 }

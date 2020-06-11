@@ -73,13 +73,15 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
       return null;
     }
     EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
-    final EduState eduState = new EduState(eduEditor);
-    if (eduEditor == null || !eduState.isValid()) {
+    if (eduEditor == null) {
+      return null;
+    }
+    final EduState eduState = EduState.create(eduEditor);
+    if (eduState == null) {
       return null;
     }
     final Editor editor = eduState.getEditor();
     final TaskFile taskFile = eduState.getTaskFile();
-    if (taskFile == null || editor == null) return null;
     return taskFile.getAnswerPlaceholder(editor.getCaretModel().getOffset());
   }
 }

@@ -38,7 +38,7 @@ object CheckUtils {
   const val TEST_OK = "test OK"
   const val TEST_FAILED = "FAILED + "
   const val CONGRATS_MESSAGE = "CONGRATS_MESSAGE "
-  val COMPILATION_ERRORS = listOf("Compilation failed", "Compilation error")
+  private val COMPILATION_ERRORS = listOf("Compilation failed", "Compilation error")
   const val COMPILATION_FAILED_MESSAGE = "Compilation Failed"
   const val NOT_RUNNABLE_MESSAGE = "Solution isn't runnable"
   const val LOGIN_NEEDED_MESSAGE = "Please, login to Stepik to check the task"
@@ -48,7 +48,7 @@ object CheckUtils {
   val ERRORS = listOf(COMPILATION_FAILED_MESSAGE, FAILED_TO_CHECK_MESSAGE, SYNTAX_ERROR_MESSAGE)
 
   fun navigateToFailedPlaceholder(eduState: EduState, task: Task, taskDir: VirtualFile, project: Project) {
-    val selectedTaskFile = eduState.taskFile ?: return
+    val selectedTaskFile = eduState.taskFile
     var editor = eduState.editor
     var taskFileToNavigate = selectedTaskFile
     var fileToNavigate = eduState.virtualFile
@@ -67,12 +67,7 @@ object CheckUtils {
         }
       }
     }
-    if (fileToNavigate != null) {
-      FileEditorManager.getInstance(project).openFile(fileToNavigate, true)
-    }
-    if (editor == null) {
-      return
-    }
+    FileEditorManager.getInstance(project).openFile(fileToNavigate, true)
     ApplicationManager.getApplication().invokeLater {
       IdeFocusManager.getInstance(project).requestFocus(editor.contentComponent, true)
     }

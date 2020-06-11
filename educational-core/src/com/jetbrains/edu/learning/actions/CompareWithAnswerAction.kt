@@ -8,12 +8,11 @@ import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.learning.EduState
+import com.jetbrains.edu.learning.EduState.Companion.getEduState
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtils.putSelectedTaskFileFirst
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -36,7 +35,7 @@ open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.message("comp
     val task = studyState.task
 
     val taskFiles = getTaskFiles(task)
-    putSelectedTaskFileFirst(taskFiles, studyState.taskFile!!)
+    putSelectedTaskFileFirst(taskFiles, studyState.taskFile)
 
     val requests = taskFiles.mapNotNull {
       val virtualFile = it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found")
@@ -54,12 +53,6 @@ open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.message("comp
     }
     DiffManager.getInstance().showDiff(project, SimpleDiffRequestChain(requests), DiffDialogHints.FRAME)
     EduCounterUsageCollector.solutionPeeked()
-  }
-
-  protected fun getEduState(project: Project): EduState? {
-    val studyEditor = EduUtils.getSelectedEduEditor(project)
-    val studyState = EduState(studyEditor)
-    return if (studyState.isValid) studyState else null
   }
 
   private fun getTaskFiles(task: Task) =

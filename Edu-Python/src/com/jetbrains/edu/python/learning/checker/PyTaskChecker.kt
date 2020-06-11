@@ -15,7 +15,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiManager
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.EduState
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.createRunConfiguration
@@ -106,7 +105,8 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
           }
         }
       }
-      CheckUtils.navigateToFailedPlaceholder(EduState(EduUtils.getSelectedEduEditor(project)), task, taskDir, project)
+      val eduState = EduState.getEduState(project) ?: return@invokeLater
+      CheckUtils.navigateToFailedPlaceholder(eduState, task, taskDir, project)
     }
   }
 
