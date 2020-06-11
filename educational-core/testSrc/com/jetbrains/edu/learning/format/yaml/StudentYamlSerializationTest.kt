@@ -158,6 +158,26 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  fun `test task with incomplete feedback`() {
+    val time = Date(0)
+    val task = courseWithFiles {
+      lesson {
+        eduTask()
+      }
+    }.findTask("lesson1", "task1")
+    task.status = CheckStatus.Failed
+    task.feedback = CheckFeedback(time, CheckResult(task.status, ""))
+    task.record = 1
+
+    doTest(task, """
+    |type: edu
+    |status: Failed
+    |feedback:
+    |  time: Thu, 01 Jan 1970 00:00:00 UTC
+    |record: 1
+    |""".trimMargin())
+  }
+
   fun `test video task`() {
     val firstSrc = "https://stepikvideo.blob.core.windows.net/video/29279/1080/f3d83.mp4"
     val firstRes = "1080"

@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYP
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
+import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -147,7 +148,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CheckStatus.Solved, task.status)
   }
 
-  fun `test task feedback`() {
+  fun `test task with feedback`() {
     val message = "My error message"
     val time = Date(0)
     val expected = "A"
@@ -164,10 +165,21 @@ class StudentYamlDeserializationTest : EduTestCase() {
     val task = deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     assertEquals(CheckStatus.Failed, task.status)
-    assertEquals(message, task.feedback?.message)
-    assertEquals(time, task.feedback?.time)
-    assertEquals(expected, task.feedback?.expected)
-    assertEquals(actual, task.feedback?.actual)
+    assertEquals(CheckFeedback(message, time, expected, actual), task.feedback)
+  }
+
+  fun `test task with incomplete feedback`() {
+    val time = Date(0)
+    val yamlContent = """
+    |type: edu
+    |status: Failed
+    |feedback:
+    |  time: Thu, 01 Jan 1970 00:00:00 UTC
+    |""".trimMargin()
+    val task = deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    assertEquals(CheckStatus.Failed, task.status)
+    assertEquals(CheckFeedback("", time), task.feedback)
   }
 
   fun `test selected variants`() {
