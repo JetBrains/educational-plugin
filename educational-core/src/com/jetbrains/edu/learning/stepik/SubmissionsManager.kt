@@ -35,14 +35,18 @@ class SubmissionsManager {
       val submissionsByStep = submissions[stepId] ?: return null
       submissionsFromMemory.addAll(submissionsByStep)
     }
-    return submissionsFromMemory.sortedByDescending { it.time }.toList()
+    return if (submissionsFromMemory.isEmpty()) null
+    else {
+      submissionsFromMemory.sortedByDescending { it.time }.toList()
+    }
   }
 
   fun getSubmissions(course: Course, stepIds: Set<Int>): List<Submission>? {
-    if (containsSubmissions(stepIds)) return getSubmissionsFromMemory(stepIds)
+    val submissionsFromMemory = getSubmissionsFromMemory(stepIds)
+    return if (submissionsFromMemory != null) submissionsFromMemory
     else {
       val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
-      return submissionsProvider.loadAndPutSubmissions(this, stepIds)
+      submissionsProvider.loadAndPutSubmissions(this, stepIds)
     }
   }
 
@@ -61,17 +65,8 @@ class SubmissionsManager {
     return submissions.getOrPut(stepId) { submissionsProvider.loadSubmissions(stepId).toMutableList() }
   }
 
-  private fun containsSubmissions(stepIds: Set<Int>): Boolean {
-    for (stepId in stepIds) {
-      if (!submissions.containsKey(stepId)) {
-        return false
-      }
-    }
-    return true
-  }
-
-  fun addToSubmissions(stepId: Int, submission: Submission) {
-    val submissionsList = submissions.getOrPut(stepId) { mutableListOf(submission) }
+  fun addToSubmissions(taskId: Int, submission: Submission) {
+    val submissionsList = submissions.getOrPut(taskId) { mutableListOf(submission) }
     if (!submissionsList.contains(submission)) {
       submissionsList.add(submission)
       submissionsList.sortByDescending { it.time }
@@ -79,10 +74,10 @@ class SubmissionsManager {
     }
   }
 
-  fun addToSubmissionsWithStatus(stepId: Int, checkStatus: CheckStatus, submission: Submission?) {
+  fun addToSubmissionsWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {
     if (submission == null || checkStatus == CheckStatus.Unchecked) return
     submission.status = if (checkStatus == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
-    addToSubmissions(stepId, submission)
+    addToSubmissions(taskId, submission)
   }
 
   fun isLastSubmissionUpToDate(task: Task, isSolved: Boolean): Boolean {
