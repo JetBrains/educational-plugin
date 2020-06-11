@@ -75,7 +75,7 @@ fun updateCourse(project: Project, course: EduCourse) {
 
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {
   val notification = Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("update.content"),
-                                  EduCoreBundle.message("update.content.request"),
+                                  EduCoreBundle.message("update.content.request", "update"),
                                   NotificationType.INFORMATION,
                                   notificationListener(project, updateAction))
   notification.notify(project)

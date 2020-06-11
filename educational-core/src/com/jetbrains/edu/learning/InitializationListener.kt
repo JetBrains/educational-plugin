@@ -16,6 +16,7 @@ import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.ui.SelectRolePanel
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -96,7 +97,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     val panel = SelectRolePanel()
     dialog.setPreferredFocusComponent(panel.getStudentButton())
     dialog.title(EduCoreBundle.message("select.role.dialog.title")).centerPanel(panel)
-    dialog.addOkAction().setText(EduCoreBundle.message("select.role.dialog.ok.action"))
+    dialog.addOkAction().setText(EduCoreBundle.message("select.role.dialog.ok.action", StepikNames.PLUGIN_NAME))
     dialog.show()
   }
 
