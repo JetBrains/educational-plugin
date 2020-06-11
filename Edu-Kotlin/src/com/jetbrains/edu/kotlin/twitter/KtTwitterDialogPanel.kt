@@ -1,107 +1,81 @@
-package com.jetbrains.edu.kotlin.twitter;
+package com.jetbrains.edu.kotlin.twitter
 
-import com.intellij.openapi.ui.VerticalFlowLayout;
-import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.kotlin.messages.EduKotlinBundle;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.twitter.TwitterUtils;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.ui.VerticalFlowLayout
+import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.twitter.TwitterUtils.TwitterDialogPanel
+import org.jetbrains.annotations.NonNls
+import java.awt.BorderLayout
+import java.io.InputStream
+import java.net.URL
+import javax.swing.*
+import javax.swing.event.DocumentListener
 
-import javax.swing.*;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
-import java.io.InputStream;
-import java.net.URL;
+class KtTwitterDialogPanel(solvedTask: Task) : TwitterDialogPanel() {
+  private val myTwitterTextField: JTextArea
+  private val myRemainSymbolsLabel: JLabel
+  private var myImageUrl: URL? = null
+  private var imageName = ""
 
-@SuppressWarnings("WeakerAccess")
-public class KtTwitterDialogPanel extends TwitterUtils.TwitterDialogPanel {
+  init {
+    layout = VerticalFlowLayout()
+    myRemainSymbolsLabel = JLabel()
+    myTwitterTextField = JTextArea()
+    myTwitterTextField.lineWrap = true
+    create(solvedTask)
+  }
+
+
+  private fun create(solvedTask: Task) {
+    add(JLabel(UIUtil.toHtml(POST_ACHIEVEMENT_HTML)))
+    myImageUrl = getMediaSourceForTask(solvedTask)
+    addImageLabel()
+    val messageForTask = getMessageForTask(solvedTask)
+    myTwitterTextField.text = messageForTask
+    add(myTwitterTextField)
+    myRemainSymbolsLabel.text = (140 - messageForTask.length).toString()
+    val jPanel = JPanel(BorderLayout())
+    jPanel.add(myRemainSymbolsLabel, BorderLayout.EAST)
+    add(jPanel)
+  }
+
+  private fun addImageLabel() {
+    if (myImageUrl != null) {
+      val icon: Icon = ImageIcon(myImageUrl)
+      add(JLabel(icon))
+    }
+  }
+
+  override fun getMessage(): String = myTwitterTextField.text
+  override fun getMediaSource(): InputStream? = javaClass.getResourceAsStream(imageName)
+  override fun getMediaExtension(): String? = "gif"
+
+  private fun getMediaSourceForTask(task: Task): URL? {
+    imageName = "/twitter/kotlin_koans/images/" + getImageName(task)
+    return javaClass.getResource(imageName)
+  }
+
+  override fun addTextFieldVerifier(documentListener: DocumentListener) {
+    myTwitterTextField.document.addDocumentListener(documentListener)
+  }
+
+  override fun getRemainSymbolsLabel(): JLabel = myRemainSymbolsLabel
+
+  companion object {
     @NonNls
-    private final static String POST_ACHIEVEMENT_HTML = "<b>Post your achievements to twitter!<b>\n";
+    private val POST_ACHIEVEMENT_HTML = "<b>Post your achievements to twitter!<b>\n"
+
     @NonNls
-    private final static String COMPLETE_KOTLIN_KOANS_LEVEL =
-        "Hey, I just completed level %d of Kotlin Koans. https://kotlinlang.org/docs/tutorials/koans.html #kotlinkoans";
-
-    private final JTextArea myTwitterTextField;
-    private final JLabel myRemainSymbolsLabel;
-    private URL myImageUrl;
-    private String imageName = "";
-
-    public KtTwitterDialogPanel(@NotNull Task solvedTask) {
-        setLayout(new VerticalFlowLayout());
-        myRemainSymbolsLabel = new JLabel();
-        myTwitterTextField = new JTextArea();
-        myTwitterTextField.setLineWrap(true);
-        create(solvedTask);
+    private val COMPLETE_KOTLIN_KOANS_LEVEL = "Hey, I just completed level %d of Kotlin Koans. https://kotlinlang.org/docs/tutorials/koans.html #kotlinkoans"
+    private fun getMessageForTask(task: Task): String {
+      val solvedTaskNumber = KtTwitterConfigurator.calculateTaskNumber(task)
+      return String.format(COMPLETE_KOTLIN_KOANS_LEVEL, solvedTaskNumber / 8)
     }
 
-    public void create(@NotNull Task solvedTask) {
-        add(new JLabel(UIUtil.toHtml(POST_ACHIEVEMENT_HTML)));
-        myImageUrl = getMediaSourceForTask(solvedTask);
-        addImageLabel();
-
-        String messageForTask = getMessageForTask(solvedTask);
-        myTwitterTextField.setText(messageForTask);
-        add(myTwitterTextField);
-
-        myRemainSymbolsLabel.setText(String.valueOf(140 - messageForTask.length()));
-        JPanel jPanel = new JPanel(new BorderLayout());
-        jPanel.add(myRemainSymbolsLabel, BorderLayout.EAST);
-        add(jPanel);
+    private fun getImageName(task: Task): String {
+      val solvedTaskNumber = KtTwitterConfigurator.calculateTaskNumber(task)
+      val level = solvedTaskNumber / 8
+      return level.toString() + "level.gif"
     }
-
-    private void addImageLabel() {
-        if (myImageUrl != null) {
-            Icon icon = new ImageIcon(myImageUrl);
-            add(new JLabel(icon));
-        }
-    }
-
-    @NotNull
-    @Override
-    public String getMessage() {
-        return myTwitterTextField.getText();
-    }
-
-    private static String getMessageForTask(@NotNull final Task task) {
-        int solvedTaskNumber = KtTwitterConfigurator.calculateTaskNumber(task);
-        return String.format(COMPLETE_KOTLIN_KOANS_LEVEL, solvedTaskNumber / 8);
-    }
-
-    @Nullable
-    @Override
-    public InputStream getMediaSource() {
-        return getClass().getResourceAsStream(imageName);
-    }
-
-    @Nullable
-    @Override
-    public String getMediaExtension() {
-        return "gif";
-    }
-
-    @Nullable
-    private URL getMediaSourceForTask(@NotNull final Task task) {
-        imageName = "/twitter/kotlin_koans/images/" + getImageName(task);
-        return getClass().getResource(imageName);
-    }
-    
-    private static String getImageName(@NotNull final Task task) {
-        int solvedTaskNumber = KtTwitterConfigurator.calculateTaskNumber(task);
-        int level = solvedTaskNumber / 8;
-        return level + "level.gif";
-    }
-
-
-    @Override
-    public void addTextFieldVerifier(@NotNull DocumentListener documentListener) {
-        myTwitterTextField.getDocument().addDocumentListener(documentListener);
-    }
-
-    @NotNull
-    @Override
-    public JLabel getRemainSymbolsLabel() {
-        return myRemainSymbolsLabel;
-    }
+  }
 }
