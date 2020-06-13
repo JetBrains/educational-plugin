@@ -102,6 +102,13 @@ fun <T> Call<T>.executeHandlingExceptions(omitErrors: Boolean = false): Response
   }
 }
 
+fun <T, R> Call<T>.executeAndExtractFirst(extractResult: T.() -> List<R>): Result<R, String> {
+  return executeParsingErrors(true).flatMap {
+    val result = it.body()?.extractResult()?.firstOrNull()
+    if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA)) else Ok(result)
+  }
+}
+
 fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Response<T>, String> {
   fun log(title: String, message: String?, optional: Boolean) {
     val fullText = "$title. $message"

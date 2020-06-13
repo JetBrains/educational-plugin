@@ -38,5 +38,9 @@
       <add-to-group group-id="Educational.Educator.ProjectView" relative-to-action="Educational.Educator.PushCourse" anchor="after"/>
     </action>
     <action id="Educational.Educator.GetHyperskillLesson" class="com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLesson"/>
+    <action id="Educational.Educator.ApplyHyperskillSubmission"
+            class="com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.ApplyHyperskillSubmission">
+      <add-to-group group-id="Educational.Educator.ProjectView" relative-to-action="Educational.Educator.PushCourse" anchor="after"/>
+    </action>
   </actions>
 </idea-plugin>

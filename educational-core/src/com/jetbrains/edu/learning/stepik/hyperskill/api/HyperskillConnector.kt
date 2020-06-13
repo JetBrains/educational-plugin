@@ -253,20 +253,12 @@ abstract class HyperskillConnector {
     return withTokenRefreshIfNeeded { service.websocket().executeAndExtractFromBody() }
   }
 
-  private fun <T, R> Call<T>.executeAndExtractFirst(extractResult: T.() -> List<R>): Result<R, String> {
-    return executeParsingErrors(true).flatMap {
-      val result = it.body()?.extractResult()?.firstOrNull()
-      if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA)) else Ok(result)
-    }
-  }
-
   private fun <T> Call<T>.executeAndExtractFromBody(): Result<T, String> {
     return executeParsingErrors(true).flatMap {
       val result = it.body()
       if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA)) else Ok(result)
     }
   }
-
 
   private fun <T> withTokenRefreshIfNeeded(call: () -> Result<T, String>): Result<T, String> {
     val result = call()

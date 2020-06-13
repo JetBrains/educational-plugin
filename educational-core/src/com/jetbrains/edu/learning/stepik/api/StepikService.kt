@@ -68,6 +68,9 @@ interface StepikService {
                   @Query("page") page: Int,
                   @Query("order") order: String = "desc"): Call<SubmissionsList>
 
+  @GET("api/submissions/{id}")
+  fun submissionById(@Path("id") id: Int): Call<SubmissionsList>
+
   @GET("api/attempts")
   fun attempts(@Query("step") stepId: Int, @Query("user") userId: Int): Call<AttemptsList>
 

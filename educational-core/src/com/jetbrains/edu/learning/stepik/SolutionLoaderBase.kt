@@ -185,11 +185,11 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   /**
    * @return true if solutions for given task are incompatible with current plugin version, false otherwise
    */
-  private fun updateTask(project: Project, task: Task, submissions: List<Submission>): Boolean {
+  fun updateTask(project: Project, task: Task, submissions: List<Submission>, force: Boolean = false): Boolean {
     val taskSolutions = loadSolution(task, submissions)
     ProgressManager.checkCanceled()
     if (!taskSolutions.hasIncompatibleSolutions && taskSolutions.solutions.isNotEmpty()) {
-      applySolutions(project, task, taskSolutions)
+      applySolutions(project, task, taskSolutions, force)
     }
     return taskSolutions.hasIncompatibleSolutions
   }
@@ -234,46 +234,59 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       return Date(max(taskFiles.values.map { EduUtils.findTaskFileInDir(it, taskDir)?.timeStamp ?: 0 }))
     }
 
-    private fun applySolutions(project: Project, task: Task, taskSolutions: TaskSolutions) {
+    private fun Task.modifiedBefore(project: Project, taskSolutions: TaskSolutions): Boolean {
+      val solutionDate = taskSolutions.date ?: return true
+      return solutionDate.isSignificantlyAfter(modificationDate(project))
+    }
+
+    private fun applySolutions(project: Project,
+                               task: Task,
+                               taskSolutions: TaskSolutions,
+                               force: Boolean) {
       invokeAndWaitIfNeeded {
         if (project.isDisposed) return@invokeAndWaitIfNeeded
-        val taskDir = task.getTaskDir(project) ?: return@invokeAndWaitIfNeeded
         task.status = taskSolutions.checkStatus
         YamlFormatSynchronizer.saveItem(task)
-        val solutionsMap = taskSolutions.solutions.mapValues { it.value.first }
         val lesson = task.lesson
-        if (lesson is FrameworkLesson && lesson.currentTask() != task) {
-          val frameworkLessonManager = FrameworkLessonManager.getInstance(project)
-          frameworkLessonManager.saveExternalChanges(task, solutionsMap)
-          for (taskFile in task.taskFiles.values) {
-            val placeholders = taskSolutions.solutions[taskFile.name]?.second ?: continue
-            updatePlaceholders(taskFile, placeholders)
-          }
+        if (task.course.isStudy && lesson is FrameworkLesson && lesson.currentTask() != task) {
+          applySolutionToNonCurrentTask(project, task, taskSolutions)
         }
         else {
-          val taskModificationDate = task.modificationDate(project)
-          val solutionDate = taskSolutions.date
-          if (!EduUtils.isNewlyCreated(project) && solutionDate != null && taskModificationDate.isSignificantlyAfter(solutionDate)) {
-            //means that we're trying to apply solution after the task has already been modified locally
-            return@invokeAndWaitIfNeeded
+          if (force || EduUtils.isNewlyCreated(project) || task.modifiedBefore(project, taskSolutions)) {
+            applySolutionToCurrentTask(project, task, taskSolutions)
           }
-          for (solutionPath in taskSolutions.solutions.keys) {
-            val (solutionText, placeholders) = taskSolutions.solutions[solutionPath] ?: error("No solution for $solutionPath found")
-            val taskFile = task.getTaskFile(solutionPath)
-            if (taskFile == null) {
-              GeneratorUtils.createChildFile(taskDir, solutionPath, solutionText)
+        }
+      }
+    }
+
+    private fun applySolutionToNonCurrentTask(project: Project, task: Task, taskSolutions: TaskSolutions) {
+      val frameworkLessonManager = FrameworkLessonManager.getInstance(project)
+      frameworkLessonManager.saveExternalChanges(task, taskSolutions.solutions.mapValues { it.value.first })
+      for (taskFile in task.taskFiles.values) {
+        val placeholders = taskSolutions.solutions[taskFile.name]?.second ?: continue
+        updatePlaceholders(taskFile, placeholders)
+      }
+    }
+
+    private fun applySolutionToCurrentTask(project: Project,
+                                           task: Task,
+                                           taskSolutions: TaskSolutions) {
+      val taskDir = task.getTaskDir(project) ?: error("Directory for task `${task.name}` not found")
+      for (solutionPath in taskSolutions.solutions.keys) {
+        val (solutionText, placeholders) = taskSolutions.solutions[solutionPath] ?: error("No solution for $solutionPath found")
+        val taskFile = task.getTaskFile(solutionPath)
+        if (taskFile == null) {
+          GeneratorUtils.createChildFile(taskDir, solutionPath, solutionText)
+        }
+        else {
+          val vFile = taskDir.findFileByRelativePath(solutionPath) ?: continue
+          if (EduUtils.isTestsFile(project, vFile)) continue
+          updatePlaceholders(taskFile, placeholders)
+          EduDocumentListener.modifyWithoutListener(task, solutionPath) {
+            runWriteAction {
+              VfsUtil.saveText(vFile, solutionText)
             }
-            else {
-              val vFile = taskDir.findFileByRelativePath(solutionPath) ?: continue
-              if (EduUtils.isTestsFile(project, vFile)) continue
-              updatePlaceholders(taskFile, placeholders)
-              EduDocumentListener.modifyWithoutListener(task, solutionPath) {
-                runWriteAction {
-                  VfsUtil.saveText(vFile, solutionText)
-                }
-                SaveAndSyncHandler.getInstance().refreshOpenFiles()
-              }
-            }
+            SaveAndSyncHandler.getInstance().refreshOpenFiles()
           }
         }
       }

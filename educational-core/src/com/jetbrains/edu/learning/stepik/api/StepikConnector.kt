@@ -7,13 +7,11 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.createRetrofitBuilder
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
-import com.jetbrains.edu.learning.executeHandlingExceptions
 import com.jetbrains.edu.learning.stepik.*
 import okhttp3.ConnectionPool
 import okhttp3.MediaType
@@ -176,6 +174,9 @@ abstract class StepikConnector {
     }
     return submissions.firstOrNull()
   }
+
+  fun getSubmissionById(id: Int): Result<Submission, String> =
+    service.submissionById(id).executeAndExtractFirst(SubmissionsList::submissions)
 
   private fun getSubmissionsList(stepId: Int, page: Int = 1): SubmissionsList? {
     val response = service.submissions(step = stepId, page = page).executeHandlingExceptions()
