@@ -1,19 +1,18 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.*
 import com.intellij.openapi.application.ex.ApplicationUtil
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.EduDocumentListener
@@ -283,10 +282,10 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
           if (EduUtils.isTestsFile(project, vFile)) continue
           updatePlaceholders(taskFile, placeholders)
           EduDocumentListener.modifyWithoutListener(task, solutionPath) {
-            runWriteAction {
-              VfsUtil.saveText(vFile, solutionText)
+            runUndoTransparentWriteAction {
+              val document = FileDocumentManager.getInstance().getDocument(vFile) ?: error("No document for ${solutionPath}")
+              document.setText(solutionText)
             }
-            SaveAndSyncHandler.getInstance().refreshOpenFiles()
           }
         }
       }
