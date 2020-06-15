@@ -241,6 +241,15 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
   }
 
+  fun `test empty framework lesson`() {
+    val yamlContent = """
+      |type: framework
+      |
+    """.trimMargin()
+    val lesson = MAPPER.deserializeLesson(yamlContent)
+    assertTrue(lesson is FrameworkLesson)
+  }
+
   fun `test output task`() {
     val yamlContent = """
     |type: output

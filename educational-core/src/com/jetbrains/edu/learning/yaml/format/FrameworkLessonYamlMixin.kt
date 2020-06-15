@@ -20,6 +20,6 @@ abstract class FrameworkLessonYamlMixin : LessonYamlMixin() {
 }
 
 @JsonPOJOBuilder(withPrefix = "")
-private class FrameworkLessonBuilder(@JsonProperty(CONTENT) content: List<String?>) : LessonBuilder(content) {
+private class FrameworkLessonBuilder(@JsonProperty(CONTENT) content: List<String?> = emptyList()) : LessonBuilder(content) {
   override fun createLesson() = FrameworkLesson()
 }
