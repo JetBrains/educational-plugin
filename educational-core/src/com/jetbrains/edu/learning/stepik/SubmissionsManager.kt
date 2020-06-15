@@ -3,16 +3,13 @@ package com.jetbrains.edu.learning.stepik
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Collectors
@@ -89,7 +86,16 @@ class SubmissionsManager {
   fun prepareSubmissionsContent(project: Project, course: Course, loadSolutions: () -> Unit) {
     val submissionsProvider = course.getSubmissionsProvider() ?: return
 
-    addSubmissionsLoadingPanel(project, submissionsProvider.getPlatformName(), true)
+    val toolWindow = TaskDescriptionView.getInstance(project).toolWindow
+    if (toolWindow != null) {
+      val submissionsContent = toolWindow.contentManager.findContent(EduCoreBundle.message("submissions.tab.name"))
+      if (submissionsContent != null) {
+        val submissionsPanel = submissionsContent.component
+        if (submissionsPanel is SubmissionsTabPanel) {
+          ApplicationManager.getApplication().invokeLater { submissionsPanel.addLoadingPanel(submissionsProvider.getPlatformName()) }
+        }
+      }
+    }
 
     ApplicationManager.getApplication().executeOnPooledThread {
       submissions.putAll(submissionsProvider.loadAllSubmissions(project, course))
@@ -108,30 +114,7 @@ class SubmissionsManager {
     return SubmissionsProvider.getSubmissionsProviderForCourse(this)
   }
 
-  private fun addSubmissionsLoadingPanel(project: Project, platformName: String, retry: Boolean) {
-    ToolWindowManager.getInstance(project).invokeLater(Runnable {
-      val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
-      if (toolWindow == null) {
-        if (retry) {
-          addSubmissionsLoadingPanel(project, platformName, false)
-        }
-        else {
-          LOG.warn("Failed to show Submissions Tab because ToolWindow is not initialized yet")
-        }
-        return@Runnable
-      }
-      val submissionsContent = toolWindow.contentManager.findContent(EduCoreBundle.message("submissions.tab.name"))
-      if (submissionsContent != null) {
-        val submissionsPanel = submissionsContent.component
-        if (submissionsPanel is SubmissionsTabPanel) {
-          ApplicationManager.getApplication().invokeLater { submissionsPanel.addLoadingPanel(platformName) }
-        }
-      }
-    })
-  }
-
   companion object {
-    private val LOG = Logger.getInstance(SubmissionsManager::class.java)
 
     @JvmStatic
     fun getInstance(project: Project): SubmissionsManager = ServiceManager.getService(project, SubmissionsManager::class.java)

@@ -13,6 +13,8 @@ import java.awt.Color
 abstract class TaskDescriptionView {
 
   abstract var currentTask: Task?
+  abstract var toolWindow: ToolWindow?
+    protected set
 
   abstract fun init(toolWindow: ToolWindow)
 

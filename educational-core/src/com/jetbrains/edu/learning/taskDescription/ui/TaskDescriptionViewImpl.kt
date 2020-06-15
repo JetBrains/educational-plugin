@@ -32,6 +32,7 @@ import javax.swing.JSeparator
 
 class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), DataProvider {
   private var uiContent: UiContent? = null
+  override var toolWindow: ToolWindow? = null
 
   override var currentTask: Task? = null
     // TODO: move it in some separate method
@@ -173,6 +174,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   }
 
   override fun init(toolWindow: ToolWindow) {
+    this.toolWindow = toolWindow
     val contentManager = toolWindow.contentManager
     val panel = JPanel(BorderLayout())
     panel.border = JBUI.Borders.empty(0, 15, 15, 0)

@@ -8,6 +8,7 @@ import java.awt.Point
 
 class MockTaskDescriptionView : TaskDescriptionView() {
   override var currentTask: Task? = null
+  override var toolWindow: ToolWindow? = null
 
   override fun init(toolWindow: ToolWindow) {}
   override fun updateCheckPanel(task: Task?) {}
