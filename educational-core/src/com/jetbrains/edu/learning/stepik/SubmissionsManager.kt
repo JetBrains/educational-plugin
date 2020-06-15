@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
-import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.util.concurrent.ConcurrentHashMap
@@ -85,7 +84,7 @@ class SubmissionsManager {
       val submissionsContent = window.contentManager.findContent(EduCoreBundle.message("submissions.tab.name"))
       if (submissionsContent != null) {
         val submissionsPanel = submissionsContent.component
-        if (submissionsPanel is AdditionalTabPanel) {
+        if (submissionsPanel is SubmissionsTabPanel) {
           ApplicationManager.getApplication().invokeLater { submissionsPanel.addLoadingPanel(submissionsProvider.getPlatformName()) }
         }
       }
@@ -97,6 +96,12 @@ class SubmissionsManager {
       ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
     }
   }
+
+  fun isLoggedIn(course: Course): Boolean = course.getSubmissionsProvider()?.isLoggedIn() ?: false
+
+  fun getPlatformName(course: Course): String = course.getSubmissionsProvider()?.getPlatformName() ?: error("Failed to get platform Name")
+
+  fun doAuthorize(course: Course) = course.getSubmissionsProvider()?.doAuthorize()
 
   private fun Course.getSubmissionsProvider(): SubmissionsProvider? {
     return SubmissionsProvider.getSubmissionsProviderForCourse(this)

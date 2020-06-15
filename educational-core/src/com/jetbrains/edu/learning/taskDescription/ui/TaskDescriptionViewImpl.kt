@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.SubmissionsManager
-import com.jetbrains.edu.learning.stepik.SubmissionsUiProvider
+import com.jetbrains.edu.learning.stepik.SubmissionsTabPanel
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
@@ -60,7 +60,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val topicsTab = course.configurator?.additionalTaskTab(task, project)
     addTab(contentManager, topicsTab, 1)
     if (SubmissionsManager.getInstance(project).submissionsSupported(course)) {
-      val submissionsTab = SubmissionsUiProvider.createSubmissionsTab(task, course, project)
+      val submissionsTab = SubmissionsTabPanel(project, course, task)
       val submissionsTabIndex = if (topicsTab != null) 2 else getSubmissionsTabIndex(contentManager)
       updateSubmissionsTab(contentManager, submissionsTab, submissionsTabIndex)
     }
@@ -75,7 +75,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val contentManager = uiContent?.contentManager ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
     if (SubmissionsManager.getInstance(project).submissionsSupported(course)) {
-      val submissionsTab = SubmissionsUiProvider.createSubmissionsTab(currentTask, course, project)
+      val submissionsTab = SubmissionsTabPanel(project, course, currentTask)
       updateSubmissionsTab(contentManager, submissionsTab, getSubmissionsTabIndex(contentManager))
     }
     else {
@@ -89,12 +89,12 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     addTab(contentManager, topicsTab, 1)
   }
 
-  private fun updateSubmissionsTab(contentManager: ContentManager, submissionsTab: AdditionalTabPanel?, tabIndex: Int) {
-    if (submissionsTab != null) {
-      addTab(contentManager, submissionsTab, tabIndex)
+  private fun updateSubmissionsTab(contentManager: ContentManager, submissionsTab: SubmissionsTabPanel?, tabIndex: Int) {
+    if (submissionsTab == null || !submissionsTab.isToShowSubmissions) {
+      removeSubmissionsContent(contentManager)
     }
     else {
-      removeSubmissionsContent(contentManager)
+      addTab(contentManager, submissionsTab, tabIndex)
     }
   }
 
