@@ -80,7 +80,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
             file("Main.kt", "file text")
           }
           dir("test") {
-            file("Test.java", "tests 1")
+            file("Test.java", "test text")
           }
         }
         dir("task1") {
