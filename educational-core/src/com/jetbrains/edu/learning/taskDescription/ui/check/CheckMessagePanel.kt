@@ -55,9 +55,6 @@ class CheckMessagePanel private constructor() : JPanel() {
   }
 
   private fun setDiff(diff: CheckResultDiff) {
-    // User could use "Compare Outputs..." action to compare long output
-    if (diff.actual.lines().size + diff.expected.lines().size > MAX_LINES_NUMBER) return
-
     val expected = createLabeledComponent(diff.expected, "Expected")
     val actual = createLabeledComponent(diff.actual, "Actual")
     UIUtil.mergeComponentsWithAnchor(expected, actual)
@@ -67,7 +64,12 @@ class CheckMessagePanel private constructor() : JPanel() {
   }
 
   private fun createLabeledComponent(resultText: String, labelText: String): LabeledComponent<JComponent> {
-    val textPane = MultiLineLabel(resultText).apply {
+    val lines = resultText.lines()
+    val displayMessage = if (lines.size > MAX_LINES_NUMBER)
+      lines.subList(0, MAX_LINES_NUMBER).joinToString("\n") + "..."
+    else resultText
+
+    val textPane = MultiLineLabel(displayMessage).apply {
       // `JBUI.Fonts.create` implementation scales font size.
       // Also, at the same time `font.size` returns scaled size.
       // So we have to pass non scaled font size to create font with correct size
@@ -85,7 +87,7 @@ class CheckMessagePanel private constructor() : JPanel() {
     val FOCUS_BORDER_WIDTH = if (SystemInfo.isMac) 3 else if (SystemInfo.isWindows) 0 else 2
 
     const val MAX_MESSAGE_LENGTH = 300
-    const val MAX_LINES_NUMBER = 5
+    const val MAX_LINES_NUMBER = 3
 
     @JvmStatic
     fun create(checkResult: CheckResult): CheckMessagePanel {
