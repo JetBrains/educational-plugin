@@ -32,10 +32,7 @@ class SubmissionsManager {
       val submissionsByStep = submissions[stepId] ?: return null
       submissionsFromMemory.addAll(submissionsByStep)
     }
-    return if (submissionsFromMemory.isEmpty()) null
-    else {
-      submissionsFromMemory.sortedByDescending { it.time }.toList()
-    }
+    return submissionsFromMemory.sortedByDescending { it.time }.toList()
   }
 
   fun getSubmissions(course: Course, stepIds: Set<Int>): List<Submission>? {
