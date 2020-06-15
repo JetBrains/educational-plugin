@@ -25,7 +25,7 @@ import java.util.stream.Collectors
 class SubmissionsManager {
   private val submissions = ConcurrentHashMap<Int, MutableList<Submission>>()
 
-  fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
+  private fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
     val submissionsFromMemory = mutableListOf<Submission>()
     for (stepId in stepIds) {
       val submissionsByStep = submissions[stepId] ?: return null
@@ -50,6 +50,14 @@ class SubmissionsManager {
   fun getSubmissions(task: Task, isSolved: Boolean): List<Submission>? {
     val status = if (isSolved) EduNames.CORRECT else EduNames.WRONG
     return getOrLoadSubmissions(task.course, task.id).filter { it.status == status }
+  }
+
+  fun getSubmissions(task: Task): List<Submission>? {
+    return getOrLoadSubmissions(task.course, task.id)
+  }
+
+  fun getSubmission(course: Course, stepId: Int, submissionId: Int): Submission? {
+    return getOrLoadSubmissions(course, stepId).find { it.id == submissionId }
   }
 
   private fun getOrLoadSubmissions(course: Course, stepId: Int): List<Submission> {

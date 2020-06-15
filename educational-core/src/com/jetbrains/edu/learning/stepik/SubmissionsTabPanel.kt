@@ -38,8 +38,10 @@ import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 import kotlin.math.roundToInt
 
-class SubmissionsTabPanel(project: Project, val course: Course, val task: Task?) : AdditionalTabPanel(project, EduCoreBundle.message(
-  "submissions.tab.name")) {
+class SubmissionsTabPanel(project: Project,
+                          val course: Course,
+                          val task: Task?
+) : AdditionalTabPanel(project, EduCoreBundle.message("submissions.tab.name")) {
 
   val isToShowSubmissions: Boolean
 
@@ -53,7 +55,7 @@ class SubmissionsTabPanel(project: Project, val course: Course, val task: Task?)
     }
     val submissionsManager = SubmissionsManager.getInstance(project)
     val descriptionText = StringBuilder()
-    val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
+    val submissionsList = submissionsManager.getSubmissions(task)
 
     if (submissionsManager.isLoggedIn(course) || submissionsList != null) {
       if (submissionsList == null) {
@@ -65,7 +67,7 @@ class SubmissionsTabPanel(project: Project, val course: Course, val task: Task?)
           "<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.empty")}")
         else -> {
           addSubmissionsToText(submissionsList, descriptionText)
-          this.addHyperlinkListener(getSubmissionsListener(task, project, submissionsManager))
+          this.addHyperlinkListener(getSubmissionsListener(project, submissionsManager, task))
         }
       }
     }
@@ -97,10 +99,12 @@ class SubmissionsTabPanel(project: Project, val course: Course, val task: Task?)
     })
   }
 
-  private fun getSubmissionsListener(task: Task, project: Project, submissionsManager: SubmissionsManager): HyperlinkListener {
+  private fun getSubmissionsListener(project: Project,
+                                     submissionsManager: SubmissionsManager,
+                                     task: Task): HyperlinkListener {
     return HyperlinkListener { e ->
       if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-        val submission = submissionsManager.getSubmissionsFromMemory(setOf(task.id))?.find { it.id.toString() == e.description }
+        val submission = submissionsManager.getSubmission(course, task.id, e.description.toInt())
                          ?: return@HyperlinkListener
         val reply = submission.reply ?: return@HyperlinkListener
         runInEdt {
