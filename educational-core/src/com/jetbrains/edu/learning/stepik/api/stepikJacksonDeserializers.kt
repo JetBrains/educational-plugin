@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.NAME
 import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
@@ -92,7 +91,12 @@ class StepikReplyDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : 
     @VisibleForTesting
     @JvmStatic
     fun ObjectNode.migrate(maxVersion: Int): Int {
-      val initialVersion = get(SerializationUtils.Json.VERSION)?.asInt() ?: 1
+      val versionJson = get(SerializationUtils.Json.VERSION)
+      if (versionJson == null && get(EDU_TASK) == null) {
+        // solution doesn't contain any edu data, let's not migrate it
+        return maxVersion
+      }
+      val initialVersion = versionJson?.asInt() ?: 1
       var version = initialVersion
       while (version < maxVersion) {
         when (version) {
