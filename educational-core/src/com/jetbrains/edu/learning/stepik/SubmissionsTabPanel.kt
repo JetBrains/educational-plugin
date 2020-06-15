@@ -57,7 +57,7 @@ class SubmissionsTabPanel(project: Project,
     val descriptionText = StringBuilder()
     val submissionsList = submissionsManager.getSubmissions(task)
 
-    if (submissionsManager.isLoggedIn(course) || submissionsList != null) {
+    if (submissionsManager.isLoggedIn(course)) {
       if (submissionsList == null) {
         return false
       }
