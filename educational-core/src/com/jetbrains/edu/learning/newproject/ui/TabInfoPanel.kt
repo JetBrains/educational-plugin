@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.icons.AllIcons
+import com.intellij.ui.ColorUtil
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.HtmlPanel
@@ -54,12 +55,14 @@ class TabInfoPanel(tabInfo: TabInfo) : JPanel() {
 
   private inner class TabInfoHtmlPanel : HtmlPanel() {
     init {
-      foreground = GRAY_COLOR
       super.update()
     }
 
-    private val link get () = if (infoLink != null) " <a href='${infoLink.url}'>${infoLink.text}</a>" else ""
-    override fun getBody(): String = "$infoText $link"
+    private val link get() = if (infoLink != null) " <a href='${infoLink.url}'>${infoLink.text}</a>" else ""
+
+    override fun getBody(): String = "<span style='color: $color'>$infoText</span> $link"
+
+    private val color get() = "#${ColorUtil.toHex(GRAY_COLOR)}"
 
     override fun getBodyFont(): Font = Font(TypographyManager().bodyFont, Font.PLAIN, JBUI.scaleFontSize(FONT_SIZE))
   }
@@ -81,7 +84,7 @@ open class LoginPanel(isVisible: Boolean, beforeLinkText: String, linkText: Stri
     this.isVisible = isVisible
   }
 
-  open val beforeLinkForeground:  Color
+  open val beforeLinkForeground: Color
     get() = UIUtil.getLabelForeground()
 }
 
