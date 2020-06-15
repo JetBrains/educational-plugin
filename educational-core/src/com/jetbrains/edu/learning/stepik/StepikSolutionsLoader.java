@@ -272,8 +272,8 @@ public class StepikSolutionsLoader implements Disposable {
     SubmissionsManager submissionsManager = SubmissionsManager.getInstance(myProject);
     for (Task task : allTasks) {
       Boolean isSolved = taskStatusesMap.get(getProgressId(task));
-      if (isSolved == null || !submissionsManager.isLastSubmissionUpToDate(task, isSolved)) continue;
-      if (!(task instanceof TheoryTask) && isToUpdate(task, submissionsManager, isSolved, task.getStatus(), task.getId())) {
+      if (isSolved == null || !isLastSubmissionUpToDate(submissionsManager, task, isSolved)) continue;
+      if (!(task instanceof TheoryTask) && isToUpdate(task, submissionsManager, isSolved, task.getStatus())) {
         tasksToUpdate.add(task);
       }
       task.setStatus(checkStatus(task, isSolved));
@@ -333,15 +333,14 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static boolean isToUpdate(Task task,
                                     @NotNull SubmissionsManager submissionsManager,
-                                    @NotNull Boolean isSolved,
-                                    @NotNull CheckStatus currentStatus,
-                                    int stepId) {
+                                    boolean isSolved,
+                                    @NotNull CheckStatus currentStatus) {
     if (isSolved) {
       return currentStatus != CheckStatus.Solved;
     }
 
     if (task instanceof EduTask) {
-      Submission submission = submissionsManager.getLastSubmission(task, false);
+      Submission submission = getLastSubmission(submissionsManager, task, false);
       if (submission != null) {
         Reply reply = submission.getReply();
         if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
@@ -394,7 +393,7 @@ public class StepikSolutionsLoader implements Disposable {
   private static TaskSolutions getEduTaskSolutions(@NotNull Project project, @NotNull Task task, boolean isSolved) {
     String language = task.getCourse().getLanguageID();
     SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
-    Submission submission = submissionsManager.getLastSubmission(task, isSolved);
+    Submission submission = getLastSubmission(submissionsManager, task, isSolved);
     if (submission == null) {
       return TaskSolutions.EMPTY;
     }
@@ -449,6 +448,25 @@ public class StepikSolutionsLoader implements Disposable {
 
     YamlFormatSynchronizer.saveItem(task);
     return new TaskSolutions(taskFileToText);
+  }
+
+  @Nullable
+  private static Submission getLastSubmission(@NotNull SubmissionsManager submissionsManager, @NotNull Task task, boolean isSolved) {
+    List<Submission> submissions = submissionsManager.getSubmissions(task, isSolved);
+    if (submissions == null || submissions.isEmpty()) return null;
+    return submissions.get(0);
+  }
+
+  private static boolean isLastSubmissionUpToDate(@NotNull SubmissionsManager submissionsManager, @NotNull Task task, boolean isSolved) {
+    if (task instanceof TheoryTask) return true;
+    Submission submission = getLastSubmission(submissionsManager, task, isSolved);
+    if (submission != null) {
+      Date submissionTime = submission.getTime();
+      if (submissionTime != null) {
+        return submission.getTime().after(task.getUpdateDate());
+      }
+    }
+    return false;
   }
 
   private static void setPlaceholders(@NotNull TaskFile taskFile, @NotNull TaskFile updatedTaskFile) {

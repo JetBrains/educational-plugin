@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
@@ -55,11 +54,6 @@ class SubmissionsManager {
     return getOrLoadSubmissions(task.course, task.id).filter { it.status == status }
   }
 
-  fun getLastSubmission(task: Task, isSolved: Boolean): Submission? {
-    val submissions = getSubmissions(task, isSolved) ?: return null
-    return submissions.firstOrNull()
-  }
-
   private fun getOrLoadSubmissions(course: Course, stepId: Int): List<Submission> {
     val submissionsProvider = course.getSubmissionsProvider() ?: return emptyList()
     return submissions.getOrPut(stepId) { submissionsProvider.loadSubmissions(stepId).toMutableList() }
@@ -78,12 +72,6 @@ class SubmissionsManager {
     if (submission == null || checkStatus == CheckStatus.Unchecked) return
     submission.status = if (checkStatus == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
     addToSubmissions(taskId, submission)
-  }
-
-  fun isLastSubmissionUpToDate(task: Task, isSolved: Boolean): Boolean {
-    if (task is TheoryTask) return true
-    val submission = getLastSubmission(task, isSolved) ?: return false
-    return submission.time?.after(task.updateDate) ?: false
   }
 
   fun submissionsSupported(course: Course): Boolean {
