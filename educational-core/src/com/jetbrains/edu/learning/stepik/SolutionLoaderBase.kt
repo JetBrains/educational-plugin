@@ -252,7 +252,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
         }
         else {
           if (force || EduUtils.isNewlyCreated(project) || task.modifiedBefore(project, taskSolutions)) {
-            applySolutionToCurrentTask(project, task, taskSolutions, force)
+            applySolutionToCurrentTask(project, task, taskSolutions)
           }
         }
       }
@@ -269,8 +269,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
     private fun applySolutionToCurrentTask(project: Project,
                                            task: Task,
-                                           taskSolutions: TaskSolutions,
-                                           force: Boolean) {
+                                           taskSolutions: TaskSolutions) {
       val taskDir = task.getTaskDir(project) ?: error("Directory for task `${task.name}` not found")
       for (solutionPath in taskSolutions.solutions.keys) {
         val (solutionText, placeholders) = taskSolutions.solutions[solutionPath] ?: error("No solution for $solutionPath found")
@@ -280,7 +279,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
         }
         else {
           val vFile = taskDir.findFileByRelativePath(solutionPath) ?: continue
-          if (!force && EduUtils.isTestsFile(project, vFile)) continue
+          if (EduUtils.isTestsFile(project, vFile)) continue
           updatePlaceholders(taskFile, placeholders)
           EduDocumentListener.modifyWithoutListener(task, solutionPath) {
             runUndoTransparentWriteAction {

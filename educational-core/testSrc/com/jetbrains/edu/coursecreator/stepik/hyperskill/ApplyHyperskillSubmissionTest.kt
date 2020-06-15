@@ -27,7 +27,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
           file("Main.kt", "file text")
         }
         dir("test") {
-          file("Test.java", "test text")
+          file("Test.java", "tests 1")
         }
       }
       dir("task2") {
@@ -199,7 +199,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
           file("Main.kt", "file text")
         }
         dir("test") {
-          file("Test.java", "test text")
+          file("Test.java", "tests 1")
         }
       }
       dir("task1") {
