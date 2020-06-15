@@ -12,11 +12,11 @@ import com.jetbrains.edu.learning.stepik.api.Submission
  */
 abstract class SubmissionsProvider {
 
-  abstract fun loadAllSubmissions(project: Project, course: Course?, onFinish: () -> Unit)
+  abstract fun loadAllSubmissions(project: Project, course: Course?): Map<Int, MutableList<Submission>>
 
-  abstract fun loadAndPutSubmissions(submissionsManager: SubmissionsManager, stepIds: Set<Int>): List<Submission>
+  abstract fun loadSubmissions(stepIds: Set<Int>): Map<Int, MutableList<Submission>>
 
-  abstract fun loadSubmissions(stepId: Int): List<Submission>
+  abstract fun loadStepSubmissions(stepId: Int): List<Submission>
 
   abstract fun submissionsCanBeShown(course: Course?): Boolean
 

@@ -13,7 +13,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.util.concurrent.ConcurrentHashMap
+import java.util.stream.Collectors
 
 /**
  * Stores and returns submissions for courses with submissions support if they are already loaded or delegates loading
@@ -23,10 +25,6 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class SubmissionsManager {
   private val submissions = ConcurrentHashMap<Int, MutableList<Submission>>()
-
-  fun putToSubmissions(stepId: Int, submissionsList: List<Submission>) {
-    submissions[stepId] = submissionsList.toMutableList()
-  }
 
   fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
     val submissionsFromMemory = mutableListOf<Submission>()
@@ -45,7 +43,11 @@ class SubmissionsManager {
     return if (submissionsFromMemory != null) submissionsFromMemory
     else {
       val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
-      submissionsProvider.loadAndPutSubmissions(this, stepIds)
+      val submissionsById = submissionsProvider.loadSubmissions(stepIds)
+      submissions.putAll(submissionsById)
+      submissionsById.values.stream()
+        .flatMap(List<Submission>::stream)
+        .collect(Collectors.toList())
     }
   }
 
@@ -56,7 +58,7 @@ class SubmissionsManager {
 
   private fun getOrLoadSubmissions(course: Course, stepId: Int): List<Submission> {
     val submissionsProvider = course.getSubmissionsProvider() ?: return emptyList()
-    return submissions.getOrPut(stepId) { submissionsProvider.loadSubmissions(stepId).toMutableList() }
+    return submissions.getOrPut(stepId) { submissionsProvider.loadStepSubmissions(stepId).toMutableList() }
   }
 
   fun addToSubmissions(taskId: Int, submission: Submission) {
@@ -91,7 +93,12 @@ class SubmissionsManager {
         }
       }
     }
-    submissionsProvider.loadAllSubmissions(project, course) { loadSolutions() }
+
+    ApplicationManager.getApplication().executeOnPooledThread {
+      submissions.putAll(submissionsProvider.loadAllSubmissions(project, course))
+      loadSolutions()
+      ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
+    }
   }
 
   private fun Course.getSubmissionsProvider(): SubmissionsProvider? {
