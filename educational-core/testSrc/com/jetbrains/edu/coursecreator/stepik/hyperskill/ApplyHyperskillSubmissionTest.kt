@@ -14,7 +14,6 @@ import org.intellij.lang.annotations.Language
 class ApplyHyperskillSubmissionTest: EduActionTestCase() {
   private val mockConnector: MockStepikConnector get() = StepikConnector.getInstance() as MockStepikConnector
 
-
   fun `test apply web submission`() {
     @Language("JSON")
     val submissionsJson = """
