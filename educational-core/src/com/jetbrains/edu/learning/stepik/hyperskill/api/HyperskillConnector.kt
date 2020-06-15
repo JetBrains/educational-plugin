@@ -231,7 +231,7 @@ abstract class HyperskillConnector {
   }
 
   fun getSubmissions(stepIds: Set<Int>): List<Submission> {
-    val userId = HyperskillSettings.INSTANCE.account?.userInfo?.id ?: error("Attempt to get submission for non authorized user")
+    val userId = HyperskillSettings.INSTANCE.account?.userInfo?.id ?: return emptyList()
     var currentPage = 1
     val allSubmissions = mutableListOf<Submission>()
     while (true) {
