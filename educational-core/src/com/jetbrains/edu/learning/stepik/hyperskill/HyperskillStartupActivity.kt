@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class HyperskillStartupActivity : StartupActivity {
@@ -48,7 +49,9 @@ class HyperskillStartupActivity : StartupActivity {
             submissionsManager.prepareSubmissionsContent(project, course) {}
           }
 
-          override fun userLoggedOut() {}
+          override fun userLoggedOut() {
+            TaskDescriptionView.getInstance(project).updateSubmissionsTab()
+          }
         })
       }
       synchronizeTopics(project, course)
