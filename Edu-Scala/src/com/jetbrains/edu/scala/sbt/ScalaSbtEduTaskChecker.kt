@@ -2,7 +2,10 @@ package com.jetbrains.edu.scala.sbt
 
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckResult.Companion.escaped
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
@@ -13,5 +16,7 @@ class ScalaSbtEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, proj
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
     return task.getAllTestDirectories(project).mapNotNull { ConfigurationContext(it).configuration }
   }
+
+  override fun check(indicator: ProgressIndicator): CheckResult = super.check(indicator).escaped
 }
 

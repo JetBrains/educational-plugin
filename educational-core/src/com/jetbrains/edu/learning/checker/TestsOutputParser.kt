@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.checker
 
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATS_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATULATIONS
 import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
@@ -8,6 +7,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils.TEST_FAILED
 import com.jetbrains.edu.learning.checker.CheckUtils.TEST_OK
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.xmlEscaped
 import java.util.regex.Pattern
 
 class TestsOutputParser {
@@ -16,8 +16,7 @@ class TestsOutputParser {
   private var lastFailedMessage: TestMessage.Failed? = null
   private var congratulations: String = CONGRATULATIONS
 
-  @JvmOverloads
-  fun getCheckResult(messages: List<String>, needEscapeResult: Boolean = false): CheckResult {
+  fun getCheckResult(messages: List<String>, needEscapeResult: Boolean): CheckResult {
     val processor: (TestMessage) -> Unit = { message ->
       when (message) {
         is TestMessage.Congrats -> {
@@ -37,8 +36,8 @@ class TestsOutputParser {
 
     val finalFailedMessage = lastFailedMessage
     return if (finalFailedMessage != null) {
-      val message = fillWithIncorrect(finalFailedMessage.message)
-      CheckResult(CheckStatus.Failed, message, diff = finalFailedMessage.diff)
+      val message = if (needEscapeResult) finalFailedMessage.message.xmlEscaped else finalFailedMessage.message
+      CheckResult(CheckStatus.Failed, fillWithIncorrect(message), diff = finalFailedMessage.diff)
     }
     else {
       CheckResult(CheckStatus.Solved, congratulations)

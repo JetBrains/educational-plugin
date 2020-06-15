@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.nullValue
+import com.jetbrains.edu.learning.xmlEscaped
 import org.hamcrest.CoreMatchers.equalTo
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert.assertThat
@@ -153,6 +154,20 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
           }
         """)
       }
+      eduTask("escapeMessageInFailedTest") {
+        kotlinTaskFile("src/Task.kt")
+        kotlinTaskFile("test/Tests.kt", """
+          import org.junit.Assert
+          import org.junit.Test
+
+          class Test {
+              @Test
+              fun testSolution() {
+                  Assert.assertTrue("<br>", false)
+              }
+          }
+        """)
+      }
       outputTask("outputTaskFail") {
         kotlinTaskFile("src/Task.kt", """
           fun main() {
@@ -197,7 +212,9 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
             diff(CheckResultDiff(expected = "Hello,\nWorld!", actual = "Hello\nWorld!", title = title))
         "objectComparisonTestFail" ->
           // TODO: find out why test framework doesn't provide diff for this case
-          equalTo("expected: Foo<(0, 0)> but was: Bar<(0, 0)>") to nullValue()
+          equalTo("expected: Foo<(0, 0)> but was: Bar<(0, 0)>".xmlEscaped) to nullValue()
+        "escapeMessageInFailedTest" ->
+          equalTo("<br>".xmlEscaped) to nullValue()
         "outputTaskFail" ->
           equalTo(EduCoreBundle.message("check.incorrect")) to
             diff(CheckResultDiff(expected = "OK!\n", actual = "OK\n"))

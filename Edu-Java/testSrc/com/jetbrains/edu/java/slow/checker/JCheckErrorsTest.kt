@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.xmlEscaped
 
 class JCheckErrorsTest : JdkCheckerTestBase() {
 
@@ -66,6 +67,19 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
           }
         """)
       }
+      eduTask("escapeMessageInFailedTest") {
+        javaTaskFile("src/Task.java")
+        javaTaskFile("test/Test.java", """
+          import org.junit.Assert;
+
+          public class Test {
+            @org.junit.Test
+            public void test() {
+              Assert.assertTrue("<br>", false);
+            }
+          }
+        """)
+      }
     }
   }
 
@@ -76,6 +90,7 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
         "javaCompilationError" -> CheckUtils.COMPILATION_FAILED_MESSAGE
         "testFail" -> "Task.foo() should return 42"
         "comparisonTestFail" -> EduCoreBundle.message("check.incorrect")
+        "escapeMessageInFailedTest" -> "<br>".xmlEscaped
         else -> error("Unexpected task name: ${task.name}")
       }
     }

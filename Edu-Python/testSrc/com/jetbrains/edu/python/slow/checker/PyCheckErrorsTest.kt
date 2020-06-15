@@ -70,6 +70,9 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
                 failed("Some unit tests failed")
             """)
         }
+        eduTask("DoNotEscapeMessageInFailedTest") {
+          pythonTaskFile("tests.py", """print("#educational_plugin test_type_used FAILED + <br>")""")
+        }
         outputTask("OutputTestsFailed") {
           pythonTaskFile("hello_world.py", """print("Hello, World")""")
           taskFile("output.txt") {
@@ -84,15 +87,16 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("Status for ${task.name} doesn't match", CheckStatus.Failed, checkResult.status)
       val matcher: Triple<Matcher<String>, Matcher<CheckResultDiff?>, Matcher<String?>> = when (task.name) {
-        "EduTestsFailed" -> Triple(containsString("error happened"), nullValue(), nullValue())
+        "EduTestsFailed" -> Triple(equalTo("error happened"), nullValue(), nullValue())
         "EduNoTestsRun" -> Triple(containsString(CheckUtils.NO_TESTS_HAVE_RUN), nullValue(), nullValue())
         "SyntaxError" -> Triple(containsString("Syntax Error"), nullValue(),
                                 containsString("SyntaxError: invalid syntax"))
+        "SyntaxErrorFromUnittest" -> Triple(containsString("Syntax Error"), nullValue(),
+                                            containsString("SyntaxError: invalid syntax"))
+        "DoNotEscapeMessageInFailedTest" -> Triple(equalTo("<br>"), nullValue(), nullValue())
         "OutputTestsFailed" ->
           Triple(equalTo(EduCoreBundle.message("check.incorrect")),
                  CheckResultDiffMatcher.diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n")), nullValue())
-        "SyntaxErrorFromUnittest" -> Triple(containsString("Syntax Error"), nullValue(),
-                                            containsString("SyntaxError: invalid syntax"))
         else -> error("Unexpected task name: ${task.name}")
       }
       assertThat("Checker output for ${task.name} doesn't match", checkResult.message, matcher.first)

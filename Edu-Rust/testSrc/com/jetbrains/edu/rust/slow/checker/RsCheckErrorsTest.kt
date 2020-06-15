@@ -144,6 +144,21 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
               }
           """)
         }
+        eduTask("DoNotEscapeMessageInFailedTest") {
+          taskFile("Cargo.toml", """
+            [package]
+            name = "task"
+            version = "0.1.0"
+            edition = "2018"
+          """)
+          rustTaskFile("src/lib.rs")
+          rustTaskFile("tests/tests.rs", """
+              #[test]
+              fn test() {
+                  assert!(false, "<br>");
+              }
+          """)
+        }
         outputTask("OutputCompilationFailed") {
           taskFile("Cargo.toml", """
             [package]
@@ -192,6 +207,7 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
           diff(CheckResultDiff(expected = "12", actual = "123", title = "Comparison Failure (test)"))
         "EduComparisonTestFailedWithMessage" -> equalTo("Test error message") to
           diff(CheckResultDiff(expected = "foo", actual = "bar", title = "Comparison Failure (test)"))
+        "DoNotEscapeMessageInFailedTest" -> equalTo("<br>") to nullValue()
         "OutputCompilationFailed" -> equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE) to nullValue()
         "OutputTestsFailed" ->
           equalTo(EduCoreBundle.message("check.incorrect")) to

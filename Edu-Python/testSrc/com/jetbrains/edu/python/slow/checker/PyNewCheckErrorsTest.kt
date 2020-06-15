@@ -73,6 +73,18 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
               |""".trimMargin())
           }
         }
+        eduTask("DoNotEscapeMessageInFailedTest") {
+          pythonTaskFile("task.py")
+          dir("tests") {
+            taskFile("__init__.py")
+            taskFile("tests.py", """
+              |import unittest
+              |class TestCase(unittest.TestCase):
+              |    def test_add(self):
+              |        self.assertTrue(False, "<br>")
+              |""".trimMargin())
+          }
+        }
         outputTask("OutputTestsFailed") {
           pythonTaskFile("hello_world.py", """print("Hello, World")""")
           taskFile("output.txt") {
@@ -93,6 +105,8 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
         "SyntaxError" -> Result(CheckStatus.Failed, containsString("Syntax Error"), nullValue(),
                                 containsString("SyntaxError: invalid syntax"))
         "AssertionError" -> Result(CheckStatus.Failed, equalTo("False is not true : My own message"), nullValue(), nullValue())
+        "DoNotEscapeMessageInFailedTest" -> Result(CheckStatus.Failed, equalTo("False is not true : <br>"),
+                                                   nullValue(), nullValue())
         "OutputTestsFailed" ->
           Result(CheckStatus.Failed, equalTo(EduCoreBundle.message("check.incorrect")),
                  diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n")), nullValue())

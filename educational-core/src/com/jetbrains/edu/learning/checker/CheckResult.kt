@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.checker
 
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.xmlEscaped
 import javax.swing.event.HyperlinkListener
 
 class CheckResult @JvmOverloads constructor(
@@ -22,6 +23,8 @@ class CheckResult @JvmOverloads constructor(
     @JvmField val SOLVED = CheckResult(CheckStatus.Solved, "")
     @JvmField val NO_TESTS_RUN = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.no.tests"))
     @JvmField val CANCELED = CheckResult(CheckStatus.Unchecked, "Canceled")
+
+    val CheckResult.escaped: CheckResult get() = CheckResult(status, message.xmlEscaped, details, diff, hyperlinkListener)
   }
 }
 

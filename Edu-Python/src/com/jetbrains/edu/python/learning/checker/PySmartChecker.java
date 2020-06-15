@@ -73,7 +73,7 @@ class PySmartChecker {
         final ProcessOutput output = handler.runProcess();
         final Course course = StudyTaskManager.getInstance(project).getCourse();
         if (course != null) {
-          final CheckStatus status = new TestsOutputParser().getCheckResult(output.getStdoutLines()).getStatus();
+          final CheckStatus status = new TestsOutputParser().getCheckResult(output.getStdoutLines(), false).getStatus();
           userAnswerPlaceholder.setStatus(status);
           YamlFormatSynchronizer.saveItem(usersTaskFile.getTask());
         }

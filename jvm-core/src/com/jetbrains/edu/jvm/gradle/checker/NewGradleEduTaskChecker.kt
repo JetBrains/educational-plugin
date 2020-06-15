@@ -6,6 +6,7 @@ import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckResult.Companion.escaped
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
@@ -27,4 +28,6 @@ open class NewGradleEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker
   }
 
   override fun getComparisonErrorMessage(node: SMTestProxy): String = extractComparisonErrorMessage(node)
+
+  override fun check(indicator: ProgressIndicator): CheckResult = super.check(indicator).escaped
 }
