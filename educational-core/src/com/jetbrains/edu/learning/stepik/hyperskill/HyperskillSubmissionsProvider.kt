@@ -13,9 +13,9 @@ import com.jetbrains.edu.learning.stepik.submissions.SubmissionsProvider
 
 class HyperskillSubmissionsProvider : SubmissionsProvider {
 
-  override fun loadAllSubmissions(project: Project, course: Course?): Map<Int, MutableList<Submission>> {
+  override fun loadAllSubmissions(project: Project, course: Course): Map<Int, MutableList<Submission>> {
     if (!submissionsCanBeShown(course) || !isLoggedIn()) return emptyMap()
-    val stepIds = HyperskillSolutionLoader.getInstance(project).provideTasksToUpdate(course!!).map { it.id }.toSet()
+    val stepIds = HyperskillSolutionLoader.getInstance(project).provideTasksToUpdate(course).map { it.id }.toSet()
     return loadSubmissions(stepIds)
   }
 
@@ -32,7 +32,7 @@ class HyperskillSubmissionsProvider : SubmissionsProvider {
     return HyperskillConnector.getInstance().getSubmissions(setOf(stepId))
   }
 
-  override fun submissionsCanBeShown(course: Course?): Boolean {
+  override fun submissionsCanBeShown(course: Course): Boolean {
     return course is HyperskillCourse && course.isStudy
   }
 

@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.stepik.api.Submission
 
 class StepikSubmissionsProvider : SubmissionsProvider {
 
-  override fun loadAllSubmissions(project: Project, course: Course?): Map<Int, MutableList<Submission>> {
+  override fun loadAllSubmissions(project: Project, course: Course): Map<Int, MutableList<Submission>> {
     val submissionsById = mutableMapOf<Int, MutableList<Submission>>()
     if (course is EduCourse && course.isRemote && isLoggedIn()) {
       val allTasks: List<Task> = course.allTasks
@@ -46,7 +46,7 @@ class StepikSubmissionsProvider : SubmissionsProvider {
     return StepikConnector.getInstance().getStepSubmissions(stepId)
   }
 
-  override fun submissionsCanBeShown(course: Course?): Boolean {
+  override fun submissionsCanBeShown(course: Course): Boolean {
     return course is EduCourse && course.isStudy && course.isRemote
   }
 

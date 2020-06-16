@@ -39,8 +39,8 @@ class SubmissionsManager(private val project: Project) {
     val submissionsFromMemory = getSubmissionsFromMemory(stepIds)
     return if (submissionsFromMemory != null) submissionsFromMemory
     else {
-      val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(
-        course) ?: return null
+      if (course == null) return null
+      val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
       val submissionsById = submissionsProvider.loadSubmissions(stepIds)
       submissions.putAll(submissionsById)
       ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
@@ -94,6 +94,7 @@ class SubmissionsManager(private val project: Project) {
   }
 
   fun submissionsSupported(): Boolean {
+    if (course == null) return false
     val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(
       course) ?: return false
     return submissionsProvider.submissionsCanBeShown(course)

@@ -12,13 +12,13 @@ import com.jetbrains.edu.learning.stepik.api.Submission
  */
 interface SubmissionsProvider {
 
-  fun loadAllSubmissions(project: Project, course: Course?): Map<Int, MutableList<Submission>>
+  fun loadAllSubmissions(project: Project, course: Course): Map<Int, MutableList<Submission>>
 
   fun loadSubmissions(stepIds: Set<Int>): Map<Int, MutableList<Submission>>
 
   fun loadStepSubmissions(stepId: Int): List<Submission>
 
-  fun submissionsCanBeShown(course: Course?): Boolean
+  fun submissionsCanBeShown(course: Course): Boolean
 
   fun isLoggedIn(): Boolean
 
@@ -30,8 +30,7 @@ interface SubmissionsProvider {
     private val EP_NAME = ExtensionPointName.create<SubmissionsProvider>("Educational.submissionsProvider")
 
     @JvmStatic
-    fun getSubmissionsProviderForCourse(course: Course?): SubmissionsProvider? {
-      if (course == null) return null
+    fun getSubmissionsProviderForCourse(course: Course): SubmissionsProvider? {
       val submissionsProviders = EP_NAME.extensionList.filter { it.submissionsCanBeShown(course) }
       if (submissionsProviders.isEmpty()) {
         return null
