@@ -17,17 +17,21 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import icons.EducationalCoreIcons
 
 @Suppress("ComponentNotRegistered")
-class ApplyHyperskillSubmission : DumbAwareAction("Apply Hyperskill Submission", "Apply Hyperskill Submission",
+class ApplyHyperskillSubmission : DumbAwareAction(EduCoreBundle.message("hyperskill.educator.apply.submission"),
+                                                  EduCoreBundle.message("hyperskill.educator.apply.submission"),
                                                   EducationalCoreIcons.JB_ACADEMY_ENABLED) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = getTask(project, e) ?: return
 
-    val idText = Messages.showInputDialog(project, "Submission ID", "Apply Submission", null, null, object : InputValidatorEx {
+    val validator = object : InputValidatorEx {
       private var errorText: String? = null
 
       override fun checkInput(inputString: String?): Boolean {
-        errorText = if (!StringUtil.isNotNegativeNumber(inputString)) "Invalid Submission ID" else null
+        errorText = if (!StringUtil.isNotNegativeNumber(inputString))
+          EduCoreBundle.message("hyperskill.educator.submission.invalid.id")
+        else null
+
         return errorText == null
       }
 
@@ -38,9 +42,13 @@ class ApplyHyperskillSubmission : DumbAwareAction("Apply Hyperskill Submission",
       override fun canClose(inputString: String?): Boolean {
         return checkInput(inputString)
       }
-    }) ?: return
+    }
 
-    val id = Integer.valueOf(idText) //valid int because of validator
+    val idText = Messages.showInputDialog(project, EduCoreBundle.message("hyperskill.educator.submission.id"),
+                                          EduCoreBundle.message("hyperskill.educator.apply.submission"),
+                                          null, null, validator) ?: return
+
+    val id = Integer.valueOf(idText) // valid int because of validator
 
     computeUnderProgress(project, EduCoreBundle.message("hyperskill.educator.applying.submission"), false) {
       val submission = StepikConnector.getInstance().getSubmissionById(id).onError {
