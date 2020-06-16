@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.stepik.hyperskill
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
@@ -52,8 +53,10 @@ class ApplyHyperskillSubmission : DumbAwareAction(EduCoreBundle.message("hypersk
 
     computeUnderProgress(project, EduCoreBundle.message("hyperskill.educator.applying.submission"), false) {
       val submission = StepikConnector.getInstance().getSubmissionById(id).onError {
-        Messages.showErrorDialog(EduCoreBundle.message("hyperskill.educator.failed.submission.message", id),
-                                 EduCoreBundle.message("hyperskill.educator.failed.submission.title"))
+        runInEdt {
+          Messages.showErrorDialog(EduCoreBundle.message("hyperskill.educator.failed.submission.message", id),
+                                   EduCoreBundle.message("hyperskill.educator.failed.submission.title"))
+        }
         return@computeUnderProgress
       }
       // there is no information about step id in Stepik submissions, so we have to assume that it's a submission for current task
