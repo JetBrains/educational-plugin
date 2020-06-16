@@ -4,7 +4,7 @@ package com.jetbrains.edu.learning.newproject
 
 import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.openapi.project.Project
-import com.intellij.platform.PlatformProjectOpenProcessor
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.projectImport.ProjectOpenedCallback
 import java.nio.file.Path
 
@@ -13,9 +13,9 @@ fun openNewProject(location: Path, callback: ProjectOpenedCallback): Project? {
     forceOpenInNewFrame = true,
     projectToClose = null,
     isNewProject = true,
+    runConfigurators = true,
     callback = callback
   )
 
-  @Suppress("UnstableApiUsage")
-  return PlatformProjectOpenProcessor.doOpenProject(location, task)
+  return ProjectManagerEx.getInstanceEx().openProject(location, task)
 }
