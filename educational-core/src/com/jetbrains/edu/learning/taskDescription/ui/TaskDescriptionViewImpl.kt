@@ -92,7 +92,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   }
 
   private fun updateSubmissionsTab(contentManager: ContentManager, submissionsTab: SubmissionsTabPanel?, tabIndex: Int) {
-    if (submissionsTab == null || !submissionsTab.isToShowSubmissions) {
+    if (submissionsTab == null || !submissionsTab.shouldShowSubmissions) {
       removeSubmissionsContent(contentManager)
     }
     else {

@@ -44,10 +44,10 @@ class SubmissionsTabPanel(project: Project,
                           val task: Task?
 ) : AdditionalTabPanel(project, EduCoreBundle.message("submissions.tab.name")) {
 
-  val isToShowSubmissions: Boolean
+  val shouldShowSubmissions: Boolean
 
   init {
-    isToShowSubmissions = createSubmissionsContent()
+    shouldShowSubmissions = createSubmissionsContent()
   }
 
   private fun createSubmissionsContent(): Boolean {
