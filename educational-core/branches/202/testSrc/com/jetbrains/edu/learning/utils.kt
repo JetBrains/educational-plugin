@@ -1,11 +1,14 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.featureStatistics.FeatureStatisticsBundleEP
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ComponentManager
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.project.Project
 
 import com.intellij.testFramework.registerComponentInstance
+import java.util.*
 
 fun createFileEditorManager(project: Project): FileEditorManagerImpl = FileEditorManagerImpl(project)
 
@@ -19,5 +22,18 @@ fun <T : Any> ComponentManager.registerComponent(componentKey: Class<T>, impleme
 //
 // Inspired by kotlin plugin
 fun registerAdditionalResourceBundleProviders(disposable: Disposable) {
-  // TODO: check if we need some implementation of this method for AS based on 2020.2
+  val extensionPoint = Extensions.getRootArea().getExtensionPoint(FeatureStatisticsBundleEP.EP_NAME)
+  if (extensionPoint.extensions.none { it.qualifiedName == TestOCBundleProvider.qualifiedName }) {
+    try {
+      ResourceBundle.getBundle(TestOCBundleProvider.qualifiedName, Locale.getDefault(), TestOCBundleProvider.loaderForClass)
+      extensionPoint.registerExtension(TestOCBundleProvider, disposable)
+    }
+    catch (ignore: MissingResourceException) {}
+  }
+}
+
+private object TestOCBundleProvider : FeatureStatisticsBundleEP() {
+  init {
+    qualifiedName = "messages.OCBundle"
+  }
 }

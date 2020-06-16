@@ -8,6 +8,7 @@ import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.project.Project
 
 import com.intellij.testFramework.registerComponentInstance
+import java.util.*
 
 fun createFileEditorManager(project: Project): FileEditorManagerImpl = FileEditorManagerImpl(project)
 
@@ -23,7 +24,11 @@ fun <T : Any> ComponentManager.registerComponent(componentKey: Class<T>, impleme
 fun registerAdditionalResourceBundleProviders(disposable: Disposable) {
   val extensionPoint = Extensions.getRootArea().getExtensionPoint(FeatureStatisticsBundleEP.EP_NAME)
   if (extensionPoint.extensions.none { it.qualifiedName == TestOCBundleProvider.qualifiedName }) {
-    extensionPoint.registerExtension(TestOCBundleProvider, disposable)
+    try {
+      ResourceBundle.getBundle(TestOCBundleProvider.qualifiedName, Locale.getDefault(), TestOCBundleProvider.loaderForClass)
+      extensionPoint.registerExtension(TestOCBundleProvider, disposable)
+    }
+    catch (ignore: MissingResourceException) {}
   }
 }
 

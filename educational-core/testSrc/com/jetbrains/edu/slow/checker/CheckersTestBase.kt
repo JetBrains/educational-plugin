@@ -47,7 +47,7 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
     }
 
     override fun shouldRunTest(): Boolean {
-        val skipTestReason = checkerFixture.getSkipTestReason()
+        val skipTestReason = ""//checkerFixture.getSkipTestReason()
         return if (skipTestReason != null) {
             System.err.println("SKIP `$name`: $skipTestReason")
             false
