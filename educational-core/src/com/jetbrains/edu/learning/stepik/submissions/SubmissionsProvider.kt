@@ -16,7 +16,7 @@ interface SubmissionsProvider {
 
   fun loadSubmissions(stepIds: Set<Int>): Map<Int, MutableList<Submission>>
 
-  fun submissionsCanBeShown(course: Course): Boolean
+  fun areSubmissionsAvailable(course: Course): Boolean
 
   fun isLoggedIn(): Boolean
 
@@ -29,7 +29,7 @@ interface SubmissionsProvider {
 
     @JvmStatic
     fun getSubmissionsProviderForCourse(course: Course): SubmissionsProvider? {
-      val submissionsProviders = EP_NAME.extensionList.filter { it.submissionsCanBeShown(course) }
+      val submissionsProviders = EP_NAME.extensionList.filter { it.areSubmissionsAvailable(course) }
       if (submissionsProviders.isEmpty()) {
         return null
       }

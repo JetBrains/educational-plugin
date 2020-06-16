@@ -97,7 +97,7 @@ class SubmissionsManager(private val project: Project) {
     if (course == null) return false
     val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(
       course) ?: return false
-    return submissionsProvider.submissionsCanBeShown(course)
+    return submissionsProvider.areSubmissionsAvailable(course)
   }
 
   fun prepareSubmissionsContent(loadSolutions: () -> Unit = {}) {
