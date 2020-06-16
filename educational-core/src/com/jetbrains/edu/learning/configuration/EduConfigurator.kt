@@ -167,7 +167,7 @@ interface EduConfigurator<Settings> {
     get() = EmptyIcon.ICON_16
 
   /**
-   * Tab next to the task description.
+   * Tab located next to the task description.
    *
    * @see com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
    */
