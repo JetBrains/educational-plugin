@@ -8,8 +8,6 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.ui.EduColors
@@ -18,13 +16,9 @@ import java.io.File
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
-class JoinCoursePanel(
-  private val settings: CourseDisplaySettings,
-  joinCourseAction: (CourseInfo, CourseMode) -> Unit
-) : JPanel(BorderLayout()) {
+class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(BorderLayout()) {
 
-  private val myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = true, isLocationFieldNeeded = true,
-                                                             joinCourseAction = joinCourseAction)
+  private val myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = true, isLocationFieldNeeded = true)
   private val myErrorLabel: HyperlinkLabel = HyperlinkLabel()
   private var myValidationMessage: ValidationMessage? = null
   private var myValidationListener: ValidationListener? = null

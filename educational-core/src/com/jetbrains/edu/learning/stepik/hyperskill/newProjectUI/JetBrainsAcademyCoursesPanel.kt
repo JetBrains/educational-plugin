@@ -2,17 +2,17 @@ package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.*
+import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
+import com.jetbrains.edu.learning.newproject.ui.LinkInfo
+import com.jetbrains.edu.learning.newproject.ui.LoginPanel
+import com.jetbrains.edu.learning.newproject.ui.TabInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.Color
 
-class JetBrainsAcademyCoursesPanel(
-  dialog: BrowseCoursesDialog,
-  platformProvider: JetBrainsAcademyPlatformProvider
-) : CoursesPanel(dialog, platformProvider) {
+class JetBrainsAcademyCoursesPanel(platformProvider: JetBrainsAcademyPlatformProvider) : CoursesPanel(platformProvider) {
 
   override fun tabInfo(): TabInfo? {
     val infoText = EduCoreBundle.message("hyperskill.courses.explanation", EduNames.JBA)
@@ -24,7 +24,7 @@ class JetBrainsAcademyCoursesPanel(
   private inner class JetBrainsAcademyLoginPanel : LoginPanel(!isLoggedIn(),
                                                               EduCoreBundle.message("course.dialog.jba.log.in.label.before.link"),
                                                               EduCoreBundle.message("course.dialog.log.in.to", EduNames.JBA),
-                                                              { handleLogin() }) {
+                                                              { handleLogin() })  {
     override val beforeLinkForeground: Color
       get() = EduColors.warningTextForeground
   }

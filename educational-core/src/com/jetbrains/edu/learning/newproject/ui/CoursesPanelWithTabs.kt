@@ -24,8 +24,9 @@ import javax.swing.tree.*
 
 private const val FONT_SIZE = 13.0f
 private const val SCROLL_PANE_WIDTH = 233
+private const val SCROLL_PANE_HEIGHT = 800
 
-class CoursesPanelWithTabs(val dialog: BrowseCoursesDialog) : JPanel() {
+class CoursesPanelWithTabs : JPanel() {
   private val coursesTab: CoursesTab
   private val coursesProvidersTree: JBScrollPane
 
@@ -65,17 +66,17 @@ class CoursesPanelWithTabs(val dialog: BrowseCoursesDialog) : JPanel() {
     return JBScrollPane(tree).apply {
       horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
       verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER
-      preferredSize = JBUI.size(SCROLL_PANE_WIDTH, dialog.preferredSize.height)
+      preferredSize = JBUI.size(SCROLL_PANE_WIDTH, SCROLL_PANE_HEIGHT)
       border = JBUI.Borders.customLine(NewCoursePanel.DIVIDER_COLOR, 0, 0, 0, 1)
     }
   }
 
-  fun addCourseValidationListener(courseValidationListener: CoursesPanel.CourseValidationListener) {
-    coursesTab.addCourseValidationListener(courseValidationListener)
-  }
-
   fun setError(error: ErrorState) {
     coursesTab.setError(error)
+  }
+
+  fun doValidation() {
+    coursesTab.doValidation()
   }
 
   fun setSidePaneBackground() {
@@ -96,7 +97,7 @@ class CoursesPanelWithTabs(val dialog: BrowseCoursesDialog) : JPanel() {
       layout = cardLayout
       val providers = CoursesPlatformProviderFactory.allProviders
       providers.forEach {
-        val panel = it.getPanel(dialog)
+        val panel = it.panel
         panels.add(panel)
         add(it.name, panel)
       }
@@ -114,12 +115,10 @@ class CoursesPanelWithTabs(val dialog: BrowseCoursesDialog) : JPanel() {
     fun showPanel(name: String) {
       activeTabName = name
       cardLayout.show(this, activeTabName)
-      (cardLayout.findComponentById(activeTabName) as CoursesPanel).processSelectionChanged()
     }
 
-    // TODO: do we really need it?
-    fun addCourseValidationListener(courseValidationListener: CoursesPanel.CourseValidationListener) {
-      panels.forEach { it.addCourseValidationListener(courseValidationListener) }
+    fun doValidation() {
+      (cardLayout.findComponentById(activeTabName) as CoursesPanel).doValidation()
     }
 
     fun selectedCourse(): Course? = currentPanel.selectedCourse

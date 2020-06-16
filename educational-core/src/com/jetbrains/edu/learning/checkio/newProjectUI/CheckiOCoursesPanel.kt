@@ -6,11 +6,12 @@ import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.*
+import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
+import com.jetbrains.edu.learning.newproject.ui.LinkInfo
+import com.jetbrains.edu.learning.newproject.ui.LoginPanel
+import com.jetbrains.edu.learning.newproject.ui.TabInfo
 
-class CheckiOCoursesPanel(
-  dialog: BrowseCoursesDialog,
-  platformProvider: CoursesPlatformProvider
-) : CoursesPanel(dialog, platformProvider) {
+class CheckiOCoursesPanel(platformProvider: CoursesPlatformProvider) : CoursesPanel(platformProvider) {
   private val loginComponent = CheckiOLoginPanel()
 
   init {

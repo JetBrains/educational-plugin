@@ -4,8 +4,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
-import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import icons.EducationalCoreIcons
 import javax.swing.Icon
@@ -15,7 +13,7 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider {
 
   override val icon: Icon get() = EducationalCoreIcons.JB_ACADEMY_TAB
 
-  override fun getPanel(dialog: BrowseCoursesDialog): CoursesPanel = JetBrainsAcademyCoursesPanel(dialog, this)
+  override val panel get()= JetBrainsAcademyCoursesPanel(this)
 
   override suspend fun loadCourses(): List<Course> {
     return SUPPORTED_LANGUAGES.mapNotNull { languageId ->

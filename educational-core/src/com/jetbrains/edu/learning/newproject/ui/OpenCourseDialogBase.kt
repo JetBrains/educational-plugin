@@ -2,13 +2,10 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.newproject.OpenCourseAction
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import java.awt.event.ActionEvent
 import javax.swing.AbstractAction
 import javax.swing.Action
-
-private const val CANCEL_BUTTON_TEXT = "Close"
 
 abstract class OpenCourseDialogBase : DialogWrapper(true) {
   abstract val courseInfo: CourseInfo
@@ -25,8 +22,8 @@ abstract class OpenCourseDialogBase : DialogWrapper(true) {
     return arrayOf(closeAction)
   }
 
-  fun setEnabledViewAsEducator(enabled: Boolean) {
-    (myOKAction as? OpenCourseAction)?.viewAsEducatorAction?.isEnabled = enabled
+  fun close() {
+    close(OK_EXIT_CODE)
   }
 
   override fun getStyle(): DialogStyle {

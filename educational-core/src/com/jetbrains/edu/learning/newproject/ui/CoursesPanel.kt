@@ -1,13 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
-import com.intellij.ide.plugins.DynamicPluginListener
-import com.intellij.ide.plugins.DynamicPluginListener.Companion.TOPIC
-import com.intellij.ide.plugins.IdeaPluginDescriptor
-import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.plugins.newui.HorizontalLayout
-import com.intellij.notification.Notification
-import com.intellij.notification.Notifications
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
@@ -19,15 +12,11 @@ import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.joinCourse
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.*
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.Companion.forCourse
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
 import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
@@ -41,17 +30,14 @@ import javax.swing.JPanel
 import kotlin.collections.HashSet
 
 
-private val PANEL_SIZE = JBUI.size(750, 600)
+private val PANEL_SIZE = JBUI.size(900, 600)
 
 private const val CONTENT_CARD_NAME = "CONTENT"
 private const val LOADING_CARD_NAME = "PROGRESS"
 private const val NO_COURSES = "NO_COURSES"
 
-abstract class CoursesPanel(dialog: BrowseCoursesDialog, coursesProvider: CoursesPlatformProvider) : JPanel() {
-  protected var coursePanel: NewCoursePanel = NewCoursePanel(
-    isStandalonePanel = false,
-    isLocationFieldNeeded = true,
-    joinCourseAction = joinCourseAction(dialog))
+abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel() {
+  protected var coursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false, isLocationFieldNeeded = true)
   private var courses: MutableList<Course> = mutableListOf()
   protected lateinit var coursesListPanel: CoursesListPanel
   private lateinit var myProgrammingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
@@ -84,8 +70,6 @@ abstract class CoursesPanel(dialog: BrowseCoursesDialog, coursesProvider: Course
     showProgressState()
 
     coursesListPanel.addListener { processSelectionChanged() }
-
-    setupPluginListeners(dialog.disposable)
   }
 
   fun hideLoginPanel() = coursesListPanel.hideLoginPanel()
@@ -118,38 +102,6 @@ abstract class CoursesPanel(dialog: BrowseCoursesDialog, coursesProvider: Course
     return splitPaneRoot
   }
 
-  private fun setupPluginListeners(disposable: Disposable) {
-    val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
-    connection.subscribe(TOPIC, object : DynamicPluginListener {
-      override fun pluginLoaded(pluginDescriptor: IdeaPluginDescriptor) {
-        doValidation()
-      }
-    })
-    connection
-      // TODO: find out a better way to be notified when plugin installation finishes
-      .subscribe(Notifications.TOPIC, object : Notifications {
-        override fun notify(notification: Notification) {
-          if (notification.groupId == EduUtils.getUpdateNotificationGroup().displayId) {
-            doValidation()
-            // TODO: investigate why it leads to IDE freeze when you install python plugin
-            // ApplicationManager.getApplication().invokeLater {
-            //  PluginManagerConfigurable.shutdownOrRestartApp()
-            // }
-          }
-        }
-      })
-
-    val disablePluginListener = Runnable { ApplicationManager.getApplication().invokeLater { doValidation() } }
-    Disposer.register(disposable, Disposable {
-      // BACKCOMPAT: 2019.3
-      @Suppress("DEPRECATION")
-      PluginManagerCore.removeDisablePluginListener(disablePluginListener)
-    })
-    // BACKCOMPAT: 2019.3
-    @Suppress("DEPRECATION")
-    PluginManagerCore.addDisablePluginListener(disablePluginListener)
-  }
-
   protected open fun toolbarAction(): AnAction? = null
 
   protected open fun tabInfo(): TabInfo? = null
@@ -177,15 +129,6 @@ abstract class CoursesPanel(dialog: BrowseCoursesDialog, coursesProvider: Course
     cardLayout.show(this, CONTENT_CARD_NAME)
   }
 
-  private fun joinCourseAction(dialog: BrowseCoursesDialog): (CourseInfo, CourseMode) -> Unit {
-    return { courseInfo, courseMode ->
-      joinCourse(courseInfo,
-                 courseMode,
-                 errorHandler = { errorState -> dialog.setError(errorState) },
-                 closeDialogAction = { dialog.close(DialogWrapper.OK_EXIT_CODE) })
-    }
-  }
-
   private fun updateFilters() {
     myHumanLanguagesFilterDropdown.updateItems(humanLanguages(courses))
     myProgrammingLanguagesFilterDropdown.updateItems(programmingLanguages(courses))
@@ -199,7 +142,7 @@ abstract class CoursesPanel(dialog: BrowseCoursesDialog, coursesProvider: Course
     doValidation(course)
   }
 
-  protected fun doValidation(course: Course? = coursesListPanel.selectedCourse) {
+  fun doValidation(course: Course? = coursesListPanel.selectedCourse) {
     var languageError: ErrorState = NothingSelected
     if (course != null) {
       val languageSettingsMessage = coursePanel.validateSettings(course)
@@ -226,7 +169,7 @@ abstract class CoursesPanel(dialog: BrowseCoursesDialog, coursesProvider: Course
     showContent(coursesToAdd.isEmpty())
   }
 
-  fun addCourseValidationListener(listener: CourseValidationListener) {
+  private fun addCourseValidationListener(listener: CourseValidationListener) {
     coursePanel.addCourseValidationListener(listener)
   }
 

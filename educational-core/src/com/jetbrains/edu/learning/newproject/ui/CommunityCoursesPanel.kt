@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 private const val LEARN_COMMUNITY_COURSES = "https://www.jetbrains.com/help/education/learner-start-guide.html"  // TODO: update link
 
-class CommunityCoursesPanel(dialog: BrowseCoursesDialog, coursesProvider: CoursesPlatformProvider) : CoursesPanel(dialog, coursesProvider) {
+class CommunityCoursesPanel(coursesProvider: CoursesPlatformProvider) : CoursesPanel(coursesProvider) {
 
   override fun toolbarAction(): AnAction {
     return CCNewCourseAction(EduCoreBundle.message("course.dialog.create.course"))

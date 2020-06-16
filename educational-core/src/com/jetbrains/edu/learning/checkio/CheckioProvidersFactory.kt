@@ -25,7 +25,8 @@ private class CheckiOPlatformProvider : CoursesPlatformProvider {
 
   override val icon: Icon get() = EducationalCoreIcons.CheckiO.to24()
 
-  override fun getPanel(dialog: BrowseCoursesDialog): CoursesPanel = CheckiOCoursesPanel(dialog, this)
+  override val panel: CoursesPanel
+    get() = CheckiOCoursesPanel(this)
 
   override suspend fun loadCourses(): List<Course> {
     return if (EduUtils.isAndroidStudio()) {

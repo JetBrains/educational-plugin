@@ -29,7 +29,7 @@ import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.*
 
-private const val PANEL_WIDTH = 300
+private const val PANEL_WIDTH = 450
 private const val PANEL_HEIGHT = 680
 
 private const val TOOLBAR_TOP_OFFSET = 10

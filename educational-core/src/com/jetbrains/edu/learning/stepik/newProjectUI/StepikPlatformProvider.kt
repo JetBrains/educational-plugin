@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik.newProjectUI
 
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -17,7 +16,7 @@ class StepikPlatformProvider(private val coursesProvider: StepikCoursesProvider)
 
   override val icon: Icon get() = EducationalCoreIcons.StepikCourseTab
 
-  override fun getPanel(dialog: BrowseCoursesDialog): CoursesPanel = StepikCoursesPanel(dialog, this)
+  override val panel: CoursesPanel get() = StepikCoursesPanel(this)
 
   override suspend fun loadCourses(): List<StepikCourse> {
     checkIsBackgroundThread()

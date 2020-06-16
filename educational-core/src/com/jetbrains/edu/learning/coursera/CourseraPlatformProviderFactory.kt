@@ -8,7 +8,6 @@ import com.intellij.platform.templates.github.DownloadUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.coursera.newProjectUI.CourseraCoursesPanel
-import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
@@ -36,7 +35,7 @@ class CourseraPlatformProvider : CoursesPlatformProvider {
 
   override val icon: Icon get() = EducationalCoreIcons.Coursera
 
-  override fun getPanel(dialog: BrowseCoursesDialog): CoursesPanel = CourseraCoursesPanel(dialog, this)
+  override val panel: CoursesPanel get() = CourseraCoursesPanel(this)
 
   override suspend fun loadCourses(): List<Course> {
     val tasks = mutableListOf<Future<Course?>>()

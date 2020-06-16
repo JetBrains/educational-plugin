@@ -11,7 +11,7 @@ interface CoursesPlatformProvider {
 
   val icon: Icon
 
-  fun getPanel(dialog: BrowseCoursesDialog): CoursesPanel
+  val panel: CoursesPanel
 
   suspend fun loadCourses(): List<Course>
 }

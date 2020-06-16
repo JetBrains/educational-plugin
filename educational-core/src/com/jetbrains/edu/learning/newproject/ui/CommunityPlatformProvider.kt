@@ -23,7 +23,7 @@ class CommunityPlatformProvider(private val coursesProvider: StepikCoursesProvid
 
   override val icon: Icon get() = EducationalCoreIcons.CommunityCourses
 
-  override fun getPanel(dialog: BrowseCoursesDialog): CoursesPanel = CommunityCoursesPanel(dialog, this)
+  override val panel: CoursesPanel get() = CommunityCoursesPanel(this)
 
   override suspend fun loadCourses(): List<Course> {
     val communityCourses = coursesProvider.getCommunityCourses()

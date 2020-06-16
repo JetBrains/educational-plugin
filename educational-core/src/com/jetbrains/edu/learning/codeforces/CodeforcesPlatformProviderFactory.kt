@@ -4,7 +4,6 @@ import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
@@ -20,7 +19,7 @@ private class CodeforcesPlatformProvider : CoursesPlatformProvider {
 
   override val icon: Icon get() = EducationalCoreIcons.Codeforces
 
-  override fun getPanel(dialog: BrowseCoursesDialog): CoursesPanel = CodeforcesCoursesPanel(dialog, this)
+  override val panel: CoursesPanel get() = CodeforcesCoursesPanel(this)
 
   override suspend fun loadCourses(): List<Course> {
     checkIsBackgroundThread()

@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction
 
 
-class StepikCoursesPanel(dialog: BrowseCoursesDialog, platformProvider: CoursesPlatformProvider) : CoursesPanel(dialog, platformProvider) {
+class StepikCoursesPanel(platformProvider: CoursesPlatformProvider) : CoursesPanel(platformProvider) {
   override fun toolbarAction(): AnAction? {
     return OpenStepikCourseByLink()
   }

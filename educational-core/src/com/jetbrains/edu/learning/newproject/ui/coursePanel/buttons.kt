@@ -66,7 +66,7 @@ class EditCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit) : StartCour
     setWidth72(this)
   }
 
-  override fun isVisible(course: Course) = false
+  override fun isVisible(course: Course) = course.isViewAsEducatorEnabled
 
 }
 

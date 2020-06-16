@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.newproject.joinCourse
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.OpenCourseButton
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.StartCourseButtonBase
 import com.jetbrains.edu.learning.projectView.ProgressUtil
@@ -87,8 +86,9 @@ class CourseNameInfoComponent(course: Course?) : JPanel(BorderLayout()) {
 class CourseNameComponent(course: Course?) : JPanel(BorderLayout()) {
   private val nameLabel: JLabel = JLabel()
 
-  private val openStartLoginButton: StartCourseButtonBase = OpenCourseButton { courseInfo, mode ->
-    joinCourse(courseInfo, mode, {}, {})
+  private val openStartLoginButton: StartCourseButtonBase = OpenCourseButton { _, _ ->
+    // TODO: fix when merge Katya's changes
+    // joinCourse(courseInfo, mode, {}, {})
   }
 
   init {
