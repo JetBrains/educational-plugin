@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsProvider
 
-class HyperskillSubmissionsProvider : SubmissionsProvider() {
+class HyperskillSubmissionsProvider : SubmissionsProvider {
 
   override fun loadAllSubmissions(project: Project, course: Course?): Map<Int, MutableList<Submission>> {
     if (!submissionsCanBeShown(course) || !isLoggedIn()) return emptyMap()

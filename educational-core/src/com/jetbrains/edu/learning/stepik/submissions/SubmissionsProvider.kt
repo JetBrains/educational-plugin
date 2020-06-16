@@ -10,21 +10,21 @@ import com.jetbrains.edu.learning.stepik.api.Submission
  *
  * @see com.jetbrains.edu.learning.stepik.SubmissionsManager
  */
-abstract class SubmissionsProvider {
+interface SubmissionsProvider {
 
-  abstract fun loadAllSubmissions(project: Project, course: Course?): Map<Int, MutableList<Submission>>
+  fun loadAllSubmissions(project: Project, course: Course?): Map<Int, MutableList<Submission>>
 
-  abstract fun loadSubmissions(stepIds: Set<Int>): Map<Int, MutableList<Submission>>
+  fun loadSubmissions(stepIds: Set<Int>): Map<Int, MutableList<Submission>>
 
-  abstract fun loadStepSubmissions(stepId: Int): List<Submission>
+  fun loadStepSubmissions(stepId: Int): List<Submission>
 
-  abstract fun submissionsCanBeShown(course: Course?): Boolean
+  fun submissionsCanBeShown(course: Course?): Boolean
 
-  abstract fun isLoggedIn(): Boolean
+  fun isLoggedIn(): Boolean
 
-  abstract fun getPlatformName(): String
+  fun getPlatformName(): String
 
-  abstract fun doAuthorize()
+  fun doAuthorize()
 
   companion object {
     private val EP_NAME = ExtensionPointName.create<SubmissionsProvider>("Educational.submissionsProvider")

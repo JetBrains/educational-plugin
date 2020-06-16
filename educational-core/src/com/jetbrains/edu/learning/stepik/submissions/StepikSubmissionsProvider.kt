@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.Submission
 
-class StepikSubmissionsProvider : SubmissionsProvider() {
+class StepikSubmissionsProvider : SubmissionsProvider {
 
   override fun loadAllSubmissions(project: Project, course: Course?): Map<Int, MutableList<Submission>> {
     val submissionsById = mutableMapOf<Int, MutableList<Submission>>()
