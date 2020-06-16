@@ -97,7 +97,7 @@ class SubmissionsManager(private val project: Project) {
     return submissionsProvider.submissionsCanBeShown(course)
   }
 
-  fun prepareSubmissionsContent(loadSolutions: () -> Unit) {
+  fun prepareSubmissionsContent(loadSolutions: () -> Unit = {}) {
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
 
     val toolWindow = TaskDescriptionView.getInstance(project).toolWindow

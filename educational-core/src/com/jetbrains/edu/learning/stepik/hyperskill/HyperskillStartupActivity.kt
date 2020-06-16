@@ -46,7 +46,7 @@ class HyperskillStartupActivity : StartupActivity {
             if (HyperskillSettings.INSTANCE.account == null) {
               return
             }
-            submissionsManager.prepareSubmissionsContent {}
+            submissionsManager.prepareSubmissionsContent()
           }
 
           override fun userLoggedOut() {
