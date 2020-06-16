@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -24,7 +23,6 @@ import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.util.concurrent.TimeUnit
 
 object HyperskillCheckConnector {
@@ -42,8 +40,7 @@ object HyperskillCheckConnector {
       is Ok -> {
         val feedback = if (result.details == null) result.message else "${result.message}\n${result.details}"
         val submission = postEduSubmission(attemptResponse.value, project, task, feedback)
-        SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, submission)
-        runInEdt { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
+        SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(project, task.id, task.status, submission)
         submission
       }
     }

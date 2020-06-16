@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageCommenters;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -17,7 +16,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import com.jetbrains.edu.learning.stepik.api.*;
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -149,8 +147,7 @@ public class StepikCheckerConnector {
     if (submission != null) {
       if (task instanceof CodeTask) {
         SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
-        submissionsManager.addToSubmissions(task.getId(), submission);
-        ApplicationManager.getApplication().invokeLater(() -> TaskDescriptionView.getInstance(project).updateSubmissionsTab());
+        submissionsManager.addToSubmissions(project, task.getId(), submission);
       }
       final String status = submission.getStatus();
       if (status == null) return CheckResult.FAILED_TO_CHECK;

@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
@@ -39,6 +40,7 @@ class SubmissionsManager {
       val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
       val submissionsById = submissionsProvider.loadSubmissions(stepIds)
       submissions.putAll(submissionsById)
+      course.updateSubmissionsTab()
       submissionsById.values.stream()
         .flatMap(List<Submission>::stream)
         .collect(Collectors.toList())
@@ -60,22 +62,32 @@ class SubmissionsManager {
 
   private fun getOrLoadSubmissions(course: Course, stepId: Int): List<Submission> {
     val submissionsProvider = course.getSubmissionsProvider() ?: return emptyList()
-    return submissions.getOrPut(stepId) { submissionsProvider.loadStepSubmissions(stepId).toMutableList() }
+    val submissionsList = submissions[stepId]
+    return if (submissionsList != null) {
+      submissionsList
+    }
+    else {
+      val loadedSubmissions = submissionsProvider.loadStepSubmissions(stepId).toMutableList()
+      submissions[stepId] = loadedSubmissions
+      course.updateSubmissionsTab()
+      loadedSubmissions
+    }
   }
 
-  fun addToSubmissions(taskId: Int, submission: Submission) {
+  fun addToSubmissions(project: Project, taskId: Int, submission: Submission) {
     val submissionsList = submissions.getOrPut(taskId) { mutableListOf(submission) }
     if (!submissionsList.contains(submission)) {
       submissionsList.add(submission)
       submissionsList.sortByDescending { it.time }
       //potential race when loading submissions and checking task at one time
     }
+    ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
   }
 
-  fun addToSubmissionsWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {
+  fun addToSubmissionsWithStatus(project: Project, taskId: Int, checkStatus: CheckStatus, submission: Submission?) {
     if (submission == null || checkStatus == CheckStatus.Unchecked) return
     submission.status = if (checkStatus == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
-    addToSubmissions(taskId, submission)
+    addToSubmissions(project, taskId, submission)
   }
 
   fun submissionsSupported(course: Course): Boolean {
@@ -112,6 +124,11 @@ class SubmissionsManager {
 
   private fun Course.getSubmissionsProvider(): SubmissionsProvider? {
     return SubmissionsProvider.getSubmissionsProviderForCourse(this)
+  }
+
+  private fun Course.updateSubmissionsTab() {
+    val project = course.project ?: return
+    ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
   }
 
   companion object {
