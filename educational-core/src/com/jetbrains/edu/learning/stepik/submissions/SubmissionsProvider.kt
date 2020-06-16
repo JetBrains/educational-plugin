@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik
+package com.jetbrains.edu.learning.stepik.submissions
 
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project

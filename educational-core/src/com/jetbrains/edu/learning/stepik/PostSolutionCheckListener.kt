@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 
 class PostSolutionCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {

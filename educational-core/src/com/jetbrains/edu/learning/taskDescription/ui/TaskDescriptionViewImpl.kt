@@ -21,10 +21,10 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.SubmissionsManager
-import com.jetbrains.edu.learning.stepik.SubmissionsTabPanel
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -76,7 +76,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val contentManager = uiContent?.contentManager ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
     if (SubmissionsManager.getInstance(project).submissionsSupported()) {
-      val submissionsTab = SubmissionsTabPanel(project, course, currentTask)
+      val submissionsTab = SubmissionsTabPanel(project, course,
+                                               currentTask)
       updateSubmissionsTab(contentManager, submissionsTab, getSubmissionsTabIndex(contentManager))
     }
     else {

@@ -16,13 +16,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
-import com.jetbrains.edu.learning.stepik.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import java.util.concurrent.TimeUnit
 
 object HyperskillCheckConnector {

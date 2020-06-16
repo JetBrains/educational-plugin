@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
-import com.jetbrains.edu.learning.stepik.SubmissionsManager;
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

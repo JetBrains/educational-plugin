@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.hyperskill.EduCourseUpdateChecker;
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;

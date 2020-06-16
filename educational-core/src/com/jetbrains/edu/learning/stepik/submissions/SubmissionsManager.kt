@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik
+package com.jetbrains.edu.learning.stepik.submissions
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
@@ -39,7 +39,8 @@ class SubmissionsManager(private val project: Project) {
     val submissionsFromMemory = getSubmissionsFromMemory(stepIds)
     return if (submissionsFromMemory != null) submissionsFromMemory
     else {
-      val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
+      val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(
+        course) ?: return null
       val submissionsById = submissionsProvider.loadSubmissions(stepIds)
       submissions.putAll(submissionsById)
       ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
@@ -93,7 +94,8 @@ class SubmissionsManager(private val project: Project) {
   }
 
   fun submissionsSupported(): Boolean {
-    val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return false
+    val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(
+      course) ?: return false
     return submissionsProvider.submissionsCanBeShown(course)
   }
 

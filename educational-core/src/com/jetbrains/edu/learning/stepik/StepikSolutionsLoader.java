@@ -38,6 +38,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.api.*;
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.update.UpdateNotification;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;

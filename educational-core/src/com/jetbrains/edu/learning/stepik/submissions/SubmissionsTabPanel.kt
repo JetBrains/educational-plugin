@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik
+package com.jetbrains.edu.learning.stepik.submissions
 
 import com.intellij.diff.DiffContentFactory
 import com.intellij.diff.DiffDialogHints
@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
@@ -162,8 +163,9 @@ class SubmissionsTabPanel(project: Project,
         null
       }
       else {
-        val submissionFileContent = DiffContentFactory.getInstance().create(StepikSolutionsLoader.removeAllTags(submissionText),
-                                                                            virtualFile.fileType)
+        val submissionFileContent = DiffContentFactory.getInstance().create(
+          StepikSolutionsLoader.removeAllTags(submissionText),
+          virtualFile.fileType)
         SimpleDiffRequest(EduCoreBundle.message("submissions.compare"),
                           currentFileContent,
                           submissionFileContent,

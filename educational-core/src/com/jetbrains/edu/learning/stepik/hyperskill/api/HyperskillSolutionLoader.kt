@@ -16,10 +16,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
-import com.jetbrains.edu.learning.stepik.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.openSelectedStage
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 

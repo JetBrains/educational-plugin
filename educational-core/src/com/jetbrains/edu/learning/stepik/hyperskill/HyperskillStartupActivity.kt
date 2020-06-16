@@ -9,11 +9,11 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
-import com.jetbrains.edu.learning.stepik.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 

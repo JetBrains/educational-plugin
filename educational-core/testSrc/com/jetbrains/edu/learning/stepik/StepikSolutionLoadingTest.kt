@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import junit.framework.TestCase
 import okhttp3.mockwebserver.MockResponse
 import java.text.SimpleDateFormat

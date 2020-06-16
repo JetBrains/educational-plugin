@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik
+package com.jetbrains.edu.learning.stepik.submissions
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
@@ -11,6 +11,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.stepik.StepikAuthorizer
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.Submission
 
