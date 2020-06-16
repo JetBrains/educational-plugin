@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -12,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Collectors
 
@@ -128,16 +128,16 @@ class SubmissionsManager(private val project: Project) {
     return SubmissionsProvider.getSubmissionsProviderForCourse(this)
   }
 
+  @TestOnly
+  fun clear() {
+    submissions.clear()
+  }
+
   companion object {
 
     @JvmStatic
     fun getInstance(project: Project): SubmissionsManager {
       return project.service()
     }
-  }
-
-  @VisibleForTesting
-  fun clear() {
-    submissions.clear()
   }
 }
