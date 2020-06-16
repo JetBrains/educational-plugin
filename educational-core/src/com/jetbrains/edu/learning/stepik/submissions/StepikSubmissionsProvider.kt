@@ -37,13 +37,13 @@ class StepikSubmissionsProvider : SubmissionsProvider {
   override fun loadSubmissions(stepIds: Set<Int>): Map<Int, MutableList<Submission>> {
     val submissionsById = mutableMapOf<Int, MutableList<Submission>>()
     for (stepId in stepIds) {
-      submissionsById[stepId] = StepikConnector.getInstance().getStepSubmissions(stepId).toMutableList()
+      submissionsById[stepId] = StepikConnector.getInstance().getSubmissions(stepId).toMutableList()
     }
     return submissionsById
   }
 
   override fun loadStepSubmissions(stepId: Int): List<Submission> {
-    return StepikConnector.getInstance().getStepSubmissions(stepId)
+    return StepikConnector.getInstance().getSubmissions(stepId)
   }
 
   override fun submissionsCanBeShown(course: Course): Boolean {
