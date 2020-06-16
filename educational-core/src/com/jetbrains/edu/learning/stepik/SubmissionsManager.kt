@@ -2,7 +2,8 @@ package com.jetbrains.edu.learning.stepik
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -21,6 +22,7 @@ import java.util.stream.Collectors
  *
  * @see com.jetbrains.edu.learning.stepik.SubmissionsProvider
  */
+@Service
 class SubmissionsManager {
   private val submissions = ConcurrentHashMap<Int, MutableList<Submission>>()
 
@@ -134,7 +136,7 @@ class SubmissionsManager {
   companion object {
 
     @JvmStatic
-    fun getInstance(project: Project): SubmissionsManager = ServiceManager.getService(project, SubmissionsManager::class.java)
+    fun getInstance(project: Project): SubmissionsManager = project.service()
   }
 
   @VisibleForTesting
