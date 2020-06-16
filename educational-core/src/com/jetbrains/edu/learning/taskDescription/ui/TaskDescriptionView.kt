@@ -25,7 +25,7 @@ abstract class TaskDescriptionView {
   abstract fun updateTaskDescription()
   abstract fun updateAdditionalTaskTabs()
   abstract fun updateSubmissionsTab()
-  abstract fun updateTopicsTab()
+  abstract fun updateAdditionalTab()
 
   abstract fun readyToCheck()
   abstract fun checkStarted(task: Task)

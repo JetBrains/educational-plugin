@@ -58,11 +58,11 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   private fun updateAdditionalTaskTabs(task: Task?) {
     val contentManager = uiContent?.contentManager ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
-    val topicsTab = course.configurator?.additionalTaskTab(task, project)
-    addTab(contentManager, topicsTab, 1)
+    val additionalTab = course.configurator?.additionalTaskTab(task, project)
+    addTab(contentManager, additionalTab, 1)
     if (SubmissionsManager.getInstance(project).submissionsSupported(course)) {
       val submissionsTab = SubmissionsTabPanel(project, course, task)
-      val submissionsTabIndex = if (topicsTab != null) 2 else getSubmissionsTabIndex(contentManager)
+      val submissionsTabIndex = if (additionalTab != null) 2 else getSubmissionsTabIndex(contentManager)
       updateSubmissionsTab(contentManager, submissionsTab, submissionsTabIndex)
     }
     else {
@@ -84,10 +84,10 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     }
   }
 
-  override fun updateTopicsTab() {
+  override fun updateAdditionalTab() {
     val contentManager = uiContent?.contentManager ?: return
-    val topicsTab = StudyTaskManager.getInstance(project).course?.configurator?.additionalTaskTab(currentTask, project)
-    addTab(contentManager, topicsTab, 1)
+    val additionalTab = StudyTaskManager.getInstance(project).course?.configurator?.additionalTaskTab(currentTask, project)
+    addTab(contentManager, additionalTab, 1)
   }
 
   private fun updateSubmissionsTab(contentManager: ContentManager, submissionsTab: SubmissionsTabPanel?, tabIndex: Int) {
@@ -100,9 +100,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   }
 
   private fun getSubmissionsTabIndex(contentManager: ContentManager): Int {
-    val contents = contentManager.contents
-    val topicsContent = contents.find { it.tabName == EduCoreBundle.message("hyperskill.topics.tab.name") }
-    return if (topicsContent == null) 1 else 2
+    val contents = contentManager.contents.filter { it.tabName != EduCoreBundle.message("submissions.tab.name") }
+    return contents.size
   }
 
   private fun removeSubmissionsContent(contentManager: ContentManager) {
@@ -121,11 +120,11 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val isAdditionalTabSelected = currentContent?.let { contentManager.getIndexOfContent(it) } == tabIndex
     val content = contentManager.findContent(additionalTab.name)
     content?.let { contentManager.removeContent(it, true) }
-    val topicsContent = ContentFactory.SERVICE.getInstance().createContent(additionalTab, additionalTab.name, false)
-    topicsContent.isCloseable = false
-    contentManager.addContent(topicsContent, tabIndex)
+    val additionalTabContent = ContentFactory.SERVICE.getInstance().createContent(additionalTab, additionalTab.name, false)
+    additionalTabContent.isCloseable = false
+    contentManager.addContent(additionalTabContent, tabIndex)
     if (isAdditionalTabSelected) {
-      contentManager.setSelectedContent(topicsContent)
+      contentManager.setSelectedContent(additionalTabContent)
     }
   }
 
