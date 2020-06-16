@@ -19,7 +19,7 @@ import java.util.stream.Collectors
  * Stores and returns submissions for courses with submissions support if they are already loaded or delegates loading
  * to SubmissionsProvider.
  *
- * @see com.jetbrains.edu.learning.stepik.SubmissionsProvider
+ * @see com.jetbrains.edu.learning.stepik.submissions.SubmissionsProvider
  */
 @Service
 class SubmissionsManager(private val project: Project) {

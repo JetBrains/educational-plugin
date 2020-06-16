@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.stepik.api.Submission
 /**
  * Base class for loading submissions, should be called only from SubmissionsManager.
  *
- * @see com.jetbrains.edu.learning.stepik.SubmissionsManager
+ * @see com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
  */
 interface SubmissionsProvider {
 
