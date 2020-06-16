@@ -35,9 +35,7 @@ class HyperskillStartupActivity : StartupActivity {
     val submissionsManager = SubmissionsManager.getInstance(project)
     if (course is HyperskillCourse && submissionsManager.submissionsSupported()) {
       if (HyperskillSettings.INSTANCE.account != null) {
-        submissionsManager.prepareSubmissionsContent() {
-          HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground()
-        }
+        submissionsManager.prepareSubmissionsContent { HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground() }
       }
       else {
         val busConnection: MessageBusConnection = project.messageBus.connect(taskManager)
