@@ -55,9 +55,9 @@ class SubmissionsTabPanel(project: Project,
     }
     val submissionsManager = SubmissionsManager.getInstance(project)
     val descriptionText = StringBuilder()
-    val submissionsList = submissionsManager.getSubmissions(task)
+    val submissionsList = submissionsManager.getSubmissions(task.id)
 
-    if (submissionsManager.isLoggedIn(course)) {
+    if (submissionsManager.isLoggedIn()) {
       if (submissionsList == null) {
         return false
       }
@@ -72,7 +72,7 @@ class SubmissionsTabPanel(project: Project,
       }
     }
     else {
-      addLoginLink(descriptionText, course, submissionsManager)
+      addLoginLink(descriptionText, submissionsManager)
     }
     this.setText(descriptionText.toString())
     return true
@@ -87,14 +87,13 @@ class SubmissionsTabPanel(project: Project,
   }
 
   private fun addLoginLink(descriptionText: StringBuilder,
-                           course: Course,
                            submissionsManager: SubmissionsManager) {
     descriptionText.append("<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(hyperlinkColor())}" +
-                           " href=>${EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName(course))}" +
+                           " href=>${EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName())}" +
                            "</a><a ${StyleManager().textStyleHeader}>")
     this.addHyperlinkListener(HyperlinkListener { e ->
       if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-        submissionsManager.doAuthorize(course)
+        submissionsManager.doAuthorize()
       }
     })
   }
@@ -104,7 +103,7 @@ class SubmissionsTabPanel(project: Project,
                                      task: Task): HyperlinkListener {
     return HyperlinkListener { e ->
       if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-        val submission = submissionsManager.getSubmission(course, task.id, e.description.toInt())
+        val submission = submissionsManager.getSubmission(task.id, e.description.toInt())
                          ?: return@HyperlinkListener
         val reply = submission.reply ?: return@HyperlinkListener
         runInEdt {

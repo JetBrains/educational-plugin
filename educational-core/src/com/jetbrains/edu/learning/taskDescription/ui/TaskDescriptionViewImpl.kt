@@ -60,7 +60,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val course = StudyTaskManager.getInstance(project).course ?: return
     val additionalTab = course.configurator?.additionalTaskTab(task, project)
     addTab(contentManager, additionalTab, 1)
-    if (SubmissionsManager.getInstance(project).submissionsSupported(course)) {
+    if (SubmissionsManager.getInstance(project).submissionsSupported()) {
       val submissionsTab = SubmissionsTabPanel(project, course, task)
       val submissionsTabIndex = if (additionalTab != null) 2 else getSubmissionsTabIndex(contentManager)
       updateSubmissionsTab(contentManager, submissionsTab, submissionsTabIndex)
@@ -75,7 +75,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   override fun updateSubmissionsTab() {
     val contentManager = uiContent?.contentManager ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
-    if (SubmissionsManager.getInstance(project).submissionsSupported(course)) {
+    if (SubmissionsManager.getInstance(project).submissionsSupported()) {
       val submissionsTab = SubmissionsTabPanel(project, course, currentTask)
       updateSubmissionsTab(contentManager, submissionsTab, getSubmissionsTabIndex(contentManager))
     }

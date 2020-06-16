@@ -66,7 +66,7 @@ private class ReceivingSubmissionsState(project: Project, task: CodeTask, val su
     for (receivedSubmission in objectMapper.treeToValue(data, SubmissionsList::class.java).submissions) {
       if (receivedSubmission.status == EVALUATION_STATUS) continue
       if (submission.id == receivedSubmission.id) {
-        SubmissionsManager.getInstance(project).addToSubmissions(project, task.id, receivedSubmission)
+        SubmissionsManager.getInstance(project).addToSubmissions(task.id, receivedSubmission)
         return SubmissionReceivedState(project, task, receivedSubmission)
       }
     }

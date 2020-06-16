@@ -42,8 +42,8 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     else TaskSolutions.withEmptyPlaceholders(lastSubmission.time, lastSubmission.status.toCheckStatus(), files)
   }
 
-  override fun loadSubmissions(course: Course, tasks: List<Task>): List<Submission>? {
-    return SubmissionsManager.getInstance(project).getSubmissions(course, tasks.map { it.id }.toSet())
+  override fun loadSubmissions(tasks: List<Task>): List<Submission>? {
+    return SubmissionsManager.getInstance(project).getSubmissions(tasks.map { it.id }.toSet())
   }
 
   private val Reply.eduTaskFiles: Map<String, String>

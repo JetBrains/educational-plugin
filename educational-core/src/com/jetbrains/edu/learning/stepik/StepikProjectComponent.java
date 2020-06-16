@@ -52,9 +52,9 @@ public class StepikProjectComponent implements ProjectComponent {
       () -> {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
         SubmissionsManager submissionsManager = SubmissionsManager.getInstance(myProject);
-        if (course instanceof EduCourse && submissionsManager.submissionsSupported(course)) {
+        if (course instanceof EduCourse && submissionsManager.submissionsSupported()) {
           if (EduSettings.getInstance().getUser() != null) {
-            submissionsManager.prepareSubmissionsContent(myProject, course, () -> {
+            submissionsManager.prepareSubmissionsContent(() -> {
               loadSolutionsFromStepik(course);
               return Unit.INSTANCE;
             });
@@ -67,7 +67,7 @@ public class StepikProjectComponent implements ProjectComponent {
                 if (EduSettings.getInstance().getUser() == null) {
                   return;
                 }
-                submissionsManager.prepareSubmissionsContent(myProject, course, () -> Unit.INSTANCE);
+                submissionsManager.prepareSubmissionsContent(() -> Unit.INSTANCE);
               }
 
               @Override

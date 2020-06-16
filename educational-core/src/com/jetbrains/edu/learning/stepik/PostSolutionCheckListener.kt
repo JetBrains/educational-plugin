@@ -22,7 +22,7 @@ class PostSolutionCheckListener : CheckListener {
       if (task.isUpToDate) {
         ApplicationManager.getApplication().executeOnPooledThread {
           val submission: Submission? = StepikSolutionsLoader.postSolution(task, task.status == CheckStatus.Solved, project)
-          SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(project, task.id, task.status, submission)
+          SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, submission)
         }
       }
       else {

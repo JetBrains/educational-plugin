@@ -33,9 +33,9 @@ class HyperskillStartupActivity : StartupActivity {
 
     val course = StudyTaskManager.getInstance(project).course
     val submissionsManager = SubmissionsManager.getInstance(project)
-    if (course is HyperskillCourse && submissionsManager.submissionsSupported(course)) {
+    if (course is HyperskillCourse && submissionsManager.submissionsSupported()) {
       if (HyperskillSettings.INSTANCE.account != null) {
-        submissionsManager.prepareSubmissionsContent(project, course) {
+        submissionsManager.prepareSubmissionsContent() {
           HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground()
         }
       }
@@ -46,7 +46,7 @@ class HyperskillStartupActivity : StartupActivity {
             if (HyperskillSettings.INSTANCE.account == null) {
               return
             }
-            submissionsManager.prepareSubmissionsContent(project, course) {}
+            submissionsManager.prepareSubmissionsContent {}
           }
 
           override fun userLoggedOut() {
