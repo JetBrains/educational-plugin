@@ -114,6 +114,7 @@ class CoursesPanelWithTabs(val dialog: BrowseCoursesDialog) : JPanel() {
     fun showPanel(name: String) {
       activeTabName = name
       cardLayout.show(this, activeTabName)
+      (cardLayout.findComponentById(activeTabName) as CoursesPanel).processSelectionChanged()
     }
 
     // TODO: do we really need it?

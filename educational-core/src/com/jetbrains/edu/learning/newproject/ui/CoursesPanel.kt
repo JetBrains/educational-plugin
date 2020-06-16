@@ -180,7 +180,7 @@ abstract class CoursesPanel(dialog: BrowseCoursesDialog, coursesProvider: Course
     myProgrammingLanguagesFilterDropdown.updateItems(programmingLanguages(courses))
   }
 
-  private fun processSelectionChanged() {
+  fun processSelectionChanged() {
     val course = selectedCourse
     if (course != null) {
       coursePanel.bindCourse(course)?.addSettingsChangeListener { doValidation(course) }
