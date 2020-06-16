@@ -42,7 +42,7 @@ private val LOG = Logger.getInstance(StepikAuthorizer::class.java)
 
 val featuredCourses: List<Int> = getCoursesIds(PROMOTED_COURSES_LINK)
 val inProgressCourses: List<Int> = getCoursesIds(IN_PROGRESS_COURSES_LINK)
-val featuredStepikCourses: Map<Int, String> = getCourseIdsWithLanguage(FEATURED_STEPIK_COURSES_LINK)
+val featuredStepikCourses: Map<Int, MutableList<String>> = getCourseIdsWithLanguage(FEATURED_STEPIK_COURSES_LINK)
 
 fun setCourseLanguageEnvironment(info: EduCourse) {
   val courseFormat = info.type
@@ -95,13 +95,23 @@ fun notificationListener(project: Project,
   }
 }
 
-private fun getCourseIdsWithLanguage(link: String): Map<Int, String> {
+private fun getCourseIdsWithLanguage(link: String): Map<Int, MutableList<String>> {
   val text = getTextFromLink(link) ?: return emptyMap()
-  return text.lines().associate {
+  val result = mutableMapOf<Int, MutableList<String>>()
+  text.lines().forEach {
     val partWithoutComment = it.split("#")[0]
     val idWithLanguage = partWithoutComment.split(" ")
-    idWithLanguage[0].trim().toInt() to idWithLanguage[1].trim()
+    val id = idWithLanguage[0].trim().toInt()
+    val language = idWithLanguage[1].trim()
+
+    if (result.containsKey(id)) {
+      result[id]?.add(language)
+    }
+    else {
+      result[id] = mutableListOf(language)
+    }
   }
+  return result
 }
 
 private fun getCoursesIds(link: String): List<Int> {

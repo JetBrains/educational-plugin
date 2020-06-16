@@ -124,15 +124,32 @@ class StepikCoursesProvider : CoroutineScope {
 
   private fun loadListedStepikCourses(): List<StepikCourse> {
     val courses = StepikConnector.getInstance().getCourses(featuredStepikCourses.keys.plus(inProgressCourses)) ?: return emptyList()
-    return courses.mapNotNull { course ->
+    val result = mutableListOf<StepikCourse>()
+    courses.forEach { course ->
       val courseId = course.id
-      featuredStepikCourses[courseId]?.let { course.language = it }
-      val remoteCourse = stepikCourseFromRemote(course) ?: return@mapNotNull null
-      if (inProgressCourses.contains(courseId)) {
-        remoteCourse.visibility = CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(courseId))
+      val languages = featuredStepikCourses[courseId]
+
+      fun addCourse() {
+        val remoteCourse = stepikCourseFromRemote(course) ?: return
+        if (inProgressCourses.contains(courseId)) {
+          remoteCourse.visibility = CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(courseId))
+        }
+        remoteCourse.let { result.add(it) }
       }
-      remoteCourse
-    }.filter {
+
+      if (languages.isNullOrEmpty()) {
+        addCourse()
+      }
+      else {
+        languages.forEach { language ->
+          course.language = language
+          // as course is copied to become Stepik type, it's ok to use the same loaded course for different languages
+          addCourse()
+        }
+      }
+    }
+
+    return result.filter {
       val compatibility = it.compatibility
       compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
     }
