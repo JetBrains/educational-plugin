@@ -50,8 +50,6 @@ class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0
     if (isLocationFieldNeeded) {
       locationField = createLocationComponent()
     }
-
-    UIUtil.setBackgroundRecursively(this, UIUtil.getEditorPaneBackground())
   }
 
   fun setSettingsComponents(settings: List<LabeledComponent<*>>) {
