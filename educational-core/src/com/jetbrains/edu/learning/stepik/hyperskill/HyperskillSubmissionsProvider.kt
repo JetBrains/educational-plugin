@@ -22,14 +22,7 @@ class HyperskillSubmissionsProvider : SubmissionsProvider {
   override fun loadSubmissions(stepIds: Set<Int>): Map<Int, MutableList<Submission>> {
     val submissionsById = mutableMapOf<Int, MutableList<Submission>>()
     val submissionsList = HyperskillConnector.getInstance().getSubmissions(stepIds)
-    for (stepId in stepIds) {
-      submissionsById[stepId] = submissionsList.filter { it.step == stepId }.toMutableList()
-    }
-    return submissionsById
-  }
-
-  override fun loadStepSubmissions(stepId: Int): List<Submission> {
-    return HyperskillConnector.getInstance().getSubmissions(setOf(stepId))
+    return submissionsList.groupByTo(submissionsById) { it.step }
   }
 
   override fun submissionsCanBeShown(course: Course): Boolean {

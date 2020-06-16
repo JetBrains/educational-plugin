@@ -70,10 +70,10 @@ class SubmissionsManager(private val project: Project) {
       submissionsList
     }
     else {
-      val loadedSubmissions = submissionsProvider.loadStepSubmissions(stepId).toMutableList()
-      submissions[stepId] = loadedSubmissions
+      val loadedSubmissions = submissionsProvider.loadSubmissions(setOf(stepId))
+      submissions.putAll(loadedSubmissions)
       ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
-      loadedSubmissions
+      return loadedSubmissions[stepId] ?: emptyList()
     }
   }
 

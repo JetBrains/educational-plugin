@@ -27,7 +27,7 @@ class StepikSubmissionsProvider : SubmissionsProvider {
           submissionsById[task.id] = mutableListOf()
         }
         else if (task is CodeTask || task is EduTask) {
-          submissionsById[task.id] = loadStepSubmissions(task.id).toMutableList()
+          submissionsById.putAll(loadSubmissions(setOf(task.id)))
         }
       }
     }
@@ -40,10 +40,6 @@ class StepikSubmissionsProvider : SubmissionsProvider {
       submissionsById[stepId] = StepikConnector.getInstance().getSubmissions(stepId).toMutableList()
     }
     return submissionsById
-  }
-
-  override fun loadStepSubmissions(stepId: Int): List<Submission> {
-    return StepikConnector.getInstance().getSubmissions(stepId)
   }
 
   override fun submissionsCanBeShown(course: Course): Boolean {

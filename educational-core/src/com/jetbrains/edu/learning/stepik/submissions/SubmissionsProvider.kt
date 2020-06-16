@@ -16,8 +16,6 @@ interface SubmissionsProvider {
 
   fun loadSubmissions(stepIds: Set<Int>): Map<Int, MutableList<Submission>>
 
-  fun loadStepSubmissions(stepId: Int): List<Submission>
-
   fun submissionsCanBeShown(course: Course): Boolean
 
   fun isLoggedIn(): Boolean
