@@ -31,28 +31,25 @@ object HyperskillCheckConnector {
   private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(1)
   const val EVALUATION_STATUS = "evaluation"
 
-  fun postSolution(task: Task, project: Project, result: CheckResult): Submission? {
-    return when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task.id)) {
+  fun postSolution(task: Task, project: Project, result: CheckResult) {
+    when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task.id)) {
       is Err -> {
         showErrorDetails(project, attemptResponse.error)
-        null
       }
       is Ok -> {
         val feedback = if (result.details == null) result.message else "${result.message}\n${result.details}"
-        val submission = postEduSubmission(attemptResponse.value, project, task, feedback)
-        SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, submission)
-        submission
+        postEduSubmission(attemptResponse.value, project, task, feedback)
       }
     }
   }
 
-  private fun postEduSubmission(attempt: Attempt, project: Project, task: Task, feedback: String): Submission? {
+  private fun postEduSubmission(attempt: Attempt, project: Project, task: Task, feedback: String) {
     val taskDir = task.getTaskDir(project)
     if (taskDir == null) {
       val error = EduCoreBundle.message("error.failed.to.find.dir", task.name)
       LOG.error(error)
       showErrorDetails(project, EduCoreBundle.message("error.unexpected", error))
-      return null
+      return
     }
 
     val files = ArrayList<SolutionFile>()
@@ -72,9 +69,8 @@ object HyperskillCheckConnector {
     return when (val submissionResponse = HyperskillConnector.getInstance().postSubmission(createEduSubmission(task, attempt, files, feedback))) {
       is Err -> {
         showErrorDetails(project, submissionResponse.error)
-        null
       }
-      is Ok -> submissionResponse.value
+      is Ok -> SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, submissionResponse.value)
     }
   }
 
