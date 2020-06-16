@@ -61,8 +61,8 @@ class ImportCodeforcesContestDialog(private val showViewAllLabel: Boolean) : Dia
     if (courses.isNullOrEmpty()) {
       // TODO make it clickable
       // TODO also check other places
-      Messages.showErrorDialog(EduCoreBundle.message("codeforces.failed.to.load.contests.message", CodeforcesNames.CODEFORCES_NAME, CodeforcesNames.CODEFORCES_URL),
-                               EduCoreBundle.message("codeforces.failed.to.load.contests.title", CodeforcesNames.CODEFORCES_NAME))
+      Messages.showErrorDialog(EduCoreBundle.message("codeforces.failed.to.load.contests.message", CodeforcesNames.CODEFORCES_TITLE, CodeforcesNames.CODEFORCES_URL),
+                               EduCoreBundle.message("codeforces.failed.to.load.contests.title", CodeforcesNames.CODEFORCES_TITLE))
     }
     else {
       browseContests(courses)

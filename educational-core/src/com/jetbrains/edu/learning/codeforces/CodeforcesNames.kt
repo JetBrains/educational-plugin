@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NonNls
 // TODO: move to message bundle
 object CodeforcesNames {
   const val CODEFORCES: String = "codeforces"
-  const val CODEFORCES_NAME: String = "Codeforces"
+  const val CODEFORCES_TITLE: String = "Codeforces"
   const val CODEFORCES_URL: String = "https://codeforces.com"
   const val CODEFORCES_SUBMIT: String = "submit"
   const val CODEFORCES_PROBLEMS: String = "Problems"

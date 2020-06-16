@@ -14,14 +14,13 @@ import java.awt.event.FocusEvent
 import javax.swing.*
 
 class CCAddAnswerPlaceholderPanel(@NonNls placeholderText: String) : JPanel() {
-  private val HELP_TEXT = EduCoreBundle.message("ui.panel.add.answer.placeholder.help")
   private val panel: JPanel
   private val textArea: JTextArea = JTextArea(placeholderText, 0, 0)
 
   init {
     layout = BorderLayout()
 
-    val label = JLabel(HELP_TEXT)
+    val label = JLabel(EduCoreBundle.message("ui.panel.add.answer.placeholder.help"))
     label.foreground = JBColor.GRAY
     label.border = JBUI.Borders.emptyTop(5)
 

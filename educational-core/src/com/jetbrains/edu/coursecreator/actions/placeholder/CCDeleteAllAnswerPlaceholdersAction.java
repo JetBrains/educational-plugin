@@ -16,11 +16,8 @@ import java.util.List;
 
 public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderAction {
 
-  public static final String ACTION_NAME = EduCoreBundle.message("action.delete.all.answer.placeholders");
-  public static final String ACTION_DESCRIPTION = EduCoreBundle.message("action.delete.all.answer.placeholders.description");
-
   public CCDeleteAllAnswerPlaceholdersAction() {
-    super(ACTION_NAME, ACTION_DESCRIPTION);
+    super(EduCoreBundle.message("action.delete.all.answer.placeholders"), EduCoreBundle.message("action.delete.all.answer.placeholders.description"));
   }
 
   @Override
@@ -37,7 +34,7 @@ public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderActi
   @Override
   protected void performAnswerPlaceholderAction(@NotNull CCState state) {
     final ClearPlaceholders action = new ClearPlaceholders(state.getProject(), state.getTaskFile(), state.getEditor());
-    EduUtils.runUndoableAction(state.getProject(), ACTION_NAME, action, UndoConfirmationPolicy.REQUEST_CONFIRMATION);
+    EduUtils.runUndoableAction(state.getProject(), EduCoreBundle.message("action.delete.all.answer.placeholders"), action, UndoConfirmationPolicy.REQUEST_CONFIRMATION);
   }
 
   private static class ClearPlaceholders extends TaskFileUndoableAction {
