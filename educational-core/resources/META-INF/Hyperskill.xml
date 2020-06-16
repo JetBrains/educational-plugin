@@ -21,7 +21,6 @@
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckListener"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillRemoteTaskChecker"/>
-    <coursesProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCoursesProvider"/>
     <submissionsProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSubmissionsProvider"/>
   </extensions>
 
