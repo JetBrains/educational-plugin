@@ -33,7 +33,7 @@ abstract class CourseUpdateCheckerTestBase : EduTestCase() {
       }
       else {
         assertTrue("Notification wasn't shown", notificationListener.notificationShown)
-        assertEquals(EduCoreBundle.message("update.content.request", "update"), notificationListener.notificationText)
+        assertEquals(EduCoreBundle.message("update.content.request"), notificationListener.notificationText)
       }
       assertEquals(notificationListener.notificationShown, !isCourseUpToDate)
       isCourseUpToDateCheck()
