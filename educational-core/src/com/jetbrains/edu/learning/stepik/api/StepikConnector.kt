@@ -154,15 +154,13 @@ abstract class StepikConnector {
     if (!EduSettings.isLoggedIn()) return emptyList()
     var currentPage = 1
     val allSubmissions = mutableListOf<Submission>()
-    while (true) {
+    do {
       val submissionsList = service.submissions(stepId, currentPage).executeHandlingExceptions()?.body() ?: break
       val submissions = submissionsList.submissions
       allSubmissions.addAll(submissions)
-      if (submissions.isEmpty() || !submissionsList.meta.containsKey("has_next") || submissionsList.meta["has_next"] == false) {
-        break
-      }
       currentPage += 1
     }
+    while (submissions.isNotEmpty() && submissionsList.meta.containsKey("has_next") && submissionsList.meta["has_next"] == true)
     return allSubmissions
   }
 
