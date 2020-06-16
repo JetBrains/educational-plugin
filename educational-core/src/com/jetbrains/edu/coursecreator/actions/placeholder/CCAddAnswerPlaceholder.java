@@ -105,7 +105,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     }
 
     @Override
-    public void performRedo(){
+    public void performRedo() {
       getTaskFile().addAnswerPlaceholder(myPlaceholder);
       PlaceholderPainter.showPlaceholder(getProject(), myPlaceholder);
     }

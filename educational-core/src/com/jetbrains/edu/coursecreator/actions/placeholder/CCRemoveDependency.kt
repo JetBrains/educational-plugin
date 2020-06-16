@@ -19,7 +19,7 @@ class CCRemoveDependency : CCAnswerPlaceholderAction(
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
-    val state = getState(e)?: return
+    val state = getState(e) ?: return
     val answerPlaceholder = state.answerPlaceholder ?: return
     e.presentation.isEnabledAndVisible = answerPlaceholder.placeholderDependency != null
   }
