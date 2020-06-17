@@ -23,7 +23,8 @@ import java.util.stream.Collectors
 @Service
 class SubmissionsManager(private val project: Project) {
   private val submissions = ConcurrentHashMap<Int, MutableList<Submission>>()
-  private val course: Course? = project.course
+  var course: Course? = project.course
+    @TestOnly set
 
   private fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
     val submissionsFromMemory = mutableListOf<Submission>()
@@ -35,6 +36,7 @@ class SubmissionsManager(private val project: Project) {
   }
 
   fun getSubmissions(stepIds: Set<Int>): List<Submission>? {
+    val course = this.course
     val submissionsFromMemory = getSubmissionsFromMemory(stepIds)
     return if (submissionsFromMemory != null) submissionsFromMemory
     else {
@@ -93,6 +95,7 @@ class SubmissionsManager(private val project: Project) {
   }
 
   fun submissionsSupported(): Boolean {
+    val course = this.course
     if (course == null) return false
     val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(
       course) ?: return false
@@ -100,6 +103,7 @@ class SubmissionsManager(private val project: Project) {
   }
 
   fun prepareSubmissionsContent(loadSolutions: () -> Unit = {}) {
+    val course = this.course
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
 
     val taskDescriptionView = TaskDescriptionView.getInstance(project)

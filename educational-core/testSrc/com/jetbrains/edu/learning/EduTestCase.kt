@@ -178,12 +178,14 @@ abstract class EduTestCase : BasePlatformTestCase() {
     createYamlConfigs: Boolean = false,
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
-    return course(name, language, description, environment, courseMode, courseProducer, buildCourse).apply {
+    val course = course(name, language, description, environment, courseMode, courseProducer, buildCourse).apply {
       createCourseFiles(project, module, settings = settings)
       if (createYamlConfigs) {
         createConfigFiles(project)
       }
     }
+    SubmissionsManager.getInstance(project).course = course
+    return course
   }
 
   protected fun getCourse(): Course = StudyTaskManager.getInstance(project).course!!
