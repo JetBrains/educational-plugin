@@ -8,11 +8,9 @@ import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 import org.jetbrains.intellij.tasks.PrepareSandboxTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.InetAddress
-import java.net.UnknownHostException
 import java.util.*
 
-val secretProperties = "secret.properties"
+apply(from = "common.gradle.kts")
 
 val environmentName: String by project
 val pluginVersion: String by project
@@ -26,6 +24,9 @@ val pycharmVersion: String by project
 val studioVersion: String by project
 
 val studioBuildVersion: String by project
+
+val secretProperties: String by extra
+val inJetBrainsNetwork: () -> Boolean by extra
 
 val baseVersion = when (baseIDE) {
   "idea" -> ideaVersion
@@ -287,10 +288,6 @@ project(":") {
     buildSearchableOptions {
       enabled = findProperty("enableBuildSearchableOptions") != "false"
     }
-  }
-
-  afterEvaluate {
-    configureSecretProperties()
   }
 
   task("configureIdea") {
@@ -627,29 +624,6 @@ project(":Edu-Go") {
   }
 }
 
-fun configureSecretProperties() {
-  if (inJetBrainsNetwork() || System.getenv("TEAMCITY_VERSION") != null) {
-    download {
-      src("https://repo.labs.intellij.net/edu-tools/secret.properties")
-      dest(secretProperties)
-    }
-  }
-  else {
-    val secretProperties = file(secretProperties)
-    if (!secretProperties.exists()) {
-      secretProperties.createNewFile()
-    }
-  }
-
-  val secretProperties = loadProperties(secretProperties)
-
-  secretProperties.extractAndStore("educational-core/resources/stepik/stepik.properties", "stepikClientId", "stepikClientSecret")
-  secretProperties.extractAndStore("educational-core/resources/hyperskill/hyperskill-oauth.properties", "hyperskillClientId", "hyperskillClientSecret")
-  secretProperties.extractAndStore("educational-core/resources/twitter/oauth_twitter.properties", "twitterConsumerKey", "twitterConsumerSecret")
-  secretProperties.extractAndStore("Edu-Python/resources/checkio/py-checkio-oauth.properties", "pyCheckioClientId", "pyCheckioClientSecret")
-  secretProperties.extractAndStore("Edu-JavaScript/resources/checkio/js-checkio-oauth.properties", "jsCheckioClientId", "jsCheckioClientSecret")
-}
-
 fun downloadStudioIfNeededAndGetPath(): String {
   if (!rootProject.hasProperty("studioVersion")) error("studioVersion is unspecified")
   if (!rootProject.hasProperty("studioBuildVersion")) error("studioBuildVersion is unspecified")
@@ -681,17 +655,6 @@ fun studioArtifactDownloadPath(archiveType: String): String {
   } else {
     "http://dl.google.com/dl/android/studio/ide-zips/${studioVersion}/android-studio-ide-${studioBuildVersion}-${osFamily}.$archiveType"
   }
-}
-
-fun inJetBrainsNetwork(): Boolean {
-  var inJetBrainsNetwork = false
-  try {
-    inJetBrainsNetwork = InetAddress.getByName("repo.labs.intellij.net").isReachable(1000)
-    if (!inJetBrainsNetwork && org.gradle.internal.os.OperatingSystem.current().isWindows) {
-      inJetBrainsNetwork = Runtime.getRuntime().exec("ping -n 1 repo.labs.intellij.net").waitFor() == 0
-    }
-  } catch (ignored: UnknownHostException) {}
-  return inJetBrainsNetwork
 }
 
 fun studioPath(studioFolder: File): String {
@@ -738,7 +701,10 @@ fun withProp(name: String, action: (String) -> Unit) {
 }
 
 fun withProp(filePath: String, name: String, action: (String) -> Unit) {
-  if (!file(filePath).exists()) return
+  if (!file(filePath).exists()) {
+    println("$filePath doesn't exist")
+    return
+  }
   val properties = loadProperties(filePath)
   val value = properties.getProperty(name) ?: return
   action(value)
@@ -764,14 +730,4 @@ fun loadProperties(path: String): Properties {
   val properties = Properties()
   file(path).bufferedReader().use { properties.load(it) }
   return properties
-}
-
-fun Properties.extractAndStore(path: String, vararg keys: String) {
-  val properties = Properties()
-  for (key in keys) {
-    properties[key] = getProperty(key) ?: ""
-  }
-  val file = file(path)
-  file.parentFile?.mkdirs()
-  file.bufferedWriter().use { properties.store(it, "") }
 }
