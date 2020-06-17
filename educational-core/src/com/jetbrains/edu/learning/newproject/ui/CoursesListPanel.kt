@@ -14,6 +14,7 @@ import com.intellij.util.messages.MessageBusConnection
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
@@ -82,7 +83,12 @@ class CoursesListPanel(
     }
 
   suspend fun loadCourses(): List<Course> {
-    return withContext(Dispatchers.IO) { coursesProvider.loadCourses() }
+    return withContext(Dispatchers.IO) {
+      coursesProvider.loadCourses().filter {
+        val compatibility = it.compatibility
+        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
+      }
+    }
   }
 
   private fun createListPanel(): JPanel {
