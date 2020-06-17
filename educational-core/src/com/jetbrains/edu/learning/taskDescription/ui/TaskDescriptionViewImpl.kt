@@ -59,7 +59,9 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val contentManager = uiContent?.contentManager ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
     val additionalTab = course.configurator?.additionalTaskTab(task, project)
-    addTab(contentManager, additionalTab, 1)
+    if (additionalTab != null) {
+      addTab(contentManager, additionalTab, 1)
+    }
     if (SubmissionsManager.getInstance(project).submissionsSupported()) {
       val submissionsTab = SubmissionsTabPanel(project, course, task)
       val submissionsTabIndex = if (additionalTab != null) 2 else getSubmissionsTabIndex(contentManager)
@@ -88,7 +90,9 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   override fun updateAdditionalTab() {
     val contentManager = uiContent?.contentManager ?: return
     val additionalTab = StudyTaskManager.getInstance(project).course?.configurator?.additionalTaskTab(currentTask, project)
-    addTab(contentManager, additionalTab, 1)
+    if (additionalTab != null) {
+      addTab(contentManager, additionalTab, 1)
+    }
   }
 
   private fun updateSubmissionsTab(contentManager: ContentManager, submissionsTab: SubmissionsTabPanel?, tabIndex: Int) {
@@ -114,9 +118,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   }
 
   private fun addTab(contentManager: ContentManager,
-                     additionalTab: AdditionalTabPanel?,
+                     additionalTab: AdditionalTabPanel,
                      tabIndex: Int) {
-    if (additionalTab == null) return
     val currentContent = contentManager.selectedContent
     val isAdditionalTabSelected = currentContent?.let { contentManager.getIndexOfContent(it) } == tabIndex
     val content = contentManager.findContent(additionalTab.name)
