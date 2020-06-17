@@ -26,8 +26,10 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import java.io.IOException
 import java.net.URL
 
@@ -67,7 +69,7 @@ fun getStepikLink(task: Task, lesson: Lesson): String {
 
 fun updateCourse(project: Project, course: EduCourse) {
   StepikCourseUpdater(course, project).updateCourse()
-  SubmissionsManager.loadMissingSubmissions(course)
+  SubmissionsManager.getInstance(project).getSubmissions(course.allTasks.map { it.id }.toSet())
   StepikSolutionsLoader.getInstance(project).loadSolutionsInBackground()
 }
 

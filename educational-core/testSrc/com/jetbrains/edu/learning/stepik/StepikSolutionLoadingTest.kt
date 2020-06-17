@@ -116,6 +116,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
         }
       }
     }
+    course.id = 1
     StepikSolutionsLoader.getInstance(project).loadSolutions(null, course)
     UIUtil.dispatchAllInvocationEvents()
 
@@ -180,6 +181,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
         }
       }
     }
+    course.id = 1
 
     StepikSolutionsLoader.getInstance(project).loadSolutions(null, course)
 
@@ -244,6 +246,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
       }
     } as EduCourse
     setUpdateDate(course)
+    course.id = 1
     return course
   }
 
@@ -263,11 +266,6 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/loadSolutions/"
 
   private fun getTestFile(fileName: String) = testDataPath + fileName
-
-  override fun tearDown() {
-    SubmissionsManager.clear()
-    super.tearDown()
-  }
 
   companion object {
     private val SUBMISSIONS_REQUEST_RE = """/api/submissions?.*step=(\d*).*""".toRegex()

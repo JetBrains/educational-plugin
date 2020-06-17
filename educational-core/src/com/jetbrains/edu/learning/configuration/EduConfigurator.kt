@@ -14,10 +14,10 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isConfigFile
 import org.jetbrains.annotations.SystemIndependent
 import javax.swing.Icon
-import javax.swing.JPanel
 
 /**
  * The main interface provides courses support for some language and course type.
@@ -167,9 +167,9 @@ interface EduConfigurator<Settings> {
     get() = EmptyIcon.ICON_16
 
   /**
-   * Tab next to the task description.
+   * Tab located next to the task description.
    *
    * @see com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
    */
-  fun additionalTaskTab(currentTask: Task?, project: Project): Pair<JPanel, String>? = null
+  fun additionalTaskTab(currentTask: Task?, project: Project): AdditionalTabPanel? = null
 }

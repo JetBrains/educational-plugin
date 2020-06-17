@@ -150,19 +150,17 @@ abstract class StepikConnector {
     return stepSource?.block
   }
 
-  fun getAllSubmissions(stepId: Int): MutableList<Submission> {
+  fun getSubmissions(stepId: Int): List<Submission> {
+    if (!isUnitTestMode && !EduSettings.isLoggedIn()) return emptyList()
     var currentPage = 1
     val allSubmissions = mutableListOf<Submission>()
-    while (true) {
-      val submissionsList = getSubmissionsList(stepId, currentPage) ?: break
+    do {
+      val submissionsList = service.submissions(stepId, currentPage).executeHandlingExceptions()?.body() ?: break
       val submissions = submissionsList.submissions
       allSubmissions.addAll(submissions)
-      if (submissions.isEmpty() || !submissionsList.meta.containsKey("has_next") || submissionsList.meta["has_next"] == false) {
-        SubmissionsManager.putToSubmissions(stepId, allSubmissions)
-        break
-      }
       currentPage += 1
     }
+    while (submissions.isNotEmpty() && submissionsList.meta.containsKey("has_next") && submissionsList.meta["has_next"] == true)
     return allSubmissions
   }
 
@@ -177,11 +175,6 @@ abstract class StepikConnector {
 
   fun getSubmissionById(id: Int): Result<Submission, String> =
     service.submissionById(id).executeAndExtractFirst(SubmissionsList::submissions)
-
-  private fun getSubmissionsList(stepId: Int, page: Int = 1): SubmissionsList? {
-    val response = service.submissions(step = stepId, page = page).executeHandlingExceptions()
-    return response?.body()
-  }
 
   fun getAttempts(stepId: Int, userId: Int): List<Attempt>? {
     val response = service.attempts(stepId, userId).executeHandlingExceptions()

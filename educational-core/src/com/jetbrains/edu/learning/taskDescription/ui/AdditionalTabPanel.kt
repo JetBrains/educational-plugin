@@ -3,36 +3,31 @@ package com.jetbrains.edu.learning.taskDescription.ui
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
-import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import java.awt.BorderLayout
 import java.awt.Component
-import java.awt.FlowLayout
-import javax.swing.BoxLayout
 import javax.swing.JPanel
 import javax.swing.JSeparator
 import javax.swing.JTextPane
 import javax.swing.event.HyperlinkListener
 
-class AdditionalTabPanel(val project: Project) : JPanel() {
+open class AdditionalTabPanel(val project: Project, tabName: String) : JPanel(BorderLayout()) {
 
-  private val textPane: JTextPane = createTextPane()
+  protected val textPane: JTextPane = createTextPane()
 
   init {
+    name = tabName
     val scrollPane = JBScrollPane(textPane)
     scrollPane.border = JBUI.Borders.empty()
-    val backLinkPanel = getBackLinkPanel(project)
+    val backLinkPanel = getBackLinkPanel()
 
-    layout = BoxLayout(this, BoxLayout.Y_AXIS)
     background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
     border = JBUI.Borders.empty(8, 16, 0, 0)
 
-    add(backLinkPanel, Component.LEFT_ALIGNMENT)
-    add(scrollPane, Component.LEFT_ALIGNMENT)
+    addComponent(backLinkPanel, BorderLayout.BEFORE_FIRST_LINE)
+    addComponent(scrollPane, BorderLayout.CENTER)
   }
 
   fun setText(text: String) {
@@ -43,7 +38,11 @@ class AdditionalTabPanel(val project: Project) : JPanel() {
     textPane.addHyperlinkListener(listener)
   }
 
-  private fun getBackLinkPanel(project: Project): JPanel {
+  private fun addComponent(comp: Component, constraints: String) {
+    add(comp, constraints)
+  }
+
+  private fun getBackLinkPanel(): JPanel {
     val backLink = LightColoredActionLink(
       EduCoreBundle.message("label.back.to.description"),
       CheckDetailsPanel.SwitchTaskTabAction(project, 0),
@@ -56,17 +55,5 @@ class AdditionalTabPanel(val project: Project) : JPanel() {
     backLinkPanel.add(JSeparator(), BorderLayout.SOUTH)
     backLinkPanel.maximumSize = JBUI.size(Int.MAX_VALUE, 30)
     return backLinkPanel
-  }
-
-  fun addLoadingPanel() {
-    removeAll()
-    val asyncProcessIcon = AsyncProcessIcon("Loading submissions")
-    val iconPanel = JPanel(FlowLayout(FlowLayout.LEADING))
-    iconPanel.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
-    iconPanel.add(asyncProcessIcon)
-    setText("<a ${StyleManager().textStyleHeader}>Loading submissions from ${StepikNames.STEPIK}")
-    iconPanel.add(textPane)
-    add(iconPanel, Component.LEFT_ALIGNMENT)
-    revalidate()
   }
 }

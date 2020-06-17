@@ -7,7 +7,7 @@ import com.jetbrains.edu.cpp.checker.CppTaskCheckerProvider
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
-import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
@@ -29,7 +29,7 @@ class CppCatchConfigurator : CppBaseConfigurator() {
   }
 }
 
-open class CppBaseConfigurator : EduConfiguratorWithSubmissions<CppProjectSettings>() {
+open class CppBaseConfigurator : EduConfigurator<CppProjectSettings> {
   override val courseBuilder: EduCourseBuilder<CppProjectSettings>
     get() = CppCourseBuilder("", "")
 

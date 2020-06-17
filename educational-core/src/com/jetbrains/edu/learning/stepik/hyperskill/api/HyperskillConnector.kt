@@ -138,7 +138,7 @@ abstract class HyperskillConnector {
       course.taskToTopics[taskIndex] = topics
       runInEdt {
         if (project.isDisposed) return@runInEdt
-        TaskDescriptionView.getInstance(project).updateAdditionalTaskTab()
+        TaskDescriptionView.getInstance(project).updateAdditionalTab()
       }
     }
   }
@@ -230,9 +230,21 @@ abstract class HyperskillConnector {
     return FeedbackLink("$HYPERSKILL_PROJECTS_URL/$project/stages/${stage.id}/implement")
   }
 
-  fun getSubmissions(stepIds: Set<Int>, page: Int = 1): List<Submission>? {
-    val userId = HyperskillSettings.INSTANCE.account?.userInfo?.id ?: error("Attempt to get submission for non authorized user")
-    return service.submission(userId, stepIds.joinToString(separator = ","), page).executeHandlingExceptions()?.body()?.submissions
+  fun getSubmissions(stepIds: Set<Int>): List<Submission> {
+    val userId = HyperskillSettings.INSTANCE.account?.userInfo?.id ?: return emptyList()
+    var currentPage = 1
+    val allSubmissions = mutableListOf<Submission>()
+    while (true) {
+      val submissionsList = service.submission(userId, stepIds.joinToString(separator = ","),
+                                               currentPage).executeHandlingExceptions()?.body() ?: break
+      val submissions = submissionsList.submissions
+      allSubmissions.addAll(submissions)
+      if (submissions.isEmpty() || !submissionsList.meta.containsKey("has_next") || submissionsList.meta["has_next"] == false) {
+        break
+      }
+      currentPage += 1
+    }
+    return allSubmissions
   }
 
   fun getSubmissionById(submissionId: Int): Result<Submission, String> {

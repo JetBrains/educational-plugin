@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.openSelectedStage
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
@@ -42,7 +43,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
   }
 
   override fun loadSubmissions(tasks: List<Task>): List<Submission>? {
-    return HyperskillConnector.getInstance().getSubmissions(tasks.map { it.id }.toSet())
+    return SubmissionsManager.getInstance(project).getSubmissions(tasks.map { it.id }.toSet())
   }
 
   private val Reply.eduTaskFiles: Map<String, String>

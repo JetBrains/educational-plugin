@@ -43,6 +43,7 @@ import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import java.io.IOException
 
@@ -91,6 +92,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   override fun tearDown() {
     try {
+      SubmissionsManager.getInstance(project).clear()
       myManager.closeAllFiles()
 
       EditorHistoryManager.getInstance(myFixture.project).files.forEach {
@@ -176,12 +178,14 @@ abstract class EduTestCase : BasePlatformTestCase() {
     createYamlConfigs: Boolean = false,
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
-    return course(name, language, description, environment, courseMode, courseProducer, buildCourse).apply {
+    val course = course(name, language, description, environment, courseMode, courseProducer, buildCourse).apply {
       createCourseFiles(project, module, settings = settings)
       if (createYamlConfigs) {
         createConfigFiles(project)
       }
     }
+    SubmissionsManager.getInstance(project).course = course
+    return course
   }
 
   protected fun getCourse(): Course = StudyTaskManager.getInstance(project).course!!

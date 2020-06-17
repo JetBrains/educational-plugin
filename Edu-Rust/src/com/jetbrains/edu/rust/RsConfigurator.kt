@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.rust.checker.RsTaskCheckerProvider
 import org.rust.cargo.CargoConstants
@@ -12,7 +12,7 @@ import org.rust.ide.icons.RsIcons
 import org.rust.lang.RsConstants
 import javax.swing.Icon
 
-class RsConfigurator : EduConfiguratorWithSubmissions<RsProjectSettings>() {
+class RsConfigurator : EduConfigurator<RsProjectSettings> {
   override val taskCheckerProvider: RsTaskCheckerProvider
     get() = RsTaskCheckerProvider()
 

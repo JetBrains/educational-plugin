@@ -47,10 +47,22 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     })
   }
 
+  fun loadSolutionsInBackground(course: Course, tasksToUpdate: List<Task>) {
+    ProgressManager.getInstance().run(object : Backgroundable(project, EduCoreBundle.message("update.loading.solutions")) {
+      override fun run(progressIndicator: ProgressIndicator) {
+        loadAndApplySolutions(course, tasksToUpdate, progressIndicator)
+      }
+    })
+  }
+
   @VisibleForTesting
   @JvmOverloads
   fun loadAndApplySolutions(course: Course, progressIndicator: ProgressIndicator? = null) {
     val tasksToUpdate = provideTasksToUpdate(course)
+    loadAndApplySolutions(course, tasksToUpdate, progressIndicator)
+  }
+
+  private fun loadAndApplySolutions(course: Course, tasksToUpdate: List<Task>, progressIndicator: ProgressIndicator? = null) {
     val submissions = if (progressIndicator != null)
       ApplicationUtil.runWithCheckCanceled(Callable { loadSubmissions(tasksToUpdate) }, progressIndicator)
     else loadSubmissions(tasksToUpdate)
@@ -61,6 +73,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     else {
       LOG.warn("Can't get submissions")
     }
+
     runReadAction {
       if (project.isDisposed) return@runReadAction
       project.messageBus.syncPublisher(loadingTopic).solutionLoaded(course)
@@ -200,7 +213,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   protected abstract val loadingTopic: Topic<SolutionLoadingListener>
   protected abstract fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions
   protected abstract fun loadSubmissions(tasks: List<Task>): List<Submission>?
-  protected abstract fun provideTasksToUpdate(course: Course): List<Task>
+  abstract fun provideTasksToUpdate(course: Course): List<Task>
 
   interface SolutionLoadingListener {
     fun solutionLoaded(course: Course)

@@ -9,11 +9,11 @@ import com.jetbrains.edu.learning.EduNames.TEST
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
-import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import javax.swing.Icon
 
-class GoConfigurator : EduConfiguratorWithSubmissions<GoProjectSettings>() {
+class GoConfigurator : EduConfigurator<GoProjectSettings> {
   override val courseBuilder: EduCourseBuilder<GoProjectSettings>
     get() = GoCourseBuilder()
 

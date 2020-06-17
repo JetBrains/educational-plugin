@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import java.util.concurrent.TimeUnit
 
 object HyperskillCheckConnector {
@@ -32,7 +33,9 @@ object HyperskillCheckConnector {
 
   fun postSolution(task: Task, project: Project, result: CheckResult) {
     when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task.id)) {
-      is Err -> showErrorDetails(project, attemptResponse.error)
+      is Err -> {
+        showErrorDetails(project, attemptResponse.error)
+      }
       is Ok -> {
         val feedback = if (result.details == null) result.message else "${result.message}\n${result.details}"
         postEduSubmission(attemptResponse.value, project, task, feedback)
@@ -63,8 +66,11 @@ object HyperskillCheckConnector {
       }
     }
 
-    when (val submissionResponse = HyperskillConnector.getInstance().postSubmission(createEduSubmission(task, attempt, files, feedback))) {
-      is Err -> showErrorDetails(project, submissionResponse.error)
+    return when (val submissionResponse = HyperskillConnector.getInstance().postSubmission(createEduSubmission(task, attempt, files, feedback))) {
+      is Err -> {
+        showErrorDetails(project, submissionResponse.error)
+      }
+      is Ok -> SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, submissionResponse.value)
     }
   }
 

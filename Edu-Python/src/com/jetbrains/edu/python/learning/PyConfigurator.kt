@@ -4,13 +4,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
-import com.jetbrains.edu.learning.configuration.EduConfiguratorWithSubmissions
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.python.learning.checker.PyTaskCheckerProvider
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import icons.PythonIcons
 import javax.swing.Icon
 
-open class PyConfigurator : EduConfiguratorWithSubmissions<PyNewProjectSettings>() {
+open class PyConfigurator : EduConfigurator<PyNewProjectSettings> {
   override val courseBuilder: EduCourseBuilder<PyNewProjectSettings>
     get() = PyCourseBuilder()
 
