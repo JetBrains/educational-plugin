@@ -7,11 +7,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-abstract class TaskFileUndoableAction(
-  protected val project: Project,
-  protected val taskFile: TaskFile,
-  protected val editor: Editor
-) : BasicUndoableAction(editor.document) {
+abstract class TaskFileUndoableAction(protected val project: Project, protected val taskFile: TaskFile, protected val editor: Editor) : BasicUndoableAction(editor.document) {
 
   override fun redo() {
     performRedo()
