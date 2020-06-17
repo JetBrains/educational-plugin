@@ -47,10 +47,10 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     })
   }
 
-  fun loadSolutionsInBackground(course: Course, tasksToUpdate: List<Task>) {
+  fun loadSolutionsInBackground(course: Course, tasksToUpdate: List<Task>, force: Boolean) {
     ProgressManager.getInstance().run(object : Backgroundable(project, EduCoreBundle.message("update.loading.solutions")) {
       override fun run(progressIndicator: ProgressIndicator) {
-        loadAndApplySolutions(course, tasksToUpdate, progressIndicator)
+        loadAndApplySolutions(course, tasksToUpdate, progressIndicator, force)
       }
     })
   }
@@ -62,13 +62,14 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     loadAndApplySolutions(course, tasksToUpdate, progressIndicator)
   }
 
-  private fun loadAndApplySolutions(course: Course, tasksToUpdate: List<Task>, progressIndicator: ProgressIndicator? = null) {
+  private fun loadAndApplySolutions(course: Course, tasksToUpdate: List<Task>, progressIndicator: ProgressIndicator? = null,
+                                    force: Boolean = false) {
     val submissions = if (progressIndicator != null)
       ApplicationUtil.runWithCheckCanceled(Callable { loadSubmissions(tasksToUpdate) }, progressIndicator)
     else loadSubmissions(tasksToUpdate)
 
     if (submissions != null) {
-      updateTasks(course, tasksToUpdate, submissions, progressIndicator)
+      updateTasks(course, tasksToUpdate, submissions, progressIndicator, force)
     }
     else {
       LOG.warn("Can't get submissions")
@@ -80,7 +81,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
   }
 
-  protected open fun updateTasks(course: Course, tasks: List<Task>, submissions: List<Submission>, progressIndicator: ProgressIndicator?) {
+  protected open fun updateTasks(course: Course, tasks: List<Task>, submissions: List<Submission>, progressIndicator: ProgressIndicator?,
+                                 force: Boolean = false) {
     progressIndicator?.isIndeterminate = false
     cancelUnfinishedTasks()
     val tasksToUpdate = tasks.filter { task -> task !is TheoryTask }
@@ -96,7 +98,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       futures[task.id] = ApplicationManager.getApplication().executeOnPooledThread<Boolean> {
         try {
           ProgressManager.checkCanceled()
-          updateTask(project, task, submissions)
+          updateTask(project, task, submissions, force)
         }
         finally {
           if (progressIndicator != null) {

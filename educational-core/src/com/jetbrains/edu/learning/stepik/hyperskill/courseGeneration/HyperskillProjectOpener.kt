@@ -193,11 +193,11 @@ object HyperskillProjectOpener {
 
   private fun synchronizeProjectOnStepOpening(project: Project, course: HyperskillCourse, stepId: Int) {
     val task = course.getProblemsLesson()?.getTask(stepId) ?: return
-    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, listOf(task))
+    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, listOf(task), true)
   }
 
   private fun synchronizeProjectOnStageOpening(project: Project, course: HyperskillCourse, tasks: List<Task>) {
-    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks)
+    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks, true)
     HyperskillStartupActivity.synchronizeTopics(project, course)
   }
 }

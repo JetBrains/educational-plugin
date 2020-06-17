@@ -65,8 +65,12 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     }.flatMap { it.taskList.asSequence() }.toList()
   }
 
-  override fun updateTasks(course: Course, tasks: List<Task>, submissions: List<Submission>, progressIndicator: ProgressIndicator?) {
-    super.updateTasks(course, tasks, submissions, progressIndicator)
+  override fun updateTasks(course: Course,
+                           tasks: List<Task>,
+                           submissions: List<Submission>,
+                           progressIndicator: ProgressIndicator?,
+                           force: Boolean) {
+    super.updateTasks(course, tasks, submissions, progressIndicator, force)
     runInEdt {
       openSelectedStage(course, project)
     }
