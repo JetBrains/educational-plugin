@@ -26,7 +26,7 @@ class SubmissionsManager(private val project: Project) {
   var course: Course? = project.course
     @TestOnly set
 
-  private fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
+  fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
     val submissionsFromMemory = mutableListOf<Submission>()
     for (stepId in stepIds) {
       val submissionsByStep = submissions[stepId] ?: return null

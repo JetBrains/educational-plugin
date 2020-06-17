@@ -56,7 +56,7 @@ class SubmissionsTabPanel(project: Project,
     }
     val submissionsManager = SubmissionsManager.getInstance(project)
     val descriptionText = StringBuilder()
-    val submissionsList = submissionsManager.getSubmissions(task.id)
+    val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
 
     if (submissionsManager.isLoggedIn()) {
       if (submissionsList == null) {
