@@ -151,7 +151,7 @@ abstract class StepikConnector {
   }
 
   fun getSubmissions(stepId: Int): List<Submission> {
-    if (!EduSettings.isLoggedIn()) return emptyList()
+    if (!isUnitTestMode && !EduSettings.isLoggedIn()) return emptyList()
     var currentPage = 1
     val allSubmissions = mutableListOf<Submission>()
     do {
