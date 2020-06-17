@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.jetbrains.annotations.TestOnly
@@ -103,21 +102,13 @@ class SubmissionsManager(private val project: Project) {
   fun prepareSubmissionsContent(loadSolutions: () -> Unit = {}) {
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
 
-    val toolWindow = TaskDescriptionView.getInstance(project).toolWindow
-    if (toolWindow != null) {
-      val submissionsContent = toolWindow.contentManager.findContent(EduCoreBundle.message("submissions.tab.name"))
-      if (submissionsContent != null) {
-        val submissionsPanel = submissionsContent.component
-        if (submissionsPanel is SubmissionsTabPanel) {
-          ApplicationManager.getApplication().invokeLater { submissionsPanel.addLoadingPanel(submissionsProvider.getPlatformName()) }
-        }
-      }
-    }
+    val taskDescriptionView = TaskDescriptionView.getInstance(project)
+    taskDescriptionView.addLoadingPanel(getPlatformName())
 
     ApplicationManager.getApplication().executeOnPooledThread {
       submissions.putAll(submissionsProvider.loadAllSubmissions(project, course))
       loadSolutions()
-      ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
+      ApplicationManager.getApplication().invokeLater { taskDescriptionView.updateSubmissionsTab() }
     }
   }
 

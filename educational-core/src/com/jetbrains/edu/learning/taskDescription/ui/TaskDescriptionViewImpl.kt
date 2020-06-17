@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.taskDescription.ui
 import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
@@ -135,6 +136,17 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val course = StudyTaskManager.getInstance(project).course ?: return
     if (!course.isStudy) {
       addTabToTaskDescription(project)
+    }
+  }
+
+  override fun addLoadingPanel(platformName: String) {
+    val contentManager = uiContent?.contentManager ?: return
+    val submissionsContent = contentManager.findContent(EduCoreBundle.message("submissions.tab.name"))
+    if (submissionsContent != null) {
+      val submissionsPanel = submissionsContent.component
+      if (submissionsPanel is SubmissionsTabPanel) {
+        ApplicationManager.getApplication().invokeLater { submissionsPanel.addLoadingPanel(platformName) }
+      }
     }
   }
 

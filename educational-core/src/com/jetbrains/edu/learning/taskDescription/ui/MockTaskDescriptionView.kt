@@ -8,7 +8,6 @@ import java.awt.Point
 
 class MockTaskDescriptionView : TaskDescriptionView() {
   override var currentTask: Task? = null
-  override var toolWindow: ToolWindow? = null
 
   override fun init(toolWindow: ToolWindow) {}
   override fun updateCheckPanel(task: Task?) {}
@@ -19,6 +18,7 @@ class MockTaskDescriptionView : TaskDescriptionView() {
   override fun updateAdditionalTaskTabs() {}
   override fun updateSubmissionsTab() {}
   override fun updateAdditionalTab() {}
+  override fun addLoadingPanel(platformName: String) {}
 
   override fun readyToCheck() {}
   override fun checkStarted(task: Task) {}
