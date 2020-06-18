@@ -7,11 +7,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.components.JBScrollPane;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,8 +24,6 @@ import twitter4j.auth.RequestToken;
 import twitter4j.conf.ConfigurationBuilder;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -66,7 +64,6 @@ public class TwitterUtils {
       if (panel != null) {
         TwitterDialogWrapper wrapper = new TwitterDialogWrapper(project, panel, doNotAskOption);
         wrapper.setDoNotAskOption(doNotAskOption);
-        panel.addTextFieldVerifier(createTextFieldLengthDocumentListener(wrapper, panel));
 
         if (wrapper.showAndGet()) {
           TwitterSettings settings = TwitterSettings.getInstance();
@@ -121,7 +118,7 @@ public class TwitterUtils {
       @NotNull
       @Override
       public String getDoNotShowMessage() {
-        return "Never ask me to tweet";
+        return EduCoreBundle.message("twitter.dialog.do.not.ask");
       }
     };
   }
@@ -214,26 +211,6 @@ public class TwitterUtils {
 
 
   /**
-   * Listener updates label indicating remaining symbols number like in twitter.
-   */
-  private static DocumentListener createTextFieldLengthDocumentListener(@NotNull TwitterDialogWrapper builder, @NotNull final TwitterUtils.TwitterDialogPanel panel) {
-    return new DocumentAdapter() {
-      @Override
-      protected void textChanged(DocumentEvent e) {
-        int length = e.getDocument().getLength();
-        if (length > 140 || length == 0) {
-          builder.setOKActionEnabled(false);
-          panel.getRemainSymbolsLabel().setText("<html><font color='red'>" + String.valueOf(140 - length) + "</font></html>");
-        } else {
-          builder.setOKActionEnabled(true);
-          panel.getRemainSymbolsLabel().setText(String.valueOf(140 - length));
-        }
-
-      }
-    };
-  }
-
-  /**
    * Dialog wrapper class with DoNotAsl option for asking user to tweet.
    * */
   private static class TwitterDialogWrapper extends DialogWrapper {
@@ -241,21 +218,27 @@ public class TwitterUtils {
 
     TwitterDialogWrapper(@Nullable Project project, @NotNull TwitterUtils.TwitterDialogPanel panel, DoNotAskOption doNotAskOption) {
       super(project);
-      setTitle("Twitter");
+      setTitle(EduCoreBundle.message("twitter.dialog.title"));
       setDoNotAskOption(doNotAskOption);
-      setOKButtonText("Tweet");
-      setCancelButtonText("No");
+      setOKButtonText(EduCoreBundle.message("twitter.dialog.ok.action"));
       setResizable(true);
       Dimension preferredSize = panel.getPreferredSize();
       setSize((int) preferredSize.getHeight(), (int) preferredSize.getWidth());
       myPanel = panel;
+
+      initValidation();
       init();
     }
 
     @Nullable
     @Override
     protected JComponent createCenterPanel() {
-      return new JBScrollPane(myPanel);
+      return myPanel;
+    }
+
+    @Override
+    protected @Nullable ValidationInfo doValidate() {
+      return myPanel.doValidate();
     }
   }
 
@@ -263,6 +246,14 @@ public class TwitterUtils {
    * Class provides structure for twitter dialog panel
    */
   public abstract static class TwitterDialogPanel extends JPanel {
+
+    public TwitterDialogPanel(LayoutManager layout) {
+      super(layout);
+    }
+
+    public TwitterDialogPanel() {
+      super();
+    }
 
     /**
      * Provides tweet text
@@ -276,15 +267,9 @@ public class TwitterUtils {
     
     @Nullable public abstract String getMediaExtension();
 
-    /**
-     * @return label that will be used to show remained symbol number
-     */
-    @NotNull public abstract JLabel getRemainSymbolsLabel();
-
-    /**
-     * Api to add document listener to field containing tweet text
-     */
-    public abstract void addTextFieldVerifier(@NotNull final DocumentListener documentListener);
+    @Nullable public ValidationInfo doValidate() {
+      return null;
+    }
     
   }
 }
