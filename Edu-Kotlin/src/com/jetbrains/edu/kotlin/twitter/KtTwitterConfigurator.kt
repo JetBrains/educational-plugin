@@ -6,14 +6,14 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CheckStatus.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator
-import com.jetbrains.edu.learning.twitter.TwitterSettings.Companion.getInstance
-import com.jetbrains.edu.learning.twitter.TwitterUtils.TwitterDialogPanel
+import com.jetbrains.edu.learning.twitter.TwitterSettings
+import org.jetbrains.annotations.NonNls
 
 class KtTwitterConfigurator : TwitterPluginConfigurator {
   override fun askToTweet(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean {
     val course = StudyTaskManager.getInstance(project).course ?: return false
     if (course.name == "Kotlin Koans") {
-      val settings = getInstance()
+      val settings = TwitterSettings.getInstance()
       return settings.askToTweet() &&
              solvedTask.status == Solved &&
              (statusBeforeCheck == Unchecked || statusBeforeCheck == Failed) &&
@@ -22,12 +22,25 @@ class KtTwitterConfigurator : TwitterPluginConfigurator {
     return false
   }
 
-  override fun getTweetDialogPanel(solvedTask: Task): TwitterDialogPanel? {
-    return KtTwitterDialogPanel(solvedTask)
+  override fun getDefaultMessage(solvedTask: Task): String {
+    val solvedTaskNumber = calculateTaskNumber(solvedTask)
+    return String.format(COMPLETE_KOTLIN_KOANS_LEVEL, solvedTaskNumber / 8)
   }
 
+  override fun getImageResourcePath(solvedTask: Task): String {
+    val solvedTaskNumber = calculateTaskNumber(solvedTask)
+    val level = solvedTaskNumber / 8
+    return "/twitter/kotlin_koans/images/${level}level.gif"
+  }
+
+  override fun getMediaExtension(solvedTask: Task): String = "gif"
+
   companion object {
-    fun calculateTaskNumber(solvedTask: Task): Int {
+
+    @NonNls
+    private val COMPLETE_KOTLIN_KOANS_LEVEL = "Hey, I just completed level %d of Kotlin Koans. https://kotlinlang.org/docs/tutorials/koans.html #kotlinkoans"
+
+    private fun calculateTaskNumber(solvedTask: Task): Int {
       val lesson = solvedTask.lesson
       val course = lesson.course
       var solvedTaskNumber = 0

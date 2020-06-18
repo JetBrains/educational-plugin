@@ -4,7 +4,6 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.twitter.TwitterUtils.TwitterDialogPanel
 
 /**
  * Provides twitting for courses
@@ -20,7 +19,13 @@ interface TwitterPluginConfigurator {
   /**
    * @return panel that will be shown to user in ask to tweet dialog.
    */
-  fun getTweetDialogPanel(solvedTask: Task): TwitterDialogPanel?
+  fun getTweetDialogPanel(solvedTask: Task): TwitterDialogPanel {
+    return DefaultTwitterDialogPanel(this, solvedTask)
+  }
+
+  fun getDefaultMessage(solvedTask: Task): String
+  fun getImageResourcePath(solvedTask: Task): String
+  fun getMediaExtension(solvedTask: Task): String
 
   companion object {
     @JvmField
