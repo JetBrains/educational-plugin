@@ -6,7 +6,6 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Property;
@@ -37,10 +36,6 @@ public class EduSettings implements PersistentStateComponent<Element> {
   private Set<Integer> myShownCourseIds;
 
   public EduSettings() {
-    if (ApplicationManager.getApplication().isInternal() && EduUtils.hasJCEF()) {
-      // TODO remove it later
-      Registry.get("ide.browser.jcef.enabled").setValue(true);
-    }
     init();
   }
 
