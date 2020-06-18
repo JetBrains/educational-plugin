@@ -6,6 +6,7 @@ import org.gradle.api.internal.HasConvention
 import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
 import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 import org.jetbrains.intellij.tasks.PrepareSandboxTask
+import org.jetbrains.intellij.tasks.RunIdeTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
@@ -284,6 +285,10 @@ project(":") {
   tasks {
     withType<PrepareSandboxTask> {
       finalizedBy(removeIncompatiblePlugins)
+    }
+    withType<RunIdeTask> {
+      // Disable auto plugin reloading. See `com.intellij.ide.plugins.DynamicPluginVfsListener`
+      jvmArgs("-Didea.auto.reload.plugins=false")
     }
     buildSearchableOptions {
       enabled = findProperty("enableBuildSearchableOptions") != "false"
