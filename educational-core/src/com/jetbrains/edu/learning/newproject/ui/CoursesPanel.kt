@@ -10,16 +10,19 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.FilterComponent
 import com.intellij.ui.JBCardLayout
 import com.intellij.ui.OnePixelSplitter
+import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.joinCourse
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.*
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.Companion.forCourse
@@ -42,6 +45,7 @@ private val PANEL_SIZE = JBUI.size(750, 600)
 
 private const val CONTENT_CARD_NAME = "CONTENT"
 private const val LOADING_CARD_NAME = "PROGRESS"
+private const val NO_COURSES = "NO_COURSES"
 
 abstract class CoursesPanel(dialog: BrowseCoursesDialog, coursesProvider: CoursesPlatformProvider) : JPanel() {
   protected var coursePanel: NewCoursePanel = NewCoursePanel(
@@ -76,6 +80,7 @@ abstract class CoursesPanel(dialog: BrowseCoursesDialog, coursesProvider: Course
 
     this.add(createContentPanel(coursesProvider), CONTENT_CARD_NAME)
     this.add(createLoadingPanel(), LOADING_CARD_NAME)
+    this.add(createNoCoursesPanel(), NO_COURSES)
     showProgressState()
 
     coursesListPanel.addListener { processSelectionChanged() }
@@ -159,10 +164,16 @@ abstract class CoursesPanel(dialog: BrowseCoursesDialog, coursesProvider: Course
     add(CenteredIcon(), BorderLayout.CENTER)
   }
 
+  private fun createNoCoursesPanel(): JPanel = JBPanelWithEmptyText()
+    .withEmptyText(EduCoreBundle.message("course.dialog.no.courses", ApplicationNamesInfo.getInstance().fullProductName))
+
   private fun showProgressState() = cardLayout.show(this, LOADING_CARD_NAME)
 
-  private fun showContent() {
-    coursesListPanel.selectFirstCourse()
+  private fun showContent(empty: Boolean) {
+    if (empty) {
+      cardLayout.show(this, NO_COURSES)
+      return
+    }
     cardLayout.show(this, CONTENT_CARD_NAME)
   }
 
@@ -212,7 +223,7 @@ abstract class CoursesPanel(dialog: BrowseCoursesDialog, coursesProvider: Course
   protected fun updateModel(courses: List<Course>, courseToSelect: Course?, filterCourses: Boolean = true) {
     val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
     coursesListPanel.updateModel(coursesToAdd, courseToSelect)
-    showContent()
+    showContent(coursesToAdd.isEmpty())
   }
 
   fun addCourseValidationListener(listener: CourseValidationListener) {
