@@ -1,275 +1,219 @@
-package com.jetbrains.edu.learning.twitter;
+package com.jetbrains.edu.learning.twitter
 
-import com.intellij.ide.BrowserUtil;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.InputValidatorEx;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import org.apache.http.HttpStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import twitter4j.StatusUpdate;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
-import twitter4j.auth.RequestToken;
-import twitter4j.conf.ConfigurationBuilder;
+import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.InputValidatorEx
+import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import org.apache.http.HttpStatus
+import twitter4j.StatusUpdate
+import twitter4j.Twitter
+import twitter4j.TwitterException
+import twitter4j.TwitterFactory
+import twitter4j.auth.AccessToken
+import twitter4j.conf.ConfigurationBuilder
+import java.awt.LayoutManager
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import javax.swing.JComponent
+import javax.swing.JPanel
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+object TwitterUtils {
+  private val LOG = Logger.getInstance(TwitterUtils::class.java)
 
-
-public class TwitterUtils {
-  private static final Logger LOG = Logger.getInstance(TwitterUtils.class);
-  
   /**
-   * Set consumer key and secret. 
+   * Set consumer key and secret.
    * @return Twitter instance with consumer key and secret set.
    */
-  @NotNull
-  public static Twitter getTwitter() {
-    ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-    configurationBuilder.setOAuthConsumerKey(TwitterBundle.message("twitterConsumerKey"));
-    configurationBuilder.setOAuthConsumerSecret(TwitterBundle.message("twitterConsumerSecret"));
-    return new TwitterFactory(configurationBuilder.build()).getInstance();
-  }
+  val twitter: Twitter
+    get() {
+      val configurationBuilder = ConfigurationBuilder()
+      configurationBuilder.setOAuthConsumerKey(TwitterBundle.message("twitterConsumerKey"))
+      configurationBuilder.setOAuthConsumerSecret(TwitterBundle.message("twitterConsumerSecret"))
+      return TwitterFactory(configurationBuilder.build()).instance
+    }
 
   /**
    * Set access token and token secret in Twitter instance
    */
-  private static void setAuthInfoInTwitter(Twitter twitter, @NotNull String accessToken,
-                                           @NotNull String tokenSecret) {
-    AccessToken token = new AccessToken(accessToken, tokenSecret);
-    twitter.setOAuthAccessToken(token);
+  private fun setAuthInfoInTwitter(twitter: Twitter, accessToken: String, tokenSecret: String) {
+    twitter.oAuthAccessToken = AccessToken(accessToken, tokenSecret)
   }
 
-  public static void createTwitterDialogAndShow(@NotNull Project project, 
-                                                @NotNull final TwitterPluginConfigurator configurator,
-                                                @NotNull Task task) {
-    ApplicationManager.getApplication().invokeLater(() -> {
-      DialogWrapper.DoNotAskOption doNotAskOption = createDoNotAskOption();
-      TwitterUtils.TwitterDialogPanel panel = configurator.getTweetDialogPanel(task);
+  @JvmStatic
+  fun createTwitterDialogAndShow(project: Project, configurator: TwitterPluginConfigurator, task: Task) {
+    ApplicationManager.getApplication().invokeLater {
+      val doNotAskOption = createDoNotAskOption()
+      val panel = configurator.getTweetDialogPanel(task)
       if (panel != null) {
-        TwitterDialogWrapper wrapper = new TwitterDialogWrapper(project, panel, doNotAskOption);
-        wrapper.setDoNotAskOption(doNotAskOption);
-
+        val wrapper = TwitterDialogWrapper(project, panel, doNotAskOption)
+        wrapper.setDoNotAskOption(doNotAskOption)
         if (wrapper.showAndGet()) {
-          TwitterSettings settings = TwitterSettings.getInstance();
+          val settings = TwitterSettings.getInstance()
           try {
-            boolean isAuthorized = !settings.getAccessToken().isEmpty();
-            Twitter twitter = getTwitter();
+            val isAuthorized = settings.accessToken.isNotEmpty()
+            val twitter = twitter
             if (!isAuthorized) {
-              authorizeAndUpdateStatus(twitter, panel);
+              authorizeAndUpdateStatus(twitter, panel)
             }
             else {
-              setAuthInfoInTwitter(twitter, settings.getAccessToken(), settings.getTokenSecret());
-              updateStatus(panel, twitter);
+              setAuthInfoInTwitter(twitter, settings.accessToken, settings.tokenSecret)
+              updateStatus(panel, twitter)
             }
           }
-          catch (TwitterException | IOException e) {
-            LOG.warn(e.getMessage());
-            Messages.showErrorDialog("Status wasn't updated. Please, check internet connection and try again", "Twitter");
+          catch (e: Exception) {
+            LOG.warn(e.message)
+            Messages.showErrorDialog("Status wasn't updated. Please, check internet connection and try again", "Twitter")
           }
         }
         else {
-          LOG.warn("Panel is null");
+          LOG.warn("Panel is null")
         }
       }
-    });
+    }
   }
 
-
-  private static DialogWrapper.DoNotAskOption createDoNotAskOption() {
-    return new DialogWrapper.DoNotAskOption() {
-      @Override
-      public boolean isToBeShown() {
-        return true;
-      }
-
-      @Override
-      public void setToBeShown(boolean toBeShown, int exitCode) {
+  private fun createDoNotAskOption(): DialogWrapper.DoNotAskOption {
+    return object : DialogWrapper.DoNotAskOption {
+      override fun setToBeShown(toBeShown: Boolean, exitCode: Int) {
         if (exitCode == DialogWrapper.CANCEL_EXIT_CODE || exitCode == DialogWrapper.OK_EXIT_CODE) {
-          TwitterSettings.getInstance().setAskToTweet(toBeShown);
+          TwitterSettings.getInstance().setAskToTweet(toBeShown)
         }
       }
-
-      @Override
-      public boolean canBeHidden() {
-        return true;
-      }
-
-      @Override
-      public boolean shouldSaveOptionsOnCancel() {
-        return true;
-      }
-
-      @NotNull
-      @Override
-      public String getDoNotShowMessage() {
-        return EduCoreBundle.message("twitter.dialog.do.not.ask");
-      }
-    };
+      override fun isToBeShown(): Boolean = true
+      override fun canBeHidden(): Boolean = true
+      override fun shouldSaveOptionsOnCancel(): Boolean = true
+      override fun getDoNotShowMessage(): String = message("twitter.dialog.do.not.ask")
+    }
   }
 
   /**
    * Post on twitter media and text from panel
-   * @param panel shown to user and used to provide data to post 
+   * @param panel shown to user and used to provide data to post
    */
-  public static void updateStatus(TwitterUtils.TwitterDialogPanel panel, Twitter twitter) throws IOException, TwitterException {
-    StatusUpdate update = new StatusUpdate(panel.getMessage());
-    InputStream e = panel.getMediaSource();
+  @Throws(IOException::class, TwitterException::class)
+  fun updateStatus(panel: TwitterDialogPanel, twitter: Twitter) {
+    val update = StatusUpdate(panel.message)
+    val e = panel.mediaSource
     if (e != null) {
-      File imageFile = FileUtil.createTempFile("twitter_media", panel.getMediaExtension());
-      FileUtil.copy(e, new FileOutputStream(imageFile));
-      update.media(imageFile);
+      val imageFile = FileUtil.createTempFile("twitter_media", panel.mediaExtension)
+      FileUtil.copy(e, FileOutputStream(imageFile))
+      update.media(imageFile)
     }
-
-    twitter.updateStatus(update);
-    BrowserUtil.browse("https://twitter.com/");
+    twitter.updateStatus(update)
+    BrowserUtil.browse("https://twitter.com/")
   }
 
   /**
    * Show twitter dialog, asking user to tweet about his achievements. Post tweet with provided by panel
-   * media and text. 
+   * media and text.
    * As a result of succeeded tweet twitter website is opened in default browser.
    */
-  public static void authorizeAndUpdateStatus(@NotNull final Twitter twitter,
-                                              @NotNull final TwitterUtils.TwitterDialogPanel panel) throws TwitterException {
-    RequestToken requestToken = twitter.getOAuthRequestToken();
-    BrowserUtil.browse(requestToken.getAuthorizationURL());
-
-    ApplicationManager.getApplication().invokeLater(() -> {
-      String pin = createAndShowPinDialog();
+  @Throws(TwitterException::class)
+  fun authorizeAndUpdateStatus(twitter: Twitter, panel: TwitterDialogPanel) {
+    val requestToken = twitter.oAuthRequestToken
+    BrowserUtil.browse(requestToken.authorizationURL)
+    ApplicationManager.getApplication().invokeLater {
+      val pin = createAndShowPinDialog()
       if (pin != null) {
         try {
-          AccessToken token = twitter.getOAuthAccessToken(requestToken, pin);
-          TwitterSettings settings = TwitterSettings.getInstance();
-          settings.setAccessToken(token.getToken());
-          settings.setTokenSecret(token.getTokenSecret());
-          updateStatus(panel, twitter);
+          val token = twitter.getOAuthAccessToken(requestToken, pin)
+          val settings = TwitterSettings.getInstance()
+          settings.accessToken = token.token
+          settings.tokenSecret = token.tokenSecret
+          updateStatus(panel, twitter)
         }
-        catch (TwitterException e) {
-          if (e.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
-            LOG.warn("Unable to get the access token.");
-            LOG.warn(e.getMessage());
+        catch (e: TwitterException) {
+          if (e.statusCode == HttpStatus.SC_UNAUTHORIZED) {
+            LOG.warn("Unable to get the access token.")
+            LOG.warn(e.message)
           }
         }
-        catch (IOException e) {
-          LOG.warn(e.getMessage());
+        catch (e: IOException) {
+          LOG.warn(e.message)
         }
       }
-    });
+    }
   }
 
-  public static String createAndShowPinDialog() {
-    return Messages.showInputDialog("Twitter PIN:", "Twitter Authorization", null, "", new InputValidatorEx() {
-      @Nullable
-      @Override
-      public String getErrorText(String inputString) {
-        inputString = inputString.trim();
-        if (inputString.isEmpty()) {
-          return "PIN shouldn't be empty.";
+  private fun createAndShowPinDialog(): String? {
+    return Messages.showInputDialog("Twitter PIN:", "Twitter Authorization", null, "", object : InputValidatorEx {
+      override fun getErrorText(inputString: String): String? {
+        val input = inputString.trim { it <= ' ' }
+        return when {
+          input.isEmpty() -> "PIN shouldn't be empty."
+          !isNumeric(input) -> "PIN should be numeric."
+          else -> null
         }
-        if (!isNumeric(inputString)) {
-          return "PIN should be numeric.";
-        }
-        return null;
       }
 
-      @Override
-      public boolean checkInput(String inputString) {
-        return getErrorText(inputString) == null;
+      override fun checkInput(inputString: String): Boolean {
+        return getErrorText(inputString) == null
       }
 
-      @Override
-      public boolean canClose(String inputString) {
-        return true;
-      }
-      
-      private boolean isNumeric(@NotNull final String string) {
-        for (char c: string.toCharArray()) {
+      override fun canClose(inputString: String): Boolean = true
+
+      private fun isNumeric(string: String): Boolean {
+        for (c in string.toCharArray()) {
           if (!StringUtil.isDecimalDigit(c)) {
-            return false;
+            return false
           }
         }
-        return true;
+        return true
       }
-    });
+    })
   }
-
 
   /**
    * Dialog wrapper class with DoNotAsl option for asking user to tweet.
-   * */
-  private static class TwitterDialogWrapper extends DialogWrapper {
-    private final TwitterUtils.TwitterDialogPanel myPanel;
+   */
+  private class TwitterDialogWrapper(
+    project: Project,
+    private val panel: TwitterDialogPanel,
+    doNotAskOption: DoNotAskOption?
+  ) : DialogWrapper(project) {
 
-    TwitterDialogWrapper(@Nullable Project project, @NotNull TwitterUtils.TwitterDialogPanel panel, DoNotAskOption doNotAskOption) {
-      super(project);
-      setTitle(EduCoreBundle.message("twitter.dialog.title"));
-      setDoNotAskOption(doNotAskOption);
-      setOKButtonText(EduCoreBundle.message("twitter.dialog.ok.action"));
-      setResizable(true);
-      Dimension preferredSize = panel.getPreferredSize();
-      setSize((int) preferredSize.getHeight(), (int) preferredSize.getWidth());
-      myPanel = panel;
-
-      initValidation();
-      init();
+    init {
+      title = message("twitter.dialog.title")
+      setDoNotAskOption(doNotAskOption)
+      setOKButtonText(message("twitter.dialog.ok.action"))
+      setResizable(true)
+      val preferredSize = panel.preferredSize
+      setSize(preferredSize.getHeight().toInt(), preferredSize.getWidth().toInt())
+      initValidation()
+      init()
     }
 
-    @Nullable
-    @Override
-    protected JComponent createCenterPanel() {
-      return myPanel;
-    }
-
-    @Override
-    protected @Nullable ValidationInfo doValidate() {
-      return myPanel.doValidate();
-    }
+    override fun createCenterPanel(): JComponent? = panel
+    override fun doValidate(): ValidationInfo? = panel.doValidate()
   }
 
   /**
    * Class provides structure for twitter dialog panel
    */
-  public abstract static class TwitterDialogPanel extends JPanel {
-
-    public TwitterDialogPanel(LayoutManager layout) {
-      super(layout);
-    }
-
-    public TwitterDialogPanel() {
-      super();
-    }
+  abstract class TwitterDialogPanel : JPanel {
+    constructor(layout: LayoutManager?) : super(layout)
+    constructor() : super()
 
     /**
      * Provides tweet text
      */
-    @NotNull public abstract String getMessage();
+    abstract val message: String
 
     /**
-     * @return Input stream of media should be posted or null if there's nothing to post 
+     * @return Input stream of media should be posted or null if there's nothing to post
      */
-    @Nullable public abstract InputStream getMediaSource();
-    
-    @Nullable public abstract String getMediaExtension();
+    abstract val mediaSource: InputStream?
+    abstract val mediaExtension: String?
 
-    @Nullable public ValidationInfo doValidate() {
-      return null;
-    }
-    
+    fun doValidate(): ValidationInfo? = null
   }
 }

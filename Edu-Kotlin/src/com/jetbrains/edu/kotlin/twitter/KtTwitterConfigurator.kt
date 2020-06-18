@@ -1,50 +1,44 @@
-package com.jetbrains.edu.kotlin.twitter;
+package com.jetbrains.edu.kotlin.twitter
 
-import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.twitter.TwitterSettings;
-import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
-import com.jetbrains.edu.learning.twitter.TwitterUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.CheckStatus.*
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator
+import com.jetbrains.edu.learning.twitter.TwitterSettings.Companion.getInstance
+import com.jetbrains.edu.learning.twitter.TwitterUtils.TwitterDialogPanel
 
-public class KtTwitterConfigurator implements TwitterPluginConfigurator {
-
-  @Override
-  public boolean askToTweet(@NotNull Project project, @NotNull Task solvedTask, @NotNull CheckStatus statusBeforeCheck) {
-    StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
-    Course course = studyTaskManager.getCourse();
-    if (course != null && course.getName().equals("Kotlin Koans")) {
-      TwitterSettings settings = TwitterSettings.getInstance();
-      return settings.askToTweet()
-             && solvedTask.getStatus() == CheckStatus.Solved
-             && (statusBeforeCheck == CheckStatus.Unchecked || statusBeforeCheck == CheckStatus.Failed)
-             && calculateTaskNumber(solvedTask) % 8 == 0;
+class KtTwitterConfigurator : TwitterPluginConfigurator {
+  override fun askToTweet(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean {
+    val course = StudyTaskManager.getInstance(project).course ?: return false
+    if (course.name == "Kotlin Koans") {
+      val settings = getInstance()
+      return settings.askToTweet() &&
+             solvedTask.status == Solved &&
+             (statusBeforeCheck == Unchecked || statusBeforeCheck == Failed) &&
+             calculateTaskNumber(solvedTask) % 8 == 0
     }
-    return false;
+    return false
   }
 
-  @Nullable
-  @Override
-  public TwitterUtils.TwitterDialogPanel getTweetDialogPanel(@NotNull Task solvedTask) {
-    return new KtTwitterDialogPanel(solvedTask);
+  override fun getTweetDialogPanel(solvedTask: Task): TwitterDialogPanel? {
+    return KtTwitterDialogPanel(solvedTask)
   }
 
-  public static int calculateTaskNumber(@NotNull final Task solvedTask) {
-    Lesson lesson = solvedTask.getLesson();
-    Course course = lesson.getCourse();
-    int solvedTaskNumber = 0;
-    for (Lesson currentLesson : course.getLessons()) {
-      for (Task task : currentLesson.getTaskList()) {
-        if (task.getStatus() == CheckStatus.Solved) {
-          solvedTaskNumber++;
+  companion object {
+    fun calculateTaskNumber(solvedTask: Task): Int {
+      val lesson = solvedTask.lesson
+      val course = lesson.course
+      var solvedTaskNumber = 0
+      for (currentLesson in course.lessons) {
+        for (task in currentLesson.taskList) {
+          if (task.status == Solved) {
+            solvedTaskNumber++
+          }
         }
       }
+      return solvedTaskNumber
     }
-    return solvedTaskNumber;
   }
 }

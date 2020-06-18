@@ -1,28 +1,29 @@
-package com.jetbrains.edu.learning.twitter;
+package com.jetbrains.edu.learning.twitter
 
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.twitter.TwitterUtils.TwitterDialogPanel
 
 /**
  * Provides twitting for courses
  *
  * @see TwitterAction
  */
-public interface TwitterPluginConfigurator {
-  ExtensionPointName<TwitterPluginConfigurator> EP_NAME = ExtensionPointName.create("Educational.twitterPluginConfigurator");
-
+interface TwitterPluginConfigurator {
   /**
    * The implementation should define policy when user will be asked to tweet.
    */
-  boolean askToTweet(@NotNull Project project, @NotNull Task solvedTask, @NotNull CheckStatus statusBeforeCheck);
+  fun askToTweet(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean
 
   /**
-   * @return panel that will be shown to user in ask to tweet dialog. 
+   * @return panel that will be shown to user in ask to tweet dialog.
    */
-  @Nullable
-  TwitterUtils.TwitterDialogPanel getTweetDialogPanel(@NotNull Task solvedTask);
+  fun getTweetDialogPanel(solvedTask: Task): TwitterDialogPanel?
+
+  companion object {
+    @JvmField
+    val EP_NAME = ExtensionPointName.create<TwitterPluginConfigurator>("Educational.twitterPluginConfigurator")
+  }
 }
