@@ -7,6 +7,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import org.jetbrains.kotlin.idea.isMainFunction
 import org.jetbrains.kotlin.idea.run.KotlinRunConfigurationProducer
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -18,8 +19,8 @@ class KtTaskCheckerProvider : GradleTaskCheckerProvider() {
 
   override fun mainClassForFile(project: Project, file: VirtualFile): String? {
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
-    val ktElements = PsiTreeUtil.findChildrenOfType(psiFile, KtElement::class.java)
-    val container = KotlinRunConfigurationProducer.getEntryPointContainer(ktElements.first()) ?: return null
+    val mainFunction = PsiTreeUtil.findChildrenOfType(psiFile, KtElement::class.java).find { it.isMainFunction() } ?: return null
+    val container = KotlinRunConfigurationProducer.getEntryPointContainer(mainFunction) ?: return null
     return KotlinRunConfigurationProducer.getStartClassFqName(container)
   }
 }
