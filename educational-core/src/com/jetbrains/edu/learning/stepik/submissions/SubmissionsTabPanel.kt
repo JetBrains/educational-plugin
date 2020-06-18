@@ -41,42 +41,34 @@ import kotlin.math.roundToInt
 
 class SubmissionsTabPanel(project: Project,
                           val course: Course,
-                          val task: Task?
+                          val task: Task
 ) : AdditionalTabPanel(project, EduCoreBundle.message("submissions.tab.name")) {
 
-  val shouldShowSubmissions: Boolean
-
   init {
-    shouldShowSubmissions = createSubmissionsContent()
-  }
-
-  private fun createSubmissionsContent(): Boolean {
-    if (task == null || !task.supportSubmissions()) {
-      return false
-    }
     val submissionsManager = SubmissionsManager.getInstance(project)
     val descriptionText = StringBuilder()
     val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
 
     if (submissionsManager.isLoggedIn()) {
-      if (submissionsList == null) {
-        return false
-      }
-      when {
-        task is ChoiceTask -> addViewOnStepikLink(descriptionText, task, this)
-        submissionsList.isEmpty() -> descriptionText.append(
-          "<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.empty")}")
-        else -> {
-          addSubmissionsToText(submissionsList, descriptionText)
-          this.addHyperlinkListener(getSubmissionsListener(project, submissionsManager, task))
+      if (submissionsList != null) {
+        when {
+          task is ChoiceTask -> addViewOnStepikLink(descriptionText, task, this)
+          submissionsList.isEmpty() -> descriptionText.append(
+            "<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.empty")}")
+          else -> {
+            addSubmissionsToText(submissionsList, descriptionText)
+            this.addHyperlinkListener(getSubmissionsListener(project, submissionsManager, task))
+          }
         }
+      }
+      else {
+        descriptionText.append("<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.empty")}")
       }
     }
     else {
       addLoginLink(descriptionText, submissionsManager)
     }
-    this.setText(descriptionText.toString())
-    return true
+    setText(descriptionText.toString())
   }
 
   private fun addViewOnStepikLink(descriptionText: StringBuilder, currentTask: ChoiceTask, submissionsPanel: AdditionalTabPanel) {
