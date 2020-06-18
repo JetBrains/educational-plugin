@@ -56,10 +56,6 @@ class SubmissionsManager(private val project: Project) {
     return getOrLoadSubmissions(stepId).filter { it.status == status }
   }
 
-  fun getSubmissions(stepId: Int): List<Submission>? {
-    return getOrLoadSubmissions(stepId)
-  }
-
   fun getSubmission(stepId: Int, submissionId: Int): Submission? {
     return getOrLoadSubmissions(stepId).find { it.id == submissionId }
   }
