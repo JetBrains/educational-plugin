@@ -62,7 +62,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     if (additionalTab != null) {
       addTab(contentManager, additionalTab, 1)
     }
-    if (SubmissionsManager.getInstance(project).submissionsSupported()) {
+    if (task != null && task.supportSubmissions() && SubmissionsManager.getInstance(project).submissionsSupported()) {
       val submissionsTab = SubmissionsTabPanel(project, course, task)
       val submissionsTabIndex = if (additionalTab != null) 2 else getSubmissionsTabIndex(contentManager)
       updateSubmissionsTab(contentManager, submissionsTab, submissionsTabIndex)
@@ -75,11 +75,15 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   }
 
   override fun updateSubmissionsTab() {
+    updateSubmissionsTab(currentTask)
+  }
+
+  private fun updateSubmissionsTab(task: Task?) {
+    if (task == null) return
     val contentManager = uiContent?.contentManager ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
-    if (SubmissionsManager.getInstance(project).submissionsSupported()) {
-      val submissionsTab = SubmissionsTabPanel(project, course,
-                                               currentTask)
+    if (task.supportSubmissions() && SubmissionsManager.getInstance(project).submissionsSupported()) {
+      val submissionsTab = SubmissionsTabPanel(project, course, task)
       updateSubmissionsTab(contentManager, submissionsTab, getSubmissionsTabIndex(contentManager))
     }
     else {
@@ -96,7 +100,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   }
 
   private fun updateSubmissionsTab(contentManager: ContentManager, submissionsTab: SubmissionsTabPanel?, tabIndex: Int) {
-    if (submissionsTab == null || !submissionsTab.shouldShowSubmissions) {
+    if (submissionsTab == null) {
       removeSubmissionsContent(contentManager)
     }
     else {
