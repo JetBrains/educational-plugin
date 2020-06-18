@@ -48,6 +48,19 @@ class KtCheckersTest : JdkCheckerTestBase() {
           withText("OK\n")
         }
       }
+      outputTask("OutputTaskMainInsideTask") {
+        kotlinTaskFile("src/Task.kt", """
+          object Task {
+            @JvmStatic
+            fun main(args: Array<String>) {
+              println("OK")  
+            }
+          }
+        """)
+        taskFile("test/output.txt") {
+          withText("OK\n")
+        }
+      }
       outputTask("OutputTaskWithSeveralFiles") {
         kotlinTaskFile("src/utils.kt", """
           fun ok(): String = "OK"
@@ -74,7 +87,7 @@ class KtCheckersTest : JdkCheckerTestBase() {
     }
   }
 
-  fun testKotlinCourse() {
+  fun `test kotlin course`() {
     CheckActionListener.expectedMessage { task ->
       when (task) {
         is OutputTask, is EduTask -> CheckUtils.CONGRATULATIONS
