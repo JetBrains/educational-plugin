@@ -1,11 +1,13 @@
 package com.jetbrains.edu.learning.checker
 
+import com.jetbrains.edu.learning.EduNames.FAILED_TO_CHECK_URL
+import com.jetbrains.edu.learning.EduNames.NO_TESTS_URL
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.xmlEscaped
 import javax.swing.event.HyperlinkListener
 
-class CheckResult @JvmOverloads constructor(
+data class CheckResult @JvmOverloads constructor(
   val status: CheckStatus,
   val message: String,
   val details: String? = null,
@@ -19,14 +21,26 @@ class CheckResult @JvmOverloads constructor(
 
   companion object {
     @JvmField val NO_LOCAL_CHECK = CheckResult(CheckStatus.Unchecked, "Local check isn't available")
-    @JvmField val FAILED_TO_CHECK = CheckResult(CheckStatus.Unchecked, CheckUtils.FAILED_TO_CHECK_MESSAGE)
     @JvmField val LOGIN_NEEDED = CheckResult(CheckStatus.Unchecked, CheckUtils.LOGIN_NEEDED_MESSAGE)
     @JvmField val CONNECTION_FAILED = CheckResult(CheckStatus.Unchecked, "Connection failed")
     @JvmField val SOLVED = CheckResult(CheckStatus.Solved, "")
-    @JvmField val NO_TESTS_RUN = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.no.tests"))
     @JvmField val CANCELED = CheckResult(CheckStatus.Unchecked, "Canceled")
 
-    val CheckResult.escaped: CheckResult get() = CheckResult(status, message.xmlEscaped, details, diff, hyperlinkListener)
+    val NO_TESTS_RUN
+      get() = CheckResult(
+        CheckStatus.Unchecked,
+        "${EduCoreBundle.message("check.no.tests")}. ${EduCoreBundle.message("help.use.guide", NO_TESTS_URL)}"
+      )
+
+    @JvmStatic
+    val FAILED_TO_CHECK
+      get() = CheckResult(
+        CheckStatus.Unchecked,
+        "${CheckUtils.FAILED_TO_CHECK_MESSAGE}. ${EduCoreBundle.message("help.use.guide", FAILED_TO_CHECK_URL)}"
+      )
+
+    val CheckResult.escaped: CheckResult
+      get() = if (status == CheckStatus.Failed) copy(message = message.xmlEscaped) else this
   }
 }
 

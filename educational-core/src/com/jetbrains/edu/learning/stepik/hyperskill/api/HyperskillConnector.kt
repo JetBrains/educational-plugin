@@ -268,7 +268,7 @@ abstract class HyperskillConnector {
   private fun <T> Call<T>.executeAndExtractFromBody(): Result<T, String> {
     return executeParsingErrors(true).flatMap {
       val result = it.body()
-      if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA)) else Ok(result)
+      if (result == null) Err(FAILED_TO_POST_TO_JBA) else Ok(result)
     }
   }
 

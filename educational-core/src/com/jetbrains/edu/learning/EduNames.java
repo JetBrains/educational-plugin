@@ -85,6 +85,13 @@ public class EduNames {
   public static final String CORRECT = "correct";
   public static final String WRONG = "wrong";
 
+  // Troubleshooting guide links
+  public static final String TROUBLESHOOTING_GUIDE_URL = "https://www.jetbrains.com/help/education/troubleshooting-guide.html";
+  public static final String NO_TESTS_URL = TROUBLESHOOTING_GUIDE_URL + "#no_tests_have_run";
+  public static final String NO_COURSES_URL = TROUBLESHOOTING_GUIDE_URL + "#no_courses_found";
+  public static final String FAILED_TO_POST_TO_JBA_URL = TROUBLESHOOTING_GUIDE_URL + "#failed_submission_jba";
+  public static final String FAILED_TO_CHECK_URL = TROUBLESHOOTING_GUIDE_URL + "#failed_to_launch_checking";
+
   private EduNames() {
   }
 

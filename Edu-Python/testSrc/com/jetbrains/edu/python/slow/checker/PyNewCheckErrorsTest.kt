@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckResultDiffMatcher.Companion.diff
-import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -101,7 +100,7 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
         "EduTestsFailed" ->
           Result(CheckStatus.Failed, equalTo("4 != 3 : error"),
                  diff(CheckResultDiff(expected = "4", actual = "3", title = "Comparison Failure (test_add)")), nullValue())
-        "EduNoTestsRun" -> Result(CheckStatus.Unchecked, containsString(CheckUtils.NO_TESTS_HAVE_RUN), nullValue(), nullValue())
+        "EduNoTestsRun" -> Result(CheckStatus.Unchecked, containsString(EduCoreBundle.message("check.no.tests")), nullValue(), nullValue())
         "SyntaxError" -> Result(CheckStatus.Failed, containsString("Syntax Error"), nullValue(),
                                 containsString("SyntaxError: invalid syntax"))
         "AssertionError" -> Result(CheckStatus.Failed, equalTo("False is not true : My own message"), nullValue(), nullValue())

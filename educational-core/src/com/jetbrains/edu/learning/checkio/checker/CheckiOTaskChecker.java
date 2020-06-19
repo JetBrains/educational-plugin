@@ -55,7 +55,7 @@ public class CheckiOTaskChecker extends TaskChecker<EduTask> {
     }
     catch (Exception e) {
       LOG.warn(e.getMessage());
-      return CheckResult.FAILED_TO_CHECK;
+      return CheckResult.getFAILED_TO_CHECK();
     }
   }
 }

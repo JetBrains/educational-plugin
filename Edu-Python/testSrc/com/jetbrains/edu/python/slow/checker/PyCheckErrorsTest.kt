@@ -88,7 +88,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
       assertEquals("Status for ${task.name} doesn't match", CheckStatus.Failed, checkResult.status)
       val matcher: Triple<Matcher<String>, Matcher<CheckResultDiff?>, Matcher<String?>> = when (task.name) {
         "EduTestsFailed" -> Triple(equalTo("error happened"), nullValue(), nullValue())
-        "EduNoTestsRun" -> Triple(containsString(CheckUtils.NO_TESTS_HAVE_RUN), nullValue(), nullValue())
+        "EduNoTestsRun" -> Triple(containsString(EduCoreBundle.message("check.no.tests")), nullValue(), nullValue())
         "SyntaxError" -> Triple(containsString("Syntax Error"), nullValue(),
                                 containsString("SyntaxError: invalid syntax"))
         "SyntaxErrorFromUnittest" -> Triple(containsString("Syntax Error"), nullValue(),

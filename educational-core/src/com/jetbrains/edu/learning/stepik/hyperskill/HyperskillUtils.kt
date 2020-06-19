@@ -39,6 +39,9 @@ import javax.swing.event.HyperlinkEvent
 val HYPERSKILL_SELECTED_STAGE: Key<Int> = Key.create("HYPERSKILL_SELECTED_STAGE")
 val HYPERSKILL_SELECTED_PROBLEM: Key<Int> = Key.create("HYPERSKILL_SELECTED_PROBLEM")
 
+val FAILED_TO_POST_TO_JBA: String
+  get() = EduCoreBundle.message("error.failed.to.post.solution.with.guide", EduNames.JBA, EduNames.FAILED_TO_POST_TO_JBA_URL)
+
 fun openSelectedStage(course: Course, project: Project) {
   if (course !is HyperskillCourse) {
     return

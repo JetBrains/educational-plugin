@@ -79,7 +79,7 @@ public class CheckiOMissionCheck implements Callable<CheckResult> {
         "Failed to check the task",
         myOAuthConnector
       ).handle(e);
-      return CheckResult.FAILED_TO_CHECK;
+      return CheckResult.getFAILED_TO_CHECK();
     }
   }
 
