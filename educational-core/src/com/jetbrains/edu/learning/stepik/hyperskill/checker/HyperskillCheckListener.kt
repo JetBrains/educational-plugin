@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.projectView.ProgressUtil
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.notifyLoginRequired
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 
 class HyperskillCheckListener : CheckListener {
@@ -25,11 +26,7 @@ class HyperskillCheckListener : CheckListener {
 
     if (course.isTaskInProject(task)) {
       if (HyperskillSettings.INSTANCE.account == null) {
-        val notification = Notification("hyperskill",
-                                        "Failed to post solution to ${EduNames.JBA}",
-                                        "Please, log in to post solutions to ${EduNames.JBA}",
-                                        NotificationType.WARNING)
-        notification.notify(project)
+        notifyLoginRequired(project, firstTime = true)
         return
       }
 
