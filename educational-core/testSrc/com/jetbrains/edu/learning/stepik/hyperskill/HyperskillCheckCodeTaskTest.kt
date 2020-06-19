@@ -29,7 +29,7 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
     NavigationUtils.navigateToTask(project, findTask(0, 0))
   }
 
-  private enum class MockWebSocketState {
+  enum class MockWebSocketState {
     INITIAL, CONNECTION_CONFIRMED
   }
 
