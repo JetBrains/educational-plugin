@@ -147,11 +147,11 @@ object HyperskillCheckConnector {
         is SubmissionError.WithSubmission -> submissionError.submission
       }
 
-      return periodicallyCheckSubmissionResult(submission, task)
+      return periodicallyCheckSubmissionResult(project, submission, task)
     }
   }
 
-  private fun periodicallyCheckSubmissionResult(submission: Submission, task: CodeTask): CheckResult {
+  private fun periodicallyCheckSubmissionResult(project: Project, submission: Submission, task: CodeTask): CheckResult {
     val submissionId = submission.id!!
     val connector = HyperskillConnector.getInstance()
 
@@ -165,6 +165,7 @@ object HyperskillCheckConnector {
     }
 
     if (lastSubmission.status != EVALUATION_STATUS) {
+      SubmissionsManager.getInstance(project).addToSubmissions(task.id, lastSubmission)
       return lastSubmission.toCheckResult(task)
     }
 
