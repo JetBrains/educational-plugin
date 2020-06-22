@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
@@ -75,7 +76,7 @@ class SubmissionsTabPanel(project: Project,
     descriptionText.append(
       "<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(hyperlinkColor())} " +
       "href=https://stepik.org/submissions/${currentTask.id}?unit=${currentTask.lesson.unitId}\">" +
-      EduCoreBundle.message("submissions.view.quiz.on.stepik", "</a><a ${StyleManager().textStyleHeader}>"))
+      EduCoreBundle.message("submissions.view.quiz.on.stepik", StepikNames.STEPIK, "</a><a ${StyleManager().textStyleHeader}>"))
     submissionsPanel.addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
   }
 

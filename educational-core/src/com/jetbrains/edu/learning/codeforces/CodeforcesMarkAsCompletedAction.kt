@@ -17,7 +17,8 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.util.*
 
-class CodeforcesMarkAsCompletedAction : DumbAwareAction(EduCoreBundle.message("codeforces.label.mark.codeforces.task.as.completed")) {
+class CodeforcesMarkAsCompletedAction
+  : DumbAwareAction(EduCoreBundle.message("codeforces.label.mark.codeforces.task.as.completed", CodeforcesNames.CODEFORCES_TITLE)) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = getEduState(project)?.task ?: return
@@ -42,17 +43,19 @@ class CodeforcesMarkAsCompletedAction : DumbAwareAction(EduCoreBundle.message("c
   }
 
   private fun showWrongTaskNotification(project: Project) {
-    val notification = Notification(notificationGroup.displayId,
-                                    "",
-                                    EduCoreBundle.message("codeforces.mark.as.completed.wrong.task.notification"),
-                                    NotificationType.ERROR)
+    val notification = Notification(
+      notificationGroup.displayId,
+      "",
+      EduCoreBundle.message("codeforces.mark.as.completed.wrong.task.notification", CodeforcesNames.CODEFORCES_TITLE),
+      NotificationType.ERROR
+    )
     notification.notify(project)
   }
 
   companion object {
     const val ACTION_ID = "Codeforces.MarkAsCompleted"
 
-    val notificationGroup = NotificationGroup(EduCoreBundle.message("codeforces.information"),
+    val notificationGroup = NotificationGroup(EduCoreBundle.message("codeforces.information", CodeforcesNames.CODEFORCES_TITLE),
                                               NotificationDisplayType.BALLOON,
                                               true)
   }

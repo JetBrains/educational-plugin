@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.checkio.newProjectUI
 
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -29,7 +30,7 @@ class CheckiOCoursesPanel(
   }
 
   override fun tabInfo(): TabInfo? {
-    val infoText = EduCoreBundle.message("checkio.courses.explanation", CheckiONames.CHECKIO)
+    val infoText = EduCoreBundle.message("checkio.courses.explanation", CheckiONames.CHECKIO, EduNames.PYTHON, EduNames.JAVASCRIPT)
     val linkText = EduCoreBundle.message("course.dialog.go.to.website")
     val linkInfo = LinkInfo(linkText, CheckiONames.CHECKIO_OAUTH_HOST)
     return TabInfo(infoText, linkInfo, loginComponent)
