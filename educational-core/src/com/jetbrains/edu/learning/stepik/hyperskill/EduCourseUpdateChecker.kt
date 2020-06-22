@@ -6,9 +6,13 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
+import com.jetbrains.edu.learning.CourseUpdateChecker
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
-import com.jetbrains.edu.learning.stepik.*
+import com.jetbrains.edu.learning.stepik.checkIsUpToDate
+import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
+import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
+import com.jetbrains.edu.learning.stepik.updateCourse
 
 @Service
 class EduCourseUpdateChecker(project: Project) : CourseUpdateChecker(project) {

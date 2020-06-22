@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.stepik.CourseUpdateChecker
+import com.jetbrains.edu.learning.CourseUpdateChecker
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 @Service

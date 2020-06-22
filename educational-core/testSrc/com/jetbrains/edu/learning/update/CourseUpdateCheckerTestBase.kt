@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.stepik.CourseUpdateChecker
 
 abstract class CourseUpdateCheckerTestBase : EduTestCase() {
 

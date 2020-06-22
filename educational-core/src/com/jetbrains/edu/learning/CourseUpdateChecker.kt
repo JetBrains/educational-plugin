@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik
+package com.jetbrains.edu.learning
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.Disposable
@@ -11,7 +11,6 @@ import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.EduUtils.isNewlyCreated
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.atomic.AtomicInteger
 
