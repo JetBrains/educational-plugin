@@ -63,24 +63,22 @@ class StartCodeforcesContestAction(
   }
 
   private fun getContestParameters(contestId: Int): ContestParameters? {
-    val contestInfo = getContestInfoUnderProgress(contestId)
-    if (contestInfo is Err) {
-      showFailedToGetContestInfoNotification(contestId, contestInfo.error)
+    val contestInfo = getContestInfoUnderProgress(contestId).onError {
+      showFailedToGetContestInfoNotification(contestId, it)
       return null
     }
-    val contest = (contestInfo as Ok).value
 
     val codeforcesSettings = CodeforcesSettings.getInstance()
     var contestParameters: ContestParameters?
     if (codeforcesSettings.doNotShowLanguageDialog && codeforcesSettings.isSet()) {
       contestParameters = getContestParametersFromSettings(contestId)
 
-      if (contestParameters != null && contestParameters.codeforcesLanguageRepresentation in contest.availableLanguages) {
+      if (contestParameters != null && contestParameters.codeforcesLanguageRepresentation in contestInfo.availableLanguages) {
         return contestParameters
       }
     }
 
-    contestParameters = showDialogAndGetContestParameters(contest)
+    contestParameters = showDialogAndGetContestParameters(contestInfo)
     return contestParameters
   }
 
