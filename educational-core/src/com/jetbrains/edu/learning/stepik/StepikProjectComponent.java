@@ -54,6 +54,7 @@ public class StepikProjectComponent implements ProjectComponent {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
         SubmissionsManager submissionsManager = SubmissionsManager.getInstance(myProject);
         if (course instanceof EduCourse && submissionsManager.submissionsSupported()) {
+          EduCourseUpdateChecker updateChecker = EduCourseUpdateChecker.getInstance(myProject);
           if (EduSettings.getInstance().getUser() != null) {
             submissionsManager.prepareSubmissionsContent(() -> {
               loadSolutionsFromStepik(course);
@@ -69,6 +70,10 @@ public class StepikProjectComponent implements ProjectComponent {
                   return;
                 }
                 submissionsManager.prepareSubmissionsContent(() -> Unit.INSTANCE);
+
+                if (!((EduCourse)course).isPublic()) {
+                  updateChecker.check();
+                }
               }
 
               @Override
@@ -77,7 +82,7 @@ public class StepikProjectComponent implements ProjectComponent {
               }
             });
           }
-          EduCourseUpdateChecker.getInstance(myProject).check();
+          updateChecker.check();
 
           final StepikUser currentUser = EduSettings.getInstance().getUser();
           if (currentUser == null) {

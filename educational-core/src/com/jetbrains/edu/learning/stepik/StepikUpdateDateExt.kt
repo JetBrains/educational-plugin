@@ -4,6 +4,7 @@ package com.jetbrains.edu.learning.stepik
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.util.Time
+import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -24,6 +25,10 @@ fun EduCourse.checkIsUpToDate(): CourseUpdateInfo {
   }
 
   if (updateDate == null || id == 0) {
+    return isUpToDate
+  }
+
+  if (!isPublic && !EduSettings.isLoggedIn()) {
     return isUpToDate
   }
 

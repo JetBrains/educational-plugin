@@ -32,7 +32,6 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
     if (!courseCanBeUpdated()) {
       return
     }
-    cancelCheckRequests()
     if (isNewlyCreated(project)) {
       queueNextCheck(getCheckInterval())
     }
@@ -49,6 +48,7 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
   }
 
   private fun queueNextCheck(interval: Long) {
+    cancelCheckRequests()
     LOG.info("Scheduled next is course up to date check for ${course?.name} with check interval $interval milliseconds")
     checkForAlarm.addRequest(checkRunnable, interval)
   }

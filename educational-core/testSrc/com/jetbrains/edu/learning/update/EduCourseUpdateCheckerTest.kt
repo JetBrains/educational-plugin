@@ -70,7 +70,7 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     }
   }
 
-  override fun getTestDataPath(): String = super.getTestDataPath() + "updateCourse/update_checker/"
+  override fun getTestDataPath(): String = super.getTestDataPath() + "/updateCourse/update_checker/"
 
   override fun tearDown() {
     try {
