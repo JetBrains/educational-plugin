@@ -228,10 +228,10 @@ public abstract class Task extends StudyItem {
         placeholder.setStatus(status);
       }
     }
-    myStatus = status;
-    if (status == CheckStatus.Unchecked) {
+    if (myStatus != status) {
       myFeedback = null;
     }
+    myStatus = status;
   }
 
   public Task copy() {
