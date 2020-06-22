@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
@@ -20,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.UPDATE_NOTIFICATION_GROUP_ID
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -28,13 +25,9 @@ import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import com.jetbrains.edu.learning.yaml.getConfigDir
 import java.io.IOException
 
-object HyperskillCourseUpdater {
-
-  private val LOG: Logger = Logger.getInstance(HyperskillCourseUpdater::class.java)
-
+class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : CourseUpdater(project) {
   private fun HyperskillProject.getCourseFromServer(): HyperskillCourse? {
     val connector = HyperskillConnector.getInstance()
     val hyperskillProject = when (val response = connector.getProject(id)) {
@@ -52,8 +45,7 @@ object HyperskillCourseUpdater {
     }
   }
 
-  @JvmStatic
-  fun updateCourse(project: Project, course: HyperskillCourse, onFinish: () -> Unit) {
+  override fun updateCourse(onFinish: () -> Unit) {
     runInBackground(project, EduCoreBundle.message("update.check")) {
       val projectLesson = course.getProjectLesson()
       val courseFromServer = course.hyperskillProject?.getCourseFromServer()
@@ -62,30 +54,17 @@ object HyperskillCourseUpdater {
 
       if (projectLessonShouldBeUpdated || codeChallengesUpdates.isNotEmpty()) {
         if (HyperskillSettings.INSTANCE.updateAutomatically) {
-          doUpdate(project, course, courseFromServer, codeChallengesUpdates)
+          doUpdate(courseFromServer, codeChallengesUpdates)
         }
         else {
           showUpdateAvailableNotification(project) {
             runInBackground(project, EduCoreBundle.message("update.process"), false) {
-              doUpdate(project, course, courseFromServer, codeChallengesUpdates)
+              doUpdate(courseFromServer, codeChallengesUpdates)
             }
           }
         }
       }
       onFinish()
-    }
-  }
-
-  @VisibleForTesting
-  fun Lesson.shouldBeUpdated(project: Project, remoteCourse: HyperskillCourse): Boolean {
-    val tasksFromServer = remoteCourse.getProjectLesson()?.taskList ?: return false
-    val localTasks = taskList
-    return when {
-      localTasks.size > tasksFromServer.size -> false
-      localTasks.zip(tasksFromServer).any { (task, remoteTask) -> task.id != remoteTask.id } -> false
-      localTasks.zip(tasksFromServer).any { (task, remoteTask) -> remoteTask.updateDate.isSignificantlyAfter(task.updateDate) } -> true
-      needUpdateCourseAdditionalFiles(project, remoteCourse.additionalFiles) -> true
-      else -> false
     }
   }
 
@@ -103,38 +82,14 @@ object HyperskillCourseUpdater {
 
   class TaskUpdate(val localTask: Task, val taskFromServer: Task)
 
-  private fun needUpdateCourseAdditionalFiles(project: Project, remoteFiles: List<TaskFile>): Boolean {
-    val courseDir = project.courseDir
-    for (remoteFile in remoteFiles) {
-      val needToUpdate = invokeAndWaitIfNeeded {
-        runWriteAction {
-          if (project.isDisposed) return@runWriteAction false
-          val file = courseDir.findFileByRelativePath(remoteFile.name) ?: return@runWriteAction true
-          val text = try {
-            CCUtils.loadText(file)
-          }
-          catch (e: IOException) {
-            LOG.warn("Failed to load text of `${remoteFile.name}` additional file", e)
-            return@runWriteAction true
-          }
-          text != remoteFile.text
-        }
-      }
-      if (needToUpdate) return true
-    }
-
-    return false
-  }
-
-  @JvmStatic
   @VisibleForTesting
-  fun doUpdate(project: Project, localCourse: HyperskillCourse, remoteCourse: HyperskillCourse?, codeChallengesUpdates: List<TaskUpdate>) {
-    updateProjectLesson(project, localCourse, remoteCourse)
-    updateCodeChallenges(project, codeChallengesUpdates)
-    showUpdateCompletedNotification(project)
+  fun doUpdate(remoteCourse: HyperskillCourse?, codeChallengesUpdates: List<TaskUpdate>) {
+    updateProjectLesson(remoteCourse)
+    updateCodeChallenges(codeChallengesUpdates)
+    showUpdateCompletedNotification(EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT))
   }
 
-  private fun updateCodeChallenges(project: Project, codeChallengesUpdates: List<TaskUpdate>) {
+  private fun updateCodeChallenges(codeChallengesUpdates: List<TaskUpdate>) {
     invokeAndWaitIfNeeded {
       if (project.isDisposed) {
         return@invokeAndWaitIfNeeded
@@ -144,15 +99,15 @@ object HyperskillCourseUpdater {
         if (localTask.status != CheckStatus.Solved) {
           GeneratorUtils.createTaskContent(it.taskFromServer, localTask.getDir(project)!!)
         }
-        updateTaskDescription(localTask, it.taskFromServer, project)
+        updateTaskDescription(localTask, it.taskFromServer)
         localTask.updateDate = it.taskFromServer.updateDate
         YamlFormatSynchronizer.saveItemWithRemoteInfo(localTask)
       }
     }
   }
 
-  private fun updateProjectLesson(project: Project, localCourse: HyperskillCourse, remoteCourse: HyperskillCourse?): Boolean {
-    val lesson = localCourse.getProjectLesson() ?: return true
+  private fun updateProjectLesson(remoteCourse: HyperskillCourse?): Boolean {
+    val lesson = course.getProjectLesson() ?: return true
     val remoteLesson = remoteCourse?.getProjectLesson() ?: return true
 
     invokeAndWaitIfNeeded {
@@ -162,10 +117,10 @@ object HyperskillCourseUpdater {
         if (!task.updateDate.before(remoteTask.updateDate)) continue
 
         if (task.status != CheckStatus.Solved) {
-          updateFiles(localCourse, lesson, task, remoteTask, project)
+          updateFiles(lesson, task, remoteTask)
         }
 
-        updateTaskDescription(task, remoteTask, project)
+        updateTaskDescription(task, remoteTask)
         task.updateDate = remoteTask.updateDate
         YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
       }
@@ -178,17 +133,7 @@ object HyperskillCourseUpdater {
     return false
   }
 
-  private fun updateTaskDescription(task: Task,
-                                    remoteTask: Task,
-                                    project: Project) {
-    task.descriptionText = remoteTask.descriptionText
-    task.descriptionFormat = remoteTask.descriptionFormat
-
-    // Task Description file needs to be regenerated as it already exists
-    GeneratorUtils.createDescriptionFile(task.getConfigDir(project), task) ?: return
-  }
-
-  private fun updateFiles(currentCourse: HyperskillCourse, lesson: FrameworkLesson, task: Task, remoteTask: Task, project: Project) {
+  private fun updateFiles(lesson: FrameworkLesson, task: Task, remoteTask: Task) {
     fun updateTaskFiles(
       task: Task,
       remoteTaskFiles: Map<String, TaskFile>,
@@ -213,7 +158,7 @@ object HyperskillCourseUpdater {
           }
         }
       }
-      task.init(currentCourse, lesson, false)
+      task.init(course, lesson, false)
     }
 
     val flm = FrameworkLessonManager.getInstance(project)
@@ -234,10 +179,45 @@ object HyperskillCourseUpdater {
     }
   }
 
-  private fun showUpdateCompletedNotification(project: Project) {
-    Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("hyperskill.update.notification.title"),
-                 EduCoreBundle.message("hyperskill.update.notification.text", EduNames.JBA),
-                 NotificationType.INFORMATION).notify(project)
+  companion object {
+    private val LOG: Logger = Logger.getInstance(HyperskillCourseUpdater::class.java)
+
+    @JvmStatic
+    @VisibleForTesting
+    fun Lesson.shouldBeUpdated(project: Project, remoteCourse: HyperskillCourse): Boolean {
+      val tasksFromServer = remoteCourse.getProjectLesson()?.taskList ?: return false
+      val localTasks = taskList
+      return when {
+        localTasks.size > tasksFromServer.size -> false
+        localTasks.zip(tasksFromServer).any { (task, remoteTask) -> task.id != remoteTask.id } -> false
+        localTasks.zip(tasksFromServer).any { (task, remoteTask) -> remoteTask.updateDate.isSignificantlyAfter(task.updateDate) } -> true
+        needUpdateCourseAdditionalFiles(project, remoteCourse.additionalFiles) -> true
+        else -> false
+      }
+    }
+
+    private fun needUpdateCourseAdditionalFiles(project: Project, remoteFiles: List<TaskFile>): Boolean {
+      val courseDir = project.courseDir
+      for (remoteFile in remoteFiles) {
+        val needToUpdate = invokeAndWaitIfNeeded {
+          runWriteAction {
+            if (project.isDisposed) return@runWriteAction false
+            val file = courseDir.findFileByRelativePath(remoteFile.name) ?: return@runWriteAction true
+            val text = try {
+              CCUtils.loadText(file)
+            }
+            catch (e: IOException) {
+              LOG.warn("Failed to load text of `${remoteFile.name}` additional file", e)
+              return@runWriteAction true
+            }
+            text != remoteFile.text
+          }
+        }
+        if (needToUpdate) return true
+      }
+
+      return false
+    }
   }
 }
 
@@ -247,3 +227,4 @@ private val Task.testFiles: Map<String, TaskFile>
     val defaultTestName = lesson.course.configurator?.testFileName ?: ""
     return taskFiles.filterKeys { path -> path == defaultTestName || testDirs.any { path.startsWith(it) } }
   }
+

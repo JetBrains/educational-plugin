@@ -34,6 +34,7 @@ public class EduNames {
   public static final String TASK = "task";
   public static final String COURSE = "course";
   public static final String ITEM = "item";
+  public static final String PROJECT = "project";
   public static final String TEST_TAB_NAME = "test";
   public static final String USER_TEST_INPUT = "input";
   public static final String USER_TEST_OUTPUT = "output";

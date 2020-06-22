@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseUpdater.shouldBeUpdated
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseUpdater.Companion.shouldBeUpdated
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.util.*
@@ -393,7 +393,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   private fun updateCourse(codeChallengesUpdates: List<HyperskillCourseUpdater.TaskUpdate> = emptyList(),
                            changeCourse: (HyperskillCourse.() -> Unit)? = null) {
     val remoteCourse = changeCourse?.let { toRemoteCourse(changeCourse) }
-    HyperskillCourseUpdater.doUpdate(project, course, remoteCourse, codeChallengesUpdates)
+    HyperskillCourseUpdater(project, course).doUpdate(remoteCourse, codeChallengesUpdates)
     val isProjectUpToDate = remoteCourse == null || course.getProjectLesson()?.shouldBeUpdated(project, remoteCourse) == false
     assertTrue("Project is not up-to-date after update", isProjectUpToDate)
   }

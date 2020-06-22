@@ -20,7 +20,7 @@ class HyperskillCourseUpdateChecker(project: Project) : CourseUpdateChecker(proj
       return
     }
     else {
-      HyperskillCourseUpdater.updateCourse(project, hyperskillCourse) { onFinish() }
+      HyperskillCourseUpdater(project, hyperskillCourse).updateCourse { onFinish() }
     }
   }
 

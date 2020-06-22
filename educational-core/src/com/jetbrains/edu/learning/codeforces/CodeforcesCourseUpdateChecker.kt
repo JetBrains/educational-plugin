@@ -15,9 +15,9 @@ class CodeforcesCourseUpdateChecker(project: Project,
     setCustomCheckInterval(60)
   }
 
-  override fun Course.canBeUpdated(): Boolean = true
+  override fun Course.canBeUpdated(): Boolean = course is CodeforcesCourse
 
   override fun doCheckIsUpToDate(onFinish: () -> Unit) {
-    CodeforcesCourseUpdater.updateCourse(project, course) { onFinish() }
+    CodeforcesCourseUpdater(project, course).updateCourse { onFinish() }
   }
 }

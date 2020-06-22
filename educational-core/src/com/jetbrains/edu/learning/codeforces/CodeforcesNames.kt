@@ -1,13 +1,12 @@
 package com.jetbrains.edu.learning.codeforces
 
-import org.jetbrains.annotations.NonNls
-
 // TODO: move to message bundle
 object CodeforcesNames {
   const val CODEFORCES: String = "codeforces"
   const val CODEFORCES_TITLE: String = "Codeforces"
   const val CODEFORCES_URL: String = "https://codeforces.com"
   const val CODEFORCES_SUBMIT: String = "submit"
+  const val CONTEST: String = "contest"
   const val CODEFORCES_PROBLEMS: String = "Problems"
   const val OPEN_ON_CODEFORCES_ACTION: String = "Open on Codeforces"
   const val CODEFORCES_HELP_TEXT: String = "https://codeforces.com/contest/*"
