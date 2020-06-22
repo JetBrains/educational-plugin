@@ -87,7 +87,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         showTaskDescriptionToolWindow(project, taskFile, true);
 
         Task task = taskFile.getTask();
-        if (task instanceof TheoryTask && task.getStatus() != CheckStatus.Solved) {
+        if (course.isStudy() && task instanceof TheoryTask && task.getStatus() != CheckStatus.Solved) {
           task.setStatus(CheckStatus.Solved);
           ProjectView.getInstance(project).refresh();
           if (EduSettings.isLoggedIn()) {
