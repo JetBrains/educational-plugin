@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.editor;
 
 
+import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -88,6 +89,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         Task task = taskFile.getTask();
         if (task instanceof TheoryTask && task.getStatus() != CheckStatus.Solved) {
           task.setStatus(CheckStatus.Solved);
+          ProjectView.getInstance(project).refresh();
           if (EduSettings.isLoggedIn()) {
             StepikConnectorUtils.postTheory(task, project);
           }
