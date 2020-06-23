@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.projectView.ProgressUtil
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
@@ -31,9 +32,16 @@ class HyperskillCheckListener : CheckListener {
         notification.notify(project)
         return
       }
-      ApplicationManager.getApplication().executeOnPooledThread {
+
+      if (!isUnitTestMode) {
+        ApplicationManager.getApplication().executeOnPooledThread {
+          HyperskillCheckConnector.postSolution(task, project, result)
+        }
+      }
+      else {
         HyperskillCheckConnector.postSolution(task, project, result)
       }
+
       showChooseNewProjectNotification(course, project)
     }
   }
