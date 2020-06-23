@@ -56,7 +56,6 @@ class CoursesListPanel(
     preferredSize = panelSize
     maximumSize = panelSize
     minimumSize = panelSize
-    border = JBUI.Borders.customLine(NewCoursePanel.DIVIDER_COLOR, 0, 0, 0, 1)
     add(createListPanel(), BorderLayout.CENTER)
   }
 
