@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
@@ -33,7 +34,7 @@ class HyperskillStartupActivity : StartupActivity {
 
     val course = StudyTaskManager.getInstance(project).course
     val submissionsManager = SubmissionsManager.getInstance(project)
-    if (course is HyperskillCourse && submissionsManager.submissionsSupported()) {
+    if (course is HyperskillCourse && submissionsManager.submissionsSupported() && !isUnitTestMode) {
       if (HyperskillSettings.INSTANCE.account != null) {
         submissionsManager.prepareSubmissionsContent { HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground() }
       }
