@@ -65,12 +65,6 @@ class CoursesListPanel(
     add(createListPanel(), BorderLayout.CENTER)
   }
 
-  fun selectFirstCourse() {
-    courses.firstOrNull()?.let {
-      coursesList.setSelectedValue(it, true)
-    }
-  }
-
   val courses: List<Course>
     get() {
       val model = coursesList.model

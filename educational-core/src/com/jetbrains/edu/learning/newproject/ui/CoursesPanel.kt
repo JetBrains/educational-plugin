@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
+import com.intellij.ide.BrowserUtil
 import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.application.ApplicationManager
@@ -9,9 +10,12 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.ui.FilterComponent
 import com.intellij.ui.JBCardLayout
 import com.intellij.ui.OnePixelSplitter
+import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -24,6 +28,7 @@ import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Rectangle
+import java.awt.event.ActionListener
 import java.util.*
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -116,8 +121,13 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
     add(CenteredIcon(), BorderLayout.CENTER)
   }
 
-  private fun createNoCoursesPanel(): JPanel = JBPanelWithEmptyText()
-    .withEmptyText(EduCoreBundle.message("course.dialog.no.courses", ApplicationNamesInfo.getInstance().fullProductName))
+  private fun createNoCoursesPanel(): JPanel {
+    val panel = JBPanelWithEmptyText().withEmptyText(
+      EduCoreBundle.message("course.dialog.no.courses", ApplicationNamesInfo.getInstance().fullProductName))
+    panel.emptyText.appendSecondaryText(EduCoreBundle.message("course.dialog.troubleshooting.guide"), SimpleTextAttributes.LINK_ATTRIBUTES,
+                                        ActionListener { BrowserUtil.browse(EduNames.NO_COURSES_URL) })
+    return panel
+  }
 
   private fun showProgressState() = cardLayout.show(this, LOADING_CARD_NAME)
 
