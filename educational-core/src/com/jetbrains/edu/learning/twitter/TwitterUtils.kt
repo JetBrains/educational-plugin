@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.twitter.ui.TwitterDialog
 import org.apache.http.HttpStatus
 import twitter4j.StatusUpdate
@@ -60,11 +61,11 @@ object TwitterUtils {
         catch (e: Exception) {
           LOG.warn(e)
           val message = if (e is TwitterException && e.statusCode == HttpStatus.SC_UNAUTHORIZED) {
-            "Failed to authorize"
+            EduCoreBundle.message("twitter.error.failed.to.authorize")
           } else {
-            "Status wasn't updated. Please, check internet connection and try again"
+            EduCoreBundle.message("twitter.error.status.not.updated")
           }
-          Messages.showErrorDialog(project, message, "Failed to Tweet")
+          Messages.showErrorDialog(project, message, EduCoreBundle.message("twitter.error.dialog.title"))
         }
       }
     }
@@ -98,7 +99,7 @@ object TwitterUtils {
   }
 
   private fun createAndShowPinDialog(project: Project): String? {
-    return Messages.showInputDialog(project, "Enter Twitter PIN:", "Twitter Authorization", null, "", TwitterPinValidator())
+    return Messages.showInputDialog(project, EduCoreBundle.message("twitter.enter.pin"), EduCoreBundle.message("twitter.authorization"), null, "", TwitterPinValidator())
   }
 
   private class TweetInfo(
@@ -117,8 +118,8 @@ object TwitterUtils {
     override fun getErrorText(inputString: String): String? {
       val input = inputString.trim()
       return when {
-        input.isEmpty() -> "PIN shouldn't be empty"
-        !isNumeric(input) -> "PIN should be numeric"
+        input.isEmpty() -> EduCoreBundle.message("twitter.validation.empty.pin")
+        !isNumeric(input) -> EduCoreBundle.message("twitter.validation.not.numeric.pin")
         else -> null
       }
     }

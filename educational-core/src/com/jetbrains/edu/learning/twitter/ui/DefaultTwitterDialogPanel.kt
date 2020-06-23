@@ -39,7 +39,7 @@ class DefaultTwitterDialogPanel(
   override fun doValidate(): ValidationInfo? {
     val extraCharacters = twitterTextField.text.length - 280
     return if (extraCharacters > 0) {
-      ValidationInfo(EduCoreBundle.message("twitter.error.message", extraCharacters), twitterTextField)
+      ValidationInfo(EduCoreBundle.message("twitter.validation.maximum.length", extraCharacters), twitterTextField)
     }
     else {
       super.doValidate()
