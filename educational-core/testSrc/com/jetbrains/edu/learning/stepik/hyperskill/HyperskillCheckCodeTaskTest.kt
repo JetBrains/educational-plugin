@@ -29,10 +29,6 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
     NavigationUtils.navigateToTask(project, findTask(0, 0))
   }
 
-  enum class MockWebSocketState {
-    INITIAL, CONNECTION_CONFIRMED
-  }
-
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   fun `test successful check via web socket`() {
@@ -143,10 +139,6 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
     action.actionPerformed(e)
   }
 
-  private fun WebSocket.confirmConnection() = send("Connection confirmed")
-
-  private fun WebSocket.confirmSubscription() = send("Subscription confirmed")
-
   @Language("JSON")
   private val submissionWithWrongStatus = """
     {
@@ -256,6 +248,4 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
       ]
     }
   """
-
-  private val webSocketConfiguration = """{"token": "fakeToken","url": "fakeUrl"}"""
 }

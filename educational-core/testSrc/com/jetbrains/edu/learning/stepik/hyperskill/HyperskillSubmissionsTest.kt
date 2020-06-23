@@ -110,16 +110,16 @@ class HyperskillSubmissionsTest : EduTestCase() {
   }
 
   fun `test submission added after code task check with web sockets`() {
-    var state: HyperskillCheckCodeTaskTest.MockWebSocketState = HyperskillCheckCodeTaskTest.MockWebSocketState.INITIAL
+    var state: MockWebSocketState = MockWebSocketState.INITIAL
 
     mockConnector.withWebSocketListener(object : WebSocketListener() {
       override fun onMessage(webSocket: WebSocket, text: String) {
         when (state) {
-          HyperskillCheckCodeTaskTest.MockWebSocketState.INITIAL -> {
+          MockWebSocketState.INITIAL -> {
             webSocket.confirmConnection()
-            state = HyperskillCheckCodeTaskTest.MockWebSocketState.CONNECTION_CONFIRMED
+            state = MockWebSocketState.CONNECTION_CONFIRMED
           }
-          HyperskillCheckCodeTaskTest.MockWebSocketState.CONNECTION_CONFIRMED -> {
+          MockWebSocketState.CONNECTION_CONFIRMED -> {
             webSocket.confirmSubscription()
             webSocket.send(submissionResult)
           }
@@ -139,7 +139,7 @@ class HyperskillSubmissionsTest : EduTestCase() {
     val action = CheckAction()
     action.actionPerformed(TestActionEvent(action))
 
-    checkSubmissionPresent(submissionsManager, taskId, checkStatus = checkStatus)
+    checkSubmissionPresentWithStatus(submissionsManager, taskId, checkStatus)
   }
 
   private fun doTestSubmissionsAddedAfterCodeTaskCheck() {
@@ -157,30 +157,31 @@ class HyperskillSubmissionsTest : EduTestCase() {
     doTestSubmissionsAddedAfterTaskCheck(4, EduNames.WRONG)
   }
 
-  private fun doTestSubmissionsLoaded(taskId: Int, submissionsAmount: Int) {
+  private fun doTestSubmissionsLoaded(taskId: Int, submissionsNumber: Int) {
     val submissionsManager = SubmissionsManager.getInstance(project)
     assertNull("SubmissionsManager should not contain submissions before submissions loading",
                submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
     submissionsManager.prepareSubmissionsContent()
 
-    checkSubmissionPresent(submissionsManager, taskId, submissionsAmount)
+    checkSubmissionsPresent(submissionsManager, taskId, submissionsNumber)
   }
 
-  private fun checkSubmissionPresent(submissionsManager: SubmissionsManager,
-                                     taskId: Int,
-                                     submissionsAmount: Int = 1,
-                                     checkStatus: String? = null) {
+  private fun checkSubmissionsPresent(submissionsManager: SubmissionsManager,
+                                      taskId: Int,
+                                      submissionsNumber: Int = 1) {
     val submissions = submissionsManager.getSubmissionsFromMemory(setOf(taskId))
     assertNotNull("Submissions list should not be null", submissions)
-    assertTrue(submissions!!.size == submissionsAmount)
-    if (checkStatus != null) {
-      assertEquals(checkStatus, submissions[0].status)
-    }
+    assertTrue(submissions!!.size == submissionsNumber)
   }
 
-  private fun WebSocket.confirmConnection() = send("Connection confirmed")
-
-  private fun WebSocket.confirmSubscription() = send("Subscription confirmed")
+  private fun checkSubmissionPresentWithStatus(submissionsManager: SubmissionsManager,
+                                               taskId: Int,
+                                               checkStatus: String) {
+    val submissions = submissionsManager.getSubmissionsFromMemory(setOf(taskId))
+    assertNotNull("Submissions list should not be null", submissions)
+    assertTrue(submissions!!.size == 1)
+    assertEquals(checkStatus, submissions[0].status)
+  }
 
   @Language("JSON")
   private val submissions = """
@@ -251,6 +252,4 @@ class HyperskillSubmissionsTest : EduTestCase() {
       }
     }    
    """
-
-  private val webSocketConfiguration = """{"token": "fakeToken","url": "fakeUrl"}"""
 }
