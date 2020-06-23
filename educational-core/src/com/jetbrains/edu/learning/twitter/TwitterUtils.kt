@@ -30,18 +30,12 @@ object TwitterUtils {
    */
   val twitter: Twitter
     get() {
-      val configurationBuilder = ConfigurationBuilder()
-      configurationBuilder.setOAuthConsumerKey(TwitterBundle.message("twitterConsumerKey"))
-      configurationBuilder.setOAuthConsumerSecret(TwitterBundle.message("twitterConsumerSecret"))
-      return TwitterFactory(configurationBuilder.build()).instance
+      val configuration = ConfigurationBuilder()
+        .setOAuthConsumerKey(TwitterBundle.message("twitterConsumerKey"))
+        .setOAuthConsumerSecret(TwitterBundle.message("twitterConsumerSecret"))
+        .build()
+      return TwitterFactory(configuration).instance
     }
-
-  /**
-   * Set access token and token secret in Twitter instance
-   */
-  private fun setAuthInfoInTwitter(twitter: Twitter, accessToken: String, tokenSecret: String) {
-    twitter.oAuthAccessToken = AccessToken(accessToken, tokenSecret)
-  }
 
   @JvmStatic
   fun createTwitterDialogAndShow(project: Project, configurator: TwitterPluginConfigurator, task: Task) {
@@ -56,85 +50,55 @@ object TwitterUtils {
           val info = TweetInfo(panel.message, configurator, task)
 
           if (!isAuthorized) {
-            authorizeAndUpdateStatus(twitter, info)
+            authorize(project, twitter)
           }
           else {
-            setAuthInfoInTwitter(twitter, settings.accessToken, settings.tokenSecret)
-            updateStatus(twitter, info)
+            twitter.oAuthAccessToken = AccessToken(settings.accessToken, settings.tokenSecret)
           }
+          updateStatus(twitter, info)
         }
         catch (e: Exception) {
-          LOG.warn(e.message)
-          Messages.showErrorDialog("Status wasn't updated. Please, check internet connection and try again", "Twitter")
+          LOG.warn(e)
+          val message = if (e is TwitterException && e.statusCode == HttpStatus.SC_UNAUTHORIZED) {
+            "Failed to authorize"
+          } else {
+            "Status wasn't updated. Please, check internet connection and try again"
+          }
+          Messages.showErrorDialog(project, message, "Failed to Tweet")
         }
       }
     }
   }
-
-  private fun createDoNotAskOption(): DialogWrapper.DoNotAskOption {
-    return object : DialogWrapper.DoNotAskOption {
-      override fun setToBeShown(toBeShown: Boolean, exitCode: Int) {
-        if (exitCode == DialogWrapper.CANCEL_EXIT_CODE || exitCode == DialogWrapper.OK_EXIT_CODE) {
-          TwitterSettings.getInstance().setAskToTweet(toBeShown)
-        }
-      }
-      override fun isToBeShown(): Boolean = true
-      override fun canBeHidden(): Boolean = true
-      override fun shouldSaveOptionsOnCancel(): Boolean = true
-      override fun getDoNotShowMessage(): String = message("twitter.dialog.do.not.ask")
-    }
-  }
-
   /**
-   * Post on twitter media and text from panel
+   * Post on twitter media and text from panel.
+   * As a result of succeeded tweet twitter website is opened in default browser.
    */
   @Throws(IOException::class, TwitterException::class)
   private fun updateStatus(twitter: Twitter, info: TweetInfo) {
     val update = StatusUpdate(info.message)
-    val e = info.mediaSource
-    if (e != null) {
+    val mediaSource = info.mediaSource
+    if (mediaSource != null) {
       val imageFile = FileUtil.createTempFile("twitter_media", info.mediaExtension)
-      FileUtil.copy(e, FileOutputStream(imageFile))
+      FileUtil.copy(mediaSource, FileOutputStream(imageFile))
       update.media(imageFile)
     }
     twitter.updateStatus(update)
     BrowserUtil.browse("https://twitter.com/")
   }
 
-  /**
-   * Show twitter dialog, asking user to tweet about his achievements. Post tweet with provided by panel
-   * media and text.
-   * As a result of succeeded tweet twitter website is opened in default browser.
-   */
   @Throws(TwitterException::class)
-  private fun authorizeAndUpdateStatus(twitter: Twitter, info: TweetInfo) {
+  private fun authorize(project: Project, twitter: Twitter) {
     val requestToken = twitter.oAuthRequestToken
     BrowserUtil.browse(requestToken.authorizationURL)
-    ApplicationManager.getApplication().invokeLater {
-      val pin = createAndShowPinDialog()
-      if (pin != null) {
-        try {
-          val token = twitter.getOAuthAccessToken(requestToken, pin)
-          val settings = TwitterSettings.getInstance()
-          settings.accessToken = token.token
-          settings.tokenSecret = token.tokenSecret
-          updateStatus(twitter, info)
-        }
-        catch (e: TwitterException) {
-          if (e.statusCode == HttpStatus.SC_UNAUTHORIZED) {
-            LOG.warn("Unable to get the access token.")
-            LOG.warn(e.message)
-          }
-        }
-        catch (e: IOException) {
-          LOG.warn(e.message)
-        }
-      }
-    }
+    val pin = createAndShowPinDialog(project) ?: return
+    val token = twitter.getOAuthAccessToken(requestToken, pin)
+    val settings = TwitterSettings.getInstance()
+    settings.accessToken = token.token
+    settings.tokenSecret = token.tokenSecret
   }
 
-  private fun createAndShowPinDialog(): String? {
-    return Messages.showInputDialog("Enter Twitter PIN:", "Twitter Authorization", null, "", TwitterPinValidator())
+  private fun createAndShowPinDialog(project: Project): String? {
+    return Messages.showInputDialog(project, "Enter Twitter PIN:", "Twitter Authorization", null, "", TwitterPinValidator())
   }
 
   private class TweetInfo(
