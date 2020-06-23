@@ -7,6 +7,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.HtmlPanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
 import java.awt.Color
@@ -47,6 +48,7 @@ class TabInfoPanel(tabInfo: TabInfo) : JPanel() {
       border = null
     }
     add(scrollPane, BorderLayout.CENTER)
+    UIUtil.setBackgroundRecursively(this, MAIN_BG_COLOR)
   }
 
   fun hideLoginPanel() {

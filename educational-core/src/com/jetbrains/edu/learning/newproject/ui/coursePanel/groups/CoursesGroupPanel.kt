@@ -29,6 +29,7 @@ class CoursesGroupPanel(titleString: String,
     titleLabel.foreground = SECTION_HEADER_FOREGROUND
     titleLabel.background = SECTION_HEADER_BACKGROUND
     titleLabel.border = JBUI.Borders.empty(TOP_BOTTOM, LEFT_RIGHT)
+    titleLabel.isVisible = titleString.isNotEmpty()
 
     add(titleLabel)
 

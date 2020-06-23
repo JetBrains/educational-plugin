@@ -11,6 +11,7 @@ import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -99,6 +100,7 @@ class CoursesListPanel(
     val hyperlinkPanel = JPanel(BorderLayout())
     hyperlinkPanel.border = JBUI.Borders.empty(TOOLBAR_TOP_OFFSET, TOOLBAR_LEFT_OFFSET, TOOLBAR_BOTTOM_OFFSET, 0)
     hyperlinkPanel.add(hyperlinkLabel, BorderLayout.CENTER)
+    UIUtil.setBackgroundRecursively(hyperlinkPanel, MAIN_BG_COLOR)
 
     return hyperlinkPanel
   }

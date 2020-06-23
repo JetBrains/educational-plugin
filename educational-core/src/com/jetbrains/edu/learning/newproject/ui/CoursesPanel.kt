@@ -12,12 +12,17 @@ import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.ui.tabs.TabInfo
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.*
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.Companion.forCourse
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
@@ -87,6 +92,7 @@ abstract class CoursesPanel(
     val mainPanel = JPanel(BorderLayout())
     mainPanel.add(createAndBindSearchComponent(), BorderLayout.NORTH)
     mainPanel.add(createSplitPane(), BorderLayout.CENTER)
+    mainPanel.background = MAIN_BG_COLOR
     return mainPanel
   }
 
@@ -216,6 +222,8 @@ abstract class CoursesPanel(
 
     searchPanel.add(filtersPanel, BorderLayout.LINE_END)
     searchPanel.border = JBUI.Borders.empty(8, 0)
+
+    UIUtil.setBackgroundRecursively(searchPanel, MAIN_BG_COLOR)
 
     return searchPanel
   }

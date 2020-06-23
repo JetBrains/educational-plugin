@@ -128,6 +128,7 @@ class NewCoursePanel(
     errorPanel.add(errorLabel, BorderLayout.CENTER)
     errorPanel.border = JBUI.Borders.empty(ERROR_LABEL_TOP_GAP, leftMargin, 0, 0)
     addErrorStateListener()
+    UIUtil.setBackgroundRecursively(errorPanel, MAIN_BG_COLOR)
     return errorPanel
   }
 
