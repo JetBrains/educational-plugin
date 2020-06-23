@@ -4,12 +4,9 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
-import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -19,7 +16,6 @@ private const val PANEL_HEIGHT = 680
 class CoursesListPanel(
   selectionChanged: () -> Unit,
   joinCourse: (CourseInfo, CourseMode) -> Unit,
-  private val coursesProvider: CoursesPlatformProvider,
   private val coursesPanel: CoursesPanel
 ) : JPanel(BorderLayout()) {
   private val groupsComponent: GroupsComponent = GroupsComponent(selectionChanged, joinCourse)
@@ -72,9 +68,5 @@ class CoursesListPanel(
 
   fun initialSelection() {
     groupsComponent.initialSelection()
-  }
-
-  suspend fun loadCourses(): List<Course> {
-    return withContext(Dispatchers.IO) { coursesProvider.loadCourses() }
   }
 }

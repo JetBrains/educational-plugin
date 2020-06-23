@@ -27,6 +27,8 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
 import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.awt.Rectangle
@@ -41,12 +43,8 @@ private const val CONTENT_CARD_NAME = "CONTENT"
 private const val LOADING_CARD_NAME = "PROGRESS"
 private const val NO_COURSES = "NO_COURSES"
 
-abstract class CoursesPanel(
-
-  coursesProvider: CoursesPlatformProvider) : JPanel() {
-  protected var coursePanel: NewCoursePanel = NewCoursePanel(
-    isStandalonePanel = false,
-    isLocationFieldNeeded = true)
+abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider) : JPanel() {
+  protected var coursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false, isLocationFieldNeeded = true)
   protected val coursesListPanel: CoursesListPanel
   private val coursesListDecorator: CoursesListDecorator
   protected var courses: MutableList<Course> = mutableListOf()
@@ -67,9 +65,7 @@ abstract class CoursesPanel(
 
   init {
     layout = cardLayout
-    coursesListPanel = CoursesListPanel({ processSelectionChanged() },
-                                        joinCourseAction(dialog),
-                                        coursesProvider, this)
+    coursesListPanel = CoursesListPanel({ processSelectionChanged() }, joinCourseAction(dialog), this)
     coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
 
     addCourseValidationListener(object : CourseValidationListener {
@@ -97,7 +93,7 @@ abstract class CoursesPanel(
   }
 
   suspend fun loadCourses() {
-    courses.addAll(coursesListPanel.loadCourses())
+    courses.addAll(withContext(Dispatchers.IO) { coursesProvider.loadCourses() })
     updateFilters()
     updateModel(courses, coursesListPanel.selectedCourse)
     showContent(courses.isEmpty())
