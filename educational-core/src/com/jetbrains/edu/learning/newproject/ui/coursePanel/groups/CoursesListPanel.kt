@@ -1,12 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.application.invokeLater
-import com.intellij.util.messages.MessageBusConnection
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduLogInListener
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
@@ -29,7 +23,6 @@ class CoursesListPanel(
   private val coursesPanel: CoursesPanel
 ) : JPanel(BorderLayout()) {
   private val groupsComponent: GroupsComponent = GroupsComponent(selectionChanged, joinCourse)
-  private var busConnection: MessageBusConnection? = null
   private val panelSize = JBUI.size(PANEL_WIDTH, PANEL_HEIGHT)
 
   val selectedCourse: Course? get() = groupsComponent.selectedValue
@@ -63,31 +56,6 @@ class CoursesListPanel(
       .thenComparing(Course::getName)
 
     return courses.sortedWith(comparator)
-  }
-
-  fun addLoginListener(vararg postLoginActions: () -> Unit) {
-    if (busConnection != null) {
-      busConnection!!.disconnect()
-    }
-    busConnection = ApplicationManager.getApplication().messageBus.connect()
-    busConnection!!.subscribe(EduSettings.SETTINGS_CHANGED, object : EduLogInListener {
-      override fun userLoggedOut() {}
-      override fun userLoggedIn() {
-        runPostLoginActions(*postLoginActions)
-      }
-    })
-  }
-
-  private fun runPostLoginActions(vararg postLoginActions: () -> Unit) {
-    invokeLater(modalityState = ModalityState.any()) {
-      for (action in postLoginActions) {
-        action()
-      }
-      if (busConnection != null) {
-        busConnection!!.disconnect()
-        busConnection = null
-      }
-    }
   }
 
   fun addGroup(titleString: String, courseInfos: List<CourseInfo>) {
