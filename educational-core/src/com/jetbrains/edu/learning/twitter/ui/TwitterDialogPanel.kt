@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.twitter
+package com.jetbrains.edu.learning.twitter.ui
 
 import com.intellij.openapi.ui.ValidationInfo
 import java.awt.LayoutManager

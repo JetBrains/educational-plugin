@@ -4,6 +4,8 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.twitter.ui.DefaultTwitterDialogPanel
+import com.jetbrains.edu.learning.twitter.ui.TwitterDialogPanel
 
 /**
  * Provides twitting for courses

@@ -4,14 +4,12 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.twitter.ui.TwitterDialog
 import org.apache.http.HttpStatus
 import twitter4j.StatusUpdate
 import twitter4j.Twitter
@@ -22,7 +20,6 @@ import twitter4j.conf.ConfigurationBuilder
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import javax.swing.JComponent
 
 object TwitterUtils {
   private val LOG = Logger.getInstance(TwitterUtils::class.java)
@@ -49,11 +46,9 @@ object TwitterUtils {
   @JvmStatic
   fun createTwitterDialogAndShow(project: Project, configurator: TwitterPluginConfigurator, task: Task) {
     ApplicationManager.getApplication().invokeLater {
-      val doNotAskOption = createDoNotAskOption()
       val panel = configurator.getTweetDialogPanel(task)
-      val wrapper = TwitterDialogWrapper(project, panel, doNotAskOption)
-      wrapper.setDoNotAskOption(doNotAskOption)
-      if (wrapper.showAndGet()) {
+      val dialog = TwitterDialog(project, panel)
+      if (dialog.showAndGet()) {
         val settings = TwitterSettings.getInstance()
         try {
           val isAuthorized = settings.accessToken.isNotEmpty()
@@ -139,31 +134,7 @@ object TwitterUtils {
   }
 
   private fun createAndShowPinDialog(): String? {
-    return Messages.showInputDialog("Twitter PIN:", "Twitter Authorization", null, "", object : InputValidatorEx {
-      override fun getErrorText(inputString: String): String? {
-        val input = inputString.trim { it <= ' ' }
-        return when {
-          input.isEmpty() -> "PIN shouldn't be empty."
-          !isNumeric(input) -> "PIN should be numeric."
-          else -> null
-        }
-      }
-
-      override fun checkInput(inputString: String): Boolean {
-        return getErrorText(inputString) == null
-      }
-
-      override fun canClose(inputString: String): Boolean = true
-
-      private fun isNumeric(string: String): Boolean {
-        for (c in string.toCharArray()) {
-          if (!StringUtil.isDecimalDigit(c)) {
-            return false
-          }
-        }
-        return true
-      }
-    })
+    return Messages.showInputDialog("Enter Twitter PIN:", "Twitter Authorization", null, "", TwitterPinValidator())
   }
 
   private class TweetInfo(
@@ -178,27 +149,24 @@ object TwitterUtils {
       configurator.javaClass.getResourceAsStream(configurator.getImageResourcePath(task))
   }
 
-  /**
-   * Dialog wrapper class with DoNotAsl option for asking user to tweet.
-   */
-  private class TwitterDialogWrapper(
-    project: Project,
-    private val panel: TwitterDialogPanel,
-    doNotAskOption: DoNotAskOption?
-  ) : DialogWrapper(project) {
-
-    init {
-      title = message("twitter.dialog.title")
-      setDoNotAskOption(doNotAskOption)
-      setOKButtonText(message("twitter.dialog.ok.action"))
-      setResizable(true)
-      val preferredSize = panel.preferredSize
-      setSize(preferredSize.getHeight().toInt(), preferredSize.getWidth().toInt())
-      initValidation()
-      init()
+  private class TwitterPinValidator : InputValidatorEx {
+    override fun getErrorText(inputString: String): String? {
+      val input = inputString.trim()
+      return when {
+        input.isEmpty() -> "PIN shouldn't be empty"
+        !isNumeric(input) -> "PIN should be numeric"
+        else -> null
+      }
     }
 
-    override fun createCenterPanel(): JComponent? = panel
-    override fun doValidate(): ValidationInfo? = panel.doValidate()
+    override fun checkInput(inputString: String): Boolean {
+      return getErrorText(inputString) == null
+    }
+
+    override fun canClose(inputString: String): Boolean = true
+
+    private fun isNumeric(string: String): Boolean {
+      return string.all { StringUtil.isDecimalDigit(it) }
+    }
   }
 }
