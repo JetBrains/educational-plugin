@@ -118,7 +118,8 @@ class HyperskillSubmissionsTest : EduTestCase() {
 
   private fun doTestSubmissionsAddedAfterTaskCheck(taskId: Int, checkStatus: String) {
     val submissionsManager = SubmissionsManager.getInstance(project)
-    assertNull(submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
+    assertNull("SubmissionsManager should not contain submissions before task check",
+               submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
 
     NavigationUtils.navigateToTask(project, findTask(0, 0))
     val action = CheckAction()
@@ -148,7 +149,8 @@ class HyperskillSubmissionsTest : EduTestCase() {
 
   private fun doTestSubmissionsLoaded(taskId: Int) {
     val submissionsManager = SubmissionsManager.getInstance(project)
-    assertNull(submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
+    assertNull("SubmissionsManager should not contain submissions before task check",
+               submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
     submissionsManager.prepareSubmissionsContent()
 
     val submissions = submissionsManager.getSubmissions(setOf(taskId))
