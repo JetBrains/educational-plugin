@@ -1,16 +1,13 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -66,13 +63,13 @@ class HyperskillSubmissionsTest : EduTestCase() {
       courseProducer = ::HyperskillCourse
     ) {
       lesson("Problems") {
-        codeTask("task1", stepId = 2) {
+        codeTask("task1", stepId = 1) {
           taskFile("Task.txt", "fun foo() {}")
         }
       }
     } as HyperskillCourse
 
-    doTestSubmissionsLoaded(2)
+    doTestSubmissionsLoaded(1)
   }
 
   fun `test submission added after edu task check`() {
@@ -125,11 +122,7 @@ class HyperskillSubmissionsTest : EduTestCase() {
     val action = CheckAction()
     action.actionPerformed(TestActionEvent(action))
 
-    val future = ApplicationManager.getApplication().executeOnPooledThread { Thread.sleep(1000) }
-    EduUtils.waitAndDispatchInvocationEvents(future)
-
-    val submissions = submissionsManager.getSubmissionsFromMemory(setOf(taskId))
-    checkSubmissions(submissions, checkStatus)
+    checkSubmissionPresent(submissionsManager, taskId, checkStatus)
   }
 
   private fun doTestSubmissionsAddedAfterCodeTaskCheck() {
@@ -149,21 +142,23 @@ class HyperskillSubmissionsTest : EduTestCase() {
 
   private fun doTestSubmissionsLoaded(taskId: Int) {
     val submissionsManager = SubmissionsManager.getInstance(project)
-    assertNull("SubmissionsManager should not contain submissions before task check",
+    assertNull("SubmissionsManager should not contain submissions before submissions loading",
                submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
     submissionsManager.prepareSubmissionsContent()
 
-    val submissions = submissionsManager.getSubmissions(setOf(taskId))
-    checkSubmissions(submissions)
+    checkSubmissionPresent(submissionsManager, taskId)
   }
 
-  private fun checkSubmissions(submissions: List<Submission>?, checkStatus: String? = null) {
-    assertNotNull(submissions)
+  private fun checkSubmissionPresent(submissionsManager: SubmissionsManager,
+                                     taskId: Int,
+                                     checkStatus: String? = null) {
+    val submissions = submissionsManager.getSubmissionsFromMemory(setOf(taskId))
+    assertNotNull("Submissions list should not be null", submissions)
     assertTrue(submissions!!.size == 1)
     val submission = submissions[0]
-    assertNotNull(submission)
+    assertNotNull("Submission not present", submission)
     if (checkStatus != null) {
-      assertEquals(checkStatus, submissions[0].status)
+      assertEquals(checkStatus, submission.status)
     }
   }
 
@@ -181,7 +176,7 @@ class HyperskillSubmissionsTest : EduTestCase() {
       },
       "submissions": [
         {
-          "attempt": "7565799",
+          "attempt": "7565798",
           "id": "7565000",
           "status": "wrong",
           "step": 1,
