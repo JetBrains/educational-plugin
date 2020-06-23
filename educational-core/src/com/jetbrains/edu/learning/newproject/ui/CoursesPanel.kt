@@ -48,6 +48,7 @@ abstract class CoursesPanel(
     isStandalonePanel = false,
     isLocationFieldNeeded = true)
   protected val coursesListPanel: CoursesListPanel
+  private val coursesListDecorator: CoursesListDecorator
   protected var courses: MutableList<Course> = mutableListOf()
   private lateinit var myProgrammingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   private lateinit var myHumanLanguagesFilterDropdown: HumanLanguageFilterDropdown
@@ -68,9 +69,8 @@ abstract class CoursesPanel(
     layout = cardLayout
     coursesListPanel = CoursesListPanel({ processSelectionChanged() },
                                         joinCourseAction(dialog),
-                                        this.toolbarAction(),
-                                        coursesProvider,
-                                        this.tabInfo(), this)
+                                        coursesProvider, this)
+    coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
 
     addCourseValidationListener(object : CourseValidationListener {
       override fun validationStatusChanged(canStartCourse: Boolean) {
@@ -86,7 +86,7 @@ abstract class CoursesPanel(
     coursesListPanel.addListener { processSelectionChanged() }
   }
 
-  fun hideLoginPanel() = coursesListPanel.hideLoginPanel()
+  fun hideLoginPanel() = coursesListDecorator.hideLoginPanel()
 
   private fun createContentPanel(): JPanel {
     val mainPanel = JPanel(BorderLayout())
@@ -106,7 +106,7 @@ abstract class CoursesPanel(
 
   private fun createSplitPane(): JPanel {
     val splitPane = OnePixelSplitter()
-    splitPane.firstComponent = coursesListPanel
+    splitPane.firstComponent = coursesListDecorator
     splitPane.secondComponent = coursePanel
     splitPane.proportion = 0.46f
 

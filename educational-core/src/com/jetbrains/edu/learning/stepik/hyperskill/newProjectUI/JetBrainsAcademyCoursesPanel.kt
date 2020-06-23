@@ -35,7 +35,7 @@ class JetBrainsAcademyCoursesPanel(platformProvider: JetBrainsAcademyPlatformPro
     HyperskillConnector.getInstance().doAuthorize(
       Runnable { coursePanel.hideErrorPanel() },
       Runnable { notifyListeners(true) },
-      Runnable { coursesListPanel.hideLoginPanel() }
+      Runnable { hideLoginPanel() }
     )
   }
 }

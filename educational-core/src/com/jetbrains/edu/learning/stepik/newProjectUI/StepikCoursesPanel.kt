@@ -32,7 +32,7 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider) : CoursesPan
                                                     { handleLogin() })
 
   private fun handleLogin() {
-    coursesListPanel.addLoginListener({ coursesListPanel.hideLoginPanel() }, { coursePanel.hideErrorPanel() })
+    coursesListPanel.addLoginListener({ hideLoginPanel() }, { coursePanel.hideErrorPanel() })
     StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
     EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
   }
