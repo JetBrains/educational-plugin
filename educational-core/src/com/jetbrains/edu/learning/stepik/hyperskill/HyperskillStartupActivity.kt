@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 class HyperskillStartupActivity : StartupActivity {
 
   override fun runActivity(project: Project) {
-    if (project.isDisposed || !EduUtils.isStudentProject(project) || !isUnitTestMode) return
+    if (project.isDisposed || !EduUtils.isStudentProject(project) || isUnitTestMode) return
     val taskManager = StudyTaskManager.getInstance(project)
     project.messageBus.connect(taskManager)
       .subscribe(HyperskillSolutionLoader.SOLUTION_TOPIC, object : SolutionLoaderBase.SolutionLoadingListener {
