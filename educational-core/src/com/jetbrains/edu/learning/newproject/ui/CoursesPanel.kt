@@ -66,7 +66,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   init {
     layout = cardLayout
-    coursesListPanel = CoursesListPanel({ processSelectionChanged() }, joinCourseAction(dialog), this)
+    coursesListPanel = CoursesListPanel({ processSelectionChanged() }, joinCourseAction(dialog))
     coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
 
     addCourseValidationListener(object : CourseValidationListener {
@@ -192,7 +192,8 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   protected fun updateModel(courses: List<Course>, @Suppress("UNUSED_PARAMETER") courseToSelect: Course?, filterCourses: Boolean = true) {
     val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
     // TODO: implement adding course and uncomment
-    coursesListPanel.updateModel(coursesToAdd, courseToSelect)
+    val courseInfos = coursesToAdd.map { CourseInfo(it, { locationString }, { projectSettings }) }
+    coursesListPanel.updateModel(courseInfos, courseToSelect)
   }
 
   private fun addCourseValidationListener(listener: CourseValidationListener) {
