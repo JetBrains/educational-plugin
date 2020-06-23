@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.jetbrains.annotations.TestOnly
@@ -105,10 +106,13 @@ class SubmissionsManager(private val project: Project) {
     val taskDescriptionView = TaskDescriptionView.getInstance(project)
     taskDescriptionView.addLoadingPanel(getPlatformName())
 
-    ApplicationManager.getApplication().executeOnPooledThread {
-      submissions.putAll(submissionsProvider.loadAllSubmissions(project, course))
-      loadSolutions()
-      ApplicationManager.getApplication().invokeLater { taskDescriptionView.updateSubmissionsTab() }
+    if (!isUnitTestMode) {
+      ApplicationManager.getApplication().executeOnPooledThread {
+        loadSubmissionsContent(course, submissionsProvider, taskDescriptionView, loadSolutions)
+      }
+    }
+    else {
+      loadSubmissionsContent(course, submissionsProvider, taskDescriptionView, loadSolutions)
     }
   }
 
@@ -117,6 +121,15 @@ class SubmissionsManager(private val project: Project) {
   fun getPlatformName(): String = course?.getSubmissionsProvider()?.getPlatformName() ?: error("Failed to get platform Name")
 
   fun doAuthorize() = course?.getSubmissionsProvider()?.doAuthorize()
+
+  private fun loadSubmissionsContent(course: Course,
+                                     submissionsProvider: SubmissionsProvider,
+                                     taskDescriptionView: TaskDescriptionView,
+                                     loadSolutions: () -> Unit) {
+    submissions.putAll(submissionsProvider.loadAllSubmissions(project, course))
+    loadSolutions()
+    ApplicationManager.getApplication().invokeLater { taskDescriptionView.updateSubmissionsTab() }
+  }
 
   private fun Course.getSubmissionsProvider(): SubmissionsProvider? {
     return SubmissionsProvider.getSubmissionsProviderForCourse(this)
