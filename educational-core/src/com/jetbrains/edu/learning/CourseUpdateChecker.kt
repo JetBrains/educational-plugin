@@ -9,17 +9,17 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.EduUtils.isNewlyCreated
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.atomic.AtomicInteger
 
 abstract class CourseUpdateChecker(protected val project: Project) : Disposable {
 
-  private val checkRunnable = Runnable { (checkIsUpToDate()).doWhenDone { queueNextCheck(getCheckInterval()) } }
+  //default value is 18 000 seconds (5 hours), set in educational-core.xml
+  private var checkInterval: Long = DateFormatUtil.SECOND * Registry.intValue(REGISTRY_KEY)
+  private val checkRunnable = Runnable { (checkIsUpToDate()).doWhenDone { queueNextCheck(checkInterval) } }
   private val checkForAlarm by lazy { Alarm(Alarm.ThreadToUse.POOLED_THREAD, this) }
   val course: Course? get() = project.course
-
   private val invocationCounter: AtomicInteger = AtomicInteger()
   var invocationNumber: Int
     @TestOnly
@@ -32,7 +32,7 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
       return
     }
     if (isNewlyCreated(project)) {
-      queueNextCheck(getCheckInterval())
+      queueNextCheck(checkInterval)
     }
     else {
       checkRunnable.run()
@@ -67,8 +67,10 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
 
   protected abstract fun courseCanBeUpdated(): Boolean
 
-  //default value is 18 000 seconds (5 hours), set in educational-core.xml
-  private fun getCheckInterval(): Long = DateFormatUtil.SECOND * Registry.intValue(REGISTRY_KEY)
+  fun setCustomCheckInterval(sec: Int) {
+    LOG.info("Setting custom check interval for ${course.name} with $sec seconds")
+    checkInterval = sec * DateFormatUtil.SECOND
+  }
 
   override fun dispose() {}
 

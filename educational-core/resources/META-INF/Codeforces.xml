@@ -1,9 +1,10 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.codeforces.CodeforcesSettings"/>
+    <postStartupActivity implementation="com.jetbrains.edu.learning.codeforces.CodeforcesStartupActivity"/>
     <projectConfigurable groupId="Educational" instance="com.jetbrains.edu.learning.codeforces.CodeforcesOptions"
                          id="Codeforces" displayName="Codeforces"/>
-    <applicationService serviceImplementation="com.jetbrains.edu.learning.codeforces.CodeforcesSettings"/>
   </extensions>
 
   <extensionPoints>
