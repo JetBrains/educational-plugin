@@ -9,12 +9,8 @@ import java.awt.BorderLayout
 import javax.swing.JPanel
 
 
-class CoursesListPanel(
-  selectionChanged: () -> Unit,
-  joinCourse: (CourseInfo, CourseMode) -> Unit
-) : JPanel(BorderLayout()) {
+class CoursesListPanel(selectionChanged: () -> Unit, joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
   private val groupsComponent: GroupsComponent = GroupsComponent(selectionChanged, joinCourse)
-
   val selectedCourse: Course? get() = groupsComponent.selectedValue
 
   init {
@@ -52,7 +48,7 @@ class CoursesListPanel(
     groupsComponent.clear()
   }
 
-  fun setSelectedValue(newCourseToSelect: Course?) {
+  private fun setSelectedValue(newCourseToSelect: Course?) {
     groupsComponent.setSelectedValue(newCourseToSelect)
   }
 
