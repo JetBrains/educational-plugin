@@ -9,8 +9,8 @@ import java.awt.BorderLayout
 import javax.swing.JPanel
 
 
-class CoursesListPanel(selectionChanged: () -> Unit, joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
-  private val groupsComponent: GroupsComponent = GroupsComponent(selectionChanged, joinCourse)
+class CoursesListPanel(selectionChanged: () -> Unit, private val joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
+  private val groupsComponent: GroupsComponent = GroupsComponent(selectionChanged)
   val selectedCourse: Course? get() = groupsComponent.selectedValue
 
   init {
@@ -20,7 +20,8 @@ class CoursesListPanel(selectionChanged: () -> Unit, joinCourse: (CourseInfo, Co
 
   fun updateModel(courseInfos: List<CourseInfo>, courseToSelect: Course?) {
     val sortedCourseInfos = sortCourses(courseInfos)
-    addGroup("", sortedCourseInfos)  // TODO: use actual groups
+    val group = CoursesGroup("", sortedCourseInfos, joinCourse)
+    addGroup(group)  // TODO: use actual groups
 
     if (courseToSelect == null) {
       initialSelection()
@@ -40,8 +41,8 @@ class CoursesListPanel(selectionChanged: () -> Unit, joinCourse: (CourseInfo, Co
     return courseInfos.sortedWith(comparator)
   }
 
-  fun addGroup(titleString: String, courseInfos: List<CourseInfo>) {
-    groupsComponent.addGroup(titleString, courseInfos)
+  private fun addGroup(coursesGroup: CoursesGroup) {
+    groupsComponent.addGroup(coursesGroup)
   }
 
   fun clear() {
