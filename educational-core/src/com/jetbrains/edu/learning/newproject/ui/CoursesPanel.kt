@@ -66,7 +66,8 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   init {
     layout = cardLayout
-    coursesListPanel = CoursesListPanel({ processSelectionChanged() }, joinCourseAction(dialog))
+    coursesListPanel = CoursesListPanel(joinCourseAction(dialog))
+    coursesListPanel.setSelectionListener { processSelectionChanged() }
     coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
 
     addCourseValidationListener(object : CourseValidationListener {

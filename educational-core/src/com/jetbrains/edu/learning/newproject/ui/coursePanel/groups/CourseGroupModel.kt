@@ -10,13 +10,15 @@ import javax.swing.SwingUtilities
 import kotlin.math.max
 import kotlin.math.min
 
-class CourseGroupModel(private var selectionListener: () -> Unit) {
+class CourseGroupModel {
   private val courseCards: MutableList<CourseCardComponent> = mutableListOf()
   private var hoveredCard: CourseCardComponent? = null
   var selectedCard: CourseCardComponent? = null
 
   private val mouseHandler: MouseAdapter
   private val keyListener: KeyListener
+
+  private var selectionListener: () -> Unit = {}
 
   init {
     mouseHandler = object : MouseAdapter() {
@@ -132,5 +134,9 @@ class CourseGroupModel(private var selectionListener: () -> Unit) {
 
   private fun getCourseCard(event: ComponentEvent): CourseCardComponent? {
     return ComponentUtil.getParentOfType(CourseCardComponent::class.java, event.component)
+  }
+
+  fun setSelectionListener(processSelectionChanged: () -> Unit) {
+    selectionListener = processSelectionChanged
   }
 }

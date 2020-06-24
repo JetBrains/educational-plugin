@@ -5,9 +5,9 @@ import com.intellij.ui.components.JBPanelWithEmptyText
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
-class GroupsComponent(selectionChanged: () -> Unit) : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
+class GroupsComponent : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
 
-  private val courseGroupModel: CourseGroupModel = CourseGroupModel(selectionChanged)
+  private val courseGroupModel: CourseGroupModel = CourseGroupModel()
 
   val selectedValue: Course?
     get() = courseGroupModel.selectedCard?.courseInfo?.course
@@ -34,6 +34,10 @@ class GroupsComponent(selectionChanged: () -> Unit) : JBPanelWithEmptyText(Verti
 
   fun initialSelection() {
     courseGroupModel.initialSelection()
+  }
+
+  fun setSelectionListener(processSelectionChanged: () -> Unit) {
+    courseGroupModel.setSelectionListener(processSelectionChanged)
   }
 
   companion object {
