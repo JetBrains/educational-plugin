@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.jetbrains.edu.coursecreator.CCProjectComponent
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -32,7 +31,6 @@ class YamlSynchronizationTest : YamlTestCase() {
     val document = FileDocumentManager.getInstance().getDocument(taskConfig)!!
     runWriteAction { document.setText("invalid text") }
     StudyTaskManager.getInstance(project).course = null
-    project.getComponent(CCProjectComponent::class.java).projectOpened()
 
     // check loaded task is null
     val loadedSection = StudyTaskManager.getInstance(project).course?.sections?.first()
