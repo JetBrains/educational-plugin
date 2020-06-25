@@ -7,7 +7,6 @@ import com.intellij.openapi.components.service
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestName
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_URL
 import com.jetbrains.edu.learning.codeforces.ContestInformation
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
@@ -16,7 +15,7 @@ import okhttp3.ConnectionPool
 import org.jsoup.Jsoup
 import retrofit2.converter.jackson.JacksonConverterFactory
 
-class CodeforcesConnector {
+abstract class CodeforcesConnector {
   @VisibleForTesting
   val objectMapper: ObjectMapper
   private val connectionPool: ConnectionPool = ConnectionPool()
@@ -28,10 +27,12 @@ class CodeforcesConnector {
     converterFactory = JacksonConverterFactory.create(objectMapper)
   }
 
+  protected abstract val baseUrl: String
+
   private val service: CodeforcesService by lazy { service() }
 
   private fun service(): CodeforcesService =
-    createRetrofitBuilder(CODEFORCES_URL, connectionPool)
+    createRetrofitBuilder(baseUrl, connectionPool)
       .addConverterFactory(converterFactory)
       .build()
       .create(CodeforcesService::class.java)

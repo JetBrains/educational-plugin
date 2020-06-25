@@ -3,13 +3,21 @@ package com.jetbrains.edu.slow.integration.codeforces
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
+import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
+import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 
 class CodeforcesLoadingTest: CodeforcesTestCase() {
+  override fun setUp() {
+    super.setUp()
+    val mockCodeforcesConnector = CodeforcesConnector.getInstance() as MockCodeforcesConnector
+    mockCodeforcesConnector.setBaseUrl(CodeforcesNames.CODEFORCES_URL, testRootDisposable)
+  }
   private val contestKotlinHeroesEpisode1: CodeforcesCourse by lazy {
     val contestInfo = ContestParameters(1170, "en", "Kotlin", EduNames.KOTLIN)
     when (val contest = StartCodeforcesContestAction.getContestUnderProgress(contestInfo)) {
