@@ -62,9 +62,7 @@ class NewCoursePanel(
   init {
     layout = VerticalFlowLayout(0, 0)
 
-    // We want to show left part of border only if panel is independent
-    val leftBorder = if (isStandalonePanel) LINE_BORDER_THICKNESS else 0
-    border = JBUI.Borders.customLine(DIVIDER_COLOR, 0, leftBorder, 0, 0)
+    border = JBUI.Borders.customLine(DIVIDER_COLOR, 0, 0, 0, 0)
 
     add(header)
     add(description)

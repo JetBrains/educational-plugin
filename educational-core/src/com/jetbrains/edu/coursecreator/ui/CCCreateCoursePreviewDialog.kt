@@ -8,6 +8,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages.showErrorDialog
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive
 import com.jetbrains.edu.learning.EduNames
@@ -16,6 +17,7 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.io.IOException
 import javax.swing.JComponent
 
@@ -36,12 +38,17 @@ class CCCreateCoursePreviewDialog(
     myPanel.minimumSize = JBUI.size(WIDTH, HEIGHT)
     myPanel.bindCourse(myCourse)
     init()
+    UIUtil.setBackgroundRecursively(rootPane, TaskDescriptionView.getTaskDescriptionBackgroundColor())
   }
 
   override fun createCenterPanel(): JComponent = myPanel
 
   override fun doOKAction() {
     createCoursePreview()
+  }
+
+  override fun getStyle(): DialogStyle {
+    return DialogStyle.COMPACT
   }
 
   private fun createCoursePreview() {
@@ -94,7 +101,7 @@ class CCCreateCoursePreviewDialog(
   companion object {
     private val LOG: Logger = Logger.getInstance(CCCreateCoursePreviewDialog::class.java)
 
-    private const val WIDTH: Int = 370
+    private const val WIDTH: Int = 450
     private const val HEIGHT: Int = 330
     private const val PREVIEW_CREATION_ERROR_TITLE = "Failed to Create Course Preview"
     private const val TMP_DIR_ERROR = "Failed to create temp directory for course preview."
