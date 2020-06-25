@@ -15,6 +15,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -93,7 +94,13 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   }
 
   suspend fun loadCourses() {
-    courses.addAll(withContext(Dispatchers.IO) { coursesProvider.loadCourses() })
+    courses.addAll(
+      withContext(Dispatchers.IO) {
+        coursesProvider.loadCourses()
+      }.filter {
+        val compatibility = it.compatibility
+        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
+      })
     updateFilters()
     updateModel(courses, coursesListPanel.selectedCourse)
     showContent(courses.isEmpty())
