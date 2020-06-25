@@ -46,8 +46,8 @@ private const val NO_COURSES = "NO_COURSES"
 
 abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider) : JPanel() {
   protected var coursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false, isLocationFieldNeeded = true)
-  protected val coursesListPanel: CoursesListPanel
-  private val coursesListDecorator: CoursesListDecorator
+  private val coursesListPanel = CoursesListPanel(joinCourseAction(dialog))
+  private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
   protected var courses: MutableList<Course> = mutableListOf()
   private lateinit var myProgrammingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   private lateinit var myHumanLanguagesFilterDropdown: HumanLanguageFilterDropdown
@@ -66,9 +66,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   init {
     layout = cardLayout
-    coursesListPanel = CoursesListPanel(joinCourseAction(dialog))
     coursesListPanel.setSelectionListener { processSelectionChanged() }
-    coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
 
     addCourseValidationListener(object : CourseValidationListener {
       override fun validationStatusChanged(canStartCourse: Boolean) {
