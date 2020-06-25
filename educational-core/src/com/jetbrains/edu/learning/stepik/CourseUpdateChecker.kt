@@ -1,31 +1,38 @@
 package com.jetbrains.edu.learning.stepik
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ActionCallback
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.EduUtils.isNewlyCreated
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.atomic.AtomicInteger
-import com.intellij.openapi.diagnostic.Logger
 
-abstract class CourseUpdateChecker<T : Course>(protected val project: Project,
-                                               protected val course: T,
-                                               protected val disposable: Disposable) {
+abstract class CourseUpdateChecker(protected val project: Project) : Disposable {
 
   private val checkRunnable = Runnable { (checkIsUpToDate()).doWhenDone { queueNextCheck(getCheckInterval()) } }
-  private val checkForAlarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, disposable)
+  private val checkForAlarm by lazy { Alarm(Alarm.ThreadToUse.POOLED_THREAD, this) }
+  val course: Course? get() = project.course
 
   private val invocationCounter: AtomicInteger = AtomicInteger()
+  var invocationNumber: Int
+    @TestOnly
+    get() = invocationCounter.get()
+    @TestOnly
+    set(value) = invocationCounter.set(value)
 
   fun check() {
-    if (!course.canBeUpdated()) {
+    if (!courseCanBeUpdated()) {
       return
     }
+    cancelCheckRequests()
     if (isNewlyCreated(project)) {
       queueNextCheck(getCheckInterval())
     }
@@ -34,10 +41,15 @@ abstract class CourseUpdateChecker<T : Course>(protected val project: Project,
     }
   }
 
-  protected abstract fun Course.canBeUpdated(): Boolean
+  @VisibleForTesting
+  fun cancelCheckRequests() {
+    LOG.info("Is course up to date check requests for ${course?.name} canceled, " +
+             "queue contained ${checkForAlarm.activeRequestCount} request(s)")
+    checkForAlarm.cancelAllRequests()
+  }
 
   private fun queueNextCheck(interval: Long) {
-    LOG.info("Scheduled next is course up to date check for ${course.name} with check interval $interval seconds")
+    LOG.info("Scheduled next is course up to date check for ${course?.name} with check interval $interval milliseconds")
     checkForAlarm.addRequest(checkRunnable, interval)
   }
 
@@ -54,14 +66,17 @@ abstract class CourseUpdateChecker<T : Course>(protected val project: Project,
 
   protected abstract fun doCheckIsUpToDate(onFinish: () -> Unit)
 
+  protected abstract fun courseCanBeUpdated(): Boolean
+
   //default value is 18 000 seconds (5 hours), set in educational-core.xml
   private fun getCheckInterval(): Long = DateFormatUtil.SECOND * Registry.intValue(REGISTRY_KEY)
 
-  @TestOnly
-  fun invocationNumber(): Int = invocationCounter.get()
+  override fun dispose() {}
 
   companion object {
     const val REGISTRY_KEY = "edu.course.update.check.interval"
-    private val LOG = Logger.getInstance(CourseUpdateChecker::class.java)
+
+    @JvmStatic
+    protected val LOG = Logger.getInstance(CourseUpdateChecker::class.java)
   }
 }

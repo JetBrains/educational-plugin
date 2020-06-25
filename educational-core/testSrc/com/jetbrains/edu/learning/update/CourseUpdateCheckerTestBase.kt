@@ -9,14 +9,12 @@ import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.CourseUpdateChecker
 import okhttp3.mockwebserver.MockResponse
 
 abstract class CourseUpdateCheckerTestBase : EduTestCase() {
 
-  protected fun doTest(updateChecker: CourseUpdateChecker<out Course>,
+  protected fun doTest(updateChecker: CourseUpdateChecker,
                        isCourseUpToDate: Boolean,
                        invocationNumber: Int,
                        afterTimeoutInvocationNumber: Int,
@@ -26,26 +24,21 @@ abstract class CourseUpdateCheckerTestBase : EduTestCase() {
     val notificationListener = NotificationListener(project, testRootDisposable)
     withCustomCheckInterval(checkInterval) {
       updateChecker.check()
-      assertEquals(invocationNumber, updateChecker.invocationNumber())
+      assertEquals(invocationNumber, updateChecker.invocationNumber)
       testCheckScheduled(afterTimeoutInvocationNumber, updateChecker)
-      if (isCourseUpToDate) {
-        assertFalse("Notification was shown", notificationListener.notificationShown)
-      }
-      else {
-        assertTrue("Notification wasn't shown", notificationListener.notificationShown)
-        assertEquals(EduCoreBundle.message("update.content.request"), notificationListener.notificationText)
-      }
-      assertEquals(notificationListener.notificationShown, !isCourseUpToDate)
+      checkNotification(notificationListener, isCourseUpToDate)
       isCourseUpToDateCheck()
     }
   }
 
-  protected fun testNoCheck(updateChecker: CourseUpdateChecker<out Course>) {
+  protected abstract fun checkNotification(notificationListener: NotificationListener, isCourseUpToDate: Boolean)
+
+  protected fun testNoCheck(updateChecker: CourseUpdateChecker) {
     withCustomCheckInterval(2) {
       updateChecker.check()
       val future = ApplicationManager.getApplication().executeOnPooledThread { Thread.sleep(1000) }
       EduUtils.waitAndDispatchInvocationEvents(future)
-      assertEquals(0, updateChecker.invocationNumber())
+      assertEquals(0, updateChecker.invocationNumber)
     }
   }
 
@@ -61,10 +54,10 @@ abstract class CourseUpdateCheckerTestBase : EduTestCase() {
     }
   }
 
-  private fun testCheckScheduled(expectedInvocationNumber: Int, updateChecker: CourseUpdateChecker<out Course>) {
+  private fun testCheckScheduled(expectedInvocationNumber: Int, updateChecker: CourseUpdateChecker) {
     val future = ApplicationManager.getApplication().executeOnPooledThread { Thread.sleep(3000) }
     EduUtils.waitAndDispatchInvocationEvents(future)
-    check(expectedInvocationNumber <= updateChecker.invocationNumber())
+    check(expectedInvocationNumber <= updateChecker.invocationNumber)
   }
 
   protected fun mockResponse(fileName: String): MockResponse = MockResponseFactory.fromFile(getTestFile(fileName))
@@ -88,5 +81,4 @@ abstract class CourseUpdateCheckerTestBase : EduTestCase() {
       })
     }
   }
-
 }

@@ -77,8 +77,7 @@ public class StepikProjectComponent implements ProjectComponent {
               }
             });
           }
-          EduCourseUpdateChecker upToDateChecker = new EduCourseUpdateChecker(myProject, (EduCourse)course);
-          upToDateChecker.check();
+          EduCourseUpdateChecker.getInstance(myProject).check();
 
           final StepikUser currentUser = EduSettings.getInstance().getUser();
           if (currentUser == null) {

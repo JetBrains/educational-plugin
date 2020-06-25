@@ -27,7 +27,7 @@ class HyperskillStartupActivity : StartupActivity {
       .subscribe(HyperskillSolutionLoader.SOLUTION_TOPIC, object : SolutionLoaderBase.SolutionLoadingListener {
         override fun solutionLoaded(course: Course) {
           if (course is HyperskillCourse) {
-            HyperskillCourseUpdateChecker(project, course, taskManager).check()
+            HyperskillCourseUpdateChecker.getInstance(project).check()
           }
         }
       })

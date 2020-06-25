@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -30,20 +33,20 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
 
   fun `test check scheduled for upToDate course`() {
     configureResponse("stages_empty_response.json")
-    val course = createHyperskillCourse()
-    doTest(HyperskillCourseUpdateChecker(project, course, testRootDisposable), true, 1, 2) {}
+    createHyperskillCourse()
+    doTest(HyperskillCourseUpdateChecker.getInstance(project), true, 1, 2) {}
   }
 
   fun `test check scheduled for newly created course`() {
     configureResponse("stages_empty_response.json")
-    val course = createHyperskillCourse(true)
-    doTest(HyperskillCourseUpdateChecker(project, course, testRootDisposable), true, 0, 1) {}
+    createHyperskillCourse(true)
+    doTest(HyperskillCourseUpdateChecker.getInstance(project), true, 0, 1) {}
   }
 
   fun `test no isUpToDate check for newly created course at project opening`() {
     configureResponse("stages_empty_response.json")
-    val course = createHyperskillCourse(true)
-    testNoCheck(HyperskillCourseUpdateChecker(project, course, testRootDisposable))
+    createHyperskillCourse(true)
+    testNoCheck(HyperskillCourseUpdateChecker.getInstance(project))
   }
 
   fun `test check scheduled for not upToDate course with notification`() {
@@ -62,7 +65,7 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, false)
     HyperskillSettings.INSTANCE.updateAutomatically = false
 
-    doTest(HyperskillCourseUpdateChecker(project, course, testRootDisposable), false, 1, 2, 2) {}
+    doTest(HyperskillCourseUpdateChecker.getInstance(project), false, 1, 2, 2) {}
   }
 
   private fun createHyperskillCourse(isNewlyCreated: Boolean = false): HyperskillCourse {
@@ -72,10 +75,36 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
       project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, isNewlyCreated)
     }
     course.hyperskillProject = HyperskillProject()
+    StudyTaskManager.getInstance(project).course = course
     return course
   }
 
+  override fun checkNotification(notificationListener: NotificationListener,
+                                 isCourseUpToDate: Boolean) {
+    if (isCourseUpToDate) {
+      if (notificationListener.notificationShown) {
+        assertEquals(EduCoreBundle.message("hyperskill.update.notification.text", EduNames.JBA), notificationListener.notificationText)
+      }
+    }
+    else {
+      assertTrue("Notification wasn't shown", notificationListener.notificationShown)
+      assertEquals(EduCoreBundle.message("update.content.request"), notificationListener.notificationText)
+    }
+  }
+
   override fun getTestDataPath(): String = super.getTestDataPath() + "hyperskill/"
+
+  override fun tearDown() {
+    try {
+      val updateChecker = HyperskillCourseUpdateChecker.getInstance(project)
+      updateChecker.invocationNumber = 0
+      updateChecker.cancelCheckRequests()
+      HyperskillSettings.INSTANCE.updateAutomatically = true
+    }
+    finally {
+      super.tearDown()
+    }
+  }
 
   companion object {
     private val COURSES_REQUEST_RE = """/api/projects?.*""".toRegex()

@@ -1,20 +1,33 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.CourseUpdateChecker
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
-class HyperskillCourseUpdateChecker(
-  project: Project,
-  course: HyperskillCourse,
-  disposable: Disposable
-) : CourseUpdateChecker<HyperskillCourse>(project, course, disposable) {
+@Service
+class HyperskillCourseUpdateChecker(project: Project) : CourseUpdateChecker(project) {
 
-  override fun Course.canBeUpdated(): Boolean = course.isStudy
+  override fun courseCanBeUpdated(): Boolean {
+    val hyperskillCourse = course as? HyperskillCourse ?: return false
+    return hyperskillCourse.isStudy
+  }
 
   override fun doCheckIsUpToDate(onFinish: () -> Unit) {
-    HyperskillCourseUpdater.updateCourse(project, course) { onFinish() }
+    val hyperskillCourse = course as? HyperskillCourse
+    if (hyperskillCourse == null) {
+      return
+    }
+    else {
+      HyperskillCourseUpdater.updateCourse(project, hyperskillCourse) { onFinish() }
+    }
+  }
+
+  companion object {
+    @JvmStatic
+    fun getInstance(project: Project): HyperskillCourseUpdateChecker {
+      return project.service()
+    }
   }
 }

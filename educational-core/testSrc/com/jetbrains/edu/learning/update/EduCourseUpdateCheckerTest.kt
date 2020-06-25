@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.update
 
 import com.jetbrains.edu.learning.MockResponseFactory
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.EDU_PROJECT_CREATED
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -37,8 +39,8 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   }
 
   fun `test no isUpToDate check for newly created course at project opening`() {
-    val course = createCourse(Date(), isNewlyCreated = true)
-    testNoCheck(EduCourseUpdateChecker(project, course, testRootDisposable))
+    createCourse(Date(), isNewlyCreated = true)
+    testNoCheck(EduCourseUpdateChecker.getInstance(project))
   }
 
   private fun doTestCheckScheduled(expectedInvocationNumber: Int,
@@ -46,19 +48,41 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
                                    isCourseUpToDate: Boolean,
                                    isNewlyCreated: Boolean = false) {
     val course = createCourse(updateDate, isNewlyCreated)
-    doTest(EduCourseUpdateChecker(project, course, testRootDisposable), isCourseUpToDate, 0, expectedInvocationNumber) {
+    doTest(EduCourseUpdateChecker.getInstance(project), isCourseUpToDate, 0, expectedInvocationNumber) {
       assertEquals(isCourseUpToDate, course.isUpToDate)
     }
   }
 
-  private fun createCourse(date: Date, isNewlyCreated: Boolean): EduCourse = EduCourse().apply {
-    name = "Test Course"
-    id = 1
-    updateDate = date
+  private fun createCourse(date: Date, isNewlyCreated: Boolean): EduCourse {
+    val course = EduCourse().apply {
+      name = "Test Course"
+      id = 1
+      updateDate = date
+    }
     project.putUserData(EDU_PROJECT_CREATED, isNewlyCreated)
+    StudyTaskManager.getInstance(project).course = course
+    return course
+  }
+
+  override fun checkNotification(notificationListener: NotificationListener, isCourseUpToDate: Boolean) {
+    assertEquals(notificationListener.notificationShown, !isCourseUpToDate)
+    if (!isCourseUpToDate) {
+      assertEquals(EduCoreBundle.message("update.content.request"), notificationListener.notificationText)
+    }
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "updateCourse/update_checker/"
+
+  override fun tearDown() {
+    try {
+      val updateChecker = EduCourseUpdateChecker.getInstance(project)
+      updateChecker.invocationNumber = 0
+      updateChecker.cancelCheckRequests()
+    }
+    finally {
+      super.tearDown()
+    }
+  }
 
   companion object {
     private val COURSES_REQUEST_RE = """/api/courses?.*""".toRegex()
