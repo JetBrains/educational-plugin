@@ -60,11 +60,13 @@ fun openSelectedStage(course: Course, project: Project) {
 private fun computeSelectedStage(course: HyperskillCourse): Int? {
   val stageId = course.getUserData(HYPERSKILL_SELECTED_STAGE)
   if (stageId != null) {
+    course.putUserData(HYPERSKILL_SELECTED_STAGE, null) // we may want to select something other in the same project
     return stageId
   }
   // do not switch selected stage if a user opened only a single problem
   val stepId = course.getUserData(HYPERSKILL_SELECTED_PROBLEM)
   if (stepId != null) {
+    course.putUserData(HYPERSKILL_SELECTED_PROBLEM, null) // we may want to select something other in the same project
     return null
   }
   val projectLesson = course.getProjectLesson() ?: return null
