@@ -146,6 +146,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
 
     changes.apply(project, taskDir, targetTask)
+    YamlFormatSynchronizer.saveItem(targetTask)
   }
 
   /**
