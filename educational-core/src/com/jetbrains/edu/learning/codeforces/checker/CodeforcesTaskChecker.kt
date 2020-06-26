@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.*
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TEST_DATA_FOLDER
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -30,7 +29,7 @@ class CodeforcesTaskChecker(
     val url = (task.course as CodeforcesCourse).getSubmissionUrl()
 
     indicator.text = "Executing tests"
-    val testFolders = task.getDir(project)?.findChild(TEST_DATA_FOLDER)?.children.orEmpty()
+    val testFolders = task.getTestFolders(project)
 
     for ((index, testFolder) in testFolders.withIndex()) {
       val inputVirtualFile = testFolder.findChild(task.inputFileName) ?: continue

@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.codeforces.courseFormat
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil.join
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
@@ -17,6 +19,8 @@ open class CodeforcesTask : Task() {
   open val outputFileName: String = "output.txt"
 
   override fun getItemType(): String = CODEFORCES_TASK_TYPE
+
+  fun getTestFolders(project: Project): Array<out VirtualFile> = getDir(project)?.findChild(TEST_DATA_FOLDER)?.children.orEmpty()
 
   private fun addSampleTests(htmlElement: Element) {
     htmlElement.select("div.input").forEachIndexed { index, inputElement ->

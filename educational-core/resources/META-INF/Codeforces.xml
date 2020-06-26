@@ -20,5 +20,6 @@
       <add-to-group group-id="Educational.LearnAndTeachFileMenu" relative-to-action="Educational.Educator.NewCourse" anchor="after"/>
     </action>
     <action id="Codeforces.MarkAsCompleted" class="com.jetbrains.edu.learning.codeforces.CodeforcesMarkAsCompletedAction"/>
+    <action id="Codeforces.UpdateContest" class="com.jetbrains.edu.learning.codeforces.CodeforcesUpdateContestAction"/>
   </actions>
 </idea-plugin>

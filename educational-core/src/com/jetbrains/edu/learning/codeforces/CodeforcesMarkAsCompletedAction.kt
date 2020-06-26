@@ -2,14 +2,13 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.notification.Notification
-import com.intellij.notification.NotificationDisplayType
-import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState.Companion.getEduState
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.SOLVED
+import com.jetbrains.edu.learning.codeforces.CodeforcesSettings.Companion.codeforcesNotificationGroup
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -35,7 +34,7 @@ class CodeforcesMarkAsCompletedAction
   }
 
   private fun showSuccessNotification(project: Project) {
-    val notification = Notification(notificationGroup.displayId,
+    val notification = Notification(codeforcesNotificationGroup.displayId,
                                     "",
                                     EduCoreBundle.message("codeforces.mark.as.completed.notification"),
                                     NotificationType.INFORMATION)
@@ -44,9 +43,9 @@ class CodeforcesMarkAsCompletedAction
 
   private fun showWrongTaskNotification(project: Project) {
     val notification = Notification(
-      notificationGroup.displayId,
+      codeforcesNotificationGroup.displayId,
       "",
-      EduCoreBundle.message("codeforces.mark.as.completed.wrong.task.notification", CodeforcesNames.CODEFORCES_TITLE),
+      EduCoreBundle.message("codeforces.mark.as.completed.wrong.task.notification"),
       NotificationType.ERROR
     )
     notification.notify(project)
@@ -54,9 +53,5 @@ class CodeforcesMarkAsCompletedAction
 
   companion object {
     const val ACTION_ID = "Codeforces.MarkAsCompleted"
-
-    val notificationGroup = NotificationGroup(EduCoreBundle.message("codeforces.information", CodeforcesNames.CODEFORCES_TITLE),
-                                              NotificationDisplayType.BALLOON,
-                                              true)
   }
 }

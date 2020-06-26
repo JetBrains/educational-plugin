@@ -12,12 +12,16 @@ class CodeforcesCourseUpdateChecker(project: Project,
 ) : CourseUpdateChecker<CodeforcesCourse>(project, course, disposable) {
 
   init {
-    setCustomCheckInterval(60)
+//    if (course.isOngoing()) {
+      setCustomCheckInterval(60)
+//    }
   }
 
   override fun Course.canBeUpdated(): Boolean = course is CodeforcesCourse
 
   override fun doCheckIsUpToDate(onFinish: () -> Unit) {
-    CodeforcesCourseUpdater(project, course).updateCourse { onFinish() }
+    CodeforcesCourseUpdater(project, course).updateCourseAndDoActions(
+      onFinish = { onFinish() }
+    )
   }
 }

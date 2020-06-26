@@ -2,8 +2,6 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_PROBLEMS
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TITLE
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CONTEST
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
@@ -43,13 +41,14 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   }
 
   fun `test check scheduled for not upToDate course with notification`() {
+    val taskName = "codeforcesTask"
     val course = courseWithFiles(
       language = FakeGradleBasedLanguage,
       courseProducer = ::CodeforcesCourse
     ) {
       lesson(CODEFORCES_PROBLEMS) {
-        codeforcesTask {
-          taskFile("src/Task.kt")
+        codeforcesTask(taskName) {
+          kotlinTaskFile("src/Task.kt")
         }
       }
     } as CodeforcesCourse
@@ -60,7 +59,7 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
            1,
            2,
            2,
-           notificationMessage = EduCoreBundle.message("update.notification.text", CODEFORCES_TITLE, CONTEST)) {}
+           notificationMessage = EduCoreBundle.message("codeforces.task.updated.notification", taskName)) {}
   }
 
   private fun createCodeforcesCourse(date: Date = Date(), isNewlyCreated: Boolean = false): CodeforcesCourse = CodeforcesCourse().apply {

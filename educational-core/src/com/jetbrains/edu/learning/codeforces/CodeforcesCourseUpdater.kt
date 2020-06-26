@@ -20,7 +20,8 @@ import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-class CodeforcesCourseUpdater(project: Project, val course: CodeforcesCourse) : CourseUpdater(project) {
+class CodeforcesCourseUpdater(project: Project, course: CodeforcesCourse) : CourseUpdater<CodeforcesCourse>(project, course) {
+  private val LOG: Logger = Logger.getInstance(CodeforcesCourseUpdater::class.java)
   private val updatedTasks: MutableSet<String> = mutableSetOf()
 
   fun updateCourseAndDoActions(onFinish: () -> Unit = {},
@@ -28,8 +29,7 @@ class CodeforcesCourseUpdater(project: Project, val course: CodeforcesCourse) : 
     updateCourse {
       if (updatedTasks.isNotEmpty()) {
         updateTaskDescription()
-      }
-      else {
+      } else {
         onNothingUpdated()
       }
       onFinish()
@@ -39,10 +39,7 @@ class CodeforcesCourseUpdater(project: Project, val course: CodeforcesCourse) : 
   override fun updateCourse(onFinish: () -> Unit) {
     runInBackground(project, EduCoreBundle.message("update.check")) {
       if (project.isDisposed) return@runInBackground
-      val contestParameters = ContestParameters(id = course.id,
-                                                languageId = course.language,
-                                                locale = course.languageCode,
-                                                endDateTime = course.endDateTime)
+      val contestParameters = ContestParameters(id = course.id, languageId = course.language, locale = course.languageCode)
       val remoteContest = CodeforcesConnector.getInstance().getContest(contestParameters).onError {
         LOG.error(it)
         return@runInBackground
@@ -53,17 +50,20 @@ class CodeforcesCourseUpdater(project: Project, val course: CodeforcesCourse) : 
     }
   }
 
-  private fun doUpdate(remoteCourse: CodeforcesCourse?) {
+  override fun doUpdate(remoteCourse: CodeforcesCourse?) {
     updateProjectLesson(remoteCourse)
     updatedTasks.forEach {
-      showUpdateCompletedNotification(EduCoreBundle.message("codeforces.task.description.was.updated.notification", it))
+      showUpdateCompletedNotification(EduCoreBundle.message("codeforces.task.updated.notification", it))
     }
   }
 
   @VisibleForTesting
-  fun updateProjectLesson(remoteCourse: CodeforcesCourse?): Boolean {
+  override fun updateProjectLesson(remoteCourse: CodeforcesCourse?): Boolean {
+    val lesson = course.getLesson() ?: return true
+    remoteCourse ?: return true
+
     val tasks = course.getTasks() ?: return true
-    val remoteTasks = remoteCourse?.getTasks() ?: return true
+    val remoteTasks = remoteCourse.getTasks() ?: return true
 
     invokeAndWaitIfNeeded {
       if (project.isDisposed) return@invokeAndWaitIfNeeded
@@ -72,7 +72,11 @@ class CodeforcesCourseUpdater(project: Project, val course: CodeforcesCourse) : 
         if (!task.needToBeUpdated(project, remoteTask)) continue
 
         updatedTasks.add(task.name)
+//        if (isUnitTestMode) continue
+
         updateTaskDescription(task, remoteTask)
+        updateTaskFiles(lesson, task, remoteTask.taskFiles, true)
+
         YamlFormatSynchronizer.saveItem(task)
       }
 
@@ -105,9 +109,5 @@ class CodeforcesCourseUpdater(project: Project, val course: CodeforcesCourse) : 
       @Suppress("USELESS_CAST")
       it as CodeforcesTask
     }
-  }
-
-  companion object {
-    private val LOG: Logger = Logger.getInstance(CodeforcesCourseUpdater::class.java)
   }
 }

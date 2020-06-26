@@ -269,7 +269,7 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val codeforcesTask = CodeforcesTask()
-    task(codeforcesTask, name, taskDescription, null, buildTask = buildTask)
+    task(codeforcesTask, name, taskDescription, DescriptionFormat.HTML, buildTask = buildTask)
   }
 }
 
