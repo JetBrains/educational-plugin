@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduNames
@@ -12,7 +11,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import java.awt.Component
 import javax.swing.Icon
-import kotlin.math.max
 
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.newproject.ui.utils")
 private const val INITIAL_LOGO_SIZE = 16f
@@ -57,5 +55,3 @@ fun browseHyperlink(message: ValidationMessage?) {
     BrowserUtil.browse(hyperlink)
   }
 }
-
-fun Icon.to24() = IconUtil.scale(this, null, JBUIScale.scale(24f / max(iconHeight, iconWidth)))

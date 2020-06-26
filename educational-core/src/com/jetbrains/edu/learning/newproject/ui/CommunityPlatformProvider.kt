@@ -21,7 +21,7 @@ class CommunityPlatformProvider(private val coursesProvider: StepikCoursesProvid
   override val name: String
     get() = EduCoreBundle.message("course.dialog.community.courses")
 
-  override val icon: Icon get() = EducationalCoreIcons.CourseAction.to24()
+  override val icon: Icon get() = EducationalCoreIcons.CommunityCourses
 
   override fun getPanel(dialog: BrowseCoursesDialog): CoursesPanel = CommunityCoursesPanel(dialog, this)
 
