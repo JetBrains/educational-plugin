@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
+import com.jetbrains.edu.learning.yaml.YamlTestCase
 
 open class YamlUndoTest : YamlTestCase() {
 

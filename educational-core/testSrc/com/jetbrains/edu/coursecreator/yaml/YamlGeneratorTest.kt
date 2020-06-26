@@ -10,10 +10,9 @@ import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.CourseGenerationTestBase
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.configuration.PlainTextCourseBuilder
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.checkConfigsExistAndNotEmpty
 
 class YamlGeneratorTest : CourseGenerationTestBase<Unit>() {
   override val defaultSettings: Unit = Unit

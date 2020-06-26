@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.format.yaml
 
-import com.jetbrains.edu.coursecreator.yaml.YamlTestCase
+import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink

@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlTestCase
 import java.util.*
 
 class YamlRemoteDeserializationTest : YamlTestCase() {

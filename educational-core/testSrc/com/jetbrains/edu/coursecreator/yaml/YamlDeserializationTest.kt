@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeSection
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
+import com.jetbrains.edu.learning.yaml.YamlTestCase
 import java.util.*
 
 

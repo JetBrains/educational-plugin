@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.yaml
+package com.jetbrains.edu.learning.yaml
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -7,6 +7,7 @@ import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
@@ -14,8 +15,6 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.YAML_TEST_PROJECT_READY
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.YAML_TEST_THROW_EXCEPTION
-import com.jetbrains.edu.learning.yaml.YamlLoader
-import com.jetbrains.edu.learning.yaml.configFileName
 
 abstract class YamlTestCase : EduTestCase() {
   override fun setUp() {

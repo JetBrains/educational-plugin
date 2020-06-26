@@ -4,6 +4,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.YamlTestCase
 
 
 class YamlChangeApplierTest : YamlTestCase() {

@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.YamlTestCase
 import java.util.*
 
 class YamlRemoteSerializationTest : YamlTestCase() {

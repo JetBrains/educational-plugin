@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.YAML_TEST_PROJECT_READY
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.YAML_TEST_THROW_EXCEPTION
+import com.jetbrains.edu.learning.yaml.YamlTestCase
 
 class YamlTypeChangedTest : YamlTestCase() {
 

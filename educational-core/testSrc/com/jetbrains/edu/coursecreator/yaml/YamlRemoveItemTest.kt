@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.YamlTestCase
 
 
 class YamlRemoveItemTest : YamlTestCase() {

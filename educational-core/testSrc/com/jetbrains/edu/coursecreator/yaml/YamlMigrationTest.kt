@@ -9,6 +9,8 @@ import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.yaml.YamlTestCase
+import com.jetbrains.edu.learning.yaml.checkConfigsExistAndNotEmpty
 
 class YamlMigrationTest : YamlTestCase() {
   fun `test course doesn't serialize into xml`() {
