@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.DataInputOutputUtil
 import com.jetbrains.edu.learning.EduDocumentListener
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import java.io.DataInput
@@ -164,10 +165,8 @@ sealed class Change {
     constructor(input: DataInput): super(input)
 
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
-      task.addTaskFile(path).apply {
-        isLearnerCreated = true
-        setText(text)
-      }
+      val taskFile = TaskFile(path, text).apply { isLearnerCreated = true }
+      task.addTaskFile(taskFile)
     }
 
 
