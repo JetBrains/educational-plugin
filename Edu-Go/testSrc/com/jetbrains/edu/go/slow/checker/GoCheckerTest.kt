@@ -61,13 +61,29 @@ class GoCheckerTest : GoCheckersTestBase() {
               import "fmt"
 
               func main() {
-	              fmt.Println("Yay!")
+	              fmt.Print("Yay!")
               }
           """)
           taskFile("go.mod", """
             module task2
           """)
           taskFile("output.txt","Yay!")
+        }
+        outputTask("OutputMultiline") {
+          goTaskFile("main.go", """
+              package main
+              import "fmt"
+
+              func main() {
+	              fmt.Println("123\n456")
+              }
+          """)
+          taskFile("go.mod", """
+            module task3
+          """)
+          taskFile("output.txt") {
+            withText("123\n456\n")
+          }
         }
       }
     }
