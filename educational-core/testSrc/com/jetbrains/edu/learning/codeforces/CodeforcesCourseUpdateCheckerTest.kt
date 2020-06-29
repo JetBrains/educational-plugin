@@ -5,9 +5,8 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_PROBLEMS
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.EDU_PROJECT_CREATED
 import com.jetbrains.edu.learning.update.CourseUpdateCheckerTestBase
 import java.util.*
 
@@ -43,16 +42,13 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   fun `test check scheduled for not upToDate course with notification`() {
     val taskName = "codeforcesTask"
     val course = courseWithFiles(
-      language = FakeGradleBasedLanguage,
       courseProducer = ::CodeforcesCourse
     ) {
       lesson(CODEFORCES_PROBLEMS) {
-        codeforcesTask(taskName) {
-          kotlinTaskFile("src/Task.kt")
-        }
+        codeforcesTask(taskName)
       }
     } as CodeforcesCourse
-    project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, false)
+    project.putUserData(EDU_PROJECT_CREATED, false)
 
     doTest(CodeforcesCourseUpdateChecker(project, course, testRootDisposable),
            false,
@@ -64,9 +60,9 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
 
   private fun createCodeforcesCourse(date: Date = Date(), isNewlyCreated: Boolean = false): CodeforcesCourse = CodeforcesCourse().apply {
     name = "Test Course"
-    id = 1211
+    id = 1
     updateDate = date
-    project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, isNewlyCreated)
+    project.putUserData(EDU_PROJECT_CREATED, isNewlyCreated)
   }
 
   override fun getTestDataPath(): String = "testData/codeforces/"

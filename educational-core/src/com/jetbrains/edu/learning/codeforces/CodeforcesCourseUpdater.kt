@@ -72,7 +72,6 @@ class CodeforcesCourseUpdater(project: Project, course: CodeforcesCourse) : Cour
         if (!task.needToBeUpdated(project, remoteTask)) continue
 
         updatedTasks.add(task.name)
-//        if (isUnitTestMode) continue
 
         updateTaskDescription(task, remoteTask)
         updateTaskFiles(lesson, task, remoteTask.taskFiles, true)
