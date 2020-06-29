@@ -3,10 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
-import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.util.Disposer
 import com.intellij.ui.FilterComponent
 import com.intellij.ui.JBCardLayout
 import com.intellij.ui.OnePixelSplitter
@@ -15,7 +12,6 @@ import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -122,10 +118,13 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
   }
 
   private fun createNoCoursesPanel(): JPanel {
-    val panel = JBPanelWithEmptyText().withEmptyText(
-      EduCoreBundle.message("course.dialog.no.courses", ApplicationNamesInfo.getInstance().fullProductName))
-    panel.emptyText.appendSecondaryText(EduCoreBundle.message("course.dialog.troubleshooting.guide"), SimpleTextAttributes.LINK_ATTRIBUTES,
-                                        ActionListener { BrowserUtil.browse(EduNames.NO_COURSES_URL) })
+    val panel = JBPanelWithEmptyText()
+    val text = panel.emptyText
+    text.text = EduCoreBundle.message("course.dialog.no.courses", ApplicationNamesInfo.getInstance().fullProductName)
+    text.appendSecondaryText(EduCoreBundle.message("help.use.guide1", EduNames.NO_COURSES_URL) + " ",
+                             SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
+    text.appendSecondaryText(EduCoreBundle.message("help.use.guide2", EduNames.NO_COURSES_URL),
+                             SimpleTextAttributes.LINK_ATTRIBUTES, ActionListener { BrowserUtil.browse(EduNames.NO_COURSES_URL) })
     return panel
   }
 

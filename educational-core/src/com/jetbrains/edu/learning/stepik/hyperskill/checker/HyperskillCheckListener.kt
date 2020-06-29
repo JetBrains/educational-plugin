@@ -10,11 +10,12 @@ import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.ProgressUtil
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.notifyLoginRequired
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 
 class HyperskillCheckListener : CheckListener {
@@ -26,7 +27,15 @@ class HyperskillCheckListener : CheckListener {
 
     if (course.isTaskInProject(task)) {
       if (HyperskillSettings.INSTANCE.account == null) {
-        notifyLoginRequired(project, firstTime = true)
+        Notification(
+          EduNames.JBA,
+          EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
+          EduCoreBundle.message("error.login.required", EduNames.JBA),
+          NotificationType.ERROR
+        ) { notification, e ->
+          notification.expire()
+          HyperskillLoginListener.hyperlinkUpdate(e)
+        }.notify(project)
         return
       }
 

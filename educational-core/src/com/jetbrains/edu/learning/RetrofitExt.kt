@@ -7,7 +7,7 @@ import com.intellij.util.net.HttpConfigurable
 import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.hyperskill.FAILED_TO_POST_TO_JBA
+import com.jetbrains.edu.learning.stepik.hyperskill.failedToPostToJBA
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
@@ -106,7 +106,7 @@ fun <T> Call<T>.executeHandlingExceptions(omitErrors: Boolean = false): Response
 fun <T, R> Call<T>.executeAndExtractFirst(extractResult: T.() -> List<R>): Result<R, String> {
   return executeParsingErrors(true).flatMap {
     val result = it.body()?.extractResult()?.firstOrNull()
-    if (result == null) Err(FAILED_TO_POST_TO_JBA) else Ok(result)
+    if (result == null) Err(failedToPostToJBA) else Ok(result)
   }
 }
 

@@ -66,7 +66,7 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
   override fun areTestsFailedToRun(testRoots: List<SMTestProxy.SMRootTestProxy>): Boolean {
     if (super.areTestsFailedToRun(testRoots)) return true
     val result = testRoots.firstOrNull()?.toCheckResult() ?: return false
-    return SYNTAX_ERRORS.any { it.contains(result.message) }
+    return SYNTAX_ERRORS.any { it in result.message }
   }
 
   private fun getSyntaxError(indicator: ProgressIndicator): String? {

@@ -4,7 +4,6 @@ import com.jetbrains.edu.learning.EduNames.FAILED_TO_CHECK_URL
 import com.jetbrains.edu.learning.EduNames.NO_TESTS_URL
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.xmlEscaped
 import javax.swing.event.HyperlinkListener
 
 data class CheckResult @JvmOverloads constructor(
@@ -26,21 +25,18 @@ data class CheckResult @JvmOverloads constructor(
     @JvmField val SOLVED = CheckResult(CheckStatus.Solved, "")
     @JvmField val CANCELED = CheckResult(CheckStatus.Unchecked, "Canceled")
 
-    val noTestsRun
+    val noTestsRun: CheckResult
       get() = CheckResult(
         CheckStatus.Unchecked,
         "${EduCoreBundle.message("check.no.tests")}. ${EduCoreBundle.message("help.use.guide", NO_TESTS_URL)}"
       )
 
     @JvmStatic
-    val failedToCheck
+    val failedToCheck: CheckResult
       get() = CheckResult(
         CheckStatus.Unchecked,
         "${CheckUtils.FAILED_TO_CHECK_MESSAGE}. ${EduCoreBundle.message("help.use.guide", FAILED_TO_CHECK_URL)}"
       )
-
-    val CheckResult.escaped: CheckResult
-      get() = if (status == CheckStatus.Failed) copy(message = message.xmlEscaped) else this
   }
 }
 

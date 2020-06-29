@@ -26,9 +26,7 @@ open class GradleEduTaskChecker(task: EduTask, protected val envChecker: Environ
       return CheckResult(CheckStatus.Solved, EduJVMBundle.message("task.marked.completed"))
     }
 
-    return GradleCommandLine.create(project, taskName, *params.toTypedArray())
-             ?.launchAndCheck(indicator)
-           ?: failedToCheck
+    return GradleCommandLine.create(project, taskName, *params.toTypedArray())?.launchAndCheck(indicator) ?: failedToCheck
   }
 
   protected open fun getGradleTask() = GradleTask("${getGradleProjectName(task)}:$TEST_TASK_NAME")
