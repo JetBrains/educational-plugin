@@ -39,7 +39,7 @@ class RsCodeExecutor : CodeExecutor {
       processOutput.isSuccess -> Ok(output.prepareToCheck())
       output.contains(COMPILATION_ERROR_MESSAGE, true) ->
         Err(CheckResult(CheckStatus.Failed, COMPILATION_FAILED_MESSAGE, output))
-      else -> Err(CheckResult.FAILED_TO_CHECK)
+      else -> Err(CheckResult.failedToCheck)
     }
   }
 

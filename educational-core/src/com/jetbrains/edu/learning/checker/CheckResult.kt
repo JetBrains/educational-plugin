@@ -26,14 +26,14 @@ data class CheckResult @JvmOverloads constructor(
     @JvmField val SOLVED = CheckResult(CheckStatus.Solved, "")
     @JvmField val CANCELED = CheckResult(CheckStatus.Unchecked, "Canceled")
 
-    val NO_TESTS_RUN
+    val noTestsRun
       get() = CheckResult(
         CheckStatus.Unchecked,
         "${EduCoreBundle.message("check.no.tests")}. ${EduCoreBundle.message("help.use.guide", NO_TESTS_URL)}"
       )
 
     @JvmStatic
-    val FAILED_TO_CHECK
+    val failedToCheck
       get() = CheckResult(
         CheckStatus.Unchecked,
         "${CheckUtils.FAILED_TO_CHECK_MESSAGE}. ${EduCoreBundle.message("help.use.guide", FAILED_TO_CHECK_URL)}"

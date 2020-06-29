@@ -22,7 +22,7 @@ class KtNewGradleTaskChecker(task: EduTask, envChecker: EnvironmentChecker, proj
     return if (task.hasSeparateModule(project)) {
       super.computePossibleErrorResult(indicator, stderr)
     } else  {
-      GradleCommandLine.create(project, "testClasses")?.launchAndCheck(indicator) ?: CheckResult.FAILED_TO_CHECK
+      GradleCommandLine.create(project, "testClasses")?.launchAndCheck(indicator) ?: CheckResult.failedToCheck
     }
   }
 

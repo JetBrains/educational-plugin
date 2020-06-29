@@ -56,7 +56,7 @@ class PyCCTestEventsConverter(
     if (PROCESS_FINISHED in text) {
       if (nextId == 2) {
         // `nextId == 2` means that converter didn't receive any test result
-        val failedMessage = TestMessage.Failed(ROOT_SUITE_NAME, CheckResult.NO_TESTS_RUN.message)
+        val failedMessage = TestMessage.Failed(ROOT_SUITE_NAME, CheckResult.noTestsRun.message)
         messages += createTestFailedMessage(ROOT_SUIT_ID.toInt(), failedMessage)
       }
       messages += createTestSuiteFinishedMessage()

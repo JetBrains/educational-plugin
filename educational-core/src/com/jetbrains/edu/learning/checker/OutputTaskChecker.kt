@@ -6,7 +6,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.checker.CheckResult.Companion.FAILED_TO_CHECK
+import com.jetbrains.edu.learning.checker.CheckResult.Companion.failedToCheck
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
@@ -38,14 +38,14 @@ open class OutputTaskChecker(
       val outputPatternFile = getOutputFile()
       if (outputPatternFile == null) {
         LOG.warn("Failed to find `output.txt` file (output task `${task.lesson.name}/${task.name}`)")
-        return FAILED_TO_CHECK
+        return failedToCheck
       }
       val expectedOutput = VfsUtil.loadText(outputPatternFile)
       return checkOutput(outputString, expectedOutput)
     }
     catch (e: Exception) {
       LOG.error(e)
-      return FAILED_TO_CHECK
+      return failedToCheck
     }
   }
 

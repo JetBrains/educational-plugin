@@ -13,7 +13,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
-import com.jetbrains.edu.learning.checker.CheckResult.Companion.NO_TESTS_RUN
+import com.jetbrains.edu.learning.checker.CheckResult.Companion.noTestsRun
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -40,7 +40,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
       it.isTemporary = true
     }
 
-    if (configurations.isEmpty()) return NO_TESTS_RUN
+    if (configurations.isEmpty()) return noTestsRun
 
     val testRoots = mutableListOf<SMTestProxy.SMRootTestProxy>()
     val testEventsListener = object : SMTRunnerEventsAdapter() {
@@ -71,7 +71,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
         testEventsListener = testEventsListener
       )) {
       LOG.warn("Execution failed because the configuration is broken")
-      return NO_TESTS_RUN
+      return noTestsRun
     }
 
     // We need to invoke all current pending EDT actions to get proper states of test roots.
@@ -87,7 +87,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     }
 
     val testResults = testRoots.map { it.toCheckResult() }
-    if (testResults.isEmpty()) return NO_TESTS_RUN
+    if (testResults.isEmpty()) return noTestsRun
 
     val firstFailure = testResults.firstOrNull { it.status != CheckStatus.Solved }
     return firstFailure ?: testResults.first()

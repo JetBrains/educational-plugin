@@ -80,7 +80,7 @@ public class StepikCheckerConnector {
       return result;
     }
 
-    return CheckResult.getFAILED_TO_CHECK();
+    return CheckResult.getFailedToCheck();
   }
 
   @NotNull
@@ -139,7 +139,7 @@ public class StepikCheckerConnector {
     else {
       LOG.warn("Got an incorrect attempt id: " + attemptId);
     }
-    return CheckResult.getFAILED_TO_CHECK();
+    return CheckResult.getFailedToCheck();
   }
 
   private static CheckResult doCheck(@NotNull SubmissionData submissionData,
@@ -150,7 +150,7 @@ public class StepikCheckerConnector {
         SubmissionsManager.getInstance(project).addToSubmissions(task.getId(), submission);
       }
       final String status = submission.getStatus();
-      if (status == null) return CheckResult.getFAILED_TO_CHECK();
+      if (status == null) return CheckResult.getFailedToCheck();
       final String hint = submission.getHint();
       final boolean isSolved = !status.equals(EduNames.WRONG);
       String message = hint;

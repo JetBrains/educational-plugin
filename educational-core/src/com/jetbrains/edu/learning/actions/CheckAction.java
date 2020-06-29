@@ -271,7 +271,7 @@ public class CheckAction extends DumbAwareAction {
     @Override
     public void onThrowable(@NotNull Throwable error) {
       super.onThrowable(error);
-      myResult = CheckResult.getFAILED_TO_CHECK();
+      myResult = CheckResult.getFailedToCheck();
       TaskDescriptionView.getInstance(myProject).checkFinished(myTask, myResult);
       finishChecking();
     }

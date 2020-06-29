@@ -4,7 +4,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.CheckResult.Companion.FAILED_TO_CHECK
+import com.jetbrains.edu.learning.checker.CheckResult.Companion.failedToCheck
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -20,7 +20,7 @@ open class GradleEduTaskChecker(task: EduTask, protected val envChecker: Environ
 
     val (taskName, params) = getGradleTask()
 
-    val testDirs = task.course.configurator?.testDirs ?: return FAILED_TO_CHECK
+    val testDirs = task.course.configurator?.testDirs ?: return failedToCheck
     val hasTestFiles = task.taskFiles.any { (path, _) -> testDirs.any { path.startsWith(it) } }
     if (!hasTestFiles) {
       return CheckResult(CheckStatus.Solved, EduJVMBundle.message("task.marked.completed"))
@@ -28,7 +28,7 @@ open class GradleEduTaskChecker(task: EduTask, protected val envChecker: Environ
 
     return GradleCommandLine.create(project, taskName, *params.toTypedArray())
              ?.launchAndCheck(indicator)
-             ?: FAILED_TO_CHECK
+           ?: failedToCheck
   }
 
   protected open fun getGradleTask() = GradleTask("${getGradleProjectName(task)}:$TEST_TASK_NAME")

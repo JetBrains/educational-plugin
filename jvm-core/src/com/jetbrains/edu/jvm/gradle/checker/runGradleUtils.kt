@@ -54,7 +54,7 @@ class GradleCommandLine private constructor(
 ) {
 
   fun launchAndCheck(indicator: ProgressIndicator): CheckResult {
-    val output = launch(indicator) ?: return CheckResult.FAILED_TO_CHECK
+    val output = launch(indicator) ?: return CheckResult.failedToCheck
     if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.firstMessage.xmlEscaped, output.messages.joinToString("\n"))
 
     // TODO: do not use `TestsOutputParser` here
@@ -158,7 +158,7 @@ fun runGradleRunTask(
 
   val gradleOutput = GradleCommandLine.create(project, taskName, "$MAIN_CLASS_PROPERTY_PREFIX$mainClassName")
     ?.launch(indicator)
-    ?: return Err(CheckResult.FAILED_TO_CHECK)
+    ?: return Err(CheckResult.failedToCheck)
 
   if (!gradleOutput.isSuccess) {
     return Err(

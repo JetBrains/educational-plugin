@@ -39,12 +39,12 @@ class AndroidChecker(task: EduTask, envChecker: EnvironmentChecker, project: Pro
     val assembleTask = "$taskModuleName:assemble"
 
     indicator.text = EduAndroidBundle.message("building.task")
-    val assembleResult = GradleCommandLine.create(project, assembleTask)?.launchAndCheck(indicator) ?: CheckResult.FAILED_TO_CHECK
+    val assembleResult = GradleCommandLine.create(project, assembleTask)?.launchAndCheck(indicator) ?: CheckResult.failedToCheck
     if (assembleResult.status != CheckStatus.Solved) return assembleResult
 
     indicator.text = EduAndroidBundle.message("running.unit.tests")
     val unitTestTask = "$taskModuleName:testDebugUnitTest"
-    val unitTestResult = GradleCommandLine.create(project, unitTestTask)?.launchAndCheck(indicator) ?: CheckResult.FAILED_TO_CHECK
+    val unitTestResult = GradleCommandLine.create(project, unitTestTask)?.launchAndCheck(indicator) ?: CheckResult.failedToCheck
     if (unitTestResult.status != CheckStatus.Solved) return unitTestResult
 
     val hasInstrumentedTests = task.taskFiles.any { (path, _) -> path.startsWith("src/androidTest") && !path.endsWith("AndroidEduTestRunner.kt") }
@@ -60,11 +60,11 @@ class AndroidChecker(task: EduTask, envChecker: EnvironmentChecker, project: Pro
       LOG.warn("Failed to launch emulator", e)
       false
     }
-    if (!emulatorLaunched) return CheckResult.FAILED_TO_CHECK
+    if (!emulatorLaunched) return CheckResult.failedToCheck
 
     indicator.text = EduAndroidBundle.message("running.instrumented.tests")
     val instrumentedTestTask = "$taskModuleName:connectedDebugAndroidTest"
-    return GradleCommandLine.create(project, instrumentedTestTask)?.launchAndCheck(indicator) ?: CheckResult.FAILED_TO_CHECK
+    return GradleCommandLine.create(project, instrumentedTestTask)?.launchAndCheck(indicator) ?: CheckResult.failedToCheck
   }
 
   override fun clearState() {
