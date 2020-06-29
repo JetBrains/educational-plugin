@@ -80,7 +80,13 @@ fun createTextPane(): JTextPane {
   val editorKit = UIUtil.JBWordWrapHtmlEditorKit()
   prepareCss(editorKit)
 
-  val textPane = JTextPane()
+  val textPane = object : JTextPane() {
+    override fun getSelectedText(): String {
+      // see EDU-3185
+      return super.getSelectedText().replace(Typography.nbsp, ' ')
+    }
+  }
+
   textPane.contentType = editorKit.contentType
   textPane.editorKit = editorKit
   textPane.isEditable = false
