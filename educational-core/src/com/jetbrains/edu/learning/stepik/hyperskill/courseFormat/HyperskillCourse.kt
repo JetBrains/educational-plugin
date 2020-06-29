@@ -47,4 +47,6 @@ class HyperskillCourse : Course {
   override fun getId(): Int {
     return hyperskillProject?.id ?: super.getId()
   }
+
+  override fun isViewAsEducatorEnabled(): Boolean = false
 }

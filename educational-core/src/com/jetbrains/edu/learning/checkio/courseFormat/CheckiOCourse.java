@@ -41,4 +41,9 @@ public class CheckiOCourse extends Course {
   public String getItemType() {
     return CHECKIO_TYPE;
   }
+
+  @Override
+  public boolean isViewAsEducatorEnabled() {
+    return false;
+  }
 }
