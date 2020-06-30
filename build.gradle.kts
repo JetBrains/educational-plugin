@@ -154,34 +154,34 @@ allprojects {
 
   dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    compile(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
-    compile("org.jsoup:jsoup:1.11.2")
-    compile("org.jetbrains:markdown:0.1.41") {
+    implementation(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
+    implementation("org.jsoup:jsoup:1.11.2")
+    implementation("org.jetbrains:markdown:0.1.41") {
       excludeKotlinDeps()
     }
 
-    compile(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion) {
+    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion) {
       exclude(module = "snakeyaml")
     }
     //transitive dependency is specified explicitly to avoid conflict with lib bundled since idea 181
-    compile(group = "com.fasterxml.jackson.core", name = "jackson-core", version = jacksonVersion)
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = jacksonVersion)
 
     //transitive dependency is specified explicitly because of the issue https://github.com/FasterXML/jackson-dataformats-text/issues/81
     //intellij platform uses affected snakeyaml version inside
-    compile(group = "org.yaml", name = "snakeyaml", version = "1.21")
-    compile(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion) {
+    implementation(group = "org.yaml", name = "snakeyaml", version = "1.21")
+    implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion) {
       excludeKotlinDeps()
     }
 
-    compile("com.squareup.retrofit2:retrofit:2.4.0")
-    compile("com.squareup.retrofit2:converter-jackson:2.3.0")
-    compile("com.squareup.retrofit2:converter-gson:2.4.0")
-    compile("com.squareup.okhttp3:logging-interceptor:3.14.0")
-    compile("org.jetbrains:kotlin-css-jvm:1.0.0-pre.58-kotlin-1.3.0") {
+    implementation("com.squareup.retrofit2:retrofit:2.4.0")
+    implementation("com.squareup.retrofit2:converter-jackson:2.3.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.4.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:3.14.0")
+    implementation("org.jetbrains:kotlin-css-jvm:1.0.0-pre.58-kotlin-1.3.0") {
       excludeKotlinDeps()
     }
 
-    testCompile("com.squareup.okhttp3:mockwebserver:3.14.0")
+    testImplementation("com.squareup.okhttp3:mockwebserver:3.14.0")
   }
 }
 
@@ -253,20 +253,20 @@ project(":") {
   }
 
   dependencies {
-    compile(project(":educational-core"))
-    compile(project(":jvm-core"))
-    compile(project(":Edu-YAML"))
-    compile(project(":Edu-Java"))
-    compile(project(":Edu-Kotlin"))
-    compile(project(":Edu-Python"))
-    compile(project(":Edu-Python:Idea"))
-    compile(project(":Edu-Python:PyCharm"))
-    compile(project(":Edu-Scala"))
-    compile(project(":Edu-Android"))
-    compile(project(":Edu-JavaScript"))
-    compile(project(":Edu-Rust"))
-    compile(project(":Edu-Cpp"))
-    compile(project(":Edu-Go"))
+    implementation(project(":educational-core"))
+    implementation(project(":jvm-core"))
+    implementation(project(":Edu-YAML"))
+    implementation(project(":Edu-Java"))
+    implementation(project(":Edu-Kotlin"))
+    implementation(project(":Edu-Python"))
+    implementation(project(":Edu-Python:Idea"))
+    implementation(project(":Edu-Python:PyCharm"))
+    implementation(project(":Edu-Scala"))
+    implementation(project(":Edu-Android"))
+    implementation(project(":Edu-JavaScript"))
+    implementation(project(":Edu-Rust"))
+    implementation(project(":Edu-Cpp"))
+    implementation(project(":Edu-Go"))
   }
 
   val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
@@ -383,8 +383,8 @@ project(":jvm-core") {
   val testOutput = configurations.create("testOutput")
 
   dependencies {
-    compile(project(":educational-core"))
-    testCompile(project(":educational-core", "testOutput"))
+    implementation(project(":educational-core"))
+    testImplementation(project(":educational-core", "testOutput"))
 
     testOutput(sourceSets.getByName("test").output.classesDirs)
   }
@@ -396,8 +396,8 @@ project(":Edu-YAML") {
   }
 
   dependencies {
-    compile(project(":educational-core"))
-    testCompile(project(":educational-core", "testOutput"))
+    implementation(project(":educational-core"))
+    testImplementation(project(":educational-core", "testOutput"))
   }
 }
 
@@ -418,10 +418,10 @@ project(":Edu-Java") {
   }
 
   dependencies {
-    compile(project(":educational-core"))
-    compile(project(":jvm-core"))
-    testCompile(project(":educational-core", "testOutput"))
-    testCompile(project(":jvm-core", "testOutput"))
+    implementation(project(":educational-core"))
+    implementation(project(":jvm-core"))
+    testImplementation(project(":educational-core", "testOutput"))
+    testImplementation(project(":jvm-core", "testOutput"))
   }
 }
 
@@ -444,10 +444,10 @@ project(":Edu-Kotlin") {
   }
 
   dependencies {
-    compile(project(":educational-core"))
-    compile(project(":jvm-core"))
-    testCompile(project(":educational-core", "testOutput"))
-    testCompile(project(":jvm-core", "testOutput"))
+    implementation(project(":educational-core"))
+    implementation(project(":jvm-core"))
+    testImplementation(project(":educational-core", "testOutput"))
+    testImplementation(project(":jvm-core", "testOutput"))
   }
 }
 
@@ -468,10 +468,10 @@ project(":Edu-Scala") {
   }
 
   dependencies {
-    compile(project(":educational-core"))
-    compile(project(":jvm-core"))
-    testCompile(project(":educational-core", "testOutput"))
-    testCompile(project(":jvm-core", "testOutput"))
+    implementation(project(":educational-core"))
+    implementation(project(":jvm-core"))
+    testImplementation(project(":educational-core", "testOutput"))
+    testImplementation(project(":jvm-core", "testOutput"))
   }
 }
 
@@ -498,10 +498,10 @@ project(":Edu-Android") {
   }
 
   dependencies {
-    compile(project(":educational-core"))
-    compile(project(":jvm-core"))
-    testCompile(project(":educational-core", "testOutput"))
-    testCompile(project(":jvm-core", "testOutput"))
+    implementation(project(":educational-core"))
+    implementation(project(":jvm-core"))
+    testImplementation(project(":educational-core", "testOutput"))
+    testImplementation(project(":jvm-core", "testOutput"))
   }
 
   // BACKCOMPAT: enable when 202 studio is available
@@ -522,10 +522,10 @@ project(":Edu-Python") {
   }
 
   dependencies {
-    compile(project(":educational-core"))
-    testCompile(project(":educational-core", "testOutput"))
-    testCompile(project(":Edu-Python:Idea"))
-    testCompile(project(":Edu-Python:PyCharm"))
+    implementation(project(":educational-core"))
+    testImplementation(project(":educational-core", "testOutput"))
+    testImplementation(project(":Edu-Python:Idea"))
+    testImplementation(project(":Edu-Python:PyCharm"))
   }
 }
 
@@ -546,9 +546,9 @@ project(":Edu-Python:Idea") {
   }
 
   dependencies {
-    compile(project(":educational-core"))
+    implementation(project(":educational-core"))
     compileOnly(project(":Edu-Python"))
-    testCompile(project(":educational-core", "testOutput"))
+    testImplementation(project(":educational-core", "testOutput"))
   }
 }
 
@@ -564,9 +564,9 @@ project(":Edu-Python:PyCharm") {
   }
 
   dependencies {
-    compile(project(":educational-core"))
+    implementation(project(":educational-core"))
     compileOnly(project(":Edu-Python"))
-    testCompile(project(":educational-core", "testOutput"))
+    testImplementation(project(":educational-core", "testOutput"))
   }
 }
 
@@ -587,8 +587,8 @@ project(":Edu-JavaScript") {
     setPlugins(*plugins.toTypedArray())
   }
   dependencies {
-    compile(project(":educational-core"))
-    testCompile(project(":educational-core", "testOutput"))
+    implementation(project(":educational-core"))
+    testImplementation(project(":educational-core", "testOutput"))
   }
 }
 
@@ -598,8 +598,8 @@ project(":Edu-Rust") {
   }
 
   dependencies {
-    compile(project(":educational-core"))
-    testCompile(project(":educational-core", "testOutput"))
+    implementation(project(":educational-core"))
+    testImplementation(project(":educational-core", "testOutput"))
   }
 }
 
@@ -611,8 +611,8 @@ project(":Edu-Cpp") {
 }
 
   dependencies {
-    compile(project(":educational-core"))
-    testCompile(project(":educational-core", "testOutput"))
+    implementation(project(":educational-core"))
+    testImplementation(project(":educational-core", "testOutput"))
   }
 }
 
@@ -624,8 +624,8 @@ project(":Edu-Go") {
   }
 
   dependencies {
-    compile(project(":educational-core"))
-    testCompile(project(":educational-core", "testOutput"))
+    implementation(project(":educational-core"))
+    testImplementation(project(":educational-core", "testOutput"))
   }
 }
 
