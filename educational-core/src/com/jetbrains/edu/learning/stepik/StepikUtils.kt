@@ -30,19 +30,10 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
-import java.io.IOException
-import java.net.URL
 
-private const val PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt"
-private const val IN_PROGRESS_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/in_progress_courses.txt"
-private const val FEATURED_STEPIK_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_stepik_courses.txt"
 const val UPDATE_NOTIFICATION_GROUP_ID = "Update.course"
 
 private val LOG = Logger.getInstance(StepikAuthorizer::class.java)
-
-val featuredCourses: List<Int> = getCoursesIds(PROMOTED_COURSES_LINK)
-val inProgressCourses: List<Int> = getCoursesIds(IN_PROGRESS_COURSES_LINK)
-val featuredStepikCourses: Map<Int, MutableList<String>> = getCourseIdsWithLanguage(FEATURED_STEPIK_COURSES_LINK)
 
 fun setCourseLanguageEnvironment(info: EduCourse) {
   val courseFormat = info.type
@@ -94,39 +85,3 @@ fun notificationListener(project: Project,
       "Updating Course", true, project)
   }
 }
-
-private fun getCourseIdsWithLanguage(link: String): Map<Int, MutableList<String>> {
-  val text = getTextFromLink(link) ?: return emptyMap()
-  val result = mutableMapOf<Int, MutableList<String>>()
-  text.lines().forEach {
-    val partWithoutComment = it.split("#")[0]
-    val idWithLanguage = partWithoutComment.split(" ")
-    val id = idWithLanguage[0].trim().toInt()
-    val language = idWithLanguage[1].trim()
-
-    if (result.containsKey(id)) {
-      result[id]?.add(language)
-    }
-    else {
-      result[id] = mutableListOf(language)
-    }
-  }
-  return result
-}
-
-private fun getCoursesIds(link: String): List<Int> {
-  val text = getTextFromLink(link) ?: return emptyList()
-  return text.lines().map { it.split("#")[0].trim().toInt() }
-}
-
-private fun getTextFromLink(link: String): String? {
-  val url = URL(link)
-  return try {
-    url.readText()
-  }
-  catch (e: IOException) {
-    LOG.warn("Failed to retrieve content of '$link'", e)
-    null
-  }
-}
-

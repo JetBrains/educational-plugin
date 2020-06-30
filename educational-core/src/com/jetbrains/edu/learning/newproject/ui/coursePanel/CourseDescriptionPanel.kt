@@ -5,9 +5,8 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.stepik.ListedCoursesIdsProvider
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
-import com.jetbrains.edu.learning.stepik.featuredCourses
-import com.jetbrains.edu.learning.stepik.inProgressCourses
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import kotlinx.css.CSSBuilder
 import kotlinx.css.properties.lh
@@ -95,9 +94,9 @@ private class CourseDescriptionHtmlPanel : CourseHtmlPanel() {
       return this is EduCourse
              && isRemote
              && isPublic
-             && !featuredCourses.contains(id)
+             && !ListedCoursesIdsProvider.featuredCommunityCourses.contains(id)
              && this !is StepikCourse
-             && !inProgressCourses.contains(id)
+             && !ListedCoursesIdsProvider.inProgressCourses.contains(id)
     }
 }
 

@@ -1,0 +1,65 @@
+##Community
+4222 # Kotlin Koans
+20403 # AtomicKotlin
+238  # Introduction to Python
+3215 # Logging in Python
+3216 # Introduction to Classic Ciphers
+3213 # Python Unit-Testing Course
+3212 # Django Tutorial
+2057 # Python. Functional Programmingљ
+54532 # Beam Kata - Python
+54530 # Beam Kata - Java
+55498 # Scala Tutorial
+59778 # Rustlings
+7 # Программирование на языке C++
+3206 # Программирование на языке C++ (продолжение)
+70387 # Beam Katas - Go
+72488 # Beam Katas - Kotlin
+##InProgress
+6858 # Java. Introduction
+6859 # Java. Statements and Arrays
+6864 # Java. Classes
+6860 # Java. Collections
+##Stepik
+3432 # JavaScript # JavaScript for Beginners
+16243 # Scala # Введение в Scala
+7 # ObjectiveC # Программирование на языке C++
+3206 # ObjectiveC # Программирование на языке C++ (продолжение)
+16243 # Scala # Введение в Scala
+7 # ObjectiveC # Программирование на языке C++
+3206 # ObjectiveC # Программирование на языке C++ (продолжение)
+1595 # JAVA # Java. Functional programming (Java)
+2057 # Python # Python. Functional Programming (Python)
+2 # Python # Bioinformatics Algorithms
+49181 # Scala # Introduction to programming with dependent types in Scala (2019)
+3032 # Python # CloudCoder Exercises (Python)
+3032 # ObjectiveC # CloudCoder Exercises (C++)
+3032 # JAVA # CloudCoder Exercises (Java)
+579 # ObjectiveC # Data Structures (C++)
+579 # Python # Data Structures (Python)
+5482 # Python # Основы программирования (Python)
+5482 # JAVA # Основы программирования (Java)
+5482 # ObjectiveC # Основы программирования (C++)
+5482 # Scala # Основы программирования (Scala)
+187 # JAVA # Java. Базовый курс
+512 # Python # Python: основы и применение
+50352 # Python # Нейронные сети и компьютерное зрение
+217 # Python # Алгоритмы: теория и практика. Методы (Python)
+217 # JAVA # Алгоритмы: теория и практика. Методы (Java)
+217 # ObjectiveC # Алгоритмы: теория и практика. Методы (C++)
+2223 # JavaScript # JavaScript для начинающих
+401 # Python # Нейронные сети
+150 # JAVA # Hadoop. Система для обработки больших объемов данных (Java)
+150 # Python # Hadoop. Система для обработки больших объемов данных (Python)
+4792 # kotlin # Разработка Android-приложений на Kotlin
+3693 # ObjectiveC # Задачи по программированию на языке C++
+5448 # kotlin # Введение в Kotlin JVM
+149 # ObjectiveC # Многопоточное программирование на С/С++
+1547 # ObjectiveC # Алгоритмы: теория и практика. Структуры данных (C++)
+1547 # JAVA # Алгоритмы: теория и практика. Структуры данных (Java)
+1547 # Python # Алгоритмы: теория и практика. Структуры данных (Python)
+153 # ObjectiveC # Углубленное программирование на C/C++
+5703 # kotlin # Разработка мобильных приложений для Android (Kotlin)
+5703 # JAVA # Разработка мобильных приложений для Android (Java)
+1280 # Python # Обработка изображений
+54403 # Go # Программирование на Golang

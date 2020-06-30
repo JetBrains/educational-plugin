@@ -7,8 +7,8 @@ import com.intellij.util.io.ZipUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.ListedCoursesIdsProvider
 import com.jetbrains.edu.learning.stepik.api.StepikCoursesProvider
-import com.jetbrains.edu.learning.stepik.featuredCourses
 import icons.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
 import java.io.File
@@ -28,7 +28,7 @@ class CommunityPlatformProvider(private val coursesProvider: StepikCoursesProvid
   override suspend fun loadCourses(): List<Course> {
     val communityCourses = coursesProvider.getCommunityCourses()
 
-    val featuredCourses = communityCourses.filter { it.id in featuredCourses }
+    val featuredCourses = communityCourses.filter { it.id in ListedCoursesIdsProvider.featuredStepikCourses }
     val bundledCourses = loadBundledCourses().filter { bundled ->
       featuredCourses.none { featured ->
         featured.name != bundled.name

@@ -95,7 +95,7 @@ public class EduCourse extends Course {
 
   public int getFormatVersion() {
     final int languageSeparator = myType.indexOf(" ");
-    if (languageSeparator != -1) {
+    if (languageSeparator != -1 && myType.contains(StepikNames.PYCHARM_PREFIX)) {
       String formatVersion = myType.substring(StepikNames.PYCHARM_PREFIX.length(), languageSeparator);
       try {
         return Integer.parseInt(formatVersion);

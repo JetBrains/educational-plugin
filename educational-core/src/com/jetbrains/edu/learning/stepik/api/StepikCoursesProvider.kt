@@ -8,10 +8,9 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.stepik.ListedCoursesIdsProvider
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.course.stepikCourseFromRemote
-import com.jetbrains.edu.learning.stepik.featuredStepikCourses
-import com.jetbrains.edu.learning.stepik.inProgressCourses
 import kotlinx.coroutines.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -123,16 +122,17 @@ class StepikCoursesProvider : CoroutineScope {
   }
 
   private fun loadListedStepikCourses(): List<StepikCourse> {
-    val courses = StepikConnector.getInstance().getCourses(featuredStepikCourses.keys.plus(inProgressCourses)) ?: return emptyList()
+    val listedCoursesIds = ListedCoursesIdsProvider.featuredStepikCourses.keys + ListedCoursesIdsProvider.inProgressCourses
+    val courses = StepikConnector.getInstance().getCourses(listedCoursesIds) ?: return emptyList()
     val result = mutableListOf<StepikCourse>()
     courses.forEach { course ->
       val courseId = course.id
-      val languages = featuredStepikCourses[courseId]
+      val languages = ListedCoursesIdsProvider.featuredStepikCourses[courseId]
 
       fun addCourse() {
         val remoteCourse = stepikCourseFromRemote(course) ?: return
-        if (inProgressCourses.contains(courseId)) {
-          remoteCourse.visibility = CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(courseId))
+        if (ListedCoursesIdsProvider.inProgressCourses.contains(courseId)) {
+          remoteCourse.visibility = CourseVisibility.InProgressVisibility(ListedCoursesIdsProvider.inProgressCourses.indexOf(courseId))
         }
         remoteCourse.let { result.add(it) }
       }

@@ -11,11 +11,10 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.stepik.ListedCoursesIdsProvider
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.featuredCourses
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.setCourseLanguageEnvironment
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.min
@@ -54,10 +53,11 @@ private fun AtomicInteger.compareAndUpdateValue(newPage: Int) {
 }
 
 private fun getVisibility(course: EduCourse): CourseVisibility {
+  val communityCourses = ListedCoursesIdsProvider.featuredCommunityCourses
   return when {
     !course.isPublic -> CourseVisibility.PrivateVisibility
-    featuredCourses.contains(course.id) -> CourseVisibility.FeaturedVisibility(featuredCourses.indexOf(course.id))
-    featuredCourses.isEmpty() -> CourseVisibility.LocalVisibility
+    communityCourses.contains(course.id) -> CourseVisibility.FeaturedVisibility(communityCourses.indexOf(course.id))
+    communityCourses.isEmpty() -> CourseVisibility.LocalVisibility
     else -> CourseVisibility.PublicVisibility
   }
 }
