@@ -1,10 +1,8 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.icons.AllIcons
-import com.intellij.ui.ColorUtil
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBScrollPane
-import com.intellij.util.ui.HtmlPanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
@@ -40,7 +38,8 @@ class TabInfoPanel(tabInfo: TabInfo) : JPanel() {
       add(loginComponent, BorderLayout.NORTH)
     }
 
-    val infoPanel = TabInfoHtmlPanel()
+    val linkText = if (infoLink != null) " <a href='${infoLink.url}'>${infoLink.text}</a>" else ""
+    val infoPanel = GrayTextHtmlPanel(infoText, linkText)
     infoPanel.border = JBUI.Borders.empty(TOP_BOTTOM_INFO_OFFSET, LEFT_RIGHT_OFFSET)
     val scrollPane = JBScrollPane(infoPanel).apply {
       verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER
@@ -55,19 +54,6 @@ class TabInfoPanel(tabInfo: TabInfo) : JPanel() {
     loginComponent?.isVisible = false
   }
 
-  private inner class TabInfoHtmlPanel : HtmlPanel() {
-    init {
-      super.update()
-    }
-
-    private val link get() = if (infoLink != null) " <a href='${infoLink.url}'>${infoLink.text}</a>" else ""
-
-    override fun getBody(): String = "<span style='color: $color'>$infoText</span> $link"
-
-    private val color get() = "#${ColorUtil.toHex(GRAY_COLOR)}"
-
-    override fun getBodyFont(): Font = font.deriveFont(JBUI.scaleFontSize(FONT_SIZE))
-  }
 }
 
 open class LoginPanel(isVisible: Boolean, beforeLinkText: String, linkText: String, loginHandler: () -> Unit) : JPanel(BorderLayout()) {

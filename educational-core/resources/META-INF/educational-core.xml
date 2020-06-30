@@ -285,6 +285,10 @@
     <experimentalFeature id="edu.course.marketplace" percentOfUsers="100" internalFeature="true">
       <description>Enables marketplace integration</description>
     </experimentalFeature>
+
+    <welcomeTabFactory id="EducationalWelcomeTab"
+                       implementation="com.jetbrains.edu.learning.newproject.ui.welcomeScreen.EduWelcomeTabFactory"
+                       order="first"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
