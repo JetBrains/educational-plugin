@@ -30,10 +30,15 @@ class PyCheckerFixture : EduCheckerFixture<PyNewProjectSettings>() {
   }
 
   override fun getSkipTestReason(): String? {
-    return if (DEFAULT_SDK_LOCATION == null) "no Python SDK location defined" else super.getSkipTestReason()
+    return if (DEFAULT_SDK_LOCATION == null) {
+      "No Python SDK location defined. Use `$PYTHON_SDK` environment variable to provide sdk location"
+    } else {
+      super.getSkipTestReason()
+    }
   }
 
   companion object {
-    private val DEFAULT_SDK_LOCATION = System.getenv("PYTHON_SDK")
+    private const val PYTHON_SDK = "PYTHON_SDK"
+    private val DEFAULT_SDK_LOCATION = System.getenv(PYTHON_SDK)
   }
 }

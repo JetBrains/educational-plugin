@@ -12,10 +12,15 @@ class GoCheckerFixture : EduCheckerFixture<GoProjectSettings>() {
   override val projectSettings: GoProjectSettings get() = GoProjectSettings(GoSdk.fromHomePath(DEFAULT_SDK_LOCATION))
 
   override fun getSkipTestReason(): String? {
-    return if (DEFAULT_SDK_LOCATION == null) "Go SDK location is not found" else super.getSkipTestReason()
+    return if (DEFAULT_SDK_LOCATION == null) {
+      "Go SDK location is not found. Use `$GO_SDK` environment variable to provide sdk location"
+    } else {
+      super.getSkipTestReason()
+    }
   }
 
   companion object {
-    private val DEFAULT_SDK_LOCATION = System.getenv("GO_SDK")
+    private const val GO_SDK = "GO_SDK"
+    private val DEFAULT_SDK_LOCATION = System.getenv(GO_SDK)
   }
 }
