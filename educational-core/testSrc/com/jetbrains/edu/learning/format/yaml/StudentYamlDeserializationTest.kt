@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
@@ -19,6 +20,7 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.STUDENT_MAPPER
+import java.time.ZonedDateTime
 import java.util.*
 
 class StudentYamlDeserializationTest : EduTestCase() {
@@ -36,6 +38,23 @@ class StudentYamlDeserializationTest : EduTestCase() {
     val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
     assertNotNull(course)
     assertEquals(EduNames.STUDY, course.courseMode)
+  }
+
+  fun `test codeforces course`() {
+    val endDateTime = ZonedDateTime.parse("2019-08-11T15:35+03:00[Europe/Moscow]")
+    val yamlContent = """
+      |type: codeforces
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |end_date_time: ${endDateTime.toEpochSecond()}.000000000
+      |mode: Study
+      |""".trimMargin()
+    val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
+    assertNotNull(course)
+    assertTrue(course is CodeforcesCourse)
+    assertEquals(endDateTime.toEpochSecond(), (course as CodeforcesCourse).endDateTime?.toEpochSecond())
   }
 
   fun `test checkio station`() {

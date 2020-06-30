@@ -10,11 +10,12 @@ class CodeforcesCourseUpdateChecker(project: Project,
                                     course: CodeforcesCourse,
                                     disposable: Disposable
 ) : CourseUpdateChecker<CodeforcesCourse>(project, course, disposable) {
+  private var isCourseOngoing: Boolean = course.isOngoing()
 
   init {
-//    if (course.isOngoing()) {
-      setCustomCheckInterval(60)
-//    }
+    if (isCourseOngoing) {
+      setCustomCheckInterval(ONGOING_COURSE_CHECK_INTERVAL_SECONDS)
+    }
   }
 
   override fun Course.canBeUpdated(): Boolean = course is CodeforcesCourse
@@ -23,5 +24,18 @@ class CodeforcesCourseUpdateChecker(project: Project,
     CodeforcesCourseUpdater(project, course).updateCourseAndDoActions(
       onFinish = { onFinish() }
     )
+    if (isCourseOngoing && !course.isOngoing()) {
+      isCourseOngoing = false
+      setDefaultCheckInterval()
+    }
+  }
+
+  private fun setDefaultCheckInterval() {
+    LOG.info("Setting default check interval for ${course.name}")
+    checkInterval = getDefaultCheckInterval()
+  }
+
+  companion object {
+    const val ONGOING_COURSE_CHECK_INTERVAL_SECONDS: Int = 60
   }
 }

@@ -29,7 +29,8 @@ class CodeforcesCourseUpdater(project: Project, course: CodeforcesCourse) : Cour
     updateCourse {
       if (updatedTasks.isNotEmpty()) {
         updateTaskDescription()
-      } else {
+      }
+      else {
         onNothingUpdated()
       }
       onFinish()
@@ -39,7 +40,10 @@ class CodeforcesCourseUpdater(project: Project, course: CodeforcesCourse) : Cour
   override fun updateCourse(onFinish: () -> Unit) {
     runInBackground(project, EduCoreBundle.message("update.check")) {
       if (project.isDisposed) return@runInBackground
-      val contestParameters = ContestParameters(id = course.id, languageId = course.language, locale = course.languageCode)
+      val contestParameters = ContestParameters(id = course.id,
+                                                languageId = course.language,
+                                                locale = course.languageCode,
+                                                endDateTime = course.endDateTime)
       val remoteContest = CodeforcesConnector.getInstance().getContest(contestParameters).onError {
         LOG.error(it)
         return@runInBackground

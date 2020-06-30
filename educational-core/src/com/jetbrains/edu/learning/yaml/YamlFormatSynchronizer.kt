@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
@@ -99,6 +100,7 @@ object YamlFormatSynchronizer {
 
     val mapper = ObjectMapper(yamlFactory)
     mapper.registerKotlinModule()
+    mapper.registerModule(JavaTimeModule());
     mapper.setLocale(Locale.ENGLISH)
     mapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
     mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
@@ -109,6 +111,7 @@ object YamlFormatSynchronizer {
   }
 
   private fun addMixIns(mapper: ObjectMapper) {
+    mapper.addMixIn(CodeforcesCourse::class.java, CodeforcesCourseYamlMixin::class.java)
     mapper.addMixIn(CourseraCourse::class.java, CourseraCourseYamlMixin::class.java)
     mapper.addMixIn(Course::class.java, CourseYamlMixin::class.java)
     mapper.addMixIn(Section::class.java, SectionYamlMixin::class.java)

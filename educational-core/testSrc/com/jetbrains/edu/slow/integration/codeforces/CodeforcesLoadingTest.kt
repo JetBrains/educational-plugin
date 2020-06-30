@@ -12,14 +12,14 @@ import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 
-class CodeforcesLoadingTest: CodeforcesTestCase() {
+class CodeforcesLoadingTest : CodeforcesTestCase() {
   override fun setUp() {
     super.setUp()
     val mockCodeforcesConnector = CodeforcesConnector.getInstance() as MockCodeforcesConnector
     mockCodeforcesConnector.setBaseUrl(CodeforcesNames.CODEFORCES_URL, testRootDisposable)
   }
   private val contestKotlinHeroesEpisode1: CodeforcesCourse by lazy {
-    val contestInfo = ContestParameters(1170, "en", "Kotlin", EduNames.KOTLIN)
+    val contestInfo = ContestParameters(1170, EduNames.KOTLIN, codeforcesLanguageRepresentation = "Kotlin")
     when (val contest = StartCodeforcesContestAction.getContestUnderProgress(contestInfo)) {
       is Err -> error(contest.error)
       is Ok -> contest.value
@@ -27,7 +27,7 @@ class CodeforcesLoadingTest: CodeforcesTestCase() {
   }
 
   private val codeforcesRound605Div3: CodeforcesCourse by lazy {
-    val contestInfo = ContestParameters(1272, "en", "Java", EduNames.JAVA)
+    val contestInfo = ContestParameters(1272, EduNames.JAVA, codeforcesLanguageRepresentation = "Java")
     when (val contest = StartCodeforcesContestAction.getContestUnderProgress(contestInfo)) {
       is Err -> error(contest.error)
       is Ok -> contest.value

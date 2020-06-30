@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.course
@@ -18,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import java.time.ZonedDateTime
 import java.util.*
 
 class StudentYamlSerializationTest : EduTestCase() {
@@ -47,6 +49,43 @@ class StudentYamlSerializationTest : EduTestCase() {
 
     doTest(course, """
       |type: hyperskill
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |mode: Study
+      |
+    """.trimMargin())
+  }
+
+  fun `test codeforces course`() {
+    val course = course(courseProducer = ::CodeforcesCourse) {} as CodeforcesCourse
+    val endDateTime = ZonedDateTime.parse("2019-08-11T15:35+03:00[Europe/Moscow]")
+    course.apply {
+      languageCode = "en"
+      this.endDateTime = endDateTime
+    }
+
+    doTest(course, """
+      |type: codeforces
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |end_date_time: ${endDateTime.toEpochSecond()}.000000000
+      |mode: Study
+      |
+    """.trimMargin())
+  }
+
+  fun `test codeforces course without endDateTime`() {
+    val course = course(courseProducer = ::CodeforcesCourse) {} as CodeforcesCourse
+    course.apply {
+      languageCode = "en"
+    }
+
+    doTest(course, """
+      |type: codeforces
       |title: Test Course
       |language: English
       |summary: Test Course Description

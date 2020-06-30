@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.components.service
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestName
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
 import com.jetbrains.edu.learning.codeforces.ContestInformation
 import com.jetbrains.edu.learning.codeforces.ContestParameters
@@ -50,14 +49,19 @@ abstract class CodeforcesConnector {
       Ok(CodeforcesCourse(contestParameters, doc))
     }
 
-  fun getContestInformation(contestId: Int): Result<ContestInformation, String> =
-    service.status(contestId).executeParsingErrors().flatMap {
-      val responseBody = it.body() ?: return@flatMap Err(EduCoreBundle.message("codeforces.failed.to.parse.response"))
-      val doc = Jsoup.parse(responseBody.string())
-      val contestName = getContestName(doc) ?: return@flatMap Err(EduCoreBundle.message("codeforces.failed.to.get.contest.name"))
-      val contestLanguage = getLanguages(doc) ?: return@flatMap Err(EduCoreBundle.message("codeforces.failed.to.get.contest.language"))
-      Ok(ContestInformation(contestId, contestName, contestLanguage))
-    }
+  fun getContestInformation(contestId: Int): Result<ContestInformation, String> {
+    val contestsList = getContests() ?: return Err(EduCoreBundle.message("codeforces.failed.to.get.contests.list"))
+    val contestInfo = contestsList.contests.find { it.id == contestId }
+                      ?: return Err(EduCoreBundle.message("codeforces.failed.to.find.contest.in.contests.list"))
+
+    val responseBody = service.status(contestId).executeParsingErrors()
+                         .onError { return Err(it) }
+                         .body() ?: return Err(EduCoreBundle.message("codeforces.failed.to.parse.response"))
+    val doc = Jsoup.parse(responseBody.string())
+    val contestLanguage = getLanguages(doc) ?: return Err(EduCoreBundle.message("codeforces.failed.to.get.contest.language"))
+
+    return Ok(ContestInformation(contestId, contestInfo.name, contestLanguage, contestInfo.endTime))
+  }
 
   companion object {
     @JvmStatic

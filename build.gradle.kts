@@ -163,6 +163,8 @@ allprojects {
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion) {
       exclude(module = "snakeyaml")
     }
+    compile(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = jacksonVersion)
+
     //transitive dependency is specified explicitly to avoid conflict with lib bundled since idea 181
     implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = jacksonVersion)
 

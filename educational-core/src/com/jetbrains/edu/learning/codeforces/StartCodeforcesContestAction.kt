@@ -71,7 +71,7 @@ class StartCodeforcesContestAction(
     val codeforcesSettings = CodeforcesSettings.getInstance()
     var contestParameters: ContestParameters?
     if (codeforcesSettings.doNotShowLanguageDialog && codeforcesSettings.isSet()) {
-      contestParameters = getContestParametersFromSettings(contestId)
+      contestParameters = getContestParametersFromSettings(contestInfo)
 
       if (contestParameters != null && contestParameters.codeforcesLanguageRepresentation in contestInfo.availableLanguages) {
         return contestParameters
@@ -82,14 +82,14 @@ class StartCodeforcesContestAction(
     return contestParameters
   }
 
-  private fun getContestParametersFromSettings(contestId: Int): ContestParameters? {
+  private fun getContestParametersFromSettings(contestInformation: ContestInformation): ContestParameters? {
     val codeforcesSettings = CodeforcesSettings.getInstance()
 
     val locale = (codeforcesSettings.preferableTaskTextLanguage ?: return null).locale
     val language = codeforcesSettings.preferableLanguage ?: return null
     val languageIdAndVersion = getLanguageIdAndVersion(language) ?: return null
 
-    return ContestParameters(contestId, locale, language, languageIdAndVersion)
+    return ContestParameters(contestInformation.id, language, locale, contestInformation.endDateTime, languageIdAndVersion)
   }
 
   private fun getContestInfoUnderProgress(contestId: Int): Result<ContestInformation, String> =
@@ -126,7 +126,7 @@ class StartCodeforcesContestAction(
       codeforcesSettings.doNotShowLanguageDialog = true
     }
 
-    return ContestParameters(contestInformation.id, taskTextLanguage.locale, language, languageIdAndVersion)
+    return ContestParameters(contestInformation.id, languageIdAndVersion, taskTextLanguage.locale, contestInformation.endDateTime, language)
   }
 
   private fun showFailedToGetContestInfoNotification(contestId: Int, error: String) {

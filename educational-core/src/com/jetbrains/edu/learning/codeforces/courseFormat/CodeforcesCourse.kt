@@ -10,10 +10,13 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import icons.EducationalCoreIcons
 import org.jsoup.nodes.Document
+import java.time.ZonedDateTime
 import java.util.*
 import javax.swing.Icon
 
 class CodeforcesCourse : Course {
+  var endDateTime: ZonedDateTime? = null
+
   @Suppress("unused") //used for deserialization
   constructor()
 
@@ -21,6 +24,7 @@ class CodeforcesCourse : Course {
     id = contestParameters.id
     language = contestParameters.languageId
     languageCode = contestParameters.locale
+    endDateTime = contestParameters.endDateTime
     updateDate = Date()
 
     parseResponseToAddContent(doc)
@@ -33,6 +37,7 @@ class CodeforcesCourse : Course {
 
   fun getContestUrl(): String = getContestURLFromID(id)
   fun getSubmissionUrl(): String = "${getContestUrl()}/${CODEFORCES_SUBMIT}?locale=$languageCode"
+  fun isOngoing(): Boolean = if (endDateTime == null) false else (endDateTime!! > ZonedDateTime.now())
 
   private fun parseResponseToAddContent(doc: Document) {
     name = doc.selectFirst(".caption").text()

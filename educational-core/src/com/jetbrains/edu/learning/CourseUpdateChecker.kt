@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger
 abstract class CourseUpdateChecker(protected val project: Project) : Disposable {
 
   //default value is 18 000 seconds (5 hours), set in educational-core.xml
-  private var checkInterval: Long = DateFormatUtil.SECOND * Registry.intValue(REGISTRY_KEY)
+  var checkInterval: Long = getDefaultCheckInterval()
   private val checkRunnable = Runnable { (checkIsUpToDate()).doWhenDone { queueNextCheck(checkInterval) } }
   private val checkForAlarm by lazy { Alarm(Alarm.ThreadToUse.POOLED_THREAD, this) }
   val course: Course? get() = project.course
@@ -74,10 +74,14 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
 
   override fun dispose() {}
 
+  fun getDefaultCheckInterval(): Long {
+    return DateFormatUtil.SECOND * Registry.intValue(REGISTRY_KEY)
+  }
+
   companion object {
-    const val REGISTRY_KEY = "edu.course.update.check.interval"
+    const val REGISTRY_KEY: String = "edu.course.update.check.interval"
 
     @JvmStatic
-    protected val LOG = Logger.getInstance(CourseUpdateChecker::class.java)
+    val LOG: Logger = Logger.getInstance(CourseUpdateChecker::class.java)
   }
 }
