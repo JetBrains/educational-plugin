@@ -20,8 +20,8 @@ class StepikPlatformProviderFactory : CoursesPlatformProviderFactory {
     val coursesProvider = StepikCoursesProvider()
     return listOf(
       JetBrainsAcademyPlatformProvider(),
-      StepikPlatformProvider(coursesProvider),
-      CommunityPlatformProvider(coursesProvider)
+      CommunityPlatformProvider(coursesProvider),
+      StepikPlatformProvider(coursesProvider)
     )
   }
 }
