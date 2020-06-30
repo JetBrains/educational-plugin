@@ -1,26 +1,23 @@
-package com.jetbrains.edu.learning.twitter;
+package com.jetbrains.edu.learning.twitter
 
-import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.checker.CheckListener;
-import com.jetbrains.edu.learning.checker.CheckResult;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.checker.CheckListener
+import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.twitter.TwitterUtils.createTwitterDialogAndShow
 
-public class TwitterAction implements CheckListener {
+class TwitterAction : CheckListener {
+  private var statusBeforeCheck: CheckStatus? = null
 
-  private CheckStatus myStatusBeforeCheck;
-
-  @Override
-  public void beforeCheck(@NotNull Project project, @NotNull Task task) {
-    myStatusBeforeCheck = task.getStatus();
+  override fun beforeCheck(project: Project, task: Task) {
+    statusBeforeCheck = task.status
   }
 
-  @Override
-  public void afterCheck(@NotNull Project project, @NotNull Task task, @NotNull CheckResult result) {
-    for (TwitterPluginConfigurator twitterPluginConfigurator : TwitterPluginConfigurator.EP_NAME.getExtensionList()) {
-      if (twitterPluginConfigurator.askToTweet(project, task, myStatusBeforeCheck)) {
-        TwitterUtils.createTwitterDialogAndShow(project, twitterPluginConfigurator, task);
+  override fun afterCheck(project: Project, task: Task, result: CheckResult) {
+    for (twitterPluginConfigurator in TwitterPluginConfigurator.EP_NAME.extensionList) {
+      if (twitterPluginConfigurator.askToTweet(project, task, statusBeforeCheck!!)) {
+        createTwitterDialogAndShow(project, twitterPluginConfigurator, task)
       }
     }
   }
