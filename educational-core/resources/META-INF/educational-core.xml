@@ -278,8 +278,7 @@
     <experimentalFeature id="edu.course.creator.split.editor" percentOfUsers="100" internalFeature="true">
       <description>Enables previous task view for framework lessons</description>
     </experimentalFeature>
-    <defaultLiveTemplatesProvider implementation="com.jetbrains.edu.coursecreator.taskDescription.HintTemplateProvider"/>
-    <liveTemplateContext implementation="com.jetbrains.edu.coursecreator.taskDescription.HintTemplateContentType"/>
+    <liveTemplateContext implementation="com.jetbrains.edu.coursecreator.taskDescription.HintTemplateContextType"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.yaml.GeneratedRemoteInfoNotificationProvider"/>
     <registryKey key="edu.course.creator.solve.all"
                  description="Enables `Solve All Tasks Before` action"
@@ -341,6 +340,7 @@
     <optionsProvider instance="com.jetbrains.edu.learning.twitter.TwitterOptionsProvider"/>
   </extensions>
 
+  <xi:include href="/META-INF/platform-educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/ide-specific-actions.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Codeforces.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
