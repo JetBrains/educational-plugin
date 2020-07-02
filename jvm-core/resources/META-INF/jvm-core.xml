@@ -9,11 +9,9 @@
                     dynamic="true"/>
   </extensionPoints>
 
-  <project-components>
-    <component>
-      <implementation-class>com.jetbrains.edu.jvm.gradle.GradleProjectComponent</implementation-class>
-    </component>
-  </project-components>
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="com.jetbrains.edu.jvm.gradle.GradleStartupActivity"/>
+  </extensions>
 
   <extensions defaultExtensionNs="Educational">
     <gradleRefresher implementation="com.jetbrains.edu.jvm.gradle.IdeaGradleCourseRefresher"/>
