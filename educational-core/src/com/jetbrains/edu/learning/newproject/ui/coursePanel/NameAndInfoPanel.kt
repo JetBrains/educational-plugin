@@ -7,6 +7,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
 import java.awt.Color
@@ -25,13 +26,13 @@ private const val INFO_PANEL_TOP_OFFSET = 5
 private const val FONT_SIZE = 26.0f
 private val GRAY_TEXT_FOREGROUND: Color = JBColor.namedColor("Plugins.tagForeground", JBColor(0x787878, 0x999999))
 
-class NameAndInfoPanel(joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel() {
+class NameAndInfoPanel(errorHandler: (ErrorState) -> Unit) : JPanel() {
   private var nameHtmlPanel: CourseNameHtmlPanel = CourseNameHtmlPanel()
   private val infoPanel = InfoPanel()
   private var tagsPanel: TagsPanel = TagsPanel()
   private var baselinePanel: BaselinePanel = BaselinePanel()
-  private val startButton: StartCourseButtonBase = StartCourseButton(true, joinCourse)
-  private val editButton: StartCourseButtonBase = EditCourseButton(joinCourse)
+  private val startButton: StartCourseButtonBase = StartCourseButton(true, errorHandler)
+  private val editButton: StartCourseButtonBase = EditCourseButton(errorHandler)
 
   init {
     border = JBUI.Borders.emptyRight(RIGHT_OFFSET)

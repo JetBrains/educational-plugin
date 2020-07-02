@@ -13,7 +13,10 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.JBAcademyCourseButton
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.OpenCourseButton
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.StartCourseButton
 import com.jetbrains.edu.learning.projectView.ProgressUtil
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
@@ -45,9 +48,9 @@ private const val COMPLETED = "Completed"
 private val HOVER_COLOR: Color = JBColor.namedColor("BrowseCourses.lightSelectionBackground", JBColor(0xE9EEF5, 0x36393B))
 val GRAY_COLOR: Color = JBColor.namedColor("BrowseCourses.infoForeground", JBColor(Gray._120, Gray._135))
 
-class CourseCardComponent(val courseInfo: CourseInfo, joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
+class CourseCardComponent(val courseInfo: CourseInfo, errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout()) {
   private val logoComponent: JLabel = JLabel()
-  private var courseNameInfoComponent: CourseNameInfoComponent = CourseNameInfoComponent(courseInfo, joinCourse)
+  private var courseNameInfoComponent: CourseNameInfoComponent = CourseNameInfoComponent(courseInfo, errorHandler)
 
   init {
     border = JBUI.Borders.empty(CARD_GAP)
@@ -93,8 +96,8 @@ class CourseCardComponent(val courseInfo: CourseInfo, joinCourse: (CourseInfo, C
   }
 }
 
-class CourseNameInfoComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
-  private val nameComponent: CourseNameComponent = CourseNameComponent(courseInfo, joinCourse)
+class CourseNameInfoComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout()) {
+  private val nameComponent: CourseNameComponent = CourseNameComponent(courseInfo, errorHandler)
   private val courseInfoComponent: JPanel
 
   init {
@@ -116,14 +119,9 @@ class CourseNameInfoComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, C
   }
 }
 
-class CourseNameComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
+class CourseNameComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout()) {
   private val nameLabel: JLabel = JLabel()
   private val button: ColorButton
-
-  private val openStartLoginButton: StartCourseButtonBase = OpenCourseButton { _, _ ->
-    // TODO: fix when merge Katya's changes
-    // joinCourse(courseInfo, mode, {}, {})
-  }
 
   init {
     nameLabel.text = courseInfo.course.name
@@ -133,13 +131,13 @@ class CourseNameComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, Cours
     val coursePath = CoursesStorage.getInstance().getCoursePath(courseInfo.course)
     when {
       courseInfo.course is JetBrainsAcademyCourse -> {
-        button = JBAcademyCourseButton(courseInfo.course, false)
+        button = JBAcademyCourseButton(false, errorHandler)
       }
       coursePath != null -> {
         button = OpenCourseButton(coursePath)
       }
       else -> {
-        button = StartCourseButton(false, joinCourse)
+        button = StartCourseButton(false, errorHandler)
         button.update(courseInfo)
       }
     }

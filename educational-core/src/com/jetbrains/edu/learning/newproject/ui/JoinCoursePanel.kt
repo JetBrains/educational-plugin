@@ -18,7 +18,9 @@ import javax.swing.event.DocumentEvent
 
 class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(BorderLayout()) {
 
-  private val myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = true, isLocationFieldNeeded = true)
+  private val myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = true, isLocationFieldNeeded = true) {
+    setError(it.message)
+  }
   private val myErrorLabel: HyperlinkLabel = HyperlinkLabel()
   private var myValidationMessage: ValidationMessage? = null
   private var myValidationListener: ValidationListener? = null
@@ -67,9 +69,13 @@ class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(Bord
         ValidationMessage("Can't create course at this location")
       else -> myCoursePanel.validateSettings(course)
     }
+    setError(message)
+    myValidationListener?.onInputDataValidated(message == null || message.type != ValidationMessageType.ERROR)
+  }
+
+  private fun setError(message: ValidationMessage?) {
     myValidationMessage = message
     updateErrorText(message)
-    myValidationListener?.onInputDataValidated(message == null || message.type != ValidationMessageType.ERROR)
   }
 
   fun updateErrorText(message: ValidationMessage?) {

@@ -6,6 +6,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.getScaledLogo
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -16,11 +17,8 @@ private const val HEADER_HGAP = 20
 private const val TOP_OFFSET = 15
 private const val LOGO_SIZE = 80
 
-class HeaderPanel(
-  leftMargin: Int,
-  joinCourseAction: (CourseInfo, CourseMode) -> Unit
-) : NonOpaquePanel() {
-  private var nameAndInfoPanel = NameAndInfoPanel(joinCourseAction)
+class HeaderPanel(leftMargin: Int, errorHandler: (ErrorState) -> Unit) : NonOpaquePanel() {
+  private var nameAndInfoPanel = NameAndInfoPanel(errorHandler)
   private var iconPanel = IconPanel()
 
   init {

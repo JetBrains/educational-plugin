@@ -2,15 +2,15 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
 
-class CoursesListPanel(private val joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
-  private val groupsComponent: GroupsComponent = GroupsComponent()
+class CoursesListPanel(errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout()) {
+  private val groupsComponent: GroupsComponent = GroupsComponent(errorHandler)
   val selectedCourse: Course? get() = groupsComponent.selectedValue
 
   init {
@@ -20,7 +20,7 @@ class CoursesListPanel(private val joinCourse: (CourseInfo, CourseMode) -> Unit)
 
   fun updateModel(courseInfos: List<CourseInfo>, courseToSelect: Course?) {
     val sortedCourseInfos = sortCourses(courseInfos)
-    val group = CoursesGroup("", sortedCourseInfos, joinCourse)
+    val group = CoursesGroup("", sortedCourseInfos)
     addGroup(group)  // TODO: use actual groups
 
     if (courseToSelect == null) {

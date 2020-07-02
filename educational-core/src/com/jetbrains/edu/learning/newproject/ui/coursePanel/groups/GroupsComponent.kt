@@ -3,9 +3,10 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.components.JBPanelWithEmptyText
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
-class GroupsComponent : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
+class GroupsComponent(private val errorHandler: (ErrorState) -> Unit) : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
 
   private val courseGroupModel: CourseGroupModel = CourseGroupModel()
 
@@ -18,7 +19,7 @@ class GroupsComponent : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
   }
 
   fun addGroup(coursesGroup: CoursesGroup) {
-    val groupPanel = CoursesGroupPanel(coursesGroup)
+    val groupPanel = CoursesGroupPanel(coursesGroup, errorHandler)
     groupPanel.courseCards.forEach { courseGroupModel.addCourseCard(it) }
     add(groupPanel)
   }

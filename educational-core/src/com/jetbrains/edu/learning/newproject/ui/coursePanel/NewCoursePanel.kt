@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.FilterComponent
 import com.intellij.ui.Gray
@@ -10,19 +9,12 @@ import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.LanguageSettings
-import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettings
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
-import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import java.awt.BorderLayout
 import java.awt.CardLayout
 import java.util.*
@@ -40,24 +32,17 @@ private const val LARGE_HORIZONTAL_MARGIN = 15
 private const val EMPTY = "empty"
 private const val CONTENT = "content"
 
-private const val BEFORE_LINK = "beforeLink"
-private const val LINK = "link"
-private const val LINK_TEXT = "linkText"
-private const val AFTER_LINK = "afterLink"
-private val LINK_ERROR_PATTERN: Regex = """(?<$BEFORE_LINK>.*)<a href="(?<$LINK>.*)">(?<$LINK_TEXT>.*)</a>(?<$AFTER_LINK>.*)""".toRegex()
-private fun MatchGroupCollection.valueOrEmpty(groupName: String): String = this[groupName]?.value ?: ""
-
-
 // TODO: Rename to CoursePanel after CoursePanel.java is removed
 class NewCoursePanel(
   val isStandalonePanel: Boolean,
   val isLocationFieldNeeded: Boolean,
-  val joinCourseAction: ((CourseInfo, CourseMode) -> Unit)? = null
+  val joinCourseAction: (CourseInfo, CourseMode) -> Unit,
+  errorHandler: (ErrorState) -> Unit
 ) : JPanel() {
   var errorState: ErrorState = ErrorState.NothingSelected
   var course: Course? = null
 
-  private var header = HeaderPanel(leftMargin, joinCourseAction ?: { course, mode -> joinCourse(course, mode) })
+  private var header = HeaderPanel(leftMargin) { course, mode -> joinCourseAction(course, mode)}
   private var description = CourseDescriptionPanel(leftMargin)
   private var advancedSettings = CourseSettings(isLocationFieldNeeded, leftMargin)
   private val errorLabel: HyperlinkLabel = HyperlinkLabel().apply { isVisible = false }
@@ -198,55 +183,6 @@ class NewCoursePanel(
     val DIVIDER_COLOR = JBColor(Gray._192, Gray._81)
   }
 
-  private fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode) {
-    val (course, getLocation, getProjectSettings) = courseInfo
 
-    // location is null for course preview dialog only
-    val location = getLocation()
-    if (location == null) {
-      return
-    }
-
-    CoursesStorage.getInstance().addCourse(course, location)
-
-    if (course is JetBrainsAcademyCourse) {
-      joinJetBrainsAcademy()
-      return
-    }
-
-    val configurator = course.configurator
-    // If `configurator != null` than `projectSettings` is always not null
-    // because project settings are produced by configurator itself
-    val projectSettings = getProjectSettings()
-    if (configurator != null && projectSettings != null) {
-      try {
-        configurator.beforeCourseStarted(course)
-
-        val dialog = UIUtil.getParentOfType(JoinCourseDialogBase::class.java, this)
-        dialog?.close()
-        course.courseMode = courseMode.toString()
-        val projectGenerator = configurator
-          .courseBuilder
-          .getCourseProjectGenerator(course)
-        projectGenerator?.doCreateCourseProject(location, projectSettings)
-      }
-      catch (e: CourseCantBeStartedException) {
-        setError(e.error)
-      }
-    }
-  }
-
-  private fun joinJetBrainsAcademy() {
-    val account = HyperskillSettings.INSTANCE.account ?: return
-
-    HyperskillProjectAction.openHyperskillProject(account) { errorMessage ->
-      val groups = LINK_ERROR_PATTERN.matchEntire(errorMessage)?.groups
-      val errorState = if (groups == null) ErrorState.CustomSevereError(errorMessage)
-      else ErrorState.CustomSevereError(groups.valueOrEmpty(BEFORE_LINK),
-                                        groups.valueOrEmpty(LINK_TEXT),
-                                        groups.valueOrEmpty(AFTER_LINK),
-                                        Runnable { BrowserUtil.browse(groups.valueOrEmpty(LINK)) })
-      setError(errorState)
-    }
-  }
 }
+

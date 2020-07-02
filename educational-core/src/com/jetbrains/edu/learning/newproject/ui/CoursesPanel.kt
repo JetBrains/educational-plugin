@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.*
 import com.jetbrains.edu.learning.newproject.ui.ErrorState.Companion.forCourse
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
@@ -45,8 +44,8 @@ private const val LOADING_CARD_NAME = "PROGRESS"
 private const val NO_COURSES = "NO_COURSES"
 
 abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider) : JPanel() {
-  protected var coursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false, isLocationFieldNeeded = true)
-  private val coursesListPanel = CoursesListPanel(joinCourseAction(dialog))
+  protected var coursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false, isLocationFieldNeeded = true) { setError(it) }
+  private val coursesListPanel = CoursesListPanel { setError(it) }
   private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
   protected var courses: MutableList<Course> = mutableListOf()
   private lateinit var myProgrammingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
@@ -78,8 +77,6 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     this.add(createLoadingPanel(), LOADING_CARD_NAME)
     this.add(createNoCoursesPanel(), NO_COURSES)
     showProgressState()
-
-    coursesListPanel.addListener { processSelectionChanged() }
   }
 
   fun hideLoginPanel() = coursesListDecorator.hideLoginPanel()

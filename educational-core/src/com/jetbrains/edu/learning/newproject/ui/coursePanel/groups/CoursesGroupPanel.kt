@@ -4,6 +4,7 @@ import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.Color
 import javax.swing.JLabel
@@ -14,7 +15,7 @@ val SECTION_HEADER_BACKGROUND: Color = JBColor(0xF7F7F7, 0x3C3F41)
 const val TOP_BOTTOM = 4
 const val LEFT_RIGHT = 10
 
-class CoursesGroupPanel(coursesGroup: CoursesGroup) : JPanel(VerticalFlowLayout(0, 0)) {
+class CoursesGroupPanel(coursesGroup: CoursesGroup, errorHandler: (ErrorState) -> Unit) : JPanel(VerticalFlowLayout(0, 0)) {
 
   init {
     background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
@@ -31,7 +32,7 @@ class CoursesGroupPanel(coursesGroup: CoursesGroup) : JPanel(VerticalFlowLayout(
     add(titleLabel)
 
     for (courseInfo in coursesGroup.courseInfos) {
-      val courseCardComponent = CourseCardComponent(courseInfo, coursesGroup.joinCourse)
+      val courseCardComponent = CourseCardComponent(courseInfo, errorHandler)
       courseCardComponent.updateColors(false)
       add(courseCardComponent)
     }
