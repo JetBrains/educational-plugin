@@ -149,7 +149,7 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
         (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
         EduDocumentListener.setGlobalListener(myProject, testRootDisposable)
 
-        CheckListener.EP_NAME.getPoint(null).registerExtension(CheckActionListener(), testRootDisposable)
+        CheckActionListener.registerListener(testRootDisposable)
         CheckActionListener.reset()
     }
 

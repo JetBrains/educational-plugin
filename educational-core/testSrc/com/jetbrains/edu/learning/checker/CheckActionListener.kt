@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.checker
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -54,6 +55,11 @@ class CheckActionListener : CheckListener {
     // Those fields can be modified if some special checks are needed (return true if should run standard checks)
     private var checkResultVerifier = SHOULD_PASS
     private var expectedMessageProducer: ((Task) -> String?)? = null
+
+    @JvmStatic
+    fun registerListener(disposable: Disposable) {
+      CheckListener.EP_NAME.getPoint(null).registerExtension(CheckActionListener(), disposable)
+    }
 
     @JvmStatic
     fun reset() {

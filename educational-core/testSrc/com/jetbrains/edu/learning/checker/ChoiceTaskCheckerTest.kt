@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 class ChoiceTaskCheckerTest : EduTestCase() {
   override fun setUp() {
     super.setUp()
+    CheckActionListener.registerListener(testRootDisposable)
     CheckActionListener.reset()
   }
 

@@ -9,7 +9,6 @@
               implementationClass="com.jetbrains.edu.learning.configurators.FakeGradleFileType"/>
   </extensions>
   <extensions defaultExtensionNs="Educational">
-    <checkListener implementation="com.jetbrains.edu.learning.checker.CheckActionListener"/>
     <codeforcesLanguageProvider implementation="com.jetbrains.edu.learning.codeforces.TextCodeforcesLanguageProvider"/>
   </extensions>
 </idea-plugin>
