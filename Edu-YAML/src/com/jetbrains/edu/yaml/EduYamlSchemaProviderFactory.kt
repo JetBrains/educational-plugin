@@ -15,11 +15,17 @@ import com.jetbrains.jsonSchema.impl.JsonSchemaVersion
 
 class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
   override fun getProviders(project: Project): List<StudyItemConfigSchemaProvider> {
-    return listOf(StudyItemConfigSchemaProvider(project, EduNames.COURSE),
-                  StudyItemConfigSchemaProvider(project, EduNames.SECTION),
-                  StudyItemConfigSchemaProvider(project, EduNames.LESSON),
-                  TaskSpecificConfigSchemaProvider(project, ChoiceTask.CHOICE_TASK_TYPE),
-                  TaskGeneralConfigSchemaProvider(project, listOf(ChoiceTask.CHOICE_TASK_TYPE)))
+    val tasksWithSpecificProvider = setOf(ChoiceTask.CHOICE_TASK_TYPE)
+
+    return listOf(
+      StudyItemConfigSchemaProvider(project, EduNames.COURSE),
+      StudyItemConfigSchemaProvider(project, EduNames.SECTION),
+      StudyItemConfigSchemaProvider(project, EduNames.LESSON),
+      TaskGeneralConfigSchemaProvider(project, tasksWithSpecificProvider),
+      *tasksWithSpecificProvider
+        .map { TaskSpecificConfigSchemaProvider(project, it) }
+        .toTypedArray()
+    )
   }
 
   open class StudyItemConfigSchemaProvider(protected val project: Project, protected val itemKind: String) : JsonSchemaFileProvider {
@@ -54,14 +60,14 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
     override fun getSchemaResourcePath(): String = "/yaml/${taskType}-${itemKind}-schema.json"
   }
 
-  class TaskGeneralConfigSchemaProvider(project: Project, private val typesForIgnore: List<String>)
+  class TaskGeneralConfigSchemaProvider(project: Project, private val tasksWithSpecificProvider: Collection<String>)
     : StudyItemConfigSchemaProvider(project, EduNames.TASK) {
 
     override fun isAvailable(file: VirtualFile): Boolean {
-      // We need exclude task types with specific Config Schema Provider
+      // We need to exclude task types with specific Config Schema Provider
       // to make providers mapped one to one for every yaml file.
       val task = EduUtils.getTaskForFile(project, file) ?: return false
-      return super.isAvailable(file) && typesForIgnore.find { it == task.itemType } == null
+      return super.isAvailable(file) && !tasksWithSpecificProvider.contains(task.itemType)
     }
   }
 }
