@@ -6,13 +6,12 @@ import com.intellij.ide.ui.newItemPopup.NewItemPopupUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.ui.popup.JBPopup
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.newItemTitleMessage
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.TestOnly
 
 private var MOCK: NewStudyItemUi? = null
@@ -70,7 +69,7 @@ class NewStudyItemPopupUi : NewStudyItemUi {
     val nameField = contentPanel.textField
     nameField.text = model.suggestedName
     nameField.selectAll()
-    val title = EduCoreBundle.message("action.new.study.item.title", model.itemType.presentableTitleName)
+    val title = model.itemType.newItemTitleMessage
     val popup = NewItemPopupUtil.createNewItemPopup(title, contentPanel, nameField)
     contentPanel.setApplyAction { event ->
       val name = nameField.text

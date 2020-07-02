@@ -1,21 +1,20 @@
 package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.ide.ui.newItemPopup.NewItemWithTemplatesPopupPanel
-import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.ui.*
 import com.intellij.ui.SimpleTextAttributes.GRAYED_ATTRIBUTES
 import com.intellij.ui.SimpleTextAttributes.REGULAR_ATTRIBUTES
 import com.intellij.ui.components.fields.ExtendableTextComponent
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.coursecreator.actions.StudyItemType
+import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.StudyItemVariant
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.coursecreator.pressEnterToCreateItemMessage
+import com.jetbrains.edu.coursecreator.selectItemTypeMessage
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Font
 import java.awt.Graphics
-import java.awt.event.KeyEvent
 import javax.swing.*
 
 class NewStudyItemPopupPanel(
@@ -39,8 +38,7 @@ class NewStudyItemPopupPanel(
   fun getSelectedItem(): StudyItemVariant? = myTemplatesList.selectedValue
 
   private fun setTextFieldIcon(icon: Icon) {
-    val enter = KeymapUtil.getKeystrokeText(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0))
-    val hintMessage = EduCoreBundle.message("action.new.study.item.hint", enter, itemType.presentableName)
+    val hintMessage = itemType.pressEnterToCreateItemMessage
 
     myTextField.setExtensions(TemplateIconExtension(icon), HintExtension(hintMessage, font))
     myTextField.repaint()
@@ -113,7 +111,7 @@ private class StudyItemRenderer(private val itemType: StudyItemType) : ListCellR
     separator.background = list.background
     separator.font = UIUtil.getLabelFont(UIUtil.FontSize.NORMAL)
     separator.border = JBUI.Borders.empty(UIUtil.DEFAULT_VGAP / 2, 0)
-    separator.caption = EduCoreBundle.message("action.new.study.item.select.type", itemType.presentableName)
+    separator.caption = itemType.selectItemTypeMessage
     separator.setCaptionCentered(false)
     return separator
   }

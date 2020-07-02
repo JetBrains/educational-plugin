@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
-import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 

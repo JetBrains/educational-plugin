@@ -2,11 +2,9 @@ package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.messages.BUNDLE
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.Nls
-import org.jetbrains.annotations.PropertyKey
 import javax.swing.Icon
 
 class NewStudyItemInfo(
@@ -43,18 +41,3 @@ data class StudyItemVariant(
   val icon: Icon,
   val producer: () -> StudyItem
 )
-
-enum class StudyItemType(
-  @PropertyKey(resourceBundle = BUNDLE) private val nameKey: String,
-  @PropertyKey(resourceBundle = BUNDLE) private val titleNameKey: String
-) {
-  COURSE("study.item.course", "study.item.course.title"),
-  SECTION("study.item.section", "study.item.section.title"),
-  LESSON("study.item.lesson", "study.item.lesson.title"),
-  FRAMEWORK_LESSON("study.item.framework.lesson", "study.item.framework.lesson.title"),
-  TASK("study.item.task", "study.item.task.title");
-
-  val presentableName: String get() = EduCoreBundle.message(nameKey)
-
-  val presentableTitleName: String get() = EduCoreBundle.message(titleNameKey)
-}

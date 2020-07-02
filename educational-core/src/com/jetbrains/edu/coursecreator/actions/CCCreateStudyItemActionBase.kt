@@ -10,10 +10,9 @@ import com.intellij.openapi.actionSystem.DataKey
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
-import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.*
 import com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
@@ -33,7 +32,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   icon: Icon
 ) : DumbAwareAction(
   itemType.presentableTitleName,
-  "Create New " + itemType.presentableTitleName,
+  itemType.createItemMessage,
   icon
 ) {
 

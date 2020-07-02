@@ -2,12 +2,12 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.createItemTitleMessage
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel.Companion.AFTER_DELTA
 import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.JComponent
@@ -25,7 +25,7 @@ abstract class CCCreateStudyItemDialogBase(
   protected val positionPanel: CCItemPositionPanel? = additionalPanels.find { it is CCItemPositionPanel } as? CCItemPositionPanel
 
   init {
-    title = "Create New ${model.itemType.presentableTitleName}"
+    title = model.itemType.createItemTitleMessage
   }
 
   override fun postponeValidation(): Boolean = false
