@@ -1,5 +1,6 @@
 package com.jetbrains.edu.jvm.gradle
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -52,7 +53,9 @@ class GradleStartupActivity : StartupActivity.DumbAware {
         gradlew.setExecutable(true)
       }
       else {
-        VirtualFileManager.getInstance().addVirtualFileListener(GradleWrapperListener(project), project)
+        val taskManager = StudyTaskManager.getInstance(project)
+        val connection = ApplicationManager.getApplication().messageBus.connect(taskManager)
+        connection.subscribe(VirtualFileManager.VFS_CHANGES, GradleWrapperListener(connection))
       }
     }
   }
