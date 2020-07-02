@@ -53,11 +53,15 @@ class CoursesListPanel(errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout
     groupsComponent.setSelectedValue(newCourseToSelect)
   }
 
-  fun initialSelection() {
+  private fun initialSelection() {
     groupsComponent.initialSelection()
   }
 
   fun setSelectionListener(processSelectionChanged: () -> Unit) {
     groupsComponent.setSelectionListener(processSelectionChanged)
+  }
+
+  fun setButtonsEnabled(canStartCourse: Boolean) {
+    groupsComponent.setButtonsEnabled(canStartCourse)
   }
 }

@@ -70,6 +70,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     addCourseValidationListener(object : CourseValidationListener {
       override fun validationStatusChanged(canStartCourse: Boolean) {
         coursePanel.setButtonsEnabled(canStartCourse)
+        coursesListPanel.setButtonsEnabled(canStartCourse)
       }
     })
 

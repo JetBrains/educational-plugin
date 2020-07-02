@@ -94,6 +94,10 @@ class CourseCardComponent(val courseInfo: CourseInfo, errorHandler: (ErrorState)
       parent.scrollRectToVisible(bounds)
     }
   }
+
+  fun setButtonsEnabled(canStartCourse: Boolean) {
+    courseNameInfoComponent.setButtonsEnabled(canStartCourse)
+  }
 }
 
 class CourseNameInfoComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout()) {
@@ -116,6 +120,10 @@ class CourseNameInfoComponent(courseInfo: CourseInfo, errorHandler: (ErrorState)
     }
     add(nameComponent, BorderLayout.NORTH)
     add(courseInfoComponent, BorderLayout.SOUTH)
+  }
+
+  fun setButtonsEnabled(canStartCourse: Boolean) {
+    nameComponent.setButtonEnabled(canStartCourse)
   }
 }
 
@@ -144,6 +152,10 @@ class CourseNameComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> 
 
     add(nameLabel, BorderLayout.CENTER)
     add(button, BorderLayout.EAST)
+  }
+
+  fun setButtonEnabled(canStartCourse: Boolean) {
+    button.isEnabled = button is OpenCourseButton || canStartCourse
   }
 }
 

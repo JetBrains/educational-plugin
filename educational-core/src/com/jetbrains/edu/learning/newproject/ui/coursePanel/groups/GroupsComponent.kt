@@ -41,6 +41,10 @@ class GroupsComponent(private val errorHandler: (ErrorState) -> Unit) : JBPanelW
     courseGroupModel.setSelectionListener(processSelectionChanged)
   }
 
+  fun setButtonsEnabled(canStartCourse: Boolean) {
+    courseGroupModel.setButtonsEnabled(canStartCourse)
+  }
+
   companion object {
     private const val NO_COURSES = "No courses found"
   }

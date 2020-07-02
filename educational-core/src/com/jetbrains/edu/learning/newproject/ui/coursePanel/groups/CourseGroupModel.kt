@@ -139,4 +139,10 @@ class CourseGroupModel {
   fun setSelectionListener(processSelectionChanged: () -> Unit) {
     selectionListener = processSelectionChanged
   }
+
+  fun setButtonsEnabled(canStartCourse: Boolean) {
+    for (courseCard in courseCards) {
+      courseCard.setButtonsEnabled(canStartCourse)
+    }
+  }
 }
