@@ -4,7 +4,6 @@ import com.intellij.lang.Language
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -48,7 +47,7 @@ open class StepikTaskBuilder(
     "code" to this::codeTask,
     "choice" to this::choiceTask,
     "text" to this::theoryTask,
-    "string" to this::theoryTask,
+    "string" to this::unsupportedTask,
     "pycharm" to { _: String -> pycharmTask() },
     "video" to this::videoTask,
     "number" to this::unsupportedTask,
