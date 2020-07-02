@@ -1,13 +1,14 @@
 // BACKCOMPAT: 2019.3
 @file:Suppress("DEPRECATION")
 
-package com.jetbrains.edu.coursecreator
+package com.jetbrains.edu.coursecreator.taskDescription
 
 import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.codeInsight.template.impl.DefaultLiveTemplatesProvider
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
 
 class HintTemplateProvider : DefaultLiveTemplatesProvider {

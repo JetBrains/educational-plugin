@@ -278,8 +278,8 @@
     <experimentalFeature id="edu.course.creator.split.editor" percentOfUsers="100" internalFeature="true">
       <description>Enables previous task view for framework lessons</description>
     </experimentalFeature>
-    <defaultLiveTemplatesProvider implementation="com.jetbrains.edu.coursecreator.HintTemplateProvider"/>
-    <liveTemplateContext implementation="com.jetbrains.edu.coursecreator.HintTemplateContentType"/>
+    <defaultLiveTemplatesProvider implementation="com.jetbrains.edu.coursecreator.taskDescription.HintTemplateProvider"/>
+    <liveTemplateContext implementation="com.jetbrains.edu.coursecreator.taskDescription.HintTemplateContentType"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.yaml.GeneratedRemoteInfoNotificationProvider"/>
     <registryKey key="edu.course.creator.solve.all"
                  description="Enables `Solve All Tasks Before` action"
