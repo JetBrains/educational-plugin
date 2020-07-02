@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.twitter
 
 import com.intellij.openapi.components.*
+import com.jetbrains.edu.learning.isUnitTestMode
 
 @Service
 @State(name = "StudyTwitterSettings", storages = [Storage("study_twitter_settings.xml", roamingType = RoamingType.DISABLED)])
@@ -30,7 +31,7 @@ class TwitterSettings : SimplePersistentStateComponent<TwitterSettings.State>(St
   }
 
   class State : BaseState() {
-    var askToTweet by property(true)
+    var askToTweet by property(!isUnitTestMode)
     var accessToken by string()
     var tokenSecret by string()
   }
