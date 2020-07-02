@@ -17,6 +17,9 @@
   <xi:include href="/META-INF/Edu-Python-PyCharm.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="com.intellij">
+
+    <postStartupActivity implementation="com.jetbrains.edu.python.learning.PyShowTutorialStartupActivity"/>
+
     <localInspection shortName="PyEduInterpreterInspection"
                      bundle="messages.EduPythonBundle"
                      groupKey="python.inspection.group.name"
@@ -44,11 +47,5 @@
     <coursesProvider implementation="com.jetbrains.edu.python.learning.PyBundledCoursesProvider"/>
     <codeforcesLanguageProvider implementation="com.jetbrains.edu.python.learning.codeforces.PyCodeforcesLanguageProvider"/>
   </extensions>
-
-  <project-components>
-    <component>
-      <implementation-class>com.jetbrains.edu.python.learning.PyShowTutorial</implementation-class>
-    </component>
-  </project-components>
 
 </idea-plugin>
