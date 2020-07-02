@@ -63,7 +63,7 @@ object ProgressUtil {
     @Suppress("UsePropertyAccessSyntax") // for compatibility with JDK11
     progressBar.setUI(object : DarculaProgressBarUI() {
       override fun getRemainderColor(): Color {
-        return JBColor(Gray._237, Color(76, 77, 79))
+        return JBColor(Gray._220, Color(76, 77, 79))
       }
     })
     progressBar.foreground = ColorProgressBar.GREEN
