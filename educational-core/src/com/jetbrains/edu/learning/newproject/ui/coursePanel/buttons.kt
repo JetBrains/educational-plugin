@@ -62,10 +62,11 @@ class OpenCourseButton(coursePath: String) : CourseButtonBase() {
 class JBAcademyCourseButton(fill: Boolean = true, errorHandler: (ErrorState) -> Unit) : CourseButtonBase(fill) {
 
   init {
-    text = if (HyperskillSettings.INSTANCE.account == null) "Log In" else "Start"
+    text = "Start"
     setWidth72(this)
 
     addActionListener {
+      // TODO: enable button if user not logged in
       if (HyperskillSettings.INSTANCE.account == null) {
         HyperskillConnector.getInstance().doAuthorize(
           Runnable { runInEdt(ModalityState.stateForComponent(this)) { HyperskillProjectOpener.requestFocus() } },
