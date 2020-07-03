@@ -132,6 +132,7 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
           "py" -> EduNames.PYTHON to EduNames.UNITTEST //legacy environment was handled earlier
           "kt" -> EduNames.KOTLIN to EduNames.DEFAULT_ENVIRONMENT
           "js", "html" -> EduNames.JAVASCRIPT to EduNames.DEFAULT_ENVIRONMENT
+          "scala" -> EduNames.SCALA to EduNames.DEFAULT_ENVIRONMENT
           else -> null
         }
 

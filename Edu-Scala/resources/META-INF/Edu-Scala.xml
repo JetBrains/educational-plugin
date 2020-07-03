@@ -7,6 +7,8 @@
     <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator" environment="Gradle"/>
     <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.sbt.ScalaSbtConfigurator" environment="sbt"/>
     <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator" courseType="Stepik"/>
+    <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.stepik.hyperskill.ScalaHyperskillConfigurator"
+                  courseType="Hyperskill"/>
     <codeforcesLanguageProvider implementation="com.jetbrains.edu.scala.codeforces.ScalaCodeforcesLanguageProvider"/>
   </extensions>
 
