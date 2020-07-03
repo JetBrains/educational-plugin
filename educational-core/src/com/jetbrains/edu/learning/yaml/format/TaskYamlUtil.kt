@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getEduEditors
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -97,6 +98,9 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
     @Suppress("DEPRECATION") // it's ok as we just copy value of deprecated field
     existingItem.customPresentableName = deserializedItem.customPresentableName
     existingItem.solutionHidden = deserializedItem.solutionHidden
+    if (deserializedItem is TheoryTask && existingItem is TheoryTask) {
+      existingItem.postSubmissionOnOpen = deserializedItem.postSubmissionOnOpen
+    }
     if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {
       existingItem.isMultipleChoice = deserializedItem.isMultipleChoice
       existingItem.choiceOptions = deserializedItem.choiceOptions

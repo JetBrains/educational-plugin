@@ -87,7 +87,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         showTaskDescriptionToolWindow(project, taskFile, true);
 
         Task task = taskFile.getTask();
-        if (course.isStudy() && task instanceof TheoryTask && task.getStatus() != CheckStatus.Solved) {
+        if (course.isStudy() && isToPostTheory(task) && task.getStatus() != CheckStatus.Solved) {
           task.setStatus(CheckStatus.Solved);
           ProjectView.getInstance(project).refresh();
           if (EduSettings.isLoggedIn()) {
@@ -131,5 +131,9 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       EduUtils.updateToolWindows(project);
       studyToolWindow.show(null);
     }
+  }
+
+  private static boolean isToPostTheory(Task task) {
+    return task instanceof TheoryTask && ((TheoryTask)task).postSubmissionOnOpen;
   }
 }

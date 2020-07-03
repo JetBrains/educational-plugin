@@ -1,0 +1,48 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "steps" : [
+    {
+      "id" : 352166,
+      "lesson" : 94732,
+      "position" : 7,
+      "status" : "ready",
+      "block" : {
+        "name" : "sorting",
+        "text" : "<p style=\"text-align: center;\"><img class=\"image-fullsize\" src=\"https://ucarecdn.com/3ff7893c-fc1d-431d-8dde-ce9d8508a4fe/\"></p><p><br></p>",
+        "video" : null,
+        "options" : { },
+        "subtitle_files" : [ ]
+      },
+      "actions" : { },
+      "progress" : "77-352166",
+      "subscriptions" : [
+        "31-77-352166",
+        "30-77-352166"
+      ],
+      "instruction" : null,
+      "session" : null,
+      "instruction_type" : null,
+      "viewed_by" : 458,
+      "passed_by" : 458,
+      "correct_ratio" : null,
+      "worth" : 0,
+      "is_solutions_unlocked" : false,
+      "solutions_unlocked_attempts" : 3,
+      "has_submissions_restrictions" : false,
+      "max_submissions_count" : 3,
+      "variation" : 1,
+      "variations_count" : 1,
+      "create_date" : "2018-06-18T05:59:14Z",
+      "update_date" : "2018-06-18T05:59:14Z",
+      "discussions_count" : 0,
+      "discussion_proxy" : "77-352166-1",
+      "discussion_threads" : [
+        "77-352166-1"
+      ]
+    }
+  ]
+}

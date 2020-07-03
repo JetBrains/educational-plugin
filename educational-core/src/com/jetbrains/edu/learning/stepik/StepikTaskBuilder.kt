@@ -201,6 +201,7 @@ open class StepikTaskBuilder(
     val task = TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
     task.descriptionText = "${name.toLowerCase().capitalize()} tasks are not supported yet. <br>" +
                            "View this step on <a href=\"${getStepikLink(task, lesson)}\">Stepik</a>."
+    task.postSubmissionOnOpen = false
 
     initTaskFiles(task, "This is a ${name.toLowerCase()} task. You can use this editor as a playground\n")
     return task

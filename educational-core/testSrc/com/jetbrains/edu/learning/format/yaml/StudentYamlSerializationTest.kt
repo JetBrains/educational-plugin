@@ -209,6 +209,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |currentTime: 0
     |status: Solved
     |record: 1
+    |post_submission_on_open: true
     |""".trimMargin())
   }
 

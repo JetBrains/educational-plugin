@@ -27,6 +27,7 @@ class StepikTaskBuilderTest : EduTestCase() {
   override fun getTestDataPath(): String = "testData/stepikTaskBuilder"
 
   fun `test theory task`() = doTest<TheoryTask>(FakeGradleBasedLanguage)
+  fun `test unsupported task`() = doTest<TheoryTask>(FakeGradleBasedLanguage, false)
   fun `test choice task`() = doTest<ChoiceTask>(FakeGradleBasedLanguage)
   fun `test code task`() = doTest<CodeTask>(FakeGradleBasedLanguage)
   fun `test edu task`() = doTest<EduTask>(FakeGradleBasedLanguage)
@@ -103,7 +104,7 @@ class StepikTaskBuilderTest : EduTestCase() {
     assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.time.limit", 5)));
   }
 
-  private inline fun <reified T : Task> doTest(language: Language) {
+  private inline fun <reified T : Task> doTest(language: Language, postSubmissionOnOpen: Boolean = true) {
     val stepSource = loadStepSource()
     val task = buildTask(stepSource, language)
 
@@ -116,6 +117,13 @@ class StepikTaskBuilderTest : EduTestCase() {
       assertThat(path, pathMatcher)
       assertThat(taskFile.name, pathMatcher)
     }
+    if (task is TheoryTask) {
+      checkPostSubmissionOnOpen(task, postSubmissionOnOpen)
+    }
+  }
+
+  private fun checkPostSubmissionOnOpen(task: TheoryTask, postSubmissionOnOpen: Boolean) {
+    assertEquals(postSubmissionOnOpen, task.postSubmissionOnOpen)
   }
 
   private fun loadStepSource(): StepSource {

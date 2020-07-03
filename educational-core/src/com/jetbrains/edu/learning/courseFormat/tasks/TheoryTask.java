@@ -13,9 +13,16 @@ public class TheoryTask extends Task {
     super(name);
   }
 
-  public TheoryTask(@NotNull final String name, int id, int position, @NotNull Date updateDate, @NotNull CheckStatus status) {
+  public TheoryTask(@NotNull final String name,
+                    int id,
+                    int position,
+                    @NotNull Date updateDate,
+                    @NotNull CheckStatus status) {
     super(name, id, position, updateDate, status);
   }
+
+  // needed to prohibit post empty submission at unsupported tasks opening (sorting, matching, text, etc)
+  public boolean postSubmissionOnOpen = true;
 
   @Override
   public String getItemType() {

@@ -41,6 +41,9 @@ object YamlMixinNames {
   const val RECORD = "record"
   const val SOLUTION_HIDDEN = "solution_hidden"
 
+  // theory task
+  const val POST_SUBMISSION_ON_OPEN = "post_submission_on_open"
+
   // choice task
   const val IS_CORRECT = "is_correct"
   const val OPTIONS = "options"
