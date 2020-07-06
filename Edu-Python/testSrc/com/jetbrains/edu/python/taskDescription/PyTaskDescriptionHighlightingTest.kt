@@ -60,13 +60,11 @@ class PyTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <span class="code-block"><pre>
-      <span style="...">def </span>foo():
+      <span class="code-block"><pre>  <span style="...">def </span>foo():
           print <span style="...">"Hello!"</span>
     </pre> </span>
       <p>Code block with specific language:</p>
-      <span class="code-block"><pre>
-      <span style="...">def </span>foo():
+      <span class="code-block"><pre>  <span style="...">def </span>foo():
           print <span style="...">"Hello!"</span>
     </pre> </span>
       <p>Inline code <span class="code"><span style="...">if </span>__name__ == <span style="...">"__main__"</span></span></p>

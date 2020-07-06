@@ -78,16 +78,14 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <span class="code-block"><pre>
-      <span style="...">class </span>Main {
+      <span class="code-block"><pre>  <span style="...">class </span>Main {
           <span style="...">public static void </span>main(String[] args) {
             System.out.println(<span style="...">"Hello!"</span>);
           }
       }
     </pre> </span>
       <p>Code block with specific language:</p>
-      <span class="code-block"><pre>
-      <span style="...">class </span>Main {
+      <span class="code-block"><pre>  <span style="...">class </span>Main {
           <span style="...">public static void </span>main(String[] args) {
             System.out.println(<span style="...">"Hello!"</span>);
           }
@@ -112,8 +110,7 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
     <html>
      <head></head>
      <body>
-      <span class="code-block"><pre>
-      class Main {
+      <span class="code-block"><pre>  class Main {
           public static void main(String[] args) {
             System.out.println("Hello!");
           }

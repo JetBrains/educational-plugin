@@ -66,14 +66,12 @@ class KtTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <span class="code-block"><pre>
-      <span style="...">fun </span>main(args: Array&lt;String&gt;) {
+      <span class="code-block"><pre>  <span style="...">fun </span>main(args: Array&lt;String&gt;) {
         println(<span style="...">"Hello!"</span>)
       }
     </pre> </span>
       <p>Code block with specific language:</p>
-      <span class="code-block"><pre>
-      <span style="...">fun </span>main(args: Array&lt;String&gt;) {
+      <span class="code-block"><pre>  <span style="...">fun </span>main(args: Array&lt;String&gt;) {
         println(<span style="...">"Hello!"</span>)
       }
     </pre> </span>

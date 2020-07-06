@@ -76,16 +76,14 @@ class CppTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase()
  <head></head>
  <body>
   <p>Code block with default language:</p>
-  <span class="code-block"><pre>
-  <span style="...">int </span>main(<span style="...">void</span>) {
+  <span class="code-block"><pre>  <span style="...">int </span>main(<span style="...">void</span>) {
       <span style="...">double </span>x = <span style="...">1e-6 </span>+ <span style="...">5.0</span>;
       cout &lt;&lt; <span style="...">"Hello world!"</span>;
       <span style="...">return </span><span style="...">0</span>;
    }
 </pre> </span>
   <p>Code block with specific language:</p>
-  <span class="code-block"><pre>
-  <span style="...">int </span>main(<span style="...">void</span>) {
+  <span class="code-block"><pre>  <span style="...">int </span>main(<span style="...">void</span>) {
       <span style="...">double </span>x = <span style="...">1e-6 </span>+ <span style="...">5.0</span>;
       cout &lt;&lt; <span style="...">"Hello world!"</span>;
       <span style="...">return </span><span style="...">0</span>;

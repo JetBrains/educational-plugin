@@ -67,14 +67,12 @@ class ScalaTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <span class="code-block"><pre>
-      <span style="...">def </span>main(args: Array[String]): Unit = {
+      <span class="code-block"><pre>  <span style="...">def </span>main(args: Array[String]): Unit = {
         println(<span style="...">"Hello!"</span>)
       }
     </pre> </span>
       <p>Code block with specific language:</p>
-      <span class="code-block"><pre>
-      <span style="...">def </span>main(args: Array[String]): Unit = {
+      <span class="code-block"><pre>  <span style="...">def </span>main(args: Array[String]): Unit = {
         println(<span style="...">"Hello!"</span>)
       }
     </pre> </span>
