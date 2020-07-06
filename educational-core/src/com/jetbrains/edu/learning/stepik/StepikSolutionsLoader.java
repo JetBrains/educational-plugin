@@ -122,7 +122,7 @@ public class StepikSolutionsLoader implements Disposable {
                              CLOSE_PLACEHOLDER_TAG);
               insertedTextLength += OPEN_PLACEHOLDER_TAG.length() + CLOSE_PLACEHOLDER_TAG.length();
             }
-            files.add(new SolutionFile(fileName, builder.toString()));
+            files.add(new SolutionFile(fileName, builder.toString(), taskFile.isVisible()));
           }
         });
       }

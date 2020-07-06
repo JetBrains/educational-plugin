@@ -29,7 +29,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     val lastSubmission = submissions.firstOrNull { it.step == task.id }
     val reply = lastSubmission?.reply ?: return TaskSolutions.EMPTY
 
-    val files: Map<String, String> = when (task) {
+    val files: Map<String, Solution> = when (task) {
       is EduTask -> reply.eduTaskFiles
       is CodeTask -> reply.codeTaskFiles(task)
       else -> {
@@ -39,20 +39,20 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     }
 
     return if (files.isEmpty()) TaskSolutions.EMPTY
-    else TaskSolutions.withEmptyPlaceholders(lastSubmission.time, lastSubmission.status.toCheckStatus(), files)
+    else TaskSolutions(lastSubmission.time, lastSubmission.status.toCheckStatus(), files)
   }
 
   override fun loadSubmissions(tasks: List<Task>): List<Submission>? {
     return SubmissionsManager.getInstance(project).getSubmissions(tasks.map { it.id }.toSet())
   }
 
-  private val Reply.eduTaskFiles: Map<String, String>
-    get() = solution?.associate { it.name to it.text } ?: emptyMap()
+  private val Reply.eduTaskFiles: Map<String, Solution>
+    get() = solution?.associate { it.name to Solution(it.text, it.isVisible, emptyList()) } ?: emptyMap()
 
-  private fun Reply.codeTaskFiles(task: CodeTask): Map<String, String> {
+  private fun Reply.codeTaskFiles(task: CodeTask): Map<String, Solution> {
     val codeFromServer = code ?: return emptyMap()
     val taskFileName = task.mockTaskFileName ?: return emptyMap()
-    return mapOf(taskFileName to codeFromServer)
+    return mapOf(taskFileName to Solution(codeFromServer, true, emptyList()))
   }
 
   override fun provideTasksToUpdate(course: Course): List<Task> {

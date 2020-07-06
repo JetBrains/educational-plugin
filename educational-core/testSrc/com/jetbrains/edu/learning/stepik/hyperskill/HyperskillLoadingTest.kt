@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
@@ -261,6 +262,11 @@ class HyperskillLoadingTest : NavigationTestBase() {
       file("settings.gradle")
     }
     fileTree.assertEquals(rootDir, myFixture)
+
+    checkVisibility(course.findTask("lesson1", "task1").taskFiles,
+                    mapOf("src/Task.kt" to true, "src/Baz.kt" to false, "test/Tests1.kt" to false))
+    checkVisibility(course.findTask("lesson1", "task2").taskFiles,
+                    mapOf("src/Task.kt" to true, "src/Baz.kt" to true, "src/additional.txt" to true, "test/Tests2.kt" to false))
   }
 
   fun `test solution loading with new file on the first stage`() {
@@ -378,6 +384,12 @@ class HyperskillLoadingTest : NavigationTestBase() {
     return course
   }
 
+  private fun checkVisibility(taskFiles: Map<String, TaskFile>, visibility: Map<String, Boolean>) {
+    assertEquals(visibility.size, taskFiles.size)
+    taskFiles.forEach { (name, file) ->
+      assertEquals("Visibility for $name differs", visibility[name], file.isVisible)
+    }
+  }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"
 

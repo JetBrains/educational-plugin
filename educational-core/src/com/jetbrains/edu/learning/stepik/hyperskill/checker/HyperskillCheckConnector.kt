@@ -62,7 +62,7 @@ object HyperskillCheckConnector {
 
       runReadAction {
         val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: return@runReadAction
-        files.add(SolutionFile(taskFile.name, document.text))
+        files.add(SolutionFile(taskFile.name, document.text, taskFile.isVisible))
       }
     }
 

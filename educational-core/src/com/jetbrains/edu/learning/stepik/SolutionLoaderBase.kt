@@ -275,31 +275,34 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
     private fun applySolutionToNonCurrentTask(project: Project, task: Task, taskSolutions: TaskSolutions) {
       val frameworkLessonManager = FrameworkLessonManager.getInstance(project)
-      frameworkLessonManager.saveExternalChanges(task, taskSolutions.solutions.mapValues { it.value.first })
+      frameworkLessonManager.saveExternalChanges(task, taskSolutions.solutions.mapValues { it.value.text })
       for (taskFile in task.taskFiles.values) {
-        val placeholders = taskSolutions.solutions[taskFile.name]?.second ?: continue
-        updatePlaceholders(taskFile, placeholders)
+        val solution = taskSolutions.solutions[taskFile.name] ?: continue
+        updatePlaceholders(taskFile, solution.placeholders)
+        taskFile.isVisible = solution.isVisible
       }
     }
 
-    private fun applySolutionToCurrentTask(project: Project,
-                                           task: Task,
-                                           taskSolutions: TaskSolutions) {
+    private fun applySolutionToCurrentTask(project: Project, task: Task, taskSolutions: TaskSolutions) {
       val taskDir = task.getTaskDir(project) ?: error("Directory for task `${task.name}` not found")
-      for (solutionPath in taskSolutions.solutions.keys) {
-        val (solutionText, placeholders) = taskSolutions.solutions[solutionPath] ?: error("No solution for $solutionPath found")
-        val taskFile = task.getTaskFile(solutionPath)
+      for ((path, solution) in taskSolutions.solutions) {
+        val taskFile = task.getTaskFile(path)
         if (taskFile == null) {
-          GeneratorUtils.createChildFile(taskDir, solutionPath, solutionText)
+          GeneratorUtils.createChildFile(taskDir, path, solution.text)
+          // it does not work
+          // val created = task.getTaskFile(path) ?: error("taskFile should be created moment ago")
+          task.addTaskFile(TaskFile(path, solution.text, solution.isVisible))
         }
         else {
-          val vFile = taskDir.findFileByRelativePath(solutionPath) ?: continue
+          val vFile = taskDir.findFileByRelativePath(path) ?: continue
+          taskFile.isVisible = solution.isVisible
+
           if (EduUtils.isTestsFile(project, vFile)) continue
-          updatePlaceholders(taskFile, placeholders)
-          EduDocumentListener.modifyWithoutListener(task, solutionPath) {
+          updatePlaceholders(taskFile, solution.placeholders)
+          EduDocumentListener.modifyWithoutListener(task, path) {
             runUndoTransparentWriteAction {
-              val document = FileDocumentManager.getInstance().getDocument(vFile) ?: error("No document for ${solutionPath}")
-              document.setText(solutionText)
+              val document = FileDocumentManager.getInstance().getDocument(vFile) ?: error("No document for ${path}")
+              document.setText(solution.text)
             }
           }
         }
@@ -307,22 +310,17 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
   }
 
+  protected data class Solution(val text: String, val isVisible: Boolean, val placeholders: List<AnswerPlaceholder>)
+
   protected class TaskSolutions @JvmOverloads constructor(
     val date: Date?,
     val checkStatus: CheckStatus,
-    val solutions: Map<String, Pair<String, List<AnswerPlaceholder>>> = emptyMap(),
+    val solutions: Map<String, Solution> = emptyMap(),
     val hasIncompatibleSolutions: Boolean = false
   ) {
     companion object {
       val EMPTY = TaskSolutions(null, CheckStatus.Unchecked)
       val INCOMPATIBLE = TaskSolutions(null, CheckStatus.Unchecked, hasIncompatibleSolutions = true)
-
-      fun withEmptyPlaceholders(date: Date?, checkStatus: CheckStatus, taskFiles: Map<String, String>): TaskSolutions {
-        return TaskSolutions(date, checkStatus, taskFiles.mapValues {
-          @Suppress("RemoveExplicitTypeArguments") // type required by compiler
-          it.value to emptyList<AnswerPlaceholder>()
-        })
-      }
     }
   }
 }

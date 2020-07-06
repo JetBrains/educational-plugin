@@ -400,11 +400,15 @@ class SolutionFile {
   @JsonProperty(TEXT)
   var text: String = ""
 
+  @JsonProperty(IS_VISIBLE)
+  var isVisible: Boolean = true
+
   constructor()
 
-  constructor(name: String, text: String) {
+  constructor(name: String, text: String, visible: Boolean) {
     this.name = name
     this.text = text
+    isVisible = visible
   }
 }
 
