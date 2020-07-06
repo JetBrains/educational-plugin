@@ -90,7 +90,6 @@ abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
       answerPlaceholderCopy.offset = answerPlaceholder.offset
       answerPlaceholderCopy.length = answerPlaceholder.length
       answerPlaceholderCopy.index = answerPlaceholder.index
-      answerPlaceholderCopy.hints = answerPlaceholder.hints
       val state = answerPlaceholder.initialState
       if (state != null) {
         answerPlaceholderCopy.initialState = AnswerPlaceholder.MyInitialState(state.offset, state.length)

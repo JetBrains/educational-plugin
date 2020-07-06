@@ -153,14 +153,6 @@ public class AnswerPlaceholder {
     myOffset = offset;
   }
 
-  public List<String> getHints() {
-    return myHints;
-  }
-
-  public void setHints(@NotNull final List<String> hints) {
-    myHints = hints;
-  }
-
   @Nullable
   public String getStudentAnswer() {
     return myStudentAnswer;

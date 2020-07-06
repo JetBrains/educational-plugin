@@ -50,7 +50,6 @@ import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException;
@@ -272,7 +271,6 @@ public class EduUtils {
     if (task.getCourse() instanceof HyperskillCourse) {
       TaskDescriptionUtil.removeHyperskillTags(textBuffer);
     }
-    textBuffer.append(TaskExt.taskDescriptionHintBlocks(task));
     return textBuffer.toString();
   }
 

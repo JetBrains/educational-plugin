@@ -20,7 +20,6 @@ public class CCTestsUtil {
     if (p1.getPossibleAnswerLength() != p2.getPossibleAnswerLength()) return false;
     if (p1.getPossibleAnswer() != null ? !p1.getPossibleAnswer().equals(p2.getPossibleAnswer()) : p2.getPossibleAnswer() != null) return false;
     if (p1.getPlaceholderText() != null ? !p1.getPlaceholderText().equals(p2.getPlaceholderText()) : p2.getPlaceholderText() != null) return false;
-    if (!p1.getHints().equals(p2.getHints())) return false;
     return true;
   }
 

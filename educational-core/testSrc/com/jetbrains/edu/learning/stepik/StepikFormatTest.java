@@ -120,7 +120,6 @@ public class StepikFormatTest extends EduTestCase {
     answerPlaceholder.setLength(10);
     answerPlaceholder.setPlaceholderText("type here");
     answerPlaceholder.setPossibleAnswer("answer1");
-    answerPlaceholder.setHints(Arrays.asList("hint 1", "hint 2"));
     final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
     final String placeholderSerialization = mapper.writeValueAsString(answerPlaceholder);
     String expected  = loadJsonText();

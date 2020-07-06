@@ -56,11 +56,6 @@ public class CourseFormatTest extends EduTestCase {
     assertEquals("First task description", EduUtils.getTaskTextFromTask(getProject(), eduTask));
   }
 
-  public void testDescriptionWithPlaceholderHints() throws IOException {
-    EduTask eduTask = getFirstEduTask();
-    assertEquals("First task description\n<div class='hint'>my first hint</div>\n\n", EduUtils.getTaskTextFromTask(getProject(), eduTask));
-  }
-
   public void testFeedbackLinks() throws IOException {
     EduTask eduTask = getFirstEduTask();
 
@@ -82,17 +77,6 @@ public class CourseFormatTest extends EduTestCase {
     final Task task = taskList.get(0);
     assertTrue(task instanceof EduTask);
     return (EduTask)task;
-  }
-
-  public void testHint() throws IOException {
-    EduTask eduTask = getFirstEduTask();
-    final TaskFile taskFile = eduTask.getTaskFile("task.py");
-    assertNotNull(taskFile);
-    final List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
-    assertEquals(1, answerPlaceholders.size());
-    final List<String> hints = answerPlaceholders.get(0).getHints();
-    assertEquals(1, hints.size());
-    assertEquals("my first hint", hints.get(0));
   }
 
   public void testPlaceholderText() throws IOException {
