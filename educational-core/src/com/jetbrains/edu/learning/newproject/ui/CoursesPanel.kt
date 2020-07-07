@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
+import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettings
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
 import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
 import kotlinx.coroutines.Dispatchers
@@ -188,8 +189,9 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   protected fun updateModel(courses: List<Course>, @Suppress("UNUSED_PARAMETER") courseToSelect: Course?, filterCourses: Boolean = true) {
     val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
-    // TODO: implement adding course and uncomment
-    val courseInfos = coursesToAdd.map { CourseInfo(it, { locationString }, { projectSettings }) }
+    val courseInfos = coursesToAdd.map {
+      CourseInfo(it, { CourseSettings.nameToLocation(it) }, { CourseSettings.getLanguageSettings(it)?.settings })
+    }
     coursesListPanel.updateModel(courseInfos, courseToSelect)
   }
 

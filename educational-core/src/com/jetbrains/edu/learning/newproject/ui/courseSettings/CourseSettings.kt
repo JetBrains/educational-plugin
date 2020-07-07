@@ -115,19 +115,24 @@ class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0
     return validationMessage
   }
 
-  private fun nameToLocation(course: Course): String {
-    val courseName = course.name
-    val language = course.languageDisplayName
-    val humanLanguage = course.humanLanguage
-    var name = courseName
-    if (!IOUtil.isAscii(name!!)) {
-      //there are problems with venv creation for python course
-      name = "${EduNames.COURSE} $language $humanLanguage".capitalize()
+  companion object {
+    fun nameToLocation(course: Course): String {
+      val courseName = course.name
+      val language = course.languageDisplayName
+      val humanLanguage = course.humanLanguage
+      var name = courseName
+      if (!IOUtil.isAscii(name!!)) {
+        //there are problems with venv creation for python course
+        name = "${EduNames.COURSE} $language $humanLanguage".capitalize()
+      }
+      if (!PathUtil.isValidFileName(name)) {
+        DateFormat.getDateInstance(DateFormat.DATE_FIELD, Locale.getDefault()).format(course.updateDate)
+        name = FileUtil.sanitizeFileName(name)
+      }
+      return FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), name, "").absolutePath
     }
-    if (!PathUtil.isValidFileName(name)) {
-      DateFormat.getDateInstance(DateFormat.DATE_FIELD, Locale.getDefault()).format(course.updateDate)
-      name = FileUtil.sanitizeFileName(name)
-    }
-    return FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), name, "").absolutePath
+
+    fun getLanguageSettings(course: Course): LanguageSettings<out Any?>? = course.configurator?.courseBuilder?.getLanguageSettings()
   }
+
 }
