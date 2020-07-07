@@ -31,7 +31,8 @@ class NameAndInfoPanel(errorHandler: (ErrorState) -> Unit) : JPanel() {
   private val infoPanel = InfoPanel()
   private var tagsPanel: TagsPanel = TagsPanel()
   private var baselinePanel: BaselinePanel = BaselinePanel()
-  private val startButton: StartCourseButtonBase = StartCourseButton(true, errorHandler)
+  private val startButton: StartCourseButton = StartCourseButton(true, errorHandler)
+  private val openButton: OpenCourseButton = OpenCourseButton()
   private val editButton: StartCourseButtonBase = EditCourseButton(errorHandler)
 
   init {
@@ -41,6 +42,7 @@ class NameAndInfoPanel(errorHandler: (ErrorState) -> Unit) : JPanel() {
     baselinePanel.setYOffset(JBUI.scale(Y_OFFSET))
     baselinePanel.add(nameHtmlPanel)
     baselinePanel.addButtonComponent(startButton)
+    baselinePanel.addButtonComponent(openButton)
     baselinePanel.addButtonComponent(editButton)
 
     add(baselinePanel)
@@ -57,6 +59,7 @@ class NameAndInfoPanel(errorHandler: (ErrorState) -> Unit) : JPanel() {
     infoPanel.bind(course, settings)
     tagsPanel.update(course, settings)
     startButton.update(courseInfo)
+    openButton.update(courseInfo)
     editButton.update(courseInfo)
 
     revalidate()

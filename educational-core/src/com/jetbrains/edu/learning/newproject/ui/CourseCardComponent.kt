@@ -137,18 +137,17 @@ class CourseNameComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> 
     nameLabel.toolTipText = courseInfo.course.name
 
     val coursePath = CoursesStorage.getInstance().getCoursePath(courseInfo.course)
-    when {
+    button = when {
       courseInfo.course is JetBrainsAcademyCourse -> {
-        button = JBAcademyCourseButton(false, errorHandler)
+        JBAcademyCourseButton(false, errorHandler)
       }
       coursePath != null -> {
-        button = OpenCourseButton(coursePath)
+        OpenCourseButton()
       }
       else -> {
-        button = StartCourseButton(false, errorHandler)
-        button.update(courseInfo)
+        StartCourseButton(false, errorHandler)
       }
-    }
+    }.apply { addListener(courseInfo) }
 
     add(nameLabel, BorderLayout.CENTER)
     add(button, BorderLayout.EAST)

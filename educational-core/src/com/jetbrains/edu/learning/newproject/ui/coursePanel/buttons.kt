@@ -44,39 +44,29 @@ private const val LINK_TEXT = "linkText"
 private const val AFTER_LINK = "afterLink"
 private val LINK_ERROR_PATTERN: Regex = """(?<$BEFORE_LINK>.*)<a href="(?<$LINK>.*)">(?<$LINK_TEXT>.*)</a>(?<$AFTER_LINK>.*)""".toRegex()
 
-class OpenCourseButton(coursePath: String) : CourseButtonBase() {
+class OpenCourseButton : CourseButtonBase() {
 
   init {
     text = "Open"
     setWidth72(this)
+  }
 
-    addActionListener {
-      ApplicationManager.getApplication().invokeAndWait {
-        val project = ProjectUtil.openProject(coursePath, null, true)
-        ProjectUtil.focusProjectWindow(project, true)
-      }
+  override fun actionListener(courseInfo: CourseInfo): ActionListener = ActionListener {
+    ApplicationManager.getApplication().invokeAndWait {
+      val coursePath = CoursesStorage.getInstance().getCoursePath(courseInfo.course) ?: return@invokeAndWait
+      val project = ProjectUtil.openProject(coursePath, null, true)
+      ProjectUtil.focusProjectWindow(project, true)
     }
   }
+
+  override fun isVisible(course: Course): Boolean = CoursesStorage.getInstance().getCoursePath(course) != null
 }
 
-class JBAcademyCourseButton(fill: Boolean = true, errorHandler: (ErrorState) -> Unit) : CourseButtonBase(fill) {
+class JBAcademyCourseButton(fill: Boolean = true, private val errorHandler: (ErrorState) -> Unit) : CourseButtonBase(fill) {
 
   init {
     text = "Start"
     setWidth72(this)
-
-    addActionListener {
-      // TODO: enable button if user not logged in
-      if (HyperskillSettings.INSTANCE.account == null) {
-        HyperskillConnector.getInstance().doAuthorize(
-          Runnable { runInEdt(ModalityState.stateForComponent(this)) { HyperskillProjectOpener.requestFocus() } },
-          Runnable { text = "Start" }
-        )
-      }
-      else {
-        joinJetBrainsAcademy(errorHandler)
-      }
-    }
   }
 
   private fun joinJetBrainsAcademy(setError: (ErrorState) -> Unit) {
@@ -92,6 +82,24 @@ class JBAcademyCourseButton(fill: Boolean = true, errorHandler: (ErrorState) -> 
       setError(errorState)
     }
   }
+
+  override fun actionListener(courseInfo: CourseInfo): ActionListener = ActionListener {
+    // TODO: enable button if user not logged in
+    if (HyperskillSettings.INSTANCE.account == null) {
+      HyperskillConnector.getInstance().doAuthorize(
+        Runnable { runInEdt(ModalityState.stateForComponent(this)) { HyperskillProjectOpener.requestFocus() } },
+        Runnable { text = "Start" }
+      )
+    }
+    else {
+      joinJetBrainsAcademy(errorHandler)
+    }
+  }
+
+  // this button is used on course cards only
+  override fun update(courseInfo: CourseInfo) {}
+
+  override fun isVisible(course: Course): Boolean = true
 }
 
 class StartCourseButton(fill: Boolean = true, errorHandler: (ErrorState) -> Unit) : StartCourseButtonBase(errorHandler, fill) {
@@ -102,8 +110,8 @@ class StartCourseButton(fill: Boolean = true, errorHandler: (ErrorState) -> Unit
     setWidth72(this)
   }
 
-  override fun isVisible(course: Course): Boolean = true
-
+  // we place this button on course card and course panel both
+  override fun isVisible(course: Course): Boolean = CoursesStorage.getInstance().getCoursePath(course) == null
 }
 
 class EditCourseButton(errorHandler: (ErrorState) -> Unit) : StartCourseButtonBase(errorHandler) {
@@ -115,34 +123,16 @@ class EditCourseButton(errorHandler: (ErrorState) -> Unit) : StartCourseButtonBa
   }
 
   override fun isVisible(course: Course) = course.isViewAsEducatorEnabled
-
 }
 
 /**
  * inspired by [com.intellij.ide.plugins.newui.InstallButton]
  */
 abstract class StartCourseButtonBase(private val errorHandler: (ErrorState) -> Unit, fill: Boolean = false) : CourseButtonBase(fill) {
-  private var listener: ActionListener? = null
   abstract val courseMode: CourseMode
 
-  private fun actionListener(courseInfo: CourseInfo) = ActionListener {
+  override fun actionListener(courseInfo: CourseInfo) = ActionListener {
     joinCourse(courseInfo, courseMode, errorHandler)
-  }
-
-  fun update(courseInfo: CourseInfo) {
-    listener?.let { removeActionListener(listener) }
-    isVisible = isVisible(courseInfo.course)
-    if (isVisible) {
-      addListener(courseInfo)
-    }
-  }
-
-  abstract fun isVisible(course: Course): Boolean
-
-  private fun addListener(courseInfo: CourseInfo) {
-    listener?.apply { removeActionListener(listener) }
-    listener = actionListener(courseInfo)
-    addActionListener(listener)
   }
 
   private fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode, setError: (ErrorState) -> Unit) {
@@ -164,8 +154,8 @@ abstract class StartCourseButtonBase(private val errorHandler: (ErrorState) -> U
       try {
         configurator.beforeCourseStarted(course)
 
-      val dialog = UIUtil.getParentOfType(JoinCourseDialogBase::class.java, this)
-      dialog?.close()
+        val dialog = UIUtil.getParentOfType(JoinCourseDialogBase::class.java, this)
+        dialog?.close()
         course.courseMode = courseMode.toString()
         val projectGenerator = configurator
           .courseBuilder
@@ -181,6 +171,8 @@ abstract class StartCourseButtonBase(private val errorHandler: (ErrorState) -> U
 }
 
 abstract class CourseButtonBase(fill: Boolean = false) : ColorButton() {
+  private var listener: ActionListener? = null
+
   init {
     setTextColor(if (fill) FillForegroundColor else ForegroundColor)
     setBgColor(if (fill) FillBackgroundColor else BackgroundColor)
@@ -188,6 +180,23 @@ abstract class CourseButtonBase(fill: Boolean = false) : ColorButton() {
     setBorderColor(BorderColor)
     setFocusedBorderColor(BorderColor)
     setFocusedTextColor(ForegroundColor)
+  }
+
+  abstract fun isVisible(course: Course): Boolean
+
+  protected abstract fun actionListener(courseInfo: CourseInfo): ActionListener
+
+  open fun update(courseInfo: CourseInfo) {
+    isVisible = isVisible(courseInfo.course)
+    addListener(courseInfo)
+  }
+
+  fun addListener(courseInfo: CourseInfo) {
+    listener?.let { removeActionListener(listener) }
+    isVisible = isVisible(courseInfo.course)
+    if (isVisible) {
+      addActionListener(actionListener(courseInfo))
+    }
   }
 }
 
