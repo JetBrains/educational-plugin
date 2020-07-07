@@ -216,7 +216,6 @@
     <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
 
     <postStartupActivity implementation="com.jetbrains.edu.learning.EduStartupActivity"/>
-    <postStartupActivity implementation="com.jetbrains.edu.coursecreator.CCStartupActivity"/>
 
     <projectConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
                          id="Educational" displayName="Education"/>

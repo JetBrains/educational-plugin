@@ -6,6 +6,7 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.colors.EditorColorsListener
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
@@ -16,6 +17,8 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
+import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
@@ -34,8 +37,11 @@ class EduStartupActivity : StartupActivity.DumbAware {
     val manager = StudyTaskManager.getInstance(project)
     val connection = ApplicationManager.getApplication().messageBus.connect(manager)
     if (!isUnitTestMode) {
-      if (EduUtils.isStudentProject(project)) {
-        connection.subscribe(VirtualFileManager.VFS_CHANGES, UserCreatedFileListener(project))
+      val vfsListener = if (EduUtils.isStudentProject(project)) UserCreatedFileListener(project) else CCVirtualFileListener(project)
+      connection.subscribe(VirtualFileManager.VFS_CHANGES, vfsListener)
+
+      if (CCUtils.isCourseCreator(project)) {
+        EditorFactory.getInstance().eventMulticaster.addDocumentListener(SynchronizeTaskDescription(project), manager)
       }
       EduDocumentListener.setGlobalListener(project, manager)
       selectProjectView(project, true)
