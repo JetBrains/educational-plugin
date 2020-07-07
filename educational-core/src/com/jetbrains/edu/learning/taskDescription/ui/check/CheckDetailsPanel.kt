@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
+import com.jetbrains.edu.learning.xmlUnescaped
 import java.awt.BorderLayout
 import javax.swing.BoxLayout
 import javax.swing.JPanel
@@ -63,7 +64,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     }
 
     if (messagePanel.messageShortened) {
-      linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, checkResult.fullMessage)),
+      linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, checkResult.fullMessage.xmlUnescaped)),
                      BorderLayout.NORTH)
     }
     return messagePanel

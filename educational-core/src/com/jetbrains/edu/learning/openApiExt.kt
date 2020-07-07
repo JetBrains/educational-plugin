@@ -39,6 +39,8 @@ val Project.course: Course? get() = StudyTaskManager.getInstance(this).course
 
 val String.xmlEscaped: String get() = StringUtil.escapeXmlEntities(this)
 
+val String.xmlUnescaped: String get() = StringUtil.unescapeXmlEntities(this)
+
 inline fun <T> runReadActionInSmartMode(project: Project, crossinline runnable: () -> T): T {
   return DumbService.getInstance(project).runReadActionInSmartMode(Computable { runnable() })
 }
