@@ -8,9 +8,9 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.colors.EditorColorsListener
 import com.intellij.openapi.editor.colors.EditorColorsManager
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.wm.ToolWindowId
@@ -45,19 +45,19 @@ class EduStartupActivity : StartupActivity.DumbAware {
       TaskDescriptionView.updateAllTabs(TaskDescriptionView.getInstance(project))
     })
 
-    val course = manager.course
-    if (course == null) {
-      LOG.warn("Opened project is with null course")
-      return
-    }
+    StartupManager.getInstance(project).runWhenProjectIsInitialized {
+      val course = manager.course
+      if (course == null) {
+        LOG.warn("Opened project is with null course")
+        return@runWhenProjectIsInitialized
+      }
 
-    val propertiesComponent = PropertiesComponent.getInstance(project)
-    if (CCUtils.isCourseCreator(project) && !propertiesComponent.getBoolean(HINTS_IN_DESCRIPTION_PROPERTY)) {
-      moveHintsToTaskDescription(project, course)
-      propertiesComponent.setValue(HINTS_IN_DESCRIPTION_PROPERTY, true)
-    }
+      val propertiesComponent = PropertiesComponent.getInstance(project)
+      if (CCUtils.isCourseCreator(project) && !propertiesComponent.getBoolean(HINTS_IN_DESCRIPTION_PROPERTY)) {
+        moveHintsToTaskDescription(project, course)
+        propertiesComponent.setValue(HINTS_IN_DESCRIPTION_PROPERTY, true)
+      }
 
-    DumbService.getInstance(project).runWhenSmart {
       setupProject(project, course)
       ApplicationManager.getApplication().invokeLater {
         runWriteAction { EduCounterUsageCollector.eduProjectOpened(course) }
