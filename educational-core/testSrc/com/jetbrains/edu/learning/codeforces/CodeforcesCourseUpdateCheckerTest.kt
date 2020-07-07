@@ -60,7 +60,7 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
            1,
            2,
            2,
-           notificationMessage = EduCoreBundle.message("codeforces.task.updated.notification", taskName)) {}
+           notificationMessage = EduCoreBundle.message("codeforces.task.description.was.updated.notification", taskName)) {}
   }
 
   fun `test custom check interval for ongoing contest`() {

@@ -57,17 +57,14 @@ class CodeforcesCourseUpdater(project: Project, course: CodeforcesCourse) : Cour
   override fun doUpdate(remoteCourse: CodeforcesCourse?) {
     updateProjectLesson(remoteCourse)
     updatedTasks.forEach {
-      showUpdateCompletedNotification(EduCoreBundle.message("codeforces.task.updated.notification", it))
+      showUpdateCompletedNotification(EduCoreBundle.message("codeforces.task.description.was.updated.notification", it))
     }
   }
 
   @VisibleForTesting
   override fun updateProjectLesson(remoteCourse: CodeforcesCourse?): Boolean {
-    val lesson = course.getLesson() ?: return true
-    remoteCourse ?: return true
-
     val tasks = course.getTasks() ?: return true
-    val remoteTasks = remoteCourse.getTasks() ?: return true
+    val remoteTasks = remoteCourse?.getTasks() ?: return true
 
     invokeAndWaitIfNeeded {
       if (project.isDisposed) return@invokeAndWaitIfNeeded
@@ -76,10 +73,7 @@ class CodeforcesCourseUpdater(project: Project, course: CodeforcesCourse) : Cour
         if (!task.needToBeUpdated(project, remoteTask)) continue
 
         updatedTasks.add(task.name)
-
         updateTaskDescription(task, remoteTask)
-        updateTaskFiles(lesson, task, remoteTask.taskFiles, true)
-
         YamlFormatSynchronizer.saveItem(task)
       }
 
