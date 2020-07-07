@@ -262,17 +262,38 @@ class HyperskillLoadingTest : NavigationTestBase() {
       file("settings.gradle")
     }
     fileTree.assertEquals(rootDir, myFixture)
+  }
 
-    checkVisibility(course.findTask("lesson1", "task1").taskFiles,
-                    mapOf("src/Task.kt" to true, "src/Baz.kt" to false, "test/Tests1.kt" to false))
-    checkVisibility(course.findTask("lesson1", "task2").taskFiles,
-                    mapOf("src/Task.kt" to true, "src/Baz.kt" to true, "src/additional.txt" to true, "test/Tests2.kt" to false))
+  fun `test file visibility is loaded`() {
+    configureResponse("submission_stage2_failed_new_file_visibility.json")
+    val course = createHyperskillCourse()
+
+    withVirtualFileListener(course) {
+      HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
+    }
+    val task1 = course.findTask("lesson1", "task1")
+    checkVisibility(task1.name, task1.taskFiles,
+                    mapOf("src/Task.kt" to true, "src/Baz.kt" to false, "test/Tests1.kt" to false, "src/additional1.txt" to true,
+                          "src/additional2.txt" to false))
+    val task2 = course.findTask("lesson1", "task2")
+
+    /**
+     * We should properly fill isVisible to submissions in non-current tasks
+     * @see com.jetbrains.edu.learning.stepik.SolutionLoaderBase.Companion.applySolutionToNonCurrentTask
+     * EDU-3480
+     * "src/additional3.txt" is set right because it is default value
+     * TODO add `"src/additional4.txt" to false`
+     */
+    checkVisibility(task2.name, task2.taskFiles,
+                    mapOf("src/Task.kt" to false, "src/Baz.kt" to true, "test/Tests2.kt" to false, "src/additional3.txt" to true))
   }
 
   fun `test solution loading with new file on the first stage`() {
     configureResponse("submission_stage1_new_file.json")
     val course = createHyperskillCourse()
-    HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
+    withVirtualFileListener(course) {
+      HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
+    }
 
     val fileTree = fileTree {
       dir("lesson1") {
@@ -384,8 +405,8 @@ class HyperskillLoadingTest : NavigationTestBase() {
     return course
   }
 
-  private fun checkVisibility(taskFiles: Map<String, TaskFile>, visibility: Map<String, Boolean>) {
-    assertEquals(visibility.size, taskFiles.size)
+  private fun checkVisibility(name: String, taskFiles: Map<String, TaskFile>, visibility: Map<String, Boolean>) {
+    assertEquals("TaskFiles count is wrong for $name", visibility.size, taskFiles.size)
     taskFiles.forEach { (name, file) ->
       assertEquals("Visibility for $name differs", visibility[name], file.isVisible)
     }

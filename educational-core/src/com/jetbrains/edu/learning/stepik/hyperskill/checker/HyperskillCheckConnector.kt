@@ -1,10 +1,12 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.containers.nullize
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -44,12 +46,21 @@ object HyperskillCheckConnector {
   }
 
   private fun postEduSubmission(attempt: Attempt, project: Project, task: Task, feedback: String) {
+    val files = getSolutionFiles(task, project).nullize() ?: return
+    return when (val response = HyperskillConnector.getInstance().postSubmission(createEduSubmission(task, attempt, files, feedback))) {
+      is Err -> showErrorDetails(project, response.error)
+      is Ok -> SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, response.value)
+    }
+  }
+
+  @VisibleForTesting
+  fun getSolutionFiles(task: Task, project: Project): List<SolutionFile> {
     val taskDir = task.getTaskDir(project)
     if (taskDir == null) {
       val error = EduCoreBundle.message("error.failed.to.find.dir", task.name)
       LOG.error(error)
       showErrorDetails(project, EduCoreBundle.message("error.unexpected", error))
-      return
+      return emptyList()
     }
 
     val files = ArrayList<SolutionFile>()
@@ -65,13 +76,11 @@ object HyperskillCheckConnector {
         files.add(SolutionFile(taskFile.name, document.text, taskFile.isVisible))
       }
     }
-
-    return when (val submissionResponse = HyperskillConnector.getInstance().postSubmission(createEduSubmission(task, attempt, files, feedback))) {
-      is Err -> {
-        showErrorDetails(project, submissionResponse.error)
-      }
-      is Ok -> SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, submissionResponse.value)
+    if (files.isEmpty()) {
+      LOG.warn("No files were collected to post solution")
+      showErrorDetails(project, EduCoreBundle.message("error.failed.to.collect.files", task.name))
     }
+    return files
   }
 
   private fun createEduSubmission(task: Task, attempt: Attempt, files: List<SolutionFile>, feedback: String): Submission {

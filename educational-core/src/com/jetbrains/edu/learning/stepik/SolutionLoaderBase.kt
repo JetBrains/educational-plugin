@@ -289,9 +289,13 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
         val taskFile = task.getTaskFile(path)
         if (taskFile == null) {
           GeneratorUtils.createChildFile(taskDir, path, solution.text)
-          // it does not work
-          // val created = task.getTaskFile(path) ?: error("taskFile should be created moment ago")
-          task.addTaskFile(TaskFile(path, solution.text, solution.isVisible))
+          val createdFile = task.getTaskFile(path)
+          if (createdFile == null) {
+            val help = if (isUnitTestMode) "Don't you forget to use `withVirtualFileListener`?" else ""
+            LOG.error("taskFile $path should be created moment ago. $help")
+            continue
+          }
+          createdFile.isVisible = solution.isVisible
         }
         else {
           val vFile = taskDir.findFileByRelativePath(path) ?: continue
