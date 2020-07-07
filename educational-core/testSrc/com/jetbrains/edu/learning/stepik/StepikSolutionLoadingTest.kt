@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik
 
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils.getFirstTask
-import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -14,7 +13,6 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import junit.framework.TestCase
-import okhttp3.mockwebserver.MockResponse
 import java.text.SimpleDateFormat
 
 class StepikSolutionLoadingTest : NavigationTestBase() {
@@ -106,7 +104,8 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
       mapOf(1 to "submissions_response_1.json", 2 to "submissions_response_2.json"))
     val course = courseWithFiles(
       language = FakeGradleBasedLanguage,
-      courseProducer = ::EduCourse) {
+      courseProducer = ::EduCourse,
+      id = 1) {
       frameworkLesson("lesson1") {
         eduTask("task1", stepId = 1) {
           taskFile("task.kt", "fun fizz() {}")
@@ -116,7 +115,6 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
         }
       }
     }
-    course.id = 1
     StepikSolutionsLoader.getInstance(project).loadSolutions(null, course)
     UIUtil.dispatchAllInvocationEvents()
 
@@ -167,7 +165,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
   fun `test framework lesson solutions with dependencies`() {
     configureSubmissionsResponse(
       mapOf(1 to "submissions_response_with_placeholders_1.json", 2 to "submissions_response_with_placeholders_2.json"))
-    val course = courseWithFiles {
+    val course = courseWithFiles(id = 1) {
       frameworkLesson("lesson1") {
         eduTask("task1", stepId = 1) {
           taskFile("fizz.kt", "fun fizz() = <p>\"Fizz\"</p>") {
@@ -181,7 +179,6 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
         }
       }
     }
-    course.id = 1
 
     StepikSolutionsLoader.getInstance(project).loadSolutions(null, course)
 
@@ -227,12 +224,11 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
     checkTaskStatuses(course.allTasks, listOf(CheckStatus.Failed, CheckStatus.Solved))
   }
 
-  private fun mockResponse(fileName: String): MockResponse = MockResponseFactory.fromFile(getTestFile(fileName))
-
   private fun createStepikCourse(): EduCourse {
     val course = courseWithFiles(
       language = FakeGradleBasedLanguage,
-      courseProducer = ::EduCourse
+      courseProducer = ::EduCourse,
+      id = 1
     ) {
       lesson("lesson1") {
         eduTask("task1", stepId = 1) {
@@ -246,7 +242,6 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
       }
     } as EduCourse
     setUpdateDate(course)
-    course.id = 1
     return course
   }
 
@@ -264,8 +259,6 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/loadSolutions/"
-
-  private fun getTestFile(fileName: String) = testDataPath + fileName
 
   companion object {
     private val SUBMISSIONS_REQUEST_RE = """/api/submissions?.*step=(\d*).*""".toRegex()

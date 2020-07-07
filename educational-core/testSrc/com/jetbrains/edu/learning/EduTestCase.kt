@@ -45,6 +45,8 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import okhttp3.mockwebserver.MockResponse
+import org.apache.http.HttpStatus
 import java.io.IOException
 
 abstract class EduTestCase : BasePlatformTestCase() {
@@ -170,6 +172,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
   fun courseWithFiles(
     name: String = "Test Course",
     courseMode: String = EduNames.STUDY,
+    id: Int? = null,
     description: String = "Test Course Description",
     environment: String = "",
     language: Language = PlainTextLanguage.INSTANCE,
@@ -184,6 +187,10 @@ abstract class EduTestCase : BasePlatformTestCase() {
         createConfigFiles(project)
       }
     }
+    if (id != null) {
+      course.id = id
+    }
+
     SubmissionsManager.getInstance(project).course = course
     return course
   }
@@ -306,4 +313,9 @@ abstract class EduTestCase : BasePlatformTestCase() {
     extension.environment = environment
     EducationalExtensionPoint.EP_NAME.getPoint(null).registerExtension(extension, disposable)
   }
+
+  protected fun getTestFile(fileName: String) = testDataPath + fileName
+
+  protected fun mockResponse(fileName: String, responseCode: Int = HttpStatus.SC_OK): MockResponse = MockResponseFactory.fromFile(
+    getTestFile(fileName), responseCode)
 }

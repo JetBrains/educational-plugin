@@ -8,9 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.stepik.CourseUpdateChecker
-import okhttp3.mockwebserver.MockResponse
 
 abstract class CourseUpdateCheckerTestBase : EduTestCase() {
 
@@ -60,11 +58,7 @@ abstract class CourseUpdateCheckerTestBase : EduTestCase() {
     check(expectedInvocationNumber <= updateChecker.invocationNumber)
   }
 
-  protected fun mockResponse(fileName: String): MockResponse = MockResponseFactory.fromFile(getTestFile(fileName))
-
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/"
-
-  protected fun getTestFile(fileName: String) = testDataPath + fileName
 
   @Suppress("DEPRECATION")
   class NotificationListener(project: Project, disposable: Disposable) {

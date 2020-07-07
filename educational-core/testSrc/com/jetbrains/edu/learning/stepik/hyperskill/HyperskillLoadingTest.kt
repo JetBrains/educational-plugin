@@ -5,7 +5,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry
 import com.jetbrains.edu.learning.EduTestDialog
-import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -15,7 +14,6 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.withTestDialog
-import okhttp3.mockwebserver.MockResponse
 
 class HyperskillLoadingTest : NavigationTestBase() {
   override fun setUp() {
@@ -28,8 +26,6 @@ class HyperskillLoadingTest : NavigationTestBase() {
   private fun configureResponse(responseFileName: String) {
     mockConnector.withResponseHandler(testRootDisposable) { mockResponse(responseFileName) }
   }
-
-  private fun mockResponse(fileName: String): MockResponse = MockResponseFactory.fromFile(getTestFile(fileName))
 
   fun `test solution loading second stage failed`() {
     configureResponse("submission_stage2_failed.json")
@@ -413,8 +409,6 @@ class HyperskillLoadingTest : NavigationTestBase() {
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"
-
-  private fun getTestFile(fileName: String) = testDataPath + fileName
 
   companion object {
     private val TOPICS_REQUEST_RE = """/api/topics?.*page=(\d*).*""".toRegex()

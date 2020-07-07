@@ -1,0 +1,19 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : true,
+    "has_previous" : false
+  },
+  "attempts" : [
+    {
+      "id" : 229584056,
+      "dataset" : "",
+      "dataset_url" : null,
+      "time" : "2020-07-03T09:50:14Z",
+      "status" : "active",
+      "time_left" : null,
+      "step" : 1,
+      "user" : 131219422
+    }
+  ]
+}

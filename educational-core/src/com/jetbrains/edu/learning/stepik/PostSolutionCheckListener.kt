@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
@@ -21,15 +22,24 @@ class PostSolutionCheckListener : CheckListener {
     val course = task.lesson.course
     if (course is EduCourse && course.isRemote && course.isStudy && EduSettings.isLoggedIn() && task.isToSubmitToStepik) {
       if (task.isUpToDate) {
-        ApplicationManager.getApplication().executeOnPooledThread {
-          val submission: Submission? = StepikSolutionsLoader.postSolution(task, task.status == CheckStatus.Solved, project)
-          SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, submission)
+        if (!isUnitTestMode) {
+          ApplicationManager.getApplication().executeOnPooledThread {
+            addSubmissionToSubmissionsManager(project, task)
+          }
+        }
+        else {
+          addSubmissionToSubmissionsManager(project, task)
         }
       }
       else {
         showSubmissionNotPostedNotification(project, course, task.name)
       }
     }
+  }
+
+  private fun addSubmissionToSubmissionsManager(project: Project, task: Task) {
+    val submission: Submission? = StepikSolutionsLoader.postSolution(task, task.status == CheckStatus.Solved, project)
+    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, submission)
   }
 
   private fun showSubmissionNotPostedNotification(project: Project, course: EduCourse, taskName: String) {

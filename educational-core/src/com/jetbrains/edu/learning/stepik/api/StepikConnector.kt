@@ -50,7 +50,7 @@ abstract class StepikConnector {
     get() = service(EduSettings.getInstance().user)
 
   private fun service(account: StepikUser?): StepikService {
-    if (account != null && !account.tokenInfo.isUpToDate()) {
+    if (!isUnitTestMode && account != null && !account.tokenInfo.isUpToDate()) {
       account.refreshTokens()
     }
 

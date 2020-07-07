@@ -1,22 +1,18 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.intellij.lang.annotations.Language
 
-class HyperskillSubmissionsTest : EduTestCase() {
+class HyperskillSubmissionsTest : SubmissionsTestBase() {
 
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
@@ -54,7 +50,7 @@ class HyperskillSubmissionsTest : EduTestCase() {
       }
     } as HyperskillCourse
 
-    doTestSubmissionsLoaded(1, 1)
+    doTestSubmissionsLoaded(setOf(1), mapOf(1 to 1))
   }
 
   fun `test edu task several submissions loaded`() {
@@ -71,7 +67,7 @@ class HyperskillSubmissionsTest : EduTestCase() {
       }
     } as HyperskillCourse
 
-    doTestSubmissionsLoaded(2, 2)
+    doTestSubmissionsLoaded(setOf(2), mapOf(2 to 2))
   }
 
   fun `test code problem submissions loaded`() {
@@ -86,7 +82,7 @@ class HyperskillSubmissionsTest : EduTestCase() {
       }
     } as HyperskillCourse
 
-    doTestSubmissionsLoaded(1, 1)
+    doTestSubmissionsLoaded(setOf(1), mapOf(1 to 1))
   }
 
   fun `test submission added after edu task check`() {
@@ -102,7 +98,7 @@ class HyperskillSubmissionsTest : EduTestCase() {
         }
       }
     } as HyperskillCourse
-    doTestSubmissionsAddedAfterTaskCheck(3, EduNames.CORRECT)
+    doTestSubmissionAddedAfterTaskCheck(3, EduNames.CORRECT)
   }
 
   fun `test submission added after code task check with periodically check`() {
@@ -130,18 +126,6 @@ class HyperskillSubmissionsTest : EduTestCase() {
     doTestSubmissionsAddedAfterCodeTaskCheck()
   }
 
-  private fun doTestSubmissionsAddedAfterTaskCheck(taskId: Int, checkStatus: String) {
-    val submissionsManager = SubmissionsManager.getInstance(project)
-    assertNull("SubmissionsManager should not contain submissions before task check",
-               submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
-
-    NavigationUtils.navigateToTask(project, findTask(0, 0))
-    val action = CheckAction()
-    action.actionPerformed(TestActionEvent(action))
-
-    checkSubmissionPresentWithStatus(submissionsManager, taskId, checkStatus)
-  }
-
   private fun doTestSubmissionsAddedAfterCodeTaskCheck() {
     courseWithFiles(courseProducer = ::HyperskillCourse) {
       lesson("Problems") {
@@ -154,33 +138,7 @@ class HyperskillSubmissionsTest : EduTestCase() {
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { "Wrong solution" }
 
-    doTestSubmissionsAddedAfterTaskCheck(4, EduNames.WRONG)
-  }
-
-  private fun doTestSubmissionsLoaded(taskId: Int, submissionsNumber: Int) {
-    val submissionsManager = SubmissionsManager.getInstance(project)
-    assertNull("SubmissionsManager should not contain submissions before submissions loading",
-               submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
-    submissionsManager.prepareSubmissionsContent()
-
-    checkSubmissionsPresent(submissionsManager, taskId, submissionsNumber)
-  }
-
-  private fun checkSubmissionsPresent(submissionsManager: SubmissionsManager,
-                                      taskId: Int,
-                                      submissionsNumber: Int = 1) {
-    val submissions = submissionsManager.getSubmissionsFromMemory(setOf(taskId))
-    assertNotNull("Submissions list should not be null", submissions)
-    assertTrue(submissions!!.size == submissionsNumber)
-  }
-
-  private fun checkSubmissionPresentWithStatus(submissionsManager: SubmissionsManager,
-                                               taskId: Int,
-                                               checkStatus: String) {
-    val submissions = submissionsManager.getSubmissionsFromMemory(setOf(taskId))
-    assertNotNull("Submissions list should not be null", submissions)
-    assertTrue(submissions!!.size == 1)
-    assertEquals(checkStatus, submissions[0].status)
+    doTestSubmissionAddedAfterTaskCheck(4, EduNames.WRONG)
   }
 
   @Language("JSON")

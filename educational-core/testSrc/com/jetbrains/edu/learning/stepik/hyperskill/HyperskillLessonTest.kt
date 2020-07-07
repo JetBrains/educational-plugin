@@ -5,7 +5,6 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.collectAdditionalLessonInfo
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLesson
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -37,7 +36,7 @@ class HyperskillLessonTest : EduTestCase() {
         "/api/steps?ids%5B%5D=111" -> "steps_response_111.json"
         else -> "response_empty.json"
       }
-      MockResponseFactory.fromFile(getTestFile(responseFileName))
+      mockResponse(responseFileName)
     }
 
     val lessonAttachmentLink = "${StepikNames.STEPIK_URL}/media/attachments/lesson/${lessonId}/${StepikNames.ADDITIONAL_INFO}"
@@ -51,8 +50,6 @@ class HyperskillLessonTest : EduTestCase() {
     assertEquals("build.gradle", additionalFiles[0].name)
     assertEquals("additional file text", additionalFiles[0].text)
   }
-
-  private fun getTestFile(fileName: String) = testDataPath + fileName
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"
 }

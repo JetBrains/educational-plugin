@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.update
 
-import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -22,7 +21,7 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   private fun configureResponse() {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
-      MockResponseFactory.fromFile(getTestFile("remote_course.json"))
+      mockResponse("remote_course.json")
     }
   }
 
