@@ -61,6 +61,31 @@
         "array"
       ],
       "uniqueItems": true
+    },
+    "vendor": {
+      "description": "Vendor name, email and url information",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Vendor name"
+        },
+        "url": {
+          "type": "string",
+          "description": "Vendor url"
+        },
+        "email": {
+          "type": "string",
+          "description": "Vendor email"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [

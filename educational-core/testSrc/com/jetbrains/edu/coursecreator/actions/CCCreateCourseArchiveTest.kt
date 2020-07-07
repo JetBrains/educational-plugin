@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
@@ -222,7 +223,7 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
 
     // It is not important, what would be passed to the constructor, except the first argument - project
     // Inside `compute()`, exception would be thrown, so we will not reach the moment of creating the archive
-    CourseArchiveCreator(project, course.getDir(project), File(""), false).compute()
+    EduCourseArchiveCreator(project, File("")).compute()
 
     val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
     assertEquals(task.configFileName, navigatedFile.name)
@@ -380,9 +381,8 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     @Suppress("DEPRECATION")
     val baseDir = myFixture.project.baseDir
     VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
-    val errorMessage = CCCreateCourseArchive.createCourseArchive(myFixture.project, "course",
-                                                                 myFixture.project.basePath + "/" + GENERATED_FILES_FOLDER,
-                                                                 false)
+    val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(
+      EduCourseArchiveCreator(myFixture.project, File("${myFixture.project.basePath}/$GENERATED_FILES_FOLDER", "course.zip")))
     assertNull(errorMessage)
     VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
     val generated = baseDir.findChild(GENERATED_FILES_FOLDER)

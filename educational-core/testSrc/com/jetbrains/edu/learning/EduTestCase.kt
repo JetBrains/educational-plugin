@@ -179,11 +179,13 @@ abstract class EduTestCase : BasePlatformTestCase() {
     environment: String = "",
     language: Language = PlainTextLanguage.INSTANCE,
     settings: Any = Unit,
+    courseVendor: Vendor? = null,
     courseProducer: () -> Course = ::EduCourse,
     createYamlConfigs: Boolean = false,
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
     val course = course(name, language, description, environment, courseMode, courseProducer, buildCourse).apply {
+      vendor = courseVendor
       createCourseFiles(project, module, settings = settings)
       if (createYamlConfigs) {
         createConfigFiles(project)

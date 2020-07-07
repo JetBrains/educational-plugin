@@ -1,23 +1,21 @@
 package com.jetbrains.edu.coursecreator.actions
 
-import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.PrettyPrinter
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.ide.projectView.ProjectView
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.io.ZipUtil
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.CCUtils.generateArchiveFolder
 import com.jetbrains.edu.coursecreator.actions.mixins.*
 import com.jetbrains.edu.learning.EduNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.EduUtils
@@ -30,22 +28,20 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
 import java.io.File
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 
-class CourseArchiveCreator(
+abstract class CourseArchiveCreator(
   private val project: Project,
-  private val jsonFolder: VirtualFile,
-  private val zipFile: File,
-  private val showMessage: Boolean
+  private val zipFile: File
 ) : Computable<String?> {
 
   override fun compute(): String? {
-    val course = StudyTaskManager.getInstance(project).course ?: return "Unable to obtain course for current project"
-    jsonFolder.refresh(false, true)
-    val courseCopy = course.copy()
+    val courseCopy = StudyTaskManager.getInstance(project).course?.copy() ?: return "Unable to obtain course for current project"
+    val jsonFolder = generateArchiveFolder(project) ?: return "Failed to generate course archive"
+
     try {
       loadActualTexts(project, courseCopy)
     }
@@ -53,7 +49,7 @@ class CourseArchiveCreator(
       if (!isUnitTestMode) {
         LOG.error("Failed to create course archive: ${e.message}")
       }
-      val yamlFile = e.placeholder.taskFile?.task?.getTaskDir(project)?.findChild("task-info.yaml") ?: return e.message
+      val yamlFile = e.placeholder.taskFile?.task?.getTaskDir(project)?.findChild(TASK_CONFIG) ?: return e.message
       FileEditorManager.getInstance(project).openFile(yamlFile, true)
       return "${e.message}\n\n${e.placeholderInfo}"
     }
@@ -62,7 +58,7 @@ class CourseArchiveCreator(
     return try {
       val json = generateJson(jsonFolder, courseCopy)
       VirtualFileManager.getInstance().refreshWithoutFileWatcher(false)
-      packCourse(json, zipFile, showMessage)
+      ZipUtil.compressFile(json, zipFile)
       synchronize(project)
       null
     }
@@ -77,23 +73,15 @@ class CourseArchiveCreator(
     ProjectView.getInstance(project).refresh()
   }
 
-  private fun packCourse(json: File, zipFile: File, showMessage: Boolean) {
-    ZipUtil.compressFile(json, zipFile)
-    if (showMessage) {
-      ApplicationManager.getApplication().invokeLater {
-        Messages.showInfoMessage("Course archive was saved to " + zipFile.path,
-                                 "Course Archive Was Created Successfully")
-      }
-    }
-  }
-
   private fun generateJson(parentDir: VirtualFile, course: Course): File {
-    val mapper = if (course.id == 0) course.localMapper else course.remoteMapper
+    val mapper = getMapper(course)
 
     val jsonFile = File(File(parentDir.path), COURSE_META_FILE)
     mapper.writer(printer).writeValue(jsonFile, course)
     return jsonFile
   }
+
+  abstract fun getMapper(course: Course): ObjectMapper
 
   companion object {
     private val LOG = Logger.getInstance(CourseArchiveCreator::class.java.name)
@@ -105,37 +93,15 @@ class CourseArchiveCreator(
         return prettyPrinter
       }
 
-    private val Course.localMapper: ObjectMapper
-      get() {
-        val factory = JsonFactory()
-        val mapper = ObjectMapper(factory)
-        mapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
-        mapper.addMixIn(EduCourse::class.java, LocalEduCourseMixin::class.java)
-        mapper.addMixIn(Section::class.java, LocalSectionMixin::class.java)
-        mapper.addMixIn(Lesson::class.java, LocalLessonMixin::class.java)
-        mapper.addMixIn(Task::class.java, LocalTaskMixin::class.java)
-        mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
-        mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionLocalMixin::class.java)
-        commonSetup(mapper, course)
-        return mapper
-      }
+    fun addStudyItemMixins(mapper: ObjectMapper) {
+      mapper.addMixIn(Section::class.java, LocalSectionMixin::class.java)
+      mapper.addMixIn(Lesson::class.java, LocalLessonMixin::class.java)
+      mapper.addMixIn(Task::class.java, LocalTaskMixin::class.java)
+      mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
+      mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionLocalMixin::class.java)
+    }
 
-    private val Course.remoteMapper: ObjectMapper
-      get() {
-        val factory = JsonFactory()
-        val mapper = ObjectMapper(factory)
-        mapper.addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
-        mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
-        mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
-        mapper.addMixIn(Task::class.java, RemoteTaskMixin::class.java)
-        commonSetup(mapper, course)
-        val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)
-        dateFormat.timeZone = TimeZone.getTimeZone("UTC")
-        mapper.dateFormat = dateFormat
-        return mapper
-      }
-
-    private fun commonSetup(mapper: ObjectMapper, course: Course) {
+    fun commonMapperSetup(mapper: ObjectMapper, course: Course) {
       if (course is CourseraCourse) {
         mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
       }

@@ -99,9 +99,10 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun generateFolder(project: Project, name: String): VirtualFile? {
+  fun generateArchiveFolder(project: Project): VirtualFile? {
     val generatedRoot = getGeneratedFilesFolder(project) ?: return null
 
+    val name = "course"
     var folder = generatedRoot.findChild(name)
     //need to delete old folder
     runWriteAction {
@@ -112,6 +113,7 @@ object CCUtils {
         LOG.info("Failed to generate folder $name", e)
       }
     }
+    folder?.refresh(false, true)
     return folder
   }
 

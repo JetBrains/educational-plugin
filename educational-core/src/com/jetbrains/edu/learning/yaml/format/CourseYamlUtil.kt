@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
@@ -47,6 +48,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TITLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TOP_LEVEL_LESSONS_SECTION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VENDOR
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -55,7 +57,7 @@ import java.util.*
  * Update [CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
-@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN,
+@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN,
                    CONTENT)
 @JsonDeserialize(builder = CourseBuilder::class)
 abstract class CourseYamlMixin {
@@ -95,6 +97,10 @@ abstract class CourseYamlMixin {
   @JsonProperty(SOLUTIONS_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private var solutionsHidden: Boolean = false
+
+  @JsonProperty(VENDOR)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private val myVendor: Vendor? = null
 }
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
@@ -160,6 +166,7 @@ private class CourseBuilder(
   @JsonProperty(TYPE) val courseType: String?,
   @JsonProperty(TITLE) val title: String,
   @JsonProperty(SUMMARY) val summary: String,
+  @JsonProperty(VENDOR) val yamlVendor: Vendor?,
   @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
   @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
   @JsonProperty(LANGUAGE) val language: String,
@@ -193,6 +200,7 @@ private class CourseBuilder(
       name = title
       description = summary
       environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
+      vendor = yamlVendor
       solutionsHidden = areSolutionsHidden ?: false
 
       // for C++ there are two languages with the same display name, and we have to filter out the one we have configurator for

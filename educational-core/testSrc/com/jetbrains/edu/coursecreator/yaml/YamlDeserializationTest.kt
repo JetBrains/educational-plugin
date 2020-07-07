@@ -466,6 +466,48 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(FeedbackLink.LinkType.CUSTOM, task.feedbackLink.type)
   }
 
+  fun `test vendor with email`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |vendor:
+      |  name: Jetbrains
+      |  email: academy@jetbrains.com
+      |programming_language: Plain text
+      |""".trimMargin()
+    val course = deserializeNotNull(yamlContent)
+    assertTrue(course is EduCourse)
+    val vendor = course.vendor
+    assertNotNull(vendor)
+    assertEquals("Jetbrains", vendor.name)
+    assertEquals("academy@jetbrains.com", vendor.email)
+    assertNull(vendor.url)
+  }
+
+  fun `test vendor with url`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |vendor:
+      |  name: Jetbrains
+      |  url: jetbrains.com
+      |programming_language: Plain text
+      |""".trimMargin()
+    val course = deserializeNotNull(yamlContent)
+    assertTrue(course is EduCourse)
+    val vendor = course.vendor
+    assertNotNull(vendor)
+    assertEquals("Jetbrains", vendor.name)
+    assertEquals("jetbrains.com", vendor.url)
+    assertNull(vendor.email)
+  }
+
   fun `test file visibility`() {
     val taskFileName = "Task.java"
     val testFileName = "Test.java"

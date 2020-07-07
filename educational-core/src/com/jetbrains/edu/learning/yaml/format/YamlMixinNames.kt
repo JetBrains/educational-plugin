@@ -30,6 +30,9 @@ object YamlMixinNames {
   const val STAGES = "stages"
   const val THEORY_ID = "theory_id"
 
+  // marketplace course
+  const val VENDOR = "vendor"
+
   // lesson
   const val UNIT = "unit"
 

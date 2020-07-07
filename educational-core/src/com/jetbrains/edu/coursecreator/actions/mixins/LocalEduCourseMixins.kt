@@ -9,16 +9,52 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.ObjectCodec
-import com.fasterxml.jackson.databind.BeanDescription
 import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonSerializer
+import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.annotation.JsonAppend
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.databind.cfg.MapperConfig
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.fasterxml.jackson.databind.introspect.AnnotatedClass
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
+import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter
+import com.fasterxml.jackson.databind.util.Annotations
 import com.fasterxml.jackson.databind.util.StdConverter
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ADDITIONAL_FILES
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.AUTHORS
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.COURSE_TYPE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.CUSTOM_NAME
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DEPENDENCY
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DESCRIPTION_FORMAT
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DESCRIPTION_TEXT
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ENVIRONMENT
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FEEDBACK_LINK
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FILES
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_VISIBLE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ITEMS
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LANGUAGE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LENGTH
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LINK
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LINK_TYPE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.NAME
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.OFFSET
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLACEHOLDERS
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLACEHOLDER_TEXT
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.POSSIBLE_ANSWER
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTIONS_HIDDEN
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTION_HIDDEN
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUBMIT_MANUALLY
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUMMARY
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_LIST
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_TYPE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TEXT
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TITLE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TYPE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.VERSION
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
@@ -32,44 +68,12 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYP
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTION_HIDDEN
 import java.util.*
 
-private const val VERSION = "version"
-private const val TITLE = "title"
-private const val AUTHORS = "authors"
-private const val LANGUAGE = "language"
-private const val SUMMARY = "summary"
-private const val PROGRAMMING_LANGUAGE = "programming_language"
-private const val ITEMS = "items"
-private const val NAME = "name"
-private const val TASK_LIST = "task_list"
-private const val FILES = "files"
-private const val TASK_TYPE = "task_type"
-private const val DESCRIPTION_TEXT = "description_text"
-private const val DESCRIPTION_FORMAT = "description_format"
-private const val TEXT = "text"
-private const val IS_VISIBLE = "is_visible"
-private const val FEEDBACK_LINK = "feedback_link"
-private const val PLACEHOLDERS = "placeholders"
-private const val TYPE = "type"
-private const val LINK = "link"
-private const val LINK_TYPE = "link_type"
-private const val OFFSET = "offset"
-private const val LENGTH = "length"
-private const val PLACEHOLDER_TEXT = "placeholder_text"
-private const val POSSIBLE_ANSWER = "possible_answer"
-private const val DEPENDENCY = "dependency"
-private const val COURSE_TYPE = "course_type"
-private const val ADDITIONAL_FILES = "additional_files"
-private const val ENVIRONMENT = "environment"
-private const val SUBMIT_MANUALLY = "submit_manually"
-private const val CUSTOM_NAME = "custom_name"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, SOLUTIONS_HIDDEN, ITEMS)
-@JsonSerialize(using = CourseSerializer::class)
+@JsonAppend(props = [JsonAppend.Prop(VersionPropertyWriter::class, name = VERSION, type = Int::class)])
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
   private lateinit var myName: String
@@ -110,6 +114,7 @@ abstract class LocalEduCourseMixin {
   private var solutionsHidden: Boolean = false
 }
 
+@Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)
 abstract class CourseraCourseMixin : LocalEduCourseMixin() {
   @JsonProperty(SUBMIT_MANUALLY)
@@ -280,20 +285,25 @@ abstract class FeedbackLinkMixin {
   private var myLink: String? = null
 }
 
-class CourseSerializer : JsonSerializer<Course>() {
-  override fun serialize(course: Course, generator: JsonGenerator, provider: SerializerProvider) {
-    generator.writeStartObject()
-    val serializer = getJsonSerializer(provider, course.javaClass)
-    serializer.unwrappingSerializer(null).serialize(course, generator, provider)
-    generator.writeObjectField(VERSION, JSON_FORMAT_VERSION)
-    generator.writeEndObject()
-  }
-}
+class VersionPropertyWriter : VirtualBeanPropertyWriter {
 
-private fun getJsonSerializer(provider: SerializerProvider, itemClass: Class<out StudyItem>): JsonSerializer<Any> {
-  val javaType = provider.constructType(itemClass)
-  val beanDesc: BeanDescription = provider.config.introspect(javaType)
-  return BeanSerializerFactory.instance.findBeanSerializer(provider, javaType, beanDesc)
+  @Suppress("unused")
+  constructor()
+
+  constructor(propDef: BeanPropertyDefinition, contextAnnotations: Annotations, declaredType: JavaType) : super(propDef,
+                                                                                                                contextAnnotations,
+                                                                                                                declaredType)
+
+  override fun withConfig(config: MapperConfig<*>?,
+                          declaringClass: AnnotatedClass,
+                          propDef: BeanPropertyDefinition,
+                          type: JavaType): VirtualBeanPropertyWriter {
+    return VersionPropertyWriter(propDef, declaringClass.annotations, type)
+  }
+
+  override fun value(bean: Any, gen: JsonGenerator, prov: SerializerProvider): Any {
+    return JSON_FORMAT_VERSION
+  }
 }
 
 class CourseDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Course>(vc) {

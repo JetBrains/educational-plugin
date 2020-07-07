@@ -5,17 +5,14 @@ package com.jetbrains.edu.coursecreator.actions.mixins
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ID
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.STEPIK_ID
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.UNIT_ID
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.UPDATE_DATE
 import java.util.*
-
-private const val UPDATE_DATE = "update_date"
-private const val ID = "id"
-private const val STEPIK_ID = "stepic_id"
-private const val UNIT_ID = "unit_id"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonSerialize(using = CourseSerializer::class)
 @JsonPropertyOrder(ID, UPDATE_DATE)
 abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
   @JsonProperty(ID)

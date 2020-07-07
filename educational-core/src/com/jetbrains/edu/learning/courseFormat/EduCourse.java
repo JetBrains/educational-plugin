@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
@@ -13,7 +12,6 @@ import java.util.List;
 
 
 public class EduCourse extends Course {
-  private static final Logger LOG = Logger.getInstance(Course.class);
   public static final String ENVIRONMENT_SEPARATOR = "#";
 
   // Fields from stepik:

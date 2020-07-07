@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -10,7 +11,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive
+import com.jetbrains.edu.coursecreator.actions.EduCourseArchiveCreator
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.configuration.EduConfigurator
@@ -18,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import java.io.File
 import java.io.IOException
 import javax.swing.JComponent
 
@@ -60,7 +62,8 @@ class CCCreateCoursePreviewDialog(
     val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
     val locationDir = folder.path
     close(OK_EXIT_CODE)
-    val errorMessage = CCCreateCourseArchive.createCourseArchive(myProject, archiveName, locationDir, false)
+    val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(
+      EduCourseArchiveCreator(myProject, File(locationDir, "$archiveName.zip")))
 
     if (errorMessage.isNullOrEmpty()) {
       val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")

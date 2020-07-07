@@ -48,6 +48,9 @@ public abstract class Course extends LessonContainer {
 
   protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
 
+  // Marketplace:
+  private Vendor myVendor;
+
   @Transient protected List<TaskFile> additionalFiles = new ArrayList<>();
 
   public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
@@ -311,5 +314,13 @@ public abstract class Course extends LessonContainer {
 
   public boolean isViewAsEducatorEnabled() {
     return ApplicationManager.getApplication().isInternal();
+  }
+
+  public Vendor getVendor() {
+    return myVendor;
+  }
+
+  public void setVendor(Vendor vendor) {
+    myVendor = vendor;
   }
 }
