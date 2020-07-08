@@ -60,7 +60,8 @@ object NavigationUtils {
     return prevLessonTaskList[prevLessonTaskList.size - 1]
   }
 
-  private fun nextLesson(lesson: Lesson): Lesson? {
+  @JvmStatic
+  fun nextLesson(lesson: Lesson): Lesson? {
     val container = lesson.container
     val siblings = container.items
     val nextLessonIndex = lesson.index
@@ -92,7 +93,8 @@ object NavigationUtils {
     return null
   }
 
-  private fun previousLesson(lesson: Lesson): Lesson? {
+  @JvmStatic
+  fun previousLesson(lesson: Lesson): Lesson? {
     val container = lesson.container
     val siblings = container.items
     val prevLessonIndex = lesson.index - 2

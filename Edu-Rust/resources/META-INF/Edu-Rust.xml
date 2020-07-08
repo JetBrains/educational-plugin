@@ -1,5 +1,8 @@
 <idea-plugin>
   <depends>com.intellij.modules.lang</depends>
+  <depends>org.rust.lang</depends>
+  <depends>org.toml.lang</depends>
+
   <extensions defaultExtensionNs="Educational">
     <configurator language="Rust" implementationClass="com.jetbrains.edu.rust.RsConfigurator"/>
     <codeforcesLanguageProvider implementation="com.jetbrains.edu.rust.codeforces.RsCodeforcesLanguageProvider"/>
