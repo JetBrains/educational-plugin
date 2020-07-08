@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 abstract class CourseUpdateCheckerTestBase : EduTestCase() {
 
@@ -17,7 +16,6 @@ abstract class CourseUpdateCheckerTestBase : EduTestCase() {
                        invocationNumber: Int,
                        afterTimeoutInvocationNumber: Int,
                        checkInterval: Int = 1,
-                       notificationMessage: String = EduCoreBundle.message("update.content.request"),
                        isCourseUpToDateCheck: () -> Unit
   ) {
     val notificationListener = NotificationListener(project, testRootDisposable)

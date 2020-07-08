@@ -68,7 +68,7 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
   protected abstract fun courseCanBeUpdated(): Boolean
 
   fun setCustomCheckInterval(sec: Int) {
-    LOG.info("Setting custom check interval for ${course.name} with $sec seconds")
+    LOG.info("Setting custom check interval for ${course?.name} with $sec seconds")
     checkInterval = sec * DateFormatUtil.SECOND
   }
 
