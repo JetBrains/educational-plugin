@@ -76,13 +76,4 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
 
     assertEquals("https://codeforces.com/contest/1211/problem/H?locale=en", tasks[7].feedbackLink.link)
   }
-
-  companion object {
-    private val expectedTaskDescriptionFiles = mapOf(
-      1211 to mapOf(
-        "A" to "Contest 1211 problem A expected task description.html",
-        "G" to "Contest 1211 problem G expected task description.html"
-      )
-    )
-  }
 }

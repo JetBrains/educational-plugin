@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase.Companion.expectedTaskDescriptionFiles
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
@@ -75,7 +76,7 @@ class CodeforcesLoadingTest: EduTestCase() {
     assertEquals("https://codeforces.com/contest/1170/problem/A?locale=en", task.feedbackLink.link)
 
     val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1170).getValue("A"))
-    assertEquals(expectedTaskDescription.trim(), task.descriptionText.trim())
+    assertEquals(expectedTaskDescription.trim(), task.descriptionText)
   }
 
   fun `test codeforces contest Kotlin Heroes Episode 1 task E with image`() {
@@ -86,7 +87,7 @@ class CodeforcesLoadingTest: EduTestCase() {
     assertEquals("https://codeforces.com/contest/1170/problem/E?locale=en", task.feedbackLink.link)
 
     val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1170).getValue("E"))
-    assertEquals(expectedTaskDescription.trim(), task.descriptionText.trim())
+    assertEquals(expectedTaskDescription.trim(), task.descriptionText)
   }
 
   fun `test codeforces contest Kotlin Heroes Episode 1 task G with image`() {
@@ -97,7 +98,8 @@ class CodeforcesLoadingTest: EduTestCase() {
     assertEquals("https://codeforces.com/contest/1170/problem/G?locale=en", task.feedbackLink.link)
 
     val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1170).getValue("G"))
-    assertEquals(expectedTaskDescription.trim(), task.descriptionText.trim())
+    assertEquals(expectedTaskDescription.trim(), task.descriptionText)
+    assertEquals(expectedTaskDescription.trim(), task.descriptionText)
   }
 
   fun `test codeforces contest Codeforces Round 605 (Div 3)`() {
@@ -139,7 +141,7 @@ class CodeforcesLoadingTest: EduTestCase() {
     assertEquals("https://codeforces.com/contest/1272/problem/A?locale=en", task.feedbackLink.link)
 
     val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1272).getValue("A"))
-    assertEquals(expectedTaskDescription.trim(), task.descriptionText.trim())
+    assertEquals(expectedTaskDescription.trim(), task.descriptionText)
   }
 
   fun `test codeforces contest Codeforces Round 605 (Div 3) task B with image`() {
@@ -150,25 +152,11 @@ class CodeforcesLoadingTest: EduTestCase() {
     assertEquals("https://codeforces.com/contest/1272/problem/B?locale=en", task.feedbackLink.link)
 
     val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1272).getValue("B"))
-    assertEquals(expectedTaskDescription.trim(), task.descriptionText.trim())
+    assertEquals(expectedTaskDescription.trim(), task.descriptionText)
   }
 
   @Throws(IOException::class)
   private fun loadText(fileName: String): String {
     return FileUtil.loadFile(File(testDataPath, fileName), true)
-  }
-
-  companion object {
-    private val expectedTaskDescriptionFiles = mapOf(
-      1170 to mapOf(
-        "A" to "Contest 1170 problem A expected task description.html",
-        "E" to "Contest 1170 problem E expected task description.html",
-        "G" to "Contest 1170 problem G expected task description.html"
-      ),
-      1272 to mapOf(
-        "A" to "Contest 1272 problem A expected task description.html",
-        "B" to "Contest 1272 problem B expected task description.html"
-      )
-    )
   }
 }

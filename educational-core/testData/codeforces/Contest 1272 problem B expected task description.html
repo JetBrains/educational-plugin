@@ -27,7 +27,7 @@
  <div>
   <p>Recently you have bought a snow walking robot and brought it home. Suppose your home is a cell $(0, 0)$ on an infinite grid.</p>
   <p>You also have the sequence of instructions of this robot. It is written as the string $s$ consisting of characters '<span class="tex-font-style-tt">L</span>', '<span class="tex-font-style-tt">R</span>', '<span class="tex-font-style-tt">U</span>' and '<span class="tex-font-style-tt">D</span>'. If the robot is in the cell $(x, y)$ right now, he can move to one of the adjacent cells (depending on the current instruction).</p>
-  <ul> 
+  <ul>
    <li> If the current instruction is '<span class="tex-font-style-tt">L</span>', then the robot can move to the left to $(x - 1, y)$; </li>
    <li> if the current instruction is '<span class="tex-font-style-tt">R</span>', then the robot can move to the right to $(x + 1, y)$; </li>
    <li> if the current instruction is '<span class="tex-font-style-tt">U</span>', then the robot can move to the top to $(x, y + 1)$; </li>
@@ -63,8 +63,7 @@
     <div class="title">
      Input
     </div>
-    <pre>
-6
+    <pre>6
 LRU
 DURLDRUDRULRDURDDL
 LRUDDLRUDRUL
@@ -77,8 +76,7 @@ LLL
     <div class="title">
      Output
     </div>
-    <pre>
-2
+    <pre>2
 LR
 14
 RUURDDDDLLLUUR
@@ -100,8 +98,8 @@ UD
   </div>
   <p>There are only two possible answers in the first test case: "<span class="tex-font-style-tt">LR</span>" and "<span class="tex-font-style-tt">RL</span>".</p>
   <p>The picture corresponding to the second test case:</p>
-  <center> 
-   <img class="tex-graphics" src="https://espresso.codeforces.com/b8d040c328a3c50a5e36b8d6da86a6e5f2b67b52.png" style="max-width: 100.0%;max-height: 100.0%;"> Note that the direction of traverse does not matter 
+  <center>
+   <img class="tex-graphics" src="https://espresso.codeforces.com/b8d040c328a3c50a5e36b8d6da86a6e5f2b67b52.png" style="max-width: 100.0%;max-height: 100.0%;"> Note that the direction of traverse does not matter
   </center>
   <p>Another correct answer to the third test case: "<span class="tex-font-style-tt">URDDLLLUURDR</span>".</p>
  </div>
