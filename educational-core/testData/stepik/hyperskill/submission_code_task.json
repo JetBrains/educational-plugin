@@ -19,15 +19,18 @@
         "solution": [
           {
             "name": "src/Task.kt",
-            "text": "fun userFoo() {}"
+            "text": "fun userFoo() {}",
+            "is_visible": true
           },
           {
             "name": "src/Baz.kt",
-            "text": "fun userBaz() {}"
+            "text": "fun userBaz() {}",
+            "is_visible": true
           },
           {
             "name": "test/Tests1.kt",
-            "text": "fun userTests1() {}"
+            "text": "fun userTests1() {}",
+            "is_visible": false
           }
         ],
         "language": null,
