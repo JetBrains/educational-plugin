@@ -35,7 +35,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     return true
   }
 
-  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
+  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
     if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
 
     val mainCMakeTemplateInfo = getCppTemplates(myCourse).mainCMakeList

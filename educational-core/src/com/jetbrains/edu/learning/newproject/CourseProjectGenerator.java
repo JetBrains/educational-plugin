@@ -54,7 +54,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.EnumSet;
 
 /**
  * If you add any new public methods here, please do not forget to add it also to
@@ -183,7 +182,8 @@ public abstract class CourseProjectGenerator<S> {
                                     @NotNull S settings) {
     GeneratorUtils.initializeCourse(project, myCourse);
 
-    if (CCUtils.isCourseCreator(project) && myCourse.getItems().isEmpty()) {
+    boolean isNewCourse = CCUtils.isCourseCreator(project) && myCourse.getItems().isEmpty();
+    if (isNewCourse) {
       final Lesson lesson = myCourseBuilder.createInitialLesson(project, myCourse);
       if (lesson != null) {
         myCourse.addLesson(lesson);
@@ -200,7 +200,7 @@ public abstract class CourseProjectGenerator<S> {
         if (myCourse instanceof EduCourse && ((EduCourse)myCourse).isRemote() && CCUtils.isCourseCreator(project)) {
           checkIfAvailableOnRemote();
         }
-        createAdditionalFiles(project, baseDir);
+        createAdditionalFiles(project, baseDir, isNewCourse);
         EduCounterUsageCollector.eduProjectCreated(myCourse);
 
         return null; // just to use correct overloading of `runProcessWithProgressSynchronously` method
@@ -235,8 +235,11 @@ public abstract class CourseProjectGenerator<S> {
    *
    * @param project course project
    * @param baseDir base directory of project
+   * @param isNewCourse {@code true} if course is new one, {@code false} otherwise
    *
    * @throws IOException
    */
-  public void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {}
+  public void createAdditionalFiles(@NotNull Project project,
+                                    @NotNull VirtualFile baseDir,
+                                    boolean isNewCourse) throws IOException {}
 }

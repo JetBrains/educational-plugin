@@ -26,7 +26,7 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
     super.createCourseStructure(project, module, baseDir, settings)
   }
 
-  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
+  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
     val sbtVersion = maxOf(Sbt.LatestVersion(), MIN_RECOMMENDED_SBT_VERSION)
     val templateVariables = mapOf(
       PROJECT_NAME to sanitizeName(project.name),

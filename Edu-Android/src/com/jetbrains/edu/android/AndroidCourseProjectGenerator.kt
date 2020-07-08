@@ -20,8 +20,8 @@ import java.util.*
 
 class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Course) : GradleCourseProjectGenerator(builder, course) {
 
-  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
-    super.createAdditionalFiles(project, baseDir)
+  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
+    super.createAdditionalFiles(project, baseDir, isNewCourse)
 
     // We have to create property files manually
     // instead of `com.android.tools.idea.gradle.util.LocalProperties` and `com.android.tools.idea.gradle.util.LocalProperties`

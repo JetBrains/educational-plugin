@@ -48,7 +48,9 @@ public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjec
 
 
   @Override
-  public void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {
+  public void createAdditionalFiles(@NotNull Project project,
+                                    @NotNull VirtualFile baseDir,
+                                    boolean isNewCourse) throws IOException {
     VirtualFile packageJsonFile = baseDir.findChild(PACKAGE_JSON);
     if (packageJsonFile == null && !myCourse.isStudy()) {
       final String templateText = getInternalTemplateText(PACKAGE_JSON);

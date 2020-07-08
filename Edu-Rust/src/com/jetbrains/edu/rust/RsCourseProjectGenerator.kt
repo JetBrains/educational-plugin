@@ -1,7 +1,11 @@
 package com.jetbrains.edu.rust
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.rust.cargo.CargoConstants
 import org.rust.cargo.project.model.cargoProjects
@@ -25,5 +29,25 @@ class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
                 }
             }
         }
+    }
+
+    override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
+        if (!isNewCourse) return
+        val course = project.course ?: return
+
+        val members = mutableListOf<String>()
+        course.visitLessons { lesson ->
+            val lessonDir = lesson.getLessonDir(project) ?: return@visitLessons
+            val lessonDirPath = VfsUtil.getRelativePath(lessonDir, baseDir) ?: return@visitLessons
+            members += "    \"${lessonDirPath}/*/\""
+        }
+
+        val initialMembers = members.joinToString(",\n", postfix = if (members.isEmpty()) "" else ",")
+
+        GeneratorUtils.createFileFromTemplate(baseDir, "Cargo.toml", "workspaceCargo.toml", mapOf(INITIAL_MEMBERS to initialMembers))
+    }
+
+    companion object {
+        private const val INITIAL_MEMBERS = "INITIAL_MEMBERS"
     }
 }

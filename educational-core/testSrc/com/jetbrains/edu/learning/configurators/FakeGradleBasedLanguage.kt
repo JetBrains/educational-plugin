@@ -76,8 +76,8 @@ class FakeGradleCourseProjectGenerator(
 ) : CourseProjectGenerator<Unit>(builder, course) {
   override fun afterProjectGenerated(project: Project, projectSettings: Unit) {}
 
-  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
-    super.createAdditionalFiles(project, baseDir)
+  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
+    super.createAdditionalFiles(project, baseDir, isNewCourse)
     GeneratorUtils.createChildFile(baseDir, "build.gradle", "")
     GeneratorUtils.createChildFile(baseDir, "settings.gradle", "")
   }

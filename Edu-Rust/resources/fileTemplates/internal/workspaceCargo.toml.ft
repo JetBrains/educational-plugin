@@ -1,0 +1,9 @@
+[workspace]
+
+members = [
+$INITIAL_MEMBERS
+]
+
+exclude = [
+    "**/*.yaml"
+]
