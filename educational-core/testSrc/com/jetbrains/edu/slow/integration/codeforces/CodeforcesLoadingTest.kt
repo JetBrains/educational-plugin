@@ -1,20 +1,14 @@
 package com.jetbrains.edu.slow.integration.codeforces
 
-import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase.Companion.expectedTaskDescriptionFiles
+import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import java.io.File
-import java.io.IOException
 
-class CodeforcesLoadingTest: EduTestCase() {
-  override fun getTestDataPath(): String = "testData/codeforces"
-
+class CodeforcesLoadingTest: CodeforcesTestCase() {
   private val contestKotlinHeroesEpisode1: CodeforcesCourse by lazy {
     val contestInfo = ContestParameters(1170, "en", "Kotlin", EduNames.KOTLIN)
     when (val contest = StartCodeforcesContestAction.getContestUnderProgress(contestInfo)) {
@@ -153,10 +147,5 @@ class CodeforcesLoadingTest: EduTestCase() {
 
     val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1272).getValue("B"))
     assertEquals(expectedTaskDescription.trim(), task.descriptionText)
-  }
-
-  @Throws(IOException::class)
-  private fun loadText(fileName: String): String {
-    return FileUtil.loadFile(File(testDataPath, fileName), true)
   }
 }
