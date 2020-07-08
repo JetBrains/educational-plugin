@@ -58,17 +58,15 @@ interface EduCourseBuilder<Settings> {
    * @return [VirtualFile] of created lesson
    */
   fun createLessonContent(project: Project, lesson: Lesson, parentDirectory: VirtualFile): VirtualFile? {
-    val lessonDirectory = arrayOfNulls<VirtualFile>(1)
-    runWriteAction {
+    return runWriteAction {
       try {
-        lessonDirectory[0] = VfsUtil.createDirectoryIfMissing(
-          parentDirectory, lesson.name)
+        VfsUtil.createDirectoryIfMissing(parentDirectory, lesson.name)
       }
       catch (e: IOException) {
         LOG.error("Failed to create lesson directory", e)
+        null
       }
     }
-    return lessonDirectory[0]
   }
 
   /**
