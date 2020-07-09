@@ -4,11 +4,9 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 
 @NonNls
-private const val BUNDLE = "messages.EduCoreBundle"
+private const val BUNDLE = "messages.EduCoreStudyItemBundle"
 
-object EduCoreBundle : EduBundle(BUNDLE) {
-  const val FAILED_TO_CONVERT_TO_STUDENT_FILE = "Failed to convert answer file to student one because placeholder is broken."
-
+object EduCoreStudyItemBundle : EduBundle(BUNDLE) {
   @JvmStatic
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String {
     return getMessage(key, *params)

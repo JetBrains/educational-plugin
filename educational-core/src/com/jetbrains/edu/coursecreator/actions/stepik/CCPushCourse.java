@@ -14,11 +14,14 @@ import com.intellij.openapi.progress.Task.Modal;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduVersions;
+import com.jetbrains.edu.learning.PluginUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
@@ -33,7 +36,7 @@ import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 public class CCPushCourse extends CCPushAction {
 
   public CCPushCourse() {
-    super(EduCoreBundle.message("study.item.course"), null);
+    super(EduCoreStudyItemBundle.message("course"), null);
   }
 
   @Override

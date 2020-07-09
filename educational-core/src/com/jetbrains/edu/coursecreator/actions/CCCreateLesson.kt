@@ -14,15 +14,15 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle
 import icons.EducationalCoreIcons.Lesson
 
 class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(StudyItemType.LESSON, Lesson) {
 
   override val studyItemVariants: List<StudyItemVariant>
     get() = listOf(
-      StudyItemVariant(StringUtil.toTitleCase(EduCoreBundle.message("study.item.lesson")), "", Lesson, ::Lesson),
-      StudyItemVariant(StringUtil.toTitleCase(EduCoreBundle.message("study.item.framework.lesson")), "", Lesson, ::FrameworkLesson)
+      StudyItemVariant(StringUtil.toTitleCase(EduCoreStudyItemBundle.message("lesson")), "", Lesson, ::Lesson),
+      StudyItemVariant(StringUtil.toTitleCase(EduCoreStudyItemBundle.message("framework.lesson")), "", Lesson, ::FrameworkLesson)
     )
 
   override fun addItem(course: Course, item: Lesson) {

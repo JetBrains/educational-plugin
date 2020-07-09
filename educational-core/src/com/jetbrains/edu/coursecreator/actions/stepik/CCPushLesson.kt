@@ -20,13 +20,14 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.twelvemonkeys.lang.StringUtil
 
 // educational-core.xml
-class CCPushLesson : CCPushAction(EduCoreBundle.message("study.item.lesson")) {
+class CCPushLesson : CCPushAction(EduCoreStudyItemBundle.message("lesson")) {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false

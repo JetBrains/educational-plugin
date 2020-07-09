@@ -15,12 +15,12 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-class CCPushSection : CCPushAction(EduCoreBundle.message("study.item.section")) {
+class CCPushSection : CCPushAction(EduCoreStudyItemBundle.message("section")) {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false

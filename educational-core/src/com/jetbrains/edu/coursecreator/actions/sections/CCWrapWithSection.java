@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class CCWrapWithSection extends DumbAwareAction {
     int sectionIndex = course.getSections().size() + 1;
     InputValidator validator = new CCStudyItemPathInputValidator(course, StudyItemType.SECTION, OpenApiExtKt.getCourseDir(project));
     String sectionName = Messages.showInputDialog(EduCoreBundle.message("action.wrap.with.section.enter.name"),
-                                                  EduCoreBundle.message("study.item.section.title"), null,
+                                                  EduCoreStudyItemBundle.message("section.title"), null,
                                                   EduNames.SECTION + sectionIndex, validator);
     if (sectionName == null) {
       return;

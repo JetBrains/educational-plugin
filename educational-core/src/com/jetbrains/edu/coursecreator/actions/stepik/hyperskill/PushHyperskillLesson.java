@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
@@ -33,7 +33,7 @@ public class PushHyperskillLesson extends CCPushAction {
   private static final Logger LOG = Logger.getInstance(PushHyperskillLesson.class);
 
   public PushHyperskillLesson() {
-    super(EduCoreBundle.message("study.item.hyperskill.lesson"), EducationalCoreIcons.JB_ACADEMY_ENABLED);
+    super(EduCoreStudyItemBundle.message("hyperskill.lesson"), EducationalCoreIcons.JB_ACADEMY_ENABLED);
   }
 
   @Override
