@@ -20,9 +20,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
 
     assertEquals("A. Three Problems", task.name)
     assertEquals("https://codeforces.com/contest/1211/problem/A?locale=en", task.feedbackLink.link)
-
-    val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1211).getValue("A"))
-    assertEquals(expectedTaskDescription.trim(), task.descriptionText.trim())
+    task.checkTaskDescription(1211, 'A')
   }
 
   fun `test codeforces contest Kotlin Heroes Episode 2 task G with image`() {
@@ -38,9 +36,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
 
     assertEquals("G. King's Path", task.name)
     assertEquals("https://codeforces.com/contest/1211/problem/G?locale=en", task.feedbackLink.link)
-
-    val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1211).getValue("G"))
-    assertEquals(expectedTaskDescription.trim(), task.descriptionText.trim())
+    task.checkTaskDescription(1211, 'G')
   }
 
   fun `test codeforces contest Kotlin Heroes Episode 2`() {

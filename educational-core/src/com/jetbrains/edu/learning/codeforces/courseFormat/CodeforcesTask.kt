@@ -38,11 +38,6 @@ open class CodeforcesTask : Task() {
     addTaskFile(TaskFile(path, innerElement.first().text()))
   }
 
-  override fun setDescriptionText(descriptionText: String) {
-    val description = descriptionText.lineSequence().joinToString(separator = "\n") { it.trimEnd() }
-    super.setDescriptionText(description)
-  }
-
   companion object {
     fun create(htmlElement: Element, lesson: Lesson): CodeforcesTask {
       val isStandardIO = htmlElement.select("div.input-file, div.output-file").all { isStandardIOType(it) }

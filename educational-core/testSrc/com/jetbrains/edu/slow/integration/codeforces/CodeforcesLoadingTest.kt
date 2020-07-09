@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 
 class CodeforcesLoadingTest: CodeforcesTestCase() {
   private val contestKotlinHeroesEpisode1: CodeforcesCourse by lazy {
@@ -64,36 +65,29 @@ class CodeforcesLoadingTest: CodeforcesTestCase() {
 
   fun `test codeforces contest Kotlin Heroes Episode 1 task A`() {
     val contest = contestKotlinHeroesEpisode1
-    val task = contest.lessons.first().taskList[0]
+    val task = contest.lessons.first().taskList[0] as CodeforcesTask
 
     assertEquals("A. Three Integers Again", task.name)
     assertEquals("https://codeforces.com/contest/1170/problem/A?locale=en", task.feedbackLink.link)
-
-    val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1170).getValue("A"))
-    assertEquals(expectedTaskDescription.trim(), task.descriptionText)
+    task.checkTaskDescription(1170, 'A')
   }
 
   fun `test codeforces contest Kotlin Heroes Episode 1 task E with image`() {
     val contest = contestKotlinHeroesEpisode1
-    val task = contest.lessons.first().taskList[4]
+    val task = contest.lessons.first().taskList[4] as CodeforcesTask
 
     assertEquals("E. Sliding Doors", task.name)
     assertEquals("https://codeforces.com/contest/1170/problem/E?locale=en", task.feedbackLink.link)
-
-    val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1170).getValue("E"))
-    assertEquals(expectedTaskDescription.trim(), task.descriptionText)
+    task.checkTaskDescription(1170, 'E')
   }
 
   fun `test codeforces contest Kotlin Heroes Episode 1 task G with image`() {
     val contest = contestKotlinHeroesEpisode1
-    val task = contest.lessons.first().taskList[6]
+    val task = contest.lessons.first().taskList[6] as CodeforcesTask
 
     assertEquals("G. Graph Decomposition", task.name)
     assertEquals("https://codeforces.com/contest/1170/problem/G?locale=en", task.feedbackLink.link)
-
-    val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1170).getValue("G"))
-    assertEquals(expectedTaskDescription.trim(), task.descriptionText)
-    assertEquals(expectedTaskDescription.trim(), task.descriptionText)
+    task.checkTaskDescription(1170, 'G')
   }
 
   fun `test codeforces contest Codeforces Round 605 (Div 3)`() {
@@ -129,23 +123,19 @@ class CodeforcesLoadingTest: CodeforcesTestCase() {
 
   fun `test codeforces contest Codeforces Round 605 (Div 3) task A`() {
     val contest = codeforcesRound605Div3
-    val task = contest.lessons.first().taskList[0]
+    val task = contest.lessons.first().taskList[0] as CodeforcesTask
 
     assertEquals("A. Three Friends", task.name)
     assertEquals("https://codeforces.com/contest/1272/problem/A?locale=en", task.feedbackLink.link)
-
-    val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1272).getValue("A"))
-    assertEquals(expectedTaskDescription.trim(), task.descriptionText)
+    task.checkTaskDescription(1272, 'A')
   }
 
   fun `test codeforces contest Codeforces Round 605 (Div 3) task B with image`() {
     val contest = codeforcesRound605Div3
-    val task = contest.lessons.first().taskList[1]
+    val task = contest.lessons.first().taskList[1] as CodeforcesTask
 
     assertEquals("B. Snow Walking Robot", task.name)
     assertEquals("https://codeforces.com/contest/1272/problem/B?locale=en", task.feedbackLink.link)
-
-    val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(1272).getValue("B"))
-    assertEquals(expectedTaskDescription.trim(), task.descriptionText)
+    task.checkTaskDescription(1272, 'B')
   }
 }
