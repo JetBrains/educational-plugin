@@ -14,6 +14,7 @@ import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl
 import com.intellij.openapi.fileEditor.impl.text.TextEditorPsiDataProvider
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -47,6 +48,7 @@ import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import okhttp3.mockwebserver.MockResponse
 import org.apache.http.HttpStatus
+import java.io.File
 import java.io.IOException
 
 abstract class EduTestCase : BasePlatformTestCase() {
@@ -318,4 +320,9 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   protected fun mockResponse(fileName: String, responseCode: Int = HttpStatus.SC_OK): MockResponse = MockResponseFactory.fromFile(
     getTestFile(fileName), responseCode)
+
+  @Throws(IOException::class)
+  protected fun loadText(fileName: String): String {
+    return FileUtil.loadFile(File(testDataPath, fileName))
+  }
 }

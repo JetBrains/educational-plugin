@@ -1,28 +1,33 @@
 package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.text.DateFormatUtil
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.codeforces.CodeforcesCourseUpdateChecker.Companion.ONGOING_COURSE_CHECK_INTERVAL_SECONDS
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_PROBLEMS
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase.Companion.contest1211
-import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase.Companion.expectedTaskDescriptionFiles
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
+import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker.Companion.ONGOING_COURSE_CHECK_INTERVAL
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.EDU_PROJECT_CREATED
+import com.jetbrains.edu.learning.update.CourseUpdateChecker
 import com.jetbrains.edu.learning.update.CourseUpdateCheckerTestBase
-import java.io.File
+import org.jsoup.Jsoup
 import java.time.ZonedDateTime
 import java.util.*
 
 class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   private val expectedTaskADescription: String by lazy {
-    FileUtil.loadFile(File(testDataPath, expectedTaskDescriptionFiles.getValue(1211).getValue("A")))
+    val doc = Jsoup.parse(loadText(contest1211))
+    val course = CodeforcesCourse(ContestParameters(1211, EduNames.KOTLIN), doc)
+    course.allTasks.first().descriptionText
   }
   private val mockConnector: MockCodeforcesConnector get() = CodeforcesConnector.getInstance() as MockCodeforcesConnector
   private val taskName: String = "codeforcesTask"
@@ -33,7 +38,7 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   }
 
   override fun checkNotification(notificationListener: NotificationListener, isCourseUpToDate: Boolean) {
-    assertEquals(notificationListener.notificationShown, !isCourseUpToDate)
+    assertEquals(!isCourseUpToDate, notificationListener.notificationShown)
     if (!isCourseUpToDate) {
       assertEquals(EduCoreBundle.message("codeforces.task.description.was.updated.notification", taskName), notificationListener.notificationText)
     }
@@ -73,15 +78,14 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     assertTrue(course.isOngoing())
 
     val checker = CodeforcesCourseUpdateChecker(project)
-    assertEquals(ONGOING_COURSE_CHECK_INTERVAL_SECONDS * DateFormatUtil.SECOND, checker.checkInterval)
+    assertEquals(ONGOING_COURSE_CHECK_INTERVAL, checker.checkInterval)
 
     val future = ApplicationManager.getApplication().executeOnPooledThread { Thread.sleep(secondsToEnd * 1000L) }
     EduUtils.waitAndDispatchInvocationEvents(future)
 
     checker.check()
     assertFalse(course.isOngoing())
-
-    assertEquals(checker.getDefaultCheckInterval(), checker.checkInterval)
+    assertEquals(DateFormatUtil.SECOND * Registry.intValue(CourseUpdateChecker.REGISTRY_KEY), checker.checkInterval)
   }
 
   private fun createCodeforcesCourse(isNewlyCreated: Boolean = false, isCourseUpToDate: Boolean = false): CodeforcesCourse {

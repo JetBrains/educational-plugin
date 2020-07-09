@@ -1,18 +1,10 @@
 package com.jetbrains.edu.learning.codeforces
 
-import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
-import java.io.File
-import java.io.IOException
 
 abstract class CodeforcesTestCase : EduTestCase() {
   override fun getTestDataPath(): String = "testData/codeforces"
-
-  @Throws(IOException::class)
-  protected fun loadText(fileName: String): String {
-    return FileUtil.loadFile(File(testDataPath, fileName))
-  }
 
   protected fun CodeforcesTask.checkTaskDescription(contestId: Int, problem: Char) {
     val expectedTaskDescription = loadText(expectedTaskDescriptionFiles.getValue(contestId).getValue(problem))
@@ -23,7 +15,7 @@ abstract class CodeforcesTestCase : EduTestCase() {
   companion object {
     const val contest1211 = "Contest 1211.html"
 
-    private val expectedTaskDescriptionFiles = mapOf(
+    val expectedTaskDescriptionFiles = mapOf(
       1170 to mapOf(
         'A' to "Contest 1170 problem A expected task description.html",
         'E' to "Contest 1170 problem E expected task description.html",

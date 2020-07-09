@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.update
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.stepik.UPDATE_NOTIFICATION_GROUP_ID
 import com.jetbrains.edu.learning.yaml.getConfigDir
 
 abstract class CourseUpdater(val project: Project) {
-  abstract fun updateCourse(onFinish: () -> Unit)
+  abstract fun updateCourse(onFinish: (isUpdated: Boolean) -> Unit)
 
   protected fun updateTaskDescription(task: Task, remoteTask: Task) {
     task.descriptionText = remoteTask.descriptionText

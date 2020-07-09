@@ -1,18 +1,19 @@
 package com.jetbrains.edu.learning.codeforces
 
-import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import java.io.File
 
 class CodeforcesCourseUpdateTest : CodeforcesTestCase() {
   private val expectedTaskADescription: String by lazy {
-    FileUtil.loadFile(File(testDataPath, expectedTaskDescriptionFiles.getValue(1211).getValue("A")))
+    loadText(expectedTaskDescriptionFiles.getValue(1211).getValue('A'))
   }
   private val mockConnector: MockCodeforcesConnector get() = CodeforcesConnector.getInstance() as MockCodeforcesConnector
 
@@ -41,13 +42,15 @@ class CodeforcesCourseUpdateTest : CodeforcesTestCase() {
   fun `test outdated description`() {
     val course = createCodeforcesCourse("OUTDATED")
     CodeforcesCourseUpdateChecker.getInstance(project).check()
-    assertEquals(expectedTaskADescription, course.allTasks.first().descriptionText)
+    val codeforcesTask = course.allTasks.first() as CodeforcesTask
+    codeforcesTask.checkTaskDescription(1211, 'A')
   }
 
   fun `test up-to-date description`() {
     val course = createCodeforcesCourse()
     CodeforcesCourseUpdateChecker.getInstance(project).check()
-    assertEquals(expectedTaskADescription, course.allTasks.first().descriptionText)
+    val codeforcesTask = course.allTasks.first() as CodeforcesTask
+    codeforcesTask.checkTaskDescription(1211, 'A')
   }
 
   private fun createCodeforcesCourse(taskADescription: String? = null): CodeforcesCourse {

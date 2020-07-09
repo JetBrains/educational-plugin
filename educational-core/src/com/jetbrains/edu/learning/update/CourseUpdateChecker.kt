@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.update
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.Disposable
@@ -9,14 +9,13 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.EduUtils.isNewlyCreated
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.atomic.AtomicInteger
 
 abstract class CourseUpdateChecker(protected val project: Project) : Disposable {
-
-  //default value is 18 000 seconds (5 hours), set in educational-core.xml
-  var checkInterval: Long = getDefaultCheckInterval()
   private val checkRunnable = Runnable { (checkIsUpToDate()).doWhenDone { queueNextCheck(checkInterval) } }
   private val checkForAlarm by lazy { Alarm(Alarm.ThreadToUse.POOLED_THREAD, this) }
   val course: Course? get() = project.course
@@ -26,6 +25,12 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
     get() = invocationCounter.get()
     @TestOnly
     set(value) = invocationCounter.set(value)
+
+  open val checkInterval: Long
+    get() {
+      //default value is 18 000 seconds (5 hours), set in educational-core.xml
+      return DateFormatUtil.SECOND * Registry.intValue(REGISTRY_KEY)
+    }
 
   fun check() {
     if (!courseCanBeUpdated()) {
@@ -67,21 +72,11 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
 
   protected abstract fun courseCanBeUpdated(): Boolean
 
-  fun setCustomCheckInterval(sec: Int) {
-    LOG.info("Setting custom check interval for ${course?.name} with $sec seconds")
-    checkInterval = sec * DateFormatUtil.SECOND
-  }
-
   override fun dispose() {}
-
-  fun getDefaultCheckInterval(): Long {
-    return DateFormatUtil.SECOND * Registry.intValue(REGISTRY_KEY)
-  }
 
   companion object {
     const val REGISTRY_KEY: String = "edu.course.update.check.interval"
 
-    @JvmStatic
-    val LOG: Logger = Logger.getInstance(CourseUpdateChecker::class.java)
+    private val LOG: Logger = Logger.getInstance(CourseUpdateChecker::class.java)
   }
 }

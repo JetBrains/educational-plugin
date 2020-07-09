@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.codeforces
+package com.jetbrains.edu.learning.codeforces.update
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -15,18 +15,31 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 @Suppress("ComponentNotRegistered")
 class CodeforcesUpdateContestAction : DumbAwareAction(
-  EduCoreBundle.message("codeforces.label.update.contest", CodeforcesNames.CODEFORCES_TITLE)) {
+  EduCoreBundle.message("codeforces.label.update.contest", CODEFORCES_TITLE)
+) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val course = project.course ?: return
-    if (course !is CodeforcesCourse) {
-      showWrongCourseNotification(project)
-    }
-    if (project.isDisposed || !EduUtils.isStudentProject(project)) return
+    if (project.isDisposed) return
 
-    CodeforcesCourseUpdater(project, course as CodeforcesCourse).updateCourseAndDoActions(
-      onNothingUpdated = { showUpToDateNotification(project) }
-    )
+    val course = project.course as? CodeforcesCourse ?: return
+    CodeforcesCourseUpdater(project, course).updateCourse { isUpdated ->
+      if (!isUpdated) {
+        showUpToDateNotification(project)
+      }
+    }
+  }
+
+  override fun update(e: AnActionEvent) {
+    val presentation = e.presentation
+    presentation.isEnabledAndVisible = false
+
+    val project = e.project ?: return
+    if (!EduUtils.isStudentProject(project)) return
+
+    val course = project.course ?: return
+    if (course !is CodeforcesCourse) return
+
+    presentation.isEnabledAndVisible = true
   }
 
   private fun showUpToDateNotification(project: Project) {
@@ -35,16 +48,6 @@ class CodeforcesUpdateContestAction : DumbAwareAction(
       "",
       EduCoreBundle.message("update.notification.text", CODEFORCES_TITLE, CONTEST),
       NotificationType.INFORMATION
-    )
-    notification.notify(project)
-  }
-
-  private fun showWrongCourseNotification(project: Project) {
-    val notification = Notification(
-      codeforcesNotificationGroup.displayId,
-      "",
-      EduCoreBundle.message("codeforces.update.contest.failed.notification"),
-      NotificationType.ERROR
     )
     notification.notify(project)
   }

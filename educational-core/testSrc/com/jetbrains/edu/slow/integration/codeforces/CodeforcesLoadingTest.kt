@@ -18,6 +18,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     val mockCodeforcesConnector = CodeforcesConnector.getInstance() as MockCodeforcesConnector
     mockCodeforcesConnector.setBaseUrl(CodeforcesNames.CODEFORCES_URL, testRootDisposable)
   }
+
   private val contestKotlinHeroesEpisode1: CodeforcesCourse by lazy {
     val contestInfo = ContestParameters(1170, EduNames.KOTLIN, codeforcesLanguageRepresentation = "Kotlin")
     when (val contest = StartCodeforcesContestAction.getContestUnderProgress(contestInfo)) {

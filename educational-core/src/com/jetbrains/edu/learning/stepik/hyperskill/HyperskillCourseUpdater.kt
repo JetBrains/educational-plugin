@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
+import com.jetbrains.edu.learning.update.CourseUpdater
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 
@@ -45,16 +46,18 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
     }
   }
 
-  override fun updateCourse(onFinish: () -> Unit) {
+  override fun updateCourse(onFinish: (isUpdated: Boolean) -> Unit) {
     runInBackground(project, EduCoreBundle.message("update.check")) {
       val projectLesson = course.getProjectLesson()
       val courseFromServer = course.hyperskillProject?.getCourseFromServer()
       val projectLessonShouldBeUpdated = courseFromServer != null && projectLesson?.shouldBeUpdated(project, courseFromServer) ?: false
       val codeChallengesUpdates = course.getProblemsLesson()?.getCodeChallengesUpdates() ?: emptyList()
 
+      var isUpdated = false
       if (projectLessonShouldBeUpdated || codeChallengesUpdates.isNotEmpty()) {
         if (HyperskillSettings.INSTANCE.updateAutomatically) {
           doUpdate(courseFromServer, codeChallengesUpdates)
+          isUpdated = true
         }
         else {
           showUpdateAvailableNotification(project) {
@@ -64,7 +67,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
           }
         }
       }
-      onFinish()
+      onFinish(isUpdated)
     }
   }
 
