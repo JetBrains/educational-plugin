@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.taskDescription.ui.BrowserWindow;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
-import javafx.embed.swing.JFXPanel;
 import netscape.javascript.JSObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,12 +27,12 @@ import org.w3c.dom.html.HTMLFormElement;
 import org.w3c.dom.html.HTMLInputElement;
 import org.w3c.dom.html.HTMLTextAreaElement;
 
+import javax.swing.*;
 import java.io.IOException;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public class CheckiOMissionCheck implements Callable<CheckResult> {
+public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
   private final Project myProject;
   private final Task myTask;
 
@@ -46,7 +45,7 @@ public class CheckiOMissionCheck implements Callable<CheckResult> {
   private final String myInterpreterName;
   private final String myTestFormTargetUrl;
 
-  protected CheckiOMissionCheck(
+  protected JavaFxCheckiOMissionCheck(
     @NotNull Task task,
     @NotNull Project project,
     @NotNull CheckiOOAuthConnector oAuthConnector,
@@ -200,7 +199,9 @@ public class CheckiOMissionCheck implements Callable<CheckResult> {
     myLatch.countDown();
   }
 
-  public JFXPanel getBrowserPanel() {
+  @NotNull
+  @Override
+  public JComponent getPanel() {
     return myBrowserWindow.getPanel();
   }
 

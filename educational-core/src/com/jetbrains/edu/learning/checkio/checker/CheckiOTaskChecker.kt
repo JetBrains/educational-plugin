@@ -22,7 +22,7 @@ class CheckiOTaskChecker(
   testFormTargetUrl: String
 ) : TaskChecker<EduTask>(task, project) {
 
-  private val missionCheck: CheckiOMissionCheck = CheckiOMissionCheck(
+  private val missionCheck: CheckiOMissionCheck = JavaFxCheckiOMissionCheck(
     task,
     project,
     oAuthConnector,
@@ -40,7 +40,7 @@ class CheckiOTaskChecker(
       val checkResult = ApplicationUtil.runWithCheckCanceled(missionCheck, ProgressManager.getInstance().progressIndicator)
 
       if (checkResult.status != CheckStatus.Unchecked) {
-        getInstance(project).showJavaFXResult("CheckiO Response", missionCheck.getBrowserPanel())
+        getInstance(project).showResult("CheckiO Response", missionCheck.getPanel())
       }
       checkResult
     }

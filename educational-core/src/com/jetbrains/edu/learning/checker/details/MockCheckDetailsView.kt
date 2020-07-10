@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.checker.details
 
-import javafx.embed.swing.JFXPanel
+import javax.swing.JComponent
 
 class MockCheckDetailsView : CheckDetailsView() {
   override fun showOutput(message: String) {
@@ -9,7 +9,7 @@ class MockCheckDetailsView : CheckDetailsView() {
   override fun showCheckResultDetails(title: String, message: String) {
   }
 
-  override fun showJavaFXResult(title: String, panel: JFXPanel) {
+  override fun showResult(title: String, panel: JComponent) {
   }
 
   override fun clear() {

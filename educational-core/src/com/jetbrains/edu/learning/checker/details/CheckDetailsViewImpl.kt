@@ -6,7 +6,6 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowManager
-import javafx.embed.swing.JFXPanel
 import javax.swing.JComponent
 
 class CheckDetailsViewImpl(val project: Project) : CheckDetailsView() {
@@ -40,7 +39,7 @@ class CheckDetailsViewImpl(val project: Project) : CheckDetailsView() {
     }
   }
 
-  override fun showJavaFXResult(title: String, panel: JFXPanel) {
+  override fun showResult(title: String, panel: JComponent) {
     runInEdt {
       createContentAndShowToolWindow(panel, title)
     }
