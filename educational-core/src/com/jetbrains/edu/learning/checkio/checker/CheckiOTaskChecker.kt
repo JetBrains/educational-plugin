@@ -1,61 +1,52 @@
-package com.jetbrains.edu.learning.checkio.checker;
+package com.jetbrains.edu.learning.checkio.checker
 
-import com.intellij.openapi.application.ex.ApplicationUtil;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.checker.CheckResult;
-import com.jetbrains.edu.learning.checker.EnvironmentChecker;
-import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.checker.details.CheckDetailsView;
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.application.ex.ApplicationUtil
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckResult.Companion.failedToCheck
+import com.jetbrains.edu.learning.checker.EnvironmentChecker
+import com.jetbrains.edu.learning.checker.TaskChecker
+import com.jetbrains.edu.learning.checker.details.CheckDetailsView.Companion.getInstance
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
-public class CheckiOTaskChecker extends TaskChecker<EduTask> {
-  private final CheckiOMissionCheck myMissionCheck;
-  private final EnvironmentChecker myEnvChecker;
+class CheckiOTaskChecker(
+  task: EduTask,
+  private val envChecker: EnvironmentChecker,
+  project: Project,
+  oAuthConnector: CheckiOOAuthConnector,
+  interpreterName: String,
+  testFormTargetUrl: String
+) : TaskChecker<EduTask>(task, project) {
 
-  public CheckiOTaskChecker(
-    @NotNull EduTask task,
-    @NotNull EnvironmentChecker envChecker,
-    @NotNull Project project,
-    @NotNull CheckiOOAuthConnector oAuthConnector,
-    @NotNull String interpreterName,
-    @NotNull String testFormTargetUrl
-  ) {
-    super(task, project);
+  private val missionCheck: CheckiOMissionCheck = CheckiOMissionCheck(
+    task,
+    project,
+    oAuthConnector,
+    interpreterName,
+    testFormTargetUrl
+  )
 
-    myMissionCheck = new CheckiOMissionCheck(
-      task,
-      project,
-      oAuthConnector,
-      interpreterName,
-      testFormTargetUrl
-    );
-    myEnvChecker = envChecker;
-  }
-
-  @NotNull
-  @Override
-  public CheckResult check(@NotNull ProgressIndicator indicator) {
-    try {
-      String possibleError = myEnvChecker.checkEnvironment(project);
-      if (possibleError != null) return new CheckResult(CheckStatus.Unchecked, possibleError);
-
-      final CheckResult checkResult =
-        ApplicationUtil.runWithCheckCanceled(myMissionCheck, ProgressManager.getInstance().getProgressIndicator());
-
-      if (checkResult.getStatus() != CheckStatus.Unchecked) {
-        CheckDetailsView.getInstance(project).showJavaFXResult("CheckiO Response", myMissionCheck.getBrowserPanel());
+  override fun check(indicator: ProgressIndicator): CheckResult {
+    return try {
+      val possibleError = envChecker.checkEnvironment(project)
+      if (possibleError != null) {
+        return CheckResult(CheckStatus.Unchecked, possibleError)
       }
 
-      return checkResult;
+      val checkResult = ApplicationUtil.runWithCheckCanceled(missionCheck, ProgressManager.getInstance().progressIndicator)
+
+      if (checkResult.status != CheckStatus.Unchecked) {
+        getInstance(project).showJavaFXResult("CheckiO Response", missionCheck.getBrowserPanel())
+      }
+      checkResult
     }
-    catch (Exception e) {
-      LOG.warn(e.getMessage());
-      return CheckResult.getFailedToCheck();
+    catch (e: Exception) {
+      LOG.warn(e.message)
+      failedToCheck
     }
   }
 }
