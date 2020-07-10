@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,7 @@ import static com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPla
 public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
   public CCAddAnswerPlaceholder() {
-    super(EduCoreBundle.message("action.add.answer.placeholder"), EduCoreBundle.message("action.add.answer.placeholder.description"));
+    super(EduCoreActionBundle.message("add.answer.placeholder"), EduCoreActionBundle.message("add.answer.placeholder.description"));
   }
 
 
@@ -80,7 +81,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     }
 
     AddAction action = new AddAction(project, answerPlaceholder, taskFile, editor);
-    EduUtils.runUndoableAction(project, EduCoreBundle.message("action.add.answer.placeholder"), action);
+    EduUtils.runUndoableAction(project, EduCoreActionBundle.message("add.answer.placeholder"), action);
   }
 
   static class AddAction extends TaskFileUndoableAction {

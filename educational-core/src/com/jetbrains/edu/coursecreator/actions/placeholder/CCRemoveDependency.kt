@@ -2,13 +2,13 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.ui.EditorNotifications
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 
 class CCRemoveDependency : CCAnswerPlaceholderAction(
-  EduCoreBundle.message("action.remove.dependency"),
-  EduCoreBundle.message("action.remove.dependency.description")
+  EduCoreActionBundle.message("remove.dependency"),
+  EduCoreActionBundle.message("remove.dependency.description")
 ) {
   override fun performAnswerPlaceholderAction(state: CCState) {
     val answerPlaceholder = state.answerPlaceholder ?: return

@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ public class CCRemoveSection extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCRemoveSection.class);
 
   public CCRemoveSection() {
-    super(EduCoreBundle.message("action.remove.section"), EduCoreBundle.message("action.remove.section.description"), null);
+    super(EduCoreActionBundle.message("remove.section"), EduCoreActionBundle.message("remove.section.description"), null);
   }
 
   @Override

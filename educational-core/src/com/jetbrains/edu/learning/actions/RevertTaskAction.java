@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
@@ -43,8 +43,8 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
   private static final Logger LOG = Logger.getInstance(RevertTaskAction.class.getName());
 
   public RevertTaskAction() {
-    super(EduCoreBundle.message("action.reset.request"),
-          EduCoreBundle.message("action.reset.to.initial.state"),
+    super(EduCoreActionBundle.message("reset.request"),
+          EduCoreActionBundle.message("reset.to.initial.state"),
           EducationalCoreIcons.ResetTask);
   }
 
@@ -58,7 +58,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
     validateEditors(project);
     Notification notification = new Notification("reset.task", EmptyIcon.ICON_16, "", "",
-                                                 EduCoreBundle.message("action.reset.result"), NotificationType.INFORMATION, null);
+                                                 EduCoreActionBundle.message("reset.result"), NotificationType.INFORMATION, null);
     notification.notify(project);
     ProjectView.getInstance(project).refresh();
     TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
@@ -117,8 +117,8 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     final Project project = event.getProject();
     if (project == null) return;
 
-    int result = showOkCancelDialog(project, EduCoreBundle.message("action.reset.progress.dropped"),
-                                    EduCoreBundle.message("action.reset.request"), OK_BUTTON, CANCEL_BUTTON, getQuestionIcon());
+    int result = showOkCancelDialog(project, EduCoreActionBundle.message("reset.progress.dropped"),
+                                    EduCoreActionBundle.message("reset.request"), OK_BUTTON, CANCEL_BUTTON, getQuestionIcon());
     if (result != OK) return;
     revert(project);
     EduCounterUsageCollector.revertTask();

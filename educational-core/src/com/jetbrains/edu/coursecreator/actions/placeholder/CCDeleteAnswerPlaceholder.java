@@ -6,12 +6,13 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NotNull;
 
 public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
   public CCDeleteAnswerPlaceholder() {
-    super(EduCoreBundle.message("label.delete"), EduCoreBundle.message("action.delete.answer.placeholder.description"));
+    super(EduCoreBundle.message("label.delete"), EduCoreActionBundle.message("delete.answer.placeholder.description"));
   }
 
   @Override
@@ -23,7 +24,7 @@ public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
     Project project = state.getProject();
     TaskFile taskFile = state.getTaskFile();
     AnswerPlaceholder answerPlaceholder = state.getAnswerPlaceholder();
-    EduUtils.runUndoableAction(project, EduCoreBundle.message("action.delete.answer.placeholder"),
+    EduUtils.runUndoableAction(project, EduCoreActionBundle.message("delete.answer.placeholder"),
                                new CCAddAnswerPlaceholder.AddAction(project, answerPlaceholder, taskFile, state.getEditor()) {
                                  @Override
                                  public void undo() {

@@ -33,7 +33,7 @@ public class PushHyperskillLesson extends CCPushAction {
   private static final Logger LOG = Logger.getInstance(PushHyperskillLesson.class);
 
   public PushHyperskillLesson() {
-    super(EduCoreStudyItemBundle.message("hyperskill.lesson"), EducationalCoreIcons.JB_ACADEMY_ENABLED);
+    super(EduCoreStudyItemBundle.message("lesson.hyperskill"), EducationalCoreIcons.JB_ACADEMY_ENABLED);
   }
 
   @Override
