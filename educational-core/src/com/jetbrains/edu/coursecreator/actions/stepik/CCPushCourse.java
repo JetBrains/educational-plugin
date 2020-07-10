@@ -36,7 +36,7 @@ import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 public class CCPushCourse extends CCPushAction {
 
   public CCPushCourse() {
-    super(EduCoreStudyItemBundle.message("course"), null);
+    super(EduCoreStudyItemBundle.message("item.course"), null);
   }
 
   @Override

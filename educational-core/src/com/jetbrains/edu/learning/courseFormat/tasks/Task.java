@@ -334,10 +334,10 @@ public abstract class Task extends StudyItem {
   @NotNull
   public String getUIName() {
     if (getCourse() instanceof HyperskillCourse) {
-      if (this instanceof CodeTask) return EduCoreStudyItemBundle.message("task.challenge");
-      return EduCoreStudyItemBundle.message("task.stage");
+      if (this instanceof CodeTask) return EduCoreStudyItemBundle.message("item.task.challenge");
+      return EduCoreStudyItemBundle.message("item.task.stage");
     }
-    return EduCoreStudyItemBundle.message("task");
+    return EduCoreStudyItemBundle.message("item.task");
   }
 
   public boolean supportSubmissions() {

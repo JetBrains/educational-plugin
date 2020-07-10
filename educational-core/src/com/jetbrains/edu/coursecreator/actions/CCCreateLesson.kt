@@ -21,8 +21,8 @@ class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(StudyItemType.LESSON,
 
   override val studyItemVariants: List<StudyItemVariant>
     get() = listOf(
-      StudyItemVariant(StringUtil.toTitleCase(EduCoreStudyItemBundle.message("lesson")), "", Lesson, ::Lesson),
-      StudyItemVariant(StringUtil.toTitleCase(EduCoreStudyItemBundle.message("lesson.framework")), "", Lesson, ::FrameworkLesson)
+      StudyItemVariant(StringUtil.toTitleCase(EduCoreStudyItemBundle.message("item.lesson")), "", Lesson, ::Lesson),
+      StudyItemVariant(StringUtil.toTitleCase(EduCoreStudyItemBundle.message("item.lesson.framework")), "", Lesson, ::FrameworkLesson)
     )
 
   override fun addItem(course: Course, item: Lesson) {

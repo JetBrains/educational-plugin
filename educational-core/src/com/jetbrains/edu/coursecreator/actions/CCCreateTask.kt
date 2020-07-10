@@ -115,25 +115,25 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Task)
   override val studyItemVariants: List<StudyItemVariant>
     get() = listOf(
       StudyItemVariant(
-        EduCoreStudyItemBundle.message("task.edu.title"),
+        EduCoreStudyItemBundle.message("item.task.edu.title"),
         EduCoreActionBundle.message("new.study.item.task.edu.description"),
         Task,
         ::EduTask
       ),
       StudyItemVariant(
-        EduCoreStudyItemBundle.message("task.output.title"),
+        EduCoreStudyItemBundle.message("item.task.output.title"),
         EduCoreActionBundle.message("new.study.item.task.output.description"),
         Task,
         ::OutputTask
       ),
       StudyItemVariant(
-        EduCoreStudyItemBundle.message("task.theory.title"),
+        EduCoreStudyItemBundle.message("item.task.theory.title"),
         EduCoreActionBundle.message("new.study.item.task.theory.description"),
         Task,
         ::TheoryTask
       ),
       StudyItemVariant(
-        EduCoreStudyItemBundle.message("task.choice.title"),
+        EduCoreStudyItemBundle.message("item.task.choice.title"),
         EduCoreActionBundle.message("new.study.item.task.choice.description"),
         Task
       ) {
@@ -145,7 +145,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Task)
         task
       },
       StudyItemVariant(
-        EduCoreStudyItemBundle.message("task.ide"),
+        EduCoreStudyItemBundle.message("item.task.ide"),
         EduCoreActionBundle.message("new.study.item.task.ide.description"),
         IdeTask,
         ::IdeTask

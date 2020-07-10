@@ -17,19 +17,19 @@ enum class StudyItemType {
 
 val StudyItemType.presentableName: String
   @Nls get() = when (this) {
-    COURSE -> EduCoreStudyItemBundle.message("course")
-    SECTION -> EduCoreStudyItemBundle.message("section")
-    LESSON -> EduCoreStudyItemBundle.message("lesson")
-    TASK -> EduCoreStudyItemBundle.message("task")
+    COURSE -> EduCoreStudyItemBundle.message("item.course")
+    SECTION -> EduCoreStudyItemBundle.message("item.section")
+    LESSON -> EduCoreStudyItemBundle.message("item.lesson")
+    TASK -> EduCoreStudyItemBundle.message("item.task")
   }
 
 val StudyItemType.presentableTitleName: String
   @Nls(capitalization = Nls.Capitalization.Title)
   get() = when (this) {
-    COURSE -> EduCoreStudyItemBundle.message("course.title")
-    SECTION -> EduCoreStudyItemBundle.message("section.title")
-    LESSON -> EduCoreStudyItemBundle.message("lesson.title")
-    TASK -> EduCoreStudyItemBundle.message("task.title")
+    COURSE -> EduCoreStudyItemBundle.message("item.course.title")
+    SECTION -> EduCoreStudyItemBundle.message("item.section.title")
+    LESSON -> EduCoreStudyItemBundle.message("item.lesson.title")
+    TASK -> EduCoreStudyItemBundle.message("item.task.title")
   }
 
 val StudyItemType.createItemMessage: String

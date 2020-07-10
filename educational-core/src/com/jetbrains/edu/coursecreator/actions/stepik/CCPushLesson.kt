@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.twelvemonkeys.lang.StringUtil
 
 // educational-core.xml
-class CCPushLesson : CCPushAction(EduCoreStudyItemBundle.message("lesson")) {
+class CCPushLesson : CCPushAction(EduCoreStudyItemBundle.message("item.lesson")) {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false

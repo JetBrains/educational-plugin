@@ -25,7 +25,7 @@ import static com.jetbrains.edu.learning.EduUtils.showNotification;
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushTask extends CCPushAction {
   public CCPushTask() {
-    super(EduCoreStudyItemBundle.message("task"), null);
+    super(EduCoreStudyItemBundle.message("item.task"), null);
   }
 
   @Override

@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-class CCPushSection : CCPushAction(EduCoreStudyItemBundle.message("section")) {
+class CCPushSection : CCPushAction(EduCoreStudyItemBundle.message("item.section")) {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
