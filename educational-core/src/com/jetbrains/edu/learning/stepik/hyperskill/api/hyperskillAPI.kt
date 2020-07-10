@@ -16,6 +16,7 @@ const val ID = "id"
 const val TITLE = "title"
 const val EMAIL = "email"
 const val FULL_NAME = "fullname"
+const val IS_GUEST = "is_guest"
 const val PROJECT = "project"
 const val DESCRIPTION = "description"
 const val IDE_FILES = "ide_files"
@@ -42,6 +43,9 @@ class HyperskillUserInfo {
 
   @JsonProperty(FULL_NAME)
   var fullname: String = ""
+
+  @JsonProperty(IS_GUEST)
+  var isGuest: Boolean = false
 
   @JsonProperty(PROJECT)
   var hyperskillProjectId: Int? = null

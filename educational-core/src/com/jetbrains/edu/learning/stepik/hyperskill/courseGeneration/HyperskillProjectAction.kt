@@ -29,7 +29,7 @@ class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") 
 
   override fun actionPerformed(e: AnActionEvent) {
     val account = HyperskillSettings.INSTANCE.account
-    if (account == null) {
+    if (account == null || HyperskillConnector.getInstance().getCurrentUser(account) == null) {
       showBalloon(e, "Please <a href=\"\">login to ${EduNames.JBA}</a> and select a project.", true)
     }
     else {

@@ -120,10 +120,13 @@ fun isHyperskillSupportAvailable(): Boolean = EduConfiguratorManager.allExtensio
 fun getSelectedProjectIdUnderProgress(account: HyperskillAccount): Int? {
   return computeUnderProgress(null, SYNCHRONIZE_JBA_ACCOUNT, false) {
     val currentUser = HyperskillConnector.getInstance().getCurrentUser(account)
-    if (currentUser != null) {
-      account.userInfo = currentUser
+    if (currentUser == null) {
+      null
     }
-    account.userInfo.hyperskillProjectId
+    else {
+      account.userInfo = currentUser
+      account.userInfo.hyperskillProjectId
+    }
   }
 }
 

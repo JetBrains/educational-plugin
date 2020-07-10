@@ -105,7 +105,14 @@ abstract class HyperskillConnector {
 
   fun getCurrentUser(account: HyperskillAccount): HyperskillUserInfo? {
     val response = service(account).getCurrentUserInfo().executeHandlingExceptions()
-    return response?.body()?.profiles?.firstOrNull()
+    val userInfo = response?.body()?.profiles?.firstOrNull()
+    if (userInfo?.isGuest == true) {
+      // it means that session is broken and we should force user to relogin
+      LOG.warn("User ${userInfo.fullname} ${userInfo.email} is anonymous")
+      HyperskillSettings.INSTANCE.account = null
+      return null
+    }
+    return userInfo
   }
 
   fun getStages(projectId: Int): List<HyperskillStage>? {
