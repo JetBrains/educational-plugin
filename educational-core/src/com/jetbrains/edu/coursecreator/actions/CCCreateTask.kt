@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.StudyItemType
+import com.jetbrains.edu.coursecreator.TaskType
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
@@ -20,7 +21,7 @@ import icons.EducationalCoreIcons.IdeTask
 import icons.EducationalCoreIcons.Task
 import java.util.*
 
-class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Task) {
+class CCCreateTask : CCCreateStudyItemActionBase<Task>(TaskType, Task) {
 
   override fun addItem(course: Course, item: Task) {
     item.lesson.addTask(item)

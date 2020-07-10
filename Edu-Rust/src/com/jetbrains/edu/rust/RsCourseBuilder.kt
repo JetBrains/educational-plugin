@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.exists
 import com.jetbrains.edu.coursecreator.StudyItemType
+import com.jetbrains.edu.coursecreator.TaskType
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.learning.EduCourseBuilder
@@ -106,7 +107,7 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     }
 
     override fun validateItemName(name: String, itemType: StudyItemType): String? =
-      if (itemType == StudyItemType.TASK) RsPackageNameValidator.validate(name.toPackageName(), true) else null
+      if (itemType == TaskType) RsPackageNameValidator.validate(name.toPackageName(), true) else null
 
     companion object {
         private const val LIB_RS = RsConstants.LIB_RS_FILE

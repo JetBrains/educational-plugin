@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.StudyItemType;
+import com.jetbrains.edu.coursecreator.SectionType;
 import com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase;
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo;
 import com.jetbrains.edu.coursecreator.actions.StudyItemVariant;
@@ -23,7 +23,7 @@ import java.util.List;
 public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
 
   public CCCreateSection() {
-    super(StudyItemType.SECTION, EducationalCoreIcons.Section);
+    super(SectionType.INSTANCE, EducationalCoreIcons.Section);
   }
 
   @Override

@@ -3,7 +3,7 @@ package com.jetbrains.edu.coursecreator.handlers.rename;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
-import com.jetbrains.edu.coursecreator.StudyItemType;
+import com.jetbrains.edu.coursecreator.LessonType;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CCLessonRenameHandler extends CCStudyItemRenameHandler {
   public CCLessonRenameHandler() {
-    super(StudyItemType.LESSON);
+    super(LessonType.INSTANCE);
   }
 
   @Override

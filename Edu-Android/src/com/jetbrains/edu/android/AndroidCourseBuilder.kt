@@ -6,7 +6,7 @@ import com.android.tools.idea.sdk.AndroidSdks
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.jetbrains.edu.coursecreator.StudyItemType
+import com.jetbrains.edu.coursecreator.TaskType
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
@@ -46,7 +46,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     studyItemCreator: (NewStudyItemInfo) -> Unit
   ) {
     val parentItem = model.parent
-    if (model.itemType != StudyItemType.TASK || parentItem is FrameworkLesson && parentItem.taskList.isNotEmpty()) {
+    if (model.itemType != TaskType || parentItem is FrameworkLesson && parentItem.taskList.isNotEmpty()) {
       super.showNewStudyItemUi(project, course, model, additionalPanels, studyItemCreator)
     }
     else {

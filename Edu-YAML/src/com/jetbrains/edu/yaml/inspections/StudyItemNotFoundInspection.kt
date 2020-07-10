@@ -12,14 +12,11 @@ import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parentOfType
-import com.jetbrains.edu.coursecreator.StudyItemType
-import com.jetbrains.edu.coursecreator.StudyItemType.*
+import com.jetbrains.edu.coursecreator.*
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
 import com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.coursecreator.actions.sections.CCCreateSection
-import com.jetbrains.edu.coursecreator.createItemMessage
-import com.jetbrains.edu.coursecreator.failedToFindItemMessage
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
@@ -36,12 +33,12 @@ class StudyItemNotFoundInspection : UnresolvedFileReferenceInspection() {
 
   override fun registerProblem(holder: ProblemsHolder, element: YAMLScalar) {
     val childType = when (element.itemType) {
-      COURSE -> {
+      CourseType -> {
         val course = element.project.course ?: return
-        if (course.hasSections) SECTION else LESSON
+        if (course.hasSections) SectionType else LessonType
       }
-      SECTION -> LESSON
-      LESSON -> TASK
+      SectionType -> LessonType
+      LessonType -> TaskType
       else -> return
     }
 
@@ -52,9 +49,9 @@ class StudyItemNotFoundInspection : UnresolvedFileReferenceInspection() {
 
   private val YAMLScalar.itemType: StudyItemType get() {
     return when (containingFile.name) {
-      COURSE_CONFIG -> COURSE
-      SECTION_CONFIG -> SECTION
-      LESSON_CONFIG -> LESSON
+      COURSE_CONFIG -> CourseType
+      SECTION_CONFIG -> SectionType
+      LESSON_CONFIG -> LessonType
       else -> error("Unexpected containing file `${containingFile.name}`")
     }
   }
@@ -73,9 +70,9 @@ class StudyItemNotFoundInspection : UnresolvedFileReferenceInspection() {
       val name = scalar.textValue
 
       val action = when (itemType) {
-        SECTION -> CCCreateSection()
-        LESSON -> CCCreateLesson()
-        TASK -> CCCreateTask()
+        SectionType -> CCCreateSection()
+        LessonType -> CCCreateLesson()
+        TaskType -> CCCreateTask()
         else -> return
       }
 

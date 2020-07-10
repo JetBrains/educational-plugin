@@ -11,7 +11,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.StudyItemType;
+import com.jetbrains.edu.coursecreator.SectionType;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -65,7 +65,7 @@ public class CCWrapWithSection extends DumbAwareAction {
       return;
     }
     int sectionIndex = course.getSections().size() + 1;
-    InputValidator validator = new CCStudyItemPathInputValidator(course, StudyItemType.SECTION, OpenApiExtKt.getCourseDir(project));
+    InputValidator validator = new CCStudyItemPathInputValidator(course, SectionType.INSTANCE, OpenApiExtKt.getCourseDir(project));
     String sectionName = Messages.showInputDialog(EduCoreActionBundle.message("wrap.with.section.enter.name"),
                                                   EduCoreStudyItemBundle.message("item.section.title"), null,
                                                   EduNames.SECTION + sectionIndex, validator);

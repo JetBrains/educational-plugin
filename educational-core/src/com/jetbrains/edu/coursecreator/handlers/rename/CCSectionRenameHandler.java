@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFileSystemItem;
-import com.jetbrains.edu.coursecreator.StudyItemType;
+import com.jetbrains.edu.coursecreator.SectionType;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CCSectionRenameHandler extends CCStudyItemRenameHandler {
   public CCSectionRenameHandler() {
-    super(StudyItemType.SECTION);
+    super(SectionType.INSTANCE);
   }
 
   @Override

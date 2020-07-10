@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFileSystemItem;
-import com.jetbrains.edu.coursecreator.StudyItemType;
+import com.jetbrains.edu.coursecreator.TaskType;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CCTaskRenameHandler extends CCStudyItemRenameHandler {
   public CCTaskRenameHandler() {
-    super(StudyItemType.TASK);
+    super(TaskType.INSTANCE);
   }
 
   @Override

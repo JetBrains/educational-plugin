@@ -9,7 +9,6 @@ import com.intellij.openapi.ui.popup.JBPopup
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
-import com.jetbrains.edu.coursecreator.newItemTitleMessage
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly

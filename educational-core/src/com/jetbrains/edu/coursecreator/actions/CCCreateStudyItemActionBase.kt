@@ -109,7 +109,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
         ProjectView.getInstance(project).select(virtualFile, virtualFile, true)
       }
       askFeedback(course, project)
-      if (StudyItemType.LESSON == itemType) {
+      if (LessonType == itemType) {
         suggestWrapLessonsIntoSection(project, course, sourceDirectory)
       }
     }
