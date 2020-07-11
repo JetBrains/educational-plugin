@@ -1,21 +1,13 @@
 package com.jetbrains.edu.learning.checkio.checker;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.taskDescription.ui.BrowserWindow;
 import javafx.application.Platform;
@@ -28,14 +20,10 @@ import org.w3c.dom.html.HTMLInputElement;
 import org.w3c.dom.html.HTMLTextAreaElement;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
-  private final Project myProject;
-  private final Task myTask;
-
   private final BrowserWindow myBrowserWindow;
   private final CheckiOTestResultHandler myResultHandler;
 
@@ -52,14 +40,13 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
     @NotNull String interpreterName,
     @NotNull String testFormTargetUrl
   ) {
-    myProject = project;
-    myTask = task;
+    super(project, task);
     myOAuthConnector = oAuthConnector;
     myInterpreterName = interpreterName;
     myTestFormTargetUrl = testFormTargetUrl;
 
     myResultHandler = new CheckiOTestResultHandler();
-    myBrowserWindow = new BrowserWindow(myProject, false);
+    myBrowserWindow = new BrowserWindow(project, false);
   }
 
   @NotNull
@@ -67,7 +54,7 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
   public CheckResult call() {
     try {
       final String accessToken = myOAuthConnector.getAccessToken();
-      final String taskId = String.valueOf(myTask.getId());
+      final String taskId = String.valueOf(getTask().getId());
       final String code = getCodeFromTask();
 
       return doCheck(accessToken, taskId, code);
@@ -80,29 +67,6 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
       ).handle(e);
       return CheckResult.getFailedToCheck();
     }
-  }
-
-  private String getCodeFromTask() throws IOException {
-    final TaskFile taskFile = ((CheckiOMission) myTask).getTaskFile();
-    final VirtualFile missionDir = myTask.getDir(myProject);
-    if (missionDir == null) {
-      throw new IOException("Directory is not found for mission: " + myTask.getId() + ", " + myTask.getName());
-    }
-
-    final VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, missionDir);
-    if (virtualFile == null) {
-      throw new IOException("Virtual file is not found for mission: " + myTask.getId() + ", " + myTask.getName());
-    }
-
-    final Document document = ApplicationManager.getApplication().runReadAction((Computable<Document>) () ->
-      FileDocumentManager.getInstance().getDocument(virtualFile)
-    );
-
-    if (document == null) {
-      throw new IOException("Document isn't provided for VirtualFile: " + virtualFile.getName());
-    }
-
-    return document.getText();
   }
 
   @NotNull
