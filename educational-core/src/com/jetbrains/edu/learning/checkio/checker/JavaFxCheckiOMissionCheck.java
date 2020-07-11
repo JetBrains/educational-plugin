@@ -15,6 +15,7 @@ import javafx.concurrent.Worker;
 import netscape.javascript.JSObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.w3c.dom.Document;
 import org.w3c.dom.html.HTMLFormElement;
 import org.w3c.dom.html.HTMLInputElement;
 import org.w3c.dom.html.HTMLTextAreaElement;
@@ -136,7 +137,7 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
       }
 
       String location = myBrowserWindow.getEngine().getLocation();
-      final org.w3c.dom.Document document = myBrowserWindow.getEngine().getDocument();
+      final Document document = myBrowserWindow.getEngine().getDocument();
       if (location.contains("checkioTestForm.html")) {
         ((HTMLInputElement)document.getElementById("access-token")).setValue(accessToken);
         ((HTMLInputElement)document.getElementById("task-id")).setValue(taskId);
@@ -154,7 +155,7 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
     }));
   }
 
-  private static void applyCheckiOBackgroundColor(@NotNull final org.w3c.dom.Document document) {
+  private static void applyCheckiOBackgroundColor(@NotNull final Document document) {
     document.getDocumentElement().setAttribute("style", "background-color : #DEE7F6;");
   }
 
