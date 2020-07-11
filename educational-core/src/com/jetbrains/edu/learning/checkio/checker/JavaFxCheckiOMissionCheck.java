@@ -5,7 +5,6 @@ import com.intellij.openapi.util.Ref;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
-import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -30,7 +29,6 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
 
   @Nullable private CheckResult myCheckResult;
   private final CountDownLatch myLatch = new CountDownLatch(1);
-  private final CheckiOOAuthConnector myOAuthConnector;
   private final String myInterpreterName;
   private final String myTestFormTargetUrl;
 
@@ -41,8 +39,7 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
     @NotNull String interpreterName,
     @NotNull String testFormTargetUrl
   ) {
-    super(project, task);
-    myOAuthConnector = oAuthConnector;
+    super(project, task, oAuthConnector);
     myInterpreterName = interpreterName;
     myTestFormTargetUrl = testFormTargetUrl;
 
@@ -52,26 +49,7 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
 
   @NotNull
   @Override
-  public CheckResult call() {
-    try {
-      final String accessToken = myOAuthConnector.getAccessToken();
-      final String taskId = String.valueOf(getTask().getId());
-      final String code = getCodeFromTask();
-
-      return doCheck(accessToken, taskId, code);
-    } catch (InterruptedException e) {
-      return new CheckResult(CheckStatus.Unchecked, "Checking was cancelled");
-    } catch (Exception e) {
-      new CheckiOErrorHandler(
-        "Failed to check the task",
-        myOAuthConnector
-      ).handle(e);
-      return CheckResult.getFailedToCheck();
-    }
-  }
-
-  @NotNull
-  private CheckResult doCheck(@NotNull String accessToken, @NotNull String taskId, @NotNull String code)
+  protected CheckResult doCheck(@NotNull String accessToken, @NotNull String taskId, @NotNull String code)
     throws InterruptedException, NetworkException {
 
     Platform.runLater(() -> {
