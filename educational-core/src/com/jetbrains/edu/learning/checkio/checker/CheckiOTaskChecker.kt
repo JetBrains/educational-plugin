@@ -4,6 +4,8 @@ import com.intellij.openapi.application.ex.ApplicationUtil
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.failedToCheck
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
@@ -22,13 +24,13 @@ class CheckiOTaskChecker(
   testFormTargetUrl: String
 ) : TaskChecker<EduTask>(task, project) {
 
-  private val missionCheck: CheckiOMissionCheck = JavaFxCheckiOMissionCheck(
-    task,
-    project,
-    oAuthConnector,
-    interpreterName,
-    testFormTargetUrl
-  )
+  private val missionCheck: CheckiOMissionCheck = when (EduSettings.getInstance().javaUiLibraryWithCheck) {
+    JavaUILibrary.JCEF -> {
+      getJCEFCheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl)
+      ?: throw RuntimeException("Can't get JCEF CheckiO checker")
+    }
+    else -> JavaFxCheckiOMissionCheck(task, project, oAuthConnector, interpreterName, testFormTargetUrl)
+  }
 
   override fun check(indicator: ProgressIndicator): CheckResult {
     return try {
