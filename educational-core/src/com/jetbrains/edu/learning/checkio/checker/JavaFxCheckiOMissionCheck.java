@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.taskDescription.ui.BrowserWindow;
 import javafx.application.Platform;
@@ -15,8 +14,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.html.HTMLFormElement;
 
 import javax.swing.*;
-
-import static com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText;
 
 public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
   private final BrowserWindow myBrowserWindow;
@@ -50,7 +47,7 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
   }
 
   private void loadTestForm() {
-    final String html = getInternalTemplateText(CHECKIO_TEST_FORM_TEMPLATE, getResources());
+    final String html = getTestFormHtml();
     myBrowserWindow.getEngine().loadContent(html);
   }
 
@@ -112,9 +109,7 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
   public class CheckiOTestResultHandler {
     @SuppressWarnings("unused") // used in JS code
     public void handleTestEvent(int result) {
-      checkResult = result == 1 ?
-                      new CheckResult(CheckStatus.Solved, "All tests passed") :
-                      new CheckResult(CheckStatus.Failed, "Tests failed");
+      setCheckResult(result);
       getLatch().countDown();
     }
   }

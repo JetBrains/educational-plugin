@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import java.io.IOException
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
@@ -58,7 +59,16 @@ abstract class CheckiOMissionCheck(val project: Project,
     }
   }
 
-  protected fun getResources() = mapOf(
+  protected fun getTestFormHtml(): String = GeneratorUtils.getInternalTemplateText(CHECKIO_TEST_FORM_TEMPLATE, getResources())
+
+  protected fun setCheckResult(result: Int) {
+    checkResult = when (result) {
+      1 -> CheckResult(CheckStatus.Solved, "All tests passed")
+      else -> CheckResult(CheckStatus.Failed, "Tests failed")
+    }
+  }
+
+  private fun getResources() = mapOf(
     "testFormTargetUrl" to testFormTargetUrl,
     "accessToken" to oAuthConnector.accessToken,
     "taskId" to task.id.toString(),
@@ -88,6 +98,6 @@ abstract class CheckiOMissionCheck(val project: Project,
   }
 
   companion object {
-    protected const val CHECKIO_TEST_FORM_TEMPLATE = "checkioTestForm.html"
+    private const val CHECKIO_TEST_FORM_TEMPLATE = "checkioTestForm.html"
   }
 }

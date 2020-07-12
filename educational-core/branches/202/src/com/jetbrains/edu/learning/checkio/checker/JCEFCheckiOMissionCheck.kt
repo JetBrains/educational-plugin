@@ -1,8 +1,16 @@
 package com.jetbrains.edu.learning.checkio.checker
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.ui.jcef.JBCefBrowser
+import com.intellij.ui.jcef.JBCefJSQuery
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import javafx.application.Platform
+import org.cef.browser.CefBrowser
+import org.cef.browser.CefFrame
+import org.cef.handler.CefLoadHandler
+import org.cef.handler.CefLoadHandlerAdapter
 import javax.swing.JComponent
 
 class JCEFCheckiOMissionCheck(project: Project,
@@ -11,12 +19,67 @@ class JCEFCheckiOMissionCheck(project: Project,
                               interpreterName: String,
                               testFormTargetUrl: String
 ) : CheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl) {
+  private val jbCefBrowser = JBCefBrowser()
+  private val jbCefJSQuery = JBCefJSQuery.create(jbCefBrowser)
 
-  override fun doCheck() {
-    TODO("Not yet implemented")
+  init {
+    jbCefBrowser.jbCefClient.addLoadHandler(TestFormLoadHandler(), jbCefBrowser.cefBrowser)
+
+    jbCefJSQuery.addHandler { value ->
+      val result = value.toIntOrNull() ?: return@addHandler null
+
+      ApplicationManager.getApplication().executeOnPooledThread {
+        setCheckResult(result)
+        latch.countDown()
+      }
+      null
+    }
   }
 
-  override fun getPanel(): JComponent {
-    TODO("Not yet implemented")
+  override fun doCheck() {
+    Platform.runLater {
+      val html = getTestFormHtml()
+      jbCefBrowser.loadHTML(html)
+    }
+  }
+
+  override fun getPanel(): JComponent = jbCefBrowser.component
+
+  private inner class TestFormLoadHandler : CefLoadHandlerAdapter() {
+    override fun onLoadError(browser: CefBrowser?,
+                             frame: CefFrame?,
+                             errorCode: CefLoadHandler.ErrorCode?,
+                             errorText: String?,
+                             failedUrl: String?) {
+      ApplicationManager.getApplication().executeOnPooledThread {
+        setConnectionError()
+      }
+    }
+
+    override fun onLoadEnd(browser: CefBrowser, frame: CefFrame?, httpStatusCode: Int) {
+      // actually it means test form
+      if (browser.url.contains("about:blank")) {
+        browser.mainFrame.executeJavaScript(
+          """
+          form = document.getElementById('test-form');
+          if (form) form.submit();
+          """.trimIndent(), jbCefBrowser.cefBrowser.url, 0
+        )
+      }
+
+      if (browser.url.contains("check-html-output")) {
+        browser.mainFrame.executeJavaScript(
+          """
+          function handleEvent(e) {
+            let value = e.detail.success;
+            ${jbCefJSQuery.inject("value")}
+          }
+          window.addEventListener('checkio:checkDone', handleEvent, false);  
+            
+          document.documentElement.setAttribute("style", "background-color : #DEE7F6;")
+          """.trimIndent(), jbCefBrowser.cefBrowser.url, 0
+        )
+      }
+    }
   }
 }
