@@ -1,116 +1,98 @@
-package com.jetbrains.edu.learning.checkio.checker;
+package com.jetbrains.edu.learning.checkio.checker
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.taskDescription.ui.BrowserWindow;
-import javafx.application.Platform;
-import javafx.concurrent.Worker;
-import netscape.javascript.JSObject;
-import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Document;
-import org.w3c.dom.html.HTMLFormElement;
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Ref
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.taskDescription.ui.BrowserWindow
+import javafx.application.Platform
+import javafx.beans.value.ObservableValue
+import javafx.concurrent.Worker
+import netscape.javascript.JSObject
+import org.w3c.dom.html.HTMLFormElement
+import javax.swing.JComponent
 
-import javax.swing.*;
+class JavaFxCheckiOMissionCheck(
+  project: Project,
+  task: Task,
+  oAuthConnector: CheckiOOAuthConnector,
+  interpreterName: String,
+  testFormTargetUrl: String
+) : CheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl) {
+  private val browserWindow: BrowserWindow = BrowserWindow(project, false)
+  private val resultHandler: CheckiOTestResultHandler = CheckiOTestResultHandler()
 
-public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
-  private final BrowserWindow myBrowserWindow;
-  private final CheckiOTestResultHandler myResultHandler;
-
-  protected JavaFxCheckiOMissionCheck(
-    @NotNull Task task,
-    @NotNull Project project,
-    @NotNull CheckiOOAuthConnector oAuthConnector,
-    @NotNull String interpreterName,
-    @NotNull String testFormTargetUrl
-  ) {
-    super(project, task, oAuthConnector, interpreterName, testFormTargetUrl);
-    myBrowserWindow = new BrowserWindow(project, false);
-    myResultHandler = new CheckiOTestResultHandler();
+  override fun doCheck() {
+    Platform.runLater {
+      setTestFormLoadedListener()
+      setCheckDoneListener()
+      loadTestForm()
+    }
   }
 
-  @Override
-  protected void doCheck() {
-    Platform.runLater(() -> {
-      setTestFormLoadedListener();
-      setCheckDoneListener();
-      loadTestForm();
-    });
+  override fun getPanel(): JComponent = browserWindow.panel
+
+  private fun loadTestForm() {
+    val html = getTestFormHtml()
+    browserWindow.engine.loadContent(html)
   }
 
-  @NotNull
-  @Override
-  public JComponent getPanel() {
-    return myBrowserWindow.getPanel();
-  }
-
-  private void loadTestForm() {
-    final String html = getTestFormHtml();
-    myBrowserWindow.getEngine().loadContent(html);
-  }
-
-  private void setCheckDoneListener() {
-    final Ref<Boolean> visited = new Ref<>(Boolean.FALSE);
-
-    myBrowserWindow.getEngine().getLoadWorker().stateProperty().addListener((observable, oldState, newState) -> {
+  private fun setCheckDoneListener() {
+    val visited = Ref(false)
+    browserWindow.engine.loadWorker.stateProperty().addListener { _: ObservableValue<out Worker.State>?,
+                                                                  _: Worker.State?,
+                                                                  newState: Worker.State ->
       if (newState == Worker.State.FAILED) {
-        setConnectionError();
-        return;
+        setConnectionError()
+        return@addListener
       }
 
-      if (myBrowserWindow.getEngine().getLocation().contains(CheckiONames.CHECKIO_URL)
-          && newState == Worker.State.SUCCEEDED
-          && !visited.get()) {
-        visited.set(Boolean.TRUE);
-
-        final JSObject windowObject = (JSObject)myBrowserWindow.getEngine().executeScript("window");
-        windowObject.setMember("javaHandler", myResultHandler);
-
-        myBrowserWindow.getEngine().executeScript(
-          "function handleEvent(e) {\n" +
-          "\twindow.javaHandler.handleTestEvent(e.detail.success)\n" +
-          "}\n" +
-          "window.addEventListener(\"checkio:checkDone\", handleEvent, false)"
-        );
+      if (browserWindow.engine.location.contains(CheckiONames.CHECKIO_URL)
+          && newState == Worker.State.SUCCEEDED && !visited.get()) {
+        visited.set(true)
+        val windowObject = browserWindow.engine.executeScript("window") as JSObject
+        windowObject.setMember("javaHandler", resultHandler)
+        browserWindow.engine.executeScript(
+          """
+            function handleEvent(e) {
+	            window.javaHandler.handleTestEvent(e.detail.success)
+            }
+            window.addEventListener("checkio:checkDone", handleEvent, false)
+          """.trimIndent()
+        )
       }
-    });
+    }
   }
 
-  private void setTestFormLoadedListener() {
-    myBrowserWindow.getEngine().getLoadWorker().stateProperty().addListener(((observable, oldState, newState) -> {
+  private fun setTestFormLoadedListener() {
+    browserWindow.engine.loadWorker.stateProperty().addListener { _: ObservableValue<out Worker.State>?,
+                                                                  _: Worker.State?,
+                                                                  newState: Worker.State ->
       if (newState == Worker.State.FAILED) {
-        setConnectionError();
-        return;
+        setConnectionError()
+        return@addListener
       }
-
       if (newState != Worker.State.SUCCEEDED) {
-        return;
+        return@addListener
       }
 
-      String location = myBrowserWindow.getEngine().getLocation();
-      final Document document = myBrowserWindow.getEngine().getDocument();
-      final HTMLFormElement testForm = (HTMLFormElement) document.getElementById("test-form");
-      if (testForm != null) {
-        testForm.submit();
-      }
+      val location = browserWindow.engine.location
+      val document = browserWindow.engine.document
+      val testForm = document.getElementById("test-form") as? HTMLFormElement
+      testForm?.submit()
 
       if (location.contains("check-html-output")) {
-        applyCheckiOBackgroundColor(document);
+        document.documentElement.setAttribute("style", "background-color : #DEE7F6;")
       }
-    }));
+    }
   }
 
-  private static void applyCheckiOBackgroundColor(@NotNull final Document document) {
-    document.getDocumentElement().setAttribute("style", "background-color : #DEE7F6;");
-  }
-
-  public class CheckiOTestResultHandler {
-    @SuppressWarnings("unused") // used in JS code
-    public void handleTestEvent(int result) {
-      setCheckResult(result);
-      getLatch().countDown();
+  inner class CheckiOTestResultHandler {
+    @Suppress("unused") // used in JS code
+    fun handleTestEvent(result: Int) {
+      setCheckResult(result)
+      latch.countDown()
     }
   }
 }

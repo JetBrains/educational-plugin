@@ -29,7 +29,7 @@ class CheckiOTaskChecker(
       getJCEFCheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl)
       ?: throw RuntimeException("Can't get JCEF CheckiO checker")
     }
-    else -> JavaFxCheckiOMissionCheck(task, project, oAuthConnector, interpreterName, testFormTargetUrl)
+    else -> JavaFxCheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl)
   }
 
   override fun check(indicator: ProgressIndicator): CheckResult {
