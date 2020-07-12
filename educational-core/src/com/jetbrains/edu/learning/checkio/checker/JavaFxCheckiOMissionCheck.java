@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.checkio.checker;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
-import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -108,11 +107,6 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
 
   private static void applyCheckiOBackgroundColor(@NotNull final Document document) {
     document.getDocumentElement().setAttribute("style", "background-color : #DEE7F6;");
-  }
-
-  private void setConnectionError() {
-    checkResult = CheckResult.CONNECTION_FAILED;
-    getLatch().countDown();
   }
 
   public class CheckiOTestResultHandler {

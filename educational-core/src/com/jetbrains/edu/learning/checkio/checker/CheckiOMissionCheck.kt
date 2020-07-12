@@ -66,6 +66,11 @@ abstract class CheckiOMissionCheck(val project: Project,
     "code" to getCodeFromTask()
   )
 
+  protected fun setConnectionError() {
+    checkResult = CONNECTION_FAILED
+    latch.countDown()
+  }
+
   private fun getCodeFromTask(): String {
     val taskFile = (task as CheckiOMission).taskFile
     val missionDir = task.getDir(project)
