@@ -39,9 +39,15 @@ class CheckiOTaskChecker(
         return CheckResult(CheckStatus.Unchecked, possibleError)
       }
 
+      // workaround
+      val isJCEF = EduSettings.getInstance().javaUiLibraryWithCheck == JavaUILibrary.JCEF
+      if (isJCEF) {
+        getInstance(project).showResult("CheckiO Response", missionCheck.getPanel())
+      }
+
       val checkResult = ApplicationUtil.runWithCheckCanceled(missionCheck, ProgressManager.getInstance().progressIndicator)
 
-      if (checkResult.status != CheckStatus.Unchecked) {
+      if (!isJCEF && checkResult.status != CheckStatus.Unchecked) {
         getInstance(project).showResult("CheckiO Response", missionCheck.getPanel())
       }
       checkResult

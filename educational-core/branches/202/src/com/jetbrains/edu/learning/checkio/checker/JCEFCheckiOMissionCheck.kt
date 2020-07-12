@@ -62,7 +62,10 @@ class JCEFCheckiOMissionCheck(project: Project,
         browser.mainFrame.executeJavaScript(
           """
           form = document.getElementById('test-form');
-          if (form) form.submit();
+          if (form) {
+            form.hidden = true;
+            form.submit();
+          }
           """.trimIndent(), jbCefBrowser.cefBrowser.url, 0
         )
       }
