@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.checkio.checker;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.jetbrains.edu.learning.checker.CheckResult;
-import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -13,22 +12,16 @@ import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import netscape.javascript.JSObject;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.html.HTMLFormElement;
 
 import javax.swing.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText;
 
 public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
   private final BrowserWindow myBrowserWindow;
   private final CheckiOTestResultHandler myResultHandler;
-
-  @Nullable private CheckResult myCheckResult;
-  private final CountDownLatch myLatch = new CountDownLatch(1);
 
   protected JavaFxCheckiOMissionCheck(
     @NotNull Task task,
@@ -38,30 +31,23 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
     @NotNull String testFormTargetUrl
   ) {
     super(project, task, oAuthConnector, interpreterName, testFormTargetUrl);
-    myResultHandler = new CheckiOTestResultHandler();
     myBrowserWindow = new BrowserWindow(project, false);
+    myResultHandler = new CheckiOTestResultHandler();
   }
 
-  @NotNull
   @Override
-  protected CheckResult doCheck() throws InterruptedException, NetworkException {
+  protected void doCheck() {
     Platform.runLater(() -> {
       setTestFormLoadedListener();
       setCheckDoneListener();
       loadTestForm();
     });
+  }
 
-    boolean timeoutExceeded = !myLatch.await(30L, TimeUnit.SECONDS);
-    if (timeoutExceeded) {
-      return new CheckResult(CheckStatus.Unchecked, "Checking took too much time");
-    }
-
-    if (myCheckResult == CheckResult.CONNECTION_FAILED) {
-      throw new NetworkException();
-    }
-
-    //noinspection ConstantConditions cannot be null because of handler implementation
-    return myCheckResult;
+  @NotNull
+  @Override
+  public JComponent getPanel() {
+    return myBrowserWindow.getPanel();
   }
 
   private void loadTestForm() {
@@ -125,23 +111,17 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
   }
 
   private void setConnectionError() {
-    myCheckResult = CheckResult.CONNECTION_FAILED;
-    myLatch.countDown();
-  }
-
-  @NotNull
-  @Override
-  public JComponent getPanel() {
-    return myBrowserWindow.getPanel();
+    checkResult = CheckResult.CONNECTION_FAILED;
+    getLatch().countDown();
   }
 
   public class CheckiOTestResultHandler {
     @SuppressWarnings("unused") // used in JS code
     public void handleTestEvent(int result) {
-      myCheckResult = result == 1 ?
+      checkResult = result == 1 ?
                       new CheckResult(CheckStatus.Solved, "All tests passed") :
                       new CheckResult(CheckStatus.Failed, "Tests failed");
-      myLatch.countDown();
+      getLatch().countDown();
     }
   }
 }
