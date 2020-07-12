@@ -16,12 +16,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.html.HTMLFormElement;
-import org.w3c.dom.html.HTMLInputElement;
-import org.w3c.dom.html.HTMLTextAreaElement;
 
 import javax.swing.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import static com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText;
 
 public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
   private final BrowserWindow myBrowserWindow;
@@ -29,8 +29,6 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
 
   @Nullable private CheckResult myCheckResult;
   private final CountDownLatch myLatch = new CountDownLatch(1);
-  private final String myInterpreterName;
-  private final String myTestFormTargetUrl;
 
   protected JavaFxCheckiOMissionCheck(
     @NotNull Task task,
@@ -39,21 +37,16 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
     @NotNull String interpreterName,
     @NotNull String testFormTargetUrl
   ) {
-    super(project, task, oAuthConnector);
-    myInterpreterName = interpreterName;
-    myTestFormTargetUrl = testFormTargetUrl;
-
+    super(project, task, oAuthConnector, interpreterName, testFormTargetUrl);
     myResultHandler = new CheckiOTestResultHandler();
     myBrowserWindow = new BrowserWindow(project, false);
   }
 
   @NotNull
   @Override
-  protected CheckResult doCheck(@NotNull String accessToken, @NotNull String taskId, @NotNull String code)
-    throws InterruptedException, NetworkException {
-
+  protected CheckResult doCheck() throws InterruptedException, NetworkException {
     Platform.runLater(() -> {
-      setTestFormLoadedListener(accessToken, taskId, code);
+      setTestFormLoadedListener();
       setCheckDoneListener();
       loadTestForm();
     });
@@ -72,8 +65,8 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
   }
 
   private void loadTestForm() {
-    final String formUrl = getClass().getResource(CheckiONames.CHECKIO_TEST_FORM_URL).toExternalForm();
-    myBrowserWindow.getEngine().load(formUrl);
+    final String html = getInternalTemplateText(CHECKIO_TEST_FORM_TEMPLATE, getResources());
+    myBrowserWindow.getEngine().loadContent(html);
   }
 
   private void setCheckDoneListener() {
@@ -85,7 +78,9 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
         return;
       }
 
-      if (myBrowserWindow.getEngine().getLocation().contains(CheckiONames.CHECKIO_URL) && newState == Worker.State.SUCCEEDED && !visited.get()) {
+      if (myBrowserWindow.getEngine().getLocation().contains(CheckiONames.CHECKIO_URL)
+          && newState == Worker.State.SUCCEEDED
+          && !visited.get()) {
         visited.set(Boolean.TRUE);
 
         final JSObject windowObject = (JSObject)myBrowserWindow.getEngine().executeScript("window");
@@ -101,9 +96,7 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
     });
   }
 
-  private void setTestFormLoadedListener(@NotNull String accessToken,
-                                         @NotNull String taskId,
-                                         @NotNull String code) {
+  private void setTestFormLoadedListener() {
     myBrowserWindow.getEngine().getLoadWorker().stateProperty().addListener(((observable, oldState, newState) -> {
       if (newState == Worker.State.FAILED) {
         setConnectionError();
@@ -116,14 +109,8 @@ public class JavaFxCheckiOMissionCheck extends CheckiOMissionCheck {
 
       String location = myBrowserWindow.getEngine().getLocation();
       final Document document = myBrowserWindow.getEngine().getDocument();
-      if (location.contains("checkioTestForm.html")) {
-        ((HTMLInputElement)document.getElementById("access-token")).setValue(accessToken);
-        ((HTMLInputElement)document.getElementById("task-id")).setValue(taskId);
-        ((HTMLInputElement)document.getElementById("interpreter")).setValue(myInterpreterName);
-        ((HTMLTextAreaElement)document.getElementById("code")).setValue(code);
-
-        final HTMLFormElement testForm = (HTMLFormElement) document.getElementById("test-form");
-        testForm.setAction(myTestFormTargetUrl);
+      final HTMLFormElement testForm = (HTMLFormElement) document.getElementById("test-form");
+      if (testForm != null) {
         testForm.submit();
       }
 

@@ -19,21 +19,19 @@ import javax.swing.JComponent
 
 abstract class CheckiOMissionCheck(val project: Project,
                                    val task: Task,
-                                   private val oAuthConnector: CheckiOOAuthConnector
+                                   private val oAuthConnector: CheckiOOAuthConnector,
+                                   private val interpreterName: String,
+                                   private val testFormTargetUrl: String
 ) : Callable<CheckResult> {
 
   abstract fun getPanel(): JComponent
 
   @Throws(InterruptedException::class, NetworkException::class)
-  protected abstract fun doCheck(accessToken: String, taskId: String, code: String): CheckResult
+  protected abstract fun doCheck(): CheckResult
 
   override fun call(): CheckResult {
     return try {
-      val accessToken = oAuthConnector.accessToken
-      val taskId = task.id.toString()
-      val code = getCodeFromTask()
-
-      doCheck(accessToken, taskId, code)
+      doCheck()
     }
     catch (e: InterruptedException) {
       CheckResult(CheckStatus.Unchecked, "Checking was cancelled")
@@ -43,6 +41,14 @@ abstract class CheckiOMissionCheck(val project: Project,
       failedToCheck
     }
   }
+
+  protected fun getResources() = mapOf(
+    "testFormTargetUrl" to testFormTargetUrl,
+    "accessToken" to oAuthConnector.accessToken,
+    "taskId" to task.id.toString(),
+    "interpreterName" to interpreterName,
+    "code" to getCodeFromTask()
+  )
 
   private fun getCodeFromTask(): String {
     val taskFile = (task as CheckiOMission).taskFile
@@ -58,5 +64,9 @@ abstract class CheckiOMissionCheck(val project: Project,
     ) ?: throw IOException("Document isn't provided for VirtualFile: ${virtualFile.name}")
 
     return document.text
+  }
+
+  companion object {
+    protected const val CHECKIO_TEST_FORM_TEMPLATE = "checkioTestForm.html"
   }
 }
