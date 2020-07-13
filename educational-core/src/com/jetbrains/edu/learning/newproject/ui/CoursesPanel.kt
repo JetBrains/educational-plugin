@@ -86,6 +86,7 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
     courses.addAll(coursesListPanel.loadCourses())
     updateFilters()
     updateModel(courses, coursesListPanel.selectedCourse)
+    showContent(courses.isEmpty())
     processSelectionChanged()
   }
 
@@ -130,7 +131,7 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
 
   private fun showProgressState() = cardLayout.show(this, LOADING_CARD_NAME)
 
-  private fun showContent(empty: Boolean) {
+  fun showContent(empty: Boolean) {
     if (empty) {
       cardLayout.show(this, NO_COURSES)
       return
@@ -143,10 +144,13 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
     myProgrammingLanguagesFilterDropdown.updateItems(programmingLanguages(courses))
   }
 
-  fun processSelectionChanged() {
+  private fun processSelectionChanged() {
     val course = selectedCourse
     if (course != null) {
       coursePanel.bindCourse(course)?.addSettingsChangeListener { doValidation(course) }
+    }
+    else {
+      coursePanel.showEmptyState()
     }
     doValidation(course)
   }
@@ -175,7 +179,6 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
   protected fun updateModel(courses: List<Course>, courseToSelect: Course?, filterCourses: Boolean = true) {
     val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
     coursesListPanel.updateModel(coursesToAdd, courseToSelect)
-    showContent(coursesToAdd.isEmpty())
   }
 
   private fun addCourseValidationListener(listener: CourseValidationListener) {

@@ -12,6 +12,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.StatusText
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
@@ -50,12 +51,16 @@ class CoursesListPanel(
   val selectedCourse: Course? get() = coursesList.selectedValue
 
   init {
-    coursesList.setEmptyText(EduCoreBundle.message("course.dialog.no.courses.found"))
-    coursesList.cellRenderer = CourseColoredListCellRenderer()
-    coursesList.border = null
-    coursesList.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
-    coursesList.addMouseMotionListener(CourseMouseMotionListener())
-    coursesList.addMouseMotionListener(CourseMouseMotionListener())
+    coursesList.apply {
+      emptyText.text = EduCoreBundle.message("course.dialog.no.courses.found")
+      emptyText.appendSecondaryText(EduCoreBundle.message("course.dialog.no.courses.found.secondary.text"), StatusText.DEFAULT_ATTRIBUTES,
+                                    null)
+      cellRenderer = CourseColoredListCellRenderer()
+      border = null
+      background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
+      addMouseMotionListener(CourseMouseMotionListener())
+      addMouseMotionListener(CourseMouseMotionListener())
+    }
 
     preferredSize = panelSize
     maximumSize = panelSize
@@ -132,6 +137,7 @@ class CoursesListPanel(
     coursesList.model = listModel
     val courseToShow = courseToSelect ?: sortedCourses.firstOrNull()
     if (courseToShow == null) {
+      coursesList.setSelectedValue(null, true)
       return
     }
     sortedCourses

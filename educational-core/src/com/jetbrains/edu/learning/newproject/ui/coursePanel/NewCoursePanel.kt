@@ -6,6 +6,7 @@ import com.intellij.ui.FilterComponent
 import com.intellij.ui.Gray
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.JBColor
+import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.CoursesStorage
@@ -22,6 +23,7 @@ import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import java.awt.BorderLayout
+import java.awt.CardLayout
 import java.awt.Dimension
 import java.util.*
 import javax.swing.JPanel
@@ -32,8 +34,10 @@ const val DESCRIPTION_AND_SETTINGS_TOP_OFFSET = 25
 private const val ERROR_LABEL_TOP_GAP = 20
 private const val HORIZONTAL_MARGIN = 10
 private const val LARGE_HORIZONTAL_MARGIN = 15
-private const val LINE_BORDER_THICKNESS = 1
 private val PANEL_SIZE = JBUI.size(500, 600)
+
+private const val EMPTY = "empty"
+private const val CONTENT = "content"
 
 private const val BEFORE_LINK = "beforeLink"
 private const val LINK = "link"
@@ -72,14 +76,19 @@ class NewCoursePanel(val isStandalonePanel: Boolean, val isLocationFieldNeeded: 
     }
 
   init {
-    layout = VerticalFlowLayout(0, 0)
+    layout = CardLayout()
 
     border = JBUI.Borders.customLine(DIVIDER_COLOR, 0, 0, 0, 0)
 
-    add(header)
-    add(description)
-    add(advancedSettings)
-    add(createErrorPanel())
+    val emptyStatePanel = JBPanelWithEmptyText().withEmptyText(EduCoreBundle.message("course.dialog.no.course.selected"))
+    add(emptyStatePanel, EMPTY)
+
+    val content = JPanel(VerticalFlowLayout(0, 0))
+    content.add(header)
+    content.add(description)
+    content.add(advancedSettings)
+    content.add(createErrorPanel())
+    add(content, CONTENT)
 
     background = UIUtil.getEditorPaneBackground()
   }
@@ -94,6 +103,10 @@ class NewCoursePanel(val isStandalonePanel: Boolean, val isLocationFieldNeeded: 
 
   fun addLocationFieldDocumentListener(listener: DocumentListener) {
     advancedSettings.addLocationFieldDocumentListener(listener)
+  }
+
+  fun showEmptyState() {
+    (layout as CardLayout).show(this, EMPTY)
   }
 
   private fun updateCourseDescriptionPanel(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()) {
@@ -119,6 +132,7 @@ class NewCoursePanel(val isStandalonePanel: Boolean, val isLocationFieldNeeded: 
   }
 
   fun bindCourse(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()): LanguageSettings<*>? {
+    (layout as CardLayout).show(this, CONTENT)
     this.course = course
     advancedSettings.update(course, settings.showLanguageSettings)
     updateCourseDescriptionPanel(course, settings)
