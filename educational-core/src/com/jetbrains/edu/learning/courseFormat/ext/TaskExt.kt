@@ -138,8 +138,9 @@ private fun TaskFile.canShowSolution() =
 
 fun Task.canShowSolution(): Boolean {
   if (course is HyperskillCourse) return status == CheckStatus.Solved
-  val solutionIsHidden = solutionHidden ?: course.solutionsHidden
-  return !solutionIsHidden && taskFiles.values.any { it.canShowSolution() }
+  val hiddenByEducator = solutionHidden ?: course.solutionsHidden
+  val shouldShow = !hiddenByEducator || status == CheckStatus.Solved
+  return shouldShow && taskFiles.values.any { it.canShowSolution() }
 }
 
 @JvmName("revertTaskParameters")
