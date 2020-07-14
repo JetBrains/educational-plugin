@@ -87,10 +87,12 @@ open class StepikTaskBuilder(
 
       if (samples != null) {
         append("<br>")
+        val inputBegin = "<b>Sample Input:</b><br><pre><code class=\"language-no-highlight\">"
+        val outputBegin = "<b>Sample Output:</b><br><pre><code class=\"language-no-highlight\">"
         for (sample in samples) {
           if (sample.size == 2) {
-            append("<b>Sample Input:</b><br>${sample[0].replace("\n", "<br>")}<br>")
-            append("<b>Sample Output:</b><br>${sample[1].replace("\n", "<br>")}<br><br>")
+            append("$inputBegin${sample[0].replace("\n", "<br>")}</code></pre><br>")
+            append("$outputBegin${sample[1].replace("\n", "<br>")}</code></pre><br><br>")
           }
         }
       }
