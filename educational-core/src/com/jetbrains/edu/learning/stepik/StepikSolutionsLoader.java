@@ -476,7 +476,6 @@ public class StepikSolutionsLoader implements Disposable {
     for (int i = 0; i < answerPlaceholders.size(); i++) {
       AnswerPlaceholder answerPlaceholder = answerPlaceholders.get(i);
       AnswerPlaceholder updatedPlaceholder = updatedPlaceholders.get(i);
-      answerPlaceholder.setHints(updatedPlaceholder.getHints());
       answerPlaceholder.setPossibleAnswer(updatedPlaceholder.getPossibleAnswer());
       answerPlaceholder.setPlaceholderText(updatedPlaceholder.getPlaceholderText());
       answerPlaceholder.setStatus(updatedPlaceholder.getStatus());

@@ -465,7 +465,6 @@ class TaskFileBuilder(val task: Task? = null) {
     if (placeholderText != null) {
       answerPlaceholder.placeholderText = placeholderText
     }
-    answerPlaceholder.hints = hints
     val createdDependency = AnswerPlaceholderDependency.create(answerPlaceholder, dependency, isVisible)
     if (createdDependency != null) {
       answerPlaceholder.placeholderDependency = createdDependency

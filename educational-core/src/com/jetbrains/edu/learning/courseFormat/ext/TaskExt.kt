@@ -142,38 +142,6 @@ fun Task.canShowSolution(): Boolean {
   return !solutionIsHidden && taskFiles.values.any { it.canShowSolution() }
 }
 
-fun Task.taskDescriptionHintBlocks(): String {
-  val text = StringBuffer()
-  val hints = ArrayList<String>()
-  for (value in taskFiles.values) {
-    for (placeholder in value.answerPlaceholders) {
-      if (!placeholder.isVisible) {
-        continue
-      }
-      for (hint in placeholder.hints) {
-        if (hint.isNotEmpty()) {
-          hints.add(hint)
-        }
-      }
-    }
-  }
-
-  if (hints.isEmpty()) {
-    return ""
-  }
-
-  text.append("\n")
-  for (hint in hints) {
-    text.append("<div class='hint'>")
-      .append(hint)
-      .append("</div>")
-      .append("\n")
-  }
-  text.append("\n")
-
-  return text.toString()
-}
-
 @JvmName("revertTaskParameters")
 fun Task.revertTaskParameters(project: Project) {
   if (this is VideoTask) {

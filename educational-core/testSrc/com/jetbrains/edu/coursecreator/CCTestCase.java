@@ -182,18 +182,6 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
         if (possibleAnswer != null) {
           answerPlaceholder.setPossibleAnswer(possibleAnswer);
         }
-        final ArrayList<String> hints = new ArrayList<>();
-        String hint = openingMatcher.group(6);
-        if (hint != null) {
-          hints.add(hint);
-        }
-        String hint2 = openingMatcher.group(8);
-        if (hint2 != null) {
-          hints.add(hint2);
-        }
-        if (!hints.isEmpty()) {
-          answerPlaceholder.setHints(hints);
-        }
         answerPlaceholder.setOffset(openingMatcher.start());
         if (!closingMatcher.find(openingMatcher.end())) {
           LOG.error("No matching closing tag found");

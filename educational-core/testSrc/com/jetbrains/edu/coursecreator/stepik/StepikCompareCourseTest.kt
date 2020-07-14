@@ -3,8 +3,6 @@ package com.jetbrains.edu.coursecreator.stepik
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.slow.integration.stepik.addNewLesson
-import com.jetbrains.edu.slow.integration.stepik.addNewSection
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
@@ -17,6 +15,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.slow.integration.stepik.addNewLesson
+import com.jetbrains.edu.slow.integration.stepik.addNewSection
 import junit.framework.TestCase.assertTrue
 
 class StepikCompareCourseTest : EduTestCase() {
@@ -517,46 +517,6 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedTask = localCourse.lessons.single().taskList.single()
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.placeholderDependency = AnswerPlaceholderDependency()
-
-    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
-    checkChangedItems(localCourse, courseFromServer, expectedInfo)
-  }
-
-  fun `test hints size`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-      lesson("lesson1") {
-        eduTask {
-          taskFile("Task.txt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "Foo")
-          }
-        }
-      }
-    }.asRemote()
-
-    localCourse.lessons.single().taskList.single().taskFiles.values.single().answerPlaceholders.single().hints = listOf("hint1")
-    val courseFromServer = localCourse.copy() as EduCourse
-    val changedTask = localCourse.lessons.single().taskList.single()
-    changedTask.taskFiles.values.single().answerPlaceholders.single().hints = listOf("hint1", "hint2")
-
-    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
-    checkChangedItems(localCourse, courseFromServer, expectedInfo)
-  }
-
-  fun `test hints value`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-      lesson("lesson1") {
-        eduTask {
-          taskFile("Task.txt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "Foo")
-          }
-        }
-      }
-    }.asRemote()
-
-    localCourse.lessons.single().taskList.single().taskFiles.values.single().answerPlaceholders.single().hints = listOf("hint1")
-    val courseFromServer = localCourse.copy() as EduCourse
-    val changedTask = localCourse.lessons.single().taskList.single()
-    changedTask.taskFiles.values.single().answerPlaceholders.single().hints = listOf("hint2")
 
     val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)

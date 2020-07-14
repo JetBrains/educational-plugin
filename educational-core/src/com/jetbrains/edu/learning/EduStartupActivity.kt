@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.projectView.ProjectView
-import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
@@ -21,13 +19,10 @@ import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
-import com.jetbrains.edu.learning.courseFormat.ext.taskDescriptionHintBlocks
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import java.io.IOException
 
 class EduStartupActivity : StartupActivity.DumbAware {
 
@@ -56,12 +51,6 @@ class EduStartupActivity : StartupActivity.DumbAware {
       if (course == null) {
         LOG.warn("Opened project is with null course")
         return@runWhenProjectIsInitialized
-      }
-
-      val propertiesComponent = PropertiesComponent.getInstance(project)
-      if (CCUtils.isCourseCreator(project) && !propertiesComponent.getBoolean(HINTS_IN_DESCRIPTION_PROPERTY)) {
-        moveHintsToTaskDescription(project, course)
-        propertiesComponent.setValue(HINTS_IN_DESCRIPTION_PROPERTY, true)
       }
 
       setupProject(project, course)
@@ -116,35 +105,5 @@ class EduStartupActivity : StartupActivity.DumbAware {
 
   companion object {
     private val LOG = Logger.getInstance(EduStartupActivity::class.java)
-    private const val HINTS_IN_DESCRIPTION_PROPERTY = "HINTS_IN_TASK_DESCRIPTION"
-
-    @VisibleForTesting
-    fun moveHintsToTaskDescription(project: Project, course: Course) {
-      course.visitLessons { lesson ->
-        for (task in lesson.taskList) {
-          val text = StringBuffer(task.descriptionText)
-          val hintBlocks = task.taskDescriptionHintBlocks()
-          text.append(hintBlocks)
-          task.descriptionText = text.toString()
-          val file = task.getDescriptionFile(project)
-          if (file != null) {
-            runWriteAction {
-              try {
-                VfsUtil.saveText(file, text.toString())
-              }
-              catch (e: IOException) {
-                LOG.warn(e.message)
-              }
-            }
-          }
-
-          for (value in task.taskFiles.values) {
-            for (placeholder in value.answerPlaceholders) {
-              placeholder.hints = emptyList()
-            }
-          }
-        }
-      }
-    }
   }
 }

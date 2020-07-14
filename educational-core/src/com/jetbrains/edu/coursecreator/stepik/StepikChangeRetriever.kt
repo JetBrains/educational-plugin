@@ -258,7 +258,6 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
            length == otherPlaceholder.length &&
            index == otherPlaceholder.index &&
            placeholderText == otherPlaceholder.placeholderText &&
-           hints == otherPlaceholder.hints &&
            placeholderDependencyEqual
   }
 

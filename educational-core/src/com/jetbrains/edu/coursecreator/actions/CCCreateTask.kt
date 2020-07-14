@@ -176,7 +176,6 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TaskType, Task) {
     newPlaceholder.length = length
     newPlaceholder.possibleAnswer = possibleAnswer
     newPlaceholder.index = index
-    newPlaceholder.hints = ArrayList(hints)
     val state = initialState
     if (state != null) {
       newPlaceholder.initialState = AnswerPlaceholder.MyInitialState(state.offset, state.length)
