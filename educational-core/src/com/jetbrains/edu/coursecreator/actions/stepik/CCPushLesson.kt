@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.pushAvailable
+import com.jetbrains.edu.coursecreator.LessonType
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
 import com.jetbrains.edu.learning.EduUtils
@@ -19,15 +20,13 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.twelvemonkeys.lang.StringUtil
 
 // educational-core.xml
-class CCPushLesson : CCPushAction(EduCoreStudyItemBundle.message("item.lesson")) {
+class CCPushLesson : CCPushAction(LessonType.presentableName) {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false

@@ -42,7 +42,8 @@ sealed class StudyItemType {
 
 object CourseType : StudyItemType() {
   override val presentableName: String
-    @Nls get() = EduCoreStudyItemBundle.message("item.course")
+    @Nls
+    get() = EduCoreStudyItemBundle.message("item.course")
 
   override val presentableTitleName: String
     @Nls(capitalization = Nls.Capitalization.Title)
@@ -75,7 +76,8 @@ object CourseType : StudyItemType() {
 
 object SectionType : StudyItemType() {
   override val presentableName: String
-    @Nls get() = EduCoreStudyItemBundle.message("item.section")
+    @Nls
+    get() = EduCoreStudyItemBundle.message("item.section")
 
   override val presentableTitleName: String
     @Nls(capitalization = Nls.Capitalization.Title)
@@ -108,7 +110,8 @@ object SectionType : StudyItemType() {
 
 object LessonType : StudyItemType() {
   override val presentableName: String
-    @Nls get() = EduCoreStudyItemBundle.message("item.lesson")
+    @Nls
+    get() = EduCoreStudyItemBundle.message("item.lesson")
 
   override val presentableTitleName: String
     @Nls(capitalization = Nls.Capitalization.Title)
@@ -141,7 +144,8 @@ object LessonType : StudyItemType() {
 
 object TaskType : StudyItemType() {
   override val presentableName: String
-    @Nls get() = EduCoreStudyItemBundle.message("item.task")
+    @Nls
+    get() = EduCoreStudyItemBundle.message("item.task")
 
   override val presentableTitleName: String
     @Nls(capitalization = Nls.Capitalization.Title)

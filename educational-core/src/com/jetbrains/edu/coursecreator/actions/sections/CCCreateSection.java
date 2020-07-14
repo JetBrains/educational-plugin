@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
-import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,7 +84,7 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   @Override
   protected List<StudyItemVariant> getStudyItemVariants() {
     return Collections.singletonList(
-      new StudyItemVariant(EduCoreStudyItemBundle.message("item.section.title"), "", EducationalCoreIcons.Section, Section::new)
+      new StudyItemVariant(SectionType.INSTANCE.getPresentableTitleName(), "", EducationalCoreIcons.Section, Section::new)
     );
   }
 }

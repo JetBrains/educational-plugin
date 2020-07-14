@@ -8,13 +8,13 @@ import com.intellij.openapi.progress.Task.Modal;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.TaskType;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ import static com.jetbrains.edu.learning.EduUtils.showNotification;
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushTask extends CCPushAction {
   public CCPushTask() {
-    super(EduCoreStudyItemBundle.message("item.task"), null);
+    super(TaskType.INSTANCE.getPresentableName(), null);
   }
 
   @Override

@@ -8,6 +8,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.OptionTag;
 import com.intellij.util.xmlb.annotations.Transient;
+import com.jetbrains.edu.coursecreator.TaskType;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.actions.CheckAction;
@@ -337,7 +338,7 @@ public abstract class Task extends StudyItem {
       if (this instanceof CodeTask) return EduCoreStudyItemBundle.message("item.task.challenge");
       return EduCoreStudyItemBundle.message("item.task.stage");
     }
-    return EduCoreStudyItemBundle.message("item.task");
+    return TaskType.INSTANCE.getPresentableName();
   }
 
   public boolean supportSubmissions() {

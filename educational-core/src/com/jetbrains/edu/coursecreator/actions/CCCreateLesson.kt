@@ -8,7 +8,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.LessonType
-import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
@@ -22,7 +21,7 @@ class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LessonType, Lesson) {
 
   override val studyItemVariants: List<StudyItemVariant>
     get() = listOf(
-      StudyItemVariant(StringUtil.toTitleCase(EduCoreStudyItemBundle.message("item.lesson")), "", Lesson, ::Lesson),
+      StudyItemVariant(StringUtil.toTitleCase(LessonType.presentableName), "", Lesson, ::Lesson),
       StudyItemVariant(StringUtil.toTitleCase(EduCoreStudyItemBundle.message("item.lesson.framework")), "", Lesson, ::FrameworkLesson)
     )
 
