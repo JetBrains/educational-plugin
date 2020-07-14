@@ -19,6 +19,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
+import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.ChoiceTaskResourcesManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -98,6 +99,9 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
 
   @Override
   public void setText(@NotNull String text, @Nullable Task task) {
+    if (task != null && TaskDescriptionUtil.containsYoutubeLink(text)) {
+      text = TaskDescriptionUtil.processYoutubeLink(text, task.getId());
+    }
     myBrowserWindow.loadContent(wrapHints(text, task));
   }
 

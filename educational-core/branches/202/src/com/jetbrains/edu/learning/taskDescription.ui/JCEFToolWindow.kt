@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
+import com.jetbrains.edu.learning.taskDescription.containsYoutubeLink
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.ChoiceTaskResourcesManager
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
@@ -97,6 +98,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
       when {
         url.contains("about:blank") -> return false
         url.startsWith(JCEF_URL_PREFIX) -> url = url.substringAfter(JCEF_URL_PREFIX)
+        url.containsYoutubeLink() -> return false
       }
 
       return jcefLinkInToolWindowHandler.process(url)
