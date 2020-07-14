@@ -18,6 +18,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
       when (event) {
         is VFilePropertyChangeEvent -> beforePropertyChange(event)
         is VFileMoveEvent -> beforeFileMovement(event)
+        is VFileDeleteEvent -> beforeFileDeletion(event)
       }
     }
   }
@@ -164,6 +165,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
     }
   }
 
+  protected open fun beforeFileDeletion(event: VFileDeleteEvent) {}
   protected open fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {}
   protected open fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {}
 

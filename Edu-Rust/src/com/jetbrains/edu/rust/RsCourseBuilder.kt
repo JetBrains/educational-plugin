@@ -15,6 +15,8 @@ import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.rust.cargo.CargoConstants
@@ -127,6 +129,29 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
         }
 
         return lessonFile
+    }
+
+    override fun beforeStudyItemDeletion(project: Project, item: StudyItem) {
+        val membersArray = project.workspaceManifest?.membersArray ?: return
+
+        when (item) {
+            is Lesson -> removeLesson(project, item, membersArray)
+            is Section -> {
+                for (lesson in item.lessons) {
+                    removeLesson(project, lesson, membersArray)
+                }
+            }
+        }
+    }
+
+    private fun removeLesson(project: Project, lesson: Lesson, membersArray: TomlArray) {
+        val path = lesson.courseRelativePath(project) ?: return
+        val item = membersArray.findStringLiteralElement { it.startsWith(path) } ?: return
+        val nextSibling = item.nextSibling
+        if (nextSibling?.isTomlComma == true) {
+            nextSibling.delete()
+        }
+        item.delete()
     }
 
     private fun updateCargoToml(project: Project, lesson: Lesson) {

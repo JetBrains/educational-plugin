@@ -1,8 +1,8 @@
 package com.jetbrains.edu.coursecreator.handlers
 
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.fileInfo
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
@@ -65,10 +66,7 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     lesson.removeTask(task)
     YamlFormatSynchronizer.saveItem(lesson)
 
-    val configurator = course.configurator
-    if (configurator != null) {
-      runInEdt { configurator.courseBuilder.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED) }
-    }
+    course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
   }
 
   private fun deleteFileInTask(info: FileInfo.FileInTask, file: VirtualFile) {
@@ -84,5 +82,19 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
       taskFiles.remove(pathInTask)
     }
     YamlFormatSynchronizer.saveItem(task)
+  }
+
+  override fun beforeFileDeletion(event: VFileDeleteEvent) {
+    val fileInfo = event.file.fileInfo(project) ?: return
+
+    val studyItem = when (fileInfo) {
+      is FileInfo.SectionDirectory -> fileInfo.section
+      is FileInfo.LessonDirectory -> fileInfo.lesson
+      is FileInfo.FileInTask -> fileInfo.task
+      else -> return
+    }
+
+    val courseBuilder = studyItem.course.configurator?.courseBuilder ?: return
+    courseBuilder.beforeStudyItemDeletion(project, studyItem)
   }
 }

@@ -11,10 +11,7 @@ import com.jetbrains.edu.coursecreator.actions.*
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.learning.checker.OutputTaskChecker.Companion.OUTPUT_PATTERN_NAME
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -248,6 +245,12 @@ interface EduCourseBuilder<Settings> {
   fun validateItemName(name: String, itemType: StudyItemType): String? {
     return null
   }
+
+  /**
+   * Provides language specific action before study item deletion.
+   * Called in write action and only in educator mode
+   */
+  fun beforeStudyItemDeletion(project: Project, item: StudyItem) {}
 
   companion object {
     val LOG = Logger.getInstance(EduCourseBuilder::class.java)

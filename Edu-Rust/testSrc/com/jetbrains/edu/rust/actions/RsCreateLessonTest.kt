@@ -5,13 +5,11 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
-import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.rust.RsProjectSettings
-import org.intellij.lang.annotations.Language
 import org.rust.cargo.CargoConstants
 import org.rust.lang.RsLanguage
 
-class RsCreateLessonTest : EduActionTestCase() {
+class RsCreateLessonTest : RsActionTestBase() {
 
   fun `test add lesson item no trailing comma`() {
     courseWithFiles(
@@ -203,12 +201,5 @@ class RsCreateLessonTest : EduActionTestCase() {
           "**/*.yaml"
       ]
     """)
-  }
-
-  private fun checkCargoToml(@Language("TOML") expectedText: String) {
-    val manifest = LightPlatformTestCase.getSourceRoot().findChild(CargoConstants.MANIFEST_FILE)
-                   ?: error("Failed to find root ${CargoConstants.MANIFEST_FILE}")
-    myFixture.openFileInEditor(manifest)
-    myFixture.checkResult(expectedText.trimIndent())
   }
 }
