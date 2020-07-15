@@ -16,7 +16,7 @@ class RsDeleteActionTest : RsActionTestBase() {
       
       members = [
           "section1/lesson2/*/",
-          "section1/lesson3/*/",
+          "section1/lesson3/*/" ,
           "lesson4/*/"
       ]
       
@@ -31,7 +31,7 @@ class RsDeleteActionTest : RsActionTestBase() {
       members = [
           "lesson1/*/",
           "section1/lesson2/*/",
-          "section1/lesson3/*/",
+          "section1/lesson3/*/" ,
           ]
       
       exclude = [
@@ -129,7 +129,7 @@ class RsDeleteActionTest : RsActionTestBase() {
         members = [
             "lesson1/*/",
             "section1/lesson2/*/",
-            "section1/lesson3/*/",
+            "section1/lesson3/*/" ,
             "lesson4/*/"
         ]
         

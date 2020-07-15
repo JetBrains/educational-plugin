@@ -6,85 +6,103 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.rust.RsProjectSettings
+import org.intellij.lang.annotations.Language
 import org.rust.cargo.CargoConstants
 import org.rust.lang.RsLanguage
 
 class RsCreateLessonTest : RsActionTestBase() {
 
-  fun `test add lesson item no trailing comma`() {
-    courseWithFiles(
-      courseMode = CCUtils.COURSE_MODE,
-      language = RsLanguage,
-      settings = RsProjectSettings()
-    ) {
-      lesson("lesson1")
-      additionalFile(CargoConstants.MANIFEST_FILE, """
-        [workspace]
+  fun `test add lesson item no trailing comma`() = addLastLesson("""
+    [workspace]
 
-        members = [
-            "lesson1/*/"
-        ]
+    members = [
+        "lesson1/*/"
+    ]
 
-        exclude = [
-            "**/*.yaml"
-        ]
-      """.trimIndent())
-    }
-    withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
-      testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateLesson())
-    }
+    exclude = [
+        "**/*.yaml"
+    ]    
+  """, """
+    [workspace]
+    
+    members = [
+        "lesson1/*/",
+    "lesson2/*/",
+    ]
 
-    checkCargoToml("""
-      [workspace]
-      
-      members = [
-          "lesson1/*/",
-      "lesson2/*/",
-      ]
+    exclude = [
+        "**/*.yaml"
+    ]    
+  """)
 
-      exclude = [
-          "**/*.yaml"
-      ]
-    """)
-  }
+  fun `test add lesson item trailing comma`() = addLastLesson("""
+    [workspace]
 
-  fun `test add lesson item trailing comma`() {
-    courseWithFiles(
-      courseMode = CCUtils.COURSE_MODE,
-      language = RsLanguage,
-      settings = RsProjectSettings()
-    ) {
-      lesson("lesson1")
-      additionalFile(CargoConstants.MANIFEST_FILE, """
-        [workspace]
+    members = [
+        "lesson1/*/",
+    ]
 
-        members = [
-            "lesson1/*/",
-        ]
+    exclude = [
+        "**/*.yaml"
+    ]
+  """, """
+    [workspace]
+    
+    members = [
+        "lesson1/*/",
+    "lesson2/*/",
+    ]
+    
+    exclude = [
+        "**/*.yaml"
+    ]
+  """)
 
-        exclude = [
-            "**/*.yaml"
-        ]
-      """.trimIndent())
-    }
+  fun `test add lesson comments`() = addLastLesson("""
+    [workspace]
 
-    withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
-      testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateLesson())
-    }
+    members = [
+        "lesson1/*/" # very useful comment
+    ]
 
-    checkCargoToml("""
-      [workspace]
-      
-      members = [
-          "lesson1/*/",
-      "lesson2/*/",
-      ]
-      
-      exclude = [
-          "**/*.yaml"
-      ]
-    """)
-  }
+    exclude = [
+        "**/*.yaml"
+    ]
+  """, """
+    [workspace]
+    
+    members = [
+        "lesson1/*/", # very useful comment
+    "lesson2/*/",
+    ]
+    
+    exclude = [
+        "**/*.yaml"
+    ]
+  """)
+
+  fun `test add lesson extra spaces`() = addLastLesson("""
+    [workspace]
+
+    members = [
+        "lesson1/*/" ,
+    ]
+
+    exclude = [
+        "**/*.yaml"
+    ]
+  """, """
+    [workspace]
+    
+    members = [
+        "lesson1/*/" ,
+    "lesson2/*/",
+    ]
+    
+    exclude = [
+        "**/*.yaml"
+    ]
+  """)
 
   fun `test add lesson item with section`() {
     courseWithFiles(
@@ -193,13 +211,30 @@ class RsCreateLessonTest : RsActionTestBase() {
 
       members = [
           "lesson1/*/",
-      "lesson2/*/",
-          "lesson3/*/"
+          "lesson2/*/",
+      "lesson3/*/"
       ]
 
       exclude = [
           "**/*.yaml"
       ]
     """)
+  }
+
+  private fun addLastLesson(@Language("TOML") before: String, @Language("TOML") after: String) {
+    courseWithFiles(
+      courseMode = CCUtils.COURSE_MODE,
+      language = RsLanguage,
+      settings = RsProjectSettings()
+    ) {
+      lesson("lesson1")
+      additionalFile(CargoConstants.MANIFEST_FILE, before.trimIndent())
+    }
+
+    withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
+      testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateLesson())
+    }
+
+    checkCargoToml(after)
   }
 }

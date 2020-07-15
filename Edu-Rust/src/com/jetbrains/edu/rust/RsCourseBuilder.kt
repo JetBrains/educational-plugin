@@ -147,11 +147,20 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     private fun removeLesson(project: Project, lesson: Lesson, membersArray: TomlArray) {
         val path = lesson.courseRelativePath(project) ?: return
         val item = membersArray.findStringLiteralElement { it.startsWith(path) } ?: return
-        val nextSibling = item.nextSibling
-        if (nextSibling?.isTomlComma == true) {
-            nextSibling.delete()
+
+        var lastElementToDelete: PsiElement? = null
+        for (element in item.rightSiblings) {
+            if (element is TomlValue || element.elementType == TomlElementTypes.R_BRACKET) break
+            lastElementToDelete = element
+            if (element.isTomlComma) break
         }
-        item.delete()
+
+        if (lastElementToDelete != null) {
+            membersArray.deleteChildRange(item, lastElementToDelete)
+        }
+        else {
+            item.delete()
+        }
     }
 
     private fun updateCargoToml(project: Project, lesson: Lesson) {
@@ -162,18 +171,29 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
         if (membersArray.findStringLiteralElement { it.startsWith(lessonRelativePath) } != null) return
 
         val factory = TomlPsiFactory(project)
-        var anchor = findAnchor(project, membersArray, lesson) ?: return
+        val anchor = findAnchor(project, membersArray, lesson) ?: return
 
-        val nextSibling = anchor.nextSibling
-        if (anchor is TomlValue) {
-            anchor = if (nextSibling?.isTomlComma == true) nextSibling else membersArray.addAfter(factory.createComma(), anchor)
+        var hasComma = false
+        var tomlValue: TomlValue? = null
+        for (element in anchor.leftSiblings) {
+            if (element is TomlValue) {
+                tomlValue = element
+                break
+            }
+            if (element.isTomlComma) {
+                hasComma = true
+            }
         }
 
-        val createdElement = membersArray.addAfter(factory.createLiteral("\"$lessonRelativePath/*/\""), anchor)
-        membersArray.addBefore(createNewline(project), createdElement)
+        if (tomlValue != null && !hasComma) {
+            membersArray.addAfter(factory.createComma(), tomlValue)
+        }
+
+        val createdElement = membersArray.addBefore(factory.createLiteral("\"$lessonRelativePath/*/\""), anchor)
         // If anchor element is in the middle of array, we need add comma after inserted element.
         // Note, trailing comma is allowed in toml (see https://toml.io/en/v1.0.0-rc.1#array)
-        membersArray.addAfter(factory.createComma(), createdElement)
+        val createdComma = membersArray.addAfter(factory.createComma(), createdElement)
+        membersArray.addAfter(createNewline(project), createdComma)
     }
 
     private val Project.workspaceManifest: TomlFile?
@@ -192,18 +212,17 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     }
 
     private fun findAnchor(project: Project, membersArray: TomlArray, lesson: Lesson): PsiElement? {
-        val prevLessonPath = run {
-            val prevLesson = NavigationUtils.previousLesson(lesson) ?: return@run null
-            val prevLessonDir = prevLesson.getLessonDir(project) ?: return null
-            VfsUtil.getRelativePath(prevLessonDir, project.courseDir)
+        val nextLessonPath = run {
+            val nextLesson = NavigationUtils.nextLesson(lesson) ?: return@run null
+            val nextLessonDir = nextLesson.getLessonDir(project) ?: return@run null
+            VfsUtil.getRelativePath(nextLessonDir, project.courseDir)
         }
 
         var anchor: PsiElement? = null
-        if (prevLessonPath != null) {
-            anchor = membersArray.findStringLiteralElement { it.startsWith(prevLessonPath) }
+        if (nextLessonPath != null) {
+            anchor = membersArray.findStringLiteralElement { it.startsWith(nextLessonPath) }
         }
-        return anchor ?: membersArray.elements.lastOrNull()
-               ?: membersArray.childrenWithLeaves.find { it.elementType == TomlElementTypes.L_BRACKET }
+        return anchor ?: membersArray.childrenWithLeaves.find { it.elementType == TomlElementTypes.R_BRACKET }
     }
 
     private fun TomlArray.findStringLiteralElement(filter: (String) -> Boolean): TomlValue? {
@@ -221,6 +240,12 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     }
 
     private val PsiElement.isTomlComma: Boolean get() = elementType == TomlElementTypes.COMMA
+
+    private val PsiElement.leftSiblings: Sequence<PsiElement>
+        get() = generateSequence(prevSibling) { it.prevSibling }
+
+    private val PsiElement.rightSiblings: Sequence<PsiElement>
+        get() = generateSequence(nextSibling) { it.nextSibling }
 
     companion object {
         private const val LIB_RS = RsConstants.LIB_RS_FILE
