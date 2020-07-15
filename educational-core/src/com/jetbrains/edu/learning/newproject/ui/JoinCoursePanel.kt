@@ -5,6 +5,7 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
@@ -41,7 +42,8 @@ class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(Bord
 
   // '!!' is safe here because `myCoursePanel` has location field
   val locationString: String get() = myCoursePanel.locationString!!
-  val projectSettings: Any? get() = myCoursePanel.projectSettings
+
+  val languageSettings: LanguageSettings<*>? get() = myCoursePanel.languageSettings
 
   fun bindCourse(course: Course) {
     myCoursePanel.bindCourse(course, settings)?.addSettingsChangeListener { doValidation(course) }

@@ -6,6 +6,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.treeStructure.Tree
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
@@ -32,7 +33,7 @@ class CoursesPanelWithTabs : JPanel() {
   private val coursesTab: CoursesTab
   private val coursesProvidersTree: JBScrollPane
 
-  val projectSettings get() = coursesTab.projectSettings()
+  val languageSettings: LanguageSettings<*>? get() = coursesTab.languageSettings()
   val locationString get() = coursesTab.locationString()
   val selectedCourse get() = coursesTab.selectedCourse()
 
@@ -128,7 +129,7 @@ class CoursesPanelWithTabs : JPanel() {
 
     fun locationString() = currentPanel.locationString
 
-    fun projectSettings() = currentPanel.projectSettings
+    fun languageSettings() = currentPanel.languageSettings
 
     fun setError(error: ErrorState) {
       currentPanel.setError(error)

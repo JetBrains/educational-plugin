@@ -141,8 +141,6 @@ class CourseGroupModel {
   }
 
   fun setButtonsEnabled(canStartCourse: Boolean) {
-    for (courseCard in courseCards) {
-      courseCard.setButtonsEnabled(canStartCourse)
-    }
+    selectedCard?.setButtonsEnabled(canStartCourse)
   }
 }

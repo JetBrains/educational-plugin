@@ -13,14 +13,11 @@ import com.intellij.ui.tabs.TabInfo
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.ErrorState.*
-import com.jetbrains.edu.learning.newproject.ui.ErrorState.Companion.forCourse
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
@@ -53,7 +50,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   private lateinit var myHumanLanguagesFilterDropdown: HumanLanguageFilterDropdown
   private val cardLayout = JBCardLayout()
 
-  val projectSettings get() = coursePanel.projectSettings
+  val languageSettings get() = coursePanel.languageSettings
 
   val selectedCourse get() = coursesListPanel.selectedCourse
 
@@ -167,12 +164,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   }
 
   fun doValidation(course: Course? = coursesListPanel.selectedCourse) {
-    var languageError: ErrorState = NothingSelected
-    if (course != null) {
-      val languageSettingsMessage = coursePanel.validateSettings(course)
-      languageError = languageSettingsMessage?.let { LanguageSettingsError(it) } ?: None
-    }
-    val errorState = forCourse(course).merge(languageError)
+    val errorState = getErrorState(course) { coursePanel.validateSettings(it) }
     setError(errorState)
     notifyListeners(errorState.courseCanBeStarted)
   }
@@ -190,7 +182,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   protected fun updateModel(courses: List<Course>, @Suppress("UNUSED_PARAMETER") courseToSelect: Course?, filterCourses: Boolean = true) {
     val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
     val courseInfos = coursesToAdd.map {
-      CourseInfo(it, { CourseSettings.nameToLocation(it) }, { CourseSettings.getLanguageSettings(it)?.settings })
+      CourseInfo(it, { CourseSettings.nameToLocation(it) }, { CourseSettings.getLanguageSettings(it) })
     }
     coursesListPanel.updateModel(courseInfos, courseToSelect)
   }

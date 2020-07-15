@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
+import com.jetbrains.edu.learning.newproject.ui.getErrorState
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
@@ -114,6 +115,29 @@ class StartCourseButton(fill: Boolean = true, errorHandler: (ErrorState) -> Unit
   override fun isVisible(course: Course): Boolean = CoursesStorage.getInstance().getCoursePath(course) == null
 }
 
+class StartCourseFromCardButton(errorHandler: (ErrorState) -> Unit) : StartCourseButtonBase(errorHandler, false) {
+  override val courseMode = CourseMode.STUDY
+
+  init {
+    text = "Start"
+    setWidth72(this)
+  }
+
+  // we place this button on course card and course panel both
+  override fun isVisible(course: Course): Boolean = CoursesStorage.getInstance().getCoursePath(course) == null
+
+  override fun canStartCourse(courseInfo: CourseInfo) = ErrorState.forCourse(courseInfo.course).courseCanBeStarted
+                                                        && courseInfo.projectSettings != null
+                                                        && courseInfo.location() != null
+
+  override fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode, setError: (ErrorState) -> Unit) {
+    val errorState = getErrorState(courseInfo.course) { courseInfo.languageSettings()?.validate(it, courseInfo.location()) }
+    if (errorState.courseCanBeStarted) {
+      super.joinCourse(courseInfo, courseMode, setError)
+    }
+  }
+}
+
 class EditCourseButton(errorHandler: (ErrorState) -> Unit) : StartCourseButtonBase(errorHandler) {
   override val courseMode = CourseMode.COURSE_CREATOR
 
@@ -135,8 +159,8 @@ abstract class StartCourseButtonBase(private val errorHandler: (ErrorState) -> U
     joinCourse(courseInfo, courseMode, errorHandler)
   }
 
-  private fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode, setError: (ErrorState) -> Unit) {
-    val (course, getLocation, getProjectSettings) = courseInfo
+  open fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode, setError: (ErrorState) -> Unit) {
+    val (course, getLocation, _) = courseInfo
 
     // location is null for course preview dialog only
     val location = getLocation()
@@ -149,7 +173,7 @@ abstract class StartCourseButtonBase(private val errorHandler: (ErrorState) -> U
     val configurator = course.configurator
     // If `configurator != null` than `projectSettings` is always not null
     // because project settings are produced by configurator itself
-    val projectSettings = getProjectSettings()
+    val projectSettings = courseInfo.projectSettings
     if (configurator != null && projectSettings != null) {
       try {
         configurator.beforeCourseStarted(course)
@@ -183,6 +207,8 @@ abstract class CourseButtonBase(fill: Boolean = false) : ColorButton() {
   }
 
   abstract fun isVisible(course: Course): Boolean
+
+  open fun canStartCourse(courseInfo: CourseInfo): Boolean = true
 
   protected abstract fun actionListener(courseInfo: CourseInfo): ActionListener
 

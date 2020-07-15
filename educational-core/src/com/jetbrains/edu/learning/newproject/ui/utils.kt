@@ -46,6 +46,15 @@ val Course.unsupportedCourseMessage: String get() {
   }
 }
 
+fun getErrorState(course: Course?, validateSettings: (Course) -> ValidationMessage?): ErrorState {
+  var languageError: ErrorState = ErrorState.NothingSelected
+  if (course != null) {
+    val languageSettingsMessage = validateSettings(course)
+    languageError = languageSettingsMessage?.let { ErrorState.LanguageSettingsError(it) } ?: ErrorState.None
+  }
+  return ErrorState.forCourse(course).merge(languageError)
+}
+
 fun browseHyperlink(message: ValidationMessage?) {
   if (message == null) {
     return

@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.JBAcademyCourseButton
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.OpenCourseButton
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.StartCourseButton
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.StartCourseFromCardButton
 import com.jetbrains.edu.learning.projectView.ProgressUtil
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
@@ -145,9 +145,12 @@ class CourseNameComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> 
         OpenCourseButton()
       }
       else -> {
-        StartCourseButton(false, errorHandler)
+        StartCourseFromCardButton(errorHandler)
       }
-    }.apply { addListener(courseInfo) }
+    }.apply {
+      addListener(courseInfo)
+      isEnabled = canStartCourse(courseInfo)
+    }
 
     add(nameLabel, BorderLayout.CENTER)
     add(button, BorderLayout.EAST)

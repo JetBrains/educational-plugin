@@ -11,7 +11,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.util.Disposer
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -77,7 +76,7 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
 
 
   override val courseInfo: CourseInfo
-    get() = CourseInfo(panel.selectedCourse ?: error("The course was not selected"), { panel.locationString }, { panel.projectSettings })
+    get() = CourseInfo(panel.selectedCourse ?: error("The course was not selected"), { panel.locationString }, { panel.languageSettings })
 
   override fun createCenterPanel(): JComponent = panel
 

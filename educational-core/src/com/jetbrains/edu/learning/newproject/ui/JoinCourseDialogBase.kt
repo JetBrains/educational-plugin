@@ -19,7 +19,7 @@ open class JoinCourseDialogBase(private val course: Course, settings: CourseDisp
   }
 
   override val courseInfo: CourseInfo
-    get() = CourseInfo(course, { panel.locationString }, { panel.projectSettings })
+    get() = CourseInfo(course, { panel.locationString }, { panel.languageSettings })
 
   override fun createCenterPanel(): JComponent = panel
 

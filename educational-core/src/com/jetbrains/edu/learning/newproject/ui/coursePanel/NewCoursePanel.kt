@@ -55,6 +55,9 @@ class NewCoursePanel(
   val projectSettings: Any?
     get() = advancedSettings.getProjectSettings()
 
+  val languageSettings: LanguageSettings<*>?
+    get() = advancedSettings.languageSettings
+
   private val leftMargin: Int
     get() {
       return if (isStandalonePanel) {
@@ -104,7 +107,7 @@ class NewCoursePanel(
       // TODO: set error
       return
     }
-    header.update(CourseInfo(course, { locationString }, { projectSettings }), settings)
+    header.update(CourseInfo(course, { locationString }, { advancedSettings.languageSettings }), settings)
     description.bind(course)
   }
 
