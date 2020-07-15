@@ -92,7 +92,6 @@ class JavaFxCheckiOMissionCheck(
     @Suppress("unused") // used in JS code
     fun handleTestEvent(result: Int) {
       setCheckResult(result)
-      latch.countDown()
     }
   }
 }

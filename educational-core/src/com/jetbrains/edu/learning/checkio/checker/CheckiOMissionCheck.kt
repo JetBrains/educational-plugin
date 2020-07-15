@@ -28,7 +28,7 @@ abstract class CheckiOMissionCheck(val project: Project,
                                    private val testFormTargetUrl: String
 ) : Callable<CheckResult> {
   protected lateinit var checkResult: CheckResult
-  protected val latch = CountDownLatch(1)
+  private val latch = CountDownLatch(1)
 
   abstract fun getPanel(): JComponent
 
@@ -57,6 +57,9 @@ abstract class CheckiOMissionCheck(val project: Project,
       CheckiOErrorHandler("Failed to check the task", oAuthConnector).handle(e)
       failedToCheck
     }
+    finally {
+      latch.countDown()
+    }
   }
 
   protected fun getTestFormHtml(): String = GeneratorUtils.getInternalTemplateText(CHECKIO_TEST_FORM_TEMPLATE, getResources())
@@ -66,6 +69,7 @@ abstract class CheckiOMissionCheck(val project: Project,
       1 -> CheckResult(CheckStatus.Solved, "All tests passed")
       else -> CheckResult(CheckStatus.Failed, "Tests failed")
     }
+    latch.countDown()
   }
 
   private fun getResources() = mapOf(

@@ -1,12 +1,12 @@
 package com.jetbrains.edu.learning.checkio.checker
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.project.Project
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import javafx.application.Platform
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandler
@@ -30,14 +30,13 @@ class JCEFCheckiOMissionCheck(project: Project,
 
       ApplicationManager.getApplication().executeOnPooledThread {
         setCheckResult(result)
-        latch.countDown()
       }
       null
     }
   }
 
   override fun doCheck() {
-    Platform.runLater {
+    invokeLater {
       val html = getTestFormHtml()
       jbCefBrowser.loadHTML(html)
     }

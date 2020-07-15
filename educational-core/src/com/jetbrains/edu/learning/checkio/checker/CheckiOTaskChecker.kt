@@ -39,7 +39,8 @@ class CheckiOTaskChecker(
         return CheckResult(CheckStatus.Unchecked, possibleError)
       }
 
-      // workaround
+      // workaround for JBR-2259
+      // panel must be shown with JCEF, otherwise request won't be done
       val isJCEF = EduSettings.getInstance().javaUiLibraryWithCheck == JavaUILibrary.JCEF
       if (isJCEF) {
         getInstance(project).showResult("CheckiO Response", missionCheck.getPanel())
