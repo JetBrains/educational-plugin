@@ -28,7 +28,7 @@ class CommunityPlatformProvider(private val coursesProvider: StepikCoursesProvid
   override suspend fun loadCourses(): List<Course> {
     val communityCourses = coursesProvider.getCommunityCourses()
 
-    val featuredCourses = communityCourses.filter { it.id in ListedCoursesIdsProvider.featuredStepikCourses }
+    val featuredCourses = communityCourses.filter { it.id in ListedCoursesIdsProvider.featuredCommunityCourses }
     val bundledCourses = loadBundledCourses().filter { bundled ->
       featuredCourses.none { featured ->
         featured.name != bundled.name
