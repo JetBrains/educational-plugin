@@ -1,59 +1,45 @@
 package com.jetbrains.edu.cpp
 
-import com.intellij.psi.PsiFileFactory
-import com.jetbrains.cmake.CMakeLanguage
-import com.jetbrains.edu.coursecreator.CCTestCase
+import com.jetbrains.cmake.CMakeListsFileType
+import com.jetbrains.edu.learning.EduTestCase
+import org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase
+import org.junit.Assert.assertThat
 
-class CppUtilTest : CCTestCase() {
-  private fun findCMakeCommandTestBase(cMakeFile: String, commandName: String, shouldFind: Boolean = true) {
-    val mockPsiFile = PsiFileFactory.getInstance(myFixture.project).createFileFromText(CMakeLanguage.INSTANCE, cMakeFile)
-    val result = mockPsiFile.findCMakeCommand(commandName)
+class CppUtilTest : EduTestCase() {
+
+  fun `test find CMake command - project`() = checkCMakeCommand("""
+    |#some text
+    |
+    |project(name)
+    |
+    |# some text
+  """, "project")
+
+  fun `test find CMake command - ProJEct`() = checkCMakeCommand("""
+    | #some text
+    | 
+    | ProJEct(name)
+  """, "project")
+
+  fun `test find CMake command - inline call`() = checkCMakeCommand("""
+    | message("Hi!") project(name) message("By!")
+  """, "project")
+
+  fun `test find CMake command - no command`() = checkCMakeCommand("""
+    | #some text
+    | message("empty me )=")
+    | # no text ;)
+  """, "project", shouldFind = false)
+
+  private fun checkCMakeCommand(text: String, commandName: String, shouldFind: Boolean = true) {
+    val file = myFixture.configureByText(CMakeListsFileType.FILE_NAME, text.trimMargin())
+    val result = file.findCMakeCommand(commandName)
     if (shouldFind) {
-      kotlin.test.assertNotNull(result)
-      assert(result.name.equals(commandName, true))
+      check(result != null)
+      assertThat(result.name, equalToIgnoringCase(commandName))
     }
     else {
       assertNull(result)
     }
   }
-
-  fun `test find CMake command - project`() =
-    findCMakeCommandTestBase(
-      """
-        |#some text
-        |
-        |project(name)
-        |
-        |# some text
-      """.trimMargin(),
-      "project")
-
-  fun `test find CMake command - ProJEct`() =
-    findCMakeCommandTestBase(
-      """
-        | #some text
-        | 
-        | ProJEct(name)
-      """.trimMargin(),
-      "project"
-    )
-
-  fun `test find CMake command - inline call`() =
-    findCMakeCommandTestBase(
-      """
-        | message("Hi!") project(name) message("By!")
-      """.trimMargin(),
-      "project"
-    )
-
-  fun `test find CMake command - no command`() =
-    findCMakeCommandTestBase(
-      """
-        | #some text
-        | message("empty me )=")
-        | # no text ;)
-      """.trimMargin(),
-      "project",
-      false
-    )
 }
