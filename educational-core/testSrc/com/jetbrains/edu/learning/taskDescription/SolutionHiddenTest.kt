@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.taskDescription
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 
 class SolutionHiddenTest : EduTestCase() {
@@ -19,15 +21,7 @@ class SolutionHiddenTest : EduTestCase() {
   private fun doTestSolutionHidden(solutionsHiddenInCourse: Boolean,
                                    solutionHiddenInTask: Boolean?,
                                    expectedSolutionHiddenInTask: Boolean) {
-    val course = courseWithFiles("Edu test course") {
-      lesson(name = "lesson1") {
-        eduTask(name = "task1") {
-          taskFile("taskFile1.txt", "a = <p>TODO()</p>") {
-            placeholder(0, "2")
-          }
-        }
-      }
-    }
+    val course = getCurrentCourse()
     course.solutionsHidden = solutionsHiddenInCourse
     val task = findTask(0, 0)
     task.solutionHidden = solutionHiddenInTask
@@ -68,5 +62,26 @@ class SolutionHiddenTest : EduTestCase() {
       }
     }
     assertFalse(findTask(0, 0).canShowSolution())
+  }
+
+  fun `test show hidden solution if task is solved`() {
+    getCurrentCourse()
+    val task = findTask(0, 0)
+    task.solutionHidden = true
+    task.status = CheckStatus.Solved
+
+    assertTrue(task.canShowSolution())
+  }
+
+  private fun getCurrentCourse(): Course {
+    return courseWithFiles("Edu test course") {
+      lesson(name = "lesson1") {
+        eduTask(name = "task1") {
+          taskFile("taskFile1.txt", "a = <p>TODO()</p>") {
+            placeholder(0, "2")
+          }
+        }
+      }
+    }
   }
 }
