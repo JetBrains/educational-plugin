@@ -140,7 +140,9 @@ class CourseGroupModel {
     selectionListener = processSelectionChanged
   }
 
-  fun setButtonsEnabled(canStartCourse: Boolean) {
-    selectedCard?.setButtonsEnabled(canStartCourse)
+  fun updateButtons() {
+    courseCards.forEach {
+      it.updateButton()
+    }
   }
 }

@@ -47,7 +47,7 @@ class GroupsComponent(private val errorHandler: (ErrorState) -> Unit) : JBPanelW
     courseGroupModel.setSelectionListener(processSelectionChanged)
   }
 
-  fun setButtonsEnabled(canStartCourse: Boolean) {
-    courseGroupModel.setButtonsEnabled(canStartCourse)
+  fun updateButtons() {
+    courseGroupModel.updateButtons()
   }
 }

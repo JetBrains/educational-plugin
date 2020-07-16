@@ -66,7 +66,7 @@ class CoursesListPanel(errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout
     groupsComponent.setSelectionListener(processSelectionChanged)
   }
 
-  fun setButtonsEnabled(canStartCourse: Boolean) {
-    groupsComponent.setButtonsEnabled(canStartCourse)
+  fun updateButtons() {
+    groupsComponent.updateButtons()
   }
 }

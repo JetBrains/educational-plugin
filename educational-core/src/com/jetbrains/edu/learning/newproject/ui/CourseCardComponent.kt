@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.icons.AllIcons
-import com.intellij.ide.plugins.newui.ColorButton
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
@@ -13,10 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.JBAcademyCourseButton
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.OpenCourseButton
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.StartCourseFromCardButton
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
 import com.jetbrains.edu.learning.projectView.ProgressUtil
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
@@ -95,8 +91,8 @@ class CourseCardComponent(val courseInfo: CourseInfo, errorHandler: (ErrorState)
     }
   }
 
-  fun setButtonsEnabled(canStartCourse: Boolean) {
-    courseNameInfoComponent.setButtonsEnabled(canStartCourse)
+  fun updateButton() {
+    courseNameInfoComponent.updateButton(courseInfo)
   }
 }
 
@@ -122,14 +118,14 @@ class CourseNameInfoComponent(courseInfo: CourseInfo, errorHandler: (ErrorState)
     add(courseInfoComponent, BorderLayout.SOUTH)
   }
 
-  fun setButtonsEnabled(canStartCourse: Boolean) {
-    nameComponent.setButtonEnabled(canStartCourse)
+  fun updateButton(courseInfo: CourseInfo) {
+    nameComponent.updateButton(courseInfo)
   }
 }
 
 class CourseNameComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout()) {
   private val nameLabel: JLabel = JLabel()
-  private val button: ColorButton
+  private val button: CourseButtonBase
 
   init {
     nameLabel.text = courseInfo.course.name
@@ -145,7 +141,7 @@ class CourseNameComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> 
         OpenCourseButton()
       }
       else -> {
-        StartCourseFromCardButton(errorHandler)
+        StartCourseButton(false, errorHandler)
       }
     }.apply {
       addListener(courseInfo)
@@ -156,8 +152,8 @@ class CourseNameComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> 
     add(button, BorderLayout.EAST)
   }
 
-  fun setButtonEnabled(canStartCourse: Boolean) {
-    button.isEnabled = button is OpenCourseButton || canStartCourse
+  fun updateButton(courseInfo: CourseInfo) {
+    button.isEnabled = button.canStartCourse(courseInfo)
   }
 }
 

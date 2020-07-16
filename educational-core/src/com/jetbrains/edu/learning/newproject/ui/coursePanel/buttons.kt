@@ -18,12 +18,14 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.getErrorState
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import org.jetbrains.annotations.Nullable
 import java.awt.Color
 import java.awt.event.ActionListener
 
@@ -113,29 +115,17 @@ class StartCourseButton(fill: Boolean = true, errorHandler: (ErrorState) -> Unit
 
   // we place this button on course card and course panel both
   override fun isVisible(course: Course): Boolean = CoursesStorage.getInstance().getCoursePath(course) == null
-}
 
-class StartCourseFromCardButton(errorHandler: (ErrorState) -> Unit) : StartCourseButtonBase(errorHandler, false) {
-  override val courseMode = CourseMode.STUDY
-
-  init {
-    text = "Start"
-    setWidth72(this)
-  }
-
-  // we place this button on course card and course panel both
-  override fun isVisible(course: Course): Boolean = CoursesStorage.getInstance().getCoursePath(course) == null
-
-  override fun canStartCourse(courseInfo: CourseInfo) = ErrorState.forCourse(courseInfo.course).courseCanBeStarted
-                                                        && courseInfo.projectSettings != null
+  override fun canStartCourse(courseInfo: CourseInfo) = courseInfo.projectSettings != null
                                                         && courseInfo.location() != null
+                                                        && getErrorState(courseInfo.course) { validateSettings(courseInfo) }.courseCanBeStarted
 
-  override fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode, setError: (ErrorState) -> Unit) {
-    val errorState = getErrorState(courseInfo.course) { courseInfo.languageSettings()?.validate(it, courseInfo.location()) }
-    if (errorState.courseCanBeStarted) {
-      super.joinCourse(courseInfo, courseMode, setError)
-    }
+  private fun validateSettings(courseInfo: CourseInfo): @Nullable ValidationMessage? {
+    val languageSettings = courseInfo.languageSettings()
+    languageSettings?.getLanguageSettingsComponents(courseInfo.course, null)
+    return languageSettings?.validate(courseInfo.course, courseInfo.location())
   }
+
 }
 
 class EditCourseButton(errorHandler: (ErrorState) -> Unit) : StartCourseButtonBase(errorHandler) {
@@ -159,7 +149,7 @@ abstract class StartCourseButtonBase(private val errorHandler: (ErrorState) -> U
     joinCourse(courseInfo, courseMode, errorHandler)
   }
 
-  open fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode, setError: (ErrorState) -> Unit) {
+  private fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode, setError: (ErrorState) -> Unit) {
     val (course, getLocation, _) = courseInfo
 
     // location is null for course preview dialog only
