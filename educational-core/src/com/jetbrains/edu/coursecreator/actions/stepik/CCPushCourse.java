@@ -22,7 +22,10 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +39,7 @@ import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 public class CCPushCourse extends CCPushAction {
 
   public CCPushCourse() {
+    // TODO i18n rewrite call after refactoring [CCPushAction]
     super(CourseType.INSTANCE.getPresentableName(), null);
   }
 
@@ -73,11 +77,12 @@ public class CCPushCourse extends CCPushAction {
     }
 
     if (CourseExt.getHasSections(course) && CourseExt.getHasTopLevelLessons(course)) {
-      if (!askToWrapTopLevelLessons(project, (EduCourse)course, "Wrap and Post")) {
+      if (!askToWrapTopLevelLessons(project, (EduCourse)course, EduCoreBundle.message("label.wrap.and.post"))) {
         return;
       }
     }
 
+    // TODO i18n rewrite call when [checkIfAuthorized] will be localize
     if (!checkIfAuthorized(project, ((EduCourse)course).isRemote() ? "update course" : "post course")) {
       return;
     }
@@ -97,18 +102,19 @@ public class CCPushCourse extends CCPushAction {
     if (course.isRemote()) {
       EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId(), null, true);
       if (courseInfo == null) {
-        String message = "Cannot find course on Stepik. <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
-        Notification notification = new Notification("update.course", "Failed to update", message, NotificationType.ERROR,
-                                                     createPostCourseNotificationListener(project, course));
+        Notification notification =
+          new Notification("update.course", EduCoreBundle.message("error.failed.to.update.course"),
+                           EduCoreBundle.message("error.failed.to.update.no.course.on.stepik", StepikNames.STEPIK),
+                           NotificationType.ERROR, createPostCourseNotificationListener(project, course));
         notification.notify(project);
         return;
       }
       if (courseInfo.getFormatVersion() < EduVersions.JSON_FORMAT_VERSION) {
-        String message = "Updating this course will make it available since " +
-                         PluginUtils.pluginVersion(EduNames.PLUGIN_ID) + " plugin version. <br> <a href=\"update\">Update course</a>";
-        Notification notification = new Notification("update.course", "Format Version Mismatch", message,
-                                                     NotificationType.WARNING,
-                                                     createUpdateCourseNotificationListener(project, course));
+        Notification notification =
+          new Notification("update.course", EduCoreBundle.message("error.mismatch.format.version"),
+                           EduCoreBundle.message("error.mismatch.format.version.invalid.plugin.version",
+                                                 PluginUtils.pluginVersion(EduNames.PLUGIN_ID)),
+                           NotificationType.WARNING, createUpdateCourseNotificationListener(project, course));
         notification.notify(project);
         return;
       }
@@ -134,7 +140,7 @@ public class CCPushCourse extends CCPushAction {
   }
 
   private static void updateCourse(Project project, @NotNull EduCourse course) {
-    ProgressManager.getInstance().run(new Modal(project, "Updating Course", true) {
+    ProgressManager.getInstance().run(new Modal(project, EduCoreActionBundle.message("push.course.updating"), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setIndeterminate(false);

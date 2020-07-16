@@ -21,12 +21,15 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.api.CourseAdditionalInfo;
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikUnit;
 import org.apache.http.HttpStatus;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -444,6 +447,7 @@ public class CCStepikConnector {
     }
   }
 
+  // TODO function is needed to be refactored after refactoring [showStepikNotification]
   public static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
     checkCanceled();
     if (!EduSettings.isLoggedIn()) {
@@ -461,7 +465,9 @@ public class CCStepikConnector {
     }
   }
 
-  public static void showErrorNotification(@NotNull Project project, @NotNull String title, @NotNull String message) {
+  public static void showErrorNotification(@NotNull Project project,
+                                           @NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String title,
+                                           @NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String message) {
     LOG.info(message);
     final Notification notification = new Notification(PUSH_COURSE_GROUP_ID, title, message, NotificationType.ERROR);
     notification.notify(project);
@@ -487,8 +493,8 @@ public class CCStepikConnector {
     };
   }
 
-  public static AnAction openOnStepikAction(@NotNull String url) {
-    return new AnAction("Open on Stepik") {
+  public static AnAction openOnStepikAction(@NotNull @NonNls String url) {
+    return new AnAction(EduCoreActionBundle.message("open.on", StepikNames.STEPIK)) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         BrowserUtil.browse(StepikNames.STEPIK_URL + url);
@@ -496,6 +502,7 @@ public class CCStepikConnector {
     };
   }
 
+  // TODO function is needed to be refactored for localization
   public static void showStepikNotification(@NotNull Project project, @NotNull String failedActionName) {
     String text = "Log in to Stepik to " + failedActionName;
     Notification notification = new Notification("Stepik", "Failed to " + failedActionName, text, NotificationType.ERROR);

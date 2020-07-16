@@ -29,12 +29,15 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo
 import com.jetbrains.edu.learning.stepik.api.TaskAdditionalInfo
 import com.jetbrains.edu.learning.stepik.collectTaskFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.apache.commons.codec.binary.Base64
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import java.io.IOException
 import java.util.*
 
@@ -256,7 +259,7 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun wrapIntoSection(project: Project, course: Course, lessonsToWrap: List<Lesson>, sectionName: String): Section? {
+  fun wrapIntoSection(project: Project, course: Course, lessonsToWrap: List<Lesson>, @NonNls sectionName: String): Section? {
     Collections.sort(lessonsToWrap, EduUtils.INDEX_COMPARATOR)
     val minIndex = lessonsToWrap[0].index
     val maxIndex = lessonsToWrap[lessonsToWrap.size - 1].index
@@ -342,11 +345,15 @@ object CCUtils {
 
   @JvmStatic
   @JvmOverloads
-  fun askToWrapTopLevelLessons(project: Project, course: EduCourse, yesText: String = "Wrap"): Boolean {
-    val result = Messages.showYesNoDialog(project,
-                                          "Top-level lessons will be wrapped with sections as it's not allowed to have both " +
-                                          "top-level lessons and sections",
-                                          "Wrap Lessons Into Sections", yesText, "Cancel", null)
+  fun askToWrapTopLevelLessons(project: Project, course: EduCourse, @Nls yesText: String = EduCoreBundle.message("label.wrap")): Boolean {
+    val result = Messages.showYesNoDialog(
+      project,
+      EduCoreBundle.message("notification.wrap.lessons.into.section.message"),
+      EduCoreBundle.message("notification.wrap.lessons.into.section"),
+      yesText,
+      EduCoreBundle.message("label.cancel"),
+      null
+    )
     if (result != Messages.YES) {
       return false
     }

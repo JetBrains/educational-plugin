@@ -67,10 +67,7 @@ import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.markdown.parser.MarkdownParser;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.SystemIndependent;
-import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.annotations.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -832,7 +829,9 @@ public class EduUtils {
     return getSection(project, course, file) != null;
   }
 
-  public static void showNotification(@NotNull Project project, @NotNull String title, @Nullable AnAction action) {
+  public static void showNotification(@NotNull Project project,
+                                      @NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String title,
+                                      @Nullable AnAction action) {
     final Notification notification = new Notification(CCStepikConnector.PUSH_COURSE_GROUP_ID, title, "", NotificationType.INFORMATION);
     if (action != null) {
       notification.addAction(action);

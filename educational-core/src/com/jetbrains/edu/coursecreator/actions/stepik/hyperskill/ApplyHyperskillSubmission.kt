@@ -11,16 +11,20 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import icons.EducationalCoreIcons
 
 @Suppress("ComponentNotRegistered")
-class ApplyHyperskillSubmission : DumbAwareAction(EduCoreBundle.message("hyperskill.educator.apply.submission"),
-                                                  EduCoreBundle.message("hyperskill.educator.apply.submission"),
-                                                  EducationalCoreIcons.JB_ACADEMY_ENABLED) {
+class ApplyHyperskillSubmission : DumbAwareAction(
+  EduCoreActionBundle.message("apply.submission", HYPERSKILL),
+  EduCoreActionBundle.message("apply.submission.description", HYPERSKILL),
+  EducationalCoreIcons.JB_ACADEMY_ENABLED
+) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = getTask(project, e) ?: return
@@ -46,7 +50,7 @@ class ApplyHyperskillSubmission : DumbAwareAction(EduCoreBundle.message("hypersk
     }
 
     val idText = Messages.showInputDialog(project, EduCoreBundle.message("hyperskill.educator.submission.id"),
-                                          EduCoreBundle.message("hyperskill.educator.apply.submission"),
+                                          EduCoreActionBundle.message("apply.submission", HYPERSKILL),
                                           null, null, validator) ?: return
 
     val id = Integer.valueOf(idText) // valid int because of validator

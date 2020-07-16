@@ -9,17 +9,27 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 
 @Suppress("ComponentNotRegistered") // registered in educational-core.xml
-class CCGetCourseFromStepik : DumbAwareAction("Get Course From Stepik", "Get Course From Stepik", null) {
+class CCGetCourseFromStepik : DumbAwareAction(
+  EduCoreActionBundle.message("get.course", StepikNames.STEPIK),
+  EduCoreActionBundle.message("get.course.description", StepikNames.STEPIK),
+  null) {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
-    val courseId = Messages.showInputDialog("Please, enter course id", "Get Course From Stepik", null)
+    val courseId = Messages.showInputDialog(
+      EduCoreActionBundle.message("get.course.enter.course.id"),
+      EduCoreActionBundle.message("get.course", StepikNames.STEPIK),
+      null
+    )
     if (!courseId.isNullOrEmpty()) {
-      ProgressManager.getInstance().run(object : Task.Modal(project, "Loading Course", true) {
+      ProgressManager.getInstance().run(object : Task.Modal(project, EduCoreActionBundle.message("get.course.loading"), true) {
         override fun run(indicator: ProgressIndicator) {
           createCourse(courseId)
         }
@@ -36,13 +46,20 @@ class CCGetCourseFromStepik : DumbAwareAction("Get Course From Stepik", "Get Cou
 
     StepikCourseLoader.loadCourseStructure(info)
     runInEdt {
-      CCNewCourseDialog("Get Course From Stepik", "Create", info).show()
+      CCNewCourseDialog(
+        EduCoreActionBundle.message("get.course", StepikNames.STEPIK),
+        EduCoreBundle.message("label.create"),
+        info
+      ).show()
     }
   }
 
   private fun showError(courseId: String) {
     runInEdt {
-      Messages.showWarningDialog("Can't load course info. Check that course with `$courseId` id exists", "Failed to Load Course")
+      Messages.showWarningDialog(
+        EduCoreBundle.message("error.failed.to.load.course.not.exists", courseId),
+        EduCoreBundle.message("error.failed.to.load.course")
+      )
     }
   }
 }

@@ -16,10 +16,13 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
+// TODO i18n rewrite super call after refactoring [CCPushAction]
 class CCPushSection : CCPushAction(SectionType.presentableName) {
 
   override fun update(e: AnActionEvent) {
@@ -67,9 +70,9 @@ class CCPushSection : CCPushAction(SectionType.presentableName) {
   companion object {
     @JvmStatic
     fun doPush(project: Project, section: Section, course: EduCourse) {
-      ProgressManager.getInstance().run(object : Task.Modal(project, "Uploading Section", true) {
+      ProgressManager.getInstance().run(object : Task.Modal(project, EduCoreActionBundle.message("push.section.uploading"), true) {
         override fun run(indicator: ProgressIndicator) {
-          indicator.text = "Uploading section to " + StepikNames.STEPIK_URL
+          indicator.text = EduCoreActionBundle.message("push.section.uploading.to", StepikNames.STEPIK_URL)
           if (section.id > 0) {
             updateSection(section, course, project)
           }
@@ -79,8 +82,11 @@ class CCPushSection : CCPushAction(SectionType.presentableName) {
             section.position = section.index
             val success = CCStepikConnector.postSection(project, section)
             if (success) {
-              EduUtils.showNotification(project, "Section \"${section.name}\" posted",
-                                        CCStepikConnector.openOnStepikAction("/course/${course.id}"))
+              EduUtils.showNotification(
+                project,
+                EduCoreActionBundle.message("push.section.uploaded", section.name),
+                CCStepikConnector.openOnStepikAction("/course/${course.id}")
+              )
             }
           }
         }
@@ -92,14 +98,20 @@ class CCPushSection : CCPushAction(SectionType.presentableName) {
       section.position = section.index
       val positionChanged = sectionFromServerPosition != section.position
       if (positionChanged) {
-        showErrorNotification(project, "Failed to update section",
-                              "It's impossible to update one section since it's position changed. Please, use 'Update course' action.")
+        showErrorNotification(
+          project,
+          EduCoreBundle.message("error.failed.to.update.section"),
+          EduCoreBundle.message("error.failed.to.update.section.position.changed")
+        )
         return
       }
       val updated = CCStepikConnector.updateSection(section, course, project)
       if (updated) {
-        EduUtils.showNotification(project, "Section \"${section.name}\" updated",
-                                  CCStepikConnector.openOnStepikAction("/course/${course.id}"))
+        EduUtils.showNotification(
+          project,
+          EduCoreActionBundle.message("push.section.updated", section.name),
+          CCStepikConnector.openOnStepikAction("/course/${course.id}")
+        )
       }
     }
   }

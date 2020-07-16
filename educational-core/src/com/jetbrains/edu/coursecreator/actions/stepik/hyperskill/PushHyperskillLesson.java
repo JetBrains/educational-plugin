@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
 import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
@@ -27,13 +28,15 @@ import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 import static com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL;
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
 import static com.jetbrains.edu.learning.ExperimentsKt.isFeatureEnabled;
+import static com.jetbrains.edu.learning.stepik.hyperskill.HyperskillNamesKt.HYPERSKILL;
 
 @SuppressWarnings("ComponentNotRegistered") // Hyperskill.xml
 public class PushHyperskillLesson extends CCPushAction {
   private static final Logger LOG = Logger.getInstance(PushHyperskillLesson.class);
 
   public PushHyperskillLesson() {
-    super(EduCoreStudyItemBundle.message("item.lesson.hyperskill"), EducationalCoreIcons.JB_ACADEMY_ENABLED);
+    // TODO i18n rewrite call after refactoring [CCPushAction]
+    super(EduCoreStudyItemBundle.message("item.lesson.custom", HYPERSKILL), EducationalCoreIcons.JB_ACADEMY_ENABLED);
   }
 
   @Override
@@ -65,6 +68,7 @@ public class PushHyperskillLesson extends CCPushAction {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
     if (!EduSettings.isLoggedIn()) {
+      // TODO i18n rewrite call when [showStepikNotification] will be localize
       showStepikNotification(project, "post lesson");
       return;
     }
@@ -76,10 +80,10 @@ public class PushHyperskillLesson extends CCPushAction {
     final Lesson lesson = getLesson(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY), project, course);
     if (lesson == null) return;
 
-    ProgressManager.getInstance().run(new Modal(project, "Uploading Hyperskill Lesson", true) {
+    ProgressManager.getInstance().run(new Modal(project, EduCoreActionBundle.message("push.custom.lesson.uploading", HYPERSKILL), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText("Uploading Hyperskill lesson to " + StepikNames.STEPIK_URL);
+        indicator.setText(EduCoreActionBundle.message("push.custom.lesson.uploading.to", HYPERSKILL, StepikNames.STEPIK_URL));
         doPush(lesson, project);
         YamlFormatSynchronizer.saveRemoteInfo(lesson);
       }
@@ -106,7 +110,8 @@ public class PushHyperskillLesson extends CCPushAction {
   }
 
   public static void doPush(Lesson lesson, Project project) {
-    String notification = "Hyperskill lesson " + (lesson.getId() > 0 ? "updated" : "uploaded");
+    String notification = lesson.getId() > 0 ? EduCoreActionBundle.message("push.custom.lesson.updated", HYPERSKILL)
+                                             : EduCoreActionBundle.message("push.custom.lesson.uploaded", HYPERSKILL);
     boolean success = lesson.getId() > 0 ? updateLesson(project, lesson, true, -1)
                                          : postLesson(project, lesson, lesson.getIndex(), -1);
 

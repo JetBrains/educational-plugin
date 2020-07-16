@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.toTitleCase
 import javax.swing.Icon
 
+// TODO i18n Class is needed to be refactored
 abstract class CCPushAction(itemName: String, icon: Icon? = null) : DumbAwareAction(getActionText(itemName), getActionText(itemName),
                                                                                     icon) {
   protected val itemName = itemName.toTitleCase()

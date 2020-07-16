@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task.Modal;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -15,9 +16,11 @@ import com.jetbrains.edu.coursecreator.stepik.StepikChangesInfo;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
-import com.intellij.openapi.progress.Task.Modal;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.helper.StringUtil;
 
@@ -27,13 +30,30 @@ import java.util.Collections;
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCShowChangedFiles extends DumbAwareAction {
 
-  private static final String INFO_CHANGED = "Info Changed";
-  private static final String ADDITIONAL_INFO_CHANGED = "Additional Info Changed";
-  private static final String REMOVED = "Removed";
-  private static final String NEW = "New";
+  @Nls
+  private static String getStatusInfoChanged() {
+    return EduCoreActionBundle.message("show.changed.files.status.info.changed");
+  }
+
+  @Nls
+  private static String getStatusAdditionalInfoChanged() {
+    return EduCoreActionBundle.message("show.changed.files.status.additional.info.changed");
+  }
+
+  @Nls
+  private static String getStatusRemoved() {
+    return EduCoreActionBundle.message("show.changed.files.status.removed");
+  }
+
+  @Nls
+  private static String getStatusNew() {
+    return EduCoreActionBundle.message("show.changed.files.status.new");
+  }
 
   public CCShowChangedFiles() {
-    super("Compare with Course on Stepik", "Show changed files comparing to the course on Stepik", null);
+    super(EduCoreActionBundle.message("show.changed.files", StepikNames.STEPIK),
+          EduCoreActionBundle.message("show.changed.files.description", StepikNames.STEPIK),
+          null);
   }
 
   @Override
@@ -48,7 +68,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
       return;
     }
 
-    ProgressManager.getInstance().run(new Modal(project, "Computing Changes", false) {
+    ProgressManager.getInstance().run(new Modal(project, EduCoreActionBundle.message("show.changed.files.computing.changes"), false) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         EduCourse remoteCourse = StepikConnector.getInstance().getCourseInfo(course.getId());
@@ -60,7 +80,8 @@ public class CCShowChangedFiles extends DumbAwareAction {
 
         String message = buildChangeMessage((EduCourse)course, remoteCourse, project);
         ApplicationManager.getApplication().invokeLater(
-          () -> Messages.showInfoMessage(message, course.getName() + " Comparing to Stepik"));
+          () -> Messages.showInfoMessage(message, EduCoreActionBundle.message("show.changed.files.comparing.to",
+                                                                              StepikNames.STEPIK, course.getName())));
       }
     });
   }
@@ -76,51 +97,51 @@ public class CCShowChangedFiles extends DumbAwareAction {
       appendChangeLine(course, builder);
     }
     if (changedItems.isCourseAdditionalInfoChanged()) {
-      appendChangeLine(course, builder, ADDITIONAL_INFO_CHANGED);
+      appendChangeLine(course, builder, getStatusAdditionalInfoChanged());
     }
     for (Section section : changedItems.getNewSections()) {
-      appendChangeLine(section, builder, NEW);
+      appendChangeLine(section, builder, getStatusNew());
     }
     for (Section section : changedItems.getSectionsToDelete()) {
-      appendChangeLine(section, builder, REMOVED);
+      appendChangeLine(section, builder, getStatusRemoved());
     }
     for (Section section : changedItems.getSectionInfosToUpdate()) {
-      appendChangeLine(section, builder, INFO_CHANGED);
+      appendChangeLine(section, builder, getStatusInfoChanged());
     }
     for (Lesson lesson : changedItems.getNewLessons()) {
-      appendChangeLine(lesson, builder, NEW);
+      appendChangeLine(lesson, builder, getStatusNew());
     }
     for (Lesson lesson : changedItems.getLessonsToDelete()) {
-      appendChangeLine(lesson, builder, REMOVED);
+      appendChangeLine(lesson, builder, getStatusRemoved());
     }
     for (Lesson lesson : changedItems.getLessonsInfoToUpdate()) {
-      appendChangeLine(lesson, builder, INFO_CHANGED);
+      appendChangeLine(lesson, builder, getStatusInfoChanged());
     }
-    for (Lesson lesson: changedItems.getLessonAdditionalInfosToUpdate()) {
-      appendChangeLine(lesson, builder, ADDITIONAL_INFO_CHANGED);
+    for (Lesson lesson : changedItems.getLessonAdditionalInfosToUpdate()) {
+      appendChangeLine(lesson, builder, getStatusAdditionalInfoChanged());
     }
     for (Task task : changedItems.getNewTasks()) {
-      appendChangeLine(task, builder, NEW);
+      appendChangeLine(task, builder, getStatusNew());
     }
     for (Task task : changedItems.getTasksToDelete()) {
-      appendChangeLine(task, builder, REMOVED);
+      appendChangeLine(task, builder, getStatusRemoved());
     }
     for (Task task : changedItems.getTasksToUpdate()) {
-      appendChangeLine(task, builder, INFO_CHANGED);
+      appendChangeLine(task, builder, getStatusInfoChanged());
     }
 
     String message = builder.toString();
     if (message.isEmpty()) {
-      return "No changes";
+      return EduCoreActionBundle.message("show.changed.files.no.changes");
     }
     return message;
   }
 
   private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder) {
-    appendChangeLine(item, stringBuilder, "Changed");
+    appendChangeLine(item, stringBuilder, EduCoreActionBundle.message("show.changed.files.status.changed"));
   }
 
-  private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder, @NotNull String status) {
+  private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder, @NotNull @Nls String status) {
     stringBuilder
       .append(getPath(item))
       .append(" ")

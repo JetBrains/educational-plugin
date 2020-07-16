@@ -19,17 +19,24 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.loadAndFillAdditionalCourseInfo
 import com.jetbrains.edu.learning.stepik.api.loadAndFillLessonAdditionalInfo
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import icons.EducationalCoreIcons
+import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered") // Hyperskill.xml
-class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik", "Get Hyperskill Lesson from Stepik",
-                                            EducationalCoreIcons.JB_ACADEMY_ENABLED) {
+class GetHyperskillLesson : DumbAwareAction(
+  EduCoreActionBundle.message("get.lesson", HYPERSKILL, StepikNames.STEPIK),
+  EduCoreActionBundle.message("get.lesson.description", HYPERSKILL, StepikNames.STEPIK),
+  EducationalCoreIcons.JB_ACADEMY_ENABLED
+) {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = CCPluginToggleAction.isCourseCreatorFeaturesEnabled
@@ -38,22 +45,34 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
-    val lessonId = Messages.showInputDialog("Please, enter lesson id", "Get Hyperskill Lesson from Stepik",
-                                            EducationalCoreIcons.JB_ACADEMY_ENABLED)
+    val lessonId = Messages.showInputDialog(
+      EduCoreActionBundle.message("get.lesson.enter.lesson.id"),
+      EduCoreActionBundle.message("get.lesson", HYPERSKILL, StepikNames.STEPIK),
+      EducationalCoreIcons.JB_ACADEMY_ENABLED
+    )
     if (lessonId != null && lessonId.isNotEmpty()) {
-      ProgressManager.getInstance().run(object : Task.Modal(project, "Loading Course", true) {
+      ProgressManager.getInstance().run(object : Task.Modal(
+        project,
+        EduCoreActionBundle.message("get.course.loading"),
+        true
+      ) {
         override fun run(indicator: ProgressIndicator) {
           val course = createCourse(lessonId) ?: return
           val configurator = course.configurator
           if (configurator == null) {
             val environment = if (course.environment == EduNames.DEFAULT_ENVIRONMENT) "default" else course.environment
             showError(
-              "Failed to find configurator (${course.language}, $environment), check if all required plugins are enabled",
-              "Failed to Create Lesson")
+              EduCoreBundle.message("error.failed.to.create.lesson.no.configuration", course.language, environment),
+              EduCoreBundle.message("error.failed.to.create.lesson")
+            )
             return
           }
           runInEdt {
-            CCNewCourseDialog("Get Hyperskill Lesson from Stepik", "Create", course).show()
+            CCNewCourseDialog(
+              EduCoreActionBundle.message("get.lesson", HYPERSKILL, StepikNames.STEPIK),
+              EduCoreBundle.message("label.create"),
+              course
+            ).show()
           }
         }
       })
@@ -76,11 +95,14 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
 
     val languageAndEnvironment = getLanguageAndEnvironment(lesson)
     if (languageAndEnvironment == null) {
-      showError("Failed to determine language", "Failed to Create Lesson")
+      showError(
+        EduCoreBundle.message("error.failed.to.create.lesson.undefined.language"),
+        EduCoreBundle.message("error.failed.to.create.lesson")
+      )
       return null
     }
 
-    val hyperskillLessonName = "Hyperskill lesson $lessonId"
+    @NonNls val hyperskillLessonName = "Hyperskill lesson $lessonId"
     course.apply {
       name = hyperskillLessonName
       description = hyperskillLessonName
@@ -100,12 +122,12 @@ class GetHyperskillLesson : DumbAwareAction("Get Hyperskill Lesson from Stepik",
     val stepikUser = EduSettings.getInstance().user
 
     val message = if (stepikUser == null) {
-      "Log in to ${StepikNames.STEPIK} in Settings/Education to access the lesson"
+      EduCoreBundle.message("error.failed.to.get.lesson.not.log.in", StepikNames.STEPIK)
     }
     else {
-      "Check that ${StepikNames.STEPIK} account `${stepikUser.name}` has access to the lesson"
+      EduCoreBundle.message("error.failed.to.get.lesson.no.access", StepikNames.STEPIK, stepikUser.name)
     }
-    showError(message, "Failed to Get Lesson")
+    showError(message, EduCoreBundle.message("error.failed.to.get.lesson"))
   }
 
   private fun showError(message: String, title: String) {

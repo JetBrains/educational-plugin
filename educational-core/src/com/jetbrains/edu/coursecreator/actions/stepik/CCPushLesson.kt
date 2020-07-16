@@ -20,12 +20,16 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.twelvemonkeys.lang.StringUtil
+import org.jetbrains.annotations.NonNls
 
 // educational-core.xml
+// TODO i18n rewrite super call after refactoring [CCPushAction]
 class CCPushLesson : CCPushAction(LessonType.presentableName) {
 
   override fun update(e: AnActionEvent) {
@@ -83,9 +87,9 @@ class CCPushLesson : CCPushAction(LessonType.presentableName) {
       return
     }
 
-    ProgressManager.getInstance().run(object : Modal(project, "Uploading Lesson", true) {
+    ProgressManager.getInstance().run(object : Modal(project, EduCoreActionBundle.message("push.lesson.uploading"), true) {
       override fun run(indicator: ProgressIndicator) {
-        indicator.text = "Uploading lesson to " + StepikNames.STEPIK_URL
+        indicator.text = EduCoreActionBundle.message("push.lesson.uploading.to", StepikNames.STEPIK_URL)
         doPush(lesson, project, course)
         YamlFormatSynchronizer.saveRemoteInfo(lesson)
       }
@@ -97,8 +101,14 @@ class CCPushLesson : CCPushAction(LessonType.presentableName) {
 
     private fun wrapAndPost(project: Project, course: Course, lesson: Lesson) {
       ApplicationManager.getApplication().invokeAndWait {
-        val result = Messages.showYesNoDialog(project, "Since you have sections, we'll have to wrap this lesson into section before upload",
-                                              "Wrap Lesson Into Sections", "Wrap and Post", "Cancel", null)
+        val result = Messages.showYesNoDialog(
+          project,
+          EduCoreBundle.message("notification.wrap.lessons.into.section.message.for.single.lesson"),
+          EduCoreBundle.message("notification.wrap.lessons.into.section"),
+          EduCoreBundle.message("label.wrap.and.post"),
+          EduCoreBundle.message("label.cancel"),
+          null
+        )
         if (result == Messages.YES) {
           val section = CCUtils.wrapIntoSection(project, course, listOf(lesson), sectionToWrapIntoName(lesson))
           if (section != null) {
@@ -109,6 +119,7 @@ class CCPushLesson : CCPushAction(LessonType.presentableName) {
       }
     }
 
+    @NonNls
     private fun sectionToWrapIntoName(lesson: Lesson): String {
       return "Section. " + StringUtil.capitalize(lesson.name)
     }
@@ -123,14 +134,24 @@ class CCPushLesson : CCPushAction(LessonType.presentableName) {
         }
         val positionChanged = lesson.index != unit.position
         if (positionChanged) {
-          showErrorNotification(project, "Failed to update lesson",
-                                "It's impossible to update one lesson since it's position changed. Please, use 'Update course' action.")
+          showErrorNotification(
+            project,
+            EduCoreBundle.message("error.failed.to.update.lesson"),
+            EduCoreBundle.message("error.failed.to.update.lesson.position.changed")
+          )
+
+
+
           return
         }
         val sectionId = if (lesson.section != null) lesson.section!!.id else course.sectionIds[0]
         val success = CCStepikConnector.updateLesson(project, lesson, true, sectionId)
         if (success) {
-          EduUtils.showNotification(project, "Lesson updated", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id))
+          EduUtils.showNotification(
+            project,
+            EduCoreActionBundle.message("push.lesson.updated", lesson.name),
+            CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id)
+          )
         }
       }
       else {
@@ -138,7 +159,11 @@ class CCPushLesson : CCPushAction(LessonType.presentableName) {
         if (!pushAvailable(lesson.container, lesson, project)) return
         val success = CCStepikConnector.postLesson(project, lesson, lesson.index, sectionId)
         if (success) {
-          EduUtils.showNotification(project, "Lesson uploaded", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id))
+          EduUtils.showNotification(
+            project,
+            EduCoreActionBundle.message("push.lesson.uploaded", lesson.name),
+            CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id)
+          )
         }
       }
     }

@@ -15,6 +15,8 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +27,7 @@ import static com.jetbrains.edu.learning.EduUtils.showNotification;
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushTask extends CCPushAction {
   public CCPushTask() {
+    // TODO rewrite call after refactoring [CCPushAction]
     super(TaskType.INSTANCE.getPresentableName(), null);
   }
 
@@ -89,10 +92,10 @@ public class CCPushTask extends CCPushAction {
     final Task task = lesson.getTask(taskDir.getName());
     if (task == null) return;
 
-    ProgressManager.getInstance().run(new Modal(project, "Uploading Task", true) {
+    ProgressManager.getInstance().run(new Modal(project, EduCoreActionBundle.message("push.task.uploading"), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText("Uploading task to " + StepikNames.STEPIK_URL);
+        indicator.setText(EduCoreActionBundle.message("push.task.uploading.to", StepikNames.STEPIK_URL));
         if (task.getId() <= 0) {
           postNewTask(project, task, lesson);
         }
@@ -120,7 +123,7 @@ public class CCPushTask extends CCPushAction {
     if (isPosted) {
       task.setId(taskCopy.getId());
       task.setUpdateDate(taskCopy.getUpdateDate());
-      showNotification(project, "Task " + task.getName() + " uploaded",
+      showNotification(project, EduCoreActionBundle.message("push.task.uploaded", task.getName()),
                        openOnStepikAction("/lesson/" + lesson.getId() + "/step/" + task.getIndex()));
     }
   }
@@ -129,8 +132,8 @@ public class CCPushTask extends CCPushAction {
     int position = task.getIndex();
     int positionOnServer = getTaskPosition(task.getId());
     if (position != positionOnServer) {
-      showErrorNotification(project, "Failed to update task",
-                            "It's impossible to update one task since it's position changed. Please, use 'Update course' action.");
+      showErrorNotification(project, EduCoreBundle.message("error.failed.to.update.task"),
+                            EduCoreBundle.message("error.failed.to.update.task.position.changed"));
       return;
     }
     Task taskCopy = task.copy();
@@ -138,7 +141,7 @@ public class CCPushTask extends CCPushAction {
     taskCopy.setLesson(task.getLesson());
     boolean updated = CCStepikConnector.updateTask(project, taskCopy);
     if (updated) {
-      showNotification(project, "Task " + task.getName() + " updated",
+      showNotification(project, EduCoreActionBundle.message("push.task.updated", task.getName()),
                        openOnStepikAction("/lesson/" + lesson.getId() + "/step/" + task.getIndex()));
     }
   }
