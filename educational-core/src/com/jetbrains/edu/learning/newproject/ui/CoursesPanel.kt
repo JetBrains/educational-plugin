@@ -139,7 +139,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   private fun showProgressState() = cardLayout.show(this, LOADING_CARD_NAME)
 
-  fun showContent(empty: Boolean) {
+  private fun showContent(empty: Boolean) {
     if (empty) {
       cardLayout.show(this, NO_COURSES)
       return
@@ -179,7 +179,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     return filteredCourses
   }
 
-  protected fun updateModel(courses: List<Course>, @Suppress("UNUSED_PARAMETER") courseToSelect: Course?, filterCourses: Boolean = true) {
+  protected fun updateModel(courses: List<Course>, courseToSelect: Course?, filterCourses: Boolean = true) {
     val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
     val courseInfos = coursesToAdd.map {
       CourseInfo(it, { CourseSettings.nameToLocation(it) }, { CourseSettings.getLanguageSettings(it) })
