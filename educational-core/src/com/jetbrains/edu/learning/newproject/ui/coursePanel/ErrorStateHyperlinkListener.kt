@@ -53,7 +53,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
         StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
         EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
       }
-      ErrorState.JavaFXRequired -> invokeSwitchBootJdk(coursePanel)
+      ErrorState.JavaFXorJCEFRequired -> invokeSwitchBootJdk(coursePanel)
       // BACKCOMPAT: 2019.3. Use `PluginsAdvertiser.installAndEnable`
       ErrorState.IncompatibleVersion -> @Suppress("DEPRECATION") PluginsAdvertiser.installAndEnablePlugins(setOf(EduNames.PLUGIN_ID)) {}
       is ErrorState.RequirePlugins -> {
