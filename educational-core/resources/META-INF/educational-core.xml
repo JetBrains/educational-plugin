@@ -1,12 +1,6 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <depends>com.intellij.modules.lang</depends>
 
-  <project-components>
-    <component>
-      <implementation-class>com.jetbrains.edu.learning.stepik.StepikProjectComponent</implementation-class>
-    </component>
-  </project-components>
-
   <applicationListeners>
     <listener class="com.jetbrains.edu.learning.InitializationListener" topic="com.intellij.ide.AppLifecycleListener"/>
     <listener class="com.jetbrains.edu.learning.InitializationListener" topic="com.intellij.ide.plugins.DynamicPluginListener"/>
@@ -214,6 +208,7 @@
     <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
 
     <postStartupActivity implementation="com.jetbrains.edu.learning.EduStartupActivity"/>
+    <postStartupActivity implementation="com.jetbrains.edu.learning.stepik.StepikStartupActivity"/>
 
     <projectConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
                          id="Educational" displayName="Education"/>
