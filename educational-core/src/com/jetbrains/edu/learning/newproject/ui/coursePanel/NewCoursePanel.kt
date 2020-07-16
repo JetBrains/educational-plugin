@@ -86,7 +86,7 @@ class NewCoursePanel(
     }
     add(scrollPane, CONTENT)
 
-    background = UIUtil.getEditorPaneBackground()
+    UIUtil.setBackgroundRecursively(this, MAIN_BG_COLOR)
   }
 
   fun setButtonsEnabled(isEnabled: Boolean) {
