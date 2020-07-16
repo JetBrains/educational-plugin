@@ -19,6 +19,11 @@ class CoursesListPanel(errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout
   }
 
   fun updateModel(courseInfos: List<CourseInfo>, courseToSelect: Course?) {
+    clear()
+
+    if (courseInfos.isEmpty()) {
+      return
+    }
     val sortedCourseInfos = sortCourses(courseInfos)
     val group = CoursesGroup("", sortedCourseInfos)
     addGroup(group)  // TODO: use actual groups

@@ -2,7 +2,9 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.components.JBPanelWithEmptyText
+import com.intellij.util.ui.StatusText
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
@@ -15,7 +17,9 @@ class GroupsComponent(private val errorHandler: (ErrorState) -> Unit) : JBPanelW
 
   init {
     background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
-    withEmptyText(NO_COURSES)
+    emptyText.text = EduCoreBundle.message("course.dialog.no.courses.found")
+    emptyText.appendSecondaryText(EduCoreBundle.message("course.dialog.no.courses.found.secondary.text"), StatusText.DEFAULT_ATTRIBUTES,
+                                  null)
   }
 
   fun addGroup(coursesGroup: CoursesGroup) {
@@ -27,6 +31,8 @@ class GroupsComponent(private val errorHandler: (ErrorState) -> Unit) : JBPanelW
   fun clear() {
     courseGroupModel.clear()
     removeAll()
+    revalidate()
+    repaint()
   }
 
   fun setSelectedValue(newCourseToSelect: Course?) {
@@ -43,9 +49,5 @@ class GroupsComponent(private val errorHandler: (ErrorState) -> Unit) : JBPanelW
 
   fun setButtonsEnabled(canStartCourse: Boolean) {
     courseGroupModel.setButtonsEnabled(canStartCourse)
-  }
-
-  companion object {
-    private const val NO_COURSES = "No courses found"
   }
 }
