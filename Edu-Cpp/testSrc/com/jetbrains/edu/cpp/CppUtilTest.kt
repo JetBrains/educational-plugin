@@ -2,7 +2,8 @@ package com.jetbrains.edu.cpp
 
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.EduTestCase
-import org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase
+import org.hamcrest.Description
+import org.hamcrest.TypeSafeMatcher
 import org.junit.Assert.assertThat
 
 class CppUtilTest : EduTestCase() {
@@ -36,10 +37,26 @@ class CppUtilTest : EduTestCase() {
     val result = file.findCMakeCommand(commandName)
     if (shouldFind) {
       check(result != null)
-      assertThat(result.name, equalToIgnoringCase(commandName))
+      assertThat(result.name, IsEqualIgnoringCase(commandName))
     }
     else {
       assertNull(result)
     }
+  }
+}
+
+// BACKCOMPAT: 2019.3. Use `org.hamcrest.text.IsEqualIgnoringCase` instead
+private class IsEqualIgnoringCase(private val string: String) : TypeSafeMatcher<String>() {
+
+  override fun matchesSafely(item: String): Boolean {
+    return string.equals(item, ignoreCase = true)
+  }
+
+  override fun describeMismatchSafely(item: String, mismatchDescription: Description) {
+    mismatchDescription.appendText("was $item")
+  }
+
+  override fun describeTo(description: Description) {
+    description.appendText("equalToIgnoringCase($string)")
   }
 }
