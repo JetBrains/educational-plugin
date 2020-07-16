@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.stepik.StepikProjectComponent.STEP_ID
+import com.jetbrains.edu.learning.stepik.StepikProjectComponent.Companion.STEP_ID
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG

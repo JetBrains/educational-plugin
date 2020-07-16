@@ -1,153 +1,120 @@
-package com.jetbrains.edu.learning.stepik;
+package com.jetbrains.edu.learning.stepik
 
-import com.intellij.ide.BrowserUtil;
-import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.ui.popup.BalloonBuilder;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.wm.*;
-import com.intellij.util.messages.MessageBusConnection;
-import com.jetbrains.edu.learning.EduLogInListener;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.EduCourse;
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
-import com.jetbrains.edu.learning.stepik.hyperskill.EduCourseUpdateChecker;
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager;
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
-import kotlin.Unit;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.ide.BrowserUtil
+import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.components.ProjectComponent
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.startup.StartupManager
+import com.intellij.openapi.ui.MessageType
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.wm.CustomStatusBarWidget
+import com.intellij.openapi.wm.WindowManager
+import com.jetbrains.edu.learning.EduLogInListener
+import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.synchronizeCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.EduCourseUpdateChecker
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import static com.jetbrains.edu.learning.EduUtils.isEduProject;
-import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
-
-@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
-public class StepikProjectComponent implements ProjectComponent {
-  private static final Logger LOG = Logger.getInstance(StepikProjectComponent.class.getName());
-
-  public static final Key<Integer> STEP_ID = Key.create("STEP_ID");
-  private final Project myProject;
-
-  private StepikProjectComponent(@NotNull final Project project) {
-    myProject = project;
-  }
-
-  @Override
-  public void projectOpened() {
-    if (myProject.isDisposed() || !isEduProject(myProject)) {
-      return;
+// educational-core.xml
+class StepikProjectComponent(private val myProject: Project) : ProjectComponent {
+  override fun projectOpened() {
+    if (myProject.isDisposed || !EduUtils.isEduProject(myProject)) {
+      return
     }
-
-    StartupManager.getInstance(myProject).runWhenProjectIsInitialized(
-      () -> {
-        Course course = StudyTaskManager.getInstance(myProject).getCourse();
-        SubmissionsManager submissionsManager = SubmissionsManager.getInstance(myProject);
-        if (course instanceof EduCourse && submissionsManager.submissionsSupported()) {
-          EduCourseUpdateChecker updateChecker = EduCourseUpdateChecker.getInstance(myProject);
-          if (EduSettings.getInstance().getUser() != null) {
-            submissionsManager.prepareSubmissionsContent(() -> {
-              loadSolutionsFromStepik(course);
-              return Unit.INSTANCE;
-            });
+    StartupManager.getInstance(myProject).runWhenProjectIsInitialized {
+      val course = StudyTaskManager.getInstance(myProject).course
+      val submissionsManager = SubmissionsManager.getInstance(myProject)
+      if (course is EduCourse && submissionsManager.submissionsSupported()) {
+        val updateChecker = EduCourseUpdateChecker.getInstance(myProject)
+        if (EduSettings.getInstance().user != null) {
+          submissionsManager.prepareSubmissionsContent {
+            loadSolutionsFromStepik(course)
           }
-          else {
-            MessageBusConnection busConnection = myProject.getMessageBus().connect(myProject);
-            busConnection.subscribe(EduSettings.SETTINGS_CHANGED, new EduLogInListener() {
-              @Override
-              public void userLoggedIn() {
-                if (EduSettings.getInstance().getUser() == null) {
-                  return;
-                }
-                submissionsManager.prepareSubmissionsContent(() -> Unit.INSTANCE);
-
-                if (!((EduCourse)course).isPublic()) {
-                  updateChecker.check();
-                }
-              }
-
-              @Override
-              public void userLoggedOut() {
-                TaskDescriptionView.getInstance(myProject).updateSubmissionsTab();
-              }
-            });
-          }
-          updateChecker.check();
-
-          final StepikUser currentUser = EduSettings.getInstance().getUser();
-          if (currentUser == null) {
-            showBalloon();
-          }
-          selectStep(course);
         }
+        else {
+          val busConnection = myProject.messageBus.connect(myProject)
+          busConnection.subscribe(EduSettings.SETTINGS_CHANGED, object : EduLogInListener {
+            override fun userLoggedIn() {
+              if (EduSettings.getInstance().user == null) {
+                return
+              }
+              submissionsManager.prepareSubmissionsContent {}
+              if (!course.isPublic) {
+                updateChecker.check()
+              }
+            }
+
+            override fun userLoggedOut() {
+              TaskDescriptionView.getInstance(myProject).updateSubmissionsTab()
+            }
+          })
+        }
+        updateChecker.check()
+        val currentUser = EduSettings.getInstance().user
+        if (currentUser == null) {
+          showBalloon()
+        }
+        selectStep(course)
       }
-    );
+    }
   }
 
-  private void showBalloon() {
-    IdeFrame frame = WindowManager.getInstance().getIdeFrame(myProject);
-    if (frame == null) return;
-    StatusBar statusBar = frame.getStatusBar();
-    if (statusBar == null) return;
-    StatusBarWidget widget = statusBar.getWidget(StepikWidget.ID);
-    if (!(widget instanceof CustomStatusBarWidget)) return;
-    CustomStatusBarWidget customWidget = (CustomStatusBarWidget)widget;
-    JComponent widgetComponent = customWidget.getComponent();
-    if (widgetComponent == null) return;
-    String redirectUrl = StepikAuthorizer.getOAuthRedirectUrl();
-    String authLnk = StepikAuthorizer.createOAuthLink(redirectUrl);
-    BalloonBuilder builder =
-      JBPopupFactory.getInstance()
-        .createHtmlTextBalloonBuilder("<a href=\"\">Log in</a> to synchronize your study progress", MessageType.INFO, null);
-    builder.setClickHandler(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        BrowserUtil.browse(authLnk);
-      }
-    }, true);
-    builder.setHideOnClickOutside(true);
-    builder.setCloseButtonEnabled(true);
-    builder.setHideOnCloseClick(true);
-    Balloon balloon = builder.createBalloon();
-    balloon.showInCenterOf(widgetComponent);
+  private fun showBalloon() {
+    val frame = WindowManager.getInstance().getIdeFrame(myProject) ?: return
+    val statusBar = frame.statusBar ?: return
+    val widget = statusBar.getWidget(StepikWidget.ID) as? CustomStatusBarWidget ?: return
+    val widgetComponent = widget.component ?: return
+    val redirectUrl = StepikAuthorizer.getOAuthRedirectUrl()
+    val authLnk = StepikAuthorizer.createOAuthLink(redirectUrl)
+    val builder = JBPopupFactory.getInstance()
+      .createHtmlTextBalloonBuilder("<a href=\"\">Log in</a> to synchronize your study progress", MessageType.INFO,
+                                    null)
+    builder.setClickHandler({ BrowserUtil.browse(authLnk) }, true)
+    builder.setHideOnClickOutside(true)
+    builder.setCloseButtonEnabled(true)
+    builder.setHideOnCloseClick(true)
+    val balloon = builder.createBalloon()
+    balloon.showInCenterOf(widgetComponent)
   }
 
-  private void loadSolutionsFromStepik(@NotNull Course course) {
-    if (!myProject.isDisposed() && course instanceof EduCourse && ((EduCourse)course).isRemote()) {
+  private fun loadSolutionsFromStepik(course: Course) {
+    if (!myProject.isDisposed && course is EduCourse && course.isRemote) {
       if (PropertiesComponent.getInstance(myProject).getBoolean(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
-        PropertiesComponent.getInstance(myProject).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
-        return;
+        PropertiesComponent.getInstance(myProject).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false)
+        return
       }
       try {
-        StepikSolutionsLoader.getInstance(myProject).loadSolutionsInBackground();
-        EduCounterUsageCollector.synchronizeCourse(EduCounterUsageCollector.SynchronizeCoursePlace.PROJECT_REOPEN);
+        StepikSolutionsLoader.getInstance(myProject).loadSolutionsInBackground()
+        synchronizeCourse(EduCounterUsageCollector.SynchronizeCoursePlace.PROJECT_REOPEN)
       }
-      catch (Exception e) {
-        LOG.warn(e.getMessage());
+      catch (e: Exception) {
+        LOG.warn(e.message)
       }
     }
   }
 
-  private void selectStep(@NotNull Course course) {
-    Integer stepId = course.getUserData(STEP_ID);
+  private fun selectStep(course: Course) {
+    val stepId = course.getUserData(STEP_ID)
     if (stepId != null) {
-      navigateToStep(myProject, course, stepId);
+      EduUtils.navigateToStep(myProject, course, stepId)
     }
   }
 
-  @NotNull
-  @Override
-  public String getComponentName() {
-    return "StepikProjectComponent";
+  override fun getComponentName(): String {
+    return "StepikProjectComponent"
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(StepikProjectComponent::class.java)
+    @JvmStatic
+    val STEP_ID = Key.create<Int>("STEP_ID")
   }
 }
