@@ -7,8 +7,6 @@
     </component>
   </project-components>
 
-  <!--suppress PluginXmlValidity -->
-  <!-- https://youtrack.jetbrains.com/issue/IDEA-241994 -->
   <applicationListeners>
     <listener class="com.jetbrains.edu.learning.InitializationListener" topic="com.intellij.ide.AppLifecycleListener"/>
     <listener class="com.jetbrains.edu.learning.InitializationListener" topic="com.intellij.ide.plugins.DynamicPluginListener"/>
