@@ -57,6 +57,7 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
       name = "Test Course"
       id = 1
       updateDate = date
+      isPublic = true
     }
     project.putUserData(EDU_PROJECT_CREATED, isNewlyCreated)
     StudyTaskManager.getInstance(project).course = course

@@ -83,7 +83,8 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
                                  isCourseUpToDate: Boolean) {
     if (isCourseUpToDate) {
       if (notificationListener.notificationShown) {
-        assertEquals(EduCoreBundle.message("hyperskill.update.notification.text", EduNames.JBA), notificationListener.notificationText)
+        assertEquals(EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT),
+                     notificationListener.notificationText)
       }
     }
     else {
