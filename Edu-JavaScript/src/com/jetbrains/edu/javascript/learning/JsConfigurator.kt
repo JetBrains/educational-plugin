@@ -41,6 +41,7 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
     super.excludeFromArchive(project, file) || file.path.contains("node_modules") || "package-lock.json" == file.name
 
   companion object {
+    const val MAIN_JS = "main.js"
     const val TASK_JS = "task.js"
     const val TEST_JS = "test.js"
   }

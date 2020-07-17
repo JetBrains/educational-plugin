@@ -28,6 +28,8 @@ class AndroidConfigurator : GradleConfiguratorBase() {
   override val isCourseCreatorEnabled: Boolean
     get() = isFeatureEnabled(EduExperimentalFeatures.ANDROID_COURSES) || isUnitTestMode
 
+  override fun getMockFileName(text: String): String = "Main.kt"
+
   override val logo: Icon
     get() = AndroidIcons.Android
 }
