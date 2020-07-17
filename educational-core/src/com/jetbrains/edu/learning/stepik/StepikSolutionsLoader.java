@@ -29,8 +29,9 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
@@ -375,8 +376,9 @@ public class StepikSolutionsLoader implements Disposable {
     }
   }
 
-  private static TaskSolutions getStepikTaskSolutions(@NotNull Project project, @NotNull Task task) {
-    String taskFileName = TaskExt.getMockTaskFileName(task);
+  private static TaskSolutions getStepikTaskSolutions(@NotNull Project project, @NotNull Task task, boolean isSolved) {
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(task.getCourse());
+    String taskFileName = (configurator == null) ? null : configurator.getMockFileName(configurator.getMockTemplate());
     SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
     String solution = getSolutionTextForStepikAssignment(task, submissionsManager);
     if (solution != null && taskFileName != null) {

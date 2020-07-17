@@ -3,6 +3,7 @@ package com.jetbrains.edu.scala.sbt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.stepik.fileName
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
@@ -11,6 +12,7 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.scala.sbt.checker.ScalaSbtTaskCheckerProvider
 import icons.EducationalCoreIcons
+import org.jetbrains.plugins.scala.ScalaLanguage
 import javax.swing.Icon
 
 class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
@@ -25,6 +27,8 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = ScalaSbtTaskCheckerProvider()
+
+  override fun getMockFileName(text: String): String = fileName(ScalaLanguage.INSTANCE, text)
 
   override val mockTemplate: String
     get() = getInternalTemplateText(MOCK_SCALA)

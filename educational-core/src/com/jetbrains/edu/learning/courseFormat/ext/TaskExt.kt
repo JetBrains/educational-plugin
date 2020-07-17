@@ -22,8 +22,6 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import java.util.*
-import kotlin.collections.HashSet
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -98,13 +96,6 @@ fun Task.hasChangedFiles(project: Project): Boolean {
   }
   return false
 }
-
-val Task.mockTaskFileName: String?
-  get() {
-    val configurator = course.configurator ?: return null
-    val fileName = configurator.getMockFileName(configurator.mockTemplate) ?: return null
-    return GeneratorUtils.joinPaths(configurator.sourceDir, fileName)
-  }
 
 fun Task.saveStudentAnswersIfNeeded(project: Project) {
   if (lesson !is FrameworkLesson) return

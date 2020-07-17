@@ -14,6 +14,7 @@ class ScalaGradleTaskCheckerProvider : GradleTaskCheckerProvider() {
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
     if (psiFile !is ScalaFile) return null
 
+    // does not work :(
     PsiTreeUtil.findChildrenOfType(psiFile, ScObject::class.java).forEach {
       val mainMethod = findMainMethod(it)
       if (mainMethod.isDefined) return mainMethod.get().name

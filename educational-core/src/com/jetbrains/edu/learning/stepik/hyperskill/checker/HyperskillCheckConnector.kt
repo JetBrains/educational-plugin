@@ -11,9 +11,9 @@ import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getText
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
-import com.jetbrains.edu.learning.courseFormat.ext.mockTaskFileName
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -113,18 +113,12 @@ object HyperskillCheckConnector {
       return Err("""Unknown language "$languageDisplayName". Check if support for "$languageDisplayName" is enabled.""")
     }
 
-    val fileName = task.mockTaskFileName
-    if (fileName == null) {
-      LOG.error("Unable to create submission: could not retrieve mockTaskFileName from course ${course.name} for the task ${task.name}")
-      return Err(EduCoreErrorBundle.message("failed.to.post.solution", EduNames.JBA))
+    val codeTaskText = course.configurator?.getCodeTaskFile(project, task)?.getText(project)
+    if (codeTaskText == null) {
+      LOG.error("Unable to create submission: file with code is not found for the task ${task.name}")
+      return Err(EduCoreErrorBundle.message("error.failed.to.post.solution", EduNames.JBA))
     }
-
-    val answer = task.getTaskFile(fileName)?.getText(project)
-    if (answer == null) {
-      LOG.warn("Unable to create submission: file with code ${fileName} is not found for the task ${task.name}")
-      return Err(EduCoreErrorBundle.message("failed.to.post.solution.no.file", EduNames.JBA, fileName))
-    }
-    val codeSubmission = StepikCheckerConnector.createCodeSubmission(attempt.id, defaultLanguage, answer)
+    val codeSubmission = StepikCheckerConnector.createCodeSubmission(attempt.id, defaultLanguage, codeTaskText)
     return connector.postSubmission(codeSubmission)
   }
 

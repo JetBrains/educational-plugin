@@ -16,7 +16,7 @@ abstract class GradleTaskCheckerProvider : TaskCheckerProvider {
   override fun getTheoryTaskChecker(task: TheoryTask, project: Project): TheoryTaskChecker =
     GradleTheoryTaskChecker(task, project, this::mainClassForFile)
 
-  protected abstract fun mainClassForFile(project: Project, file: VirtualFile): String?
+  abstract fun mainClassForFile(project: Project, file: VirtualFile): String?
 
   override fun getCodeExecutor(): CodeExecutor = GradleCodeExecutor(this::mainClassForFile)
 }

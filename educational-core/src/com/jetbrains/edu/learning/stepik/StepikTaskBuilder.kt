@@ -4,7 +4,6 @@ import com.intellij.lang.Language
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -246,23 +245,24 @@ open class StepikTaskBuilder(
 
   private fun createMockTaskFile(task: Task, comment: String, codeTemplate: String?) {
     val configurator = EduConfiguratorManager.findConfigurator(courseType, courseEnvironment, language)
+    if (configurator == null) {
+      LOG.error("Could not find configurator for courseType $courseType, language $language")
+      return
+    }
     val editorText = buildString {
       if (codeTemplate == null) {
         val commentPrefix = LanguageCommenters.INSTANCE.forLanguage(language)?.lineCommentPrefix
         if (commentPrefix != null) {
           append("$commentPrefix $comment")
         }
-
-        if (configurator != null) {
-          append("\n${configurator.mockTemplate}")
-        }
+        append("\n${configurator.mockTemplate}")
       }
       else {
         append(codeTemplate)
       }
     }
 
-    val taskFilePath = getTaskFilePath(editorText, configurator) ?: return
+    val taskFilePath = GeneratorUtils.joinPaths(configurator.sourceDir, configurator.getMockFileName(editorText))
     val taskFile = TaskFile()
     taskFile.setText(editorText)
     taskFile.name = taskFilePath
@@ -311,11 +311,6 @@ open class StepikTaskBuilder(
           placeholder.placeholderText = fileText.substring(offset, offset + length)
         }
       }
-    }
-
-    private fun getTaskFilePath(editorText: String, configurator: EduConfigurator<*>?): String? {
-      val fileName = configurator?.getMockFileName(editorText) ?: return null
-      return GeneratorUtils.joinPaths(configurator.sourceDir, fileName)
     }
   }
 }

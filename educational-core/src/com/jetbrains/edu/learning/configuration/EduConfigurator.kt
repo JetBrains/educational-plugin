@@ -13,8 +13,10 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isConfigFile
 import org.jetbrains.annotations.SystemIndependent
@@ -122,13 +124,23 @@ interface EduConfigurator<Settings> {
   val isCourseCreatorEnabled: Boolean
     get() = true
 
+  fun getCodeTaskFile(project: Project, task: Task): TaskFile? {
+    val files = task.taskFiles.values
+    if (files.size == 1) return files.firstOrNull()
+    val name = GeneratorUtils.joinPaths(sourceDir, getMockFileName(mockTemplate))
+    if (name in task.taskFiles) {
+      return task.taskFiles[name]
+    }
+    return files.firstOrNull { !it.isLearnerCreated } ?: files.firstOrNull()
+  }
+
   /**
    * Constructs file name for Stepik tasks according to its text.
    * For example, Java requires file name should be the same as name of public class in it
    *
    * @see com.jetbrains.edu.learning.stepik.StepikTaskBuilder
    */
-  fun getMockFileName(text: String): String? = null
+  fun getMockFileName(text: String): String
 
   /**
    * Allows to customize file template used as playground in theory and choice tasks

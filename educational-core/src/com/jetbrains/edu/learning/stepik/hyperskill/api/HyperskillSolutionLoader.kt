@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.ext.mockTaskFileName
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -48,8 +48,8 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
   private fun Reply.codeTaskFiles(task: CodeTask): Map<String, Solution> {
     val codeFromServer = code ?: return emptyMap()
-    val taskFileName = task.mockTaskFileName ?: return emptyMap()
-    return mapOf(taskFileName to Solution(codeFromServer, true, emptyList()))
+    val taskFile = task.course.configurator?.getCodeTaskFile(project, task) ?: return emptyMap()
+    return mapOf(taskFile.name to Solution(codeFromServer, true, emptyList()))
   }
 
   override fun provideTasksToUpdate(course: Course): List<Task> {

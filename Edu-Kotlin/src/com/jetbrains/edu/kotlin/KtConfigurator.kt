@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTem
 import org.jetbrains.kotlin.idea.KotlinIcons
 import javax.swing.Icon
 
-class KtConfigurator : GradleConfiguratorBase() {
+open class KtConfigurator : GradleConfiguratorBase() {
   override val courseBuilder: GradleCourseBuilderBase
     get() = KtCourseBuilder()
 
