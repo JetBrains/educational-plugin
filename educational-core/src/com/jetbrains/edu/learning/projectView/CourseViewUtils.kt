@@ -14,8 +14,10 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import icons.EducationalCoreIcons
 import org.jetbrains.annotations.TestOnly
 import javax.swing.Icon
@@ -126,5 +128,8 @@ object CourseViewUtils {
       }
     }
 
-  private fun Lesson.isSolved() = taskList.all { it.status == CheckStatus.Solved }
+  private fun Lesson.isSolved() = taskList.all {
+    val project = it.project ?: return false
+    return it.status == CheckStatus.Solved || SubmissionsManager.getInstance(project).containsCorrectSubmission(it.id)
+  }
 }

@@ -52,9 +52,8 @@ class SubmissionsManager(private val project: Project) {
     }
   }
 
-  fun getSubmissions(stepId: Int, isSolved: Boolean): List<Submission>? {
-    val status = if (isSolved) EduNames.CORRECT else EduNames.WRONG
-    return getOrLoadSubmissions(stepId).filter { it.status == status }
+  fun getSubmissions(stepId: Int): List<Submission>? {
+    return getOrLoadSubmissions(stepId)
   }
 
   fun getSubmission(stepId: Int, submissionId: Int): Submission? {
@@ -83,6 +82,11 @@ class SubmissionsManager(private val project: Project) {
       //potential race when loading submissions and checking task at one time
     }
     ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
+  }
+
+  fun containsCorrectSubmission(stepId: Int): Boolean {
+    val correctSubmissions = getSubmissionsFromMemory(setOf(stepId))?.filter { it.status == EduNames.CORRECT } ?: return false
+    return correctSubmissions.isNotEmpty()
   }
 
   fun addToSubmissionsWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {

@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.messages.MessageBusConnection;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -191,12 +192,11 @@ public class StepikSolutionsLoader implements Disposable {
       if (progressIndicator == null || !progressIndicator.isCanceled()) {
         Future<Boolean> future = ApplicationManager.getApplication().executeOnPooledThread(() -> {
           try {
-            boolean isSolved = task.getStatus() == CheckStatus.Solved;
             if (progressIndicator != null) {
               progressIndicator.setFraction((double)progressIndex / tasksToUpdate.size());
               progressIndicator.setText(String.format("Loading solution %d of %d", progressIndex, tasksToUpdate.size()));
             }
-            return loadSolution(myProject, task, isSolved);
+            return loadSolution(myProject, task);
           }
           finally {
             countDownLatch.countDown();
@@ -273,12 +273,14 @@ public class StepikSolutionsLoader implements Disposable {
     SubmissionsManager submissionsManager = SubmissionsManager.getInstance(myProject);
     for (Task task : allTasks) {
       Boolean isSolved = taskStatusesMap.get(getProgressId(task));
-      if (isSolved == null || !isLastSubmissionUpToDate(submissionsManager, task, isSolved)) continue;
-      if (!(task instanceof TheoryTask) && isToUpdate(task, submissionsManager, isSolved, task.getStatus())) {
+      if (isSolved == null || !isLastSubmissionUpToDate(submissionsManager, task)) continue;
+      if (!(task instanceof TheoryTask) && isToUpdate(task, submissionsManager)) {
         tasksToUpdate.add(task);
       }
-      task.setStatus(checkStatus(task, isSolved));
-      YamlFormatSynchronizer.saveItem(task);
+      if (!tasksToUpdate.contains(task) || task.getStatus().equals(CheckStatus.Unchecked)) {
+        task.setStatus(checkStatus(task, isSolved));
+        YamlFormatSynchronizer.saveItem(task);
+      }
     }
     return tasksToUpdate;
   }
@@ -332,16 +334,9 @@ public class StepikSolutionsLoader implements Disposable {
     });
   }
 
-  private static boolean isToUpdate(Task task,
-                                    @NotNull SubmissionsManager submissionsManager,
-                                    boolean isSolved,
-                                    @NotNull CheckStatus currentStatus) {
-    if (isSolved) {
-      return currentStatus != CheckStatus.Solved;
-    }
-
+  private static boolean isToUpdate(Task task, @NotNull SubmissionsManager submissionsManager) {
     if (task instanceof EduTask) {
-      Submission submission = getLastSubmission(submissionsManager, task.getId(), false);
+      Submission submission = getLastSubmission(submissionsManager, task.getId());
       if (submission != null) {
         Reply reply = submission.getReply();
         if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
@@ -350,7 +345,7 @@ public class StepikSolutionsLoader implements Disposable {
       }
     }
     else {
-      String solution = getSolutionTextForStepikAssignment(task, submissionsManager, false); //loads all submissions inside
+      String solution = getSolutionTextForStepikAssignment(task, submissionsManager); //loads all submissions inside
       if (solution != null) {
         return true;
       }
@@ -362,39 +357,39 @@ public class StepikSolutionsLoader implements Disposable {
   /**
    * @return true if solutions for given task are incompatible with current plugin version, false otherwise
    */
-  private static boolean loadSolution(@NotNull Project project, @NotNull Task task, boolean isSolved) {
-    TaskSolutions taskSolutions = loadSolutionTexts(project, task, isSolved);
+  private static boolean loadSolution(@NotNull Project project, @NotNull Task task) {
+    TaskSolutions taskSolutions = loadSolutionTexts(project, task);
     if (!taskSolutions.hasIncompatibleSolutions && !taskSolutions.solutions.isEmpty()) {
       updateFiles(project, task, taskSolutions.solutions);
     }
     return taskSolutions.hasIncompatibleSolutions;
   }
 
-  private static TaskSolutions loadSolutionTexts(@NotNull Project project, @NotNull Task task, boolean isSolved) {
+  private static TaskSolutions loadSolutionTexts(@NotNull Project project, @NotNull Task task) {
     if (task.isToSubmitToStepik()) {
-      return getEduTaskSolutions(project, task, isSolved);
+      return getEduTaskSolutions(project, task);
     }
     else {
-      return getStepikTaskSolutions(project, task, isSolved);
+      return getStepikTaskSolutions(project, task);
     }
   }
 
-  private static TaskSolutions getStepikTaskSolutions(@NotNull Project project, @NotNull Task task, boolean isSolved) {
+  private static TaskSolutions getStepikTaskSolutions(@NotNull Project project, @NotNull Task task) {
     String taskFileName = TaskExt.getMockTaskFileName(task);
     SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
-    String solution = getSolutionTextForStepikAssignment(task, submissionsManager, isSolved);
+    String solution = getSolutionTextForStepikAssignment(task, submissionsManager);
     if (solution != null && taskFileName != null) {
-      task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
+      task.setStatus(getCheckStatus(getLastSubmission(submissionsManager, task.getId())));
       YamlFormatSynchronizer.saveItem(task);
       return new TaskSolutions(Collections.singletonMap(taskFileName, solution));
     }
     return TaskSolutions.EMPTY;
   }
 
-  private static TaskSolutions getEduTaskSolutions(@NotNull Project project, @NotNull Task task, boolean isSolved) {
+  private static TaskSolutions getEduTaskSolutions(@NotNull Project project, @NotNull Task task) {
     String language = task.getCourse().getLanguageID();
     SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
-    Submission submission = getLastSubmission(submissionsManager, task.getId(), isSolved);
+    Submission submission = getLastSubmission(submissionsManager, task.getId());
     if (submission == null) {
       return TaskSolutions.EMPTY;
     }
@@ -417,7 +412,7 @@ public class StepikSolutionsLoader implements Disposable {
 
     String serializedTask = reply.getEduTask();
     if (serializedTask == null) {
-      task.setStatus(checkStatus(null, isSolved));
+      task.setStatus(getCheckStatus(submission));
       return new TaskSolutions(loadSolutionTheOldWay(task, reply));
     }
 
@@ -434,7 +429,7 @@ public class StepikSolutionsLoader implements Disposable {
       return TaskSolutions.EMPTY;
     }
 
-    task.setStatus(checkStatus(task, isSolved));
+    task.setStatus(getCheckStatus(submission));
 
     Map<String, String> taskFileToText = new HashMap<>();
     for (SolutionFile file : reply.getSolution()) {
@@ -451,16 +446,22 @@ public class StepikSolutionsLoader implements Disposable {
     return new TaskSolutions(taskFileToText);
   }
 
+  @NotNull
+  private static CheckStatus getCheckStatus(@Nullable Submission submission) {
+    if (submission == null) return CheckStatus.Unchecked;
+    return EduNames.CORRECT.equals(submission.getStatus()) ? CheckStatus.Solved : CheckStatus.Failed;
+  }
+
   @Nullable
-  private static Submission getLastSubmission(@NotNull SubmissionsManager submissionsManager, int taskId, boolean isSolved) {
-    List<Submission> submissions = submissionsManager.getSubmissions(taskId, isSolved);
+  private static Submission getLastSubmission(@NotNull SubmissionsManager submissionsManager, int taskId) {
+    List<Submission> submissions = submissionsManager.getSubmissions(taskId);
     if (submissions == null || submissions.isEmpty()) return null;
     return submissions.get(0);
   }
 
-  private static boolean isLastSubmissionUpToDate(@NotNull SubmissionsManager submissionsManager, @NotNull Task task, boolean isSolved) {
+  private static boolean isLastSubmissionUpToDate(@NotNull SubmissionsManager submissionsManager, @NotNull Task task) {
     if (task instanceof TheoryTask) return true;
-    Submission submission = getLastSubmission(submissionsManager, task.getId(), isSolved);
+    Submission submission = getLastSubmission(submissionsManager, task.getId());
     if (submission != null) {
       Date submissionTime = submission.getTime();
       if (submissionTime != null) {
@@ -569,9 +570,8 @@ public class StepikSolutionsLoader implements Disposable {
 
   @Nullable
   static String getSolutionTextForStepikAssignment(@NotNull Task task,
-                                                   @NotNull SubmissionsManager submissionsManager,
-                                                   boolean isSolved) {
-    final List<Submission> submissions = submissionsManager.getSubmissions(task.getId(), isSolved);
+                                                   @NotNull SubmissionsManager submissionsManager) {
+    final List<Submission> submissions = submissionsManager.getSubmissions(task.getId());
     if (submissions == null || submissions.isEmpty()) {
       return null;
     }

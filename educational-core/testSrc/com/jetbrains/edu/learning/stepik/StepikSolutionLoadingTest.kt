@@ -99,6 +99,14 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
     assertEquals(2, taskToUpdate.taskFiles.size)
   }
 
+  fun `test apply last submission`() {
+    configureSubmissionsResponse(mapOf(1 to "submissions_response_4.json"))
+    val course = createStepikCourse()
+
+    StepikSolutionsLoader.getInstance(project).loadSolutions(null, course)
+    checkTaskStatuses(course.allTasks, listOf(CheckStatus.Failed, CheckStatus.Unchecked))
+  }
+
   fun `test framework lesson solutions`() {
     configureSubmissionsResponse(
       mapOf(1 to "submissions_response_1.json", 2 to "submissions_response_2.json"))

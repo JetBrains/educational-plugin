@@ -14,11 +14,13 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle;
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
 import com.jetbrains.edu.learning.stepik.api.StepikJacksonDeserializersKt;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager;
 import com.jetbrains.edu.learning.yaml.YamlDeserializer;
 import icons.EducationalCoreIcons;
 import org.jdom.Element;
@@ -273,6 +275,10 @@ public abstract class Task extends StudyItem {
   public Icon getIcon() {
     if (myStatus == CheckStatus.Unchecked) {
       return EducationalCoreIcons.Task;
+    }
+    Project project = CourseExt.getProject(getCourse());
+    if (project != null && SubmissionsManager.getInstance(project).containsCorrectSubmission(getId())) {
+      return EducationalCoreIcons.TaskSolved;
     }
     return myStatus == CheckStatus.Solved ? EducationalCoreIcons.TaskSolved : EducationalCoreIcons.TaskFailed;
   }

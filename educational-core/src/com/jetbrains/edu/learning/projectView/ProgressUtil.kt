@@ -14,7 +14,9 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import java.awt.Color
 import javax.swing.JProgressBar
 
@@ -48,7 +50,10 @@ object ProgressUtil {
 
   private fun getSolvedTasks(lesson: Lesson): Int {
     return lesson.taskList
-      .filter { it.status == CheckStatus.Solved }
+      .filter {
+        val project = it.project ?: return@filter false
+        it.status == CheckStatus.Solved || SubmissionsManager.getInstance(project).containsCorrectSubmission(it.id)
+      }
       .count()
   }
 

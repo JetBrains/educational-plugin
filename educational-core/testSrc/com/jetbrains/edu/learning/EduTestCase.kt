@@ -57,6 +57,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()
+    SubmissionsManager.getInstance(project).clear()
     // In this method course is set before course files are created so `CCProjectComponent.createYamlConfigFilesIfMissing` is called
     // for course with no files. This flag is checked in this method and it does nothing if the flag is false
     project.putUserData(YamlFormatSettings.YAML_TEST_PROJECT_READY, false)

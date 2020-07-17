@@ -25,7 +25,7 @@ abstract class SubmissionsTestBase : EduTestCase() {
                                                checkStatus: String) {
     val submissions = submissionsManager.getSubmissionsFromMemory(setOf(taskId))
     assertNotNull("Submissions list should not be null", submissions)
-    assertTrue(submissions!!.size == 1)
+    assertEquals(1, submissions!!.size)
     assertEquals(checkStatus, submissions[0].status)
   }
 
