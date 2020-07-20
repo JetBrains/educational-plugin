@@ -109,6 +109,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
                                        ActionPlaces.UNKNOWN,
                                        DataManager.getInstance().getDataContext(coursePanel))
     )
+    doValidation(coursePanel)
   }
 
   private fun doValidation(coursePanel: NewCoursePanel) {
