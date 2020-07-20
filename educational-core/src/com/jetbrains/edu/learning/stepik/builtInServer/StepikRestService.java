@@ -118,7 +118,6 @@ public class StepikRestService extends OAuthRestService {
         final boolean success = StepikConnector.getInstance().login(code, StepikAuthorizer.getOAuthRedirectUrl());
         final StepikUser user = EduSettings.getInstance().getUser();
         if (success && user != null) {
-          EduSettings.getInstance().setUser(user);
           showOkPage(request, context);
           showStepikNotification(NotificationType.INFORMATION,
                                  "Logged in as " + user.getFirstName() + " " + user.getLastName());
