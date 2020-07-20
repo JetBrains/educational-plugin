@@ -136,8 +136,8 @@ class CCPushLesson : CCPushAction(LessonType.presentableName) {
         if (positionChanged) {
           showErrorNotification(
             project,
-            EduCoreBundle.message("error.failed.to.update.lesson"),
-            EduCoreBundle.message("error.failed.to.update.lesson.position.changed")
+            EduCoreBundle.message("error.failed.to.update"),
+            EduCoreBundle.message("error.failed.to.update.item.position.changed")
           )
 
 

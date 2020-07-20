@@ -100,8 +100,8 @@ class CCPushSection : CCPushAction(SectionType.presentableName) {
       if (positionChanged) {
         showErrorNotification(
           project,
-          EduCoreBundle.message("error.failed.to.update.section"),
-          EduCoreBundle.message("error.failed.to.update.section.position.changed")
+          EduCoreBundle.message("error.failed.to.update"),
+          EduCoreBundle.message("error.failed.to.update.item.position.changed")
         )
         return
       }

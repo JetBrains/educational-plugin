@@ -103,7 +103,7 @@ public class CCPushCourse extends CCPushAction {
       EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId(), null, true);
       if (courseInfo == null) {
         Notification notification =
-          new Notification("update.course", EduCoreBundle.message("error.failed.to.update.course"),
+          new Notification("update.course", EduCoreBundle.message("error.failed.to.update"),
                            EduCoreBundle.message("error.failed.to.update.no.course.on.stepik", StepikNames.STEPIK),
                            NotificationType.ERROR, createPostCourseNotificationListener(project, course));
         notification.notify(project);
