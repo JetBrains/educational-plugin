@@ -40,18 +40,6 @@ class StyleManager {
 
   val textStyleHeader = "style=font-size:${bodyFontSize}"
 
-  val scrollBarStylesheets = getScrollBarStylesheetsUrls()
-  val baseStylesheet = resourceUrl(BROWSER_CSS)
-
-  fun resources(content: String) = StyleResourcesManager(content).resources
-
-  private fun getScrollBarStylesheetsUrls(): List<String> {
-    return listOf(resourceUrl(SCROLL_BARS_BASE_CSS),
-                  if (SystemInfo.isWindows) resourceUrl(SCROLL_BARS_WIN_SHAPE_CSS)
-                  else resourceUrl(SCROLL_BARS_MAC_LINUX_SHAPE_CSS),
-                  resourceUrl(scrollBarsCssFileName()))
-  }
-
   private fun java.awt.Color.asCssColor(): Color = Color("#${ColorUtil.toHex(this)}")
 
   private fun bodyColor(): Color {
@@ -63,15 +51,30 @@ class StyleManager {
     else Color(TaskDescriptionBundle.message("code.background"))
   }
 
-  private fun scrollBarsCssFileName(): String = when {
-    isHighContrast() -> SCROLL_BARS_HIGH_CONTRAST_CSS
-    UIUtil.isUnderDarcula() -> SCROLL_BARS_DARCULA_CSS
-    else -> SCROLL_BARS_LIGHT_CSS
-  }
-
   companion object {
-    internal val LOG = Logger.getInstance(this::class.java)
-    const val FONT_FACTOR_PROPERTY = "edu.task.description.font.factor"
+    internal val LOG: Logger = Logger.getInstance(this::class.java)
+
+    const val FONT_FACTOR_PROPERTY: String = "edu.task.description.font.factor"
+
+    private val scrollBarsCssFileName: String
+      get() = when {
+        isHighContrast() -> SCROLL_BARS_HIGH_CONTRAST_CSS
+        UIUtil.isUnderDarcula() -> SCROLL_BARS_DARCULA_CSS
+        else -> SCROLL_BARS_LIGHT_CSS
+      }
+
+    val baseStylesheet: String = resourceUrl(BROWSER_CSS)
+
+    val scrollBarStylesheets: List<String>
+      get() {
+        return listOf(
+          resourceUrl(SCROLL_BARS_BASE_CSS),
+          if (SystemInfo.isWindows) resourceUrl(SCROLL_BARS_WIN_SHAPE_CSS) else resourceUrl(SCROLL_BARS_MAC_LINUX_SHAPE_CSS),
+          resourceUrl(scrollBarsCssFileName)
+        )
+      }
+
+    fun resources(content: String): Map<String, String?> = StyleResourcesManager(content).resources
   }
 }
 

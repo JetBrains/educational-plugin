@@ -61,12 +61,11 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
 
   fun updateLaf() {
     Platform.runLater {
-      val styleManager = StyleManager()
-      val baseStylesheet = styleManager.baseStylesheet
+      val baseStylesheet = StyleManager.baseStylesheet
       myEngine.userStyleSheetLocation = baseStylesheet
       panel.scene.stylesheets.clear()
       panel.scene.stylesheets.add(baseStylesheet)
-      panel.scene.stylesheets.addAll(styleManager.scrollBarStylesheets)
+      panel.scene.stylesheets.addAll(StyleManager.scrollBarStylesheets)
       myPane.style = "-fx-background-color: ${StyleManager().bodyBackground};"
       myEngine.reload()
     }

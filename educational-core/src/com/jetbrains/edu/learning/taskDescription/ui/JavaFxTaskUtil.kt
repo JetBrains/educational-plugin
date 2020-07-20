@@ -18,9 +18,7 @@ const val SINGLE_CHOICE_LABEL = "Select one option from the list:"
 
 fun htmlWithResources(project: Project, content: String): String {
   val templateText = loadText("/style/template.html.ft")
-  val styleManager = StyleManager()
-
-  val textWithResources = StrSubstitutor(styleManager.resources(content)).replace(templateText) ?: "Cannot load task text"
+  val textWithResources = StrSubstitutor(StyleManager.resources(content)).replace(templateText) ?: "Cannot load task text"
   return absolutizePaths(project, textWithResources)
 }
 
