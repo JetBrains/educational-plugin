@@ -92,7 +92,7 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
 
   abstract fun setText(text: String, task: Task?)
 
-  protected abstract fun updateLaf()
+  protected open fun updateLaf() {}
 
   private inner class StudyLafManagerListener : LafManagerListener {
     override fun lookAndFeelChanged(manager: LafManager) {

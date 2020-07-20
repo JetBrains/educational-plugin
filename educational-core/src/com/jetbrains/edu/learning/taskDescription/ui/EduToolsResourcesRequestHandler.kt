@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.getResource
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.getResource
 import io.netty.channel.Channel
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext

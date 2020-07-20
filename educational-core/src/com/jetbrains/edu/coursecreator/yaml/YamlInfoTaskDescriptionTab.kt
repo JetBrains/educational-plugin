@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.*
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.resourceUrl
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.resourceUrl
 import org.apache.commons.lang.text.StrSubstitutor
 import java.awt.BorderLayout
 import javax.swing.JComponent

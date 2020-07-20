@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow.Companion.HINT_HEADER
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow.Companion.HINT_HEADER_EXPANDED
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
 import com.sun.javafx.application.PlatformImpl
 import com.sun.webkit.dom.DocumentImpl
 import com.sun.webkit.dom.ElementImpl
@@ -61,11 +62,11 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
 
   fun updateLaf() {
     Platform.runLater {
-      val baseStylesheet = StyleManager.baseStylesheet
+      val baseStylesheet = StyleResourcesManager.resourceUrl(StyleResourcesManager.BROWSER_CSS)
       myEngine.userStyleSheetLocation = baseStylesheet
       panel.scene.stylesheets.clear()
       panel.scene.stylesheets.add(baseStylesheet)
-      panel.scene.stylesheets.addAll(StyleManager.scrollBarStylesheetFiles.values)
+      panel.scene.stylesheets.addAll(StyleResourcesManager.scrollBarStylesheetResources)
       myPane.style = "-fx-background-color: ${StyleManager().bodyBackground};"
       myEngine.reload()
     }

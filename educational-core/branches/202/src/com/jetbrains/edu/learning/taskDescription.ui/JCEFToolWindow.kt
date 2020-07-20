@@ -82,8 +82,6 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     taskSpecificJBCefBrowser.component.isVisible = true
   }
 
-  override fun updateLaf() {}
-
   private inner class TaskInfoRequestHandler : CefRequestHandlerAdapter() {
     private val jcefLinkInToolWindowHandler by lazy {
       JCefToolWindowLinkHandler()

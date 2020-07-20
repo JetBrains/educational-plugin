@@ -13,8 +13,7 @@ internal class TypographyManager {
   val bodyLineHeight = (bodyFontSize * lineHeightScaleFactor("body.line.height")).toInt()
   val codeLineHeight = (codeFontSize * lineHeightScaleFactor("code.line.height")).toInt()
 
-  val bodyFont = TaskDescriptionBundle.getOsDependentParameter(
-    if (isJavaFxOrJCEF()) "body.font" else "swing.body.font")
+  val bodyFont = TaskDescriptionBundle.getOsDependentParameter(if (isJavaFxOrJCEF()) "body.font" else "swing.body.font")
   val codeFont = TaskDescriptionBundle.getOsDependentParameter("code.font")
 
   private fun fontScaleFactor(parameterName: String): Float {
