@@ -120,6 +120,9 @@ public class EduSettings implements PersistentStateComponent<Element> {
 
   private JavaUILibrary initialJavaUiLibrary() {
     if (javaUiLibrary != null) return javaUiLibrary;
+    if (ApplicationManager.getApplication().isInternal() && EduUtils.hasJCEF()) {
+      return JavaUILibrary.JCEF;
+    }
     if (EduUtils.hasJavaFx()) {
       return JavaUILibrary.JAVAFX;
     } else if (EduUtils.hasJCEF()) {
