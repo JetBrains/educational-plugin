@@ -65,7 +65,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
       myEngine.userStyleSheetLocation = baseStylesheet
       panel.scene.stylesheets.clear()
       panel.scene.stylesheets.add(baseStylesheet)
-      panel.scene.stylesheets.addAll(StyleManager.scrollBarStylesheets)
+      panel.scene.stylesheets.addAll(StyleManager.scrollBarStylesheetFiles.values)
       myPane.style = "-fx-background-color: ${StyleManager().bodyBackground};"
       myEngine.reload()
     }

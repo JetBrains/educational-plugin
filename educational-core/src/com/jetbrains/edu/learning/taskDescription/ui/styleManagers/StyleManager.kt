@@ -63,9 +63,10 @@ class StyleManager {
         else -> SCROLL_BARS_LIGHT_CSS
       }
 
-    val baseStylesheet: String = resourceUrl(BROWSER_CSS)
+    val baseStylesheet: String
+      get() = resourceUrl(BROWSER_CSS)
 
-    val scrollBarStylesheets: List<String>
+    val scrollBarStylesheetFiles: List<String>
       get() {
         return listOf(
           resourceUrl(SCROLL_BARS_BASE_CSS),
@@ -74,7 +75,7 @@ class StyleManager {
         )
       }
 
-    fun resources(content: String): Map<String, String?> = StyleResourcesManager(content).resources
+    fun resources(content: String): Map<String, String> = StyleResourcesManager(content).resources
   }
 }
 

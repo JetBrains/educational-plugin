@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
-import com.jetbrains.edu.learning.taskDescription.ui.loadText
 import kotlinx.css.*
 import kotlinx.css.properties.lh
 
@@ -12,27 +11,29 @@ internal class StyleResourcesManager(taskText: String = "") {
   val resources = mapOf(
     "typography_color_style" to typographyAndColorStylesheet(),
     "content" to taskText,
-    "base_css" to loadText(BROWSER_CSS),
+    "base_css" to StyleManager.baseStylesheet,
     "mathJax" to "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
     resourcePair("stepik_link", STEPIK_LINK_CSS),
-    resourcePair("codeforces_task", CODEFORCES_TASK_CSS),
-    *panelSpecificHintFiles()
-  ).plus(VideoTaskResourcesManager().videoResources)
+    resourcePair("codeforces_task", CODEFORCES_TASK_CSS)
+  )
+    .plus(panelSpecificHintFiles)
+    .plus(VideoTaskResourcesManager().videoResources)
     .plus(ChoiceTaskResourcesManager().choiceTaskResources)
 
-  private fun panelSpecificHintFiles(): Array<Pair<String, String>> {
-    return if (isJavaFxOrJCEF()) {
-      arrayOf(
-        resourcePair("jquery", JQUERY_JS),
-        resourcePair("hint_base", JAVAFX_BASE_CSS),
-        resourcePair("hint_laf_specific", hintLafSpecificFileName()),
-        resourcePair("toggle_hint_script", JAVAFX_TOGGLE_HINT_JS)
-      )
+  private val panelSpecificHintFiles: Map<String, String>
+    get() {
+      return if (isJavaFxOrJCEF()) {
+        mapOf(
+          "jquery" to resourceUrl(JQUERY_JS),
+          "hint_base" to resourceUrl(JAVAFX_BASE_CSS),
+          "hint_laf_specific" to resourceUrl(hintLafSpecificFileName()),
+          "toggle_hint_script" to resourceUrl(JAVAFX_TOGGLE_HINT_JS)
+        )
+      }
+      else {
+        mapOf("hint_base" to SWING_BASE_CSS)
+      }
     }
-    else {
-      arrayOf(resourcePair("hint_base", SWING_BASE_CSS))
-    }
-  }
 
   private fun resourcePair(name: String, path: String) = name to resourceUrl(path)
 

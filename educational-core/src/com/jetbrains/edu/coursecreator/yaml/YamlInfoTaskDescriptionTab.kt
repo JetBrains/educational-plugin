@@ -29,7 +29,6 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel() {
     templateText = StrSubstitutor(StyleManager.resources(templateText)).replace(templateText)
     val yamlCss = if (UIUtil.isUnderDarcula()) "/yaml-tab/yaml-base-darcula.css" else "/yaml-tab/yaml-base.css"
     templateText = templateText.replace("\${yaml-base-css}", resourceUrl(yamlCss))
-    templateText = templateText.replace("\${base-css}", StyleManager.baseStylesheet)
 
     val defaultSwingPanel: (String) -> JComponent = {
       val textPane = createTextPane()
