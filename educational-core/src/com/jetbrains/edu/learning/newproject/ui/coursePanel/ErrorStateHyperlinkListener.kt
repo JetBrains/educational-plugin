@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.actions.SwitchTaskPanelAction
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -53,7 +54,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
         StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
         EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
       }
-      ErrorState.JavaFXorJCEFRequired -> invokeSwitchBootJdk(coursePanel)
+      ErrorState.JavaFXorJCEFRequired -> invokeSwitchUILibrary(coursePanel)
       // BACKCOMPAT: 2019.3. Use `PluginsAdvertiser.installAndEnable`
       ErrorState.IncompatibleVersion -> @Suppress("DEPRECATION") PluginsAdvertiser.installAndEnablePlugins(setOf(EduNames.PLUGIN_ID)) {}
       is ErrorState.RequirePlugins -> {
@@ -96,11 +97,11 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
     })
   }
 
-  private fun invokeSwitchBootJdk(coursePanel: NewCoursePanel) {
-    val switchBootJdkId = "SwitchBootJdk"
-    val action = ActionManager.getInstance().getAction(switchBootJdkId)
+  private fun invokeSwitchUILibrary(coursePanel: NewCoursePanel) {
+    val switchUILibraryAction = SwitchTaskPanelAction.ACTION_ID
+    val action = ActionManager.getInstance().getAction(switchUILibraryAction)
     if (action == null) {
-      Logger.getInstance(CoursesPanel::class.java).error("$switchBootJdkId action not found")
+      Logger.getInstance(CoursesPanel::class.java).error("$switchUILibraryAction action not found")
       return
     }
     action.actionPerformed(

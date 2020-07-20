@@ -71,4 +71,8 @@ class SwitchTaskPanelAction : DumbAwareAction() {
     val project = e.project
     e.presentation.isEnabled = project != null && EduUtils.isEduProject(project) || ACTION_SEARCH == place
   }
+
+  companion object {
+    const val ACTION_ID = "Educational.SwitchTaskDescriptionPanel"
+  }
 }
