@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.replaceEncodedShortcuts
+import com.jetbrains.rd.util.firstOrNull
 import java.util.*
 
 const val SOURCE = "source"
@@ -58,6 +59,8 @@ const val THUMBNAIL = "thumbnail"
 const val URLS = "urls"
 const val QUALITY = "quality"
 const val URL = "url"
+const val CODE_TEMPLATES_HEADER = "code_templates_header_lines_count"
+const val CODE_TEMPLATES_FOOTER = "code_templates_footer_lines_count"
 
 class Step {
   @JsonProperty(TEXT)
@@ -170,6 +173,12 @@ open class PyCharmStepOptions : StepOptions {
   @JsonProperty(SOLUTION_HIDDEN)
   var solutionHidden: Boolean? = null
 
+  @JsonProperty(CODE_TEMPLATES_HEADER)
+  var codeTemplatesHeader: Map<String, Int>? = null
+
+  @JsonProperty(CODE_TEMPLATES_FOOTER)
+  var codeTemplatesFooter: Map<String, Int>? = null
+
   constructor()
 
   constructor(project: Project, task: Task) {
@@ -186,6 +195,13 @@ open class PyCharmStepOptions : StepOptions {
     solutionHidden = task.solutionHidden
   }
 }
+
+val PyCharmStepOptions.hasHeaderOrFooter: Boolean
+  get() {
+    val header = codeTemplatesHeader?.firstOrNull()?.value ?: return false
+    val footer = codeTemplatesFooter?.firstOrNull()?.value ?: return false
+    return header > 0 || footer > 0
+  }
 
 fun collectTaskFiles(project: Project, task: Task): MutableList<TaskFile> {
   val files = mutableListOf<TaskFile>()

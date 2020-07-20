@@ -7,7 +7,10 @@ import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
+import com.jetbrains.edu.learning.stepik.hasHeaderOrFooter
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
@@ -22,6 +25,13 @@ class HyperskillTaskBuilder(course: Course, lesson: Lesson, private val stepSour
   private fun Task.description(theoryId: Int?): String = buildString {
     appendln("<b>$name</b> ${link(stepLink(id), "Open on ${EduNames.JBA}", true)}")
     appendln("<br><br>")
+
+    val options = stepSource.block?.options as? PyCharmStepOptions
+    if (options?.hasHeaderOrFooter == true) {
+      appendln(EduCoreBundle.message("hyperskill.hidden.content"))
+      appendln("<br>")
+    }
+
     appendln(descriptionText)
     if (theoryId != null) {
       append(link(stepLink(theoryId), "Show topic summary"))
