@@ -16,7 +16,6 @@
 package com.jetbrains.edu.learning.taskDescription.ui;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.JBUI;
@@ -127,11 +126,6 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
       LOG.warn("Cannot find bulb icon");
     }
     return bulbIconUrl == null ? "" : bulbIconUrl.toExternalForm();
-  }
-
-  @Override
-  protected void updateLaf() {
-    myTaskTextPane.setBackground(EditorColorsManager.getInstance().getGlobalScheme().getDefaultBackground());
   }
 
   class EduHyperlinkListener implements HyperlinkListener {
