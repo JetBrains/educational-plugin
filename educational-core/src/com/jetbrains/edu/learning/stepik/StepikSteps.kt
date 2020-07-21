@@ -24,9 +24,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.replaceEncodedShortcuts
-import com.jetbrains.rd.util.firstOrNull
 import java.util.*
 
 const val SOURCE = "source"
@@ -196,12 +196,12 @@ open class PyCharmStepOptions : StepOptions {
   }
 }
 
-val PyCharmStepOptions.hasHeaderOrFooter: Boolean
-  get() {
-    val header = codeTemplatesHeader?.firstOrNull()?.value ?: return false
-    val footer = codeTemplatesFooter?.firstOrNull()?.value ?: return false
-    return header > 0 || footer > 0
-  }
+fun PyCharmStepOptions.hasHeaderOrFooter(langId: String): Boolean {
+  val lang = HyperskillLanguages.langOfId(langId).langName ?: return false
+  val header = codeTemplatesHeader?.get(lang) ?: return false
+  val footer = codeTemplatesFooter?.get(lang) ?: return false
+  return header > 0 || footer > 0
+}
 
 fun collectTaskFiles(project: Project, task: Task): MutableList<TaskFile> {
   val files = mutableListOf<TaskFile>()

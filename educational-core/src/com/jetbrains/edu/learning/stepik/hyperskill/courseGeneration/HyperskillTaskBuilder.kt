@@ -16,23 +16,28 @@ import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
 import com.jetbrains.edu.learning.taskDescription.link
 
-class HyperskillTaskBuilder(course: Course, lesson: Lesson, private val stepSource: HyperskillStepSource, private val stepId: Int)
-  : StepikTaskBuilder(course, lesson, stepSource, stepId, -1) {
+class HyperskillTaskBuilder(
+  private val course: Course,
+  lesson: Lesson,
+  private val stepSource: HyperskillStepSource,
+  private val stepId: Int
+) : StepikTaskBuilder(course, lesson, stepSource, stepId, -1) {
   override fun getLanguageName(language: Language, languageVersion: String): String? {
     return HyperskillLanguages.langOfId(language.id).langName
   }
 
-  private fun Task.description(theoryId: Int?): String = buildString {
+  private fun Task.description(theoryId: Int?, langId: String): String = buildString {
     appendln("<b>$name</b> ${link(stepLink(id), "Open on ${EduNames.JBA}", true)}")
     appendln("<br><br>")
+    appendln(descriptionText)
 
     val options = stepSource.block?.options as? PyCharmStepOptions
-    if (options?.hasHeaderOrFooter == true) {
+    if (options?.hasHeaderOrFooter(langId) == true) {
+      appendln("<b>${EduCoreBundle.message("label.attention")}</b><br><br>")
       appendln(EduCoreBundle.message("hyperskill.hidden.content"))
-      appendln("<br>")
+      appendln("<br><br>")
     }
 
-    appendln(descriptionText)
     if (theoryId != null) {
       append(link(stepLink(theoryId), "Show topic summary"))
     }
@@ -41,9 +46,10 @@ class HyperskillTaskBuilder(course: Course, lesson: Lesson, private val stepSour
   override fun createTask(type: String): Task? {
     val task = super.createTask(type)
     if (task is CodeTask) {
+      val langId = course.languageID
       task.apply {
         name = stepSource.title
-        descriptionText = description(stepSource.topicTheory)
+        descriptionText = description(stepSource.topicTheory, langId)
         feedbackLink = FeedbackLink(stepLink(stepId))
       }
     }
