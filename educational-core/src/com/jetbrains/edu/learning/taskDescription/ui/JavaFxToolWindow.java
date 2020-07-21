@@ -33,18 +33,18 @@ import org.w3c.dom.Document;
 import javax.swing.*;
 
 public class JavaFxToolWindow extends TaskDescriptionToolWindow {
-  private BrowserWindow myBrowserWindow;
+  private final BrowserWindow myBrowserWindow;
 
   private BrowserWindow taskSpecificBrowserWindow;
 
   public JavaFxToolWindow(@NotNull Project project) {
     super(project);
+    myBrowserWindow = new BrowserWindow(project, true);
   }
 
   @NotNull
   @Override
   public JComponent createTaskInfoPanel() {
-    myBrowserWindow = new BrowserWindow(getProject(), true);
     return myBrowserWindow.getPanel();
   }
 
@@ -90,11 +90,6 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
         taskSpecificBrowserWindow.getEngine().documentProperty().removeListener(this);
       }
     });
-  }
-
-  @Override
-  protected void updateLaf() {
-    myBrowserWindow.updateLaf();
   }
 
   @Override

@@ -16,8 +16,6 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.ide.ui.LafManager
-import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
@@ -40,11 +38,6 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
                                              "  <div class='hint_content'>" +
                                              " %s" +
                                              "  </div>"
-
-  init {
-    // TODO: provide correct parent disposable here to correctly unload the plugin
-    project.messageBus.connect().subscribe(LafManagerListener.TOPIC, StudyLafManagerListener())
-  }
 
   abstract fun createTaskInfoPanel(): JComponent
 
@@ -91,14 +84,6 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
   }
 
   abstract fun setText(text: String, task: Task?)
-
-  protected open fun updateLaf() {}
-
-  private inner class StudyLafManagerListener : LafManagerListener {
-    override fun lookAndFeelChanged(manager: LafManager) {
-      updateLaf()
-    }
-  }
 
   companion object {
     const val HINT_HEADER: String = "hint_header"

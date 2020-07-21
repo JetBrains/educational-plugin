@@ -1,7 +1,10 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.ide.ui.LafManager
+import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -40,6 +43,8 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
     get() = myWebComponent.engine
 
   init {
+    ApplicationManager.getApplication().messageBus.connect(this)
+      .subscribe(LafManagerListener.TOPIC, StudyLafManagerListener())
     PlatformImpl.startup {
       Platform.setImplicitExit(false)
       myPane = StackPane()
@@ -59,7 +64,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
     panel.isVisible = true
   }
 
-  fun updateLaf() {
+  private fun updateLaf() {
     Platform.runLater {
       val baseStylesheet = StyleResourcesManager.resourceUrl(StyleResourcesManager.BROWSER_CSS)
       myEngine.userStyleSheetLocation = baseStylesheet
@@ -172,6 +177,12 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
         EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.STEPIK)
       }
       return true
+    }
+  }
+
+  private inner class StudyLafManagerListener : LafManagerListener {
+    override fun lookAndFeelChanged(manager: LafManager) {
+      updateLaf()
     }
   }
 
