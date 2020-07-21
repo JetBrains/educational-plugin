@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "block": {
+        "name": "code",
+        "text": "<p>You are asked to perform a security audit in a baking company. Their products are represented by <code class=\"language-java\">Bakery</code> class and its different subclasses like <code class=\"language-java\">Cake</code> and <code class=\"language-java\">LemonTart</code>. All the pastries are sold in nice boxes. Prior to being released to the customer, all boxes are checked with carefully designed <code class=\"language-java\">NaiveQualityControl</code> class. However, recently a number of mistakes happened and unedible things were packed in boxes and escaped the quality check.</p>\n\n<p>A short look at <code class=\"language-java\">NaiveQualityControl</code> led you to the conclusion that it's quite easy to provide <code class=\"language-java\">NaiveQualityControl</code> with <code class=\"language-java\">Box</code> filled with <code class=\"language-java\">Paper</code> that will pass QC. Now your task is to demonstrate this mistake. Here's the code:</p>\n\n<pre><code class=\"language-java\">/* This class and its subclasses should pass quality check */\nclass Bakery {}\n\nclass Cake extends Bakery {}\n\n/* This one should not */\nclass Paper {}\n\n/* These boxes are used to pack stuff */\nclass Box&lt;T&gt; {\n    void put(T item) { /* implementation omitted */ }\n    T get() { /* implementation omitted */ }\n}\n\n/* This quality checker ensures that boxes for sale contain Bakery and anything else */\nclass NaiveQualityControl {\n  \n  public static boolean check(List&lt;Box&lt;? extends Bakery&gt;&gt; boxes) {\n    /* Method signature guarantees that all illegal \n       calls will produce compile-time error... or not? */  \n    return true;  \n  }\n  \n}</code></pre>\n\n<p>You need to add implementation to <code class=\"language-java\">Violator.defraud()</code> method that will do the following:</p>\n\n<ul>\n\t<li>Create <code class=\"language-java\">List of Boxes&lt;? extends Bakery&gt;</code> according to the method signature</li>\n\t<li>Put <code class=\"language-java\">Paper</code> object in at least one <code class=\"language-java\">Box</code> in the list</li>\n\t<li>The resulting list should pass <code class=\"language-java\">NaiveQualityControl </code>check</li>\n</ul>\n\n<p>Do not change the method signature or code of any other classes, just add implementation to defraud method.</p>",
+        "video": null,
+        "options": {
+          "execution_time_limit": 5,
+          "execution_memory_limit": 256,
+          "limits": {
+            "TEXT": {
+              "time": 8,
+              "memory": 256
+            }
+          },
+          "code_templates": {
+            "TEXT": "/**\n * Class to work with\n */\nclass Violator {\n\n    public static List<Box<? extends Bakery>> defraud() {\n        // Add implementation here\n    }\n\n}"
+          },
+          "code_templates_header_lines_count": {
+            "TEXT": 8
+          },
+          "code_templates_footer_lines_count": {
+            "TEXT": 124
+          },
+          "code_templates_options": {},
+          "samples": [],
+          "is_run_user_code_allowed": true,
+          "language": ""
+        }
+      },
+      "title": "Violator"
+    }
+  ]
+}

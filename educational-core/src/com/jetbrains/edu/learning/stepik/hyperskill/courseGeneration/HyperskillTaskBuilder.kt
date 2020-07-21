@@ -33,8 +33,8 @@ class HyperskillTaskBuilder(
 
     val options = stepSource.block?.options as? PyCharmStepOptions
     if (options?.hasHeaderOrFooter(langId) == true) {
-      appendln("<b>${EduCoreBundle.message("label.attention")}</b><br><br>")
-      appendln(EduCoreBundle.message("hyperskill.hidden.content"))
+      appendln("<b>${EduCoreBundle.message("label.caution")}</b><br><br>")
+      appendln(EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check")))
       appendln("<br><br>")
     }
 
@@ -46,10 +46,9 @@ class HyperskillTaskBuilder(
   override fun createTask(type: String): Task? {
     val task = super.createTask(type)
     if (task is CodeTask) {
-      val langId = course.languageID
       task.apply {
         name = stepSource.title
-        descriptionText = description(stepSource.topicTheory, langId)
+        descriptionText = description(stepSource.topicTheory, this@HyperskillTaskBuilder.course.languageID)
         feedbackLink = FeedbackLink(stepLink(stepId))
       }
     }

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFrame
@@ -122,7 +123,8 @@ object HyperskillProjectOpener {
     }
   }
 
-  private fun HyperskillCourse.addProblemTask(stepId: Int) {
+  @VisibleForTesting
+  fun HyperskillCourse.addProblemTask(stepId: Int) {
     var lesson = getProblemsLesson()
     if (lesson == null) {
       lesson = createProblemsLesson()
