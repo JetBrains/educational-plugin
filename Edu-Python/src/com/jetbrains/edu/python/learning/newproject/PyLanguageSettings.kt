@@ -102,32 +102,26 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
 
     @JvmOverloads
     @JvmStatic
-    fun getBaseSdk(course: Course, context: UserDataHolder? = null): String? {
-      val flavor = PythonSdkFlavor.getApplicableFlavors(false)[0]
-      val sdkPaths = flavor.suggestHomePaths(null, context)
-
-      if (sdkPaths.isEmpty()) {
+    fun getBaseSdk(course: Course, context: UserDataHolder? = null): PyBaseSdkDescriptor? {
+      val baseSdks = PyBaseSdksProvider.getBaseSdks(context)
+      if (baseSdks.isEmpty()) {
         return null
       }
-      return sdkPaths.filter {
-        isSdkApplicable(course, flavor.getLanguageLevel(it)) == OK && flavor.getVersionString(it) != null
-      }.maxBy {
-        flavor.getVersionString(it)!!
-      }
+      return baseSdks.filter { isSdkApplicable(course, it.languageLevel) == OK }.maxBy { it.version }
     }
 
     private class NoApplicablePythonError(requiredVersion: Int) : Err<String>(EduPythonBundle.message("error.incorrect.python", requiredVersion))
     private class SpecificPythonRequiredError(requiredVersion: String) : Err<String>(EduPythonBundle.message("error.old.python", requiredVersion))
 
     private fun createFakeSdk(course: Course, context: UserDataHolder?): ProjectJdkImpl? {
-      val fakeSdkPath = getBaseSdk(course, context) ?: return null
+      val baseSdk = getBaseSdk(course, context) ?: return null
       val flavor = PythonSdkFlavor.getApplicableFlavors(false)[0]
       val prefix = flavor.name + " "
-      val versionString = flavor.getVersionString(fakeSdkPath)
-      if (versionString == null || !versionString.contains(prefix)) {
+      val version = baseSdk.version
+      if (prefix !in version) {
         return null
       }
-      val pythonVersion = versionString.substring(prefix.length)
+      val pythonVersion = version.substring(prefix.length)
       val name = "new virtual env $pythonVersion"
       return ProjectJdkImpl(name, PyFakeSdkType, "", pythonVersion)
     }

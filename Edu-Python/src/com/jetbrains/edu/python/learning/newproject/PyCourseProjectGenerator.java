@@ -99,7 +99,8 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
       Sdk sdk = settings.getSdk();
       return sdk != null ? sdk.getHomePath() : null;
     }
-    return PyLanguageSettings.getBaseSdk(course);
+    PyBaseSdkDescriptor baseSdk = PyLanguageSettings.getBaseSdk(course);
+    return baseSdk == null ? null : baseSdk.getPath();
   }
 
   @Nullable
