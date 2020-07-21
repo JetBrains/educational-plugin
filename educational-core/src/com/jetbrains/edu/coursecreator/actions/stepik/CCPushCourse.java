@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
@@ -104,7 +105,7 @@ public class CCPushCourse extends CCPushAction {
       if (courseInfo == null) {
         Notification notification =
           new Notification("update.course", EduCoreBundle.message("error.failed.to.update"),
-                           EduCoreBundle.message("error.failed.to.update.no.course.on.stepik", StepikNames.STEPIK),
+                           EduCoreBundle.message("error.failed.to.update.no.course.on.stepik", StepikNames.STEPIK, getUploadText()),
                            NotificationType.ERROR, createPostCourseNotificationListener(project, course));
         notification.notify(project);
         return;
@@ -113,7 +114,7 @@ public class CCPushCourse extends CCPushAction {
         Notification notification =
           new Notification("update.course", EduCoreBundle.message("error.mismatch.format.version"),
                            EduCoreBundle.message("error.mismatch.format.version.invalid.plugin.version",
-                                                 PluginUtils.pluginVersion(EduNames.PLUGIN_ID)),
+                                                 PluginUtils.pluginVersion(EduNames.PLUGIN_ID), getUpdateText()),
                            NotificationType.WARNING, createUpdateCourseNotificationListener(project, course));
         notification.notify(project);
         return;
@@ -148,5 +149,17 @@ public class CCPushCourse extends CCPushAction {
         EduCounterUsageCollector.updateCourse();
       }
     });
+  }
+
+  @Nls(capitalization = Nls.Capitalization.Title)
+  public static String getUpdateText() {
+    // TODO i18n change after refactoring [CCPushAction]
+    return CCPushAction.getUpdateText(CourseType.INSTANCE.getPresentableTitleName());
+  }
+
+  @Nls(capitalization = Nls.Capitalization.Title)
+  public static String getUploadText() {
+    // TODO i18n change after refactoring [CCPushAction]
+    return CCPushAction.getUploadText(CourseType.INSTANCE.getPresentableTitleName());
   }
 }

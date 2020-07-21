@@ -133,7 +133,7 @@ public class CCPushTask extends CCPushAction {
     int positionOnServer = getTaskPosition(task.getId());
     if (position != positionOnServer) {
       showErrorNotification(project, EduCoreBundle.message("error.failed.to.update"),
-                            EduCoreBundle.message("error.failed.to.update.item.position.changed"));
+                            EduCoreBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateText()));
       return;
     }
     Task taskCopy = task.copy();

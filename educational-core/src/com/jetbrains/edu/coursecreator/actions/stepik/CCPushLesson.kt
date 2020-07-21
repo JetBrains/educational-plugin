@@ -137,7 +137,7 @@ class CCPushLesson : CCPushAction(LessonType.presentableName) {
           showErrorNotification(
             project,
             EduCoreBundle.message("error.failed.to.update"),
-            EduCoreBundle.message("error.failed.to.update.item.position.changed")
+            EduCoreBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateText())
           )
 
 
