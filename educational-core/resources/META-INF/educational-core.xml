@@ -191,9 +191,6 @@
                         serviceImplementation="com.jetbrains.edu.learning.stepik.api.StepikConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.stepik.api.MockStepikConnector"/>
 
-    <applicationService serviceInterface="com.intellij.refactoring.rename.RenameHandlerRegistry"
-                        serviceImplementation="com.jetbrains.edu.learning.handlers.EduRenameHandlerRegistry"
-                        overrides="true"/>
     <applicationService serviceImplementation="com.jetbrains.edu.coursecreator.settings.CCSettings"/>
 
     <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.StepikWidgetProvider"/>
@@ -225,8 +222,16 @@
     <editorFactoryListener implementation="com.jetbrains.edu.learning.editor.EduEditorFactoryListener"/>
     <!-- should be last, otherwise project tree will be changed with GradleTreeStructureProvider -->
     <highlightErrorFilter implementation="com.jetbrains.edu.learning.editor.EduHighlightErrorFilter"/>
+
+    <!-- Rename -->
     <renameHandler implementation="com.jetbrains.edu.learning.handlers.EduCourseItemRenameHandler"/>
+    <renamePsiElementProcessor implementation="com.jetbrains.edu.learning.handlers.rename.SectionRenameProcessor" order="first"/>
+    <renamePsiElementProcessor implementation="com.jetbrains.edu.learning.handlers.rename.LessonRenameProcessor" order="first"/>
+    <renamePsiElementProcessor implementation="com.jetbrains.edu.learning.handlers.rename.TaskRenameProcessor" order="first"/>
+
+    <!-- Move -->
     <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
+
     <statistics.applicationUsagesCollector implementation="com.jetbrains.edu.learning.statistics.EduStateUsagesCollector"/>
     <statistics.counterUsagesCollector groupId="educational.counters" version="2"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
@@ -249,9 +254,7 @@
                              order="first"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCTaskMoveHandlerDelegate"
                              order="first"/>
-    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCTaskRenameHandler" order="first"/>
-    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCLessonRenameHandler" order="first"/>
-    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCSectionRenameHandler" order="first"/>
+
     <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCDescriptionFileRenameHandler" order="first"/>
     <highlightErrorFilter implementation="com.jetbrains.edu.coursecreator.CCHighlightErrorFilter"/>
 
