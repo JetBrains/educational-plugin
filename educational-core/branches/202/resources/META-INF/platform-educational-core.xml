@@ -1,4 +1,9 @@
 <idea-plugin>
+  <applicationListeners>
+    <listener class="com.jetbrains.edu.learning.EduDynamicPluginListener"
+              topic="com.intellij.ide.plugins.DynamicPluginListener"/>
+  </applicationListeners>
+
   <extensions defaultExtensionNs="com.intellij">
     <defaultLiveTemplates file="liveTemplates/hint.xml"/>
   </extensions>
