@@ -14,11 +14,13 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.ext.saveStudentAnswersIfNeeded
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import java.util.*
 import javax.swing.tree.TreePath
 
@@ -26,7 +28,8 @@ object NavigationUtils {
 
   @JvmStatic
   fun nextTask(task: Task): Task? {
-    if (task.course is HyperskillCourse && task.status != CheckStatus.Solved) return null
+    val project = task.project ?: return null
+    if (task.course is HyperskillCourse && !SubmissionsManager.getInstance(project).containsCorrectSubmission(task.id)) return null
 
     val currentLesson = task.lesson
     val taskList = currentLesson.taskList

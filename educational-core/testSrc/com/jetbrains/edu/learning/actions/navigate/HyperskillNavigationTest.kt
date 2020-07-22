@@ -11,8 +11,10 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.withTestDialog
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
@@ -365,6 +367,31 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
 
     assertThat(task2.taskFiles.keys, not(hasItem("src/Baz.kt")))
+  }
+
+  fun `test navigate to next unavailable`() {
+    val course = createHyperskillCourse()
+    val task = course.findTask("lesson1", "task1")
+    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, CheckStatus.Failed, Submission())
+
+    task.status = CheckStatus.Failed
+    task.openTaskFileInEditor("src/Task.kt")
+    val presentation = myFixture.testAction(NextTaskAction())
+    assertFalse(presentation.isEnabledAndVisible)
+  }
+
+  fun `test navigate to next available when we have correct submission`() {
+    val course = createHyperskillCourse()
+    val task = course.findTask("lesson1", "task1")
+
+    val submissionsManager = SubmissionsManager.getInstance(project)
+    submissionsManager.addToSubmissionsWithStatus(task.id, CheckStatus.Solved, Submission())
+    submissionsManager.addToSubmissionsWithStatus(task.id, CheckStatus.Failed, Submission())
+
+    task.status = CheckStatus.Failed
+    task.openTaskFileInEditor("src/Task.kt")
+    val presentation = myFixture.testAction(NextTaskAction())
+    assertTrue(presentation.isEnabledAndVisible)
   }
 
   private fun createHyperskillCourse(): Course {
