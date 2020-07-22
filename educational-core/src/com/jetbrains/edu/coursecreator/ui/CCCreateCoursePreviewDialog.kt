@@ -29,7 +29,8 @@ class CCCreateCoursePreviewDialog(
   private val myConfigurator: EduConfigurator<*>
 ) : DialogWrapper(true) {
 
-  private val myPanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = true, isLocationFieldNeeded = false)
+  private val myPanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = true,
+                                                       isLocationFieldNeeded = false) { _, _ -> createCoursePreview() }
 
   init {
     title = "Course Preview"
