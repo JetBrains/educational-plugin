@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.util.xmlb.annotations.Transient;
+import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -168,7 +169,7 @@ public class EduCourse extends Course {
 
   @Override
   public boolean isViewAsEducatorEnabled() {
-    return true;
+    return getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != Boolean.TRUE;
   }
 
   public int getLearnersCount() {

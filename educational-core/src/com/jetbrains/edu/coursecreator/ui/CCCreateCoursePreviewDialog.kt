@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages.showErrorDialog
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -37,7 +38,10 @@ class CCCreateCoursePreviewDialog(
     setOKButtonText("Create")
     myPanel.preferredSize = JBUI.size(WIDTH, HEIGHT)
     myPanel.minimumSize = JBUI.size(WIDTH, HEIGHT)
-    myPanel.bindCourse(myCourse)
+    val courseCopy = myCourse.copy().apply {
+      putUserData(IS_COURSE_PREVIEW_KEY, true)
+    }
+    myPanel.bindCourse(courseCopy)
     init()
     UIUtil.setBackgroundRecursively(rootPane, TaskDescriptionView.getTaskDescriptionBackgroundColor())
   }
@@ -111,5 +115,8 @@ class CCCreateCoursePreviewDialog(
 
     const val PREVIEW_FOLDER_PREFIX: String = "course_preview"
     const val IS_COURSE_PREVIEW: String = "Edu.IsCoursePreview"
+
+    @JvmField
+    val IS_COURSE_PREVIEW_KEY = Key.create<Boolean>(IS_COURSE_PREVIEW)
   }
 }
