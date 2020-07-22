@@ -141,6 +141,6 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   companion object {
-    private const val JCEF_URL_PREFIX = "file:///intellij/jbcefbrowser/"
+    private const val JCEF_URL_PREFIX = "file:///jbcefbrowser/"
   }
 }
