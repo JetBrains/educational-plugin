@@ -248,6 +248,11 @@
     <!--for educators-->
     <xml.xmlSuppressionProvider
         implementation="com.jetbrains.edu.coursecreator.taskDescription.ShortcutInTaskDescriptionSuppressionProvider"/>
+
+    <!-- Rename -->
+    <renamePsiElementProcessor implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCDescriptionFileRenameProcessor" order="first"/>
+
+    <!-- Move -->
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCSectionMoveHandlerDelegate"
                              order="first"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCLessonMoveHandlerDelegate"
@@ -255,7 +260,6 @@
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCTaskMoveHandlerDelegate"
                              order="first"/>
 
-    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCDescriptionFileRenameHandler" order="first"/>
     <highlightErrorFilter implementation="com.jetbrains.edu.coursecreator.CCHighlightErrorFilter"/>
 
     <projectViewPane implementation="com.jetbrains.edu.learning.projectView.CourseViewPane"/>
