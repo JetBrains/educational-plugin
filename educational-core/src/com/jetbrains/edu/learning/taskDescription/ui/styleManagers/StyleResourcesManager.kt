@@ -30,6 +30,15 @@ object StyleResourcesManager {
   private const val STEPIK_LINK_CSS: String = "/style/stepikLink.css"
   private const val SWING_BASE_CSS: String = "/style/hint/swing/base.css"
 
+  private const val INTELLIJ_ICON_FONT_EOT: String = "/style/hint/javafx/fonts/intellij-icon-font.eot"
+  private const val INTELLIJ_ICON_FONT_SVG: String = "/style/hint/javafx/fonts/intellij-icon-font.svg"
+  private const val INTELLIJ_ICON_FONT_TTF: String = "/style/hint/javafx/fonts/intellij-icon-font.ttf"
+  private const val INTELLIJ_ICON_FONT_WOFF: String = "/style/hint/javafx/fonts/intellij-icon-font.woff"
+  private const val INTELLIJ_ICON_FONT_DARCULA_EOT: String = "/style/hint/javafx/fonts/intellij-icon-font-darcula.eot"
+  private const val INTELLIJ_ICON_FONT_DARCULA_SVG: String = "/style/hint/javafx/fonts/intellij-icon-font-darcula.svg"
+  private const val INTELLIJ_ICON_FONT_DARCULA_TTF: String = "/style/hint/javafx/fonts/intellij-icon-font-darcula.ttf"
+  private const val INTELLIJ_ICON_FONT_DARCULA_WOFF: String = "/style/hint/javafx/fonts/intellij-icon-font-darcula.woff"
+
   val resourcesList = listOf(
     BROWSER_CSS,
     CODEFORCES_TASK_CSS,
@@ -46,7 +55,15 @@ object StyleResourcesManager {
     SCROLL_BARS_MAC_LINUX_SHAPE_CSS,
     SCROLL_BARS_WIN_SHAPE_CSS,
     STEPIK_LINK_CSS,
-    SWING_BASE_CSS
+    SWING_BASE_CSS,
+    INTELLIJ_ICON_FONT_EOT,
+    INTELLIJ_ICON_FONT_SVG,
+    INTELLIJ_ICON_FONT_TTF,
+    INTELLIJ_ICON_FONT_WOFF,
+    INTELLIJ_ICON_FONT_DARCULA_EOT,
+    INTELLIJ_ICON_FONT_DARCULA_SVG,
+    INTELLIJ_ICON_FONT_DARCULA_TTF,
+    INTELLIJ_ICON_FONT_DARCULA_WOFF
   )
 
   val scrollBarStylesheetResources: List<String>

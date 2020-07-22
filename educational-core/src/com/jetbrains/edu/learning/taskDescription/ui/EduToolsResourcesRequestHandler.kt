@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.util.io.getHostName
+import com.intellij.util.io.isLocalHost
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.getResource
 import io.netty.channel.Channel
@@ -20,13 +22,15 @@ import java.util.*
  * Used for resolving local resources as remote ones in JCEF
  */
 class EduToolsResourcesRequestHandler : HttpRequestHandler() {
-  override fun process(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): Boolean {
-    val uri = request.uri()
-    if (!uri.contains(EDU_RESOURCES)) {
-      return false
-    }
 
-    val resourceRelativePath = uri.split(EDU_RESOURCES)[1]
+  override fun isAccessible(request: HttpRequest): Boolean {
+    val hostName = getHostName(request)
+    val uri = request.uri()
+    return hostName != null && isLocalHost(hostName) && uri.contains(EDU_RESOURCES)
+  }
+
+  override fun process(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): Boolean {
+    val resourceRelativePath = request.uri().split(EDU_RESOURCES)[1]
     if (resourceRelativePath !in StyleResourcesManager.resourcesList) return false
     val url = getResource(resourceRelativePath) ?: return false
     val bytes = url.readBytes()
@@ -75,6 +79,5 @@ class EduToolsResourcesRequestHandler : HttpRequestHandler() {
       val port = BuiltInServerManager.getInstance().port
       return "http://localhost:$port/$EDU_RESOURCES/${name.trimStart('/')}"
     }
-
   }
 }
