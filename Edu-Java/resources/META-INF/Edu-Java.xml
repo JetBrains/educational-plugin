@@ -10,8 +10,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <renameHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
-    <refactoring.moveHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
+    <refactoring.moveHandler implementation="com.jetbrains.edu.java.JMoveHandler" order="first"/>
   </extensions>
 </idea-plugin>
 
