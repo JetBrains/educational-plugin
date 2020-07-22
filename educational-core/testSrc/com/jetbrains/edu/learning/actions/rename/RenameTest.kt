@@ -23,7 +23,7 @@ class RenameTest : RenameTestBase() {
       }
     }
 
-    doRenameAction(course, "section1", "section2")
+    doRenameAction(course, "section1", "section2", shouldBeInvoked = false)
     assertEquals(1, course.items.size)
     assertNull(course.getSection("section2"))
     assertNotNull(course.getSection("section1"))
@@ -40,7 +40,7 @@ class RenameTest : RenameTestBase() {
       }
     }
 
-    doRenameAction(course, "section1/lesson1", "lesson2")
+    doRenameAction(course, "section1/lesson1", "lesson2", shouldBeInvoked = false)
     assertEquals(1, course.items.size)
     val section = course.getSection("section1")!!
     assertNotNull(section)
@@ -57,7 +57,7 @@ class RenameTest : RenameTestBase() {
       }
     }
 
-    doRenameAction(course, "lesson1", "lesson2")
+    doRenameAction(course, "lesson1", "lesson2", shouldBeInvoked = false)
     assertEquals(1, course.items.size)
     assertNotNull(course.getLesson("lesson1"))
     assertNull(course.getLesson("lesson2"))
@@ -71,7 +71,7 @@ class RenameTest : RenameTestBase() {
         }
       }
     }
-    doRenameAction(course, "lesson1/task1", "task2")
+    doRenameAction(course, "lesson1/task1", "task2", shouldBeInvoked = false)
     assertEquals(1, course.items.size)
     val lesson = course.getLesson("lesson1")!!
     assertNotNull(lesson)
@@ -120,7 +120,7 @@ class RenameTest : RenameTestBase() {
     withVirtualFileListener(course) {
       GeneratorUtils.createChildFile(findFile("lesson1/task1"), "taskFile2.txt", "")
     }
-    doRenameAction(course, "lesson1/task1/taskFile2.txt", "taskFile3.txt", shouldBeShown = false)
+    doRenameAction(course, "lesson1/task1/taskFile2.txt", "taskFile3.txt", shouldBeInvoked = false)
     val task = course.findTask("lesson1", "task1")
     assertNull(task.getTaskFile("taskFile2.txt"))
     assertNotNull(task.getTaskFile("taskFile3.txt"))
@@ -163,7 +163,7 @@ class RenameTest : RenameTestBase() {
       myFixture.testAction(NextTaskAction())
     }
 
-    doRenameAction(course, "lesson1/task/taskFile2.txt", "taskFile3.txt", shouldBeShown = false)
+    doRenameAction(course, "lesson1/task/taskFile2.txt", "taskFile3.txt", shouldBeInvoked = false)
 
     val task2 = course.findTask("lesson1", "task2")
     assertNull(task2.getTaskFile("taskFile2.txt"))
@@ -181,7 +181,7 @@ class RenameTest : RenameTestBase() {
       }
     }
 
-    doRenameActionWithInput(course, "section1", "section2")
+    doRenameAction(course, "section1", "section2")
     assertEquals(1, course.items.size)
     assertNull(course.getSection("section1"))
     assertNotNull(course.getSection("section2"))
@@ -198,7 +198,7 @@ class RenameTest : RenameTestBase() {
       }
     }
 
-    doRenameActionWithInput(course, "section1/lesson1", "lesson2")
+    doRenameAction(course, "section1/lesson1", "lesson2")
     assertEquals(1, course.items.size)
     val section = course.getSection("section1")!!
     assertNotNull(section)
@@ -215,7 +215,7 @@ class RenameTest : RenameTestBase() {
       }
     }
 
-    doRenameActionWithInput(course, "lesson1", "lesson2")
+    doRenameAction(course, "lesson1", "lesson2")
     assertEquals(1, course.items.size)
     assertNotNull(course.getLesson("lesson2"))
     assertNull(course.getLesson("lesson1"))
@@ -229,7 +229,7 @@ class RenameTest : RenameTestBase() {
         }
       }
     }
-    doRenameActionWithInput(course, "lesson1/task1", "task2")
+    doRenameAction(course, "lesson1/task1", "task2")
     assertEquals(1, course.items.size)
     val lesson = course.getLesson("lesson1")!!
     assertNotNull(lesson)
@@ -246,7 +246,7 @@ class RenameTest : RenameTestBase() {
       }
     }
 
-    doRenameActionWithInput(course, "lesson1/task1/${EduNames.TASK_HTML}", EduNames.TASK_MD)
+    doRenameAction(course, "lesson1/task1/${EduNames.TASK_HTML}", EduNames.TASK_MD)
     assertEquals(DescriptionFormat.MD, course.lessons[0].taskList[0].descriptionFormat)
     assertNull(findDescriptionFile(EduNames.TASK_HTML))
     assertNotNull(findDescriptionFile(EduNames.TASK_MD))
@@ -262,7 +262,7 @@ class RenameTest : RenameTestBase() {
     }
 
     val newFileName = "incorrectFileName.txt"
-    doRenameActionWithInput(course, "lesson1/task1/${EduNames.TASK_HTML}", newFileName, shouldBeShown = false)
+    doRenameAction(course, "lesson1/task1/${EduNames.TASK_HTML}", newFileName, shouldBeInvoked = false)
     assertEquals(DescriptionFormat.HTML, course.lessons[0].taskList[0].descriptionFormat)
     assertNull(findDescriptionFile(newFileName))
     assertNotNull(findDescriptionFile(EduNames.TASK_HTML))
@@ -278,7 +278,7 @@ class RenameTest : RenameTestBase() {
     }
     // When there isn't any rename handler for file, rename action uses default one.
     // And default rename handler has special code for unit tests not to show rename dialog at all
-    doRenameActionWithInput(course, "lesson1/task1/taskFile1.txt", "taskFile2.txt", shouldBeShown = false)
+    doRenameAction(course, "lesson1/task1/taskFile1.txt", "taskFile2.txt", shouldBeInvoked = false)
     val task = course.findTask("lesson1", "task1")
     assertNull(task.getTaskFile("taskFile1.txt"))
     assertNotNull(task.getTaskFile("taskFile2.txt"))

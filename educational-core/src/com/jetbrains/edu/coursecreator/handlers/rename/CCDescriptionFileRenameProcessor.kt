@@ -10,6 +10,10 @@ import com.intellij.refactoring.rename.RenamePsiFileProcessor
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.handlers.rename.EduRenameDialogBase
+import com.jetbrains.edu.learning.handlers.rename.RenameDialogFactory
+import com.jetbrains.edu.learning.handlers.rename.createRenameDialog
 
 class CCDescriptionFileRenameProcessor : RenamePsiFileProcessor() {
 
@@ -27,22 +31,33 @@ class CCDescriptionFileRenameProcessor : RenamePsiFileProcessor() {
     val task = EduUtils.getTaskForFile(project, (element as PsiFile).virtualFile)
                ?: return super.createRenameDialog(project, element, nameSuggestionContext, editor)
 
-    return object : RenamePsiFileProcessor.PsiFileRenameDialog(project, element, nameSuggestionContext, editor) {
+    return createRenameDialog(project, element, nameSuggestionContext, editor, Factory(task))
+  }
 
-      init {
-        title = "Rename description file"
-      }
+  private class Factory(private val task: Task) : RenameDialogFactory {
+    override fun createRenameDialog(
+      project: Project,
+      element: PsiElement,
+      nameSuggestionContext: PsiElement?,
+      editor: Editor?
+    ): EduRenameDialogBase {
+      return object : EduRenameDialogBase(project, element, nameSuggestionContext, editor) {
 
-      override fun performRename(newName: String) {
-        val format = DescriptionFormat.values().find { it.descriptionFileName == newName } ?: error("Unexpected new name: `$newName`")
-        task.descriptionFormat = format
-        super.performRename(newName)
-      }
+        init {
+          title = "Rename description file"
+        }
 
-      @Throws(ConfigurationException::class)
-      override fun canRun() {
-        if (!EduUtils.isTaskDescriptionFile(newName)) {
-          throw ConfigurationException("Description file should be named '${EduNames.TASK_HTML}' or '${EduNames.TASK_MD}'.")
+        override fun performRename(newName: String) {
+          val format = DescriptionFormat.values().find { it.descriptionFileName == newName } ?: error("Unexpected new name: `$newName`")
+          task.descriptionFormat = format
+          super.performRename(newName)
+        }
+
+        @Throws(ConfigurationException::class)
+        override fun canRun() {
+          if (!EduUtils.isTaskDescriptionFile(newName)) {
+            throw ConfigurationException("Description file should be named '${EduNames.TASK_HTML}' or '${EduNames.TASK_MD}'.")
+          }
         }
       }
     }

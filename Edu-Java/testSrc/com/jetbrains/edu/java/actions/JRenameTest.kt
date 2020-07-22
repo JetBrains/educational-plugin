@@ -42,7 +42,7 @@ class JRenameTest : RenameTestBase() {
     }
     myFixture.openFileInEditor(findFile("lesson1/task1/Task1.java"))
     val javaFile = myFixture.file as PsiJavaFile
-    doRenameActionWithInput(course, javaFile.findClass("Foo"), "Bar", shouldBeShown = false)
+    doRenameAction(course, javaFile.findClass("Foo"), "Bar", shouldBeInvoked = false)
     myFixture.checkResult("""
         public class Task1 {}
         class Bar {}
@@ -68,7 +68,7 @@ class JRenameTest : RenameTestBase() {
 
     myFixture.openFileInEditor(findFile("lesson1/task1/Foo.java"))
     val javaFile = myFixture.file as PsiJavaFile
-    doRenameAction(course, javaFile.findClass("Foo"), "Bar", shouldBeShown = false)
+    doRenameAction(course, javaFile.findClass("Foo"), "Bar", shouldBeInvoked = false)
 
     val task = course.findTask("lesson1", "task1")
     assertNotNull(task.getTaskFile("Bar.java"))
@@ -90,7 +90,7 @@ class JRenameTest : RenameTestBase() {
     }
     myFixture.openFileInEditor(findFile("lesson1/task1/Task1.java"))
     val javaFile = myFixture.file as PsiJavaFile
-    doRenameAction(course, javaFile.findClass("Task1"), "Task2", shouldBeShown = false)
+    doRenameAction(course, javaFile.findClass("Task1"), "Task2", shouldBeInvoked = false)
     val task = course.findTask("lesson1", "task1")
     assertNotNull(task.getTaskFile("Task2.java"))
     assertNull(task.getTaskFile("Task1.java"))
