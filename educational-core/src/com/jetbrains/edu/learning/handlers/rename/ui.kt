@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.studyItemType
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class StudyItemRenameDialog(
@@ -34,7 +35,7 @@ class StudyItemRenameDialog(
   @Throws(ConfigurationException::class)
   override fun canRun() {
     if (item.course.isStudy) {
-      throw ConfigurationException("This rename operation can break the course")
+      throw ConfigurationException(EduCoreBundle.message("error.invalid.rename.message"))
     }
     val itemDir = item.getDir(project)
     val validator = CCStudyItemPathInputValidator(item.course, item.studyItemType, itemDir.parent, item.name)
