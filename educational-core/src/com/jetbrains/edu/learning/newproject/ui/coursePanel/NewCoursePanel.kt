@@ -7,6 +7,7 @@ import com.intellij.ui.Gray
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBPanelWithEmptyText
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.CoursesStorage
@@ -27,6 +28,8 @@ import java.awt.CardLayout
 import java.awt.Dimension
 import java.util.*
 import javax.swing.JPanel
+import javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+import javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
 import javax.swing.event.DocumentListener
 
 const val DESCRIPTION_AND_SETTINGS_TOP_OFFSET = 25
@@ -88,7 +91,10 @@ class NewCoursePanel(val isStandalonePanel: Boolean, val isLocationFieldNeeded: 
     content.add(description)
     content.add(advancedSettings)
     content.add(createErrorPanel())
-    add(content, CONTENT)
+    val scrollPane = JBScrollPane(content, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER).apply {
+      border = null
+    }
+    add(scrollPane, CONTENT)
 
     background = UIUtil.getEditorPaneBackground()
   }
