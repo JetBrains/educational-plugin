@@ -6,8 +6,10 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 
 class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
 
@@ -18,7 +20,6 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task = course.findTask("lesson1", "task1")
       task.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      task.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
     }
 
@@ -57,7 +58,6 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      task1.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
 
       val task2 = course.findTask("lesson1", "task2")
@@ -102,7 +102,6 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      task1.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
 
       val task2 = course.findTask("lesson1", "task2")
@@ -114,7 +113,6 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
 
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun baz() {}\n")
-      task1.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
     }
 
@@ -157,7 +155,6 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.createTaskFileAndOpenInEditor("NewFile.kt")
       myFixture.type("fun qwe() {}\n")
-      task1.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
     }
 
@@ -196,7 +193,6 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.createTaskFileAndOpenInEditor("src/NewFile.kt")
       myFixture.type("fun qwe() {}")
-      task1.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
 
       val task2 = course.findTask("lesson1", "task2")
@@ -238,7 +234,6 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.removeTaskFile("src/Task.kt")
       task1.openTaskFileInEditor("src/Bar.kt")
-      task1.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
     }
 
@@ -277,7 +272,6 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.removeTaskFile("src/Task.kt")
       task1.openTaskFileInEditor("src/Bar.kt")
-      task1.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
 
       val task2 = course.findTask("lesson1", "task2")
@@ -329,6 +323,8 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       }
     } as HyperskillCourse
     course.hyperskillProject = HyperskillProject().apply { isTemplateBased = true }
+    val task1 = course.findTask("lesson1", "task1")
+    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task1.id, CheckStatus.Solved, Submission())
     return course
   }
 }

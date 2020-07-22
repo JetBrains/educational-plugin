@@ -7,8 +7,10 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 
 class RenameTest : RenameTestBase() {
 
@@ -159,7 +161,7 @@ class RenameTest : RenameTestBase() {
       GeneratorUtils.createChildFile(findFile("lesson1/task"), "taskFile2.txt", "")
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("taskFile2.txt")
-      task1.status = CheckStatus.Solved
+      SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task1.id, CheckStatus.Solved, Submission())
       myFixture.testAction(NextTaskAction())
     }
 

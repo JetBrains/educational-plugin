@@ -8,19 +8,21 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 
 class YamlChangedAfterEventTest : YamlTestCase() {
   fun `test hyperskill framework lesson navigation with learner created file`() {
     val course = createHyperskillFrameworkCourse(isTemplateBased = false)
 
     val task1 = course.findTask("lesson1", "task1")
+    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task1.id, CheckStatus.Solved, Submission())
 
     withVirtualFileListener(course) {
       GeneratorUtils.createChildFile(project.courseDir, "lesson1/task/userFile.txt", "user file")
       task1.openTaskFileInEditor("file1.txt")
-      task1.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
     }
 

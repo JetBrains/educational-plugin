@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.saveStudentAnswersIfNeeded
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import java.util.*
@@ -29,7 +30,7 @@ object NavigationUtils {
   @JvmStatic
   fun nextTask(task: Task): Task? {
     val project = task.project ?: return null
-    if (task.course is HyperskillCourse && !SubmissionsManager.getInstance(project).containsCorrectSubmission(task.id)) return null
+    if (isUnsolvedHyperskillStage(task, project)) return null
 
     val currentLesson = task.lesson
     val taskList = currentLesson.taskList
@@ -46,6 +47,9 @@ object NavigationUtils {
 
   @JvmStatic
   fun previousTask(task: Task): Task? {
+    // We don't want to switch between stages and code problems
+    if (isFirstHyperskillProblem(task)) return null
+
     val currentLesson = task.lesson
     val prevTaskIndex = task.index - 2
     if (prevTaskIndex >= 0) return currentLesson.taskList[prevTaskIndex]
@@ -58,6 +62,18 @@ object NavigationUtils {
       prevLessonTaskList = prevLesson.taskList
     }
     return prevLessonTaskList[prevLessonTaskList.size - 1]
+  }
+
+  private fun isUnsolvedHyperskillStage(task: Task, project: Project): Boolean {
+    return task.course is HyperskillCourse &&
+           task.lesson.name != HYPERSKILL_PROBLEMS &&
+           !SubmissionsManager.getInstance(project).containsCorrectSubmission(task.id)
+  }
+
+  private fun isFirstHyperskillProblem(task: Task): Boolean {
+    return task.course is HyperskillCourse &&
+           task.lesson.name == HYPERSKILL_PROBLEMS &&
+           task.index == 1
   }
 
   @JvmStatic

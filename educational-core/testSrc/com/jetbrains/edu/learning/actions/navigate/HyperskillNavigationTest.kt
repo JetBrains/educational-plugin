@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
@@ -29,7 +30,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
       val task = course.findTask("lesson1", "task1")
       task.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      task.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
     }
 
@@ -71,7 +71,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("src/Task.kt")
-      task1.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
 
       val task2 = course.findTask("lesson1", "task2")
@@ -117,7 +116,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("src/Task.kt")
-      task1.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
 
       val task2 = course.findTask("lesson1", "task2")
@@ -172,7 +170,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("src/Task.kt")
-      task1.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
 
       val task2 = course.findTask("lesson1", "task2")
@@ -230,7 +227,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       GeneratorUtils.createChildFile(rootDir, "lesson1/task/src/Bar.kt", "fun bar() {}")
       task1.openTaskFileInEditor("src/Task.kt")
-      task1.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
     }
 
@@ -285,7 +281,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       withTestDialog(EduTestDialog(Messages.YES)) {
         task1.openTaskFileInEditor("src/Task.kt")
-        task1.status = CheckStatus.Solved
         myFixture.testAction(NextTaskAction())
       }
     }
@@ -332,7 +327,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
           findFile("lesson1/task/src/Baz.kt").delete(HyperskillNavigationTest::class.java)
         }
         task1.openTaskFileInEditor("src/Task.kt")
-        task1.status = CheckStatus.Solved
         myFixture.testAction(NextTaskAction())
       }
     }
@@ -372,9 +366,10 @@ class HyperskillNavigationTest : NavigationTestBase() {
   fun `test navigate to next unavailable`() {
     val course = createHyperskillCourse()
     val task = course.findTask("lesson1", "task1")
-    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, CheckStatus.Failed, Submission())
+    val submissionsManager = SubmissionsManager.getInstance(project)
+    submissionsManager.clear()
+    submissionsManager.addToSubmissionsWithStatus(task.id, CheckStatus.Failed, Submission())
 
-    task.status = CheckStatus.Failed
     task.openTaskFileInEditor("src/Task.kt")
     val presentation = myFixture.testAction(NextTaskAction())
     assertFalse(presentation.isEnabledAndVisible)
@@ -384,14 +379,21 @@ class HyperskillNavigationTest : NavigationTestBase() {
     val course = createHyperskillCourse()
     val task = course.findTask("lesson1", "task1")
 
-    val submissionsManager = SubmissionsManager.getInstance(project)
-    submissionsManager.addToSubmissionsWithStatus(task.id, CheckStatus.Solved, Submission())
-    submissionsManager.addToSubmissionsWithStatus(task.id, CheckStatus.Failed, Submission())
-
+    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, CheckStatus.Failed, Submission())
     task.status = CheckStatus.Failed
+
     task.openTaskFileInEditor("src/Task.kt")
     val presentation = myFixture.testAction(NextTaskAction())
     assertTrue(presentation.isEnabledAndVisible)
+  }
+
+  fun `test navigate from problems to stages unavailable`() {
+    val course = createHyperskillCourseWithProblemsLesson()
+    val task = course.findTask(HYPERSKILL_PROBLEMS, "problem1")
+
+    task.openTaskFileInEditor("src/Task.kt")
+    val presentation = myFixture.testAction(PreviousTaskAction())
+    assertFalse(presentation.isEnabledAndVisible)
   }
 
   private fun createHyperskillCourse(): Course {
@@ -414,6 +416,28 @@ class HyperskillNavigationTest : NavigationTestBase() {
           taskFile("src/Task.kt", "fun foo() {}")
           taskFile("src/Baz.kt", "fun baz() {}")
           taskFile("test/Tests3.kt", "fun tests3() {}")
+        }
+      }
+    } as HyperskillCourse
+    course.hyperskillProject = HyperskillProject()
+    val task1 = course.findTask("lesson1", "task1")
+    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task1.id, CheckStatus.Solved, Submission())
+    return course
+  }
+
+  private fun createHyperskillCourseWithProblemsLesson(): Course {
+    val course = courseWithFiles(
+      language = FakeGradleBasedLanguage,
+      courseProducer = ::HyperskillCourse
+    ) {
+      frameworkLesson("lesson1") {
+        eduTask("task1") {
+          taskFile("src/Task.kt", "fun foo() {}")
+        }
+      }
+      lesson(HYPERSKILL_PROBLEMS) {
+        eduTask("problem1") {
+          taskFile("src/Task.kt", "fun foo() {}")
         }
       }
     } as HyperskillCourse
