@@ -45,7 +45,6 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
       myPane = StackPane()
       myWebComponent = WebView()
       myWebComponent.fontSmoothingTypeProperty().value = FontSmoothingType.GRAY
-      myWebComponent.setOnDragDetected { }
       myEngine = myWebComponent.engine
       Disposer.register(myProject, this)
 
