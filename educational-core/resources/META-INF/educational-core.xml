@@ -224,10 +224,10 @@
     <highlightErrorFilter implementation="com.jetbrains.edu.learning.editor.EduHighlightErrorFilter"/>
 
     <!-- Rename -->
-    <renameHandler implementation="com.jetbrains.edu.learning.handlers.EduCourseItemRenameHandler"/>
     <renamePsiElementProcessor implementation="com.jetbrains.edu.learning.handlers.rename.SectionRenameProcessor" order="first"/>
     <renamePsiElementProcessor implementation="com.jetbrains.edu.learning.handlers.rename.LessonRenameProcessor" order="first"/>
     <renamePsiElementProcessor implementation="com.jetbrains.edu.learning.handlers.rename.TaskRenameProcessor" order="first"/>
+    <renamePsiElementProcessor implementation="com.jetbrains.edu.learning.handlers.rename.EduTaskFileRenameProcessor" order="first"/>
 
     <!-- Move -->
     <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
