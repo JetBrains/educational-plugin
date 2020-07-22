@@ -20,8 +20,11 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import java.awt.event.ActionEvent
 import java.io.File
 import java.io.IOException
+import javax.swing.AbstractAction
+import javax.swing.Action
 import javax.swing.JComponent
 
 class CCCreateCoursePreviewDialog(
@@ -50,6 +53,20 @@ class CCCreateCoursePreviewDialog(
 
   override fun doOKAction() {
     createCoursePreview()
+  }
+
+  override fun createActions(): Array<out Action> {
+    val closeAction = object : AbstractAction(UIUtil.replaceMnemonicAmpersand("&Close")) {
+      override fun actionPerformed(e: ActionEvent) {
+        close()
+      }
+    }
+
+    return arrayOf(closeAction)
+  }
+
+  fun close() {
+    close(OK_EXIT_CODE)
   }
 
   override fun getStyle(): DialogStyle {
