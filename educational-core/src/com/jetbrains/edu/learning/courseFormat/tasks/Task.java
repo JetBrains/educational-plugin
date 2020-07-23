@@ -8,7 +8,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.OptionTag;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.coursecreator.TaskType;
+import com.jetbrains.edu.coursecreator.StudyItemTypeKt;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.actions.CheckAction;
@@ -28,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.io.IOException;
 import java.util.*;
+
+import static com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE;
 
 /**
  * Implementation of task which contains task files, tests, input file for tests
@@ -338,7 +340,7 @@ public abstract class Task extends StudyItem {
       if (this instanceof CodeTask) return EduCoreStudyItemBundle.message("item.task.challenge");
       return EduCoreStudyItemBundle.message("item.task.stage");
     }
-    return TaskType.INSTANCE.getPresentableName();
+    return StudyItemTypeKt.getPresentableName(TASK_TYPE);
   }
 
   public boolean supportSubmissions() {

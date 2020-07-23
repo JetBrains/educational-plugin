@@ -2,7 +2,7 @@ package com.jetbrains.edu.go
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.StudyItemType
-import com.jetbrains.edu.coursecreator.TaskType
+import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.go.GoConfigurator.Companion.GO_MOD
@@ -54,7 +54,7 @@ class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
 
   // https://golang.org/ref/spec#Import_declarations
   override fun validateItemName(name: String, itemType: StudyItemType): String? {
-    return if (itemType == TaskType && name.contains(FORBIDDEN_SYMBOLS)) EduGoBundle.message("error.invalid.name") else null
+    return if (itemType == TASK_TYPE && name.contains(FORBIDDEN_SYMBOLS)) EduGoBundle.message("error.invalid.name") else null
   }
 
   /**

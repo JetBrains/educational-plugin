@@ -10,9 +10,9 @@ import com.intellij.openapi.progress.Task.Modal
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.*
 import com.jetbrains.edu.coursecreator.CCUtils.pushAvailable
-import com.jetbrains.edu.coursecreator.LessonType
+import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
 import com.jetbrains.edu.learning.EduUtils
@@ -31,8 +31,8 @@ import org.jetbrains.annotations.NonNls
 
 // educational-core.xml
 class CCPushLesson : DumbAwareAction(
-  EduCoreBundle.message("gluing.slash", LessonType.uploadToStepikTitleMessage, LessonType.updateOnStepikTitleMessage),
-  EduCoreBundle.message("gluing.slash", LessonType.uploadToStepikMessage, LessonType.updateOnStepikMessage),
+  EduCoreBundle.message("gluing.slash", LESSON_TYPE.uploadToStepikTitleMessage, LESSON_TYPE.updateOnStepikTitleMessage),
+  EduCoreBundle.message("gluing.slash", LESSON_TYPE.uploadToStepikMessage, LESSON_TYPE.updateOnStepikMessage),
   null
 ) {
 
@@ -64,10 +64,10 @@ class CCPushLesson : DumbAwareAction(
     if (course.id > 0) {
       e.presentation.isEnabledAndVisible = true
       if (lesson.id <= 0) {
-        e.presentation.text = LessonType.uploadToStepikTitleMessage
+        e.presentation.text = LESSON_TYPE.uploadToStepikTitleMessage
       }
       else {
-        e.presentation.text = LessonType.updateOnStepikTitleMessage
+        e.presentation.text = LESSON_TYPE.updateOnStepikTitleMessage
       }
     }
   }

@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.RenameDialog
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
+import com.jetbrains.edu.coursecreator.presentableTitleName
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course

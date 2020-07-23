@@ -9,7 +9,6 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.TaskType;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -23,34 +22,16 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
+import static com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE;
+import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.*;
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushTask extends DumbAwareAction {
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  public static String getUpdateText() {
-    return TaskType.INSTANCE.getUpdateOnStepikMessage();
-  }
-
-  @Nls(capitalization = Nls.Capitalization.Title)
-  public static String getUpdateTitleText() {
-    return TaskType.INSTANCE.getUpdateOnStepikTitleMessage();
-  }
-
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  public static String getUploadText() {
-    return TaskType.INSTANCE.getUploadToStepikTitleMessage();
-  }
-
-  @Nls(capitalization = Nls.Capitalization.Title)
-  public static String getUploadTitleText() {
-    return TaskType.INSTANCE.getUploadToStepikTitleMessage();
-  }
-
   public CCPushTask() {
-    super(EduCoreBundle.message("gluing.slash", getUploadTitleText(), getUpdateTitleText()),
-          EduCoreBundle.message("gluing.slash", getUploadText(), getUpdateText()),
+    super(EduCoreBundle.message("gluing.slash", getUploadToStepikTitleMessage(TASK_TYPE), getUpdateOnStepikTitleMessage(TASK_TYPE)),
+          EduCoreBundle.message("gluing.slash", getUploadToStepikMessage(TASK_TYPE), getUpdateOnStepikMessage(TASK_TYPE)),
           null);
   }
 
@@ -82,10 +63,10 @@ public class CCPushTask extends DumbAwareAction {
       final Task task = lesson.getTask(taskDir.getName());
       if (task != null) {
         if (task.getId() <= 0) {
-          e.getPresentation().setText(getUploadTitleText());
+          e.getPresentation().setText(getUploadToStepikTitleMessage(TASK_TYPE));
         }
         else {
-          e.getPresentation().setText(getUpdateTitleText());
+          e.getPresentation().setText(getUpdateOnStepikTitleMessage(TASK_TYPE));
         }
       }
     }

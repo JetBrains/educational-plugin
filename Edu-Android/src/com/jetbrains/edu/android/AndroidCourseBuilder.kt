@@ -6,7 +6,7 @@ import com.android.tools.idea.sdk.AndroidSdks
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.jetbrains.edu.coursecreator.TaskType
+import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
@@ -46,7 +46,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     studyItemCreator: (NewStudyItemInfo) -> Unit
   ) {
     val parentItem = model.parent
-    if (model.itemType != TaskType || parentItem is FrameworkLesson && parentItem.taskList.isNotEmpty()) {
+    if (model.itemType != TASK_TYPE || parentItem is FrameworkLesson && parentItem.taskList.isNotEmpty()) {
       super.showNewStudyItemUi(project, course, model, additionalPanels, studyItemCreator)
     }
     else {
@@ -77,9 +77,9 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
   ): List<TemplateFileInfo> {
     val packageName = info.getUserData(PACKAGE_NAME) ?: return emptyList()
     val packagePath = packageName.replace('.', VfsUtilCore.VFS_SEPARATOR_CHAR)
-    
+
     val templates = mutableListOf<TemplateFileInfo>()
-    
+
     if (withSources) {
       templates += TemplateFileInfo("android-task-build.gradle", BUILD_GRADLE, true)
       templates += TemplateFileInfo("android-MainActivity.kt", "src/main/java/$packagePath/MainActivity.kt", true)
@@ -93,7 +93,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
       templates += TemplateFileInfo("android-ExampleUnitTest.kt", "src/test/java/$packagePath/ExampleUnitTest.kt", false)
       templates += TemplateFileInfo("android-AndroidEduTestRunner.kt", "src/androidTest/java/$packagePath/AndroidEduTestRunner.kt", false)
     }
-    
+
     return templates
   }
 

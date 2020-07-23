@@ -2,7 +2,7 @@ package com.jetbrains.edu.go
 
 import com.goide.GoLanguage
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.TaskType
+import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
@@ -21,7 +21,7 @@ class GoCreateTaskTest : EduActionTestCase() {
      * TODO: find the way to write integration tests (validate names & create StudyItem)
      */
     val taskName = "Good Task 666 пробелы и кириллица"
-    assertNull(GoCourseBuilder().validateItemName(taskName, TaskType))
+    assertNull(GoCourseBuilder().validateItemName(taskName, TASK_TYPE))
 
     withMockCreateStudyItemUi(MockNewStudyItemUi(taskName)) {
       testAction(dataContext(lessonFile), CCCreateTask())
@@ -33,6 +33,6 @@ class GoCreateTaskTest : EduActionTestCase() {
 
   fun `test forbidden task name`() {
     val taskName = "Bad name !@#"
-    assertEquals("Name contains forbidden symbols", GoCourseBuilder().validateItemName(taskName, TaskType))
+    assertEquals("Name contains forbidden symbols", GoCourseBuilder().validateItemName(taskName, TASK_TYPE))
   }
 }

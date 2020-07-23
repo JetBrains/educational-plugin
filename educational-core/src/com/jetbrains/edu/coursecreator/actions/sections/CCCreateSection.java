@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.SectionType;
 import com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase;
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo;
 import com.jetbrains.edu.coursecreator.actions.StudyItemVariant;
@@ -19,10 +18,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static com.jetbrains.edu.coursecreator.StudyItemType.SECTION_TYPE;
+import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.getPresentableTitleName;
+
 public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
 
   public CCCreateSection() {
-    super(SectionType.INSTANCE, EducationalCoreIcons.Section);
+    super(SECTION_TYPE, EducationalCoreIcons.Section);
   }
 
   @Override
@@ -84,7 +86,7 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   @Override
   protected List<StudyItemVariant> getStudyItemVariants() {
     return Collections.singletonList(
-      new StudyItemVariant(SectionType.INSTANCE.getPresentableTitleName(), "", EducationalCoreIcons.Section, Section::new)
+      new StudyItemVariant(getPresentableTitleName(SECTION_TYPE), "", EducationalCoreIcons.Section, Section::new)
     );
   }
 }

@@ -7,9 +7,9 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.*
 import com.jetbrains.edu.coursecreator.CCUtils.pushAvailable
-import com.jetbrains.edu.coursecreator.SectionType
+import com.jetbrains.edu.coursecreator.StudyItemType.SECTION_TYPE
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
 import com.jetbrains.edu.learning.EduUtils
@@ -24,8 +24,8 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class CCPushSection : DumbAwareAction(
-  EduCoreBundle.message("gluing.slash", SectionType.uploadToStepikTitleMessage, SectionType.updateOnStepikTitleMessage),
-  EduCoreBundle.message("gluing.slash", SectionType.uploadToStepikMessage, SectionType.updateOnStepikMessage),
+  EduCoreBundle.message("gluing.slash", SECTION_TYPE.uploadToStepikTitleMessage, SECTION_TYPE.updateOnStepikTitleMessage),
+  EduCoreBundle.message("gluing.slash", SECTION_TYPE.uploadToStepikMessage, SECTION_TYPE.updateOnStepikMessage),
   null
 ) {
 
@@ -49,10 +49,10 @@ class CCPushSection : DumbAwareAction(
     if (section != null && course.id > 0) {
       e.presentation.isEnabledAndVisible = true
       if (section.id <= 0) {
-        e.presentation.text = SectionType.uploadToStepikTitleMessage
+        e.presentation.text = SECTION_TYPE.uploadToStepikTitleMessage
       }
       else {
-        e.presentation.text = SectionType.updateOnStepikTitleMessage
+        e.presentation.text = SECTION_TYPE.updateOnStepikTitleMessage
       }
     }
   }

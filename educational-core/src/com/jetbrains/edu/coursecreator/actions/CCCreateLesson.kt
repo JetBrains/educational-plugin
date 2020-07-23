@@ -7,7 +7,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
-import com.jetbrains.edu.coursecreator.LessonType
+import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
+import com.jetbrains.edu.coursecreator.presentableName
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
@@ -17,11 +18,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle
 import icons.EducationalCoreIcons.Lesson
 
-class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LessonType, Lesson) {
+class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) {
 
   override val studyItemVariants: List<StudyItemVariant>
     get() = listOf(
-      StudyItemVariant(StringUtil.toTitleCase(LessonType.presentableName), "", Lesson, ::Lesson),
+      StudyItemVariant(StringUtil.toTitleCase(LESSON_TYPE.presentableName), "", Lesson, ::Lesson),
       StudyItemVariant(StringUtil.toTitleCase(EduCoreStudyItemBundle.message("item.lesson.framework")), "", Lesson, ::FrameworkLesson)
     )
 

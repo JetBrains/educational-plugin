@@ -14,7 +14,6 @@ import com.intellij.openapi.progress.Task.Modal;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.CourseType;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
@@ -35,33 +34,25 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.event.HyperlinkEvent;
 
 import static com.jetbrains.edu.coursecreator.CCUtils.askToWrapTopLevelLessons;
+import static com.jetbrains.edu.coursecreator.StudyItemType.COURSE_TYPE;
+import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.*;
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushCourse extends DumbAwareAction {
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  public static String getUpdateText() {
-    return CourseType.INSTANCE.getUpdateOnStepikMessage();
-  }
-
   @Nls(capitalization = Nls.Capitalization.Title)
   public static String getUpdateTitleText() {
-    return CourseType.INSTANCE.getUpdateOnStepikTitleMessage();
+    return getUpdateOnStepikTitleMessage(COURSE_TYPE);
   }
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
-  public static String getUploadText() {
-    return CourseType.INSTANCE.getUploadToStepikTitleMessage();
-  }
-
-  @Nls(capitalization = Nls.Capitalization.Title)
   public static String getUploadTitleText() {
-    return CourseType.INSTANCE.getUploadToStepikTitleMessage();
+    return getUploadToStepikTitleMessage(COURSE_TYPE);
   }
 
   public CCPushCourse() {
     super(EduCoreBundle.message("gluing.slash", getUploadTitleText(), getUpdateTitleText()),
-          EduCoreBundle.message("gluing.slash", getUploadText(), getUpdateText()),
+          EduCoreBundle.message("gluing.slash", getUploadToStepikMessage(COURSE_TYPE), getUpdateOnStepikMessage(COURSE_TYPE)),
           null);
   }
 
@@ -79,10 +70,10 @@ public class CCPushCourse extends DumbAwareAction {
     }
     presentation.setEnabledAndVisible(true);
     if (((EduCourse)course).isRemote()) {
-      presentation.setText(CourseType.INSTANCE.getUpdateOnStepikTitleMessage());
+      presentation.setText(getUpdateOnStepikTitleMessage(COURSE_TYPE));
     }
     else {
-      presentation.setText(CourseType.INSTANCE.getUploadToStepikTitleMessage());
+      presentation.setText(getUploadToStepikTitleMessage(COURSE_TYPE));
     }
   }
 
@@ -126,7 +117,7 @@ public class CCPushCourse extends DumbAwareAction {
       if (courseInfo == null) {
         Notification notification =
           new Notification("update.course", EduCoreBundle.message("error.failed.to.update"),
-                           EduCoreBundle.message("error.failed.to.update.no.course.on.stepik", StepikNames.STEPIK, getUploadText()),
+                           EduCoreBundle.message("error.failed.to.update.no.course.on.stepik", StepikNames.STEPIK, getUploadTitleText()),
                            NotificationType.ERROR, createPostCourseNotificationListener(project, course));
         notification.notify(project);
         return;
@@ -135,7 +126,7 @@ public class CCPushCourse extends DumbAwareAction {
         Notification notification =
           new Notification("update.course", EduCoreBundle.message("error.mismatch.format.version"),
                            EduCoreBundle.message("error.mismatch.format.version.invalid.plugin.version",
-                                                 PluginUtils.pluginVersion(EduNames.PLUGIN_ID), getUpdateText()),
+                                                 PluginUtils.pluginVersion(EduNames.PLUGIN_ID), getUpdateTitleText()),
                            NotificationType.WARNING, createUpdateCourseNotificationListener(project, course));
         notification.notify(project);
         return;
@@ -149,12 +140,10 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   @NotNull
-  private static NotificationListener createUpdateCourseNotificationListener(Project project,
-                                                                             @NotNull EduCourse course) {
+  private static NotificationListener createUpdateCourseNotificationListener(Project project, @NotNull EduCourse course) {
     return new NotificationListener() {
       @Override
-      public void hyperlinkUpdate(@NotNull Notification notification,
-                                  @NotNull HyperlinkEvent event) {
+      public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
         notification.expire();
         updateCourse(project, course);
       }

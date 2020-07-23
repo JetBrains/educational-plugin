@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.*
+import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
 import com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
@@ -109,7 +110,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
         ProjectView.getInstance(project).select(virtualFile, virtualFile, true)
       }
       askFeedback(course, project)
-      if (LessonType == itemType) {
+      if (LESSON_TYPE == itemType) {
         suggestWrapLessonsIntoSection(project, course, sourceDirectory)
       }
     }

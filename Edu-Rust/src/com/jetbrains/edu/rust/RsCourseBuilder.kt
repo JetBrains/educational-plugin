@@ -9,7 +9,7 @@ import com.intellij.psi.PsiParserFacade
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.io.exists
 import com.jetbrains.edu.coursecreator.StudyItemType
-import com.jetbrains.edu.coursecreator.TaskType
+import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.learning.*
@@ -122,7 +122,7 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
   }
 
   override fun validateItemName(name: String, itemType: StudyItemType): String? =
-    if (itemType == TaskType) RsPackageNameValidator.validate(name.toPackageName(), true) else null
+    if (itemType == TASK_TYPE) RsPackageNameValidator.validate(name.toPackageName(), true) else null
 
   override fun createLessonContent(project: Project, lesson: Lesson, parentDirectory: VirtualFile): VirtualFile? {
     val lessonFile = super.createLessonContent(project, lesson, parentDirectory) ?: return null

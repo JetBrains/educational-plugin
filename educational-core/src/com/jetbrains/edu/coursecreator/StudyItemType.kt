@@ -1,254 +1,130 @@
 package com.jetbrains.edu.coursecreator
 
 import com.intellij.openapi.keymap.KeymapUtil
-import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle
+import com.jetbrains.edu.coursecreator.StudyItemType.*
+import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle.message
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.awt.event.KeyEvent
 import javax.swing.KeyStroke
 
-sealed class StudyItemType {
-  abstract val presentableName: String
-    @Nls get
+enum class StudyItemType {
+  COURSE_TYPE,
+  SECTION_TYPE,
+  LESSON_TYPE,
+  TASK_TYPE;
+}
 
-  abstract val presentableTitleName: String
-    @Nls(capitalization = Nls.Capitalization.Title) get
+val StudyItemType.presentableName: String
+  @Nls
+  get() = when (this) {
+    COURSE_TYPE -> message("item.course")
+    SECTION_TYPE -> message("item.section")
+    LESSON_TYPE -> message("item.lesson")
+    TASK_TYPE -> message("item.task")
+  }
 
-  abstract val createItemMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence) get
 
-  abstract val createItemTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title) get
+val StudyItemType.presentableTitleName: String
+  @Nls(capitalization = Nls.Capitalization.Title)
+  get() = when (this) {
+    COURSE_TYPE -> message("item.course.title")
+    SECTION_TYPE -> message("item.section.title")
+    LESSON_TYPE -> message("item.lesson.title")
+    TASK_TYPE -> message("item.task.title")
+  }
 
-  abstract val newItemTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title) get
+val StudyItemType.createItemMessage: String
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  get() = when (this) {
+    COURSE_TYPE -> message("create.course")
+    SECTION_TYPE -> message("create.section")
+    LESSON_TYPE -> message("create.lesson")
+    TASK_TYPE -> message("create.task")
+  }
 
-  abstract val selectItemTypeMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence) get
+val StudyItemType.createItemTitleMessage: String
+  @Nls(capitalization = Nls.Capitalization.Title)
+  get() = when (this) {
+    COURSE_TYPE -> message("create.course.title")
+    SECTION_TYPE -> message("create.section.title")
+    LESSON_TYPE -> message("create.lesson.title")
+    TASK_TYPE -> message("create.task.title")
+  }
 
-  abstract val updateOnStepikMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence) get
+val StudyItemType.newItemTitleMessage: String
+  @Nls(capitalization = Nls.Capitalization.Title)
+  get() = when (this) {
+    COURSE_TYPE -> message("new.course.title")
+    SECTION_TYPE -> message("new.section.title")
+    LESSON_TYPE -> message("new.lesson.title")
+    TASK_TYPE -> message("new.task.title")
+  }
 
-  abstract val updateOnStepikTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title) get
+val StudyItemType.selectItemTypeMessage: String
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  get() = when (this) {
+    COURSE_TYPE -> message("select.type.course")
+    SECTION_TYPE -> message("select.type.section")
+    LESSON_TYPE -> message("select.type.lesson")
+    TASK_TYPE -> message("select.type.task")
+  }
 
-  abstract val uploadToStepikMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence) get
-
-  abstract val uploadToStepikTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title) get
-
-  val pressEnterToCreateItemMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() {
-      val enter = KeymapUtil.getKeystrokeText(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0))
-      return pressEnterToCreateItemMessageImpl(enter)
+val StudyItemType.pressEnterToCreateItemMessage: String
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  get() {
+    val enter = KeymapUtil.getKeystrokeText(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0))
+    return when (this) {
+      COURSE_TYPE -> message("hint.press.enter.to.create.course", enter)
+      SECTION_TYPE -> message("hint.press.enter.to.create.section", enter)
+      LESSON_TYPE -> message("hint.press.enter.to.create.lesson", enter)
+      TASK_TYPE -> message("hint.press.enter.to.create.task", enter)
     }
+  }
 
+val StudyItemType.updateOnStepikMessage: String
   @Nls(capitalization = Nls.Capitalization.Sentence)
-  abstract fun failedToFindItemMessage(@NonNls itemName: String): String
+  get() = when (this) {
+    COURSE_TYPE -> message("update.on.0.course", STEPIK)
+    SECTION_TYPE -> message("update.on.0.section", STEPIK)
+    LESSON_TYPE -> message("update.on.0.lesson", STEPIK)
+    TASK_TYPE -> message("update.on.0.task", STEPIK)
+  }
 
+val StudyItemType.updateOnStepikTitleMessage: String
+  @Nls(capitalization = Nls.Capitalization.Title)
+  get() = when (this) {
+    COURSE_TYPE -> message("update.on.0.course.title", STEPIK)
+    SECTION_TYPE -> message("update.on.0.section.title", STEPIK)
+    LESSON_TYPE -> message("update.on.0.lesson.title", STEPIK)
+    TASK_TYPE -> message("update.on.0.task.title", STEPIK)
+  }
+
+val StudyItemType.uploadToStepikMessage: String
   @Nls(capitalization = Nls.Capitalization.Sentence)
-  protected abstract fun pressEnterToCreateItemMessageImpl(enter: String): String
-}
+  get() = when (this) {
+    COURSE_TYPE -> message("upload.to.0.course", STEPIK)
+    SECTION_TYPE -> message("upload.to.0.section", STEPIK)
+    LESSON_TYPE -> message("upload.to.0.lesson", STEPIK)
+    TASK_TYPE -> message("upload.to.0.task", STEPIK)
+  }
 
-object CourseType : StudyItemType() {
-  override val presentableName: String
-    @Nls
-    get() = EduCoreStudyItemBundle.message("item.course")
+val StudyItemType.uploadToStepikTitleMessage: String
+  @Nls(capitalization = Nls.Capitalization.Title)
+  get() = when (this) {
+    COURSE_TYPE -> message("upload.to.0.course.title", STEPIK)
+    SECTION_TYPE -> message("upload.to.0.section.title", STEPIK)
+    LESSON_TYPE -> message("upload.to.0.lesson.title", STEPIK)
+    TASK_TYPE -> message("upload.to.0.task.title", STEPIK)
+  }
 
-  override val presentableTitleName: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("item.course.title")
-
-  override val createItemMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("create.course")
-
-  override val createItemTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("create.course.title")
-
-  override val newItemTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("new.course.title")
-
-  override val selectItemTypeMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("select.type.course")
-
-  override val updateOnStepikMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("update.on.0.course", StepikNames.STEPIK)
-
-  override val updateOnStepikTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("update.on.0.course.title", StepikNames.STEPIK)
-
-  override val uploadToStepikMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("upload.to.0.course", StepikNames.STEPIK)
-
-  override val uploadToStepikTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("upload.to.0.course.title", StepikNames.STEPIK)
-
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  override fun failedToFindItemMessage(itemName: String): String =
-    EduCoreStudyItemBundle.message("failed.to.find.course", itemName)
-
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  override fun pressEnterToCreateItemMessageImpl(enter: String): String =
-    EduCoreStudyItemBundle.message("hint.press.enter.to.create.course", enter)
-}
-
-object SectionType : StudyItemType() {
-  override val presentableName: String
-    @Nls
-    get() = EduCoreStudyItemBundle.message("item.section")
-
-  override val presentableTitleName: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("item.section.title")
-
-  override val createItemMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("create.section")
-
-  override val createItemTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("create.section.title")
-
-  override val newItemTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("new.section.title")
-
-  override val selectItemTypeMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("select.type.section")
-
-  override val updateOnStepikMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("update.on.0.section", StepikNames.STEPIK)
-
-  override val updateOnStepikTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("update.on.0.section.title", StepikNames.STEPIK)
-
-  override val uploadToStepikMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("upload.to.0.section", StepikNames.STEPIK)
-
-  override val uploadToStepikTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("upload.to.0.section.title", StepikNames.STEPIK)
-
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  override fun failedToFindItemMessage(itemName: String): String =
-    EduCoreStudyItemBundle.message("failed.to.find.section", itemName)
-
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  override fun pressEnterToCreateItemMessageImpl(enter: String): String =
-    EduCoreStudyItemBundle.message("hint.press.enter.to.create.section", enter)
-}
-
-object LessonType : StudyItemType() {
-  override val presentableName: String
-    @Nls
-    get() = EduCoreStudyItemBundle.message("item.lesson")
-
-  override val presentableTitleName: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("item.lesson.title")
-
-  override val createItemMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("create.lesson")
-
-  override val createItemTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("create.lesson.title")
-
-  override val newItemTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("new.lesson.title")
-
-  override val selectItemTypeMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("select.type.lesson")
-
-  override val updateOnStepikMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("update.on.0.lesson", StepikNames.STEPIK)
-
-  override val updateOnStepikTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("update.on.0.lesson.title", StepikNames.STEPIK)
-
-  override val uploadToStepikMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("upload.to.0.lesson", StepikNames.STEPIK)
-
-  override val uploadToStepikTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("upload.to.0.lesson.title", StepikNames.STEPIK)
-
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  override fun failedToFindItemMessage(itemName: String): String =
-    EduCoreStudyItemBundle.message("failed.to.find.lesson", itemName)
-
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  override fun pressEnterToCreateItemMessageImpl(enter: String): String =
-    EduCoreStudyItemBundle.message("hint.press.enter.to.create.lesson", enter)
-}
-
-object TaskType : StudyItemType() {
-  override val presentableName: String
-    @Nls
-    get() = EduCoreStudyItemBundle.message("item.task")
-
-  override val presentableTitleName: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("item.task.title")
-
-  override val createItemMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("create.task")
-
-  override val createItemTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("create.task.title")
-
-  override val newItemTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("new.task.title")
-
-  override val selectItemTypeMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("select.type.task")
-
-  override val updateOnStepikMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("update.on.0.task", StepikNames.STEPIK)
-
-  override val updateOnStepikTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("update.on.0.task.title", StepikNames.STEPIK)
-
-  override val uploadToStepikMessage: String
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    get() = EduCoreStudyItemBundle.message("upload.to.0.task", StepikNames.STEPIK)
-
-  override val uploadToStepikTitleMessage: String
-    @Nls(capitalization = Nls.Capitalization.Title)
-    get() = EduCoreStudyItemBundle.message("upload.to.0.task.title", StepikNames.STEPIK)
-
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  override fun failedToFindItemMessage(itemName: String): String =
-    EduCoreStudyItemBundle.message("failed.to.find.task", itemName)
-
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  override fun pressEnterToCreateItemMessageImpl(enter: String): String =
-    EduCoreStudyItemBundle.message("hint.press.enter.to.create.task", enter)
-}
+@Nls(capitalization = Nls.Capitalization.Sentence)
+fun StudyItemType.failedToFindItemMessage(@NonNls itemName: String): String =
+  when (this) {
+    COURSE_TYPE -> message("failed.to.find.course", itemName)
+    SECTION_TYPE -> message("failed.to.find.section", itemName)
+    LESSON_TYPE -> message("failed.to.find.lesson", itemName)
+    TASK_TYPE -> message("failed.to.find.task", itemName)
+  }
