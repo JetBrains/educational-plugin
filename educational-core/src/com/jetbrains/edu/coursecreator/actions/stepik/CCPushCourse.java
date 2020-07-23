@@ -11,6 +11,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Modal;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.CourseType;
@@ -37,11 +38,31 @@ import static com.jetbrains.edu.coursecreator.CCUtils.askToWrapTopLevelLessons;
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
-public class CCPushCourse extends CCPushAction {
+public class CCPushCourse extends DumbAwareAction {
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  public static String getUpdateText() {
+    return CourseType.INSTANCE.getUpdateOnStepikMessage();
+  }
+
+  @Nls(capitalization = Nls.Capitalization.Title)
+  public static String getUpdateTitleText() {
+    return CourseType.INSTANCE.getUpdateOnStepikTitleMessage();
+  }
+
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  public static String getUploadText() {
+    return CourseType.INSTANCE.getUploadToStepikTitleMessage();
+  }
+
+  @Nls(capitalization = Nls.Capitalization.Title)
+  public static String getUploadTitleText() {
+    return CourseType.INSTANCE.getUploadToStepikTitleMessage();
+  }
 
   public CCPushCourse() {
-    // TODO i18n rewrite call after refactoring [CCPushAction]
-    super(CourseType.INSTANCE.getPresentableName(), null);
+    super(EduCoreBundle.message("gluing.slash", getUploadTitleText(), getUpdateTitleText()),
+          EduCoreBundle.message("gluing.slash", getUploadText(), getUpdateText()),
+          null);
   }
 
   @Override
@@ -58,10 +79,10 @@ public class CCPushCourse extends CCPushAction {
     }
     presentation.setEnabledAndVisible(true);
     if (((EduCourse)course).isRemote()) {
-      presentation.setText(getUpdateText(getItemName()));
+      presentation.setText(CourseType.INSTANCE.getUpdateOnStepikTitleMessage());
     }
     else {
-      presentation.setText(getUploadText(getItemName()));
+      presentation.setText(CourseType.INSTANCE.getUploadToStepikTitleMessage());
     }
   }
 
@@ -149,17 +170,5 @@ public class CCPushCourse extends CCPushAction {
         EduCounterUsageCollector.updateCourse();
       }
     });
-  }
-
-  @Nls(capitalization = Nls.Capitalization.Title)
-  public static String getUpdateText() {
-    // TODO i18n change after refactoring [CCPushAction]
-    return CCPushAction.getUpdateText(CourseType.INSTANCE.getPresentableTitleName());
-  }
-
-  @Nls(capitalization = Nls.Capitalization.Title)
-  public static String getUploadText() {
-    // TODO i18n change after refactoring [CCPushAction]
-    return CCPushAction.getUploadText(CourseType.INSTANCE.getPresentableTitleName());
   }
 }

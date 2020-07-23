@@ -6,21 +6,22 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Modal;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
-import com.jetbrains.edu.coursecreator.actions.stepik.CCPushAction;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
-import icons.EducationalCoreIcons;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,12 +32,33 @@ import static com.jetbrains.edu.learning.ExperimentsKt.isFeatureEnabled;
 import static com.jetbrains.edu.learning.stepik.hyperskill.HyperskillNamesKt.HYPERSKILL;
 
 @SuppressWarnings("ComponentNotRegistered") // Hyperskill.xml
-public class PushHyperskillLesson extends CCPushAction {
+public class PushHyperskillLesson extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(PushHyperskillLesson.class);
 
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  public static String getUpdateText() {
+    return EduCoreStudyItemBundle.message("update.on.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
+  }
+
+  @Nls(capitalization = Nls.Capitalization.Title)
+  public static String getUpdateTitleText() {
+    return EduCoreStudyItemBundle.message("update.on.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
+  }
+
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  public static String getUploadText() {
+    return EduCoreStudyItemBundle.message("upload.to.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
+  }
+
+  @Nls(capitalization = Nls.Capitalization.Title)
+  public static String getUploadTitleText() {
+    return EduCoreStudyItemBundle.message("upload.to.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
+  }
+
   public PushHyperskillLesson() {
-    // TODO i18n rewrite call after refactoring [CCPushAction]
-    super(EduCoreStudyItemBundle.message("item.lesson.custom", HYPERSKILL), EducationalCoreIcons.JB_ACADEMY_ENABLED);
+    super(EduCoreBundle.message("gluing.slash", getUploadTitleText(), getUpdateTitleText()),
+          EduCoreBundle.message("gluing.slash", getUploadText(), getUpdateText()),
+          null);
   }
 
   @Override
@@ -55,10 +77,10 @@ public class PushHyperskillLesson extends CCPushAction {
     if (lesson == null) return;
 
     if (lesson.getId() > 0) {
-      e.getPresentation().setText(getUpdateText(getItemName()));
+      e.getPresentation().setText(getUpdateTitleText());
     }
     else {
-      e.getPresentation().setText(getUploadText(getItemName()));
+      e.getPresentation().setText(getUploadTitleText());
     }
     e.getPresentation().setEnabledAndVisible(true);
   }

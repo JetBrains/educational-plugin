@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.pushAvailable
@@ -22,8 +23,11 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-// TODO i18n rewrite super call after refactoring [CCPushAction]
-class CCPushSection : CCPushAction(SectionType.presentableName) {
+class CCPushSection : DumbAwareAction(
+  EduCoreBundle.message("gluing.slash", SectionType.uploadToStepikTitleMessage, SectionType.updateOnStepikTitleMessage),
+  EduCoreBundle.message("gluing.slash", SectionType.uploadToStepikMessage, SectionType.updateOnStepikMessage),
+  null
+) {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
@@ -45,10 +49,10 @@ class CCPushSection : CCPushAction(SectionType.presentableName) {
     if (section != null && course.id > 0) {
       e.presentation.isEnabledAndVisible = true
       if (section.id <= 0) {
-        e.presentation.text = getUploadText(itemName)
+        e.presentation.text = SectionType.uploadToStepikTitleMessage
       }
       else {
-        e.presentation.text = getUpdateText(itemName)
+        e.presentation.text = SectionType.updateOnStepikTitleMessage
       }
     }
   }
@@ -101,7 +105,7 @@ class CCPushSection : CCPushAction(SectionType.presentableName) {
         showErrorNotification(
           project,
           EduCoreBundle.message("error.failed.to.update"),
-          EduCoreBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateText())
+          EduCoreBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText())
         )
         return
       }

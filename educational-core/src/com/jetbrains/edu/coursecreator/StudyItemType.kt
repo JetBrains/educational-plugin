@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator
 
 import com.intellij.openapi.keymap.KeymapUtil
 import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle
+import com.jetbrains.edu.learning.stepik.StepikNames
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.awt.event.KeyEvent
@@ -25,6 +26,18 @@ sealed class StudyItemType {
 
   abstract val selectItemTypeMessage: String
     @Nls(capitalization = Nls.Capitalization.Sentence) get
+
+  abstract val updateOnStepikMessage: String
+    @Nls(capitalization = Nls.Capitalization.Sentence) get
+
+  abstract val updateOnStepikTitleMessage: String
+    @Nls(capitalization = Nls.Capitalization.Title) get
+
+  abstract val uploadToStepikMessage: String
+    @Nls(capitalization = Nls.Capitalization.Sentence) get
+
+  abstract val uploadToStepikTitleMessage: String
+    @Nls(capitalization = Nls.Capitalization.Title) get
 
   val pressEnterToCreateItemMessage: String
     @Nls(capitalization = Nls.Capitalization.Sentence)
@@ -65,6 +78,22 @@ object CourseType : StudyItemType() {
     @Nls(capitalization = Nls.Capitalization.Sentence)
     get() = EduCoreStudyItemBundle.message("select.type.course")
 
+  override val updateOnStepikMessage: String
+    @Nls(capitalization = Nls.Capitalization.Sentence)
+    get() = EduCoreStudyItemBundle.message("update.on.0.course", StepikNames.STEPIK)
+
+  override val updateOnStepikTitleMessage: String
+    @Nls(capitalization = Nls.Capitalization.Title)
+    get() = EduCoreStudyItemBundle.message("update.on.0.course.title", StepikNames.STEPIK)
+
+  override val uploadToStepikMessage: String
+    @Nls(capitalization = Nls.Capitalization.Sentence)
+    get() = EduCoreStudyItemBundle.message("upload.to.0.course", StepikNames.STEPIK)
+
+  override val uploadToStepikTitleMessage: String
+    @Nls(capitalization = Nls.Capitalization.Title)
+    get() = EduCoreStudyItemBundle.message("upload.to.0.course.title", StepikNames.STEPIK)
+
   @Nls(capitalization = Nls.Capitalization.Sentence)
   override fun failedToFindItemMessage(itemName: String): String =
     EduCoreStudyItemBundle.message("failed.to.find.course", itemName)
@@ -98,6 +127,22 @@ object SectionType : StudyItemType() {
   override val selectItemTypeMessage: String
     @Nls(capitalization = Nls.Capitalization.Sentence)
     get() = EduCoreStudyItemBundle.message("select.type.section")
+
+  override val updateOnStepikMessage: String
+    @Nls(capitalization = Nls.Capitalization.Sentence)
+    get() = EduCoreStudyItemBundle.message("update.on.0.section", StepikNames.STEPIK)
+
+  override val updateOnStepikTitleMessage: String
+    @Nls(capitalization = Nls.Capitalization.Title)
+    get() = EduCoreStudyItemBundle.message("update.on.0.section.title", StepikNames.STEPIK)
+
+  override val uploadToStepikMessage: String
+    @Nls(capitalization = Nls.Capitalization.Sentence)
+    get() = EduCoreStudyItemBundle.message("upload.to.0.section", StepikNames.STEPIK)
+
+  override val uploadToStepikTitleMessage: String
+    @Nls(capitalization = Nls.Capitalization.Title)
+    get() = EduCoreStudyItemBundle.message("upload.to.0.section.title", StepikNames.STEPIK)
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
   override fun failedToFindItemMessage(itemName: String): String =
@@ -133,6 +178,22 @@ object LessonType : StudyItemType() {
     @Nls(capitalization = Nls.Capitalization.Sentence)
     get() = EduCoreStudyItemBundle.message("select.type.lesson")
 
+  override val updateOnStepikMessage: String
+    @Nls(capitalization = Nls.Capitalization.Sentence)
+    get() = EduCoreStudyItemBundle.message("update.on.0.lesson", StepikNames.STEPIK)
+
+  override val updateOnStepikTitleMessage: String
+    @Nls(capitalization = Nls.Capitalization.Title)
+    get() = EduCoreStudyItemBundle.message("update.on.0.lesson.title", StepikNames.STEPIK)
+
+  override val uploadToStepikMessage: String
+    @Nls(capitalization = Nls.Capitalization.Sentence)
+    get() = EduCoreStudyItemBundle.message("upload.to.0.lesson", StepikNames.STEPIK)
+
+  override val uploadToStepikTitleMessage: String
+    @Nls(capitalization = Nls.Capitalization.Title)
+    get() = EduCoreStudyItemBundle.message("upload.to.0.lesson.title", StepikNames.STEPIK)
+
   @Nls(capitalization = Nls.Capitalization.Sentence)
   override fun failedToFindItemMessage(itemName: String): String =
     EduCoreStudyItemBundle.message("failed.to.find.lesson", itemName)
@@ -166,6 +227,22 @@ object TaskType : StudyItemType() {
   override val selectItemTypeMessage: String
     @Nls(capitalization = Nls.Capitalization.Sentence)
     get() = EduCoreStudyItemBundle.message("select.type.task")
+
+  override val updateOnStepikMessage: String
+    @Nls(capitalization = Nls.Capitalization.Sentence)
+    get() = EduCoreStudyItemBundle.message("update.on.0.task", StepikNames.STEPIK)
+
+  override val updateOnStepikTitleMessage: String
+    @Nls(capitalization = Nls.Capitalization.Title)
+    get() = EduCoreStudyItemBundle.message("update.on.0.task.title", StepikNames.STEPIK)
+
+  override val uploadToStepikMessage: String
+    @Nls(capitalization = Nls.Capitalization.Sentence)
+    get() = EduCoreStudyItemBundle.message("upload.to.0.task", StepikNames.STEPIK)
+
+  override val uploadToStepikTitleMessage: String
+    @Nls(capitalization = Nls.Capitalization.Title)
+    get() = EduCoreStudyItemBundle.message("upload.to.0.task.title", StepikNames.STEPIK)
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
   override fun failedToFindItemMessage(itemName: String): String =

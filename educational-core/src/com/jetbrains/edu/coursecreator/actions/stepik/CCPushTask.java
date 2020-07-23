@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Modal;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
@@ -19,16 +20,38 @@ import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
-public class CCPushTask extends CCPushAction {
+public class CCPushTask extends DumbAwareAction {
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  public static String getUpdateText() {
+    return TaskType.INSTANCE.getUpdateOnStepikMessage();
+  }
+
+  @Nls(capitalization = Nls.Capitalization.Title)
+  public static String getUpdateTitleText() {
+    return TaskType.INSTANCE.getUpdateOnStepikTitleMessage();
+  }
+
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  public static String getUploadText() {
+    return TaskType.INSTANCE.getUploadToStepikTitleMessage();
+  }
+
+  @Nls(capitalization = Nls.Capitalization.Title)
+  public static String getUploadTitleText() {
+    return TaskType.INSTANCE.getUploadToStepikTitleMessage();
+  }
+
   public CCPushTask() {
-    // TODO rewrite call after refactoring [CCPushAction]
-    super(TaskType.INSTANCE.getPresentableName(), null);
+    super(EduCoreBundle.message("gluing.slash", getUploadTitleText(), getUpdateTitleText()),
+          EduCoreBundle.message("gluing.slash", getUploadText(), getUpdateText()),
+          null);
   }
 
   @Override
@@ -59,10 +82,10 @@ public class CCPushTask extends CCPushAction {
       final Task task = lesson.getTask(taskDir.getName());
       if (task != null) {
         if (task.getId() <= 0) {
-          e.getPresentation().setText(getUploadText(getItemName()));
+          e.getPresentation().setText(getUploadTitleText());
         }
         else {
-          e.getPresentation().setText(getUpdateText(getItemName()));
+          e.getPresentation().setText(getUpdateTitleText());
         }
       }
     }
@@ -133,7 +156,7 @@ public class CCPushTask extends CCPushAction {
     int positionOnServer = getTaskPosition(task.getId());
     if (position != positionOnServer) {
       showErrorNotification(project, EduCoreBundle.message("error.failed.to.update"),
-                            EduCoreBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateText()));
+                            EduCoreBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText()));
       return;
     }
     Task taskCopy = task.copy();

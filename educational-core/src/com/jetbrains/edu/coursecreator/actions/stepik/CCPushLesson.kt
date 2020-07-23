@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task.Modal
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -29,8 +30,11 @@ import com.twelvemonkeys.lang.StringUtil
 import org.jetbrains.annotations.NonNls
 
 // educational-core.xml
-// TODO i18n rewrite super call after refactoring [CCPushAction]
-class CCPushLesson : CCPushAction(LessonType.presentableName) {
+class CCPushLesson : DumbAwareAction(
+  EduCoreBundle.message("gluing.slash", LessonType.uploadToStepikTitleMessage, LessonType.updateOnStepikTitleMessage),
+  EduCoreBundle.message("gluing.slash", LessonType.uploadToStepikMessage, LessonType.updateOnStepikMessage),
+  null
+) {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
@@ -60,10 +64,10 @@ class CCPushLesson : CCPushAction(LessonType.presentableName) {
     if (course.id > 0) {
       e.presentation.isEnabledAndVisible = true
       if (lesson.id <= 0) {
-        e.presentation.text = getUploadText(itemName)
+        e.presentation.text = LessonType.uploadToStepikTitleMessage
       }
       else {
-        e.presentation.text = getUpdateText(itemName)
+        e.presentation.text = LessonType.updateOnStepikTitleMessage
       }
     }
   }
@@ -137,7 +141,7 @@ class CCPushLesson : CCPushAction(LessonType.presentableName) {
           showErrorNotification(
             project,
             EduCoreBundle.message("error.failed.to.update"),
-            EduCoreBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateText())
+            EduCoreBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText())
           )
 
 
