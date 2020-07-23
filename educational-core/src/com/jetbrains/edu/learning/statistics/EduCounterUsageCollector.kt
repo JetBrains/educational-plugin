@@ -123,6 +123,19 @@ object EduCounterUsageCollector {
   @JvmStatic
   fun codeforcesSubmitSolution() = reportEvent("codeforces.submit.solution")
 
+  @JvmStatic
+  fun twitterDialogShown(course: Course) = reportEvent(
+    "twitter.dialog.shown",
+    mapOf(TYPE to course.itemType, LANGUAGE to course.languageID)
+  )
+
+  @JvmStatic
+  fun twitterAchievementPosted(course: Course) = reportEvent(
+    "twitter.achievement.posted",
+    mapOf(TYPE to course.itemType, LANGUAGE to course.languageID)
+  )
+
+  @Suppress("UnstableApiUsage")
   private fun reportEvent(eventId: String, additionalData: Map<String, String> = emptyMap()) {
     val data = FeatureUsageData()
     additionalData.forEach {
