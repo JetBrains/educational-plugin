@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.util.io.getHostName
 import com.intellij.util.io.isLocalHost
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.getResource
@@ -24,9 +23,9 @@ import java.util.*
 class EduToolsResourcesRequestHandler : HttpRequestHandler() {
 
   override fun isAccessible(request: HttpRequest): Boolean {
-    val hostName = getHostName(request)
+    val hostName = getHostName(request) ?: return false
     val uri = request.uri()
-    return hostName != null && isLocalHost(hostName) && uri.contains(EDU_RESOURCES)
+    return isLocalHost(hostName) && uri.contains(EDU_RESOURCES)
   }
 
   override fun process(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): Boolean {
