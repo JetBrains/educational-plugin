@@ -13,12 +13,13 @@ object PyBaseSdksProvider {
   private var sdkDescriptors: Map<String, PyBaseSdkDescriptor> = emptyMap()
 
   fun getBaseSdks(context: UserDataHolder? = null): Collection<PyBaseSdkDescriptor> {
+    val oldDescriptors = sdkDescriptors
     val newDescriptors = mutableMapOf<String, PyBaseSdkDescriptor>()
 
     val flavor = PythonSdkFlavor.getApplicableFlavors(false).first()
     val sdkPaths = flavor.suggestHomePaths(null, context)
     for (sdkPath in sdkPaths) {
-      val sdkDescriptor = sdkDescriptors[sdkPath]
+      val sdkDescriptor = oldDescriptors[sdkPath]
       if (sdkDescriptor != null) {
         newDescriptors[sdkPath] = sdkDescriptor
         continue
@@ -29,9 +30,8 @@ object PyBaseSdksProvider {
     }
 
     sdkDescriptors = newDescriptors
-    return sdkDescriptors.values
+    return newDescriptors.values
   }
 }
 
 class PyBaseSdkDescriptor(val path: String, val version: String, val languageLevel: LanguageLevel)
-
