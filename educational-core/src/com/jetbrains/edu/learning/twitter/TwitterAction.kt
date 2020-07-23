@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.twitter.TwitterUtils.createTwitterDialogAndShow
 
 class TwitterAction : CheckListener {
@@ -21,6 +22,7 @@ class TwitterAction : CheckListener {
     for (twitterPluginConfigurator in TwitterPluginConfigurator.EP_NAME.extensionList) {
       if (twitterPluginConfigurator.askToTweet(project, task, statusBeforeCheck!!)) {
         createTwitterDialogAndShow(project, twitterPluginConfigurator, task)
+        EduCounterUsageCollector.twitterDialogShown(task.course)
       }
     }
   }

@@ -10,6 +10,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.twitter.ui.createTwitterDialogUI
 import org.apache.http.HttpStatus
 import twitter4j.StatusUpdate
@@ -55,6 +56,7 @@ object TwitterUtils {
             twitter.oAuthAccessToken = AccessToken(settings.accessToken, settings.tokenSecret)
           }
           updateStatus(twitter, info)
+          EduCounterUsageCollector.twitterAchievementPosted(task.course)
         }
         catch (e: Exception) {
           LOG.warn(e)
