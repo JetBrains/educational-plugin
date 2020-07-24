@@ -18,10 +18,13 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Supplier;
+
 abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
 
-  protected CCAnswerPlaceholderAction(@Nullable @Nls(capitalization = Nls.Capitalization.Title) String text,
-                                      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String description) {
+  protected CCAnswerPlaceholderAction(
+    @NotNull Supplier<@Nls(capitalization = Nls.Capitalization.Title) String> text,
+    @NotNull Supplier<@Nls(capitalization = Nls.Capitalization.Sentence) String> description) {
     super(text, description, null);
   }
 

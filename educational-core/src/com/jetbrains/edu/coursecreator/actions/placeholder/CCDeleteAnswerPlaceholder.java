@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
   public CCDeleteAnswerPlaceholder() {
-    super(EduCoreBundle.message("label.delete"), EduCoreActionBundle.message("delete.answer.placeholder.description"));
+    super(EduCoreBundle.lazyMessage("label.delete"), EduCoreActionBundle.lazyMessage("delete.answer.placeholder.description"));
   }
 
   @Override

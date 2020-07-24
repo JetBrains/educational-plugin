@@ -583,7 +583,10 @@ public class EduUtils {
     return null;
   }
 
-  public static void runUndoableAction(Project project, String name, UndoableAction action, UndoConfirmationPolicy confirmationPolicy) {
+  public static void runUndoableAction(Project project,
+                                       @Nls(capitalization = Nls.Capitalization.Title) String name,
+                                       UndoableAction action,
+                                       UndoConfirmationPolicy confirmationPolicy) {
     try {
       WriteCommandAction.writeCommandAction(project)
         .withName(name)
@@ -602,7 +605,9 @@ public class EduUtils {
     return "AndroidStudio".equals(PlatformUtils.getPlatformPrefix());
   }
 
-  public static void runUndoableAction(Project project, String name, UndoableAction action) {
+  public static void runUndoableAction(Project project,
+                                       @Nls(capitalization = Nls.Capitalization.Title) String name,
+                                       UndoableAction action) {
     runUndoableAction(project, name, action, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
   }
 

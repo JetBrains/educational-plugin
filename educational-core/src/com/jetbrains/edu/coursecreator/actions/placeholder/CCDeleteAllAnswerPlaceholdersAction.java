@@ -17,8 +17,8 @@ import java.util.List;
 public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderAction {
 
   public CCDeleteAllAnswerPlaceholdersAction() {
-    super(EduCoreActionBundle.message("delete.all.answer.placeholders"),
-          EduCoreActionBundle.message("delete.all.answer.placeholders.description"));
+    super(EduCoreActionBundle.lazyMessage("delete.all.answer.placeholders"),
+          EduCoreActionBundle.lazyMessage("delete.all.answer.placeholders.description"));
   }
 
   @Override
