@@ -30,7 +30,7 @@ object NavigationUtils {
   @JvmStatic
   fun nextTask(task: Task): Task? {
     val project = task.project ?: return null
-    if (isUnsolvedHyperskillStage(task, project)) return null
+    if (isUnsolvedHyperskillStage(task, project) || isLastHyperskillStage(task)) return null
 
     val currentLesson = task.lesson
     val taskList = currentLesson.taskList
@@ -68,6 +68,13 @@ object NavigationUtils {
     return task.course is HyperskillCourse &&
            task.lesson.name != HYPERSKILL_PROBLEMS &&
            !SubmissionsManager.getInstance(project).containsCorrectSubmission(task.id)
+  }
+
+  private fun isLastHyperskillStage(task: Task): Boolean {
+    val course = task.course
+    return course is HyperskillCourse &&
+           task.lesson.name != HYPERSKILL_PROBLEMS &&
+           task.index == course.stages.size
   }
 
   private fun isFirstHyperskillProblem(task: Task): Boolean {

@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.withTestDialog
@@ -387,6 +388,16 @@ class HyperskillNavigationTest : NavigationTestBase() {
     assertTrue(presentation.isEnabledAndVisible)
   }
 
+  fun `test navigate to next unavailable on last stage`() {
+    val course = createHyperskillCourseWithProblemsLesson()
+    val task = course.findTask("lesson1", "task1")
+    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, CheckStatus.Solved, Submission())
+
+    task.openTaskFileInEditor("src/Task.kt")
+    val presentation = myFixture.testAction(NextTaskAction())
+    assertFalse(presentation.isEnabledAndVisible)
+  }
+
   fun `test navigate from problems to stages unavailable`() {
     val course = createHyperskillCourseWithProblemsLesson()
     val task = course.findTask(HYPERSKILL_PROBLEMS, "problem1")
@@ -442,6 +453,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
       }
     } as HyperskillCourse
     course.hyperskillProject = HyperskillProject()
+    course.stages = listOf(HyperskillStage(1, "", 1))
     return course
   }
 }
