@@ -7,7 +7,7 @@ import java.io.File
 
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
-class CCCreateCourseArchive : CreateCourseArchiveAction(EduUtils.addMnemonic(EduCoreActionBundle.message("action.create.course.archive"))) {
+class CCCreateCourseArchive : CreateCourseArchiveAction(EduUtils.addMnemonic(EduCoreActionBundle.message("create.course.archive"))) {
 
   override fun showAuthorField(): Boolean = true
 

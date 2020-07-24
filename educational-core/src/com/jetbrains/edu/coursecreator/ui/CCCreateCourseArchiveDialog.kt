@@ -10,7 +10,7 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String, showAuth
   private val myPanel: CCCreateCourseArchivePanel
 
   init {
-    title = EduCoreActionBundle.message("action.create.course.archive")
+    title = EduCoreActionBundle.message("create.course.archive")
     myPanel = CCCreateCourseArchivePanel(project, courseName, showAuthorField)
     addPanelListener()
     init()

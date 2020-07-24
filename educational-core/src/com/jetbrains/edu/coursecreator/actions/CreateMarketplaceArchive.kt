@@ -11,7 +11,7 @@ import java.io.File
 
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
-class CreateMarketplaceArchive : CreateCourseArchiveAction(EduUtils.addMnemonic(EduCoreActionBundle.message("action.create.course.archive.marketplace"))) {
+class CreateMarketplaceArchive : CreateCourseArchiveAction(EduUtils.addMnemonic(EduCoreActionBundle.message("create.course.archive.marketplace"))) {
 
   override fun showAuthorField(): Boolean = false
 
