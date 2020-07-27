@@ -21,8 +21,8 @@ import icons.EducationalCoreIcons
 
 @Suppress("ComponentNotRegistered")
 class ApplyHyperskillSubmission : DumbAwareAction(
-  EduCoreActionBundle.message("apply.submission", HYPERSKILL),
-  EduCoreActionBundle.message("apply.submission.description", HYPERSKILL),
+  EduCoreActionBundle.lazyMessage("apply.submission", HYPERSKILL),
+  EduCoreActionBundle.lazyMessage("apply.submission.description", HYPERSKILL),
   EducationalCoreIcons.JB_ACADEMY_ENABLED
 ) {
   override fun actionPerformed(e: AnActionEvent) {

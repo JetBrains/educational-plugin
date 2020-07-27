@@ -33,8 +33,8 @@ import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered") // Hyperskill.xml
 class GetHyperskillLesson : DumbAwareAction(
-  EduCoreActionBundle.message("get.lesson", HYPERSKILL, StepikNames.STEPIK),
-  EduCoreActionBundle.message("get.lesson.description", HYPERSKILL, StepikNames.STEPIK),
+  EduCoreActionBundle.lazyMessage("get.lesson", HYPERSKILL, StepikNames.STEPIK),
+  EduCoreActionBundle.lazyMessage("get.lesson.description", HYPERSKILL, StepikNames.STEPIK),
   EducationalCoreIcons.JB_ACADEMY_ENABLED
 ) {
 

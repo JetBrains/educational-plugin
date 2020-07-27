@@ -56,8 +56,8 @@ public class PushHyperskillLesson extends DumbAwareAction {
   }
 
   public PushHyperskillLesson() {
-    super(EduCoreBundle.message("gluing.slash", getUploadTitleText(), getUpdateTitleText()),
-          EduCoreBundle.message("gluing.slash", getUploadText(), getUpdateText()),
+    super(EduCoreBundle.lazyMessage("gluing.slash", getUploadTitleText(), getUpdateTitleText()),
+          EduCoreBundle.lazyMessage("gluing.slash", getUploadText(), getUpdateText()),
           null);
   }
 
