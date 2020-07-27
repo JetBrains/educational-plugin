@@ -25,7 +25,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillP
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import java.awt.BorderLayout
 import java.awt.CardLayout
-import java.awt.Dimension
 import java.util.*
 import javax.swing.JPanel
 import javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
@@ -37,7 +36,6 @@ const val DESCRIPTION_AND_SETTINGS_TOP_OFFSET = 25
 private const val ERROR_LABEL_TOP_GAP = 20
 private const val HORIZONTAL_MARGIN = 10
 private const val LARGE_HORIZONTAL_MARGIN = 15
-private val PANEL_SIZE = JBUI.size(500, 600)
 
 private const val EMPTY = "empty"
 private const val CONTENT = "content"
@@ -105,10 +103,6 @@ class NewCoursePanel(
 
   fun setButtonsEnabled(isEnabled: Boolean) {
     header.setButtonsEnabled(isEnabled)
-  }
-
-  override fun getMinimumSize(): Dimension {
-    return PANEL_SIZE
   }
 
   fun addLocationFieldDocumentListener(listener: DocumentListener) {

@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropd
 import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
-import java.awt.Dimension
 import java.awt.Rectangle
 import java.awt.event.ActionListener
 import java.util.*
@@ -30,8 +29,6 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 import kotlin.collections.HashSet
 
-
-private val PANEL_SIZE = JBUI.size(900, 600)
 
 private const val CONTENT_CARD_NAME = "CONTENT"
 private const val LOADING_CARD_NAME = "PROGRESS"
@@ -97,6 +94,7 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
     val splitPane = OnePixelSplitter()
     splitPane.firstComponent = coursesListPanel
     splitPane.secondComponent = coursePanel
+    splitPane.proportion = 0.46f
 
     val splitPaneRoot = JPanel(BorderLayout()) // needed to set borders
     splitPaneRoot.add(splitPane, BorderLayout.CENTER)
@@ -107,8 +105,6 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
   protected open fun toolbarAction(): AnAction? = null
 
   protected open fun tabInfo(): TabInfo? = null
-
-  override fun getPreferredSize(): Dimension = PANEL_SIZE
 
   interface CourseValidationListener {
     fun validationStatusChanged(canStartCourse: Boolean)

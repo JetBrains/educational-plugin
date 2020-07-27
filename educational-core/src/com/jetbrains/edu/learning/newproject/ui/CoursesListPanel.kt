@@ -30,9 +30,6 @@ import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.*
 
-private const val PANEL_WIDTH = 450
-private const val PANEL_HEIGHT = 680
-
 private const val TOOLBAR_TOP_OFFSET = 10
 private const val TOOLBAR_BOTTOM_OFFSET = 8
 private const val TOOLBAR_LEFT_OFFSET = 13
@@ -45,7 +42,6 @@ class CoursesListPanel(
   private var coursesList: JBList<Course> = JBList()
   private var busConnection: MessageBusConnection? = null
   private var hoveredIndex: Int = -1
-  private val panelSize = JBUI.size(PANEL_WIDTH, PANEL_HEIGHT)
   private var tabInfoPanel: TabInfoPanel? = null
 
   val selectedCourse: Course? get() = coursesList.selectedValue
@@ -62,9 +58,6 @@ class CoursesListPanel(
       addMouseMotionListener(CourseMouseMotionListener())
     }
 
-    preferredSize = panelSize
-    maximumSize = panelSize
-    minimumSize = panelSize
     border = JBUI.Borders.customLine(NewCoursePanel.DIVIDER_COLOR, 0, 0, 0, 1)
 
     add(createListPanel(), BorderLayout.CENTER)

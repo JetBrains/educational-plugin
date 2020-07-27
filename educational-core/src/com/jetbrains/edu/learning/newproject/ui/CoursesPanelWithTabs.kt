@@ -23,8 +23,10 @@ import javax.swing.tree.*
 
 
 private const val FONT_SIZE = 13.0f
+private const val PANEL_WIDTH = 1050
+private const val PANEL_HEIGHT = 750
+
 private const val SCROLL_PANE_WIDTH = 233
-private const val SCROLL_PANE_HEIGHT = 800
 
 class CoursesPanelWithTabs : JPanel() {
   private val coursesTab: CoursesTab
@@ -40,6 +42,7 @@ class CoursesPanelWithTabs : JPanel() {
     coursesProvidersTree = createCourseProvidersTree()
     add(coursesProvidersTree, BorderLayout.WEST)
     add(coursesTab, BorderLayout.CENTER)
+    preferredSize = JBUI.size(PANEL_WIDTH, PANEL_HEIGHT)
   }
 
   private fun createCourseProvidersTree(): JBScrollPane {
@@ -66,7 +69,7 @@ class CoursesPanelWithTabs : JPanel() {
     return JBScrollPane(tree).apply {
       horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
       verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER
-      preferredSize = JBUI.size(SCROLL_PANE_WIDTH, SCROLL_PANE_HEIGHT)
+      preferredSize = JBUI.size(SCROLL_PANE_WIDTH, PANEL_HEIGHT)
       border = JBUI.Borders.customLine(NewCoursePanel.DIVIDER_COLOR, 0, 0, 0, 1)
     }
   }
