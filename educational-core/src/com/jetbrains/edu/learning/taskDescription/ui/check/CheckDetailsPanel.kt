@@ -123,9 +123,17 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
   }
 
   private class ShowFullOutputAction(private val project: Project, private val text: String) : DumbAwareAction(null as String?) {
+    private var outputShown = false
+
     override fun actionPerformed(e: AnActionEvent) {
-      CheckDetailsView.getInstance(project).showOutput(text)
-      EduCounterUsageCollector.fullOutputShown()
+      if (!outputShown) {
+        CheckDetailsView.getInstance(project).showOutput(text)
+        outputShown = true
+        EduCounterUsageCollector.fullOutputShown()
+      } else {
+        CheckDetailsView.getInstance(project).clear()
+        outputShown = false
+      }
     }
   }
 
