@@ -146,7 +146,7 @@ object EduCounterUsageCollector {
 
   private fun Enum<*>.toLower() = this.toString().toLowerCase()
 
-  const val GROUP_ID = "educational.counters"
+  private const val GROUP_ID = "educational.counters"
   private const val MODE = "mode"
   private const val SOURCE = "source"
   private const val EVENT = "event"
