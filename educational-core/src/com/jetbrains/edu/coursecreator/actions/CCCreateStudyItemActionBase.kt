@@ -32,8 +32,8 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   protected val itemType: StudyItemType,
   icon: Icon
 ) : DumbAwareAction(
-  itemType.presentableTitleName,
-  itemType.createItemMessage,
+  { itemType.presentableTitleName },
+  { itemType.createItemMessage },
   icon
 ) {
 
@@ -190,6 +190,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
 
     @JvmStatic
     val SUGGESTED_NAME: DataKey<String> = DataKey.create("SUGGESTED_NAME")
+
     @JvmStatic
     val ITEM_INDEX: DataKey<Int> = DataKey.create("ITEM_INDEX")
 

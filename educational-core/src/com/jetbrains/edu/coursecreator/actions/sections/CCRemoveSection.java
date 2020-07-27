@@ -30,7 +30,7 @@ public class CCRemoveSection extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCRemoveSection.class);
 
   public CCRemoveSection() {
-    super(EduCoreActionBundle.message("remove.section"), EduCoreActionBundle.message("remove.section.description"), null);
+    super(EduCoreActionBundle.lazyMessage("remove.section"), EduCoreActionBundle.lazyMessage("remove.section.description"), null);
   }
 
   @Override

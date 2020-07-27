@@ -29,7 +29,7 @@ public class CCWrapWithSection extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCWrapWithSection.class);
 
   public CCWrapWithSection() {
-    super(EduCoreActionBundle.message("wrap.with.section"), EduCoreActionBundle.message("wrap.with.section.description"), null);
+    super(EduCoreActionBundle.lazyMessage("wrap.with.section"), EduCoreActionBundle.lazyMessage("wrap.with.section.description"), null);
   }
 
   @Override
