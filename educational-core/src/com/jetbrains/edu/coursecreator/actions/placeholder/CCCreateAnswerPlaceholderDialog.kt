@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.JComponent
@@ -83,7 +84,7 @@ open class CCCreateAnswerPlaceholderDialog(
     }
     val errorText = try {
       val dependency = AnswerPlaceholderDependency.create(placeholder, currentText)
-      if (dependency == null) EduCoreBundle.message("error.invalid.dependency") else null
+      if (dependency == null) EduCoreErrorBundle.message("error.invalid.dependency") else null
     }
     catch (e: AnswerPlaceholderDependency.InvalidDependencyException) {
       e.customMessage

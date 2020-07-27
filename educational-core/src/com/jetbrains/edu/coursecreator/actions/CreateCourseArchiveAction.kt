@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.createCourseArchive
 import java.io.File
 
@@ -62,7 +63,7 @@ abstract class CreateCourseArchiveAction(title: String) : DumbAwareAction(title)
       createCourseArchive()
     }
     else {
-      Messages.showErrorDialog(project, errorMessage, EduCoreBundle.message("error.failed.to.create.course.archive"))
+      Messages.showErrorDialog(project, errorMessage, EduCoreErrorBundle.message("error.failed.to.create.course.archive"))
     }
   }
 

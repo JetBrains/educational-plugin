@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.mockTaskFileName
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
@@ -57,9 +58,9 @@ object HyperskillCheckConnector {
   fun getSolutionFiles(task: Task, project: Project): List<SolutionFile> {
     val taskDir = task.getTaskDir(project)
     if (taskDir == null) {
-      val error = EduCoreBundle.message("error.failed.to.find.dir", task.name)
+      val error = EduCoreErrorBundle.message("error.failed.to.find.dir", task.name)
       LOG.error(error)
-      showErrorDetails(project, EduCoreBundle.message("error.unexpected", error))
+      showErrorDetails(project, EduCoreErrorBundle.message("error.unexpected", error))
       return emptyList()
     }
 
@@ -78,7 +79,7 @@ object HyperskillCheckConnector {
     }
     if (files.isEmpty()) {
       LOG.warn("No files were collected to post solution")
-      showErrorDetails(project, EduCoreBundle.message("error.failed.to.collect.files", task.name))
+      showErrorDetails(project, EduCoreErrorBundle.message("error.failed.to.collect.files", task.name))
     }
     return files
   }
@@ -89,9 +90,9 @@ object HyperskillCheckConnector {
   }
 
   private fun String.toCheckResult(): CheckResult {
-    return if (this == EduCoreBundle.message("error.forbidden")) {
+    return if (this == EduCoreErrorBundle.message("error.forbidden")) {
       CheckResult(CheckStatus.Unchecked,
-                  EduCoreBundle.message("error.forbidden.with.link"),
+                  EduCoreErrorBundle.message("error.forbidden.with.link"),
                   hyperlinkListener = HyperskillLoginListener
       )
     }
@@ -115,13 +116,13 @@ object HyperskillCheckConnector {
     val fileName = task.mockTaskFileName
     if (fileName == null) {
       LOG.error("Unable to create submission: could not retrieve mockTaskFileName from course ${course.name} for the task ${task.name}")
-      return Err(EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA))
+      return Err(EduCoreErrorBundle.message("error.failed.to.post.solution", EduNames.JBA))
     }
 
     val answer = task.getTaskFile(fileName)?.getText(project)
     if (answer == null) {
       LOG.warn("Unable to create submission: file with code ${fileName} is not found for the task ${task.name}")
-      return Err(EduCoreBundle.message("error.failed.to.post.solution.no.file", EduNames.JBA, fileName))
+      return Err(EduCoreErrorBundle.message("error.failed.to.post.solution.no.file", EduNames.JBA, fileName))
     }
     val codeSubmission = StepikCheckerConnector.createCodeSubmission(attempt.id, defaultLanguage, answer)
     return connector.postSubmission(codeSubmission)

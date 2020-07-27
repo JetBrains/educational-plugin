@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,8 +55,8 @@ public class CCRemoveSection extends DumbAwareAction {
     final VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
     for (VirtualFile child : sectionChildren) {
       if (courseDir.findChild(child.getName()) != null) {
-        Messages.showInfoMessage(EduCoreBundle.message("error.failed.to.unwrap.section.message", child.getName()),
-                                 EduCoreBundle.message("error.failed.to.unwrap.section"));
+        Messages.showInfoMessage(EduCoreErrorBundle.message("error.failed.to.unwrap.section.message", child.getName()),
+                                 EduCoreErrorBundle.message("error.failed.to.unwrap.section"));
         return;
       }
     }

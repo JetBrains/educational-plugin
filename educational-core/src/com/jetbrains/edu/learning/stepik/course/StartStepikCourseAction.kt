@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Compatible
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.IncompatibleVersion
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.StepikLanguage
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -107,8 +107,8 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
   }
 
   private fun showAdaptiveCoursesAreNotSupportedNotification(courseName: String) {
-    Messages.showErrorDialog(EduCoreBundle.message("error.adaptive.courses.not.supported.message", courseName, JBA_DEFAULT_URL, EduNames.JBA),
-                             EduCoreBundle.message("error.adaptive.courses.not.supported.title"))
+    Messages.showErrorDialog(EduCoreErrorBundle.message("error.adaptive.courses.not.supported.message", courseName, JBA_DEFAULT_URL, EduNames.JBA),
+                             EduCoreErrorBundle.message("error.adaptive.courses.not.supported.title"))
   }
 
   private fun showFailedToAddCourseNotification(courseLink: String) {

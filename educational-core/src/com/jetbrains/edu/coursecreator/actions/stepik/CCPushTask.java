@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle;
 import com.jetbrains.edu.learning.messages.UtilsKt;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
@@ -140,8 +141,8 @@ public class CCPushTask extends DumbAwareAction {
     int position = task.getIndex();
     int positionOnServer = getTaskPosition(task.getId());
     if (position != positionOnServer) {
-      showErrorNotification(project, EduCoreBundle.message("error.failed.to.update"),
-                            EduCoreBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText()));
+      showErrorNotification(project, EduCoreErrorBundle.message("error.failed.to.update"),
+                            EduCoreErrorBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText()));
       return;
     }
     Task taskCopy = task.copy();

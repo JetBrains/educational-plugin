@@ -8,7 +8,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.rename.RenameDialog
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
 import com.jetbrains.edu.learning.handlers.isRenameForbidden
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 
 class EduTaskFileRenameProcessor : RenamePsiFileProcessor() {
 
@@ -37,7 +37,7 @@ class EduTaskFileRenameProcessor : RenamePsiFileProcessor() {
     ): EduRenameDialogBase {
       return object : EduRenameDialogBase(project, element, nameSuggestionContext, editor) {
         override fun canRun() {
-          throw ConfigurationException(EduCoreBundle.message("error.invalid.rename.message"))
+          throw ConfigurationException(EduCoreErrorBundle.message("error.invalid.rename.message"))
         }
       }
     }

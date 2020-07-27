@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -42,7 +43,7 @@ val HYPERSKILL_SELECTED_STAGE: Key<Int> = Key.create("HYPERSKILL_SELECTED_STAGE"
 val HYPERSKILL_SELECTED_PROBLEM: Key<Int> = Key.create("HYPERSKILL_SELECTED_PROBLEM")
 
 val failedToPostToJBA: String
-  get() = EduCoreBundle.message("error.failed.to.post.solution.with.guide", EduNames.JBA, EduNames.FAILED_TO_POST_TO_JBA_URL)
+  get() = EduCoreErrorBundle.message("error.failed.to.post.solution.with.guide", EduNames.JBA, EduNames.FAILED_TO_POST_TO_JBA_URL)
 
 fun openSelectedStage(course: Course, project: Project) {
   if (course !is HyperskillCourse) {
@@ -131,11 +132,11 @@ fun getSelectedProjectIdUnderProgress(account: HyperskillAccount): Int? {
 }
 
 fun showErrorDetails(project: Project, error: String) {
-  if (error == EduCoreBundle.message("error.forbidden")) {
+  if (error == EduCoreErrorBundle.message("error.forbidden")) {
     Notification(
       EduNames.JBA,
-      EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
-      EduCoreBundle.message("error.forbidden.with.link"),
+      EduCoreErrorBundle.message("error.failed.to.post.solution", EduNames.JBA),
+      EduCoreErrorBundle.message("error.forbidden.with.link"),
       NotificationType.ERROR
     ) { notification, e ->
       notification.expire()
@@ -147,7 +148,7 @@ fun showErrorDetails(project: Project, error: String) {
   LOG.warn(error)
   Notification(
     EduNames.JBA,
-    EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
+    EduCoreErrorBundle.message("error.failed.to.post.solution", EduNames.JBA),
     EduCoreBundle.message("help.use.guide", EduNames.FAILED_TO_POST_TO_JBA_URL),
     NotificationType.ERROR,
     NotificationListener.URL_OPENING_LISTENER)

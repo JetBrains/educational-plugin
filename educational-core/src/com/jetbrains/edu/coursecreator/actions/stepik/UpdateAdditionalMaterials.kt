@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class UpdateAdditionalMaterials : DumbAwareAction(EduCoreActionBundle.lazyMessage("update.additional.materials")) {
@@ -31,8 +32,8 @@ class UpdateAdditionalMaterials : DumbAwareAction(EduCoreActionBundle.lazyMessag
         if (!CCStepikConnector.updateCourseAdditionalInfo(project, course)) {
           showErrorNotification(
             project,
-            EduCoreBundle.message("error.failed.to.update"),
-            EduCoreBundle.message("error.failed.to.update.additional.materials")
+            EduCoreErrorBundle.message("error.failed.to.update"),
+            EduCoreErrorBundle.message("error.failed.to.update.additional.materials")
           )
         }
         else {

@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
@@ -57,8 +58,8 @@ class CCGetCourseFromStepik : DumbAwareAction(
   private fun showError(courseId: String) {
     runInEdt {
       Messages.showWarningDialog(
-        EduCoreBundle.message("error.failed.to.load.course.not.exists", courseId),
-        EduCoreBundle.message("error.failed.to.load.course")
+        EduCoreErrorBundle.message("error.failed.to.load.course.not.exists", courseId),
+        EduCoreErrorBundle.message("error.failed.to.load.course")
       )
     }
   }
