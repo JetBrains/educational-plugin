@@ -47,7 +47,7 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
                                    isCourseUpToDate: Boolean,
                                    isNewlyCreated: Boolean = false) {
     val course = createCourse(updateDate, isNewlyCreated)
-    doTest(EduCourseUpdateChecker.getInstance(project), isCourseUpToDate, 0, expectedInvocationNumber) {
+    doTest(EduCourseUpdateChecker.getInstance(project), isCourseUpToDate, 0, expectedInvocationNumber, checkInterval = 1) {
       assertEquals(isCourseUpToDate, course.isUpToDate)
     }
   }

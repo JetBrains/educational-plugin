@@ -6,30 +6,31 @@
   },
   "steps": [
     {
-      "id": 111,
-      "lesson": 278738129,
-      "position": 1,
-      "status": "ready",
-      "block": {
-        "name": "pycharm",
-        "text": "text",
-        "video": null,
-        "options": {
-          "task_type": "edu",
-          "lesson_type": "framework",
-          "title": "stage1",
-          "description_text": null,
-          "description_format": "HTML",
-          "feedback_link": {
-            "link_type": "STEPIK",
-            "link": null
+      "id" : 111,
+      "lesson" : 278738129,
+      "position" : 1,
+      "status" : "ready",
+      "updated_at" : "2020-01-10T18:05:45Z",
+      "block" : {
+        "name" : "pycharm",
+        "text" : "text",
+        "video" : null,
+        "options" : {
+          "task_type" : "edu",
+          "lesson_type" : "framework",
+          "title" : "stage1",
+          "description_text" : null,
+          "description_format" : "HTML",
+          "feedback_link" : {
+            "link_type" : "STEPIK",
+            "link" : null
           },
-          "files": [
+          "files" : [
             {
-              "name": "file.py",
-              "placeholders": [],
-              "is_visible": true,
-              "text": "text"
+              "name" : "file.py",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "text"
             },
             {
               "name": "tests.py",
