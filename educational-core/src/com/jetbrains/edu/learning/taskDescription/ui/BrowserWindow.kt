@@ -183,6 +183,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
   private inner class StudyLafManagerListener : LafManagerListener {
     override fun lookAndFeelChanged(manager: LafManager) {
       updateLaf()
+      TaskDescriptionView.updateAllTabs(TaskDescriptionView.getInstance(myProject))
     }
   }
 

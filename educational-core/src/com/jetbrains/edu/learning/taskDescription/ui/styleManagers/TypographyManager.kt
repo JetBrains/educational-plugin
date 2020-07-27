@@ -1,15 +1,15 @@
 package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 
+import com.intellij.ide.ui.UISettings
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.FontPreferences
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
 
 internal class TypographyManager {
-  private val editorFontSize = EditorColorsManager.getInstance().globalScheme.editorFontSize
+  private val uiSettingsFontSize = UISettings.instance.fontSize
 
-  val bodyFontSize = (editorFontSize * fontScaleFactor("body.font.size")).toInt()
-  val codeFontSize = (editorFontSize * fontScaleFactor("code.font.size")).toInt()
+  val bodyFontSize = (uiSettingsFontSize * fontScaleFactor("body.font.size")).toInt()
+  val codeFontSize = (uiSettingsFontSize * fontScaleFactor("code.font.size")).toInt()
   val bodyLineHeight = (bodyFontSize * lineHeightScaleFactor("body.line.height")).toInt()
   val codeLineHeight = (codeFontSize * lineHeightScaleFactor("code.line.height")).toInt()
 

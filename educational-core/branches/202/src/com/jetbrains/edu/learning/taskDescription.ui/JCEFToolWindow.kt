@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.ide.ui.LafManagerListener
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems.FILE_PROTOCOL_PREFIX
 import com.intellij.ui.jcef.JBCefBrowser
@@ -29,6 +31,10 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   private val jsQuerySetScrollHeight = JBCefJSQuery.create(taskSpecificJBCefBrowser)
 
   init {
+    ApplicationManager.getApplication().messageBus.connect(project)
+      .subscribe(LafManagerListener.TOPIC,
+                 LafManagerListener { TaskDescriptionView.updateAllTabs(TaskDescriptionView.getInstance(project)) })
+
     taskInfoJBCefBrowser.jbCefClient.addRequestHandler(TaskInfoRequestHandler(), taskInfoJBCefBrowser.cefBrowser)
     taskSpecificJBCefBrowser.jbCefClient.addLoadHandler(TaskSpecificLoadHandler(), taskSpecificJBCefBrowser.cefBrowser)
 
