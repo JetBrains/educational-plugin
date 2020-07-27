@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.content.Content
 import com.intellij.util.Alarm
 import com.intellij.util.ui.JBUI
@@ -64,8 +65,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     }
 
     if (messagePanel.messageShortened) {
-      linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, checkResult.fullMessage.xmlUnescaped)),
-                     BorderLayout.NORTH)
+      linksPanel.add(ShowFullOutputAction(project, checkResult.fullMessage.xmlUnescaped).actionLink, BorderLayout.NORTH)
     }
     return messagePanel
   }
@@ -124,15 +124,19 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
 
   private class ShowFullOutputAction(private val project: Project, private val text: String) : DumbAwareAction(null as String?) {
     private var outputShown = false
+    val actionLink: ActionLink = LightColoredActionLink(EduCoreBundle.message("label.full.output.show"), this)
 
     override fun actionPerformed(e: AnActionEvent) {
       if (!outputShown) {
         CheckDetailsView.getInstance(project).showOutput(text)
         outputShown = true
+        actionLink.text = EduCoreBundle.message("label.full.output.hide")
         EduCounterUsageCollector.fullOutputShown()
-      } else {
+      }
+      else {
         CheckDetailsView.getInstance(project).clear()
         outputShown = false
+        actionLink.text = EduCoreBundle.message("label.full.output.show")
       }
     }
   }
