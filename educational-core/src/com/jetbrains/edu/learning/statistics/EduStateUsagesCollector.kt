@@ -31,5 +31,5 @@ class EduStateUsagesCollector : ApplicationUsagesCollector() {
     return metrics
   }
 
-  override fun getVersion() = 1
+  override fun getVersion() = 2
 }
