@@ -14,18 +14,22 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.messages.UtilsKt;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
+import static com.jetbrains.edu.learning.messages.UtilsKt.pass;
+
 abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
 
   protected CCAnswerPlaceholderAction(
     @NotNull Supplier<@Nls(capitalization = Nls.Capitalization.Title) String> text,
     @NotNull Supplier<@Nls(capitalization = Nls.Capitalization.Sentence) String> description) {
-    super(text, description, null);
+    // BACKCOMPAT: 2019.3 need to delete pass call
+    super(pass(text), pass(description), null);
   }
 
   @Nullable

@@ -37,6 +37,7 @@ import static com.jetbrains.edu.coursecreator.CCUtils.askToWrapTopLevelLessons;
 import static com.jetbrains.edu.coursecreator.StudyItemType.COURSE_TYPE;
 import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.*;
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
+import static com.jetbrains.edu.learning.messages.UtilsKt.makeLazy;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushCourse extends DumbAwareAction {
@@ -70,10 +71,12 @@ public class CCPushCourse extends DumbAwareAction {
     }
     presentation.setEnabledAndVisible(true);
     if (((EduCourse)course).isRemote()) {
-      presentation.setText(() -> getUpdateOnStepikTitleMessage(COURSE_TYPE));
+      // BACKCOMPAT: 2019.3 need to delete mackLazy call and use lambdas
+      presentation.setText(makeLazy(getUpdateOnStepikTitleMessage(COURSE_TYPE)));
     }
     else {
-      presentation.setText(() -> getUploadToStepikTitleMessage(COURSE_TYPE));
+      // BACKCOMPAT: 2019.3 need to delete mackLazy call and use lambdas
+      presentation.setText(makeLazy(getUploadToStepikTitleMessage(COURSE_TYPE)));
     }
   }
 

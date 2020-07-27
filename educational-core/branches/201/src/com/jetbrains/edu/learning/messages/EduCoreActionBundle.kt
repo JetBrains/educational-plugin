@@ -5,9 +5,9 @@ import org.jetbrains.annotations.PropertyKey
 import java.util.function.Supplier
 
 @NonNls
-private const val BUNDLE = "messages.EduCoreStudyItemBundle"
+private const val BUNDLE = "messages.EduCoreActionBundle"
 
-object EduCoreStudyItemBundle : EduBundle(BUNDLE) {
+object EduCoreActionBundle : EduBundle(BUNDLE) {
   @JvmStatic
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String {
     return getMessage(key, *params)
@@ -15,6 +15,6 @@ object EduCoreStudyItemBundle : EduBundle(BUNDLE) {
 
   @JvmStatic
   fun lazyMessage(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): Supplier<String> {
-    return getLazyMessage(key, *params)
+    return Supplier { getMessage(key, *params) }
   }
 }

@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.makeLazy
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -64,10 +65,12 @@ class CCPushLesson : DumbAwareAction(
     if (course.id > 0) {
       e.presentation.isEnabledAndVisible = true
       if (lesson.id <= 0) {
-        e.presentation.setText { LESSON_TYPE.uploadToStepikTitleMessage }
+        // BACKCOMPAT: 2019.3 need to delete mackLazy call and use lambdas
+        e.presentation.setText(LESSON_TYPE.uploadToStepikTitleMessage.makeLazy())
       }
       else {
-        e.presentation.setText { LESSON_TYPE.updateOnStepikTitleMessage }
+        // BACKCOMPAT: 2019.3 need to delete mackLazy call and use lambdas
+        e.presentation.setText(LESSON_TYPE.updateOnStepikTitleMessage.makeLazy())
       }
     }
   }

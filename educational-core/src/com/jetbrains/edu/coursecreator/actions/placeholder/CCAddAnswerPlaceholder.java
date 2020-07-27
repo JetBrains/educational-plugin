@@ -26,7 +26,9 @@ import static com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPla
 public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
   public CCAddAnswerPlaceholder() {
-    super(EduCoreActionBundle.lazyMessage("add.answer.placeholder"), EduCoreActionBundle.lazyMessage("add.answer.placeholder.description"));
+    // BACKCOMPAT: 2019.3 Use lazyMessage call instead
+    super(() -> EduCoreActionBundle.message("add.answer.placeholder"),
+          () -> EduCoreActionBundle.message("add.answer.placeholder.description"));
   }
 
 
