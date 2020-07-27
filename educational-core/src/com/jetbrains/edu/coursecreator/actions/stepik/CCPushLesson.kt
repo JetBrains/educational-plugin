@@ -31,8 +31,8 @@ import org.jetbrains.annotations.NonNls
 
 // educational-core.xml
 class CCPushLesson : DumbAwareAction(
-  EduCoreBundle.message("gluing.slash", LESSON_TYPE.uploadToStepikTitleMessage, LESSON_TYPE.updateOnStepikTitleMessage),
-  EduCoreBundle.message("gluing.slash", LESSON_TYPE.uploadToStepikMessage, LESSON_TYPE.updateOnStepikMessage),
+  EduCoreBundle.lazyMessage("gluing.slash", LESSON_TYPE.uploadToStepikTitleMessage, LESSON_TYPE.updateOnStepikTitleMessage),
+  EduCoreBundle.lazyMessage("gluing.slash", LESSON_TYPE.uploadToStepikMessage, LESSON_TYPE.updateOnStepikMessage),
   null
 ) {
 
@@ -64,10 +64,10 @@ class CCPushLesson : DumbAwareAction(
     if (course.id > 0) {
       e.presentation.isEnabledAndVisible = true
       if (lesson.id <= 0) {
-        e.presentation.text = LESSON_TYPE.uploadToStepikTitleMessage
+        e.presentation.setText { LESSON_TYPE.uploadToStepikTitleMessage }
       }
       else {
-        e.presentation.text = LESSON_TYPE.updateOnStepikTitleMessage
+        e.presentation.setText { LESSON_TYPE.updateOnStepikTitleMessage }
       }
     }
   }
@@ -143,9 +143,6 @@ class CCPushLesson : DumbAwareAction(
             EduCoreBundle.message("error.failed.to.update"),
             EduCoreBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText())
           )
-
-
-
           return
         }
         val sectionId = if (lesson.section != null) lesson.section!!.id else course.sectionIds[0]

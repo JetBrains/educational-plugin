@@ -24,8 +24,8 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class CCPushSection : DumbAwareAction(
-  EduCoreBundle.message("gluing.slash", SECTION_TYPE.uploadToStepikTitleMessage, SECTION_TYPE.updateOnStepikTitleMessage),
-  EduCoreBundle.message("gluing.slash", SECTION_TYPE.uploadToStepikMessage, SECTION_TYPE.updateOnStepikMessage),
+  EduCoreBundle.lazyMessage("gluing.slash", SECTION_TYPE.uploadToStepikTitleMessage, SECTION_TYPE.updateOnStepikTitleMessage),
+  EduCoreBundle.lazyMessage("gluing.slash", SECTION_TYPE.uploadToStepikMessage, SECTION_TYPE.updateOnStepikMessage),
   null
 ) {
 
@@ -49,10 +49,10 @@ class CCPushSection : DumbAwareAction(
     if (section != null && course.id > 0) {
       e.presentation.isEnabledAndVisible = true
       if (section.id <= 0) {
-        e.presentation.text = SECTION_TYPE.uploadToStepikTitleMessage
+        e.presentation.setText { SECTION_TYPE.uploadToStepikTitleMessage }
       }
       else {
-        e.presentation.text = SECTION_TYPE.updateOnStepikTitleMessage
+        e.presentation.setText { SECTION_TYPE.updateOnStepikTitleMessage }
       }
     }
   }

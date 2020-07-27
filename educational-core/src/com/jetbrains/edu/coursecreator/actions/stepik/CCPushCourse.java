@@ -51,8 +51,8 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   public CCPushCourse() {
-    super(EduCoreBundle.message("gluing.slash", getUploadTitleText(), getUpdateTitleText()),
-          EduCoreBundle.message("gluing.slash", getUploadToStepikMessage(COURSE_TYPE), getUpdateOnStepikMessage(COURSE_TYPE)),
+    super(EduCoreBundle.lazyMessage("gluing.slash", getUploadTitleText(), getUpdateTitleText()),
+          EduCoreBundle.lazyMessage("gluing.slash", getUploadToStepikMessage(COURSE_TYPE), getUpdateOnStepikMessage(COURSE_TYPE)),
           null);
   }
 
@@ -70,10 +70,10 @@ public class CCPushCourse extends DumbAwareAction {
     }
     presentation.setEnabledAndVisible(true);
     if (((EduCourse)course).isRemote()) {
-      presentation.setText(getUpdateOnStepikTitleMessage(COURSE_TYPE));
+      presentation.setText(() -> getUpdateOnStepikTitleMessage(COURSE_TYPE));
     }
     else {
-      presentation.setText(getUploadToStepikTitleMessage(COURSE_TYPE));
+      presentation.setText(() -> getUploadToStepikTitleMessage(COURSE_TYPE));
     }
   }
 

@@ -17,8 +17,8 @@ import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 
 @Suppress("ComponentNotRegistered") // registered in educational-core.xml
 class CCGetCourseFromStepik : DumbAwareAction(
-  EduCoreActionBundle.message("get.course", StepikNames.STEPIK),
-  EduCoreActionBundle.message("get.course.description", StepikNames.STEPIK),
+  EduCoreActionBundle.lazyMessage("get.course", StepikNames.STEPIK),
+  EduCoreActionBundle.lazyMessage("get.course.description", StepikNames.STEPIK),
   null) {
 
   override fun actionPerformed(e: AnActionEvent) {

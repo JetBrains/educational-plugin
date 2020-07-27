@@ -51,8 +51,8 @@ public class CCShowChangedFiles extends DumbAwareAction {
   }
 
   public CCShowChangedFiles() {
-    super(EduCoreActionBundle.message("show.changed.files", StepikNames.STEPIK),
-          EduCoreActionBundle.message("show.changed.files.description", StepikNames.STEPIK),
+    super(EduCoreActionBundle.lazyMessage("show.changed.files", StepikNames.STEPIK),
+          EduCoreActionBundle.lazyMessage("show.changed.files.description", StepikNames.STEPIK),
           null);
   }
 

@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
-class UpdateAdditionalMaterials : DumbAwareAction(EduCoreActionBundle.message("update.additional.materials")) {
+class UpdateAdditionalMaterials : DumbAwareAction(EduCoreActionBundle.lazyMessage("update.additional.materials")) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return

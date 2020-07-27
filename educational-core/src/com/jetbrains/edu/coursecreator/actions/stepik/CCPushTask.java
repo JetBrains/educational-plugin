@@ -30,8 +30,8 @@ import static com.jetbrains.edu.learning.EduUtils.showNotification;
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushTask extends DumbAwareAction {
   public CCPushTask() {
-    super(EduCoreBundle.message("gluing.slash", getUploadToStepikTitleMessage(TASK_TYPE), getUpdateOnStepikTitleMessage(TASK_TYPE)),
-          EduCoreBundle.message("gluing.slash", getUploadToStepikMessage(TASK_TYPE), getUpdateOnStepikMessage(TASK_TYPE)),
+    super(EduCoreBundle.lazyMessage("gluing.slash", getUploadToStepikTitleMessage(TASK_TYPE), getUpdateOnStepikTitleMessage(TASK_TYPE)),
+          EduCoreBundle.lazyMessage("gluing.slash", getUploadToStepikMessage(TASK_TYPE), getUpdateOnStepikMessage(TASK_TYPE)),
           null);
   }
 
@@ -63,10 +63,10 @@ public class CCPushTask extends DumbAwareAction {
       final Task task = lesson.getTask(taskDir.getName());
       if (task != null) {
         if (task.getId() <= 0) {
-          e.getPresentation().setText(getUploadToStepikTitleMessage(TASK_TYPE));
+          e.getPresentation().setText(() -> getUploadToStepikTitleMessage(TASK_TYPE));
         }
         else {
-          e.getPresentation().setText(getUpdateOnStepikTitleMessage(TASK_TYPE));
+          e.getPresentation().setText(() -> getUpdateOnStepikTitleMessage(TASK_TYPE));
         }
       }
     }
