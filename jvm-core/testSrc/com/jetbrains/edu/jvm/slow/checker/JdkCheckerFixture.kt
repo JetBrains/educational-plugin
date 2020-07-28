@@ -11,7 +11,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.IdeaTestUtil
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.slow.checker.EduCheckerFixture
+import com.jetbrains.edu.learning.checker.EduCheckerFixture
 import java.io.File
 
 class JdkCheckerFixture : EduCheckerFixture<JdkProjectSettings>() {

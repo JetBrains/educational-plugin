@@ -1,4 +1,4 @@
-package com.jetbrains.edu.slow.checker
+package com.jetbrains.edu.learning.checker
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -18,8 +18,6 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.checker.CheckActionListener
-import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile

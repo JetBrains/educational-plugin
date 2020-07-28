@@ -3,6 +3,7 @@ package com.jetbrains.edu.slow.checker
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.learning.checker.CheckersTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask

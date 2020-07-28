@@ -2,7 +2,7 @@ package com.jetbrains.edu.go.slow.checker
 
 import com.goide.sdk.GoSdk
 import com.jetbrains.edu.go.GoProjectSettings
-import com.jetbrains.edu.slow.checker.EduCheckerFixture
+import com.jetbrains.edu.learning.checker.EduCheckerFixture
 
 /**
  * You need to set GO_SDK environment variable,

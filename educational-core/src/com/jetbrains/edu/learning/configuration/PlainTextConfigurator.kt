@@ -6,15 +6,15 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import java.io.IOException
 import javax.swing.Icon
@@ -59,6 +59,16 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
               return CheckResult.SOLVED
             }
             return checkResultFile.checkResult
+          }
+        }
+      }
+
+      override fun getCodeExecutor(): CodeExecutor {
+        return object : CodeExecutor {
+          override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, CheckResult> {
+            val taskDir = task.getDir(project) ?: return Err(CheckResult(CheckStatus.Unchecked, "No taskDir in tests"))
+            val checkResultFile = taskDir.findChild(CHECK_RESULT_FILE) ?: return Err(CheckResult(CheckStatus.Unchecked, "No $CHECK_RESULT_FILE file"))
+            return Ok(VfsUtil.loadText(checkResultFile))
           }
         }
       }

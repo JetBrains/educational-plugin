@@ -6,8 +6,8 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.util.ThrowableRunnable
+import com.jetbrains.edu.learning.checker.EduCheckerFixture
 import com.jetbrains.edu.python.learning.newproject.PyFakeSdkType
-import com.jetbrains.edu.slow.checker.EduCheckerFixture
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor

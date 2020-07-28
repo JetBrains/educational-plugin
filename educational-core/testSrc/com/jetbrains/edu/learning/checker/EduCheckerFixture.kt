@@ -1,4 +1,4 @@
-package com.jetbrains.edu.slow.checker
+package com.jetbrains.edu.learning.checker
 
 import com.intellij.testFramework.fixtures.impl.BaseFixture
 

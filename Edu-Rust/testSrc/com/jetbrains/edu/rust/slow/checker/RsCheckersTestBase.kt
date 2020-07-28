@@ -1,9 +1,9 @@
 package com.jetbrains.edu.rust.slow.checker
 
+import com.jetbrains.edu.learning.checker.CheckersTestBase
+import com.jetbrains.edu.learning.checker.EduCheckerFixture
 import com.jetbrains.edu.learning.withFeature
 import com.jetbrains.edu.rust.RsProjectSettings
-import com.jetbrains.edu.slow.checker.CheckersTestBase
-import com.jetbrains.edu.slow.checker.EduCheckerFixture
 import org.rust.ide.experiments.RsExperiments
 
 // This test runs only when Rust toolchain is found.

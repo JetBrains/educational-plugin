@@ -2,8 +2,8 @@ package com.jetbrains.edu.kotlin.slow.checker
 
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.slow.checker.JdkCheckerFixture
+import com.jetbrains.edu.learning.checker.EduCheckerFixture
 import com.jetbrains.edu.learning.twitter.TwitterSettings
-import com.jetbrains.edu.slow.checker.EduCheckerFixture
 import com.jetbrains.edu.slow.checker.RealCourseCheckersTestBase
 
 abstract class KtRealCourseCheckersTestBase(courseId: Int) : RealCourseCheckersTestBase<JdkProjectSettings>(courseId) {
