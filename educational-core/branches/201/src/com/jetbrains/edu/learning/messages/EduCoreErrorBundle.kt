@@ -15,6 +15,6 @@ object EduCoreErrorBundle : EduBundle(BUNDLE) {
 
   @JvmStatic
   fun lazyMessage(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): Supplier<String> {
-    return getLazyMessage(key, *params)
+    return Supplier { getMessage(key, *params) }
   }
 }
