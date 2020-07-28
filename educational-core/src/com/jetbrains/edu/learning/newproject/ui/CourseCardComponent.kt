@@ -135,13 +135,13 @@ class CourseNameComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> 
     val coursePath = CoursesStorage.getInstance().getCoursePath(courseInfo.course)
     button = when {
       courseInfo.course is JetBrainsAcademyCourse -> {
-        JBAcademyCourseButton(false, errorHandler)
+        JBAcademyCourseButton(errorHandler, false)
       }
       coursePath != null -> {
         OpenCourseButton()
       }
       else -> {
-        StartCourseButton(false, errorHandler)
+        StartCourseButton(errorHandler, false)
       }
     }.apply {
       addListener(courseInfo)

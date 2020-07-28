@@ -17,11 +17,21 @@ private const val HEADER_HGAP = 20
 private const val TOP_OFFSET = 15
 private const val LOGO_SIZE = 80
 
-class HeaderPanel(leftMargin: Int, errorHandler: (ErrorState) -> Unit) : NonOpaquePanel() {
-  private var nameAndInfoPanel = NameAndInfoPanel(errorHandler)
-  private var iconPanel = IconPanel()
+class HeaderPanel : NonOpaquePanel {
+  private var nameAndInfoPanel: NameAndInfoPanel
+  private val iconPanel = IconPanel()
 
-  init {
+  constructor(leftMargin: Int, joinCourseAction: () -> Unit) : super() {
+    nameAndInfoPanel = NameAndInfoPanel(joinCourseAction)
+    initUI(leftMargin)
+  }
+
+  constructor(leftMargin: Int, errorHandler: (ErrorState) -> Unit) : super() {
+    nameAndInfoPanel = NameAndInfoPanel(errorHandler)
+    initUI(leftMargin)
+  }
+
+  private fun initUI(leftMargin: Int) {
     layout = BorderLayout(HEADER_HGAP, 0)
     border = JBUI.Borders.empty(TOP_OFFSET, leftMargin, 0, 0)
 

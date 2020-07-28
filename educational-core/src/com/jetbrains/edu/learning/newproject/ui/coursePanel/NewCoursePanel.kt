@@ -33,16 +33,14 @@ private const val EMPTY = "empty"
 private const val CONTENT = "content"
 
 // TODO: Rename to CoursePanel after CoursePanel.java is removed
-class NewCoursePanel(
-  val isStandalonePanel: Boolean,
-  val isLocationFieldNeeded: Boolean,
-  val joinCourseAction: (CourseInfo, CourseMode) -> Unit,
-  errorHandler: (ErrorState) -> Unit
+class NewCoursePanel private constructor(
+  private val isStandalonePanel: Boolean,
+  private val isLocationFieldNeeded: Boolean
 ) : JPanel() {
   var errorState: ErrorState = ErrorState.NothingSelected
   var course: Course? = null
 
-  private var header = HeaderPanel(leftMargin) { course, mode -> joinCourseAction(course, mode)}
+  private lateinit var header: HeaderPanel
   private var description = CourseDescriptionPanel(leftMargin)
   private var advancedSettings = CourseSettings(isLocationFieldNeeded, leftMargin)
   private val errorLabel: HyperlinkLabel = HyperlinkLabel().apply { isVisible = false }
@@ -68,9 +66,26 @@ class NewCoursePanel(
       }
     }
 
-  init {
-    layout = CardLayout()
+  constructor(
+    isStandalonePanel: Boolean,
+    isLocationFieldNeeded: Boolean,
+    joinCourseAction: () -> Unit
+  ) : this(isStandalonePanel, isLocationFieldNeeded) {
+    header = HeaderPanel(leftMargin, joinCourseAction)
+    initUI()
+  }
 
+  constructor(
+    isStandalonePanel: Boolean,
+    isLocationFieldNeeded: Boolean,
+    errorHandler: (ErrorState) -> Unit
+  ) : this(isStandalonePanel, isLocationFieldNeeded) {
+    header = HeaderPanel(leftMargin, errorHandler)
+    initUI()
+  }
+
+  private fun initUI() {
+    layout = CardLayout()
     border = JBUI.Borders.customLine(DIVIDER_COLOR, 0, 0, 0, 0)
 
     val emptyStatePanel = JBPanelWithEmptyText().withEmptyText(EduCoreBundle.message("course.dialog.no.course.selected"))
@@ -185,7 +200,6 @@ class NewCoursePanel(
     // default divider's color too dark in Darcula, so use the same color as in plugins dialog
     val DIVIDER_COLOR = JBColor(Gray._192, Gray._81)
   }
-
 
 }
 

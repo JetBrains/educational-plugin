@@ -26,16 +26,29 @@ private const val INFO_PANEL_TOP_OFFSET = 5
 private const val FONT_SIZE = 26.0f
 private val GRAY_TEXT_FOREGROUND: Color = JBColor.namedColor("Plugins.tagForeground", JBColor(0x787878, 0x999999))
 
-class NameAndInfoPanel(errorHandler: (ErrorState) -> Unit) : JPanel() {
-  private var nameHtmlPanel: CourseNameHtmlPanel = CourseNameHtmlPanel()
+class NameAndInfoPanel : JPanel {
+  private val nameHtmlPanel: CourseNameHtmlPanel = CourseNameHtmlPanel()
   private val infoPanel = InfoPanel()
-  private var tagsPanel: TagsPanel = TagsPanel()
-  private var baselinePanel: BaselinePanel = BaselinePanel()
-  private val startButton: StartCourseButton = StartCourseButton(true, errorHandler)
+  private val tagsPanel: TagsPanel = TagsPanel()
+  private val baselinePanel: BaselinePanel = BaselinePanel()
   private val openButton: OpenCourseButton = OpenCourseButton()
-  private val editButton: StartCourseButtonBase = EditCourseButton(errorHandler)
+  private var startButton: CourseButtonBase
+  private var editButton: CourseButtonBase
 
-  init {
+  constructor(joinCourse: () -> Unit) : super() {
+    startButton = CustomActionCourseButton(joinCourse)
+    editButton = EditCourseButton { }
+    initUI()
+  }
+
+  constructor(errorHandler: (ErrorState) -> Unit) : super() {
+    startButton = StartCourseButton(errorHandler)
+    editButton = EditCourseButton(errorHandler)
+    initUI()
+  }
+
+
+  private fun initUI() {
     border = JBUI.Borders.emptyRight(RIGHT_OFFSET)
     layout = VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false)
 
@@ -48,7 +61,6 @@ class NameAndInfoPanel(errorHandler: (ErrorState) -> Unit) : JPanel() {
     add(baselinePanel)
     add(infoPanel)
 
-    tagsPanel = TagsPanel()
     add(tagsPanel)
     UIUtil.setBackgroundRecursively(this, UIUtil.getEditorPaneBackground())
   }

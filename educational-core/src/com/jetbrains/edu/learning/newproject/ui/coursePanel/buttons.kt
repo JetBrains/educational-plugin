@@ -65,7 +65,7 @@ class OpenCourseButton : CourseButtonBase() {
   override fun isVisible(course: Course): Boolean = CoursesStorage.getInstance().getCoursePath(course) != null
 }
 
-class JBAcademyCourseButton(fill: Boolean = true, private val errorHandler: (ErrorState) -> Unit) : CourseButtonBase(fill) {
+class JBAcademyCourseButton(private val errorHandler: (ErrorState) -> Unit, fill: Boolean = true) : CourseButtonBase(fill) {
 
   init {
     text = "Start"
@@ -105,7 +105,7 @@ class JBAcademyCourseButton(fill: Boolean = true, private val errorHandler: (Err
   override fun isVisible(course: Course): Boolean = true
 }
 
-class StartCourseButton(fill: Boolean = true, errorHandler: (ErrorState) -> Unit) : StartCourseButtonBase(errorHandler, fill) {
+class StartCourseButton(errorHandler: (ErrorState) -> Unit, fill: Boolean = true) : StartCourseButtonBase(errorHandler, fill) {
   override val courseMode = CourseMode.STUDY
 
   init {
@@ -137,6 +137,14 @@ class EditCourseButton(errorHandler: (ErrorState) -> Unit) : StartCourseButtonBa
   }
 
   override fun isVisible(course: Course) = course.isViewAsEducatorEnabled
+}
+
+class CustomActionCourseButton(private val joinCourse: () -> Unit) : CourseButtonBase() {
+  override fun isVisible(course: Course): Boolean = true
+
+  override fun actionListener(courseInfo: CourseInfo): ActionListener = ActionListener {
+    joinCourse()
+  }
 }
 
 /**
