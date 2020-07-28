@@ -10,6 +10,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.twitter.ui.TwitterDialog
 import org.apache.http.HttpStatus
 import twitter4j.StatusUpdate
@@ -61,11 +62,11 @@ object TwitterUtils {
         catch (e: Exception) {
           LOG.warn(e)
           val message = if (e is TwitterException && e.statusCode == HttpStatus.SC_UNAUTHORIZED) {
-            EduCoreBundle.message("twitter.error.failed.to.authorize")
+            EduCoreErrorBundle.message("failed.to.authorize")
           } else {
-            EduCoreBundle.message("twitter.error.status.not.updated")
+            EduCoreErrorBundle.message("failed.to.update.status")
           }
-          Messages.showErrorDialog(project, message, EduCoreBundle.message("twitter.error.dialog.title"))
+          Messages.showErrorDialog(project, message, EduCoreErrorBundle.message("twitter.failed.to.tweet"))
         }
       }
     }

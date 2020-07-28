@@ -179,7 +179,7 @@ object HyperskillCheckConnector {
       return lastSubmission.toCheckResult(task)
     }
 
-    return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("hyperskill.failed.to.check.code", EduNames.JBA))
+    return CheckResult(CheckStatus.Unchecked, EduCoreErrorBundle.message("failed.to.get.check.result.from", EduNames.JBA))
   }
 }
 

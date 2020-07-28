@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLangu
 import com.jetbrains.edu.learning.codeforces.ContestInformation
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import okhttp3.ConnectionPool
 import org.jsoup.Jsoup
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -44,21 +44,21 @@ abstract class CodeforcesConnector {
 
   fun getContest(contestParameters: ContestParameters): Result<CodeforcesCourse, String> =
     service.problems(contestParameters.id, contestParameters.locale).executeParsingErrors().flatMap {
-      val responseBody = it.body() ?: return@flatMap Err(EduCoreBundle.message("codeforces.failed.to.parse.response"))
+      val responseBody = it.body() ?: return@flatMap Err(EduCoreErrorBundle.message("failed.to.parse.response"))
       val doc = Jsoup.parse(responseBody.string())
       Ok(CodeforcesCourse(contestParameters, doc))
     }
 
   fun getContestInformation(contestId: Int): Result<ContestInformation, String> {
-    val contestsList = getContests() ?: return Err(EduCoreBundle.message("codeforces.failed.to.get.contests.list"))
+    val contestsList = getContests() ?: return Err(EduCoreErrorBundle.message("codeforces.failed.to.get.contests.list"))
     val contestInfo = contestsList.contests.find { it.id == contestId }
-                      ?: return Err(EduCoreBundle.message("codeforces.failed.to.find.contest.in.contests.list"))
+                      ?: return Err(EduCoreErrorBundle.message("codeforces.failed.to.find.contest.in.contests.list"))
 
     val responseBody = service.status(contestId).executeParsingErrors()
                          .onError { return Err(it) }
-                         .body() ?: return Err(EduCoreBundle.message("codeforces.failed.to.parse.response"))
+                         .body() ?: return Err(EduCoreErrorBundle.message("failed.to.parse.response"))
     val doc = Jsoup.parse(responseBody.string())
-    val contestLanguage = getLanguages(doc) ?: return Err(EduCoreBundle.message("codeforces.failed.to.get.contest.language"))
+    val contestLanguage = getLanguages(doc) ?: return Err(EduCoreErrorBundle.message("codeforces.failed.to.get.contest.language"))
 
     return Ok(ContestInformation(contestId, contestInfo.name, contestLanguage, contestInfo.endTime))
   }

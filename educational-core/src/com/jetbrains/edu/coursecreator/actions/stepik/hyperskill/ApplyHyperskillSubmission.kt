@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
@@ -34,7 +35,7 @@ class ApplyHyperskillSubmission : DumbAwareAction(
 
       override fun checkInput(inputString: String?): Boolean {
         errorText = if (!StringUtil.isNotNegativeNumber(inputString))
-          EduCoreBundle.message("hyperskill.educator.submission.invalid.id")
+          EduCoreErrorBundle.message("submission.invalid.id")
         else null
 
         return errorText == null
@@ -49,17 +50,17 @@ class ApplyHyperskillSubmission : DumbAwareAction(
       }
     }
 
-    val idText = Messages.showInputDialog(project, EduCoreBundle.message("hyperskill.educator.submission.id"),
+    val idText = Messages.showInputDialog(project, EduCoreBundle.message("submission.id"),
                                           EduCoreActionBundle.message("apply.submission", HYPERSKILL),
                                           null, null, validator) ?: return
 
     val id = Integer.valueOf(idText) // valid int because of validator
 
-    computeUnderProgress(project, EduCoreBundle.message("hyperskill.educator.applying.submission"), false) {
+    computeUnderProgress(project, EduCoreBundle.message("submission.applying"), false) {
       val submission = StepikConnector.getInstance().getSubmissionById(id).onError {
         runInEdt {
-          Messages.showErrorDialog(EduCoreBundle.message("hyperskill.educator.failed.submission.message", id),
-                                   EduCoreBundle.message("hyperskill.educator.failed.submission.title"))
+          Messages.showErrorDialog(EduCoreErrorBundle.message("submission.failed.to.retrieve", id),
+                                   EduCoreErrorBundle.message("submission.not.applied"))
         }
         return@computeUnderProgress
       }

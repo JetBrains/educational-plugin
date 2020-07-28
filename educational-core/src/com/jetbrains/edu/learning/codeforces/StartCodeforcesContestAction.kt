@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider.Companio
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -131,13 +132,22 @@ class StartCodeforcesContestAction(
 
   private fun showFailedToGetContestInfoNotification(contestId: Int, error: String) {
     val contestUrl = CodeforcesContestConnector.getContestURLFromID(contestId)
-    Messages.showErrorDialog(EduCoreBundle.message("codeforces.failed.to.get.contest.information", CodeforcesNames.CODEFORCES_TITLE, error.toLowerCase(), contestUrl),
-                             EduCoreBundle.message("codeforces.failed.to.load.contest.title", CodeforcesNames.CODEFORCES_TITLE))
+    Messages.showErrorDialog(
+      EduCoreErrorBundle.message(
+        "codeforces.failed.to.get.contest.information",
+        CodeforcesNames.CODEFORCES_TITLE,
+        error.toLowerCase(),
+        contestUrl
+      ),
+      EduCoreErrorBundle.message("codeforces.failed.to.load.contest.title", CodeforcesNames.CODEFORCES_TITLE)
+    )
   }
 
   private fun showNoSupportedLanguagesForContestNotification(contestName: String) {
-    Messages.showErrorDialog(EduCoreBundle.message("codeforces.no.supported.languages", contestName),
-                             EduCoreBundle.message("codeforces.failed.to.load.contest.title", CodeforcesNames.CODEFORCES_TITLE))
+    Messages.showErrorDialog(
+      EduCoreErrorBundle.message("codeforces.no.supported.languages", contestName),
+      EduCoreErrorBundle.message("codeforces.failed.to.load.contest.title", CodeforcesNames.CODEFORCES_TITLE)
+    )
   }
 
   companion object {
