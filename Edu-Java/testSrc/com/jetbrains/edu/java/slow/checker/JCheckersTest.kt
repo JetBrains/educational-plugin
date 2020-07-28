@@ -54,6 +54,18 @@ class JCheckersTest : JdkCheckerTestBase() {
           withText("OK\n")
         }
       }
+      outputTask("OutputTaskWithWindowsLineSeparators") {
+        javaTaskFile("src/Task.java", """
+          public class Task {
+            public static void main(String[] args) {
+              System.out.println("OK");
+            }
+          }
+        """)
+        taskFile("test/output.txt") {
+          withText("OK\r\n")
+        }
+      }
       outputTask("OutputTaskWithSeveralFiles") {
         javaTaskFile("src/Utils.java", """
           public class Utils {
