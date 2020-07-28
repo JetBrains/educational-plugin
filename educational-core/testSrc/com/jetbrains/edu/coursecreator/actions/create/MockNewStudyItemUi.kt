@@ -1,8 +1,8 @@
 package com.jetbrains.edu.coursecreator.actions.create
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel.Companion.AFTER_DELTA
 import com.jetbrains.edu.coursecreator.ui.NewStudyItemUi

@@ -2,9 +2,9 @@ package com.jetbrains.edu.android.actions
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.android.AndroidCourseBuilder
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
+import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.learning.courseFormat.Course
 

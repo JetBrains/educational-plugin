@@ -5,8 +5,8 @@ import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.createItemTitleMessage
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel.Companion.AFTER_DELTA
 import com.jetbrains.edu.learning.courseFormat.Course

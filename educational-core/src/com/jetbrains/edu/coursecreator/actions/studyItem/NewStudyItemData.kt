@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.actions
+package com.jetbrains.edu.coursecreator.actions.studyItem
 
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VirtualFile

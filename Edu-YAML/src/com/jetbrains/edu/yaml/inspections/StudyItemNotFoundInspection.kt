@@ -14,8 +14,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parentOfType
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.StudyItemType.*
-import com.jetbrains.edu.coursecreator.actions.sections.CCCreateSection
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
+import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateSection
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateStudyItemActionBase
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.createItemMessage

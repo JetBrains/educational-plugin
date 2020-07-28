@@ -7,8 +7,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.jetbrains.edu.android.messages.EduAndroidBundle
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialogBase
 import com.jetbrains.edu.learning.courseFormat.Course
 import org.jetbrains.android.util.AndroidUtils

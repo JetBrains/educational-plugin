@@ -5,8 +5,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils.createSectionDir
 import com.jetbrains.edu.coursecreator.StudyItemType
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
-import com.jetbrains.edu.coursecreator.actions.StudyItemVariant
 import com.jetbrains.edu.coursecreator.presentableTitleName
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course

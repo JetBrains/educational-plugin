@@ -8,7 +8,7 @@ import com.intellij.ui.components.fields.ExtendableTextComponent
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.StudyItemType
-import com.jetbrains.edu.coursecreator.actions.StudyItemVariant
+import com.jetbrains.edu.coursecreator.actions.studyItem.StudyItemVariant
 import com.jetbrains.edu.coursecreator.pressEnterToCreateItemMessage
 import com.jetbrains.edu.coursecreator.selectItemTypeMessage
 import java.awt.BorderLayout
