@@ -127,7 +127,7 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("Status for ${task.name} doesn't match", CheckStatus.Unchecked, checkResult.status)
       assertThat("Checker output for ${task.name} doesn't match", checkResult.message,
-                 containsString(EduCoreErrorBundle.message("error.no.interpreter", EduNames.PYTHON)))
+                 containsString(EduCoreErrorBundle.message("no.interpreter", EduNames.PYTHON)))
     }
     doTest()
   }

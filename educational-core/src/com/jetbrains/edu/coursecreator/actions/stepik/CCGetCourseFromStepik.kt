@@ -58,8 +58,8 @@ class CCGetCourseFromStepik : DumbAwareAction(
   private fun showError(courseId: String) {
     runInEdt {
       Messages.showWarningDialog(
-        EduCoreErrorBundle.message("error.failed.to.load.course.not.exists", courseId),
-        EduCoreErrorBundle.message("error.failed.to.load.course")
+        EduCoreErrorBundle.message("failed.to.load.course.not.exists", courseId),
+        EduCoreErrorBundle.message("failed.to.load.course")
       )
     }
   }

@@ -43,7 +43,7 @@ val HYPERSKILL_SELECTED_STAGE: Key<Int> = Key.create("HYPERSKILL_SELECTED_STAGE"
 val HYPERSKILL_SELECTED_PROBLEM: Key<Int> = Key.create("HYPERSKILL_SELECTED_PROBLEM")
 
 val failedToPostToJBA: String
-  get() = EduCoreErrorBundle.message("error.failed.to.post.solution.with.guide", EduNames.JBA, EduNames.FAILED_TO_POST_TO_JBA_URL)
+  get() = EduCoreErrorBundle.message("failed.to.post.solution.with.guide", EduNames.JBA, EduNames.FAILED_TO_POST_TO_JBA_URL)
 
 fun openSelectedStage(course: Course, project: Project) {
   if (course !is HyperskillCourse) {
@@ -132,11 +132,11 @@ fun getSelectedProjectIdUnderProgress(account: HyperskillAccount): Int? {
 }
 
 fun showErrorDetails(project: Project, error: String) {
-  if (error == EduCoreErrorBundle.message("error.forbidden")) {
+  if (error == EduCoreErrorBundle.message("access.denied")) {
     Notification(
       EduNames.JBA,
-      EduCoreErrorBundle.message("error.failed.to.post.solution", EduNames.JBA),
-      EduCoreErrorBundle.message("error.forbidden.with.link"),
+      EduCoreErrorBundle.message("failed.to.post.solution", EduNames.JBA),
+      EduCoreErrorBundle.message("access.denied.with.link"),
       NotificationType.ERROR
     ) { notification, e ->
       notification.expire()
@@ -148,7 +148,7 @@ fun showErrorDetails(project: Project, error: String) {
   LOG.warn(error)
   Notification(
     EduNames.JBA,
-    EduCoreErrorBundle.message("error.failed.to.post.solution", EduNames.JBA),
+    EduCoreErrorBundle.message("failed.to.post.solution", EduNames.JBA),
     EduCoreBundle.message("help.use.guide", EduNames.FAILED_TO_POST_TO_JBA_URL),
     NotificationType.ERROR,
     NotificationListener.URL_OPENING_LISTENER)

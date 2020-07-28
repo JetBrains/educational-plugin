@@ -63,8 +63,8 @@ class GetHyperskillLesson : DumbAwareAction(
           if (configurator == null) {
             val environment = if (course.environment == EduNames.DEFAULT_ENVIRONMENT) "default" else course.environment
             showError(
-              EduCoreErrorBundle.message("error.failed.to.create.lesson.no.configuration", course.language, environment),
-              EduCoreErrorBundle.message("error.failed.to.create.lesson")
+              EduCoreErrorBundle.message("failed.to.create.lesson.no.configuration", course.language, environment),
+              EduCoreErrorBundle.message("failed.to.create.lesson")
             )
             return
           }
@@ -97,8 +97,8 @@ class GetHyperskillLesson : DumbAwareAction(
     val languageAndEnvironment = getLanguageAndEnvironment(lesson)
     if (languageAndEnvironment == null) {
       showError(
-        EduCoreErrorBundle.message("error.failed.to.create.lesson.undefined.language"),
-        EduCoreErrorBundle.message("error.failed.to.create.lesson")
+        EduCoreErrorBundle.message("failed.to.create.lesson.undefined.language"),
+        EduCoreErrorBundle.message("failed.to.create.lesson")
       )
       return null
     }
@@ -123,12 +123,12 @@ class GetHyperskillLesson : DumbAwareAction(
     val stepikUser = EduSettings.getInstance().user
 
     val message = if (stepikUser == null) {
-      EduCoreErrorBundle.message("error.failed.to.get.lesson.not.log.in", StepikNames.STEPIK)
+      EduCoreErrorBundle.message("failed.to.get.lesson.not.log.in", StepikNames.STEPIK)
     }
     else {
-      EduCoreErrorBundle.message("error.failed.to.get.lesson.no.access", StepikNames.STEPIK, stepikUser.name)
+      EduCoreErrorBundle.message("failed.to.get.lesson.no.access", StepikNames.STEPIK, stepikUser.name)
     }
-    showError(message, EduCoreErrorBundle.message("error.failed.to.get.lesson"))
+    showError(message, EduCoreErrorBundle.message("failed.to.get.lesson"))
   }
 
   private fun showError(message: String, title: String) {

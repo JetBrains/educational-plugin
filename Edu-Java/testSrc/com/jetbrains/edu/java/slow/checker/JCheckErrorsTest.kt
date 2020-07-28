@@ -109,7 +109,7 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
     }
 
     CheckActionListener.shouldSkip()
-    CheckActionListener.expectedMessage { EduCoreErrorBundle.message("error.unable.to.create.configuration") }
+    CheckActionListener.expectedMessage { EduCoreErrorBundle.message("unable.to.create.configuration") }
 
     try {
       doTest()

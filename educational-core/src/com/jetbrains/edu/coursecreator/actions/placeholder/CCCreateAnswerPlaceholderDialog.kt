@@ -84,7 +84,7 @@ open class CCCreateAnswerPlaceholderDialog(
     }
     val errorText = try {
       val dependency = AnswerPlaceholderDependency.create(placeholder, currentText)
-      if (dependency == null) EduCoreErrorBundle.message("error.invalid.dependency") else null
+      if (dependency == null) EduCoreErrorBundle.message("invalid.dependency") else null
     }
     catch (e: AnswerPlaceholderDependency.InvalidDependencyException) {
       e.customMessage

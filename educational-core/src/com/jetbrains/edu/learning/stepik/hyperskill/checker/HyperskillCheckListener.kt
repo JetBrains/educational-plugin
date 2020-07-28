@@ -29,8 +29,8 @@ class HyperskillCheckListener : CheckListener {
       if (HyperskillSettings.INSTANCE.account == null) {
         Notification(
           EduNames.JBA,
-          EduCoreErrorBundle.message("error.failed.to.post.solution", EduNames.JBA),
-          EduCoreErrorBundle.message("error.login.required", EduNames.JBA),
+          EduCoreErrorBundle.message("failed.to.post.solution", EduNames.JBA),
+          EduCoreErrorBundle.message("login.required", EduNames.JBA),
           NotificationType.ERROR
         ) { notification, e ->
           notification.expire()

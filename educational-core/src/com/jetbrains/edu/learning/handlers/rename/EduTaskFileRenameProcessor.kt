@@ -37,7 +37,7 @@ class EduTaskFileRenameProcessor : RenamePsiFileProcessor() {
     ): EduRenameDialogBase {
       return object : EduRenameDialogBase(project, element, nameSuggestionContext, editor) {
         override fun canRun() {
-          throw ConfigurationException(EduCoreErrorBundle.message("error.invalid.rename.message"))
+          throw ConfigurationException(EduCoreErrorBundle.message("invalid.rename.message"))
         }
       }
     }

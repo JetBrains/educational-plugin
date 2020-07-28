@@ -33,7 +33,7 @@ open class DefaultCodeExecutor : CodeExecutor {
 
     val configuration = runReadActionInSmartMode(project) { createRunConfiguration(project, task) }
     if (configuration == null) {
-      return logAndQuit(EduCoreErrorBundle.message("error.unable.to.create.configuration"))
+      return logAndQuit(EduCoreErrorBundle.message("unable.to.create.configuration"))
     }
 
     try {
@@ -41,7 +41,7 @@ open class DefaultCodeExecutor : CodeExecutor {
     }
     catch (e: RuntimeConfigurationException) {
       LOG.warn(e)
-      return logAndQuit(EduCoreErrorBundle.message("error.unable.to.create.configuration"))
+      return logAndQuit(EduCoreErrorBundle.message("unable.to.create.configuration"))
     }
 
     configuration.isActivateToolWindowBeforeRun = false
@@ -77,10 +77,10 @@ open class DefaultCodeExecutor : CodeExecutor {
     }
 
     if (!CheckUtils.executeRunConfigurations(project, listOf(configuration), indicator, executionListener, processListener))
-      return logAndQuit(EduCoreErrorBundle.message("error.execution.failed"))
+      return logAndQuit(EduCoreErrorBundle.message("execution.failed"))
 
-    if (indicator.isCanceled) return logAndQuit(EduCoreErrorBundle.message("error.execution.canceled"))
-    if (processNotStarted) return logAndQuit(EduCoreErrorBundle.message("error.execution.failed"))
+    if (indicator.isCanceled) return logAndQuit(EduCoreErrorBundle.message("execution.canceled"))
+    if (processNotStarted) return logAndQuit(EduCoreErrorBundle.message("execution.failed"))
 
     var outputString = output.joinToString("")
     if (outputString.isEmpty()) {

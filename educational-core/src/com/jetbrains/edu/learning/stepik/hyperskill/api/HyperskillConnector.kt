@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.api.*
@@ -283,7 +282,7 @@ abstract class HyperskillConnector {
   private fun <T> withTokenRefreshIfNeeded(call: () -> Result<T, String>): Result<T, String> {
     val result = call()
     if (!isUnitTestMode && !ApplicationManager.getApplication().isInternal
-        && result is Err && result.error == EduCoreErrorBundle.message("error.forbidden")) {
+        && result is Err && result.error == EduCoreErrorBundle.message("access.denied")) {
       HyperskillSettings.INSTANCE.account?.refreshTokens()
       return call()
     }

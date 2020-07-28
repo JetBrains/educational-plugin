@@ -124,29 +124,29 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
     when (response.code()) {
       HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_CREATED -> Ok(response) // 200, 201
       HttpURLConnection.HTTP_UNAVAILABLE, HttpURLConnection.HTTP_BAD_GATEWAY ->
-        Err("${EduCoreErrorBundle.message("error.service.maintenance")}\n\n$error") // 502, 503
+        Err("${EduCoreErrorBundle.message("service.maintenance")}\n\n$error") // 502, 503
       in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION ->
-        Err("${EduCoreErrorBundle.message("error.service.down")}\n\n$error") // 500x
-      HttpURLConnection.HTTP_FORBIDDEN -> Err(EduCoreErrorBundle.message("error.forbidden"))
+        Err("${EduCoreErrorBundle.message("service.down")}\n\n$error") // 500x
+      HttpURLConnection.HTTP_FORBIDDEN -> Err(EduCoreErrorBundle.message("access.denied"))
       in HttpURLConnection.HTTP_BAD_REQUEST..HttpURLConnection.HTTP_UNSUPPORTED_TYPE ->
-        Err(EduCoreErrorBundle.message("error.unexpected", error)) // 400x
+        Err(EduCoreErrorBundle.message("unexpected.error", error)) // 400x
       else -> {
         LOG.warn("Code ${response.code()} is not handled")
-        Err(EduCoreErrorBundle.message("error.unexpected", error))
+        Err(EduCoreErrorBundle.message("unexpected.error", error))
       }
     }
   }
   catch (e: InterruptedIOException) {
     log("Connection to server was interrupted", e.message, omitErrors)
-    Err("${EduCoreErrorBundle.message("error.interrupted")}\n\n${e.message}")
+    Err("${EduCoreErrorBundle.message("connection.interrupted")}\n\n${e.message}")
   }
   catch (e: IOException) {
     log("Failed to connect to server", e.message, omitErrors)
-    Err("${EduCoreErrorBundle.message("error.failed.to.connect")} \n\n${e.message}")
+    Err("${EduCoreErrorBundle.message("failed.to.connect")} \n\n${e.message}")
   }
   catch (e: RuntimeException) {
     log("Failed to connect to server", e.message, omitErrors)
-    Err("${EduCoreErrorBundle.message("error.failed.to.connect")}\n\n${e.message}")
+    Err("${EduCoreErrorBundle.message("failed.to.connect")}\n\n${e.message}")
   }
 }
 

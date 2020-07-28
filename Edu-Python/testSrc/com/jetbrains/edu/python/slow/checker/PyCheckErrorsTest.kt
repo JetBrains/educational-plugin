@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckResultDiffMatcher
-import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -113,7 +112,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("Status for ${task.name} doesn't match", CheckStatus.Unchecked, checkResult.status)
       assertThat("Checker output for ${task.name} doesn't match", checkResult.message,
-                 containsString(EduCoreErrorBundle.message("error.no.interpreter", EduNames.PYTHON)))
+                 containsString(EduCoreErrorBundle.message("no.interpreter", EduNames.PYTHON)))
     }
     doTest()
   }
