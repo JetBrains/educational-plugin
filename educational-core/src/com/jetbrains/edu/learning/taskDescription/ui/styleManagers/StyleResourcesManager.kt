@@ -137,7 +137,7 @@ object StyleResourcesManager {
     }
   }
 
-  private fun isHighContrast(): Boolean {
+  fun isHighContrast(): Boolean {
     val lookAndFeel = LafManager.getInstance().currentLookAndFeel as? UIThemeBasedLookAndFeelInfo ?: return false
     return lookAndFeel.theme.id == "JetBrainsHighContrastTheme"
   }

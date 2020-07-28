@@ -29,7 +29,15 @@ class StyleManager {
   private fun java.awt.Color.asCssColor(): Color = Color("#${ColorUtil.toHex(this)}")
 
   private fun bodyColor(): Color {
-    return if (UIUtil.isUnderDarcula()) Color((TaskDescriptionBundle.message("darcula.body.color"))) else JBColor.foreground().asCssColor()
+    return if (UIUtil.isUnderDarcula()) {
+      if (StyleResourcesManager.isHighContrast()) {
+        Color(TaskDescriptionBundle.message("high.contrast.body.color"))
+      }
+      else Color((TaskDescriptionBundle.message("darcula.body.color")))
+    }
+    else {
+      JBColor.foreground().asCssColor()
+    }
   }
 
   private fun codeBackground(): Color {
