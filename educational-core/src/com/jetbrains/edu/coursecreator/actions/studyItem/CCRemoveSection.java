@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.actions.sections;
+package com.jetbrains.edu.coursecreator.actions.studyItem;
 
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;

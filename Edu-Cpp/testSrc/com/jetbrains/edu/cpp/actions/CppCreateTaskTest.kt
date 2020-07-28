@@ -4,10 +4,13 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
+import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
-import com.jetbrains.edu.cpp.*
+import com.jetbrains.edu.cpp.CppBaseConfigurator
+import com.jetbrains.edu.cpp.CppCatchConfigurator
+import com.jetbrains.edu.cpp.CppProjectSettings
+import com.jetbrains.edu.cpp.getExpectedTaskCMakeText
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.fileTree

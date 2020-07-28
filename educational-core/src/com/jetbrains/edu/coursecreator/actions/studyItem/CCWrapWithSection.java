@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.actions.sections;
+package com.jetbrains.edu.coursecreator.actions.studyItem;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;

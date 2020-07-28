@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.actions
+package com.jetbrains.edu.coursecreator.actions.studyItem
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.notification.Notification
@@ -14,7 +14,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.*
 import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
-import com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.actions.StudyItemVariant
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import com.jetbrains.edu.learning.StudyTaskManager

@@ -14,10 +14,10 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parentOfType
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.StudyItemType.*
-import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
-import com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase
-import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.coursecreator.actions.sections.CCCreateSection
+import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
+import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateStudyItemActionBase
+import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.createItemMessage
 import com.jetbrains.edu.coursecreator.failedToFindItemMessage
 import com.jetbrains.edu.learning.course

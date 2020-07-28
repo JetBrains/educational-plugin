@@ -1,8 +1,8 @@
 package com.jetbrains.edu.coursecreator.actions.create
 
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.actions.studyItem.CCWrapWithSection
 import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection
 import com.jetbrains.edu.learning.EduTestInputDialog
 import com.jetbrains.edu.learning.withTestDialog
 import junit.framework.TestCase

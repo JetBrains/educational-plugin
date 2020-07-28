@@ -2,8 +2,8 @@ package com.jetbrains.edu.rust.actions
 
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
+import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.rust.RsProjectSettings
 import org.intellij.lang.annotations.Language

@@ -99,11 +99,11 @@
     <action id="Educational.CCEditTaskDescription" class="com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription"/>
 
     <group id="Educational.Educator.NewFile">
-      <action id="Educational.Educator.CreateTask" class="com.jetbrains.edu.coursecreator.actions.CCCreateTask"/>
+      <action id="Educational.Educator.CreateTask" class="com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask"/>
       <action id="Educational.Educator.CreateLesson"
-              class="com.jetbrains.edu.coursecreator.actions.CCCreateLesson"/>
+              class="com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson"/>
       <action id="Educational.Educator.CreateSection"
-              class="com.jetbrains.edu.coursecreator.actions.sections.CCCreateSection"/>
+              class="com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateSection"/>
       <separator/>
       <add-to-group group-id="NewGroup" anchor="first"/>
     </group>
@@ -125,8 +125,8 @@
       <action id="Educational.Educator.ShowPreview" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCShowPreview">
         <add-to-group group-id="EditorTabPopupMenu"/>
       </action>
-      <action id="Educational.Educator.CCWrapWithSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection"/>
-      <action id="Educational.Educator.CCRemoveSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCRemoveSection"/>
+      <action id="Educational.Educator.CCWrapWithSection" class="com.jetbrains.edu.coursecreator.actions.studyItem.CCWrapWithSection"/>
+      <action id="Educational.Educator.CCRemoveSection" class="com.jetbrains.edu.coursecreator.actions.studyItem.CCRemoveSection"/>
       <action id="Educational.Educator.IncludeIntoTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIncludeIntoTask"/>
       <action id="Educational.Educator.ExcludeFromTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCExcludeFromTask"/>
       <separator/>

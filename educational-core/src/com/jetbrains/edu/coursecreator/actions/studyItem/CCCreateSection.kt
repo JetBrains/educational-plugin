@@ -1,11 +1,10 @@
-package com.jetbrains.edu.coursecreator.actions.sections
+package com.jetbrains.edu.coursecreator.actions.studyItem
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils.createSectionDir
 import com.jetbrains.edu.coursecreator.StudyItemType
-import com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.StudyItemVariant
 import com.jetbrains.edu.coursecreator.presentableTitleName
@@ -15,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import icons.EducationalCoreIcons
 
-class CCCreateSection_ : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTION_TYPE, EducationalCoreIcons.Section) {
+class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTION_TYPE, EducationalCoreIcons.Section) {
   override fun addItem(course: Course, item: Section) {
     course.addSection(item)
   }

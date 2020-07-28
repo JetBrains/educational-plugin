@@ -3,9 +3,9 @@ package com.jetbrains.edu.coursecreator.actions.create
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.sections.CCCreateSection
-import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateSection
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
+import com.jetbrains.edu.learning.EduActionTestCase
 import junit.framework.TestCase
 
 class CCCreateSectionTest : EduActionTestCase() {

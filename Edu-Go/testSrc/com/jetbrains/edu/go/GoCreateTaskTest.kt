@@ -3,8 +3,8 @@ package com.jetbrains.edu.go
 import com.goide.GoLanguage
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
-import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
+import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
 
