@@ -1,8 +1,9 @@
 package com.jetbrains.edu.learning.checker
 
+import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
@@ -40,7 +41,7 @@ open class OutputTaskChecker(
         LOG.warn("Failed to find `output.txt` file (output task `${task.lesson.name}/${task.name}`)")
         return failedToCheck
       }
-      val expectedOutput = VfsUtil.loadText(outputPatternFile)
+      val expectedOutput = runReadAction { FileDocumentManager.getInstance().getDocument(outputPatternFile)?.text.orEmpty() }
       return checkOutput(outputString, expectedOutput)
     }
     catch (e: Exception) {
