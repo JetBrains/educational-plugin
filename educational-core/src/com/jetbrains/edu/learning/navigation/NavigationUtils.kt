@@ -63,6 +63,10 @@ object NavigationUtils {
 
   private fun isUnsolvedHyperskillStage(task: Task): Boolean {
     val course = task.course as? HyperskillCourse ?: return false
+    // Stages info could be not up-to-date, but we definitely do not want to make API call here
+    // So, if task status is Solved, we are sure that it is solved stage
+    // Otherwise, we rely on latest stages info
+    if (task.status == CheckStatus.Solved) return false
     return task.lesson.name != HYPERSKILL_PROBLEMS &&
            course.stages.getOrNull(task.index - 1)?.isCompleted != true
   }

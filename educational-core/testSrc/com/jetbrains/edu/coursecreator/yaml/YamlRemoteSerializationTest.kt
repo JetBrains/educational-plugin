@@ -37,7 +37,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     }
     course.hyperskillProject = hyperskillProject
 
-    course.stages = listOf(HyperskillStage(1, "First", 11),
+    course.stages = listOf(HyperskillStage(1, "First", 11, true),
                            HyperskillStage(2, "Second", 22)
     )
 
@@ -54,8 +54,10 @@ class YamlRemoteSerializationTest : YamlTestCase() {
       |stages:
       |- id: 1
       |  step: 11
+      |  is_completed: true
       |- id: 2
       |  step: 22
+      |  is_completed: false
       |topics:
       |  0:
       |  - title: Learn Anything

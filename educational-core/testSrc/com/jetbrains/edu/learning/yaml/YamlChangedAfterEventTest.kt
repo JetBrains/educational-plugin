@@ -5,7 +5,6 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
