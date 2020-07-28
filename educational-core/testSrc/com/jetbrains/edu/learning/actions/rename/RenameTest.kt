@@ -4,13 +4,11 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.NextTaskAction
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 
 class RenameTest : RenameTestBase() {
 
@@ -139,9 +137,9 @@ class RenameTest : RenameTestBase() {
     }
     doRenameAction(course, "additionalFile1.txt", "additionalFile2.txt", shouldBeInvoked = false)
     assertNull(LightPlatformTestCase.getSourceRoot().findFileByRelativePath("additionalFile2.txt"))
-    assertNull(course.additionalFiles.find { it.name ==  "additionalFile2.txt" })
+    assertNull(course.additionalFiles.find { it.name == "additionalFile2.txt" })
     assertNotNull(LightPlatformTestCase.getSourceRoot().findFileByRelativePath("additionalFile1.txt"))
-    assertNotNull(course.additionalFiles.find { it.name ==  "additionalFile1.txt" })
+    assertNotNull(course.additionalFiles.find { it.name == "additionalFile1.txt" })
   }
 
   fun `test rename student created task file in student mode in hyperskill course`() {
@@ -156,12 +154,12 @@ class RenameTest : RenameTestBase() {
       }
     } as HyperskillCourse
     course.hyperskillProject = HyperskillProject()
+    course.stages = listOf(HyperskillStage(1, "", 1, true), HyperskillStage(2, "", 2, true))
 
     withVirtualFileListener(course) {
       GeneratorUtils.createChildFile(findFile("lesson1/task"), "taskFile2.txt", "")
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("taskFile2.txt")
-      SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task1.id, CheckStatus.Solved, Submission())
       myFixture.testAction(NextTaskAction())
     }
 

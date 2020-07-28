@@ -14,14 +14,12 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
-import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.ext.saveStudentAnswersIfNeeded
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import java.util.*
 import javax.swing.tree.TreePath
 
@@ -29,8 +27,7 @@ object NavigationUtils {
 
   @JvmStatic
   fun nextTask(task: Task): Task? {
-    val project = task.project ?: return null
-    if (isUnsolvedHyperskillStage(task, project) || isLastHyperskillStage(task)) return null
+    if (isUnsolvedHyperskillStage(task) || isLastHyperskillStage(task)) return null
 
     val currentLesson = task.lesson
     val taskList = currentLesson.taskList
@@ -64,16 +61,15 @@ object NavigationUtils {
     return prevLessonTaskList[prevLessonTaskList.size - 1]
   }
 
-  private fun isUnsolvedHyperskillStage(task: Task, project: Project): Boolean {
-    return task.course is HyperskillCourse &&
-           task.lesson.name != HYPERSKILL_PROBLEMS &&
-           !SubmissionsManager.getInstance(project).containsCorrectSubmission(task.id)
+  private fun isUnsolvedHyperskillStage(task: Task): Boolean {
+    val course = task.course as? HyperskillCourse ?: return false
+    return task.lesson.name != HYPERSKILL_PROBLEMS &&
+           course.stages.getOrNull(task.index - 1)?.isCompleted != true
   }
 
   private fun isLastHyperskillStage(task: Task): Boolean {
-    val course = task.course
-    return course is HyperskillCourse &&
-           task.lesson.name != HYPERSKILL_PROBLEMS &&
+    val course = task.course as? HyperskillCourse ?: return false
+    return task.lesson.name != HYPERSKILL_PROBLEMS &&
            task.index == course.stages.size
   }
 

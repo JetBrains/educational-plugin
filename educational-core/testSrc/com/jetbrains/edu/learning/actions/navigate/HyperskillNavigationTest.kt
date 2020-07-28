@@ -11,12 +11,10 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.withTestDialog
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
@@ -366,10 +364,8 @@ class HyperskillNavigationTest : NavigationTestBase() {
 
   fun `test navigate to next unavailable`() {
     val course = createHyperskillCourse()
+    course.stages = listOf(HyperskillStage(1, "", 1, false), HyperskillStage(2, "", 2, false), HyperskillStage(3, "", 3, false))
     val task = course.findTask("lesson1", "task1")
-    val submissionsManager = SubmissionsManager.getInstance(project)
-    submissionsManager.clear()
-    submissionsManager.addToSubmissionsWithStatus(task.id, CheckStatus.Failed, Submission())
 
     task.openTaskFileInEditor("src/Task.kt")
     val presentation = myFixture.testAction(NextTaskAction())
@@ -379,8 +375,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
   fun `test navigate to next available when we have correct submission`() {
     val course = createHyperskillCourse()
     val task = course.findTask("lesson1", "task1")
-
-    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, CheckStatus.Failed, Submission())
     task.status = CheckStatus.Failed
 
     task.openTaskFileInEditor("src/Task.kt")
@@ -391,7 +385,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
   fun `test navigate to next unavailable on last stage`() {
     val course = createHyperskillCourseWithProblemsLesson()
     val task = course.findTask("lesson1", "task1")
-    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, CheckStatus.Solved, Submission())
 
     task.openTaskFileInEditor("src/Task.kt")
     val presentation = myFixture.testAction(NextTaskAction())
@@ -407,7 +400,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     assertFalse(presentation.isEnabledAndVisible)
   }
 
-  private fun createHyperskillCourse(): Course {
+  private fun createHyperskillCourse(): HyperskillCourse {
     val course = courseWithFiles(
       language = FakeGradleBasedLanguage,
       courseProducer = ::HyperskillCourse
@@ -431,8 +424,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
       }
     } as HyperskillCourse
     course.hyperskillProject = HyperskillProject()
-    val task1 = course.findTask("lesson1", "task1")
-    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task1.id, CheckStatus.Solved, Submission())
+    course.stages = listOf(HyperskillStage(1, "", 1, true), HyperskillStage(2, "", 2, true), HyperskillStage(3, "", 3, true))
     return course
   }
 
@@ -453,7 +445,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
       }
     } as HyperskillCourse
     course.hyperskillProject = HyperskillProject()
-    course.stages = listOf(HyperskillStage(1, "", 1))
+    course.stages = listOf(HyperskillStage(1, "", 1, true))
     return course
   }
 }

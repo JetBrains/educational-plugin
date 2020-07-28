@@ -28,6 +28,7 @@ const val STEP_ID = "step"
 const val TOPIC_THEORY = "topic_theory"
 const val SOLUTIONS = "solutions"
 const val IS_TEMPLATE_BASED = "is_template_based"
+const val IS_COMPLETED = "is_completed"
 const val UPDATED_AT = "updated_at"
 const val TOKEN = "token"
 const val URL = "url"
@@ -60,10 +61,11 @@ class HyperskillStage {
   @Suppress("unused") //used for deserialization
   constructor()
 
-  constructor(stageId: Int, stageTitle: String, stageStepId: Int) {
+  constructor(stageId: Int, stageTitle: String, stageStepId: Int, isStageCompleted: Boolean = false) {
     id = stageId
     title = stageTitle
     stepId = stageStepId
+    isCompleted = isStageCompleted
   }
 
   @JsonProperty(ID)
@@ -74,6 +76,9 @@ class HyperskillStage {
 
   @JsonProperty(STEP_ID)
   var stepId: Int = -1
+
+  @JsonProperty(IS_COMPLETED)
+  var isCompleted: Boolean = false
 }
 
 class HyperskillProject {

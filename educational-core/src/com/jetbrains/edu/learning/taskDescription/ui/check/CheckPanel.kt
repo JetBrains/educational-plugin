@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -142,7 +143,8 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   }
 
   private fun JPanel.addNextTaskButton(task: Task) {
-    if ((task.status == CheckStatus.Solved || task is TheoryTask) && NavigationUtils.nextTask(task) != null) {
+    if ((task.status == CheckStatus.Solved || task is TheoryTask || task.course is HyperskillCourse) &&
+        NavigationUtils.nextTask(task) != null) {
       val nextButton = CheckPanelButtonComponent(ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID))
       nextButton.border = JBUI.Borders.empty(0, 12, 0, 0)
       add(nextButton, BorderLayout.WEST)

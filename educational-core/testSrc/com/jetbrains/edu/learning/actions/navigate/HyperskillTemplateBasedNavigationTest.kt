@@ -3,13 +3,11 @@ package com.jetbrains.edu.learning.actions.navigate
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 
 class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
 
@@ -323,8 +321,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       }
     } as HyperskillCourse
     course.hyperskillProject = HyperskillProject().apply { isTemplateBased = true }
-    val task1 = course.findTask("lesson1", "task1")
-    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task1.id, CheckStatus.Solved, Submission())
+    course.stages = listOf(HyperskillStage(1, "", 1, true), HyperskillStage(2, "", 2, true))
     return course
   }
 }

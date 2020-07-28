@@ -12,11 +12,10 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseUpdater.Companion.shouldBeUpdated
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import java.util.*
 
 class HyperskillCourseUpdateTest : NavigationTestBase() {
@@ -184,7 +183,6 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     createHyperskillCourse()
 
     val task1 = course.taskList[0]
-    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task1.id, CheckStatus.Solved, Submission())
     val task2 = course.taskList[1]
 
     val taskText = "fun foo2() {}"
@@ -240,7 +238,6 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     createHyperskillCourse()
 
     val task1 = course.taskList[0]
-    SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task1.id, CheckStatus.Solved, Submission())
     val task2 = course.taskList[1]
 
     withVirtualFileListener(course) {
@@ -461,6 +458,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
       additionalFile("build.gradle", "apply plugin: \"java\"")
     } as HyperskillCourse
     course.hyperskillProject = HyperskillProject()
+    course.stages = listOf(HyperskillStage(1, "", 1, true), HyperskillStage(2, "", 2))
   }
 }
 
