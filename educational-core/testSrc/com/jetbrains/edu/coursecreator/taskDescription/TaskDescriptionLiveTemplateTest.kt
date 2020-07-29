@@ -22,6 +22,7 @@ class TaskDescriptionLiveTemplateTest : EduTestCase() {
       <div class="hint">
         Hint text
       </div>
+      
       </html>
     """)
   }
