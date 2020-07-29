@@ -1,9 +1,11 @@
 package com.jetbrains.edu.rust.actions
 
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
+import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.rust.RsProjectSettings
 import org.intellij.lang.annotations.Language
@@ -111,7 +113,9 @@ class RsCreateLessonTest : RsActionTestBase() {
       settings = RsProjectSettings()
     ) {
       section("section1") {
-        lesson("lesson1")
+        lesson("lesson1") {
+          eduTask("task1")
+        }
       }
       additionalFile(CargoConstants.MANIFEST_FILE, """
         [workspace]
@@ -126,9 +130,7 @@ class RsCreateLessonTest : RsActionTestBase() {
       """.trimIndent())
     }
 
-    withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
-      testAction(dataContext(findFile("section1")), CCCreateLesson())
-    }
+    addNewLessonWithTask("lesson2", "task1", findFile("section1"))
 
     checkCargoToml("""
       [workspace]
@@ -163,9 +165,7 @@ class RsCreateLessonTest : RsActionTestBase() {
       """.trimIndent())
     }
 
-    withMockCreateStudyItemUi(MockNewStudyItemUi("lesson1")) {
-      testAction(dataContext(findFile("section1")), CCCreateLesson())
-    }
+    addNewLessonWithTask("lesson1", "task1", findFile("section1"))
 
     checkCargoToml("""
       [workspace]
@@ -186,8 +186,12 @@ class RsCreateLessonTest : RsActionTestBase() {
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
-      lesson("lesson1")
-      lesson("lesson3")
+      lesson("lesson1") {
+        eduTask("task1")
+      }
+      lesson("lesson3") {
+        eduTask("task3")
+      }
       additionalFile("Cargo.toml", """
         [workspace]
 
@@ -202,9 +206,7 @@ class RsCreateLessonTest : RsActionTestBase() {
       """.trimIndent())
     }
 
-    withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
-      testAction(dataContext(findFile("lesson1")), CCCreateLesson())
-    }
+    addNewLessonWithTask("lesson2", "task2", findFile("lesson1"))
 
     checkCargoToml("""
       [workspace]
@@ -221,20 +223,111 @@ class RsCreateLessonTest : RsActionTestBase() {
     """)
   }
 
-  private fun addLastLesson(@Language("TOML") before: String, @Language("TOML") after: String) {
+  fun `test do not modify manifest on empty lesson creation`() {
     courseWithFiles(
       courseMode = CCUtils.COURSE_MODE,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
-      lesson("lesson1")
-      additionalFile(CargoConstants.MANIFEST_FILE, before.trimIndent())
+      lesson("lesson1") {
+        eduTask("task1")
+      }
+      additionalFile("Cargo.toml", """
+        [workspace]
+
+        members = [
+            "lesson1/*/",
+        ]
+
+        exclude = [
+            "**/*.yaml"
+        ]
+      """.trimIndent())
     }
 
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
       testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateLesson())
     }
 
+    checkCargoToml("""
+        [workspace]
+
+        members = [
+            "lesson1/*/",
+        ]
+
+        exclude = [
+            "**/*.yaml"
+        ]
+      """)
+  }
+
+  fun `test do not modify manifest on non first task creation`() {
+    courseWithFiles(
+      courseMode = CCUtils.COURSE_MODE,
+      language = RsLanguage,
+      settings = RsProjectSettings()
+    ) {
+      lesson("lesson1") {
+        eduTask("task1")
+      }
+      additionalFile("Cargo.toml", """
+        [workspace]
+
+        members = [
+            "lesson1/*/",
+        ]
+
+        exclude = [
+            "**/*.yaml"
+        ]
+      """.trimIndent())
+    }
+
+    withMockCreateStudyItemUi(MockNewStudyItemUi("task2")) {
+      testAction(dataContext(findFile("lesson1")), CCCreateTask())
+    }
+
+    checkCargoToml("""
+        [workspace]
+
+        members = [
+            "lesson1/*/",
+        ]
+
+        exclude = [
+            "**/*.yaml"
+        ]
+      """)
+  }
+
+
+  private fun addLastLesson(@Language("TOML") before: String, @Language("TOML") after: String) {
+    courseWithFiles(
+      courseMode = CCUtils.COURSE_MODE,
+      language = RsLanguage,
+      settings = RsProjectSettings()
+    ) {
+      lesson("lesson1") {
+        eduTask("task1")
+      }
+      additionalFile(CargoConstants.MANIFEST_FILE, before.trimIndent())
+    }
+
+    addNewLessonWithTask("lesson2", "task2", LightPlatformTestCase.getSourceRoot())
+
     checkCargoToml(after)
+  }
+
+  private fun addNewLessonWithTask(lessonName: String, taskName: String, context: VirtualFile) {
+    withMockCreateStudyItemUi(MockNewStudyItemUi(lessonName)) {
+      testAction(dataContext(context), CCCreateLesson())
+    }
+
+    val lessonDir = context.findChild(lessonName) ?: context.parent.findChild(lessonName)
+    check(lessonDir != null)
+    withMockCreateStudyItemUi(MockNewStudyItemUi(taskName)) {
+      testAction(dataContext(lessonDir), CCCreateTask())
+    }
   }
 }

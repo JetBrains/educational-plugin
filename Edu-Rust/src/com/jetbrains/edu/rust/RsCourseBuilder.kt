@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.rust.cargo.CargoConstants
@@ -125,9 +126,14 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     if (itemType == TASK_TYPE) RsPackageNameValidator.validate(name.toPackageName(), true) else null
 
   override fun onStudyItemCreation(project: Project, item: StudyItem) {
-    if (item is Lesson) {
-      WriteCommandAction.runWriteCommandAction(project) {
-        updateCargoToml(project, item)
+    if (item is Task) {
+      val lesson = item.lesson
+      // Info about new lesson should be inserted into Cargo.toml only after first task creation.
+      // Otherwise, Cargo fails to retrieve project metadata because of invalid manifest
+      if (lesson.items.size == 1) {
+        WriteCommandAction.runWriteCommandAction(project) {
+          updateCargoToml(project, lesson)
+        }
       }
     }
   }
