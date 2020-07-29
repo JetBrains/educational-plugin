@@ -98,7 +98,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
         compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
       })
     updateFilters()
-    updateModel(courses, coursesListPanel.selectedCourse)
+    updateModel(courses, null)
     showContent(courses.isEmpty())
     processSelectionChanged()
   }
@@ -241,7 +241,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
           filtered.add(course)
         }
       }
-      updateModel(filtered, selectedCourse)
+      updateModel(filtered, null)
     }
 
     private fun accept(@NonNls filter: String, course: Course): Boolean {

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
+import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.ComponentUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -25,6 +26,7 @@ class CourseGroupModel {
       override fun mouseClicked(event: MouseEvent) {
         if (SwingUtilities.isLeftMouseButton(event)) {
           val cardComponent = getCourseCard(event)
+          IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown { IdeFocusManager.getGlobalInstance().requestFocus(cardComponent as Component, true) }
           if (cardComponent == selectedCard) {
             return
           }

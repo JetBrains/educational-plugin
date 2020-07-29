@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
@@ -72,12 +71,9 @@ class CourseCardComponent(val courseInfo: CourseInfo, errorHandler: (ErrorState)
     UIUtil.setBackgroundRecursively(this, background)
   }
 
-  fun setSelection(isSelectedOrHover: Boolean, scrollAndFocus: Boolean = false) {
-    if (scrollAndFocus) {
+  fun setSelection(isSelectedOrHover: Boolean, scroll: Boolean = false) {
+    if (scroll) {
       scrollToVisible()
-      if (parent != null && isSelectedOrHover) {
-        IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown { IdeFocusManager.getGlobalInstance().requestFocus(this, true) }
-      }
     }
     updateColors(isSelectedOrHover)
     repaint()
