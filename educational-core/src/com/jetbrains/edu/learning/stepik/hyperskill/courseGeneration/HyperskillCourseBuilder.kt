@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -33,11 +34,9 @@ open class HyperskillCourseBuilder<T>(private val baseCourseBuilder: EduCourseBu
                                   additionalPanels: List<AdditionalPanel>, studyItemCreator: (NewStudyItemInfo) -> Unit) =
     baseCourseBuilder.showNewStudyItemUi(project, course, model, additionalPanels, studyItemCreator)
 
-  override fun createLessonContent(project: Project, lesson: Lesson, parentDirectory: VirtualFile): VirtualFile? =
-    baseCourseBuilder.createLessonContent(project, lesson, parentDirectory)
-
-  override fun createTaskContent(project: Project, task: Task, parentDirectory: VirtualFile): VirtualFile? =
-    baseCourseBuilder.createTaskContent(project, task, parentDirectory)
+  override fun onStudyItemCreation(project: Project, item: StudyItem) {
+    baseCourseBuilder.onStudyItemCreation(project, item)
+  }
 
   override fun refreshProject(project: Project, cause: RefreshCause) = baseCourseBuilder.refreshProject(project, cause)
 

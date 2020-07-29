@@ -20,11 +20,13 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.studyItemType
 import com.jetbrains.edu.learning.messages.makeLazy
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.isFeedbackAsked
 import com.jetbrains.edu.learning.statistics.showNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import java.io.IOException
 import java.util.*
 import javax.swing.Icon
 
@@ -102,13 +104,23 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
       CCUtils.updateHigherElements(parentDir.children, getStudyOrderable(item, course), item.index - 1, 1)
       addItem(course, item)
       sortSiblings(course, parentItem)
-      val virtualFile = createItemDir(project, course, item, parentDir)
+
+      val itemDir = try {
+        val dir = createItemDir(project, course, item, parentDir)
+        onStudyItemCreation(project, course, item)
+        dir
+      }
+      catch (e: IOException) {
+        LOG.error("Failed to create ${item.studyItemType.presentableName}", e)
+        null
+      }
+
       YamlFormatSynchronizer.saveItem(item)
       YamlFormatSynchronizer.saveItem(item.parent)
       EduCounterUsageCollector.studyItemCreated(item)
 
-      if (virtualFile != null) {
-        ProjectView.getInstance(project).select(virtualFile, virtualFile, true)
+      if (itemDir != null) {
+        ProjectView.getInstance(project).select(itemDir, itemDir, true)
       }
       askFeedback(course, project)
       if (LESSON_TYPE == itemType) {
@@ -119,7 +131,18 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
 
   protected abstract fun addItem(course: Course, item: Item)
   protected abstract fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem>
+  @Throws(IOException::class)
   protected abstract fun createItemDir(project: Project, course: Course, item: Item, parentDirectory: VirtualFile): VirtualFile?
+
+  protected open fun onStudyItemCreation(project: Project, course: Course, item: StudyItem) {
+    val configurator = course.configurator
+    if (configurator == null) {
+      LOG.info("Failed to get configurator for " + course.languageID)
+      return
+    }
+
+    configurator.courseBuilder.onStudyItemCreation(project, item)
+  }
 
   private fun showCreationUI(
     project: Project,

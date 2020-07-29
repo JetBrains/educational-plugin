@@ -3,14 +3,15 @@ package com.jetbrains.edu.coursecreator.actions.studyItem
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
-import com.jetbrains.edu.coursecreator.CCUtils.createSectionDir
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.presentableTitleName
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import icons.EducationalCoreIcons
+import java.io.IOException
 
 class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTION_TYPE, EducationalCoreIcons.Section) {
   override fun addItem(course: Course, item: Section) {
@@ -21,8 +22,9 @@ class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTI
     return Function<VirtualFile, StudyItem> { file: VirtualFile -> course.getItem(file.name) }
   }
 
+  @Throws(IOException::class)
   override fun createItemDir(project: Project, course: Course, item: Section, parentDirectory: VirtualFile): VirtualFile? {
-    return createSectionDir(project, item.name)
+    return GeneratorUtils.createSection(item, parentDirectory)
   }
 
   override fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int = course.items.size

@@ -124,14 +124,12 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
   override fun validateItemName(name: String, itemType: StudyItemType): String? =
     if (itemType == TASK_TYPE) RsPackageNameValidator.validate(name.toPackageName(), true) else null
 
-  override fun createLessonContent(project: Project, lesson: Lesson, parentDirectory: VirtualFile): VirtualFile? {
-    val lessonFile = super.createLessonContent(project, lesson, parentDirectory) ?: return null
-
-    WriteCommandAction.runWriteCommandAction(project) {
-      updateCargoToml(project, lesson)
+  override fun onStudyItemCreation(project: Project, item: StudyItem) {
+    if (item is Lesson) {
+      WriteCommandAction.runWriteCommandAction(project) {
+        updateCargoToml(project, item)
+      }
     }
-
-    return lessonFile
   }
 
   override fun beforeStudyItemDeletion(project: Project, item: StudyItem) {

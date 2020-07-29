@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.actions.studyItem
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -13,10 +12,11 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle
 import icons.EducationalCoreIcons.Lesson
+import java.io.IOException
 
 class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) {
 
@@ -37,13 +37,9 @@ class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) 
     return Function { file -> (item as? Lesson)?.container?.getItem(file.name) }
   }
 
+  @Throws(IOException::class)
   override fun createItemDir(project: Project, course: Course, item: Lesson, parentDirectory: VirtualFile): VirtualFile? {
-    val configurator = course.configurator
-    if (configurator == null) {
-      LOG.info("Failed to get configurator for " + course.languageID)
-      return null
-    }
-    return configurator.courseBuilder.createLessonContent(project, item, parentDirectory)
+    return GeneratorUtils.createLesson(item, parentDirectory)
   }
 
   override fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int {
@@ -87,9 +83,5 @@ class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) 
     if (course.hasSections && getParentItem(project, course, sourceDirectory) is Course) {
       event.presentation.isEnabledAndVisible = false
     }
-  }
-
-  companion object {
-    private val LOG: Logger = Logger.getInstance(CCCreateLesson::class.java)
   }
 }

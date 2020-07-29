@@ -1,9 +1,7 @@
 package com.jetbrains.edu.learning
 
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils.loadText
 import com.jetbrains.edu.coursecreator.StudyItemType
@@ -20,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.joinPaths
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import java.io.IOException
@@ -53,43 +50,10 @@ interface EduCourseBuilder<Settings> {
   ) = showNewStudyItemDialog(project, course, model, additionalPanels, studyItemCreator = studyItemCreator)
 
   /**
-   * Creates content (including its directory or module) of new lesson in project
-   *
-   * @param project Parameter is used in Java and Kotlin plugins
-   * @param lesson  [Lesson] to create content for. It's already properly initialized and added to course.
-   * @return [VirtualFile] of created lesson
+   * Creates additional content of new study item in project
+   * [item] object is already properly initialized and added to corresponding parent.
    */
-  fun createLessonContent(project: Project, lesson: Lesson, parentDirectory: VirtualFile): VirtualFile? {
-    return runWriteAction {
-      try {
-        VfsUtil.createDirectoryIfMissing(parentDirectory, lesson.name)
-      }
-      catch (e: IOException) {
-        LOG.error("Failed to create lesson directory", e)
-        null
-      }
-    }
-  }
-
-  /**
-   * Creates content (including its directory or module) of new task in project
-   *
-   * @param task [Task] to create content for. It's already properly initialized and added to corresponding lesson.
-   * @return [VirtualFile] of created task
-   */
-  fun createTaskContent(project: Project, task: Task, parentDirectory: VirtualFile): VirtualFile? {
-    try {
-      createTask(task, parentDirectory)
-    }
-    catch (e: IOException) {
-      LOG.error("Failed to create task", e)
-    }
-    val taskDir = parentDirectory.findChild(task.name)
-    if (!isUnitTestMode) {
-      refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
-    }
-    return taskDir
-  }
+  fun onStudyItemCreation(project: Project, item: StudyItem) {}
 
   /**
    * Allows to update project modules and the whole project structure

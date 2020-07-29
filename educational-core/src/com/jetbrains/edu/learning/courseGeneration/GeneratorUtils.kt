@@ -68,29 +68,31 @@ object GeneratorUtils {
     EduCounterUsageCollector.studyItemCreated(course)
   }
 
-  fun createSection(item: Section, baseDir: VirtualFile) {
+  fun createSection(item: Section, baseDir: VirtualFile): VirtualFile {
     val sectionDir = createUniqueDir(baseDir, item)
 
     for (lesson in item.lessons) {
       createLesson(lesson, sectionDir)
     }
     EduCounterUsageCollector.studyItemCreated(item)
+    return sectionDir
   }
 
   @Throws(IOException::class)
   @JvmStatic
-  fun createLesson(lesson: Lesson, courseDir: VirtualFile) {
+  fun createLesson(lesson: Lesson, courseDir: VirtualFile): VirtualFile {
     val lessonDir = createUniqueDir(courseDir, lesson)
     val taskList = lesson.taskList
     for (task in taskList) {
       createTask(task, lessonDir)
     }
     EduCounterUsageCollector.studyItemCreated(lesson)
+    return lessonDir
   }
 
   @Throws(IOException::class)
   @JvmStatic
-  fun createTask(task: Task, lessonDir: VirtualFile) {
+  fun createTask(task: Task, lessonDir: VirtualFile): VirtualFile {
     val isFirstInFrameworkLesson = task.parent is FrameworkLesson && task.index == 1
     val isStudyCourse = task.course.isStudy
     val (contentDir, configDir) = if (isStudyCourse && isFirstInFrameworkLesson) {
@@ -111,6 +113,7 @@ object GeneratorUtils {
 
     createDescriptionFile(configDir, task)
     EduCounterUsageCollector.studyItemCreated(task)
+    return contentDir
   }
 
   @Throws(IOException::class)

@@ -8,16 +8,20 @@ import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle
 import icons.EducationalCoreIcons.IdeTask
 import icons.EducationalCoreIcons.Task
+import java.io.IOException
 import java.util.*
 
 class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
@@ -29,13 +33,16 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
   override fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem> =
     Function { file -> (item as? Task)?.lesson?.getTask(file.name) }
 
+  @Throws(IOException::class)
   override fun createItemDir(project: Project, course: Course, item: Task, parentDirectory: VirtualFile): VirtualFile? {
-    val configurator = course.configurator
-    if (configurator == null) {
-      LOG.info("Failed to get configurator for " + course.languageID)
-      return null
+    return GeneratorUtils.createTask(item, parentDirectory)
+  }
+
+  override fun onStudyItemCreation(project: Project, course: Course, item: StudyItem) {
+    super.onStudyItemCreation(project, course, item)
+    if (!isUnitTestMode) {
+      course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
     }
-    return configurator.courseBuilder.createTaskContent(project, item, parentDirectory)
   }
 
   override fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int =
