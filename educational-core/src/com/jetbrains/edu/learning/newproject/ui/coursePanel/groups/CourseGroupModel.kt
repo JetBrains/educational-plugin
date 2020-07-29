@@ -25,6 +25,9 @@ class CourseGroupModel {
       override fun mouseClicked(event: MouseEvent) {
         if (SwingUtilities.isLeftMouseButton(event)) {
           val cardComponent = getCourseCard(event)
+          if (cardComponent == selectedCard) {
+            return
+          }
           setSelection(cardComponent)
         }
       }
@@ -103,7 +106,7 @@ class CourseGroupModel {
     }
     if (cardComponent != null && cardComponent != selectedCard) {
       selectedCard = cardComponent
-      cardComponent.setSelection(isSelectedOrHover = true, scrollAndFocus = true)
+      cardComponent.setSelection(isSelectedOrHover = true, scroll = true)
     }
     selectionListener()
   }
