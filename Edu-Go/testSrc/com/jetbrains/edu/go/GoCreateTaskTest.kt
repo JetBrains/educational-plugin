@@ -16,23 +16,29 @@ class GoCreateTaskTest : EduActionTestCase() {
 
     val lessonFile = findFile("lesson1")
 
-    /**
-     * CCCreateTask does not validate names.
-     * TODO: find the way to write integration tests (validate names & create StudyItem)
-     */
-    val taskName = "Good Task 666 пробелы и кириллица"
-    assertNull(GoCourseBuilder().validateItemName(project, taskName, TASK_TYPE))
-
-    withMockCreateStudyItemUi(MockNewStudyItemUi(taskName)) {
+    val mockUi = MockNewStudyItemUi("Good Task 666 пробелы и кириллица")
+    withMockCreateStudyItemUi(mockUi) {
       testAction(dataContext(lessonFile), CCCreateTask())
     }
+    check(mockUi.errorMessage == null)
 
     val goModFile = course.lessons[0].taskList[0].taskFiles["go.mod"] ?: error("go.mod should be generated for Go task")
     assertEquals("module good_task_666_пробелы_и_кириллица\n", goModFile.text)
   }
 
   fun `test forbidden task name`() {
-    val taskName = "Bad name !@#"
-    assertEquals("Name contains forbidden symbols", GoCourseBuilder().validateItemName(project, taskName, TASK_TYPE))
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = GoLanguage.INSTANCE) {
+      lesson {}
+    }
+
+    val lessonFile = findFile("lesson1")
+
+    val mockUi = MockNewStudyItemUi("Bad name !@#")
+    withMockCreateStudyItemUi(mockUi) {
+      testAction(dataContext(lessonFile), CCCreateTask())
+    }
+
+    assertEquals("Name contains forbidden symbols", mockUi.errorMessage)
+    assertTrue(course.lessons[0].taskList.isEmpty())
   }
 }

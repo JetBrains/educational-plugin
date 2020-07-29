@@ -5,6 +5,7 @@ import com.jetbrains.edu.android.AndroidCourseBuilder
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.ui.NewStudyItemInfoCallback
 import com.jetbrains.edu.learning.courseFormat.Course
 
 class MockAndroidNewStudyUi(
@@ -17,13 +18,16 @@ class MockAndroidNewStudyUi(
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    studyItemCreator: (NewStudyItemInfo) -> Unit
+    callback: NewStudyItemInfoCallback
   ) {
-    super.show(project, course, model) {
+    val newStudyItemCreator: (NewStudyItemInfo) -> Unit = {
       it.putUserData(AndroidCourseBuilder.PACKAGE_NAME, packageName)
       it.putUserData(AndroidCourseBuilder.MIN_ANDROID_SDK, 15)
       it.putUserData(AndroidCourseBuilder.COMPILE_ANDROID_SDK, 28)
-      studyItemCreator(it)
+      callback.studyItemCreator(it)
     }
+
+    val newCallback = NewStudyItemInfoCallback(callback.validator, newStudyItemCreator)
+    super.show(project, course, model, newCallback)
   }
 }

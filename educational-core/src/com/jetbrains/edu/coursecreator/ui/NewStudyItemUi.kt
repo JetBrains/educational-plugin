@@ -27,7 +27,9 @@ fun showNewStudyItemDialog(
   } else {
     NewStudyItemPopupUi()
   }
-  ui.show(project, course, model, studyItemCreator)
+  val validator = CCStudyItemPathInputValidator(project, course, model.itemType, model.parentDir)
+  val callback = NewStudyItemInfoCallback(validator, studyItemCreator)
+  ui.show(project, course, model, callback)
 }
 
 @TestOnly
@@ -45,8 +47,25 @@ interface NewStudyItemUi {
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    studyItemCreator: (NewStudyItemInfo) -> Unit
+    callback: NewStudyItemInfoCallback
   )
+}
+
+class NewStudyItemInfoCallback(
+  val validator: InputValidatorEx,
+  val studyItemCreator: (NewStudyItemInfo) -> Unit
+) {
+  operator fun invoke(info: NewStudyItemInfo, onActionCallback: (String?) -> Unit) {
+    val name = info.name
+    if (validator.checkInput(name) && validator.canClose(name)) {
+      onActionCallback(null)
+      studyItemCreator(info)
+    }
+    else {
+      val errorMessage = validator.getErrorText(name)
+      onActionCallback(errorMessage)
+    }
+  }
 }
 
 class NewStudyItemPopupUi : NewStudyItemUi {
@@ -54,14 +73,13 @@ class NewStudyItemPopupUi : NewStudyItemUi {
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    studyItemCreator: (NewStudyItemInfo) -> Unit
+    callback: NewStudyItemInfoCallback
   ) {
-    val validator = CCStudyItemPathInputValidator(project, course, model.itemType, model.parentDir)
-    val popup = createLightWeightPopup(model, validator, studyItemCreator)
+    val popup = createLightWeightPopup(model, callback)
     popup.showCenteredInCurrentWindow(project)
   }
 
-  private fun createLightWeightPopup(model: NewStudyItemUiModel, validator: InputValidatorEx, studyItemCreator: (NewStudyItemInfo) -> Unit): JBPopup {
+  private fun createLightWeightPopup(model: NewStudyItemUiModel, callback: NewStudyItemInfoCallback): JBPopup {
     val contentPanel = NewStudyItemPopupPanel(model.itemType, model.studyItemVariants)
     val nameField = contentPanel.textField
     nameField.text = model.suggestedName
@@ -69,18 +87,15 @@ class NewStudyItemPopupUi : NewStudyItemUi {
     val title = model.itemType.newItemTitleMessage
     val popup = NewItemPopupUtil.createNewItemPopup(title, contentPanel, nameField)
     contentPanel.setApplyAction { event ->
-      val name = nameField.text
-      if (validator.checkInput(name) && validator.canClose(name)) {
-        popup.closeOk(event)
-        val itemProducer = contentPanel.getSelectedItem()?.producer
-        if (itemProducer != null) {
-          val info = NewStudyItemInfo(nameField.text, model.baseIndex + CCItemPositionPanel.AFTER_DELTA, itemProducer)
-          studyItemCreator(info)
+      val variant = contentPanel.getSelectedItem() ?: return@setApplyAction
+      val info = NewStudyItemInfo(nameField.text, model.baseIndex + CCItemPositionPanel.AFTER_DELTA, variant.producer)
+      callback(info) { errorMessage ->
+        if (errorMessage == null) {
+          popup.closeOk(event)
         }
-      }
-      else {
-        val errorMessage = validator.getErrorText(name)
-        contentPanel.setError(errorMessage)
+        else {
+          contentPanel.setError(errorMessage)
+        }
       }
     }
 
