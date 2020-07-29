@@ -95,6 +95,50 @@ class RsDeleteActionTest : RsActionTestBase() {
       ]
   """)
 
+  fun `test delete last task in lesson`() = doTest(createRustCourse(), "lesson1/task1", """
+      [workspace]
+      
+      members = [
+          "section1/lesson2/*/",
+          "section1/lesson3/*/" ,
+          "lesson4/*/"
+      ]
+      
+      exclude = [
+          "**/*.yaml"
+      ]
+  """)
+
+  fun `test delete non-last task in lesson`() = doTest(createRustCourse(), "lesson4/task5", """
+      [workspace]
+      
+      members = [
+          "lesson1/*/",
+          "section1/lesson2/*/",
+          "section1/lesson3/*/" ,
+          "lesson4/*/"
+      ]
+      
+      exclude = [
+          "**/*.yaml"
+      ]
+  """)
+
+  fun `test delete empty lesson`() = doTest(createRustCourse(), "lesson5", """
+      [workspace]
+      
+      members = [
+          "lesson1/*/",
+          "section1/lesson2/*/",
+          "section1/lesson3/*/" ,
+          "lesson4/*/"
+      ]
+      
+      exclude = [
+          "**/*.yaml"
+      ]
+  """)
+
   private fun createRustCourse(): Course {
     return courseWithFiles(
       courseMode = CCUtils.COURSE_MODE,
@@ -122,7 +166,11 @@ class RsDeleteActionTest : RsActionTestBase() {
         eduTask("task4") {
           rustTaskFile("main.rs")
         }
+        eduTask("task5") {
+          rustTaskFile("main.rs")
+        }
       }
+      lesson("lesson5")
       additionalFile("Cargo.toml", """
         [workspace]
         

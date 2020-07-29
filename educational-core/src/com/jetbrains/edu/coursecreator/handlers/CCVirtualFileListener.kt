@@ -90,7 +90,7 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     val studyItem = when (fileInfo) {
       is FileInfo.SectionDirectory -> fileInfo.section
       is FileInfo.LessonDirectory -> fileInfo.lesson
-      is FileInfo.FileInTask -> fileInfo.task
+      is FileInfo.TaskDirectory -> fileInfo.task
       else -> return
     }
 

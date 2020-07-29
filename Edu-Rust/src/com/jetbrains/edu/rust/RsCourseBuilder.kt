@@ -142,6 +142,12 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     val membersArray = project.workspaceManifest?.membersArray ?: return
 
     when (item) {
+      is Task -> {
+        val lesson = item.lesson
+        if (lesson.items.size == 1) {
+          removeLesson(project, lesson, membersArray)
+        }
+      }
       is Lesson -> removeLesson(project, item, membersArray)
       is Section -> {
         for (lesson in item.lessons) {
