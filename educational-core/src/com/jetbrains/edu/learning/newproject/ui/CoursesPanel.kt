@@ -107,6 +107,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     val splitPane = OnePixelSplitter()
     splitPane.firstComponent = coursesListDecorator
     splitPane.secondComponent = coursePanel
+    splitPane.divider.background = NewCoursePanel.DIVIDER_COLOR
     splitPane.proportion = 0.46f
 
     val splitPaneRoot = JPanel(BorderLayout()) // needed to set borders
