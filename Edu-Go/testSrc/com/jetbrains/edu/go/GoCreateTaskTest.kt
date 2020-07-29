@@ -21,7 +21,7 @@ class GoCreateTaskTest : EduActionTestCase() {
      * TODO: find the way to write integration tests (validate names & create StudyItem)
      */
     val taskName = "Good Task 666 пробелы и кириллица"
-    assertNull(GoCourseBuilder().validateItemName(taskName, TASK_TYPE))
+    assertNull(GoCourseBuilder().validateItemName(project, taskName, TASK_TYPE))
 
     withMockCreateStudyItemUi(MockNewStudyItemUi(taskName)) {
       testAction(dataContext(lessonFile), CCCreateTask())
@@ -33,6 +33,6 @@ class GoCreateTaskTest : EduActionTestCase() {
 
   fun `test forbidden task name`() {
     val taskName = "Bad name !@#"
-    assertEquals("Name contains forbidden symbols", GoCourseBuilder().validateItemName(taskName, TASK_TYPE))
+    assertEquals("Name contains forbidden symbols", GoCourseBuilder().validateItemName(project, taskName, TASK_TYPE))
   }
 }

@@ -20,7 +20,7 @@ abstract class CCCreateStudyItemDialogBase(
 ) : CCDialogWrapperBase(project) {
 
   private val nameField: JBTextField = JBTextField(model.suggestedName, TEXT_FIELD_COLUMNS)
-  private val validator: InputValidatorEx = CCStudyItemPathInputValidator(course, model.itemType, model.parentDir)
+  private val validator: InputValidatorEx = CCStudyItemPathInputValidator(project, course, model.itemType, model.parentDir)
 
   protected val positionPanel: CCItemPositionPanel? = additionalPanels.find { it is CCItemPositionPanel } as? CCItemPositionPanel
 

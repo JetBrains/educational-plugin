@@ -78,5 +78,6 @@ open class HyperskillCourseBuilder<T>(private val baseCourseBuilder: EduCourseBu
   override val testTemplateName: String?
     get() = baseCourseBuilder.testTemplateName
 
-  override fun validateItemName(name: String, itemType: StudyItemType): String? = baseCourseBuilder.validateItemName(name, itemType)
+  override fun validateItemName(project: Project, name: String, itemType: StudyItemType): String? =
+    baseCourseBuilder.validateItemName(project, name, itemType)
 }

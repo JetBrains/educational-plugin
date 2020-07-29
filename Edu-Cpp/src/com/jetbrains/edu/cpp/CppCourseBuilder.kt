@@ -78,7 +78,7 @@ class CppCourseBuilder(
     CMakeWorkspace.getInstance(project).selectProjectDir(VfsUtil.virtualToIoFile(project.courseDir))
   }
 
-  override fun validateItemName(name: String, itemType: StudyItemType): String? =
+  override fun validateItemName(project: Project, name: String, itemType: StudyItemType): String? =
     if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else EduCppBundle.message("error.invalid.name")
 
   companion object {

@@ -20,9 +20,11 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.rust.messages.EduRustBundle
 import org.rust.cargo.CargoConstants
 import org.rust.cargo.project.model.CargoProject
 import org.rust.cargo.project.model.cargoProjects
+import org.rust.cargo.project.workspace.PackageOrigin
 import org.rust.ide.newProject.RsPackageNameValidator
 import org.rust.lang.RsConstants
 import org.rust.lang.core.psi.ext.childrenWithLeaves
@@ -122,8 +124,19 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     return mapOf("PACKAGE_NAME" to info.name.toPackageName())
   }
 
-  override fun validateItemName(name: String, itemType: StudyItemType): String? =
-    if (itemType == TASK_TYPE) RsPackageNameValidator.validate(name.toPackageName(), true) else null
+  override fun validateItemName(project: Project, name: String, itemType: StudyItemType): String? {
+    if (itemType != TASK_TYPE) return null
+    val packageName = name.toPackageName()
+    val nameValidationMessage = RsPackageNameValidator.validate(packageName, true)
+    if (nameValidationMessage != null) return nameValidationMessage
+    if (!project.isSingleWorkspaceProject) return null
+
+    val isNameAlreadyUsed = project.cargoProjects.allProjects
+      .flatMap { it.workspace?.packages.orEmpty() }
+      .any { it.origin == PackageOrigin.WORKSPACE && it.name == packageName }
+
+    return if (isNameAlreadyUsed) EduRustBundle.message("error.name.already.used", RsNames.CARGO) else null
+  }
 
   override fun onStudyItemCreation(project: Project, item: StudyItem) {
     if (item is Task) {

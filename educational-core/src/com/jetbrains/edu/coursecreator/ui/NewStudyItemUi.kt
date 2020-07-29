@@ -59,7 +59,7 @@ class NewStudyItemPopupUi : NewStudyItemUi {
     additionalPanels: List<AdditionalPanel>,
     studyItemCreator: (NewStudyItemInfo) -> Unit
   ) {
-    val validator = CCStudyItemPathInputValidator(course, model.itemType, model.parentDir)
+    val validator = CCStudyItemPathInputValidator(project, course, model.itemType, model.parentDir)
     val popup = createLightWeightPopup(model, validator, studyItemCreator)
     popup.showCenteredInCurrentWindow(project)
   }

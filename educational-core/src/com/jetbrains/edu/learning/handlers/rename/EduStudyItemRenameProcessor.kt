@@ -78,7 +78,7 @@ abstract class EduStudyItemRenameProcessor : RenamePsiFileProcessor() {
             throw ConfigurationException(EduCoreErrorBundle.message("invalid.rename.message"))
           }
           val itemDir = item.getDir(project.courseDir)
-          val validator = CCStudyItemPathInputValidator(item.course, item.studyItemType, itemDir.parent, item.name)
+          val validator = CCStudyItemPathInputValidator(project, item.course, item.studyItemType, itemDir.parent, item.name)
           if (!validator.checkInput(newName)) {
             throw ConfigurationException(validator.getErrorText(newName))
           }

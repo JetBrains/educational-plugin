@@ -66,7 +66,7 @@ public class CCWrapWithSection extends DumbAwareAction {
       return;
     }
     int sectionIndex = course.getSections().size() + 1;
-    InputValidator validator = new CCStudyItemPathInputValidator(course, SECTION_TYPE, OpenApiExtKt.getCourseDir(project));
+    InputValidator validator = new CCStudyItemPathInputValidator(project, course, SECTION_TYPE, OpenApiExtKt.getCourseDir(project));
     String sectionName = Messages.showInputDialog(EduCoreActionBundle.message("wrap.with.section.enter.name"),
                                                   getPresentableTitleName(SECTION_TYPE), null, EduNames.SECTION + sectionIndex, validator);
     if (sectionName == null) {

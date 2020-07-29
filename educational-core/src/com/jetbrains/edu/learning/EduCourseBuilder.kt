@@ -210,7 +210,7 @@ interface EduCourseBuilder<Settings> {
    *
    * @see [com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator]
    */
-  fun validateItemName(name: String, itemType: StudyItemType): String? {
+  fun validateItemName(project: Project, name: String, itemType: StudyItemType): String? {
     return null
   }
 

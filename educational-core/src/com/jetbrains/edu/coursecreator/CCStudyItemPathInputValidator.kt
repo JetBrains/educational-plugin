@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
@@ -7,6 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 
 class CCStudyItemPathInputValidator @JvmOverloads constructor(
+  private val project: Project,
   private val course: Course,
   private val studyItemType: StudyItemType?,
   private val parentDir: VirtualFile?,
@@ -21,7 +23,7 @@ class CCStudyItemPathInputValidator @JvmOverloads constructor(
       inputString.isEmpty() -> "Empty name"
       !PathUtil.isValidFileName(inputString) -> "Invalid name"
       parentDir.findChild(inputString) != null && inputString != name -> "${parentDir.name} already contains directory named $inputString"
-      studyItemType != null -> course.configurator?.courseBuilder?.validateItemName(inputString, studyItemType)
+      studyItemType != null -> course.configurator?.courseBuilder?.validateItemName(project, inputString, studyItemType)
       else -> null
     }
     return errorText == null
