@@ -9,8 +9,8 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.io.File
@@ -35,7 +35,7 @@ class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(Bord
     myErrorLabel.addHyperlinkListener { browseHyperlink(myValidationMessage) }
     add(myCoursePanel, BorderLayout.CENTER)
     add(myErrorLabel, BorderLayout.SOUTH)
-    UIUtil.setBackgroundRecursively(this, TaskDescriptionView.getTaskDescriptionBackgroundColor())
+    UIUtil.setBackgroundRecursively(this, MAIN_BG_COLOR)
 
     setupValidation()
   }

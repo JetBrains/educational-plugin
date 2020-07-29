@@ -103,7 +103,6 @@ class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0
     else {
       isVisible = false
     }
-    UIUtil.setBackgroundRecursively(this, UIUtil.getEditorPaneBackground())
   }
 
   fun getProjectSettings(): Any? = languageSettings?.settings

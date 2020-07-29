@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
 import com.jetbrains.edu.learning.projectView.ProgressUtil
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import icons.EducationalCoreIcons
 import java.awt.BorderLayout
@@ -64,7 +63,7 @@ class CourseCardComponent(val courseInfo: CourseInfo, errorHandler: (ErrorState)
   }
 
   fun updateColors(isSelectedOrHover: Boolean) {
-    updateColors(if (isSelectedOrHover) HOVER_COLOR else TaskDescriptionView.getTaskDescriptionBackgroundColor())
+    updateColors(if (isSelectedOrHover) HOVER_COLOR else MAIN_BG_COLOR)
   }
 
   private fun updateColors(background: Color) {

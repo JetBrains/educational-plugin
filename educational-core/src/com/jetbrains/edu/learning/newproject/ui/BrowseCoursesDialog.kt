@@ -13,7 +13,7 @@ import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import javax.swing.JComponent
@@ -30,7 +30,7 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
   init {
     title = "Select Course"
     init()
-    rootPane.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
+    rootPane.background = MAIN_BG_COLOR
     panel.setSidePaneBackground()
 
     Disposer.register(disposable, Disposable { job.cancel() })

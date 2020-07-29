@@ -5,7 +5,7 @@ import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import java.awt.Color
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -18,7 +18,7 @@ const val LEFT_RIGHT = 10
 class CoursesGroupPanel(coursesGroup: CoursesGroup, errorHandler: (ErrorState) -> Unit) : JPanel(VerticalFlowLayout(0, 0)) {
 
   init {
-    background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
+    background = MAIN_BG_COLOR
     val name = coursesGroup.name
 
     val titleLabel = JLabel(name)

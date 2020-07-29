@@ -6,7 +6,7 @@ import com.intellij.util.ui.StatusText
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 
 class GroupsComponent(private val errorHandler: (ErrorState) -> Unit) : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
 
@@ -16,7 +16,7 @@ class GroupsComponent(private val errorHandler: (ErrorState) -> Unit) : JBPanelW
     get() = courseGroupModel.selectedCard?.courseInfo?.course
 
   init {
-    background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
+    background = MAIN_BG_COLOR
     emptyText.text = EduCoreBundle.message("course.dialog.no.courses.found")
     emptyText.appendSecondaryText(EduCoreBundle.message("course.dialog.no.courses.found.secondary.text"), StatusText.DEFAULT_ATTRIBUTES,
                                   null)
