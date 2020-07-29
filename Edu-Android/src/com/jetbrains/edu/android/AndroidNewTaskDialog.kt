@@ -23,7 +23,7 @@ class AndroidNewTaskAfterPopupDialog(
   course: Course,
   model: NewStudyItemUiModel,
   private val currentInfo: NewStudyItemInfo
-) : CCCreateStudyItemDialogBase(project, course, model, emptyList()) {
+) : CCCreateStudyItemDialogBase(project, course, model) {
 
   init { init() }
 

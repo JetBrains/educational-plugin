@@ -10,7 +10,6 @@ import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
-import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
@@ -42,12 +41,11 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    additionalPanels: List<AdditionalPanel>,
     studyItemCreator: (NewStudyItemInfo) -> Unit
   ) {
     val parentItem = model.parent
     if (model.itemType != TASK_TYPE || parentItem is FrameworkLesson && parentItem.taskList.isNotEmpty()) {
-      super.showNewStudyItemUi(project, course, model, additionalPanels, studyItemCreator)
+      super.showNewStudyItemUi(project, course, model, studyItemCreator)
     }
     else {
       val studyItemCreatorWrapper = if (isUnitTestMode) {
@@ -62,7 +60,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
         }
         androidStudyItemCreator
       }
-      super.showNewStudyItemUi(project, course, model, additionalPanels, studyItemCreatorWrapper)
+      super.showNewStudyItemUi(project, course, model, studyItemCreatorWrapper)
     }
   }
 

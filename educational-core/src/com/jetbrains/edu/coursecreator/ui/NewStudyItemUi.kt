@@ -20,7 +20,6 @@ fun showNewStudyItemDialog(
   project: Project,
   course: Course,
   model: NewStudyItemUiModel,
-  additionalPanels: List<AdditionalPanel>,
   studyItemCreator: (NewStudyItemInfo) -> Unit
 ) {
   val ui = if (isUnitTestMode) {
@@ -28,7 +27,7 @@ fun showNewStudyItemDialog(
   } else {
     NewStudyItemPopupUi()
   }
-  ui.show(project, course, model, additionalPanels, studyItemCreator)
+  ui.show(project, course, model, studyItemCreator)
 }
 
 @TestOnly
@@ -46,7 +45,6 @@ interface NewStudyItemUi {
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    additionalPanels: List<AdditionalPanel>,
     studyItemCreator: (NewStudyItemInfo) -> Unit
   )
 }
@@ -56,7 +54,6 @@ class NewStudyItemPopupUi : NewStudyItemUi {
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    additionalPanels: List<AdditionalPanel>,
     studyItemCreator: (NewStudyItemInfo) -> Unit
   ) {
     val validator = CCStudyItemPathInputValidator(project, course, model.itemType, model.parentDir)

@@ -6,7 +6,6 @@ import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
-import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.RefreshCause
@@ -30,9 +29,12 @@ open class HyperskillCourseBuilder<T>(private val baseCourseBuilder: EduCourseBu
    */
   override fun getLanguageSettings(): LanguageSettings<T> = baseCourseBuilder.getLanguageSettings()
 
-  override fun showNewStudyItemUi(project: Project, course: Course, model: NewStudyItemUiModel,
-                                  additionalPanels: List<AdditionalPanel>, studyItemCreator: (NewStudyItemInfo) -> Unit) =
-    baseCourseBuilder.showNewStudyItemUi(project, course, model, additionalPanels, studyItemCreator)
+  override fun showNewStudyItemUi(
+    project: Project,
+    course: Course,
+    model: NewStudyItemUiModel,
+    studyItemCreator: (NewStudyItemInfo) -> Unit
+  ) = baseCourseBuilder.showNewStudyItemUi(project, course, model, studyItemCreator)
 
   override fun onStudyItemCreation(project: Project, item: StudyItem) {
     baseCourseBuilder.onStudyItemCreation(project, item)

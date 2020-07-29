@@ -15,14 +15,12 @@ import javax.swing.JComponent
 abstract class CCCreateStudyItemDialogBase(
   project: Project,
   course: Course,
-  protected val model: NewStudyItemUiModel,
-  protected val additionalPanels: List<AdditionalPanel>
+  protected val model: NewStudyItemUiModel
 ) : CCDialogWrapperBase(project) {
 
   private val nameField: JBTextField = JBTextField(model.suggestedName, TEXT_FIELD_COLUMNS)
   private val validator: InputValidatorEx = CCStudyItemPathInputValidator(project, course, model.itemType, model.parentDir)
 
-  protected val positionPanel: CCItemPositionPanel? = additionalPanels.find { it is CCItemPositionPanel } as? CCItemPositionPanel
 
   init {
     title = model.itemType.createItemTitleMessage
@@ -43,7 +41,6 @@ abstract class CCCreateStudyItemDialogBase(
         row("Name:") { nameField() }
       }
       createAdditionalFields(this)
-      additionalPanels.forEach { it.attach(this) }
     }
   }
 
@@ -55,7 +52,7 @@ abstract class CCCreateStudyItemDialogBase(
   protected open fun createNewStudyItemInfo(): NewStudyItemInfo {
     return NewStudyItemInfo(
       nameField.text,
-      model.baseIndex + (positionPanel?.indexDelta ?: AFTER_DELTA),
+      model.baseIndex + AFTER_DELTA,
       model.studyItemVariants.first().producer
     )
   }

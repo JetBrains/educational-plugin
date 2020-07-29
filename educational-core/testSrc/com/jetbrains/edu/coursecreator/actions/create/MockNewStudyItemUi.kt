@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.actions.create
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
-import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel.Companion.AFTER_DELTA
 import com.jetbrains.edu.coursecreator.ui.NewStudyItemUi
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -17,7 +16,6 @@ open class MockNewStudyItemUi(
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    additionalPanels: List<AdditionalPanel>,
     studyItemCreator: (NewStudyItemInfo) -> Unit
   ) {
     val itemVariant = if (itemType != null) {

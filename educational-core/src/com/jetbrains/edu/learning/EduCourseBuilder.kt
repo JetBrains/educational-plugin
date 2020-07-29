@@ -10,7 +10,6 @@ import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
-import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.learning.checker.OutputTaskChecker.Companion.OUTPUT_PATTERN_NAME
 import com.jetbrains.edu.learning.courseFormat.*
@@ -35,9 +34,6 @@ interface EduCourseBuilder<Settings> {
    * Shows UI for new study item creation
    *
    * @param model some parameters for UI extracted from context where creating action was called
-   * @param additionalPanels additional ui elements which should be shown while new study item creation
-   *
-   * @see com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
    *
    * @return properties for study item creation
    */
@@ -45,9 +41,8 @@ interface EduCourseBuilder<Settings> {
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    additionalPanels: List<AdditionalPanel>,
     studyItemCreator: (NewStudyItemInfo) -> Unit
-  ) = showNewStudyItemDialog(project, course, model, additionalPanels, studyItemCreator = studyItemCreator)
+  ) = showNewStudyItemDialog(project, course, model, studyItemCreator = studyItemCreator)
 
   /**
    * Creates additional content of new study item in project

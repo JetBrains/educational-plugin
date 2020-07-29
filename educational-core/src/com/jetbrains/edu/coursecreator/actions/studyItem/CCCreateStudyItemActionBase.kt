@@ -14,8 +14,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.*
 import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
-import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
-import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -28,7 +26,6 @@ import com.jetbrains.edu.learning.statistics.isFeedbackAsked
 import com.jetbrains.edu.learning.statistics.showNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
-import java.util.*
 import javax.swing.Icon
 
 // BACKCOMPAT: 2019.3 need to delete mackLazy call and use lambdas
@@ -155,7 +152,6 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   ) {
     val index: Int
     val suggestedName: String
-    val additionalPanels = ArrayList<AdditionalPanel>()
     if (isAddedAsLast(project, course, sourceDirectory)) {
       index = ITEM_INDEX.getData(dataContext) ?: getSiblingsSize(course, parentItem)
       suggestedName = SUGGESTED_NAME.getData(dataContext) ?: itemType.presentableName + (index + 1)
@@ -166,18 +162,13 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
       index = defaultIndex ?: thresholdItem.index
       val itemName = itemType.presentableName
       suggestedName = SUGGESTED_NAME.getData(dataContext) ?: itemName + (index + 1)
-      // If item index is specified by additional params
-      // we don't want to ask user about it
-      if (defaultIndex == null) {
-        additionalPanels.add(CCItemPositionPanel(thresholdItem.name))
-      }
     }
     if (parentItem == null) {
       return
     }
     val parentItemDir = parentItem.getDir(project.courseDir) ?: return
     val model = NewStudyItemUiModel(parentItem, parentItemDir, itemType, suggestedName, index, studyItemVariants)
-    showCreateStudyItemDialog(project, course, model, additionalPanels, studyItemCreator)
+    showCreateStudyItemDialog(project, course, model, studyItemCreator)
   }
 
   protected abstract val studyItemVariants: List<StudyItemVariant>
@@ -186,11 +177,10 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     project: Project,
     course: Course,
     model: NewStudyItemUiModel,
-    additionalPanels: List<AdditionalPanel>,
     studyItemCreator: (NewStudyItemInfo) -> Unit
   ) {
     val configurator = course.configurator ?: return
-    configurator.courseBuilder.showNewStudyItemUi(project, course, model, additionalPanels, studyItemCreator)
+    configurator.courseBuilder.showNewStudyItemUi(project, course, model, studyItemCreator)
   }
 
   protected abstract fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int
