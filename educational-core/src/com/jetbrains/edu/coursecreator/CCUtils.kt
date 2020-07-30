@@ -16,7 +16,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
@@ -264,7 +263,15 @@ object CCUtils {
     val minIndex = lessonsToWrap[0].index
     val maxIndex = lessonsToWrap[lessonsToWrap.size - 1].index
 
-    val sectionDir = createSectionDir(project, sectionName) ?: return null
+    val sectionDir = runWriteAction {
+      try {
+        VfsUtil.createDirectoryIfMissing(project.courseDir, sectionName)
+      }
+      catch (e: IOException) {
+        LOG.error("Failed to create directory for section $sectionName", e)
+        null
+      }
+    } ?: return null
 
     val section = createSection(lessonsToWrap, sectionName, minIndex)
     section.course = course
@@ -313,20 +320,6 @@ object CCUtils {
         }
 
       }
-    })
-  }
-
-  @JvmStatic
-  fun createSectionDir(project: Project, sectionName: String): VirtualFile? {
-    return ApplicationManager.getApplication().runWriteAction(Computable<VirtualFile> {
-      try {
-        return@Computable VfsUtil.createDirectoryIfMissing(project.courseDir, sectionName)
-      }
-      catch (e1: IOException) {
-        LOG.error("Failed to create directory for section $sectionName")
-      }
-
-      null
     })
   }
 
