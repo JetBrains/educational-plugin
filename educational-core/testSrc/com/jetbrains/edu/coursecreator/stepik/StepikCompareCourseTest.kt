@@ -145,7 +145,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val newName = "renamed"
     val changedSection = localCourse.sections.single()
     runWriteAction {
-      changedSection.getDir(project)!!.rename(this, newName)
+      changedSection.getDir(project.courseDir)!!.rename(this, newName)
     }
     changedSection.name = newName
     val expectedInfo = StepikChangesInfo(sectionInfosToUpdate = arrayListOf(changedSection))
@@ -228,7 +228,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
     val newName = "renamed"
     runWriteAction {
-      changedTask.getTaskDir(project)!!.rename(this, newName)
+      changedTask.getDir(project.courseDir)!!.rename(this, newName)
     }
     changedTask.name = newName
 
@@ -250,7 +250,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
     val newName = "renamed"
     runWriteAction {
-      changedTask.getTaskDir(project)!!.rename(this, newName)
+      changedTask.getDir(project.courseDir)!!.rename(this, newName)
     }
     changedTask.name = newName
 
@@ -327,7 +327,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val newFileName = "new.txt"
 
     runWriteAction {
-      changedTask.getDir(project)!!.createChildData(this, newFileName)
+      changedTask.getDir(project.courseDir)!!.createChildData(this, newFileName)
     }
     changedTask.addTaskFile(newFileName)
 
@@ -348,7 +348,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val newFileName = "new.txt"
 
     runWriteAction {
-      changedTask.getDir(project)!!.createChildData(this, newFileName)
+      changedTask.getDir(project.courseDir)!!.createChildData(this, newFileName)
     }
     changedTask.addTaskFile(newFileName)
 
@@ -368,7 +368,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val courseFromServer = localCourse.copy() as EduCourse
     val changedTask = localCourse.lessons.single().taskList[0]
 
-    val taskDescriptionFile = changedTask.getTaskDir(project)!!.findChild(EduNames.TASK_HTML)
+    val taskDescriptionFile = changedTask.getDir(project.courseDir)!!.findChild(EduNames.TASK_HTML)
                               ?: error("Failed to find task description file")
 
     runWriteAction {

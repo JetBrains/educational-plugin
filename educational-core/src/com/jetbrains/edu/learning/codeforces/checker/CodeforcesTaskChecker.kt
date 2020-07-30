@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.withRegistryKeyOff

@@ -83,7 +83,7 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
 
     course.visitLessons {
       for (task in it.taskList) {
-        val taskDir = task.getTaskDir(project) ?: continue
+        val taskDir = task.getDir(project.courseDir) ?: continue
         val cargoProject = cargoProjectMap[taskDir]
         if (cargoProject == null) {
           val manifestFile = taskDir.findChild(CargoConstants.MANIFEST_FILE) ?: continue
@@ -220,14 +220,14 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     }
 
   private fun Lesson.courseRelativePath(project: Project): String? {
-    val lessonDir = getLessonDir(project) ?: return null
+    val lessonDir = getDir(project.courseDir) ?: return null
     return VfsUtil.getRelativePath(lessonDir, project.courseDir)
   }
 
   private fun findAnchor(project: Project, membersArray: TomlArray, lesson: Lesson): PsiElement? {
     val nextLessonPath = run {
       val nextLesson = NavigationUtils.nextLesson(lesson) ?: return@run null
-      val nextLessonDir = nextLesson.getLessonDir(project) ?: return@run null
+      val nextLessonDir = nextLesson.getDir(project.courseDir) ?: return@run null
       VfsUtil.getRelativePath(nextLessonDir, project.courseDir)
     }
 

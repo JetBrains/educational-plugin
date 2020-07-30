@@ -11,6 +11,7 @@ import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -60,7 +61,7 @@ object CourseViewUtils {
   }
 
   private fun Task.hasVisibleTaskFilesNotInsideSourceDir(project: Project): Boolean {
-    val taskDir = getDir(project) ?: error("Directory for task $name not found")
+    val taskDir = getDir(project.courseDir) ?: error("Directory for task $name not found")
     val sourceDir = findSourceDir(taskDir) ?: return false
     return taskFiles.values.any {
       if (!it.isVisible) return@any false

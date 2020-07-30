@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import icons.EducationalCoreIcons
@@ -61,7 +62,7 @@ open class CppBaseConfigurator : EduConfigurator<CppProjectSettings> {
       return true
     }
 
-    val courseDir = project.course?.getDir(project) ?: return false
+    val courseDir = project.course?.getDir(project.courseDir) ?: return false
     // we could use it how indicator because CLion generate build dirs with names `cmake-build-*`
     // @see com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace.getProfileGenerationDirNames
     val buildDirPrefix = GeneratorUtils.joinPaths(courseDir.path, "cmake-build-")

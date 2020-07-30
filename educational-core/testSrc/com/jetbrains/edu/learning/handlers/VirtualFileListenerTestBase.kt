@@ -8,15 +8,12 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListenerTest
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduTestDialog
-import com.jetbrains.edu.learning.FileCheck
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.withTestDialog
 
 abstract class VirtualFileListenerTestBase : EduTestCase() {
   protected abstract val courseMode: String
@@ -43,7 +40,7 @@ abstract class VirtualFileListenerTestBase : EduTestCase() {
     }
 
     val task = course.findTask("lesson1", "task1")
-    val taskDir = task.getTaskDir(project) ?: error("Failed to find directory of `${task.name}` task")
+    val taskDir = task.getDir(project.courseDir) ?: error("Failed to find directory of `${task.name}` task")
 
     GeneratorUtils.createChildFile(taskDir, filePathInTask, "")
     checksProducer(task).forEach(FileCheck::check)

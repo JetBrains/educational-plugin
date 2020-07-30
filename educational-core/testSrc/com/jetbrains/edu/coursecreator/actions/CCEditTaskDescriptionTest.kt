@@ -9,6 +9,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import junit.framework.TestCase
 
@@ -81,6 +82,6 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     assertFalse("Task Description file wasn't deleted", descriptionFile.exists())
   }
 
-  private fun findTaskDescriptionFile() = findTask(0, 0).getTaskDir(project)?.findChild(EduNames.TASK_HTML)
+  private fun findTaskDescriptionFile() = findTask(0, 0).getDir(project.courseDir)?.findChild(EduNames.TASK_HTML)
                                           ?: error("Task description file not found")
 }

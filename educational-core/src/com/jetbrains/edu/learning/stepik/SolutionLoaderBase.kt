@@ -15,16 +15,13 @@ import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.learning.EduDocumentListener
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.update.UpdateNotification
@@ -244,7 +241,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
 
     private fun Task.modificationDate(project: Project): Date {
-      val taskDir = getTaskDir(project) ?: return Date(0)
+      val taskDir = getDir(project.courseDir) ?: return Date(0)
       return Date(max(taskFiles.values.map { EduUtils.findTaskFileInDir(it, taskDir)?.timeStamp ?: 0 }))
     }
 
@@ -284,7 +281,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
 
     private fun applySolutionToCurrentTask(project: Project, task: Task, taskSolutions: TaskSolutions) {
-      val taskDir = task.getTaskDir(project) ?: error("Directory for task `${task.name}` not found")
+      val taskDir = task.getDir(project.courseDir) ?: error("Directory for task `${task.name}` not found")
       for ((path, solution) in taskSolutions.solutions) {
         val taskFile = task.getTaskFile(path)
         if (taskFile == null) {

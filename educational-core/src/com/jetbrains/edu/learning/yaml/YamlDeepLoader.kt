@@ -77,7 +77,7 @@ object YamlDeepLoader {
       }
       // set parent to get dir
       task.lesson = this
-      val taskDir = task.getDir(project)
+      val taskDir = task.getDir(project.courseDir)
       val invalidTaskFilesNames = task.taskFiles
         .filter { (name, _) -> taskDir?.findFileByRelativePath(name) == null }.map { it.key }
       invalidTaskFilesNames.forEach { task.taskFiles.remove(it) }
@@ -152,7 +152,7 @@ object YamlDeepLoader {
   }
 
   private fun Task.findTaskDescriptionFile(project: Project): VirtualFile {
-    val taskDir = getTaskDir(project) ?: error(noDirForItemMessage(name, EduNames.TASK))
+    val taskDir = getDir(project.courseDir) ?: error(noDirForItemMessage(name, EduNames.TASK))
     val file = taskDir.findChild(EduNames.TASK_HTML) ?: taskDir.findChild(EduNames.TASK_MD)
     return file ?: error("No task description file for $name")
   }

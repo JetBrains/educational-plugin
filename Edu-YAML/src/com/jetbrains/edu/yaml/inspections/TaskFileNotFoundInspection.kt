@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parentOfType
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -45,7 +46,7 @@ class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
       val scalar = startElement as YAMLScalar
       val task = EduUtils.getTaskForFile(project, file.virtualFile) ?: return
-      val taskDir = task.getTaskDir(project) ?: return
+      val taskDir = task.getDir(project.courseDir) ?: return
 
       val mapping = scalar.parentOfType<YAMLMapping>() ?: return
       val isVisible = mapping.getKeyValueByKey(VISIBLE)?.valueText != "false"

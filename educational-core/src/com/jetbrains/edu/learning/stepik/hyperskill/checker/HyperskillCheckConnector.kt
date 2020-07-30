@@ -56,7 +56,7 @@ object HyperskillCheckConnector {
 
   @VisibleForTesting
   fun getSolutionFiles(task: Task, project: Project): List<SolutionFile> {
-    val taskDir = task.getTaskDir(project)
+    val taskDir = task.getDir(project.courseDir)
     if (taskDir == null) {
       val error = EduCoreErrorBundle.message("failed.to.find.dir", task.name)
       LOG.error(error)

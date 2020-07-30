@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,7 +76,7 @@ public class PyCCRunTestsConfigurationProducer extends LazyRunConfigurationProdu
     if (task == null) {
       return null;
     }
-    VirtualFile taskDir = task.getTaskDir(project);
+    VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(project));
     if (taskDir == null) {
       return null;
     }

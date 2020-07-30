@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -76,7 +77,7 @@ interface EduConfigurator<Settings> {
   fun isTestFile(project: Project, file: VirtualFile): Boolean {
     if (file.isDirectory) return false
     val task = EduUtils.getTaskForFile(project, file) ?: return false
-    val taskDir = task.getTaskDir(project) ?: return false
+    val taskDir = task.getDir(project.courseDir) ?: return false
     return task.findTestDirs(taskDir).any { VfsUtilCore.isAncestor(it, file, true) }
   }
 

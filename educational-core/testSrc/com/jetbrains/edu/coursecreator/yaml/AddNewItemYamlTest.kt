@@ -4,6 +4,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -51,7 +52,7 @@ class AddNewItemYamlTest : YamlTestCase() {
     val task = course.lessons.first().taskList.first()
     task.taskFiles.remove("test2.txt")
 
-    val configFile = task.getDir(project)!!.findChild(task.configFileName)!!
+    val configFile = task.getDir(project.courseDir)!!.findChild(task.configFileName)!!
     loadAndDispatchEvents(configFile)
 
     assertEquals(2, task.taskFiles.size)
@@ -64,7 +65,7 @@ class AddNewItemYamlTest : YamlTestCase() {
 
     saveItemAndDispatchEvents(task)
 
-    val configFile = task.getDir(project)!!.findChild(task.configFileName)!!
+    val configFile = task.getDir(project.courseDir)!!.findChild(task.configFileName)!!
     loadAndDispatchEvents(configFile)
 
     assertEquals(1, task.taskFiles.size)
@@ -139,7 +140,7 @@ class AddNewItemYamlTest : YamlTestCase() {
     val expectedSize = itemContainer.items.size
     itemContainer.removeLastItem()
 
-    val configFile = itemContainer.getDir(project)!!.findChild(itemContainer.configFileName)!!
+    val configFile = itemContainer.getDir(project.courseDir)!!.findChild(itemContainer.configFileName)!!
     loadAndDispatchEvents(configFile)
 
     assertEquals(expectedSize, itemContainer.items.size)
@@ -151,7 +152,7 @@ class AddNewItemYamlTest : YamlTestCase() {
   private fun doToParentAddedTest(itemContainer: ItemContainer) {
     val expectedSize = itemContainer.items.size
     val lastChild = itemContainer.items.last()
-    val lastChildConfig = lastChild.getDir(project).findChild(lastChild.configFileName)!!
+    val lastChildConfig = lastChild.getDir(project.courseDir).findChild(lastChild.configFileName)!!
     itemContainer.removeLastItem()
 
     loadAndDispatchEvents(lastChildConfig)
@@ -161,7 +162,7 @@ class AddNewItemYamlTest : YamlTestCase() {
   private fun doNotAddedTest(itemContainer: ItemContainer) {
     val expectedSize = itemContainer.items.size - 1
     val lastChild = itemContainer.items.last()
-    val lastChildConfig = lastChild.getDir(project).findChild(lastChild.configFileName)!!
+    val lastChildConfig = lastChild.getDir(project.courseDir).findChild(lastChild.configFileName)!!
     itemContainer.removeLastItem()
 
     saveItemAndDispatchEvents(itemContainer)

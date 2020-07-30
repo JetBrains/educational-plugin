@@ -20,6 +20,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.*
 import com.jetbrains.edu.learning.EduNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -49,7 +50,7 @@ abstract class CourseArchiveCreator(
       if (!isUnitTestMode) {
         LOG.error("Failed to create course archive: ${e.message}")
       }
-      val yamlFile = e.placeholder.taskFile?.task?.getTaskDir(project)?.findChild(TASK_CONFIG) ?: return e.message
+      val yamlFile = e.placeholder.taskFile?.task?.getDir(project.courseDir)?.findChild(TASK_CONFIG) ?: return e.message
       FileEditorManager.getInstance(project).openFile(yamlFile, true)
       return "${e.message}\n\n${e.placeholderInfo}"
     }
@@ -119,7 +120,7 @@ abstract class CourseArchiveCreator(
     @JvmStatic
     fun loadActualTexts(project: Project, course: Course) {
       course.visitLessons { lesson ->
-        val lessonDir = lesson.getLessonDir(project)
+        val lessonDir = lesson.getDir(project.courseDir)
         if (lessonDir == null) return@visitLessons
         for (task in lesson.taskList) {
           loadActualTexts(project, task)
@@ -129,7 +130,7 @@ abstract class CourseArchiveCreator(
 
     @JvmStatic
     fun loadActualTexts(project: Project, task: Task) {
-      val taskDir = task.getTaskDir(project) ?: return
+      val taskDir = task.getDir(project.courseDir) ?: return
       convertToStudentTaskFiles(project, task, taskDir)
       addDescriptions(project, task)
     }

@@ -15,6 +15,7 @@ import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.EduNames.FRAMEWORK
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -205,7 +206,7 @@ fun PyCharmStepOptions.hasHeaderOrFooter(langId: String): Boolean {
 
 fun collectTaskFiles(project: Project, task: Task): MutableList<TaskFile> {
   val files = mutableListOf<TaskFile>()
-  val taskDir = task.getTaskDir(project) ?: error("Directory for task ${task.name} does not exist")
+  val taskDir = task.getDir(project.courseDir) ?: error("Directory for task ${task.name} does not exist")
   for ((_, value) in task.taskFiles) {
     invokeAndWaitIfNeeded {
       runWriteAction {

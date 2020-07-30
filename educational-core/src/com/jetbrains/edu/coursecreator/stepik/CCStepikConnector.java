@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
@@ -399,7 +400,7 @@ public class CCStepikConnector {
 
   public static boolean updateTask(@NotNull final Project project, @NotNull final Task task) {
     if (!checkIfAuthorized(project, "update task")) return false;
-    VirtualFile taskDir = task.getTaskDir(project);
+    VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(project));
     if (taskDir == null) return false;
     final Course course = task.getLesson().getCourse();
 

@@ -17,6 +17,7 @@ import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
 import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -174,7 +175,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     if (parentItem == null) {
       return
     }
-    val parentItemDir = parentItem.getDir(project) ?: return
+    val parentItemDir = parentItem.getDir(project.courseDir) ?: return
     val model = NewStudyItemUiModel(parentItem, parentItemDir, itemType, suggestedName, index, studyItemVariants)
     showCreateStudyItemDialog(project, course, model, additionalPanels, studyItemCreator)
   }

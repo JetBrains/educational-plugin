@@ -10,6 +10,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 
@@ -50,7 +51,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
     val course = createCourse(courseMode)
 
     val task = course.findTask("lesson1", "task1")
-    val taskDir = task.getTaskDir(project) ?: error("Can't find task dir of `${task.name}` task")
+    val taskDir = task.getDir(project.courseDir) ?: error("Can't find task dir of `${task.name}` task")
 
     val selectedFiles = mutableListOf<VirtualFile>()
     val affectedCourseFiles = mutableListOf<TaskFile>()

@@ -7,6 +7,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 
@@ -17,7 +18,7 @@ class GradleEnvironmentChecker : EnvironmentChecker() {
 
     val unableToCreateConfigurationError = EduCoreErrorBundle.message("unable.to.create.configuration")
     val task = EduUtils.getCurrentTask(project) ?: return unableToCreateConfigurationError
-    val taskDir = task.getTaskDir(project) ?: return unableToCreateConfigurationError
+    val taskDir = task.getDir(project.courseDir) ?: return unableToCreateConfigurationError
     val module = ModuleUtil.findModuleForFile(taskDir, project) ?: return unableToCreateConfigurationError
 
     val gradleNotImportedError = EduJVMBundle.message("error.gradle.not.imported")

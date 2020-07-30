@@ -249,11 +249,12 @@ public class EduUtils {
       return null;
     }
     Lesson lesson = task.getLesson();
-    VirtualFile lessonDir = lesson.getDir(project);
+    VirtualFile lessonDir = lesson.getDir(OpenApiExtKt.getCourseDir(project));
     if (lessonDir == null) {
       return null;
     }
-    VirtualFile taskDirectory = lesson instanceof FrameworkLesson ? lessonDir.findChild(task.getName()) : task.getDir(project);
+    VirtualFile taskDirectory = lesson instanceof FrameworkLesson ? lessonDir.findChild(task.getName())
+                                                                  : task.getDir(OpenApiExtKt.getCourseDir(project));
     String text = getTaskTextByTaskName(task, taskDirectory);
     if (text == null) {
       LOG.warn("Cannot find task description file for a task: " + task.getName());
@@ -805,7 +806,7 @@ public class EduUtils {
       return section.getLesson(lessonDir.getName());
     }
 
-    VirtualFile courseDir = course.getDir(project);
+    VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
     if (courseDir.equals(lessonParent)) {
       return course.getLesson(lessonDir.getName());
     }
@@ -817,7 +818,7 @@ public class EduUtils {
   public static Section getSection(@NotNull Project project, @NotNull Course course, @NotNull VirtualFile sectionDir) {
     if (!sectionDir.isDirectory()) return null;
 
-    VirtualFile courseDir = course.getDir(project);
+    VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
     VirtualFile sectionParentDir = sectionDir.getParent();
     if (courseDir.equals(sectionParentDir)) {
       return course.getSection(sectionDir.getName());

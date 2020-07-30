@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.createRunConfiguration
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -39,7 +40,7 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
 
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
     val producer = RunConfigurationProducer.getInstance(PyCCRunTestsConfigurationProducer::class.java)
-    val taskDir = task.getTaskDir(project) ?: return emptyList()
+    val taskDir = task.getDir(project.courseDir) ?: return emptyList()
     val testFilePath = task.course.configurator?.testFileName ?: return emptyList()
     val file = taskDir.findFileByRelativePath(testFilePath) ?: return emptyList()
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return emptyList()
@@ -92,7 +93,7 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
   override fun onTaskFailed() {
     super.onTaskFailed()
     ApplicationManager.getApplication().invokeLater {
-      val taskDir = task.getTaskDir(project)
+      val taskDir = task.getDir(project.courseDir)
       if (taskDir == null) return@invokeLater
       for ((_, taskFile) in task.taskFiles) {
         if (taskFile.answerPlaceholders.size < 2) {

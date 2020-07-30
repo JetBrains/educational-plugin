@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.yaml.format
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -30,7 +29,7 @@ class RemoteStudyItem : StudyItem() {
     throw NotImplementedError()
   }
 
-  override fun getDir(project: Project): VirtualFile {
+  override fun getDir(baseDir: VirtualFile): VirtualFile {
     throw NotImplementedError()
   }
 

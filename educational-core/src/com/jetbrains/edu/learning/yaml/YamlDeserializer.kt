@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYP
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -184,7 +185,7 @@ object YamlDeserializer {
     }
 
   fun StudyItem.getConfigFileForChild(project: Project, childName: String): VirtualFile? {
-    val dir = getDir(project) ?: error(noDirForItemMessage(name))
+    val dir = getDir(project.courseDir) ?: error(noDirForItemMessage(name))
     val itemDir = dir.findChild(childName)
     val configFile = childrenConfigFileNames.map { itemDir?.findChild(it) }.firstOrNull { it != null }
     if (configFile != null) {

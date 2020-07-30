@@ -10,6 +10,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
 import com.jetbrains.edu.learning.isFeatureEnabled
 import org.jdom.Element
@@ -32,7 +33,7 @@ class EduFileEditorProvider : FileEditorProvider, DumbAware {
         isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR) &&
         CCSettings.getInstance().showSplitEditor()) {
       val prevTaskFile = task.lesson.taskList.getOrNull(task.index - 2)?.getTaskFile(taskFile.name)
-      val taskDir = prevTaskFile?.task?.getTaskDir(project)
+      val taskDir = prevTaskFile?.task?.getDir(project.courseDir)
       if (prevTaskFile != null && taskDir != null) {
         val prevTaskVirtualFile = EduUtils.findTaskFileInDir(prevTaskFile, taskDir)
         if (prevTaskVirtualFile != null) {

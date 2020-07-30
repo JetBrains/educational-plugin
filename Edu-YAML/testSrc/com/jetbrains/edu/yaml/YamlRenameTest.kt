@@ -4,6 +4,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.yaml.configFileName
@@ -27,7 +28,7 @@ class YamlRenameTest : YamlCodeInsightTest() {
 
   fun `test rename lesson`() {
     val lesson = getCourse().getLesson("lesson1")!!
-    val dir = lesson.getDir(project)!!
+    val dir = lesson.getDir(project.courseDir)!!
     val psiDir = PsiManager.getInstance(project).findDirectory(dir)!!
 
     doTest(psiDir, "lesson2", lesson.parent, """
@@ -43,7 +44,7 @@ class YamlRenameTest : YamlCodeInsightTest() {
 
   fun `test rename task`() {
     val task = getCourse().findTask("lesson1", "task1")
-    val dir = task.getDir(project)!!
+    val dir = task.getDir(project.courseDir)!!
     val psiDir = PsiManager.getInstance(project).findDirectory(dir)!!
 
     doTest(psiDir, "task2", task.parent, """
@@ -75,7 +76,7 @@ class YamlRenameTest : YamlCodeInsightTest() {
   }
 
   private fun openConfigFile(item: StudyItem) {
-    val configFile = item.getDir(project).findChild(item.configFileName)!!
+    val configFile = item.getDir(project.courseDir).findChild(item.configFileName)!!
     myFixture.openFileInEditor(configFile)
   }
 }

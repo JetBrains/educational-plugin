@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -24,7 +25,7 @@ class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
     if (!project.isSingleWorkspaceProject) {
       myCourse.visitLessons {
         for (task in it.taskList) {
-          val manifestFile = task.getTaskDir(project)?.findChild(CargoConstants.MANIFEST_FILE) ?: continue
+          val manifestFile = task.getDir(project.courseDir)?.findChild(CargoConstants.MANIFEST_FILE) ?: continue
           project.cargoProjects.attachCargoProject(manifestFile.pathAsPath)
         }
       }
@@ -37,7 +38,7 @@ class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
 
     val members = mutableListOf<String>()
     course.visitLessons { lesson ->
-      val lessonDir = lesson.getLessonDir(project) ?: return@visitLessons
+      val lessonDir = lesson.getDir(project.courseDir) ?: return@visitLessons
       val lessonDirPath = VfsUtil.getRelativePath(lessonDir, baseDir) ?: return@visitLessons
       members += "    \"${lessonDirPath}/*/\""
     }

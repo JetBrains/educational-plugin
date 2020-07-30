@@ -5,6 +5,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.EditorTestUtil
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.yaml.configFileName
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory
@@ -28,7 +29,7 @@ abstract class YamlCodeInsightTest : EduTestCase() {
    * highlighting (ex. warning descriptions) tags
    */
   protected fun openConfigFileWithText(item: StudyItem, configText: String) {
-    val configFile = runWriteAction { item.getDir(project)!!.findOrCreateChildData(project, item.configFileName) }
+    val configFile = runWriteAction { item.getDir(project.courseDir)!!.findOrCreateChildData(project, item.configFileName) }
     val document = FileDocumentManager.getInstance().getDocument(configFile)!!
     runWriteAction {
       document.setText(configText)

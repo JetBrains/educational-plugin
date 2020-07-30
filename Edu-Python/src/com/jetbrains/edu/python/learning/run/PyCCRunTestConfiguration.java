@@ -13,6 +13,7 @@ import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.python.run.PythonRunConfiguration;
 import org.jdom.Element;
@@ -72,7 +73,7 @@ public class PyCCRunTestConfiguration extends PythonRunConfiguration {
     if (task == null) {
       throw new RuntimeConfigurationException(message);
     }
-    VirtualFile taskDir = task.getTaskDir(myProject);
+    VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(myProject));
     if (taskDir == null) {
       throw new RuntimeConfigurationException(message);
     }

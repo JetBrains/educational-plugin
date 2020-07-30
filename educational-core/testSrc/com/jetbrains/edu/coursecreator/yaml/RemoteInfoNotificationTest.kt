@@ -4,6 +4,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.placeholderDependencies.NotificationsTestBase
 import com.jetbrains.edu.learning.yaml.GeneratedRemoteInfoNotificationProvider
@@ -47,7 +48,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |""".trimMargin()
 
-    val lessonDir = course.lessons[0].getLessonDir(project)!!
+    val lessonDir = course.lessons[0].getDir(project.courseDir)!!
     val configFile = GeneratorUtils.createChildFile(lessonDir, YamlFormatSettings.REMOTE_LESSON_CONFIG, yamlText)
     myFixture.openFileInEditor(configFile!!)
     checkEditorNotification(configFile)
@@ -64,7 +65,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |""".trimMargin()
 
-    val taskDir = course.lessons[0].taskList[0].getTaskDir(project)!!
+    val taskDir = course.lessons[0].taskList[0].getDir(project.courseDir)!!
     val configFile = GeneratorUtils.createChildFile(taskDir, YamlFormatSettings.REMOTE_TASK_CONFIG, yamlText)
     myFixture.openFileInEditor(configFile!!)
     checkEditorNotification(configFile)
@@ -95,7 +96,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |""".trimMargin()
 
-    val taskDir = course.lessons[0].taskList[0].getTaskDir(project)!!
+    val taskDir = course.lessons[0].taskList[0].getDir(project.courseDir)!!
     val configFile = GeneratorUtils.createChildFile(taskDir, YamlFormatSettings.TASK_CONFIG, yamlText)
     myFixture.openFileInEditor(configFile!!)
     checkNoEditorNotification(configFile)

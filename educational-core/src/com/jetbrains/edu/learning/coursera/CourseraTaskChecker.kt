@@ -18,6 +18,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -91,7 +92,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
 
   @VisibleForTesting
   fun createSubmissionJson(project: Project, task: Task, courseraSettings: CourseraSettings): String {
-    val taskDir = task.getDir(project) ?: error("No directory for task ${task.name}")
+    val taskDir = task.getDir(project.courseDir) ?: error("No directory for task ${task.name}")
 
     val assignmentKey = taskDir.getValueFromChildFile(ASSIGNMENT_KEY)
     val partId = taskDir.getValueFromChildFile(PART_ID)

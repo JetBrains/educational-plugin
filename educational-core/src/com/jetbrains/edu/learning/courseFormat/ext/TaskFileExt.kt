@@ -9,6 +9,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.editor.EduSplitEditor
@@ -20,7 +21,7 @@ fun TaskFile.getDocument(project: Project): Document? {
 }
 
 fun TaskFile.getVirtualFile(project: Project): VirtualFile? {
-  val taskDir = task.getTaskDir(project) ?: return null
+  val taskDir = task.getDir(project.courseDir) ?: return null
   return EduUtils.findTaskFileInDir(this, taskDir)
 }
 

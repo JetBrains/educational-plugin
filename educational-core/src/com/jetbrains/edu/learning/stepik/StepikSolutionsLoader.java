@@ -27,6 +27,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
@@ -102,7 +103,7 @@ public class StepikSolutionsLoader implements Disposable {
       return null;
     }
     final ArrayList<SolutionFile> files = new ArrayList<>();
-    final VirtualFile taskDir = task.getTaskDir(project);
+    final VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(project));
     if (taskDir == null) {
       LOG.error("Failed to find task directory " + task.getName());
       return null;
@@ -609,7 +610,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static void updateFiles(@NotNull Project project, @NotNull Task task, Map<String, String> solutionsMap) {
-    VirtualFile taskDir = task.getTaskDir(project);
+    VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(project));
     if (taskDir == null) {
       return;
     }

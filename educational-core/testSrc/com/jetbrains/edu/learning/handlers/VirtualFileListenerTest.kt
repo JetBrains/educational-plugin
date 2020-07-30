@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.`in`
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -20,7 +21,7 @@ class VirtualFileListenerTest : VirtualFileListenerTestBase() {
     doAddFileTest(filePath) { task ->
       listOf((filePath `in` task).withAdditionalCheck { taskFile ->
         assertEquals(true, taskFile.isLearnerCreated)
-        val taskConfigFile = task.getDir(project)?.findChild(task.configFileName) ?: error("Failed to find config file")
+        val taskConfigFile = task.getDir(project.courseDir)?.findChild(task.configFileName) ?: error("Failed to find config file")
         // after task files is created, changes are saved to config in `invokeLater`
         // we want to check config after it happened, means this event is dispatched
         PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()

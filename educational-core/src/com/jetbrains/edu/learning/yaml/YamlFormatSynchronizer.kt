@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -315,9 +316,9 @@ val StudyItem.remoteConfigFileName: String
 
 fun StudyItem.getConfigDir(project: Project): VirtualFile {
   return if (this is Task && lesson is FrameworkLesson) {
-    lesson.getDir(project)?.findChild(name) ?: error("Config for '$name' task dir in framework lesson not found")
+    lesson.getDir(project.courseDir)?.findChild(name) ?: error("Config for '$name' task dir in framework lesson not found")
   }
   else {
-    getDir(project)
+    getDir(project.courseDir)
   }
 }

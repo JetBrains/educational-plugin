@@ -16,7 +16,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
       }
     }
     val task = course.findTask("lesson1", "task1")
-    val taskDir = task.getTaskDir(project)!!
+    val taskDir = task.getDir(project.courseDir)!!
     GeneratorUtils.createChildFile(taskDir, "src/foo.txt", "")
 
     doSingleCompletion(task, """
@@ -73,7 +73,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
       }
     }
     val task = course.findTask("lesson1", "task1")
-    val taskDir = task.getTaskDir(project)!!
+    val taskDir = task.getDir(project.courseDir)!!
     GeneratorUtils.createChildFile(taskDir, "src/taskfile2.txt", "")
 
     doSingleCompletion(task, """
@@ -102,7 +102,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
       }
     }
     val task = course.findTask("lesson1", "task1")
-    val taskDir = task.getTaskDir(project)!!
+    val taskDir = task.getDir(project.courseDir)!!
     GeneratorUtils.createChildFile(taskDir, "taskfile2.txt", "")
 
     doSingleCompletion(task, """
@@ -131,7 +131,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
       }
     }
     val task = course.findTask("lesson1", "task1")
-    val taskDir = task.getTaskDir(project)!!
+    val taskDir = task.getDir(project.courseDir)!!
     GeneratorUtils.createChildFile(taskDir, ".hidden_dir/hidden_file", "")
 
     checkNoCompletion(task, """
@@ -153,7 +153,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
       }
     }
     val task = course.findTask("lesson1", "task1")
-    val taskDir = task.getTaskDir(project)!!
+    val taskDir = task.getDir(project.courseDir)!!
     GeneratorUtils.createChildFile(taskDir, "src/task.txt", "")
 
     doSingleCompletion(task, """
@@ -180,7 +180,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
       }
     }
     val task = course.findTask("lesson1", "task1")
-    val taskDir = task.getTaskDir(project)!!
+    val taskDir = task.getDir(project.courseDir)!!
     GeneratorUtils.createChildFile(taskDir, "src/task.txt", "")
 
     doSingleCompletion(task, """
@@ -238,7 +238,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     }
 
     val lesson = course.getLesson("lesson1")!!
-    val lessonDir = lesson.getLessonDir(project)!!
+    val lessonDir = lesson.getDir(project.courseDir)!!
     runWriteAction { lessonDir.createChildDirectory(this, "task2") }
 
     doSingleCompletion(lesson, """
@@ -281,7 +281,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     }
 
     val lesson = course.getLesson("lesson1")!!
-    val lessonDir = lesson.getLessonDir(project)!!
+    val lessonDir = lesson.getDir(project.courseDir)!!
     runWriteAction { lessonDir.createChildDirectory(this, "task2") }
 
     doSingleCompletion(lesson, """

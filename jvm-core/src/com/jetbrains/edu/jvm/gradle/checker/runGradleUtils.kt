@@ -195,14 +195,14 @@ private fun getSelectedFile(project: Project): VirtualFile? {
  * There are two types of supported gradle projects: module-per-task and one module for the whole course
  */
 fun Task.hasSeparateModule(project: Project): Boolean {
-  val taskDir = getTaskDir(project) ?: error("Dir for task $name not found")
+  val taskDir = getDir(project.courseDir) ?: error("Dir for task $name not found")
   val taskModule = ModuleUtil.findModuleForFile(taskDir, project) ?: error("Module for task $name not found")
   val courseModule = ModuleUtil.findModuleForFile(project.courseDir, project)
   return taskModule != courseModule
 }
 
 inline fun <T> withGradleTestRunner(project: Project, task: Task, action: () -> T): T? {
-  val taskDir = task.getTaskDir(project) ?: return null
+  val taskDir = task.getDir(project.courseDir) ?: return null
   val module = ModuleUtil.findModuleForFile(taskDir, project) ?: return null
   val path = ExternalSystemApiUtil.getExternalRootProjectPath(module) ?: return null
   val settings = GradleSettings.getInstance(project).getLinkedProjectSettings(path) ?: return null

@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.python.learning.getCurrentTaskFilePath
 import com.jetbrains.python.run.CommandLinePatcher
@@ -89,7 +90,7 @@ class PyCCCommandLineState private constructor(
       val task = EduUtils.getTaskForFile(configuration.project, testsFile)
                  ?: return logAndQuit("Failed to find task for `${testsFile.path}`")
 
-      val taskDir = task.getTaskDir(configuration.project) ?: return logAndQuit("Failed to get task dir for `${task.name}` task")
+      val taskDir = task.getDir(configuration.project.courseDir) ?: return logAndQuit("Failed to get task dir for `${task.name}` task")
 
       if (configuration.sdk == null) return logAndQuit("Python SDK should not be null while creating instance of PyCCCommandLineState")
       return PyCCCommandLineState(configuration, environment, task, taskDir)

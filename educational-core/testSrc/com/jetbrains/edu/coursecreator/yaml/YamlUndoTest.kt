@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -51,7 +52,7 @@ open class YamlUndoTest : YamlTestCase() {
 
     performUndo()
 
-    checkPlaceholders(task.getDir(project)!!, placeholder, startOffset, endOffset)
+    checkPlaceholders(task.getDir(project.courseDir)!!, placeholder, startOffset, endOffset)
   }
 
   // EDU-2217
@@ -64,7 +65,7 @@ open class YamlUndoTest : YamlTestCase() {
 
     performUndo()
 
-    checkPlaceholders(task.getDir(project)!!, placeholder, startOffset, endOffset)
+    checkPlaceholders(task.getDir(project.courseDir)!!, placeholder, startOffset, endOffset)
   }
 
   // EDU-2161
@@ -79,7 +80,7 @@ open class YamlUndoTest : YamlTestCase() {
     performUndo()
     performUndo()
 
-    checkPlaceholders(task.getDir(project)!!, placeholder, startOffset, endOffset)
+    checkPlaceholders(task.getDir(project.courseDir)!!, placeholder, startOffset, endOffset)
   }
 
   private fun performUndo() {

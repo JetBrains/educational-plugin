@@ -11,6 +11,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.StudyItemTypeKt;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -182,17 +183,6 @@ public abstract class Task extends StudyItem {
     myLesson = lesson;
   }
 
-  @Nullable
-  public VirtualFile getTaskDir(@NotNull final Project project) {
-    if (myLesson == null) {
-      LOG.warn("Lesson is null for task " + getName() + " (id " + getId() + ")");
-      return null;
-    }
-    final VirtualFile lessonDir = myLesson.getLessonDir(project);
-
-    return lessonDir == null ? null : lessonDir.findChild(TaskExt.getDirName(this));
-  }
-
   public String getTaskDescription() {
     return descriptionText;
   }
@@ -252,7 +242,7 @@ public abstract class Task extends StudyItem {
   }
 
   public boolean isValid(@NotNull Project project) {
-    VirtualFile taskDir = getTaskDir(project);
+    VirtualFile taskDir = getDir(OpenApiExtKt.getCourseDir(project));
     if (taskDir == null) return false;
     for (TaskFile taskFile : getTaskFileValues()) {
       VirtualFile file = EduUtils.findTaskFileInDir(taskFile, taskDir);
@@ -294,8 +284,13 @@ public abstract class Task extends StudyItem {
 
   @Override
   @Nullable
-  public VirtualFile getDir(@NotNull Project project) {
-    return getTaskDir(project);
+  public VirtualFile getDir(@NotNull final VirtualFile courseDir) {
+    if (myLesson == null) {
+      LOG.warn("Lesson is null for task " + getName() + " (id " + getId() + ")");
+      return null;
+    }
+    final VirtualFile lessonDir = myLesson.getDir(courseDir);
+    return lessonDir == null ? null : lessonDir.findChild(TaskExt.getDirName(this));
   }
 
   @NotNull

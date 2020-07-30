@@ -67,11 +67,11 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
     FileEditorManager.getInstance(project).openFile(findFileInTask(0, 0, "src/Main.kt"), true)
 
     withTestDialog(EduTestInputDialog("1")) {
-      val taskDir = findTask(0, 0).getTaskDir(project) ?: error("Task directory not found")
+      val taskDir = findTask(0, 0).getDir(project.courseDir) ?: error("Task directory not found")
       testAction(dataContext(taskDir), ApplyHyperskillSubmission(), true)
     }
 
-    expectedFileTree.assertEquals(getCourse().getDir(project), myFixture)
+    expectedFileTree.assertEquals(project.courseDir, myFixture)
   }
 
   private fun createHyperskillCourse(mode: String): HyperskillCourse {

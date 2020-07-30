@@ -7,6 +7,7 @@ import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.FileTreeBuilder
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -93,7 +94,7 @@ abstract class CCNewTaskStructureTestBase : EduActionTestCase() {
     ) {
       val task = course.findTask(lessonName, taskName)
       assertInstanceOf(task, taskClass)
-      fileTree(taskStructure).assertEquals(task.getTaskDir(project)!!, myFixture)
+      fileTree(taskStructure).assertEquals(task.getDir(project.courseDir)!!, myFixture)
     }
 
     val lessonFile = findFile("lesson1")

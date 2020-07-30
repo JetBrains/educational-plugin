@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.checkio.notifications.CheckiONotification
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -64,7 +65,7 @@ class CheckiOCourseUpdater(
   private fun createNewStations(newStations: List<CheckiOStation>) {
     newStations.forEach {
       try {
-        GeneratorUtils.createLesson(it, course.getDir(project))
+        GeneratorUtils.createLesson(it, project.courseDir)
       }
       catch (e: IOException) {
         LOG.error("IO error occurred creating station [${it.id}; ${it.name}]", e)
@@ -107,7 +108,7 @@ class CheckiOCourseUpdater(
                                newStation: CheckiOStation,
                                newMission: CheckiOMission,
                                stationsWithNewMissions: MutableSet<CheckiOStation>) {
-    val lessonDir = oldStation.getLessonDir(project) ?: error("Failed to find station dir: ${oldStation.name}")
+    val lessonDir = oldStation.getDir(project.courseDir) ?: error("Failed to find station dir: ${oldStation.name}")
     try {
       newMission.lesson = newStation
       GeneratorUtils.createTask(newMission, lessonDir)
@@ -121,7 +122,7 @@ class CheckiOCourseUpdater(
   private fun updateMission(newMission: CheckiOMission, oldMission: CheckiOMission) {
     val oldTaskFile = oldMission.taskFile
 
-    val oldMissionDir = oldMission.getDir(project)
+    val oldMissionDir = oldMission.getDir(project.courseDir)
                         ?: return LOG.error("Directory is not found for mission [${oldMission.id}; ${oldMission.name}]")
 
     val oldVirtualFile = EduUtils.findTaskFileInDir(oldTaskFile, oldMissionDir)

@@ -95,7 +95,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
       runInEdt {
         runWriteAction {
           for (lesson in lessonsToDelete) {
-            val virtualFile = lesson.getDir(project)
+            val virtualFile = lesson.getDir(project.courseDir)
             CommandProcessor.getInstance().executeCommand(project, {
               virtualFile?.delete(CCStudyItemDeleteProvider::class.java)
             }, "", this.javaClass)
@@ -120,7 +120,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
         runInEdt {
           runWriteAction {
             tasksToDelete.forEach {
-              val virtualFile = it.getTaskDir(project)
+              val virtualFile = it.getDir(project.courseDir)
               CommandProcessor.getInstance().executeCommand(project, {
                 virtualFile?.delete(CCStudyItemDeleteProvider::class.java)
               }, "", this.javaClass)
@@ -169,7 +169,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
       runInEdt {
         runWriteAction {
           for (section in sectionsToDelete) {
-            val virtualFile = section.getDir(project)
+            val virtualFile = section.getDir(project.courseDir)
             CommandProcessor.getInstance().executeCommand(project, {
               virtualFile?.delete(CCStudyItemDeleteProvider::class.java)
             }, "", this.javaClass)
@@ -287,7 +287,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
 
   private fun createNewLessons(newLessons: List<Lesson>, parentDir: VirtualFile) {
     for (lesson in newLessons) {
-      val lessonDir = lesson.getLessonDir(project)
+      val lessonDir = lesson.getDir(project.courseDir)
       if (directoryAlreadyExists(lessonDir)) {
         saveExistingDirectory(lessonDir!!, lesson)
       }
@@ -364,7 +364,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
       project.courseDir.findChild(item.name)
     }
     else {
-      (item as Lesson).getLessonDir(project)
+      (item as Lesson).getDir(project.courseDir)
     }
   }
 

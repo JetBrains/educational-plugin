@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.failedToCheck
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
@@ -64,7 +65,7 @@ open class OutputTaskChecker(
     val outputFile = task.findTestDirs(project)
       .mapNotNull { it.findChild(OUTPUT_PATTERN_NAME) }
       .firstOrNull()
-    return outputFile ?: task.getTaskDir(project)?.findChild(OUTPUT_PATTERN_NAME)
+    return outputFile ?: task.getDir(project.courseDir)?.findChild(OUTPUT_PATTERN_NAME)
   }
 
   companion object {

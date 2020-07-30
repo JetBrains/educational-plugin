@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.PlaceholderPainter
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -166,7 +167,7 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
   }
 
   private fun getOpenedEduEditors(project: Project, task: Task): List<EduEditor> {
-    val taskDir = task.getDir(project) ?: error(noDirForItemMessage(task.name, EduNames.TASK))
+    val taskDir = task.getDir(project.courseDir) ?: error(noDirForItemMessage(task.name, EduNames.TASK))
     return FileEditorManager.getInstance(project).openFiles
       .filter { VfsUtil.isAncestor(taskDir, it, true) }
       .map { FileEditorManager.getInstance(project).getSelectedEditor(it) }

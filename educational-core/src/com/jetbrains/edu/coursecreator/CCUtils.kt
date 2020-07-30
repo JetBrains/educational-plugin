@@ -278,7 +278,7 @@ object CCUtils {
 
     for (i in lessonsToWrap.indices) {
       val lesson = lessonsToWrap[i]
-      val lessonDir = lesson.getLessonDir(project)
+      val lessonDir = lesson.getDir(project.courseDir)
       if (lessonDir != null) {
         moveLesson(lessonDir, sectionDir)
         lesson.index = i + 1

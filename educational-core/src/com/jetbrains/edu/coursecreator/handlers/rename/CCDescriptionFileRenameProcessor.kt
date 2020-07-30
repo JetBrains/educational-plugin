@@ -9,6 +9,7 @@ import com.intellij.refactoring.rename.RenameDialog
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.rename.EduRenameDialogBase
@@ -24,7 +25,7 @@ class CCDescriptionFileRenameProcessor : RenamePsiFileProcessor() {
     val file = element.virtualFile
     if (!EduUtils.isTaskDescriptionFile(file.name)) return false
     val task = EduUtils.getTaskForFile(project, file) ?: return false
-    return file.parent == task.getTaskDir(project)
+    return file.parent == task.getDir(project.courseDir)
   }
 
   override fun createRenameDialog(project: Project, element: PsiElement, nameSuggestionContext: PsiElement?, editor: Editor?): RenameDialog {

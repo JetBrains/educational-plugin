@@ -234,7 +234,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
   }
 
   protected fun Task.createTaskFileAndOpenInEditor(taskFilePath: String, text: String = "") {
-    val taskDir = getTaskDir(project) ?: error("Can't find task dir")
+    val taskDir = getDir(project.courseDir) ?: error("Can't find task dir")
     val file = GeneratorUtils.createChildFile(taskDir, taskFilePath, text) ?: error("Failed to create `$taskFilePath` in $taskDir")
     myFixture.openFileInEditor(file)
   }
@@ -243,7 +243,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     require(getTaskFile(taskFilePath) != null) {
       "Can't find `$taskFilePath` task file in $name task"
     }
-    val taskDir = getTaskDir(project) ?: error("Can't find task dir")
+    val taskDir = getDir(project.courseDir) ?: error("Can't find task dir")
     val file = taskDir.findFileByRelativePath(taskFilePath) ?: error("Can't find `$taskFilePath` in `$taskDir`")
     runWriteAction { file.delete(this) }
   }

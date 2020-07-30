@@ -7,6 +7,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.yaml.YamlTestCase
@@ -58,7 +59,7 @@ class YamlMigrationTest : YamlTestCase() {
   }
 
   private fun createStudyXml() {
-    val projectDir = StudyTaskManager.getInstance(project).course!!.getDir(project)
+    val projectDir = StudyTaskManager.getInstance(project).course!!.getDir(project.courseDir)
     runInEdt {
       runWriteAction {
         val ideaDir = projectDir.createChildDirectory(this, ".idea")

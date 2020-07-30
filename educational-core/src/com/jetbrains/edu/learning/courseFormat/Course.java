@@ -2,13 +2,11 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -140,8 +138,8 @@ public abstract class Course extends LessonContainer {
 
   @Override
   @NotNull
-  public VirtualFile getDir(@NotNull Project project) {
-    return OpenApiExtKt.getCourseDir(project);
+  public VirtualFile getDir(@NotNull final VirtualFile baseDir) {
+    return baseDir;
   }
 
   @NotNull

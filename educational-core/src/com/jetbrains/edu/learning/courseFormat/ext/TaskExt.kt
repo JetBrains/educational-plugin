@@ -13,6 +13,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
@@ -43,7 +44,7 @@ fun Task.findSourceDir(taskDir: VirtualFile): VirtualFile? {
 fun Task.findTestDirs(taskDir: VirtualFile): List<VirtualFile> = testDirs.mapNotNull { taskDir.findFileByRelativePath(it) }
 
 fun Task.findTestDirs(project: Project): List<VirtualFile> {
-  val taskDir = getDir(project) ?: return emptyList()
+  val taskDir = getDir(project.courseDir) ?: return emptyList()
   return findTestDirs(taskDir)
 }
 
@@ -108,7 +109,7 @@ val Task.mockTaskFileName: String?
 fun Task.saveStudentAnswersIfNeeded(project: Project) {
   if (lesson !is FrameworkLesson) return
 
-  val taskDir = getTaskDir(project) ?: return
+  val taskDir = getDir(project.courseDir) ?: return
   for ((_, taskFile) in taskFiles) {
     val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
     val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: continue
@@ -129,7 +130,7 @@ fun Task.addDefaultTaskDescription() {
 }
 
 fun Task.getDescriptionFile(project: Project): VirtualFile? {
-  val taskDir = getTaskDir(project) ?: return null
+  val taskDir = getDir(project.courseDir) ?: return null
   return taskDir.findChild(descriptionFormat.descriptionFileName)
 }
 

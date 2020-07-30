@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -22,7 +23,7 @@ import org.rust.openapiext.execute
 class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: EduTask) : EduTaskCheckerBase(task, envChecker, project) {
 
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult {
-    val taskDir = task.getTaskDir(project) ?: error("Failed to find directory of `${task.name}` task")
+    val taskDir = task.getDir(project.courseDir) ?: error("Failed to find directory of `${task.name}` task")
     val cargo = project.rustSettings.toolchain?.rawCargo() ?: return CheckResult(CheckStatus.Failed, message("error.no.toolchain"))
     val pkg = runReadAction { project.cargoProjects.findPackageForFile(taskDir) } ?:
               return CheckResult(CheckStatus.Failed, message("error.no.package.for.task", task.name))

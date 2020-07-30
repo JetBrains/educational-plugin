@@ -55,7 +55,7 @@ object HyperskillProjectOpener {
           }
           hyperskillCourse.init(null, null, false)
           val projectLesson = hyperskillCourse.getProjectLesson()!!
-          val courseDir = hyperskillCourse.getDir(project)
+          val courseDir = hyperskillCourse.getDir(project.courseDir)
           GeneratorUtils.createLesson(projectLesson, courseDir)
           GeneratorUtils.createAdditionalFiles(course, courseDir)
           YamlFormatSynchronizer.saveAll(project)
@@ -171,11 +171,11 @@ object HyperskillProjectOpener {
     problemsLesson.init(course, null, false)
 
     if (createLessonDir) {
-      GeneratorUtils.createLesson(problemsLesson, course.getDir(project))
+      GeneratorUtils.createLesson(problemsLesson, course.getDir(project.courseDir))
       YamlFormatSynchronizer.saveAll(project)
     }
     else if (createTaskDir) {
-      GeneratorUtils.createTask(task, problemsLesson.getDir(project)!!)
+      GeneratorUtils.createTask(task, problemsLesson.getDir(project.courseDir)!!)
       YamlFormatSynchronizer.saveItem(problemsLesson)
       YamlFormatSynchronizer.saveItem(task)
       YamlFormatSynchronizer.saveRemoteInfo(task)

@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.CodeExecutor.Companion.resultUnchecked
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -25,7 +26,7 @@ import org.rust.openapiext.isSuccess
 
 class RsCodeExecutor : CodeExecutor {
   override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, CheckResult> {
-    val taskDir = task.getTaskDir(project) ?: return resultUnchecked(EduRustBundle.message("error.no.task.dir"))
+    val taskDir = task.getDir(project.courseDir) ?: return resultUnchecked(EduRustBundle.message("error.no.task.dir"))
     val mainVFile = task.findSourceDir(taskDir)?.findChild(MAIN_RS_FILE) ?: return resultUnchecked(EduRustBundle.message("error.failed.find.0", MAIN_RS_FILE))
     val target = runReadAction { PsiManager.getInstance(project).findFile(mainVFile)?.rustFile?.containingCargoTarget }
                  ?: return resultUnchecked(EduRustBundle.message("error.failed.find.target.for.0", MAIN_RS_FILE))

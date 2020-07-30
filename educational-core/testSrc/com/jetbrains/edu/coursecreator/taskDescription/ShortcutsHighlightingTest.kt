@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.taskDescription
 import com.intellij.xml.util.CheckDtdReferencesInspection
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.taskDescription.toShortcut
 
@@ -31,7 +32,7 @@ class ShortcutsHighlightingTest : EduTestCase() {
     }
 
     val task = findTask(0, 0)
-    val taskDescriptionFile = task.getDir(project)?.findChild(descriptionFormat.descriptionFileName) ?: error("No task description file")
+    val taskDescriptionFile = task.getDir(project.courseDir)?.findChild(descriptionFormat.descriptionFileName) ?: error("No task description file")
 
     myFixture.openFileInEditor(taskDescriptionFile)
     myFixture.checkHighlighting()

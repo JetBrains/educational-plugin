@@ -9,6 +9,7 @@ import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.RefreshCause
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -78,7 +79,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
 
     if (parentItem is FrameworkLesson) {
       val prevTask = parentItem.getTaskList().getOrNull(info.index - 2)
-      val prevTaskDir = prevTask?.getTaskDir(project)
+      val prevTaskDir = prevTask?.getDir(project.courseDir)
       if (prevTask == null || prevTaskDir == null) {
         initTask(project, course, item, info)
         return

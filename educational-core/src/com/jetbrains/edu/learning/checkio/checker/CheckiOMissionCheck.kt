@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -87,7 +88,7 @@ abstract class CheckiOMissionCheck(val project: Project,
 
   private fun getCodeFromTask(): String {
     val taskFile = (task as CheckiOMission).taskFile
-    val missionDir = task.getDir(project)
+    val missionDir = task.getDir(project.courseDir)
                      ?: throw IOException("Directory is not found for mission: ${task.id}, ${task.name}")
     val virtualFile = EduUtils.findTaskFileInDir(taskFile, missionDir)
                       ?: throw IOException("Virtual file is not found for mission: ${task.id}, ${task.name}")

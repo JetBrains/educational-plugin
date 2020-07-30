@@ -13,6 +13,7 @@ import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
 import com.jetbrains.edu.coursecreator.presentableTitleName
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -76,7 +77,7 @@ abstract class EduStudyItemRenameProcessor : RenamePsiFileProcessor() {
           if (item.course.isStudy) {
             throw ConfigurationException(EduCoreErrorBundle.message("invalid.rename.message"))
           }
-          val itemDir = item.getDir(project)
+          val itemDir = item.getDir(project.courseDir)
           val validator = CCStudyItemPathInputValidator(item.course, item.studyItemType, itemDir.parent, item.name)
           if (!validator.checkInput(newName)) {
             throw ConfigurationException(validator.getErrorText(newName))

@@ -3,6 +3,7 @@ package com.jetbrains.edu.yaml.inspections
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 
 class StudyItemNotFoundInspectionTest : YamlInspectionsTestBase(StudyItemNotFoundInspection::class) {
@@ -111,7 +112,7 @@ class StudyItemNotFoundInspectionTest : YamlInspectionsTestBase(StudyItemNotFoun
     }
     val actualItems = itemContainer.items.map { it.name }
     assertEquals(expectedItems, actualItems)
-    val itemContainerDir = itemContainer.getDir(project)!!
+    val itemContainerDir = itemContainer.getDir(project.courseDir)!!
     for (name in expectedItems) {
       assertNotNull("Failed to find `$name` directory", itemContainerDir.findFileByRelativePath(name))
     }

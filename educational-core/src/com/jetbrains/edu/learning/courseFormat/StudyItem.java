@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -87,7 +86,7 @@ public abstract class StudyItem extends UserDataHolderBase {
     myId = id;
   }
 
-  public abstract VirtualFile getDir(@NotNull Project project);
+  public abstract VirtualFile getDir(@NotNull final VirtualFile baseDir);
 
   @NotNull
   public abstract Course getCourse();

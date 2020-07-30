@@ -9,6 +9,7 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -33,7 +34,7 @@ abstract class YamlTestCase : EduTestCase() {
 
   protected fun loadItemFromConfig(item: StudyItem, newConfigText: String) {
     createConfigFiles(project)
-    val configFile = item.getDir(project)!!.findChild(item.configFileName)!!
+    val configFile = item.getDir(project.courseDir)!!.findChild(item.configFileName)!!
     val document = FileDocumentManager.getInstance().getDocument(configFile)!!
     runWriteAction {
       document.setText(newConfigText)
@@ -59,7 +60,7 @@ fun checkConfigsExistAndNotEmpty(project: Project, course: Course) {
 }
 
 private fun checkConfig(project: Project, item: StudyItem) {
-  val itemDir = item.getDir(project)
+  val itemDir = item.getDir(project.courseDir)
   val configFileName = item.configFileName
   val configFile = itemDir.findChild(configFileName)!!
   val configText = FileDocumentManager.getInstance().getDocument(configFile)!!.text

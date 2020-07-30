@@ -53,7 +53,7 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
       override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
         return object : TaskChecker<EduTask>(task, project) {
           override fun check(indicator: ProgressIndicator): CheckResult {
-            val taskDir = task.getDir(project) ?: error("No taskDir in tests")
+            val taskDir = task.getDir(project.courseDir) ?: error("No taskDir in tests")
             val checkResultFile = taskDir.findChild(CHECK_RESULT_FILE)
             if (checkResultFile == null) {
               return CheckResult.SOLVED
@@ -66,7 +66,7 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
       override fun getCodeExecutor(): CodeExecutor {
         return object : CodeExecutor {
           override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, CheckResult> {
-            val taskDir = task.getDir(project) ?: return Err(CheckResult(CheckStatus.Unchecked, "No taskDir in tests"))
+            val taskDir = task.getDir(project.courseDir) ?: return Err(CheckResult(CheckStatus.Unchecked, "No taskDir in tests"))
             val checkResultFile = taskDir.findChild(CHECK_RESULT_FILE) ?: return Err(CheckResult(CheckStatus.Unchecked, "No $CHECK_RESULT_FILE file"))
             return Ok(VfsUtil.loadText(checkResultFile))
           }

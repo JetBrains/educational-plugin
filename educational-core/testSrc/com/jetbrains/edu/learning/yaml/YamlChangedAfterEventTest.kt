@@ -4,6 +4,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.actions.NextTaskAction
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -17,7 +18,7 @@ class YamlChangedAfterEventTest : YamlTestCase() {
     val task1 = course.findTask("lesson1", "task1")
 
     withVirtualFileListener(course) {
-      GeneratorUtils.createChildFile(course.getDir(project), "lesson1/task/userFile.txt", "user file")
+      GeneratorUtils.createChildFile(project.courseDir, "lesson1/task/userFile.txt", "user file")
       task1.openTaskFileInEditor("file1.txt")
       task1.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())

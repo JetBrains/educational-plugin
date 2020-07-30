@@ -5,6 +5,7 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.StreamUtil
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.taskDescription.IMG_TAG
 import com.jetbrains.edu.learning.taskDescription.SCRIPT_TAG
 import com.jetbrains.edu.learning.taskDescription.SRC_ATTRIBUTE
@@ -35,7 +36,7 @@ private fun absolutizePaths(project: Project, content: String): String {
     return content
   }
 
-  val taskDir = task.getTaskDir(project)
+  val taskDir = task.getDir(project.courseDir)
   if (taskDir == null) {
     return content
   }

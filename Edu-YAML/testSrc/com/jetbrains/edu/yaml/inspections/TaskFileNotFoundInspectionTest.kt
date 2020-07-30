@@ -1,6 +1,7 @@
 package com.jetbrains.edu.yaml.inspections
 
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundInspection::class) {
@@ -118,7 +119,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     testQuickFix(task, quickFixName, before, after)
     val actualTaskFiles = task.taskFiles.values.map { it.name to it.isVisible }
     assertEquals(expectedTaskFiles, actualTaskFiles)
-    val taskDir = task.getTaskDir(project)!!
+    val taskDir = task.getDir(project.courseDir)!!
     for ((path, _) in expectedTaskFiles) {
       assertNotNull("Failed to find `$path` file", taskDir.findFileByRelativePath(path))
     }

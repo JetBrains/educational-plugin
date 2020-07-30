@@ -10,10 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.ui.tree.TreeUtil
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.RefreshCause
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
@@ -182,7 +179,7 @@ object NavigationUtils {
       project.course?.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
     }
 
-    val taskDir = task.getTaskDir(project) ?: return
+    val taskDir = task.getDir(project.courseDir) ?: return
 
     if (taskFiles.isEmpty()) {
       val selectingDir = task.findSourceDir(taskDir) ?: taskDir
@@ -226,7 +223,7 @@ object NavigationUtils {
     currentTask: Task, targetTask: Task,
     showDialogIfConflict: Boolean
   ) {
-    val dir = currentTask.getTaskDir(project) ?: return
+    val dir = currentTask.getDir(project.courseDir) ?: return
 
     val frameworkLessonManager = FrameworkLessonManager.getInstance(project)
     @Suppress("NAME_SHADOWING")

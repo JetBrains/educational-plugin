@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizerKt;
@@ -59,7 +60,7 @@ public class CCChangeCourseInfo extends DumbAwareAction {
     }
 
     String configFileName = YamlFormatSynchronizerKt.getConfigFileName(course);
-    VirtualFile configFile = course.getDir(project).findChild(configFileName);
+    VirtualFile configFile = OpenApiExtKt.getCourseDir(project).findChild(configFileName);
     if (configFile == null) {
       Logger.getInstance(CCChangeCourseInfo.class).error("Failed to find course config file");
       return;

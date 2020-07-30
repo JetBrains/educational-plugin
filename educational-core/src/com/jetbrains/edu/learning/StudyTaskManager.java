@@ -211,7 +211,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   private void createDescriptionFiles(@NotNull Project project) {
     List<Task> tasks = CourseExt.getAllTasks(myCourse);
     for (Task task : tasks) {
-      VirtualFile taskDir = task.getTaskDir(project);
+      VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(project));
       if (taskDir == null) {
         LOG.warn("Cannot find directory for a task: " + task.getName());
         continue;

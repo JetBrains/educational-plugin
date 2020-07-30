@@ -1,9 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.visitors.TaskVisitor;
 import com.jetbrains.edu.learning.yaml.YamlDeserializer;
@@ -121,21 +119,6 @@ public class Lesson extends ItemContainer {
     mySection = section;
   }
 
-  @Nullable
-  public VirtualFile getLessonDir(@NotNull final Project project) {
-    VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
-
-    if (mySection == null) {
-      return courseDir.findChild(getName());
-    }
-    else {
-      VirtualFile sectionDir = courseDir.findChild(mySection.getName());
-      assert sectionDir != null : "Section dir for lesson not found";
-
-      return sectionDir.findChild(getName());
-    }
-  }
-
   @NotNull
   public LessonContainer getContainer() {
     if (mySection != null) {
@@ -146,8 +129,16 @@ public class Lesson extends ItemContainer {
 
   @Override
   @Nullable
-  public VirtualFile getDir(@NotNull Project project) {
-    return getLessonDir(project);
+  public VirtualFile getDir(@NotNull final VirtualFile baseDir) {
+    if (mySection == null) {
+      return baseDir.findChild(getName());
+    }
+    else {
+      VirtualFile sectionDir = baseDir.findChild(mySection.getName());
+      assert sectionDir != null : "Section dir for lesson not found";
+
+      return sectionDir.findChild(getName());
+    }
   }
 
   public void visitTasks(@NotNull TaskVisitor visitor) {
