@@ -13,10 +13,12 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.noTestsRun
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 
 abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: EnvironmentChecker, project: Project) :
@@ -32,7 +34,8 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     }
 
     val possibleError = envChecker.checkEnvironment(project, task)
-    if (possibleError != null) return CheckResult(CheckStatus.Unchecked, possibleError)
+    if (possibleError != null) return CheckResult(CheckStatus.Unchecked,
+                                                  "$possibleError\n${EduCoreBundle.message("help.use.guide", EduNames.NO_TESTS_URL)}")
 
     val configurations = runReadActionInSmartMode(project) { createTestConfigurations() }
     configurations.forEach {
