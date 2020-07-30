@@ -26,8 +26,8 @@ import static com.jetbrains.edu.learning.messages.UtilsKt.pass;
 abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
 
   protected CCAnswerPlaceholderAction(
-    @NotNull Supplier<@Nls(capitalization = Nls.Capitalization.Title) String> text,
-    @NotNull Supplier<@Nls(capitalization = Nls.Capitalization.Sentence) String> description) {
+    @NotNull Supplier<String> text,
+    @NotNull Supplier<String> description) {
     // BACKCOMPAT: 2019.3 need to delete pass call
     super(pass(text), pass(description), null);
   }
