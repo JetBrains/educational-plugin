@@ -4,9 +4,11 @@ import com.goide.GoIcons
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.go.checker.GoCodeExecutor
 import com.jetbrains.edu.go.checker.GoEduTaskChecker
+import com.jetbrains.edu.go.checker.GoEnvironmentChecker
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames.TEST
 import com.jetbrains.edu.learning.checker.CodeExecutor
+import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
@@ -30,7 +32,8 @@ class GoConfigurator : EduConfigurator<GoProjectSettings> {
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = object : TaskCheckerProvider {
-      // TODO implement envChecker validation
+      override val envChecker: EnvironmentChecker
+        get() = GoEnvironmentChecker()
       override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> = GoEduTaskChecker(project, envChecker, task)
       override fun getCodeExecutor(): CodeExecutor = GoCodeExecutor()
     }
