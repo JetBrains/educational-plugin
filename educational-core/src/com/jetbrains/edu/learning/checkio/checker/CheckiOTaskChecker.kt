@@ -34,7 +34,7 @@ class CheckiOTaskChecker(
 
   override fun check(indicator: ProgressIndicator): CheckResult {
     return try {
-      val possibleError = envChecker.checkEnvironment(project)
+      val possibleError = envChecker.checkEnvironment(project, task)
       if (possibleError != null) {
         return CheckResult(CheckStatus.Unchecked, possibleError)
       }

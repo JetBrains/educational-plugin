@@ -30,7 +30,7 @@ class AndroidChecker(task: EduTask, envChecker: EnvironmentChecker, project: Pro
   private var deviceLaunching: Future<IDevice>? = null
 
   override fun check(indicator: ProgressIndicator): CheckResult {
-    val possibleError = envChecker.checkEnvironment(project)
+    val possibleError = envChecker.checkEnvironment(project, task)
     if (possibleError != null) return CheckResult(CheckStatus.Unchecked, possibleError)
 
     indicator.isIndeterminate = true

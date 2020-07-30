@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.rust.messages.EduRustBundle
 import org.rust.cargo.project.model.cargoProjects
 import org.rust.cargo.project.settings.rustSettings
@@ -13,7 +14,7 @@ import org.rust.cargo.project.settings.rustSettings
 class RsTaskCheckerProvider : TaskCheckerProvider {
   override val envChecker: EnvironmentChecker
     get() = object: EnvironmentChecker() {
-      override fun checkEnvironment(project: Project): String? {
+      override fun checkEnvironment(project: Project, task: Task): String? {
         val toolchain = project.rustSettings.toolchain
         if (toolchain == null || !toolchain.looksLikeValidToolchain()) {
           return EduRustBundle.message("error.no.toolchain.location")

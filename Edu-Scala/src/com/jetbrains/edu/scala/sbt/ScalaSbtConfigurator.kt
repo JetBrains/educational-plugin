@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.scala.messages.EduScalaBundle
@@ -55,7 +56,7 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
   }
 
   private class ScalaSbtEnvironmentChecker: EnvironmentChecker() {
-    override fun checkEnvironment(project: Project): String? {
+    override fun checkEnvironment(project: Project, task: Task): String? {
       if (ProjectRootManager.getInstance(project).projectSdk == null) {
         return EduCoreErrorBundle.message("no.sdk")
       }

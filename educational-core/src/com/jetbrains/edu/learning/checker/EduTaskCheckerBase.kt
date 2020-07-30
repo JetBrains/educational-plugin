@@ -31,7 +31,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
       }
     }
 
-    val possibleError = envChecker.checkEnvironment(project)
+    val possibleError = envChecker.checkEnvironment(project, task)
     if (possibleError != null) return CheckResult(CheckStatus.Unchecked, possibleError)
 
     val configurations = runReadActionInSmartMode(project) { createTestConfigurations() }

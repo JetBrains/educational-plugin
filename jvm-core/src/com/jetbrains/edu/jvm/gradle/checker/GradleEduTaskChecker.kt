@@ -15,7 +15,7 @@ open class GradleEduTaskChecker(task: EduTask, protected val envChecker: Environ
   TaskChecker<EduTask>(task, project) {
 
   override fun check(indicator: ProgressIndicator): CheckResult {
-    val possibleError = envChecker.checkEnvironment(project)
+    val possibleError = envChecker.checkEnvironment(project, task)
     if (possibleError != null) return CheckResult(CheckStatus.Unchecked, possibleError)
 
     val (taskName, params) = getGradleTask()
