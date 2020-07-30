@@ -43,6 +43,9 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
     get() = myWebComponent.engine
 
   init {
+    // TODO: pass another disposable with shorter lifetime.
+    // For example, content manager of the corresponding toolwindow
+    Disposer.register(StudyTaskManager.getInstance(myProject), this)
     ApplicationManager.getApplication().messageBus.connect(this)
       .subscribe(LafManagerListener.TOPIC, StudyLafManagerListener())
     PlatformImpl.startup {
@@ -51,7 +54,6 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
       myWebComponent = WebView()
       myWebComponent.fontSmoothingTypeProperty().value = FontSmoothingType.GRAY
       myEngine = myWebComponent.engine
-      Disposer.register(myProject, this)
 
       myPane.children.add(myWebComponent)
       if (myLinkInNewBrowser) {

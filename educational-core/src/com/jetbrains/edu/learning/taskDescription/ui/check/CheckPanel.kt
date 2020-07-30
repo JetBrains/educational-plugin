@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.taskDescription.ui.check
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.AnAction
@@ -34,14 +35,14 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
+class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(BorderLayout()) {
   private val checkFinishedPanel: JPanel = JPanel(BorderLayout())
   private val checkActionsPanel: JPanel = JPanel(BorderLayout())
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
   private val checkButtonWrapper = JPanel(BorderLayout())
   private val rightActionsToolbar = JPanel(HorizontalLayout(10))
   private val course = project.course
-  private val checkTimeAlarm: Alarm = Alarm(project)
+  private val checkTimeAlarm: Alarm = Alarm(parentDisposable)
 
   init {
     checkActionsPanel.add(checkButtonWrapper, BorderLayout.WEST)

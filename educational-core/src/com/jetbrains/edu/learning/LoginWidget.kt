@@ -34,8 +34,7 @@ abstract class LoginWidget(val project: Project,
 
   init {
     setToolTipText()
-    val busConnection = project.messageBus.connect(project)
-    busConnection.subscribe(topic, object : EduLogInListener {
+    project.messageBus.connect().subscribe(topic, object : EduLogInListener {
       override fun userLoggedOut() = update()
       override fun userLoggedIn() = update()
     })

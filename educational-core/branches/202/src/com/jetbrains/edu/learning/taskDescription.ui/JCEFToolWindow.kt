@@ -31,7 +31,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   private val jsQuerySetScrollHeight = JBCefJSQuery.create(taskSpecificJBCefBrowser)
 
   init {
-    ApplicationManager.getApplication().messageBus.connect(project)
+    ApplicationManager.getApplication().messageBus.connect(this)
       .subscribe(LafManagerListener.TOPIC,
                  LafManagerListener { TaskDescriptionView.updateAllTabs(TaskDescriptionView.getInstance(project)) })
 

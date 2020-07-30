@@ -16,6 +16,7 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
@@ -29,7 +30,7 @@ import org.jsoup.nodes.Element
 import javax.swing.JComponent
 
 
-abstract class TaskDescriptionToolWindow(protected val project: Project) {
+abstract class TaskDescriptionToolWindow(protected val project: Project) : Disposable {
   private val HINT_BLOCK_TEMPLATE = "<div class='" + HINT_HEADER + "'>Hint %s</div>" +
                                     "  <div class='hint_content'>" +
                                     " %s" +
@@ -84,6 +85,8 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) {
   }
 
   abstract fun setText(text: String, task: Task?)
+
+  override fun dispose() {}
 
   companion object {
     const val HINT_HEADER: String = "hint_header"

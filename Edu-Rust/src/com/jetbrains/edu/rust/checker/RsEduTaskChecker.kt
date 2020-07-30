@@ -6,6 +6,7 @@ import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
@@ -28,7 +29,9 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
     val pkg = runReadAction { project.cargoProjects.findPackageForFile(taskDir) } ?:
               return CheckResult(CheckStatus.Failed, message("error.no.package.for.task", task.name))
     val cmd = CargoCommandLine.forPackage(pkg, "test", listOf("--no-run"))
-    val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(project)
+
+    val disposable = StudyTaskManager.getInstance(project)
+    val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(disposable)
     for (line in processOutput.stdoutLines) {
       if (line.trimStart().startsWith(COMPILATION_ERROR_MESSAGE, true)) {
         return CheckResult(CheckStatus.Failed, CheckUtils.COMPILATION_FAILED_MESSAGE, processOutput.stdout)

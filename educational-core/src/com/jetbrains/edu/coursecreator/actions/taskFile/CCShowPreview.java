@@ -152,7 +152,7 @@ public class CCShowPreview extends DumbAwareAction {
       return;
     }
     final EditorEx createdEditor = (EditorEx)factory.createEditor(document, project, userFile, true);
-    Disposer.register(project, () -> factory.releaseEditor(createdEditor));
+    Disposer.register(StudyTaskManager.getInstance(project), () -> factory.releaseEditor(createdEditor));
     PlaceholderPainter.showPlaceholders(project, taskFile, createdEditor);
     JPanel header = new JPanel();
     header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));

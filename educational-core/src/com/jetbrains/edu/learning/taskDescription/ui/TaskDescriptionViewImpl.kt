@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.content.ContentFactory
@@ -201,6 +202,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       JAVAFX -> JavaFxToolWindow(project)
       JCEF -> getJCEFToolWindow(project) ?: SwingToolWindow(project)
     }
+    Disposer.register(contentManager, taskTextTW)
+
     val taskTextPanel = taskTextTW.createTaskInfoPanel()
     val topPanel = JPanel(BorderLayout())
 
@@ -220,7 +223,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     taskSpecificPanel.border = JBUI.Borders.emptyRight(15)
     bottomPanel.add(taskSpecificPanel, BorderLayout.CENTER)
 
-    val checkPanel = CheckPanel(project)
+    val checkPanel = CheckPanel(project, contentManager)
     checkPanel.border = JBUI.Borders.empty(2, 0, 0, 15)
     bottomPanel.add(checkPanel, BorderLayout.SOUTH)
 
@@ -237,7 +240,6 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     currentTask = EduUtils.getCurrentTask(project)
     updateAdditionalTaskTabs(currentTask)
 
-    // TODO: provide correct parent disposable here to correctly unload the plugin
     val connection = project.messageBus.connect()
     connection.subscribe(LafManagerListener.TOPIC, LafManagerListener {
       UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())

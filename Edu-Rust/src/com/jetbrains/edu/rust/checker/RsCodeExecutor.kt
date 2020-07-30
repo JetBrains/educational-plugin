@@ -7,6 +7,7 @@ import com.intellij.psi.PsiManager
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.checker.CodeExecutor
@@ -33,7 +34,8 @@ class RsCodeExecutor : CodeExecutor {
     val cargo = project.rustSettings.toolchain?.rawCargo() ?: return resultUnchecked(EduRustBundle.message("error.no.toolchain"))
     val cmd = CargoCommandLine.forTarget(target, "run")
 
-    val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(project, stdIn = input?.toByteArray())
+    val disposable = StudyTaskManager.getInstance(project)
+    val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(disposable, stdIn = input?.toByteArray())
     val output = processOutput.stdout
 
     return when {
