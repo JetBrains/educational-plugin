@@ -89,9 +89,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         dir("src") {
           file("task.cpp")
         }
-        dir("test") {
-          file("test.cpp")
-        }
         file("task.html")
         file("CMakeLists.txt")
       }
@@ -122,9 +119,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       dir("section/lesson/task") {
         dir("src") {
           file("task.cpp")
-        }
-        dir("test") {
-          file("test.cpp")
         }
         file("task.html")
         file("CMakeLists.txt")
@@ -164,18 +158,12 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         dir("src") {
           file("task.cpp")
         }
-        dir("test") {
-          file("test.cpp")
-        }
         file("task.html")
         file("CMakeLists.txt")
       }
       dir("top_level_lesson/task") {
         dir("src") {
           file("task.cpp")
-        }
-        dir("test") {
-          file("test.cpp")
         }
         file("task.html")
         file("CMakeLists.txt")
@@ -216,9 +204,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         dir("edu") {
           dir("src") {
             file("task.cpp")
-          }
-          dir("test") {
-            file("test.cpp")
           }
           file("task.html")
           file("CMakeLists.txt")

@@ -18,19 +18,16 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
       dir("Introduction") {
         dir("Our first program") {
           file("hello_world.py")
-          file("tests.py")
           file("task.html")
         }
         dir("Comments") {
           file("comments.py")
-          file("tests.py")
           file("task.html")
         }
       }
       dir("Variables") {
         dir("Variable definition") {
           file("variable_definition.py")
-          file("tests.py")
           file("task.html")
         }
       }

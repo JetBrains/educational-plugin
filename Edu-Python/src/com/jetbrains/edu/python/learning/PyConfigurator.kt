@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.python.learning.checker.PyTaskCheckerProvider
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import icons.PythonIcons
@@ -22,7 +23,7 @@ open class PyConfigurator : EduConfigurator<PyNewProjectSettings> {
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
     super.excludeFromArchive(project, file) || excludeFromArchive(file)
 
-  override fun isTestFile(project: Project, file: VirtualFile): Boolean = testFileName == file.name
+  override fun isTestFile(task: Task, path: String): Boolean = testFileName == path
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = PyTaskCheckerProvider()

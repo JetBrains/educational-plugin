@@ -71,17 +71,11 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
             fun foo() {}
           """)
           }
-          dir("test") {
-            file("Tests1.kt")
-          }
           file("task.html")
         }
         dir("task2") {
           dir("src") {
             file("Task.kt")
-          }
-          dir("test") {
-            file("Tests2.kt")
           }
           file("task.html")
         }

@@ -21,11 +21,13 @@ class JNodesTests : CourseViewTestBase() {
             taskFile("Task1.java")
             taskFile("foo/bar/Task2.java")
           }
+          taskFile("Task3.java")
           taskFile("test/Tests.java")
         }
 
         eduTask {
           taskFile("src/Task1.java")
+          taskFile("Task2.java")
           taskFile("test/Tests.java")
         }
       }
@@ -40,13 +42,11 @@ class JNodesTests : CourseViewTestBase() {
       |     -DirectoryNode foo.bar
       |      Task2.java
       |     Task1.java
-      |    -DirectoryNode test
-      |     Tests.java
+      |    Task3.java
       |   -TaskNode task2
       |    -DirectoryNode src
       |     Task1.java
-      |    -DirectoryNode test
-      |     Tests.java
+      |    Task2.java
     """.trimMargin())
   }
 }

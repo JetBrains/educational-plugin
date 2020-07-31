@@ -128,9 +128,12 @@ fun VirtualFile.getTaskDir(project: Project): VirtualFile? {
 }
 
 fun VirtualFile.isTestsFile(project: Project): Boolean {
+  if (isDirectory) return false
+  val task = getContainingTask(project) ?: return false
+  val path: String = pathRelativeToTask(project)
   val course = StudyTaskManager.getInstance(project).course ?: return false
   val configurator = course.configurator ?: return false
-  return configurator.isTestFile(project, this)
+  return configurator.isTestFile(task, path)
 }
 
 fun VirtualFile.getTaskFile(project: Project): TaskFile? {

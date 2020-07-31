@@ -1,7 +1,10 @@
 package com.jetbrains.edu.rust
 
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.CourseGenerationTestBase
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.newCourse
 import org.rust.lang.RsLanguage
 
 class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
@@ -82,9 +85,6 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
       dir("lesson1/task1") {
         dir("src") {
           file("main.rs")
-        }
-        dir("tests") {
-          file("tests.rs")
         }
         file("task.html")
         file("Cargo.toml")

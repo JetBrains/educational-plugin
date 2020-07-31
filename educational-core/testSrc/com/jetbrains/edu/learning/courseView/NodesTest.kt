@@ -22,6 +22,7 @@ class NodesTest : CourseViewTestBase() {
 
         eduTask {
           taskFile("src/file.txt")
+          taskFile("file1.txt")
           taskFile("test/file.txt")
         }
       }
@@ -32,14 +33,10 @@ class NodesTest : CourseViewTestBase() {
     | -CourseNode Test Course  0/2
     |  -LessonNode lesson1
     |   -TaskNode task1
-    |    -DirectoryNode src
-    |     file.txt
-    |    -DirectoryNode test
-    |     file.txt
+    |    file.txt
     |   -TaskNode task2
+    |    file1.txt
     |    -DirectoryNode src
-    |     file.txt
-    |    -DirectoryNode test
     |     file.txt
     """.trimMargin("|"))
   }

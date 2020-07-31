@@ -44,7 +44,9 @@ import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -120,6 +122,15 @@ public class EduUtils {
     catch (IOException e) {
       LOG.error(e);
     }
+  }
+
+  public static boolean isTestsFile(@NotNull Task task, @NotNull String path) {
+    Course course = task.getCourse();
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
+    if (configurator == null) {
+      return false;
+    }
+    return configurator.isTestFile(task, path);
   }
 
   @Nullable

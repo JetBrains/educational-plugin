@@ -4,7 +4,6 @@ import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.execution.process.ProcessOutput
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -166,20 +165,20 @@ fun runGradleRunTask(project: Project, task: Task, indicator: ProgressIndicator)
 }
 
 private fun findMainClass(project: Project, task: Task): String? =
-  runReadAction {
-    val language = task.course.languageById ?: return@runReadAction null
+  runReadActionInSmartMode(project) {
+    val language = task.course.languageById ?: return@runReadActionInSmartMode null
     val selectedFile = getSelectedFile(project)
     if (selectedFile != null) {
       val fileTask = selectedFile.getContainingTask(project)
       if (fileTask == task) {
         val mainClass = MainFileProvider.getMainClassName(project, selectedFile, language)
-        if (mainClass != null) return@runReadAction mainClass
+        if (mainClass != null) return@runReadActionInSmartMode mainClass
       }
     }
 
     for ((_, taskFile) in task.taskFiles) {
       val file = taskFile.getVirtualFile(project) ?: continue
-      return@runReadAction MainFileProvider.getMainClassName(project, file, language) ?: continue
+      return@runReadActionInSmartMode MainFileProvider.getMainClassName(project, file, language) ?: continue
     }
     null
   }

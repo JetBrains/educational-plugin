@@ -1,5 +1,6 @@
 package com.jetbrains.edu.jvm.gradle.checker
 
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
@@ -22,7 +23,7 @@ class GradleEnvironmentChecker : EnvironmentChecker() {
   override fun checkEnvironment(project: Project, task: Task): CheckResult? {
     ProjectRootManager.getInstance(project).projectSdk ?: return noSdkConfiguredResult
     val taskDir = task.getDir(project.courseDir) ?: return getFailedToLaunchCheckingResult(project)
-    val module = ModuleUtil.findModuleForFile(taskDir, project) ?: return getFailedToLaunchCheckingResult(project)
+    val module = invokeAndWaitIfNeeded {  ModuleUtil.findModuleForFile(taskDir, project) } ?: return getFailedToLaunchCheckingResult(project)
 
     val path = ExternalSystemApiUtil.getExternalRootProjectPath(module) ?: return getGradleNotImportedResult(project)
     GradleSettings.getInstance(project).getLinkedProjectSettings(path) ?: return getGradleNotImportedResult(project)

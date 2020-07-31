@@ -6,11 +6,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.shouldHavePhysicalFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 fun VirtualFile.fileInfo(project: Project): FileInfo? {
   if (project.isDisposed) return null
-  if (shouldIgnore(this, project)) return null
 
   if (isDirectory) {
     getSection(project)?.let { return FileInfo.SectionDirectory(it) }
@@ -19,6 +19,7 @@ fun VirtualFile.fileInfo(project: Project): FileInfo? {
   }
 
   val task = getContainingTask(project) ?: return null
+  if (shouldIgnore(this, project, task)) return null
 
   val taskRelativePath = pathRelativeToTask(project)
 
@@ -31,11 +32,12 @@ fun VirtualFile.fileInfo(project: Project): FileInfo? {
   return FileInfo.FileInTask(task, taskRelativePath)
 }
 
-private fun shouldIgnore(file: VirtualFile, project: Project): Boolean {
+private fun shouldIgnore(file: VirtualFile, project: Project, task: Task): Boolean {
   val courseDir = project.courseDir
   if (!FileUtil.isAncestor(courseDir.path, file.path, true)) return true
   val course = StudyTaskManager.getInstance(project).course ?: return true
   if (course.configurator?.excludeFromArchive(project, file) == true) return true
+  if (!task.shouldHavePhysicalFile(file.path)) return true
   return false
 }
 

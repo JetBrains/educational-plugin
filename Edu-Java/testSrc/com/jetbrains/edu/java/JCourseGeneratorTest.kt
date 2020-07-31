@@ -2,7 +2,10 @@ package com.jetbrains.edu.java
 
 import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.CourseGenerationTestBase
+import com.jetbrains.edu.learning.CourseMode
+import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.newCourse
 
 class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
@@ -16,17 +19,11 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("src") {
             file("Task.java")
           }
-          dir("test") {
-            file("Tests.java")
-          }
           file("task.html")
         }
         dir("task2") {
           dir("src") {
             file("Task.java")
-          }
-          dir("test") {
-            file("Tests.java")
           }
           file("task.html")
         }
@@ -35,9 +32,6 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("task1") {
           dir("src") {
             file("Task.java")
-          }
-          dir("test") {
-            file("Tests.java")
           }
           file("task.html")
         }

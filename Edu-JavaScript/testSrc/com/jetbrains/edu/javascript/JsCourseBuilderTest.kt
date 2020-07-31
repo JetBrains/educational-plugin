@@ -53,9 +53,6 @@ class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
     fileTree {
       dir("lesson1/task1") {
         file("task.js")
-        dir("test") {
-          file("test.js")
-        }
         file("task.html")
       }
       file("package.json")

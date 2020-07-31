@@ -21,10 +21,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.checker.CheckListener;
 import com.jetbrains.edu.learning.checker.CheckResult;
@@ -37,9 +39,14 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
@@ -51,9 +58,13 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CheckAction extends DumbAwareAction {
   public static final String ACTION_ID = "Educational.Check";
   private static final Logger LOG = Logger.getInstance(CheckAction.class);
@@ -182,7 +193,7 @@ public class CheckAction extends DumbAwareAction {
   private class StudyCheckTask extends com.intellij.openapi.progress.Task.Backgroundable {
     private final Project myProject;
     private final Task myTask;
-    @Nullable private final TaskChecker myChecker;
+    @Nullable private final TaskChecker<?> myChecker;
     private CheckResult myResult;
     private static final String TEST_RESULTS_DISPLAY_ID = "Test Results: Run";
 
@@ -208,7 +219,7 @@ public class CheckAction extends DumbAwareAction {
       TaskDescriptionView.getInstance(myProject).checkStarted(myTask);
       long start = System.currentTimeMillis();
       NotificationSettings notificationSettings = turnOffTestRunnerNotifications();
-      CheckResult localCheckResult = myChecker == null ? CheckResult.NO_LOCAL_CHECK : myChecker.check(indicator);
+      CheckResult localCheckResult = localCheck(indicator);
       ApplicationManager.getApplication()
         .invokeLater(() -> NotificationsConfigurationImpl.getInstanceImpl().changeSettings(notificationSettings));
       long end = System.currentTimeMillis();
@@ -219,6 +230,62 @@ public class CheckAction extends DumbAwareAction {
       }
       RemoteTaskChecker remoteChecker = RemoteTaskCheckerManager.remoteCheckerForTask(myProject, myTask);
       myResult = remoteChecker == null ? localCheckResult : remoteChecker.check(myProject, myTask, indicator);
+    }
+
+    @NotNull
+    private CheckResult localCheck(@NotNull ProgressIndicator indicator) {
+      if (myChecker == null) return CheckResult.NO_LOCAL_CHECK;
+      VirtualFile taskDir = myTask.getDir(OpenApiExtKt.getCourseDir(myProject));
+      if (taskDir == null) return CheckResult.NO_LOCAL_CHECK;
+      List<TaskFile> testFiles = getTestFiles();
+      createTests(taskDir, testFiles);
+      try {
+        return myChecker.check(indicator);
+      }
+      finally {
+        if (TaskExt.shouldGenerateTestsOnTheFly(myTask)) {
+          deleteTests(taskDir, testFiles);
+        }
+      }
+    }
+
+    private void deleteTests(@NotNull VirtualFile taskDir, List<TaskFile> testFiles) {
+      List<VirtualFile> testDirs = TaskExt.findTestDirs(myTask, myProject);
+      ApplicationManager.getApplication().invokeAndWait(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+        for (VirtualFile dir : testDirs) {
+          EduUtils.deleteFile(dir);
+        }
+        for (TaskFile file : testFiles) {
+          VirtualFile testFile = VfsUtil.findRelativeFile(taskDir, file.getName());
+          EduUtils.deleteFile(testFile);
+        }
+      }));
+    }
+
+    private void createTests(@NotNull VirtualFile taskDir, List<TaskFile> testFiles) {
+      boolean refreshNeeded = false;
+      for (TaskFile file : testFiles) {
+        try {
+          if (taskDir.findFileByRelativePath(file.getName()) == null) {
+            GeneratorUtils.createChildFile(taskDir, file.getName(), file.getText());
+            refreshNeeded = true;
+          }
+        }
+        catch (IOException e) {
+          LOG.warn("Failed to create tests" + e.getMessage());
+        }
+      }
+      if (refreshNeeded) {
+        ApplicationManager.getApplication().invokeAndWait(
+            () -> VfsUtil.markDirtyAndRefresh(false, true, true, taskDir));
+      }
+    }
+
+    @NotNull
+    private List<TaskFile> getTestFiles() {
+      return myTask.getTaskFiles().values().stream()
+          .filter(it -> EduUtils.isTestsFile(myTask, it.getName()) && (myTask instanceof EduTask || myTask instanceof OutputTask))
+          .collect(Collectors.toList());
     }
 
     private void showFakeProgress(ProgressIndicator indicator) {

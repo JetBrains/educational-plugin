@@ -422,6 +422,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   private fun Task.toTaskUpdate(changeTask: Task.() -> Unit): HyperskillCourseUpdater.TaskUpdate {
     val remoteTask = this.copy()
     remoteTask.changeTask()
+    remoteTask.init(this.course, this.parent, false)
     return HyperskillCourseUpdater.TaskUpdate(this, remoteTask)
   }
 

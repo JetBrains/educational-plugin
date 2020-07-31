@@ -18,17 +18,11 @@ class ScalaGradleCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings
           dir("src") {
             file("Task.scala")
           }
-          dir("test") {
-            file("Test.scala")
-          }
           file("task.html")
         }
         dir("my task 2") {
           dir("src") {
             file("Task.scala")
-          }
-          dir("test") {
-            file("Test.scala")
           }
           file("task.html")
         }

@@ -1,7 +1,10 @@
 package com.jetbrains.edu.kotlin
 
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.CourseGenerationTestBase
+import com.jetbrains.edu.learning.CourseMode
+import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.newCourse
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
@@ -16,18 +19,12 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("src") {
             file("Task.kt")
           }
-          dir("test") {
-            file("tests.kt")
-          }
           file("task.html")
         }
         dir("Java to Kotlin conversion") {
           dir("src") {
             file("JavaCode.java")
             file("Task.kt")
-          }
-          dir("test") {
-            file("tests.kt")
           }
           file("task.html")
         }
@@ -36,9 +33,6 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("Comparison") {
           dir("src") {
             file("Task.kt")
-          }
-          dir("test") {
-            file("tests.kt")
           }
           file("task.html")
         }

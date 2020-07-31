@@ -11,15 +11,14 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.isTestsFile
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -158,4 +157,13 @@ fun Task.revertTaskParameters(project: Project) {
   else if (this is ChoiceTask) {
     this.clearSelectedVariants()
   }
+}
+
+fun Task.shouldHavePhysicalFile(path: String): Boolean {
+  return !(shouldGenerateTestsOnTheFly() && EduUtils.isTestsFile(this, path))
+}
+
+fun Task.shouldGenerateTestsOnTheFly(): Boolean {
+  return isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE) && course.isStudy && course is EduCourse &&
+         (this is EduTask || this is OutputTask)
 }
