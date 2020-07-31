@@ -46,8 +46,10 @@ class CodeforcesTaskChecker(
 
       val input = runReadAction { inputDocument.text }
 
-      val possibleError = envChecker.checkEnvironment(project, task)
-      if (possibleError != null) return CheckResult(CheckStatus.Unchecked, possibleError)
+      val possibleError = envChecker.getEnvironmentError(project, task)
+      if (possibleError != null) {
+        return possibleError
+      }
 
       val result = withRegistryKeyOff(RUN_WITH_PTY) {
         codeExecutor.execute(project, task, indicator, input)

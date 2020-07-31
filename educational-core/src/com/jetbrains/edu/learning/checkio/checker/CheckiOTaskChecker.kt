@@ -34,9 +34,9 @@ class CheckiOTaskChecker(
 
   override fun check(indicator: ProgressIndicator): CheckResult {
     return try {
-      val possibleError = envChecker.checkEnvironment(project, task)
+      val possibleError = envChecker.getEnvironmentError(project, task)
       if (possibleError != null) {
-        return CheckResult(CheckStatus.Unchecked, possibleError)
+        return possibleError
       }
 
       // workaround for JBR-2259
