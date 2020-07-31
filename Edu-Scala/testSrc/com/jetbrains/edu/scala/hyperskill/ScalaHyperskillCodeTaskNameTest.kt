@@ -1,5 +1,12 @@
 package com.jetbrains.edu.scala.hyperskill
 
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.testFramework.IdeaTestUtil
+import com.intellij.testFramework.LightProjectDescriptor
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -7,6 +14,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.jetbrains.plugins.scala.ScalaLanguage
+import java.io.File
 
 class ScalaHyperskillCodeTaskNameTest : EduTestCase() {
   fun `test find taskFile for uploading`() {
@@ -52,5 +60,19 @@ class ScalaHyperskillCodeTaskNameTest : EduTestCase() {
       """.trimIndent())
 
     assertEquals("CoolTaskName.scala", fileName)
+  }
+
+  // scala tests still do not work. Decided to return to them later
+  override fun getProjectDescriptor(): LightProjectDescriptor {
+    // tried to move this code to setUp or at least init - does not work, I have NPE while calc jdkHomeDir
+    return object : LightProjectDescriptor() {
+      override fun getSdk(): Sdk? {
+        val myJdkHome = IdeaTestUtil.requireRealJdkHome()
+        VfsRootAccess.allowRootAccess(testRootDisposable, myJdkHome)
+        val jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(myJdkHome))!!
+        return SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null,
+                                             "Test JDK")
+      }
+    }
   }
 }

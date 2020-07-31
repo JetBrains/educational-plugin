@@ -1,12 +1,21 @@
 package com.jetbrains.edu.java.hyperskill
 
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.testFramework.IdeaTestUtil
+import com.intellij.testFramework.LightProjectDescriptor
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import java.io.File
 
 class JHyperskillCodeTaskNameTest : EduTestCase() {
   fun `test find taskFile for uploading`() {
@@ -35,7 +44,8 @@ class JHyperskillCodeTaskNameTest : EduTestCase() {
     course.stages = listOf(HyperskillStage(1, "", 1))
 
     val task = findTask(0, 0)
-    val codeTaskFile = course.configurator?.getCodeTaskFile(project, task)
+    val configurator = course.configurator as HyperskillConfigurator
+    val codeTaskFile = configurator.getCodeTaskFile(project, task)
 
     assertEquals("src/CoolTaskName.java", codeTaskFile!!.name)
   }
@@ -57,5 +67,18 @@ class JHyperskillCodeTaskNameTest : EduTestCase() {
       """.trimIndent())
 
     assertEquals("CoolTaskName.java", fileName)
+  }
+
+  override fun getProjectDescriptor(): LightProjectDescriptor {
+    // tried to move this code to setUp or at least init - does not work, I have NPE while calc jdkHomeDir
+    return object : LightProjectDescriptor() {
+      override fun getSdk(): Sdk? {
+        val myJdkHome = IdeaTestUtil.requireRealJdkHome()
+        VfsRootAccess.allowRootAccess(testRootDisposable, myJdkHome)
+        val jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(myJdkHome))!!
+        return SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null,
+                                             "Test JDK")
+      }
+    }
   }
 }

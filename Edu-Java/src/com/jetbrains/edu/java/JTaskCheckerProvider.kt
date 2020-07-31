@@ -14,7 +14,6 @@ open class JTaskCheckerProvider : GradleTaskCheckerProvider() {
   override fun mainClassForFile(project: Project, file: VirtualFile): String? {
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
     val mainClass = PsiTreeUtil.findChildrenOfType(psiFile, PsiClass::class.java).find { psiClass ->
-      // second part returns false even if we have main method :-(
       PsiMethodUtil.MAIN_CLASS.value(psiClass) && PsiMethodUtil.hasMainMethod(psiClass)
     } ?: return null
 

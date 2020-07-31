@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
@@ -113,7 +114,8 @@ object HyperskillCheckConnector {
       return Err("""Unknown language "$languageDisplayName". Check if support for "$languageDisplayName" is enabled.""")
     }
 
-    val codeTaskText = course.configurator?.getCodeTaskFile(project, task)?.getText(project)
+    val configurator = course.configurator as? HyperskillConfigurator
+    val codeTaskText = configurator?.getCodeTaskFile(project, task)?.getText(project)
     if (codeTaskText == null) {
       LOG.error("Unable to create submission: file with code is not found for the task ${task.name}")
       return Err(EduCoreErrorBundle.message("error.failed.to.post.solution", EduNames.JBA))

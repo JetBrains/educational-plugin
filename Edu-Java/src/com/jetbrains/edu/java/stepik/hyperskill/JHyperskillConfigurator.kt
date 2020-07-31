@@ -6,17 +6,17 @@ import com.jetbrains.edu.java.JCourseBuilder
 import com.jetbrains.edu.java.JLanguageSettings
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.jvm.gradle.GradleHyperskillConfigurator
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseBuilder
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseProjectGenerator
 
-class JHyperskillConfigurator : HyperskillConfigurator<JdkProjectSettings>(JConfigurator()) {
+class JHyperskillConfigurator : GradleHyperskillConfigurator<JdkProjectSettings>(JConfigurator()) {
   override val courseBuilder: EduCourseBuilder<JdkProjectSettings>
     get() = JHyperskillCourseBuilder(JCourseBuilder())
 

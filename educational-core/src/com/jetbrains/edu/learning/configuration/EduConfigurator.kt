@@ -13,10 +13,8 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isConfigFile
 import org.jetbrains.annotations.SystemIndependent
@@ -123,16 +121,6 @@ interface EduConfigurator<Settings> {
    */
   val isCourseCreatorEnabled: Boolean
     get() = true
-
-  fun getCodeTaskFile(project: Project, task: Task): TaskFile? {
-    val files = task.taskFiles.values
-    if (files.size == 1) return files.firstOrNull()
-    val name = GeneratorUtils.joinPaths(sourceDir, getMockFileName(mockTemplate))
-    if (name in task.taskFiles) {
-      return task.taskFiles[name]
-    }
-    return files.firstOrNull { !it.isLearnerCreated } ?: files.firstOrNull()
-  }
 
   /**
    * Constructs file name for Stepik tasks according to its text.

@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.successMessage
 
-class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvider) : TaskCheckerProvider {
+class HyperskillTaskCheckerProvider(val baseProvider: TaskCheckerProvider) : TaskCheckerProvider {
   override val envChecker: EnvironmentChecker
     get() = baseProvider.envChecker
 

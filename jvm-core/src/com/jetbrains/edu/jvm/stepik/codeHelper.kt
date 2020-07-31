@@ -10,7 +10,6 @@ import com.intellij.psi.*
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import org.jetbrains.annotations.NotNull
 
 private const val MAIN_NAME = "Main"
 
@@ -25,7 +24,7 @@ fun fileName(language: Language, fileText: String): String {
       val classes = file.classes
       for (aClass in classes) {
         val className = aClass.nameIdentifier?.text ?: aClass.name
-        if ((isPublic(aClass) || fileName == className) && className != null) {
+        if ((aClass.isPublic || fileName == className) && className != null) {
           fileName = className
           break
         }
@@ -41,7 +40,7 @@ fun findCodeTaskFile(project: Project, task: Task, mainClassForFile: (Project, V
     val virtualFile = file.getVirtualFile(project) ?: continue
     val psiFile = PsiManager.getInstance(project).findFile(virtualFile) as? PsiClassOwner ?: continue
     for (aClass in psiFile.classes) {
-      if (isPublic(aClass) && mainClassForFile(project, virtualFile) != null) {
+      if (aClass.isPublic && mainClassForFile(project, virtualFile) != null) {
         return file
       }
     }
@@ -49,4 +48,5 @@ fun findCodeTaskFile(project: Project, task: Task, mainClassForFile: (Project, V
   return null
 }
 
-private fun isPublic(aClass: @NotNull PsiClass) = aClass.hasModifierProperty(PsiModifier.PUBLIC)
+private val PsiClass.isPublic: Boolean
+  get() = hasModifierProperty(PsiModifier.PUBLIC)
