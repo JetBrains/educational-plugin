@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 class JsEnvironmentChecker : EnvironmentChecker() {
   override fun checkEnvironment(project: Project, task: Task): String? {
     return if (NodeJsInterpreterManager.getInstance(project).interpreter == null)
-      EduCoreErrorBundle.message("no.interpreter", "Node.js")
+      EduCoreErrorBundle.message("no.interpreter", NodeJS)
     else null
   }
 }
