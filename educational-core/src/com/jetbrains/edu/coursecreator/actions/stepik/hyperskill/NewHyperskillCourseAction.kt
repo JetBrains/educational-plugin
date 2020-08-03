@@ -13,14 +13,14 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 
 @Suppress("ComponentNotRegistered") // Hyperskill.xml
 class NewHyperskillCourseAction : DumbAwareAction(
-  EduCoreActionBundle.lazyMessage("create.course", HYPERSKILL),
-  EduCoreActionBundle.lazyMessage("create.course.description", HYPERSKILL),
+  EduCoreActionBundle.lazyMessage("action.create.course.text", HYPERSKILL),
+  EduCoreActionBundle.lazyMessage("action.create.course.description", HYPERSKILL),
   null
 ) {
 
   override fun actionPerformed(e: AnActionEvent) {
     CCNewCourseDialog(
-      EduCoreActionBundle.message("create.course", HYPERSKILL),
+      EduCoreActionBundle.message("action.create.course.text", HYPERSKILL),
       EduCoreBundle.message("label.create"),
       courseProducer = ::HyperskillCourse
     ).show()

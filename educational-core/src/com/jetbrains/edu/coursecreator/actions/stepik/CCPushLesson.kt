@@ -95,9 +95,9 @@ class CCPushLesson : DumbAwareAction(
       return
     }
 
-    ProgressManager.getInstance().run(object : Modal(project, EduCoreActionBundle.message("push.lesson.uploading"), true) {
+    ProgressManager.getInstance().run(object : Modal(project, EduCoreActionBundle.message("action.push.lesson.uploading"), true) {
       override fun run(indicator: ProgressIndicator) {
-        indicator.text = EduCoreActionBundle.message("push.lesson.uploading.to", StepikNames.STEPIK_URL)
+        indicator.text = EduCoreActionBundle.message("action.push.lesson.uploading.to", StepikNames.STEPIK_URL)
         doPush(lesson, project, course)
         YamlFormatSynchronizer.saveRemoteInfo(lesson)
       }
@@ -154,7 +154,7 @@ class CCPushLesson : DumbAwareAction(
         if (success) {
           EduUtils.showNotification(
             project,
-            EduCoreActionBundle.message("push.lesson.updated", lesson.name),
+            EduCoreActionBundle.message("action.push.lesson.updated", lesson.name),
             CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id)
           )
         }
@@ -166,7 +166,7 @@ class CCPushLesson : DumbAwareAction(
         if (success) {
           EduUtils.showNotification(
             project,
-            EduCoreActionBundle.message("push.lesson.uploaded", lesson.name),
+            EduCoreActionBundle.message("action.push.lesson.uploaded", lesson.name),
             CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id)
           )
         }

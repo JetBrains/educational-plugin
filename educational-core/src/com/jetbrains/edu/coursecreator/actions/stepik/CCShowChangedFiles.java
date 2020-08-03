@@ -32,27 +32,27 @@ public class CCShowChangedFiles extends DumbAwareAction {
 
   @Nls
   private static String getStatusInfoChanged() {
-    return EduCoreActionBundle.message("show.changed.files.status.info.changed");
+    return EduCoreActionBundle.message("action.show.changed.files.status.info.changed");
   }
 
   @Nls
   private static String getStatusAdditionalInfoChanged() {
-    return EduCoreActionBundle.message("show.changed.files.status.additional.info.changed");
+    return EduCoreActionBundle.message("action.show.changed.files.status.additional.info.changed");
   }
 
   @Nls
   private static String getStatusRemoved() {
-    return EduCoreActionBundle.message("show.changed.files.status.removed");
+    return EduCoreActionBundle.message("action.show.changed.files.status.removed");
   }
 
   @Nls
   private static String getStatusNew() {
-    return EduCoreActionBundle.message("show.changed.files.status.new");
+    return EduCoreActionBundle.message("action.show.changed.files.status.new");
   }
 
   public CCShowChangedFiles() {
-    super(EduCoreActionBundle.lazyMessage("show.changed.files", StepikNames.STEPIK),
-          EduCoreActionBundle.lazyMessage("show.changed.files.description", StepikNames.STEPIK),
+    super(EduCoreActionBundle.lazyMessage("action.show.changed.files", StepikNames.STEPIK),
+          EduCoreActionBundle.lazyMessage("action.show.changed.files.description", StepikNames.STEPIK),
           null);
   }
 
@@ -68,7 +68,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
       return;
     }
 
-    ProgressManager.getInstance().run(new Modal(project, EduCoreActionBundle.message("show.changed.files.computing.changes"), false) {
+    ProgressManager.getInstance().run(new Modal(project, EduCoreActionBundle.message("action.show.changed.files.computing.changes"), false) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         EduCourse remoteCourse = StepikConnector.getInstance().getCourseInfo(course.getId());
@@ -80,7 +80,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
 
         String message = buildChangeMessage((EduCourse)course, remoteCourse, project);
         ApplicationManager.getApplication().invokeLater(
-          () -> Messages.showInfoMessage(message, EduCoreActionBundle.message("show.changed.files.comparing.to",
+          () -> Messages.showInfoMessage(message, EduCoreActionBundle.message("action.show.changed.files.comparing.to",
                                                                               StepikNames.STEPIK, course.getName())));
       }
     });
@@ -132,13 +132,13 @@ public class CCShowChangedFiles extends DumbAwareAction {
 
     String message = builder.toString();
     if (message.isEmpty()) {
-      return EduCoreActionBundle.message("show.changed.files.no.changes");
+      return EduCoreActionBundle.message("action.show.changed.files.no.changes");
     }
     return message;
   }
 
   private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder) {
-    appendChangeLine(item, stringBuilder, EduCoreActionBundle.message("show.changed.files.status.changed"));
+    appendChangeLine(item, stringBuilder, EduCoreActionBundle.message("action.show.changed.files.status.changed"));
   }
 
   private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder, @NotNull @Nls String status) {

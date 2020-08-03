@@ -34,8 +34,8 @@ import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered") // Hyperskill.xml
 class GetHyperskillLesson : DumbAwareAction(
-  EduCoreActionBundle.lazyMessage("get.lesson", HYPERSKILL, StepikNames.STEPIK),
-  EduCoreActionBundle.lazyMessage("get.lesson.description", HYPERSKILL, StepikNames.STEPIK),
+  EduCoreActionBundle.lazyMessage("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),
+  EduCoreActionBundle.lazyMessage("action.get.lesson.description", HYPERSKILL, StepikNames.STEPIK),
   EducationalCoreIcons.JB_ACADEMY_ENABLED
 ) {
 
@@ -47,14 +47,14 @@ class GetHyperskillLesson : DumbAwareAction(
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
     val lessonId = Messages.showInputDialog(
-      EduCoreActionBundle.message("get.lesson.enter.lesson.id"),
-      EduCoreActionBundle.message("get.lesson", HYPERSKILL, StepikNames.STEPIK),
+      EduCoreActionBundle.message("action.get.lesson.enter.lesson.id"),
+      EduCoreActionBundle.message("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),
       EducationalCoreIcons.JB_ACADEMY_ENABLED
     )
     if (lessonId != null && lessonId.isNotEmpty()) {
       ProgressManager.getInstance().run(object : Task.Modal(
         project,
-        EduCoreActionBundle.message("get.course.loading"),
+        EduCoreActionBundle.message("action.get.course.loading"),
         true
       ) {
         override fun run(indicator: ProgressIndicator) {
@@ -70,7 +70,7 @@ class GetHyperskillLesson : DumbAwareAction(
           }
           runInEdt {
             CCNewCourseDialog(
-              EduCoreActionBundle.message("get.lesson", HYPERSKILL, StepikNames.STEPIK),
+              EduCoreActionBundle.message("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),
               EduCoreBundle.message("label.create"),
               course
             ).show()

@@ -78,9 +78,9 @@ class CCPushSection : DumbAwareAction(
   companion object {
     @JvmStatic
     fun doPush(project: Project, section: Section, course: EduCourse) {
-      ProgressManager.getInstance().run(object : Task.Modal(project, EduCoreActionBundle.message("push.section.uploading"), true) {
+      ProgressManager.getInstance().run(object : Task.Modal(project, EduCoreActionBundle.message("action.push.section.uploading"), true) {
         override fun run(indicator: ProgressIndicator) {
-          indicator.text = EduCoreActionBundle.message("push.section.uploading.to", StepikNames.STEPIK_URL)
+          indicator.text = EduCoreActionBundle.message("action.push.section.uploading.to", StepikNames.STEPIK_URL)
           if (section.id > 0) {
             updateSection(section, course, project)
           }
@@ -92,7 +92,7 @@ class CCPushSection : DumbAwareAction(
             if (success) {
               EduUtils.showNotification(
                 project,
-                EduCoreActionBundle.message("push.section.uploaded", section.name),
+                EduCoreActionBundle.message("action.push.section.uploaded", section.name),
                 CCStepikConnector.openOnStepikAction("/course/${course.id}")
               )
             }
@@ -117,7 +117,7 @@ class CCPushSection : DumbAwareAction(
       if (updated) {
         EduUtils.showNotification(
           project,
-          EduCoreActionBundle.message("push.section.updated", section.name),
+          EduCoreActionBundle.message("action.push.section.updated", section.name),
           CCStepikConnector.openOnStepikAction("/course/${course.id}")
         )
       }

@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
 
 class NextTaskAction : TaskNavigationAction(
-  EduCoreActionBundle.message("navigation.next"),
-  EduCoreActionBundle.message("navigation.next.description"),
+  EduCoreActionBundle.message("action.navigation.next.text"),
+  EduCoreActionBundle.message("action.navigation.next.description"),
   AllIcons.Actions.Forward
 ) {
 
@@ -21,7 +21,7 @@ class NextTaskAction : TaskNavigationAction(
       //no project in event in this case, so just enable it
       return
     }
-    e.presentation.text = EduCoreActionBundle.message("navigation.next")
+    e.presentation.text = EduCoreActionBundle.message("action.navigation.next.text")
     super.update(e)
   }
 

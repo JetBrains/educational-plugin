@@ -124,25 +124,25 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     get() = listOf(
       StudyItemVariant(
         EduCoreStudyItemBundle.message("item.task.edu.title"),
-        EduCoreActionBundle.message("new.study.item.task.edu.description"),
+        EduCoreActionBundle.message("action.new.study.item.task.edu.description"),
         Task,
         ::EduTask
       ),
       StudyItemVariant(
         EduCoreStudyItemBundle.message("item.task.output.title"),
-        EduCoreActionBundle.message("new.study.item.task.output.description"),
+        EduCoreActionBundle.message("action.new.study.item.task.output.description"),
         Task,
         ::OutputTask
       ),
       StudyItemVariant(
         EduCoreStudyItemBundle.message("item.task.theory.title"),
-        EduCoreActionBundle.message("new.study.item.task.theory.description"),
+        EduCoreActionBundle.message("action.new.study.item.task.theory.description"),
         Task,
         ::TheoryTask
       ),
       StudyItemVariant(
         EduCoreStudyItemBundle.message("item.task.choice.title"),
-        EduCoreActionBundle.message("new.study.item.task.choice.description"),
+        EduCoreActionBundle.message("action.new.study.item.task.choice.description"),
         Task
       ) {
         val task = ChoiceTask()
@@ -154,7 +154,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
       },
       StudyItemVariant(
         EduCoreStudyItemBundle.message("item.task.ide"),
-        EduCoreActionBundle.message("new.study.item.task.ide.description"),
+        EduCoreActionBundle.message("action.new.study.item.task.ide.description"),
         IdeTask,
         ::IdeTask
       )

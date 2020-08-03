@@ -29,7 +29,8 @@ public class CCWrapWithSection extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCWrapWithSection.class);
 
   public CCWrapWithSection() {
-    super(EduCoreActionBundle.lazyMessage("wrap.with.section"), EduCoreActionBundle.lazyMessage("wrap.with.section.description"), null);
+    super(EduCoreActionBundle.lazyMessage("action.wrap.with.section.text"), EduCoreActionBundle.lazyMessage(
+      "action.wrap.with.section.description"), null);
   }
 
   @Override
@@ -67,7 +68,7 @@ public class CCWrapWithSection extends DumbAwareAction {
     }
     int sectionIndex = course.getSections().size() + 1;
     InputValidator validator = new CCStudyItemPathInputValidator(project, course, SECTION_TYPE, OpenApiExtKt.getCourseDir(project));
-    String sectionName = Messages.showInputDialog(EduCoreActionBundle.message("wrap.with.section.enter.name"),
+    String sectionName = Messages.showInputDialog(EduCoreActionBundle.message("action.wrap.with.section.enter.name"),
                                                   getPresentableTitleName(SECTION_TYPE), null, EduNames.SECTION + sectionIndex, validator);
     if (sectionName == null) {
       return;

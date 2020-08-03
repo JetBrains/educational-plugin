@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
   public CCDeleteAnswerPlaceholder() {
     // BACKCOMPAT: 2019.3 Use lazyMessage call instead
-    super(() -> EduCoreBundle.message("label.delete"), () -> EduCoreActionBundle.message("delete.answer.placeholder.description"));
+    super(() -> EduCoreBundle.message("label.delete"), () -> EduCoreActionBundle.message("action.delete.answer.placeholder.description"));
   }
 
   @Override
@@ -25,7 +25,7 @@ public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
     Project project = state.getProject();
     TaskFile taskFile = state.getTaskFile();
     AnswerPlaceholder answerPlaceholder = state.getAnswerPlaceholder();
-    EduUtils.runUndoableAction(project, EduCoreActionBundle.message("delete.answer.placeholder"),
+    EduUtils.runUndoableAction(project, EduCoreActionBundle.message("action.delete.answer.placeholder.text"),
                                new CCAddAnswerPlaceholder.AddAction(project, answerPlaceholder, taskFile, state.getEditor()) {
                                  @Override
                                  public void undo() {

@@ -43,8 +43,8 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
   private static final Logger LOG = Logger.getInstance(RevertTaskAction.class.getName());
 
   public RevertTaskAction() {
-    super(EduCoreActionBundle.message("reset.request"),
-          EduCoreActionBundle.message("reset.to.initial.state"),
+    super(EduCoreActionBundle.message("action.reset.request"),
+          EduCoreActionBundle.message("action.reset.to.initial.state"),
           EducationalCoreIcons.ResetTask);
   }
 
@@ -58,7 +58,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
     validateEditors(project);
     Notification notification = new Notification("reset.task", EmptyIcon.ICON_16, "", "",
-                                                 EduCoreActionBundle.message("reset.result"), NotificationType.INFORMATION, null);
+                                                 EduCoreActionBundle.message("action.reset.result"), NotificationType.INFORMATION, null);
     notification.notify(project);
     ProjectView.getInstance(project).refresh();
     TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
@@ -117,8 +117,8 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     final Project project = event.getProject();
     if (project == null) return;
 
-    int result = showOkCancelDialog(project, EduCoreActionBundle.message("reset.progress.dropped"),
-                                    EduCoreActionBundle.message("reset.request"), OK_BUTTON, CANCEL_BUTTON, getQuestionIcon());
+    int result = showOkCancelDialog(project, EduCoreActionBundle.message("action.reset.progress.dropped"),
+                                    EduCoreActionBundle.message("action.reset.request"), OK_BUTTON, CANCEL_BUTTON, getQuestionIcon());
     if (result != OK) return;
     revert(project);
     EduCounterUsageCollector.revertTask();

@@ -18,19 +18,19 @@ import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 
 @Suppress("ComponentNotRegistered") // registered in educational-core.xml
 class CCGetCourseFromStepik : DumbAwareAction(
-  EduCoreActionBundle.lazyMessage("get.course", StepikNames.STEPIK),
-  EduCoreActionBundle.lazyMessage("get.course.description", StepikNames.STEPIK),
+  EduCoreActionBundle.lazyMessage("action.get.course.text", StepikNames.STEPIK),
+  EduCoreActionBundle.lazyMessage("action.get.course.description", StepikNames.STEPIK),
   null) {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
     val courseId = Messages.showInputDialog(
-      EduCoreActionBundle.message("get.course.enter.course.id"),
-      EduCoreActionBundle.message("get.course", StepikNames.STEPIK),
+      EduCoreActionBundle.message("action.get.course.enter.course.id"),
+      EduCoreActionBundle.message("action.get.course.text", StepikNames.STEPIK),
       null
     )
     if (!courseId.isNullOrEmpty()) {
-      ProgressManager.getInstance().run(object : Task.Modal(project, EduCoreActionBundle.message("get.course.loading"), true) {
+      ProgressManager.getInstance().run(object : Task.Modal(project, EduCoreActionBundle.message("action.get.course.loading"), true) {
         override fun run(indicator: ProgressIndicator) {
           createCourse(courseId)
         }
@@ -48,7 +48,7 @@ class CCGetCourseFromStepik : DumbAwareAction(
     StepikCourseLoader.loadCourseStructure(info)
     runInEdt {
       CCNewCourseDialog(
-        EduCoreActionBundle.message("get.course", StepikNames.STEPIK),
+        EduCoreActionBundle.message("action.get.course.text", StepikNames.STEPIK),
         EduCoreBundle.message("label.create"),
         info
       ).show()

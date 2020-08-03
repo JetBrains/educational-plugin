@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.messages.EduCoreErrorBundle;
-import com.jetbrains.edu.learning.messages.UtilsKt;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
@@ -100,10 +99,10 @@ public class CCPushTask extends DumbAwareAction {
     final Task task = lesson.getTask(taskDir.getName());
     if (task == null) return;
 
-    ProgressManager.getInstance().run(new Modal(project, EduCoreActionBundle.message("push.task.uploading"), true) {
+    ProgressManager.getInstance().run(new Modal(project, EduCoreActionBundle.message("action.push.task.uploading"), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText(EduCoreActionBundle.message("push.task.uploading.to", StepikNames.STEPIK_URL));
+        indicator.setText(EduCoreActionBundle.message("action.push.task.uploading.to", StepikNames.STEPIK_URL));
         if (task.getId() <= 0) {
           postNewTask(project, task, lesson);
         }
@@ -131,7 +130,7 @@ public class CCPushTask extends DumbAwareAction {
     if (isPosted) {
       task.setId(taskCopy.getId());
       task.setUpdateDate(taskCopy.getUpdateDate());
-      showNotification(project, EduCoreActionBundle.message("push.task.uploaded", task.getName()),
+      showNotification(project, EduCoreActionBundle.message("action.push.task.uploaded", task.getName()),
                        openOnStepikAction("/lesson/" + lesson.getId() + "/step/" + task.getIndex()));
     }
   }
@@ -149,7 +148,7 @@ public class CCPushTask extends DumbAwareAction {
     taskCopy.setLesson(task.getLesson());
     boolean updated = CCStepikConnector.updateTask(project, taskCopy);
     if (updated) {
-      showNotification(project, EduCoreActionBundle.message("push.task.updated", task.getName()),
+      showNotification(project, EduCoreActionBundle.message("action.push.task.updated", task.getName()),
                        openOnStepikAction("/lesson/" + lesson.getId() + "/step/" + task.getIndex()));
     }
   }

@@ -22,8 +22,8 @@ import icons.EducationalCoreIcons
 
 @Suppress("ComponentNotRegistered")
 class ApplyHyperskillSubmission : DumbAwareAction(
-  EduCoreActionBundle.lazyMessage("apply.submission", HYPERSKILL),
-  EduCoreActionBundle.lazyMessage("apply.submission.description", HYPERSKILL),
+  EduCoreActionBundle.lazyMessage("action.apply.submission.text", HYPERSKILL),
+  EduCoreActionBundle.lazyMessage("action.apply.submission.description", HYPERSKILL),
   EducationalCoreIcons.JB_ACADEMY_ENABLED
 ) {
   override fun actionPerformed(e: AnActionEvent) {
@@ -51,7 +51,7 @@ class ApplyHyperskillSubmission : DumbAwareAction(
     }
 
     val idText = Messages.showInputDialog(project, EduCoreBundle.message("submission.id"),
-                                          EduCoreActionBundle.message("apply.submission", HYPERSKILL),
+                                          EduCoreActionBundle.message("action.apply.submission.text", HYPERSKILL),
                                           null, null, validator) ?: return
 
     val id = Integer.valueOf(idText) // valid int because of validator

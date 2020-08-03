@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
   public CCEditAnswerPlaceholder() {
-    super(() -> EduCoreBundle.message("label.edit"), () -> EduCoreActionBundle.message("edit.answer.placeholder.description"));
+    super(() -> EduCoreBundle.message("label.edit"), () -> EduCoreActionBundle.message("action.edit.answer.placeholder.description"));
   }
 
   @Override

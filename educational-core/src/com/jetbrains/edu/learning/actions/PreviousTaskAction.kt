@@ -6,8 +6,8 @@ import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 
 class PreviousTaskAction : TaskNavigationAction(
-  EduCoreActionBundle.message("navigation.previous"),
-  EduCoreActionBundle.message("navigation.previous.description"),
+  EduCoreActionBundle.message("action.navigation.previous.text"),
+  EduCoreActionBundle.message("action.navigation.previous.description"),
   AllIcons.Actions.Back
 ) {
 

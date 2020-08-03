@@ -7,8 +7,8 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 // BACKCOMPAT: 2019.3 Use lazyMessage call instead
 class CCRemoveDependency : CCAnswerPlaceholderAction(
-  { EduCoreActionBundle.message("remove.dependency") },
-  { EduCoreActionBundle.message("remove.dependency.description") }
+  { EduCoreActionBundle.message("action.remove.dependency.text") },
+  { EduCoreActionBundle.message("action.remove.dependency.description") }
 ) {
   override fun performAnswerPlaceholderAction(state: CCState) {
     val answerPlaceholder = state.answerPlaceholder ?: return

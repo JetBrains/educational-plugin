@@ -56,7 +56,7 @@ abstract class CreateCourseArchiveAction(title: String) : DumbAwareAction(title)
     if (errorMessage == null) {
       invokeLater {
         Messages.showInfoMessage("Course archive was saved to $locationPath",
-                                 EduCoreActionBundle.message("create.course.archive.success.message"))
+                                 EduCoreActionBundle.message("action.create.course.archive.success.message"))
       }
       PropertiesComponent.getInstance(project).setValue(LAST_ARCHIVE_LOCATION, locationPath)
       createCourseArchive()

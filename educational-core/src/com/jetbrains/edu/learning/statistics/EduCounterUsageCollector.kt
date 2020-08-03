@@ -96,7 +96,7 @@ object EduCounterUsageCollector {
   fun previewTaskFile() = reportEvent("preview.task.file")
 
   @JvmStatic
-  fun createCourseArchive() = reportEvent("create.course.archive")
+  fun createCourseArchive() = reportEvent("action.create.course.archive.text")
 
   private enum class PostCourseEvent {
     UPLOAD, UPDATE

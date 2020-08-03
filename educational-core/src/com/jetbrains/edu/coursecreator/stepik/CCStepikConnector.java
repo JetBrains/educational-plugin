@@ -495,7 +495,7 @@ public class CCStepikConnector {
   }
 
   public static AnAction openOnStepikAction(@NotNull @NonNls String url) {
-    return new AnAction(EduCoreActionBundle.message("open.on", StepikNames.STEPIK)) {
+    return new AnAction(EduCoreActionBundle.message("action.open.on.text", StepikNames.STEPIK)) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         BrowserUtil.browse(StepikNames.STEPIK_URL + url);

@@ -19,8 +19,8 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class ExportStepikIds : DumbAwareAction(
-  EduCoreActionBundle.lazyMessage("export.ids", StepikNames.STEPIK),
-  EduCoreActionBundle.lazyMessage("export.ids.description", StepikNames.STEPIK, "json"),
+  EduCoreActionBundle.lazyMessage("action.export.ids.text", StepikNames.STEPIK),
+  EduCoreActionBundle.lazyMessage("action.export.ids.description", StepikNames.STEPIK, "json"),
   null
 ) {
 

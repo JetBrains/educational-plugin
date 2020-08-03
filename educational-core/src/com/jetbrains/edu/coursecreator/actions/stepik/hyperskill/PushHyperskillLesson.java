@@ -102,10 +102,10 @@ public class PushHyperskillLesson extends DumbAwareAction {
     final Lesson lesson = getLesson(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY), project, course);
     if (lesson == null) return;
 
-    ProgressManager.getInstance().run(new Modal(project, EduCoreActionBundle.message("push.custom.lesson.uploading", HYPERSKILL), true) {
+    ProgressManager.getInstance().run(new Modal(project, EduCoreActionBundle.message("action.push.custom.lesson.uploading", HYPERSKILL), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText(EduCoreActionBundle.message("push.custom.lesson.uploading.to", HYPERSKILL, StepikNames.STEPIK_URL));
+        indicator.setText(EduCoreActionBundle.message("action.push.custom.lesson.uploading.to", HYPERSKILL, StepikNames.STEPIK_URL));
         doPush(lesson, project);
         YamlFormatSynchronizer.saveRemoteInfo(lesson);
       }
@@ -132,8 +132,8 @@ public class PushHyperskillLesson extends DumbAwareAction {
   }
 
   public static void doPush(Lesson lesson, Project project) {
-    String notification = lesson.getId() > 0 ? EduCoreActionBundle.message("push.custom.lesson.updated", HYPERSKILL)
-                                             : EduCoreActionBundle.message("push.custom.lesson.uploaded", HYPERSKILL);
+    String notification = lesson.getId() > 0 ? EduCoreActionBundle.message("action.push.custom.lesson.updated", HYPERSKILL)
+                                             : EduCoreActionBundle.message("action.push.custom.lesson.uploaded", HYPERSKILL);
     boolean success = lesson.getId() > 0 ? updateLesson(project, lesson, true, -1)
                                          : postLesson(project, lesson, lesson.getIndex(), -1);
 
