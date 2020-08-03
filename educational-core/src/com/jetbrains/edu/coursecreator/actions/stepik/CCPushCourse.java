@@ -120,16 +120,16 @@ public class CCPushCourse extends DumbAwareAction {
       EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId(), null, true);
       if (courseInfo == null) {
         Notification notification =
-          new Notification("update.course", EduCoreErrorBundle.message("failed.to.update"),
-                           EduCoreErrorBundle.message("failed.to.update.no.course.on.stepik", StepikNames.STEPIK, getUploadTitleText()),
+          new Notification("update.course", EduCoreErrorBundle.message("error.failed.to.update"),
+                           EduCoreErrorBundle.message("error.failed.to.update.no.course.on.stepik", StepikNames.STEPIK, getUploadTitleText()),
                            NotificationType.ERROR, createPostCourseNotificationListener(project, course));
         notification.notify(project);
         return;
       }
       if (courseInfo.getFormatVersion() < EduVersions.JSON_FORMAT_VERSION) {
         Notification notification =
-          new Notification("update.course", EduCoreErrorBundle.message("mismatch.format.version"),
-                           EduCoreErrorBundle.message("mismatch.format.version.invalid.plugin.version",
+          new Notification("update.course", EduCoreErrorBundle.message("error.mismatch.format.version"),
+                           EduCoreErrorBundle.message("error.mismatch.format.version.invalid.plugin.version",
                                                       PluginUtils.pluginVersion(EduNames.PLUGIN_ID), getUpdateTitleText()),
                            NotificationType.WARNING, createUpdateCourseNotificationListener(project, course));
         notification.notify(project);

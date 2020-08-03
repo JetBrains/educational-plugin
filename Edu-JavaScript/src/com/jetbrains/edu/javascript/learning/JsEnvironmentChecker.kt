@@ -10,7 +10,7 @@ class JsEnvironmentChecker : EnvironmentChecker() {
   override fun checkEnvironment(project: Project, task: Task): String? {
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
     return if (interpreter == null || interpreter.validate(project) != null) {
-      EduCoreErrorBundle.message("no.interpreter", NodeJS)
+      EduCoreErrorBundle.message("error.no.interpreter", NodeJS)
     } else {
       null
     }

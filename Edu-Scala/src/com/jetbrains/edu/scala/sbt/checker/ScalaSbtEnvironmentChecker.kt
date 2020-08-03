@@ -11,7 +11,7 @@ import com.jetbrains.edu.scala.sbt.isSbtProject
 class ScalaSbtEnvironmentChecker: EnvironmentChecker() {
   override fun checkEnvironment(project: Project, task: Task): String? {
     if (ProjectRootManager.getInstance(project).projectSdk == null) {
-      return EduCoreErrorBundle.message("no.sdk")
+      return EduCoreErrorBundle.message("error.no.sdk")
     }
     if (!project.isSbtProject) {
       return EduScalaBundle.message("error.no.sbt.project")

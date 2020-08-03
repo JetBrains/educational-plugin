@@ -75,12 +75,12 @@ object TwitterUtils {
           override fun onThrowable(error: Throwable) {
             LOG.warn(error)
             val message = if (error is TwitterException && error.statusCode == HttpStatus.SC_UNAUTHORIZED) {
-              EduCoreErrorBundle.message("failed.to.authorize")
+              EduCoreErrorBundle.message("error.failed.to.authorize")
             }
             else {
-              EduCoreErrorBundle.message("failed.to.update.status")
+              EduCoreErrorBundle.message("error.failed.to.update.status")
             }
-            Messages.showErrorDialog(project, message, EduCoreErrorBundle.message("twitter.failed.to.tweet"))
+            Messages.showErrorDialog(project, message, EduCoreErrorBundle.message("twitter.error.failed.to.tweet"))
           }
         })
       }

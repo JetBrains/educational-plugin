@@ -14,9 +14,9 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 class GradleEnvironmentChecker : EnvironmentChecker() {
   override fun checkEnvironment(project: Project, task: Task): String? {
     val sdk = ProjectRootManager.getInstance(project).projectSdk
-    if (sdk == null) return EduCoreErrorBundle.message("no.sdk")
+    if (sdk == null) return EduCoreErrorBundle.message("error.no.sdk")
 
-    val unableToCreateConfigurationError = EduCoreErrorBundle.message("unable.to.create.configuration")
+    val unableToCreateConfigurationError = EduCoreErrorBundle.message("error.unable.to.create.configuration")
     val taskDir = task.getDir(project.courseDir) ?: return unableToCreateConfigurationError
     val module = ModuleUtil.findModuleForFile(taskDir, project) ?: return unableToCreateConfigurationError
 

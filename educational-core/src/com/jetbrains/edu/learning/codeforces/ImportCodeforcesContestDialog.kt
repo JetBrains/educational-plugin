@@ -63,11 +63,11 @@ class ImportCodeforcesContestDialog(private val showViewAllLabel: Boolean) : Dia
       // TODO also check other places
       Messages.showErrorDialog(
         EduCoreErrorBundle.message(
-          "codeforces.failed.to.load.contests.message",
+          "codeforces.error.failed.to.load.contests.message",
           CodeforcesNames.CODEFORCES_TITLE,
           CodeforcesNames.CODEFORCES_URL
         ),
-        EduCoreErrorBundle.message("codeforces.failed.to.load.contests.title", CodeforcesNames.CODEFORCES_TITLE)
+        EduCoreErrorBundle.message("codeforces.error.failed.to.load.contests.title", CodeforcesNames.CODEFORCES_TITLE)
       )
     }
     else {

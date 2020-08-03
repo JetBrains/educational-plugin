@@ -108,8 +108,8 @@ class CCPushSection : DumbAwareAction(
       if (positionChanged) {
         showErrorNotification(
           project,
-          EduCoreErrorBundle.message("failed.to.update"),
-          EduCoreErrorBundle.message("failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText())
+          EduCoreErrorBundle.message("error.failed.to.update"),
+          EduCoreErrorBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText())
         )
         return
       }

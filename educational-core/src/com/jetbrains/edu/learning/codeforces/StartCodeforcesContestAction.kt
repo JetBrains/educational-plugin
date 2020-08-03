@@ -134,19 +134,19 @@ class StartCodeforcesContestAction(
     val contestUrl = CodeforcesContestConnector.getContestURLFromID(contestId)
     Messages.showErrorDialog(
       EduCoreErrorBundle.message(
-        "codeforces.failed.to.get.contest.information",
+        "codeforces.error.failed.to.get.contest.information",
         CodeforcesNames.CODEFORCES_TITLE,
         error.toLowerCase(),
         contestUrl
       ),
-      EduCoreErrorBundle.message("codeforces.failed.to.load.contest.title", CodeforcesNames.CODEFORCES_TITLE)
+      EduCoreErrorBundle.message("codeforces.error.failed.to.load.contest.title", CodeforcesNames.CODEFORCES_TITLE)
     )
   }
 
   private fun showNoSupportedLanguagesForContestNotification(contestName: String) {
     Messages.showErrorDialog(
-      EduCoreErrorBundle.message("codeforces.no.supported.languages", contestName),
-      EduCoreErrorBundle.message("codeforces.failed.to.load.contest.title", CodeforcesNames.CODEFORCES_TITLE)
+      EduCoreErrorBundle.message("codeforces.error.no.supported.languages", contestName),
+      EduCoreErrorBundle.message("codeforces.error.failed.to.load.contest.title", CodeforcesNames.CODEFORCES_TITLE)
     )
   }
 

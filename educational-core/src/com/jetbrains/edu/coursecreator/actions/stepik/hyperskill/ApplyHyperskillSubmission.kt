@@ -35,7 +35,7 @@ class ApplyHyperskillSubmission : DumbAwareAction(
 
       override fun checkInput(inputString: String?): Boolean {
         errorText = if (!StringUtil.isNotNegativeNumber(inputString))
-          EduCoreErrorBundle.message("submission.invalid.id")
+          EduCoreErrorBundle.message("error.submission.invalid.id")
         else null
 
         return errorText == null
@@ -59,8 +59,8 @@ class ApplyHyperskillSubmission : DumbAwareAction(
     computeUnderProgress(project, EduCoreBundle.message("submission.applying"), false) {
       val submission = StepikConnector.getInstance().getSubmissionById(id).onError {
         runInEdt {
-          Messages.showErrorDialog(EduCoreErrorBundle.message("submission.failed.to.retrieve", id),
-                                   EduCoreErrorBundle.message("submission.not.applied"))
+          Messages.showErrorDialog(EduCoreErrorBundle.message("error.submission.failed.to.retrieve", id),
+                                   EduCoreErrorBundle.message("error.submission.not.applied"))
         }
         return@computeUnderProgress
       }

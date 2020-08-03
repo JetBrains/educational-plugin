@@ -55,8 +55,8 @@ public class CCRemoveSection extends DumbAwareAction {
     final VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
     for (VirtualFile child : sectionChildren) {
       if (courseDir.findChild(child.getName()) != null) {
-        Messages.showInfoMessage(EduCoreErrorBundle.message("failed.to.unwrap.section.message", child.getName()),
-                                 EduCoreErrorBundle.message("failed.to.unwrap.section"));
+        Messages.showInfoMessage(EduCoreErrorBundle.message("error.failed.to.unwrap.section.message", child.getName()),
+                                 EduCoreErrorBundle.message("error.failed.to.unwrap.section"));
         return;
       }
     }

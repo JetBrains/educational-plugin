@@ -62,7 +62,7 @@ abstract class CreateCourseArchiveAction(title: String) : DumbAwareAction(title)
       createCourseArchive()
     }
     else {
-      Messages.showErrorDialog(project, errorMessage, EduCoreErrorBundle.message("failed.to.create.course.archive"))
+      Messages.showErrorDialog(project, errorMessage, EduCoreErrorBundle.message("error.failed.to.create.course.archive"))
     }
   }
 

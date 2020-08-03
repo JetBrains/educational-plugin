@@ -65,9 +65,9 @@ object HyperskillCheckConnector {
   fun getSolutionFiles(task: Task, project: Project): List<SolutionFile> {
     val taskDir = task.getDir(project.courseDir)
     if (taskDir == null) {
-      val error = EduCoreErrorBundle.message("failed.to.find.dir", task.name)
+      val error = EduCoreErrorBundle.message("error.failed.to.find.dir", task.name)
       LOG.error(error)
-      showErrorDetails(project, EduCoreErrorBundle.message("unexpected.error", error))
+      showErrorDetails(project, EduCoreErrorBundle.message("error.unexpected.error", error))
       return emptyList()
     }
 
@@ -86,7 +86,7 @@ object HyperskillCheckConnector {
     }
     if (files.isEmpty()) {
       LOG.warn("No files were collected to post solution")
-      showErrorDetails(project, EduCoreErrorBundle.message("failed.to.collect.files", task.name))
+      showErrorDetails(project, EduCoreErrorBundle.message("error.failed.to.collect.files", task.name))
     }
     return files
   }
@@ -97,9 +97,9 @@ object HyperskillCheckConnector {
   }
 
   private fun String.toCheckResult(): CheckResult {
-    return if (this == EduCoreErrorBundle.message("access.denied")) {
+    return if (this == EduCoreErrorBundle.message("error.access.denied")) {
       CheckResult(CheckStatus.Unchecked,
-                  EduCoreErrorBundle.message("access.denied.with.link"),
+                  EduCoreErrorBundle.message("error.access.denied.with.link"),
                   hyperlinkListener = HyperskillLoginListener
       )
     }
@@ -124,7 +124,7 @@ object HyperskillCheckConnector {
     val codeTaskText = configurator?.getCodeTaskFile(project, task)?.getText(project)
     if (codeTaskText == null) {
       LOG.error("Unable to create submission: file with code is not found for the task ${task.name}")
-      return Err(EduCoreErrorBundle.message("failed.to.post.solution", EduNames.JBA))
+      return Err(EduCoreErrorBundle.message("error.failed.to.post.solution", EduNames.JBA))
     }
     val codeSubmission = StepikCheckerConnector.createCodeSubmission(attempt.id, defaultLanguage, codeTaskText)
     return connector.postSubmission(codeSubmission)
@@ -181,7 +181,7 @@ object HyperskillCheckConnector {
       return lastSubmission.toCheckResult(task)
     }
 
-    return CheckResult(CheckStatus.Unchecked, EduCoreErrorBundle.message("failed.to.get.check.result.from", EduNames.JBA))
+    return CheckResult(CheckStatus.Unchecked, EduCoreErrorBundle.message("error.failed.to.get.check.result.from", EduNames.JBA))
   }
 }
 

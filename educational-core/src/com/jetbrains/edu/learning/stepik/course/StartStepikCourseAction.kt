@@ -107,8 +107,8 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
   }
 
   private fun showAdaptiveCoursesAreNotSupportedNotification(courseName: String) {
-    Messages.showErrorDialog(EduCoreErrorBundle.message("adaptive.courses.not.supported.message", courseName, JBA_DEFAULT_URL, EduNames.JBA),
-                             EduCoreErrorBundle.message("adaptive.courses.not.supported.title"))
+    Messages.showErrorDialog(EduCoreErrorBundle.message("error.adaptive.courses.not.supported.message", courseName, JBA_DEFAULT_URL, EduNames.JBA),
+                             EduCoreErrorBundle.message("error.adaptive.courses.not.supported.title"))
   }
 
   private fun showFailedToAddCourseNotification(courseLink: String) {

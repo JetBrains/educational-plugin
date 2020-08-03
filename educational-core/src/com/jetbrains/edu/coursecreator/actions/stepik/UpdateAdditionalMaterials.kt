@@ -31,8 +31,8 @@ class UpdateAdditionalMaterials : DumbAwareAction(EduCoreActionBundle.lazyMessag
         if (!CCStepikConnector.updateCourseAdditionalInfo(project, course)) {
           showErrorNotification(
             project,
-            EduCoreErrorBundle.message("failed.to.update"),
-            EduCoreErrorBundle.message("failed.to.update.additional.materials")
+            EduCoreErrorBundle.message("error.failed.to.update"),
+            EduCoreErrorBundle.message("error.failed.to.update.additional.materials")
           )
         }
         else {

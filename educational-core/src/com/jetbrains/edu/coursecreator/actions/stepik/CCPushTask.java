@@ -139,8 +139,8 @@ public class CCPushTask extends DumbAwareAction {
     int position = task.getIndex();
     int positionOnServer = getTaskPosition(task.getId());
     if (position != positionOnServer) {
-      showErrorNotification(project, EduCoreErrorBundle.message("failed.to.update"),
-                            EduCoreErrorBundle.message("failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText()));
+      showErrorNotification(project, EduCoreErrorBundle.message("error.failed.to.update"),
+                            EduCoreErrorBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText()));
       return;
     }
     Task taskCopy = task.copy();

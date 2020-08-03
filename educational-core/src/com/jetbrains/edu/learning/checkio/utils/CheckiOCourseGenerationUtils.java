@@ -37,7 +37,7 @@ public final class CheckiOCourseGenerationUtils {
                                               () -> BrowserUtil.browse(link + "/login/checkio/"));
     }
     else if (e instanceof NetworkException) {
-      return new ErrorState.CustomSevereError(EduCoreErrorBundle.message("failed.to.connect"), "", "", null);
+      return new ErrorState.CustomSevereError(EduCoreErrorBundle.message("error.failed.to.connect"), "", "", null);
     }
     return new ErrorState.CustomSevereError(e.getMessage(), "", "", null);
   }

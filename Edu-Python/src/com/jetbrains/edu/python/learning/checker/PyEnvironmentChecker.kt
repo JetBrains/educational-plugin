@@ -9,6 +9,6 @@ import com.jetbrains.python.sdk.pythonSdk
 
 class PyEnvironmentChecker : EnvironmentChecker() {
   override fun checkEnvironment(project: Project, task: Task): String? {
-    return if (project.pythonSdk == null) EduCoreErrorBundle.message("no.interpreter", EduNames.PYTHON) else null
+    return if (project.pythonSdk == null) EduCoreErrorBundle.message("error.no.interpreter", EduNames.PYTHON) else null
   }
 }

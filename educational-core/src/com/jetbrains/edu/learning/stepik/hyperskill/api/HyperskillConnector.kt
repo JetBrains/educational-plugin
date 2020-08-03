@@ -282,7 +282,7 @@ abstract class HyperskillConnector {
   private fun <T> withTokenRefreshIfNeeded(call: () -> Result<T, String>): Result<T, String> {
     val result = call()
     if (!isUnitTestMode && !ApplicationManager.getApplication().isInternal
-        && result is Err && result.error == EduCoreErrorBundle.message("access.denied")) {
+        && result is Err && result.error == EduCoreErrorBundle.message("error.access.denied")) {
       HyperskillSettings.INSTANCE.account?.refreshTokens()
       return call()
     }
