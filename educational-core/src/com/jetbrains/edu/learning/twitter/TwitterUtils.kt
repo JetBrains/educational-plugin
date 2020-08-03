@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.twitter.ui.createTwitterDialogUI
 import org.apache.http.HttpStatus
@@ -75,12 +74,12 @@ object TwitterUtils {
           override fun onThrowable(error: Throwable) {
             LOG.warn(error)
             val message = if (error is TwitterException && error.statusCode == HttpStatus.SC_UNAUTHORIZED) {
-              EduCoreErrorBundle.message("error.failed.to.authorize")
+              EduCoreBundle.message("error.failed.to.authorize")
             }
             else {
-              EduCoreErrorBundle.message("error.failed.to.update.status")
+              EduCoreBundle.message("error.failed.to.update.status")
             }
-            Messages.showErrorDialog(project, message, EduCoreErrorBundle.message("twitter.error.failed.to.tweet"))
+            Messages.showErrorDialog(project, message, EduCoreBundle.message("twitter.error.failed.to.tweet"))
           }
         })
       }

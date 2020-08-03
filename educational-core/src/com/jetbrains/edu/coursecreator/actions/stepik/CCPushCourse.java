@@ -22,9 +22,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
@@ -120,17 +118,17 @@ public class CCPushCourse extends DumbAwareAction {
       EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId(), null, true);
       if (courseInfo == null) {
         Notification notification =
-          new Notification("update.course", EduCoreErrorBundle.message("error.failed.to.update"),
-                           EduCoreErrorBundle.message("error.failed.to.update.no.course.on.stepik", StepikNames.STEPIK, getUploadTitleText()),
+          new Notification("update.course", EduCoreBundle.message("error.failed.to.update"),
+                           EduCoreBundle.message("error.failed.to.update.no.course.on.stepik", StepikNames.STEPIK, getUploadTitleText()),
                            NotificationType.ERROR, createPostCourseNotificationListener(project, course));
         notification.notify(project);
         return;
       }
       if (courseInfo.getFormatVersion() < EduVersions.JSON_FORMAT_VERSION) {
         Notification notification =
-          new Notification("update.course", EduCoreErrorBundle.message("error.mismatch.format.version"),
-                           EduCoreErrorBundle.message("error.mismatch.format.version.invalid.plugin.version",
-                                                      PluginUtils.pluginVersion(EduNames.PLUGIN_ID), getUpdateTitleText()),
+          new Notification("update.course", EduCoreBundle.message("error.mismatch.format.version"),
+                           EduCoreBundle.message("error.mismatch.format.version.invalid.plugin.version",
+                                                 PluginUtils.pluginVersion(EduNames.PLUGIN_ID), getUpdateTitleText()),
                            NotificationType.WARNING, createUpdateCourseNotificationListener(project, course));
         notification.notify(project);
         return;
@@ -155,7 +153,7 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   private static void updateCourse(Project project, @NotNull EduCourse course) {
-    ProgressManager.getInstance().run(new Modal(project, EduCoreActionBundle.message("action.push.course.updating"), true) {
+    ProgressManager.getInstance().run(new Modal(project, EduCoreBundle.message("action.push.course.updating"), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setIndeterminate(false);

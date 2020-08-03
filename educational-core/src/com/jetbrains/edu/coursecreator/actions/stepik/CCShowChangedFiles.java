@@ -16,7 +16,7 @@ import com.jetbrains.edu.coursecreator.stepik.StepikChangesInfo;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
@@ -32,27 +32,27 @@ public class CCShowChangedFiles extends DumbAwareAction {
 
   @Nls
   private static String getStatusInfoChanged() {
-    return EduCoreActionBundle.message("action.show.changed.files.status.info.changed");
+    return EduCoreBundle.message("action.show.changed.files.status.info.changed");
   }
 
   @Nls
   private static String getStatusAdditionalInfoChanged() {
-    return EduCoreActionBundle.message("action.show.changed.files.status.additional.info.changed");
+    return EduCoreBundle.message("action.show.changed.files.status.additional.info.changed");
   }
 
   @Nls
   private static String getStatusRemoved() {
-    return EduCoreActionBundle.message("action.show.changed.files.status.removed");
+    return EduCoreBundle.message("action.show.changed.files.status.removed");
   }
 
   @Nls
   private static String getStatusNew() {
-    return EduCoreActionBundle.message("action.show.changed.files.status.new");
+    return EduCoreBundle.message("action.show.changed.files.status.new");
   }
 
   public CCShowChangedFiles() {
-    super(EduCoreActionBundle.lazyMessage("action.show.changed.files", StepikNames.STEPIK),
-          EduCoreActionBundle.lazyMessage("action.show.changed.files.description", StepikNames.STEPIK),
+    super(EduCoreBundle.lazyMessage("action.show.changed.files", StepikNames.STEPIK),
+          EduCoreBundle.lazyMessage("action.show.changed.files.description", StepikNames.STEPIK),
           null);
   }
 
@@ -68,7 +68,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
       return;
     }
 
-    ProgressManager.getInstance().run(new Modal(project, EduCoreActionBundle.message("action.show.changed.files.computing.changes"), false) {
+    ProgressManager.getInstance().run(new Modal(project, EduCoreBundle.message("action.show.changed.files.computing.changes"), false) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         EduCourse remoteCourse = StepikConnector.getInstance().getCourseInfo(course.getId());
@@ -80,8 +80,8 @@ public class CCShowChangedFiles extends DumbAwareAction {
 
         String message = buildChangeMessage((EduCourse)course, remoteCourse, project);
         ApplicationManager.getApplication().invokeLater(
-          () -> Messages.showInfoMessage(message, EduCoreActionBundle.message("action.show.changed.files.comparing.to",
-                                                                              StepikNames.STEPIK, course.getName())));
+          () -> Messages.showInfoMessage(message, EduCoreBundle.message("action.show.changed.files.comparing.to",
+                                                                        StepikNames.STEPIK, course.getName())));
       }
     });
   }
@@ -132,13 +132,13 @@ public class CCShowChangedFiles extends DumbAwareAction {
 
     String message = builder.toString();
     if (message.isEmpty()) {
-      return EduCoreActionBundle.message("action.show.changed.files.no.changes");
+      return EduCoreBundle.message("action.show.changed.files.no.changes");
     }
     return message;
   }
 
   private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder) {
-    appendChangeLine(item, stringBuilder, EduCoreActionBundle.message("action.show.changed.files.status.changed"));
+    appendChangeLine(item, stringBuilder, EduCoreBundle.message("action.show.changed.files.status.changed"));
   }
 
   private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder, @NotNull @Nls String status) {

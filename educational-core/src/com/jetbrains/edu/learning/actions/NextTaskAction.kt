@@ -3,13 +3,13 @@ package com.jetbrains.edu.learning.actions
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
 
 class NextTaskAction : TaskNavigationAction(
-  EduCoreActionBundle.message("action.navigation.next.text"),
-  EduCoreActionBundle.message("action.navigation.next.description"),
+  EduCoreBundle.message("action.navigation.next.text"),
+  EduCoreBundle.message("action.navigation.next.description"),
   AllIcons.Actions.Forward
 ) {
 
@@ -21,7 +21,7 @@ class NextTaskAction : TaskNavigationAction(
       //no project in event in this case, so just enable it
       return
     }
-    e.presentation.text = EduCoreActionBundle.message("action.navigation.next.text")
+    e.presentation.text = EduCoreBundle.message("action.navigation.next.text")
     super.update(e)
   }
 

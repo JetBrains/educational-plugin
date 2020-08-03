@@ -11,9 +11,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
@@ -22,8 +20,8 @@ import icons.EducationalCoreIcons
 
 @Suppress("ComponentNotRegistered")
 class ApplyHyperskillSubmission : DumbAwareAction(
-  EduCoreActionBundle.lazyMessage("action.apply.submission.text", HYPERSKILL),
-  EduCoreActionBundle.lazyMessage("action.apply.submission.description", HYPERSKILL),
+  EduCoreBundle.lazyMessage("action.apply.submission.text", HYPERSKILL),
+  EduCoreBundle.lazyMessage("action.apply.submission.description", HYPERSKILL),
   EducationalCoreIcons.JB_ACADEMY_ENABLED
 ) {
   override fun actionPerformed(e: AnActionEvent) {
@@ -35,7 +33,7 @@ class ApplyHyperskillSubmission : DumbAwareAction(
 
       override fun checkInput(inputString: String?): Boolean {
         errorText = if (!StringUtil.isNotNegativeNumber(inputString))
-          EduCoreErrorBundle.message("error.submission.invalid.id")
+          EduCoreBundle.message("error.submission.invalid.id")
         else null
 
         return errorText == null
@@ -51,7 +49,7 @@ class ApplyHyperskillSubmission : DumbAwareAction(
     }
 
     val idText = Messages.showInputDialog(project, EduCoreBundle.message("submission.id"),
-                                          EduCoreActionBundle.message("action.apply.submission.text", HYPERSKILL),
+                                          EduCoreBundle.message("action.apply.submission.text", HYPERSKILL),
                                           null, null, validator) ?: return
 
     val id = Integer.valueOf(idText) // valid int because of validator
@@ -59,8 +57,8 @@ class ApplyHyperskillSubmission : DumbAwareAction(
     computeUnderProgress(project, EduCoreBundle.message("submission.applying"), false) {
       val submission = StepikConnector.getInstance().getSubmissionById(id).onError {
         runInEdt {
-          Messages.showErrorDialog(EduCoreErrorBundle.message("error.submission.failed.to.retrieve", id),
-                                   EduCoreErrorBundle.message("error.submission.not.applied"))
+          Messages.showErrorDialog(EduCoreBundle.message("error.submission.failed.to.retrieve", id),
+                                   EduCoreBundle.message("error.submission.not.applied"))
         }
         return@computeUnderProgress
       }

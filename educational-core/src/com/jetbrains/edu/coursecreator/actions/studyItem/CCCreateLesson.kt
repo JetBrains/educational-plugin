@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import icons.EducationalCoreIcons.Lesson
 import java.io.IOException
 
@@ -25,7 +25,7 @@ class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) 
       StudyItemVariant(StringUtil.toTitleCase(LESSON_TYPE.presentableName), "",
                                                                                   Lesson, ::Lesson),
       StudyItemVariant(
-        StringUtil.toTitleCase(EduCoreStudyItemBundle.message("item.lesson.framework")), "", Lesson, ::FrameworkLesson)
+        StringUtil.toTitleCase(EduCoreBundle.message("item.lesson.framework")), "", Lesson, ::FrameworkLesson)
     )
 
   override fun addItem(course: Course, item: Lesson) {

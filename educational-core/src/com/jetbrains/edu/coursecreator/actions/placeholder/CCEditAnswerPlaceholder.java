@@ -8,7 +8,6 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog.DependencyInfo;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency;
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
   public CCEditAnswerPlaceholder() {
-    super(() -> EduCoreBundle.message("label.edit"), () -> EduCoreActionBundle.message("action.edit.answer.placeholder.description"));
+    super(() -> EduCoreBundle.message("label.edit"), () -> EduCoreBundle.message("action.edit.answer.placeholder.description"));
   }
 
   @Override

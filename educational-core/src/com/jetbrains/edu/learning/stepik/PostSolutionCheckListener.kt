@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 
@@ -44,9 +43,9 @@ class PostSolutionCheckListener : CheckListener {
   }
 
   private fun showSubmissionNotPostedNotification(project: Project, course: EduCourse, taskName: String) {
-    val notificationGroup = NotificationGroup(EduCoreErrorBundle.message("error.solution.not.posted"), NotificationDisplayType.NONE, true)
+    val notificationGroup = NotificationGroup(EduCoreBundle.message("error.solution.not.posted"), NotificationDisplayType.NONE, true)
     val notification = Notification(notificationGroup.displayId,
-                                    EduCoreErrorBundle.message("error.solution.not.posted"),
+                                    EduCoreBundle.message("error.solution.not.posted"),
                                     EduCoreBundle.message("stepik.task.was.updated", StepikNames.STEPIK, taskName),
                                     NotificationType.INFORMATION,
                                     notificationListener(project) { updateCourse(project, course) })

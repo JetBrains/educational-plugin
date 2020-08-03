@@ -15,9 +15,7 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
@@ -37,22 +35,22 @@ public class PushHyperskillLesson extends DumbAwareAction {
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
   public static String getUpdateText() {
-    return EduCoreStudyItemBundle.message("item.update.on.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
+    return EduCoreBundle.message("item.update.on.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
   }
 
   @Nls(capitalization = Nls.Capitalization.Title)
   public static String getUpdateTitleText() {
-    return EduCoreStudyItemBundle.message("item.update.on.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
+    return EduCoreBundle.message("item.update.on.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
   }
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
   public static String getUploadText() {
-    return EduCoreStudyItemBundle.message("item.upload.to.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
+    return EduCoreBundle.message("item.upload.to.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
   }
 
   @Nls(capitalization = Nls.Capitalization.Title)
   public static String getUploadTitleText() {
-    return EduCoreStudyItemBundle.message("item.upload.to.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
+    return EduCoreBundle.message("item.upload.to.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
   }
 
   public PushHyperskillLesson() {
@@ -102,10 +100,10 @@ public class PushHyperskillLesson extends DumbAwareAction {
     final Lesson lesson = getLesson(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY), project, course);
     if (lesson == null) return;
 
-    ProgressManager.getInstance().run(new Modal(project, EduCoreActionBundle.message("action.push.custom.lesson.uploading", HYPERSKILL), true) {
+    ProgressManager.getInstance().run(new Modal(project, EduCoreBundle.message("action.push.custom.lesson.uploading", HYPERSKILL), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText(EduCoreActionBundle.message("action.push.custom.lesson.uploading.to", HYPERSKILL, StepikNames.STEPIK_URL));
+        indicator.setText(EduCoreBundle.message("action.push.custom.lesson.uploading.to", HYPERSKILL, StepikNames.STEPIK_URL));
         doPush(lesson, project);
         YamlFormatSynchronizer.saveRemoteInfo(lesson);
       }
@@ -132,8 +130,8 @@ public class PushHyperskillLesson extends DumbAwareAction {
   }
 
   public static void doPush(Lesson lesson, Project project) {
-    String notification = lesson.getId() > 0 ? EduCoreActionBundle.message("action.push.custom.lesson.updated", HYPERSKILL)
-                                             : EduCoreActionBundle.message("action.push.custom.lesson.uploaded", HYPERSKILL);
+    String notification = lesson.getId() > 0 ? EduCoreBundle.message("action.push.custom.lesson.updated", HYPERSKILL)
+                                             : EduCoreBundle.message("action.push.custom.lesson.uploaded", HYPERSKILL);
     boolean success = lesson.getId() > 0 ? updateLesson(project, lesson, true, -1)
                                          : postLesson(project, lesson, lesson.getIndex(), -1);
 

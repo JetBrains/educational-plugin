@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator
 
 import com.intellij.openapi.keymap.KeymapUtil
 import com.jetbrains.edu.coursecreator.StudyItemType.*
-import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle.message
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls

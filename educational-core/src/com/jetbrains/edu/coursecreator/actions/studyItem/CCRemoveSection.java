@@ -18,8 +18,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +29,7 @@ public class CCRemoveSection extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCRemoveSection.class);
 
   public CCRemoveSection() {
-    super(EduCoreActionBundle.lazyMessage("action.remove.section.text"), EduCoreActionBundle.lazyMessage(
+    super(EduCoreBundle.lazyMessage("action.remove.section.text"), EduCoreBundle.lazyMessage(
       "action.remove.section.description"), null);
   }
 
@@ -55,8 +54,8 @@ public class CCRemoveSection extends DumbAwareAction {
     final VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
     for (VirtualFile child : sectionChildren) {
       if (courseDir.findChild(child.getName()) != null) {
-        Messages.showInfoMessage(EduCoreErrorBundle.message("error.failed.to.unwrap.section.message", child.getName()),
-                                 EduCoreErrorBundle.message("error.failed.to.unwrap.section"));
+        Messages.showInfoMessage(EduCoreBundle.message("error.failed.to.unwrap.section.message", child.getName()),
+                                 EduCoreBundle.message("error.failed.to.unwrap.section"));
         return;
       }
     }

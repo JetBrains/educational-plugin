@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.io.File
 import javax.swing.JComponent
 
@@ -10,7 +10,7 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String, showAuth
   private val myPanel: CCCreateCourseArchivePanel
 
   init {
-    title = EduCoreActionBundle.message("action.create.course.archive.text")
+    title = EduCoreBundle.message("action.create.course.archive.text")
     myPanel = CCCreateCourseArchivePanel(project, courseName, showAuthorField)
     addPanelListener()
     init()

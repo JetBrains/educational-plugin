@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
-import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
 import com.jetbrains.edu.learning.stepik.api.StepikJacksonDeserializersKt;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
@@ -338,8 +338,8 @@ public abstract class Task extends StudyItem {
   @NotNull
   public String getUIName() {
     if (getCourse() instanceof HyperskillCourse) {
-      if (this instanceof CodeTask) return EduCoreStudyItemBundle.message("item.task.challenge");
-      return EduCoreStudyItemBundle.message("item.task.stage");
+      if (this instanceof CodeTask) return EduCoreBundle.message("item.task.challenge");
+      return EduCoreBundle.message("item.task.stage");
     }
     return StudyItemTypeKt.getPresentableName(TASK_TYPE);
   }

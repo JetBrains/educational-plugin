@@ -18,8 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle
-import com.jetbrains.edu.learning.messages.EduCoreStudyItemBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import icons.EducationalCoreIcons.IdeTask
 import icons.EducationalCoreIcons.Task
 import java.io.IOException
@@ -123,26 +122,26 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
   override val studyItemVariants: List<StudyItemVariant>
     get() = listOf(
       StudyItemVariant(
-        EduCoreStudyItemBundle.message("item.task.edu.title"),
-        EduCoreActionBundle.message("action.new.study.item.task.edu.description"),
+        EduCoreBundle.message("item.task.edu.title"),
+        EduCoreBundle.message("action.new.study.item.task.edu.description"),
         Task,
         ::EduTask
       ),
       StudyItemVariant(
-        EduCoreStudyItemBundle.message("item.task.output.title"),
-        EduCoreActionBundle.message("action.new.study.item.task.output.description"),
+        EduCoreBundle.message("item.task.output.title"),
+        EduCoreBundle.message("action.new.study.item.task.output.description"),
         Task,
         ::OutputTask
       ),
       StudyItemVariant(
-        EduCoreStudyItemBundle.message("item.task.theory.title"),
-        EduCoreActionBundle.message("action.new.study.item.task.theory.description"),
+        EduCoreBundle.message("item.task.theory.title"),
+        EduCoreBundle.message("action.new.study.item.task.theory.description"),
         Task,
         ::TheoryTask
       ),
       StudyItemVariant(
-        EduCoreStudyItemBundle.message("item.task.choice.title"),
-        EduCoreActionBundle.message("action.new.study.item.task.choice.description"),
+        EduCoreBundle.message("item.task.choice.title"),
+        EduCoreBundle.message("action.new.study.item.task.choice.description"),
         Task
       ) {
         val task = ChoiceTask()
@@ -153,8 +152,8 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
         task
       },
       StudyItemVariant(
-        EduCoreStudyItemBundle.message("item.task.ide"),
-        EduCoreActionBundle.message("action.new.study.item.task.ide.description"),
+        EduCoreBundle.message("item.task.ide"),
+        EduCoreBundle.message("action.new.study.item.task.ide.description"),
         IdeTask,
         ::IdeTask
       )

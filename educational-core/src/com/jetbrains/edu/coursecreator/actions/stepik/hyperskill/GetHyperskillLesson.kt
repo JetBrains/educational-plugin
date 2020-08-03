@@ -19,9 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.isFeatureEnabled
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
@@ -34,8 +32,8 @@ import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered") // Hyperskill.xml
 class GetHyperskillLesson : DumbAwareAction(
-  EduCoreActionBundle.lazyMessage("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),
-  EduCoreActionBundle.lazyMessage("action.get.lesson.description", HYPERSKILL, StepikNames.STEPIK),
+  EduCoreBundle.lazyMessage("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),
+  EduCoreBundle.lazyMessage("action.get.lesson.description", HYPERSKILL, StepikNames.STEPIK),
   EducationalCoreIcons.JB_ACADEMY_ENABLED
 ) {
 
@@ -47,14 +45,14 @@ class GetHyperskillLesson : DumbAwareAction(
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
     val lessonId = Messages.showInputDialog(
-      EduCoreActionBundle.message("action.get.lesson.enter.lesson.id"),
-      EduCoreActionBundle.message("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),
+      EduCoreBundle.message("action.get.lesson.enter.lesson.id"),
+      EduCoreBundle.message("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),
       EducationalCoreIcons.JB_ACADEMY_ENABLED
     )
     if (lessonId != null && lessonId.isNotEmpty()) {
       ProgressManager.getInstance().run(object : Task.Modal(
         project,
-        EduCoreActionBundle.message("action.get.course.loading"),
+        EduCoreBundle.message("action.get.course.loading"),
         true
       ) {
         override fun run(indicator: ProgressIndicator) {
@@ -63,14 +61,14 @@ class GetHyperskillLesson : DumbAwareAction(
           if (configurator == null) {
             val environment = if (course.environment == EduNames.DEFAULT_ENVIRONMENT) "default" else course.environment
             showError(
-              EduCoreErrorBundle.message("error.failed.to.create.lesson.no.configuration", course.language, environment),
-              EduCoreErrorBundle.message("error.failed.to.create.lesson")
+              EduCoreBundle.message("error.failed.to.create.lesson.no.configuration", course.language, environment),
+              EduCoreBundle.message("error.failed.to.create.lesson")
             )
             return
           }
           runInEdt {
             CCNewCourseDialog(
-              EduCoreActionBundle.message("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),
+              EduCoreBundle.message("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),
               EduCoreBundle.message("label.create"),
               course
             ).show()
@@ -97,8 +95,8 @@ class GetHyperskillLesson : DumbAwareAction(
     val languageAndEnvironment = getLanguageAndEnvironment(lesson)
     if (languageAndEnvironment == null) {
       showError(
-        EduCoreErrorBundle.message("error.failed.to.create.lesson.undefined.language"),
-        EduCoreErrorBundle.message("error.failed.to.create.lesson")
+        EduCoreBundle.message("error.failed.to.create.lesson.undefined.language"),
+        EduCoreBundle.message("error.failed.to.create.lesson")
       )
       return null
     }
@@ -123,12 +121,12 @@ class GetHyperskillLesson : DumbAwareAction(
     val stepikUser = EduSettings.getInstance().user
 
     val message = if (stepikUser == null) {
-      EduCoreErrorBundle.message("error.failed.to.get.lesson.not.log.in", StepikNames.STEPIK)
+      EduCoreBundle.message("error.failed.to.get.lesson.not.log.in", StepikNames.STEPIK)
     }
     else {
-      EduCoreErrorBundle.message("error.failed.to.get.lesson.no.access", StepikNames.STEPIK, stepikUser.name)
+      EduCoreBundle.message("error.failed.to.get.lesson.no.access", StepikNames.STEPIK, stepikUser.name)
     }
-    showError(message, EduCoreErrorBundle.message("error.failed.to.get.lesson"))
+    showError(message, EduCoreBundle.message("error.failed.to.get.lesson"))
   }
 
   private fun showError(message: String, title: String) {

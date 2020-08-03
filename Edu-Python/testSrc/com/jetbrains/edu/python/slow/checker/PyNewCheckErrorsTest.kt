@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.nullValue
 import com.jetbrains.python.PythonLanguage
 import org.hamcrest.CoreMatchers.containsString
@@ -127,7 +126,7 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("Status for ${task.name} doesn't match", CheckStatus.Unchecked, checkResult.status)
       assertThat("Checker output for ${task.name} doesn't match", checkResult.message,
-                 containsString(EduCoreErrorBundle.message("error.no.interpreter", EduNames.PYTHON)))
+                 containsString(EduCoreBundle.message("error.no.interpreter", EduNames.PYTHON)))
     }
     doTest()
   }

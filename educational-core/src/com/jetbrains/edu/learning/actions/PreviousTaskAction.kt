@@ -2,12 +2,12 @@ package com.jetbrains.edu.learning.actions
 
 import com.intellij.icons.AllIcons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 
 class PreviousTaskAction : TaskNavigationAction(
-  EduCoreActionBundle.message("action.navigation.previous.text"),
-  EduCoreActionBundle.message("action.navigation.previous.description"),
+  EduCoreBundle.message("action.navigation.previous.text"),
+  EduCoreBundle.message("action.navigation.previous.description"),
   AllIcons.Actions.Back
 ) {
 

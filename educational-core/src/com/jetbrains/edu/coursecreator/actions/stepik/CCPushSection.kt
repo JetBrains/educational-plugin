@@ -17,9 +17,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.messages.makeLazy
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -78,9 +76,9 @@ class CCPushSection : DumbAwareAction(
   companion object {
     @JvmStatic
     fun doPush(project: Project, section: Section, course: EduCourse) {
-      ProgressManager.getInstance().run(object : Task.Modal(project, EduCoreActionBundle.message("action.push.section.uploading"), true) {
+      ProgressManager.getInstance().run(object : Task.Modal(project, EduCoreBundle.message("action.push.section.uploading"), true) {
         override fun run(indicator: ProgressIndicator) {
-          indicator.text = EduCoreActionBundle.message("action.push.section.uploading.to", StepikNames.STEPIK_URL)
+          indicator.text = EduCoreBundle.message("action.push.section.uploading.to", StepikNames.STEPIK_URL)
           if (section.id > 0) {
             updateSection(section, course, project)
           }
@@ -92,7 +90,7 @@ class CCPushSection : DumbAwareAction(
             if (success) {
               EduUtils.showNotification(
                 project,
-                EduCoreActionBundle.message("action.push.section.uploaded", section.name),
+                EduCoreBundle.message("action.push.section.uploaded", section.name),
                 CCStepikConnector.openOnStepikAction("/course/${course.id}")
               )
             }
@@ -108,8 +106,8 @@ class CCPushSection : DumbAwareAction(
       if (positionChanged) {
         showErrorNotification(
           project,
-          EduCoreErrorBundle.message("error.failed.to.update"),
-          EduCoreErrorBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText())
+          EduCoreBundle.message("error.failed.to.update"),
+          EduCoreBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText())
         )
         return
       }
@@ -117,7 +115,7 @@ class CCPushSection : DumbAwareAction(
       if (updated) {
         EduUtils.showNotification(
           project,
-          EduCoreActionBundle.message("action.push.section.updated", section.name),
+          EduCoreBundle.message("action.push.section.updated", section.name),
           CCStepikConnector.openOnStepikAction("/course/${course.id}")
         )
       }

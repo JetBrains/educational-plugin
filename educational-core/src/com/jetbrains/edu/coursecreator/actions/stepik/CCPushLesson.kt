@@ -21,9 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.messages.makeLazy
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -95,9 +93,9 @@ class CCPushLesson : DumbAwareAction(
       return
     }
 
-    ProgressManager.getInstance().run(object : Modal(project, EduCoreActionBundle.message("action.push.lesson.uploading"), true) {
+    ProgressManager.getInstance().run(object : Modal(project, EduCoreBundle.message("action.push.lesson.uploading"), true) {
       override fun run(indicator: ProgressIndicator) {
-        indicator.text = EduCoreActionBundle.message("action.push.lesson.uploading.to", StepikNames.STEPIK_URL)
+        indicator.text = EduCoreBundle.message("action.push.lesson.uploading.to", StepikNames.STEPIK_URL)
         doPush(lesson, project, course)
         YamlFormatSynchronizer.saveRemoteInfo(lesson)
       }
@@ -144,8 +142,8 @@ class CCPushLesson : DumbAwareAction(
         if (positionChanged) {
           showErrorNotification(
             project,
-            EduCoreErrorBundle.message("error.failed.to.update"),
-            EduCoreErrorBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText())
+            EduCoreBundle.message("error.failed.to.update"),
+            EduCoreBundle.message("error.failed.to.update.item.position.changed", CCPushCourse.getUpdateTitleText())
           )
           return
         }
@@ -154,7 +152,7 @@ class CCPushLesson : DumbAwareAction(
         if (success) {
           EduUtils.showNotification(
             project,
-            EduCoreActionBundle.message("action.push.lesson.updated", lesson.name),
+            EduCoreBundle.message("action.push.lesson.updated", lesson.name),
             CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id)
           )
         }
@@ -166,7 +164,7 @@ class CCPushLesson : DumbAwareAction(
         if (success) {
           EduUtils.showNotification(
             project,
-            EduCoreActionBundle.message("action.push.lesson.uploaded", lesson.name),
+            EduCoreBundle.message("action.push.lesson.uploaded", lesson.name),
             CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id)
           )
         }

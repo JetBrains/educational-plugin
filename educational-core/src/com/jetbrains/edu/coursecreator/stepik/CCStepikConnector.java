@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.api.CourseAdditionalInfo;
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo;
@@ -495,7 +495,7 @@ public class CCStepikConnector {
   }
 
   public static AnAction openOnStepikAction(@NotNull @NonNls String url) {
-    return new AnAction(EduCoreActionBundle.message("action.open.on.text", StepikNames.STEPIK)) {
+    return new AnAction(EduCoreBundle.message("action.open.on.text", StepikNames.STEPIK)) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         BrowserUtil.browse(StepikNames.STEPIK_URL + url);

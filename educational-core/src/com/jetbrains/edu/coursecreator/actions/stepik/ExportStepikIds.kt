@@ -14,13 +14,13 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class ExportStepikIds : DumbAwareAction(
-  EduCoreActionBundle.lazyMessage("action.export.ids.text", StepikNames.STEPIK),
-  EduCoreActionBundle.lazyMessage("action.export.ids.description", StepikNames.STEPIK, "json"),
+  EduCoreBundle.lazyMessage("action.export.ids.text", StepikNames.STEPIK),
+  EduCoreBundle.lazyMessage("action.export.ids.description", StepikNames.STEPIK, "json"),
   null
 ) {
 

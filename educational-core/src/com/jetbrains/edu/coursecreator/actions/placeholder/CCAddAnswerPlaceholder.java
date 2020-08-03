@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,8 +26,8 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
   public CCAddAnswerPlaceholder() {
     // BACKCOMPAT: 2019.3 Use lazyMessage call instead
-    super(() -> EduCoreActionBundle.message("action.add.answer.placeholder.text"),
-          () -> EduCoreActionBundle.message("action.add.answer.placeholder.description"));
+    super(() -> EduCoreBundle.message("action.add.answer.placeholder.text"),
+          () -> EduCoreBundle.message("action.add.answer.placeholder.description"));
   }
 
 
@@ -82,7 +82,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     }
 
     AddAction action = new AddAction(project, answerPlaceholder, taskFile, editor);
-    EduUtils.runUndoableAction(project, EduCoreActionBundle.message("action.add.answer.placeholder.text"), action);
+    EduUtils.runUndoableAction(project, EduCoreBundle.message("action.add.answer.placeholder.text"), action);
   }
 
   static class AddAction extends TaskFileUndoableAction {

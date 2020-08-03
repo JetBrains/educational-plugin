@@ -10,11 +10,10 @@ import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotific
 import com.jetbrains.edu.learning.EduUtils.showNotification
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
-class UpdateAdditionalMaterials : DumbAwareAction(EduCoreActionBundle.lazyMessage("action.update.additional.materials.text")) {
+class UpdateAdditionalMaterials : DumbAwareAction(EduCoreBundle.lazyMessage("action.update.additional.materials.text")) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
@@ -23,7 +22,7 @@ class UpdateAdditionalMaterials : DumbAwareAction(EduCoreActionBundle.lazyMessag
     }
     ProgressManager.getInstance().run(object : Task.Modal(
       project,
-      EduCoreActionBundle.message("action.update.additional.materials.action"),
+      EduCoreBundle.message("action.update.additional.materials.action"),
       false
     ) {
       override fun run(indicator: ProgressIndicator) {
@@ -31,12 +30,12 @@ class UpdateAdditionalMaterials : DumbAwareAction(EduCoreActionBundle.lazyMessag
         if (!CCStepikConnector.updateCourseAdditionalInfo(project, course)) {
           showErrorNotification(
             project,
-            EduCoreErrorBundle.message("error.failed.to.update"),
-            EduCoreErrorBundle.message("error.failed.to.update.additional.materials")
+            EduCoreBundle.message("error.failed.to.update"),
+            EduCoreBundle.message("error.failed.to.update.additional.materials")
           )
         }
         else {
-          showNotification(project, EduCoreActionBundle.message("action.update.additional.materials.updated"), null)
+          showNotification(project, EduCoreBundle.message("action.update.additional.materials.updated"), null)
         }
       }
     })

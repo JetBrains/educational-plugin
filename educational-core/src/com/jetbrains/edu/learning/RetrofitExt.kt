@@ -7,7 +7,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.PlatformUtils
 import com.intellij.util.net.HttpConfigurable
 import com.intellij.util.net.ssl.CertificateManager
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.failedToPostToJBA
 import okhttp3.*
@@ -128,32 +128,32 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
     when (response.code()) {
       HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_CREATED -> Ok(response) // 200, 201
       HttpURLConnection.HTTP_UNAVAILABLE, HttpURLConnection.HTTP_BAD_GATEWAY ->
-        Err("${EduCoreErrorBundle.message("error.service.maintenance")}\n\n$error") // 502, 503
+        Err("${EduCoreBundle.message("error.service.maintenance")}\n\n$error") // 502, 503
       in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION ->
-        Err("${EduCoreErrorBundle.message("error.service.down")}\n\n$error") // 500x
-      HttpURLConnection.HTTP_FORBIDDEN -> Err(EduCoreErrorBundle.message("error.access.denied"))
+        Err("${EduCoreBundle.message("error.service.down")}\n\n$error") // 500x
+      HttpURLConnection.HTTP_FORBIDDEN -> Err(EduCoreBundle.message("error.access.denied"))
       in HttpURLConnection.HTTP_BAD_REQUEST..HttpURLConnection.HTTP_UNSUPPORTED_TYPE ->
-        Err(EduCoreErrorBundle.message("error.unexpected.error", error)) // 400x
+        Err(EduCoreBundle.message("error.unexpected.error", error)) // 400x
       else -> {
         LOG.warn("Code ${response.code()} is not handled")
-        Err(EduCoreErrorBundle.message("error.unexpected.error", error))
+        Err(EduCoreBundle.message("error.unexpected.error", error))
       }
     }
   }
   catch (e: InterruptedIOException) {
     log("Connection to server was interrupted", e.message, omitErrors)
-    Err("${EduCoreErrorBundle.message("error.connection.interrupted")}\n\n${e.message}")
+    Err("${EduCoreBundle.message("error.connection.interrupted")}\n\n${e.message}")
   }
   catch (e: IOException) {
     log("Failed to connect to server", e.message, omitErrors)
-    Err("${EduCoreErrorBundle.message("error.failed.to.connect")} \n\n${e.message}")
+    Err("${EduCoreBundle.message("error.failed.to.connect")} \n\n${e.message}")
   }
   catch (e: ProcessCanceledException) {
     throw e
   }
   catch (e: RuntimeException) {
     log("Failed to connect to server", e.message, omitErrors)
-    Err("${EduCoreErrorBundle.message("error.failed.to.connect")}\n\n${e.message}")
+    Err("${EduCoreBundle.message("error.failed.to.connect")}\n\n${e.message}")
   }
 }
 

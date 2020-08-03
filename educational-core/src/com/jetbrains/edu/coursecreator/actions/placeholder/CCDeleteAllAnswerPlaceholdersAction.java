@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.messages.EduCoreActionBundle;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,8 +17,8 @@ import java.util.List;
 public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderAction {
 
   public CCDeleteAllAnswerPlaceholdersAction() {
-    super(() -> EduCoreActionBundle.message("action.delete.all.answer.placeholders.text"),
-          () -> EduCoreActionBundle.message("action.delete.all.answer.placeholders.description"));
+    super(() -> EduCoreBundle.message("action.delete.all.answer.placeholders.text"),
+          () -> EduCoreBundle.message("action.delete.all.answer.placeholders.description"));
   }
 
   @Override
@@ -35,7 +35,7 @@ public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderActi
   @Override
   protected void performAnswerPlaceholderAction(@NotNull CCState state) {
     final ClearPlaceholders action = new ClearPlaceholders(state.getProject(), state.getTaskFile(), state.getEditor());
-    EduUtils.runUndoableAction(state.getProject(), EduCoreActionBundle.message("action.delete.all.answer.placeholders.text"), action,
+    EduUtils.runUndoableAction(state.getProject(), EduCoreBundle.message("action.delete.all.answer.placeholders.text"), action,
                                UndoConfirmationPolicy.REQUEST_CONFIRMATION);
   }
 

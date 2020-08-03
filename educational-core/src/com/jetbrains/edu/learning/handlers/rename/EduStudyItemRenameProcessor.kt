@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.studyItemType
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 abstract class EduStudyItemRenameProcessor : RenamePsiFileProcessor() {
@@ -75,7 +75,7 @@ abstract class EduStudyItemRenameProcessor : RenamePsiFileProcessor() {
         @Throws(ConfigurationException::class)
         override fun canRun() {
           if (item.course.isStudy) {
-            throw ConfigurationException(EduCoreErrorBundle.message("error.invalid.rename.message"))
+            throw ConfigurationException(EduCoreBundle.message("error.invalid.rename.message"))
           }
           val itemDir = item.getDir(project.courseDir)
           val validator = CCStudyItemPathInputValidator(project, item.course, item.studyItemType, itemDir.parent, item.name)

@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.ProgressUtil
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
@@ -29,8 +29,8 @@ class HyperskillCheckListener : CheckListener {
       if (HyperskillSettings.INSTANCE.account == null) {
         Notification(
           EduNames.JBA,
-          EduCoreErrorBundle.message("error.failed.to.post.solution", EduNames.JBA),
-          EduCoreErrorBundle.message("error.login.required", EduNames.JBA),
+          EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
+          EduCoreBundle.message("error.login.required", EduNames.JBA),
           NotificationType.ERROR
         ) { notification, e ->
           notification.expire()

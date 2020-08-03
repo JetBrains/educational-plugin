@@ -9,7 +9,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.HyperlinkLabel
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,12 +62,12 @@ class ImportCodeforcesContestDialog(private val showViewAllLabel: Boolean) : Dia
       // TODO make it clickable
       // TODO also check other places
       Messages.showErrorDialog(
-        EduCoreErrorBundle.message(
+        EduCoreBundle.message(
           "codeforces.error.failed.to.load.contests.message",
           CodeforcesNames.CODEFORCES_TITLE,
           CodeforcesNames.CODEFORCES_URL
         ),
-        EduCoreErrorBundle.message("codeforces.error.failed.to.load.contests.title", CodeforcesNames.CODEFORCES_TITLE)
+        EduCoreBundle.message("codeforces.error.failed.to.load.contests.title", CodeforcesNames.CODEFORCES_TITLE)
       )
     }
     else {

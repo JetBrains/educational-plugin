@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.xmlEscaped
 
 class JCheckErrorsTest : JdkCheckerTestBase() {
@@ -109,7 +108,7 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
     }
 
     CheckActionListener.shouldSkip()
-    CheckActionListener.expectedMessage { EduCoreErrorBundle.message("error.unable.to.create.configuration") }
+    CheckActionListener.expectedMessage { EduCoreBundle.message("error.unable.to.create.configuration") }
 
     try {
       doTest()
