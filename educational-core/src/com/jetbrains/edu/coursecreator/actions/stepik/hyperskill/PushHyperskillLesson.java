@@ -37,22 +37,22 @@ public class PushHyperskillLesson extends DumbAwareAction {
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
   public static String getUpdateText() {
-    return EduCoreStudyItemBundle.message("update.on.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
+    return EduCoreStudyItemBundle.message("item.update.on.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
   }
 
   @Nls(capitalization = Nls.Capitalization.Title)
   public static String getUpdateTitleText() {
-    return EduCoreStudyItemBundle.message("update.on.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
+    return EduCoreStudyItemBundle.message("item.update.on.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
   }
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
   public static String getUploadText() {
-    return EduCoreStudyItemBundle.message("upload.to.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
+    return EduCoreStudyItemBundle.message("item.upload.to.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
   }
 
   @Nls(capitalization = Nls.Capitalization.Title)
   public static String getUploadTitleText() {
-    return EduCoreStudyItemBundle.message("upload.to.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
+    return EduCoreStudyItemBundle.message("item.upload.to.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
   }
 
   public PushHyperskillLesson() {
