@@ -44,6 +44,13 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
 
     if (configurations.isEmpty()) return noTestsRun
 
+    configurations.forEach {
+      val validationResult = validateConfiguration(it)
+      if (validationResult != null) {
+        return validationResult
+      }
+    }
+
     val testRoots = mutableListOf<SMTestProxy.SMRootTestProxy>()
     val testEventsListener = object : SMTRunnerEventsAdapter() {
       // We have to collect test roots in `onTestingStarted`
@@ -151,6 +158,8 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
    * Returns message for comparison error that will be shown to a user in Check Result panel
    */
   protected open fun getComparisonErrorMessage(node: SMTestProxy): String = getErrorMessage(node)
+
+  protected open fun validateConfiguration(configuration: RunnerAndConfigurationSettings): CheckResult? = null
 
   companion object {
     fun extractComparisonErrorMessage(node: SMTestProxy): String {
