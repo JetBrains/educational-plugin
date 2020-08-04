@@ -119,7 +119,9 @@ class StartCourseButton(errorHandler: (ErrorState) -> Unit, fill: Boolean = true
 
   override fun canStartCourse(courseInfo: CourseInfo) = courseInfo.projectSettings != null
                                                         && courseInfo.location() != null
-                                                        && getErrorState(courseInfo.course) { validateSettings(courseInfo) }.courseCanBeStarted
+                                                        && getErrorState(courseInfo.course) {
+    validateSettings(courseInfo)
+  }.courseCanBeStarted
 
   private fun validateSettings(courseInfo: CourseInfo): @Nullable ValidationMessage? {
     val languageSettings = courseInfo.languageSettings()
@@ -180,9 +182,7 @@ abstract class StartCourseButtonBase(private val errorHandler: (ErrorState) -> U
         val dialog = UIUtil.getParentOfType(JoinCourseDialogBase::class.java, this)
         dialog?.close()
         course.courseMode = courseMode.toString()
-        val projectGenerator = configurator
-          .courseBuilder
-          .getCourseProjectGenerator(course)
+        val projectGenerator = configurator.courseBuilder.getCourseProjectGenerator(course)
         projectGenerator?.doCreateCourseProject(location, projectSettings)
       }
       catch (e: CourseCantBeStartedException) {
