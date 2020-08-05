@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.ui.ColorUtil
-import com.intellij.ui.JBColor
 import com.intellij.util.ui.AsyncProcessIcon
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
@@ -28,6 +27,9 @@ import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TaskDescriptionBundle
+import com.jetbrains.edu.learning.ui.EduColors
 import icons.EducationalCoreIcons
 import java.awt.BorderLayout
 import java.awt.FlowLayout
@@ -74,7 +76,7 @@ class SubmissionsTabPanel(project: Project,
 
   private fun addViewOnStepikLink(descriptionText: StringBuilder, currentTask: ChoiceTask, submissionsPanel: AdditionalTabPanel) {
     descriptionText.append(
-      "<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(hyperlinkColor())} " +
+      "<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(EduColors.hyperlinkColor)} " +
       "href=https://stepik.org/submissions/${currentTask.id}?unit=${currentTask.lesson.unitId}\">" +
       EduCoreBundle.message("submissions.view.quiz.on.stepik", StepikNames.STEPIK, "</a><a ${StyleManager().textStyleHeader}>"))
     submissionsPanel.addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
@@ -82,7 +84,7 @@ class SubmissionsTabPanel(project: Project,
 
   private fun addLoginLink(descriptionText: StringBuilder,
                            submissionsManager: SubmissionsManager) {
-    descriptionText.append("<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(hyperlinkColor())}" +
+    descriptionText.append("<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(EduColors.hyperlinkColor)}" +
                            " href=>${EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName())}" +
                            "</a><a ${StyleManager().textStyleHeader}>")
     this.addHyperlinkListener(HyperlinkListener { e ->
@@ -107,19 +109,37 @@ class SubmissionsTabPanel(project: Project,
     }
   }
 
-  private fun hyperlinkColor() = JBColor(0x6894C6, 0x5C84C9)
-
   private fun getImageUrl(status: String?): URL? {
     val icon = when (status) {
-      EduNames.CORRECT -> EducationalCoreIcons.TaskSolvedNoFrame
-      else -> EducationalCoreIcons.TaskFailedNoFrame
+      EduNames.CORRECT -> if (StyleResourcesManager.isHighContrast()) EducationalCoreIcons.TaskSolvedNoFrameHighContrast else EducationalCoreIcons.TaskSolvedNoFrame
+      else -> if (StyleResourcesManager.isHighContrast()) EducationalCoreIcons.TaskFailedNoFrameHighContrast else EducationalCoreIcons.TaskFailedNoFrame
     }
     return (icon as IconLoader.CachedImageIcon).url
   }
 
-  private fun getLinkColor(submission: Submission): String = when (submission.status) {
-    EduNames.CORRECT -> "#${ColorUtil.toHex(JBColor(0x368746, 0x499C54))}"
-    else -> "#${ColorUtil.toHex(JBColor(0xC7222D, 0xFF5261))}"
+  private fun getLinkColor(submission: Submission): String {
+    return when (submission.status) {
+      EduNames.CORRECT -> getCorrectLinkColor()
+      else -> getWrongLinkColor()
+    }
+  }
+
+  private fun getCorrectLinkColor(): String {
+    return if (StyleResourcesManager.isHighContrast()) {
+      TaskDescriptionBundle.message("correct.label.foreground.high.contrast")
+    }
+    else {
+      "#${ColorUtil.toHex(EduColors.correctLabelForeground)}"
+    }
+  }
+
+  private fun getWrongLinkColor(): String {
+    return if (StyleResourcesManager.isHighContrast()) {
+      TaskDescriptionBundle.message("wrong.label.foreground.high.contrast")
+    }
+    else {
+      "#${ColorUtil.toHex(EduColors.wrongLabelForeground)}"
+    }
   }
 
   private fun getSubmissionTexts(reply: Reply, taskName: String): Map<String, String>? {

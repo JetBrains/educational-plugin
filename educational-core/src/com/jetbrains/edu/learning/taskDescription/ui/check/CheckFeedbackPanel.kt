@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.taskDescription.ui.check
 
 import com.intellij.icons.AllIcons
-import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
@@ -13,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
+import com.jetbrains.edu.learning.ui.EduColors
 import icons.EducationalCoreIcons
 import java.awt.BorderLayout
 import java.util.*
@@ -42,8 +42,8 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
         else -> null
       }
       foreground = when (status) {
-        CheckStatus.Failed -> JBColor(0xC7222D, 0xFF5261)
-        CheckStatus.Solved -> JBColor(0x368746, 0x499C54)
+        CheckStatus.Failed -> EduColors.wrongLabelForeground
+        CheckStatus.Solved -> EduColors.correctLabelForeground
         else -> foreground
       }
 
