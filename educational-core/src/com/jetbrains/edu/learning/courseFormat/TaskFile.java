@@ -46,6 +46,11 @@ public class TaskFile {
     myVisible = isVisible;
   }
 
+  public TaskFile(@NotNull String name, @NotNull String text, boolean isVisible, boolean isLearnerCreated) {
+    this(name, text, isVisible);
+    myLearnerCreated = isLearnerCreated;
+  }
+
   public void initTaskFile(final Task task, boolean isRestarted) {
     setTask(task);
     final List<AnswerPlaceholder> answerPlaceholders = getAnswerPlaceholders();

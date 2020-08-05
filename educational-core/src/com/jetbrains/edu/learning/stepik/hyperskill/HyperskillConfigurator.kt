@@ -81,7 +81,7 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
         return task.taskFiles[name]
       }
     }
-    return files.firstOrNull { !it.isLearnerCreated } ?: files.firstOrNull()
+    return files.firstOrNull { !it.isLearnerCreated && it.isVisible }
   }
 
   companion object {

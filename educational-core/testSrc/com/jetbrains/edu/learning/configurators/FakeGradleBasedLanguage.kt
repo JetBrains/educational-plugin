@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import javax.swing.Icon
 
 object FakeGradleBasedLanguage : Language("FakeGradleBasedLanguage")
@@ -59,6 +60,8 @@ class FakeGradleConfigurator : EduConfigurator<Unit> {
   }
 }
 
+class FakeGradleHyperskillConfigurator : HyperskillConfigurator<Unit>(FakeGradleConfigurator())
+
 class FakeGradleCourseBuilder : EduCourseBuilder<Unit> {
   override fun getLanguageSettings(): LanguageSettings<Unit> = object : LanguageSettings<Unit>() {
     override fun getSettings() {}
@@ -67,6 +70,7 @@ class FakeGradleCourseBuilder : EduCourseBuilder<Unit> {
   override fun getCourseProjectGenerator(course: Course): FakeGradleCourseProjectGenerator = FakeGradleCourseProjectGenerator(
     this, course)
   override fun refreshProject(project: Project, cause: RefreshCause) {}
+  override val mainTemplateName: String? = "Main.kt"
   override val testTemplateName: String? = "Tests.kt"
 }
 

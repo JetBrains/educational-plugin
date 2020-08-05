@@ -293,6 +293,8 @@
   <extensions defaultExtensionNs="Educational">
     <!-- Only for development purposes -->
     <configurator language="TEXT" implementationClass="com.jetbrains.edu.learning.configuration.PlainTextConfigurator"/>
+    <configurator language="TEXT" courseType="Hyperskill"
+                  implementationClass="com.jetbrains.edu.learning.stepik.hyperskill.PlainTextHyperskillConfigurator"/>
 
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
     <optionsProvider instance="com.jetbrains.edu.learning.coursera.CourseraOptions"/>

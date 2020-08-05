@@ -118,7 +118,7 @@ object HyperskillCheckConnector {
     val codeTaskText = configurator?.getCodeTaskFile(project, task)?.getText(project)
     if (codeTaskText == null) {
       LOG.error("Unable to create submission: file with code is not found for the task ${task.name}")
-      return Err(EduCoreErrorBundle.message("error.failed.to.post.solution", EduNames.JBA))
+      return Err(EduCoreErrorBundle.message("failed.to.post.solution", EduNames.JBA))
     }
     val codeSubmission = StepikCheckerConnector.createCodeSubmission(attempt.id, defaultLanguage, codeTaskText)
     return connector.postSubmission(codeSubmission)

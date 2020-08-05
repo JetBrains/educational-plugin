@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -177,7 +178,7 @@ val HyperskillProject.eduEnvironment: String?
 
 val Task.successMessage: String
   get() {
-    if (!course.isStudy) {
+    if (!course.isStudy || isUnitTestMode) {
       return CheckUtils.CONGRATULATIONS
     }
     val hyperskillCourse = this.course as HyperskillCourse

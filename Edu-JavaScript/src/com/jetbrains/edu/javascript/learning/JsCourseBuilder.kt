@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class JsCourseBuilder : EduCourseBuilder<JsNewProjectSettings> {
-  override val mainTemplateName: String = JsConfigurator.MAIN_JS
   override val taskTemplateName: String = JsConfigurator.TASK_JS
   override val testTemplateName: String = JsConfigurator.TEST_JS
 

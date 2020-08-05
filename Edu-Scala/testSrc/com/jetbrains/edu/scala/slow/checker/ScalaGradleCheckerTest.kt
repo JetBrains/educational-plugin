@@ -8,16 +8,16 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import org.jetbrains.plugins.scala.ScalaLanguage
 
-class ScalaSbtCheckerTest : JdkCheckerTestBase() {
+class ScalaGradleCheckerTest : JdkCheckerTestBase() {
 
   override fun createCourse(): Course {
 
-    return course(language = ScalaLanguage.INSTANCE, environment = "sbt") {
+    return course(language = ScalaLanguage.INSTANCE, environment = "Gradle") {
       section {
         lesson {
+          // it should fail, but it does not
           eduTask("EduTask in section") {
             scalaTaskFile("src/Task.scala", """
             class Task {
@@ -33,7 +33,6 @@ class ScalaSbtCheckerTest : JdkCheckerTestBase() {
               }
             }
           """)
-            taskFile("build.sbt", taskSbtText)
           }
         }
       }
@@ -53,7 +52,6 @@ class ScalaSbtCheckerTest : JdkCheckerTestBase() {
               }
             }
           """)
-          taskFile("build.sbt", taskSbtText)
         }
       }
       frameworkLesson {
@@ -72,16 +70,12 @@ class ScalaSbtCheckerTest : JdkCheckerTestBase() {
               }
             }
           """)
-          taskFile("build.sbt", taskSbtText)
         }
       }
     }
   }
 
-  private val taskSbtText: String
-    get() = GeneratorUtils.getInternalTemplateText("task-build.sbt")
-
-  fun `test scala sbt course`() {
+  fun `test scala gradle course`() {
     CheckActionListener.expectedMessage { task ->
       when (task) {
         is OutputTask, is EduTask -> CheckUtils.CONGRATULATIONS
