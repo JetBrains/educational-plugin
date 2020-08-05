@@ -3,12 +3,13 @@ package com.jetbrains.edu.kotlin.hyperskill
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
-class KtHyperskillCodeTaskNameTest : EduTestCase()  {
+class KtHyperskillCodeTaskNameTest : EduTestCase() {
   fun `test find taskFile for uploading`() {
     val course = courseWithFiles(
       language = KotlinLanguage.INSTANCE,
@@ -31,7 +32,8 @@ class KtHyperskillCodeTaskNameTest : EduTestCase()  {
     course.stages = listOf(HyperskillStage(1, "", 1))
 
     val task = findTask(0, 0)
-    val codeTaskFile = course.configurator?.getCodeTaskFile(project, task)
+    val configurator = course.configurator as HyperskillConfigurator
+    val codeTaskFile = configurator.getCodeTaskFile(project, task)
 
     assertEquals("src/Main.kt", codeTaskFile!!.name)
   }

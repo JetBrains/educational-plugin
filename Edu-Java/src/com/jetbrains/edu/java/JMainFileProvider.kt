@@ -7,11 +7,10 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiMethodUtil
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
+import com.jetbrains.edu.learning.configuration.MainFileProvider
 
-open class JTaskCheckerProvider : GradleTaskCheckerProvider() {
-
-  override fun mainClassForFile(project: Project, file: VirtualFile): String? {
+class JMainFileProvider: MainFileProvider {
+  override fun findMainClass(project: Project, file: VirtualFile): String? {
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
     val mainClass = PsiTreeUtil.findChildrenOfType(psiFile, PsiClass::class.java).find { psiClass ->
       PsiMethodUtil.MAIN_CLASS.value(psiClass) && PsiMethodUtil.hasMainMethod(psiClass)

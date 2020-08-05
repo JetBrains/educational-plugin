@@ -376,7 +376,7 @@ public class StepikSolutionsLoader implements Disposable {
     }
   }
 
-  private static TaskSolutions getStepikTaskSolutions(@NotNull Project project, @NotNull Task task, boolean isSolved) {
+  private static TaskSolutions getStepikTaskSolutions(@NotNull Project project, @NotNull Task task) {
     EduConfigurator<?> configurator = CourseExt.getConfigurator(task.getCourse());
     String taskFileName = (configurator == null) ? null : configurator.getMockFileName(configurator.getMockTemplate());
     SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);

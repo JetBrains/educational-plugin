@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils.hasCompilationErrors
 import com.jetbrains.edu.learning.checker.CheckUtils.postProcessOutput
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.TestsOutputParser
+import com.jetbrains.edu.learning.configuration.MainFileProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -146,13 +147,8 @@ class GradleOutput(val isSuccess: Boolean, _messages: List<String>) {
  * Run gradle 'run' task.
  * Returns gradle output if task was successfully executed, otherwise returns CheckResult.
  */
-fun runGradleRunTask(
-  project: Project,
-  task: Task,
-  indicator: ProgressIndicator,
-  mainClassForFile: (Project, VirtualFile) -> String?
-): Result<String, CheckResult> {
-  val mainClassName = findMainClass(project, task, mainClassForFile)
+fun runGradleRunTask(project: Project, task: Task, indicator: ProgressIndicator): Result<String, CheckResult> {
+  val mainClassName = findMainClass(project, task)
                       ?: return CodeExecutor.resultUnchecked(EduJVMBundle.message("error.no.main", task.name))
   val taskName = if (task.hasSeparateModule(project)) "${getGradleProjectName(task)}:run" else "run"
 
@@ -168,20 +164,20 @@ fun runGradleRunTask(
   return Ok(gradleOutput.firstMessage)
 }
 
-private fun findMainClass(project: Project, task: Task, mainClassForFile: (Project, VirtualFile) -> String?): String? =
+private fun findMainClass(project: Project, task: Task): String? =
   runReadAction {
     val selectedFile = getSelectedFile(project)
     if (selectedFile != null) {
       val fileTask = EduUtils.getTaskForFile(project, selectedFile)
       if (fileTask == task) {
-        val mainClass = mainClassForFile(project, selectedFile)
+        val mainClass = MainFileProvider.getMainClassName(project, selectedFile)
         if (mainClass != null) return@runReadAction mainClass
       }
     }
 
     for ((_, taskFile) in task.taskFiles) {
       val file = taskFile.getVirtualFile(project) ?: continue
-      return@runReadAction mainClassForFile(project, file) ?: continue
+      return@runReadAction MainFileProvider.getMainClassName(project, file) ?: continue
     }
     null
   }

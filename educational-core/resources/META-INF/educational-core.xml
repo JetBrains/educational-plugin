@@ -42,8 +42,10 @@
 
     <extensionPoint qualifiedName="Educational.coursesPlatformProviderFactory"
                     interface="com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory"
-                    dynamic="true"
-    />
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.mainFileProvider"
+                    interface="com.jetbrains.edu.learning.configuration.MainFileProvider"
+                    dynamic="true"/>
   </extensionPoints>
 
   <actions>

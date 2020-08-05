@@ -262,7 +262,12 @@ open class StepikTaskBuilder(
       }
     }
 
-    val taskFilePath = GeneratorUtils.joinPaths(configurator.sourceDir, configurator.getMockFileName(editorText))
+    val fileName = configurator.getMockFileName(editorText)
+    if (fileName == null) {
+      LOG.error("Could not retrieve fileName for courseType $courseType, language $language")
+      return
+    }
+    val taskFilePath = GeneratorUtils.joinPaths(configurator.sourceDir, fileName)
     val taskFile = TaskFile()
     taskFile.setText(editorText)
     taskFile.name = taskFilePath

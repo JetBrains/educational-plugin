@@ -128,7 +128,7 @@ interface EduConfigurator<Settings> {
    *
    * @see com.jetbrains.edu.learning.stepik.StepikTaskBuilder
    */
-  fun getMockFileName(text: String): String
+  fun getMockFileName(text: String): String? = courseBuilder.mainTemplateName
 
   /**
    * Allows to customize file template used as playground in theory and choice tasks

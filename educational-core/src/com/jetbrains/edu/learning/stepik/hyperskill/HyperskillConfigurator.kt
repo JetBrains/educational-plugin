@@ -68,15 +68,18 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
 
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean = baseConfigurator.excludeFromArchive(project, file)
   override fun isTestFile(project: Project, file: VirtualFile): Boolean = baseConfigurator.isTestFile(project, file)
-  override fun getMockFileName(text: String): String = baseConfigurator.getMockFileName(text)
+  override fun getMockFileName(text: String): String? = baseConfigurator.getMockFileName(text)
   override fun beforeCourseStarted(course: Course) = baseConfigurator.beforeCourseStarted(course)
 
   open fun getCodeTaskFile(project: Project, task: Task): TaskFile? {
     val files = task.taskFiles.values
     if (files.size == 1) return files.firstOrNull()
-    val name = GeneratorUtils.joinPaths(sourceDir, getMockFileName(mockTemplate))
-    if (name in task.taskFiles) {
-      return task.taskFiles[name]
+    val mainFileName = baseConfigurator.courseBuilder.mainTemplateName
+    if (mainFileName != null) {
+      val name = GeneratorUtils.joinPaths(sourceDir, mainFileName)
+      if (name in task.taskFiles) {
+        return task.taskFiles[name]
+      }
     }
     return files.firstOrNull { !it.isLearnerCreated } ?: files.firstOrNull()
   }

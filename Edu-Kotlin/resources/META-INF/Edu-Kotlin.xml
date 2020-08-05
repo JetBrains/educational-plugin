@@ -8,6 +8,7 @@
     <configurator implementationClass="com.jetbrains.edu.kotlin.KtConfigurator" language="kotlin"/>
     <twitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>
     <codeforcesLanguageProvider implementation="com.jetbrains.edu.kotlin.codeforces.KtCodeforcesLanguageProvider"/>
+    <mainFileProvider implementation="com.jetbrains.edu.kotlin.KtMainFileProvider"/>
 
     <!-- Hyperskill -->
     <configurator implementationClass="com.jetbrains.edu.kotlin.stepik.hyperskill.KtHyperskillConfigurator" language="kotlin" courseType="Hyperskill"/>

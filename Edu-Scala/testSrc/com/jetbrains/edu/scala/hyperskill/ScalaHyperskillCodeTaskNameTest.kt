@@ -10,6 +10,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -39,7 +40,8 @@ class ScalaHyperskillCodeTaskNameTest : EduTestCase() {
     course.stages = listOf(HyperskillStage(1, "", 1))
 
     val task = findTask(0, 0)
-    val codeTaskFile = course.configurator?.getCodeTaskFile(project, task)
+    val configurator = course.configurator as HyperskillConfigurator
+    val codeTaskFile = configurator.getCodeTaskFile(project, task)
 
     assertEquals("src/CoolTaskName.scala", codeTaskFile!!.name)
   }

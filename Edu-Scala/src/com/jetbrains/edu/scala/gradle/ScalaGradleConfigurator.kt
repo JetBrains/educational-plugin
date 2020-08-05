@@ -1,6 +1,7 @@
 package com.jetbrains.edu.scala.gradle
 
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
+import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import com.jetbrains.edu.jvm.stepik.fileName
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -20,7 +21,7 @@ class ScalaGradleConfigurator : GradleConfiguratorBase() {
     get() = !EduUtils.isAndroidStudio()
 
   override val taskCheckerProvider: TaskCheckerProvider
-    get() = ScalaGradleTaskCheckerProvider()
+    get() = GradleTaskCheckerProvider()
 
   override val mockTemplate: String
     get() = getInternalTemplateText(MOCK_SCALA)
