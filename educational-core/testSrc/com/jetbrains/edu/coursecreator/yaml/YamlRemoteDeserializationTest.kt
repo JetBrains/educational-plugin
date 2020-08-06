@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightVirtualFile
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
@@ -42,6 +43,10 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
       |stages:
       |- id: 1
       |  step: 11
+      |  is_completed: true
+      |- id: 2
+      |  step: 22
+      |  is_completed: false
       |topics:
       |  0:
       |  - title: Learn Anything
@@ -57,13 +62,18 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertEquals(ideFiles, hyperskillProject.ideFiles)
     assertEquals(isTemplateBased, hyperskillProject.isTemplateBased)
 
-    val hyperskillStage = course.stages[0]
-    assertEquals(1, hyperskillStage.id)
-    assertEquals(11, hyperskillStage.stepId)
+    checkStage(HyperskillStage(1, "", 11, true), course.stages[0])
+    checkStage(HyperskillStage(2, "", 22, false), course.stages[1])
 
     val hyperskillTopic = course.taskToTopics[0]!!.first()
     assertEquals(404, hyperskillTopic.theoryId)
     assertEquals("Learn Anything", hyperskillTopic.title)
+  }
+
+  private fun checkStage(expected: HyperskillStage, actual: HyperskillStage) {
+    assertEquals(expected.id, actual.id)
+    assertEquals(expected.stepId, actual.stepId)
+    assertEquals(expected.isCompleted, actual.isCompleted)
   }
 
   fun `test course without top-level lessons`() {
