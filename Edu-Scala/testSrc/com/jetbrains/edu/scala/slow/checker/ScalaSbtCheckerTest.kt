@@ -21,7 +21,7 @@ class ScalaSbtCheckerTest : JdkCheckerTestBase() {
           eduTask("EduTask in section") {
             scalaTaskFile("src/Task.scala", """
             class Task {
-              def foo(): Int = 43
+              def foo(): Int = 42
             }
           """)
             scalaTaskFile("test/TestSpec.scala", """

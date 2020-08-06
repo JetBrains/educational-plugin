@@ -178,7 +178,7 @@ val HyperskillProject.eduEnvironment: String?
 
 val Task.successMessage: String
   get() {
-    if (!course.isStudy || isUnitTestMode) {
+    if (!course.isStudy) {
       return CheckUtils.CONGRATULATIONS
     }
     val hyperskillCourse = this.course as HyperskillCourse

@@ -13,7 +13,6 @@ class ScalaMainFileProvider : MainFileProvider {
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
     if (psiFile !is ScalaFile) return null
 
-    // TODO fix tests, they still do not work for Scala
     PsiTreeUtil.findChildrenOfType(psiFile, ScObject::class.java).forEach {
       val mainMethod = findMainMethod(it)
       if (mainMethod.isDefined) return mainMethod.get().name

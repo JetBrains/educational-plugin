@@ -11,17 +11,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import org.jetbrains.plugins.scala.ScalaLanguage
 
 class ScalaGradleCheckerTest : JdkCheckerTestBase() {
-
   override fun createCourse(): Course {
-
     return course(language = ScalaLanguage.INSTANCE, environment = "Gradle") {
       section {
         lesson {
-          // it should fail, but it does not
           eduTask("EduTask in section") {
             scalaTaskFile("src/Task.scala", """
             class Task {
-              def foo(): Int = 43
+              def foo(): Int = 42
             }
           """)
             scalaTaskFile("test/TestSpec.scala", """

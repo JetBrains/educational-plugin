@@ -75,8 +75,7 @@ class JHyperskillCodeTaskNameTest : EduTestCase() {
         val myJdkHome = IdeaTestUtil.requireRealJdkHome()
         VfsRootAccess.allowRootAccess(testRootDisposable, myJdkHome)
         val jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(myJdkHome))!!
-        return SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null,
-                                             "Test JDK")
+        return SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null, "Test JDK")
       }
     }
   }
