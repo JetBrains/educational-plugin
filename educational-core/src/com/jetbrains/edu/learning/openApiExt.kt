@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.progress.util.ProgressWrapper
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
@@ -15,8 +16,11 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
+import com.intellij.util.ConcurrencyUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import java.util.*
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorService
 
 private val LOG = Logger.getInstance("openApiExt")
 
@@ -67,6 +71,28 @@ fun runInBackground(project: Project? = null, title: String, canBeCancelled: Boo
   ProgressManager.getInstance().run(object : Task.Backgroundable(project, title, canBeCancelled) {
     override fun run(indicator: ProgressIndicator) = task(indicator)
   })
+
+fun <T : Any> invokeAllWithProgress(tasks: List<() -> T?>, executor: ExecutorService): List<T> {
+  val progressManager = ProgressManager.getInstance()
+  val indicator = progressManager.progressIndicator
+  val callables = tasks.map { task ->
+    Callable {
+      if (indicator != null) {
+        progressManager.runProcess(task, ProgressWrapper.wrap(indicator))
+      }
+      else {
+        task()
+      }
+    }
+  }
+
+  val result = ConcurrencyUtil.invokeAll(callables, executor)
+    .filterNot { it.isCancelled }
+    .mapNotNull { it.get() }
+
+  ProgressManager.checkCanceled()
+  return result
+}
 
 fun <T> withRegistryKeyOff(key: String, action: () -> T): T {
   val registryValue = Registry.get(key)

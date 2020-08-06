@@ -2,13 +2,12 @@ package com.jetbrains.edu.learning.stepik.api
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.util.ConcurrencyUtil
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.invokeAllWithProgress
 import com.jetbrains.edu.learning.stepik.*
 import java.util.*
-import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 
 object StepikCourseLoader {
@@ -72,18 +71,12 @@ object StepikCourseLoader {
   }
 
   private fun getOrderedListOfSections(allSections: List<Section>, remoteCourse: EduCourse): List<StudyItem> {
-    val loadItemTasks = mutableListOf<Callable<StudyItem?>>()
-    for ((index, section) in allSections.withIndex()) {
-      loadItemTasks.add(Callable { loadItemTask(remoteCourse, section, index + 1) })
+    val tasks = allSections.mapIndexed { index, section ->
+      { loadItemTask(remoteCourse, section, index + 1) }
     }
-    val sections = ArrayList<StudyItem>()
-    ConcurrencyUtil.invokeAll(loadItemTasks, EXECUTOR_SERVICE)
-      .filterNot { it.isCancelled }
-      .mapNotNull { it.get() }
-      .forEach { sections.add(it) }
 
-    sections.sortBy { it.index }
-    return sections
+    val sections = invokeAllWithProgress(tasks, EXECUTOR_SERVICE)
+    return sections.sortedBy { it.index }
   }
 
   private fun hasVisibleSections(sections: List<Section>, courseName: String): Boolean {
@@ -124,7 +117,6 @@ object StepikCourseLoader {
       if (progressIndicator != null && updateIndicator) {
         progressIndicator.isIndeterminate = false
         val readableIndex = lessonIndex + 1
-        progressIndicator.checkCanceled()
         progressIndicator.text = "Loading lesson $readableIndex of $lessonCount"
         progressIndicator.fraction = readableIndex.toDouble() / lessonCount
       }

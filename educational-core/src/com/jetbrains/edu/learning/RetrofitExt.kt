@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.PlatformUtils
 import com.intellij.util.net.HttpConfigurable
 import com.intellij.util.net.ssl.CertificateManager
@@ -117,7 +119,9 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
   }
 
   return try {
-    val response = this.execute()
+    val response = execute()
+    ProgressManager.checkCanceled()
+
     val error = response.errorBody()?.string() ?: return Ok(response)
     log(error, "Code ${response.code()}", omitErrors)
 
@@ -143,6 +147,9 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
   catch (e: IOException) {
     log("Failed to connect to server", e.message, omitErrors)
     Err("${EduCoreErrorBundle.message("failed.to.connect")} \n\n${e.message}")
+  }
+  catch (e: ProcessCanceledException) {
+    throw e
   }
   catch (e: RuntimeException) {
     log("Failed to connect to server", e.message, omitErrors)
