@@ -13,11 +13,12 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 
 abstract class GradleHyperskillConfigurator<T>(baseConfigurator: EduConfigurator<T>) : HyperskillConfigurator<T>(baseConfigurator) {
   override fun getCodeTaskFile(project: Project, task: Task): TaskFile? {
+    val language = task.course.languageById ?: return super.getCodeTaskFile(project, task)
     for (file in task.taskFiles.values) {
       val virtualFile = file.getVirtualFile(project) ?: continue
       val psiFile = PsiManager.getInstance(project).findFile(virtualFile) as? PsiClassOwner ?: continue
       for (aClass in psiFile.classes) {
-        if (aClass.isPublic && MainFileProvider.getMainClassName(project, virtualFile) != null) {
+        if (aClass.isPublic && MainFileProvider.getMainClassName(project, virtualFile, language) != null) {
           return file
         }
       }

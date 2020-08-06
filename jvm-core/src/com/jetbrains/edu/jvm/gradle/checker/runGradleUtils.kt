@@ -166,18 +166,19 @@ fun runGradleRunTask(project: Project, task: Task, indicator: ProgressIndicator)
 
 private fun findMainClass(project: Project, task: Task): String? =
   runReadAction {
+    val language = task.course.languageById ?: return@runReadAction null
     val selectedFile = getSelectedFile(project)
     if (selectedFile != null) {
       val fileTask = EduUtils.getTaskForFile(project, selectedFile)
       if (fileTask == task) {
-        val mainClass = MainFileProvider.getMainClassName(project, selectedFile)
+        val mainClass = MainFileProvider.getMainClassName(project, selectedFile, language)
         if (mainClass != null) return@runReadAction mainClass
       }
     }
 
     for ((_, taskFile) in task.taskFiles) {
       val file = taskFile.getVirtualFile(project) ?: continue
-      return@runReadAction MainFileProvider.getMainClassName(project, file) ?: continue
+      return@runReadAction MainFileProvider.getMainClassName(project, file, language) ?: continue
     }
     null
   }

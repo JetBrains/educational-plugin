@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.configuration
 
-import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.lang.Language
+import com.intellij.lang.LanguageExtension
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 
@@ -9,10 +10,10 @@ interface MainFileProvider {
 
   companion object {
     @JvmField
-    val EP_NAME = ExtensionPointName.create<MainFileProvider>("Educational.mainFileProvider")
+    val EP_NAME = LanguageExtension<MainFileProvider>("Educational.mainFileProvider")
 
-    fun getMainClassName(project: Project, file: VirtualFile): String? {
-      return EP_NAME.extensionList.mapNotNull { it.findMainClass(project, file) }.firstOrNull()
+    fun getMainClassName(project: Project, file: VirtualFile, language: Language): String? {
+      return EP_NAME.forLanguage(language)?.findMainClass(project, file)
     }
   }
 }

@@ -70,7 +70,6 @@ class JHyperskillCodeTaskNameTest : EduTestCase() {
   }
 
   override fun getProjectDescriptor(): LightProjectDescriptor {
-    // tried to move this code to setUp or at least init - does not work, I have NPE while calc jdkHomeDir
     return object : LightProjectDescriptor() {
       override fun getSdk(): Sdk? {
         val myJdkHome = IdeaTestUtil.requireRealJdkHome()

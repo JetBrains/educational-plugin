@@ -44,8 +44,10 @@
                     interface="com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory"
                     dynamic="true"/>
     <extensionPoint qualifiedName="Educational.mainFileProvider"
-                    interface="com.jetbrains.edu.learning.configuration.MainFileProvider"
-                    dynamic="true"/>
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.learning.configuration.MainFileProvider"/>
+    </extensionPoint>
   </extensionPoints>
 
   <actions>
