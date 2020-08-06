@@ -294,7 +294,11 @@ project(":") {
     }
     withType<RunIdeTask> {
       // Disable auto plugin reloading. See `com.intellij.ide.plugins.DynamicPluginVfsListener`
+      // To enable dynamic reloading, change value to `true` and disable `EduDynamicPluginListener`
       jvmArgs("-Didea.auto.reload.plugins=false")
+      // Uncomment to enable memory dump creation if plugin cannot be unloaded by the platform
+      // jvmArgs("-Dide.plugins.snapshot.on.unload.fail=true")
+
     }
     buildSearchableOptions {
       enabled = findProperty("enableBuildSearchableOptions") != "false"
