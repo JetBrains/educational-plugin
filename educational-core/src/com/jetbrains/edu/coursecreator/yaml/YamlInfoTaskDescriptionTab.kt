@@ -1,7 +1,9 @@
 package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.content.ContentFactory
@@ -22,7 +24,7 @@ import javax.swing.JPanel
 
 private const val NAME = "YAML Help"
 
-class YamlInfoTaskDescriptionTab(val project: Project) : JPanel() {
+class YamlInfoTaskDescriptionTab(val project: Project) : JPanel(), Disposable {
 
   init {
     var templateText = loadText("/yaml-tab/yaml-tab-template.html") ?: "Cannot load yaml documentation"
@@ -45,7 +47,7 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel() {
         browserWindow.panel
       }
       JavaUILibrary.JCEF -> {
-        getJCEFComponent(templateText) ?: defaultSwingPanel(templateText)
+        getJCEFComponent(this, templateText) ?: defaultSwingPanel(templateText)
       }
       else -> {
         defaultSwingPanel(templateText)
@@ -61,13 +63,17 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel() {
     background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
     border = JBUI.Borders.empty(8, 15, 0, 0)
   }
+
+  override fun dispose() {}
 }
 
 fun addTabToTaskDescription(project: Project) {
   val contentManager = project.taskDescriptionTWContentManager ?: return
   val content = contentManager.findContent(NAME)
   content?.let { contentManager.removeContent(it, true) }
-  val yamlInfoTab = ContentFactory.SERVICE.getInstance().createContent(YamlInfoTaskDescriptionTab(project), NAME, false)
+  val descriptionTab = YamlInfoTaskDescriptionTab(project)
+  Disposer.register(contentManager, descriptionTab)
+  val yamlInfoTab = ContentFactory.SERVICE.getInstance().createContent(descriptionTab, NAME, false)
   yamlInfoTab.isCloseable = false
   contentManager.addContent(yamlInfoTab, contentManager.contents.size)
 }

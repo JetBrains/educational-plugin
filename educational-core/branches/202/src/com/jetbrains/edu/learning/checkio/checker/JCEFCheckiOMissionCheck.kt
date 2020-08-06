@@ -3,8 +3,10 @@ package com.jetbrains.edu.learning.checkio.checker
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefJSQuery
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.cef.browser.CefBrowser
@@ -34,6 +36,11 @@ class JCEFCheckiOMissionCheck(project: Project,
       }
       null
     }
+    // TODO: pass another disposable with shorter lifetime
+    // for example, content manager of the corresponding tool window
+    // otherwise, jcef browser objects can be leaked until the project is closed.
+    // But it's better than nothing
+    Disposer.register(StudyTaskManager.getInstance(project), jbCefBrowser)
   }
 
   override fun doCheck(resources: Map<String, String>) {
