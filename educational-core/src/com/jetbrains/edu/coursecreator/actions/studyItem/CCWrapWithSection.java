@@ -29,8 +29,8 @@ public class CCWrapWithSection extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCWrapWithSection.class);
 
   public CCWrapWithSection() {
-    super(EduCoreBundle.lazyMessage("action.wrap.with.section.text"), EduCoreBundle.lazyMessage(
-      "action.wrap.with.section.description"), null);
+    super(EduCoreBundle.lazyMessage("action.wrap.with.section.text"),
+          EduCoreBundle.lazyMessage("action.wrap.with.section.description"), null);
   }
 
   @Override
