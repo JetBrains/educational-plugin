@@ -5,6 +5,9 @@
     <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector"
                         serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector"/>
+    <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectManager"
+                        serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectManager"
+                        testServiceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.MockHyperskillProjectManager"/>
 
     <postStartupActivity implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillStartupActivity"/>
 

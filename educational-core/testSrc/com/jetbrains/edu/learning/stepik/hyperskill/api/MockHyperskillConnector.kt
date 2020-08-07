@@ -1,10 +1,20 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.api
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.MockWebServerHelper
 import com.jetbrains.edu.learning.ResponseHandler
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.stepik.HyperskillStepOptions
+import com.jetbrains.edu.learning.stepik.PYCHARM
+import com.jetbrains.edu.learning.stepik.Step
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -32,5 +42,58 @@ class MockHyperskillConnector : HyperskillConnector() {
     val webSocket = client.newWebSocket(Request.Builder().url(webSocketMockSever.url("/")).build(), listener)
     webSocketMockSever.enqueue(MockResponseFactory.fromString("Mock Server Started").withWebSocketUpgrade(webSocketListener))
     return webSocket
+  }
+
+  fun configureFromCourse(disposable: Disposable, course: HyperskillCourse) {
+    val hyperskillProject = course.hyperskillProject!!
+    val projectId = hyperskillProject.id
+    withResponseHandler(disposable) { request ->
+      MockResponseFactory.fromString(
+        when (request.path) {
+          "/api/projects/$projectId" -> objectMapper.writeValueAsString(ProjectsList().also { it.projects = listOf(hyperskillProject) })
+          "/api/stages?project=$projectId" -> objectMapper.writeValueAsString(StagesList().also { it.stages = course.stages })
+          "/api/steps?ids=${course.stages.map { it.stepId }.joinToString(separator = ",")}" -> stepSources(course)
+          else -> "{}"
+        }
+      )
+    }
+  }
+
+  private fun stepSources(course: HyperskillCourse): String {
+    val stepsList = HyperskillStepsList().apply {
+      steps = course.allTasks.map { task ->
+        createStepSource(task)
+      }
+    }
+    val tree = objectMapper.valueToTree<JsonNode>(stepsList)
+    for (node in tree.findValues("block")) {
+      val objectNode = node as ObjectNode
+      val source: JsonNode = objectNode.get("source")
+      objectNode.set<JsonNode>("options", source)
+    }
+    return objectMapper.writeValueAsString(tree)
+  }
+
+  private fun createStepSource(task: Task): HyperskillStepSource {
+
+    val step = Step().apply {
+      name = PYCHARM
+      text = task.descriptionText
+    }
+
+    step.options = HyperskillStepOptions().apply {
+      title = task.name
+      descriptionFormat = task.descriptionFormat
+      descriptionText = task.descriptionText
+      files = task.taskFiles.values.toMutableList()
+      taskType = task.itemType
+      lessonType = if (task.lesson is FrameworkLesson) EduNames.FRAMEWORK else null
+    }
+
+    return HyperskillStepSource().apply {
+      id = task.id
+      block = step
+      title = task.name
+    }
   }
 }

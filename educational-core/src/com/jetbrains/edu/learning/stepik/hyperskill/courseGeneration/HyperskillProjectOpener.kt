@@ -12,8 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -82,7 +80,7 @@ object HyperskillProjectOpener {
     return getHyperskillCourseUnderProgress(request).map { hyperskillCourse ->
       runInEdt {
         requestFocus()
-        JoinCourseDialog(hyperskillCourse, CourseDisplaySettings(showTagsPanel = false, showInstructorField = false)).show()
+        HyperskillProjectManager.getInstance().newProject(hyperskillCourse)
       }
     }
   }
@@ -196,11 +194,19 @@ object HyperskillProjectOpener {
   }
 
   private fun synchronizeProjectOnStepOpening(project: Project, course: HyperskillCourse, stepId: Int) {
+    if (isUnitTestMode) {
+      //TODO: remove?
+      return
+    }
     val task = course.getProblemsLesson()?.getTask(stepId) ?: return
     HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, listOf(task), true)
   }
 
   private fun synchronizeProjectOnStageOpening(project: Project, course: HyperskillCourse, tasks: List<Task>) {
+    if (isUnitTestMode) {
+      //TODO: remove?
+      return
+    }
     HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks, true)
     HyperskillStartupActivity.synchronizeTopics(project, course)
   }
