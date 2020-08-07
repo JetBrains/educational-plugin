@@ -33,13 +33,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="4fa15" class="javax.swing.JLabel" binding="myErrorIcon">
-            <constraints border-constraint="West"/>
-            <properties>
-              <text value=""/>
-            </properties>
-          </component>
-          <component id="4bdcf" class="javax.swing.JLabel" binding="myErrorLabel">
+          <component id="4bdcf" class="com.jetbrains.edu.learning.newproject.ui.ErrorComponent" binding="myErrorComponent">
             <constraints border-constraint="Center"/>
             <properties>
               <text value=""/>

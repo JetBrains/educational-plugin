@@ -3,26 +3,27 @@ package com.jetbrains.edu.learning.stepik.course
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
-import com.intellij.ui.HyperlinkLabel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.ui.EduColors
 import org.apache.commons.lang.math.NumberUtils.isDigits
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.*
+import javax.swing.event.HyperlinkEvent
+import javax.swing.event.HyperlinkListener
 
 class ImportStepikCoursePanel(private val parent: Disposable) {
   private val courseLinkTextField = JTextField()
   val panel: JPanel
   private val helpLabel = JLabel("https://stepik.org/course/*")
-  private var errorLabel = HyperlinkLabel()
+  private val errorComponent = ErrorComponent(getHyperlinkListener())
   private var validationListener: ValidationListener? = null
 
   val courseLink: String
@@ -34,9 +35,8 @@ class ImportStepikCoursePanel(private val parent: Disposable) {
   init {
     helpLabel.foreground = UIUtil.getLabelDisabledForeground()
     helpLabel.font = UIUtil.getLabelFont()
-    errorLabel.setHyperlinkText("", "Log in", " to Stepik to import course")
-    errorLabel.foreground = EduColors.errorTextForeground
-    errorLabel.isVisible = false
+    errorComponent.setErrorMessage("", "Log in", " to Stepik to import course")
+    errorComponent.border = JBUI.Borders.empty(1)
 
     val courseLink = JLabel("Course link:")
     panel = JPanel(BorderLayout())
@@ -59,10 +59,9 @@ class ImportStepikCoursePanel(private val parent: Disposable) {
         .addComponent(helpLabel)
     )
     panel.add(nestedPanel, BorderLayout.NORTH)
-    panel.add(errorLabel, BorderLayout.SOUTH)
-    panel.preferredSize = JBUI.size(Dimension(400, 80))
+    panel.add(errorComponent, BorderLayout.SOUTH)
+    panel.preferredSize = JBUI.size(Dimension(400, 90))
     panel.minimumSize = panel.preferredSize
-    addErrorStateListener()
   }
 
   fun setValidationListener(validationListener: ValidationListener?) {
@@ -70,8 +69,8 @@ class ImportStepikCoursePanel(private val parent: Disposable) {
     doValidation()
   }
 
-  private fun addErrorStateListener() {
-    errorLabel.addHyperlinkListener {
+  private fun getHyperlinkListener(): HyperlinkListener = HyperlinkListener { e ->
+    if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
       if (!EduSettings.isLoggedIn()) {
         addLoginListener()
         StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
@@ -94,7 +93,7 @@ class ImportStepikCoursePanel(private val parent: Disposable) {
 
   private fun doValidation() {
     val isLoggedIn = EduSettings.isLoggedIn()
-    errorLabel.isVisible = !isLoggedIn
+    errorComponent.isVisible = !isLoggedIn
     if (isLoggedIn) {
       // If user is logged - make panel smaller without `Log In` message
       setPanelSize(Dimension(400, 50))

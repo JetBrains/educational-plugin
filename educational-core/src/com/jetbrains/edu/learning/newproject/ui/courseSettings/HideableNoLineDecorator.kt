@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui.courseSettings
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.Nls
@@ -35,7 +36,7 @@ class HideableNoLineDecorator(private val myPanel: JPanel, @Nls(capitalization =
 
   init {
     myTitledSeparator = NoLineTitledSeparator(title)
-    val separatorPanel = JPanel(BorderLayout())
+    val separatorPanel = NonOpaquePanel()
     separatorPanel.add(myTitledSeparator, BorderLayout.CENTER)
     myPanel.add(separatorPanel, BorderLayout.NORTH)
     myTitledSeparator.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)

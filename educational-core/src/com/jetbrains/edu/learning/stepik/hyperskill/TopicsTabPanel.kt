@@ -38,8 +38,8 @@ class TopicsTabPanel(project: Project,
   }
 
   private fun topicLink(topic: HyperskillTopic, textStyleHeader: String): String {
-    val liStyle = "style=color:${ColorUtil.toHex(EduColors.hyperlinkColor)};"
-    val linkStyle = "$textStyleHeader;color:${ColorUtil.toHex(EduColors.hyperlinkColor)}"
+    val liStyle = "style=color:#${ColorUtil.toHex(EduColors.hyperlinkColor)};"
+    val linkStyle = "$textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)}"
     val topicLink = "https://hyperskill.org/learn/step/${topic.theoryId}/"
 
     return """<li $liStyle><a $linkStyle href=$topicLink>${topic.title}</a></li>"""

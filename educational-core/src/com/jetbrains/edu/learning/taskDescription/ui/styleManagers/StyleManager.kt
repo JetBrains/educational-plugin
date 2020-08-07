@@ -24,7 +24,7 @@ class StyleManager {
   val codeBackground = if (isJavaFxOrJCEF()) codeBackground()
   else ColorUtil.dimmer(UIUtil.getPanelBackground()).asCssColor()
 
-  val textStyleHeader = "style=font-size:${bodyFontSize}"
+  val textStyleHeader = "style=font-size:${bodyFontSize}pt"
 
   private fun java.awt.Color.asCssColor(): Color = Color("#${ColorUtil.toHex(this)}")
 

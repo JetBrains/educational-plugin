@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.DESCRIPTION_AND_SETTINGS_TOP_OFFSET
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import java.awt.BorderLayout
 import java.io.File
 import java.text.DateFormat
@@ -60,7 +59,7 @@ class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0
       myAdvancedSettings.add(setting, BorderLayout.PAGE_END)
     }
     UIUtil.mergeComponentsWithAnchor(settings)
-    UIUtil.setBackgroundRecursively(myAdvancedSettings, MAIN_BG_COLOR)
+    UIUtil.setBackgroundRecursively(myAdvancedSettings, background)
     myAdvancedSettings.revalidate()
     myAdvancedSettings.repaint()
   }

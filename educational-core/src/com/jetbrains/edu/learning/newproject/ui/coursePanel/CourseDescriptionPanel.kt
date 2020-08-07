@@ -33,6 +33,7 @@ class CourseDescriptionPanel(leftMargin: Int) : JBScrollPane() {
     border = JBUI.Borders.emptyLeft(leftMargin)
     descriptionPanel = CourseDescriptionHtmlPanel()
     descriptionPanel.border = JBUI.Borders.emptyTop(DESCRIPTION_AND_SETTINGS_TOP_OFFSET)
+    descriptionPanel.background = MAIN_BG_COLOR
     setViewportView(descriptionPanel)
   }
 

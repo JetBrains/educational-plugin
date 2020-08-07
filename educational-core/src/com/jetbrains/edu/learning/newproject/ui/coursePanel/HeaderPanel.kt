@@ -25,7 +25,7 @@ class HeaderPanel(leftMargin: Int, joinCourseAction: (CourseInfo, CourseMode) ->
     border = JBUI.Borders.empty(TOP_OFFSET, leftMargin, 0, 0)
     add(iconPanel.iconLabel, BorderLayout.WEST)
     add(nameAndInfoPanel, BorderLayout.CENTER)
-    UIUtil.setBackgroundRecursively(this, UIUtil.getEditorPaneBackground())
+    UIUtil.setBackgroundRecursively(this, MAIN_BG_COLOR)
   }
 
   fun setButtonsEnabled(isEnabled: Boolean) {

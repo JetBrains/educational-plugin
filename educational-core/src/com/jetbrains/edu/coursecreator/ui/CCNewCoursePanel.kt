@@ -12,7 +12,6 @@ import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.DocumentAdapter
-import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.layout.*
 import com.intellij.util.text.nullize
@@ -28,10 +27,10 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.enablePlugins
 import com.jetbrains.edu.learning.getDisabledPlugins
+import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettings
-import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.ItemEvent
@@ -42,6 +41,8 @@ import java.time.format.FormatStyle
 import java.util.*
 import javax.swing.*
 import javax.swing.event.DocumentEvent
+import javax.swing.event.HyperlinkEvent
+import javax.swing.event.HyperlinkListener
 import javax.swing.text.AttributeSet
 import javax.swing.text.PlainDocument
 
@@ -56,7 +57,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
   private val myPathField: PathField = PathField()
   private val myLocationField: LabeledComponent<TextFieldWithBrowseButton> = createLocationField()
 
-  private val myErrorLabel = HyperlinkLabel()
+  private val myErrorComponent = ErrorComponent(getHyperlinkListener())
 
   private val myCourse: Course = (course ?: courseProducer()).apply { courseMode = CCUtils.COURSE_MODE }
   private lateinit var myLanguageSettings: LanguageSettings<*>
@@ -70,8 +71,8 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
   init {
     layout = BorderLayout()
     // Check both Darcula and Light theme before changing size
-    preferredSize = JBUI.size(700, 350)
-    minimumSize = JBUI.size(700, 350)
+    preferredSize = JBUI.size(700, 372)
+    minimumSize = JBUI.size(700, 372)
 
     myDescriptionTextArea.rows = 10
     myDescriptionTextArea.lineWrap = true
@@ -88,20 +89,22 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     myTitleField.complementaryTextField = myPathField
     myPathField.complementaryTextField = myTitleField
 
-    myErrorLabel.border = JBUI.Borders.emptyTop(8)
-    myErrorLabel.foreground = EduColors.errorTextForeground
-
     val bottomPanel = JPanel(BorderLayout())
-    bottomPanel.add(myErrorLabel, BorderLayout.SOUTH)
+    myErrorComponent.minimumSize = JBUI.size(700, 34)
+    myErrorComponent.preferredSize = myErrorComponent.minimumSize
+    myErrorComponent.border = JBUI.Borders.empty(5, 6, 2, 2)
+    bottomPanel.add(myErrorComponent, BorderLayout.SOUTH)
     bottomPanel.add(myAdvancedSettings, BorderLayout.NORTH)
 
     add(myPanel, BorderLayout.NORTH)
     add(bottomPanel, BorderLayout.SOUTH)
 
-    myErrorLabel.addHyperlinkListener { enablePlugins(myRequiredAndDisabledPlugins) }
-
     myCourseDataComboBox.renderer = object : DefaultListCellRenderer() {
-      override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
+      override fun getListCellRendererComponent(list: JList<*>,
+                                                value: Any?,
+                                                index: Int,
+                                                isSelected: Boolean,
+                                                cellHasFocus: Boolean): Component {
         val component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
         if (component is JLabel && value is CourseData) {
           component.text = value.displayName
@@ -160,12 +163,19 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     myLocationField.component.textField.document.addDocumentListener(validator)
   }
 
+  private fun getHyperlinkListener(): HyperlinkListener = HyperlinkListener { e ->
+    if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
+      enablePlugins(myRequiredAndDisabledPlugins)
+    }
+  }
+
   private fun doValidation() {
     val validationMessage = when {
       myTitleField.text.isNullOrBlank() -> ValidationMessage("Enter course title")
       myDescriptionTextArea.text.isNullOrBlank() -> ValidationMessage("Enter course description")
       locationString.isBlank() -> ValidationMessage("Enter course location")
-      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage("Can't create course at this location")
+      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage(
+        "Can't create course at this location")
       myRequiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(myRequiredAndDisabledPlugins.map { PluginId.getId(it) })
       else -> {
         val validationMessage = myLanguageSettings.validate(null, locationString)
@@ -174,9 +184,13 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
       }
     }
     if (validationMessage != null) {
-      myErrorLabel.setHyperlinkText(validationMessage.beforeLink, validationMessage.linkText, validationMessage.afterLink)
+      myErrorComponent.setErrorMessage(validationMessage.beforeLink, validationMessage.linkText, validationMessage.afterLink)
+      myErrorComponent.isVisible = true
+      revalidate()
     }
-    myErrorLabel.isVisible = validationMessage != null
+    else {
+      myErrorComponent.isVisible = false
+    }
     myValidationListener?.onInputDataValidated(validationMessage == null)
   }
 

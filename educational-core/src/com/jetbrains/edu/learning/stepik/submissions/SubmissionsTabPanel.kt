@@ -76,7 +76,7 @@ class SubmissionsTabPanel(project: Project,
 
   private fun addViewOnStepikLink(descriptionText: StringBuilder, currentTask: ChoiceTask, submissionsPanel: AdditionalTabPanel) {
     descriptionText.append(
-      "<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(EduColors.hyperlinkColor)} " +
+      "<a ${StyleManager().textStyleHeader};color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} " +
       "href=https://stepik.org/submissions/${currentTask.id}?unit=${currentTask.lesson.unitId}\">" +
       EduCoreBundle.message("submissions.view.quiz.on.stepik", StepikNames.STEPIK, "</a><a ${StyleManager().textStyleHeader}>"))
     submissionsPanel.addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
@@ -84,7 +84,7 @@ class SubmissionsTabPanel(project: Project,
 
   private fun addLoginLink(descriptionText: StringBuilder,
                            submissionsManager: SubmissionsManager) {
-    descriptionText.append("<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(EduColors.hyperlinkColor)}" +
+    descriptionText.append("<a ${StyleManager().textStyleHeader};color:#${ColorUtil.toHex(EduColors.hyperlinkColor)}" +
                            " href=>${EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName())}" +
                            "</a><a ${StyleManager().textStyleHeader}>")
     this.addHyperlinkListener(HyperlinkListener { e ->

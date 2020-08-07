@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.ui;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -8,9 +7,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.coursecreator.actions.CreateCourseArchiveAction;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.newproject.ui.ErrorComponent;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,15 +22,13 @@ import java.awt.*;
 public class CCCreateCourseArchivePanel extends JPanel {
   private JPanel myPanel;
   private TextFieldWithBrowseButton myLocationField;
-  private JLabel myErrorIcon;
-  private JLabel myErrorLabel;
+  private ErrorComponent myErrorComponent;
   private JTextField myAuthorField;
   private JLabel myAuthorLabel;
 
   public CCCreateCourseArchivePanel(@NotNull final Project project, String name, boolean showAuthorField) {
     setLayout(new BorderLayout());
     add(myPanel, BorderLayout.CENTER);
-    myErrorIcon.setIcon(AllIcons.Actions.Lightning);
     setErrorVisible(false);
     myAuthorField.setText(getAuthorInitialValue(project));
     myLocationField.setText(getArchiveLocation(project, name));
@@ -37,6 +36,7 @@ public class CCCreateCourseArchivePanel extends JPanel {
     myLocationField.addBrowseFolderListener("Choose Location Folder", null, project, descriptor);
     myAuthorLabel.setVisible(showAuthorField);
     myAuthorField.setVisible(showAuthorField);
+    myErrorComponent.setBorder(JBUI.Borders.empty(2, 1));
   }
 
   public void addLocationListener(DocumentListener listener) {
@@ -62,12 +62,11 @@ public class CCCreateCourseArchivePanel extends JPanel {
   }
 
   protected void setErrorVisible(boolean isVisible) {
-    myErrorIcon.setVisible(isVisible);
-    myErrorLabel.setVisible(isVisible);
+    myErrorComponent.setVisible(isVisible);
   }
 
   protected void setError() {
-    myErrorLabel.setText("Invalid location. File already exists.");
+    myErrorComponent.setErrorMessage("Invalid location. File already exists.", "", "");
     setErrorVisible(true);
   }
 

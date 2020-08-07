@@ -8,7 +8,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser
-import com.intellij.ui.HyperlinkLabel
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
@@ -25,13 +24,16 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import javax.swing.JTextPane
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 
 class ErrorStateHyperlinkListener : HyperlinkListener {
   override fun hyperlinkUpdate(e: HyperlinkEvent?) {
-    val coursePanel = UIUtil.getParentOfType(CoursePanel::class.java, e?.source as? HyperlinkLabel) ?: return
-    val coursesPanel = UIUtil.getParentOfType(CoursesPanel::class.java, e?.source as? HyperlinkLabel) ?: return
+    if (e?.eventType != HyperlinkEvent.EventType.ACTIVATED) return
+
+    val coursePanel = UIUtil.getParentOfType(CoursePanel::class.java, e?.source as? JTextPane) ?: return
+    val coursesPanel = UIUtil.getParentOfType(CoursesPanel::class.java, e?.source as? JTextPane) ?: return
     when (val state = coursePanel.errorState) {
       is ErrorState.CheckiOLoginRequired -> {
         val course = coursePanel.course as CheckiOCourse
@@ -48,7 +50,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
           Runnable { coursesPanel.hideLoginPanel() }
         )
       }
-      is ErrorState.StepikLoginRequired, ErrorState.NotLoggedIn  -> {
+      is ErrorState.StepikLoginRequired, ErrorState.NotLoggedIn -> {
         addLoginListener(coursePanel, coursesPanel)
         // TODO: Update course list
         StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
