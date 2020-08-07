@@ -82,8 +82,7 @@ object HyperskillProjectOpener {
     return getHyperskillCourseUnderProgress(request).map { hyperskillCourse ->
       runInEdt {
         requestFocus()
-        JoinCourseDialog(hyperskillCourse, CourseDisplaySettings(showTagsPanel = false,
-                                                                 showInstructorField = false)).show()
+        JoinCourseDialog(hyperskillCourse, CourseDisplaySettings(showTagsPanel = false, showInstructorField = false)).show()
       }
     }
   }
