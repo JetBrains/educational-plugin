@@ -11,7 +11,6 @@ import com.jetbrains.edu.javascript.learning.messages.EduJavaScriptBundle
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestFiles
@@ -41,8 +40,7 @@ open class JsTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
       null
     }
     catch (e: RuntimeConfigurationError) {
-      val baseDir = project.course?.getDir(project.courseDir)
-      val packageJson = baseDir?.findChild(NodeModuleNamesUtil.PACKAGE_JSON) ?: return null
+      val packageJson = project.courseDir.findChild(NodeModuleNamesUtil.PACKAGE_JSON) ?: return null
       val message = """${EduCoreBundle.message("check.no.tests")}. ${EduJavaScriptBundle.message("install.dependencies")}."""
       CheckResult(CheckStatus.Unchecked, message, hyperlinkListener = object : HyperlinkAdapter() {
         override fun hyperlinkActivated(e: HyperlinkEvent?) {
