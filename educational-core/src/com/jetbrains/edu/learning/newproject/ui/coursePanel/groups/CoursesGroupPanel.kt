@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseCardComponent
+import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView

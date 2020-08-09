@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 import com.intellij.ui.ComponentUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseCardComponent
+import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import java.awt.Component
 import java.awt.event.*
 import javax.swing.SwingUtilities

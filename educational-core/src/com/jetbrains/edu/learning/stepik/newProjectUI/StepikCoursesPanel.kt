@@ -66,7 +66,8 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider) : CoursesPan
 
     private fun importCourse() {
       val course = StartStepikCourseAction().importStepikCourse() ?: return
-      val courses = coursesListPanel.courses
+      // TODO: implement course adding
+      val courses = courses
       updateModel(courses.plus(course), course, false)
     }
 

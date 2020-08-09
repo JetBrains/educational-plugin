@@ -14,19 +14,18 @@ import com.jetbrains.edu.learning.newproject.ui.TabInfo
 class CheckiOCoursesPanel(platformProvider: CoursesPlatformProvider) : CoursesPanel(platformProvider) {
   private val loginComponent = CheckiOLoginPanel()
 
-  init {
-    coursesListPanel.addListener {
-      if (selectedCourse != null) {
-        val checkiOConnectorProvider = selectedCourse?.configurator as? CheckiOConnectorProvider
-        if (checkiOConnectorProvider == null) {
-          loginComponent.isVisible = false
-          return@addListener
-        }
-
-        val checkiOAccount = checkiOConnectorProvider.oAuthConnector.account
-        val isLoggedIn = checkiOAccount == null
-        loginComponent.isVisible = isLoggedIn
+  override fun processSelectionChanged() {
+    super.processSelectionChanged()
+    if (selectedCourse != null) {
+      val checkiOConnectorProvider = selectedCourse?.configurator as? CheckiOConnectorProvider
+      if (checkiOConnectorProvider == null) {
+        loginComponent.isVisible = false
+        return
       }
+
+      val checkiOAccount = checkiOConnectorProvider.oAuthConnector.account
+      val isLoggedIn = checkiOAccount == null
+      loginComponent.isVisible = isLoggedIn
     }
   }
 

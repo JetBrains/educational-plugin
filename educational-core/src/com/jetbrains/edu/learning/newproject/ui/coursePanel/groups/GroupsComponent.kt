@@ -7,9 +7,12 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
-class GroupsComponent(selectionChanged: () -> Unit, val joinCourse: (CourseInfo, CourseMode) -> Unit) : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
+class GroupsComponent(selectionChanged: () -> Unit, private val joinCourse: (CourseInfo, CourseMode) -> Unit) : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
 
   private val courseGroupModel: CourseGroupModel = CourseGroupModel(selectionChanged)
+
+  val selectedValue: Course?
+    get() = courseGroupModel.selectedCard?.courseInfo?.course
 
   init {
     background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
@@ -33,9 +36,6 @@ class GroupsComponent(selectionChanged: () -> Unit, val joinCourse: (CourseInfo,
   fun initialSelection() {
     courseGroupModel.initialSelection()
   }
-
-  val selectedValue: Course?
-    get() = courseGroupModel.selectedCard?.courseInfo?.course
 
   companion object {
     private const val NO_COURSES = "No courses found"

@@ -21,7 +21,7 @@ import java.awt.Color
 import java.awt.event.ActionListener
 
 // TODO: use this everywhere in browse courses
-private val MAIN_BG_COLOR: Color = JBColor.namedColor("BrowseCourses.background", JBColor(
+val MAIN_BG_COLOR: Color = JBColor.namedColor("BrowseCourses.background", JBColor(
   (NotNullProducer { if (JBColor.isBright()) TaskDescriptionView.getTaskDescriptionBackgroundColor() else Color(0x313335) })))
 private val WhiteForeground: Color = JBColor(Color.white, Color(0xBBBBBB))
 private val GreenColor: Color = JBColor(0x5D9B47, 0x2B7B50)
@@ -62,7 +62,7 @@ class JBAcademyCourseButton(course: JetBrainsAcademyCourse, fill: Boolean = true
         )
       }
       else {
-        joinJetBrainsAcademy(course) {}  // TODO: error handling
+        joinJetBrainsAcademy() {}  // TODO: error handling
       }
     }
   }

@@ -36,11 +36,14 @@ private const val CONTENT_CARD_NAME = "CONTENT"
 private const val LOADING_CARD_NAME = "PROGRESS"
 private const val NO_COURSES = "NO_COURSES"
 
-abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel() {
-  protected var coursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false, isLocationFieldNeeded = true)
-  private var courses: MutableList<Course> = mutableListOf()
-  private val coursesListPanel: CoursesListPanel = CoursesListPanel(::processSelectionChanged, ::joinCourse, ImportCourseAction())
-  private val myCourseListPanel: JPanel = JPanel(BorderLayout())
+abstract class CoursesPanel(
+
+  coursesProvider: CoursesPlatformProvider) : JPanel() {
+  protected var coursePanel: NewCoursePanel = NewCoursePanel(
+    isStandalonePanel = false,
+    isLocationFieldNeeded = true)
+  protected val coursesListPanel: CoursesListPanel
+  protected var courses: MutableList<Course> = mutableListOf()
   private lateinit var myProgrammingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   private lateinit var myHumanLanguagesFilterDropdown: HumanLanguageFilterDropdown
   private val cardLayout = JBCardLayout()
@@ -58,6 +61,11 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
 
   init {
     layout = cardLayout
+    coursesListPanel = CoursesListPanel({ processSelectionChanged() },
+                                        joinCourseAction(dialog),
+                                        this.toolbarAction(),
+                                        coursesProvider,
+                                        this.tabInfo(), this)
 
     addCourseValidationListener(object : CourseValidationListener {
       override fun validationStatusChanged(canStartCourse: Boolean) {
@@ -65,7 +73,7 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
       }
     })
 
-    this.add(createContentPanel(coursesProvider), CONTENT_CARD_NAME)
+    this.add(createContentPanel(), CONTENT_CARD_NAME)
     this.add(createLoadingPanel(), LOADING_CARD_NAME)
     this.add(createNoCoursesPanel(), NO_COURSES)
     showProgressState()
@@ -75,10 +83,10 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
 
   fun hideLoginPanel() = coursesListPanel.hideLoginPanel()
 
-  private fun createContentPanel(coursesProvider: CoursesPlatformProvider): JPanel {
+  private fun createContentPanel(): JPanel {
     val mainPanel = JPanel(BorderLayout())
     mainPanel.add(createAndBindSearchComponent(), BorderLayout.NORTH)
-    mainPanel.add(createSplitPane(coursesProvider), BorderLayout.CENTER)
+    mainPanel.add(createSplitPane(), BorderLayout.CENTER)
     return mainPanel
   }
 
@@ -90,10 +98,7 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
     processSelectionChanged()
   }
 
-  private fun createSplitPane(coursesProvider: CoursesPlatformProvider): JPanel {
-    coursesListPanel = CoursesListPanel(toolbarAction(), coursesProvider, tabInfo())
-    coursesListPanel.addListener { processSelectionChanged() }
-
+  private fun createSplitPane(): JPanel {
     val splitPane = OnePixelSplitter()
     splitPane.firstComponent = coursesListPanel
     splitPane.secondComponent = coursePanel
@@ -143,7 +148,7 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
     myProgrammingLanguagesFilterDropdown.updateItems(programmingLanguages(courses))
   }
 
-  private fun processSelectionChanged() {
+  open fun processSelectionChanged() {
     val course = selectedCourse
     if (course != null) {
       coursePanel.bindCourse(course)?.addSettingsChangeListener { doValidation(course) }
@@ -175,8 +180,9 @@ abstract class CoursesPanel(coursesProvider: CoursesPlatformProvider) : JPanel()
     return filteredCourses
   }
 
-  protected fun updateModel(courses: List<Course>, courseToSelect: Course?, filterCourses: Boolean = true) {
+  protected fun updateModel(courses: List<Course>, @Suppress("UNUSED_PARAMETER") courseToSelect: Course?, filterCourses: Boolean = true) {
     val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
+    // TODO: implement adding course and uncomment
     coursesListPanel.updateModel(coursesToAdd, courseToSelect)
   }
 
