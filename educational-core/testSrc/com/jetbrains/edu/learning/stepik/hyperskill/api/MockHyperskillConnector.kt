@@ -78,7 +78,6 @@ class MockHyperskillConnector : HyperskillConnector() {
   }
 
   private fun createStepSource(task: Task): HyperskillStepSource {
-
     val step = Step().apply {
       name = PYCHARM
       text = task.descriptionText
