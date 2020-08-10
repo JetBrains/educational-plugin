@@ -4,7 +4,6 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.checker.CheckUtils.FAILED_TO_CHECK_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.NOT_RUNNABLE_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.createDefaultRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -20,7 +19,7 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
 
     if (!CheckUtils.executeRunConfigurations(project, listOf(configuration), indicator)) {
       LOG.warn("Execution failed")
-      return CheckResult(CheckStatus.Unchecked, FAILED_TO_CHECK_MESSAGE)
+      return CheckResult.failedToCheck
     }
 
     return CheckResult.SOLVED

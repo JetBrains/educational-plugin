@@ -33,15 +33,16 @@ open class DefaultCodeExecutor : CodeExecutor {
 
     val configuration = runReadActionInSmartMode(project) { createRunConfiguration(project, task) }
     if (configuration == null) {
-      return logAndQuit(EduCoreBundle.message("error.unable.to.create.configuration"))
+      LOG.warn("Failed to launch checking. Run configuration is null")
+      return Err(CheckResult.failedToCheck)
     }
 
     try {
       configuration.checkSettings()
     }
     catch (e: RuntimeConfigurationException) {
-      LOG.warn(e)
-      return logAndQuit(EduCoreBundle.message("error.unable.to.create.configuration"))
+      LOG.warn("Failed to launch checking", e)
+      return Err(CheckResult.failedToCheck)
     }
 
     configuration.isActivateToolWindowBeforeRun = false

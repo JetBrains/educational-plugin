@@ -16,9 +16,9 @@ class GradleEnvironmentChecker : EnvironmentChecker() {
     val sdk = ProjectRootManager.getInstance(project).projectSdk
     if (sdk == null) return EduCoreBundle.message("error.no.sdk")
 
-    val unableToCreateConfigurationError = EduCoreBundle.message("error.unable.to.create.configuration")
-    val taskDir = task.getDir(project.courseDir) ?: return unableToCreateConfigurationError
-    val module = ModuleUtil.findModuleForFile(taskDir, project) ?: return unableToCreateConfigurationError
+    val failedToCheck = EduCoreBundle.message("error.failed.to.launch.checking")
+    val taskDir = task.getDir(project.courseDir) ?: return failedToCheck
+    val module = ModuleUtil.findModuleForFile(taskDir, project) ?: return failedToCheck
 
     val gradleNotImportedError = EduJVMBundle.message("error.gradle.not.imported")
     val path = ExternalSystemApiUtil.getExternalRootProjectPath(module) ?: return gradleNotImportedError

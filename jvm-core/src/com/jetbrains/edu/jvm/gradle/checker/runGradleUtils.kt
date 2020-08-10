@@ -20,7 +20,6 @@ import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
-import com.jetbrains.edu.learning.checker.CheckUtils.FAILED_TO_CHECK_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
 import com.jetbrains.edu.learning.checker.CheckUtils.hasCompilationErrors
 import com.jetbrains.edu.learning.checker.CheckUtils.postProcessOutput
@@ -33,6 +32,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.sanitizeName
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.settings.TestRunner
 
@@ -67,7 +67,7 @@ class GradleCommandLine private constructor(
       val handler = CapturingProcessHandler(cmd)
       handler.runProcessWithProgressIndicator(indicator)
     } catch (e: ExecutionException) {
-      LOG.info(FAILED_TO_CHECK_MESSAGE, e)
+      LOG.info("Failed to launch checking", e)
       return null
     }
 
@@ -83,7 +83,7 @@ class GradleCommandLine private constructor(
 
     if (!output.stdout.contains(taskName)) {
       LOG.warn("#educational: executing $taskName fails: \n" + output.stdout)
-      return GradleOutput(false, listOf(FAILED_TO_CHECK_MESSAGE, stderr, output.stdout))
+      return GradleOutput(false, listOf(EduCoreBundle.message("error.failed.to.launch.checking"), stderr, output.stdout))
     }
 
     return GradleOutput(true, collectMessages(output))

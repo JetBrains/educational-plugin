@@ -14,6 +14,8 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.xmlEscaped
+import org.hamcrest.CoreMatchers.containsString
+import org.junit.Assert.assertThat
 
 class JCheckErrorsTest : JdkCheckerTestBase() {
 
@@ -108,7 +110,9 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
     }
 
     CheckActionListener.shouldSkip()
-    CheckActionListener.expectedMessage { EduCoreBundle.message("error.unable.to.create.configuration") }
+    CheckActionListener.setCheckResultVerifier { _, checkResult ->
+      assertThat(checkResult.message, containsString(EduCoreBundle.message("error.failed.to.launch.checking")))
+    }
 
     try {
       doTest()

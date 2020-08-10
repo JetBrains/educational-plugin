@@ -28,14 +28,16 @@ data class CheckResult @JvmOverloads constructor(
     val noTestsRun: CheckResult
       get() = CheckResult(
         CheckStatus.Unchecked,
-        "${EduCoreBundle.message("check.no.tests")}. ${EduCoreBundle.message("help.use.guide", NO_TESTS_URL)}"
+        EduCoreBundle.message("gluing.dot", EduCoreBundle.message("check.no.tests"),
+                              EduCoreBundle.message("help.use.guide", NO_TESTS_URL))
       )
 
     @JvmStatic
     val failedToCheck: CheckResult
       get() = CheckResult(
         CheckStatus.Unchecked,
-        "${CheckUtils.FAILED_TO_CHECK_MESSAGE}. ${EduCoreBundle.message("help.use.guide", FAILED_TO_CHECK_URL)}"
+        EduCoreBundle.message("gluing.dot", EduCoreBundle.message("error.failed.to.launch.checking"),
+                              EduCoreBundle.message("help.use.guide", FAILED_TO_CHECK_URL))
       )
   }
 }
