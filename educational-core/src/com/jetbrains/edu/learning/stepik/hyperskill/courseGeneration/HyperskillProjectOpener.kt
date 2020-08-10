@@ -195,7 +195,6 @@ object HyperskillProjectOpener {
 
   private fun synchronizeProjectOnStepOpening(project: Project, course: HyperskillCourse, stepId: Int) {
     if (isUnitTestMode) {
-      //TODO: remove?
       return
     }
     val task = course.getProblemsLesson()?.getTask(stepId) ?: return
@@ -204,7 +203,6 @@ object HyperskillProjectOpener {
 
   private fun synchronizeProjectOnStageOpening(project: Project, course: HyperskillCourse, tasks: List<Task>) {
     if (isUnitTestMode) {
-      //TODO: remove?
       return
     }
     HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks, true)
