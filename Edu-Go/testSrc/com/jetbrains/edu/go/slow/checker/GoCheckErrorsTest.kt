@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.nullValue
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
@@ -23,6 +24,51 @@ class GoCheckErrorsTest : GoCheckersTestBase() {
             // todo: replace this with an actual task
             func Sum(a, b int) int {
               return a + b + 1
+            }
+          """)
+          taskFile("go.mod", """
+            module task1
+          """)
+          goTaskFile("test/task_test.go", """
+            package test
+            
+            import (
+            	task "task1"
+            	"testing"
+            )
+            
+            //todo: replace this with an actual test
+            func TestSum(t *testing.T) {
+            	type args struct {
+            		a int
+            		b int
+            	}
+            	tests := []struct {
+            		name string
+            		args args
+            		want int
+            	}{
+            		{"1", args{1, 1}, 2},
+            		{"2", args{1, 2}, 3},
+            	}
+            	for _, tt := range tests {
+            		t.Run(tt.name, func(t *testing.T) {
+            			if got := task.Sum(tt.args.a, tt.args.b); got != tt.want {
+            				t.Errorf("Sum() = %v, want %v", got, tt.want)
+            			}
+            		})
+            	}
+            }
+
+          """)
+        }
+        eduTask("EduCompilationFailed") {
+          goTaskFile("task.go", """
+            package task
+
+            // todo: replace this with an actual task
+            func Sum(a, b int) int {
+              return a + b +
             }
           """)
           taskFile("go.mod", """
@@ -101,6 +147,7 @@ class GoCheckErrorsTest : GoCheckersTestBase() {
       assertEquals(CheckStatus.Failed, checkResult.status)
       val (messageMatcher, diffMatcher) = when (task.name) {
         "EduTestFailed" -> CoreMatchers.equalTo(incorrect) to nullValue()
+        "EduCompilationFailed" -> CoreMatchers.equalTo(EduCoreErrorBundle.message("execution.failed")) to nullValue()
         "OutputTestFailed" -> CoreMatchers.equalTo(incorrect) to
           CheckResultDiffMatcher.diff(CheckResultDiff(expected = "Yes", actual = "No"))
         "OutputMultilineTestFailed" -> CoreMatchers.equalTo(incorrect) to

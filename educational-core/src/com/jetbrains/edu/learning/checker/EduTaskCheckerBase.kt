@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.checker.CheckResult.Companion.noTestsRun
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 
 abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: EnvironmentChecker, project: Project) :
@@ -152,7 +153,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
   /**
    * Returns message for test error that will be shown to a user in Check Result panel
    */
-  protected open fun getErrorMessage(node: SMTestProxy): String = node.errorMessage
+  protected open fun getErrorMessage(node: SMTestProxy): String = node.errorMessage ?: EduCoreErrorBundle.message("execution.failed")
 
   /**
    * Returns message for comparison error that will be shown to a user in Check Result panel
