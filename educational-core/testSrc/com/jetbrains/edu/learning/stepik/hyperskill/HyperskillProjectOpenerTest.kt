@@ -17,7 +17,6 @@ class HyperskillProjectOpenerTest : EduTestCase() {
   override fun setUp() {
     super.setUp()
     mockProjectManager.project = project
-    mockProjectManager.module = module
   }
 
   fun `test open stage in new project`() {
@@ -112,7 +111,6 @@ class HyperskillProjectOpenerTest : EduTestCase() {
 
   override fun tearDown() {
     mockProjectManager.project = null
-    mockProjectManager.module = null
     super.tearDown()
   }
 }
