@@ -71,7 +71,7 @@ class MockHyperskillConnector : HyperskillConnector() {
     val tree = objectMapper.valueToTree<JsonNode>(stepsList)
     for (node in tree.findValues(BLOCK)) {
       val objectNode = node as ObjectNode
-      val source: JsonNode = objectNode.get(SOURCE)
+      val source = objectNode.get(SOURCE)
       objectNode.set<JsonNode>(OPTIONS, source)
     }
     return objectMapper.writeValueAsString(tree)
