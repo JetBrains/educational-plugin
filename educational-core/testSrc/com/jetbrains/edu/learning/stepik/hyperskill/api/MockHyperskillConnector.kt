@@ -11,9 +11,8 @@ import com.jetbrains.edu.learning.ResponseHandler
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.HyperskillStepOptions
-import com.jetbrains.edu.learning.stepik.PYCHARM
-import com.jetbrains.edu.learning.stepik.Step
+import com.jetbrains.edu.learning.stepik.*
+import com.jetbrains.edu.learning.stepik.api.OPTIONS
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -66,10 +65,10 @@ class MockHyperskillConnector : HyperskillConnector() {
       }
     }
     val tree = objectMapper.valueToTree<JsonNode>(stepsList)
-    for (node in tree.findValues("block")) {
+    for (node in tree.findValues(BLOCK)) {
       val objectNode = node as ObjectNode
-      val source: JsonNode = objectNode.get("source")
-      objectNode.set<JsonNode>("options", source)
+      val source: JsonNode = objectNode.get(SOURCE)
+      objectNode.set<JsonNode>(OPTIONS, source)
     }
     return objectMapper.writeValueAsString(tree)
   }
