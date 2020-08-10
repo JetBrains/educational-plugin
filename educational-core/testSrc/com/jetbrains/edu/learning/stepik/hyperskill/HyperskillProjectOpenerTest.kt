@@ -21,7 +21,7 @@ class HyperskillProjectOpenerTest : EduTestCase() {
 
   fun `test open stage in new project`() {
     loginFakeUser()
-    configureMockResponses(1)
+    configureMockResponses()
 
     HyperskillProjectOpener.open(HyperskillOpenStageRequest(1, 1))
 
@@ -50,10 +50,10 @@ class HyperskillProjectOpenerTest : EduTestCase() {
 
   fun `test open stage in opened project`() {
     loginFakeUser()
-    configureMockResponses(2)
+    configureMockResponses()
 
     // set up existing project
-    hyperskillCourseWithFiles(projectId = 2) {
+    hyperskillCourseWithFiles {
       lesson("Problems") {
         codeTask("task1", stepId = 4) {
           taskFile("src/Task.kt", "fun foo() {}")
@@ -61,7 +61,7 @@ class HyperskillProjectOpenerTest : EduTestCase() {
       }
     }
 
-    HyperskillProjectOpener.open(HyperskillOpenStageRequest(2, 1))
+    HyperskillProjectOpener.open(HyperskillOpenStageRequest(1, 1))
 
     val fileTree = fileTree {
       dir("Problems") {
@@ -94,8 +94,8 @@ class HyperskillProjectOpenerTest : EduTestCase() {
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
-  private fun configureMockResponses(projectId: Int) {
-    mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId) {
+  private fun configureMockResponses() {
+    mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse {
       frameworkLesson("lesson1") {
         eduTask("task1", stepId = 1) {
           taskFile("src/Task.kt", "stage 1")

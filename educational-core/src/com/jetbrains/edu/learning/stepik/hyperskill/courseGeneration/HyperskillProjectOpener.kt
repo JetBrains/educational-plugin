@@ -70,7 +70,7 @@ object HyperskillProjectOpener {
   }
 
   private fun openInOpenedProject(request: HyperskillOpenInProjectRequest): Boolean =
-    openInExistingProject(request, EduBuiltInServerUtils::focusOpenProject)
+    openInExistingProject(request, HyperskillProjectManager.getInstance()::focusOpenProject)
 
   private fun openInRecentProject(request: HyperskillOpenInProjectRequest): Boolean =
     openInExistingProject(request, EduBuiltInServerUtils::openRecentProject)
