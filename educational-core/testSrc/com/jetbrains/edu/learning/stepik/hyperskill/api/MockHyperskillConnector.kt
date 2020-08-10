@@ -64,6 +64,10 @@ class MockHyperskillConnector : HyperskillConnector() {
         createStepSource(task)
       }
     }
+
+    // HACK: rename "source" to "options"
+    // This property has different names in educator and learner formats. Our (de)serializers are configured to support that.
+    // However, here we need learners name in serialized step that's why we need to rename.
     val tree = objectMapper.valueToTree<JsonNode>(stepsList)
     for (node in tree.findValues(BLOCK)) {
       val objectNode = node as ObjectNode
