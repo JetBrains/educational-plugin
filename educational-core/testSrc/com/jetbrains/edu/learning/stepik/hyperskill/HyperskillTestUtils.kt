@@ -14,6 +14,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 
 const val TEST_HYPERSKILL_PROJECT_NAME = "Test Hyperskill Project"
 
+fun testStageName(index: Int): String = "Test Stage $index"
+
 fun loginFakeUser() {
   val fakeToken = TokenInfo().apply { accessToken = "faketoken" }
   HyperskillSettings.INSTANCE.account = HyperskillAccount().apply {
@@ -51,7 +53,7 @@ private fun HyperskillCourse.init(projectId: Int) {
   val projectLesson = getProjectLesson()
   if (projectLesson != null) {
     stages = projectLesson.items.mapIndexed { i, task ->
-      HyperskillStage(i + 1, "Test Stage ${i + 1}", task.id)
+      HyperskillStage(i + 1, testStageName(i + 1), task.id)
     }
   }
 }

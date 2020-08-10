@@ -35,10 +35,10 @@ class HyperskillProjectOpenerTest : EduTestCase() {
             file("Tests1.kt", "stage 1 test")
           }
         }
-        dir("Test Stage 1") {
+        dir(testStageName(1)) {
           file("task.html")
         }
-        dir("Test Stage 2") {
+        dir(testStageName(2)) {
           file("task.html")
         }
       }
@@ -81,10 +81,10 @@ class HyperskillProjectOpenerTest : EduTestCase() {
             file("Tests1.kt", "stage 1 test")
           }
         }
-        dir("Test Stage 1") {
+        dir(testStageName(1)) {
           file("task.html")
         }
-        dir("Test Stage 2") {
+        dir(testStageName(2)) {
           file("task.html")
         }
       }
