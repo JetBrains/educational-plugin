@@ -29,7 +29,6 @@ interface TwitterPluginConfigurator {
 
   fun getDefaultMessage(solvedTask: Task): String
   fun getImagePath(solvedTask: Task): Path?
-  fun getMediaExtension(solvedTask: Task): String
 
   companion object {
     @JvmField

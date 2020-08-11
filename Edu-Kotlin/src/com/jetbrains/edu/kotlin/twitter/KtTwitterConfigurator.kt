@@ -40,8 +40,6 @@ class KtTwitterConfigurator : TwitterPluginConfigurator {
     return path.resolve("twitter/kotlin_koans/images/${level}level.gif").takeIf { it.exists() }
   }
 
-  override fun getMediaExtension(solvedTask: Task): String = "gif"
-
   companion object {
 
     @NonNls
