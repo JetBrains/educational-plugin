@@ -14,7 +14,7 @@ import javax.swing.JComponent
 class TwitterDialog(
   project: Project,
   dialogPanelCreator: (Disposable) -> TwitterDialogPanel
-) : DialogWrapper(project) {
+) : DialogWrapper(project), TwitterDialogUI {
 
   private val panel: TwitterDialogPanel
 
@@ -29,7 +29,7 @@ class TwitterDialog(
     init()
   }
 
-  val message: String get() = panel.message
+  override val message: String get() = panel.message
 
   override fun createCenterPanel(): JComponent? = panel
   override fun doValidate(): ValidationInfo? = panel.doValidate()

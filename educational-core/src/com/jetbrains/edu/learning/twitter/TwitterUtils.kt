@@ -10,7 +10,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
-import com.jetbrains.edu.learning.twitter.ui.TwitterDialog
+import com.jetbrains.edu.learning.twitter.ui.createTwitterDialogUI
 import org.apache.http.HttpStatus
 import twitter4j.StatusUpdate
 import twitter4j.Twitter
@@ -40,7 +40,7 @@ object TwitterUtils {
   @JvmStatic
   fun createTwitterDialogAndShow(project: Project, configurator: TwitterPluginConfigurator, task: Task) {
     ApplicationManager.getApplication().invokeLater {
-      val dialog = TwitterDialog(project) { configurator.getTweetDialogPanel(task, it) }
+      val dialog = createTwitterDialogUI(project) { configurator.getTweetDialogPanel(task, it) }
       if (dialog.showAndGet()) {
         val settings = TwitterSettings.getInstance()
         try {
