@@ -1,18 +1,15 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.twitter
 
-import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.BuildNumber
-import com.intellij.util.io.exists
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator
+import com.jetbrains.edu.learning.twitter.TwitterUtils
 import java.nio.file.Path
 
 class HyperskillTwitterConfigurator : TwitterPluginConfigurator {
@@ -40,8 +37,7 @@ class HyperskillTwitterConfigurator : TwitterPluginConfigurator {
   }
 
   override fun getImagePath(solvedTask: Task): Path? {
-    val path = PluginManagerCore.getPlugin(PluginId.getId(EduNames.PLUGIN_ID))?.pluginPath ?: return null
-    return path.resolve("twitter/hyperskill/achievement0.gif").takeIf { it.exists() }
+    return TwitterUtils.pluginRelativePath("twitter/hyperskill/achievement0.gif")
   }
 
   companion object {

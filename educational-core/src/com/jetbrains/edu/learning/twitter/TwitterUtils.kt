@@ -1,12 +1,17 @@
 package com.jetbrains.edu.learning.twitter
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.io.exists
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
@@ -124,5 +129,17 @@ object TwitterUtils {
     private fun isNumeric(string: String): Boolean {
       return string.all { StringUtil.isDecimalDigit(it) }
     }
+  }
+
+  fun pluginRelativePath(path: String): Path? {
+    require(!FileUtil.isAbsolute(path)) { "`$path` shouldn't be absolute" }
+
+     // BACKCOMPAT: 2019.3. Use `pluginPath` instead of `path?.toPath()`
+    @Suppress("DEPRECATION")
+    return PluginManagerCore.getPlugin(PluginId.getId(EduNames.PLUGIN_ID))
+      ?.path
+      ?.toPath()
+      ?.resolve(path)
+      ?.takeIf { it.exists() }
   }
 }

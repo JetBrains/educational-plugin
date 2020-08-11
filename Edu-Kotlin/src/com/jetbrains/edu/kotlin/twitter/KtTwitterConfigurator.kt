@@ -1,15 +1,12 @@
 package com.jetbrains.edu.kotlin.twitter
 
-import com.intellij.ide.plugins.PluginManagerCore
-import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
-import com.intellij.util.io.exists
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CheckStatus.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator
+import com.jetbrains.edu.learning.twitter.TwitterUtils
 import org.jetbrains.annotations.NonNls
 import java.nio.file.Path
 
@@ -30,13 +27,9 @@ class KtTwitterConfigurator : TwitterPluginConfigurator {
   }
 
   override fun getImagePath(solvedTask: Task): Path? {
-    // BACKCOMPAT: 2019.3. Use `pluginPath` instead of `path?.toPath()`
-    @Suppress("DEPRECATION")
-    val path = PluginManagerCore.getPlugin(PluginId.getId(EduNames.PLUGIN_ID))?.path?.toPath() ?: return null
-
     val solvedTaskNumber = calculateTaskNumber(solvedTask)
     val level = solvedTaskNumber / 8
-    return path.resolve("twitter/kotlin_koans/images/${level}level.gif").takeIf { it.exists() }
+    return TwitterUtils.pluginRelativePath("twitter/kotlin_koans/images/${level}level.gif")
   }
 
   companion object {
