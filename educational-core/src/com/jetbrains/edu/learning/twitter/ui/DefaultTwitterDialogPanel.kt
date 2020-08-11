@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.twitter.ui
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.components.JBScrollPane
@@ -7,13 +8,13 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator
-import javax.swing.ImageIcon
-import javax.swing.JLabel
+import javax.swing.Box
 import javax.swing.JTextArea
 
 class DefaultTwitterDialogPanel(
   configurator: TwitterPluginConfigurator,
-  solvedTask: Task
+  solvedTask: Task,
+  disposable: Disposable
 ) : TwitterDialogPanel(VerticalFlowLayout(0, 0)) {
 
   private val twitterTextField: JTextArea = JTextArea(4, 0)
@@ -26,11 +27,12 @@ class DefaultTwitterDialogPanel(
     val scrollPane = JBScrollPane(twitterTextField)
     add(scrollPane)
 
-    val imageUrl = configurator.javaClass.getResource(configurator.getImageResourcePath(solvedTask))
-    if (imageUrl != null) {
-      val iconLabel = JLabel(ImageIcon(imageUrl))
-      iconLabel.border = JBUI.Borders.empty(10, 0, 0, 0)
-      add(iconLabel)
+    val imagePath = configurator.getImagePath(solvedTask)
+    if (imagePath != null) {
+      val component = createImageComponent(imagePath, disposable)
+      // Don't use border for component because it changes size of component content
+      add(Box.createVerticalStrut(JBUI.scale(10)))
+      add(component)
     }
   }
 

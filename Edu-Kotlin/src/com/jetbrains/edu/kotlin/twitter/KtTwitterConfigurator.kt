@@ -1,6 +1,10 @@
 package com.jetbrains.edu.kotlin.twitter
 
+import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
+import com.intellij.util.io.exists
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CheckStatus.*
@@ -8,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator
 import com.jetbrains.edu.learning.twitter.TwitterSettings
 import org.jetbrains.annotations.NonNls
+import java.nio.file.Path
 
 class KtTwitterConfigurator : TwitterPluginConfigurator {
   override fun askToTweet(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean {
@@ -27,10 +32,12 @@ class KtTwitterConfigurator : TwitterPluginConfigurator {
     return String.format(COMPLETE_KOTLIN_KOANS_LEVEL, solvedTaskNumber / 8)
   }
 
-  override fun getImageResourcePath(solvedTask: Task): String {
+  override fun getImagePath(solvedTask: Task): Path? {
+    val path = PluginManagerCore.getPlugin(PluginId.getId(EduNames.PLUGIN_ID))?.pluginPath ?: return null
+
     val solvedTaskNumber = calculateTaskNumber(solvedTask)
     val level = solvedTaskNumber / 8
-    return "/twitter/kotlin_koans/images/${level}level.gif"
+    return path.resolve("twitter/kotlin_koans/images/${level}level.gif").takeIf { it.exists() }
   }
 
   override fun getMediaExtension(solvedTask: Task): String = "gif"

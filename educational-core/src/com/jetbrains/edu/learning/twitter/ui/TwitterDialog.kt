@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.twitter.ui
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
@@ -12,20 +13,23 @@ import javax.swing.JComponent
  */
 class TwitterDialog(
   project: Project,
-  private val panel: TwitterDialogPanel
+  dialogPanelCreator: (Disposable) -> TwitterDialogPanel
 ) : DialogWrapper(project) {
+
+  private val panel: TwitterDialogPanel
 
   init {
     title = EduCoreBundle.message("twitter.dialog.title")
     setDoNotAskOption(DoNotAskOption())
     setOKButtonText(EduCoreBundle.message("twitter.dialog.ok.action"))
-    setResizable(true)
-    val preferredSize = panel.preferredSize
-    setSize(preferredSize.getHeight().toInt(), preferredSize.getWidth().toInt())
+    setResizable(false)
+    panel = dialogPanelCreator(disposable)
 
     initValidation()
     init()
   }
+
+  val message: String get() = panel.message
 
   override fun createCenterPanel(): JComponent? = panel
   override fun doValidate(): ValidationInfo? = panel.doValidate()

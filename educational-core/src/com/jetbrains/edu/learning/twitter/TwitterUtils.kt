@@ -6,7 +6,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -19,9 +18,8 @@ import twitter4j.TwitterException
 import twitter4j.TwitterFactory
 import twitter4j.auth.AccessToken
 import twitter4j.conf.ConfigurationBuilder
-import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
+import java.nio.file.Path
 
 object TwitterUtils {
   private val LOG = Logger.getInstance(TwitterUtils::class.java)
@@ -42,14 +40,13 @@ object TwitterUtils {
   @JvmStatic
   fun createTwitterDialogAndShow(project: Project, configurator: TwitterPluginConfigurator, task: Task) {
     ApplicationManager.getApplication().invokeLater {
-      val panel = configurator.getTweetDialogPanel(task)
-      val dialog = TwitterDialog(project, panel)
+      val dialog = TwitterDialog(project) { configurator.getTweetDialogPanel(task, it) }
       if (dialog.showAndGet()) {
         val settings = TwitterSettings.getInstance()
         try {
           val isAuthorized = settings.accessToken.isNotEmpty()
           val twitter = twitter
-          val info = TweetInfo(panel.message, configurator, task)
+          val info = TweetInfo(dialog.message, configurator.getImagePath(task))
 
           if (!isAuthorized) {
             authorize(project, twitter)
@@ -78,11 +75,9 @@ object TwitterUtils {
   @Throws(IOException::class, TwitterException::class)
   private fun updateStatus(twitter: Twitter, info: TweetInfo) {
     val update = StatusUpdate(info.message)
-    val mediaSource = info.mediaSource
-    if (mediaSource != null) {
-      val imageFile = FileUtil.createTempFile("twitter_media", info.mediaExtension)
-      FileUtil.copy(mediaSource, FileOutputStream(imageFile))
-      update.media(imageFile)
+    val mediaPath = info.mediaPath
+    if (mediaPath != null) {
+      update.media(mediaPath.toFile())
     }
     twitter.updateStatus(update)
     BrowserUtil.browse("https://twitter.com/")
@@ -105,15 +100,8 @@ object TwitterUtils {
 
   private class TweetInfo(
     val message: String,
-    private val configurator: TwitterPluginConfigurator,
-    private val task: Task
-  ) {
-    val mediaExtension: String get() =
-      configurator.getMediaExtension(task)
-
-    val mediaSource: InputStream? get() =
-      configurator.javaClass.getResourceAsStream(configurator.getImageResourcePath(task))
-  }
+    val mediaPath: Path?
+  )
 
   private class TwitterPinValidator : InputValidatorEx {
     override fun getErrorText(inputString: String): String? {
