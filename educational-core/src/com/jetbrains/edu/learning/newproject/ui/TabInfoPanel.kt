@@ -66,7 +66,7 @@ class TabInfoPanel(tabInfo: TabInfo) : JPanel() {
 
     private val color get() = "#${ColorUtil.toHex(GRAY_COLOR)}"
 
-    override fun getBodyFont(): Font = Font(TypographyManager().bodyFont, Font.PLAIN, JBUI.scaleFontSize(FONT_SIZE))
+    override fun getBodyFont(): Font = font.deriveFont(JBUI.scaleFontSize(FONT_SIZE))
   }
 }
 
