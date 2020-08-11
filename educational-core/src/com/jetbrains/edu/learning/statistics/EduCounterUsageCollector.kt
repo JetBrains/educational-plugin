@@ -35,7 +35,7 @@ object EduCounterUsageCollector {
     reportEvent("study.item.created", mapOf(MODE to item.course.courseMode, TYPE to item.itemType))
 
   enum class LinkType {
-    IN_COURSE, STEPIK, EXTERNAL, PSI, CODEFORCES
+    IN_COURSE, STEPIK, EXTERNAL, PSI, CODEFORCES, JBA
   }
 
   @JvmStatic

@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
 import com.intellij.lang.Language
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -27,7 +26,7 @@ class HyperskillTaskBuilder(
   }
 
   private fun Task.description(theoryId: Int?, langId: String): String = buildString {
-    appendln("<b>$name</b> ${link(stepLink(id), "Open on ${EduNames.JBA}", true)}")
+    appendln("<b>$name</b>")
     appendln("<br><br>")
     appendln(descriptionText)
 

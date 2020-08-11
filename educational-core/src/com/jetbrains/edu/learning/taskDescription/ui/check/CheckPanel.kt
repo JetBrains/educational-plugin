@@ -13,7 +13,7 @@ import com.intellij.util.Alarm
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.GoToTaskUrlAction
 import com.jetbrains.edu.learning.actions.NextTaskAction
@@ -21,10 +21,12 @@ import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.OPEN_ON_CODEFORCES_ACTION
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -38,7 +40,7 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
   private val checkButtonWrapper = JPanel(BorderLayout())
   private val rightActionsToolbar = JPanel(HorizontalLayout(10))
-  private val task = EduUtils.getCurrentTask(project)
+  private val course = project.course
   private val checkTimeAlarm: Alarm = Alarm(project)
 
   init {
@@ -50,10 +52,15 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   }
 
   private fun createRightActionsToolbar(): JPanel {
-    if (task is CodeforcesTask) {
+    if (course is CodeforcesCourse) {
       rightActionsToolbar.add(createActionLink(OPEN_ON_CODEFORCES_ACTION, GoToTaskUrlAction.ACTION_ID))
     }
     else {
+      if (course is HyperskillCourse) {
+        val link = createActionLink(EduCoreBundle.message("hyperskill.open.on", EduNames.JBA), GoToTaskUrlAction.ACTION_ID)
+        link.border = JBUI.Borders.empty(9, 0, 0, 0)
+        rightActionsToolbar.add(link)
+      }
       rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
       rightActionsToolbar.add(createSingleActionToolbar(GoToTaskUrlAction.ACTION_ID))
     }
