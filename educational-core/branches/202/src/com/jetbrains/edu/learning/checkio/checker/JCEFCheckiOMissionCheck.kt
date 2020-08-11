@@ -23,6 +23,7 @@ class JCEFCheckiOMissionCheck(project: Project,
   private val jbCefJSQuery = JBCefJSQuery.create(jbCefBrowser)
 
   init {
+    jbCefBrowser.cefBrowser.createImmediately()
     jbCefBrowser.jbCefClient.addLoadHandler(TestFormLoadHandler(), jbCefBrowser.cefBrowser)
 
     jbCefJSQuery.addHandler { value ->
