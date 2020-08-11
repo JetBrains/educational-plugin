@@ -203,6 +203,7 @@ private class ProviderWithIconCellRenderer : DefaultTreeCellRenderer() {
         textLabel.text = UIUtil.toHtml("<b>$userObject</b>")
         component.border = JBUI.Borders.empty(PROVIDER_TOP_BOTTOM_OFFSET, 0)
       }
+      textLabel.foreground = UIUtil.getListForeground(selected, hasFocus)
     }
 
     return component
