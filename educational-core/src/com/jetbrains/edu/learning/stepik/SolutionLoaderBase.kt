@@ -3,8 +3,11 @@ package com.jetbrains.edu.learning.stepik
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.*
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationUtil
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -14,7 +17,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -70,11 +72,6 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
     else {
       LOG.warn("Can't get submissions")
-    }
-
-    runReadAction {
-      if (project.isDisposed) return@runReadAction
-      project.messageBus.syncPublisher(loadingTopic).solutionLoaded(course)
     }
   }
 
@@ -209,14 +206,9 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     cancelUnfinishedTasks()
   }
 
-  protected abstract val loadingTopic: Topic<SolutionLoadingListener>
   protected abstract fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions
   protected abstract fun loadSubmissions(tasks: List<Task>): List<Submission>?
   abstract fun provideTasksToUpdate(course: Course): List<Task>
-
-  interface SolutionLoadingListener {
-    fun solutionLoaded(course: Course)
-  }
 
   companion object {
 

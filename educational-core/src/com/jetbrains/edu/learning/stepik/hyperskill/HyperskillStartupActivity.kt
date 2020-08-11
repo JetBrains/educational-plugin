@@ -7,9 +7,7 @@ import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -23,14 +21,6 @@ class HyperskillStartupActivity : StartupActivity {
   override fun runActivity(project: Project) {
     if (project.isDisposed || !EduUtils.isStudentProject(project) || isUnitTestMode) return
     val taskManager = StudyTaskManager.getInstance(project)
-    project.messageBus.connect(taskManager)
-      .subscribe(HyperskillSolutionLoader.SOLUTION_TOPIC, object : SolutionLoaderBase.SolutionLoadingListener {
-        override fun solutionLoaded(course: Course) {
-          if (course is HyperskillCourse) {
-            HyperskillCourseUpdateChecker.getInstance(project).check()
-          }
-        }
-      })
 
     val course = StudyTaskManager.getInstance(project).course
     val submissionsManager = SubmissionsManager.getInstance(project)
@@ -54,6 +44,7 @@ class HyperskillStartupActivity : StartupActivity {
         })
       }
       synchronizeTopics(project, course)
+      HyperskillCourseUpdateChecker.getInstance(project).check()
     }
   }
 

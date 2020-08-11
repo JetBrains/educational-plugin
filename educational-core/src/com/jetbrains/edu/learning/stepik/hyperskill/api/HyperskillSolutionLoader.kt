@@ -5,7 +5,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -22,8 +21,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.openSelectedStage
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
-
-  override val loadingTopic: Topic<SolutionLoadingListener> = SOLUTION_TOPIC
 
   override fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions {
     val lastSubmission = submissions.firstOrNull { it.step == task.id }
@@ -86,7 +83,6 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     @JvmStatic
     fun getInstance(project: Project): HyperskillSolutionLoader = ServiceManager.getService(project, HyperskillSolutionLoader::class.java)
 
-    val SOLUTION_TOPIC: Topic<SolutionLoadingListener> = Topic.create("Hyperskill solutions loaded", SolutionLoadingListener::class.java)
     private val LOG = Logger.getInstance(HyperskillSolutionLoader::class.java)
   }
 }
