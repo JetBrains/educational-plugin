@@ -7,15 +7,18 @@ import com.intellij.openapi.util.Computable
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.CONNECTION_FAILED
+import com.jetbrains.edu.learning.checker.CheckResult.Companion.LOGIN_NEEDED
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.failedToCheck
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException
 import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.io.IOException
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
@@ -33,12 +36,12 @@ abstract class CheckiOMissionCheck(val project: Project,
 
   abstract fun getPanel(): JComponent
 
-  protected abstract fun doCheck()
+  protected abstract fun doCheck(resources: Map<String, String>)
 
   @Throws(InterruptedException::class, NetworkException::class)
   override fun call(): CheckResult {
     return try {
-      doCheck()
+      doCheck(collectResources())
 
       val timeoutExceeded: Boolean = !latch.await(30L, TimeUnit.SECONDS)
       if (timeoutExceeded) {
@@ -50,6 +53,10 @@ abstract class CheckiOMissionCheck(val project: Project,
       }
 
       return checkResult
+    }
+    catch (e: CheckiOLoginRequiredException) {
+      CheckiOErrorHandler(EduCoreBundle.message("label.login.required"), oAuthConnector).handle(e)
+      LOGIN_NEEDED
     }
     catch (e: InterruptedException) {
       CheckResult(CheckStatus.Unchecked, "Checking was cancelled")
@@ -63,7 +70,8 @@ abstract class CheckiOMissionCheck(val project: Project,
     }
   }
 
-  protected fun getTestFormHtml(): String = GeneratorUtils.getInternalTemplateText(CHECKIO_TEST_FORM_TEMPLATE, getResources())
+  protected fun getTestFormHtml(resources: Map<String, String>): String =
+    GeneratorUtils.getInternalTemplateText(CHECKIO_TEST_FORM_TEMPLATE, resources)
 
   protected fun setCheckResult(result: Int) {
     checkResult = when (result) {
@@ -73,7 +81,7 @@ abstract class CheckiOMissionCheck(val project: Project,
     latch.countDown()
   }
 
-  private fun getResources() = mapOf(
+  private fun collectResources(): Map<String, String> = mapOf(
     "testFormTargetUrl" to testFormTargetUrl,
     "accessToken" to oAuthConnector.accessToken,
     "taskId" to task.id.toString(),

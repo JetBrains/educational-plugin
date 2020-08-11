@@ -41,7 +41,7 @@ object CheckUtils {
   private val COMPILATION_ERRORS = listOf("Compilation failed", "Compilation error")
   const val COMPILATION_FAILED_MESSAGE = "Compilation Failed"
   const val NOT_RUNNABLE_MESSAGE = "Solution isn't runnable"
-  const val LOGIN_NEEDED_MESSAGE = "Please, login to Stepik to check the task"
+  const val LOGIN_NEEDED_MESSAGE = "Please, login to check the task"
   const val FAILED_TO_CHECK_MESSAGE = "Failed to launch checking"
   const val SYNTAX_ERROR_MESSAGE = "Syntax Error"
   val ERRORS = listOf(COMPILATION_FAILED_MESSAGE, FAILED_TO_CHECK_MESSAGE, SYNTAX_ERROR_MESSAGE)

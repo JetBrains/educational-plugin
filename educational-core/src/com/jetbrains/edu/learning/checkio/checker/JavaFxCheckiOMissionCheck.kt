@@ -23,18 +23,18 @@ class JavaFxCheckiOMissionCheck(
   private val browserWindow: BrowserWindow = BrowserWindow(project, false)
   private val resultHandler: CheckiOTestResultHandler = CheckiOTestResultHandler()
 
-  override fun doCheck() {
+  override fun doCheck(resources: Map<String, String>) {
     Platform.runLater {
       setTestFormLoadedListener()
       setCheckDoneListener()
-      loadTestForm()
+      loadTestForm(resources)
     }
   }
 
   override fun getPanel(): JComponent = browserWindow.panel
 
-  private fun loadTestForm() {
-    val html = getTestFormHtml()
+  private fun loadTestForm(resources: Map<String, String>) {
+    val html = getTestFormHtml(resources)
     browserWindow.engine.loadContent(html)
   }
 

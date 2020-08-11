@@ -36,9 +36,9 @@ class JCEFCheckiOMissionCheck(project: Project,
     }
   }
 
-  override fun doCheck() {
+  override fun doCheck(resources: Map<String, String>) {
     invokeLater {
-      val html = getTestFormHtml()
+      val html = getTestFormHtml(resources)
       jbCefBrowser.loadHTML(html)
     }
   }
