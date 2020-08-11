@@ -62,7 +62,7 @@ object NavigationUtils {
 
   private fun isUnsolvedHyperskillStage(task: Task): Boolean {
     val course = task.course as? HyperskillCourse ?: return false
-    if (task.lesson.name == HYPERSKILL_PROBLEMS) return false
+    if (task.lesson.name == HYPERSKILL_PROBLEMS || task.status == CheckStatus.Solved) return false
     val stage = course.stages.getOrNull(task.index - 1) ?: return false
     return !stage.isCompleted
   }

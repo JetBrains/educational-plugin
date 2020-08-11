@@ -41,11 +41,11 @@ class HyperskillCheckListener : CheckListener {
 
       if (!isUnitTestMode) {
         ApplicationManager.getApplication().executeOnPooledThread {
-          HyperskillCheckConnector.postSolution(task, project, result)
+          HyperskillCheckConnector.postStageSolution(task, project, result)
         }
       }
       else {
-        HyperskillCheckConnector.postSolution(task, project, result)
+        HyperskillCheckConnector.postStageSolution(task, project, result)
       }
 
       showChooseNewProjectNotification(course, project)

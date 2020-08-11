@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.successMessage
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvider) : TaskCheckerProvider {
   override val envChecker: EnvironmentChecker
@@ -27,15 +26,7 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
         return checkResult
       }
 
-      override fun onTaskSolved() {
-        checker.onTaskSolved()
-        val course = task.course as? HyperskillCourse ?: return
-        val stage = course.stages.getOrNull(task.index - 1) ?: return
-        if (stage.isCompleted) return
-        stage.isCompleted = true
-        YamlFormatSynchronizer.saveRemoteInfo(course)
-      }
-
+      override fun onTaskSolved() = checker.onTaskSolved()
       override fun onTaskFailed() = checker.onTaskFailed()
       override fun clearState() = checker.clearState()
     }

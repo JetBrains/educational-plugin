@@ -25,8 +25,10 @@ import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.concurrent.TimeUnit
 
 object HyperskillCheckConnector {
@@ -35,7 +37,7 @@ object HyperskillCheckConnector {
   private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(1)
   const val EVALUATION_STATUS = "evaluation"
 
-  fun postSolution(task: Task, project: Project, result: CheckResult) {
+  fun postStageSolution(task: Task, project: Project, result: CheckResult) {
     when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task.id)) {
       is Err -> {
         showErrorDetails(project, attemptResponse.error)
@@ -49,9 +51,18 @@ object HyperskillCheckConnector {
 
   private fun postEduSubmission(attempt: Attempt, project: Project, task: Task, feedback: String) {
     val files = getSolutionFiles(task, project).nullize() ?: return
-    return when (val response = HyperskillConnector.getInstance().postSubmission(createEduSubmission(task, attempt, files, feedback))) {
+    when (val response = HyperskillConnector.getInstance().postSubmission(createEduSubmission(task, attempt, files, feedback))) {
       is Err -> showErrorDetails(project, response.error)
-      is Ok -> SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, response.value)
+      is Ok -> {
+        SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, response.value)
+        if (task.status == CheckStatus.Solved) {
+          val course = task.course as? HyperskillCourse ?: return
+          val stage = course.stages.getOrNull(task.index - 1) ?: return
+          if (stage.isCompleted) return
+          stage.isCompleted = true
+          YamlFormatSynchronizer.saveRemoteInfo(course)
+        }
+      }
     }
   }
 

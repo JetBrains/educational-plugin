@@ -143,8 +143,8 @@ class CheckPanel(val project: Project) : JPanel(BorderLayout()) {
   }
 
   private fun JPanel.addNextTaskButton(task: Task) {
-    if ((task.status == CheckStatus.Solved || task is TheoryTask || task.course is HyperskillCourse) &&
-        NavigationUtils.nextTask(task) != null) {
+    val mayAddNext = task.status == CheckStatus.Solved || task is TheoryTask || task.course is HyperskillCourse
+    if (mayAddNext && NavigationUtils.nextTask(task) != null) {
       val nextButton = CheckPanelButtonComponent(ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID))
       nextButton.border = JBUI.Borders.empty(0, 12, 0, 0)
       add(nextButton, BorderLayout.WEST)
