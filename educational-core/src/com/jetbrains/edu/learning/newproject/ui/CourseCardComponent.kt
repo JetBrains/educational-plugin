@@ -125,7 +125,6 @@ class CourseNameComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> 
   init {
     nameLabel.text = courseInfo.course.name
     nameLabel.font = Font(TypographyManager().bodyFont, Font.BOLD, FONT_SIZE)
-    nameLabel.toolTipText = courseInfo.course.name
 
     val coursePath = CoursesStorage.getInstance().getCoursePath(courseInfo.course)
     button = when {
