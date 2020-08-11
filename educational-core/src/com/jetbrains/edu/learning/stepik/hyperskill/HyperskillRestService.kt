@@ -85,13 +85,14 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
   private fun openProblem(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val stepId = getIntParameter("step_id", urlDecoder)
+    val language = getStringParameter("language", urlDecoder) ?: error("No language for open step request")
     val account = HyperskillSettings.INSTANCE.account ?: error("Attempt to open step for unauthorized user")
     val projectId = getSelectedProjectIdUnderProgress(account)
     if (projectId == null) {
       showError(SELECT_PROJECT)
       return SELECT_PROJECT
     }
-    return openInIDE(HyperskillOpenStepRequest(projectId, stepId), request, context)
+    return openInIDE(HyperskillOpenStepRequest(projectId, stepId, language), request, context)
   }
 
   private fun openStage(decoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {

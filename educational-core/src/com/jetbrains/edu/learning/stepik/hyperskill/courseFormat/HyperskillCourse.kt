@@ -5,11 +5,13 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
+import com.jetbrains.edu.learning.stepik.hyperskill.getCodeChallengesProjectName
 import java.util.concurrent.ConcurrentHashMap
 
 class HyperskillCourse : Course {
@@ -25,6 +27,12 @@ class HyperskillCourse : Course {
     description = hyperskillProject.description + descriptionNote(hyperskillProject.id)
     language = languageID
     this.environment = environment
+  }
+
+  constructor(languageName: String, languageID: String) {
+    name = getCodeChallengesProjectName(languageName)
+    description = EduCoreBundle.message("hyperskill.code.challenges.project.description", languageName.capitalize())
+    language = languageID
   }
 
   val isTemplateBased: Boolean

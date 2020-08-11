@@ -22,7 +22,9 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.StepikStartupActivity.Companion.STEP_ID
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadRemoteInfo
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
 import org.jdom.Element
 import org.jdom.JDOMException
@@ -89,8 +91,11 @@ object EduBuiltInServerUtils {
     val projectFile = File(PathUtil.toSystemDependentName(projectPath))
     val projectDir = VfsUtil.findFile(projectFile.toPath(), true) ?: return null
     val remoteInfoConfig = projectDir.findChild(REMOTE_COURSE_CONFIG) ?: return null
+    val localCourseConfig = projectDir.findChild(COURSE_CONFIG) ?: return null
     return runReadAction {
-      YamlDeserializer.deserializeRemoteItem(remoteInfoConfig) as Course
+      val localCourse = YamlDeserializer.deserializeItem(localCourseConfig, null) as? Course ?: return@runReadAction null
+      localCourse.loadRemoteInfo(remoteInfoConfig)
+      localCourse
     }
   }
 

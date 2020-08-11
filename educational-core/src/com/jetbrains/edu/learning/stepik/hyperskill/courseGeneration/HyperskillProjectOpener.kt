@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -34,8 +35,7 @@ object HyperskillProjectOpener {
 
   private fun openInExistingProject(request: HyperskillOpenInProjectRequest,
                                     findProject: ((Course) -> Boolean) -> Pair<Project, Course>?): Boolean {
-    val (project, course) = findProject { it is HyperskillCourse && it.hyperskillProject?.id == request.projectId }
-                            ?: return false
+    val (project, course) = findExistingProject(findProject, request) ?: return false
     val hyperskillCourse = course as HyperskillCourse
     when (request) {
       is HyperskillOpenStepRequest -> {
@@ -69,6 +69,23 @@ object HyperskillProjectOpener {
     return true
   }
 
+  private fun findExistingProject(findProject: ((Course) -> Boolean) -> Pair<Project, Course>?,
+                                  request: HyperskillOpenInProjectRequest): Pair<Project, Course>? {
+    val projectId = request.projectId
+    return when (request) {
+      is HyperskillOpenStageRequest -> findProject { it.matchesById(projectId) }
+      is HyperskillOpenStepRequest -> {
+        val hyperskillLanguage = request.language
+        val eduLanguage = HYPERSKILL_LANGUAGES[hyperskillLanguage] ?: return null
+
+        findProject { it.matchesById(projectId) && it.language == eduLanguage }
+        ?: findProject { it is HyperskillCourse && it.name == getCodeChallengesProjectName(hyperskillLanguage) }
+      }
+    }
+  }
+
+  private fun Course.matchesById(projectId: Int) = this is HyperskillCourse && hyperskillProject?.id == projectId
+
   private fun openInOpenedProject(request: HyperskillOpenInProjectRequest): Boolean =
     openInExistingProject(request, HyperskillProjectManager.getInstance()::focusOpenProject)
 
@@ -85,29 +102,38 @@ object HyperskillProjectOpener {
     }
   }
 
+  private fun createHyperskillCourse(request: HyperskillOpenInProjectRequest,
+                                     hyperskillProject: HyperskillProject): Result<HyperskillCourse, String> {
+    val hyperskillLanguage = if (request is HyperskillOpenStepRequest) request.language else hyperskillProject.language
+    val eduLanguage = HYPERSKILL_LANGUAGES[hyperskillLanguage] ?: return Err("Unsupported language ${hyperskillLanguage}")
+
+    if (request is HyperskillOpenStepRequest && hyperskillLanguage != hyperskillProject.language) {
+      return Ok(HyperskillCourse(hyperskillLanguage, eduLanguage))
+    }
+
+    if (!hyperskillProject.useIde) {
+      return Err(HYPERSKILL_PROJECT_NOT_SUPPORTED)
+    }
+
+    val eduEnvironment = hyperskillProject.eduEnvironment
+    if (eduEnvironment == null) {
+      return Err("Unsupported environment ${hyperskillProject.environment}")
+    }
+    return Ok(HyperskillCourse(hyperskillProject, eduLanguage, eduEnvironment))
+  }
+
   private fun getHyperskillCourseUnderProgress(request: HyperskillOpenInProjectRequest): Result<HyperskillCourse, String> {
     return computeUnderProgress(title = "Loading ${EduNames.JBA} Project") { indicator ->
-      val hyperskillProject = when (val result = HyperskillConnector.getInstance().getProject(request.projectId)) {
-        is Err -> return@computeUnderProgress Err(result.error)
-        is Ok -> result.value
+      val hyperskillProject = HyperskillConnector.getInstance().getProject(request.projectId).onError {
+        return@computeUnderProgress Err(it)
       }
 
-      if (!hyperskillProject.useIde) {
-        return@computeUnderProgress Err(HYPERSKILL_PROJECT_NOT_SUPPORTED)
-      }
-      val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language]
-      if (languageId == null) {
-        return@computeUnderProgress Err("Unsupported language ${hyperskillProject.language}")
-      }
-      val eduEnvironment = hyperskillProject.eduEnvironment
-      if (eduEnvironment == null) {
-        return@computeUnderProgress Err("Unsupported environment ${hyperskillProject.environment}")
-      }
-      val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId, eduEnvironment)
+      val hyperskillCourse = createHyperskillCourse(request, hyperskillProject).onError { return@computeUnderProgress Err(it) }
       if (hyperskillCourse.configurator == null) {
         return@computeUnderProgress Err("The project isn't supported (language: ${hyperskillProject.language}). " +
                                         "Check if all needed plugins are installed and enabled")
       }
+
       when (request) {
         is HyperskillOpenStepRequest -> {
           hyperskillCourse.addProblemTask(request.stepId)

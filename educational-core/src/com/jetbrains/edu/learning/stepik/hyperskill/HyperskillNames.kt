@@ -56,3 +56,5 @@ private fun getCustomServer(): CustomAuthorizationServer {
   val startedServer = CustomAuthorizationServer.getServerIfStarted(HYPERSKILL)
   return startedServer ?: createCustomServer()
 }
+
+fun getCodeChallengesProjectName(language: String) = "${language.capitalize()} Code Challenges"
