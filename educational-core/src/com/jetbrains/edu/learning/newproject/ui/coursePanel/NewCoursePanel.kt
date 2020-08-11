@@ -25,23 +25,19 @@ import javax.swing.event.DocumentListener
 const val DESCRIPTION_AND_SETTINGS_TOP_OFFSET = 25
 
 private const val ERROR_LABEL_TOP_GAP = 20
-private const val HORIZONTAL_MARGIN = 10
-private const val LARGE_HORIZONTAL_MARGIN = 15
+private const val HORIZONTAL_MARGIN = 20
 
 private const val EMPTY = "empty"
 private const val CONTENT = "content"
 
 // TODO: Rename to CoursePanel after CoursePanel.java is removed
-class NewCoursePanel private constructor(
-  private val isStandalonePanel: Boolean,
-  private val isLocationFieldNeeded: Boolean
-) : JPanel() {
+class NewCoursePanel private constructor(private val isLocationFieldNeeded: Boolean) : JPanel() {
   var errorState: ErrorState = ErrorState.NothingSelected
   var course: Course? = null
 
   private lateinit var header: HeaderPanel
-  private var description = CourseDescriptionPanel(leftMargin)
-  private var advancedSettings = CourseSettings(isLocationFieldNeeded, leftMargin)
+  private var description = CourseDescriptionPanel(HORIZONTAL_MARGIN)
+  private var advancedSettings = CourseSettings(isLocationFieldNeeded, HORIZONTAL_MARGIN)
   private val errorLabel: HyperlinkLabel = HyperlinkLabel().apply { isVisible = false }
   private var mySearchField: FilterComponent? = null
   private val listeners: MutableList<CoursesPanel.CourseValidationListener> = ArrayList()
@@ -55,31 +51,19 @@ class NewCoursePanel private constructor(
   val languageSettings: LanguageSettings<*>?
     get() = advancedSettings.languageSettings
 
-  private val leftMargin: Int
-    get() {
-      return if (isStandalonePanel) {
-        LARGE_HORIZONTAL_MARGIN
-      }
-      else {
-        HORIZONTAL_MARGIN
-      }
-    }
-
   constructor(
-    isStandalonePanel: Boolean,
     isLocationFieldNeeded: Boolean,
     joinCourseAction: () -> Unit
-  ) : this(isStandalonePanel, isLocationFieldNeeded) {
-    header = HeaderPanel(leftMargin, joinCourseAction)
+  ) : this(isLocationFieldNeeded) {
+    header = HeaderPanel(HORIZONTAL_MARGIN, joinCourseAction)
     initUI()
   }
 
   constructor(
-    isStandalonePanel: Boolean,
     isLocationFieldNeeded: Boolean,
     errorHandler: (ErrorState) -> Unit
-  ) : this(isStandalonePanel, isLocationFieldNeeded) {
-    header = HeaderPanel(leftMargin, errorHandler)
+  ) : this(isLocationFieldNeeded) {
+    header = HeaderPanel(HORIZONTAL_MARGIN, errorHandler)
     initUI()
   }
 
@@ -128,7 +112,7 @@ class NewCoursePanel private constructor(
   private fun createErrorPanel(): JPanel {
     val errorPanel = JPanel(BorderLayout())
     errorPanel.add(errorLabel, BorderLayout.CENTER)
-    errorPanel.border = JBUI.Borders.empty(ERROR_LABEL_TOP_GAP, leftMargin, 0, 0)
+    errorPanel.border = JBUI.Borders.empty(ERROR_LABEL_TOP_GAP, HORIZONTAL_MARGIN, 0, 0)
     addErrorStateListener()
     UIUtil.setBackgroundRecursively(errorPanel, MAIN_BG_COLOR)
     return errorPanel

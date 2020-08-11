@@ -41,8 +41,7 @@ private const val LOADING_CARD_NAME = "PROGRESS"
 private const val NO_COURSES = "NO_COURSES"
 
 abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider) : JPanel() {
-  protected var coursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = false,
-                                                             isLocationFieldNeeded = true) { errorState -> setError(errorState) }
+  protected var coursePanel: NewCoursePanel = NewCoursePanel(isLocationFieldNeeded = true) { errorState -> setError(errorState) }
   private val coursesListPanel = CoursesListPanel { setError(it) }
   private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
   protected var courses: MutableList<Course> = mutableListOf()

@@ -19,7 +19,7 @@ import javax.swing.event.DocumentEvent
 
 class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(BorderLayout()) {
 
-  private val myCoursePanel: NewCoursePanel = NewCoursePanel(isStandalonePanel = true, isLocationFieldNeeded = true) { errorState ->
+  private val myCoursePanel: NewCoursePanel = NewCoursePanel(isLocationFieldNeeded = true) { errorState ->
     setError(errorState.message)
   }
   private val myErrorLabel: HyperlinkLabel = HyperlinkLabel()
