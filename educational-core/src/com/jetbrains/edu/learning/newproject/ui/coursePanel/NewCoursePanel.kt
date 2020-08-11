@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.FilterComponent
-import com.intellij.ui.Gray
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBPanelWithEmptyText
@@ -198,7 +197,7 @@ class NewCoursePanel private constructor(
 
   companion object {
     // default divider's color too dark in Darcula, so use the same color as in plugins dialog
-    val DIVIDER_COLOR = JBColor(Gray._192, Gray._81)
+    val DIVIDER_COLOR = JBColor(0xC5C5C5, 0x515151)
   }
 
 }
