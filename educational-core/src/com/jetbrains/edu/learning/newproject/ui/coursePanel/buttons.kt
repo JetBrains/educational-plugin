@@ -25,7 +25,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillP
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import org.jetbrains.annotations.Nullable
 import java.awt.Color
 import java.awt.event.ActionListener
 
@@ -123,7 +122,7 @@ class StartCourseButton(errorHandler: (ErrorState) -> Unit, fill: Boolean = true
     validateSettings(courseInfo)
   }.courseCanBeStarted
 
-  private fun validateSettings(courseInfo: CourseInfo): @Nullable ValidationMessage? {
+  private fun validateSettings(courseInfo: CourseInfo): ValidationMessage? {
     val languageSettings = courseInfo.languageSettings()
     languageSettings?.getLanguageSettingsComponents(courseInfo.course, null)
     return languageSettings?.validate(courseInfo.course, courseInfo.location())
