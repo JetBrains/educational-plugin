@@ -9,8 +9,8 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.io.File
@@ -19,7 +19,7 @@ import javax.swing.event.DocumentEvent
 
 class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(BorderLayout()) {
 
-  private val myCoursePanel: NewCoursePanel = NewCoursePanel(isLocationFieldNeeded = true) { errorState ->
+  private val myCoursePanel: CoursePanel = CoursePanel(isLocationFieldNeeded = true) { errorState ->
     setError(errorState.message)
   }
   private val myErrorLabel: HyperlinkLabel = HyperlinkLabel()

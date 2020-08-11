@@ -17,8 +17,8 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import java.awt.event.ActionEvent
 import java.io.File
@@ -33,8 +33,7 @@ class CCCreateCoursePreviewDialog(
   private val myConfigurator: EduConfigurator<*>
 ) : DialogWrapper(true) {
 
-  private val myPanel: NewCoursePanel = NewCoursePanel(isLocationFieldNeeded = false,
-                                                       joinCourseAction = { createCoursePreview() })
+  private val myPanel: CoursePanel = CoursePanel(isLocationFieldNeeded = false, joinCourseAction = { createCoursePreview() })
 
   init {
     title = "Course Preview"

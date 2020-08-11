@@ -30,8 +30,7 @@ private const val HORIZONTAL_MARGIN = 20
 private const val EMPTY = "empty"
 private const val CONTENT = "content"
 
-// TODO: Rename to CoursePanel after CoursePanel.java is removed
-class NewCoursePanel private constructor(private val isLocationFieldNeeded: Boolean) : JPanel() {
+class CoursePanel private constructor(private val isLocationFieldNeeded: Boolean) : JPanel() {
   var errorState: ErrorState = ErrorState.NothingSelected
   var course: Course? = null
 

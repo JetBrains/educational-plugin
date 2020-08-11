@@ -9,7 +9,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.ScrollPaneConstants
@@ -45,7 +45,7 @@ class CoursesListDecorator(mainPanel: JPanel, tabInfo: TabInfo?, toolbarAction: 
     if (toolbarAction != null) {
       val toolbarPanel = createToolbarPanel(toolbarAction)
       add(toolbarPanel, BorderLayout.SOUTH)
-      scrollPane.border = JBUI.Borders.customLine(NewCoursePanel.DIVIDER_COLOR, 0, 0, 1, 0)
+      scrollPane.border = JBUI.Borders.customLine(CoursePanel.DIVIDER_COLOR, 0, 0, 1, 0)
     }
   }
 

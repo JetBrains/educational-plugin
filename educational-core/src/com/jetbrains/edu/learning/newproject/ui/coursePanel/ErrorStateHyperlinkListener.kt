@@ -30,7 +30,7 @@ import javax.swing.event.HyperlinkListener
 
 class ErrorStateHyperlinkListener : HyperlinkListener {
   override fun hyperlinkUpdate(e: HyperlinkEvent?) {
-    val coursePanel = UIUtil.getParentOfType(NewCoursePanel::class.java, e?.source as? HyperlinkLabel) ?: return
+    val coursePanel = UIUtil.getParentOfType(CoursePanel::class.java, e?.source as? HyperlinkLabel) ?: return
     val coursesPanel = UIUtil.getParentOfType(CoursesPanel::class.java, e?.source as? HyperlinkLabel) ?: return
     when (val state = coursePanel.errorState) {
       is ErrorState.CheckiOLoginRequired -> {
@@ -70,8 +70,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
     }
   }
 
-  private fun addCheckiOLoginListener(coursePanel: NewCoursePanel,
-                                      coursesPanel: CoursesPanel) {
+  private fun addCheckiOLoginListener(coursePanel: CoursePanel, coursesPanel: CoursesPanel) {
     val course = coursePanel.course
     val checkiOConnectorProvider = (course?.configurator as CheckiOConnectorProvider?)!!
     val checkiOOAuthConnector = checkiOConnectorProvider.oAuthConnector
@@ -82,8 +81,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
     )
   }
 
-  private fun addLoginListener(coursePanel: NewCoursePanel,
-                               coursesPanel: CoursesPanel) {
+  private fun addLoginListener(coursePanel: CoursePanel, coursesPanel: CoursesPanel) {
     val connection = ApplicationManager.getApplication().messageBus.connect()
     connection.subscribe(EduSettings.SETTINGS_CHANGED, object : EduLogInListener {
       override fun userLoggedOut() {}
@@ -97,7 +95,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
     })
   }
 
-  private fun invokeSwitchUILibrary(coursePanel: NewCoursePanel) {
+  private fun invokeSwitchUILibrary(coursePanel: CoursePanel) {
     val switchUILibraryAction = SwitchTaskPanelAction.ACTION_ID
     val action = ActionManager.getInstance().getAction(switchUILibraryAction)
     if (action == null) {
@@ -112,7 +110,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
     doValidation(coursePanel)
   }
 
-  private fun doValidation(coursePanel: NewCoursePanel) {
+  private fun doValidation(coursePanel: CoursePanel) {
     var languageError: ErrorState = ErrorState.NothingSelected
     val course = coursePanel.course
     if (course != null) {

@@ -18,8 +18,8 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.NewCoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettings
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
@@ -41,7 +41,7 @@ private const val LOADING_CARD_NAME = "PROGRESS"
 private const val NO_COURSES = "NO_COURSES"
 
 abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider) : JPanel() {
-  protected var coursePanel: NewCoursePanel = NewCoursePanel(isLocationFieldNeeded = true) { errorState -> setError(errorState) }
+  protected var coursePanel: CoursePanel = CoursePanel(isLocationFieldNeeded = true) { errorState -> setError(errorState) }
   private val coursesListPanel = CoursesListPanel { setError(it) }
   private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
   protected var courses: MutableList<Course> = mutableListOf()
@@ -105,12 +105,12 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     val splitPane = OnePixelSplitter()
     splitPane.firstComponent = coursesListDecorator
     splitPane.secondComponent = coursePanel
-    splitPane.divider.background = NewCoursePanel.DIVIDER_COLOR
+    splitPane.divider.background = CoursePanel.DIVIDER_COLOR
     splitPane.proportion = 0.46f
 
     val splitPaneRoot = JPanel(BorderLayout()) // needed to set borders
     splitPaneRoot.add(splitPane, BorderLayout.CENTER)
-    splitPaneRoot.border = JBUI.Borders.customLine(NewCoursePanel.DIVIDER_COLOR, 1, 0, 0, 0)
+    splitPaneRoot.border = JBUI.Borders.customLine(CoursePanel.DIVIDER_COLOR, 1, 0, 0, 0)
     return splitPaneRoot
   }
 
