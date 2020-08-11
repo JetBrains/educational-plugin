@@ -39,7 +39,8 @@ private const val ACADEMY_TEXT = "Log in and select a project to start"
 private const val NO_TASKS_COMPLETED_YET = "No tasks completed yet"
 private const val COMPLETED = "Completed"
 
-private val HOVER_COLOR: Color = JBColor.namedColor("BrowseCourses.lightSelectionBackground", JBColor(0xE9EEF5, 0x36393B))
+private val HOVER_COLOR: Color = JBColor.namedColor("BrowseCourses.hoverBackground", JBColor(0xF5F9FF, 0x282A2C))
+private val SELECTION_COLOR: Color = JBColor.namedColor("BrowseCourses.lightSelectionBackground", JBColor(0xE9EEF5, 0x36393B))
 val GRAY_COLOR: Color = JBColor.namedColor("BrowseCourses.infoForeground", JBColor(Gray._120, Gray._135))
 
 class CourseCardComponent(val courseInfo: CourseInfo, errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout()) {
@@ -62,8 +63,8 @@ class CourseCardComponent(val courseInfo: CourseInfo, errorHandler: (ErrorState)
     updateColors(false)
   }
 
-  fun updateColors(isSelectedOrHover: Boolean) {
-    updateColors(if (isSelectedOrHover) HOVER_COLOR else MAIN_BG_COLOR)
+  fun updateColors(isSelected: Boolean) {
+    updateColors(if (isSelected) SELECTION_COLOR else MAIN_BG_COLOR)
   }
 
   private fun updateColors(background: Color) {
@@ -76,6 +77,10 @@ class CourseCardComponent(val courseInfo: CourseInfo, errorHandler: (ErrorState)
     }
     updateColors(isSelectedOrHover)
     repaint()
+  }
+
+  fun setHover() {
+    updateColors(HOVER_COLOR)
   }
 
   private fun scrollToVisible() {

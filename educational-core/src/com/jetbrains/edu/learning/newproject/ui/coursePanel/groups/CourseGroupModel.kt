@@ -43,7 +43,7 @@ class CourseGroupModel {
         val cardComponent = getCourseCard(event)
         if (cardComponent != selectedCard) {
           hoveredCard = cardComponent
-          cardComponent?.setSelection(true)
+          cardComponent?.setHover()
         }
       }
     }
