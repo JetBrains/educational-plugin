@@ -33,7 +33,9 @@ class KtTwitterConfigurator : TwitterPluginConfigurator {
   }
 
   override fun getImagePath(solvedTask: Task): Path? {
-    val path = PluginManagerCore.getPlugin(PluginId.getId(EduNames.PLUGIN_ID))?.pluginPath ?: return null
+    // BACKCOMPAT: 2019.3. Use `pluginPath` instead of `path?.toPath()`
+    @Suppress("DEPRECATION")
+    val path = PluginManagerCore.getPlugin(PluginId.getId(EduNames.PLUGIN_ID))?.path?.toPath() ?: return null
 
     val solvedTaskNumber = calculateTaskNumber(solvedTask)
     val level = solvedTaskNumber / 8
