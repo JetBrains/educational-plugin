@@ -6,6 +6,8 @@ import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import okhttp3.WebSocket
@@ -86,7 +88,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
   }
 
   fun `test submission added after edu task check`() {
-    courseWithFiles(
+    val course = courseWithFiles(
       language = FakeGradleBasedLanguage,
       courseProducer = ::HyperskillCourse
     ) {
@@ -98,6 +100,8 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
         }
       }
     } as HyperskillCourse
+    course.stages = listOf(HyperskillStage(1, "", 1))
+    course.hyperskillProject = HyperskillProject()
     doTestSubmissionAddedAfterTaskCheck(3, EduNames.CORRECT)
   }
 

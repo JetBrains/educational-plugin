@@ -33,7 +33,7 @@ class KtHyperskillCheckerTest : JdkCheckerTestBase() {
       }
     } as HyperskillCourse
     course.stages = listOf(HyperskillStage(1, "", 1))
-    course.hyperskillProject = HyperskillProject().apply { id = 42 }
+    course.hyperskillProject = HyperskillProject()
     return course
   }
 

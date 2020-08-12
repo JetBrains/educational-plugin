@@ -5,7 +5,6 @@ package com.jetbrains.edu.jvm.stepik
 import com.intellij.lang.Language
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.ProjectManager
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiModifier
@@ -23,7 +22,7 @@ fun fileName(language: Language, fileText: String): String {
       val classes = file.classes
       for (aClass in classes) {
         val className = aClass.nameIdentifier?.text ?: aClass.name
-        if ((aClass.isPublic || fileName == className) && className != null) {
+        if ((aClass.hasModifierProperty(PsiModifier.PUBLIC) || fileName == className) && className != null) {
           fileName = className
           break
         }
@@ -33,6 +32,3 @@ fun fileName(language: Language, fileText: String): String {
 
   return "$fileName.${fileType.defaultExtension}"
 }
-
-val PsiClass.isPublic: Boolean
-  get() = hasModifierProperty(PsiModifier.PUBLIC)
