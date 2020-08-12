@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.MockWebServerHelper
 import com.jetbrains.edu.learning.ResponseHandler
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.*
@@ -44,6 +45,16 @@ class MockHyperskillConnector : HyperskillConnector() {
   }
 
   fun configureFromCourse(disposable: Disposable, course: HyperskillCourse) {
+    if (course.hyperskillProject != null) {
+      configureProjectResponses(disposable, course)
+    }
+
+    if (course.getProblemsLesson() != null) {
+      configureCodeChallengesResponses(disposable, course.getProblemsLesson()!!)
+    }
+  }
+
+  private fun configureProjectResponses(disposable: Disposable, course: HyperskillCourse) {
     val hyperskillProject = course.hyperskillProject!!
     val projectId = hyperskillProject.id
     withResponseHandler(disposable) { request ->
@@ -51,16 +62,25 @@ class MockHyperskillConnector : HyperskillConnector() {
         when (request.path) {
           "/api/projects/$projectId" -> objectMapper.writeValueAsString(ProjectsList().also { it.projects = listOf(hyperskillProject) })
           "/api/stages?project=$projectId" -> objectMapper.writeValueAsString(StagesList().also { it.stages = course.stages })
-          "/api/steps?ids=${course.stages.map { it.stepId }.joinToString(separator = ",")}" -> stepSources(course)
-          else -> "{}"
+          "/api/steps?ids=${course.stages.map { it.stepId }.joinToString(separator = ",")}" -> stepSources(course.allTasks)
+          else -> return@withResponseHandler null
         }
       )
     }
   }
 
-  private fun stepSources(course: HyperskillCourse): String {
+  private fun configureCodeChallengesResponses(disposable: Disposable, lesson: Lesson) {
+    withResponseHandler(disposable) { request ->
+      val result = """/api/steps\?ids=(\d+)""".toRegex().matchEntire(request.path) ?: return@withResponseHandler null
+      val stepId = result.groupValues[1].toInt()
+      val tasks = lesson.taskList.find { it.id == stepId } ?: return@withResponseHandler null
+      MockResponseFactory.fromString(stepSources(listOf(tasks)))
+    }
+  }
+
+  private fun stepSources(tasks: List<Task>): String {
     val stepsList = HyperskillStepsList().apply {
-      steps = course.allTasks.map { task ->
+      steps = tasks.map { task ->
         createStepSource(task)
       }
     }

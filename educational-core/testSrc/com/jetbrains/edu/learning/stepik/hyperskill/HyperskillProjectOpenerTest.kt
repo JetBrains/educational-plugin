@@ -1,14 +1,12 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectManager
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.MockHyperskillProjectManager
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.*
 
 class HyperskillProjectOpenerTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
@@ -90,6 +88,69 @@ class HyperskillProjectOpenerTest : EduTestCase() {
       }
       file("build.gradle")
       file("settings.gradle")
+    }
+    fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  fun `test open step in new code challenges project`() {
+    loginFakeUser()
+    configureMockResponses()
+
+    mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null, language = PlainTextLanguage.INSTANCE) {
+      lesson(HYPERSKILL_PROBLEMS) {
+        codeTask(stepId = 4) {
+          taskFile("task.txt", "file text")
+        }
+      }
+    })
+
+    HyperskillProjectOpener.open(HyperskillOpenStepRequest(1, 4, "TEXT"))
+
+    val fileTree = fileTree {
+      dir(HYPERSKILL_PROBLEMS) {
+        dir("task1") {
+          file("task.txt", "file text")
+          file("task.html")
+        }
+      }
+    }
+    fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  fun `test open step in existing code challenges project`() {
+    loginFakeUser()
+    configureMockResponses()
+
+    mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null, language = PlainTextLanguage.INSTANCE) {
+      lesson(HYPERSKILL_PROBLEMS) {
+        codeTask(name = "new task", stepId = 5) {
+          taskFile("task.txt", "new file text")
+        }
+      }
+    })
+
+    // set up existing project
+    hyperskillCourseWithFiles(name = getCodeChallengesProjectName("TEXT"), language = PlainTextLanguage.INSTANCE) {
+      lesson(HYPERSKILL_PROBLEMS) {
+        codeTask("code task", stepId = 4) {
+          taskFile("task.txt", "file text")
+        }
+      }
+    }
+
+    HyperskillProjectOpener.open(HyperskillOpenStepRequest(1, 5, "TEXT"))
+
+    val fileTree = fileTree {
+      dir(HYPERSKILL_PROBLEMS) {
+        dir("code task") {
+          file("task.txt", "file text")
+          file("task.html")
+        }
+        dir("new task") {
+          file("task.txt", "new file text")
+          file("task.html")
+        }
+      }
     }
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }

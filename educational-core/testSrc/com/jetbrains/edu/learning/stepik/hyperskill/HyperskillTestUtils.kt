@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.lang.Language
 import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.authUtils.TokenInfo
@@ -25,20 +26,23 @@ fun loginFakeUser() {
   }
 }
 
-fun EduTestCase.hyperskillCourseWithFiles(projectId: Int? = 1, buildCourse: CourseBuilder.() -> Unit): HyperskillCourse {
-  val course = courseWithFiles(name = TEST_HYPERSKILL_PROJECT_NAME,
-                               courseProducer = ::HyperskillCourse,
-                               language = FakeGradleBasedLanguage,
-                               buildCourse = buildCourse) as HyperskillCourse
+fun EduTestCase.hyperskillCourseWithFiles(projectId: Int? = 1,
+                                          name: String = TEST_HYPERSKILL_PROJECT_NAME,
+                                          language: Language = FakeGradleBasedLanguage,
+                                          buildCourse: CourseBuilder.() -> Unit): HyperskillCourse {
+  val course = courseWithFiles(name = name, courseProducer = ::HyperskillCourse,
+                               language = language, buildCourse = buildCourse) as HyperskillCourse
   course.init(projectId)
   return course
 }
 
 @Suppress("unused") // want this method to be available only in EduTestCase
-fun EduTestCase.hyperskillCourse(projectId: Int? = 1, buildCourse: CourseBuilder.() -> Unit): HyperskillCourse {
+fun EduTestCase.hyperskillCourse(projectId: Int? = 1,
+                                 language: Language = FakeGradleBasedLanguage,
+                                 buildCourse: CourseBuilder.() -> Unit): HyperskillCourse {
   val course = course(name = TEST_HYPERSKILL_PROJECT_NAME,
                       courseProducer = ::HyperskillCourse,
-                      language = FakeGradleBasedLanguage,
+                      language = language,
                       buildCourse = buildCourse) as HyperskillCourse
   course.init(projectId)
   return course
