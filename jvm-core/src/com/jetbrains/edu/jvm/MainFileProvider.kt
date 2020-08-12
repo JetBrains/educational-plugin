@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.configuration
+package com.jetbrains.edu.jvm
 
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtension

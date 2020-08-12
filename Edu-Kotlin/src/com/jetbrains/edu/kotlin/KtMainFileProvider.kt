@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.edu.learning.configuration.MainFileProvider
+import com.jetbrains.edu.jvm.MainFileProvider
 import org.jetbrains.kotlin.idea.isMainFunction
 import org.jetbrains.kotlin.idea.run.KotlinRunConfigurationProducer
 import org.jetbrains.kotlin.psi.KtElement

@@ -15,6 +15,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.jvm.MainFileProvider
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -25,7 +26,6 @@ import com.jetbrains.edu.learning.checker.CheckUtils.hasCompilationErrors
 import com.jetbrains.edu.learning.checker.CheckUtils.postProcessOutput
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.TestsOutputParser
-import com.jetbrains.edu.learning.configuration.MainFileProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile

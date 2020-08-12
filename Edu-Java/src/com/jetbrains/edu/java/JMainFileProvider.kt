@@ -7,7 +7,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiMethodUtil
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.edu.learning.configuration.MainFileProvider
+import com.jetbrains.edu.jvm.MainFileProvider
 
 class JMainFileProvider: MainFileProvider {
   override fun findMainClass(project: Project, file: VirtualFile): String? {

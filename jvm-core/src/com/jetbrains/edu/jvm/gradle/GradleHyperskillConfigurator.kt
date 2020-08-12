@@ -3,9 +3,9 @@ package com.jetbrains.edu.jvm.gradle
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiManager
+import com.jetbrains.edu.jvm.MainFileProvider
 import com.jetbrains.edu.jvm.stepik.isPublic
 import com.jetbrains.edu.learning.configuration.EduConfigurator
-import com.jetbrains.edu.learning.configuration.MainFileProvider
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task

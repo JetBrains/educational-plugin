@@ -7,6 +7,11 @@
     <extensionPoint qualifiedName="Educational.gradleRefresher"
                     interface="com.jetbrains.edu.jvm.gradle.GradleCourseRefresher"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.mainFileProvider"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.jvm.MainFileProvider"/>
+    </extensionPoint>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
