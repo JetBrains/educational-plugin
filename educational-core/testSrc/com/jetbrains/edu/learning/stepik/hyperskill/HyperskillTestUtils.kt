@@ -25,7 +25,7 @@ fun loginFakeUser() {
   }
 }
 
-fun EduTestCase.hyperskillCourseWithFiles(projectId: Int = 1, buildCourse: CourseBuilder.() -> Unit): HyperskillCourse {
+fun EduTestCase.hyperskillCourseWithFiles(projectId: Int? = 1, buildCourse: CourseBuilder.() -> Unit): HyperskillCourse {
   val course = courseWithFiles(name = TEST_HYPERSKILL_PROJECT_NAME,
                                courseProducer = ::HyperskillCourse,
                                language = FakeGradleBasedLanguage,
@@ -35,7 +35,7 @@ fun EduTestCase.hyperskillCourseWithFiles(projectId: Int = 1, buildCourse: Cours
 }
 
 @Suppress("unused") // want this method to be available only in EduTestCase
-fun EduTestCase.hyperskillCourse(projectId: Int = 1, buildCourse: CourseBuilder.() -> Unit): HyperskillCourse {
+fun EduTestCase.hyperskillCourse(projectId: Int? = 1, buildCourse: CourseBuilder.() -> Unit): HyperskillCourse {
   val course = course(name = TEST_HYPERSKILL_PROJECT_NAME,
                       courseProducer = ::HyperskillCourse,
                       language = FakeGradleBasedLanguage,
@@ -44,7 +44,10 @@ fun EduTestCase.hyperskillCourse(projectId: Int = 1, buildCourse: CourseBuilder.
   return course
 }
 
-private fun HyperskillCourse.init(projectId: Int) {
+private fun HyperskillCourse.init(projectId: Int?) {
+  if (projectId == null) {
+    return
+  }
   hyperskillProject = HyperskillProject().apply {
     id = projectId
     language = FakeGradleBasedLanguage.id

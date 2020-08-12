@@ -384,6 +384,37 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  fun `test code challenge project updated`() {
+    val taskFileName = "Task.txt"
+    val oldText = "old text"
+    val newText = "new text"
+
+    course = hyperskillCourseWithFiles(projectId = null) {
+      lesson(HYPERSKILL_PROBLEMS) {
+        codeTask(taskDescription = oldText) {
+          taskFile(taskFileName, oldText)
+        }
+      }
+    }
+
+    updateCourse(findLesson(0).taskList.map { it.toTaskUpdate {
+      descriptionText = newText
+      updateDate = Date(100)
+      getTaskFile(taskFileName)!!.setText(newText)
+    } })
+
+    fileTree {
+      dir("Problems") {
+        dir("task1") {
+          file(taskFileName, newText)
+          file("task.html", newText)
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
   private fun Task.toTaskUpdate(changeTask: Task.() -> Unit): HyperskillCourseUpdater.TaskUpdate {
     val remoteTask = this.copy()
     remoteTask.changeTask()
