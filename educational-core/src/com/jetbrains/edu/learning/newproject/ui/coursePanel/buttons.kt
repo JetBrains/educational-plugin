@@ -28,7 +28,6 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.Color
 import java.awt.event.ActionListener
 
-// TODO: use this everywhere in browse courses
 val MAIN_BG_COLOR: Color
   get() = JBColor.namedColor("BrowseCourses.background", JBColor(
     (NotNullProducer { if (JBColor.isBright()) TaskDescriptionView.getTaskDescriptionBackgroundColor() else Color(0x313335) })))
