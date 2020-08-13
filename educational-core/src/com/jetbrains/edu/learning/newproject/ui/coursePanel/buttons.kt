@@ -7,6 +7,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.JBColor
 import com.intellij.util.NotNullProducer
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -43,7 +44,8 @@ class OpenCourseButton : CourseButtonBase() {
     }
   }
 
-  override fun isVisible(course: Course): Boolean = CoursesStorage.getInstance().getCoursePath(course) != null
+  override fun isVisible(course: Course): Boolean = course.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != true
+                                                    && CoursesStorage.getInstance().getCoursePath(course) != null
 }
 
 class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Boolean = true) : StartCourseButtonBase(joinCourse, fill) {
@@ -55,7 +57,8 @@ class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Bool
   }
 
   // we place this button on course card and course panel both
-  override fun isVisible(course: Course): Boolean = CoursesStorage.getInstance().getCoursePath(course) == null
+  override fun isVisible(course: Course): Boolean = course.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == true
+                                                    || CoursesStorage.getInstance().getCoursePath(course) == null
 
   override fun canStartCourse(courseInfo: CourseInfo) = courseInfo.projectSettings != null
                                                         && courseInfo.location() != null
