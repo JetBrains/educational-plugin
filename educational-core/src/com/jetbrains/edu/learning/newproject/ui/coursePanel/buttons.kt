@@ -4,13 +4,20 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.ide.plugins.newui.ColorButton
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.DialogWrapperDialog
+import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.JBColor
 import com.intellij.util.NotNullProducer
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.getErrorState
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -38,10 +45,29 @@ class OpenCourseButton : CourseButtonBase() {
 
   override fun actionListener(courseInfo: CourseInfo): ActionListener = ActionListener {
     ApplicationManager.getApplication().invokeAndWait {
-      val coursePath = CoursesStorage.getInstance().getCoursePath(courseInfo.course) ?: return@invokeAndWait
+      val coursesStorage = CoursesStorage.getInstance()
+      val coursePath = coursesStorage.getCoursePath(courseInfo.course) ?: return@invokeAndWait
+      if (!FileUtil.exists(coursePath)) {
+        if (showNoCourseDialog(coursePath) == Messages.CANCEL) {
+          coursesStorage.removeCourseByLocation(coursePath)
+          val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, this)
+          dialog?.dialogWrapper?.close(DialogWrapper.CANCEL_EXIT_CODE)
+          JoinCourseDialog(courseInfo.course).show()
+        }
+        return@invokeAndWait
+      }
       val project = ProjectUtil.openProject(coursePath, null, true)
       ProjectUtil.focusProjectWindow(project, true)
     }
+  }
+
+  private fun showNoCourseDialog(coursePath: String): Int {
+    return Messages.showOkCancelDialog(null,
+                                       EduCoreBundle.message("course.dialog.course.not.found.text", FileUtil.toSystemDependentName(coursePath)),
+                                       EduCoreBundle.message("course.dialog.course.not.found.title"),
+                                       Messages.getOkButton(),
+                                       EduCoreBundle.message("course.dialog.course.not.found.reopen.button"),
+                                       Messages.getErrorIcon())
   }
 
   override fun isVisible(course: Course): Boolean = course.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != true
@@ -140,4 +166,3 @@ enum class CourseMode {
     override fun toString(): String = CCUtils.COURSE_MODE
   };
 }
-
