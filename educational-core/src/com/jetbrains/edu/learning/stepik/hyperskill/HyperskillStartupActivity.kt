@@ -43,16 +43,15 @@ class HyperskillStartupActivity : StartupActivity {
           }
         })
       }
-      synchronizeProject(project, course)
+      synchronizeTopics(project, course)
       HyperskillCourseUpdateChecker.getInstance(project).check()
     }
   }
 
   companion object {
-    fun synchronizeProject(project: Project, hyperskillCourse: HyperskillCourse) {
+    fun synchronizeTopics(project: Project, hyperskillCourse: HyperskillCourse) {
       ApplicationManager.getApplication().executeOnPooledThread {
         HyperskillConnector.getInstance().fillTopics(hyperskillCourse, project)
-        HyperskillConnector.getInstance().fillStagesResults(hyperskillCourse)
         YamlFormatSynchronizer.saveRemoteInfo(hyperskillCourse)
       }
     }

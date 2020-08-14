@@ -193,7 +193,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   /**
    * @return true if solutions for given task are incompatible with current plugin version, false otherwise
    */
-  fun updateTask(project: Project, task: Task, submissions: List<Submission>, force: Boolean = false): Boolean {
+  open fun updateTask(project: Project, task: Task, submissions: List<Submission>, force: Boolean = false): Boolean {
     val taskSolutions = loadSolution(task, submissions)
     ProgressManager.checkCanceled()
     if (!taskSolutions.hasIncompatibleSolutions && taskSolutions.solutions.isNotEmpty()) {

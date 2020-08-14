@@ -18,6 +18,8 @@ import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
 import com.jetbrains.edu.learning.stepik.hyperskill.openSelectedStage
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 
@@ -73,6 +75,14 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     runInEdt {
       openSelectedStage(course, project)
     }
+  }
+
+  override fun updateTask(project: Project, task: Task, submissions: List<Submission>, force: Boolean): Boolean {
+    val course = task.course as HyperskillCourse
+    if (task.lesson == course.getProjectLesson() && submissions.any { it.step == task.id && it.status == EduNames.CORRECT }) {
+      markStageAsCompleted(task)
+    }
+    return super.updateTask(project, task, submissions, force)
   }
 
   private fun String?.toCheckStatus(): CheckStatus = when (this) {

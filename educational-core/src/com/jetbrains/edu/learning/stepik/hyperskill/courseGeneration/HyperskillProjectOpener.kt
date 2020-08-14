@@ -235,6 +235,6 @@ object HyperskillProjectOpener {
       return
     }
     HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks, true)
-    HyperskillStartupActivity.synchronizeProject(project, course)
+    HyperskillStartupActivity.synchronizeTopics(project, course)
   }
 }

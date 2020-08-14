@@ -120,12 +120,6 @@ abstract class HyperskillConnector {
     return response?.body()?.stages
   }
 
-  fun fillStagesResults(course: HyperskillCourse) {
-    val hyperskillProject = course.hyperskillProject ?: return
-    val stages = getStages(hyperskillProject.id) ?: return
-    course.stages = stages
-  }
-
   fun getProject(projectId: Int): Result<HyperskillProject, String> {
     return service.project(projectId).executeParsingErrors(true).flatMap {
       val result = it.body()?.projects?.firstOrNull()

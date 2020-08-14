@@ -85,8 +85,8 @@ class SubmissionsManager(private val project: Project) {
   }
 
   fun containsCorrectSubmission(stepId: Int): Boolean {
-    val correctSubmissions = getSubmissionsFromMemory(setOf(stepId))?.filter { it.status == EduNames.CORRECT } ?: return false
-    return correctSubmissions.isNotEmpty()
+    val submissions = getSubmissionsFromMemory(setOf(stepId)) ?: return false
+    return submissions.any { it.status == EduNames.CORRECT }
   }
 
   fun addToSubmissionsWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {

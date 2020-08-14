@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.event.HyperlinkEvent
@@ -90,6 +91,14 @@ fun getTopPanelForProblem(project: Project, course: HyperskillCourse, task: Task
                                    NavigateToProjectAction(project, course), AllIcons.Actions.Back), BorderLayout.WEST)
   panel.border = JBUI.Borders.empty(0, 0, 10, 0)
   return panel
+}
+
+fun markStageAsCompleted(task: Task) {
+  val course = task.course as HyperskillCourse
+  val stage = course.stages.getOrNull(task.index - 1) ?: error("No stage for stage ${task.name} in course ${course.name}")
+  if (stage.isCompleted) return
+  stage.isCompleted = true
+  YamlFormatSynchronizer.saveRemoteInfo(course)
 }
 
 private class NavigateToProjectAction(private val project: Project, private val course: HyperskillCourse) : DumbAwareAction(null as String?) {

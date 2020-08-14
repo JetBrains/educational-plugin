@@ -25,10 +25,9 @@ import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
 import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.concurrent.TimeUnit
 
 object HyperskillCheckConnector {
@@ -56,11 +55,7 @@ object HyperskillCheckConnector {
       is Ok -> {
         SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, response.value)
         if (task.status == CheckStatus.Solved) {
-          val course = task.course as? HyperskillCourse ?: return
-          val stage = course.stages.getOrNull(task.index - 1) ?: return
-          if (stage.isCompleted) return
-          stage.isCompleted = true
-          YamlFormatSynchronizer.saveRemoteInfo(course)
+          markStageAsCompleted(task)
         }
       }
     }

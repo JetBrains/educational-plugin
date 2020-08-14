@@ -3,11 +3,8 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.checker.CheckActionListener
-import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import okhttp3.WebSocket
@@ -39,10 +36,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
   }
 
   fun `test edu task submissions loaded`() {
-    courseWithFiles(
-      language = FakeGradleBasedLanguage,
-      courseProducer = ::HyperskillCourse
-    ) {
+    hyperskillCourseWithFiles {
       frameworkLesson("lesson1") {
         eduTask("task1", stepId = 1) {
           taskFile("src/Task.kt", "fun foo() {}")
@@ -50,16 +44,13 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
           taskFile("test/Tests1.kt", "fun tests1() {}")
         }
       }
-    } as HyperskillCourse
+    }
 
     doTestSubmissionsLoaded(setOf(1), mapOf(1 to 1))
   }
 
   fun `test edu task several submissions loaded`() {
-    courseWithFiles(
-      language = FakeGradleBasedLanguage,
-      courseProducer = ::HyperskillCourse
-    ) {
+    hyperskillCourseWithFiles {
       frameworkLesson("lesson1") {
         eduTask("task1", stepId = 2) {
           taskFile("src/Task.kt", "fun foo() {}")
@@ -67,31 +58,25 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
           taskFile("test/Tests1.kt", "fun tests1() {}")
         }
       }
-    } as HyperskillCourse
+    }
 
     doTestSubmissionsLoaded(setOf(2), mapOf(2 to 2))
   }
 
   fun `test code problem submissions loaded`() {
-    courseWithFiles(
-      language = FakeGradleBasedLanguage,
-      courseProducer = ::HyperskillCourse
-    ) {
+    hyperskillCourseWithFiles {
       lesson("Problems") {
         codeTask("task1", stepId = 1) {
           taskFile("Task.txt", "fun foo() {}")
         }
       }
-    } as HyperskillCourse
+    }
 
     doTestSubmissionsLoaded(setOf(1), mapOf(1 to 1))
   }
 
   fun `test submission added after edu task check`() {
-    val course = courseWithFiles(
-      language = FakeGradleBasedLanguage,
-      courseProducer = ::HyperskillCourse
-    ) {
+    hyperskillCourseWithFiles {
       frameworkLesson("lesson1") {
         eduTask("task1", stepId = 3) {
           taskFile("src/Task.kt", "fun foo() {}")
@@ -99,9 +84,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
           taskFile("test/Tests1.kt", "fun tests1() {}")
         }
       }
-    } as HyperskillCourse
-    course.stages = listOf(HyperskillStage(1, "", 1))
-    course.hyperskillProject = HyperskillProject()
+    }
     doTestSubmissionAddedAfterTaskCheck(3, EduNames.CORRECT)
   }
 

@@ -69,13 +69,13 @@ object NavigationUtils {
 
   private fun isLastHyperskillStage(task: Task): Boolean {
     val course = task.course as? HyperskillCourse ?: return false
-    return task.lesson.name != HYPERSKILL_PROBLEMS &&
+    return task.lesson == course.getProjectLesson() &&
            task.index == course.stages.size
   }
 
   private fun isFirstHyperskillProblem(task: Task): Boolean {
-    return task.course is HyperskillCourse &&
-           task.lesson.name == HYPERSKILL_PROBLEMS &&
+    val course = task.course as? HyperskillCourse ?: return false
+    return task.lesson == course.getProblemsLesson() &&
            task.index == 1
   }
 
