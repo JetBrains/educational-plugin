@@ -205,6 +205,9 @@ object HyperskillProjectOpener {
       YamlFormatSynchronizer.saveItem(problemsLesson)
       YamlFormatSynchronizer.saveItem(task)
       YamlFormatSynchronizer.saveRemoteInfo(task)
+    }
+
+    if (createLessonDir || createTaskDir) {
       course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
     }
   }
