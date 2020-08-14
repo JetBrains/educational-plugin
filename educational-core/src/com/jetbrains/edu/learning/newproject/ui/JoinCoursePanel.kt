@@ -8,19 +8,19 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.io.File
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
-class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(BorderLayout()) {
+class JoinCoursePanel(course: Course, settings: CourseDisplaySettings) : JPanel(BorderLayout()) {
 
-  private val myCoursePanel: CoursePanel = CoursePanel(isLocationFieldNeeded = true) { errorState ->
-    setError(errorState.message)
+  private val coursePanel: CoursePanel = CoursePanel(isLocationFieldNeeded = true) { _, _, panel ->
+    CoursesPlatformProvider.joinCourse(CourseInfo(course, { locationString }, { languageSettings }), CourseMode.STUDY, panel) {
+      setError(it.message)
+    }
   }
   private val myErrorLabel: HyperlinkLabel = HyperlinkLabel()
   private var myValidationMessage: ValidationMessage? = null
@@ -29,25 +29,21 @@ class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(Bord
   init {
     preferredSize = JBUI.size(WIDTH, HEIGHT)
     minimumSize = JBUI.size(WIDTH, HEIGHT)
-
     myErrorLabel.border = JBUI.Borders.emptyTop(8)
     myErrorLabel.foreground = EduColors.errorTextForeground
     myErrorLabel.addHyperlinkListener { browseHyperlink(myValidationMessage) }
-    add(myCoursePanel, BorderLayout.CENTER)
+    add(coursePanel, BorderLayout.CENTER)
     add(myErrorLabel, BorderLayout.SOUTH)
     UIUtil.setBackgroundRecursively(this, MAIN_BG_COLOR)
 
+    coursePanel.bindCourse(course, settings)
     setupValidation()
   }
 
   // '!!' is safe here because `myCoursePanel` has location field
-  val locationString: String get() = myCoursePanel.locationString!!
+  val locationString: String get() = coursePanel.locationString!!
 
-  val languageSettings: LanguageSettings<*>? get() = myCoursePanel.languageSettings
-
-  fun bindCourse(course: Course) {
-    myCoursePanel.bindCourse(course, settings)?.addSettingsChangeListener { doValidation(course) }
-  }
+  val languageSettings: LanguageSettings<*>? get() = coursePanel.languageSettings
 
   fun setValidationListener(course: Course, listener: ValidationListener?) {
     myValidationListener = listener
@@ -60,7 +56,7 @@ class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(Bord
         doValidation(null)
       }
     }
-    myCoursePanel.addLocationFieldDocumentListener(validator)
+    coursePanel.addLocationFieldDocumentListener(validator)
   }
 
   private fun doValidation(course: Course?) {
@@ -69,7 +65,7 @@ class JoinCoursePanel(private val settings: CourseDisplaySettings) : JPanel(Bord
       locationString.isBlank() -> ValidationMessage("Enter course location")
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) ->
         ValidationMessage("Can't create course at this location")
-      else -> myCoursePanel.validateSettings(course)
+      else -> coursePanel.validateSettings(course)
     }
     setError(message)
     myValidationListener?.onInputDataValidated(message == null || message.type != ValidationMessageType.ERROR)

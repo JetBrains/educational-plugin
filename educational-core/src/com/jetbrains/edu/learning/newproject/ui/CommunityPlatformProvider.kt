@@ -15,7 +15,7 @@ import java.io.File
 import java.io.IOException
 import javax.swing.Icon
 
-class CommunityPlatformProvider(private val coursesProvider: StepikCoursesProvider) : CoursesPlatformProvider {
+class CommunityPlatformProvider(private val coursesProvider: StepikCoursesProvider) : CoursesPlatformProvider() {
   private val bundledCoursesNames = listOf("Kotlin Koans.zip", "Introduction to Python.zip")
 
   override val name: String

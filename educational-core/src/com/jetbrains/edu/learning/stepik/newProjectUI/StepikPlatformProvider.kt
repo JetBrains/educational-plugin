@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
-class StepikPlatformProvider(private val coursesProvider: StepikCoursesProvider) : CoursesPlatformProvider {
+class StepikPlatformProvider(private val coursesProvider: StepikCoursesProvider) : CoursesPlatformProvider() {
 
   override val name: String = StepikNames.STEPIK
 

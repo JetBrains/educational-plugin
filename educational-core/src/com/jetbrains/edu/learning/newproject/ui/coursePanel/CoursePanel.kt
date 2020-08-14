@@ -30,16 +30,23 @@ private const val HORIZONTAL_MARGIN = 20
 private const val EMPTY = "empty"
 private const val CONTENT = "content"
 
-class CoursePanel private constructor(private val isLocationFieldNeeded: Boolean) : JPanel() {
+class CoursePanel(
+  private val isLocationFieldNeeded: Boolean,
+  private val joinCourseAction: (CourseInfo, CourseMode, JPanel) -> Unit
+) : JPanel() {
   var errorState: ErrorState = ErrorState.NothingSelected
   var course: Course? = null
 
-  private lateinit var header: HeaderPanel
-  private var description = CourseDescriptionPanel(HORIZONTAL_MARGIN)
-  private var advancedSettings = CourseSettings(isLocationFieldNeeded, HORIZONTAL_MARGIN)
+  private val header: HeaderPanel = HeaderPanel(HORIZONTAL_MARGIN) { courseInfo, courseMode -> joinCourse(courseInfo, courseMode) }
+  private val description = CourseDescriptionPanel(HORIZONTAL_MARGIN)
+  private val advancedSettings = CourseSettings(isLocationFieldNeeded, HORIZONTAL_MARGIN)
   private val errorLabel: HyperlinkLabel = HyperlinkLabel().apply { isVisible = false }
   private var mySearchField: FilterComponent? = null
   private val listeners: MutableList<CoursesPanel.CourseValidationListener> = ArrayList()
+
+  private fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode) {
+    joinCourseAction(courseInfo, courseMode, this)
+  }
 
   val locationString: String?
     get() = advancedSettings.locationString
@@ -50,23 +57,7 @@ class CoursePanel private constructor(private val isLocationFieldNeeded: Boolean
   val languageSettings: LanguageSettings<*>?
     get() = advancedSettings.languageSettings
 
-  constructor(
-    isLocationFieldNeeded: Boolean,
-    joinCourseAction: () -> Unit
-  ) : this(isLocationFieldNeeded) {
-    header = HeaderPanel(HORIZONTAL_MARGIN, joinCourseAction)
-    initUI()
-  }
-
-  constructor(
-    isLocationFieldNeeded: Boolean,
-    errorHandler: (ErrorState) -> Unit
-  ) : this(isLocationFieldNeeded) {
-    header = HeaderPanel(HORIZONTAL_MARGIN, errorHandler)
-    initUI()
-  }
-
-  private fun initUI() {
+  init {
     layout = CardLayout()
     border = JBUI.Borders.customLine(DIVIDER_COLOR, 0, 0, 0, 0)
 

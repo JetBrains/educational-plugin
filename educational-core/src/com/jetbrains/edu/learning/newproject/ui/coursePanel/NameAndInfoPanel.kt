@@ -7,7 +7,6 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
 import java.awt.Color
@@ -26,41 +25,25 @@ private const val INFO_PANEL_TOP_OFFSET = 5
 private const val FONT_SIZE = 26.0f
 private val GRAY_TEXT_FOREGROUND: Color = JBColor.namedColor("Plugins.tagForeground", JBColor(0x787878, 0x999999))
 
-class NameAndInfoPanel : JPanel {
+class NameAndInfoPanel(joinCourseAction: (CourseInfo, CourseMode) -> Unit) : JPanel() {
   private val nameHtmlPanel: CourseNameHtmlPanel = CourseNameHtmlPanel()
   private val infoPanel = InfoPanel()
   private val tagsPanel: TagsPanel = TagsPanel()
   private val baselinePanel: BaselinePanel = BaselinePanel()
   private val openButton: OpenCourseButton = OpenCourseButton()
-  private var startButton: CourseButtonBase
-  private var editButton: CourseButtonBase
+  private var startButton: CourseButtonBase = StartCourseButton(joinCourseAction)
+  private var editButton: CourseButtonBase = EditCourseButton(joinCourseAction)
 
-  constructor(joinCourse: () -> Unit) : super() {
-    startButton = CustomActionCourseButton(joinCourse)
-    editButton = EditCourseButton { }
-    initUI()
-  }
-
-  constructor(errorHandler: (ErrorState) -> Unit) : super() {
-    startButton = StartCourseButton(errorHandler)
-    editButton = EditCourseButton(errorHandler)
-    initUI()
-  }
-
-
-  private fun initUI() {
+  init {
     border = JBUI.Borders.emptyRight(RIGHT_OFFSET)
     layout = VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false)
-
     baselinePanel.setYOffset(JBUI.scale(Y_OFFSET))
     baselinePanel.add(nameHtmlPanel)
     baselinePanel.addButtonComponent(startButton)
     baselinePanel.addButtonComponent(openButton)
     baselinePanel.addButtonComponent(editButton)
-
     add(baselinePanel)
     add(infoPanel)
-
     add(tagsPanel)
     UIUtil.setBackgroundRecursively(this, UIUtil.getEditorPaneBackground())
   }

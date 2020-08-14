@@ -6,7 +6,6 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.getScaledLogo
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -17,24 +16,13 @@ private const val HEADER_HGAP = 20
 private const val TOP_OFFSET = 15
 private const val LOGO_SIZE = 80
 
-class HeaderPanel : NonOpaquePanel {
-  private var nameAndInfoPanel: NameAndInfoPanel
+class HeaderPanel(leftMargin: Int, joinCourseAction: (CourseInfo, CourseMode) -> Unit) : NonOpaquePanel() {
+  private var nameAndInfoPanel: NameAndInfoPanel = NameAndInfoPanel(joinCourseAction)
   private val iconPanel = IconPanel()
 
-  constructor(leftMargin: Int, joinCourseAction: () -> Unit) : super() {
-    nameAndInfoPanel = NameAndInfoPanel(joinCourseAction)
-    initUI(leftMargin)
-  }
-
-  constructor(leftMargin: Int, errorHandler: (ErrorState) -> Unit) : super() {
-    nameAndInfoPanel = NameAndInfoPanel(errorHandler)
-    initUI(leftMargin)
-  }
-
-  private fun initUI(leftMargin: Int) {
+  init {
     layout = BorderLayout(HEADER_HGAP, 0)
     border = JBUI.Borders.empty(TOP_OFFSET, leftMargin, 0, 0)
-
     add(iconPanel.iconLabel, BorderLayout.WEST)
     add(nameAndInfoPanel, BorderLayout.CENTER)
     UIUtil.setBackgroundRecursively(this, UIUtil.getEditorPaneBackground())

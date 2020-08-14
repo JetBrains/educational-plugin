@@ -27,7 +27,7 @@ class CourseraPlatformProviderFactory : CoursesPlatformProviderFactory {
 }
 
 @VisibleForTesting
-class CourseraPlatformProvider : CoursesPlatformProvider {
+class CourseraPlatformProvider : CoursesPlatformProvider() {
   private val LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/coursera-assignmnets.txt"
   private val LOG = Logger.getInstance(CourseraPlatformProvider::class.java)
 

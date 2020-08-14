@@ -6,11 +6,11 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import javax.swing.JComponent
 
 open class JoinCourseDialogBase(private val course: Course, settings: CourseDisplaySettings) : OpenCourseDialogBase() {
-  private val panel: JoinCoursePanel = JoinCoursePanel(settings)
+  private val panel: JoinCoursePanel
 
   init {
     title = course.name
-    panel.bindCourse(course)
+    panel = JoinCoursePanel(course, settings)
     panel.setValidationListener(course, object : JoinCoursePanel.ValidationListener {
       override fun onInputDataValidated(isInputDataComplete: Boolean) {
         isOKActionEnabled = isInputDataComplete

@@ -2,15 +2,15 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
 
-class CoursesListPanel(errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout()) {
-  private val groupsComponent: GroupsComponent = GroupsComponent(errorHandler)
+class CoursesListPanel(joinCourseAction: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
+  private val groupsComponent: GroupsComponent = GroupsComponent(joinCourseAction)
   val selectedCourse: Course? get() = groupsComponent.selectedValue
 
   init {

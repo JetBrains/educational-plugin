@@ -43,9 +43,9 @@ private val HOVER_COLOR: Color = JBColor.namedColor("BrowseCourses.hoverBackgrou
 private val SELECTION_COLOR: Color = JBColor.namedColor("BrowseCourses.lightSelectionBackground", JBColor(0xE9EEF5, 0x36393B))
 val GRAY_COLOR: Color = JBColor.namedColor("BrowseCourses.infoForeground", JBColor(Gray._120, Gray._135))
 
-class CourseCardComponent(val courseInfo: CourseInfo, errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout()) {
+class CourseCardComponent(val courseInfo: CourseInfo, joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
   private val logoComponent: JLabel = JLabel()
-  private var courseNameInfoComponent: CourseNameInfoComponent = CourseNameInfoComponent(courseInfo, errorHandler)
+  private var courseNameInfoComponent: CourseNameInfoComponent = CourseNameInfoComponent(courseInfo, joinCourse)
 
   init {
     border = JBUI.Borders.empty(CARD_GAP)
@@ -96,8 +96,8 @@ class CourseCardComponent(val courseInfo: CourseInfo, errorHandler: (ErrorState)
   }
 }
 
-class CourseNameInfoComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout()) {
-  private val nameComponent: CourseNameComponent = CourseNameComponent(courseInfo, errorHandler)
+class CourseNameInfoComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
+  private val nameComponent: CourseNameComponent = CourseNameComponent(courseInfo, joinCourse)
   private val courseInfoComponent: JPanel
 
   init {
@@ -123,7 +123,7 @@ class CourseNameInfoComponent(courseInfo: CourseInfo, errorHandler: (ErrorState)
   }
 }
 
-class CourseNameComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> Unit) : JPanel(BorderLayout()) {
+class CourseNameComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
   private val nameLabel: JLabel = JLabel()
   private val button: CourseButtonBase
 
@@ -133,14 +133,11 @@ class CourseNameComponent(courseInfo: CourseInfo, errorHandler: (ErrorState) -> 
 
     val coursePath = CoursesStorage.getInstance().getCoursePath(courseInfo.course)
     button = when {
-      courseInfo.course is JetBrainsAcademyCourse -> {
-        JBAcademyCourseButton(errorHandler, false)
-      }
       coursePath != null -> {
         OpenCourseButton()
       }
       else -> {
-        StartCourseButton(errorHandler, false)
+        StartCourseButton(joinCourse, false)
       }
     }.apply {
       addListener(courseInfo)
