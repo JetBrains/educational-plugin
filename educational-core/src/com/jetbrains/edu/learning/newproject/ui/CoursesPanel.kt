@@ -192,9 +192,14 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
       CourseInfo(it,
                  { CourseSettings.nameToLocation(it) },
                  {
-                   val settings = CourseSettings.getLanguageSettings(it)
-                   settings?.getLanguageSettingsComponents(it, null)
-                   settings
+                   if (coursePanel.course == it) {
+                     languageSettings
+                   }
+                   else {
+                     val settings = CourseSettings.getLanguageSettings(it)
+                     settings?.getLanguageSettingsComponents(it, null)
+                     settings
+                   }
                  })
     }
     coursesListPanel.updateModel(courseInfos, courseToSelect)
