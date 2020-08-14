@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.DialogWrapperDialog
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -44,6 +47,9 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
                                         Runnable { BrowserUtil.browse(groups.valueOrEmpty(LINK)) })
       panel.setError(errorState)
     }
+
+    val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, coursePanel)
+    dialog?.dialogWrapper?.close(DialogWrapper.OK_EXIT_CODE)
   }
 
   override suspend fun loadCourses(): List<Course> {

@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui
 
+import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
@@ -50,8 +52,8 @@ abstract class CoursesPlatformProvider {
         try {
           configurator.beforeCourseStarted(course)
 
-          val dialog = UIUtil.getParentOfType(JoinCourseDialogBase::class.java, component)
-          dialog?.close()
+          val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, component)
+          dialog?.dialogWrapper?.close(DialogWrapper.OK_EXIT_CODE)
           course.courseMode = courseMode.toString()
           val projectGenerator = configurator.courseBuilder.getCourseProjectGenerator(course)
           projectGenerator?.doCreateCourseProject(location, projectSettings)
