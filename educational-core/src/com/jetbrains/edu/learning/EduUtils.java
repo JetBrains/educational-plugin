@@ -620,33 +620,29 @@ public class EduUtils {
       return fileType.isBinary();
     }
 
-    String mimeType = getMimeType(file);
-    return isToEncodeContent(mimeType);
+    String contentType = getMimeType(file);
+    if (contentType == null) {
+      return isGitObject(file.getName());
+    }
+
+    return contentType.startsWith("image") ||
+           contentType.startsWith("audio") ||
+           contentType.startsWith("video") ||
+           contentType.startsWith("application");
   }
 
   private static String getMimeType(VirtualFile file) {
-    String mimeType = null;
     try {
-      mimeType = Files.probeContentType(Paths.get(file.getPath()));
+      return Files.probeContentType(Paths.get(file.getPath()));
     }
     catch (IOException e) {
       LOG.error(e);
     }
-    return mimeType;
+    return null;
   }
 
-  public static boolean isToEncodeContent(@Nullable String contentType) {
-    if (contentType == null) {
-      return false;
-    }
-
-    if (contentType.startsWith("image") ||
-        contentType.startsWith("audio") ||
-        contentType.startsWith("video")) {
-      return true;
-    }
-
-    return false;
+  private static boolean isGitObject(String name) {
+    return (name.length() == 38 || name.length() == 40) && name.matches("[a-z0-9]+");
   }
 
   @Nullable

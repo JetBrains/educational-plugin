@@ -24,12 +24,6 @@
   ],
   "additional_files" : [
     {
-      "name" : "test.img",
-      "placeholders" : [ ],
-      "is_visible" : true,
-      "text" : ""
-    },
-    {
       "name" : "build.gradle",
       "placeholders" : [ ],
       "is_visible" : true,
@@ -37,6 +31,12 @@
     },
     {
       "name" : "settings.gradle",
+      "placeholders" : [ ],
+      "is_visible" : true,
+      "text" : ""
+    },
+    {
+      "name" : "8abe7b618ddf9c55adbea359ce891775794a61",
       "placeholders" : [ ],
       "is_visible" : true,
       "text" : ""
