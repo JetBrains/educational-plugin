@@ -190,7 +190,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
     val courseInfos = coursesToAdd.map {
       CourseInfo(it,
-                 { CourseSettings.nameToLocation(it) },
+                 { if (coursePanel.course == it) locationString else CourseSettings.nameToLocation(it) },
                  {
                    if (coursePanel.course == it) {
                      languageSettings
