@@ -68,7 +68,6 @@ class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Bool
 
   private fun validateSettings(courseInfo: CourseInfo): ValidationMessage? {
     val languageSettings = courseInfo.languageSettings()
-    languageSettings?.getLanguageSettingsComponents(courseInfo.course, null)
     return languageSettings?.validate(courseInfo.course, courseInfo.location())
   }
 

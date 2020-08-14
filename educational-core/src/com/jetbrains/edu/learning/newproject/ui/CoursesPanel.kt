@@ -189,7 +189,13 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   protected fun updateModel(courses: List<Course>, courseToSelect: Course?, filterCourses: Boolean = true) {
     val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
     val courseInfos = coursesToAdd.map {
-      CourseInfo(it, { CourseSettings.nameToLocation(it) }, { CourseSettings.getLanguageSettings(it) })
+      CourseInfo(it,
+                 { CourseSettings.nameToLocation(it) },
+                 {
+                   val settings = CourseSettings.getLanguageSettings(it)
+                   settings?.getLanguageSettingsComponents(it, null)
+                   settings
+                 })
     }
     coursesListPanel.updateModel(courseInfos, courseToSelect)
   }
