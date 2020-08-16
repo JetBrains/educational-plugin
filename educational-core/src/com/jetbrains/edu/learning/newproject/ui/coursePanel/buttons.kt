@@ -126,7 +126,8 @@ abstract class CourseButtonBase(fill: Boolean = false) : ColorButton() {
     listener?.let { removeActionListener(listener) }
     isVisible = isVisible(courseInfo.course)
     if (isVisible) {
-      addActionListener(actionListener(courseInfo))
+      listener = actionListener(courseInfo)
+      addActionListener(listener)
     }
   }
 }
