@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.checkio.notifications.errors;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
+import com.intellij.openapi.application.ApplicationManager;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.notifications.CheckiONotification;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,9 @@ public class CheckiOLoginRequiredNotification extends CheckiONotification.Error 
 
     @Override
     protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-      myOAuthConnector.doAuthorize(() -> notification.hideBalloon());
+      myOAuthConnector.doAuthorize(() -> ApplicationManager.getApplication().invokeLater(
+        () -> notification.hideBalloon()
+      ));
     }
   }
 }
