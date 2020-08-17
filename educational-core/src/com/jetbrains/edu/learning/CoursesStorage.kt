@@ -18,6 +18,8 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
     return state.courses.find { it.name == course.name && it.id == course.id }?.location
   }
 
+  fun hasCourse(course: Course): Boolean = getCoursePath(course) != null
+
   fun getCourseMetaInfo(course: Course): CourseMetaInfo? {
     return state.courses.find { it.name == course.name && it.id == course.id }
   }

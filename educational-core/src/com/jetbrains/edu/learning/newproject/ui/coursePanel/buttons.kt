@@ -71,7 +71,7 @@ class OpenCourseButton : CourseButtonBase() {
   }
 
   override fun isVisible(course: Course): Boolean = course.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != true
-                                                    && CoursesStorage.getInstance().getCoursePath(course) != null
+                                                    && CoursesStorage.getInstance().hasCourse(course)
 }
 
 class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Boolean = true) : StartCourseButtonBase(joinCourse, fill) {
@@ -84,7 +84,7 @@ class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Bool
 
   // we place this button on course card and course panel both
   override fun isVisible(course: Course): Boolean = course.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == true
-                                                    || CoursesStorage.getInstance().getCoursePath(course) == null
+                                                    || !CoursesStorage.getInstance().hasCourse(course)
 
   override fun canStartCourse(courseInfo: CourseInfo) = courseInfo.projectSettings != null
                                                         && courseInfo.location() != null
