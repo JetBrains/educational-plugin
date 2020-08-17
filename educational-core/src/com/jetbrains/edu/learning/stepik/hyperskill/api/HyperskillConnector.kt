@@ -9,7 +9,9 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames.MISMATCH_REDIRECT_URI_URL
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -25,6 +27,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillT
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import okhttp3.*
+import org.jetbrains.builtInWebServer.BuiltInServerOptions
+import org.jetbrains.ide.BuiltInServerManager
 import retrofit2.Call
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.*
@@ -75,8 +79,22 @@ abstract class HyperskillConnector {
   // Authorization requests:
 
   fun doAuthorize(vararg postLoginActions: Runnable) {
+    val port = BuiltInServerManager.getInstance().port
+    val defaultPort = BuiltInServerOptions.DEFAULT_PORT
+
+    // 20 port range comes from org.jetbrains.ide.BuiltInServerManagerImplKt.PORTS_COUNT
+    if (port !in defaultPort..defaultPort + 20 && port !in HYPERSKILL_FAILOVER_PORTS) {
+      showUnsupportedPortError(port)
+      return
+    }
+
     createAuthorizationListener(*postLoginActions)
     BrowserUtil.browse(AUTHORISATION_CODE_URL)
+  }
+
+  private fun showUnsupportedPortError(port: Int) {
+    Messages.showErrorDialog(EduCoreBundle.message("hyperskill.unsupported.port.message", port.toString(), MISMATCH_REDIRECT_URI_URL),
+                             EduCoreBundle.message("hyperskill.unsupported.port.title"))
   }
 
   fun login(code: String): Boolean {

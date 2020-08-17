@@ -18,6 +18,7 @@ const val JBA_DEFAULT_URL = "https://www.jetbrains.com/academy/"
 val HYPERSKILL_PROFILE_PATH = "${HYPERSKILL_URL}profile/"
 private val port = BuiltInServerManager.getInstance().port
 val REDIRECT_URI_DEFAULT = "http://localhost:$port/api/edu/hyperskill/oauth"
+val HYPERSKILL_FAILOVER_PORTS = listOf(61904, 50605, 55795, 54687, 58511)
 
 var CLIENT_ID = HyperskillOAuthBundle.valueOrDefault("hyperskillClientId", "")
 var CLIENT_SECRET = HyperskillOAuthBundle.valueOrDefault("hyperskillClientSecret", "")
