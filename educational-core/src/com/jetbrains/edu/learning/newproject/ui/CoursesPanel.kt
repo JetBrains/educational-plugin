@@ -4,6 +4,7 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.application.ApplicationNamesInfo
+import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.ui.FilterComponent
 import com.intellij.ui.JBCardLayout
 import com.intellij.ui.OnePixelSplitter
@@ -57,6 +58,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   private lateinit var myProgrammingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   private lateinit var myHumanLanguagesFilterDropdown: HumanLanguageFilterDropdown
   private val cardLayout = JBCardLayout()
+  @Volatile private var loadingFinished = false
 
   val languageSettings get() = coursePanel.languageSettings
 
@@ -103,10 +105,18 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
         val compatibility = it.compatibility
         compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
       })
-    updateFilters()
-    updateModel(courses, null)
-    showContent(courses.isEmpty())
-    processSelectionChanged()
+    loadingFinished = true
+    if (isShowing) {
+      onTabSelection()
+    }
+  }
+
+  fun onTabSelection() {
+    if (loadingFinished) {
+      updateFilters()
+      updateModel(courses, null)
+      showContent(courses.isEmpty())
+    }
   }
 
   private fun createSplitPane(): JPanel {

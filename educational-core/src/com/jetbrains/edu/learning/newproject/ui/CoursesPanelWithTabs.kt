@@ -117,6 +117,8 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope) : JPanel() {
 
     fun showPanel(name: String) {
       activeTabName = name
+      val panel = cardLayout.findComponentById(activeTabName) as? CoursesPanel ?: return
+      panel.onTabSelection()
       cardLayout.show(this, activeTabName)
     }
 
