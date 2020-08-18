@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -115,10 +116,12 @@ object HyperskillProjectOpener {
       return Err(HYPERSKILL_PROJECT_NOT_SUPPORTED)
     }
 
-    val eduEnvironment = hyperskillProject.eduEnvironment
-    if (eduEnvironment == null) {
-      return Err("Unsupported environment ${hyperskillProject.environment}")
+    val eduEnvironment = hyperskillProject.eduEnvironment ?: return Err("Unsupported environment ${hyperskillProject.environment}")
+
+    if (eduEnvironment == EduNames.ANDROID && !EduUtils.isAndroidStudio()) {
+      return Err(EduCoreBundle.message("hyperskill.android.not.supported"))
     }
+
     return Ok(HyperskillCourse(hyperskillProject, eduLanguage, eduEnvironment))
   }
 

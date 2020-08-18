@@ -9,16 +9,19 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.hyperskill.*
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
+import com.jetbrains.edu.learning.stepik.hyperskill.SELECT_PROJECT
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.getSelectedProjectIdUnderProgress
+import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
+import java.net.URL
 import javax.swing.event.HyperlinkEvent
 
 class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") {
@@ -38,9 +41,8 @@ class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") 
   }
 
   private fun showBalloon(e: AnActionEvent, message: String, authorize: Boolean) {
-    val builder = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, MessageType.INFO, null)
+    val builder = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, MessageType.INFO, HSHyperlinkListener(authorize))
     builder.setHideOnClickOutside(true)
-    builder.setClickHandler(HSHyperlinkListener(authorize), true)
     val balloon = builder.createBalloon()
 
     val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
@@ -69,22 +71,24 @@ class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") 
   }
 }
 
-class HSHyperlinkListener(private val authorize: Boolean) : ActionListener, NotificationListener {
+class HSHyperlinkListener(private val authorize: Boolean) : NotificationListener, HyperlinkAdapter() {
   override fun hyperlinkUpdate(notification: Notification, event: HyperlinkEvent) {
-    authorizeOrBrowse()
+    authorizeOrBrowse(event.url)
   }
 
-  override fun actionPerformed(e: ActionEvent?) {
-    authorizeOrBrowse()
-  }
-
-  private fun authorizeOrBrowse() {
+  private fun authorizeOrBrowse(url: URL?) {
     if (authorize) {
       HyperskillConnector.getInstance().doAuthorize()
       EduCounterUsageCollector.loggedIn(HYPERSKILL, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
     }
     else {
-      BrowserUtil.browse(HYPERSKILL_PROJECTS_URL)
+      if (url != null) {
+        BrowserUtil.browse(url)
+      }
     }
+  }
+
+  override fun hyperlinkActivated(e: HyperlinkEvent?) {
+    authorizeOrBrowse(e?.url)
   }
 }
