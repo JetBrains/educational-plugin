@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -75,7 +76,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
 
   @Suppress("SameParameterValue")
   private fun createActionLink(actionText: String, actionId: String): ActionLink {
-    return ActionLink(actionText, ActionManager.getInstance().getAction(actionId))
+    return LightColoredActionLink(actionText, ActionManager.getInstance().getAction(actionId))
   }
 
   private fun createSingleActionToolbar(action: AnAction): JComponent {
