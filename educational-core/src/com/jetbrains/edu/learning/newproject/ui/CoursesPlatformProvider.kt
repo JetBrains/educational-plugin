@@ -42,8 +42,6 @@ abstract class CoursesPlatformProvider {
         return
       }
 
-      CoursesStorage.getInstance().addCourse(course, location)
-
       val configurator = course.configurator
       // If `configurator != null` than `projectSettings` is always not null
       // because project settings are produced by configurator itself
@@ -57,6 +55,7 @@ abstract class CoursesPlatformProvider {
           course.courseMode = courseMode.toString()
           val projectGenerator = configurator.courseBuilder.getCourseProjectGenerator(course)
           projectGenerator?.doCreateCourseProject(location, projectSettings)
+          CoursesStorage.getInstance().addCourse(course, location)
         }
         catch (e: CourseCantBeStartedException) {
           errorHandler(e.error)
