@@ -11,6 +11,8 @@ import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
@@ -171,8 +173,15 @@ object NavigationUtils {
     navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder)
   }
 
-  private fun getFirstTaskFile(taskDir: VirtualFile, taskFiles: Collection<TaskFile>): VirtualFile? {
-    val firstVisibleTaskFile = taskFiles.firstOrNull { it.isVisible } ?: return null
+  private fun getFirstTaskFile(taskDir: VirtualFile, task: Task): VirtualFile? {
+    val taskFiles = task.taskFiles.values
+    val firstVisibleTaskFile =
+      if (task is CodeforcesTask) {
+        taskFiles.firstOrNull { it.isVisible && !it.name.startsWith(CodeforcesNames.TEST_DATA_FOLDER) }
+      }
+      else {
+        taskFiles.firstOrNull { it.isVisible }
+      } ?: return null
     return EduUtils.findTaskFileInDir(firstVisibleTaskFile, taskDir)
   }
 
@@ -227,7 +236,7 @@ object NavigationUtils {
       }
     }
     if (fileToActivate == null) {
-      fileToActivate = getFirstTaskFile(taskDir, taskFiles.values)
+      fileToActivate = getFirstTaskFile(taskDir, task)
     }
 
     ProjectView.getInstance(project).refresh()
