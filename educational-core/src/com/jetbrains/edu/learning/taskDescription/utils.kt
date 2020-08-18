@@ -4,6 +4,7 @@ package com.jetbrains.edu.learning.taskDescription
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.keymap.KeymapUtil
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.SOURCE
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -114,6 +115,11 @@ fun String.getYoutubeVideoId(): String? {
   else {
     null
   }
+}
+
+fun Task.addHeader(tasksNumber: Int, text: String): String = buildString {
+  appendln("<h1 style=\"margin-top: 15px\">${uiName.capitalize()} $index/$tasksNumber: $name</h1>")
+  appendln(text)
 }
 
 fun String.containsYoutubeLink(): Boolean = contains(YOUTUBE_LINKS_REGEX)
