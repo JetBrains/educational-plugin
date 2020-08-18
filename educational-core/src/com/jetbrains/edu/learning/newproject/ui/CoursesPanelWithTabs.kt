@@ -92,7 +92,6 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope) : JPanel() {
   }
 
   private inner class CoursesTab : JPanel() {
-    // TODO: can't we get it from layout? See other usages
     private val panels: MutableList<CoursesPanel> = mutableListOf()
     private var activeTabName: String? = null
     private val cardLayout = JBCardLayout()
@@ -135,7 +134,6 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope) : JPanel() {
       currentPanel.setError(error)
     }
 
-    // TODO: get from panels?
     private val currentPanel: CoursesPanel
       get() {
         activeTabName ?: error("Active tab name is null")
