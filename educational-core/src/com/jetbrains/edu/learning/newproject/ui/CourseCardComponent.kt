@@ -91,9 +91,6 @@ class CourseCardComponent(val courseInfo: CourseInfo, joinCourse: (CourseInfo, C
     }
   }
 
-  fun updateButton() {
-    courseNameInfoComponent.updateButton(courseInfo)
-  }
 }
 
 class CourseNameInfoComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
@@ -118,9 +115,6 @@ class CourseNameInfoComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, C
     add(courseInfoComponent, BorderLayout.SOUTH)
   }
 
-  fun updateButton(courseInfo: CourseInfo) {
-    nameComponent.updateButton(courseInfo)
-  }
 }
 
 class CourseNameComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
@@ -140,17 +134,16 @@ class CourseNameComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, Cours
         StartCourseButton(joinCourse, false)
       }
     }.apply {
-      addListener(courseInfo)
-      isEnabled = canStartCourse(courseInfo)
+      // EDU-3618
+      // addListener(courseInfo)
+      // isEnabled = canStartCourse(courseInfo)
     }
 
     add(nameLabel, BorderLayout.CENTER)
-    add(button, BorderLayout.EAST)
+    // EDU-3618
+    // add(button, BorderLayout.EAST)
   }
 
-  fun updateButton(courseInfo: CourseInfo) {
-    button.isEnabled = button.canStartCourse(courseInfo)
-  }
 }
 
 class CommunityCourseInfoComponent(course: EduCourse) : JPanel(FlowLayout(FlowLayout.LEFT, INFO_HGAP, INFO_VGAP)) {

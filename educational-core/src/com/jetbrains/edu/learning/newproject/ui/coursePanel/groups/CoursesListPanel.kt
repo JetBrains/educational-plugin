@@ -66,7 +66,4 @@ class CoursesListPanel(joinCourseAction: (CourseInfo, CourseMode) -> Unit) : JPa
     groupsComponent.setSelectionListener(processSelectionChanged)
   }
 
-  fun updateButtons() {
-    groupsComponent.updateButtons()
-  }
 }

@@ -145,9 +145,4 @@ class CourseGroupModel {
     selectionListener = processSelectionChanged
   }
 
-  fun updateButtons() {
-    courseCards.forEach {
-      it.updateButton()
-    }
-  }
 }

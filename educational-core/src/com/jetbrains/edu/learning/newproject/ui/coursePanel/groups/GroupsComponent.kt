@@ -48,7 +48,4 @@ class GroupsComponent(private val joinCourse: (CourseInfo, CourseMode) -> Unit) 
     courseGroupModel.setSelectionListener(processSelectionChanged)
   }
 
-  fun updateButtons() {
-    courseGroupModel.updateButtons()
-  }
 }
