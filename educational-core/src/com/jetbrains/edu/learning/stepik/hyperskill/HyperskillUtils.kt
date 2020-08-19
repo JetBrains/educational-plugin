@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
@@ -11,8 +10,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.ui.HyperlinkAdapter
-import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduState.Companion.getEduState
@@ -31,9 +28,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
+import com.jetbrains.edu.learning.taskDescription.ui.TopPanel
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.event.HyperlinkEvent
 
@@ -84,12 +80,8 @@ fun getTopPanelForProblem(project: Project, course: HyperskillCourse, task: Task
   if (task == null || course.isTaskInProject(task) || CCUtils.isCourseCreator(project) || course.getProjectLesson() == null) {
     return null
   }
-  val panel = JPanel(BorderLayout())
-  panel.background = UIUtil.getListBackground()
-  panel.add(LightColoredActionLink("""Navigate to project "${course.presentableName}"""",
-                                   NavigateToProjectAction(project, course), AllIcons.Actions.Back), BorderLayout.WEST)
-  panel.border = JBUI.Borders.empty(0, 0, 10, 0)
-  return panel
+  return TopPanel(EduCoreBundle.message("hyperskill.navigate.to.project", course.presentableName),
+                  NavigateToProjectAction(project, course))
 }
 
 fun markStageAsCompleted(task: Task) {

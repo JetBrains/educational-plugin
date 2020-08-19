@@ -26,8 +26,7 @@ class HyperskillTaskBuilder(
   }
 
   private fun Task.description(theoryId: Int?, langId: String): String = buildString {
-    appendln("<b>$name</b>")
-    appendln("<br><br>")
+    appendln("<h2>$name</h2>")
     appendln(descriptionText)
 
     val options = stepSource.block?.options as? PyCharmStepOptions

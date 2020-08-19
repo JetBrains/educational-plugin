@@ -173,8 +173,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val course = StudyTaskManager.getInstance(project).course
     if (course is HyperskillCourse) {
       val panel = getTopPanelForProblem(project, course, task) ?: return
-      topPanel.add(panel, BorderLayout.CENTER)
-      topPanel.add(JSeparator(), BorderLayout.SOUTH)
+      topPanel.add(panel, BorderLayout.SOUTH)
     }
   }
 
