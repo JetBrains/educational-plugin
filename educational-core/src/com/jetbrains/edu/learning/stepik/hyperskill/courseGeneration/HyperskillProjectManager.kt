@@ -9,8 +9,8 @@ import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 open class HyperskillProjectManager {
-  open fun newProject(course: HyperskillCourse) {
-    JoinCourseDialog(course, CourseDisplaySettings(showTagsPanel = false, showInstructorField = false)).show()
+  open fun newProject(course: HyperskillCourse): Boolean {
+    return JoinCourseDialog(course, CourseDisplaySettings(showTagsPanel = false, showInstructorField = false)).showAndGet()
   }
 
   open fun focusOpenProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? =

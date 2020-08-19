@@ -12,7 +12,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.SELECT_PROJECT
@@ -56,16 +56,16 @@ class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") 
   }
 
   companion object {
-    fun openHyperskillProject(account: HyperskillAccount, showError: (String) -> Unit) {
+    fun openHyperskillProject(account: HyperskillAccount, showError: (String) -> Unit): Boolean {
       val projectId = getSelectedProjectIdUnderProgress(account)
       if (projectId == null) {
         showError(SELECT_PROJECT)
-        return
+        return false
       }
 
-      val result = HyperskillProjectOpener.open(HyperskillOpenStageRequest(projectId, null))
-      if (result is Err) {
-        showError(result.error)
+      return HyperskillProjectOpener.open(HyperskillOpenStageRequest(projectId, null)).onError {
+        showError(it)
+        return false
       }
     }
   }

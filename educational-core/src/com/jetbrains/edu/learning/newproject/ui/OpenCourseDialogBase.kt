@@ -23,7 +23,7 @@ abstract class OpenCourseDialogBase : DialogWrapper(true) {
   }
 
   fun close() {
-    close(OK_EXIT_CODE)
+    close(CANCEL_EXIT_CODE)
   }
 
   override fun getStyle(): DialogStyle {

@@ -10,9 +10,10 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 class MockHyperskillProjectManager : HyperskillProjectManager() {
   var project: Project? = null
 
-  override fun newProject(course: HyperskillCourse) {
+  override fun newProject(course: HyperskillCourse): Boolean {
     assertProject()
     course.createCourseFiles(project!!, ModuleManager.getInstance(project!!).modules[0])
+    return true
   }
 
   override fun focusOpenProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? {

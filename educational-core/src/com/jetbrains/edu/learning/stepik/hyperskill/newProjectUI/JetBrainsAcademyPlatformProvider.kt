@@ -38,7 +38,7 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
 
     val account = HyperskillSettings.INSTANCE.account ?: return
 
-    HyperskillProjectAction.openHyperskillProject(account) { errorMessage ->
+    val isOpened = HyperskillProjectAction.openHyperskillProject(account) { errorMessage ->
       val groups = LINK_ERROR_PATTERN.matchEntire(errorMessage)?.groups
       val errorState = if (groups == null) ErrorState.CustomSevereError(errorMessage)
       else ErrorState.CustomSevereError(groups.valueOrEmpty(BEFORE_LINK),
@@ -48,8 +48,10 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
       panel.setError(errorState)
     }
 
-    val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, coursePanel)
-    dialog?.dialogWrapper?.close(DialogWrapper.OK_EXIT_CODE)
+    if (isOpened) {
+      val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, coursePanel)
+      dialog?.dialogWrapper?.close(DialogWrapper.OK_EXIT_CODE)
+    }
   }
 
   override suspend fun loadCourses(): List<Course> {

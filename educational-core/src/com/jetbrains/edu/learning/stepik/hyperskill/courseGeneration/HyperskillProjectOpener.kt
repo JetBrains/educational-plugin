@@ -5,6 +5,7 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
+import com.intellij.testFramework.runInEdtAndGet
 import com.intellij.ui.AppIcon
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -23,14 +24,14 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 object HyperskillProjectOpener {
 
-  fun open(request: HyperskillOpenInProjectRequest): Result<Unit, String> {
+  fun open(request: HyperskillOpenInProjectRequest): Result<Boolean, String> {
     runInEdt {
       // We might perform heavy operations (including network access)
       // So we want to request focus and show progress bar so as it won't seem that IDE doesn't respond
       requestFocus()
     }
-    if (openInOpenedProject(request)) return Ok(Unit)
-    if (openInRecentProject(request)) return Ok(Unit)
+    if (openInOpenedProject(request)) return Ok(true)
+    if (openInRecentProject(request)) return Ok(true)
     return openInNewProject(request)
   }
 
@@ -94,9 +95,9 @@ object HyperskillProjectOpener {
     openInExistingProject(request, EduBuiltInServerUtils::openRecentProject)
 
 
-  private fun openInNewProject(request: HyperskillOpenInProjectRequest): Result<Unit, String> {
+  private fun openInNewProject(request: HyperskillOpenInProjectRequest): Result<Boolean, String> {
     return getHyperskillCourseUnderProgress(request).map { hyperskillCourse ->
-      runInEdt {
+      runInEdtAndGet {
         requestFocus()
         HyperskillProjectManager.getInstance().newProject(hyperskillCourse)
       }
