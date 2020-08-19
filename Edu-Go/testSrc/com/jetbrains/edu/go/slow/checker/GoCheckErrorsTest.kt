@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduCoreErrorBundle
 import com.jetbrains.edu.learning.nullValue
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
@@ -147,7 +146,7 @@ class GoCheckErrorsTest : GoCheckersTestBase() {
       assertEquals(CheckStatus.Failed, checkResult.status)
       val (messageMatcher, diffMatcher) = when (task.name) {
         "EduTestFailed" -> CoreMatchers.equalTo(incorrect) to nullValue()
-        "EduCompilationFailed" -> CoreMatchers.equalTo(EduCoreErrorBundle.message("execution.failed")) to nullValue()
+        "EduCompilationFailed" -> CoreMatchers.equalTo(EduCoreBundle.message("error.execution.failed")) to nullValue()
         "OutputTestFailed" -> CoreMatchers.equalTo(incorrect) to
           CheckResultDiffMatcher.diff(CheckResultDiff(expected = "Yes", actual = "No"))
         "OutputMultilineTestFailed" -> CoreMatchers.equalTo(incorrect) to
