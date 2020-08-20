@@ -14,8 +14,7 @@ class ScalaMainFileProvider : MainFileProvider {
     if (psiFile !is ScalaFile) return null
 
     PsiTreeUtil.findChildrenOfType(psiFile, ScObject::class.java).forEach {
-      val mainMethod = findMainMethod(it)
-      if (mainMethod.isDefined) return mainMethod.get().name
+      if (findMainMethod(it).isDefined) return it.fakeCompanionClassOrCompanionClass().name
     }
     return null
   }
