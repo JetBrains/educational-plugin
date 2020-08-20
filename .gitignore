@@ -29,6 +29,7 @@ hs_err_pid*
 !.idea/codeStyles/*
 !.idea/vcs.xml
 !.idea/dictionaries/educational.xml
+!.idea/icon.png
 !educational-core/testData/coursera/*
 .idea/
 build/
