@@ -50,6 +50,45 @@ class ScalaGradleCheckerTest : JdkCheckerTestBase() {
             }
           """)
         }
+
+        outputTask("OutputTask with main method") {
+          scalaTaskFile("src/Main.scala", """
+            object Main {
+              def main(args: Array[String]): Unit = {
+                println("OK")
+              }
+            }
+          """)
+          taskFile("test/output.txt") {
+            withText("OK\n")
+          }
+        }
+
+        outputTask("OutputTask with App") {
+          scalaTaskFile("src/Main.scala", """
+            object Main extends App {
+              println("OK")
+            }
+          """)
+          taskFile("test/output.txt") {
+            withText("OK\n")
+          }
+        }
+
+        outputTask("OutputTask with defined companion class") {
+          scalaTaskFile("src/Main.scala", """
+            class Main
+
+            object Main {
+              def main(args: Array[String]): Unit = {
+                println("OK")
+              }
+            }
+          """)
+          taskFile("test/output.txt") {
+            withText("OK\n")
+          }
+        }
       }
       frameworkLesson {
         eduTask("EduTask in framework lesson") {
