@@ -1,16 +1,14 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.edu.learning.courseView
 
-import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestUtil
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
-import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.projectView.CourseViewPane
+import com.jetbrains.edu.learning.withTestDialog
 import junit.framework.TestCase
 import org.junit.Assert
 
@@ -31,46 +29,6 @@ class CourseViewTest : CourseViewTestBase() {
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
   }
 
-  fun testProjectOpened() {
-    createStudyCourse()
-    val projectView = ProjectView.getInstance(project)
-    projectView.refresh()
-    projectView.changeView(CourseViewPane.ID)
-    val pane = projectView.currentProjectViewPane
-    waitWhileBusy(pane.tree)
-    EduUtils.openFirstTask(StudyTaskManager.getInstance(project).course!!, project)
-    PlatformTestUtil.waitForAlarm(600)
-    waitWhileBusy(pane.tree)
-    val structure = "-Project\n" +
-                    " -CourseNode Edu test course  0/4\n" +
-                    "  -LessonNode lesson1\n" +
-                    "   -TaskNode task1\n" +
-                    "    taskFile1.txt\n" +
-                    "   +TaskNode task2\n" +
-                    "   +TaskNode task3\n" +
-                    "   +TaskNode task4\n"
-    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
-  }
-
-  fun testExpandAfterNavigation() {
-    createStudyCourse()
-    configureByTaskFile(1, 1, "taskFile1.txt")
-    val projectView = ProjectView.getInstance(project)
-    projectView.changeView(CourseViewPane.ID)
-    navigateToNextTask()
-
-    val pane = projectView.currentProjectViewPane
-    val structure = "-Project\n" +
-                    " -CourseNode Edu test course  0/4\n" +
-                    "  -LessonNode lesson1\n" +
-                    "   +TaskNode task1\n" +
-                    "   -TaskNode task2\n" +
-                    "    taskFile2.txt\n" +
-                    "   +TaskNode task3\n" +
-                    "   +TaskNode task4\n"
-    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
-  }
-
   fun testCourseProgress() {
     createStudyCourse()
     configureByTaskFile(1, 1, "taskFile1.txt")
@@ -78,18 +36,9 @@ class CourseViewTest : CourseViewTestBase() {
     TestCase.assertNotNull(pane.getProgressBar())
   }
 
-  fun testSwitchingPane() {
-    createStudyCourse()
-    val projectView = ProjectView.getInstance(project)
-    projectView.changeView(CourseViewPane.ID)
-    TestCase.assertEquals(CourseViewPane.ID, projectView.currentViewId)
-  }
-
   fun testCheckTask() {
     createStudyCourse()
     configureByTaskFile(1, 1, "taskFile1.txt")
-    val projectView = ProjectView.getInstance(project)
-    projectView.changeView(CourseViewPane.ID)
 
     val fileName = "lesson1/task1/taskFile1.txt"
     val taskFile = myFixture.findFileInTempDir(fileName)
@@ -139,13 +88,6 @@ class CourseViewTest : CourseViewTestBase() {
   private fun launchAction(taskFile: VirtualFile, action: AnAction) {
     val presentation = testAction(dataContext(taskFile), action)
     Assert.assertTrue(presentation.isEnabledAndVisible)
-  }
-
-  private fun navigateToNextTask() {
-    val eduEditor = EduUtils.getSelectedEduEditor(project) ?: error("Can’t get selected edu editor")
-    val eduState = EduState.create(eduEditor) ?: error("Can't create edu state")
-    val targetTask = NavigationUtils.nextTask(eduState.task) ?: error ("Can't navigate to task")
-    NavigationUtils.navigateToTask(project, targetTask)
   }
 
   override fun getTestDataPath(): String {
