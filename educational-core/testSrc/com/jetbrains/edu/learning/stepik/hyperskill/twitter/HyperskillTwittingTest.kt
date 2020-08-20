@@ -93,7 +93,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
   }
 
   private fun createHyperskillCourse(courseMode: String = EduNames.STUDY): HyperskillCourse {
-    return hyperskillCourseWithFiles (courseMode = courseMode) {
+    return hyperskillCourseWithFiles(courseMode = courseMode) {
       frameworkLesson("Project") {
         eduTask("Task1") {
           taskFile("task.txt")
