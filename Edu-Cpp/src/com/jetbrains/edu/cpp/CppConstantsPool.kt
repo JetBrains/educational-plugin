@@ -13,14 +13,14 @@ const val GTEST_VERSION_VALUE: String = "release-1.8.1"
 const val GTEST_SOURCE_DIR_KEY: String = "GTEST_SOURCE_DIR"
 const val GTEST_SOURCE_DIR_VALUE: String = "googletest-src"
 
-const val GTEST_BUILD_DIR_KEY : String = "GTEST_BUILD_DIR"
-const val GTEST_BUILD_DIR_VALUE : String = "googletest-build"
+const val GTEST_BUILD_DIR_KEY: String = "GTEST_BUILD_DIR"
+const val GTEST_BUILD_DIR_VALUE: String = "googletest-build"
 
-const val CATCH_HEADER_URL_KEY : String = "CATCH_URL"
-const val CATCH_HEADER_URL_VALUE : String = "https://raw.githubusercontent.com/catchorg/Catch2/master/single_include/catch2/catch.hpp"
+const val CATCH_HEADER_URL_KEY: String = "CATCH_URL"
+const val CATCH_HEADER_URL_VALUE: String = "https://raw.githubusercontent.com/catchorg/Catch2/master/single_include/catch2/catch.hpp"
 
-const val TEST_FRAMEWORKS_BASE_DIR_KEY : String = "TEST_FRAMEWORK_DIR"
-const val TEST_FRAMEWORKS_BASE_DIR_VALUE : String = "test-framework"
+const val TEST_FRAMEWORKS_BASE_DIR_KEY: String = "TEST_FRAMEWORK_DIR"
+const val TEST_FRAMEWORKS_BASE_DIR_VALUE: String = "test-framework"
 
 const val CMAKE_MINIMUM_REQUIRED_LINE_KEY: String = "CMAKE_MINIMUM_REQUIRED_LINE"
 val CMAKE_MINIMUM_REQUIRED_LINE_VALUE: String by lazy {
@@ -29,8 +29,7 @@ val CMAKE_MINIMUM_REQUIRED_LINE_VALUE: String by lazy {
   }
 
   val progressManager = ProgressManager.getInstance()
-
-  if (progressManager.hasProgressIndicator()) {
+  if (progressManager.isUnderProgress) {
     progressManager.runProcess(cMakeVersionExtractor, null)
   }
   else {
@@ -43,3 +42,6 @@ val CMAKE_MINIMUM_REQUIRED_LINE_VALUE: String by lazy {
 const val CMAKE_PROJECT_NAME_KEY: String = "PROJECT_NAME"
 
 const val CMAKE_CPP_STANDARD_KEY: String = "CPP_STANDARD"
+
+private val ProgressManager.isUnderProgress: Boolean
+  get() = hasProgressIndicator() || hasModalProgressIndicator() || hasUnsafeProgressIndicator()
