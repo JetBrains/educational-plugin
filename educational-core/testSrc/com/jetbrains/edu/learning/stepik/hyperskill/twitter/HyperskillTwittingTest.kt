@@ -12,8 +12,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.twitter.TwitterSettings
 import com.jetbrains.edu.learning.twitter.ui.TwitterDialogUI
 import com.jetbrains.edu.learning.twitter.ui.withMockTwitterDialogUI
@@ -93,7 +93,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
   }
 
   private fun createHyperskillCourse(courseMode: String = EduNames.STUDY): HyperskillCourse {
-    val course = courseWithFiles(courseMode = courseMode, courseProducer = ::HyperskillCourse) {
+    return hyperskillCourseWithFiles (courseMode = courseMode) {
       frameworkLesson("Project") {
         eduTask("Task1") {
           taskFile("task.txt")
@@ -108,11 +108,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
           taskFile("task.txt")
         }
       }
-
-    } as HyperskillCourse
-
-    course.hyperskillProject = HyperskillProject()
-    return course
+    }
   }
 
   private fun createEduCourse(): EduCourse {
