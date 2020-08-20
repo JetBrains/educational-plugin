@@ -61,7 +61,7 @@ open class DefaultCodeExecutor : CodeExecutor {
             out.flush()
           }
           catch (e: IOException) {
-            LOG.error("Failed to write input", e)
+            LOG.warn("Failed to write input", e)
           }
         }
       }
