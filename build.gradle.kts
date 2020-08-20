@@ -666,8 +666,10 @@ fun downloadStudioIfNeededAndGetPath(): String {
 
 fun studioArtifactDownloadPath(archiveType: String): String {
   return if (inJetBrainsNetwork()) {
+    println("Downloading studio from JB repo...")
     "https://repo.labs.intellij.net/edu-tools/android-studio-ide-${studioBuildVersion}-${osFamily}.$archiveType"
   } else {
+    println("Downloading studio from google's website...")
     "http://dl.google.com/dl/android/studio/ide-zips/${studioVersion}/android-studio-ide-${studioBuildVersion}-${osFamily}.$archiveType"
   }
 }
