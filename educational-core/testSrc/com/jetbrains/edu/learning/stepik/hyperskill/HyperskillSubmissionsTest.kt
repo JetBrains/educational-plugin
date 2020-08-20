@@ -89,6 +89,12 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
   }
 
   fun `test submission added after code task check with periodically check`() {
+    mockConnector.withWebSocketListener(object : WebSocketListener() {
+      override fun onMessage(webSocket: WebSocket, text: String) {
+        webSocket.cancel() // close violently
+      }
+    })
+
     doTestSubmissionsAddedAfterCodeTaskCheck()
   }
 
