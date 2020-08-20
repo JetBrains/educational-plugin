@@ -1,7 +1,7 @@
 package com.jetbrains.edu.rust.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
@@ -13,10 +13,12 @@ import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.rust.messages.EduRustBundle.message
 import org.rust.cargo.project.model.cargoProjects
 import org.rust.cargo.project.settings.rustSettings
+import org.rust.cargo.runconfig.command.CargoCommandConfigurationType
 import org.rust.cargo.toolchain.CargoCommandLine
 import org.rust.openapiext.execute
 
@@ -38,6 +40,9 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
     }
     return super.computePossibleErrorResult(indicator, stderr)
   }
+
+  override val preferredConfigurationType: ConfigurationType?
+    get() = CargoCommandConfigurationType.getInstance()
 
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
     return createTestConfigurationsForTestDirectories()

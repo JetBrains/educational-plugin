@@ -165,7 +165,20 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
   }
 
   protected fun createTestConfigurationFromPsiElement(element: PsiElement): RunnerAndConfigurationSettings? {
-    return ConfigurationContext(element).configuration
+    return ConfigurationContext(element).selectPreferredConfiguration()
+  }
+
+  /**
+   * Provides hint for checker what configuration should be preferred according to its type.
+   * Should help when several run configurations are provided by platform and plugins
+   *
+   * @see com.jetbrains.edu.learning.checker.EduTaskCheckerBase.selectPreferredConfiguration
+   */
+  protected open val preferredConfigurationType: ConfigurationType? = null
+
+  protected open fun ConfigurationContext.selectPreferredConfiguration(): RunnerAndConfigurationSettings? {
+    val comparator = createConfigurationTypeComparator(preferredConfigurationType)
+    return configurationsFromContext?.sortedWith(comparator)?.firstOrNull()?.configurationSettings
   }
 
   /**
@@ -184,6 +197,16 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     fun extractComparisonErrorMessage(node: SMTestProxy): String {
       val index = StringUtil.indexOfIgnoreCase(node.errorMessage, "expected:", 0)
       return if (index != -1) node.errorMessage.substring(0, index).trim() else node.errorMessage
+    }
+
+    private fun createConfigurationTypeComparator(configurationType: ConfigurationType?): Comparator<ConfigurationFromContext> {
+      return Comparator { c1, c2 ->
+        when {
+          c1.configurationType == configurationType && c2.configurationType != configurationType -> -1
+          c1.configurationType != configurationType && c2.configurationType == configurationType -> 1
+          else -> 0
+        }
+      }
     }
   }
 }

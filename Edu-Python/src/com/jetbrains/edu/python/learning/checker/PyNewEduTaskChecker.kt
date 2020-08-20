@@ -1,6 +1,7 @@
 package com.jetbrains.edu.python.learning.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -18,7 +19,10 @@ class PyNewEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project
     // In general, python plugin can create run configuration for a directory
     // but it can skip some test files if they haven't proper names
     return createTestConfigurationsForTestFiles()
-      .filter { it.configuration !is PythonRunConfiguration }
+  }
+
+  override fun ConfigurationContext.selectPreferredConfiguration(): RunnerAndConfigurationSettings? {
+    return configuration?.takeIf { it.configuration is PythonRunConfiguration }
   }
 
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult =
