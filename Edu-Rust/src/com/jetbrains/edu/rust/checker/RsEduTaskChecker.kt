@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.rust.messages.EduRustBundle.message
 import org.rust.cargo.project.model.cargoProjects
@@ -41,7 +40,7 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
   }
 
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
-    return task.getAllTestDirectories(project).mapNotNull { ConfigurationContext(it).configuration }
+    return createTestConfigurationsForTestDirectories()
   }
 
   override fun getErrorMessage(node: SMTestProxy): String {

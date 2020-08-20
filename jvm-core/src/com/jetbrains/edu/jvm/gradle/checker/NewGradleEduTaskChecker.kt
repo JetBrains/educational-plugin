@@ -1,14 +1,12 @@
 package com.jetbrains.edu.jvm.gradle.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
-import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.xmlEscaped
 
@@ -22,8 +20,7 @@ open class NewGradleEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker
 
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
     return withGradleTestRunner(project, task) {
-      task.getAllTestDirectories(project)
-        .mapNotNull { ConfigurationContext(it).configuration }
+      createTestConfigurationsForTestDirectories()
     }.orEmpty()
   }
 

@@ -1,7 +1,6 @@
 package com.jetbrains.edu.javascript.learning
 
 import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.configurations.RuntimeConfigurationError
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
@@ -13,7 +12,6 @@ import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.ext.getAllTestFiles
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.event.HyperlinkEvent
@@ -21,7 +19,7 @@ import javax.swing.event.HyperlinkEvent
 open class JsTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : EduTaskCheckerBase(task, envChecker, project) {
 
   override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
-    return task.getAllTestFiles(project).mapNotNull { ConfigurationContext(it).configuration }
+    return createTestConfigurationsForTestFiles()
   }
 
   // It is tested only with Jest so may not work with other JS test frameworks

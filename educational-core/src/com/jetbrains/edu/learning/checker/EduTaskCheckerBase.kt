@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.actions.ConfigurationFromContext
+import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.process.*
 import com.intellij.execution.testframework.Filter
 import com.intellij.execution.testframework.sm.runner.SMTRunnerEventsAdapter
@@ -13,9 +16,12 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.psi.PsiElement
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.noTestsRun
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
+import com.jetbrains.edu.learning.courseFormat.ext.getAllTestFiles
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runReadActionInSmartMode
@@ -149,6 +155,18 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
    * @return Run configurations to run task tests
    */
   protected abstract fun createTestConfigurations(): List<RunnerAndConfigurationSettings>
+
+  protected fun createTestConfigurationsForTestFiles(): List<RunnerAndConfigurationSettings> {
+    return task.getAllTestFiles(project).mapNotNull { createTestConfigurationFromPsiElement(it) }
+  }
+
+  protected fun createTestConfigurationsForTestDirectories(): List<RunnerAndConfigurationSettings> {
+    return task.getAllTestDirectories(project).mapNotNull { createTestConfigurationFromPsiElement(it) }
+  }
+
+  protected fun createTestConfigurationFromPsiElement(element: PsiElement): RunnerAndConfigurationSettings? {
+    return ConfigurationContext(element).configuration
+  }
 
   /**
    * Returns message for test error that will be shown to a user in Check Result panel
