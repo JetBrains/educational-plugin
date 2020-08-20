@@ -1,0 +1,1710 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="X-Csrf-Token" content="9fe74dbea762532d7178a1aa6df6ccaf">
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=0.01">
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/jquery-1.8.3.js"></script>
+  <script type="application/javascript">
+    window.standaloneContest = false;
+    function adjustViewport() {
+      var screenWidthPx = Math.min($(window).width(), window.screen.width);
+      var siteWidthPx = 1100; // min width of site
+      var ratio = Math.min(screenWidthPx / siteWidthPx, 1.0);
+      var viewport = "width=device-width, initial-scale=" + ratio;
+      $('#viewport').attr('content', viewport);
+      var style = $('<style>html * { max-height: 1000000px; }</style>');
+      $('html > head').append(style);
+    }
+
+    if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+      adjustViewport();
+    }
+  </script>
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="-1">
+  <meta http-equiv="profileName" content="h2">
+  <meta name="google-site-verification" content="OTd2dN5x4nS4OPknPI9JFg36fKxjqY0i1PSfFPv_J90">
+  <meta property="fb:admins" content="100001352546622">
+  <meta property="og:image" content="//sta.codeforces.com/s/96697/images/codeforces-telegram-square.png">
+  <link rel="image_src" href="//sta.codeforces.com/s/96697/images/codeforces-telegram-square.png">
+  <meta property="og:title" content="Problems - Codeforces">
+  <meta property="og:description" content="">
+  <meta property="og:site_name" content="Codeforces">
+  <meta name="utc_offset" content="+03:00">
+  <meta name="verify-reformal" content="f56f99fd7e087fb6ccb48ef2">
+  <title>Problems - Codeforces</title>
+  <meta name="description" content="Codeforces. Programming competitions and contests, programming community">
+  <meta name="keywords" content="programming algorithm contest competition informatics olympiads c++ java graphs vkcup">
+  <meta name="robots" content="index, follow">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/font-awesome.min.css" type="text/css" charset="utf-8">
+  <link href="//fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&amp;subset=latin,cyrillic" rel="stylesheet" type="text/css">
+  <link href="//fonts.googleapis.com/css?family=Cuprum&amp;subset=latin,cyrillic" rel="stylesheet" type="text/css">
+  <link rel="apple-touch-icon" sizes="57x57" href="//sta.codeforces.com/s/96697/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="//sta.codeforces.com/s/96697/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="//sta.codeforces.com/s/96697/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="//sta.codeforces.com/s/96697/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="//sta.codeforces.com/s/96697/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="//sta.codeforces.com/s/96697/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="//sta.codeforces.com/s/96697/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="//sta.codeforces.com/s/96697/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="//sta.codeforces.com/s/96697/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="//sta.codeforces.com/s/96697/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="//sta.codeforces.com/s/96697/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="//sta.codeforces.com/s/96697/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="//sta.codeforces.com/s/96697/favicon-16x16.png">
+  <link rel="manifest" href="//sta.codeforces.com/s/96697/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="//sta.codeforces.com/s/96697/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  <!--CombineResourcesFilter-->
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/prettify.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/clear.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/style.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/ttypography.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/problem-statement.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/second-level-menu.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/roundbox.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/datatable.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/table-form.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/topic.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/jquery.jgrowl.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/facebox.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/jquery.wysiwyg.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/jquery.autocomplete.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/codeforces.datepick.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/colorbox.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/jquery.drafts.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/community.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/css/sidebar-menu.css" type="text/css" charset="utf-8">
+  <!-- MathJax -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {inlineMath: [['$$$','$$$']], displayMath: [['$$$$$$','$$$$$$']]}
+    });
+    </script>
+  <script type="text/javascript" async src="https://assets.codeforces.com/mathjax/MathJax.js?config=TeX-AMS_HTML-full">
+  </script>
+  <!-- /MathJax -->
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/prettify/prettify.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/moment-with-locales.min.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/pushstream.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/jquery.easing.min.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/jquery.lavalamp.min.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/jquery.jgrowl.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/jquery.swipe.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/jquery.hotkeys.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/facebox.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/jquery.wysiwyg.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/controls/wysiwyg.colorpicker.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/controls/wysiwyg.table.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/controls/wysiwyg.image.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/controls/wysiwyg.link.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/jquery.autocomplete.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/ua-parser.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/jquery.datepick.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/jquery.ie6blocker.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/jquery.colorbox-min.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/jquery.ba-bbq.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/jquery.drafts.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/clipboard.min.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/autosize.min.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/sjcl.js"></script>
+  <script type="text/javascript" src="/scripts/0e228831c042fe585fa5b8d5508a9d09/en/codeforces-options.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/codeforces.js?v=20160131"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/EventCatcher.js?v=20160131"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/js/preparedVerdictFormats-en.js"></script>
+  <!--/CombineResourcesFilter-->
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/markitup/skins/markitup/style.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="//sta.codeforces.com/s/96697/markitup/sets/markdown/style.css" type="text/css" charset="utf-8">
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/markitup/jquery.markitup.js"></script>
+  <script type="text/javascript" src="//sta.codeforces.com/s/96697/markitup/sets/markdown/set.js"></script>
+  <!--[if IE]>
+  <style>
+    #sidebar {
+      padding-left: 1em;
+      margin: 1em 1em 1em 0;
+    }
+  </style>
+  <![endif]-->
+</head>
+<body class=" ">
+<span style="display:none;" class="csrf-token" data-csrf="9fe74dbea762532d7178a1aa6df6ccaf">&nbsp;</span>
+<!-- .notificationTextCleaner used in Codeforces.showAnnouncements() -->
+<div class="notificationTextCleaner" style="font-size: 0px"></div>
+<div class="button-up" style="display: none; opacity: 0.7; width: 50px; height:100%; position: fixed; left: 0; top: 0; cursor: pointer; text-align: center; line-height: 35px; color: #d3dbe4; font-weight: bold; font-size: 3.0rem;">
+  <i class="icon-circle-arrow-up"></i>
+</div>
+<div class="verdictPrototypeDiv" style="display: none;"></div>
+<!-- Codeforces JavaScripts. -->
+<script type="text/javascript">
+  String.prototype.hashCode = function() {
+    var hash = 0, i, chr;
+    if (this.length === 0) return hash;
+    for (i = 0; i < this.length; i++) {
+      chr   = this.charCodeAt(i);
+      hash  = ((hash << 5) - hash) + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+  };
+
+  var queryMobile = Codeforces.queryString.mobile;
+  if (queryMobile === "true" || queryMobile === "false") {
+    Codeforces.putToStorage("useMobile", queryMobile == "true");
+  } else {
+    var useMobile = Codeforces.getFromStorage("useMobile");
+    if (useMobile === true || useMobile === false) {
+      if (useMobile != false) {
+        Codeforces.redirect(Codeforces.updateUrlParameter(document.location.href, "mobile", useMobile));
+      }
+    }
+  }
+</script>
+<script type="text/javascript">
+  if (window.parent.frames.length > 0) {
+    window.stop();
+  }
+</script>
+<script type="text/javascript">
+  window.fbAsyncInit = function() {
+    FB.init({
+              appId      : '554666954583323',
+              xfbml      : true,
+              version    : 'v2.8'
+            });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+<script type="text/javascript">
+  $(document).ready(function () {
+    (function () {
+      jQuery.expr[':'].containsCI = function(elem, index, match) {
+        return !match || !match.length || match.length < 4 || !match[3] || (
+               elem.textContent || elem.innerText || jQuery(elem).text() || ''
+        ).toLowerCase().indexOf(match[3].toLowerCase()) >= 0;
+      }
+    }(jQuery));
+
+    $.ajaxPrefilter(function(options, originalOptions, xhr) {
+      var csrf = Codeforces.getCsrfToken();
+
+      if (csrf) {
+        var data = originalOptions.data;
+        if (originalOptions.data !== undefined) {
+          if (Object.prototype.toString.call(originalOptions.data) === '[object String]') {
+            data = $.deparam(originalOptions.data);
+          }
+        } else {
+          data = {};
+        }
+        options.data = $.param($.extend(data, { csrf_token: csrf }));
+      }
+    });
+
+    window.getCodeforcesServerTime = function(callback) {
+      $.post("/data/time", {}, callback, "json");
+    }
+
+    window.updateTypography = function () {
+      $("div.ttypography code").addClass("tt");
+      $("div.ttypography pre>code").addClass("prettyprint").removeClass("tt");
+      $("div.ttypography table").addClass("bordertable");
+      prettyPrint();
+    }
+
+    $.ajaxSetup({ scriptCharset: "utf-8" ,contentType: "application/x-www-form-urlencoded; charset=UTF-8", headers: {
+        'X-Csrf-Token': Codeforces.getCsrfToken()
+      }});
+
+    window.updateTypography();
+
+    Codeforces.signForms();
+
+    setTimeout(function() {
+      $(".second-level-menu-list").lavaLamp({
+                                              fx: "backout",
+                                              speed: 700
+                                            });
+    }, 100);
+
+
+    Codeforces.countdown();
+    $("a[rel='photobox']").colorbox();
+
+
+    function showAnnouncements(json) {
+      //info("j=" + JSON.stringify(json));
+
+      if (json.t != "a") {
+        return;
+      }
+      // console.log("Got announcement from channel");
+      setTimeout(function() {
+        Codeforces.showAnnouncements(json.d, "en");
+      }, Math.random() * 500);
+    }
+
+    function showEventCatcherUserMessage(json) {
+      if (json.t == "s") {
+        var points = json.d[5];
+        var passedTestCount = json.d[7];
+        var judgedTestCount = json.d[8];
+        var verdict = preparedVerdictFormats[json.d[12]];
+        var verdictPrototypeDiv = $(".verdictPrototypeDiv");
+        verdictPrototypeDiv.html(verdict);
+        if (judgedTestCount != null && judgedTestCount != undefined) {
+          verdictPrototypeDiv.find(".verdict-format-judged").text(judgedTestCount);
+        }
+        if (passedTestCount != null && passedTestCount != undefined) {
+          verdictPrototypeDiv.find(".verdict-format-passed").text(passedTestCount);
+        }
+        if (points != null && points != undefined) {
+          verdictPrototypeDiv.find(".verdict-format-points").text(points);
+        }
+        Codeforces.showMessage(verdictPrototypeDiv.text());
+      }
+    }
+
+    $(".clickable-title").each(function() {
+      var title = $(this).attr("data-title");
+      if (title) {
+        var tmp = document.createElement("DIV");
+        tmp.innerHTML = title;
+        $(this).attr("title", tmp.textContent || tmp.innerText || "");
+      }
+    });
+
+    $(".clickable-title").click(function() {
+      var title = $(this).attr("data-title");
+      if (title) {
+        Codeforces.alert(title);
+      } else {
+        Codeforces.alert($(this).attr("title"));
+      }
+    }).css("position", "relative").css("bottom", "3px");
+
+    Codeforces.showDelayedMessage();
+
+    Codeforces.reformatTimes();
+
+    //Codeforces.initializePubSub();
+    if (window.codeforcesOptions.subscribeServerUrl) {
+      window.eventCatcher = new EventCatcher(
+          window.codeforcesOptions.subscribeServerUrl,
+          [
+            Codeforces.getGlobalChannel(),
+            Codeforces.getUserChannel(),
+            Codeforces.getUserShowMessageChannel(),
+            Codeforces.getContestChannel(),
+            Codeforces.getParticipantChannel(),
+            Codeforces.getTalkChannel()
+          ]
+      );
+
+      if (Codeforces.getParticipantChannel()) {
+        window.eventCatcher.subscribe(Codeforces.getParticipantChannel(), function(json) {
+          showAnnouncements(json);
+        });
+      }
+
+      if (Codeforces.getContestChannel()) {
+        window.eventCatcher.subscribe(Codeforces.getContestChannel(), function(json) {
+          showAnnouncements(json);
+        });
+      }
+
+      if (Codeforces.getGlobalChannel()) {
+        window.eventCatcher.subscribe(Codeforces.getGlobalChannel(), function(json) {
+          showAnnouncements(json);
+        });
+      }
+
+      if (Codeforces.getUserChannel()) {
+        window.eventCatcher.subscribe(Codeforces.getUserChannel(), function(json) {
+          showAnnouncements(json);
+        });
+      }
+
+      if (Codeforces.getUserShowMessageChannel()) {
+        window.eventCatcher.subscribe(Codeforces.getUserShowMessageChannel(), function(json) {
+          showEventCatcherUserMessage(json);
+        });
+      }
+    }
+
+    Codeforces.setupContestTimes("/data/contests");
+    Codeforces.setupSpoilers();
+    Codeforces.setupTutorials("/data/problemTutorial");
+  });
+</script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-743380-5']);
+  _gaq.push(['_trackPageview']);
+
+  (function () {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = (document.location.protocol == 'https:' ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<div id="body">
+  <div style="width: 950px; margin: 0 auto;" class="compact-problemset">
+    <div id="header" style="position: relative;">
+      <div style="float:left;">
+        <a href="/"><img src="//sta.codeforces.com/s/96697/images/codeforces-logo-with-telegram.png"></a>
+      </div>
+      <div class="lang">
+        <div style="text-align: right;">
+          <a href="?locale=en"><img src="//sta.codeforces.com/s/96697/images/flags/24/gb.png" title="In English" alt="In English"></a>
+          <a href="?locale=ru"><img src="//sta.codeforces.com/s/96697/images/flags/24/ru.png" title="По-русски" alt="По-русски"></a>
+        </div>
+      </div>
+      <br style="clear: both;">
+    </div>
+    <div style="text-align: center; font-size: 1.8rem; margin-bottom: 0.5em;" class="caption">
+      Codeforces Global Round 8
+    </div>
+    <div style="border-top: 1px solid #ccc; height: 1em;"></div>
+    <div class="problem-frames">
+      <div style="margin-bottom: 2em;">
+        <style>
+            .input-output-copier {
+                font-size: 1.2rem;
+                float: right;
+                color: #888 !important;
+                cursor: pointer;
+                border: 1px solid rgb(185, 185, 185);
+                padding: 3px;
+                margin: 1px;
+                line-height: 1.1rem;
+                text-transform: none;
+            }
+
+            .input-output-copier:hover {
+                background-color: #def;
+            }
+
+            .test-explanation textarea {
+                width: 100%;
+                height: 1.5em;
+            }
+
+            .pending-submission-message {
+                color: darkorange !important;
+            }
+        </style>
+        <div class="problemindexholder" problemindex="A">
+          <div class="ttypography">
+            <div class="problem-statement">
+              <div class="header">
+                <div class="title">
+                  A. C+=
+                </div>
+                <div class="time-limit">
+                  <div class="property-title">
+                    time limit per test
+                  </div>2 seconds
+                </div>
+                <div class="memory-limit">
+                  <div class="property-title">
+                    memory limit per test
+                  </div>512 megabytes
+                </div>
+                <div class="input-file">
+                  <div class="property-title">
+                    input
+                  </div>standard input
+                </div>
+                <div class="output-file">
+                  <div class="property-title">
+                    output
+                  </div>standard output
+                </div>
+              </div>
+              <div>
+                <p>Leo has developed a new programming language C+=. In C+=, integer variables can only be changed with a "<span class="tex-font-style-tt">+=</span>" operation that adds the right-hand side value to the left-hand side variable. For example, performing "<span class="tex-font-style-tt">a += b</span>" when <span class="tex-font-style-tt">a = </span>$$$2$$$, <span class="tex-font-style-tt">b = </span>$$$3$$$ changes the value of <span class="tex-font-style-tt">a</span> to $$$5$$$ (the value of <span class="tex-font-style-tt">b</span> does not change).</p>
+                <p>In a prototype program Leo has two integer variables <span class="tex-font-style-tt">a</span> and <span class="tex-font-style-tt">b</span>, initialized with some positive values. He can perform any number of operations "<span class="tex-font-style-tt">a += b</span>" or "<span class="tex-font-style-tt">b += a</span>". Leo wants to test handling large integers, so he wants to make the value of either <span class="tex-font-style-tt">a</span> or <span class="tex-font-style-tt">b</span> <span class="tex-font-style-bf">strictly greater</span> than a given value $$$n$$$. What is the smallest number of operations he has to perform?</p>
+              </div>
+              <div class="input-specification">
+                <div class="section-title">
+                  Input
+                </div>
+                <p>The first line contains a single integer $$$T$$$ ($$$1 \leq T \leq 100$$$)&nbsp;— the number of test cases.</p>
+                <p>Each of the following $$$T$$$ lines describes a single test case, and contains three integers $$$a, b, n$$$ ($$$1 \leq a, b \leq n \leq 10^9$$$)&nbsp;— initial values of <span class="tex-font-style-tt">a</span> and <span class="tex-font-style-tt">b</span>, and the value one of the variables has to exceed, respectively.</p>
+              </div>
+              <div class="output-specification">
+                <div class="section-title">
+                  Output
+                </div>
+                <p>For each test case print a single integer&nbsp;— the smallest number of operations needed. Separate answers with line breaks.</p>
+              </div>
+              <div class="sample-tests">
+                <div class="section-title">
+                  Example
+                </div>
+                <div class="sample-test">
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+2
+1 2 3
+5 4 100
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+2
+7
+</pre>
+                  </div>
+                </div>
+              </div>
+              <div class="note">
+                <div class="section-title">
+                  Note
+                </div>
+                <p>In the first case we cannot make a variable exceed $$$3$$$ in one operation. One way of achieving this in two operations is to perform "<span class="tex-font-style-tt">b += a</span>" twice.</p>
+              </div>
+            </div>
+            <p> </p>
+          </div>
+        </div>
+        <script type="text/javascript">
+          $(document).ready(function () {
+            window.changedTests = new Set();
+            console.log("Initialized window.changedTests.");
+
+            function endsWith(string, suffix) {
+              return string.indexOf(suffix, string.length - suffix.length) !== -1;
+            }
+
+            var inputFileDiv = $("div.input-file");
+            var inputFile = inputFileDiv.text();
+            var outputFileDiv = $("div.output-file");
+            var outputFile = outputFileDiv.text();
+
+
+            if (!endsWith(inputFile, "standard input")
+                && !endsWith(inputFile, "standard input")) {
+              inputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            if (!endsWith(outputFile, "standard output")
+                && !endsWith(outputFile, "standard output")) {
+              outputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            var titleDiv = $("div.header div.title");
+
+
+
+            String.prototype.replaceAll = function (search, replace) {
+              return this.split(search).join(replace);
+            };
+
+            $(".sample-test .title").each(function () {
+              var preId = ("id" + Math.random()).replaceAll(".", "0");
+              var cpyId = ("id" + Math.random()).replaceAll(".", "0");
+
+              $(this).parent().find("pre").attr("id", preId);
+              var $copy = $("<div title='Copy' data-clipboard-target='#" + preId + "' id='" + cpyId + "' class='input-output-copier'>Copy</div>");
+              $(this).append($copy);
+
+              var clipboard = new Clipboard('#' + cpyId, {
+                text: function (trigger) {
+                  return Codeforces.filterClipboardText(document.querySelector('#' + preId).innerText);
+                }
+              });
+
+              var isInput = $(this).parent().hasClass("input");
+
+              clipboard.on('success', function (e) {
+                if (isInput) {
+                  Codeforces.showMessage("The example input has been copied into the clipboard");
+                } else {
+                  Codeforces.showMessage("The example output has been copied into the clipboard");
+                }
+                e.clearSelection();
+              });
+            });
+
+            $(".test-form-item input").change(function () {
+              addPendingSubmissionMessage($($(this).closest("form")), "You changed the answer, do not forget to submit it if you want to save the changes");
+              var index = $(this).closest(".problemindexholder").attr("problemindex");
+              var test = "";
+              $(this).closest("form input").each(function() {
+                var test_ = $(this).attr("name");
+                if (test_ && test_.substring(0, 4) === "test") {
+                  test = test_;
+                }
+              });
+              if (index.length > 0 && test.length > 0) {
+                var indexTest = index + "::" + test;
+                window.changedTests.add(indexTest);
+                console.log("Changed " + indexTest + ", size=" + window.changedTests.size);
+              }
+            });
+
+            $(window).on('beforeunload', function () {
+              if (window.changedTests.size > 0) {
+                return 'Dialog text here';
+              }
+            });
+
+            autosize($('.test-explanation textarea'));
+
+          });
+        </script>
+      </div>
+      <div style="margin-bottom: 2em;">
+        <div class="problemindexholder" problemindex="B">
+          <div class="ttypography">
+            <div class="problem-statement">
+              <div class="header">
+                <div class="title">
+                  B. Codeforces Subsequences
+                </div>
+                <div class="time-limit">
+                  <div class="property-title">
+                    time limit per test
+                  </div>2 seconds
+                </div>
+                <div class="memory-limit">
+                  <div class="property-title">
+                    memory limit per test
+                  </div>512 megabytes
+                </div>
+                <div class="input-file">
+                  <div class="property-title">
+                    input
+                  </div>standard input
+                </div>
+                <div class="output-file">
+                  <div class="property-title">
+                    output
+                  </div>standard output
+                </div>
+              </div>
+              <div>
+                <p>Karl likes Codeforces and subsequences. He wants to find a string of lowercase English letters that contains at least $$$k$$$ subsequences <span class="tex-font-style-tt">codeforces</span>. Out of all possible strings, Karl wants to find a shortest one.</p>
+                <p>Formally, a <span class="tex-font-style-tt">codeforces</span> subsequence of a string $$$s$$$ is a subset of ten characters of $$$s$$$ that read <span class="tex-font-style-tt">codeforces</span> from left to right. For example, <span class="tex-font-style-tt">codeforces</span> contains <span class="tex-font-style-tt">codeforces</span> a single time, while <span class="tex-font-style-tt">codeforcesisawesome</span> contains <span class="tex-font-style-tt">codeforces</span> four times: <span class="tex-font-style-tt"> <span class="tex-font-style-bf">codeforces</span>isawesome</span>, <span class="tex-font-style-tt"> <span class="tex-font-style-bf">codeforce</span>si<span class="tex-font-style-bf">s</span>awesome</span>, <span class="tex-font-style-tt"> <span class="tex-font-style-bf">codeforce</span>sisawe<span class="tex-font-style-bf">s</span>ome</span>, <span class="tex-font-style-tt"> <span class="tex-font-style-bf">codeforc</span>esisaw<span class="tex-font-style-bf">es</span>ome</span>.</p>
+                <p>Help Karl find any shortest string that contains at least $$$k$$$ <span class="tex-font-style-tt">codeforces</span> subsequences.</p>
+              </div>
+              <div class="input-specification">
+                <div class="section-title">
+                  Input
+                </div>
+                <p>The only line contains a single integer $$$k$$$ ($$$1 \leq k \leq 10^{16})$$$.</p>
+              </div>
+              <div class="output-specification">
+                <div class="section-title">
+                  Output
+                </div>
+                <p>Print a shortest string of lowercase English letters that contains at least $$$k$$$ <span class="tex-font-style-tt">codeforces</span> subsequences. If there are several such strings, print any of them.</p>
+              </div>
+              <div class="sample-tests">
+                <div class="section-title">
+                  Examples
+                </div>
+                <div class="sample-test">
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+1
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+codeforces
+</pre>
+                  </div>
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+3
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+codeforcesss</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p> </p>
+          </div>
+        </div>
+        <script type="text/javascript">
+          $(document).ready(function () {
+
+            function endsWith(string, suffix) {
+              return string.indexOf(suffix, string.length - suffix.length) !== -1;
+            }
+
+            var inputFileDiv = $("div.input-file");
+            var inputFile = inputFileDiv.text();
+            var outputFileDiv = $("div.output-file");
+            var outputFile = outputFileDiv.text();
+
+
+            if (!endsWith(inputFile, "standard input")
+                && !endsWith(inputFile, "standard input")) {
+              inputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            if (!endsWith(outputFile, "standard output")
+                && !endsWith(outputFile, "standard output")) {
+              outputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            var titleDiv = $("div.header div.title");
+
+
+
+
+          });
+        </script>
+      </div>
+      <div style="margin-bottom: 2em;">
+        <div class="problemindexholder" problemindex="C">
+          <div class="ttypography">
+            <div class="problem-statement">
+              <div class="header">
+                <div class="title">
+                  C. Even Picture
+                </div>
+                <div class="time-limit">
+                  <div class="property-title">
+                    time limit per test
+                  </div>2 seconds
+                </div>
+                <div class="memory-limit">
+                  <div class="property-title">
+                    memory limit per test
+                  </div>512 megabytes
+                </div>
+                <div class="input-file">
+                  <div class="property-title">
+                    input
+                  </div>standard input
+                </div>
+                <div class="output-file">
+                  <div class="property-title">
+                    output
+                  </div>standard output
+                </div>
+              </div>
+              <div>
+                <p>Leo Jr. draws pictures in his notebook with checkered sheets (that is, each sheet has a regular square grid printed on it). We can assume that the sheets are infinitely large in any direction.</p>
+                <p>To draw a picture, Leo Jr. colors some of the cells on a sheet gray. He considers the resulting picture <span class="tex-font-style-it">beautiful</span> if the following conditions are satisfied:</p>
+                <ul>
+                  <li> The picture is <span class="tex-font-style-bf">connected</span>, that is, it is possible to get from any gray cell to any other by following a chain of gray cells, with each pair of adjacent cells in the path being neighbours (that is, sharing a side). </li>
+                  <li> Each gray cell has an <span class="tex-font-style-bf">even number of gray neighbours</span>. </li>
+                  <li> There are <span class="tex-font-style-bf">exactly $$$n$$$ gray cells with all gray neighbours</span>. The number of other gray cells can be arbitrary <span class="tex-font-style-it">(but reasonable, so that they can all be listed)</span>. </li>
+                </ul>
+                <p>Leo Jr. is now struggling to draw a beautiful picture with a particular choice of $$$n$$$. Help him, and provide any example of a beautiful picture.</p>
+                <p>To output cell coordinates in your answer, assume that the sheet is provided with a Cartesian coordinate system such that one of the cells is chosen to be the origin $$$(0, 0)$$$, axes $$$0x$$$ and $$$0y$$$ are orthogonal and parallel to grid lines, and a unit step along any axis in any direction takes you to a neighbouring cell.</p>
+              </div>
+              <div class="input-specification">
+                <div class="section-title">
+                  Input
+                </div>
+                <p>The only line contains a single integer $$$n$$$ ($$$1 \leq n \leq 500$$$)&nbsp;— the number of gray cells with all gray neighbours in a beautiful picture.</p>
+              </div>
+              <div class="output-specification">
+                <div class="section-title">
+                  Output
+                </div>
+                <p>In the first line, print a single integer $$$k$$$&nbsp;— the number of gray cells in your picture. For technical reasons, $$$k$$$ should not exceed $$$5 \cdot 10^5$$$.</p>
+                <p>Each of the following $$$k$$$ lines should contain two integers&nbsp;— coordinates of a gray cell in your picture. All listed cells should be distinct, and the picture should satisdfy all the properties listed above. All coordinates should not exceed $$$10^9$$$ by absolute value.</p>
+                <p>One can show that there exists an answer satisfying all requirements with a small enough $$$k$$$.</p>
+              </div>
+              <div class="sample-tests">
+                <div class="section-title">
+                  Example
+                </div>
+                <div class="sample-test">
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+4
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+12
+1 0
+2 0
+0 1
+1 1
+2 1
+3 1
+0 2
+1 2
+2 2
+3 2
+1 3
+2 3
+</pre>
+                  </div>
+                </div>
+              </div>
+              <div class="note">
+                <div class="section-title">
+                  Note
+                </div>
+                <p>The answer for the sample is pictured below:</p>
+                <center>
+                  <img class="tex-graphics" src="https://espresso.codeforces.com/32d3333414209636f4bf5f77aeae92fca88b7155.png" style="max-width: 100.0%;max-height: 100.0%;">
+                </center>
+              </div>
+            </div>
+            <p> </p>
+          </div>
+        </div>
+        <script type="text/javascript">
+          $(document).ready(function () {
+
+            function endsWith(string, suffix) {
+              return string.indexOf(suffix, string.length - suffix.length) !== -1;
+            }
+
+            var inputFileDiv = $("div.input-file");
+            var inputFile = inputFileDiv.text();
+            var outputFileDiv = $("div.output-file");
+            var outputFile = outputFileDiv.text();
+
+
+            if (!endsWith(inputFile, "standard input")
+                && !endsWith(inputFile, "standard input")) {
+              inputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            if (!endsWith(outputFile, "standard output")
+                && !endsWith(outputFile, "standard output")) {
+              outputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            var titleDiv = $("div.header div.title");
+
+
+
+
+          });
+        </script>
+      </div>
+      <div style="margin-bottom: 2em;">
+        <div class="problemindexholder" problemindex="D">
+          <div class="ttypography">
+            <div class="problem-statement">
+              <div class="header">
+                <div class="title">
+                  D. AND, OR and square sum
+                </div>
+                <div class="time-limit">
+                  <div class="property-title">
+                    time limit per test
+                  </div>2 seconds
+                </div>
+                <div class="memory-limit">
+                  <div class="property-title">
+                    memory limit per test
+                  </div>512 megabytes
+                </div>
+                <div class="input-file">
+                  <div class="property-title">
+                    input
+                  </div>standard input
+                </div>
+                <div class="output-file">
+                  <div class="property-title">
+                    output
+                  </div>standard output
+                </div>
+              </div>
+              <div>
+                <p>Gottfried learned about binary number representation. He then came up with this task and presented it to you.</p>
+                <p>You are given a collection of $$$n$$$ non-negative integers $$$a_1, \ldots, a_n$$$. You are allowed to perform the following operation: choose two distinct indices $$$1 \leq i, j \leq n$$$. If before the operation $$$a_i = x$$$, $$$a_j = y$$$, then after the operation $$$a_i = x~\mathsf{AND}~y$$$, $$$a_j = x~\mathsf{OR}~y$$$, where $$$\mathsf{AND}$$$ and $$$\mathsf{OR}$$$ are bitwise AND and OR respectively (refer to the Notes section for formal description). The operation may be performed any number of times (possibly zero).</p>
+                <p>After all operations are done, compute $$$\sum_{i=1}^n a_i^2$$$&nbsp;— the sum of squares of all $$$a_i$$$. What is the largest sum of squares you can achieve?</p>
+              </div>
+              <div class="input-specification">
+                <div class="section-title">
+                  Input
+                </div>
+                <p>The first line contains a single integer $$$n$$$ ($$$1 \leq n \leq 2 \cdot 10^5$$$).</p>
+                <p>The second line contains $$$n$$$ integers $$$a_1, \ldots, a_n$$$ ($$$0 \leq a_i &lt; 2^{20}$$$).</p>
+              </div>
+              <div class="output-specification">
+                <div class="section-title">
+                  Output
+                </div>
+                <p>Print a single integer&nbsp;— the largest possible sum of squares that can be achieved after several (possibly zero) operations.</p>
+              </div>
+              <div class="sample-tests">
+                <div class="section-title">
+                  Examples
+                </div>
+                <div class="sample-test">
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+1
+123
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+15129
+</pre>
+                  </div>
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+3
+1 3 5
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+51
+</pre>
+                  </div>
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+2
+349525 699050
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+1099509530625
+</pre>
+                  </div>
+                </div>
+              </div>
+              <div class="note">
+                <div class="section-title">
+                  Note
+                </div>
+                <p>In the first sample no operation can be made, thus the answer is $$$123^2$$$.</p>
+                <p>In the second sample we can obtain the collection $$$1, 1, 7$$$, and $$$1^2 + 1^2 + 7^2 = 51$$$.</p>
+                <p>If $$$x$$$ and $$$y$$$ are represented in binary with equal number of bits (possibly with leading zeros), then each bit of $$$x~\mathsf{AND}~y$$$ is set to $$$1$$$ if and only if both corresponding bits of $$$x$$$ and $$$y$$$ are set to $$$1$$$. Similarly, each bit of $$$x~\mathsf{OR}~y$$$ is set to $$$1$$$ if and only if at least one of the corresponding bits of $$$x$$$ and $$$y$$$ are set to $$$1$$$. For example, $$$x = 3$$$ and $$$y = 5$$$ are represented as $$$011_2$$$ and $$$101_2$$$ (highest bit first). Then, $$$x~\mathsf{AND}~y = 001_2 = 1$$$, and $$$x~\mathsf{OR}~y = 111_2 = 7$$$.</p>
+              </div>
+            </div>
+            <p> </p>
+          </div>
+        </div>
+        <script type="text/javascript">
+          $(document).ready(function () {
+
+            function endsWith(string, suffix) {
+              return string.indexOf(suffix, string.length - suffix.length) !== -1;
+            }
+
+            var inputFileDiv = $("div.input-file");
+            var inputFile = inputFileDiv.text();
+            var outputFileDiv = $("div.output-file");
+            var outputFile = outputFileDiv.text();
+
+
+            if (!endsWith(inputFile, "standard input")
+                && !endsWith(inputFile, "standard input")) {
+              inputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            if (!endsWith(outputFile, "standard output")
+                && !endsWith(outputFile, "standard output")) {
+              outputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            var titleDiv = $("div.header div.title");
+
+
+
+
+          });
+        </script>
+      </div>
+      <div style="margin-bottom: 2em;">
+        <div class="problemindexholder" problemindex="E">
+          <div class="ttypography">
+            <div class="problem-statement">
+              <div class="header">
+                <div class="title">
+                  E. Ski Accidents
+                </div>
+                <div class="time-limit">
+                  <div class="property-title">
+                    time limit per test
+                  </div>2 seconds
+                </div>
+                <div class="memory-limit">
+                  <div class="property-title">
+                    memory limit per test
+                  </div>512 megabytes
+                </div>
+                <div class="input-file">
+                  <div class="property-title">
+                    input
+                  </div>standard input
+                </div>
+                <div class="output-file">
+                  <div class="property-title">
+                    output
+                  </div>standard output
+                </div>
+              </div>
+              <div>
+                <p>Arthur owns a ski resort on a mountain. There are $$$n$$$ landing spots on the mountain numbered from $$$1$$$ to $$$n$$$ from the top to the foot of the mountain. The spots are connected with one-directional ski tracks. All tracks go towards the foot of the mountain, so there are <span class="tex-font-style-bf">no directed cycles</span> formed by the tracks. There are <span class="tex-font-style-bf">at most two tracks leaving each spot</span>, but many tracks may enter the same spot.</p>
+                <p>A skier can start skiing from one spot and stop in another spot if there is a sequence of tracks that lead from the starting spot and end in the ending spot. Unfortunately, recently there were many accidents, because the structure of the resort allows a skier to go through dangerous paths, by reaching high speed and endangering himself and the other customers. Here, a path is called dangerous, if it consists of at least two tracks.</p>
+                <p>Arthur wants to secure his customers by closing some of the spots in a way that there are no dangerous paths in the resort. When a spot is closed, all tracks entering and leaving that spot become unusable. </p>
+                <p>Formally, after closing some of the spots, <span class="tex-font-style-bf">there should not be a path that consists of two or more tracks</span>.</p>
+                <p>Arthur doesn't want to close too many spots. He will be happy to find any way to close <span class="tex-font-style-bf">at most $$$\frac{4}{7}n$$$ spots</span> so that the remaining part is safe. Help him find any suitable way to do so.</p>
+              </div>
+              <div class="input-specification">
+                <div class="section-title">
+                  Input
+                </div>
+                <p>The first line contains a single positive integer $$$T$$$&nbsp;— the number of test cases. $$$T$$$ test case description follows.</p>
+                <p>The first line of each description contains two integers $$$n$$$ and $$$m$$$ ($$$1 \leq n \leq 2 \cdot 10^5$$$)&nbsp;— the number of landing spots and tracks respectively.</p>
+                <p>The following $$$m$$$ lines describe the tracks. Each of these lines contains two integers $$$x$$$ and $$$y$$$ ($$$1 \leq x &lt; y \leq n$$$)&nbsp;— indices of the starting and finishing spots for the respective track. It is guaranteed that at most two tracks start at each spot. There may be tracks in which starting and finishing spots both coincide.</p>
+                <p>It is guaranteed that the sum of $$$n$$$ over all test cases does not exceed $$$2 \cdot 10^5$$$.</p>
+              </div>
+              <div class="output-specification">
+                <div class="section-title">
+                  Output
+                </div>
+                <p>For each test case, print a single integer $$$k$$$ ($$$0 \leq k \leq \frac{4}{7}n$$$)&nbsp;— the number of spots to be closed. In the next line, print $$$k$$$ distinct integers&nbsp;— indices of all spots to be closed, in any order.</p>
+                <p>If there are several answers, you may output any of them. Note that you <span class="tex-font-style-bf">don't have to minimize $$$k$$$</span>. It can be shown that a suitable answer always exists.</p>
+              </div>
+              <div class="sample-tests">
+                <div class="section-title">
+                  Example
+                </div>
+                <div class="sample-test">
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+2
+4 6
+1 2
+1 3
+2 3
+2 4
+3 4
+3 4
+7 6
+1 2
+1 3
+2 4
+2 5
+3 6
+3 7
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+2
+3 4
+4
+4 5 6 7
+</pre>
+                  </div>
+                </div>
+              </div>
+              <div class="note">
+                <div class="section-title">
+                  Note
+                </div>
+                <p>In the first sample case, closing any two spots is suitable.</p>
+                <p>In the second sample case, closing only the spot $$$1$$$ is also suitable.</p>
+              </div>
+            </div>
+            <p> </p>
+          </div>
+        </div>
+        <script type="text/javascript">
+          $(document).ready(function () {
+
+            function endsWith(string, suffix) {
+              return string.indexOf(suffix, string.length - suffix.length) !== -1;
+            }
+
+            var inputFileDiv = $("div.input-file");
+            var inputFile = inputFileDiv.text();
+            var outputFileDiv = $("div.output-file");
+            var outputFile = outputFileDiv.text();
+
+
+            if (!endsWith(inputFile, "standard input")
+                && !endsWith(inputFile, "standard input")) {
+              inputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            if (!endsWith(outputFile, "standard output")
+                && !endsWith(outputFile, "standard output")) {
+              outputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            var titleDiv = $("div.header div.title");
+
+
+
+
+          });
+        </script>
+      </div>
+      <div style="margin-bottom: 2em;">
+        <div class="problemindexholder" problemindex="F">
+          <div class="ttypography">
+            <div class="problem-statement">
+              <div class="header">
+                <div class="title">
+                  F. Lamps on a Circle
+                </div>
+                <div class="time-limit">
+                  <div class="property-title">
+                    time limit per test
+                  </div>2 seconds
+                </div>
+                <div class="memory-limit">
+                  <div class="property-title">
+                    memory limit per test
+                  </div>512 megabytes
+                </div>
+                <div class="input-file">
+                  <div class="property-title">
+                    input
+                  </div>standard input
+                </div>
+                <div class="output-file">
+                  <div class="property-title">
+                    output
+                  </div>standard output
+                </div>
+              </div>
+              <div>
+                <p> <span class="tex-font-style-it">This is an interactive problem.</span></p>
+                <p>John and his imaginary friend play a game. There are $$$n$$$ lamps arranged in a circle. Lamps are numbered $$$1$$$ through $$$n$$$ in clockwise order, that is, lamps $$$i$$$ and $$$i + 1$$$ are adjacent for any $$$i = 1, \ldots, n - 1$$$, and also lamps $$$n$$$ and $$$1$$$ are adjacent. Initially all lamps are turned off.</p>
+                <p>John and his friend take turns, with John moving first. On his turn John can choose to terminate the game, or to make a move. To make a move, John can choose any positive number $$$k$$$ and turn any $$$k$$$ lamps of his choosing on. In response to this move, John's friend will choose $$$k$$$ <span class="tex-font-style-bf">consecutive</span> lamps and turn all of them off (the lamps in the range that were off before this move stay off). Note that the value of $$$k$$$ is the same as John's number on his last move. For example, if $$$n = 5$$$ and John have just turned three lamps on, John's friend may choose to turn off lamps $$$1, 2, 3$$$, or $$$2, 3, 4$$$, or $$$3, 4, 5$$$, or $$$4, 5, 1$$$, or $$$5, 1, 2$$$.</p>
+                <p>After this, John may choose to terminate or move again, and so on. However, John can not make more than $$$10^4$$$ moves.</p>
+                <p>John wants to maximize the number of lamps turned on at the end of the game, while his friend wants to minimize this number. Your task is to provide a strategy for John to achieve optimal result. Your program will play interactively for John against the jury's interactor program playing for John's friend.</p>
+                <p>Suppose there are $$$n$$$ lamps in the game. Let $$$R(n)$$$ be the number of turned on lamps at the end of the game if both players act optimally. Your program has to terminate the game with at least $$$R(n)$$$ turned on lamps within $$$10^4$$$ moves. Refer to Interaction section below for interaction details.</p>
+                <p>For technical reasons <span class="tex-font-style-bf">hacks for this problem are disabled.</span></p>
+              </div>
+              <div>
+                <div class="section-title">
+                  Interaction
+                </div>
+                <p>Initially your program will be fed a single integer $$$n$$$ ($$$1 \leq n \leq 1000$$$)&nbsp;— the number of lamps in the game. Then the interactor will wait for your actions.</p>
+                <p>To make a move, print a line starting with an integer $$$k$$$ ($$$1 \leq k \leq n$$$), followed by $$$k$$$ <span class="tex-font-style-bf">distinct</span> integers $$$l_1, \ldots, l_k$$$ ($$$1 \leq l_i \leq n$$$)&nbsp;— indices of lamps you want to turn on. The indices may be printed in any order. It is allowed to try to turn on a lamp that is already on (although this will have no effect).</p>
+                <p>If your move was invalid for any reason, or if you have made more than $$$10^4$$$ moves, the interactor will reply with a line containing a single integer $$$-1$$$. Otherwise, the reply will be a line containing a single integer $$$x$$$ ($$$1 \leq x \leq n)$$$, meaning that the response was to turn off $$$k$$$ consecutive lamps starting from $$$x$$$ in clockwise order.</p>
+                <p>To terminate the game instead of making a move, print a line containing a single integer $$$0$$$. The test will be passed if at this point there are at least $$$R(n)$$$ lamps turned on (note that neither $$$R(n)$$$, nor the verdict received are not communicated to your program in any way). This action does not count towards the number of moves (that is, it is legal to terminate the game after exactly $$$10^4$$$ moves).</p>
+                <p>To receive the correct verdict, your program should terminate immediately after printing $$$0$$$, or after receiving $$$-1$$$ as a response.</p>
+                <p>Don't forget to flush your output after every action.</p>
+              </div>
+              <div class="sample-tests">
+                <div class="section-title">
+                  Examples
+                </div>
+                <div class="sample-test">
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+3
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+
+0
+</pre>
+                  </div>
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+4
+
+1</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+
+2 1 3
+
+0
+</pre>
+                  </div>
+                </div>
+              </div>
+              <div class="note">
+                <div class="section-title">
+                  Note
+                </div>
+                <p>When $$$n = 3$$$, any John's move can be reversed, thus $$$R(3) = 0$$$, and terminating the game immediately is correct.</p>
+                <p>$$$R(4) = 1$$$, and one strategy to achieve this result is shown in the second sample case.</p>
+                <p>Blank lines in sample interactions are for clarity and should not be printed.</p>
+              </div>
+            </div>
+            <p> </p>
+          </div>
+        </div>
+        <script type="text/javascript">
+          $(document).ready(function () {
+
+            function endsWith(string, suffix) {
+              return string.indexOf(suffix, string.length - suffix.length) !== -1;
+            }
+
+            var inputFileDiv = $("div.input-file");
+            var inputFile = inputFileDiv.text();
+            var outputFileDiv = $("div.output-file");
+            var outputFile = outputFileDiv.text();
+
+
+            if (!endsWith(inputFile, "standard input")
+                && !endsWith(inputFile, "standard input")) {
+              inputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            if (!endsWith(outputFile, "standard output")
+                && !endsWith(outputFile, "standard output")) {
+              outputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            var titleDiv = $("div.header div.title");
+
+
+
+
+          });
+        </script>
+      </div>
+      <div style="margin-bottom: 2em;">
+        <div class="problemindexholder" problemindex="G">
+          <div class="ttypography">
+            <div class="problem-statement">
+              <div class="header">
+                <div class="title">
+                  G. Shifting Dominoes
+                </div>
+                <div class="time-limit">
+                  <div class="property-title">
+                    time limit per test
+                  </div>2 seconds
+                </div>
+                <div class="memory-limit">
+                  <div class="property-title">
+                    memory limit per test
+                  </div>512 megabytes
+                </div>
+                <div class="input-file">
+                  <div class="property-title">
+                    input
+                  </div>standard input
+                </div>
+                <div class="output-file">
+                  <div class="property-title">
+                    output
+                  </div>standard output
+                </div>
+              </div>
+              <div>
+                <p>Bill likes to play with dominoes. He took an $$$n \times m$$$ board divided into equal square cells, and covered it with dominoes. Each domino covers two adjacent cells of the board either horizontally or vertically, and each cell is covered exactly once with a half of one domino (that is, there are no uncovered cells, and no two dominoes cover the same cell twice).</p>
+                <p>After that Bill decided to play with the covered board and share some photos of it on social media. First, he removes exactly one domino from the board, freeing two of the cells. Next, he moves dominoes around. A domino can only be moved <span class="tex-font-style-bf">along the line parallel to its longer side</span>. A move in the chosen direction is possible if the next cell in this direction is currently free. Bill doesn't want to lose track of what the original tiling looks like, so he makes sure that at any point each domino <span class="tex-font-style-bf">shares at least one cell with its original position</span>.</p>
+                <p>After removing a domino and making several (possibly, zero) moves Bill takes a photo of the board and posts it. However, with the amount of filters Bill is using, domino borders are not visible, so <span class="tex-font-style-bf">only the two free cells of the board</span> can be identified. When the photo is posted, Bill reverts the board to its original state and starts the process again.</p>
+                <p>Bill wants to post as many photos as possible, but he will not post any photo twice. How many distinct photos can he take? Recall that photos are different if the pairs of free cells in the photos are different.</p>
+              </div>
+              <div class="input-specification">
+                <div class="section-title">
+                  Input
+                </div>
+                <p>The first line contains two positive integers $$$n$$$ and $$$m$$$ ($$$nm \leq 2 \cdot 10^5$$$)&nbsp;— height and width of the board respectively.</p>
+                <p>The next $$$n$$$ lines describe the tiling of the board, row by row from top to bottom. Each of these lines contains $$$m$$$ characters, describing the cells in the corresponding row left to right. Each character is one of <span class="tex-font-style-tt">U</span>, <span class="tex-font-style-tt">D</span>, <span class="tex-font-style-tt">L</span>, or <span class="tex-font-style-tt">R</span>, meaning that the cell is covered with a top, bottom, left, or right half of a domino respectively.</p>
+                <p>It is guaranteed that the described tiling is valid, that is, each half-domino has a counterpart in the relevant location. In particular, since tiling is possible, the number of cells in the board is even.</p>
+              </div>
+              <div class="output-specification">
+                <div class="section-title">
+                  Output
+                </div>
+                <p>Print a single integer&nbsp;— the number of distinct photos Bill can take.</p>
+              </div>
+              <div class="sample-tests">
+                <div class="section-title">
+                  Examples
+                </div>
+                <div class="sample-test">
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+2 4
+UUUU
+DDDD
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+4
+</pre>
+                  </div>
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+2 3
+ULR
+DLR
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+6
+</pre>
+                  </div>
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+6 6
+ULRUUU
+DUUDDD
+UDDLRU
+DLRLRD
+ULRULR
+DLRDLR
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+133
+</pre>
+                  </div>
+                </div>
+              </div>
+              <div class="note">
+                <div class="section-title">
+                  Note
+                </div>
+                <p>In the first sample case, no moves are possible after removing any domino, thus there are four distinct photos.</p>
+                <p>In the second sample case, four photos are possible after removing the leftmost domino by independently moving/not moving the remaining two dominoes. Two more different photos are obtained by removing one of the dominoes on the right.</p>
+              </div>
+            </div>
+            <p> </p>
+          </div>
+        </div>
+        <script type="text/javascript">
+          $(document).ready(function () {
+
+            function endsWith(string, suffix) {
+              return string.indexOf(suffix, string.length - suffix.length) !== -1;
+            }
+
+            var inputFileDiv = $("div.input-file");
+            var inputFile = inputFileDiv.text();
+            var outputFileDiv = $("div.output-file");
+            var outputFile = outputFileDiv.text();
+
+
+            if (!endsWith(inputFile, "standard input")
+                && !endsWith(inputFile, "standard input")) {
+              inputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            if (!endsWith(outputFile, "standard output")
+                && !endsWith(outputFile, "standard output")) {
+              outputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            var titleDiv = $("div.header div.title");
+
+
+
+
+          });
+        </script>
+      </div>
+      <div style="margin-bottom: 2em;">
+        <div class="problemindexholder" problemindex="H1">
+          <div class="ttypography">
+            <div class="problem-statement">
+              <div class="header">
+                <div class="title">
+                  H1. Breadboard Capacity (easy version)
+                </div>
+                <div class="time-limit">
+                  <div class="property-title">
+                    time limit per test
+                  </div>2 seconds
+                </div>
+                <div class="memory-limit">
+                  <div class="property-title">
+                    memory limit per test
+                  </div>512 megabytes
+                </div>
+                <div class="input-file">
+                  <div class="property-title">
+                    input
+                  </div>standard input
+                </div>
+                <div class="output-file">
+                  <div class="property-title">
+                    output
+                  </div>standard output
+                </div>
+              </div>
+              <div>
+                <p> <span class="tex-font-style-it">This is an easier version of the problem H without modification queries.</span></p>
+                <p>Lester and Delbert work at an electronics company. They are currently working on a microchip component serving to connect two independent parts of a large supercomputer.</p>
+                <p>The component is built on top of a <span class="tex-font-style-it">breadboard</span>&nbsp;— a grid-like base for a microchip. The breadboard has $$$n$$$ rows and $$$m$$$ columns, and each row-column intersection contains a node. Also, on each side of the breadboard there are ports that can be attached to adjacent nodes. Left and right side have $$$n$$$ ports each, and top and bottom side have $$$m$$$ ports each. Each of the ports is connected on the outside to one of the parts bridged by the breadboard, and is colored red or blue respectively.</p>
+                <center>
+                  <img class="tex-graphics" src="https://espresso.codeforces.com/e6a12a78bc56706cf5c95fdc316ea249219fb133.png" style="max-width: 100.0%;max-height: 100.0%;">
+                </center>
+                <p>Ports can be connected by wires going inside the breadboard. However, there are a few rules to follow:</p>
+                <ul>
+                  <li> Each wire should connect a red port with a blue port, and each port should be connected to at most one wire. </li>
+                  <li> Each part of the wire should be horizontal or vertical, and turns are only possible at one of the nodes. </li>
+                  <li> To avoid interference, wires can not have common parts of non-zero length (but may have common nodes). Also, a wire can not cover the same segment of non-zero length twice. </li>
+                </ul>
+                <p>The <span class="tex-font-style-it">capacity</span> of the breadboard is the largest number of red-blue wire connections that can be made subject to the rules above. For example, the breadboard above has capacity $$$7$$$, and one way to make seven connections is pictured below.</p>
+                <center>
+                  <img class="tex-graphics" src="https://espresso.codeforces.com/529a6ec6323f826da5a530372962049e6cb652a8.png" style="max-width: 100.0%;max-height: 100.0%;">
+                </center>
+                <p> <span class="tex-font-style-it">Up to this point statements of both versions are identical. Differences follow below.</span></p>
+                <p>Given the current breadboard configuration, help Lester and Delbert find its capacity efficiently.</p>
+              </div>
+              <div class="input-specification">
+                <div class="section-title">
+                  Input
+                </div>
+                <p>The first line contains three integers $$$n, m, q$$$ ($$$1 \leq n, m \leq 10^5$$$, $$$\pmb{q = 0}$$$). $$$n$$$ and $$$m$$$ are the number of rows and columns of the breadboard respectively. <span class="tex-font-style-it">In this version $$$q$$$ is always zero, and is only present for consistency with the harder version.</span></p>
+                <p>The next four lines describe initial coloring of the ports. Each character in these lines is either <span class="tex-font-style-tt">R</span> or <span class="tex-font-style-tt">B</span>, depending on the coloring of the respective port. The first two of these lines contain $$$n$$$ characters each, and describe ports on the left and right sides respectively from top to bottom. The last two lines contain $$$m$$$ characters each, and describe ports on the top and bottom sides respectively from left to right.</p>
+              </div>
+              <div class="output-specification">
+                <div class="section-title">
+                  Output
+                </div>
+                <p>Print a single integer&nbsp;— the given breadboard capacity.</p>
+              </div>
+              <div class="sample-tests">
+                <div class="section-title">
+                  Example
+                </div>
+                <div class="sample-test">
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+4 5 0
+BBRR
+RBBR
+BBBBB
+RRRRR
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+7
+</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p> </p>
+          </div>
+        </div>
+        <script type="text/javascript">
+          $(document).ready(function () {
+
+            function endsWith(string, suffix) {
+              return string.indexOf(suffix, string.length - suffix.length) !== -1;
+            }
+
+            var inputFileDiv = $("div.input-file");
+            var inputFile = inputFileDiv.text();
+            var outputFileDiv = $("div.output-file");
+            var outputFile = outputFileDiv.text();
+
+
+            if (!endsWith(inputFile, "standard input")
+                && !endsWith(inputFile, "standard input")) {
+              inputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            if (!endsWith(outputFile, "standard output")
+                && !endsWith(outputFile, "standard output")) {
+              outputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            var titleDiv = $("div.header div.title");
+
+
+
+
+          });
+        </script>
+      </div>
+      <div style="margin-bottom: 1em;">
+        <div class="problemindexholder" problemindex="H2">
+          <div class="ttypography">
+            <div class="problem-statement">
+              <div class="header">
+                <div class="title">
+                  H2. Breadboard Capacity (hard version)
+                </div>
+                <div class="time-limit">
+                  <div class="property-title">
+                    time limit per test
+                  </div>2 seconds
+                </div>
+                <div class="memory-limit">
+                  <div class="property-title">
+                    memory limit per test
+                  </div>512 megabytes
+                </div>
+                <div class="input-file">
+                  <div class="property-title">
+                    input
+                  </div>standard input
+                </div>
+                <div class="output-file">
+                  <div class="property-title">
+                    output
+                  </div>standard output
+                </div>
+              </div>
+              <div>
+                <p> <span class="tex-font-style-it">This is a harder version of the problem H with modification queries.</span></p>
+                <p>Lester and Delbert work at an electronics company. They are currently working on a microchip component serving to connect two independent parts of a large supercomputer.</p>
+                <p>The component is built on top of a <span class="tex-font-style-it">breadboard</span>&nbsp;— a grid-like base for a microchip. The breadboard has $$$n$$$ rows and $$$m$$$ columns, and each row-column intersection contains a node. Also, on each side of the breadboard there are ports that can be attached to adjacent nodes. Left and right side have $$$n$$$ ports each, and top and bottom side have $$$m$$$ ports each. Each of the ports is connected on the outside to one of the parts bridged by the breadboard, and is colored red or blue respectively.</p>
+                <center>
+                  <img class="tex-graphics" src="https://espresso.codeforces.com/e6a12a78bc56706cf5c95fdc316ea249219fb133.png" style="max-width: 100.0%;max-height: 100.0%;">
+                </center>
+                <p>Ports can be connected by wires going inside the breadboard. However, there are a few rules to follow:</p>
+                <ul>
+                  <li> Each wire should connect a red port with a blue port, and each port should be connected to at most one wire. </li>
+                  <li> Each part of the wire should be horizontal or vertical, and turns are only possible at one of the nodes. </li>
+                  <li> To avoid interference, wires can not have common parts of non-zero length (but may have common nodes). Also, a wire can not cover the same segment of non-zero length twice. </li>
+                </ul>
+                <p>The <span class="tex-font-style-it">capacity</span> of the breadboard is the largest number of red-blue wire connections that can be made subject to the rules above. For example, the breadboard above has capacity $$$7$$$, and one way to make seven connections is pictured below.</p>
+                <center>
+                  <img class="tex-graphics" src="https://espresso.codeforces.com/529a6ec6323f826da5a530372962049e6cb652a8.png" style="max-width: 100.0%;max-height: 100.0%;">
+                </center>
+                <p> <span class="tex-font-style-it">Up to this point statements of both versions are identical. Differences follow below.</span></p>
+                <p>As is common, specifications of the project change a lot during development, so coloring of the ports is not yet fixed. There are $$$q$$$ modifications to process, each of them has the form of "colors of all ports in a contiguous range along one of the sides are switched (red become blue, and blue become red)". All modifications are persistent, that is, the previous modifications are not undone before the next one is made.</p>
+                <p>To estimate how bad the changes are, Lester and Delbert need to find the breadboard capacity after each change. Help them do this efficiently.</p>
+              </div>
+              <div class="input-specification">
+                <div class="section-title">
+                  Input
+                </div>
+                <p>The first line contains three integers $$$n, m, q$$$ ($$$1 \leq n, m \leq 10^5$$$, $$$0 \leq q \leq 10^5$$$)&nbsp;— the number of rows and columns of the breadboard, and the number of modifications respectively.</p>
+                <p>The next four lines describe initial coloring of the ports. Each character in these lines is either <span class="tex-font-style-tt">R</span> or <span class="tex-font-style-tt">B</span>, depending on the coloring of the respective port. The first two of these lines contain $$$n$$$ characters each, and describe ports on the left and right sides respectively from top to bottom. The last two lines contain $$$m$$$ characters each, and describe ports on the top and bottom sides respectively from left to right.</p>
+                <p>The next $$$q$$$ lines describe modifications. Each of these lines contains a character $$$s$$$, followed by two integers $$$l$$$ and $$$r$$$. If $$$s$$$ is <span class="tex-font-style-tt">L</span> or <span class="tex-font-style-tt">R</span>, the modification is concerned with ports on the left/right side respectively, $$$l$$$ and $$$r$$$ satisfy $$$1 \leq l \leq r \leq n$$$, and ports in rows between $$$l$$$ and $$$r$$$ (inclusive) on the side switch colors. Similarly, if $$$s$$$ is <span class="tex-font-style-tt">U</span> or <span class="tex-font-style-tt">D</span>, then $$$1 \leq l \leq r \leq m$$$, and ports in columns between $$$l$$$ and $$$r$$$ (inclusive) on the top/bottom side respectively switch colors.</p>
+              </div>
+              <div class="output-specification">
+                <div class="section-title">
+                  Output
+                </div>
+                <p>Print $$$q + 1$$$ integers, one per line&nbsp;— the breadboard capacity after $$$0, \ldots, q$$$ modifications have been made to the initial coloring.</p>
+              </div>
+              <div class="sample-tests">
+                <div class="section-title">
+                  Example
+                </div>
+                <div class="sample-test">
+                  <div class="input">
+                    <div class="title">
+                      Input
+                    </div>
+                    <pre>
+4 5 4
+BBRR
+RBBR
+BBBBB
+RRRRR
+L 2 3
+R 3 4
+U 1 5
+D 1 5
+</pre>
+                  </div>
+                  <div class="output">
+                    <div class="title">
+                      Output
+                    </div>
+                    <pre>
+7
+7
+9
+4
+9
+</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p> </p>
+          </div>
+        </div>
+        <script type="text/javascript">
+          $(document).ready(function () {
+
+            function endsWith(string, suffix) {
+              return string.indexOf(suffix, string.length - suffix.length) !== -1;
+            }
+
+            var inputFileDiv = $("div.input-file");
+            var inputFile = inputFileDiv.text();
+            var outputFileDiv = $("div.output-file");
+            var outputFile = outputFileDiv.text();
+
+
+            if (!endsWith(inputFile, "standard input")
+                && !endsWith(inputFile, "standard input")) {
+              inputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            if (!endsWith(outputFile, "standard output")
+                && !endsWith(outputFile, "standard output")) {
+              outputFileDiv.attr("style", "font-weight: bold");
+            }
+
+            var titleDiv = $("div.header div.title");
+
+
+
+
+          });
+        </script>
+      </div>
+    </div>
+    <br style="clear: both;">
+    <div id="footer">
+      <div>
+        <a href="https://codeforces.com/">Codeforces</a> (c) Copyright 2010-2020 Mike Mirzayanov
+      </div>
+      <div>
+        The only programming contests Web 2.0 platform
+      </div>
+    </div>
+  </div>
+</div>
+<script type="application/javascript">
+  if ('serviceWorker' in navigator && 'fetch' in window && 'caches' in window) {
+    var parser = new UAParser();
+    var browserName = parser.getBrowser().name;
+    var browserVersion = parser.getBrowser().version;
+
+    var supportedBrowser = false;
+    var supportedBrowsers = {
+      "Chrome": "76",
+      "Firefox": "68",
+      // "Edge": "18",
+      "Safari": "12.1",
+      "Opera": "63",
+      "Yandex": "19.9"
+    };
+
+    for (var name in supportedBrowsers) {
+      if (name === browserName && supportedBrowsers[name] <= browserVersion) {
+        supportedBrowser = true;
+      }
+    }
+
+    if (supportedBrowser) {
+      navigator.serviceWorker.register('/service-worker-96697.js')
+          .then(function (registration) {
+            console.log('Service worker registered');
+          })
+          .catch(function (error) {
+            console.log('Registration failed: ', error);
+          });
+    } else {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for (var i = 0; i < registrations.length; i++) {
+          registrations[i].unregister();
+        }
+      });
+    }
+  }
+</script>
+</body>
+</html>

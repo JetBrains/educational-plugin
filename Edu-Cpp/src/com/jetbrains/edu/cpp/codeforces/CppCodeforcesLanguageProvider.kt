@@ -28,6 +28,8 @@ class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider {
 
   override fun createTaskFiles(task: Task): List<TaskFile> {
     val moduleName = FileUtil.sanitizeFileName(task.name)
+    task.customPresentableName = task.name
+    task.name = moduleName
     task.addCMakeList(moduleName)
     return super.createTaskFiles(task)
   }
