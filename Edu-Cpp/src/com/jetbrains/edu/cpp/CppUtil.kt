@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
@@ -20,7 +21,9 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
  * @return created taskFile
  */
 fun Task.addCMakeList(projectName: String, cppStandard: String = ""): TaskFile {
-  val templateInfo = getCppTemplates(course).taskCMakeList
+  val templateInfo = getCppTemplates(course).let {
+    if (this is EduTask) it.testTaskCMakeList else it.executableTaskCMakeList
+  }
 
   val taskFile = TaskFile(CMakeListsFileType.FILE_NAME, templateInfo.getText(projectName, cppStandard))
   taskFile.isVisible = false

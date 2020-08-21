@@ -8,12 +8,14 @@ import com.jetbrains.edu.learning.stepik.course.StepikCourse
 
 /** Provides CMake file template information, where:
  * [mainCMakeList] - configures the course project, e.g. find all tasks `CMakeList.txt` files and adds them.
- * [taskCMakeList] - configures the task project.
+ * [testTaskCMakeList] - configures the task project with tests.
+ * [executableTaskCMakeList] - configure the task executable project.
  * [extraTopLevelFiles] - another depended on course type files that should be added to the top dir of the course.
  */
 data class CppTemplates(
   val mainCMakeList: TemplateInfo,
-  val taskCMakeList: TemplateInfo,
+  val testTaskCMakeList: TemplateInfo,
+  val executableTaskCMakeList: TemplateInfo,
   val extraTopLevelFiles: List<TemplateInfo> = emptyList()
 )
 
@@ -39,33 +41,37 @@ data class TemplateInfo(private val templateName: String, val generatedFileName:
 fun getCppTemplates(course: Course): CppTemplates =
   when {
     course is StepikCourse ->
-      CppTemplates(TemplateInfo("StepikMainCMakeList.txt", CMakeListsFileType.FILE_NAME),
-                   TemplateInfo("StepikTaskCMakeList.txt", CMakeListsFileType.FILE_NAME),
+      CppTemplates(TemplateInfo("stepik.CMakeList.txt", CMakeListsFileType.FILE_NAME),
+                   TemplateInfo("stepik.task.CMakeList.txt", CMakeListsFileType.FILE_NAME),
+                   TemplateInfo("stepik.task.CMakeList.txt", CMakeListsFileType.FILE_NAME),
                    listOf(
-                     TemplateInfo("simple_cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
+                     TemplateInfo("stepik.cmake.utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
                    ))
     course is CodeforcesCourse ->
-      CppTemplates(TemplateInfo("codeforces.MainCMakeLists.txt", CMakeListsFileType.FILE_NAME),
-                   TemplateInfo("codeforces.TaskCMakeLists.txt", CMakeListsFileType.FILE_NAME),
+      CppTemplates(TemplateInfo("codeforces.CMakeLists.txt", CMakeListsFileType.FILE_NAME),
+                   TemplateInfo("codeforces.task.CMakeLists.txt", CMakeListsFileType.FILE_NAME),
+                   TemplateInfo("codeforces.task.CMakeLists.txt", CMakeListsFileType.FILE_NAME),
                    listOf(
-                     TemplateInfo("simple_cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
+                     TemplateInfo("stepik.cmake.utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake"))
                    ))
     course.environment == "GoogleTest" ->
-      CppTemplates(TemplateInfo("EduMainCMakeList.txt", CMakeListsFileType.FILE_NAME),
-                   TemplateInfo("EduTaskCMakeList.txt", CMakeListsFileType.FILE_NAME),
+      CppTemplates(TemplateInfo("gtest.CMakeList.txt", CMakeListsFileType.FILE_NAME),
+                   TemplateInfo("gtest.task.CMakeList.txt", CMakeListsFileType.FILE_NAME),
+                   TemplateInfo("codeforces.task.CMakeLists.txt", CMakeListsFileType.FILE_NAME),
                    listOf(
-                     TemplateInfo("cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake")),
-                     TemplateInfo("cmake_googletest.cmake",
+                     TemplateInfo("gtest.cmake.utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake")),
+                     TemplateInfo("gtest.cmake.googletest.cmake",
                                   GeneratorUtils.joinPaths("cmake", "googletest.cmake")),
-                     TemplateInfo("cmake_googletest-download.cmake",
+                     TemplateInfo("gtest.cmake.googletest-download.cmake",
                                   GeneratorUtils.joinPaths("cmake", "googletest-download.cmake"))
                    ))
     course.environment == "Catch" ->
-      CppTemplates(TemplateInfo("catch_CMakeLists.txt", CMakeListsFileType.FILE_NAME),
-                   TemplateInfo("EduTaskCMakeList.txt", CMakeListsFileType.FILE_NAME),
+      CppTemplates(TemplateInfo("catch.CMakeList.txt", CMakeListsFileType.FILE_NAME),
+                   TemplateInfo("gtest.task.CMakeList.txt", CMakeListsFileType.FILE_NAME),
+                   TemplateInfo("codeforces.task.CMakeLists.txt", CMakeListsFileType.FILE_NAME),
                    listOf(
-                     TemplateInfo("catch_cmake_utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake")),
-                     TemplateInfo("catch_cmake_catch.cmake", GeneratorUtils.joinPaths("cmake", "catch.cmake"))
+                     TemplateInfo("catch.cmake.utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake")),
+                     TemplateInfo("catch.cmake.catch.cmake", GeneratorUtils.joinPaths("cmake", "catch.cmake"))
                    ))
     else ->
       throw IllegalStateException("Course must be Stepik type or have one of these environments: GoogleTest, Catch")
