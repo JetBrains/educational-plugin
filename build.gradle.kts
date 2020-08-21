@@ -649,6 +649,8 @@ fun downloadStudioIfNeededAndGetPath(): String {
   if (!studioArchive.exists()) {
     download {
       src(studioArtifactDownloadPath(archiveType))
+      retries(2)
+      readTimeout(5 * 60 * 1000) // 5 min
       dest(studioArchive)
     }
   }
@@ -740,6 +742,7 @@ fun download(configure: DownloadSpec.() -> Unit) {
   with(DownloadAction(project)) {
     configure()
     execute()
+    println("Download completed")
   }
 }
 
