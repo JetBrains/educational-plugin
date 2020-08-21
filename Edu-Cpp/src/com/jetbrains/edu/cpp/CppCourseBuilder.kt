@@ -25,8 +25,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class CppCourseBuilder(
-  override val taskTemplateName: String,
-  override val testTemplateName: String
+  override val taskTemplateName: String?,
+  override val mainTemplateName: String?,
+  override val testTemplateName: String?
 ) : EduCourseBuilder<CppProjectSettings> {
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CppProjectSettings>? =
     CppCourseProjectGenerator(this, course)

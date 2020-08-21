@@ -36,7 +36,7 @@ class CppGoogleTestNewTaskStructureTest : CCNewTaskStructureTestBase() {
       file("task.html")
       file("CMakeLists.txt")
       dir("src") {
-        file("task.cpp")
+        file("main.cpp")
       }
       dir("test") {
         file("output.txt")
@@ -55,7 +55,7 @@ class CppGoogleTestNewTaskStructureTest : CCNewTaskStructureTestBase() {
       file("task.html")
       file("CMakeLists.txt")
       dir("src") {
-        file("task.cpp")
+        file("main.cpp")
       }
     },
     taskStructureWithoutSources = {
@@ -68,7 +68,7 @@ class CppGoogleTestNewTaskStructureTest : CCNewTaskStructureTestBase() {
       file("task.html")
       file("CMakeLists.txt")
       dir("src") {
-        file("task.cpp")
+        file("main.cpp")
       }
     },
     taskStructureWithoutSources = {
@@ -81,7 +81,7 @@ class CppGoogleTestNewTaskStructureTest : CCNewTaskStructureTestBase() {
       file("task.html")
       file("CMakeLists.txt")
       dir("src") {
-        file("task.cpp")
+        file("main.cpp")
       }
     },
     taskStructureWithoutSources = {

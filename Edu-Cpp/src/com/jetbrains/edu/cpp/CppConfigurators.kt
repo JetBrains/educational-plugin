@@ -16,23 +16,30 @@ import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class CppGTestConfigurator : CppBaseConfigurator() {
-  override val courseBuilder: EduCourseBuilder<CppProjectSettings>
-    get() = CppCourseBuilder(TASK_CPP, TEST_CPP)
-}
-
-class CppCatchConfigurator : CppBaseConfigurator() {
-  override val courseBuilder: EduCourseBuilder<CppProjectSettings>
-    get() = CppCourseBuilder(TASK_CPP, CATCH_TEST_CPP)
+  override val testTemplateName: String = TEST_TEMPLATE_NAME
 
   companion object {
     @VisibleForTesting
-    const val CATCH_TEST_CPP = "catch_test.cpp"
+    const val TEST_TEMPLATE_NAME = "gtest.test.cpp"
+  }
+}
+
+class CppCatchConfigurator : CppBaseConfigurator() {
+  override val testTemplateName: String = TEST_TEMPLATE_NAME
+
+  companion object {
+    @VisibleForTesting
+    const val TEST_TEMPLATE_NAME = "catch.test.cpp"
   }
 }
 
 open class CppBaseConfigurator : EduConfigurator<CppProjectSettings> {
+  protected open val taskTemplateName: String? = TASK_CPP
+  protected open val mainTemplateName: String? = MAIN_CPP
+  protected open val testTemplateName: String? = null
+
   override val courseBuilder: EduCourseBuilder<CppProjectSettings>
-    get() = CppCourseBuilder("", "")
+    get() = CppCourseBuilder(taskTemplateName, mainTemplateName, testTemplateName)
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = CppTaskCheckerProvider()
@@ -40,7 +47,7 @@ open class CppBaseConfigurator : EduConfigurator<CppProjectSettings> {
   override val testFileName: String
     get() = TEST_CPP
 
-  override fun getMockFileName(text: String): String = TASK_CPP
+  override fun getMockFileName(text: String): String = MAIN_CPP
 
   override val sourceDir: String
     get() = EduNames.SRC
@@ -49,7 +56,7 @@ open class CppBaseConfigurator : EduConfigurator<CppProjectSettings> {
     get() = listOf(EduNames.TEST)
 
   override val mockTemplate: String
-    get() = getInternalTemplateText(MOCK_CPP)
+    get() = getInternalTemplateText(MAIN_CPP)
 
   override val isCourseCreatorEnabled: Boolean
     get() = true
@@ -73,7 +80,7 @@ open class CppBaseConfigurator : EduConfigurator<CppProjectSettings> {
 
   companion object {
     const val TASK_CPP = "task.cpp"
+    const val MAIN_CPP = "main.cpp"
     const val TEST_CPP = "test.cpp"
-    private const val MOCK_CPP = "mock.cpp"
   }
 }
