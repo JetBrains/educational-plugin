@@ -15,7 +15,7 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
   }
 
   fun getCoursePath(course: Course): String? {
-    return state.courses.find { it.name == course.name && it.id == course.id }?.location
+    return state.courses.find { it.name == course.name && it.id == course.id && it.courseMode == course.courseMode }?.location
   }
 
   fun hasCourse(course: Course): Boolean = getCoursePath(course) != null
