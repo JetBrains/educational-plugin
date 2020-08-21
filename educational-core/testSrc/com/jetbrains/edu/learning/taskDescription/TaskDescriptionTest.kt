@@ -181,6 +181,93 @@ class TaskDescriptionTest : EduTestCase() {
     }
   }
 
+  fun `test local png image replaced in dark theme`() {
+    doTestLocalImageReplaced(true, "screenshot.png", "screenshot_dark.png")
+  }
+
+  fun `test local png image not replaced in light theme`() {
+    doTestLocalImageReplaced(false, "screenshot.png", "screenshot_dark.png")
+  }
+
+  fun `test local svg image replaced in dark theme`() {
+    doTestLocalImageReplaced(true, "screenshot.svg", "screenshot_dark.svg")
+  }
+
+  fun `test local svg image not replaced in light theme`() {
+    doTestLocalImageReplaced(false, "screenshot.svg", "screenshot_dark.svg")
+  }
+
+  fun `test remote image replaced from srcset in dark theme`() {
+    doTestImageReplacedFromSrcset("https://dark.png", true)
+  }
+
+  fun `test image not replaced from srcset in light theme`() {
+    doTestImageReplacedFromSrcset("https://light.png", false)
+  }
+
+  private fun doTestImageReplacedFromSrcset(expectedImage: String, isDarkTheme: Boolean) {
+    val taskText = """<p <img class=image-fullsize src=https://light.png srcset=https://dark.png width=400></p>""".trimIndent()
+    courseWithFiles {
+      lesson {
+        eduTask(taskDescription = taskText, taskDescriptionFormat = DescriptionFormat.HTML) {
+        }
+        eduTask(taskDescription = taskText, taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile("screenshot2.png")
+        }
+      }
+    }
+    val expectedText = """
+      <html>
+       <head></head>
+       <body>
+        <p><img class="image-fullsize" src="${expectedImage}" width="400"></p>
+       </body>
+      </html>
+    """.trimIndent()
+
+    val task = findTask(0, 0)
+    val actualText = replaceImagesForTheme(project, task, taskText, isDarkTheme)
+    assertEquals(expectedText, actualText)
+  }
+
+  private fun doTestLocalImageReplaced(isDarkTheme: Boolean, imageLight: String, imageDark: String) {
+    val expectedImage = if (isDarkTheme) imageDark
+    else imageLight
+    val taskText = """
+      <html>
+       <head></head>
+       <body>
+        <p style="text-align: center;"><img class="image-fullsize" src="${imageLight}" width="400"></p>
+        <p style="text-align: center;"><img class="image-fullsize" src="screenshot2.png" width="400"></p>
+       </body>
+      </html>
+    """.trimIndent()
+
+    courseWithFiles {
+      lesson {
+        eduTask(taskDescription = taskText, taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile(imageLight)
+          taskFile(imageDark)
+        }
+        eduTask(taskDescription = taskText, taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile("screenshot2.png")
+        }
+      }
+    }
+    val expectedText = """
+      <html>
+       <head></head> 
+       <body> 
+        <p style="text-align: center;"><img class="image-fullsize" src="${expectedImage}" width="400"></p> 
+        <p style="text-align: center;"><img class="image-fullsize" src="screenshot2.png" width="400"></p>  
+       </body>
+      </html>
+    """.trimIndent()
+    val task = findTask(0, 0)
+    val actualText = replaceImagesForTheme(project, task, taskText, isDarkTheme).trimIndent()
+    assertEquals(expectedText, actualText)
+  }
+
   private fun doTestShortcut(taskText: String,
                              taskTextWithShortcuts: String,
                              keymapName: String = "Default for XWin",

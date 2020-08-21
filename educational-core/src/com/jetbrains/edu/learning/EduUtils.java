@@ -631,7 +631,7 @@ public class EduUtils {
            contentType.startsWith("application");
   }
 
-  private static String getMimeType(VirtualFile file) {
+  public static String getMimeType(VirtualFile file) {
     try {
       return Files.probeContentType(Paths.get(file.getPath()));
     }

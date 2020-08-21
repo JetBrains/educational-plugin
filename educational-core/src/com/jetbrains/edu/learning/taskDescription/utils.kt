@@ -4,6 +4,12 @@ package com.jetbrains.edu.learning.taskDescription
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.keymap.KeymapUtil
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.SOURCE
 import org.jsoup.Jsoup
@@ -18,6 +24,9 @@ private const val YOUTUBE_VIDEO_ID_LENGTH = 11
 const val IMG_TAG = "img"
 const val SCRIPT_TAG = "script"
 const val SRC_ATTRIBUTE = "src"
+private const val SRCSET_ATTRIBUTE = "srcset"
+private const val IMAGE_TYPE = "image"
+private const val DARK_SUFFIX = "_dark"
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.taskDescription.utils")
 private val HYPERSKILL_TAGS = tagsToRegex({ "\\[$it](.*)\\[/$it]" }, "HINT", "PRE", "META") +
                               tagsToRegex({ "\\[$it-\\w+](.*)\\[/$it]" }, "ALERT")
@@ -115,6 +124,35 @@ fun String.getYoutubeVideoId(): String? {
   else {
     null
   }
+}
+
+fun replaceImagesForTheme(project: Project, task: Task, taskText: String, isDarkTheme: Boolean = UIUtil.isUnderDarcula()): String {
+  val document = Jsoup.parse(taskText)
+  val imageElements = document.getElementsByTag(IMG_TAG)
+  for (element in imageElements) {
+    val srcAttr = element.attr(SRC_ATTRIBUTE)
+    if (isDarkTheme && task.containsLocalImages(project, srcAttr)) {
+      val fileNameWithoutExtension = FileUtil.getNameWithoutExtension(srcAttr)
+      val fileExtension = FileUtilRt.getExtension(srcAttr)
+      val darkSrc = "$fileNameWithoutExtension$DARK_SUFFIX.$fileExtension"
+      if (task.taskFiles.containsKey(darkSrc)) {
+        element.attr(SRC_ATTRIBUTE, darkSrc)
+      }
+    }
+    if (element.hasAttr(SRCSET_ATTRIBUTE)) {
+      if (isDarkTheme) {
+        element.attr(SRC_ATTRIBUTE, element.attr(SRCSET_ATTRIBUTE))
+      }
+      element.removeAttr(SRCSET_ATTRIBUTE)
+    }
+  }
+  return document.toString()
+}
+
+private fun Task.containsLocalImages(project: Project, fileName: String): Boolean {
+  val virtualFile = getTaskFile(fileName)?.getVirtualFile(project) ?: return false
+  val mimeType = EduUtils.getMimeType(virtualFile)
+  return mimeType.startsWith(IMAGE_TYPE)
 }
 
 fun Task.addHeader(tasksNumber: Int, text: String): String = buildString {
