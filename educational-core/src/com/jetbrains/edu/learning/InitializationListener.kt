@@ -5,6 +5,8 @@ import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.impl.coroutineDispatchingContext
@@ -17,10 +19,13 @@ import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillNotificationGroup
 import com.jetbrains.edu.learning.ui.SelectRolePanel
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.ide.BuiltInServerManager
 import java.io.File
 
 class InitializationListener : AppLifecycleListener, DynamicPluginListener {
@@ -46,6 +51,11 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
       EduCustomServerService.getInstance().startCustomServer()
     }
     if (isUnitTestMode) return
+
+    val port = BuiltInServerManager.getInstance().port
+    if (!HyperskillConnector.getInstance().isBuiltinPortValid(port)) {
+      notifyUnsupportedPort(port)
+    }
 
     val propertiesComponent = PropertiesComponent.getInstance()
     if (!propertiesComponent.isValueSet(RECENT_COURSES_FILLED)) {
@@ -99,6 +109,15 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     dialog.title(EduCoreBundle.message("select.role.dialog.title")).centerPanel(panel)
     dialog.addOkAction().setText(EduCoreBundle.message("select.role.dialog.ok.action", StepikNames.PLUGIN_NAME))
     dialog.show()
+  }
+
+  private fun notifyUnsupportedPort(port: Int) {
+    Notification(
+      hyperskillNotificationGroup.displayId,
+      EduNames.JBA,
+      EduCoreBundle.message("hyperskill.unsupported.port.extended.message", port.toString(), EduNames.MISMATCH_REDIRECT_URI_URL),
+      NotificationType.ERROR
+    ).notify(null)
   }
 
   companion object {

@@ -22,30 +22,30 @@ class HyperskillStartupActivity : StartupActivity {
     if (project.isDisposed || !EduUtils.isStudentProject(project) || isUnitTestMode) return
     val taskManager = StudyTaskManager.getInstance(project)
 
-    val course = StudyTaskManager.getInstance(project).course
+    val course = StudyTaskManager.getInstance(project).course as? HyperskillCourse ?: return
     val submissionsManager = SubmissionsManager.getInstance(project)
-    if (course is HyperskillCourse && submissionsManager.submissionsSupported()) {
-      if (HyperskillSettings.INSTANCE.account != null) {
-        submissionsManager.prepareSubmissionsContent { HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground() }
-      }
-      else {
-        val busConnection: MessageBusConnection = project.messageBus.connect(taskManager)
-        busConnection.subscribe(HyperskillConnector.AUTHORIZATION_TOPIC, object : EduLogInListener {
-          override fun userLoggedIn() {
-            if (HyperskillSettings.INSTANCE.account == null) {
-              return
-            }
-            submissionsManager.prepareSubmissionsContent()
-          }
+    if (!submissionsManager.submissionsSupported()) return
 
-          override fun userLoggedOut() {
-            TaskDescriptionView.getInstance(project).updateSubmissionsTab()
-          }
-        })
-      }
-      synchronizeTopics(project, course)
-      HyperskillCourseUpdateChecker.getInstance(project).check()
+    if (HyperskillSettings.INSTANCE.account != null) {
+      submissionsManager.prepareSubmissionsContent { HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground() }
     }
+    else {
+      val busConnection: MessageBusConnection = project.messageBus.connect(taskManager)
+      busConnection.subscribe(HyperskillConnector.AUTHORIZATION_TOPIC, object : EduLogInListener {
+        override fun userLoggedIn() {
+          if (HyperskillSettings.INSTANCE.account == null) {
+            return
+          }
+          submissionsManager.prepareSubmissionsContent()
+        }
+
+        override fun userLoggedOut() {
+          TaskDescriptionView.getInstance(project).updateSubmissionsTab()
+        }
+      })
+    }
+    synchronizeTopics(project, course)
+    HyperskillCourseUpdateChecker.getInstance(project).check()
   }
 
   companion object {

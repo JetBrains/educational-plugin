@@ -80,16 +80,20 @@ abstract class HyperskillConnector {
 
   fun doAuthorize(vararg postLoginActions: Runnable) {
     val port = BuiltInServerManager.getInstance().port
-    val defaultPort = BuiltInServerOptions.DEFAULT_PORT
-
-    // 20 port range comes from org.jetbrains.ide.BuiltInServerManagerImplKt.PORTS_COUNT
-    if (port !in defaultPort..defaultPort + 20 && port !in HYPERSKILL_FAILOVER_PORTS) {
+    if (!isBuiltinPortValid(port)) {
       showUnsupportedPortError(port)
       return
     }
 
     createAuthorizationListener(*postLoginActions)
     BrowserUtil.browse(AUTHORISATION_CODE_URL)
+  }
+
+  fun isBuiltinPortValid(port: Int): Boolean {
+    val defaultPort = BuiltInServerOptions.DEFAULT_PORT
+
+    // 20 port range comes from org.jetbrains.ide.BuiltInServerManagerImplKt.PORTS_COUNT
+    return port in defaultPort..defaultPort + 20 || port in HYPERSKILL_FAILOVER_PORTS
   }
 
   private fun showUnsupportedPortError(port: Int) {
