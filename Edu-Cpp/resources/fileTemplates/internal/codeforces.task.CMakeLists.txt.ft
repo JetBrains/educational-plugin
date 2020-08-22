@@ -1,4 +1,0 @@
-${CMAKE_MINIMUM_REQUIRED_LINE}
-project(${PROJECT_NAME})
-
-add_executable(${PROJECT_NAME} src/main.cpp)
