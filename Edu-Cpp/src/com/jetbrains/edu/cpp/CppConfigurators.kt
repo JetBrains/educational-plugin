@@ -79,8 +79,8 @@ open class CppBaseConfigurator : EduConfigurator<CppProjectSettings> {
   }
 
   companion object {
-    const val TASK_CPP = "task.cpp"
     const val MAIN_CPP = "main.cpp"
+    const val TASK_CPP = "task.cpp"
     const val TEST_CPP = "test.cpp"
   }
 }

@@ -2,15 +2,17 @@ package com.jetbrains.edu.cpp.actions
 
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.cidr.lang.OCLanguage
-import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.cpp.*
+import com.jetbrains.edu.cpp.CppBaseConfigurator.Companion.TASK_CPP
+import com.jetbrains.edu.cpp.CppBaseConfigurator.Companion.TEST_CPP
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.cmake.CMakeListsFileType.FILE_NAME as CMAKE_LISTS_TXT
 
 class CppCreateTaskTest : EduActionTestCase() {
   private val defaultSettings = CppProjectSettings()
@@ -35,19 +37,16 @@ class CppCreateTaskTest : EduActionTestCase() {
     val fileTree = fileTree {
       dir("lesson/task1") {
         dir("src") {
-          file("task.cpp", getInternalTemplateText(CppBaseConfigurator.TASK_CPP))
+          file(TASK_CPP, getInternalTemplateText(TASK_CPP))
         }
         dir("test") {
-          file("test.cpp", when (environment) {
+          file(TEST_CPP, when (environment) {
             "GoogleTest" -> getInternalTemplateText(CppGTestConfigurator.TEST_TEMPLATE_NAME)
             "Catch" -> getInternalTemplateText(CppCatchConfigurator.TEST_TEMPLATE_NAME)
             else -> error("Test file undefined for environment `$environment`!")
           })
         }
-        file(
-          CMakeListsFileType.FILE_NAME,
-          getExpectedTaskCMakeText(course, defaultSettings, "global-lesson-task1")
-        )
+        file(CMAKE_LISTS_TXT, getExpectedTaskCMakeText(course, defaultSettings, "global-lesson-task1"))
         file("task.html")
       }
       dir("cmake") {
@@ -64,7 +63,7 @@ class CppCreateTaskTest : EduActionTestCase() {
           else -> error("Content of the `cmake` directory undefined for environment `$environment`")
         }
       }
-      file(CMakeListsFileType.FILE_NAME)
+      file(CMAKE_LISTS_TXT)
     }
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot())
   }
@@ -102,8 +101,8 @@ class CppCreateTaskTest : EduActionTestCase() {
         |
         |set(CMAKE_CXX_STANDARD 14)
         |
-        |add_executable(${'$'}{PROJECT_NAME}-run src/task.cpp)
-        |add_executable(${'$'}{PROJECT_NAME}-test src/task.cpp test/test.cpp)
+        |add_executable(${'$'}{PROJECT_NAME}-run src/$TASK_CPP)
+        |add_executable(${'$'}{PROJECT_NAME}-test src/$TASK_CPP test/$TEST_CPP)
         |
         |configure_test_target(${'$'}{PROJECT_NAME}-test)
       """.trimMargin()
@@ -116,10 +115,10 @@ class CppCreateTaskTest : EduActionTestCase() {
     ) {
       frameworkLesson("lesson") {
         eduTask("task1") {
-          cppTaskFile("src/task.cpp", taskText)
-          cppTaskFile("test/test.cpp", testText)
+          cppTaskFile("src/$TASK_CPP", taskText)
+          cppTaskFile("test/$TEST_CPP", testText)
           taskFile(
-            CMakeListsFileType.FILE_NAME,
+            CMAKE_LISTS_TXT,
             cMakeListsTextGenerator("global-lesson-task1")
           )
         }
@@ -135,13 +134,13 @@ class CppCreateTaskTest : EduActionTestCase() {
       dir("lesson") {
         dir("task1") {
           dir("src") {
-            file("task.cpp", taskText)
+            file(TASK_CPP, taskText)
           }
           dir("test") {
-            file("test.cpp", testText)
+            file(TEST_CPP, testText)
           }
           file(
-            CMakeListsFileType.FILE_NAME,
+            CMAKE_LISTS_TXT,
             cMakeListsTextGenerator("global-lesson-task1")
           )
           file("task.html")
@@ -149,13 +148,13 @@ class CppCreateTaskTest : EduActionTestCase() {
 
         dir("task2") {
           dir("src") {
-            file("task.cpp", taskText)
+            file(TASK_CPP, taskText)
           }
           dir("test") {
-            file("test.cpp", getInternalTemplateText(CppCatchConfigurator.TEST_TEMPLATE_NAME))
+            file(TEST_CPP, getInternalTemplateText(CppCatchConfigurator.TEST_TEMPLATE_NAME))
           }
           file(
-            CMakeListsFileType.FILE_NAME,
+            CMAKE_LISTS_TXT,
             cMakeListsTextGenerator("global-lesson-task2")
           )
           file("task.html")
@@ -165,7 +164,7 @@ class CppCreateTaskTest : EduActionTestCase() {
         file("catch.cmake")
         file("utils.cmake")
       }
-      file(CMakeListsFileType.FILE_NAME)
+      file(CMAKE_LISTS_TXT)
     }
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot())
   }
