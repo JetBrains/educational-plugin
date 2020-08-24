@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
@@ -19,7 +20,7 @@ class HyperskillProjectOpenerTest : EduTestCase() {
 
   fun `test open stage in new project`() {
     loginFakeUser()
-    configureMockResponses()
+    configureMockResponsesForStages()
 
     HyperskillProjectOpener.open(HyperskillOpenStageRequest(1, 1))
 
@@ -48,7 +49,7 @@ class HyperskillProjectOpenerTest : EduTestCase() {
 
   fun `test open stage in opened project`() {
     loginFakeUser()
-    configureMockResponses()
+    configureMockResponsesForStages()
 
     // set up existing project
     hyperskillCourseWithFiles {
@@ -94,7 +95,7 @@ class HyperskillProjectOpenerTest : EduTestCase() {
 
   fun `test open step in new code challenges project`() {
     loginFakeUser()
-    configureMockResponses()
+    configureMockResponsesForStages()
 
     mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null, language = PlainTextLanguage.INSTANCE) {
       lesson(HYPERSKILL_PROBLEMS) {
@@ -119,7 +120,7 @@ class HyperskillProjectOpenerTest : EduTestCase() {
 
   fun `test open step in existing code challenges project`() {
     loginFakeUser()
-    configureMockResponses()
+    configureMockResponsesForStages()
 
     mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null, language = PlainTextLanguage.INSTANCE) {
       lesson(HYPERSKILL_PROBLEMS) {
@@ -155,7 +156,90 @@ class HyperskillProjectOpenerTest : EduTestCase() {
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
-  private fun configureMockResponses() {
+  fun `test open step in new project`() {
+    loginFakeUser()
+
+    configureMockResponsesForStages()
+    mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null) {
+      lesson(HYPERSKILL_PROBLEMS) {
+        codeTask(stepId = 4) {
+          taskFile("task.txt", "file text")
+        }
+      }
+    })
+
+    HyperskillProjectOpener.open(HyperskillOpenStepRequest(1, 4, FakeGradleBasedLanguage.id))
+    val fileTree = fileTree {
+      dir(HYPERSKILL_PROBLEMS) {
+        dir("task1") {
+          file("task.txt", "file text")
+          file("task.html")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  fun `test open step in existing project with stages`() {
+    loginFakeUser()
+
+    configureMockResponsesForStages()
+    mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null) {
+      lesson(HYPERSKILL_PROBLEMS) {
+        codeTask(stepId = 4) {
+          taskFile("task.txt", "file text")
+        }
+      }
+    })
+
+    // set up existing project
+    hyperskillCourseWithFiles {
+      frameworkLesson(TEST_HYPERSKILL_PROJECT_NAME) {
+        eduTask(testStageName(1), stepId = 1) {
+          taskFile("src/Task.kt", "stage 1")
+          taskFile("test/Tests1.kt", "stage 1 test")
+        }
+        eduTask(testStageName(2), stepId = 2) {
+          taskFile("src/Task.kt", "stage 2")
+          taskFile("test/Tests2.kt", "stage 2 test")
+        }
+      }
+    }
+
+    HyperskillProjectOpener.open(HyperskillOpenStepRequest(1, 4, FakeGradleBasedLanguage.id))
+
+    val fileTree = fileTree {
+      dir(TEST_HYPERSKILL_PROJECT_NAME) {
+        dir("task") {
+          dir("src") {
+            file("Task.kt", "stage 1")
+          }
+          dir("test") {
+            file("Tests1.kt", "stage 1 test")
+          }
+        }
+        dir(testStageName(1)) {
+          file("task.html")
+        }
+        dir(testStageName(2)) {
+          file("task.html")
+        }
+      }
+      dir(HYPERSKILL_PROBLEMS) {
+        dir("task1") {
+          file("task.txt", "file text")
+          file("task.html")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  private fun configureMockResponsesForStages() {
     mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse {
       frameworkLesson("lesson1") {
         eduTask("task1", stepId = 1) {
