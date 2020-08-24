@@ -184,6 +184,7 @@
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
     </action>
     <action id="Educational.SolveAllTasksBefore" class="com.jetbrains.edu.coursecreator.actions.CCSolveAllTasksBeforeAction"/>
+    <action id="Educational.Stepik.UpdateCourse" class="com.jetbrains.edu.learning.actions.SyncStepikCourseAction"/>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">

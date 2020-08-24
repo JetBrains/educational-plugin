@@ -1,8 +1,10 @@
 package com.jetbrains.edu.learning.yaml.format
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.UPDATE_DATE
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_PROJECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STAGES
@@ -10,10 +12,15 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.THEORY_ID
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-@JsonPropertyOrder(HYPERSKILL_PROJECT, STAGES)
+@JsonPropertyOrder(HYPERSKILL_PROJECT, UPDATE_DATE, STAGES, TOPICS)
 abstract class HyperskillCourseMixin {
   @JsonProperty(HYPERSKILL_PROJECT)
   lateinit var hyperskillProject: HyperskillProject
+
+  @Suppress("unused")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEE, dd MMM yyyy HH:mm:ss zzz")
+  @JsonProperty(UPDATE_DATE)
+  private lateinit var myUpdateDate: Date
 
   @JsonProperty(STAGES)
   var stages: List<HyperskillStage> = mutableListOf()

@@ -282,5 +282,6 @@ class RemoteHyperskillChangeApplier : RemoteInfoChangeApplierBase<HyperskillCour
     existingItem.hyperskillProject = deserializedItem.hyperskillProject
     existingItem.stages = deserializedItem.stages
     existingItem.taskToTopics = deserializedItem.taskToTopics
+    existingItem.updateDate = deserializedItem.updateDate
   }
 }

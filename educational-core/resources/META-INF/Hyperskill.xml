@@ -47,5 +47,6 @@
             class="com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.ApplyHyperskillSubmission">
       <add-to-group group-id="Educational.Educator.ProjectView" relative-to-action="Educational.Educator.PushCourse" anchor="after"/>
     </action>
+    <action id="Hyperskill.UpdateCourse" class="com.jetbrains.edu.learning.stepik.hyperskill.update.SyncHyperskillCourseAction"/>
   </actions>
 </idea-plugin>

@@ -115,7 +115,10 @@ object EduCounterUsageCollector {
   }
 
   @JvmStatic
-  fun synchronizeCourse(place: SynchronizeCoursePlace) = reportEvent("synchronize.course", mapOf(SOURCE to place.toLower()))
+  fun synchronizeCourse(course: Course, place: SynchronizeCoursePlace) = reportEvent(
+    "synchronize.course",
+    mapOf(TYPE to course.itemType, SOURCE to place.toLower())
+  )
 
   @JvmStatic
   fun importCourseArchive() = reportEvent("import.course")

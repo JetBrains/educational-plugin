@@ -12,10 +12,11 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseUpdater.Companion.shouldBeUpdated
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdater
+import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdater.Companion.shouldBeUpdated
 import java.util.*
 
 class HyperskillCourseUpdateTest : NavigationTestBase() {
@@ -363,11 +364,13 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     course.hyperskillProject = HyperskillProject()
     findTask(0, 0).status = CheckStatus.Solved
 
-    updateCourse(findLesson(0).taskList.map { it.toTaskUpdate {
-      descriptionText = newText
-      updateDate = Date(100)
-      getTaskFile(taskFileName)!!.setText(newText)
-    } })
+    updateCourse(findLesson(0).taskList.map {
+      it.toTaskUpdate {
+        descriptionText = newText
+        updateDate = Date(100)
+        getTaskFile(taskFileName)!!.setText(newText)
+      }
+    })
 
     fileTree {
       dir("Problems") {
@@ -396,11 +399,13 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
       }
     }
 
-    updateCourse(findLesson(0).taskList.map { it.toTaskUpdate {
-      descriptionText = newText
-      updateDate = Date(100)
-      getTaskFile(taskFileName)!!.setText(newText)
-    } })
+    updateCourse(findLesson(0).taskList.map {
+      it.toTaskUpdate {
+        descriptionText = newText
+        updateDate = Date(100)
+        getTaskFile(taskFileName)!!.setText(newText)
+      }
+    })
 
     fileTree {
       dir("Problems") {

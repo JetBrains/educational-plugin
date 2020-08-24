@@ -14,9 +14,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 @Suppress("ComponentNotRegistered")
-class CodeforcesUpdateContestAction : DumbAwareAction(
-  EduCoreBundle.message("codeforces.label.update.contest", CODEFORCES_TITLE)
-) {
+class CodeforcesUpdateContestAction : DumbAwareAction(EduCoreBundle.message("codeforces.label.update.contest")) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (project.isDisposed) return

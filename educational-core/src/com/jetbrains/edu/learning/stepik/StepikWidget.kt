@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.LoginWidget
 import com.jetbrains.edu.learning.SynchronizationStep
 import com.jetbrains.edu.learning.actions.SyncStepikCourseAction
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
@@ -16,7 +17,7 @@ class StepikWidget(project: Project) : LoginWidget(project, EduSettings.SETTINGS
   override val icon: Icon
     get() = EducationalCoreIcons.Stepik
   override val syncStep: SynchronizationStep
-    get() = SynchronizationStep("Synchronize course", SyncStepikCourseAction())
+    get() = SynchronizationStep(EduCoreBundle.message("action.synchronize.course"), SyncStepikCourseAction())
 
   override fun ID() = ID
 

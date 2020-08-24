@@ -40,6 +40,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
       |  id: $id
       |  ide_files: $ideFiles
       |  is_template_based: $isTemplateBased
+      |update_date: Thu, 01 Jan 1970 00:00:00 UTC
       |stages:
       |- id: 1
       |  step: 11
@@ -61,6 +62,8 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertEquals(id, hyperskillProject.id)
     assertEquals(ideFiles, hyperskillProject.ideFiles)
     assertEquals(isTemplateBased, hyperskillProject.isTemplateBased)
+
+    assertEquals(Date(0), course.updateDate)
 
     checkStage(HyperskillStage(1, "", 11, true), course.stages[0])
     checkStage(HyperskillStage(2, "", 22, false), course.stages[1])

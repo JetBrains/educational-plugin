@@ -20,14 +20,15 @@ import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager;
 import icons.EducationalCoreIcons;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
 
+@SuppressWarnings("ComponentNotRegistered")
 public class SyncStepikCourseAction extends SyncCourseAction {
 
   public SyncStepikCourseAction() {
-    super("Synchronize Course", "Synchronize Course", EducationalCoreIcons.StepikRefresh);
+    super(EduCoreBundle.message("action.synchronize.course"), EduCoreBundle.message("action.synchronize.course"),
+          EducationalCoreIcons.StepikRefresh);
   }
 
   @Override
@@ -41,7 +42,7 @@ public class SyncStepikCourseAction extends SyncCourseAction {
       }
     });
 
-    EduCounterUsageCollector.synchronizeCourse(EduCounterUsageCollector.SynchronizeCoursePlace.WIDGET);
+    EduCounterUsageCollector.synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.WIDGET);
   }
 
   private void doSynchronizeCourse(@NotNull Project project, @NotNull EduCourse course, @NotNull ProgressIndicator indicator) {
@@ -66,11 +67,7 @@ public class SyncStepikCourseAction extends SyncCourseAction {
   }
 
   @Override
-  public boolean isAvailable(@Nullable Project project) {
-    if (project == null) {
-      return false;
-    }
-
+  public boolean isAvailable(@NotNull Project project) {
     if (!EduUtils.isEduProject(project)) {
       return false;
     }

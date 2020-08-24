@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.update
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
@@ -18,15 +18,18 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_LANGUAGES
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.eduEnvironment
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.update.CourseUpdater
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
+import java.util.*
 
 class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : CourseUpdater(project) {
   private fun HyperskillProject.getCourseFromServer(): HyperskillCourse? {
@@ -50,11 +53,13 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
     runInBackground(project, EduCoreBundle.message("update.check")) {
       val projectLesson = course.getProjectLesson()
       val courseFromServer = course.hyperskillProject?.getCourseFromServer()
+      val hyperskillProject = course.hyperskillProject
+      val projectShouldBeUpdated = hyperskillProject != null && hyperskillProject.shouldBeUpdated(courseFromServer?.hyperskillProject)
       val projectLessonShouldBeUpdated = courseFromServer != null && projectLesson?.shouldBeUpdated(project, courseFromServer) ?: false
       val codeChallengesUpdates = course.getProblemsLesson()?.getCodeChallengesUpdates() ?: emptyList()
 
       var isUpdated = false
-      if (projectLessonShouldBeUpdated || codeChallengesUpdates.isNotEmpty()) {
+      if (projectShouldBeUpdated || projectLessonShouldBeUpdated || codeChallengesUpdates.isNotEmpty()) {
         if (HyperskillSettings.INSTANCE.updateAutomatically) {
           doUpdate(courseFromServer, codeChallengesUpdates)
           isUpdated = true
@@ -67,7 +72,16 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
           }
         }
       }
+      course.updateDate = Date()
+      YamlFormatSynchronizer.saveRemoteInfo(course)
       onFinish(isUpdated)
+    }
+  }
+
+  private fun HyperskillProject.shouldBeUpdated(hyperskillProject: HyperskillProject?): Boolean {
+    return when {
+      hyperskillProject != null && title != hyperskillProject.title -> true
+      else -> false
     }
   }
 
@@ -87,16 +101,30 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
 
   @VisibleForTesting
   fun doUpdate(remoteCourse: HyperskillCourse?, codeChallengesUpdates: List<TaskUpdate>) {
-    updateProjectLesson(remoteCourse)
+    if (remoteCourse != null) {
+      updateCourse(remoteCourse)
+      updateProjectLesson(remoteCourse)
+    }
     updateCodeChallenges(codeChallengesUpdates)
     showUpdateCompletedNotification(EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT))
   }
 
+  private fun updateCourse(remoteCourse: HyperskillCourse) {
+    invokeAndWaitIfNeeded {
+      if (project.isDisposed) return@invokeAndWaitIfNeeded
+
+      course.description = remoteCourse.description
+      course.hyperskillProject ?: return@invokeAndWaitIfNeeded
+      remoteCourse.hyperskillProject ?: return@invokeAndWaitIfNeeded
+      course.hyperskillProject!!.title = remoteCourse.hyperskillProject!!.title
+      course.hyperskillProject!!.description = remoteCourse.hyperskillProject!!.description
+    }
+  }
+
   private fun updateCodeChallenges(codeChallengesUpdates: List<TaskUpdate>) {
     invokeAndWaitIfNeeded {
-      if (project.isDisposed) {
-        return@invokeAndWaitIfNeeded
-      }
+      if (project.isDisposed) return@invokeAndWaitIfNeeded
+
       codeChallengesUpdates.forEach {
         val localTask = it.localTask
         if (localTask.status != CheckStatus.Solved) {
@@ -109,9 +137,9 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
     }
   }
 
-  private fun updateProjectLesson(remoteCourse: HyperskillCourse?): Boolean {
-    val lesson = course.getProjectLesson() ?: return true
-    val remoteLesson = remoteCourse?.getProjectLesson() ?: return true
+  private fun updateProjectLesson(remoteCourse: HyperskillCourse) {
+    val lesson = course.getProjectLesson() ?: return
+    val remoteLesson = remoteCourse.getProjectLesson() ?: return
 
     invokeAndWaitIfNeeded {
       if (project.isDisposed) return@invokeAndWaitIfNeeded
@@ -133,7 +161,6 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
         GeneratorUtils.createChildFile(courseDir, additionalFile.name, additionalFile.text)
       }
     }
-    return false
   }
 
   private fun updateFiles(lesson: FrameworkLesson, task: Task, remoteTask: Task) {

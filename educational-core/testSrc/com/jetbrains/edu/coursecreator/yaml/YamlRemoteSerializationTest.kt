@@ -36,6 +36,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
       isTemplateBased = true
     }
     course.hyperskillProject = hyperskillProject
+    course.updateDate = Date(0)
 
     course.stages = listOf(HyperskillStage(1, "First", 11, true),
                            HyperskillStage(2, "Second", 22)
@@ -45,12 +46,14 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     topic.title = "Learn Anything"
     topic.theoryId = 404
     course.taskToTopics = mutableMapOf(0 to listOf(topic))
+
     val expectedYaml = """
       |hyperskill_project:
       |  id: ${hyperskillProject.id}
       |  ide_files: ${hyperskillProject.ideFiles}
       |  is_template_based: ${hyperskillProject.isTemplateBased}
       |  use_ide: true
+      |update_date: Thu, 01 Jan 1970 00:00:00 UTC
       |stages:
       |- id: 1
       |  step: 11

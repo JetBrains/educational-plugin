@@ -23,10 +23,8 @@ class EduCourseUpdateChecker(project: Project) : CourseUpdateChecker(project) {
   }
 
   override fun doCheckIsUpToDate(onFinish: () -> Unit) {
-    val eduCourse = course as? EduCourse
-    if (eduCourse == null) {
-      return
-    }
+    val eduCourse = course as? EduCourse ?: return
+
     ApplicationManager.getApplication().executeOnPooledThread {
       val (courseFromStepik, isUpToDate) = eduCourse.checkIsUpToDate()
       runInEdt {

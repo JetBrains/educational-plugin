@@ -88,7 +88,7 @@ class StepikStartupActivity : StartupActivity {
     }
     try {
       StepikSolutionsLoader.getInstance(project).loadSolutionsInBackground()
-      EduCounterUsageCollector.synchronizeCourse(EduCounterUsageCollector.SynchronizeCoursePlace.PROJECT_REOPEN)
+      EduCounterUsageCollector.synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.PROJECT_REOPEN)
     }
     catch (e: Exception) {
       LOG.warn(e)

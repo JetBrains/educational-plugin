@@ -225,7 +225,7 @@ public abstract class CourseProjectGenerator<S> {
       if (alreadyEnrolled) {
         StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
         stepikSolutionsLoader.loadSolutionsInBackground();
-        EduCounterUsageCollector.synchronizeCourse(EduCounterUsageCollector.SynchronizeCoursePlace.PROJECT_GENERATION);
+        EduCounterUsageCollector.synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.PROJECT_GENERATION);
       }
     }
   }

@@ -1,0 +1,15 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "projects": [
+    {
+      "id": 1,
+      "title": "Phone Book",
+      "environment": "",
+      "language": "kotlin"
+    }
+  ]
+}

@@ -31,7 +31,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import javax.swing.JPanel
 import javax.swing.event.HyperlinkEvent
 
-val LOG = Logger.getInstance("HyperskillUtils")
+private val LOG: Logger = Logger.getInstance("HyperskillUtils")
 
 val HYPERSKILL_SELECTED_STAGE: Key<Int> = Key.create("HYPERSKILL_SELECTED_STAGE")
 val HYPERSKILL_SELECTED_PROBLEM: Key<Int> = Key.create("HYPERSKILL_SELECTED_PROBLEM")
@@ -74,6 +74,7 @@ private fun computeSelectedStage(course: HyperskillCourse): Int? {
   }
   val projectLesson = course.getProjectLesson() ?: return null
   val firstUnsolvedTask = projectLesson.taskList.indexOfFirst { task -> task.status != CheckStatus.Solved }
+  if (firstUnsolvedTask == -1 && projectLesson.taskList.size < 1) return null
   return course.stages[if (firstUnsolvedTask != -1) firstUnsolvedTask else projectLesson.taskList.size - 1].id
 }
 
