@@ -1,9 +1,9 @@
 package com.jetbrains.edu.cpp.codeforces
 
-import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.cpp.CppBaseConfigurator
 import com.jetbrains.edu.cpp.CppProjectSettings
 import com.jetbrains.edu.cpp.addCMakeList
+import com.jetbrains.edu.cpp.getDefaultName
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
@@ -27,7 +27,7 @@ class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider {
     }
 
   override fun createTaskFiles(task: Task): List<TaskFile> {
-    val moduleName = FileUtil.sanitizeFileName(task.name)
+    val moduleName = getDefaultName(task)
     task.customPresentableName = task.name
     task.name = moduleName
     task.addCMakeList(moduleName)

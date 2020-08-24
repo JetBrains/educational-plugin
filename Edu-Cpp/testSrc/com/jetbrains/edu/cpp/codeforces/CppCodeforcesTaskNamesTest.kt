@@ -15,7 +15,7 @@ class CppCodeforcesTaskNamesTest : CodeforcesTestCase() {
     val lesson = Lesson().apply { this.course = course }
     course.addLesson(lesson)
 
-    val task = course.findTask("Problems", "A__C__") as CodeforcesTask
+    val task = course.findTask("Problems", "task1") as CodeforcesTask
     assertEquals("A. C+=", task.presentableName)
     assertEquals("https://codeforces.com/contest/1368/problem/A?locale=en", task.feedbackLink.link)
   }

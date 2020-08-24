@@ -53,6 +53,6 @@ class CodeforcesCourse : Course {
     lesson.course = this
 
     addLesson(lesson)
-    problems.forEach { lesson.addTask(CodeforcesTask.create(it, lesson)) }
+    problems.forEachIndexed { index, task -> lesson.addTask(CodeforcesTask.create(task, lesson, index + 1)) }
   }
 }

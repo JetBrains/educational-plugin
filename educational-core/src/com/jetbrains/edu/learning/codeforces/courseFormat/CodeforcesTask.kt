@@ -44,7 +44,7 @@ open class CodeforcesTask : Task() {
   }
 
   companion object {
-    fun create(htmlElement: Element, lesson: Lesson): CodeforcesTask {
+    fun create(htmlElement: Element, lesson: Lesson, index: Int): CodeforcesTask {
       val isStandardIO = htmlElement.select("div.input-file, div.output-file").all { isStandardIOType(it) }
 
       val task = if (isStandardIO) {
@@ -56,6 +56,7 @@ open class CodeforcesTask : Task() {
         CodeforcesTaskWithFileIO(inputFileName, outputFileName)
       }
       task.lesson = lesson
+      task.index = index
       task.name = htmlElement.select("div.header").select("div.title").text()
 
       htmlElement.select("img").forEach {

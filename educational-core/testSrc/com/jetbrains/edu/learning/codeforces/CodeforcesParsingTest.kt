@@ -16,7 +16,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     course.addLesson(lesson)
 
     val htmlElement = Jsoup.parse(loadText(contest1211)).select(".problem-statement").first()
-    val task = CodeforcesTask.create(htmlElement, lesson)
+    val task = CodeforcesTask.create(htmlElement, lesson, 1)
 
     assertEquals("A. Three Problems", task.name)
     assertEquals("https://codeforces.com/contest/1211/problem/A?locale=en", task.feedbackLink.link)
@@ -32,7 +32,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     course.addLesson(lesson)
 
     val htmlElement = Jsoup.parse(loadText(contest1211)).select(".problem-statement")[6]
-    val task = CodeforcesTask.create(htmlElement, lesson)
+    val task = CodeforcesTask.create(htmlElement, lesson, 1)
 
     assertEquals("G. King's Path", task.name)
     assertEquals("https://codeforces.com/contest/1211/problem/G?locale=en", task.feedbackLink.link)
