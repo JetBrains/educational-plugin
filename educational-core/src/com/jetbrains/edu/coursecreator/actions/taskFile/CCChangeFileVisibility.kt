@@ -8,11 +8,22 @@ import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.Nls
+import java.util.function.Supplier
 
-class CCMakeVisibleToLearner : CCChangeFileVisibility("Make Visible to Learner", true)
-class CCHideFromLearner : CCChangeFileVisibility("Hide from Learner", false)
+class CCMakeVisibleToLearner
+// BACKCOMPAT: 2019.3 Use lazyMessage call instead
+  : CCChangeFileVisibility(Supplier { EduCoreBundle.message("action.make.visible.to.learner.title") }, true)
 
-abstract class CCChangeFileVisibility(val name: String, val requiredVisibility: Boolean) : CCChangeFilePropertyActionBase(name) {
+class CCHideFromLearner
+// BACKCOMPAT: 2019.3 Use lazyMessage call instead
+  : CCChangeFileVisibility(Supplier { EduCoreBundle.message("action.hide.from.learner.title") }, false)
+
+abstract class CCChangeFileVisibility(val name: Supplier<String>, val requiredVisibility: Boolean) : CCChangeFilePropertyActionBase(name) {
+
+  constructor(@Nls(capitalization = Nls.Capitalization.Title) name: String, requiredVisibility: Boolean)
+    : this(Supplier { name }, requiredVisibility)
 
   override fun createStateForFile(project: Project, task: Task, file: VirtualFile): State? {
     val taskRelativePath = EduUtils.pathRelativeToTask(project, file)

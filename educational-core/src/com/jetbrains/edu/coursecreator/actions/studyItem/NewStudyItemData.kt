@@ -5,10 +5,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
 
 class NewStudyItemInfo(
-  val name: String,
+  @NonNls val name: String,
   val index: Int,
   val producer: () -> StudyItem
 ) : UserDataHolderBase()

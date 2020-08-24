@@ -13,9 +13,16 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.pass
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import org.jetbrains.annotations.Nls
+import java.util.function.Supplier
 
-abstract class CCChangeFilePropertyActionBase(private val name: String) : DumbAwareAction(name) {
+abstract class CCChangeFilePropertyActionBase(private val name: Supplier<String>)
+// BACKCOMPAT: 2019.3 need to delete pass call
+  : DumbAwareAction(name.pass()) {
+
+  constructor(@Nls(capitalization = Nls.Capitalization.Title) name: String) : this(Supplier { name })
 
   override fun update(e: AnActionEvent) {
     val project = e.project
@@ -47,7 +54,8 @@ abstract class CCChangeFilePropertyActionBase(private val name: String) : DumbAw
         val task = EduUtils.getTaskForFile(project, file) ?: return
         if (file.isDirectory) {
           collect(VfsUtil.collectChildrenRecursively(file).filter { !it.isDirectory })
-        } else {
+        }
+        else {
           affectedFiles += file
         }
 
@@ -59,7 +67,7 @@ abstract class CCChangeFilePropertyActionBase(private val name: String) : DumbAw
     collect(virtualFiles)
 
     val action = ChangeFilesPropertyUndoableAction(project, states, tasks, affectedFiles)
-    EduUtils.runUndoableAction(project, name, action)
+    EduUtils.runUndoableAction(project, name.get(), action)
   }
 
   protected open fun isAvailableForFile(project: Project, file: VirtualFile): Boolean {
@@ -68,7 +76,8 @@ abstract class CCChangeFilePropertyActionBase(private val name: String) : DumbAw
       // Recursive check is too expensive for `update` method
       // so we allow this action for directories
       true
-    } else {
+    }
+    else {
       isAvailableForSingleFile(project, task, file)
     }
   }

@@ -8,8 +8,12 @@ import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileInfo
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import java.util.function.Supplier
 
-class CCExcludeFromTask : CCChangeFilePropertyActionBase("Exclude from Task") {
+class CCExcludeFromTask
+// BACKCOMPAT: 2019.3 Use lazyMessage call instead
+  : CCChangeFilePropertyActionBase(Supplier { EduCoreBundle.message("action.exclude.from.task.title") }) {
 
   override fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean =
     EduUtils.belongToTask(project, file)

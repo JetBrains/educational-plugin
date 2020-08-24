@@ -7,7 +7,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
-import com.jetbrains.edu.coursecreator.presentableName
+import com.jetbrains.edu.coursecreator.presentableTitleName
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
@@ -22,10 +22,8 @@ class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) 
 
   override val studyItemVariants: List<StudyItemVariant>
     get() = listOf(
-      StudyItemVariant(StringUtil.toTitleCase(LESSON_TYPE.presentableName), "",
-                                                                                  Lesson, ::Lesson),
-      StudyItemVariant(
-        StringUtil.toTitleCase(EduCoreBundle.message("item.lesson.framework")), "", Lesson, ::FrameworkLesson)
+      StudyItemVariant(LESSON_TYPE.presentableTitleName, "", Lesson, ::Lesson),
+      StudyItemVariant(EduCoreBundle.message("item.lesson.framework.title"), "", Lesson, ::FrameworkLesson)
     )
 
   override fun addItem(course: Course, item: Lesson) {

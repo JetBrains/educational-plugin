@@ -20,10 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import static com.jetbrains.edu.learning.EduUtils.addMnemonic;
 
 public class CCChangeCourseInfo extends DumbAwareAction {
-  private static final String ACTION_TEXT = "Edit Course Information";
 
   public CCChangeCourseInfo() {
-    super(addMnemonic(ACTION_TEXT), ACTION_TEXT, null);
+    super("&Edit Course Information", "Edit course information", null);
   }
 
   @Override

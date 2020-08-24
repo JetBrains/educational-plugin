@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.studyItemType
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.makeLazy
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.isFeedbackAsked
@@ -55,9 +56,9 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     if (lessonsToWrap.size != 20) {
       return
     }
-    val notification = Notification("WrapLessons", "Wrap Lessons With Section",
-                                    "Lessons can be wrapped with section", NotificationType.INFORMATION)
-    notification.addAction(object : DumbAwareAction("Wrap lessons") {
+    val notification = Notification("WrapLessons", EduCoreBundle.message("notification.title.wrap.lessons.with.section"),
+                                    EduCoreBundle.message("notification.content.wrap.lessons.with.section"), NotificationType.INFORMATION)
+    notification.addAction(object : DumbAwareAction(EduCoreBundle.lazyMessage("action.wrap.lessons.title")) {
       override fun actionPerformed(e: AnActionEvent) {
         CCWrapWithSection.wrapLessonsIntoSection(project, course, lessonsToWrap)
         notification.expire()

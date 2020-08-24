@@ -10,6 +10,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.taskFile.CCShowPreview
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduTestDialog
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.withTestDialog
 
 class CCCreateTaskFilePreviewTest : EduActionTestCase() {
@@ -43,7 +44,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
 
     withTestDialog(EduTestDialog()) {
       testAction(createDataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview())
-    }.checkWasShown(CCShowPreview.NO_PREVIEW_MESSAGE)
+    }.checkWasShown(EduCoreBundle.message("dialog.message.no.preview.for.file"))
   }
 
   private fun createDataContext(file: VirtualFile): DataContext {

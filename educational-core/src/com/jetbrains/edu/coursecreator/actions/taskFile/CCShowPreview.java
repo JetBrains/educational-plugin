@@ -45,6 +45,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,13 +61,8 @@ import static com.jetbrains.edu.learning.EduUtils.createStudentFile;
 public class CCShowPreview extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(CCShowPreview.class.getName());
 
-  public static final String SHOW_PREVIEW = "Preview Task File";
-  public static final String NO_PREVIEW_MESSAGE = "Preview is available for task files with answer placeholders only";
-  public static final String NO_PREVIEW_TITLE = "No Preview for This File";
-  public static final String BROKEN_PREVIEW_TITLE = "Failed to Create Preview";
-
   public CCShowPreview() {
-    super(SHOW_PREVIEW, SHOW_PREVIEW, null);
+    super(EduCoreBundle.lazyMessage("action.show.preview.text"), EduCoreBundle.lazyMessage("action.show.preview.description"), null);
   }
 
   @Override
@@ -119,7 +115,8 @@ public class CCShowPreview extends DumbAwareAction {
     }
 
     if (taskFile.getAnswerPlaceholders().isEmpty()) {
-      showInfoMessage(NO_PREVIEW_MESSAGE, NO_PREVIEW_TITLE);
+      showInfoMessage(EduCoreBundle.message("dialog.message.no.preview.for.file"),
+                      EduCoreBundle.message("dialog.title.no.preview.for.file"));
       return;
     }
 
@@ -130,8 +127,8 @@ public class CCShowPreview extends DumbAwareAction {
         studentTaskFile = createStudentFile(project, virtualFile, task);
       }
       catch (BrokenPlaceholderException exception) {
-        LOG.info(BROKEN_PREVIEW_TITLE + ": " + exception.getMessage());
-        showErrorDialog(exception.getPlaceholderInfo(), BROKEN_PREVIEW_TITLE);
+        LOG.info("Failed to Create Preview: " + exception.getMessage());
+        showErrorDialog(exception.getPlaceholderInfo(), EduCoreBundle.message("dialog.title.failed.to.create.preview"));
         return;
       }
       if (studentTaskFile != null) {
@@ -157,9 +154,9 @@ public class CCShowPreview extends DumbAwareAction {
     JPanel header = new JPanel();
     header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
     header.setBorder(JBUI.Borders.empty(10));
-    header.add(new JLabel("Read-only preview."));
+    header.add(new JLabel(EduCoreBundle.message("ui.label.read.only.preview")));
     String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
-    header.add(new JLabel(String.format("Created %s.", timeStamp)));
+    header.add(new JLabel(EduCoreBundle.message("ui.label.created.at", timeStamp)));
     JComponent editorComponent = createdEditor.getComponent();
     labeledEditor.setComponent(editorComponent, header);
     createdEditor.setCaretVisible(false);
