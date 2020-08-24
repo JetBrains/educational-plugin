@@ -107,7 +107,8 @@ object HyperskillProjectOpener {
   private fun createHyperskillCourse(request: HyperskillOpenInProjectRequest,
                                      hyperskillProject: HyperskillProject): Result<HyperskillCourse, String> {
     val hyperskillLanguage = if (request is HyperskillOpenStepRequest) request.language else hyperskillProject.language
-    val eduLanguage = HYPERSKILL_LANGUAGES[hyperskillLanguage] ?: return Err("Unsupported language ${hyperskillLanguage}")
+    val eduLanguage = HYPERSKILL_LANGUAGES[hyperskillLanguage]
+                      ?: return Err(EduCoreBundle.message("hyperskill.unsupported.language", hyperskillLanguage))
 
     if (request is HyperskillOpenStepRequest && hyperskillLanguage != hyperskillProject.language) {
       return Ok(HyperskillCourse(hyperskillLanguage, eduLanguage))

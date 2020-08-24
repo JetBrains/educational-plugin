@@ -5,6 +5,8 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.*
@@ -237,6 +239,27 @@ class HyperskillProjectOpenerTest : EduTestCase() {
       file("settings.gradle")
     }
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  fun `test unsupported language`() {
+    loginFakeUser()
+    configureMockResponsesForStages()
+
+    mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null) {
+      lesson(HYPERSKILL_PROBLEMS) {
+        codeTask(stepId = 4) {
+          taskFile("task.txt", "file text")
+        }
+      }
+    })
+
+    val unknownLanguage = "Unknown language"
+    HyperskillProjectOpener.open(HyperskillOpenStepRequest(1, 4, unknownLanguage)).onError {
+      assertEquals(EduCoreBundle.message("hyperskill.unsupported.language", unknownLanguage), it)
+      return
+    }
+
+    error("Error is expected: project shouldn't open")
   }
 
   private fun configureMockResponsesForStages() {
