@@ -2,20 +2,14 @@ package com.jetbrains.edu.learning.codeforces.checker
 
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.*
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.withRegistryKeyOff
-import java.awt.datatransfer.StringSelection
 
 class CodeforcesTaskChecker(
   task: CodeforcesTask,
@@ -25,10 +19,6 @@ class CodeforcesTaskChecker(
 ) : TaskChecker<CodeforcesTask>(task, project) {
 
   override fun check(indicator: ProgressIndicator): CheckResult {
-    val studyEditor = FileEditorManager.getInstance(project).selectedEditor
-    val solution = (studyEditor as EduEditor).editor.document.text
-    val url = (task.course as CodeforcesCourse).getSubmissionUrl()
-
     indicator.text = "Executing tests"
     val testFolders = task.getTestFolders(project)
 
@@ -67,9 +57,12 @@ class CodeforcesTaskChecker(
         return CheckResult(CheckStatus.Failed, message, diff = diff)
       }
     }
-
-    CopyPasteManager.getInstance().setContents(StringSelection(solution))
-    return CheckResult(CheckStatus.Unchecked, "<a href=\"$url\">Submit solution</a> (already copied to clipboard)<br>")
+    /**
+     * Message will be added in
+     * @see com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel.createCodeforcesSuccessMessagePanel
+     * It's better not to reuse hyperlinkListener mechanism
+     */
+    return CheckResult(CheckStatus.Unchecked, "")
   }
 
   companion object {

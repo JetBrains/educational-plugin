@@ -33,8 +33,10 @@ import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
 import com.jetbrains.edu.learning.xmlUnescaped
+import org.jdesktop.swingx.HorizontalLayout
 import java.awt.BorderLayout
 import javax.swing.BoxLayout
+import javax.swing.JLabel
 import javax.swing.JPanel
 
 class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, alarm: Alarm) : JPanel(BorderLayout()) {
@@ -111,11 +113,20 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     }
 
     if (task is CodeforcesTask && checkResult.diff == null && checkResult.status == CheckStatus.Unchecked) {
-      val markAsCompleted = LightColoredActionLink(EduCoreBundle.message("codeforces.label.mark.as.completed"),
-                                                   ActionManager.getInstance().getAction(CodeforcesMarkAsCompletedAction.ACTION_ID))
-      answerHintsPanel.value.add(markAsCompleted)
+      answerHintsPanel.value.add(createCodeforcesSuccessMessagePanel())
     }
     return if (answerHintsPanel.isInitialized()) answerHintsPanel.value else null
+  }
+
+  private fun createCodeforcesSuccessMessagePanel(): JPanel {
+    val panel = JPanel(HorizontalLayout())
+    val message = JLabel(EduCoreBundle.message("codeforces.local.tests.passed"))
+    message.border = JBUI.Borders.empty(16, 0, 0, 16)
+    val markAsCompleted = LightColoredActionLink(EduCoreBundle.message("codeforces.label.mark.as.completed"),
+                                                 ActionManager.getInstance().getAction(CodeforcesMarkAsCompletedAction.ACTION_ID))
+    panel.add(message)
+    panel.add(markAsCompleted)
+    return panel
   }
 
   private fun getPeekSolutionAction(task: Task): String {

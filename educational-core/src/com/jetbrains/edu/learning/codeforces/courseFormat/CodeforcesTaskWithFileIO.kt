@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.codeforces.courseFormat
 
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.SUBMIT_TO_CODEFORCES
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class CodeforcesTaskWithFileIO : CodeforcesTask {
   override lateinit var inputFileName: String
@@ -18,5 +18,5 @@ class CodeforcesTaskWithFileIO : CodeforcesTask {
 
   override fun getItemType(): String = CODEFORCES_TASK_TYPE_WITH_FILE_IO
 
-  override fun getCheckAction(): CheckAction = CheckAction(SUBMIT_TO_CODEFORCES)
+  override fun getCheckAction(): CheckAction = CheckAction(EduCoreBundle.message("codeforces.copy.and.submit"))
 }
