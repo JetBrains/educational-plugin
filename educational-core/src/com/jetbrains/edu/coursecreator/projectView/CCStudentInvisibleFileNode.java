@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.SimpleTextAttributes;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.projectView.CourseViewUtils;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public class CCStudentInvisibleFileNode extends PsiFileNode {
                                     String name) {
     super(project, value, viewSettings);
     VirtualFile file = value.getVirtualFile();
-    boolean isExcluded = file != null && EduUtils.canBeAddedToTask(project, file);
+    boolean isExcluded = file != null && (EduUtils.canBeAddedToTask(project, file) || CCUtils.isExcluded(file, project));
     // TODO: come up with better way to show user that this file doesn't belong to task
     myName = isExcluded ? name + " (excluded)" : name;
   }

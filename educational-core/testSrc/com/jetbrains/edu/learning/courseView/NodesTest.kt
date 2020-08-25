@@ -413,6 +413,42 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin("|"))
   }
 
+  fun `test excluded files in educator mode`() {
+    val lessonIgnoredFile = "lesson1/LessonIgnoredFile.txt"
+    val courseIgnoredFile = "IgnoredFile.txt"
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask {
+          taskFile("file1.txt")
+          taskFile("file2.txt")
+        }
+        eduTask {
+          taskFile("file1.txt")
+          taskFile("file2.txt")
+        }
+      }
+      additionalFile(lessonIgnoredFile)
+      additionalFile(courseIgnoredFile)
+      additionalFile(EduNames.COURSE_IGNORE, "$courseIgnoredFile\n${lessonIgnoredFile}\n\n")
+    }
+    assertCourseView("""
+      |-Project
+      | -CCCourseNode Test Course (Course Creation)
+      |  -CCLessonNode lesson1
+      |   -CCTaskNode task1
+      |    file1.txt
+      |    file2.txt
+      |    CCStudentInvisibleFileNode task.html
+      |   -CCTaskNode task2
+      |    file1.txt
+      |    file2.txt
+      |    CCStudentInvisibleFileNode task.html
+      |   CCStudentInvisibleFileNode LessonIgnoredFile.txt (excluded)
+      |  CCStudentInvisibleFileNode .courseignore (excluded)
+      |  CCStudentInvisibleFileNode IgnoredFile.txt (excluded)
+    """.trimMargin("|"))
+  }
+
   fun `test hyperskill course`() {
     courseWithFiles(courseProducer = ::HyperskillCourse) {
       frameworkLesson  {

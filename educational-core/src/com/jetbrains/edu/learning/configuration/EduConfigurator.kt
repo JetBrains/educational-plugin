@@ -68,7 +68,8 @@ interface EduConfigurator<Settings> {
            // Hidden files
            ancestorNames.any { ancestorName: String -> ancestorName.startsWith(".") } ||
            // Special files
-           ancestorNames.contains(CCUtils.GENERATED_FILES_FOLDER) || EduNames.HINTS == name || EduNames.STEPIK_IDS_JSON == name
+           ancestorNames.contains(CCUtils.GENERATED_FILES_FOLDER) || EduNames.HINTS == name || EduNames.STEPIK_IDS_JSON == name ||
+           EduNames.COURSE_IGNORE == name
   }
 
   /**

@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.io.ZipUtil
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.CCUtils.checkIgnoredFiles
 import com.jetbrains.edu.coursecreator.CCUtils.generateArchiveFolder
 import com.jetbrains.edu.coursecreator.actions.mixins.*
 import com.jetbrains.edu.learning.EduNames.COURSE_META_FILE
@@ -43,6 +44,14 @@ abstract class CourseArchiveCreator(
   override fun compute(): String? {
     val course = StudyTaskManager.getInstance(project).course?.copy() ?: return "Unable to obtain course for current project"
     val jsonFolder = generateArchiveFolder(project) ?: return "Failed to generate course archive"
+
+    val error = checkIgnoredFiles(project)
+    if (error != null) {
+      if (!isUnitTestMode) {
+        LOG.error("Failed to create course archive: $error")
+      }
+      return error
+    }
 
     try {
       prepareCourse(course)

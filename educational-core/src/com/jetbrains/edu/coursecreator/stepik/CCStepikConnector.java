@@ -116,6 +116,11 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "post course additional information")) return false;
 
     updateProgress(PUBLISHING_COURSE_TITLE);
+    String errors = CCUtils.checkIgnoredFiles(project);
+    if (errors != null) {
+      showErrorNotification(project, FAILED_TITLE, "Failed to post additional files." + errors);
+      return false;
+    }
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
     CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
     int code = StepikConnector.getInstance().postCourseAttachment(courseAdditionalInfo, courseId);
@@ -287,6 +292,11 @@ public class CCStepikConnector {
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
     assert courseInfo != null;
     updateProgress(PUBLISHING_COURSE_TITLE);
+    String errors = CCUtils.checkIgnoredFiles(project);
+    if (errors != null) {
+      showErrorNotification(project, FAILED_TITLE, "Failed to update additional files." + errors);
+      return false;
+    }
     final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(courseInfo, project);
     CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
     return StepikConnector.getInstance().updateCourseAttachment(courseAdditionalInfo, courseInfo) == HttpStatus.SC_CREATED;

@@ -132,6 +132,31 @@ object CCUtils {
   }
 
   @JvmStatic
+  fun checkIgnoredFiles(project: Project): String? {
+    val excludedFiles = loadExcludedFilePaths(project)
+    val filesNotFound = excludedFiles.filter { project.courseDir.findFileByRelativePath(it) == null }
+    if (filesNotFound.isNotEmpty()) {
+      return """|Files listed in the `${EduNames.COURSE_IGNORE}` are not found in the project:
+                |
+                |${filesNotFound.joinToString()}""".trimMargin()
+    }
+    return null
+  }
+
+  private fun loadExcludedFilePaths(project: Project): List<String> {
+    val courseIgnore = project.courseDir.findChild(EduNames.COURSE_IGNORE)
+    if (courseIgnore == null || !courseIgnore.exists()) return emptyList()
+    return courseIgnore.document.text.lines().map { it.trim() }.filter { it.isNotEmpty() }
+  }
+
+  @JvmStatic
+  fun isExcluded(file: VirtualFile, project: Project): Boolean {
+    val excludedFiles = loadExcludedFilePaths(project)
+    val courseRelativePath = VfsUtil.getRelativePath(file, project.courseDir)
+    return courseRelativePath in excludedFiles || courseRelativePath == EduNames.COURSE_IGNORE
+  }
+
+  @JvmStatic
   fun collectAdditionalFiles(course: Course, project: Project): List<TaskFile> {
     ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
     val configurator = course.configurator
@@ -139,12 +164,16 @@ object CCUtils {
     val archiveName = String.format("%s.zip", if (sanitizedName.startsWith("_")) EduNames.COURSE else sanitizedName)
     val baseDir = project.courseDir
 
+    val excludedFiles = loadExcludedFilePaths(project)
+
     val additionalTaskFiles = mutableListOf<TaskFile>()
     VfsUtilCore.visitChildrenRecursively(baseDir, object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
       override fun visitFile(file: VirtualFile): Boolean {
         @Suppress("NAME_SHADOWING")
         val name = file.name
         if (name == archiveName) return false
+        val courseRelativePath = VfsUtil.getRelativePath(file, project.courseDir)
+        if (courseRelativePath in excludedFiles) return true
         if (file.isDirectory) {
           // All files inside task directory are already handled by `CCVirtualFileListener`
           // so here we don't need to process them again

@@ -1,15 +1,19 @@
 package com.jetbrains.edu.coursecreator.actions
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.yaml.configFileName
+import junit.framework.TestCase
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,6 +26,23 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
           taskFile("taskFile1.txt")
         }
       }
+    }
+    course.description = "my summary"
+    doTest()
+  }
+
+  fun `test course ignore`() {
+    val lessonIgnoredFile = "lesson1/LessonIgnoredFile.txt"
+    val courseIgnoredFile = "IgnoredFile.txt"
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+      additionalFile(lessonIgnoredFile)
+      additionalFile(courseIgnoredFile)
+      additionalFile(EduNames.COURSE_IGNORE, "$courseIgnoredFile\n${lessonIgnoredFile}\n\n")
     }
     course.description = "my summary"
     doTest()
@@ -385,6 +406,21 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       additionalFile("8abe7b618ddf9c55adbea359ce891775794a61")
     }
     doTest()
+  }
+
+  fun `test ignored files contain missing file`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+      additionalFile(EduNames.COURSE_IGNORE, "tmp.txt")
+    }
+    course.description = "my summary"
+    val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(
+      EduCourseArchiveCreator(myFixture.project, "${myFixture.project.basePath}/$GENERATED_FILES_FOLDER/course.zip"))
+    TestCase.assertEquals("Files listed in the `.courseignore` are not found in the project:\n\ntmp.txt", errorMessage)
   }
 
   override fun getTestDataPath(): String {

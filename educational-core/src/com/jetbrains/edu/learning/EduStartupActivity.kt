@@ -37,6 +37,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
 
       if (CCUtils.isCourseCreator(project)) {
         EditorFactory.getInstance().eventMulticaster.addDocumentListener(SynchronizeTaskDescription(project), manager)
+        EditorFactory.getInstance().eventMulticaster.addDocumentListener(CourseIgnoreDocumentListener(project), manager)
       }
       EduDocumentListener.setGlobalListener(project, manager)
       selectProjectView(project, true)
