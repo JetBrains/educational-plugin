@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.codeforces.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TITLE
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
@@ -56,6 +57,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
   private fun createRightActionsToolbar(): JPanel {
     if (course is CodeforcesCourse) {
       rightActionsToolbar.add(createActionLink(EduCoreBundle.message("action.open.on.text", CODEFORCES_TITLE), GoToTaskUrlAction.ACTION_ID))
+      rightActionsToolbar.add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"), CodeforcesCopyAndSubmitAction.ACTION_ID))
     }
     else {
       if (course is HyperskillCourse) {
