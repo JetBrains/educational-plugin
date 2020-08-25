@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.OPEN_ON_CODEFORCES_ACTION
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TITLE
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -55,11 +55,11 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
 
   private fun createRightActionsToolbar(): JPanel {
     if (course is CodeforcesCourse) {
-      rightActionsToolbar.add(createActionLink(OPEN_ON_CODEFORCES_ACTION, GoToTaskUrlAction.ACTION_ID))
+      rightActionsToolbar.add(createActionLink(EduCoreBundle.message("action.open.on.text", CODEFORCES_TITLE), GoToTaskUrlAction.ACTION_ID))
     }
     else {
       if (course is HyperskillCourse) {
-        val link = createActionLink(EduCoreBundle.message("hyperskill.open.on", EduNames.JBA), GoToTaskUrlAction.ACTION_ID)
+        val link = createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), GoToTaskUrlAction.ACTION_ID)
         link.border = JBUI.Borders.empty(9, 0, 0, 0)
         rightActionsToolbar.add(link)
       }

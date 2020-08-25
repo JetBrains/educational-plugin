@@ -62,7 +62,7 @@ class GoToTaskUrlAction : DumbAwareAction(GO_TO_TASK_URL_ACTION, GO_TO_TASK_URL_
 
   private fun isOpenOnJBAAction(e: AnActionEvent): Boolean {
     val link = e.dataContext.getData("contextComponent") as? ActionLink ?: return false
-    return link.text == EduCoreBundle.message("hyperskill.open.on", EduNames.JBA)
+    return link.text == EduCoreBundle.message("action.open.on.text", EduNames.JBA)
   }
 
   companion object {
