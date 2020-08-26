@@ -5,7 +5,6 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
-import com.intellij.testFramework.runInEdtAndGet
 import com.intellij.ui.AppIcon
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -97,7 +96,7 @@ object HyperskillProjectOpener {
 
   private fun openInNewProject(request: HyperskillOpenInProjectRequest): Result<Boolean, String> {
     return getHyperskillCourseUnderProgress(request).map { hyperskillCourse ->
-      runInEdtAndGet {
+      getInEdt {
         requestFocus()
         HyperskillProjectManager.getInstance().newProject(hyperskillCourse)
       }

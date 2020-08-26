@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.progress.ProgressIndicator
@@ -18,6 +20,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.ConcurrencyUtil
 import com.jetbrains.edu.learning.courseFormat.Course
+import kotlinx.coroutines.runBlocking
 import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
@@ -111,5 +114,11 @@ fun <T> withRegistryKeyOff(key: String, action: () -> T): T {
   }
   finally {
     registryValue.setValue(before)
+  }
+}
+
+fun <V> getInEdt(compute: () -> V): V {
+  return runBlocking(AppUIExecutor.onUiThread().coroutineDispatchingContext()) {
+    compute()
   }
 }
