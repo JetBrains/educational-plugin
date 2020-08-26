@@ -1,6 +1,5 @@
 import java.net.URL
 import java.nio.file.Files
-import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.util.*
 
@@ -53,7 +52,9 @@ fun download(url: URL, dstPath: String) {
   println("Download $url")
 
   url.openStream().use {
-    Files.copy(it, Paths.get(dstPath), StandardCopyOption.REPLACE_EXISTING)
+    val path = file(dstPath).toPath().toAbsolutePath()
+    println("Copying file to $path")
+    Files.copy(it, path, StandardCopyOption.REPLACE_EXISTING)
   }
 }
 
