@@ -6,6 +6,7 @@ import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class CheckAllTest : EduActionTestCase() {
   private lateinit var connection: MessageBusConnection
@@ -25,7 +26,7 @@ class CheckAllTest : EduActionTestCase() {
     }
 
     doTestWithNotification {
-      assertEquals(CheckAllTasks.SUCCESS_MESSAGE , it.content)
+      assertEquals(EduCoreBundle.message("notification.content.all.tasks.solved.correctly"), it.content)
     }
   }
 

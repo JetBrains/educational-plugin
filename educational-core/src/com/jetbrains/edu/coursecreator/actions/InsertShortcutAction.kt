@@ -31,6 +31,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.toShortcut
 import java.awt.BorderLayout
 import java.awt.Component
@@ -41,14 +42,18 @@ import java.awt.event.MouseEvent
 import javax.swing.*
 
 @Suppress("ComponentNotRegistered")
-open class InsertShortcutAction : AnAction("Insert Shortcut", "Inserts shortcut to render in Task Description", null) {
+open class InsertShortcutAction : AnAction(
+  EduCoreBundle.lazyMessage("action.insert.shortcut.text"),
+  EduCoreBundle.lazyMessage("action.insert.shortcut.description"),
+  null
+) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val editor = CommonDataKeys.EDITOR.getData(e.dataContext) ?: return
 
     val allActions = mutableSetOf<AnAction>()
 
-    ProgressManager.getInstance().run(object : Task.Modal(project, "Collecting shortcuts", false) {
+    ProgressManager.getInstance().run(object : Task.Modal(project, EduCoreBundle.message("dialog.title.collecting.shortcuts"), false) {
       override fun run(indicator: ProgressIndicator) {
         runReadAction {
           val mainGroup = ActionsTreeUtil.createMainGroup(project,
@@ -216,7 +221,7 @@ open class InsertShortcutAction : AnAction("Insert Shortcut", "Inserts shortcut 
       val panel = JPanel(BorderLayout())
       panel.border = JBUI.Borders.empty(2)
       panel.background = UIUtil.getListBackground(isSelected, cellHasFocus)
-      panel.toolTipText = "Double-click on selected item or press 'Enter'"
+      panel.toolTipText = EduCoreBundle.message("ui.tool.tip.double.click.or.press.enter")
 
       val anAction = value as AnAction
       val presentation = anAction.templatePresentation

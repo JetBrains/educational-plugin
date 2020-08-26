@@ -14,6 +14,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizerKt;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +23,8 @@ import static com.jetbrains.edu.learning.EduUtils.addMnemonic;
 public class CCChangeCourseInfo extends DumbAwareAction {
 
   public CCChangeCourseInfo() {
-    super("&Edit Course Information", "Edit course information", null);
+    super(EduCoreBundle.lazyMessage("action.edit.course.information.text"),
+          EduCoreBundle.lazyMessage("action.edit.course.information.description"), null);
   }
 
   @Override

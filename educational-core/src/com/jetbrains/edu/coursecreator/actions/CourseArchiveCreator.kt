@@ -28,19 +28,25 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import java.io.File
 import java.io.IOException
 import java.util.*
 
 abstract class CourseArchiveCreator(
   private val project: Project,
-  private val location: String
+  @NonNls private val location: String
 ) : Computable<String?> {
 
+  @Nls(capitalization = Nls.Capitalization.Sentence)
   override fun compute(): String? {
-    val course = StudyTaskManager.getInstance(project).course?.copy() ?: return "Unable to obtain course for current project"
-    val jsonFolder = generateArchiveFolder(project) ?: return "Failed to generate course archive"
+    val course = StudyTaskManager.getInstance(project).course?.copy()
+                     ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
+    val jsonFolder = generateArchiveFolder(project)
+                     ?: return EduCoreBundle.message("error.failed.to.generate.course.archive")
 
     val error = checkIgnoredFiles(project)
     if (error != null) {
@@ -70,7 +76,7 @@ abstract class CourseArchiveCreator(
     }
     catch (e: IOException) {
       LOG.error("Failed to create course archive", e)
-      "Write operation failed. Please check if write operations are allowed and try again."
+      EduCoreBundle.message("error.failed.to.write")
     }
   }
 

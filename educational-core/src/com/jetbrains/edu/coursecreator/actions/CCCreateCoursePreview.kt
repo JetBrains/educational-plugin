@@ -7,9 +7,10 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 @Suppress("ComponentNotRegistered")  // educational-core.xml
-class CCCreateCoursePreview : DumbAwareAction("&Create Course Preview") {
+class CCCreateCoursePreview : DumbAwareAction(EduCoreBundle.lazyMessage("action.create.course.preview.text")) {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT) ?: return

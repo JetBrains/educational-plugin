@@ -7,10 +7,12 @@ import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-
+import java.util.function.Supplier
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
-class CreateMarketplaceArchive : CreateCourseArchiveAction(EduUtils.addMnemonic(EduCoreBundle.message("action.create.course.archive.marketplace"))) {
+class CreateMarketplaceArchive
+// BACKCOMPAT: 2019.3 Use lazyMessage call instead
+  : CreateCourseArchiveAction(Supplier { EduCoreBundle.message("action.create.course.archive.marketplace") }) {
 
   override fun showAuthorField(): Boolean = false
 

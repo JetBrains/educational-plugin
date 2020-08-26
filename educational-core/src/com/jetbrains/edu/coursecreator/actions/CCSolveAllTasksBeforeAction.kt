@@ -17,11 +17,17 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered")
-class CCSolveAllTasksBeforeAction : DumbAwareAction("Solve All Tasks Before", "Solves all tasks in course before selected one", null) {
+class CCSolveAllTasksBeforeAction : DumbAwareAction(
+  EduCoreBundle.lazyMessage("action.solve.all.tasks.before.text"),
+  EduCoreBundle.lazyMessage("action.solve.all.tasks.before.description"),
+  null
+) {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
@@ -80,6 +86,7 @@ class CCSolveAllTasksBeforeAction : DumbAwareAction("Solve All Tasks Before", "S
   companion object {
     private val LOG = Logger.getInstance(CCSolveAllTasksBeforeAction::class.java)
 
+    @NonNls
     const val REGISTRY_KEY = "edu.course.creator.solve.all"
   }
 }

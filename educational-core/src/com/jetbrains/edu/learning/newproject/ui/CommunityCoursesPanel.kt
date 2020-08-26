@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.stepik.api.StepikCoursesProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.function.Supplier
 
 private const val LEARN_COMMUNITY_COURSES = "https://www.jetbrains.com/help/education/learner-start-guide.html"  // TODO: update link
 
@@ -15,7 +16,8 @@ class CommunityCoursesPanel(coursesPlatformProvider: CoursesPlatformProvider,
                             scope: CoroutineScope) : CoursesPanel(coursesPlatformProvider, scope) {
 
   override fun toolbarAction(): AnAction {
-    return CCNewCourseAction(EduCoreBundle.message("course.dialog.create.course"))
+    // BACKCOMPAT: 2019.3 Use lazyMessage call instead
+    return CCNewCourseAction(Supplier { EduCoreBundle.message ("course.dialog.create.course") })
   }
 
   override fun tabInfo(): TabInfo? {

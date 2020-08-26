@@ -4,6 +4,7 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
 import com.jetbrains.edu.learning.isUnitTestMode
+import org.jetbrains.annotations.NonNls
 
 class CCPluginToggleAction : ToggleAction() {
   override fun isSelected(e: AnActionEvent): Boolean = isCourseCreatorFeaturesEnabled
@@ -13,6 +14,7 @@ class CCPluginToggleAction : ToggleAction() {
   }
 
   companion object {
+    @NonNls
     const val COURSE_CREATOR_ENABLED = "Edu.CourseCreator.Enabled"
 
     @JvmStatic

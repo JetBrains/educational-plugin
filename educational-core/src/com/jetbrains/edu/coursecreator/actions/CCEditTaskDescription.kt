@@ -13,10 +13,16 @@ import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 
-class CCEditTaskDescription : DumbAwareAction(TEXT, TEXT, AllIcons.Actions.Edit) {
+class CCEditTaskDescription : DumbAwareAction(
+  EduCoreBundle.lazyMessage("action.edit.task.description.text"),
+  EduCoreBundle.lazyMessage("action.edit.task.description.description"),
+  AllIcons.Actions.Edit
+) {
   companion object {
-    private const val TEXT = "Edit task description"
+    @NonNls
     const val ACTION_ID = "Educational.CCEditTaskDescription"
   }
 

@@ -17,11 +17,13 @@ import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import org.jetbrains.annotations.NonNls
 import javax.swing.event.HyperlinkEvent
 
-class CheckAllTasks : AnAction("Check All Tasks") {
+class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks.text")) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
@@ -42,7 +44,7 @@ class CheckAllTasks : AnAction("Check All Tasks") {
           if (checker is EduTaskCheckerBase) {
             checker.activateRunToolWindow = false
           }
-          indicator.text = "Checking task $curTask/$tasksNum"
+          indicator.text = EduCoreBundle.message("progress.text.checking.task", curTask, tasksNum)
           val checkResult = checker.check(indicator)
           if (checkResult.status != CheckStatus.Solved) {
             failedTasks.add(it)
@@ -54,7 +56,12 @@ class CheckAllTasks : AnAction("Check All Tasks") {
           return
         }
         val notification = if (failedTasks.isEmpty()) {
-          Notification(GROUP_ID, "Check Finished", SUCCESS_MESSAGE, NotificationType.INFORMATION)
+          Notification(
+            GROUP_ID,
+            EduCoreBundle.message("notification.title.check.finished"),
+            EduCoreBundle.message("notification.content.all.tasks.solved.correctly"),
+            NotificationType.INFORMATION
+          )
         }
         else {
           createFailedTasksNotification(failedTasks, tasksNum, project)
@@ -65,20 +72,24 @@ class CheckAllTasks : AnAction("Check All Tasks") {
   }
 
   private fun createFailedTasksNotification(failedTasks: MutableList<Task>, tasksNum: Int, project: Project): Notification {
-    val subtitle = "${failedTasks.size} of $tasksNum tasks failed"
-    val tasksList = failedTasks.withIndex().joinToString("<br>") { "<a href=\"${it.index}\">${it.value.fullName}</a>" }
-    val notification = Notification(GROUP_ID, null, "Check", subtitle, tasksList, NotificationType.WARNING,
-                                    object : NotificationListener.Adapter() {
-                                      override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
-                                        notification.hideBalloon()
-                                        NavigationUtils.navigateToTask(project, failedTasks[Integer.valueOf(e.description)])
-                                        EduCounterUsageCollector.taskNavigation(
-                                          EduCounterUsageCollector.TaskNavigationPlace.CHECK_ALL_NOTIFICATION)
-                                      }
-                                    })
+    val notification = Notification(
+      GROUP_ID,
+      null,
+      EduCoreBundle.message("notification.title.check"),
+      EduCoreBundle.message("notification.subtitle.some.tasks.failed", failedTasks.size, tasksNum),
+      failedTasks.withIndex().joinToString("<br>") { "<a href=\"${it.index}\">${it.value.fullName}</a>" },
+      NotificationType.WARNING,
+      object : NotificationListener.Adapter() {
+        override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
+          notification.hideBalloon()
+          NavigationUtils.navigateToTask(project, failedTasks[Integer.valueOf(e.description)])
+          EduCounterUsageCollector.taskNavigation(EduCounterUsageCollector.TaskNavigationPlace.CHECK_ALL_NOTIFICATION)
+        }
+      }
+    )
 
     if (failedTasks.size > 1) {
-      notification.addAction(object : AnAction("Open First Failed Task") {
+      notification.addAction(object : AnAction(EduCoreBundle.lazyMessage("action.open.first.failed.task.text")) {
         override fun actionPerformed(e: AnActionEvent) {
           notification.hideBalloon()
           NavigationUtils.navigateToTask(project, failedTasks.first())
@@ -98,9 +109,7 @@ class CheckAllTasks : AnAction("Check All Tasks") {
   }
 
   companion object {
-    @VisibleForTesting
-    const val SUCCESS_MESSAGE = "All tasks are solved correctly"
-
+    @NonNls
     private const val GROUP_ID = "Education: all tasks check"
     private val LOG = Logger.getInstance(CheckAllTasks::class.java)
   }
