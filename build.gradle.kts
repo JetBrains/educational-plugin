@@ -650,7 +650,7 @@ fun downloadStudioIfNeededAndGetPath(): String {
     download {
       src(studioArtifactDownloadPath(archiveType))
       retries(2)
-      readTimeout(5 * 60 * 1000) // 5 min
+      readTimeout(3 * 60 * 1000) // 3 min
       dest(studioArchive)
     }
   }
