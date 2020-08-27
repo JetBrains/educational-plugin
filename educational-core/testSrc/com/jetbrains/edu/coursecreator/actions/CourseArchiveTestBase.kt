@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.PrettyPrinter
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtilRt
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import java.io.File
@@ -26,7 +27,8 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
     val creator = getArchiveCreator()
     creator.prepareCourse(course)
     val mapper = creator.getMapper(course)
-    return mapper.writer(printer).writeValueAsString(course)
+    val json = mapper.writer(printer).writeValueAsString(course)
+    return StringUtilRt.convertLineSeparators(json).replace("\\n\\n".toRegex(), "\n")
   }
 
   abstract fun getArchiveCreator() : CourseArchiveCreator
