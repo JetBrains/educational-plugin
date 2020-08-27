@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.createCourseArchive
-import java.io.File
 
 abstract class CreateCourseArchiveAction(title: String) : DumbAwareAction(title) {
 
@@ -51,7 +50,7 @@ abstract class CreateCourseArchiveAction(title: String) : DumbAwareAction(title)
       PropertiesComponent.getInstance(project).setValue(AUTHOR_NAME, authorName)
     }
 
-    val errorMessage = createCourseArchive(project, dlg.zipName, locationPath)
+    val errorMessage = createCourseArchive(project, locationPath)
     if (errorMessage == null) {
       invokeLater {
         Messages.showInfoMessage("Course archive was saved to $locationPath",
@@ -68,13 +67,13 @@ abstract class CreateCourseArchiveAction(title: String) : DumbAwareAction(title)
   /**
    * @return null if course archive was created successfully, non-empty error message otherwise
    */
-  fun createCourseArchive(project: Project, zipName: String, locationDir: String?): String? {
+  fun createCourseArchive(project: Project, location: String): String? {
     FileDocumentManager.getInstance().saveAllDocuments()
-    return ApplicationManager.getApplication().runWriteAction<String>(getArchiveCreator(project, File(locationDir, "$zipName.zip")))
+    return ApplicationManager.getApplication().runWriteAction<String>(getArchiveCreator(project, location))
   }
 
   abstract fun showAuthorField(): Boolean
-  abstract fun getArchiveCreator(project: Project, zipFile: File): CourseArchiveCreator
+  abstract fun getArchiveCreator(project: Project, location: String): CourseArchiveCreator
 
   companion object {
     const val LAST_ARCHIVE_LOCATION = "Edu.CourseCreator.LastArchiveLocation"

@@ -10,12 +10,11 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class EduCourseArchiveCreator(project: Project, zipFile: File)
-  : CourseArchiveCreator(project, zipFile) {
+class EduCourseArchiveCreator(project: Project, location: String)
+  : CourseArchiveCreator(project, location) {
 
   override fun getMapper(course: Course): ObjectMapper = if (course.id == 0) course.localMapper else course.remoteMapper
 

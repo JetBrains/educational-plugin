@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.actions
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import java.io.File
 
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
@@ -11,6 +10,6 @@ class CCCreateCourseArchive : CreateCourseArchiveAction(EduUtils.addMnemonic(Edu
 
   override fun showAuthorField(): Boolean = true
 
-  override fun getArchiveCreator(project: Project, zipFile: File): CourseArchiveCreator = EduCourseArchiveCreator(project, zipFile)
+  override fun getArchiveCreator(project: Project, location: String): CourseArchiveCreator = EduCourseArchiveCreator(project, location)
 
 }

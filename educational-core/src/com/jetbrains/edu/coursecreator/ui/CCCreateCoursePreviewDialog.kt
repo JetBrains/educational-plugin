@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import java.awt.event.ActionEvent
-import java.io.File
 import java.io.IOException
 import javax.swing.AbstractAction
 import javax.swing.Action
@@ -81,10 +80,9 @@ class CCCreateCoursePreviewDialog(
     }
     val courseName = myCourse.name
     val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
-    val locationDir = folder.path
+    val archiveLocation = "${folder.path}/$archiveName.zip"
     close(OK_EXIT_CODE)
-    val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(
-      EduCourseArchiveCreator(myProject, File(locationDir, "$archiveName.zip")))
+    val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(EduCourseArchiveCreator(myProject, archiveLocation))
 
     if (errorMessage.isNullOrEmpty()) {
       val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")

@@ -6,10 +6,9 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.mixins.MarketplaceCourseMixin
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import java.io.File
 
-class MarketplaceArchiveCreator(project: Project, zipFile: File)
-  : CourseArchiveCreator(project, zipFile) {
+class MarketplaceArchiveCreator(project: Project, location: String)
+  : CourseArchiveCreator(project, location) {
 
   override fun getMapper(course: Course): ObjectMapper = course.localMapper
 

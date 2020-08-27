@@ -5,6 +5,8 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.io.File
 import javax.swing.JComponent
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 
 class CCCreateCourseArchiveDialog(project: Project, courseName: String, showAuthorField: Boolean) : DialogWrapper(project) {
   private val myPanel: CCCreateCourseArchivePanel
@@ -13,27 +15,39 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String, showAuth
     title = EduCoreBundle.message("action.create.course.archive.text")
     myPanel = CCCreateCourseArchivePanel(project, courseName, showAuthorField)
     addPanelListener()
+    validateLocation()
     init()
   }
 
   private fun addPanelListener() {
-    myPanel.addLocationListener {
-      val location = locationPath
-      val file = File(location)
-      if (!file.exists() || !file.isDirectory) {
-        myOKAction.isEnabled = false
-        myPanel.setError()
+    myPanel.addLocationListener(object : DocumentListener {
+      override fun insertUpdate(e: DocumentEvent) {
+        validateLocation()
       }
-      myOKAction.isEnabled = true
+
+      override fun removeUpdate(e: DocumentEvent) {
+        validateLocation()
+      }
+
+      override fun changedUpdate(e: DocumentEvent) {
+        validateLocation()
+      }
+    })
+  }
+
+  private fun validateLocation() {
+    myPanel.setErrorVisible(false)
+    val file = File(locationPath)
+    if (file.exists()) {
+      isOKActionEnabled = false
+      myPanel.setError()
     }
+    isOKActionEnabled = true
   }
 
   override fun createCenterPanel(): JComponent? {
     return myPanel
   }
-
-  val zipName: String
-    get() = myPanel.zipName
 
   val locationPath: String
     get() = myPanel.locationPath

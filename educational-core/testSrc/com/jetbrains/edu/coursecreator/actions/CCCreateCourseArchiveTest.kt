@@ -1,25 +1,19 @@
 package com.jetbrains.edu.coursecreator.actions
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
-import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.yaml.configFileName
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CCCreateCourseArchiveTest : EduActionTestCase() {
+class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
   fun `test local course archive`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
@@ -259,7 +253,7 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
 
     // It is not important, what would be passed to the constructor, except the first argument - project
     // Inside `compute()`, exception would be thrown, so we will not reach the moment of creating the archive
-    EduCourseArchiveCreator(project, File("")).compute()
+    EduCourseArchiveCreator(project, "").compute()
 
     val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
     assertEquals(task.configFileName, navigatedFile.name)
@@ -393,42 +387,11 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     doTest()
   }
 
-  private fun doTest() {
-    val generatedJsonFile = generateJson()
-    val expectedCourseJson = loadExpectedJson()
-    assertEquals(expectedCourseJson, generatedJsonFile)
-  }
-
-  private fun loadExpectedJson(): String {
-    val fileName = getTestFile()
-    return FileUtil.loadFile(File(testDataPath, fileName))
-  }
-
-  private fun generateJson(): String {
-    @Suppress("DEPRECATION")
-    val baseDir = myFixture.project.baseDir
-    VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
-    val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(
-      EduCourseArchiveCreator(myFixture.project, File("${myFixture.project.basePath}/$GENERATED_FILES_FOLDER", "course.zip")))
-    assertNull(errorMessage)
-    VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
-    val generated = baseDir.findChild(GENERATED_FILES_FOLDER)
-    assertNotNull(generated)
-    val archive = generated!!.findChild("course.zip")
-    assertNotNull(archive)
-    val courseFolder = generated.findChild("course")
-    assertNotNull(courseFolder)
-    val jsonFile = courseFolder!!.findChild(EduNames.COURSE_META_FILE)
-    assertNotNull(jsonFile)
-    return FileUtil.loadFile(File(jsonFile!!.path), true).replace(Regex("\\n\\n"), "\n")
-  }
-
   override fun getTestDataPath(): String {
     return super.getTestDataPath() + "/actions/createCourseArchive"
   }
 
-  private fun getTestFile(): String {
-    return getTestName(true).trim() + ".json"
-  }
+  override fun getArchiveCreator() =
+    EduCourseArchiveCreator(myFixture.project, "${myFixture.project.basePath}/$GENERATED_FILES_FOLDER/course.zip")
 
 }

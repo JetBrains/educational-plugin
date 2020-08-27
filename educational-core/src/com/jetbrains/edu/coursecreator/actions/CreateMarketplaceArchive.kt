@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import java.io.File
 
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
@@ -21,6 +20,6 @@ class CreateMarketplaceArchive : CreateCourseArchiveAction(EduUtils.addMnemonic(
     presentation.isEnabledAndVisible = project != null && isCourseCreator(project) && isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE)
   }
 
-  override fun getArchiveCreator(project: Project, zipFile: File): CourseArchiveCreator = MarketplaceArchiveCreator(project, zipFile)
+  override fun getArchiveCreator(project: Project, location: String): CourseArchiveCreator = MarketplaceArchiveCreator(project, location)
 
 }

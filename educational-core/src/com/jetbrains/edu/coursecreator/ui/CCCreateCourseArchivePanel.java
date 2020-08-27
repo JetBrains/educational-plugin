@@ -13,15 +13,13 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class CCCreateCourseArchivePanel extends JPanel {
   private JPanel myPanel;
-  private JTextField myNameField;
   private TextFieldWithBrowseButton myLocationField;
   private JLabel myErrorIcon;
   private JLabel myErrorLabel;
@@ -32,19 +30,17 @@ public class CCCreateCourseArchivePanel extends JPanel {
     setLayout(new BorderLayout());
     add(myPanel, BorderLayout.CENTER);
     myErrorIcon.setIcon(AllIcons.Actions.Lightning);
-    setState(false);
-    String sanitizedName = FileUtil.sanitizeFileName(name);
-    myNameField.setText(sanitizedName.startsWith("_") ? EduNames.COURSE : sanitizedName);
+    setErrorVisible(false);
     myAuthorField.setText(getAuthorInitialValue(project));
-    myLocationField.setText(getArchiveLocation(project));
+    myLocationField.setText(getArchiveLocation(project, name));
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
     myLocationField.addBrowseFolderListener("Choose Location Folder", null, project, descriptor);
     myAuthorLabel.setVisible(showAuthorField);
     myAuthorField.setVisible(showAuthorField);
   }
 
-  public void addLocationListener(ActionListener listener) {
-    myLocationField.addActionListener(listener);
+  public void addLocationListener(DocumentListener listener) {
+    myLocationField.getTextField().getDocument().addDocumentListener(listener);
   }
 
   @NotNull
@@ -65,18 +61,14 @@ public class CCCreateCourseArchivePanel extends JPanel {
     return "User";
   }
 
-  private void setState(boolean isVisible) {
+  protected void setErrorVisible(boolean isVisible) {
     myErrorIcon.setVisible(isVisible);
     myErrorLabel.setVisible(isVisible);
   }
 
   protected void setError() {
-    myErrorLabel.setText("Invalid location");
-    setState(true);
-  }
-
-  public String getZipName() {
-    return myNameField.getText();
+    myErrorLabel.setText("Invalid location. File already exists.");
+    setErrorVisible(true);
   }
 
   public String getLocationPath() {
@@ -87,9 +79,12 @@ public class CCCreateCourseArchivePanel extends JPanel {
     return myAuthorField.getText();
   }
 
-  @Nullable
-  private static String getArchiveLocation(@NotNull Project project) {
+  private static String getArchiveLocation(@NotNull Project project, String name) {
     String location = PropertiesComponent.getInstance(project).getValue(CreateCourseArchiveAction.LAST_ARCHIVE_LOCATION);
-    return location == null ? project.getBasePath() : location;
+    if (location != null) return location;
+
+    String sanitizedName = FileUtil.sanitizeFileName(name);
+    if (sanitizedName.startsWith("_")) sanitizedName = EduNames.COURSE;
+    return project.getBasePath() + "/" + sanitizedName + ".zip";
   }
 }

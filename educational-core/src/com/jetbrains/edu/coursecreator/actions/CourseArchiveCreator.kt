@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -36,15 +37,15 @@ import java.util.*
 
 abstract class CourseArchiveCreator(
   private val project: Project,
-  private val zipFile: File
+  private val location: String
 ) : Computable<String?> {
 
   override fun compute(): String? {
-    val courseCopy = StudyTaskManager.getInstance(project).course?.copy() ?: return "Unable to obtain course for current project"
+    val course = StudyTaskManager.getInstance(project).course?.copy() ?: return "Unable to obtain course for current project"
     val jsonFolder = generateArchiveFolder(project) ?: return "Failed to generate course archive"
 
     try {
-      loadActualTexts(project, courseCopy)
+      prepareCourse(course)
     }
     catch (e: BrokenPlaceholderException) {
       if (!isUnitTestMode) {
@@ -54,19 +55,24 @@ abstract class CourseArchiveCreator(
       FileEditorManager.getInstance(project).openFile(yamlFile, true)
       return "${e.message}\n\n${e.placeholderInfo}"
     }
-    courseCopy.sortItems()
-    courseCopy.additionalFiles = CCUtils.collectAdditionalFiles(courseCopy, project)
     return try {
-      val json = generateJson(jsonFolder, courseCopy)
+      val json = generateJson(jsonFolder, course)
       VirtualFileManager.getInstance().refreshWithoutFileWatcher(false)
-      ZipUtil.compressFile(json, zipFile)
+      ZipUtil.compressFile(json, File(location))
       synchronize(project)
       null
     }
     catch (e: IOException) {
       LOG.error("Failed to create course archive", e)
-      return "Write operation failed. Please check if write operations are allowed and try again."
+      "Write operation failed. Please check if write operations are allowed and try again."
     }
+  }
+
+  @VisibleForTesting
+  fun prepareCourse(course: Course) {
+    loadActualTexts(project, course)
+    course.sortItems()
+    course.additionalFiles = CCUtils.collectAdditionalFiles(course, project)
   }
 
   private fun synchronize(project: Project) {
