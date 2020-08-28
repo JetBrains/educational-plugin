@@ -7,8 +7,8 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseBuilder
@@ -71,18 +71,7 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
   override fun getMockFileName(text: String): String? = baseConfigurator.getMockFileName(text)
   override fun beforeCourseStarted(course: Course) = baseConfigurator.beforeCourseStarted(course)
 
-  open fun getCodeTaskFile(project: Project, task: Task): TaskFile? {
-    val files = task.taskFiles.values
-    if (files.size == 1) return files.firstOrNull()
-    val mainFileName = baseConfigurator.courseBuilder.mainTemplateName
-    if (mainFileName != null) {
-      val name = GeneratorUtils.joinPaths(sourceDir, mainFileName)
-      if (name in task.taskFiles) {
-        return task.taskFiles[name]
-      }
-    }
-    return files.firstOrNull { !it.isLearnerCreated && it.isVisible }
-  }
+  open fun getCodeTaskFile(project: Project, task: Task): TaskFile? = task.getCodeTaskFile()
 
   companion object {
     const val HYPERSKILL_TEST_DIR = "hstest"

@@ -135,6 +135,19 @@ fun Task.canShowSolution(): Boolean {
   return shouldShow && taskFiles.values.any { it.canShowSolution() }
 }
 
+fun Task.getCodeTaskFile(): TaskFile? {
+  val files = taskFiles.values
+  if (files.size == 1) return files.firstOrNull()
+  val mainFileName = course.configurator?.courseBuilder?.mainTemplateName
+  if (mainFileName != null) {
+    val name = GeneratorUtils.joinPaths(sourceDir, mainFileName)
+    if (name in taskFiles) {
+      return taskFiles[name]
+    }
+  }
+  return files.firstOrNull { !it.isLearnerCreated && it.isVisible }
+}
+
 @JvmName("revertTaskParameters")
 fun Task.revertTaskParameters(project: Project) {
   if (this is VideoTask) {

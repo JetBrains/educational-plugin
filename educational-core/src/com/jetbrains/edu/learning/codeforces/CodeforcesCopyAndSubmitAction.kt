@@ -9,6 +9,8 @@ import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -23,8 +25,9 @@ class CodeforcesCopyAndSubmitAction : DumbAwareAction(EduCoreBundle.message("cod
     val task = EduState.getEduState(project)?.task as? CodeforcesTask ?: return
     val course = task.course as? CodeforcesCourse ?: return
 
-    val studyEditor = FileEditorManager.getInstance(project).selectedEditor
-    val solution = (studyEditor as EduEditor).editor.document.text
+    val studyEditor = FileEditorManager.getInstance(project).selectedEditor as EduEditor
+    val taskFile = studyEditor.taskFile.task.getCodeTaskFile() ?: return
+    val solution = taskFile.getDocument(project)?.text ?: return
     CopyPasteManager.getInstance().setContents(StringSelection(solution))
     if (!isUnitTestMode) {
       BrowserUtil.browse(course.getSubmissionUrl())
