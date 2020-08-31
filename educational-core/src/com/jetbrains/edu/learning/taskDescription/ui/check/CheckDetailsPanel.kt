@@ -112,7 +112,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
       answerHintsPanel.value.add(compareOutputs)
     }
 
-    if (task is CodeforcesTask && checkResult.diff == null && checkResult.status == CheckStatus.Unchecked) {
+    if (task is CodeforcesTask && checkResult == CheckResult.UNCHECKED) {
       answerHintsPanel.value.add(createCodeforcesSuccessMessagePanel())
     }
     return if (answerHintsPanel.isInitialized()) answerHintsPanel.value else null

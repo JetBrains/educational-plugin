@@ -62,7 +62,7 @@ class CodeforcesTaskChecker(
      * @see com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel.createCodeforcesSuccessMessagePanel
      * It's better not to reuse hyperlinkListener mechanism
      */
-    return CheckResult(CheckStatus.Unchecked, "")
+    return CheckResult.UNCHECKED
   }
 
   companion object {
