@@ -7,37 +7,72 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 
 class HyperskillFindCodeTaskFileTest : EduTestCase() {
   fun `test find the only file`() {
-    val task = CodeTask("task1")
-    val answerFile = TaskFile("src/Task.kt", "")
+    val answerFileName = "src/Task.kt"
+    val taskName = "task1"
+    val course = hyperskillCourse {
+      lesson(HYPERSKILL_PROBLEMS) {
+        codeTask(taskName) {
+          taskFile(answerFileName)
+        }
+      }
+    }
+    val task = course.findTask(HYPERSKILL_PROBLEMS, taskName) as CodeTask
+    val answerFile = task.taskFiles[answerFileName]
 
-    task.addTaskFile(answerFile)
     doTest(task, answerFile)
   }
 
   fun `test find Main file`() {
-    val task = CodeTask("task1")
-    val answerFile = TaskFile("src/Main.kt", "")
+    val answerFileName = "src/Main.kt"
+    val taskName = "task1"
+    val course = hyperskillCourse {
+      lesson(HYPERSKILL_PROBLEMS) {
+        codeTask(taskName) {
+          taskFile("src/Task.kt")
+          taskFile(answerFileName)
+        }
+      }
+    }
+    val task = course.findTask(HYPERSKILL_PROBLEMS, taskName) as CodeTask
+    val answerFile = task.taskFiles[answerFileName]
 
-    task.addTaskFile(TaskFile("src/Task.kt", ""))
-    task.addTaskFile(answerFile)
     doTest(task, answerFile)
   }
 
   fun `test find first visible & educator-created file`() {
-    val task = CodeTask("task1")
-    val answerFile = TaskFile("src/Task.kt", "")
+    val answerFileName = "src/Task.kt"
+    val taskName = "task1"
+    val course = hyperskillCourse {
+      lesson(HYPERSKILL_PROBLEMS) {
+        codeTask(taskName) {
+          taskFile("src/Foo.kt", visible = true) {
+            taskFile.isLearnerCreated = true
+          }
+          taskFile(answerFileName)
+          taskFile("src/Bar.kt", visible = false)
+          taskFile("src/Baz.kt")
+        }
+      }
+    }
+    val task = course.findTask(HYPERSKILL_PROBLEMS, taskName) as CodeTask
+    val answerFile = task.taskFiles[answerFileName]
 
-    task.addTaskFile(TaskFile("src/Foo.kt", "", true, true))
-    task.addTaskFile(answerFile)
-    task.addTaskFile(TaskFile("src/Bar.kt", "", false, false))
-    task.addTaskFile(TaskFile("src/Baz.kt", ""))
     doTest(task, answerFile)
   }
 
   fun `test unable to find file`() {
-    val task = CodeTask("task1")
-    task.addTaskFile(TaskFile("src/Foo.kt", "", false, false))
-    task.addTaskFile(TaskFile("src/Bar.kt", "", true, true))
+    val taskName = "task1"
+    val course = hyperskillCourse {
+      lesson(HYPERSKILL_PROBLEMS) {
+        codeTask(taskName) {
+          taskFile("src/Foo.kt", visible = false)
+          taskFile("src/Bar.kt") {
+            taskFile.isLearnerCreated = true
+          }
+        }
+      }
+    }
+    val task = course.findTask(HYPERSKILL_PROBLEMS, taskName) as CodeTask
     doTest(task, null)
   }
 
