@@ -161,6 +161,60 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  fun `test do not ask user about conflicts if there isn't user changes (next, prev, next)`() {
+    val course = createHyperskillCourse()
+
+    withVirtualFileListener(course) {
+      val task1 = course.findTask("lesson1", "task1")
+      task1.openTaskFileInEditor("src/Task.kt")
+      myFixture.testAction(NextTaskAction())
+
+      val task2 = course.findTask("lesson1", "task2")
+      task2.openTaskFileInEditor("src/Task.kt")
+      myFixture.type("fun bar() {}\n")
+      myFixture.testAction(PreviousTaskAction())
+
+
+      task1.openTaskFileInEditor("src/Task.kt")
+      val dialog = withTestDialog(EduTestDialog(Messages.NO)) {
+        myFixture.testAction(NextTaskAction())
+      }
+
+      assertNull(dialog.shownMessage)
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          dir("src") {
+            file("Task.kt", """
+              fun bar() {}
+              fun foo() {}
+            """)
+            file("Baz.kt", "fun baz() {}")
+          }
+          dir("test") {
+            file("Tests2.kt", """
+              fun tests2() {}
+            """)
+          }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
   fun `test ask user when changes conflict (next, prev, next), select replace changes`() {
     val course = createHyperskillCourse()
 

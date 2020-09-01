@@ -125,7 +125,13 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
     val initialCurrentFiles = currentTask.allFiles
 
-    // 1. Calculate difference between initial state of current task and current state on local FS.
+    // 1. Get difference between initial state of current task and previous task state
+    // and construct previous state of current task.
+    // Previous state is needed to determine if a user made any new change
+    val previousCurrentUserChanges = getUserChanges(currentTask)
+    val previousCurrentState = HashMap(initialCurrentFiles).apply { previousCurrentUserChanges.apply(this) }
+
+    // 2. Calculate difference between initial state of current task and current state on local FS.
     // Update change list for current task in [storage] to have ability to restore state of current task in future
     val (newCurrentRecord, currentUserChanges) = try {
       updateUserChanges(currentRecord, initialCurrentFiles, taskDir)
@@ -135,37 +141,46 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       UpdatedUserChanges(currentRecord, UserChanges.empty())
     }
 
-    // 2. Update record index to a new one.
+    // 3. Update record index to a new one.
     currentTask.record = newCurrentRecord
     YamlFormatSynchronizer.saveItem(currentTask)
 
-    // 3. Get difference (change list) between initial and latest states of target task
-    val nextUserChanges = try {
-      storage.getUserChanges(targetRecord)
-    }
-    catch (e: IOException) {
-      LOG.error("Failed to get user changes for task `${currentTask.name}`", e)
-      UserChanges.empty()
-    }
+    // 4. Get difference (change list) between initial and latest states of target task
+    val nextUserChanges = getUserChanges(targetTask)
 
-    // 4. Apply change lists to initial state to get latest states of current and target tasks
+    // 5. Apply change lists to initial state to get latest states of current and target tasks
     val currentState = HashMap(initialCurrentFiles).apply { currentUserChanges.apply(this) }
     val targetState = HashMap(targetTask.allFiles).apply { nextUserChanges.apply(this) }
 
-    // 5. Calculate difference between latest states of current and target tasks
+    // 6. Calculate difference between latest states of current and target tasks
     // Note, there are special rules for hyperskill courses for now
     // All user changes from the current task should be propagated to next task as is
+
+    // If a user navigated back to current task, didn't make any change and wants to navigate to next task again
+    // we shouldn't try to propagate current changes to next task
+    val currentTaskHasNewUserChanges = !(currentRecord != -1 && targetRecord != -1 && previousCurrentState == currentState)
+
     val course = lesson.course
-    val changes = if (taskIndexDelta == 1 && course is HyperskillCourse && !course.isTemplateBased) {
+    val changes = if (currentTaskHasNewUserChanges && taskIndexDelta == 1 && course is HyperskillCourse && !course.isTemplateBased) {
       calculatePropagationChanges(targetTask, currentTask, currentState, targetState, showDialogIfConflict)
     }
     else {
       calculateChanges(currentState, targetState)
     }
 
-    // 6. Apply difference between latest states of current and target tasks on local FS
+    // 7. Apply difference between latest states of current and target tasks on local FS
     changes.apply(project, taskDir, targetTask)
     YamlFormatSynchronizer.saveItem(targetTask)
+  }
+
+  private fun getUserChanges(task: Task): UserChanges {
+    return try {
+      storage.getUserChanges(task.record)
+    }
+    catch (e: IOException) {
+      LOG.error("Failed to get user changes for task `${task.name}`", e)
+      UserChanges.empty()
+    }
   }
 
   /**
