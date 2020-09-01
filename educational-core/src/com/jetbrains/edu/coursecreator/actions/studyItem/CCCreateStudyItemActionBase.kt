@@ -129,7 +129,8 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   }
 
   protected abstract fun addItem(course: Course, item: Item)
-  protected abstract fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem>
+  protected abstract fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem?>
+
   @Throws(IOException::class)
   protected abstract fun createItemDir(project: Project, course: Course, item: Item, parentDirectory: VirtualFile): VirtualFile?
 

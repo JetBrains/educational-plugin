@@ -55,22 +55,21 @@ object CCUtils {
    * @param threshold    index is used as threshold
    */
   @JvmStatic
-  fun updateHigherElements(dirs: Array<VirtualFile>,
-                           getStudyItem: Function<VirtualFile, out StudyItem>,
-                           threshold: Int,
-                           delta: Int) {
-    val itemsToUpdate = dirs.filterTo(mutableListOf()) { dir ->
-      val item = getStudyItem.`fun`(dir) ?: return@filterTo false
-      item.index > threshold
-    }.sortedWith(Comparator { o1, o2 ->
-      val item1 = getStudyItem.`fun`(o1)
-      val item2 = getStudyItem.`fun`(o2)
-      //if we delete some dir we should start increasing numbers in dir names from the end
-      -delta * EduUtils.INDEX_COMPARATOR.compare(item1, item2)
-    })
+  fun updateHigherElements(
+    dirs: Array<VirtualFile>,
+    getStudyItem: Function<VirtualFile, out StudyItem?>,
+    threshold: Int,
+    delta: Int
+  ) {
+    val itemsToUpdate = dirs
+      .mapNotNull { getStudyItem.`fun`(it) }
+      .filter { it.index > threshold }
+      .sortedWith(Comparator { item1, item2 ->
+        // if we delete some dir we should start increasing numbers in dir names from the end
+        -delta * EduUtils.INDEX_COMPARATOR.compare(item1, item2)
+      })
 
-    for (dir in itemsToUpdate) {
-      val item = getStudyItem.`fun`(dir)
+    for (item in itemsToUpdate) {
       val newIndex = item.index + delta
       item.index = newIndex
     }

@@ -30,7 +30,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     item.lesson.addTask(item)
   }
 
-  override fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem> =
+  override fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem?> =
     Function { file -> (item as? Task)?.lesson?.getTask(file.name) }
 
   @Throws(IOException::class)

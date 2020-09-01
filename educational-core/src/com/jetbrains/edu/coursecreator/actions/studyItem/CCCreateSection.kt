@@ -18,7 +18,7 @@ class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTI
     course.addSection(item)
   }
 
-  override fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem> {
+  override fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem?> {
     return Function<VirtualFile, StudyItem> { file: VirtualFile -> course.getItem(file.name) }
   }
 
