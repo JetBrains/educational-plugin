@@ -5,16 +5,14 @@ import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
-import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.withTestDialog
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
@@ -363,8 +361,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
   }
 
   fun `test navigate to next unavailable`() {
-    val course = createHyperskillCourse()
-    course.stages = listOf(HyperskillStage(1, "", 1, false), HyperskillStage(2, "", 2, false), HyperskillStage(3, "", 3, false))
+    val course = createHyperskillCourse(completeStages = false)
     val task = course.findTask("lesson1", "task1")
 
     task.openTaskFileInEditor("src/Task.kt")
@@ -400,11 +397,8 @@ class HyperskillNavigationTest : NavigationTestBase() {
     assertFalse(presentation.isEnabledAndVisible)
   }
 
-  private fun createHyperskillCourse(): HyperskillCourse {
-    val course = courseWithFiles(
-      language = FakeGradleBasedLanguage,
-      courseProducer = ::HyperskillCourse
-    ) {
+  private fun createHyperskillCourse(completeStages: Boolean = true): HyperskillCourse {
+    return hyperskillCourseWithFiles(completeStages = completeStages) {
       frameworkLesson("lesson1") {
         eduTask("task1") {
           taskFile("src/Task.kt", "fun foo() {}")
@@ -422,17 +416,11 @@ class HyperskillNavigationTest : NavigationTestBase() {
           taskFile("test/Tests3.kt", "fun tests3() {}")
         }
       }
-    } as HyperskillCourse
-    course.hyperskillProject = HyperskillProject()
-    course.stages = listOf(HyperskillStage(1, "", 1, true), HyperskillStage(2, "", 2, true), HyperskillStage(3, "", 3, true))
-    return course
+    }
   }
 
-  private fun createHyperskillCourseWithProblemsLesson(): Course {
-    val course = courseWithFiles(
-      language = FakeGradleBasedLanguage,
-      courseProducer = ::HyperskillCourse
-    ) {
+  private fun createHyperskillCourseWithProblemsLesson(completeStages: Boolean = true): Course {
+    return hyperskillCourseWithFiles(completeStages = completeStages) {
       frameworkLesson("lesson1") {
         eduTask("task1") {
           taskFile("src/Task.kt", "fun foo() {}")
@@ -443,9 +431,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
           taskFile("src/Task.kt", "fun foo() {}")
         }
       }
-    } as HyperskillCourse
-    course.hyperskillProject = HyperskillProject()
-    course.stages = listOf(HyperskillStage(1, "", 1, true))
-    return course
+    }
   }
 }

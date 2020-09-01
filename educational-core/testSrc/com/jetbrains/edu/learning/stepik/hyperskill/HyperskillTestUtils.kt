@@ -27,30 +27,36 @@ fun loginFakeUser() {
   }
 }
 
-fun EduTestCase.hyperskillCourseWithFiles(projectId: Int? = 1,
-                                          name: String = TEST_HYPERSKILL_PROJECT_NAME,
-                                          language: Language = FakeGradleBasedLanguage,
-                                          courseMode: String = EduNames.STUDY,
-                                          buildCourse: CourseBuilder.() -> Unit): HyperskillCourse {
-  val course = courseWithFiles(name = name, courseProducer = ::HyperskillCourse,
-                               courseMode = courseMode, language = language, buildCourse = buildCourse) as HyperskillCourse
-  course.init(projectId)
+fun EduTestCase.hyperskillCourseWithFiles(
+  projectId: Int? = 1,
+  name: String = TEST_HYPERSKILL_PROJECT_NAME,
+  language: Language = FakeGradleBasedLanguage,
+  courseMode: String = EduNames.STUDY,
+  completeStages: Boolean = false,
+  buildCourse: CourseBuilder.() -> Unit
+): HyperskillCourse {
+  val course = courseWithFiles(name = name, courseProducer = ::HyperskillCourse, courseMode = courseMode, language = language,
+                               buildCourse = buildCourse) as HyperskillCourse
+  course.init(projectId, completeStages)
   return course
 }
 
 @Suppress("unused") // want this method to be available only in EduTestCase
-fun EduTestCase.hyperskillCourse(projectId: Int? = 1,
-                                 language: Language = FakeGradleBasedLanguage,
-                                 buildCourse: CourseBuilder.() -> Unit): HyperskillCourse {
+fun EduTestCase.hyperskillCourse(
+  projectId: Int? = 1,
+  language: Language = FakeGradleBasedLanguage,
+  completeStages: Boolean = false,
+  buildCourse: CourseBuilder.() -> Unit
+): HyperskillCourse {
   val course = course(name = TEST_HYPERSKILL_PROJECT_NAME,
                       courseProducer = ::HyperskillCourse,
                       language = language,
                       buildCourse = buildCourse) as HyperskillCourse
-  course.init(projectId)
+  course.init(projectId, completeStages)
   return course
 }
 
-private fun HyperskillCourse.init(projectId: Int?) {
+private fun HyperskillCourse.init(projectId: Int?, completeStages: Boolean) {
   if (projectId == null) {
     return
   }
@@ -62,7 +68,7 @@ private fun HyperskillCourse.init(projectId: Int?) {
   val projectLesson = getProjectLesson()
   if (projectLesson != null) {
     stages = projectLesson.items.mapIndexed { i, task ->
-      HyperskillStage(i + 1, testStageName(i + 1), task.id)
+      HyperskillStage(i + 1, testStageName(i + 1), task.id, isStageCompleted = completeStages)
     }
   }
 }
