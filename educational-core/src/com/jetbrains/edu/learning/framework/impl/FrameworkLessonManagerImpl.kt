@@ -19,6 +19,13 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 
+/**
+ * Keeps list of [Change]s for each task. Change list is difference between initial task state and latest one.
+ *
+ * Allows navigating between tasks in framework lessons in learner mode (where only current task is visible for a learner)
+ * without rewriting whole task content.
+ * It can be essential in large projects like Android applications where a lot of files are the same between two consecutive tasks
+ */
 class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLessonManager {
 
   @VisibleForTesting
@@ -91,6 +98,10 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
   }
 
+  /**
+   * Convert the current state on local FS related to current task in framework lesson
+   * to a new one, to get state of next/previous (target) task.
+   */
   private fun applyTargetTaskChanges(
     lesson: FrameworkLesson,
     taskIndexDelta: Int,
@@ -113,6 +124,9 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     val targetRecord = targetTask.record
 
     val initialCurrentFiles = currentTask.allFiles
+
+    // 1. Calculate difference between initial state of current task and current state on local FS.
+    // Update change list for current task in [storage] to have ability to restore state of current task in future
     val (newCurrentRecord, currentUserChanges) = try {
       updateUserChanges(currentRecord, initialCurrentFiles, taskDir)
     }
@@ -121,9 +135,11 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       UpdatedUserChanges(currentRecord, UserChanges.empty())
     }
 
+    // 2. Update record index to a new one.
     currentTask.record = newCurrentRecord
     YamlFormatSynchronizer.saveItem(currentTask)
 
+    // 3. Get difference (change list) between initial and latest states of target task
     val nextUserChanges = try {
       storage.getUserChanges(targetRecord)
     }
@@ -132,10 +148,12 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       UserChanges.empty()
     }
 
+    // 4. Apply change lists to initial state to get latest states of current and target tasks
     val currentState = HashMap(initialCurrentFiles).apply { currentUserChanges.apply(this) }
     val targetState = HashMap(targetTask.allFiles).apply { nextUserChanges.apply(this) }
 
-    // There are special rules for hyperskill courses for now
+    // 5. Calculate difference between latest states of current and target tasks
+    // Note, there are special rules for hyperskill courses for now
     // All user changes from the current task should be propagated to next task as is
     val course = lesson.course
     val changes = if (taskIndexDelta == 1 && course is HyperskillCourse && !course.isTemplateBased) {
@@ -145,6 +163,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       calculateChanges(currentState, targetState)
     }
 
+    // 6. Apply difference between latest states of current and target tasks on local FS
     changes.apply(project, taskDir, targetTask)
     YamlFormatSynchronizer.saveItem(targetTask)
   }
