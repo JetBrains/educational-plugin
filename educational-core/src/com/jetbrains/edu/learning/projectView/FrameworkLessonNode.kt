@@ -20,7 +20,7 @@ class FrameworkLessonNode private constructor(
     get() = super.item as FrameworkLesson
 
   override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
-    val task = item.currentTask()
+    val task = item.currentTask() ?: return null
     return CourseViewUtils.modifyTaskChildNode(myProject, childNode, task) { dir -> DirectoryNode(myProject, dir, settings, task) }
   }
 
@@ -47,9 +47,14 @@ class FrameworkLessonNode private constructor(
       lesson: FrameworkLesson
     ): FrameworkLessonNode? {
       val task = lesson.currentTask()
-      val taskBaseDirectory = lessonDirectory.findSubdirectory(EduNames.TASK) ?: return null
-      val taskDirectory = CourseViewUtils.findTaskDirectory(project, taskBaseDirectory, task) ?: return null
-      return FrameworkLessonNode(project, taskDirectory, viewSettings, lesson)
+      val dir = if (task != null) {
+        val taskBaseDirectory = lessonDirectory.findSubdirectory(EduNames.TASK) ?: return null
+        CourseViewUtils.findTaskDirectory(project, taskBaseDirectory, task) ?: return null
+      }
+      else {
+        lessonDirectory
+      }
+      return FrameworkLessonNode(project, dir, viewSettings, lesson)
     }
   }
 }

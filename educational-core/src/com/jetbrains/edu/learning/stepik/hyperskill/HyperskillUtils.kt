@@ -95,7 +95,8 @@ fun markStageAsCompleted(task: Task) {
 private class NavigateToProjectAction(private val project: Project, private val course: HyperskillCourse) : DumbAwareAction(null as String?) {
   override fun actionPerformed(e: AnActionEvent) {
     val lesson = course.getProjectLesson() ?: return
-    NavigationUtils.navigateToTask(project, lesson.currentTask())
+    val currentTask = lesson.currentTask() ?: return
+    NavigationUtils.navigateToTask(project, currentTask)
   }
 }
 

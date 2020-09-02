@@ -20,7 +20,10 @@ class FrameworkLesson() : Lesson() {
 
   var currentTaskIndex: Int = 0
 
-  fun currentTask(): Task = taskList[currentTaskIndex]
+  /**
+   * currentTask is null when lesson is empty
+   */
+  fun currentTask(): Task? = taskList.getOrNull(currentTaskIndex)
 
-  override fun getItemType(): String  = EduNames.FRAMEWORK
+  override fun getItemType(): String = EduNames.FRAMEWORK
 }

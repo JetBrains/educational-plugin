@@ -7,6 +7,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class NodesTest : CourseViewTestBase() {
@@ -440,6 +441,32 @@ class NodesTest : CourseViewTestBase() {
       |  -LessonNode lesson2
       |   -TaskNode task1
       |    task1.txt
+    """.trimMargin())
+  }
+
+  fun `test hyperskill course with empty framework lesson`() {
+    courseWithFiles(courseProducer = ::HyperskillCourse) {
+      frameworkLesson {
+      }
+    }
+
+    assertCourseView("""
+      |-Project
+      | -CourseNode Test Course
+      |  FrameworkLessonNode lesson1
+    """.trimMargin())
+  }
+
+  fun `test edu course with empty framework lesson`() {
+    courseWithFiles(courseProducer = ::EduCourse) {
+      frameworkLesson {
+      }
+    }
+
+    assertCourseView("""
+      |-Project
+      | -CourseNode Test Course  0/0
+      |  FrameworkLessonNode lesson1
     """.trimMargin())
   }
 }

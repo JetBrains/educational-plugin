@@ -262,10 +262,11 @@ object NavigationUtils {
     while (currentTask.index != targetTask.index) {
       if (currentTask.index < targetTask.index) {
         frameworkLessonManager.prepareNextTask(frameworkLesson, dir, showDialogIfConflict)
-      } else {
+      }
+      else {
         frameworkLessonManager.preparePrevTask(frameworkLesson, dir, showDialogIfConflict)
       }
-      currentTask = frameworkLesson.currentTask()
+      currentTask = frameworkLesson.currentTask() ?: break
     }
   }
 
