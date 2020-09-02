@@ -58,7 +58,7 @@ sealed class CourseCompatibility {
       return null
     }
 
-    private fun Course.pluginCompatibility(): CourseCompatibility? {
+    fun Course.pluginCompatibility(): CourseCompatibility? {
       val requiredPlugins = compatibilityProvider?.requiredPlugins() ?: return null
       // TODO: O(requiredPlugins * allPlugins) because PluginManager.getPlugin takes O(allPlugins).
       //  Can be improved at least to O(requiredPlugins * log(allPlugins))

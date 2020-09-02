@@ -30,7 +30,8 @@ const val SYNCHRONIZE_JBA_ACCOUNT = "Synchronizing ${EduNames.JBA} Account"
 
 val HYPERSKILL_LANGUAGES = mapOf("java" to "${EduNames.JAVA} 11", "kotlin" to EduNames.KOTLIN, "python" to EduNames.PYTHON,
                                  "javascript" to EduNames.JAVASCRIPT, "scala" to EduNames.SCALA,
-                                 "FakeGradleBasedLanguage" to "FakeGradleBasedLanguage", "TEXT" to "TEXT") // last two needed for tests
+                                 "FakeGradleBasedLanguage" to "FakeGradleBasedLanguage", "TEXT" to "TEXT", // last three needed for tests
+                                 "Unsupported" to "Unsupported")
 
 val HYPERSKILL_ENVIRONMENTS = mapOf("android" to EduNames.ANDROID, "unittest" to EduNames.UNITTEST)
 

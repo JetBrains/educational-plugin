@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.EduTestCase
@@ -241,7 +242,29 @@ class HyperskillProjectOpenerTest : EduTestCase() {
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
-  fun `test unsupported language`() {
+  fun `test unknown language`() {
+    val unknownLanguage = "Unknown language"
+    doLanguageValidationTest(unknownLanguage) {
+      assertEquals(EduCoreBundle.message("hyperskill.unsupported.language", unknownLanguage), it)
+    }
+  }
+
+  fun `test language supported with plugin`() {
+    doLanguageValidationTest("python") {
+      assertTrue("actual: $it", it.contains(EduCoreBundle.message("course.dialog.error.plugin.install.and.enable")))
+    }
+  }
+
+  fun `test language not supported in IDE`() {
+    val unsupportedLanguage = "Unsupported"
+    doLanguageValidationTest(unsupportedLanguage) {
+      val expectedMessage = EduCoreBundle.message("hyperskill.language.not.supported", ApplicationNamesInfo.getInstance().productName,
+                                                  unsupportedLanguage)
+      assertEquals(expectedMessage, it)
+    }
+  }
+
+  private fun doLanguageValidationTest(language: String, checkError: (String) -> Unit) {
     loginFakeUser()
     configureMockResponsesForStages()
 
@@ -253,9 +276,8 @@ class HyperskillProjectOpenerTest : EduTestCase() {
       }
     })
 
-    val unknownLanguage = "Unknown language"
-    HyperskillProjectOpener.open(HyperskillOpenStepRequest(1, 4, unknownLanguage)).onError {
-      assertEquals(EduCoreBundle.message("hyperskill.unsupported.language", unknownLanguage), it)
+    HyperskillProjectOpener.open(HyperskillOpenStepRequest(1, 4, language)).onError {
+      checkError(it)
       return
     }
 

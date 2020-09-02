@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduNames
@@ -9,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
+import com.jetbrains.edu.learning.plugins.PluginInfo
 import java.awt.Component
 import javax.swing.Icon
 
@@ -53,6 +55,20 @@ fun getErrorState(course: Course?, validateSettings: (Course) -> ValidationMessa
     languageError = languageSettingsMessage?.let { ErrorState.LanguageSettingsError(it) } ?: ErrorState.None
   }
   return ErrorState.forCourse(course).merge(languageError)
+}
+
+fun getRequiredPluginsMessage(plugins: Collection<PluginInfo>, limit: Int = 3): String {
+  require(limit > 1)
+
+  val names = if (plugins.size == 1) {
+    plugins.single().displayName
+  }
+  else {
+    val suffix = if (plugins.size <= limit) " and ${plugins.last().displayName}" else " and ${plugins.size - limit + 1} more"
+    plugins.take(minOf(limit - 1, plugins.size - 1)).joinToString { it.displayName } + suffix
+  }
+
+  return "$names ${StringUtil.pluralize("plugin", plugins.size)} required. "
 }
 
 fun browseHyperlink(message: ValidationMessage?) {

@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
@@ -106,17 +105,7 @@ sealed class ErrorState(
       }
 
     private fun errorMessage(plugins: Collection<PluginInfo>, limit: Int = 3): ValidationMessage {
-      require(limit > 1)
-
-      val names = if (plugins.size == 1) {
-        plugins.single().displayName
-      }
-      else {
-        val suffix = if (plugins.size <= limit) " and ${plugins.last().displayName}" else " and ${plugins.size - limit + 1} more"
-        plugins.take(minOf(limit - 1, plugins.size - 1)).joinToString { it.displayName } + suffix
-      }
-
-      val message = "$names ${StringUtil.pluralize("plugin", plugins.size)} required. "
+      val message = getRequiredPluginsMessage(plugins, limit)
       return ValidationMessage(message, EduCoreBundle.message("course.dialog.error.plugin.install.and.enable"), "")
     }
 

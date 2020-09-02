@@ -1,18 +1,22 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.AppIcon
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.pluginCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.getRequiredPluginsMessage
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -104,8 +108,8 @@ object HyperskillProjectOpener {
   }
 
   private fun createHyperskillCourse(request: HyperskillOpenInProjectRequest,
+                                     hyperskillLanguage: String,
                                      hyperskillProject: HyperskillProject): Result<HyperskillCourse, String> {
-    val hyperskillLanguage = if (request is HyperskillOpenStepRequest) request.language else hyperskillProject.language
     val eduLanguage = HYPERSKILL_LANGUAGES[hyperskillLanguage]
                       ?: return Err(EduCoreBundle.message("hyperskill.unsupported.language", hyperskillLanguage))
 
@@ -126,17 +130,37 @@ object HyperskillProjectOpener {
     return Ok(HyperskillCourse(hyperskillProject, eduLanguage, eduEnvironment))
   }
 
+  private fun HyperskillCourse.validateLanguage(hyperskillLanguage: String): Result<Unit, String> {
+    val pluginCompatibility = pluginCompatibility()
+    if (pluginCompatibility is CourseCompatibility.PluginsRequired) {
+      val requiredPluginsMessage = getRequiredPluginsMessage(pluginCompatibility.toInstallOrEnable)
+      val helpLink = "https://www.jetbrains.com/help/idea/managing-plugins.html"
+      return Err(
+        """$requiredPluginsMessage<a href="$helpLink">${EduCoreBundle.message("course.dialog.error.plugin.install.and.enable")}.</a>"""
+      )
+    }
+
+    if (configurator == null) {
+      return Err(EduCoreBundle.message("hyperskill.language.not.supported",
+                                       ApplicationNamesInfo.getInstance().productName,
+                                       hyperskillLanguage.capitalize()))
+    }
+    return Ok(Unit)
+  }
+
   private fun getHyperskillCourseUnderProgress(request: HyperskillOpenInProjectRequest): Result<HyperskillCourse, String> {
     return computeUnderProgress(title = "Loading ${EduNames.JBA} Project") { indicator ->
       val hyperskillProject = HyperskillConnector.getInstance().getProject(request.projectId).onError {
         return@computeUnderProgress Err(it)
       }
 
-      val hyperskillCourse = createHyperskillCourse(request, hyperskillProject).onError { return@computeUnderProgress Err(it) }
-      if (hyperskillCourse.configurator == null) {
-        return@computeUnderProgress Err("The project isn't supported (language: ${hyperskillProject.language}). " +
-                                        "Check if all needed plugins are installed and enabled")
+      val hyperskillLanguage = if (request is HyperskillOpenStepRequest) request.language else hyperskillProject.language
+
+      val hyperskillCourse = createHyperskillCourse(request, hyperskillLanguage, hyperskillProject).onError {
+        return@computeUnderProgress Err(it)
       }
+
+      hyperskillCourse.validateLanguage(hyperskillLanguage).onError { return@computeUnderProgress Err(it) }
 
       when (request) {
         is HyperskillOpenStepRequest -> {
