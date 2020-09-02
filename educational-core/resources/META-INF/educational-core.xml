@@ -325,6 +325,9 @@
     <compatibilityProvider language="Scala"
                            environment="Gradle"
                            implementationClass="com.jetbrains.edu.learning.compatibility.ScalaGradleCourseCompatibilityProvider"/>
+    <!--need to register without environment to work with Hyperskill courses-->
+    <compatibilityProvider language="Scala"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.ScalaGradleCourseCompatibilityProvider"/>
     <compatibilityProvider language="Scala"
                            environment="sbt"
                            implementationClass="com.jetbrains.edu.learning.compatibility.ScalaSbtCourseCompatibilityProvider"/>
