@@ -382,9 +382,6 @@ project(":jvm-core") {
     val plugins = mutableListOf(
       "java",
       "junit",
-      "properties",
-      "gradle",
-      "Groovy",
       "gradle-java"
     )
     setPlugins(*plugins.toTypedArray())
@@ -419,9 +416,6 @@ project(":Edu-Java") {
     val plugins = mutableListOf(
       "java",
       "junit",
-      "properties",
-      "gradle",
-      "Groovy",
       "gradle-java"
     )
     setPlugins(*plugins.toTypedArray())
@@ -445,9 +439,6 @@ project(":Edu-Kotlin") {
       "Kotlin",
       "java",
       "junit",
-      "properties",
-      "gradle",
-      "Groovy",
       "gradle-java"
     )
     setPlugins(*plugins.toTypedArray())
@@ -469,9 +460,6 @@ project(":Edu-Scala") {
       scalaPlugin,
       "java",
       "junit",
-      "properties",
-      "gradle",
-      "Groovy",
       "gradle-java"
     )
     setPlugins(*plugins.toTypedArray())
@@ -488,22 +476,17 @@ project(":Edu-Scala") {
 project(":Edu-Android") {
   intellij {
     localPath = studioPath
-    val plugins = mutableListOf(
+    val plugins = listOf(
       "android",
-      "junit",
-      "properties",
-      "gradle",
-      "Groovy",
-      "gradle-java",
-      "IntelliLang",
-      "smali",
-      "Kotlin",
       "java",
+      "junit",
+      "gradle-java",
+      // Looks like `android-layoutlib` is semantically mandatory dependency of android plugin
+      // because we get `NoClassDefFoundError` without it.
+      // But it's marked as optional one so gradle-intellij-plugin doesn't load it automatically.
+      // So we have to add it manually
       "android-layoutlib"
     )
-    if (isAtLeast201) {
-      plugins += "platform-images"
-    }
     setPlugins(*plugins.toTypedArray())
   }
 
@@ -519,6 +502,7 @@ project(":Edu-Python") {
   intellij {
     val plugins = listOfNotNull(
       pythonPlugin,
+      // BACKCOMPAT: 2019.3
       // python pro plugin has mandatory dependency on yaml plugin
       "yaml",
       if (isJvmCenteredIDE) "java" else null
@@ -543,6 +527,7 @@ project(":Edu-Python:Idea") {
 
     val plugins = listOfNotNull(
       if (!isJvmCenteredIDE) pythonProPlugin else pythonPlugin,
+      // BACKCOMPAT: 2019.3
       // python pro plugin has mandatory dependency on yaml plugin
       "yaml",
       "java"
@@ -563,6 +548,7 @@ project(":Edu-Python:PyCharm") {
       localPath = null
       version = ideaVersion
     }
+    // BACKCOMPAT: 2019.3
     // python pro plugin has mandatory dependency on yaml plugin
     val plugins = listOfNotNull(pythonPlugin, "yaml")
     setPlugins(*plugins.toTypedArray())
@@ -579,16 +565,10 @@ project(":Edu-JavaScript") {
   intellij {
     localPath = null
     version = ideaVersion
-    val plugins = mutableListOf(
+    val plugins = listOf(
       "NodeJS",
-      "JavaScriptLanguage",
-      "CSS",
-      "JavaScriptDebugger"
+      "JavaScriptLanguage"
     )
-    if (isAtLeast201) {
-      // Internal CSS plugin dependency
-      plugins += "platform-images"
-    }
     setPlugins(*plugins.toTypedArray())
   }
   dependencies {
