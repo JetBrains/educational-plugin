@@ -7,11 +7,11 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
 import javax.swing.event.HyperlinkEvent
 
-class EduBrowserHyperlinkListener : BrowserHyperlinkListener() {
+open class EduBrowserHyperlinkListener : BrowserHyperlinkListener() {
   override fun hyperlinkActivated(e: HyperlinkEvent) {
     super.hyperlinkActivated(e)
 
-    val host = e.url.toString()
+    val host = e.url?.toString() ?: return
     when {
       host.startsWith(STEPIK_URL) -> {
         EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.STEPIK)

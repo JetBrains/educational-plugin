@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.Err
@@ -33,8 +32,6 @@ interface CodeExecutor {
   ): RunnerAndConfigurationSettings? = CheckUtils.createDefaultRunConfiguration(project)
 
   companion object {
-    val LOG = Logger.getInstance(CodeExecutor::class.java)
-
-    fun resultUnchecked(msg: String) = Err(CheckResult(CheckStatus.Unchecked, msg))
+    fun resultUnchecked(msg: String): Err<CheckResult> = Err(CheckResult(CheckStatus.Unchecked, msg))
   }
 }

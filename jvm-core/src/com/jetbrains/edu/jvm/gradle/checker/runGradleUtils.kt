@@ -154,11 +154,12 @@ fun runGradleRunTask(project: Project, task: Task, indicator: ProgressIndicator)
 
   val gradleOutput = GradleCommandLine.create(project, taskName, "$MAIN_CLASS_PROPERTY_PREFIX$mainClassName")
     ?.launch(indicator)
-    ?: return Err(CheckResult.failedToCheck)
+    ?: return Err(GradleEnvironmentChecker.getFailedToLaunchCheckingResult(project))
 
   if (!gradleOutput.isSuccess) {
     return Err(
-      CheckResult(CheckStatus.Failed, gradleOutput.firstMessage.xmlEscaped, gradleOutput.messages.joinToString("\n")))
+      CheckResult(CheckStatus.Failed, gradleOutput.firstMessage.xmlEscaped, gradleOutput.messages.joinToString("\n"))
+    )
   }
 
   return Ok(gradleOutput.firstMessage)

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.jvm.gradle.generation
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.USE_INTERNAL_JAVA
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.USE_PROJECT_JDK
@@ -9,9 +10,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.containers.ContainerUtilRt
+import com.jetbrains.edu.jvm.gradle.GradleWrapperListener
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createFileFromTemplate
+import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -84,4 +91,26 @@ object EduGradleUtils {
   }
 
   private val Sdk.javaSdkVersion: JavaSdkVersion? get() = JavaSdk.getInstance().getVersion(this)
+
+  fun updateGradleSettings(project: Project) {
+    val projectBasePath = project.basePath ?: return
+    val sdk = ProjectRootManager.getInstance(project).projectSdk
+    setGradleSettings(project, sdk, projectBasePath)
+  }
+
+  fun setupGradleProject(project: Project) {
+    val projectBasePath = project.basePath
+    if (projectBasePath != null) {
+      // Android Studio creates non executable `gradlew`
+      val gradlew = File(FileUtil.toSystemDependentName(projectBasePath), GRADLE_WRAPPER_UNIX)
+      if (gradlew.exists()) {
+        gradlew.setExecutable(true)
+      }
+      else {
+        val taskManager = StudyTaskManager.getInstance(project)
+        val connection = ApplicationManager.getApplication().messageBus.connect(taskManager)
+        connection.subscribe(VirtualFileManager.VFS_CHANGES, GradleWrapperListener(connection))
+      }
+    }
+  }
 }
