@@ -160,9 +160,11 @@ class SubmissionsTabPanel(project: Project,
 
   private fun addSubmissionsToText(submissionsNext: List<Submission>,
                                    descriptionText: StringBuilder) {
+    descriptionText.append("<ul style=list-style-type:none;margin:0;padding:0;>")
     for (submission in submissionsNext) {
-      descriptionText.append(submissionLink(submission)).append("<br>")
+      descriptionText.append(submissionLink(submission))
     }
+    descriptionText.append("</ul>")
   }
 
   private fun showDiff(project: Project, task: Task, reply: Reply) {
@@ -193,8 +195,8 @@ class SubmissionsTabPanel(project: Project,
     val time = submission.time ?: return null
     val pictureSize = (StyleManager().bodyFontSize * 0.75).roundToInt()
     val text = formatDate(time)
-    return "<h><img src=${getImageUrl(submission.status)} hspace=6 width=${pictureSize} height=${pictureSize}/></h>" +
-           "<a ${StyleManager().textStyleHeader};color:${getLinkColor(submission)} href=${submission.id}> ${text}</a>"
+    return "<li><h><img src=${getImageUrl(submission.status)} hspace=6 width=${pictureSize} height=${pictureSize}/></h>" +
+           "<a ${StyleManager().textStyleHeader};color:${getLinkColor(submission)} href=${submission.id}> ${text}</a></li>"
   }
 
   fun addLoadingPanel(platformName: String) {

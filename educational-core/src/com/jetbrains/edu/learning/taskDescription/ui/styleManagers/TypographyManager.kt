@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
 
 internal class TypographyManager {
   private val uiSettingsFontSize = UISettings.instance.fontSize
-
+  
   val bodyFontSize = (uiSettingsFontSize * fontScaleFactor("body.font.size")).toInt()
   val codeFontSize = (uiSettingsFontSize * fontScaleFactor("code.font.size")).toInt()
   val bodyLineHeight = (bodyFontSize * lineHeightScaleFactor("body.line.height")).toInt()

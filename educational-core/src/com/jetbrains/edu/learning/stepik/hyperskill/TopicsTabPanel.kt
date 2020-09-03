@@ -20,20 +20,28 @@ class TopicsTabPanel(project: Project,
     addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
 
     val topics = course.taskToTopics[task.index - 1]
-    var descriptionText = "<h3 ${StyleManager().textStyleHeader}>${EduCoreBundle.message("hyperskill.topics.for.stage")}</h3>"
-    if (topics != null) {
-      for (topic in topics) {
-        descriptionText += topicLink(topic)
-        descriptionText += "<br>"
+    val descriptionText = buildString {
+      val textStyleHeader = StyleManager().textStyleHeader
+      appendln("<h3 $textStyleHeader>${EduCoreBundle.message("hyperskill.topics.for.stage")}</h3>")
+      if (topics != null) {
+        appendln("<ol $textStyleHeader;padding-top:4px>")
+        for (topic in topics) {
+          appendln(topicLink(topic, textStyleHeader))
+        }
+        appendln("</ol>")
       }
-    }
-    else {
-      descriptionText += "<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("hyperskill.topics.not.found")}"
+      else {
+        appendln("<a $textStyleHeader>${EduCoreBundle.message("hyperskill.topics.not.found")}")
+      }
     }
     setText(descriptionText)
   }
 
-  private fun topicLink(topic: HyperskillTopic): String =
-    "<a ${StyleManager().textStyleHeader};color:${ColorUtil.toHex(
-      EduColors.hyperlinkColor)} href=\"https://hyperskill.org/learn/step/${topic.theoryId}/\">${topic.title}</a>"
+  private fun topicLink(topic: HyperskillTopic, textStyleHeader: String): String {
+    val liStyle = "style=color:${ColorUtil.toHex(EduColors.hyperlinkColor)};"
+    val linkStyle = "$textStyleHeader;color:${ColorUtil.toHex(EduColors.hyperlinkColor)}"
+    val topicLink = "https://hyperskill.org/learn/step/${topic.theoryId}/"
+
+    return """<li $liStyle><a $linkStyle href=$topicLink>${topic.title}</a></li>"""
+  }
 }
