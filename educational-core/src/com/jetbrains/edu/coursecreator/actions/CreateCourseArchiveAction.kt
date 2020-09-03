@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.pass
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.createCourseArchive
 import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
 
 abstract class CreateCourseArchiveAction(text: Supplier<String>)
@@ -60,7 +61,7 @@ abstract class CreateCourseArchiveAction(text: Supplier<String>)
     val errorMessage = createCourseArchive(project, locationPath)
     if (errorMessage == null) {
       invokeLater {
-        Messages.showInfoMessage("Course archive was saved to $locationPath",
+        Messages.showInfoMessage(EduCoreBundle.message("dialog.message.course.archive.saved.to", locationPath),
                                  EduCoreBundle.message("action.create.course.archive.success.message"))
       }
       PropertiesComponent.getInstance(project).setValue(LAST_ARCHIVE_LOCATION, locationPath)
@@ -83,7 +84,9 @@ abstract class CreateCourseArchiveAction(text: Supplier<String>)
   abstract fun getArchiveCreator(project: Project, location: String): CourseArchiveCreator
 
   companion object {
+    @NonNls
     const val LAST_ARCHIVE_LOCATION = "Edu.CourseCreator.LastArchiveLocation"
+    @NonNls
     const val AUTHOR_NAME = "Edu.Author.Name"
   }
 }

@@ -28,7 +28,11 @@ class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks
     val project = e.project ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
 
-    ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.Backgroundable(project, "Checking all tasks...", true) {
+    ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.Backgroundable(
+      project,
+      EduCoreBundle.message("progress.title.checking.all.tasks"),
+      true
+    ) {
       override fun run(indicator: ProgressIndicator) {
         val failedTasks = mutableListOf<Task>()
         var curTask = 0
