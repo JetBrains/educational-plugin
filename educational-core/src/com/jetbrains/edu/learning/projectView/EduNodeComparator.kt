@@ -3,8 +3,8 @@ package com.jetbrains.edu.learning.projectView
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode
 import com.intellij.ide.util.treeView.AlphaComparator
 import com.intellij.ide.util.treeView.NodeDescriptor
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.getTaskFile
 import java.util.*
 
 object EduNodeComparator : Comparator<NodeDescriptor<*>> {
@@ -25,7 +25,7 @@ object EduNodeComparator : Comparator<NodeDescriptor<*>> {
     if (this !is PsiFileNode) {
       return null
     }
-    return EduUtils.getTaskFile(project ?: return null, virtualFile ?: return null)
+    return virtualFile?.getTaskFile(project ?: return null)
   }
 
   private val TaskFile.index: Int

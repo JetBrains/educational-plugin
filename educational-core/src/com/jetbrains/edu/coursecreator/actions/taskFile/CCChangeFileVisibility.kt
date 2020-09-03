@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.pathRelativeToTask
 import org.jetbrains.annotations.Nls
 import java.util.function.Supplier
 
@@ -26,7 +27,7 @@ abstract class CCChangeFileVisibility(val name: Supplier<String>, val requiredVi
     : this(Supplier { name }, requiredVisibility)
 
   override fun createStateForFile(project: Project, task: Task, file: VirtualFile): State? {
-    val taskRelativePath = EduUtils.pathRelativeToTask(project, file)
+    val taskRelativePath = file.pathRelativeToTask(project)
     val taskFile = task.getTaskFile(taskRelativePath)
     if (taskFile != null) {
       return FileState(taskFile, file, requiredVisibility)
@@ -35,7 +36,7 @@ abstract class CCChangeFileVisibility(val name: Supplier<String>, val requiredVi
   }
 
   override fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean {
-    val path = EduUtils.pathRelativeToTask(project, file)
+    val path = file.pathRelativeToTask(project)
     val visibleFile = task.getTaskFile(path)
     return visibleFile?.isVisible == !requiredVisibility
   }

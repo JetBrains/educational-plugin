@@ -5,12 +5,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.FileInfo
-import com.jetbrains.edu.learning.RefreshCause
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.fileInfo
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
@@ -18,7 +15,7 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
 
   override fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {
     super.taskFileCreated(taskFile, file)
-    if (EduUtils.isTestsFile(project, file)) {
+    if (file.isTestsFile(project)) {
       taskFile.isVisible = false
     }
   }

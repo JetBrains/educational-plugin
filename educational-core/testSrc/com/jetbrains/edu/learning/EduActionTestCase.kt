@@ -8,7 +8,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
-import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 
 abstract class EduActionTestCase : EduTestCase() {
@@ -23,7 +22,7 @@ abstract class EduActionTestCase : EduTestCase() {
   protected fun dataContext(file: VirtualFile): MapDataContext {
     val psiManager = PsiManager.getInstance(project)
     val psiFile = psiManager.findDirectory(file) ?: psiManager.findFile(file)
-    val studyItem = findStudyItem(file)
+    val studyItem = file.getStudyItem(project)
     return MapDataContext().apply {
       put(CommonDataKeys.PROJECT, project)
       put(CommonDataKeys.VIRTUAL_FILE, file)
@@ -45,21 +44,6 @@ abstract class EduActionTestCase : EduTestCase() {
       put(CommonDataKeys.PSI_ELEMENT, element)
       put(PlatformDataKeys.DELETE_ELEMENT_PROVIDER, CCStudyItemDeleteProvider())
     }
-  }
-
-  private fun findStudyItem(file: VirtualFile): StudyItem? {
-    var studyItem: StudyItem? = null
-    val course = StudyTaskManager.getInstance(project).course
-    if (course != null) {
-      studyItem = EduUtils.getSection(project, course, file)
-      if (studyItem == null) {
-        studyItem = EduUtils.getLesson(project, course, file)
-      }
-      if (studyItem == null) {
-        studyItem = EduUtils.getTask(project, course, file)
-      }
-    }
-    return studyItem
   }
 
   protected fun testAction(context: DataContext, action: AnAction, runAction: Boolean = true): Presentation {

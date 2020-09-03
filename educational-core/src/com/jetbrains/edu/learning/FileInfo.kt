@@ -10,18 +10,17 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 fun VirtualFile.fileInfo(project: Project): FileInfo? {
   if (project.isDisposed) return null
-  val course = StudyTaskManager.getInstance(project).course ?: return null
   if (shouldIgnore(this, project)) return null
 
   if (isDirectory) {
-    EduUtils.getSection(project, course, this)?.let { return FileInfo.SectionDirectory(it) }
-    EduUtils.getLesson(project, course, this)?.let { return FileInfo.LessonDirectory(it) }
-    EduUtils.getTask(project, course, this)?.let { return FileInfo.TaskDirectory(it) }
+    getSection(project)?.let { return FileInfo.SectionDirectory(it) }
+    getLesson(project)?.let { return FileInfo.LessonDirectory(it) }
+    getTask(project)?.let { return FileInfo.TaskDirectory(it) }
   }
 
-  val task = EduUtils.getTaskForFile(project, this) ?: return null
+  val task = getContainingTask(project) ?: return null
 
-  val taskRelativePath = EduUtils.pathRelativeToTask(project, this)
+  val taskRelativePath = pathRelativeToTask(project)
 
   if (taskRelativePath.contains(EduNames.WINDOW_POSTFIX)
       || taskRelativePath.contains(EduNames.WINDOWS_POSTFIX)

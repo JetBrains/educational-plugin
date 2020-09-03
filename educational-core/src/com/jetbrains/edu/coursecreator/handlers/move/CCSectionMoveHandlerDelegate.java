@@ -8,10 +8,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.move.MoveCallback;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
@@ -27,7 +24,7 @@ public class CCSectionMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate
 
   @Override
   protected boolean isAvailable(@NotNull PsiDirectory directory) {
-    return EduUtils.isSectionDirectory(directory.getProject(), directory.getVirtualFile());
+    return VirtualFileExt.isSectionDirectory(directory.getVirtualFile(), directory.getProject());
   }
 
   @Override

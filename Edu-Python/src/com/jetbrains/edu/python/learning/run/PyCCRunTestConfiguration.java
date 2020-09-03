@@ -12,8 +12,8 @@ import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.OpenApiExtKt;
+import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.python.run.PythonRunConfiguration;
 import org.jdom.Element;
@@ -69,7 +69,7 @@ public class PyCCRunTestConfiguration extends PythonRunConfiguration {
     if (testsFile == null) {
       throw new RuntimeConfigurationException(message);
     }
-    Task task = EduUtils.getTaskForFile(myProject, testsFile);
+    Task task = VirtualFileExt.getContainingTask(testsFile, myProject);
     if (task == null) {
       throw new RuntimeConfigurationException(message);
     }

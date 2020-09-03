@@ -4,10 +4,7 @@ import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.ProjectViewTestUtil
-import com.jetbrains.edu.learning.CourseGenerationTestBase
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import javax.swing.JTree
@@ -58,7 +55,7 @@ class CourseViewHeavyTest : CourseGenerationTestBase<Unit>() {
   }
 
   private fun navigateToNextTask() {
-    val sourceTask = EduUtils.getTaskForFile(project, FileEditorManager.getInstance(project).openFiles[0]) ?: error("No opened task")
+    val sourceTask = FileEditorManager.getInstance(project).openFiles[0].getContainingTask(project) ?: error("No opened task")
     val targetTask = NavigationUtils.nextTask(sourceTask) ?: error("Can't navigate to task")
     NavigationUtils.navigateToTask(project, targetTask)
   }

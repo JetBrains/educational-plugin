@@ -3,17 +3,17 @@ package com.jetbrains.edu.coursecreator.actions.studyItem
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
 import com.jetbrains.edu.coursecreator.presentableTitleName
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.getLesson
+import com.jetbrains.edu.learning.getSection
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import icons.EducationalCoreIcons.Lesson
 import java.io.IOException
@@ -45,15 +45,15 @@ class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) 
   }
 
   override fun getParentItem(project: Project, course: Course, directory: VirtualFile): StudyItem? {
-    val lesson = EduUtils.getLesson(project, course, directory)
+    val lesson = directory.getLesson(project)
     return lesson?.container ?: (course.getSection(directory.name) ?: course)
   }
 
   override fun getThresholdItem(project: Project, course: Course, sourceDirectory: VirtualFile): StudyItem? =
-    EduUtils.getLesson(project, course, sourceDirectory)
+    sourceDirectory.getLesson(project)
 
   override fun isAddedAsLast(project: Project, course: Course, sourceDirectory: VirtualFile): Boolean {
-    val section = EduUtils.getSection(project, course, sourceDirectory)
+    val section = sourceDirectory.getSection(project)
     return section != null || sourceDirectory == project.courseDir
   }
 

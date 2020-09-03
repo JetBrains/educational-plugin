@@ -3,9 +3,9 @@ package com.jetbrains.edu.learning.actions.navigate
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
+import com.jetbrains.edu.learning.getTaskFile
 import junit.framework.TestCase
 
 class NavigateTaskWithSectionsTest : EduTestCase() {
@@ -14,7 +14,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
     configureByTaskFile(1, 1, "taskFile.txt")
     myFixture.testAction(NextTaskAction())
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
-    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
+    val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
     TestCase.assertEquals(1, task.index)
     val lesson = task.lesson
@@ -27,7 +27,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
     configureByTaskFile(2, 1, 1, "taskFile.txt")
     myFixture.testAction(NextTaskAction())
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
-    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
+    val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
     TestCase.assertEquals(2, task.index)
     val lesson = task.lesson
@@ -40,7 +40,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
     configureByTaskFile(2, 1, 2, "taskFile.txt")
     myFixture.testAction(NextTaskAction())
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
-    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
+    val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
     TestCase.assertEquals(1, task.index)
     val lesson = task.lesson
@@ -53,7 +53,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
     configureByTaskFile(2, 2, 1, "taskFile.txt")
     myFixture.testAction(NextTaskAction())
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
-    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
+    val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
     TestCase.assertEquals(1, task.index)
     val lesson = task.lesson
@@ -66,7 +66,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
     configureByTaskFile(3, 1, 1, "taskFile.txt")
     myFixture.testAction(NextTaskAction())
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
-    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
+    val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
     TestCase.assertEquals(1, task.index)
     val lesson = task.lesson
@@ -77,7 +77,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
     configureByTaskFile(4, 1, "taskFile.txt")
     myFixture.testAction(PreviousTaskAction())
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
-    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
+    val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
     TestCase.assertEquals(1, task.index)
     val lesson = task.lesson
@@ -90,7 +90,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
     configureByTaskFile(3, 1, 1, "taskFile.txt")
     myFixture.testAction(PreviousTaskAction())
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
-    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
+    val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
     TestCase.assertEquals(1, task.index)
     val lesson = task.lesson
@@ -103,7 +103,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
     configureByTaskFile(2, 2, 1, "taskFile.txt")
     myFixture.testAction(PreviousTaskAction())
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
-    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
+    val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
     TestCase.assertEquals(2, task.index)
     val lesson = task.lesson
@@ -116,7 +116,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
     configureByTaskFile(2, 1, 2, "taskFile.txt")
     myFixture.testAction(PreviousTaskAction())
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
-    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
+    val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
     TestCase.assertEquals(1, task.index)
     val lesson = task.lesson
@@ -129,7 +129,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
     configureByTaskFile(2, 1, 1, "taskFile.txt")
     myFixture.testAction(PreviousTaskAction())
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
-    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
+    val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
     TestCase.assertEquals(1, task.index)
     val lesson = task.lesson

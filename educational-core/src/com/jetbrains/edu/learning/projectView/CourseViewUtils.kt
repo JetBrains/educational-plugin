@@ -10,7 +10,6 @@ import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
@@ -18,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.pathRelativeToTask
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import icons.EducationalCoreIcons
 import org.jetbrains.annotations.TestOnly
@@ -42,7 +42,7 @@ object CourseViewUtils {
       is PsiElement -> {
         val psiFile = value.containingFile ?: return null
         val virtualFile = psiFile.virtualFile ?: return null
-        val path = EduUtils.pathRelativeToTask(project, virtualFile)
+        val path = virtualFile.pathRelativeToTask(project)
         val visibleFile = task?.getTaskFile(path)
         if (visibleFile?.isVisible == true) childNode else null
       }

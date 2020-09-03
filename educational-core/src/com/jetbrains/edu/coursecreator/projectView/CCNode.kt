@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isTestsFile
 import com.jetbrains.edu.learning.projectView.DirectoryNode
 
 class CCNode(
@@ -38,7 +39,7 @@ class CCNode(
       if (EduUtils.isTaskDescriptionFile(virtualFile.name)) {
         return null
       }
-      if (!EduUtils.isTestsFile(myProject, virtualFile)) {
+      if (!virtualFile.isTestsFile(myProject)) {
         return CCStudentInvisibleFileNode(myProject, psiFile, settings)
       }
       else {

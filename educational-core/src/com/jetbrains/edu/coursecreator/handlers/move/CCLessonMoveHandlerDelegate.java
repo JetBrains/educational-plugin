@@ -11,10 +11,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.move.MoveCallback;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +29,7 @@ public class CCLessonMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate 
 
   @Override
   protected boolean isAvailable(@NotNull PsiDirectory directory) {
-    return EduUtils.isLessonDirectory(directory.getProject(), directory.getVirtualFile());
+    return VirtualFileExt.isLessonDirectory(directory.getVirtualFile(), directory.getProject());
   }
 
   @Override
@@ -49,7 +46,7 @@ public class CCLessonMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate 
     }
     final PsiDirectory sourceDirectory = (PsiDirectory)elements[0];
     final VirtualFile sourceVFile = sourceDirectory.getVirtualFile();
-    final Lesson sourceLesson = EduUtils.getLesson(project, course, sourceVFile);
+    final Lesson sourceLesson = VirtualFileExt.getLesson(sourceVFile, project);
     if (sourceLesson == null) {
       throw new IllegalStateException("Failed to find lesson for `sourceVFile` directory");
     }
@@ -120,7 +117,7 @@ public class CCLessonMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate 
     if (targetVFile.equals(OpenApiExtKt.getCourseDir(project))) return course;
     StudyItem targetItem = course.getItem(targetVFile.getName());
     if (targetItem == null) {
-      targetItem = EduUtils.getLesson(project, course, targetVFile);
+      targetItem = VirtualFileExt.getLesson(targetVFile, project);
     }
     return targetItem;
   }

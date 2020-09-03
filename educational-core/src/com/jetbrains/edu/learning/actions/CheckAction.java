@@ -25,6 +25,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.checker.CheckListener;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
@@ -98,7 +99,7 @@ public class CheckAction extends DumbAwareAction {
     if (virtualFile == null) {
       return;
     }
-    Task task = EduUtils.getTaskForFile(project, virtualFile);
+    Task task = VirtualFileExt.getContainingTask(virtualFile, project);
     if (task == null) {
       return;
     }
@@ -173,7 +174,7 @@ public class CheckAction extends DumbAwareAction {
     if (virtualFile == null || FileEditorManager.getInstance(project).getSelectedTextEditor() == null) {
       return;
     }
-    if (EduUtils.isTestsFile(project, virtualFile)) {
+    if (VirtualFileExt.isTestsFile(virtualFile, project)) {
       presentation.setEnabledAndVisible(true);
     }
   }

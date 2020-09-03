@@ -23,10 +23,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.PlainTextFileType;
-import com.intellij.openapi.fileTypes.UnknownFileType;
-import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx;
+import com.intellij.openapi.fileEditor.impl.EditorWithProviderComposite;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.updateSettings.impl.UpdateChecker;
@@ -34,11 +31,12 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.TimeoutUtil;
@@ -47,12 +45,9 @@ import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
-import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
@@ -61,21 +56,17 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
 import com.jetbrains.edu.learning.taskDescription.ui.JCEFToolWIndowUtilsKt;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
-import kotlin.Unit;
-import org.apache.commons.codec.binary.Base64;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.markdown.parser.MarkdownParser;
 import org.jetbrains.annotations.*;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.*;
-
-import static com.jetbrains.edu.learning.messages.EduCoreBundle.FAILED_TO_CONVERT_TO_STUDENT_FILE;
 
 public class EduUtils {
 
@@ -84,17 +75,6 @@ public class EduUtils {
 
   public static final Comparator<StudyItem> INDEX_COMPARATOR = Comparator.comparingInt(StudyItem::getIndex);
   private static final Logger LOG = Logger.getInstance(EduUtils.class.getName());
-
-  public static void closeSilently(@Nullable final Closeable stream) {
-    if (stream != null) {
-      try {
-        stream.close();
-      }
-      catch (IOException e) {
-        // close silently
-      }
-    }
-  }
 
   public static boolean isZip(String fileName) {
     return fileName.contains(".zip");
@@ -109,37 +89,9 @@ public class EduUtils {
     return iterator.next();
   }
 
-  public static boolean indexIsValid(int index, @NotNull final Collection collection) {
+  public static boolean indexIsValid(int index, @NotNull final Collection<?> collection) {
     int size = collection.size();
     return index >= 0 && index < size;
-  }
-
-  @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-  @Nullable
-  public static String getFileText(@Nullable final String parentDir, @NotNull final String fileName, boolean wrapHTML,
-                                   @NotNull final String encoding) {
-    final File inputFile = parentDir != null ? new File(parentDir, fileName) : new File(fileName);
-    if (!inputFile.exists()) return null;
-    final StringBuilder taskText = new StringBuilder();
-    BufferedReader reader = null;
-    try {
-      reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), encoding));
-      String line;
-      while ((line = reader.readLine()) != null) {
-        taskText.append(line).append("\n");
-        if (wrapHTML) {
-          taskText.append("<br>");
-        }
-      }
-      return wrapHTML ? UIUtil.toHtml(taskText.toString()) : taskText.toString();
-    }
-    catch (IOException e) {
-      LOG.info("Failed to get file text from file " + fileName, e);
-    }
-    finally {
-      closeSilently(reader);
-    }
-    return null;
   }
 
   public static void updateAction(@NotNull final AnActionEvent e) {
@@ -171,59 +123,15 @@ public class EduUtils {
     }
   }
 
-  /**
-   * @return true, if file doesn't belong to task (in term of course structure)
-   * but can be added to it as task, test or additional file.
-   * Otherwise, returns false
-   */
-  public static boolean canBeAddedToTask(@NotNull Project project, @NotNull VirtualFile file) {
-    if (file.isDirectory()) return false;
-    Task task = getTaskForFile(project, file);
-    if (task == null) return false;
-    EduConfigurator<?> configurator = CourseExt.getConfigurator(task.getCourse());
-    if (configurator == null) return false;
-    if (configurator.excludeFromArchive(project, file)) return false;
-    return !belongToTask(project, file);
-  }
-
-  /**
-   * @return true, if some task contains given {@code file} as task, test or additional file.
-   * Otherwise, returns false
-   */
-  public static boolean belongToTask(@NotNull Project project, @NotNull VirtualFile file) {
-    Task task = getTaskForFile(project, file);
-    if (task == null) return false;
-    String relativePath = pathRelativeToTask(project, file);
-    return task.getTaskFile(relativePath) != null;
-  }
-
-  public static boolean isTestsFile(@NotNull Project project, @NotNull VirtualFile file) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return false;
-    }
-    EduConfigurator configurator = CourseExt.getConfigurator(course);
-    if (configurator == null) {
-      return false;
-    }
-    return configurator.isTestFile(project, file);
-  }
-
-  @Nullable
-  public static TaskFile getTaskFile(@NotNull final Project project, @NotNull final VirtualFile file) {
-    Task task = getTaskForFile(project, file);
-    return task == null ? null : task.getTaskFile(pathRelativeToTask(project, file));
-  }
-
   @Nullable
   public static EduEditor getSelectedEduEditor(@NotNull final Project project) {
     try {
-      final FileEditor fileEditor = FileEditorManagerEx.getInstanceEx(project)
+      EditorWithProviderComposite selectedEditor = FileEditorManagerEx.getInstanceEx(project)
         .getSplitters()
         .getCurrentWindow()
-        .getSelectedEditor()
-        .getSelectedWithProvider()
-        .getFileEditor();
+        .getSelectedEditor();
+      if (selectedEditor == null) return null;
+      final FileEditor fileEditor = selectedEditor.getSelectedWithProvider().getFileEditor();
       if (fileEditor instanceof EduEditor) {
         return (EduEditor)fileEditor;
       }
@@ -306,7 +214,7 @@ public class EduUtils {
   public static Task getCurrentTask(@NotNull final Project project) {
     VirtualFile[] files = FileEditorManager.getInstance(project).getSelectedFiles();
     for (VirtualFile file : files) {
-      Task task = getTaskForFile(project, file);
+      Task task = VirtualFileExt.getContainingTask(file, project);
       if (task != null) return task;
     }
     return null;
@@ -343,54 +251,6 @@ public class EduUtils {
 
   public static boolean hasJCEF() {
     return JCEFToolWIndowUtilsKt.isSupported();
-  }
-
-  @Nullable
-  public static VirtualFile getTaskDir(Project project, @NotNull Course course, @NotNull VirtualFile taskFile) {
-    VirtualFile file = taskFile.getParent();
-    while (file != null) {
-      VirtualFile lessonDirCandidate = file.getParent();
-      if (lessonDirCandidate == null) {
-        return null;
-      }
-      Lesson lesson = getLesson(project, course, lessonDirCandidate);
-      if (lesson != null) {
-        if (lesson instanceof FrameworkLesson && EduNames.TASK.equals(file.getName()) ||
-            lesson.getTask(file.getName()) != null) {
-          return file;
-        }
-      }
-
-      file = lessonDirCandidate;
-    }
-    return null;
-  }
-
-  @Nullable
-  public static Task getTaskForFile(@NotNull Project project, @NotNull VirtualFile file) {
-    final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return null;
-    }
-    VirtualFile taskDir = getTaskDir(project, course, file);
-    if (taskDir == null) {
-      return null;
-    }
-    final VirtualFile lessonDir = taskDir.getParent();
-    if (lessonDir != null) {
-      final Lesson lesson = getLesson(project, course, lessonDir);
-      if (lesson == null) {
-        return null;
-      }
-
-      if (lesson instanceof FrameworkLesson && course.isStudy()) {
-        return ((FrameworkLesson)lesson).currentTask();
-      }
-      else {
-        return lesson.getTask(taskDir.getName());
-      }
-    }
-    return null;
   }
 
   // supposed to be called under progress
@@ -469,19 +329,6 @@ public class EduUtils {
     editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
   }
 
-  @NotNull
-  public static String pathRelativeToTask(@NotNull Project project, @NotNull VirtualFile file) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) return file.getName();
-
-    VirtualFile taskDir = getTaskDir(project, course, file);
-    if (taskDir == null) return file.getName();
-
-    String fullRelativePath = FileUtil.getRelativePath(taskDir.getPath(), file.getPath(), VfsUtilCore.VFS_SEPARATOR_CHAR);
-    if (fullRelativePath == null) return file.getName();
-    return fullRelativePath;
-  }
-
   public static Pair<Integer, Integer> getPlaceholderOffsets(@NotNull final AnswerPlaceholder answerPlaceholder) {
     int startOffset = answerPlaceholder.getOffset();
     final int endOffset = answerPlaceholder.getEndOffset();
@@ -539,51 +386,6 @@ public class EduUtils {
     dialog.show();
   }
 
-  @Nullable
-  public static TaskFile createStudentFile(@NotNull Project project, @NotNull VirtualFile answerFile, @NotNull final Task task) {
-    try {
-      Task taskCopy = task.copy();
-
-      TaskFile taskFile = taskCopy.getTaskFile(pathRelativeToTask(project, answerFile));
-      if (taskFile == null) {
-        return null;
-      }
-      if (isToEncodeContent(answerFile)) {
-        taskFile.setText(Base64.encodeBase64String(answerFile.contentsToByteArray()));
-        return taskFile;
-      }
-      Document document = FileDocumentManager.getInstance().getDocument(answerFile);
-      if (document == null) {
-        return null;
-      }
-      FileDocumentManager.getInstance().saveDocument(document);
-      final LightVirtualFile studentFile = new LightVirtualFile("student_task", PlainTextFileType.INSTANCE, document.getText());
-      EduDocumentListener.runWithListener(project, taskFile, studentFile, (studentDocument) -> {
-        for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
-          try {
-            placeholder.setPossibleAnswer(studentDocument.getText(TextRange.create(placeholder.getOffset(), placeholder.getEndOffset())));
-            replaceAnswerPlaceholder(studentDocument, placeholder);
-          }
-          catch (IndexOutOfBoundsException e) {
-            // We are here because placeholder is broken. We need to put broken placeholder into exception.
-            // We need to take it from original task, because taskCopy has issues with links (taskCopy.lesson is always null)
-            TaskFile file = task.getTaskFile(taskFile.getName());
-            AnswerPlaceholder answerPlaceholder = file != null ? file.getAnswerPlaceholders().get(placeholder.getIndex()) : null;
-            throw new BrokenPlaceholderException(FAILED_TO_CONVERT_TO_STUDENT_FILE,
-                                                 answerPlaceholder != null ? answerPlaceholder : placeholder);
-          }
-        }
-        taskFile.setText(studentDocument.getImmutableCharSequence().toString());
-        return Unit.INSTANCE;
-      });
-      return taskFile;
-    }
-    catch (IOException e) {
-      LOG.error(FAILED_TO_CONVERT_TO_STUDENT_FILE + " Path to broken file " + answerFile.getPath());
-    }
-    return null;
-  }
-
   public static void runUndoableAction(Project project,
                                        @Nls(capitalization = Nls.Capitalization.Title) String name,
                                        UndoableAction action,
@@ -610,53 +412,6 @@ public class EduUtils {
                                        @Nls(capitalization = Nls.Capitalization.Title) String name,
                                        UndoableAction action) {
     runUndoableAction(project, name, action, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
-  }
-
-  public static boolean isToEncodeContent(VirtualFile file) {
-    String extension = FileUtilRt.getExtension(file.getName());
-    FileType fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension);
-
-    if (!(fileType instanceof UnknownFileType)) {
-      return fileType.isBinary();
-    }
-
-    String contentType = getMimeType(file);
-    if (contentType == null) {
-      return isGitObject(file.getName());
-    }
-
-    return contentType.startsWith("image") ||
-           contentType.startsWith("audio") ||
-           contentType.startsWith("video") ||
-           contentType.startsWith("application");
-  }
-
-  public static String getMimeType(VirtualFile file) {
-    try {
-      return Files.probeContentType(Paths.get(file.getPath()));
-    }
-    catch (IOException e) {
-      LOG.error(e);
-    }
-    return null;
-  }
-
-  private static boolean isGitObject(String name) {
-    return (name.length() == 38 || name.length() == 40) && name.matches("[a-z0-9]+");
-  }
-
-  @Nullable
-  public static Task getTask(@NotNull Project project, @NotNull Course course, @NotNull VirtualFile taskDir) {
-    VirtualFile lessonDir = taskDir.getParent();
-    if (lessonDir == null) {
-      return null;
-    }
-    Lesson lesson = getLesson(project, course, lessonDir);
-    if (lesson == null) {
-      return null;
-    }
-
-    return lesson.getTask(taskDir.getName());
   }
 
   static void deleteWindowsFile(@NotNull final VirtualFile taskDir, @NotNull final String name) {
@@ -761,76 +516,6 @@ public class EduUtils {
     return null;
   }
 
-  public static boolean isTaskDirectory(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-    if (!virtualFile.isDirectory()) {
-      return false;
-    }
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return false;
-    }
-    VirtualFile lessonDirCandidate = virtualFile.getParent();
-    if (lessonDirCandidate == null) {
-      return false;
-    }
-    Lesson lesson = getLesson(project, course, lessonDirCandidate);
-    if (lesson == null) {
-      return false;
-    }
-    return lesson.getTask(virtualFile.getName()) != null;
-  }
-
-  public static boolean isLessonDirectory(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return false;
-    }
-    return getLesson(project, course, virtualFile) != null;
-  }
-
-  @Nullable
-  public static Lesson getLesson(@NotNull Project project, @NotNull final Course course, @NotNull VirtualFile lessonDir) {
-    if (!lessonDir.isDirectory()) {
-      return null;
-    }
-    VirtualFile lessonParent = lessonDir.getParent();
-    if (lessonParent == null) {
-      return null;
-    }
-    final Section section = getSection(project, course, lessonParent);
-    if (section != null) {
-      return section.getLesson(lessonDir.getName());
-    }
-
-    VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
-    if (courseDir.equals(lessonParent)) {
-      return course.getLesson(lessonDir.getName());
-    }
-
-    return null;
-  }
-
-  @Nullable
-  public static Section getSection(@NotNull Project project, @NotNull Course course, @NotNull VirtualFile sectionDir) {
-    if (!sectionDir.isDirectory()) return null;
-
-    VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
-    VirtualFile sectionParentDir = sectionDir.getParent();
-    if (courseDir.equals(sectionParentDir)) {
-      return course.getSection(sectionDir.getName());
-    }
-
-    return null;
-  }
-
-  public static boolean isSectionDirectory(@NotNull Project project, @NotNull VirtualFile file) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return false;
-    }
-    return getSection(project, course, file) != null;
-  }
-
   public static void showNotification(@NotNull Project project,
                                       @NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String title,
                                       @Nullable AnAction action) {
@@ -839,26 +524,6 @@ public class EduUtils {
       notification.addAction(action);
     }
     notification.notify(project);
-  }
-
-  @Nullable
-  public static StudyItem getStudyItem(@NotNull Project project, @NotNull VirtualFile dir) {
-    Course course = OpenApiExtKt.getCourse(project);
-    if (course == null) return null;
-
-    VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
-    if (courseDir.equals(dir)) return course;
-
-    Section section = getSection(project, course, dir);
-    if (section != null) return section;
-
-    Lesson lesson = getLesson(project, course, dir);
-    if (lesson != null) return lesson;
-
-    Task task = getTask(project, course, dir);
-    if (task != null) return task;
-
-    return null;
   }
 
   public static String addMnemonic(String text) {

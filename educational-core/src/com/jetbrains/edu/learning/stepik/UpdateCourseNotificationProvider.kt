@@ -13,6 +13,7 @@ import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -20,7 +21,7 @@ class UpdateCourseNotificationProvider(val project: Project) :
   EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
 
   private val VirtualFile.isTaskFile: Boolean
-    get() = EduUtils.getTaskFile(project, this) != null
+    get() = getTaskFile(project) != null
   private var isUpdateRunning: AtomicBoolean = AtomicBoolean(false)
 
   companion object {

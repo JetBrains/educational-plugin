@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.messages.pass
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 import org.jetbrains.annotations.Nls
@@ -51,7 +52,7 @@ abstract class CCChangeFilePropertyActionBase(private val name: Supplier<String>
     fun collect(files: List<VirtualFile>) {
       for (file in files) {
         if (configurator.excludeFromArchive(project, file)) continue
-        val task = EduUtils.getTaskForFile(project, file) ?: return
+        val task = file.getContainingTask(project) ?: return
         if (file.isDirectory) {
           collect(VfsUtil.collectChildrenRecursively(file).filter { !it.isDirectory })
         }
@@ -71,7 +72,7 @@ abstract class CCChangeFilePropertyActionBase(private val name: Supplier<String>
   }
 
   protected open fun isAvailableForFile(project: Project, file: VirtualFile): Boolean {
-    val task = EduUtils.getTaskForFile(project, file) ?: return false
+    val task = file.getContainingTask(project) ?: return false
     return if (file.isDirectory) {
       // Recursive check is too expensive for `update` method
       // so we allow this action for directories

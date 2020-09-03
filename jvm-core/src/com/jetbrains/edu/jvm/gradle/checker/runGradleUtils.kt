@@ -169,7 +169,7 @@ private fun findMainClass(project: Project, task: Task): String? =
     val language = task.course.languageById ?: return@runReadAction null
     val selectedFile = getSelectedFile(project)
     if (selectedFile != null) {
-      val fileTask = EduUtils.getTaskForFile(project, selectedFile)
+      val fileTask = selectedFile.getContainingTask(project)
       if (fileTask == task) {
         val mainClass = MainFileProvider.getMainClassName(project, selectedFile, language)
         if (mainClass != null) return@runReadAction mainClass

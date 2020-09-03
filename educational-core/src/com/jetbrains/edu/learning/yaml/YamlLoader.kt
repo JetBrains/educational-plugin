@@ -6,10 +6,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
@@ -85,7 +82,7 @@ object YamlLoader {
   private fun reopenEditors(project: Project) {
     val selectedEditor = FileEditorManager.getInstance(project).selectedEditor
     val files = FileEditorManager.getInstance(project).openFiles
-      .filter { EduUtils.getTaskFile(project, it) != null }
+      .filter { it.getTaskFile(project) != null }
     for (virtualFile in files) {
       FileEditorManager.getInstance(project).closeFile(virtualFile)
       FileEditorManager.getInstance(project).openFile(virtualFile, false)
@@ -125,10 +122,10 @@ object YamlLoader {
     return when (this) {
              is Section -> course
              is Lesson -> {
-               val section = course?.let { EduUtils.getSection(project, course, parentDir) }
+               val section = course?.let { parentDir.getSection(project) }
                section ?: course
              }
-             is Task -> course?.let { EduUtils.getLesson(project, course, parentDir) }
+             is Task -> course?.let { parentDir.getLesson(project) }
              else -> loadingError(
                "Unexpected item type. Expected: 'Section', 'Lesson' or 'Task'. Was '${itemType}'")
            } ?: loadingError(notFoundMessage("parent", "for item '${name}'"))
@@ -144,9 +141,9 @@ object YamlLoader {
     val course = StudyTaskManager.getInstance(project).course ?: return null
     return when (name) {
       YamlFormatSettings.COURSE_CONFIG -> course
-      YamlFormatSettings.SECTION_CONFIG -> EduUtils.getSection(project, course, itemDir)
-      YamlFormatSettings.LESSON_CONFIG -> EduUtils.getLesson(project, course, itemDir)
-      YamlFormatSettings.TASK_CONFIG -> EduUtils.getTask(project, course, itemDir)
+      YamlFormatSettings.SECTION_CONFIG -> itemDir.getSection(project)
+      YamlFormatSettings.LESSON_CONFIG -> itemDir.getLesson(project)
+      YamlFormatSettings.TASK_CONFIG -> itemDir.getTask(project)
       else -> loadingError(unknownConfigMessage(name))
     }
   }

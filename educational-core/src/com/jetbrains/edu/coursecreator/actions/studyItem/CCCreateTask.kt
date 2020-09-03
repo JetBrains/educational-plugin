@@ -1,15 +1,12 @@
 package com.jetbrains.edu.coursecreator.actions.studyItem
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.settings.CCSettings
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.RefreshCause
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -17,13 +14,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import icons.EducationalCoreIcons.IdeTask
 import icons.EducationalCoreIcons.Task
 import java.io.IOException
 import java.util.*
 
+@Suppress("ComponentNotRegistered") // educational-core.xml
 class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
 
   override fun addItem(course: Course, item: Task) {
@@ -53,15 +50,15 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     course: Course,
     directory: VirtualFile
   ): StudyItem? {
-    val task = EduUtils.getTask(project, course, directory) ?: return EduUtils.getLesson(project, course, directory)
+    val task = directory.getTask(project) ?: return directory.getLesson(project)
     return task.lesson
   }
 
   override fun getThresholdItem(project: Project, course: Course, sourceDirectory: VirtualFile): StudyItem? =
-    EduUtils.getTask(project, course, sourceDirectory)
+    sourceDirectory.getTask(project)
 
   override fun isAddedAsLast(project: Project, course: Course, sourceDirectory: VirtualFile): Boolean =
-    EduUtils.getLesson(project, course, sourceDirectory) != null
+    sourceDirectory.getLesson(project) != null
 
   override fun sortSiblings(course: Course, parentItem: StudyItem?) {
     if (parentItem is Lesson) {
@@ -205,7 +202,4 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
   ): AnswerPlaceholderDependency =
     AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, fileName, placeholderIndex, isVisible)
 
-  companion object {
-    private val LOG: Logger = Logger.getInstance(CCCreateTask::class.java)
-  }
 }

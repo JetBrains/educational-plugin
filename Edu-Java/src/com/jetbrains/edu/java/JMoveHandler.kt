@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.handlers.EduMoveDelegate
 import com.jetbrains.edu.learning.handlers.isMoveForbidden
 
@@ -37,7 +38,7 @@ class JMoveHandler : EduMoveDelegate() {
     val psiClass = element as? PsiClass ?: return null
     val containingFile = psiClass.containingFile
     val virtualFile = containingFile.virtualFile ?: return null
-    val taskFile = EduUtils.getTaskFile(element.project, virtualFile) ?: return null
+    val taskFile = virtualFile.getTaskFile(element.project) ?: return null
     return if (!taskFile.isLearnerCreated && virtualFile.nameWithoutExtension == psiClass.name) containingFile else null
   }
 }

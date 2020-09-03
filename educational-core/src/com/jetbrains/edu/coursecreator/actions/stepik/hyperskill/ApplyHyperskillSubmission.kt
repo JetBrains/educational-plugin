@@ -87,6 +87,6 @@ class ApplyHyperskillSubmission : DumbAwareAction(
     if (selectedFiles == null || selectedFiles.size != 1) {
       return null
     }
-    return EduUtils.getTask(project, course, selectedFiles[0])
+    return selectedFiles[0].getTask(project)
   }
 }

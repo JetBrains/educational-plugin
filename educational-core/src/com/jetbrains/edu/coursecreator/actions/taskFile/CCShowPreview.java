@@ -38,9 +38,9 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -56,7 +56,6 @@ import java.util.Calendar;
 
 import static com.intellij.openapi.ui.Messages.showErrorDialog;
 import static com.intellij.openapi.ui.Messages.showInfoMessage;
-import static com.jetbrains.edu.learning.EduUtils.createStudentFile;
 
 public class CCShowPreview extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(CCShowPreview.class.getName());
@@ -78,7 +77,7 @@ public class CCShowPreview extends DumbAwareAction {
     }
     final PsiFile file = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
     if (file != null) {
-      TaskFile taskFile = EduUtils.getTaskFile(project, file.getVirtualFile());
+      TaskFile taskFile = VirtualFileExt.getTaskFile(file.getVirtualFile(), project);
       if (taskFile != null && taskFile.isVisible()) {
         presentation.setEnabledAndVisible(true);
       }
@@ -101,7 +100,7 @@ public class CCShowPreview extends DumbAwareAction {
       return;
     }
     VirtualFile virtualFile = file.getVirtualFile();
-    TaskFile taskFile = EduUtils.getTaskFile(project, virtualFile);
+    TaskFile taskFile = VirtualFileExt.getTaskFile(virtualFile, project);
     if (taskFile == null || !taskFile.isVisible()) {
       return;
     }
@@ -124,7 +123,7 @@ public class CCShowPreview extends DumbAwareAction {
     ApplicationManager.getApplication().runWriteAction(() -> {
       TaskFile studentTaskFile;
       try {
-        studentTaskFile = createStudentFile(project, virtualFile, task);
+        studentTaskFile = VirtualFileExt.toStudentFile(virtualFile, project, task);
       }
       catch (BrokenPlaceholderException exception) {
         LOG.info("Failed to Create Preview: " + exception.getMessage());

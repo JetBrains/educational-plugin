@@ -116,7 +116,7 @@ class EduDocumentListener private constructor(
 
   private val DocumentEvent.taskFile: TaskFile? get() {
     val file = FileDocumentManager.getInstance().getFile(document) ?: return null
-    return EduUtils.getTaskFile(project, file)
+    return file.getTaskFile(project)
   }
 
   companion object {
@@ -131,7 +131,7 @@ class EduDocumentListener private constructor(
      */
     @JvmStatic
     fun runWithListener(project: Project, taskFile: TaskFile, file: VirtualFile, action: (Document) -> Unit) {
-      require(EduUtils.getTaskFile(project, file) == null) {
+      require(file.getTaskFile(project) == null) {
         "Changes in `${taskFile.name}` should be tracked by global listener"
       }
       val document = FileDocumentManager.getInstance().getDocument(file) ?: return

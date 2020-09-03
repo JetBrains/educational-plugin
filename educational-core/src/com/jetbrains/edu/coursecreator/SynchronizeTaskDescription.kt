@@ -6,6 +6,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.testFramework.LightVirtualFile
 import com.jetbrains.edu.learning.EduDocumentListenerBase
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory.Companion.STUDY_TOOL_WINDOW
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
@@ -18,7 +19,7 @@ class SynchronizeTaskDescription(project: Project) : EduDocumentListenerBase(pro
     if (editedFile is LightVirtualFile || !EduUtils.isTaskDescriptionFile(editedFile.name)) {
       return
     }
-    val task = EduUtils.getTaskForFile(project, editedFile) ?: return
+    val task = editedFile.getContainingTask(project) ?: return
     task.descriptionText = eventDocument.text
     if (ToolWindowManager.getInstance(project).getToolWindow(STUDY_TOOL_WINDOW) == null) return
     TaskDescriptionView.getInstance(project).updateTaskDescription(task)

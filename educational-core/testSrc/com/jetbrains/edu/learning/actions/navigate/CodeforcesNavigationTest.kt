@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.actions.navigate
 
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.getTaskFile
 
 class CodeforcesNavigationTest : NavigationTestBase() {
   fun `test open next task`() {
@@ -25,7 +25,7 @@ class CodeforcesNavigationTest : NavigationTestBase() {
   private fun doTest(expectedFileName: String) {
     myFixture.testAction(NextTaskAction())
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile ?: error("Can't find current file")
-    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile) ?: error("Can't find current task file")
+    val taskFile = currentFile.getTaskFile(myFixture.project) ?: error("Can't find current task file")
     assertEquals(expectedFileName, taskFile.name)
   }
 

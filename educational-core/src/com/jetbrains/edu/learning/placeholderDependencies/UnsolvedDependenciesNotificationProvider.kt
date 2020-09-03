@@ -11,6 +11,7 @@ import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.UnsolvedDependenciesNotificationPanel
 import com.jetbrains.edu.learning.courseFormat.ext.getUnsolvedTaskDependencies
+import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
@@ -31,7 +32,7 @@ class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNot
     if (!EduUtils.isStudentProject(project)) {
       return null
     }
-    val task = EduUtils.getTaskForFile(project, file) ?: return null
+    val task = file.getContainingTask(project) ?: return null
     val taskDependencies = task.getUnsolvedTaskDependencies().sortedBy { it.index }
     if (taskDependencies.isEmpty()) {
       return null

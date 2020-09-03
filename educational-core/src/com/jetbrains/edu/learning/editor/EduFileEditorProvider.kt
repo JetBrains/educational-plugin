@@ -8,11 +8,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.settings.CCSettings
-import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
-import com.jetbrains.edu.learning.isFeatureEnabled
 import org.jdom.Element
 
 class EduFileEditorProvider : FileEditorProvider, DumbAware {
@@ -22,12 +19,12 @@ class EduFileEditorProvider : FileEditorProvider, DumbAware {
   private val defaultTextEditorProvider: TextEditorProvider by lazy { TextEditorProvider.getInstance() }
 
   override fun accept(project: Project, file: VirtualFile): Boolean {
-    val taskFile = EduUtils.getTaskFile(project, file)
+    val taskFile = file.getTaskFile(project)
     return taskFile != null && TextEditorProvider.isTextFile(file)
   }
 
   override fun createEditor(project: Project, file: VirtualFile): FileEditor {
-    val taskFile = EduUtils.getTaskFile(project, file) ?: error("Can't find task file for `$file`")
+    val taskFile = file.getTaskFile(project) ?: error("Can't find task file for `$file`")
     val task = taskFile.task
     if (task.isFrameworkTask && CCUtils.isCourseCreator(project) &&
         isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR) &&

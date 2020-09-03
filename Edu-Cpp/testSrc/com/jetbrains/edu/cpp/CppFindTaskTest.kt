@@ -14,7 +14,6 @@ class CppFindTaskTest : FindTaskFileTestBase<CppProjectSettings>() {
     createCourseStructure(courseForTests)
 
     doTestGetTaskDir(
-      course = courseForTests,
       filePath = "./lesson1/task2/src/task.cpp",
       taskDirPath = "./lesson1/task2"
     )
@@ -25,7 +24,6 @@ class CppFindTaskTest : FindTaskFileTestBase<CppProjectSettings>() {
     createCourseStructure(courseForTests)
 
     doTestGetTaskDir(
-      course = courseForTests,
       filePath = "./section1/lesson1/task2/src/task.cpp",
       taskDirPath = "./section1/lesson1/task2"
     )

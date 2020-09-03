@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.stepik
 
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import junit.framework.TestCase
@@ -43,6 +44,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
       }
     }.asRemote()
 
+    StudyTaskManager.getInstance(project).course = course
     checkMessage(course, remoteCourse, "No changes")
   }
 
@@ -88,6 +90,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
       }
     }.asRemote()
 
+    StudyTaskManager.getInstance(project).course = course
     course.getSection("section3")!!.id = 0
     checkMessage(course, remoteCourse, "section3 New\n")
   }
@@ -105,6 +108,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
       section()
     }.asRemote()
 
+    StudyTaskManager.getInstance(project).course = course
     course.sectionIds = listOf(123)
     remoteCourse.sectionIds = listOf(123)
     checkMessage(course, remoteCourse,
@@ -132,6 +136,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
       }
     }.asRemote()
 
+    StudyTaskManager.getInstance(project).course = course
     val changedSection = course.sections[0]
     checkMessage(course, remoteCourse, "${changedSection.name} Info Changed\n")
   }
@@ -162,6 +167,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
       }
     }.asRemote()
 
+    StudyTaskManager.getInstance(project).course = course
     course.sections[0].lessons[2].id = 0
     checkMessage(course, remoteCourse, "section1/lesson3 New\n")
   }
@@ -186,6 +192,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
       }
     }.asRemote()
 
+    StudyTaskManager.getInstance(project).course = course
     course.sections[1].getLesson("lesson12")!!.id = 21
     remoteCourse.sections[0].getLesson("lesson12")!!.id = 12
 
@@ -218,6 +225,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
         eduTask("task2")
       }
     }.asRemote()
+    StudyTaskManager.getInstance(project).course = course
     course.sectionIds = listOf(123)
     remoteCourse.sectionIds = listOf(123)
 
@@ -241,6 +249,7 @@ class CCShowChangedFilesTest : EduActionTestCase() {
       }
     }.asRemote()
 
+    StudyTaskManager.getInstance(project).course = course
     course.sectionIds = listOf(123)
     remoteCourse.sectionIds = listOf(123)
     checkMessage(course, remoteCourse, "lesson1/task1 Info Changed\nlesson1/task2 Info Changed\n")

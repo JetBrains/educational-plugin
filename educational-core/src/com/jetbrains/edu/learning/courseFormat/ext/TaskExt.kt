@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.isTestsFile
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -55,7 +56,7 @@ fun Task.getAllTestFiles(project: Project): List<PsiFile> {
   val testFiles = mutableListOf<VirtualFile>()
   findTestDirs(project).forEach { testDir ->
     VfsUtilCore.processFilesRecursively(testDir) {
-      if (EduUtils.isTestsFile(project, it)) {
+      if (it.isTestsFile(project)) {
         testFiles.add(it)
       }
       true

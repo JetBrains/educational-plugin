@@ -24,11 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.messages.MessageBusConnection;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.EduVersions;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -302,7 +298,7 @@ public class StepikSolutionsLoader implements Disposable {
       @Override
       public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
         EduEditor eduEditor = EduUtils.getSelectedEduEditor(myProject);
-        TaskFile taskFile = EduUtils.getTaskFile(myProject, file);
+        TaskFile taskFile = VirtualFileExt.getTaskFile(file, myProject);
         if (eduEditor != null && taskFile != null) {
           mySelectedTask = taskFile.getTask();
           Task task = taskFile.getTask();
@@ -627,7 +623,7 @@ public class StepikSolutionsLoader implements Disposable {
           if (solutionText == null) continue;
           VirtualFile vFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
           if (vFile == null) continue;
-          if (EduUtils.isTestsFile(project, vFile)) continue;
+          if (VirtualFileExt.isTestsFile(vFile, project)) continue;
           try {
             taskFile.setTrackChanges(false);
             VfsUtil.saveText(vFile, solutionText);

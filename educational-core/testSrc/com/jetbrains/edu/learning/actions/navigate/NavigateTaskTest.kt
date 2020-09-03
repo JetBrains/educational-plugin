@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.actions.TaskNavigationAction
+import com.jetbrains.edu.learning.getTaskFile
 import junit.framework.TestCase
 
 class NavigateTaskTest : EduTestCase() {
@@ -70,7 +71,7 @@ class NavigateTaskTest : EduTestCase() {
     configureByTaskFile(lesson, task, taskFileName)
     myFixture.testAction(action)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile ?: error("Can't find current file")
-    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile) ?: error("Can't find current task file")
+    val taskFile = currentFile.getTaskFile(myFixture.project) ?: error("Can't find current task file")
     val actualTaskFileInfo = TaskFileInfo(lesson = taskFile.task.lesson.index, task = taskFile.task.index, name = taskFile.name)
     TestCase.assertEquals(expectedTaskFile, actualTaskFileInfo)
   }

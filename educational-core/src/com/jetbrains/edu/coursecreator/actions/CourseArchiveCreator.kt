@@ -19,10 +19,8 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.checkIgnoredFiles
 import com.jetbrains.edu.coursecreator.CCUtils.generateArchiveFolder
 import com.jetbrains.edu.coursecreator.actions.mixins.*
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.COURSE_META_FILE
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -30,7 +28,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
 import java.io.File
 import java.io.IOException
@@ -154,7 +151,7 @@ abstract class CourseArchiveCreator(
       val studentTaskFiles = LinkedHashMap<String, TaskFile>()
       for ((key, value) in task.taskFiles) {
         val answerFile = EduUtils.findTaskFileInDir(value, taskDir) ?: continue
-        val studentFile = EduUtils.createStudentFile(project, answerFile, task)
+        val studentFile = answerFile.toStudentFile(project, task)
         if (studentFile != null) {
           studentTaskFiles[key] = studentFile
         }

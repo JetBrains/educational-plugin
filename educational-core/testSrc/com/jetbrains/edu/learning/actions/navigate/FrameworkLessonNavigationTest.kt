@@ -4,7 +4,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.actions.TaskNavigationAction
@@ -13,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 
 // Note, `CodeInsightTestFixture#type` can trigger completion (e.g. it inserts paired `"`)
@@ -419,7 +419,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     init()
     myFixture.testAction(action)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile ?: error("Can't find current file")
-    val task = EduUtils.getTaskForFile(myFixture.project, currentFile) ?: error("Can't find task for $currentFile")
+    val task = currentFile.getContainingTask(myFixture.project) ?: error("Can't find task for $currentFile")
     check(expectedTask == task) {
       "Expected ${expectedTask.name}, found ${task.name}"
     }

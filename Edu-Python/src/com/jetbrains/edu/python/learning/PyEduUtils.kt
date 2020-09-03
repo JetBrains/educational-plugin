@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isTestsFile
 import com.jetbrains.python.packaging.PyPackageManagerUI
 import com.jetbrains.python.packaging.PyPackageUtil
 
@@ -24,7 +25,7 @@ fun Task.getCurrentTaskVirtualFile(project: Project): VirtualFile? {
   var resultFile: VirtualFile? = null
   for ((_, taskFile) in taskFiles) {
     val file = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
-    if (EduUtils.isTestsFile(project, file) || !TextEditorProvider.isTextFile(file)) continue
+    if (file.isTestsFile(project) || !TextEditorProvider.isTextFile(file)) continue
     if (resultFile == null) {
       resultFile = file
     }

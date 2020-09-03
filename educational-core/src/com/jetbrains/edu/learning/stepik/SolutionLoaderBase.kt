@@ -120,7 +120,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     val connection = project.messageBus.connect()
     connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
-        val task = EduUtils.getTaskForFile(project, file) ?: return
+        val task = file.getContainingTask(project) ?: return
         val future = futures[task.id] ?: return
         if (!future.isDone) {
           (source.getSelectedEditor(file) as? EduEditor)?.startLoading()
@@ -290,7 +290,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
           val vFile = taskDir.findFileByRelativePath(path) ?: continue
           taskFile.isVisible = solution.isVisible
 
-          if (EduUtils.isTestsFile(project, vFile)) continue
+          if (vFile.isTestsFile(project)) continue
           updatePlaceholders(taskFile, solution.placeholders)
           EduDocumentListener.modifyWithoutListener(task, path) {
             runUndoTransparentWriteAction {

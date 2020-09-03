@@ -11,10 +11,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.EduDocumentListener;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.checker.TestsOutputParser;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -50,7 +47,7 @@ class PySmartChecker {
       final FileDocumentManager documentManager = FileDocumentManager.getInstance();
       final Document windowDocument = documentManager.getDocument(windowCopy);
       if (windowDocument != null) {
-        TaskFile windowTaskFile = answerTaskFile.getTask().copy().getTaskFile(EduUtils.pathRelativeToTask(project, virtualFile));
+        TaskFile windowTaskFile = answerTaskFile.getTask().copy().getTaskFile(VirtualFileExt.pathRelativeToTask(virtualFile, project));
         if (windowTaskFile == null) {
           return;
         }
@@ -123,7 +120,7 @@ class PySmartChecker {
                                                         @NotNull final TaskFile source) {
     try {
       VirtualFile answerFile = file.copy(taskDir, taskDir, file.getNameWithoutExtension() + EduNames.ANSWERS_POSTFIX + "." + file.getExtension());
-      TaskFile answerTaskFile = source.getTask().copy().getTaskFile(EduUtils.pathRelativeToTask(project, file));
+      TaskFile answerTaskFile = source.getTask().copy().getTaskFile(VirtualFileExt.pathRelativeToTask(file, project));
       if (answerTaskFile == null) {
         return null;
       }

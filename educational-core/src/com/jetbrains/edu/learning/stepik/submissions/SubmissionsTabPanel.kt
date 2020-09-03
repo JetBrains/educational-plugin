@@ -12,11 +12,11 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.ui.ColorUtil
 import com.intellij.util.ui.AsyncProcessIcon
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.isTestsFile
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
@@ -174,7 +174,7 @@ class SubmissionsTabPanel(project: Project,
       val virtualFile = it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found")
       val currentFileContent = DiffContentFactory.getInstance().create(VfsUtil.loadText(virtualFile), virtualFile.fileType)
       val submissionText = submissionTexts[it.name] ?: submissionTexts[task.name]
-      if (EduUtils.isTestsFile(project, virtualFile) || submissionText == null) {
+      if (virtualFile.isTestsFile(project) || submissionText == null) {
         null
       }
       else {

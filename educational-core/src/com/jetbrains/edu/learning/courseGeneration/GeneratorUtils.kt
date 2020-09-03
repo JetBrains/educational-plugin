@@ -20,16 +20,13 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
@@ -162,7 +159,7 @@ object GeneratorUtils {
       }
       if (dir != null) {
         val virtualTaskFile = dir.findOrCreateChildData(parentDir, fileName)
-        if (EduUtils.isToEncodeContent(virtualTaskFile)) {
+        if (virtualTaskFile.isToEncodeContent()) {
           virtualTaskFile.setBinaryContent(Base64.decodeBase64(text))
         }
         else {

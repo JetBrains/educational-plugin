@@ -177,12 +177,12 @@ object CCUtils {
         if (file.isDirectory) {
           // All files inside task directory are already handled by `CCVirtualFileListener`
           // so here we don't need to process them again
-          return EduUtils.getTask(project, course, file) == null
+          return file.getTask(project) == null
         }
-        if (EduUtils.isTestsFile(project, file)) return true
+        if (file.isTestsFile(project)) return true
         if (configurator != null && configurator.excludeFromArchive(project, file)) return false
 
-        var taskFile = EduUtils.getTaskFile(project, file)
+        var taskFile = file.getTaskFile(project)
         if (taskFile == null) {
           val path = VfsUtilCore.getRelativePath(file, baseDir) ?: return true
           taskFile = TaskFile(path, loadText(file))
@@ -212,7 +212,7 @@ object CCUtils {
   @JvmStatic
   @Throws(IOException::class)
   fun loadText(file: VirtualFile): String {
-    return if (EduUtils.isToEncodeContent(file)) {
+    return if (file.isToEncodeContent()) {
       Base64.encodeBase64URLSafeString(VfsUtilCore.loadBytes(file))
     }
     else {

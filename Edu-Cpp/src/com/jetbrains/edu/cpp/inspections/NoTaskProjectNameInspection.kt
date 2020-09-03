@@ -14,9 +14,9 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.cpp.findCMakeCommand
 import com.jetbrains.edu.cpp.getCMakeProjectUniqueName
 import com.jetbrains.edu.cpp.messages.EduCppBundle
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.getTaskFile
 
 class NoTaskProjectNameInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
@@ -26,7 +26,7 @@ class NoTaskProjectNameInspection : LocalInspectionTool() {
           return
         }
 
-        val taskFile = EduUtils.getTaskFile(file.project, file.virtualFile) ?: return
+        val taskFile = file.virtualFile.getTaskFile(file.project) ?: return
 
         if (file.findCMakeCommand("project") == null) {
           holder.registerProblem(file, EduCppBundle.message("project.name.not.set.warning"), AddDefaultProjectNameFix(file, taskFile))

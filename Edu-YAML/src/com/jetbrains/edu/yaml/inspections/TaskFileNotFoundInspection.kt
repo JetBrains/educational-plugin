@@ -12,10 +12,10 @@ import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parentOfType
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlLoader
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
@@ -45,7 +45,7 @@ class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
 
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
       val scalar = startElement as YAMLScalar
-      val task = EduUtils.getTaskForFile(project, file.virtualFile) ?: return
+      val task = file.virtualFile.getContainingTask(project) ?: return
       val taskDir = task.getDir(project.courseDir) ?: return
 
       val mapping = scalar.parentOfType<YAMLMapping>() ?: return

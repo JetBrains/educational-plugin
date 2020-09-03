@@ -17,10 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.problems.WolfTheProblemSolver;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.PlaceholderPainter;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -81,7 +78,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     final Document document = editor.getDocument();
     final VirtualFile openedFile = FileDocumentManager.getInstance().getFile(document);
     if (openedFile != null) {
-      TaskFile taskFile = EduUtils.getTaskFile(project, openedFile);
+      TaskFile taskFile = VirtualFileExt.getTaskFile(openedFile, project);
       if (taskFile != null) {
         WolfTheProblemSolver.getInstance(project).clearProblems(openedFile);
         showTaskDescriptionToolWindow(project, taskFile, true);

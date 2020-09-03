@@ -7,14 +7,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 abstract class FindTaskFileTestBase<Settings> : CourseGenerationTestBase<Settings>() {
 
   protected fun doTestGetTaskDir(pathToCourseJson: String, filePath: String, taskDirPath: String) {
-    val course = generateCourseStructure(pathToCourseJson)
-    doTestGetTaskDir(course, filePath, taskDirPath)
+    generateCourseStructure(pathToCourseJson)
+    doTestGetTaskDir(filePath, taskDirPath)
   }
 
-  protected fun doTestGetTaskDir(course: Course, filePath: String, taskDirPath: String) {
+  protected fun doTestGetTaskDir(filePath: String, taskDirPath: String) {
     val file = findFile(filePath)
     val expectedTaskDir = findFile(taskDirPath)
-    assertEquals(expectedTaskDir, EduUtils.getTaskDir(project, course, file))
+    assertEquals(expectedTaskDir, file.getTaskDir(project))
   }
 
   protected fun doTestGetTaskForFile(pathToCourseJson: String, filePath: String, expectedTask: (Course) -> Task) {
@@ -25,7 +25,7 @@ abstract class FindTaskFileTestBase<Settings> : CourseGenerationTestBase<Setting
   protected fun doTestGetTaskForFile(course: Course, filePath: String, expectedTask: (Course) -> Task) {
     val file = findFile(filePath)
     val task = expectedTask(course)
-    val taskFromUtils = EduUtils.getTaskForFile(project, file)
+    val taskFromUtils = file.getContainingTask(project)
     assertEquals(course, StudyTaskManager.getInstance(project).course)
     assertEquals("tasks: " + task.name + " " + taskFromUtils!!.name, task, taskFromUtils)
   }
@@ -38,7 +38,7 @@ abstract class FindTaskFileTestBase<Settings> : CourseGenerationTestBase<Setting
   protected fun doTestGetTaskFile(course: Course, filePath: String, expectedTaskFile: (Course) -> TaskFile) {
     val file = findFile(filePath)
     val taskFile = expectedTaskFile(course)
-    val taskFileFromUtils = EduUtils.getTaskFile(project, file)
+    val taskFileFromUtils = file.getTaskFile(project)
     assertEquals(course, StudyTaskManager.getInstance(project).course)
     assertEquals("task files: " + taskFile.name + " " + taskFileFromUtils!!.name, taskFile, taskFileFromUtils)
   }

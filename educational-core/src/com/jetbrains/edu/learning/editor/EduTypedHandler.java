@@ -9,7 +9,7 @@ import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +78,7 @@ public class EduTypedHandler extends EditorWriteActionHandler {
     if (project == null) return null;
     final VirtualFile openedFile = FileDocumentManager.getInstance().getFile(editor.getDocument());
     if (openedFile == null) return null;
-    final TaskFile taskFile = EduUtils.getTaskFile(project, openedFile);
+    final TaskFile taskFile = VirtualFileExt.getTaskFile(openedFile, project);
     if (taskFile == null) return null;
 
     return taskFile;

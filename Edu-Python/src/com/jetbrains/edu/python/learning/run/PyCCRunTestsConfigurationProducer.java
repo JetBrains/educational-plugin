@@ -11,8 +11,8 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.OpenApiExtKt;
+import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +54,7 @@ public class PyCCRunTestsConfigurationProducer extends LazyRunConfigurationProdu
 
   @Nullable
   private static String generateName(@NotNull VirtualFile testsFile, @NotNull Project project) {
-    Task task = EduUtils.getTaskForFile(project, testsFile);
+    Task task = VirtualFileExt.getContainingTask(testsFile, project);
     if (task == null) {
       return null;
     }
@@ -72,7 +72,7 @@ public class PyCCRunTestsConfigurationProducer extends LazyRunConfigurationProdu
       return null;
     }
     Project project = location.getProject();
-    Task task = EduUtils.getTaskForFile(project, file);
+    Task task = VirtualFileExt.getContainingTask(file, project);
     if (task == null) {
       return null;
     }

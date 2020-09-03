@@ -7,6 +7,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -27,7 +28,7 @@ abstract public class PlaceholderNavigationAction extends DumbAwareAction {
       final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
       final VirtualFile openedFile = fileDocumentManager.getFile(selectedEditor.getDocument());
       if (openedFile != null) {
-        final TaskFile selectedTaskFile = EduUtils.getTaskFile(project, openedFile);
+        final TaskFile selectedTaskFile = VirtualFileExt.getTaskFile(openedFile, project);
         if (selectedTaskFile != null) {
           final int offset = selectedEditor.getCaretModel().getOffset();
           final AnswerPlaceholder targetPlaceholder = getTargetPlaceholder(selectedTaskFile, offset);

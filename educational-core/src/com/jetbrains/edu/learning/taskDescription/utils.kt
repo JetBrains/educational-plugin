@@ -8,9 +8,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.mimeType
 import com.jetbrains.edu.learning.stepik.SOURCE
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -151,8 +151,8 @@ fun replaceImagesForTheme(project: Project, task: Task, taskText: String, isDark
 
 private fun Task.containsLocalImages(project: Project, fileName: String): Boolean {
   val virtualFile = getTaskFile(fileName)?.getVirtualFile(project) ?: return false
-  val mimeType = EduUtils.getMimeType(virtualFile)
-  return mimeType.startsWith(IMAGE_TYPE)
+  val mimeType = virtualFile.mimeType()
+  return mimeType?.startsWith(IMAGE_TYPE) ?: false
 }
 
 fun Task.addHeader(tasksNumber: Int, text: String): String = buildString {

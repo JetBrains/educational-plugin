@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isTestsFile
 import com.jetbrains.edu.learning.projectView.TaskNode
 
 class CCTaskNode(
@@ -39,7 +40,7 @@ class CCTaskNode(
       val virtualFile = psiFile.virtualFile ?: return null
       val course = StudyTaskManager.getInstance(myProject).course ?: return null
       val configurator = course.configurator ?: return CCStudentInvisibleFileNode(myProject, psiFile, settings)
-      return if (!EduUtils.isTestsFile(myProject, virtualFile)) {
+      return if (!virtualFile.isTestsFile(myProject)) {
         CCStudentInvisibleFileNode(myProject, psiFile, settings)
       }
       else {

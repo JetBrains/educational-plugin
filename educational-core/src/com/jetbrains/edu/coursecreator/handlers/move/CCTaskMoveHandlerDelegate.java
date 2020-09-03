@@ -11,8 +11,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.move.MoveCallback;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -33,7 +33,7 @@ public class CCTaskMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
 
   @Override
   protected boolean isAvailable(@NotNull PsiDirectory directory) {
-    return EduUtils.isTaskDirectory(directory.getProject(), directory.getVirtualFile());
+    return VirtualFileExt.isTaskDirectory(directory.getVirtualFile(), directory.getProject());
   }
 
   @Override
@@ -47,7 +47,7 @@ public class CCTaskMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
 
     final VirtualFile targetVFile = ((PsiDirectory)targetContainer).getVirtualFile();
 
-    if (!EduUtils.isTaskDirectory(project, targetVFile) && !EduUtils.isLessonDirectory(project, targetVFile)) {
+    if (!VirtualFileExt.isTaskDirectory(targetVFile, project) && !VirtualFileExt.isLessonDirectory(targetVFile, project)) {
       Messages.showInfoMessage("Tasks can be moved only to other lessons or inside lesson", "Incorrect Target For Move");
       return;
     }
@@ -57,15 +57,15 @@ public class CCTaskMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
     if (course == null) {
       return;
     }
-    final Task taskToMove = EduUtils.getTask(project, course, sourceDirectory.getVirtualFile());
+    final Task taskToMove = VirtualFileExt.getTask(sourceDirectory.getVirtualFile(), project);
     if (taskToMove == null) {
       return;
     }
 
     Lesson sourceLesson = taskToMove.getLesson();
-    if (EduUtils.isLessonDirectory(project, targetVFile)) {
+    if (VirtualFileExt.isLessonDirectory(targetVFile, project)) {
       //if user moves task to any lesson, this task is inserted as the last task in this lesson
-      Lesson targetLesson = EduUtils.getLesson(project, course, targetVFile);
+      Lesson targetLesson = VirtualFileExt.getLesson(targetVFile, project);
       if (targetLesson == null) {
         return;
       }
@@ -84,7 +84,7 @@ public class CCTaskMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
       if (lessonDir == null) {
         return;
       }
-      Task targetTask = EduUtils.getTask(project, course, targetVFile);
+      Task targetTask = VirtualFileExt.getTask(targetVFile, project);
       if (targetTask == null) {
         return;
       }

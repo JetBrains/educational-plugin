@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.python.learning.getCurrentTaskFilePath
 import com.jetbrains.python.run.CommandLinePatcher
 import com.jetbrains.python.run.PythonCommandLineState
@@ -87,7 +88,7 @@ class PyCCCommandLineState private constructor(
       val testsFile = LocalFileSystem.getInstance().findFileByPath(configuration.pathToTest)
                       ?: return logAndQuit("Failed to find ${configuration.pathToTest}")
 
-      val task = EduUtils.getTaskForFile(configuration.project, testsFile)
+      val task = testsFile.getContainingTask(configuration.project)
                  ?: return logAndQuit("Failed to find task for `${testsFile.path}`")
 
       val taskDir = task.getDir(configuration.project.courseDir) ?: return logAndQuit("Failed to get task dir for `${task.name}` task")

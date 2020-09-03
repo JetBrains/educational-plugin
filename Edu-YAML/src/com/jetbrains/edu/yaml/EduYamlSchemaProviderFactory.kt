@@ -5,8 +5,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory
@@ -52,7 +52,7 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
     override fun getName(): String = "${taskType.capitalize()} ${super.getName()}"
 
     override fun isAvailable(file: VirtualFile): Boolean {
-      val task = EduUtils.getTaskForFile(project, file) ?: return false
+      val task = file.getContainingTask(project) ?: return false
       return super.isAvailable(file) && task.itemType == taskType
     }
 
@@ -66,7 +66,7 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
     override fun isAvailable(file: VirtualFile): Boolean {
       // We need to exclude task types with specific Config Schema Provider
       // to make providers mapped one to one for every yaml file.
-      val task = EduUtils.getTaskForFile(project, file) ?: return false
+      val task = file.getContainingTask(project) ?: return false
       return super.isAvailable(file) && !tasksWithSpecificProvider.contains(task.itemType)
     }
   }

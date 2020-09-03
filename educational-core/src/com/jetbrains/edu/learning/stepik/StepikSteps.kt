@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.replaceEncodedShortcuts
+import com.jetbrains.edu.learning.toStudentFile
 import java.util.*
 
 const val SOURCE = "source"
@@ -211,7 +212,7 @@ fun collectTaskFiles(project: Project, task: Task): MutableList<TaskFile> {
     invokeAndWaitIfNeeded {
       runWriteAction {
         val answerFile = EduUtils.findTaskFileInDir(value, taskDir) ?: return@runWriteAction
-        val studentTaskFile = EduUtils.createStudentFile(project, answerFile, task) ?: return@runWriteAction
+        val studentTaskFile = answerFile.toStudentFile(project, task) ?: return@runWriteAction
         files.add(studentTaskFile)
       }
     }
