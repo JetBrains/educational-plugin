@@ -70,6 +70,12 @@ val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
 val tomlPlugin = "org.toml.lang:${prop("tomlPluginVersion")}"
 val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
 
+val jvmPlugins = arrayOf(
+  "java",
+  "junit",
+  "gradle-java"
+)
+
 plugins {
   idea
   kotlin("jvm") version "1.4.0"
@@ -379,12 +385,7 @@ project(":jvm-core") {
       localPath = null
       version = ideaVersion
     }
-    val plugins = mutableListOf(
-      "java",
-      "junit",
-      "gradle-java"
-    )
-    setPlugins(*plugins.toTypedArray())
+    setPlugins(*jvmPlugins)
   }
 
   val testOutput = configurations.create("testOutput")
@@ -413,12 +414,7 @@ project(":Edu-Java") {
   intellij {
     localPath = null
     version = ideaVersion
-    val plugins = mutableListOf(
-      "java",
-      "junit",
-      "gradle-java"
-    )
-    setPlugins(*plugins.toTypedArray())
+    setPlugins(*jvmPlugins)
   }
 
   dependencies {
@@ -435,11 +431,9 @@ project(":Edu-Kotlin") {
       localPath = null
       version = ideaVersion
     }
-    val plugins = mutableListOf(
+    val plugins = listOf(
       "Kotlin",
-      "java",
-      "junit",
-      "gradle-java"
+      *jvmPlugins
     )
     setPlugins(*plugins.toTypedArray())
   }
@@ -456,11 +450,9 @@ project(":Edu-Scala") {
   intellij {
     localPath = null
     version = ideaVersion
-    val plugins = mutableListOf(
+    val plugins = listOf(
       scalaPlugin,
-      "java",
-      "junit",
-      "gradle-java"
+      *jvmPlugins
     )
     setPlugins(*plugins.toTypedArray())
   }
@@ -478,14 +470,12 @@ project(":Edu-Android") {
     localPath = studioPath
     val plugins = listOf(
       "android",
-      "java",
-      "junit",
-      "gradle-java",
       // Looks like `android-layoutlib` is semantically mandatory dependency of android plugin
       // because we get `NoClassDefFoundError` without it.
       // But it's marked as optional one so gradle-intellij-plugin doesn't load it automatically.
       // So we have to add it manually
-      "android-layoutlib"
+      "android-layoutlib",
+      *jvmPlugins
     )
     setPlugins(*plugins.toTypedArray())
   }
