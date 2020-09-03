@@ -16,7 +16,7 @@ import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.atomic.AtomicInteger
 
 abstract class CourseUpdateChecker(protected val project: Project) : Disposable {
-  private val checkRunnable = Runnable { (checkIsUpToDate()).doWhenDone { queueNextCheck(checkInterval) } }
+  private val checkRunnable = Runnable { (checkIsUpToDate()).doWhenDone { queueNextCheck() } }
   private val checkForAlarm by lazy { Alarm(Alarm.ThreadToUse.POOLED_THREAD, this) }
   val course: Course? get() = project.course
   private val invocationCounter: AtomicInteger = AtomicInteger()
@@ -37,7 +37,7 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
       return
     }
     if (isNewlyCreated(project)) {
-      queueNextCheck(checkInterval)
+      queueNextCheck()
     }
     else {
       checkRunnable.run()
@@ -51,10 +51,10 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
     checkForAlarm.cancelAllRequests()
   }
 
-  private fun queueNextCheck(interval: Long) {
+  fun queueNextCheck() {
     cancelCheckRequests()
-    LOG.info("Scheduled next is course up to date check for ${course?.name} with check interval $interval milliseconds")
-    checkForAlarm.addRequest(checkRunnable, interval)
+    LOG.info("Scheduled next is course up to date check for ${course?.name} with check interval $checkInterval milliseconds")
+    checkForAlarm.addRequest(checkRunnable, checkInterval)
   }
 
   private fun checkIsUpToDate(): ActionCallback {

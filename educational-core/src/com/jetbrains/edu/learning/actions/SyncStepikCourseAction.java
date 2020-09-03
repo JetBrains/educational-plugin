@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.actions;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -10,9 +9,13 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
+import com.jetbrains.edu.learning.stepik.CourseUpdateInfo;
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
+import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
+import com.jetbrains.edu.learning.stepik.hyperskill.EduCourseUpdateChecker;
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager;
 import icons.EducationalCoreIcons;
 import one.util.streamex.StreamEx;
@@ -30,28 +33,35 @@ public class SyncStepikCourseAction extends SyncCourseAction {
   @Override
   public void synchronizeCourse(@NotNull Project project) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    ProgressManager.getInstance().run(new Task.Backgroundable(project, "Updating Course", true) {
+    assert course instanceof EduCourse;
+    ProgressManager.getInstance().run(new Task.Backgroundable(project, EduCoreBundle.message("stepik.updating.course"), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        assert course instanceof EduCourse;
-        updateCourseStructure(project, (EduCourse)course);
-        SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
-        if (submissionsManager.submissionsSupported()) {
-          submissionsManager.getSubmissions(StreamEx.of(CourseExt.getAllTasks(course)).map(task -> task.getId()).toSet());
-          StepikSolutionsLoader.getInstance(project).loadSolutions(course, indicator);
-        }
+        doSynchronizeCourse(project, (EduCourse)course, indicator);
       }
     });
 
     EduCounterUsageCollector.synchronizeCourse(EduCounterUsageCollector.SynchronizeCoursePlace.WIDGET);
   }
 
-  public void updateCourseStructure(@NotNull Project project, EduCourse course) {
-    if (!course.isUpToDate()) {
-      new StepikCourseUpdater(course, project).updateCourse();
+  private void doSynchronizeCourse(@NotNull Project project, @NotNull EduCourse course, @NotNull ProgressIndicator indicator) {
+    updateCourseStructure(project, course);
+    EduCourseUpdateChecker.getInstance(project).queueNextCheck();
+    SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
+    if (submissionsManager.submissionsSupported()) {
+      submissionsManager.getSubmissions(StreamEx.of(CourseExt.getAllTasks(course)).map(task -> task.getId()).toSet());
+      StepikSolutionsLoader.getInstance(project).loadSolutions(course, indicator);
+    }
+  }
+
+  public void updateCourseStructure(@NotNull Project project, @NotNull EduCourse course) {
+    CourseUpdateInfo info = StepikUpdateDateExt.checkIsUpToDate(course);
+    boolean isUpToDate = info.isUpToDate();
+    if (!isUpToDate) {
+      new StepikCourseUpdater(course, project).updateCourse(info.getRemoteCourseInfo());
     }
     else {
-      ApplicationManager.getApplication().invokeLater(() -> showNotification(project, "Course is up to date", null));
+      showNotification(project, EduCoreBundle.message("stepik.course.up.to.date"), null);
     }
   }
 

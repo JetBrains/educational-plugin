@@ -34,11 +34,12 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   private val oldLessonDirectories = HashMap<Int, VirtualFile>()
   private val oldSectionDirectories = HashMap<Int, VirtualFile>()
 
-  fun updateCourse() {
+  fun updateCourse(courseInfo: EduCourse?) {
     oldLessonDirectories.clear()
     oldSectionDirectories.clear()
 
-    val courseFromServer = courseFromServer(course)
+    val courseFromServer = courseFromServer(course, courseInfo)
+
     if (courseFromServer == null) {
       LOG.warn("Course ${course.id} not found on Stepik")
       return
@@ -47,6 +48,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     doUpdate(courseFromServer)
 
     runInEdt {
+      course.isUpToDate = true
       synchronize()
       ProjectView.getInstance(project).refresh()
       showNotification(project, "Course updated", null)
@@ -385,8 +387,8 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     }
   }
 
-  private fun courseFromServer(currentCourse: EduCourse): EduCourse? {
-    val remoteCourse = StepikConnector.getInstance().getCourseInfo(currentCourse.id, true)
+  private fun courseFromServer(currentCourse: EduCourse, courseInfo: EduCourse?): EduCourse? {
+    val remoteCourse = courseInfo ?: StepikConnector.getInstance().getCourseInfo(currentCourse.id, true)
     if (remoteCourse != null) {
       loadCourseStructure(remoteCourse)
       addTopLevelLessons(remoteCourse)
