@@ -32,7 +32,7 @@ private const val CONTENT = "content"
 
 class CoursePanel(
   private val isLocationFieldNeeded: Boolean,
-  private val joinCourseAction: (CourseInfo, CourseMode, JPanel) -> Unit
+  private val joinCourseAction: (CourseInfo, CourseMode, CoursePanel) -> Unit
 ) : JPanel() {
   var errorState: ErrorState = ErrorState.NothingSelected
   var course: Course? = null

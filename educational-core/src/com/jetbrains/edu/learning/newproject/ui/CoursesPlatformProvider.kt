@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import javax.swing.Icon
 import javax.swing.JPanel
 
@@ -22,8 +23,8 @@ abstract class CoursesPlatformProvider {
 
   abstract val panel: CoursesPanel
 
-  open fun joinAction(courseInfo: CourseInfo, courseMode: CourseMode, coursePanel: JPanel) {
-    joinCourse(courseInfo, courseMode, coursePanel) { panel.setError(it) }
+  open fun joinAction(courseInfo: CourseInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
+    joinCourse(courseInfo, courseMode, coursePanel) { coursePanel.setError(it) }
   }
 
   abstract suspend fun loadCourses(): List<Course>

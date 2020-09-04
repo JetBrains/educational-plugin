@@ -12,11 +12,11 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import icons.EducationalCoreIcons
 import javax.swing.Icon
-import javax.swing.JPanel
 
 private const val BEFORE_LINK = "beforeLink"
 private const val LINK = "link"
@@ -34,7 +34,7 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
 
   override fun joinAction(courseInfo: CourseInfo,
                           courseMode: CourseMode,
-                          coursePanel: JPanel) {
+                          coursePanel: CoursePanel) {
 
     val account = HyperskillSettings.INSTANCE.account ?: return
 
