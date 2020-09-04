@@ -3,9 +3,9 @@ package com.jetbrains.edu.cpp.actions
 import com.intellij.lang.Language
 import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
-import com.jetbrains.edu.cpp.CppBaseConfigurator.Companion.MAIN_CPP
-import com.jetbrains.edu.cpp.CppBaseConfigurator.Companion.TASK_CPP
-import com.jetbrains.edu.cpp.CppBaseConfigurator.Companion.TEST_CPP
+import com.jetbrains.edu.cpp.CppConfigurator.Companion.MAIN_CPP
+import com.jetbrains.edu.cpp.CppConfigurator.Companion.TASK_CPP
+import com.jetbrains.edu.cpp.CppConfigurator.Companion.TEST_CPP
 import com.jetbrains.edu.cpp.CppProjectSettings
 import com.jetbrains.edu.cpp.CppTemplates.Companion.defaultExecutableTaskCMakeList
 import com.jetbrains.edu.cpp.CppTemplates.Companion.defaultTestTaskCMakeList

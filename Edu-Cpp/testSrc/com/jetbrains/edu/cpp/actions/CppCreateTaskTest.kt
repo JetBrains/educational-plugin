@@ -7,8 +7,8 @@ import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.cpp.*
-import com.jetbrains.edu.cpp.CppBaseConfigurator.Companion.TASK_CPP
-import com.jetbrains.edu.cpp.CppBaseConfigurator.Companion.TEST_CPP
+import com.jetbrains.edu.cpp.CppConfigurator.Companion.TASK_CPP
+import com.jetbrains.edu.cpp.CppConfigurator.Companion.TEST_CPP
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.fileTree
@@ -41,8 +41,8 @@ class CppCreateTaskTest : EduActionTestCase() {
         }
         dir("test") {
           file(TEST_CPP, when (environment) {
-            "GoogleTest" -> getInternalTemplateText(CppGTestConfigurator.TEST_TEMPLATE_NAME)
-            "Catch" -> getInternalTemplateText(CppCatchConfigurator.TEST_TEMPLATE_NAME)
+            "GoogleTest" -> getInternalTemplateText(CppGTestCourseBuilder.TEST_TEMPLATE_NAME)
+            "Catch" -> getInternalTemplateText(CppCatchCourseBuilder.TEST_TEMPLATE_NAME)
             else -> error("Test file undefined for environment `$environment`!")
           })
         }
@@ -151,7 +151,7 @@ class CppCreateTaskTest : EduActionTestCase() {
             file(TASK_CPP, taskText)
           }
           dir("test") {
-            file(TEST_CPP, getInternalTemplateText(CppCatchConfigurator.TEST_TEMPLATE_NAME))
+            file(TEST_CPP, getInternalTemplateText(CppCatchCourseBuilder.TEST_TEMPLATE_NAME))
           }
           file(
             CMAKE_LISTS_TXT,

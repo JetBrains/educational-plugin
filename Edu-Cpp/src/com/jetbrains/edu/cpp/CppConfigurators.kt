@@ -1,6 +1,5 @@
 package com.jetbrains.edu.cpp
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.cpp.checker.CppTaskCheckerProvider
@@ -15,31 +14,19 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTem
 import icons.EducationalCoreIcons
 import javax.swing.Icon
 
-class CppGTestConfigurator : CppBaseConfigurator() {
-  override val testTemplateName: String = TEST_TEMPLATE_NAME
-
-  companion object {
-    @VisibleForTesting
-    const val TEST_TEMPLATE_NAME = "gtest.test.cpp"
-  }
-}
-
-class CppCatchConfigurator : CppBaseConfigurator() {
-  override val testTemplateName: String = TEST_TEMPLATE_NAME
-
-  companion object {
-    @VisibleForTesting
-    const val TEST_TEMPLATE_NAME = "catch.test.cpp"
-  }
-}
-
-open class CppBaseConfigurator : EduConfigurator<CppProjectSettings> {
-  protected open val taskTemplateName: String? = TASK_CPP
-  protected open val mainTemplateName: String? = MAIN_CPP
-  protected open val testTemplateName: String? = null
-
+class CppGTestConfigurator : CppConfigurator() {
   override val courseBuilder: EduCourseBuilder<CppProjectSettings>
-    get() = CppCourseBuilder(taskTemplateName, mainTemplateName, testTemplateName)
+    get() = CppGTestCourseBuilder()
+}
+
+class CppCatchConfigurator : CppConfigurator() {
+  override val courseBuilder: EduCourseBuilder<CppProjectSettings>
+    get() = CppCatchCourseBuilder()
+}
+
+open class CppConfigurator : EduConfigurator<CppProjectSettings> {
+  override val courseBuilder: EduCourseBuilder<CppProjectSettings>
+    get() = CppCourseBuilder()
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = CppTaskCheckerProvider()

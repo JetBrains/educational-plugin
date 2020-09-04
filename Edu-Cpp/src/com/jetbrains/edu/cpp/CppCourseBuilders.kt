@@ -1,5 +1,6 @@
 package com.jetbrains.edu.cpp
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -24,11 +25,29 @@ import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
-class CppCourseBuilder(
-  override val taskTemplateName: String?,
-  override val mainTemplateName: String?,
-  override val testTemplateName: String?
-) : EduCourseBuilder<CppProjectSettings> {
+class CppGTestCourseBuilder : CppCourseBuilder() {
+  override val testTemplateName: String = TEST_TEMPLATE_NAME
+
+  companion object {
+    @VisibleForTesting
+    const val TEST_TEMPLATE_NAME = "gtest.test.cpp"
+  }
+}
+
+class CppCatchCourseBuilder : CppCourseBuilder() {
+  override val testTemplateName: String = TEST_TEMPLATE_NAME
+
+  companion object {
+    @VisibleForTesting
+    const val TEST_TEMPLATE_NAME = "catch.test.cpp"
+  }
+}
+
+open class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
+  override val taskTemplateName: String = CppConfigurator.TASK_CPP
+  override val mainTemplateName: String = CppConfigurator.MAIN_CPP
+  override val testTemplateName: String = CppConfigurator.TEST_CPP
+
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CppProjectSettings>? =
     CppCourseProjectGenerator(this, course)
 

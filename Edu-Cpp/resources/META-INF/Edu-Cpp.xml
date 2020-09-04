@@ -6,7 +6,7 @@
                   displayName="C++ (Google Test)" environment="GoogleTest"/>
     <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppCatchConfigurator"
                   displayName="C++ (Catch 2.0)" environment="Catch"/>
-    <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppBaseConfigurator"
+    <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppConfigurator"
                   courseType="Stepik"/>
     <codeforcesLanguageProvider implementation="com.jetbrains.edu.cpp.codeforces.CppCodeforcesLanguageProvider"/>
 
