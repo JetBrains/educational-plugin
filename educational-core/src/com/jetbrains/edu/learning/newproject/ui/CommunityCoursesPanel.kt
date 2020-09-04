@@ -25,9 +25,9 @@ class CommunityCoursesPanel(coursesPlatformProvider: CoursesPlatformProvider,
     return TabInfo(infoText, linkInfo, null)
   }
 
-  override suspend fun updateCoursesAfterLogin() {
+  override suspend fun updateCoursesAfterLogin(preserveSelection: Boolean) {
     val privateCourses = withContext(Dispatchers.IO) { stepikCoursesProvider.loadPrivateCourseInfos() }
     courses.addAll(privateCourses)
-    super.updateCoursesAfterLogin()
+    super.updateCoursesAfterLogin(preserveSelection)
   }
 }

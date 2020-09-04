@@ -11,9 +11,11 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.ui.EduColors
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.awt.Color
 
-class JetBrainsAcademyCoursesPanel(platformProvider: JetBrainsAcademyPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
+class JetBrainsAcademyCoursesPanel(private val platformProvider: JetBrainsAcademyPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
 
   override fun tabInfo(): TabInfo? {
     val infoText = EduCoreBundle.message("hyperskill.courses.explanation", EduNames.JBA)
@@ -36,7 +38,15 @@ class JetBrainsAcademyCoursesPanel(platformProvider: JetBrainsAcademyPlatformPro
     HyperskillConnector.getInstance().doAuthorize(
       Runnable { coursePanel.hideErrorPanel() },
       Runnable { notifyListeners(true) },
-      Runnable { hideLoginPanel() }
+      Runnable { hideLoginPanel() },
+      Runnable { scheduleUpdateAfterLogin() }
     )
+  }
+
+  override suspend fun updateCoursesAfterLogin(preserveSelection: Boolean) {
+    val academyCourses = withContext(Dispatchers.IO) { platformProvider.loadCourses() }
+    courses.clear()
+    courses.addAll(academyCourses)
+    super.updateCoursesAfterLogin(false)
   }
 }

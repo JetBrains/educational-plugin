@@ -107,7 +107,7 @@ object HyperskillProjectOpener {
     }
   }
 
-  private fun createHyperskillCourse(request: HyperskillOpenInProjectRequest,
+  fun createHyperskillCourse(request: HyperskillOpenInProjectRequest,
                                      hyperskillLanguage: String,
                                      hyperskillProject: HyperskillProject): Result<HyperskillCourse, String> {
     val eduLanguage = HYPERSKILL_LANGUAGES[hyperskillLanguage]

@@ -258,7 +258,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     }
   }
 
-  protected open suspend fun updateCoursesAfterLogin() {
+  protected open suspend fun updateCoursesAfterLogin(preserveSelection: Boolean = true) {
     updateFilters()
     showContent(courses.isEmpty())
 
@@ -266,7 +266,9 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     // as all the child components have 0 bounds at the moment of update
     val courseToSelect = selectedCourse
     updateModel(courses, null)
-    coursesListPanel.setSelectedValue(courseToSelect)
+    if (preserveSelection) {
+      coursesListPanel.setSelectedValue(courseToSelect)
+    }
   }
 
   inner class LanguagesFilterComponent : FilterComponent("Edu.NewCourse", 5, true) {

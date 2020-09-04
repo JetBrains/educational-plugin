@@ -14,7 +14,12 @@ import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
+import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import icons.EducationalCoreIcons
 import kotlinx.coroutines.CoroutineScope
@@ -57,6 +62,24 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
   }
 
   override suspend fun loadCourses(): List<Course> {
+    val hyperskillProject = getSelectedProject() ?: return getSupportedTracks()
+    val hyperskillCourse = HyperskillProjectOpener.createHyperskillCourse(HyperskillOpenStageRequest(hyperskillProject.id, null),
+                                                                          hyperskillProject).onError { return emptyList() }
+    return listOf(hyperskillCourse)
+  }
+
+  private fun getSelectedProject(): HyperskillProject? {
+    val account = HyperskillSettings.INSTANCE.account ?: return null
+    val currentUser = HyperskillConnector.getInstance().getCurrentUser(account) ?: return null
+    account.userInfo = currentUser
+    val projectId = account.userInfo.hyperskillProjectId ?: return null
+
+    return HyperskillConnector.getInstance().getProject(projectId).onError {
+      return null
+    }
+  }
+
+  private fun getSupportedTracks(): List<Course> {
     return SUPPORTED_LANGUAGES.mapNotNull { languageId ->
       val provider = CourseCompatibilityProviderEP.find(languageId, EduNames.DEFAULT_ENVIRONMENT) ?: return@mapNotNull null
       JetBrainsAcademyCourse(languageId, provider.technologyName)
