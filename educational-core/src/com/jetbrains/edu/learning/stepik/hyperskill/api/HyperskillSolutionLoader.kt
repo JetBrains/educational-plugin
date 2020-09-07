@@ -79,7 +79,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
   override fun updateTask(project: Project, task: Task, submissions: List<Submission>, force: Boolean): Boolean {
     val course = task.course as HyperskillCourse
-    if (task.lesson == course.getProjectLesson() && submissions.any { it.step == task.id && it.status == EduNames.CORRECT }) {
+    if (course.isStudy && task.lesson == course.getProjectLesson() && submissions.any { it.step == task.id && it.status == EduNames.CORRECT }) {
       markStageAsCompleted(task)
     }
     return super.updateTask(project, task, submissions, force)

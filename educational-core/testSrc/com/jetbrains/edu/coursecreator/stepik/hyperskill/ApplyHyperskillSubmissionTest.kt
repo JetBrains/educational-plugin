@@ -19,7 +19,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
 
   fun `test submission from ide`() = doTest(submissionFromIDE)
 
-  fun `test in educator mode`() = doTest(submissionFromIDE, CCUtils.COURSE_MODE, fileTree {
+  fun `test in educator mode`() = doTest(submissionFromWeb, CCUtils.COURSE_MODE, fileTree {
     dir("test project") {
       dir("task1") {
         file("task.html")
@@ -95,8 +95,11 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
         }
       }
     } as HyperskillCourse
-    course.hyperskillProject = HyperskillProject()
-    course.stages = listOf(HyperskillStage(1, "", 1), HyperskillStage(2, "", 2), HyperskillStage(3, "", 3))
+
+    if (course.isStudy) {
+      course.hyperskillProject = HyperskillProject()
+      course.stages = listOf(HyperskillStage(1, "", 1), HyperskillStage(2, "", 2), HyperskillStage(3, "", 3))
+    }
     return course
   }
 
