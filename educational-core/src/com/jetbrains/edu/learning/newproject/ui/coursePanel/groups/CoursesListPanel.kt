@@ -54,7 +54,7 @@ class CoursesListPanel(joinCourseAction: (CourseInfo, CourseMode) -> Unit) : JPa
     groupsComponent.clear()
   }
 
-  private fun setSelectedValue(newCourseToSelect: Course?) {
+  fun setSelectedValue(newCourseToSelect: Course?) {
     groupsComponent.setSelectedValue(newCourseToSelect)
   }
 

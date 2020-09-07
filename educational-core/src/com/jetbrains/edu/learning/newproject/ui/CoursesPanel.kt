@@ -250,9 +250,13 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   protected open suspend fun updateCoursesAfterLogin() {
     updateFilters()
-    updateModel(courses, selectedCourse)
     showContent(courses.isEmpty())
-    processSelectionChanged()
+
+    // hack: selection in com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel.updateModel can't scroll correctly
+    // as all the child components have 0 bounds at the moment of update
+    val courseToSelect = selectedCourse
+    updateModel(courses, null)
+    coursesListPanel.setSelectedValue(courseToSelect)
   }
 
   inner class LanguagesFilterComponent : FilterComponent("Edu.NewCourse", 5, true) {
