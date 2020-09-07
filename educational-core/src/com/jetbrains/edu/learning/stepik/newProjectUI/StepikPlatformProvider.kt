@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikCoursesProvider
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import icons.EducationalCoreIcons
+import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 
 class StepikPlatformProvider(private val coursesProvider: StepikCoursesProvider) : CoursesPlatformProvider() {
@@ -16,7 +17,7 @@ class StepikPlatformProvider(private val coursesProvider: StepikCoursesProvider)
 
   override val icon: Icon get() = EducationalCoreIcons.StepikCourseTab
 
-  override val panel: CoursesPanel get() = StepikCoursesPanel(this)
+  override fun createPanel(scope: CoroutineScope): CoursesPanel = StepikCoursesPanel(this, scope)
 
   override suspend fun loadCourses(): List<StepikCourse> {
     checkIsBackgroundThread()

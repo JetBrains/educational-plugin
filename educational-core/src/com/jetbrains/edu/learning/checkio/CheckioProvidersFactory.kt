@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
 import icons.EducationalCoreIcons
+import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 import kotlin.math.max
 
@@ -24,8 +25,7 @@ private class CheckiOPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.CheckiO.to24()
 
-  override val panel: CoursesPanel
-    get() = CheckiOCoursesPanel(this)
+  override fun createPanel(scope: CoroutineScope): CoursesPanel = CheckiOCoursesPanel(this, scope)
 
   override suspend fun loadCourses(): List<Course> {
     return if (EduUtils.isAndroidStudio()) {

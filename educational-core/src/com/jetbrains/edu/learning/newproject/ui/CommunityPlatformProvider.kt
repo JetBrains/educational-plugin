@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.ListedCoursesIdsProvider
 import com.jetbrains.edu.learning.stepik.api.StepikCoursesProvider
 import icons.EducationalCoreIcons
+import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.NonNls
 import java.io.File
 import java.io.IOException
@@ -23,7 +24,7 @@ class CommunityPlatformProvider(private val coursesProvider: StepikCoursesProvid
 
   override val icon: Icon get() = EducationalCoreIcons.CommunityCourses
 
-  override val panel: CoursesPanel get() = CommunityCoursesPanel(this)
+  override fun createPanel(scope: CoroutineScope): CoursesPanel = CommunityCoursesPanel(this, coursesProvider, scope)
 
   override suspend fun loadCourses(): List<Course> {
     val communityCourses = coursesProvider.getCommunityCourses()

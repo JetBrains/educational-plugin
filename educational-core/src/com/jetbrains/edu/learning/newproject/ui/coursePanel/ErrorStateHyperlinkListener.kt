@@ -90,7 +90,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
         coursesPanel.hideLoginPanel()
         doValidation(coursePanel)
         connection.disconnect()
-        coursesPanel.updateCourseListAfterLogin()
+        coursesPanel.scheduleUpdateAfterLogin()
       }
     })
   }

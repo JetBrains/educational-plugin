@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
@@ -16,6 +17,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import icons.EducationalCoreIcons
+import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 
 private const val BEFORE_LINK = "beforeLink"
@@ -30,7 +32,7 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.JB_ACADEMY_TAB
 
-  override val panel get() = JetBrainsAcademyCoursesPanel(this)
+  override fun createPanel(scope: CoroutineScope): CoursesPanel = JetBrainsAcademyCoursesPanel(this, scope)
 
   override fun joinAction(courseInfo: CourseInfo,
                           courseMode: CourseMode,
@@ -45,7 +47,7 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
                                         groups.valueOrEmpty(LINK_TEXT),
                                         groups.valueOrEmpty(AFTER_LINK),
                                         Runnable { BrowserUtil.browse(groups.valueOrEmpty(LINK)) })
-      panel.setError(errorState)
+      coursePanel.setError(errorState)
     }
 
     if (isOpened) {

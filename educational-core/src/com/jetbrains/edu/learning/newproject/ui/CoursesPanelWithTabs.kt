@@ -29,7 +29,7 @@ private const val PANEL_HEIGHT = 750
 
 private const val SCROLL_PANE_WIDTH = 233
 
-class CoursesPanelWithTabs : JPanel() {
+class CoursesPanelWithTabs(private val scope: CoroutineScope) : JPanel() {
   private val coursesTab: CoursesTab
   private val coursesProvidersTree: JBScrollPane
 
@@ -87,7 +87,7 @@ class CoursesPanelWithTabs : JPanel() {
     UIUtil.setBackgroundRecursively(coursesProvidersTree, UIUtil.SIDE_PANEL_BACKGROUND)
   }
 
-  fun loadCourses(scope: CoroutineScope) {
+  fun loadCourses() {
     coursesTab.loadCourses(scope)
   }
 
@@ -101,7 +101,7 @@ class CoursesPanelWithTabs : JPanel() {
       layout = cardLayout
       val providers = CoursesPlatformProviderFactory.allProviders
       providers.forEach {
-        val panel = it.panel
+        val panel = it.createPanel(scope)
         panels.add(panel)
         add(it.name, panel)
       }

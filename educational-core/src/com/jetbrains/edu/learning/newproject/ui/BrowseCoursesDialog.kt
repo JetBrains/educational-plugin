@@ -20,7 +20,7 @@ import javax.swing.JComponent
 import kotlin.coroutines.CoroutineContext
 
 class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
-  val panel = CoursesPanelWithTabs()
+  val panel = CoursesPanelWithTabs(this)
 
   private val job = Job()
 
@@ -35,7 +35,7 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
 
     Disposer.register(disposable, Disposable { job.cancel() })
     setupPluginListeners(disposable)
-    panel.loadCourses(this)
+    panel.loadCourses()
   }
 
   override fun getPreferredFocusedComponent(): JComponent? {

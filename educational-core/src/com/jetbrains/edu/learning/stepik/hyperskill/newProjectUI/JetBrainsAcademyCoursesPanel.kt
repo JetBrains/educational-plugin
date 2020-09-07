@@ -10,9 +10,10 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.ui.EduColors
+import kotlinx.coroutines.CoroutineScope
 import java.awt.Color
 
-class JetBrainsAcademyCoursesPanel(platformProvider: JetBrainsAcademyPlatformProvider) : CoursesPanel(platformProvider) {
+class JetBrainsAcademyCoursesPanel(platformProvider: JetBrainsAcademyPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
 
   override fun tabInfo(): TabInfo? {
     val infoText = EduCoreBundle.message("hyperskill.courses.explanation", EduNames.JBA)

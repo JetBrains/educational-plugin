@@ -24,7 +24,9 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPa
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettings
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
 import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
@@ -40,7 +42,7 @@ private const val CONTENT_CARD_NAME = "CONTENT"
 private const val LOADING_CARD_NAME = "PROGRESS"
 private const val NO_COURSES = "NO_COURSES"
 
-abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider) : JPanel() {
+abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider, private val scope: CoroutineScope) : JPanel() {
 
   protected var coursePanel: CoursePanel = CoursePanel(isLocationFieldNeeded = true) { courseInfo, courseMode, panel ->
     coursesProvider.joinAction(courseInfo, courseMode, panel)
@@ -240,7 +242,17 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     return searchPanel
   }
 
-  open fun updateCourseListAfterLogin() {
+  fun scheduleUpdateAfterLogin() {
+    scope.launch {
+      updateCoursesAfterLogin()
+    }
+  }
+
+  protected open suspend fun updateCoursesAfterLogin() {
+    updateFilters()
+    updateModel(courses, selectedCourse)
+    showContent(courses.isEmpty())
+    processSelectionChanged()
   }
 
   inner class LanguagesFilterComponent : FilterComponent("Edu.NewCourse", 5, true) {

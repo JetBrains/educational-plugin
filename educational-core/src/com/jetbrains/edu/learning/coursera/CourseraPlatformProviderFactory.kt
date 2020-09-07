@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
 import icons.EducationalCoreIcons
+import kotlinx.coroutines.CoroutineScope
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -35,7 +36,7 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.Coursera
 
-  override val panel: CoursesPanel get() = CourseraCoursesPanel(this)
+  override fun createPanel(scope: CoroutineScope): CoursesPanel = CourseraCoursesPanel(this, scope)
 
   override suspend fun loadCourses(): List<Course> {
     val tasks = mutableListOf<Future<Course?>>()

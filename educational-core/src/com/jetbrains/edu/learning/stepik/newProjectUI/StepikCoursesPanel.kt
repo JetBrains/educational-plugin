@@ -16,9 +16,10 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction
+import kotlinx.coroutines.CoroutineScope
 
 
-class StepikCoursesPanel(platformProvider: CoursesPlatformProvider) : CoursesPanel(platformProvider) {
+class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
   private var busConnection: MessageBusConnection? = null
   override fun toolbarAction(): AnAction? {
     return OpenStepikCourseByLink()

@@ -8,8 +8,9 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.LinkInfo
 import com.jetbrains.edu.learning.newproject.ui.TabInfo
+import kotlinx.coroutines.CoroutineScope
 
-class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider) : CoursesPanel(platformProvider) {
+class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
   override fun toolbarAction(): AnAction? {
     return StartCodeforcesContestAction(EduCoreBundle.message("codeforces.open.contest.by.link"), false)
   }

@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
 import icons.EducationalCoreIcons
+import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 
 class CodeforcesPlatformProviderFactory : CoursesPlatformProviderFactory {
@@ -19,7 +20,7 @@ private class CodeforcesPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.Codeforces
 
-  override val panel: CoursesPanel get() = CodeforcesCoursesPanel(this)
+  override fun createPanel(scope: CoroutineScope): CoursesPanel = CodeforcesCoursesPanel(this, scope)
 
   override suspend fun loadCourses(): List<Course> {
     checkIsBackgroundThread()

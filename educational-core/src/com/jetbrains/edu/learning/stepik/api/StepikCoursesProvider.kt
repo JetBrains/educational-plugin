@@ -53,7 +53,7 @@ class StepikCoursesProvider : CoroutineScope {
     return loadedCourses.await().filterIsInstance<StepikCourse>()
   }
 
-  private fun loadPrivateCourseInfos(): List<EduCourse> {
+  fun loadPrivateCourseInfos(): List<EduCourse> {
     if (EduSettings.getInstance().user == null) {
       return emptyList()
     }

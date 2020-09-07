@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
+import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 import javax.swing.JPanel
 
@@ -21,7 +22,7 @@ abstract class CoursesPlatformProvider {
 
   abstract val icon: Icon
 
-  abstract val panel: CoursesPanel
+  abstract fun createPanel(scope: CoroutineScope): CoursesPanel
 
   open fun joinAction(courseInfo: CourseInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
     joinCourse(courseInfo, courseMode, coursePanel) { coursePanel.setError(it) }
