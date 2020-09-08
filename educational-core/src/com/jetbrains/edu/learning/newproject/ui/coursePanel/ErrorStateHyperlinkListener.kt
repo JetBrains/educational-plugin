@@ -47,7 +47,8 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
         HyperskillConnector.getInstance().doAuthorize(
           Runnable { coursePanel.hideErrorPanel() },
           Runnable { coursesPanel.notifyListeners(true) },
-          Runnable { coursesPanel.hideLoginPanel() }
+          Runnable { coursesPanel.hideLoginPanel() },
+          Runnable { coursesPanel.scheduleUpdateAfterLogin() }
         )
       }
       is ErrorState.StepikLoginRequired, ErrorState.NotLoggedIn -> {
