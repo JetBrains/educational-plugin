@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
-import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -141,10 +140,7 @@ class HyperskillLoadingTest : NavigationTestBase() {
   fun `test solution loading code task`() {
     configureResponse("submission_code_task.json")
 
-    val course = courseWithFiles(
-      language = FakeGradleBasedLanguage,
-      courseProducer = ::HyperskillCourse
-    ) {
+    val course = hyperskillCourseWithFiles {
       frameworkLesson("lesson1") {
         eduTask("task1", stepId = 1) {
           taskFile("src/Task.kt", "fun foo() {}")
@@ -157,9 +153,7 @@ class HyperskillLoadingTest : NavigationTestBase() {
           taskFile("src/Task.kt", "fun foo() {}")
         }
       }
-    } as HyperskillCourse
-    course.hyperskillProject = HyperskillProject()
-    course.stages = listOf(HyperskillStage(1, "", 1))
+    }
 
     HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
 
@@ -436,10 +430,7 @@ class HyperskillLoadingTest : NavigationTestBase() {
   }
 
   private fun createHyperskillCourse(): HyperskillCourse {
-    val course = courseWithFiles(
-      language = FakeGradleBasedLanguage,
-      courseProducer = ::HyperskillCourse
-    ) {
+    return hyperskillCourseWithFiles {
       frameworkLesson("lesson1") {
         eduTask("task1", stepId = 1) {
           taskFile("src/Task.kt", "fun foo() {}")
@@ -457,10 +448,7 @@ class HyperskillLoadingTest : NavigationTestBase() {
           taskFile("test/Tests3.kt", "fun tests3() {}")
         }
       }
-    } as HyperskillCourse
-    course.hyperskillProject = HyperskillProject()
-    course.stages = listOf(HyperskillStage(1, "", 1), HyperskillStage(2, "", 2), HyperskillStage(3, "", 3))
-    return course
+    }
   }
 
   private fun checkVisibility(name: String, taskFiles: Map<String, TaskFile>, visibility: Map<String, Boolean>) {
