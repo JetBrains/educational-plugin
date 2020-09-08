@@ -10,15 +10,19 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
+import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import icons.EducationalCoreIcons
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import java.awt.Component
 import javax.swing.Icon
 
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.newproject.ui.utils")
-private const val INITIAL_LOGO_SIZE = 16f
 
 val Course.logo: Icon?
   get() {
+    if (this is JetBrainsAcademyCourse) {
+      return EducationalCoreIcons.JB_ACADEMY_TAB
+    }
     val logo = configurator?.logo ?: compatibilityProvider?.logo
     if (logo == null) {
       val language = languageDisplayName
@@ -30,7 +34,7 @@ val Course.logo: Icon?
 
 fun Course.getScaledLogo(logoSize: Int, ancestor: Component): Icon? {
   val logo = logo ?: return null
-  val scaleFactor = logoSize / INITIAL_LOGO_SIZE
+  val scaleFactor = logoSize / logo.iconHeight.toFloat()
   val scaledIcon = IconUtil.scale(logo, ancestor, scaleFactor)
   return IconUtil.toSize(scaledIcon, JBUI.scale(logoSize), JBUI.scale(logoSize))
 }
