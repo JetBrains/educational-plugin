@@ -1,23 +1,20 @@
-package com.jetbrains.edu.learning.framework;
+package com.jetbrains.edu.learning.framework
 
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
-import java.util.Map;
+interface FrameworkLessonManager {
+  fun prepareNextTask(lesson: FrameworkLesson, taskDir: VirtualFile, showDialogIfConflict: Boolean)
+  fun preparePrevTask(lesson: FrameworkLesson, taskDir: VirtualFile, showDialogIfConflict: Boolean)
 
-public interface FrameworkLessonManager {
-  void prepareNextTask(@NotNull FrameworkLesson lesson, @NotNull VirtualFile taskDir, boolean showDialogIfConflict);
-  void preparePrevTask(@NotNull FrameworkLesson lesson, @NotNull VirtualFile taskDir, boolean showDialogIfConflict);
+  fun saveExternalChanges(task: Task, externalState: Map<String, String>)
+  fun updateUserChanges(task: Task, newInitialState: Map<String, String>)
 
-  void saveExternalChanges(@NotNull Task task, @NotNull Map<String, String> externalState);
-  void updateUserChanges(@NotNull Task task, @NotNull Map<String, String> newInitialState);
-
-  @NotNull
-  static FrameworkLessonManager getInstance(@NotNull Project project) {
-    return ServiceManager.getService(project, FrameworkLessonManager.class);
+  companion object {
+    @JvmStatic
+    fun getInstance(project: Project): FrameworkLessonManager = project.service()
   }
 }
