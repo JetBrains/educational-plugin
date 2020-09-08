@@ -5,7 +5,6 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
@@ -62,8 +61,9 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
   }
 
   override suspend fun loadCourses(): List<Course> {
-    val hyperskillProject = getSelectedProject() ?: return getSupportedTracks()
+    val hyperskillProject = getSelectedProject() ?: return listOf(JetBrainsAcademyCourse())
     val hyperskillCourse = HyperskillProjectOpener.createHyperskillCourse(HyperskillOpenStageRequest(hyperskillProject.id, null),
+                                                                          hyperskillProject.language,
                                                                           hyperskillProject).onError { return emptyList() }
     return listOf(hyperskillCourse)
   }
@@ -79,20 +79,5 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
     }
   }
 
-  private fun getSupportedTracks(): List<Course> {
-    return SUPPORTED_LANGUAGES.mapNotNull { languageId ->
-      val provider = CourseCompatibilityProviderEP.find(languageId, EduNames.DEFAULT_ENVIRONMENT) ?: return@mapNotNull null
-      JetBrainsAcademyCourse(languageId, provider.technologyName)
-    }
-  }
-
   private fun MatchGroupCollection.valueOrEmpty(groupName: String): String = this[groupName]?.value ?: ""
-
-  companion object {
-    private val SUPPORTED_LANGUAGES = listOf(
-      EduNames.JAVA,
-      EduNames.KOTLIN,
-      EduNames.PYTHON
-    )
-  }
 }

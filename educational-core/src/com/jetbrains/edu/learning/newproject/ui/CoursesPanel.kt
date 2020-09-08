@@ -16,7 +16,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.technologyName
+import com.jetbrains.edu.learning.courseFormat.ext.supportedTechnologies
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
@@ -226,7 +226,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   private fun humanLanguages(courses: List<Course>): Set<String> = courses.map { it.humanLanguage }.toSet()
 
-  private fun programmingLanguages(courses: List<Course>): Set<String> = courses.mapNotNull { it.technologyName }.toSet()
+  private fun programmingLanguages(courses: List<Course>): Set<String> = courses.map { it.supportedTechnologies }.flatten().toSet()
 
   private fun createAndBindSearchComponent(): JPanel {
     val searchPanel = JPanel(BorderLayout())

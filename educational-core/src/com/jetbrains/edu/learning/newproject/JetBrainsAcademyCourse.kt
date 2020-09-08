@@ -1,15 +1,15 @@
 package com.jetbrains.edu.learning.newproject
 
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.CourseVisibility
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
+import com.jetbrains.edu.learning.courseFormat.*
 
 /**
  * Fake course type for advertising JBA
  */
-class JetBrainsAcademyCourse(languageId: String, trackName: String) : Course() {
+class JetBrainsAcademyCourse : Course() {
   init {
-    course.language = languageId
-    course.name = "JetBrains Academy $trackName Track"
+    course.name = "JetBrains Academy Track"
     visibility = CourseVisibility.FeaturedVisibility(1)
     description = """
      Learn to program by creating working applications:
@@ -26,5 +26,27 @@ class JetBrainsAcademyCourse(languageId: String, trackName: String) : Course() {
    """.trimIndent()
   }
 
+  override fun getTags(): MutableList<Tag> {
+    val tags = mutableListOf<Tag>()
+
+    tags.addAll(supportedLanguages.map { ProgrammingLanguageTag(it) })
+    tags.add(HumanLanguageTag(humanLanguage))
+
+    return tags
+  }
+
+  val supportedLanguages: List<String>
+    get() = FEATURED_LANGUAGES.mapNotNull { languageId ->
+      CourseCompatibilityProviderEP.find(languageId, EduNames.DEFAULT_ENVIRONMENT)?.technologyName
+    }
+
   override fun isViewAsEducatorEnabled(): Boolean = false
+
+  companion object {
+    private val FEATURED_LANGUAGES = listOf(
+      EduNames.JAVA,
+      EduNames.KOTLIN,
+      EduNames.PYTHON,
+    )
+  }
 }
