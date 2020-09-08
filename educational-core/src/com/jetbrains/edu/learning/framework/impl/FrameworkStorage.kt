@@ -1,14 +1,24 @@
 package com.jetbrains.edu.learning.framework.impl
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.util.io.PagePool
 import com.intellij.util.io.UnsyncByteArrayInputStream
 import com.intellij.util.io.UnsyncByteArrayOutputStream
 import com.intellij.util.io.storage.AbstractRecordsTable
 import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.learning.framework.impl.migration.RecordConverter
-import java.io.*
+import com.jetbrains.edu.learning.framework.impl.migration.To1VersionRecordConverter
+import java.io.DataInputStream
+import java.io.DataOutputStream
+import java.io.File
+import java.io.IOException
+import kotlin.system.measureTimeMillis
 
 class FrameworkStorage(storageFilePath: String) : AbstractStorage(storageFilePath) {
+
+  constructor(storageFilePath: String, version: Int) : this(storageFilePath) {
+    setVersion(version)
+  }
 
   override fun createRecordsTable(pool: PagePool, recordsFile: File): AbstractRecordsTable =
     FrameworkRecordsTable(recordsFile, pool)
@@ -17,7 +27,7 @@ class FrameworkStorage(storageFilePath: String) : AbstractStorage(storageFilePat
   fun updateUserChanges(record: Int, changes: UserChanges): Int {
     return synchronized(myLock) {
       val id = if (record == -1) {
-        myRecordsTable.createNewRecord()
+        createNewRecord()
       } else {
         record
       }
@@ -25,6 +35,10 @@ class FrameworkStorage(storageFilePath: String) : AbstractStorage(storageFilePat
       id
     }
   }
+
+  @VisibleForTesting
+  @Throws(IOException::class)
+  fun createNewRecord(): Int = myRecordsTable.createNewRecord()
 
   @Throws(IOException::class)
   fun getUserChanges(record: Int): UserChanges {
@@ -39,18 +53,21 @@ class FrameworkStorage(storageFilePath: String) : AbstractStorage(storageFilePat
 
   @Throws(IOException::class)
   fun migrate(newVersion: Int) {
-    synchronized(myLock) {
-      val currentVersion = version
-      if (currentVersion >= newVersion) return
+    val migrationTime = measureTimeMillis {
+      synchronized(myLock) {
+        val currentVersion = version
+        if (currentVersion >= newVersion) return
 
-      val recordIterator = myRecordsTable.createRecordIdIterator()
-      while (recordIterator.hasNextId()) {
-        val recordId = recordIterator.nextId()
-        migrateRecord(recordId, currentVersion, newVersion)
+        val recordIterator = myRecordsTable.createRecordIdIterator()
+        while (recordIterator.hasNextId()) {
+          val recordId = recordIterator.nextId()
+          migrateRecord(recordId, currentVersion, newVersion)
+        }
+
+        version = newVersion
       }
-
-      version = newVersion
     }
+    LOG.info("Migration to $newVersion version took $migrationTime ms")
   }
 
   @Throws(IOException::class)
@@ -63,6 +80,7 @@ class FrameworkStorage(storageFilePath: String) : AbstractStorage(storageFilePat
 
     while (version < newVersion) {
       val converter: RecordConverter? = when (currentVersion) {
+        0 -> To1VersionRecordConverter()
         else -> null
       }
 

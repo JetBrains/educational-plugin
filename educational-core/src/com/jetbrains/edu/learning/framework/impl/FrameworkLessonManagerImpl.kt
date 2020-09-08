@@ -10,6 +10,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -324,12 +325,26 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   companion object {
     private val LOG: Logger = Logger.getInstance(FrameworkLessonManagerImpl::class.java)
 
+    const val VERSION: Int = 1
+
     @VisibleForTesting
     fun constructStoragePath(project: Project): String =
       FileUtil.join(project.basePath!!, Project.DIRECTORY_STORE_FOLDER, "frameworkLessonHistory", "storage")
 
     @VisibleForTesting
-    fun createStorage(project: Project): FrameworkStorage = FrameworkStorage(constructStoragePath(project))
+    fun createStorage(project: Project): FrameworkStorage {
+      val storageFilePath = constructStoragePath(project)
+      val storage = FrameworkStorage(storageFilePath)
+      return try {
+        storage.migrate(VERSION)
+        storage
+      }
+      catch (e: IOException) {
+        LOG.error(e)
+        AbstractStorage.deleteFiles(storageFilePath)
+        FrameworkStorage(storageFilePath, VERSION)
+      }
+    }
   }
 }
 

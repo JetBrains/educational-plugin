@@ -15,7 +15,7 @@ import java.io.DataInput
 import java.io.DataOutput
 import java.io.IOException
 
-class UserChanges(val changes: List<Change>) {
+class UserChanges(val changes: List<Change>, val timestamp: Long = System.currentTimeMillis()) : FrameworkStorageData {
 
   operator fun plus(otherChanges: List<Change>): UserChanges = UserChanges(changes + otherChanges)
 
@@ -32,14 +32,15 @@ class UserChanges(val changes: List<Change>) {
   }
 
   @Throws(IOException::class)
-  fun write(out: DataOutput) {
+  override fun write(out: DataOutput) {
     DataInputOutputUtil.writeINT(out, changes.size)
     changes.forEach { Change.writeChange(it, out) }
+    DataInputOutputUtil.writeLONG(out, timestamp)
   }
 
   companion object {
 
-    private val EMPTY = UserChanges(emptyList())
+    private val EMPTY = UserChanges(emptyList(), -1)
 
     @JvmStatic
     fun empty(): UserChanges = EMPTY
@@ -51,7 +52,8 @@ class UserChanges(val changes: List<Change>) {
       for (i in 0 until size) {
         changes += Change.readChange(input)
       }
-      return UserChanges(changes)
+      val timestamp = DataInputOutputUtil.readLONG(input)
+      return UserChanges(changes, timestamp)
     }
   }
 }
@@ -78,8 +80,31 @@ sealed class Change {
     out.writeUTF(text)
   }
 
+
+
   abstract fun apply(project: Project, taskDir: VirtualFile, task: Task)
   abstract fun apply(state: MutableMap<String, String>)
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is Change) return false
+    if (javaClass != other.javaClass) return false
+
+    if (path != other.path) return false
+    if (text != other.text) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = path.hashCode()
+    result = 31 * result + text.hashCode()
+    return result
+  }
+
+  override fun toString(): String {
+    return "${javaClass.simpleName}(path='$path', text='$text')"
+  }
 
   class AddFile : Change {
 
