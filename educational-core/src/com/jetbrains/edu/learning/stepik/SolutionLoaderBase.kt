@@ -32,6 +32,7 @@ import java.util.*
 import java.util.Collections.max
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
+import kotlin.math.max
 
 abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
@@ -233,8 +234,15 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
 
     private fun Task.modificationDate(project: Project): Date {
-      val taskDir = getDir(project.courseDir) ?: return Date(0)
-      return Date(max(taskFiles.values.map { EduUtils.findTaskFileInDir(it, taskDir)?.timeStamp ?: 0 }))
+      val lesson = lesson
+      return if (lesson is FrameworkLesson && lesson.currentTask() != this) {
+        val timestamp = FrameworkLessonManager.getInstance(project).getChangesTimestamp(this)
+        Date(max(0, timestamp))
+      }
+      else {
+        val taskDir = getDir(project.courseDir) ?: return Date(0)
+        Date(max(taskFiles.values.map { EduUtils.findTaskFileInDir(it, taskDir)?.timeStamp ?: 0 }))
+      }
     }
 
     private fun Task.modifiedBefore(project: Project, taskSolutions: TaskSolutions): Boolean {
@@ -252,7 +260,9 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
         YamlFormatSynchronizer.saveItem(task)
         val lesson = task.lesson
         if (task.course.isStudy && lesson is FrameworkLesson && lesson.currentTask() != task) {
-          applySolutionToNonCurrentTask(project, task, taskSolutions)
+          if (force || task.modifiedBefore(project, taskSolutions)) {
+            applySolutionToNonCurrentTask(project, task, taskSolutions)
+          }
         }
         else {
           if (force || EduUtils.isNewlyCreated(project) || task.modifiedBefore(project, taskSolutions)) {
@@ -264,6 +274,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
     private fun applySolutionToNonCurrentTask(project: Project, task: Task, taskSolutions: TaskSolutions) {
       val frameworkLessonManager = FrameworkLessonManager.getInstance(project)
+
+
       frameworkLessonManager.saveExternalChanges(task, taskSolutions.solutions.mapValues { it.value.text })
       for (taskFile in task.taskFiles.values) {
         val solution = taskSolutions.solutions[taskFile.name] ?: continue

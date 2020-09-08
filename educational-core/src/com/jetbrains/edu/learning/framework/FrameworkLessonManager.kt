@@ -13,6 +13,8 @@ interface FrameworkLessonManager {
   fun saveExternalChanges(task: Task, externalState: Map<String, String>)
   fun updateUserChanges(task: Task, newInitialState: Map<String, String>)
 
+  fun getChangesTimestamp(task: Task): Long
+
   companion object {
     @JvmStatic
     fun getInstance(project: Project): FrameworkLessonManager = project.service()

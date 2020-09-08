@@ -101,6 +101,17 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
   }
 
+  override fun getChangesTimestamp(task: Task): Long {
+    require(EduUtils.isStudentProject(project)) {
+      "`getTimestamp` should be called only if course in study mode"
+    }
+    require(task.lesson is FrameworkLesson) {
+      "Changes timestamp makes sense only for framework tasks"
+    }
+
+    return storage.getUserChanges(task.record).timestamp
+  }
+
   /**
    * Convert the current state on local FS related to current task in framework lesson
    * to a new one, to get state of next/previous (target) task.
