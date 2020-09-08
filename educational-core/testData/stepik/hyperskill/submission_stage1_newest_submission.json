@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "submissions": [
+    {
+      "attempt": 503037,
+      "can_download_test_set": false,
+      "eta": 0,
+      "feedback": "",
+      "hint": "",
+      "id": 1457792,
+      "next_test_available_at": null,
+      "reply": {
+        "choices": null,
+        "score": null,
+        "solution": [
+          {
+            "name": "src/Task.kt",
+            "text": "fun userFoo() {}",
+            "is_visible": true
+          },
+          {
+            "name": "src/Baz.kt",
+            "text": "fun userBaz() {}",
+            "is_visible": true
+          },
+          {
+            "name": "test/Tests1.kt",
+            "text": "fun userTests1() {}",
+            "is_visible": false
+          }
+        ],
+        "language": null,
+        "code": null,
+        "edu_task": null,
+        "version": 11
+      },
+      "status": "correct",
+      "step": 1,
+      "time": "3000-07-04T12:43:01Z"
+    }
+  ]
+}

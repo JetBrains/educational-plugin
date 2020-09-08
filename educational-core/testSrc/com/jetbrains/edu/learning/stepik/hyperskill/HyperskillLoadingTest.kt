@@ -5,7 +5,9 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry
 import com.jetbrains.edu.learning.EduTestDialog
+import com.jetbrains.edu.learning.FileTreeBuilder
 import com.jetbrains.edu.learning.actions.NextTaskAction
+import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.fileTree
@@ -429,8 +431,94 @@ class HyperskillLoadingTest : NavigationTestBase() {
     assertEquals(3, course.taskToTopics[0]?.size)
   }
 
-  private fun createHyperskillCourse(): HyperskillCourse {
-    return hyperskillCourseWithFiles {
+  fun `test do not apply old submissions on new user changes`() =
+    doApplySubmissionOnNonCurrentTaskTest("submission_stage1_ancient_submission.json") {
+      dir("lesson1") {
+        dir("task") {
+          dir("src") {
+            file("Task.kt", "fun foo2() {}\nfun foo() {}")
+            file("Baz.kt", "fun baz() {}")
+          }
+          dir("test") {
+            file("Tests1.kt", "fun tests1() {}")
+          }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+
+  fun `test apply new submissions on old user changes`() =
+    doApplySubmissionOnNonCurrentTaskTest("submission_stage1_newest_submission.json") {
+      dir("lesson1") {
+        dir("task") {
+          dir("src") {
+            file("Task.kt", "fun userFoo() {}")
+            file("Baz.kt", "fun userBaz() {}")
+          }
+          dir("test") {
+            file("Tests1.kt", "fun tests1() {}")
+          }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+        dir("task3") {
+          file("task.html")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+
+
+  /**
+   * Types something in the first task, navigate to the second task,
+   * applies submissions from given response and navigates back
+   */
+  private fun doApplySubmissionOnNonCurrentTaskTest(
+    responseFileName: String,
+    expectedStructure: FileTreeBuilder.() -> Unit
+  ) {
+    configureResponse(responseFileName)
+
+    val course = createHyperskillCourse(completeStages = true)
+
+    val task1 = course.findTask("lesson1", "task1")
+    val task2 = course.findTask("lesson1", "task2")
+
+    withVirtualFileListener(course) {
+      task1.openTaskFileInEditor("src/Task.kt")
+      myFixture.type("fun foo2() {}\n")
+      myFixture.testAction(NextTaskAction())
+
+      assertEquals(task2, course.getProjectLesson()!!.currentTask())
+
+      HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
+
+      task2.openTaskFileInEditor("src/Task.kt")
+      myFixture.testAction(PreviousTaskAction())
+
+      assertEquals(task1, course.getProjectLesson()!!.currentTask())
+    }
+
+    fileTree(expectedStructure).assertEquals(rootDir, myFixture)
+  }
+
+  private fun createHyperskillCourse(completeStages: Boolean = false): HyperskillCourse {
+    return hyperskillCourseWithFiles(completeStages = completeStages) {
       frameworkLesson("lesson1") {
         eduTask("task1", stepId = 1) {
           taskFile("src/Task.kt", "fun foo() {}")
