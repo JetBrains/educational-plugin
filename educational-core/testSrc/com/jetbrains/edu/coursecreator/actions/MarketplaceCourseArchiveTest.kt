@@ -4,6 +4,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Vendor
+import com.jetbrains.edu.learning.encrypt.getAesKey
 
 class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
@@ -13,7 +14,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       lesson("lesson1") {
         eduTask("task1") {}
       }
-      additionalFile("test.pdf")
+      additionalFile("test.txt", "some text")
     }
 
     doTest()
@@ -25,7 +26,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       lesson("lesson1") {
         eduTask("task1") {}
       }
-      additionalFile("test.pdf")
+      additionalFile("test.txt", "another text")
     }
 
     doTest()
@@ -37,7 +38,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       lesson("lesson1") {
         eduTask("task1") {}
       }
-      additionalFile("test.pdf")
+      additionalFile("test.txt", "new text")
     }
 
     doTest()
@@ -48,5 +49,6 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   override fun getArchiveCreator() =
-    MarketplaceArchiveCreator(myFixture.project, "${myFixture.project.basePath}/$GENERATED_FILES_FOLDER/course.zip")
+    MarketplaceArchiveCreator(myFixture.project, "${myFixture.project.basePath}/$GENERATED_FILES_FOLDER/course.zip", getAesKey())
+
 }

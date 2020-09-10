@@ -21,7 +21,7 @@
                 }
               ],
               "is_visible" : true,
-              "text" : "fun foo(): String = TODO()"
+              "text" : "pXi8uFG5Sc6Y0oMCwTrI4js+awtjCwgP1pHDEycaVsk="
             }
           },
           "description_text" : "solve task",
@@ -35,5 +35,5 @@
       "type" : "lesson"
     }
   ],
-  "version" : 11
+  "version" : 12
 }

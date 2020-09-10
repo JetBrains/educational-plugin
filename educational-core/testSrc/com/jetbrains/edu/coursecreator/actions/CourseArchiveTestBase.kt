@@ -43,6 +43,4 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
       prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE)
       return prettyPrinter
     }
-
-
 }

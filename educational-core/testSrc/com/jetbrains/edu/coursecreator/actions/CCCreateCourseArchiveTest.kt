@@ -10,10 +10,10 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.yaml.configFileName
 import junit.framework.TestCase
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -274,7 +274,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
     // It is not important, what would be passed to the constructor, except the first argument - project
     // Inside `compute()`, exception would be thrown, so we will not reach the moment of creating the archive
-    EduCourseArchiveCreator(project, "").compute()
+    getArchiveCreator().compute()
 
     val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
     assertEquals(task.configFileName, navigatedFile.name)
@@ -418,8 +418,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       additionalFile(EduNames.COURSE_IGNORE, "tmp.txt")
     }
     course.description = "my summary"
-    val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(
-      EduCourseArchiveCreator(myFixture.project, "${myFixture.project.basePath}/$GENERATED_FILES_FOLDER/course.zip"))
+    val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(getArchiveCreator())
     TestCase.assertEquals("Files listed in the `.courseignore` are not found in the project:\n\ntmp.txt", errorMessage)
   }
 
@@ -428,6 +427,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   override fun getArchiveCreator() =
-    EduCourseArchiveCreator(myFixture.project, "${myFixture.project.basePath}/$GENERATED_FILES_FOLDER/course.zip")
-
+    EduCourseArchiveCreator(myFixture.project,
+                            "${myFixture.project.basePath}/$GENERATED_FILES_FOLDER/course.zip",
+                            getAesKey())
 }

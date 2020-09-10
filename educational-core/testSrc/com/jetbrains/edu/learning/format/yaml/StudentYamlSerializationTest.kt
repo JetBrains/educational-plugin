@@ -16,6 +16,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.encrypt.AES256
+import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -268,6 +270,7 @@ class StudentYamlSerializationTest : EduTestCase() {
   fun `test codeforces task`() {
     val taskFileName = "src/Task.kt"
     val taskSolution = "Task solution"
+    val taskSolutionEncrypted = AES256.encrypt(taskSolution, getAesKey())
     val feedbackUrl = "https://codeforces.com/contest/1218/problem/A?locale=en"
     val status = CheckStatus.Unchecked
 
@@ -282,7 +285,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |files:
     |- name: $taskFileName
     |  visible: true
-    |  text: $taskSolution
+    |  encrypted_text: $taskSolutionEncrypted
     |  learner_created: false
     |feedback_link: $feedbackUrl
     |status: $status
@@ -292,6 +295,7 @@ class StudentYamlSerializationTest : EduTestCase() {
   fun `test codeforces task with file io`() {
     val taskFileName = "src/Task.kt"
     val taskSolution = "Task solution"
+    val taskSolutionEncrypted = AES256.encrypt(taskSolution, getAesKey())
     val feedbackUrl = "https://codeforces.com/contest/1228/problem/F?locale=ru"
     val status = CheckStatus.Unchecked
 
@@ -309,7 +313,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |files:
     |- name: $taskFileName
     |  visible: true
-    |  text: $taskSolution
+    |  encrypted_text: $taskSolutionEncrypted
     |  learner_created: false
     |feedback_link: $feedbackUrl
     |status: $status
@@ -332,7 +336,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |files:
     |- name: task.txt
     |  visible: true
-    |  text: text
+    |  encrypted_text: fgnGdWA8h6P1G1byNm3P3g==
     |  learner_created: false
     |status: Unchecked
     |record: -1
@@ -340,10 +344,12 @@ class StudentYamlSerializationTest : EduTestCase() {
   }
 
   fun `test task with placeholders`() {
+    val taskSolution = "42 is the answer"
+    val taskSolutionEncrypted = AES256.encrypt(taskSolution, getAesKey())
     val task = courseWithFiles {
       lesson {
         eduTask {
-          taskFile("task.txt", "<p>42 is the answer</p>") {
+          taskFile("task.txt", "<p>$taskSolution</p>") {
             placeholder(0, placeholderText = "")
           }
         }
@@ -365,7 +371,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |    initialized_from_dependency: false
     |    selected: false
     |    status: Unchecked
-    |  text: 42 is the answer
+    |  encrypted_text: $taskSolutionEncrypted
     |  learner_created: false
     |status: Unchecked
     |record: -1
@@ -387,7 +393,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |files:
     |- name: task.txt
     |  visible: true
-    |  text: text
+    |  encrypted_text: fgnGdWA8h6P1G1byNm3P3g==
     |  learner_created: true
     |status: Unchecked
     |record: -1
@@ -428,7 +434,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |files:
     |- name: task.txt
     |  visible: false
-    |  text: task text
+    |  encrypted_text: Bb6BVFFg7T7oP1LtfAFuEg==
     |  learner_created: false
     |status: Unchecked
     |record: -1

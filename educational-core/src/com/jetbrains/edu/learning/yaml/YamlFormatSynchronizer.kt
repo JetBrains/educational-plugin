@@ -43,6 +43,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.encrypt.EncryptionModule
+import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
@@ -88,6 +90,8 @@ object YamlFormatSynchronizer {
   val STUDENT_MAPPER: ObjectMapper by lazy {
     val mapper = createMapper()
     addMixIns(mapper)
+    val aesKey = getAesKey()
+    mapper.registerModule(EncryptionModule(aesKey))
     mapper.addStudentMixIns()
 
     mapper
@@ -101,7 +105,7 @@ object YamlFormatSynchronizer {
 
     val mapper = ObjectMapper(yamlFactory)
     mapper.registerKotlinModule()
-    mapper.registerModule(JavaTimeModule());
+    mapper.registerModule(JavaTimeModule())
     mapper.setLocale(Locale.ENGLISH)
     mapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
     mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)

@@ -29,6 +29,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.encrypt.EncryptionModule
+import com.jetbrains.edu.learning.encrypt.EncryptionBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
@@ -38,7 +40,8 @@ import java.util.*
 
 abstract class CourseArchiveCreator(
   private val project: Project,
-  @NonNls private val location: String
+  @NonNls private val location: String,
+  protected val aesKey: String?
 ) : Computable<String?> {
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
@@ -120,7 +123,8 @@ abstract class CourseArchiveCreator(
       mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionLocalMixin::class.java)
     }
 
-    fun commonMapperSetup(mapper: ObjectMapper, course: Course) {
+    fun commonMapperSetup(mapper: ObjectMapper, course: Course, aesKey: String?) {
+      mapper.registerModule(EncryptionModule(aesKey))
       if (course is CourseraCourse) {
         mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
       }

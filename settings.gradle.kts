@@ -46,6 +46,7 @@ fun configureSecretProperties() {
   secretProperties.extractAndStore("educational-core/resources/twitter/oauth_twitter.properties", "twitterConsumerKey", "twitterConsumerSecret")
   secretProperties.extractAndStore("Edu-Python/resources/checkio/py-checkio-oauth.properties", "pyCheckioClientId", "pyCheckioClientSecret")
   secretProperties.extractAndStore("Edu-JavaScript/resources/checkio/js-checkio-oauth.properties", "jsCheckioClientId", "jsCheckioClientSecret")
+  secretProperties.extractAndStore("educational-core/resources/aes/aes.properties", "aesKey")
 }
 
 fun download(url: URL, dstPath: String) {

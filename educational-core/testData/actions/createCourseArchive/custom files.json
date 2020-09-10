@@ -18,25 +18,25 @@
                   "name" : "taskFile1.txt",
                   "placeholders" : [ ],
                   "is_visible" : true,
-                  "text" : ""
+                  "text" : "6zkm3NpDQQaIQ+CAebF//w=="
                 },
                 "test.py" : {
                   "name" : "test.py",
                   "placeholders" : [ ],
                   "is_visible" : true,
-                  "text" : "some test"
+                  "text" : "0fgzeC1aVg9usclTUtE3LA=="
                 },
                 "additional.py" : {
                   "name" : "additional.py",
                   "placeholders" : [ ],
                   "is_visible" : false,
-                  "text" : "my test"
+                  "text" : "pL6D6cpSudLyZn+johMJ/g=="
                 },
                 "visibleAdditional.py" : {
                   "name" : "visibleAdditional.py",
                   "placeholders" : [ ],
                   "is_visible" : true,
-                  "text" : "my test"
+                  "text" : "pL6D6cpSudLyZn+johMJ/g=="
                 }
               },
               "description_text" : "solve task",
@@ -53,5 +53,5 @@
       "type" : "section"
     }
   ],
-  "version" : 11
+  "version" : 12
 }

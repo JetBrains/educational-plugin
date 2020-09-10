@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.encrypt.EncryptionBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -82,7 +83,8 @@ class CCCreateCoursePreviewDialog(
     val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
     val archiveLocation = "${folder.path}/$archiveName.zip"
     close(OK_EXIT_CODE)
-    val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(EduCourseArchiveCreator(myProject, archiveLocation))
+    val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(
+      EduCourseArchiveCreator(myProject, archiveLocation, EncryptionBundle.message("aesKey")))
 
     if (errorMessage.isNullOrEmpty()) {
       val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")

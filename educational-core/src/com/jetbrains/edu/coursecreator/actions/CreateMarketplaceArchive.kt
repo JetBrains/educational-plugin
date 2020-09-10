@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.encrypt.EncryptionBundle
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
@@ -19,6 +20,7 @@ class CreateMarketplaceArchive
     presentation.isEnabledAndVisible = project != null && isCourseCreator(project) && isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE)
   }
 
-  override fun getArchiveCreator(project: Project, location: String): CourseArchiveCreator = MarketplaceArchiveCreator(project, location)
+  override fun getArchiveCreator(project: Project, location: String): CourseArchiveCreator =
+    MarketplaceArchiveCreator(project, location, EncryptionBundle.message("aesKey"))
 
 }

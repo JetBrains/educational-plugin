@@ -51,3 +51,5 @@ Edu-Kotlin/resources/twitter/kotlin_koans/oauth_twitter.properties
 educational-core/resources/twitter/oauth_twitter.properties
 educational-core/resources/stepik/stepik.properties
 educational-core/resources/hyperskill/hyperskill-oauth.properties
+#AES key
+educational-core/resources/aes/aes.properties

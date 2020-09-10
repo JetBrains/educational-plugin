@@ -784,3 +784,6 @@
       "description_format" : "MD"
     }
     ```
+11. For Android courses replaced `Android` course type with `Pycharm` course type + `Android` environment
+  
+12. Store task file texts and additional files texts encrypted.    

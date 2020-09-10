@@ -7,6 +7,8 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.encrypt.AES256
+import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -17,8 +19,12 @@ class YamlChangedAfterEventTest : YamlTestCase() {
 
     val task1 = course.findTask("lesson1", "task1")
 
+    val userFileText = "user file"
+    val userFileTextEncrypted = AES256.encrypt(userFileText, getAesKey())
+    val taskSolutionEncrypted = AES256.encrypt("task 1", getAesKey())
+
     withVirtualFileListener(course) {
-      GeneratorUtils.createChildFile(project.courseDir, "lesson1/task/userFile.txt", "user file")
+      GeneratorUtils.createChildFile(project.courseDir, "lesson1/task/userFile.txt", userFileText)
       task1.openTaskFileInEditor("file1.txt")
       myFixture.testAction(NextTaskAction())
     }
@@ -28,11 +34,11 @@ class YamlChangedAfterEventTest : YamlTestCase() {
       |files:
       |- name: file1.txt
       |  visible: true
-      |  text: task 1
+      |  encrypted_text: $taskSolutionEncrypted
       |  learner_created: true
       |- name: userFile.txt
       |  visible: true
-      |  text: user file
+      |  encrypted_text: $userFileTextEncrypted
       |  learner_created: true
       |status: Unchecked
       |record: -1

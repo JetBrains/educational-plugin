@@ -28,24 +28,24 @@
   ],
   "additional_files" : [
     {
-      "name" : "test.pdf",
+      "name" : "test.txt",
       "placeholders" : [ ],
       "is_visible" : true,
-      "text" : ""
+      "text" : "j70iMjTU6gykgaATeLPLvA=="
     },
     {
       "name" : "build.gradle",
       "placeholders" : [ ],
       "is_visible" : true,
-      "text" : ""
+      "text" : "6zkm3NpDQQaIQ+CAebF//w=="
     },
     {
       "name" : "settings.gradle",
       "placeholders" : [ ],
       "is_visible" : true,
-      "text" : ""
+      "text" : "6zkm3NpDQQaIQ+CAebF//w=="
     }
   ],
-  "version" : 11,
+  "version" : 12,
   "edu_plugin_version" : "unknown"
 }

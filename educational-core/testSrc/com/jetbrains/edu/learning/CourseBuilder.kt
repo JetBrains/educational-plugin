@@ -134,6 +134,9 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
 }
 
 class SectionBuilder(course: Course, val section: Section = Section()) : LessonOwnerBuilder(course) {
+  init {
+    section.course = course
+  }
 
   override val nextLessonIndex: Int get() = section.lessons.size + 1
 

@@ -27,20 +27,20 @@
       "name" : "build.gradle",
       "placeholders" : [ ],
       "is_visible" : true,
-      "text" : ""
+      "text" : "6zkm3NpDQQaIQ+CAebF//w=="
     },
     {
       "name" : "settings.gradle",
       "placeholders" : [ ],
       "is_visible" : true,
-      "text" : ""
+      "text" : "6zkm3NpDQQaIQ+CAebF//w=="
     },
     {
       "name" : "gradle.properties",
       "placeholders" : [ ],
       "is_visible" : true,
-      "text" : "some.awesome.property=true"
+      "text" : "Grb5jauGmDA3vG2u2+xpYjAQxc+CxHGHkp2SIGwWD4A="
     }
   ],
-  "version" : 11
+  "version" : 12
 }
