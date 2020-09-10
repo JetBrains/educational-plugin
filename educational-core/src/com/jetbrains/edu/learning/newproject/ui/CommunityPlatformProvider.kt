@@ -5,9 +5,10 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.PathUtil
 import com.intellij.util.io.ZipUtil
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.ListedCoursesIdsProvider
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.stepik.api.StepikCoursesProvider
 import icons.EducationalCoreIcons
 import kotlinx.coroutines.CoroutineScope
@@ -26,22 +27,30 @@ class CommunityPlatformProvider(private val coursesProvider: StepikCoursesProvid
 
   override fun createPanel(scope: CoroutineScope): CoursesPanel = CommunityCoursesPanel(this, coursesProvider, scope)
 
-  override suspend fun loadCourses(): List<Course> {
-    val communityCourses = coursesProvider.getCommunityCourses()
+  override suspend fun loadCourses(): List<CoursesGroup> {
+    val groups = mutableListOf<CoursesGroup>()
+    val privateCourses = coursesProvider.getPrivateCourses()
+    if (privateCourses.isNotEmpty()) {
+      groups.add(CoursesGroup(EduCoreBundle.message("course.dialog.private.courses.group"), privateCourses))
+    }
 
-    val featuredCourses = communityCourses.filter { it.id in ListedCoursesIdsProvider.featuredCommunityCourses }
+    val featuredCourses = coursesProvider.getFeaturedCourses()
     val bundledCourses = loadBundledCourses().filter { bundled ->
       featuredCourses.none { featured ->
         featured.name != bundled.name
       }
     }
+    val bundledFeaturedGroup = bundledCourses + featuredCourses
+    if (bundledFeaturedGroup.isNotEmpty()) {
+      groups.add(CoursesGroup(EduCoreBundle.message("course.dialog.featured.courses.group"), bundledFeaturedGroup))
+    }
 
-    val comparator = Comparator
-      .comparing { course: Course -> course.visibility }
-      .thenComparing { course: Course -> course.name }
+    val otherCourses = coursesProvider.getAllOtherCourses()
+    if (otherCourses.isNotEmpty()) {
+      groups.add(CoursesGroup(EduCoreBundle.message("course.dialog.other.courses"), otherCourses))
+    }
 
-
-    return bundledCourses.plus(communityCourses).sortedWith(comparator)
+    return groups
   }
 
   private fun loadBundledCourses(): List<Course> {
@@ -54,7 +63,10 @@ class CommunityPlatformProvider(private val coursesProvider: StepikCoursesProvid
       }
       courses.add(localCourse)
     }
-    return courses
+    return courses.filter {
+      val compatibility = it.compatibility
+      compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
+    }
   }
 
   private fun getBundledCoursesPaths(): List<String> {

@@ -1,13 +1,18 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.JBColor
+import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import java.awt.Color
-import javax.swing.JLabel
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import javax.swing.JPanel
+import javax.swing.SwingConstants
 
 val SECTION_HEADER_FOREGROUND: Color = JBColor(0x787878, 0x999999)
 val SECTION_HEADER_BACKGROUND: Color = JBColor(0xF7F7F7, 0x3C3F41)
@@ -15,28 +20,48 @@ const val TOP_BOTTOM = 4
 const val LEFT_RIGHT = 10
 
 class CoursesGroupPanel(coursesGroup: CoursesGroup, showOpenButton: Boolean) : JPanel(VerticalFlowLayout(0, 0)) {
+  private val courseCardsPanel = NonOpaquePanel(VerticalFlowLayout(0, 0))
 
   init {
     background = MAIN_BG_COLOR
     val name = coursesGroup.name
 
-    val titleLabel = JLabel(name)
-    titleLabel.isOpaque = true
-    titleLabel.toolTipText = name
-    titleLabel.foreground = SECTION_HEADER_FOREGROUND
-    titleLabel.background = SECTION_HEADER_BACKGROUND
-    titleLabel.border = JBUI.Borders.empty(TOP_BOTTOM, LEFT_RIGHT)
-    titleLabel.isVisible = name.isNotEmpty()
+    add(createTitleLabel(name))
 
-    add(titleLabel)
+    fillCourseCardsPanel(coursesGroup, showOpenButton)
+    add(courseCardsPanel)
+  }
 
-    for (courseInfo in coursesGroup.courseInfos) {
-      val courseCardComponent = CourseCardComponent(courseInfo, showOpenButton)
+  private fun createTitleLabel(name: String): JBLabel {
+    val titleLabel = JBLabel(name).apply {
+      icon = AllIcons.General.ArrowDown
+      horizontalTextPosition = SwingConstants.TRAILING
+      isOpaque = true
+      toolTipText = name
+      foreground = SECTION_HEADER_FOREGROUND
+      background = SECTION_HEADER_BACKGROUND
+      border = JBUI.Borders.empty(TOP_BOTTOM, LEFT_RIGHT)
+      isVisible = name.isNotEmpty()
+    }
+
+    titleLabel.addMouseListener(object : MouseAdapter() {
+      override fun mouseClicked(e: MouseEvent?) {
+        titleLabel.icon = if (courseCardsPanel.isVisible) AllIcons.General.ArrowRight else AllIcons.General.ArrowDown
+        courseCardsPanel.isVisible = !courseCardsPanel.isVisible
+      }
+    })
+
+    return titleLabel
+  }
+
+  private fun fillCourseCardsPanel(coursesGroup: CoursesGroup, showOpenButton: Boolean) {
+    for (course in coursesGroup.courses) {
+      val courseCardComponent = CourseCardComponent(course, showOpenButton)
       courseCardComponent.updateColors(false)
-      add(courseCardComponent)
+      courseCardsPanel.add(courseCardComponent)
     }
   }
 
   val courseCards: List<CourseCardComponent>
-    get() = components.filterIsInstance<CourseCardComponent>()
+    get() = courseCardsPanel.components.filterIsInstance<CourseCardComponent>()
 }

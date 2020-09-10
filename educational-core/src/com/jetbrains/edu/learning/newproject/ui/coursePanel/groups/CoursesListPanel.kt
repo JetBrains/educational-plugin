@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -16,21 +15,25 @@ class CoursesListPanel(showOpenButton: Boolean, resetFilters: () -> Unit) : JPan
     add(groupsComponent, BorderLayout.CENTER)
   }
 
-  fun updateModel(courseInfos: List<CourseInfo>, courseToSelect: Course?) {
+  fun updateModel(coursesGroups: List<CoursesGroup>, courseToSelect: Course?) {
     clear()
 
-    if (courseInfos.isEmpty()) {
+    if (coursesGroups.isEmpty()) {
       return
     }
-    val group = CoursesGroup("", courseInfos)
-    addGroup(group)  // TODO: use actual groups
+
+    coursesGroups.forEach { coursesGroup ->
+      if (coursesGroup.courses.isNotEmpty()) {
+        addGroup(coursesGroup)
+      }
+    }
 
     if (courseToSelect == null) {
       initialSelection()
       return
     }
 
-    val newCourseToSelect = courseInfos.firstOrNull { courseInfo: CourseInfo -> courseInfo.course == courseToSelect }?.course
+    val newCourseToSelect = coursesGroups.flatMap { it.courses }.firstOrNull { course: Course -> course == courseToSelect }
     setSelectedValue(newCourseToSelect)
   }
 

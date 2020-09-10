@@ -45,7 +45,10 @@ class StepikCoursesProvider : CoroutineScope {
       }
 
       LOG.info("Loading courses finished...Took " + (System.currentTimeMillis() - startTime) + " ms")
-      result
+      result.filter {
+        val compatibility = it.compatibility
+        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
+      }
     }
   }
 
@@ -71,8 +74,22 @@ class StepikCoursesProvider : CoroutineScope {
     return result
   }
 
-  suspend fun getCommunityCourses(): List<Course> {
-    return loadedCourses.await().filterNot { it is StepikCourse }
+  suspend fun getFeaturedCourses(): List<Course> {
+    return loadedCourses.await()
+      .filterNot { it is StepikCourse }
+      .filter { it.isPublic && it.id in ListedCoursesIdsProvider.featuredCommunityCourses }
+  }
+
+  suspend fun getAllOtherCourses(): List<Course> {
+    return loadedCourses.await()
+      .filterNot { it is StepikCourse }
+      .filter { it.isPublic && it.id !in ListedCoursesIdsProvider.featuredCommunityCourses }
+  }
+
+  suspend fun getPrivateCourses(): List<Course> {
+    return loadedCourses.await()
+      .filterNot { it is StepikCourse }
+      .filterNot { it.isPublic }
   }
 
   private fun getPublicCourseInfos(): List<EduCourse> {

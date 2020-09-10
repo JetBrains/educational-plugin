@@ -7,11 +7,12 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.scale.JBUIScale
 import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
 import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 
@@ -22,8 +23,8 @@ class MyCoursesProvider(private val disposable: Disposable) : CoursesPlatformPro
 
   override fun createPanel(scope: CoroutineScope): CoursesPanel = MyCoursesPanel(this, scope, disposable)
 
-  override suspend fun loadCourses(): List<Course> {
-    return CoursesStorage.getInstance().state.courses
+  override suspend fun loadCourses(): List<CoursesGroup> {
+    return CoursesGroup(CoursesStorage.getInstance().state.courses).asList()
   }
 
   val additionalText: String

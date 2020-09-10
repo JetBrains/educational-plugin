@@ -99,7 +99,15 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Corou
 
     private fun importCourse() {
       val course = StartStepikCourseAction().importStepikCourse() ?: return
-      updateModel(courses.plus(course), course, false)
+      val coursesGroup = coursesGroups.first()
+      val alreadyAddedCourse = coursesGroup.courses.find { it.id == course.id && it.languageID == course.languageID}
+      if (alreadyAddedCourse != null) {
+        updateModel(coursesGroups, alreadyAddedCourse, false)
+      }
+      else {
+        coursesGroup.courses = coursesGroup.courses + course
+        updateModel(coursesGroups, course, false)
+      }
     }
 
     override fun displayTextInToolbar(): Boolean {

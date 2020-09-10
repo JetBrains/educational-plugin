@@ -11,10 +11,11 @@ import com.jetbrains.edu.learning.CourseDeletedListener
 import com.jetbrains.edu.learning.CourseMetaInfo
 import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
 import kotlinx.coroutines.CoroutineScope
 import java.awt.event.ActionListener
 import javax.swing.JPanel
@@ -31,8 +32,8 @@ class MyCoursesPanel(
     val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
     connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
       override fun courseDeleted(course: CourseMetaInfo) {
-        courses.clear()
-        courses.addAll(CoursesStorage.getInstance().state.courses)
+        coursesGroups.clear()
+        coursesGroups.addAll(CoursesGroup(CoursesStorage.getInstance().state.courses).asList())
         onTabSelection()
       }
     })
@@ -58,8 +59,8 @@ class MyCoursesPanel(
     }
   }
 
-  override fun updateFilters(courses: List<Course>) {
-    super.updateFilters(courses)
+  override fun updateFilters(coursesGroups: List<CoursesGroup>) {
+    super.updateFilters(coursesGroups)
     humanLanguagesFilterDropdown.selectedItems = humanLanguagesFilterDropdown.allItems
   }
 }

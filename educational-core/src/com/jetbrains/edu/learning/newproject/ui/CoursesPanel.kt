@@ -13,18 +13,15 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.supportedTechnologies
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
-import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettings
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
 import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -55,14 +52,13 @@ abstract class CoursesPanel(
 
   private val coursesListPanel = CoursesListPanel(showButtonOnCard) {
     resetSelection()
-    updateModel(courses, null, true)
+    updateModel(coursesGroups, null, true)
   }
-
   private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
-  protected var courses: MutableList<Course> = mutableListOf()
   private lateinit var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   protected lateinit var humanLanguagesFilterDropdown: HumanLanguageFilterDropdown
   private val cardLayout = JBCardLayout()
+  protected val coursesGroups = mutableListOf<CoursesGroup>()
   @Volatile private var loadingFinished = false
 
   val languageSettings get() = coursePanel.languageSettings
@@ -103,24 +99,22 @@ abstract class CoursesPanel(
   }
 
   suspend fun loadCourses() {
-    courses.addAll(
-      withContext(Dispatchers.IO) {
-        coursesProvider.loadCourses()
-      }.filter {
-        val compatibility = it.compatibility
-        it is HyperskillCourse || compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
-      })
+    coursesGroups.addAll(withContext(Dispatchers.IO) {
+      coursesProvider.loadCourses()
+    })
+
     loadingFinished = true
     if (isShowing) {
       onTabSelection()
     }
-  }
+
+}
 
   fun onTabSelection() {
     if (loadingFinished) {
-      updateFilters(courses)
-      updateModel(courses, null)
-      showContent(courses.isEmpty())
+      updateFilters(coursesGroups)
+      updateModel(coursesGroups, null)
+      showContent(coursesGroups.isEmpty())
       if (!isLoginNeeded()) {
         hideLoginPanel()
       }
@@ -173,7 +167,8 @@ abstract class CoursesPanel(
     cardLayout.show(this, CONTENT_CARD_NAME)
   }
 
-  protected open fun updateFilters(courses: List<Course>) {
+  protected open fun updateFilters(coursesGroups: List<CoursesGroup>) {
+    val courses = coursesGroups.flatMap { it.courses }
     humanLanguagesFilterDropdown.updateItems(humanLanguages(courses))
     programmingLanguagesFilterDropdown.updateItems(programmingLanguages(courses))
   }
@@ -211,23 +206,16 @@ abstract class CoursesPanel(
     return filteredCourses
   }
 
-  fun updateModel(courses: List<Course>, courseToSelect: Course?, filterCourses: Boolean = true) {
-    val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
-    val courseInfos = coursesToAdd.map {
-      CourseInfo(it,
-                 { if (coursePanel.course == it) locationString else CourseSettings.nameToLocation(it) },
-                 {
-                   if (coursePanel.course == it) {
-                     languageSettings
-                   }
-                   else {
-                     val settings = CourseSettings.getLanguageSettings(it)
-                     settings?.getLanguageSettingsComponents(it, null)
-                     settings
-                   }
-                 })
+  fun updateModel(coursesGroups: List<CoursesGroup>, courseToSelect: Course?, filterCourses: Boolean = true) {
+    if (filterCourses) {
+      val filteredCoursesGroups = coursesGroups.map {
+        CoursesGroup(it.name, filterCourses(it.courses))
+      }
+      coursesListPanel.updateModel(filteredCoursesGroups, courseToSelect)
     }
-    coursesListPanel.updateModel(courseInfos, courseToSelect)
+    else {
+      coursesListPanel.updateModel(coursesGroups, courseToSelect)
+    }
   }
 
   private fun addCourseValidationListener(listener: CourseValidationListener) {
@@ -249,10 +237,10 @@ abstract class CoursesPanel(
     searchPanel.add(searchField, BorderLayout.CENTER)
 
     programmingLanguagesFilterDropdown = ProgrammingLanguageFilterDropdown(programmingLanguages(emptyList())) {
-      updateModel(courses, selectedCourse)
+      updateModel(coursesGroups, selectedCourse)
     }
     humanLanguagesFilterDropdown = HumanLanguageFilterDropdown(humanLanguages(emptyList())) {
-      updateModel(courses, selectedCourse)
+      updateModel(coursesGroups, selectedCourse)
     }
     val filtersPanel = JPanel(HorizontalLayout(0))
     filtersPanel.add(programmingLanguagesFilterDropdown)
@@ -273,13 +261,13 @@ abstract class CoursesPanel(
   }
 
   protected open suspend fun updateCoursesAfterLogin(preserveSelection: Boolean = true) {
-    updateFilters(courses)
-    showContent(courses.isEmpty())
+    updateFilters(coursesGroups)
+    showContent(coursesGroups.isEmpty())
 
     // hack: selection in com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel.updateModel can't scroll correctly
     // as all the child components have 0 bounds at the moment of update
     val courseToSelect = selectedCourse
-    updateModel(courses, null)
+    updateModel(coursesGroups, null)
     if (preserveSelection) {
       coursesListPanel.setSelectedValue(courseToSelect)
     }
@@ -294,14 +282,10 @@ abstract class CoursesPanel(
     }
 
     override fun filter() {
-      val filter = filter
-      val filtered = ArrayList<Course>()
-      for (course in courses) {
-        if (accept(filter, course)) {
-          filtered.add(course)
-        }
+      val filteredCoursesGroups = coursesGroups.map { coursesGroup ->
+        CoursesGroup(coursesGroup.name, coursesGroup.courses.filter { accept(filter, it) })
       }
-      updateModel(filtered, null)
+      updateModel(filteredCoursesGroups, null)
     }
 
     private fun accept(@NonNls filter: String, course: Course): Boolean {

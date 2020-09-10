@@ -44,9 +44,9 @@ class JetBrainsAcademyCoursesPanel(private val platformProvider: JetBrainsAcadem
   }
 
   override suspend fun updateCoursesAfterLogin(preserveSelection: Boolean) {
-    val academyCourses = withContext(Dispatchers.IO) { platformProvider.loadCourses() }
-    courses.clear()
-    courses.addAll(academyCourses)
+    val academyCoursesGroups = withContext(Dispatchers.IO) { platformProvider.loadCourses() }
+    coursesGroups.clear()
+    coursesGroups.addAll(academyCoursesGroups)
     super.updateCoursesAfterLogin(false)
   }
 }

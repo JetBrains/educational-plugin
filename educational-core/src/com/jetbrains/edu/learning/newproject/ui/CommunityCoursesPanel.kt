@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.openapi.actionSystem.AnAction
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.stepik.api.StepikCoursesProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,8 @@ class CommunityCoursesPanel(coursesPlatformProvider: CoursesPlatformProvider,
 
   override suspend fun updateCoursesAfterLogin(preserveSelection: Boolean) {
     val privateCourses = withContext(Dispatchers.IO) { stepikCoursesProvider.loadPrivateCourseInfos() }
-    courses.addAll(privateCourses)
+    val privateCoursesGroup = CoursesGroup(EduCoreBundle.message("course.dialog.private.courses.group"), privateCourses)
+    coursesGroups.add(0, privateCoursesGroup)
     super.updateCoursesAfterLogin(preserveSelection)
   }
 }

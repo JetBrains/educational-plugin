@@ -45,14 +45,14 @@ private val HOVER_COLOR: Color = JBColor.namedColor("BrowseCourses.hoverBackgrou
 private val SELECTION_COLOR: Color = JBColor.namedColor("BrowseCourses.lightSelectionBackground", JBColor(0xE9EEF5, 0x36393B))
 val GRAY_COLOR: Color = JBColor.namedColor("BrowseCourses.infoForeground", JBColor(Gray._120, Gray._135))
 
-class CourseCardComponent(val courseInfo: CourseInfo, showOpenButton: Boolean) : JPanel(BorderLayout()) {
+class CourseCardComponent(val course: Course, showOpenButton: Boolean) : JPanel(BorderLayout()) {
   private val logoComponent: JLabel = JLabel()
-  private var courseNameInfoComponent: CourseNameInfoComponent = CourseNameInfoComponent(courseInfo, showOpenButton)
+  private var courseNameInfoComponent: CourseNameInfoComponent = CourseNameInfoComponent(course, showOpenButton)
 
   init {
     border = JBUI.Borders.empty(CARD_GAP)
     logoComponent.isOpaque = false
-    logoComponent.icon = courseInfo.course.getScaledLogo(JBUI.scale(LOGO_SIZE), this@CourseCardComponent)
+    logoComponent.icon = course.getScaledLogo(JBUI.scale(LOGO_SIZE), this@CourseCardComponent)
     logoComponent.border = JBUI.Borders.emptyRight(CARD_GAP)
 
     add(logoComponent, BorderLayout.LINE_START)
@@ -93,12 +93,11 @@ class CourseCardComponent(val courseInfo: CourseInfo, showOpenButton: Boolean) :
 
 }
 
-class CourseNameInfoComponent(courseInfo: CourseInfo, showOpenButton: Boolean) : JPanel(BorderLayout()) {
-  private val nameComponent: CourseNameComponent = CourseNameComponent(courseInfo, showOpenButton)
+class CourseNameInfoComponent(course: Course, showOpenButton: Boolean) : JPanel(BorderLayout()) {
+  private val nameComponent: CourseNameComponent = CourseNameComponent(course, showOpenButton)
   private val courseInfoComponent: JPanel
 
   init {
-    val course = courseInfo.course
     val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course)
     courseInfoComponent = when {
       courseMetaInfo != null -> {
@@ -117,18 +116,18 @@ class CourseNameInfoComponent(courseInfo: CourseInfo, showOpenButton: Boolean) :
 
 }
 
-class CourseNameComponent(courseInfo: CourseInfo, showOpenButton: Boolean) : JPanel(BorderLayout()) {
+class CourseNameComponent(course: Course, showOpenButton: Boolean) : JPanel(BorderLayout()) {
   private val nameLabel: JLabel = JLabel()
 
   init {
-    nameLabel.text = courseInfo.course.name
+    nameLabel.text = course.course.name
     nameLabel.font = Font(TypographyManager().bodyFont, Font.BOLD, CoursesDialogFontManager.fontSize)
     add(nameLabel, BorderLayout.CENTER)
 
-    val coursePath = CoursesStorage.getInstance().getCoursePath(courseInfo.course)
+    val coursePath = CoursesStorage.getInstance().getCoursePath(course)
     if (coursePath != null && showOpenButton) {
       val openCourseButton = OpenCourseButton()
-      openCourseButton.addListener(courseInfo)
+      openCourseButton.addListener(CourseInfo(course))
       add(openCourseButton, BorderLayout.EAST)
     }
   }

@@ -57,7 +57,7 @@ class ImportCodeforcesContestDialog(private val showViewAllLabel: Boolean) : Dia
   private suspend fun codeforcesListPanel() {
     // TODO: get from extension when it's registered
     val providers = CodeforcesPlatformProviderFactory().getProviders()
-    val courses = withContext(Dispatchers.IO) { providers.flatMap { it.loadCourses() } }
+    val courses = withContext(Dispatchers.IO) { providers.flatMap { it.loadCourses() }.flatMap { it.courses } }
     if (courses.isNullOrEmpty()) {
       // TODO make it clickable
       // TODO also check other places

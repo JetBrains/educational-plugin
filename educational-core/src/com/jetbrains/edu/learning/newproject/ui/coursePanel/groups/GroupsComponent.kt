@@ -12,7 +12,7 @@ class GroupsComponent(private val showCardButton: Boolean, resetFilters: () -> U
   private val courseGroupModel: CourseGroupModel = CourseGroupModel()
 
   val selectedValue: Course?
-    get() = courseGroupModel.selectedCard?.courseInfo?.course
+    get() = courseGroupModel.selectedCard?.course
 
   init {
     background = MAIN_BG_COLOR
