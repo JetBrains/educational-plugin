@@ -9,6 +9,8 @@ import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -35,7 +37,10 @@ class ImportStepikCoursePanel(private val parent: Disposable) {
   init {
     helpLabel.foreground = UIUtil.getLabelDisabledForeground()
     helpLabel.font = UIUtil.getLabelFont()
-    errorComponent.setErrorMessage("", "Log in", " to Stepik to import course")
+    errorComponent.setErrorMessage(ValidationMessage("",
+                                                     "Log in",
+                                                     " to Stepik to import course",
+                                                     type = ValidationMessageType.ERROR))
     errorComponent.border = JBUI.Borders.empty(1)
 
     val courseLink = JLabel("Course link:")

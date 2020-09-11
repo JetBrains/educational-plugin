@@ -141,11 +141,11 @@ class CoursePanel(
     val message = errorState.message ?: return
     when (errorState) {
       is ErrorState.JetBrainsAcademyLoginNeeded -> {
-        errorComponent.setErrorMessage(message.beforeLink, message.linkText, message.afterLink)
+        errorComponent.setErrorMessage(message)
         header.setButtonToolTip(EduCoreBundle.message("course.dialog.login.required"))
       }
       else -> {
-        errorComponent.setErrorMessage(message.beforeLink, message.linkText, message.afterLink)
+        errorComponent.setErrorMessage(message)
         header.setButtonToolTip(message.beforeLink + message.linkText + message.afterLink)
       }
     }

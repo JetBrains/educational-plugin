@@ -12,6 +12,8 @@ import com.jetbrains.edu.coursecreator.actions.CreateCourseArchiveAction;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent;
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessage;
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,7 +68,11 @@ public class CCCreateCourseArchivePanel extends JPanel {
   }
 
   protected void setError() {
-    myErrorComponent.setErrorMessage("Invalid location. File already exists.", "", "");
+    myErrorComponent.setErrorMessage(new ValidationMessage("Invalid location. File already exists.",
+                                                           "",
+                                                           "",
+                                                           null,
+                                                           ValidationMessageType.ERROR));
     setErrorVisible(true);
   }
 

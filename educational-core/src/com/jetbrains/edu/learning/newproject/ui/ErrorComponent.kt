@@ -5,10 +5,12 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.JBUI.CurrentTheme.Validator.errorBackgroundColor
+import com.intellij.util.ui.JBUI.CurrentTheme.Validator.warningBackgroundColor
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.ui.EduColors
+import java.awt.Color
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.RenderingHints
@@ -28,20 +30,21 @@ class ErrorComponent(
     setViewportView(errorPanel)
   }
 
-  fun setErrorMessage(beforeLinkText: String, linkText: String, afterLinkText: String) {
-    errorPanel.setErrorMessage(beforeLinkText, linkText, afterLinkText)
+  fun setErrorMessage(validationMessage: ValidationMessage) {
+    errorPanel.setErrorMessage(validationMessage)
   }
 
   inner class ErrorPanel(hyperlinkListener: HyperlinkListener?, margin: Int) : NonOpaquePanel() {
 
     private val errorTextPane: JTextPane = createTextPane()
+    private var messageType: ValidationMessageType? = null
 
     init {
       border = JBUI.Borders.empty(margin, 20, margin, 0)
       background = MAIN_BG_COLOR
 
       errorTextPane.apply {
-        background = errorBackgroundColor()
+        background = getComponentColor()
         highlighter = null
         // specifying empty borders is necessary because otherwise JTextPane's preferred size is defined as zero on MAC OS
         border = JBUI.Borders.empty(1)
@@ -50,11 +53,18 @@ class ErrorComponent(
       add(errorTextPane)
     }
 
-    fun setErrorMessage(beforeLinkText: String, linkText: String, afterLinkText: String) {
-      val text = "<span ${StyleManager().textStyleHeader}>$beforeLinkText</span>" +
-                 "<a ${StyleManager().textStyleHeader};color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=>${linkText}</a>" +
-                 "<span ${StyleManager().textStyleHeader}>$afterLinkText</span>"
+    fun setErrorMessage(validationMessage: ValidationMessage) {
+      val textStyle = StyleManager().textStyleHeader
+      val text = "<span $textStyle>${validationMessage.beforeLink}</span>" +
+                 "<a $textStyle;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=>${validationMessage.linkText}</a>" +
+                 "<span $textStyle>${validationMessage.afterLink}</span>"
+      messageType = validationMessage.type
       errorTextPane.text = text
+      errorTextPane.background = getComponentColor()
+    }
+
+    private fun getComponentColor(): Color {
+      return if (messageType == ValidationMessageType.WARNING) warningBackgroundColor() else errorBackgroundColor()
     }
 
     override fun paintComponent(g: Graphics) {
@@ -64,10 +74,10 @@ class ErrorComponent(
       val graphics = g as Graphics2D
       graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
 
-      graphics.color = errorBackgroundColor()
+      graphics.color = getComponentColor()
       graphics.fillRoundRect(0, 0, width, height, arcs.width, arcs.height) //paint background
 
-      graphics.color = errorBackgroundColor()
+      graphics.color = getComponentColor()
       graphics.drawRoundRect(0, 0, width, height, arcs.width, arcs.height) //paint border
     }
   }

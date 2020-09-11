@@ -184,7 +184,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
       }
     }
     if (validationMessage != null) {
-      myErrorComponent.setErrorMessage(validationMessage.beforeLink, validationMessage.linkText, validationMessage.afterLink)
+      myErrorComponent.setErrorMessage(validationMessage)
       myErrorComponent.isVisible = true
       revalidate()
     }
