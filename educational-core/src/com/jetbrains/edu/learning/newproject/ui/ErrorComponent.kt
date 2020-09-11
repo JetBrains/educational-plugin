@@ -26,6 +26,7 @@ class ErrorComponent(
   private val errorPanel = ErrorPanel(hyperlinkListener, errorPanelMargin)
 
   init {
+    isVisible = false
     isOpaque = false
     setViewportView(errorPanel)
   }
