@@ -17,6 +17,8 @@ which are specific to the EduTools plugin:</p>
 <ul>
 <li>Hints can be added anywhere in the task text.
 Type "hint" and press Tab.
+Hints should be added to an empty line in the task text.
+In hints you can use HTML only.
 <div class="hint">Text of your hint</div></li>
 
 <li>You can insert shortcuts in the task description.
