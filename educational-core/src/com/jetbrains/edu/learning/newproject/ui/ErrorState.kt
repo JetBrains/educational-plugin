@@ -34,7 +34,8 @@ sealed class ErrorState(
   object NothingSelected : ErrorState(OK, null, Color.BLACK, false)
   object None : ErrorState(OK, null, Color.BLACK, true)
 
-  object NotLoggedIn : ErrorState(LOGIN_RECOMMENDED, ValidationMessage("", "Log in", " to Stepik to see more courses", type = WARNING), warningTextForeground, true)
+  object NotLoggedIn : ErrorState(LOGIN_RECOMMENDED, ValidationMessage("", "Log in", " to Stepik to synchronize your progress across multiple devices", type = WARNING), warningTextForeground, true)
+
   object JetBrainsAcademyLoginNeeded : ErrorState(LOGIN_ERROR, ValidationMessage("", linkText = "Log in", afterLink = " to ${EduNames.JBA} account to open a project"), errorTextForeground, false)
 
   abstract class LoginRequired(platformName: String) : ErrorState(LOGIN_ERROR, ValidationMessage("", "Log in", " to $platformName to start this course"), errorTextForeground, false)
