@@ -13,7 +13,6 @@ import java.awt.Font
 import javax.swing.JPanel
 import javax.swing.ScrollPaneConstants
 
-private const val FONT_SIZE = 13.0f
 private const val LEFT_RIGHT_OFFSET = 13
 
 private const val TOP_LOGIN_OFFSET = 17
@@ -64,7 +63,7 @@ open class LoginPanel(isVisible: Boolean, beforeLinkText: String, linkText: Stri
       addHyperlinkListener { loginHandler() }
       setIcon(AllIcons.General.BalloonInformation)
       foreground = beforeLinkForeground
-      font = Font(TypographyManager().bodyFont, Font.PLAIN, JBUI.scaleFontSize(FONT_SIZE))
+      font = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.fontSize)
       iconTextGap = 5
     }
 

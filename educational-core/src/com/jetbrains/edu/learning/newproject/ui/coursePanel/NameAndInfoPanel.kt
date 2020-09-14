@@ -7,6 +7,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
 import java.awt.Color
@@ -22,7 +23,6 @@ private const val Y_OFFSET = 3
 private const val TAGS_TOP_OFFSET = 10
 private const val INFO_PANEL_TOP_OFFSET = 5
 
-private const val FONT_SIZE = 26.0f
 private val GRAY_TEXT_FOREGROUND: Color = JBColor.namedColor("Plugins.tagForeground", JBColor(0x787878, 0x999999))
 
 class NameAndInfoPanel(joinCourseAction: (CourseInfo, CourseMode) -> Unit) : JPanel() {
@@ -149,5 +149,5 @@ private class CourseNameHtmlPanel : CourseHtmlPanel() {
     return ""
   }
 
-  override fun getBodyFont(): Font = Font(TypographyManager().bodyFont, Font.BOLD, JBUI.scaleFontSize(FONT_SIZE))
+  override fun getBodyFont(): Font = Font(TypographyManager().bodyFont, Font.BOLD, CoursesDialogFontManager.headerFontSize)
 }

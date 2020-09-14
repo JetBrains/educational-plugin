@@ -29,8 +29,6 @@ private const val CARD_WIDTH = 80
 private const val CARD_HEIGHT = 70
 private const val H_GAP = 10
 private const val LOGO_SIZE = 40
-private const val FONT_SIZE = 13
-private const val SMALL_FONT_SIZE = 12
 
 private const val INFO_HGAP = 0
 private const val INFO_VGAP = 5
@@ -50,15 +48,13 @@ class CourseCardComponent(val courseInfo: CourseInfo, joinCourse: (CourseInfo, C
   init {
     border = JBUI.Borders.empty(CARD_GAP)
     logoComponent.isOpaque = false
-    logoComponent.icon = courseInfo.course.getScaledLogo(LOGO_SIZE, this@CourseCardComponent)
+    logoComponent.icon = courseInfo.course.getScaledLogo(JBUI.scale(LOGO_SIZE), this@CourseCardComponent)
     logoComponent.border = JBUI.Borders.emptyRight(CARD_GAP)
 
     add(logoComponent, BorderLayout.LINE_START)
     add(courseNameInfoComponent, BorderLayout.CENTER)
 
     preferredSize = JBUI.size(CARD_WIDTH, CARD_HEIGHT)
-    maximumSize = JBUI.size(CARD_WIDTH, CARD_HEIGHT)
-    minimumSize = JBUI.size(CARD_WIDTH, CARD_HEIGHT)
 
     updateColors(false)
   }
@@ -123,7 +119,7 @@ class CourseNameComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, Cours
 
   init {
     nameLabel.text = courseInfo.course.name
-    nameLabel.font = Font(TypographyManager().bodyFont, Font.BOLD, FONT_SIZE)
+    nameLabel.font = Font(TypographyManager().bodyFont, Font.BOLD, CoursesDialogFontManager.fontSize)
 
     val coursePath = CoursesStorage.getInstance().getCoursePath(courseInfo.course)
     button = when {
@@ -161,18 +157,18 @@ class CommunityCourseInfoComponent(course: EduCourse) : JPanel(FlowLayout(FlowLa
     else {
       rating.text = EduCoreBundle.message("course.dialog.card.not.rated")
     }
-    rating.font = Font(TypographyManager().bodyFont, Font.PLAIN, SMALL_FONT_SIZE)
+    rating.font = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)
 
     downloads.foreground = GRAY_COLOR
     downloads.icon = EducationalCoreIcons.User
     downloads.text = course.learnersCount.toString()
     downloads.border = JBUI.Borders.emptyRight(H_GAP)
-    downloads.font = Font(TypographyManager().bodyFont, Font.PLAIN, SMALL_FONT_SIZE)
+    downloads.font = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)
 
     val authors = course.authorFullNames.joinToString()
     authorComponent.isVisible = authors.isNotEmpty()
     authorComponent.foreground = GRAY_COLOR
-    authorComponent.font = Font(TypographyManager().bodyFont, Font.PLAIN, SMALL_FONT_SIZE)
+    authorComponent.font = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)
     if (authorComponent.isVisible) {
       authorComponent.text = authors
     }
@@ -188,7 +184,7 @@ class AcademyCourseInfoComponent(course: Course?) : JPanel(FlowLayout(FlowLayout
 
   init {
     commentLabel.foreground = GRAY_COLOR
-    commentLabel.font = Font(TypographyManager().bodyFont, Font.PLAIN, SMALL_FONT_SIZE)
+    commentLabel.font = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)
 
     if (course is JetBrainsAcademyCourse) {
       commentLabel.text = ACADEMY_TEXT
