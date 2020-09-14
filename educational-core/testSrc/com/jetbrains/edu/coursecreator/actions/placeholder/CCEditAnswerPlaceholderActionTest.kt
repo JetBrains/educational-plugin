@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.CCUtils.DEFAULT_PLACEHOLDER_TEXT
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 

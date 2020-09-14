@@ -8,19 +8,22 @@ import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.DocumentUtil;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog.DependencyInfo;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.PlaceholderPainter;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderPanel.DEFAULT_PLACEHOLDER_TEXT;
 
 public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
@@ -59,7 +62,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     taskFile.sortAnswerPlaceholders();
     answerPlaceholder.setOffset(offset);
 
-    @NonNls String defaultPlaceholderText = DEFAULT_PLACEHOLDER_TEXT;
+    @NonNls String defaultPlaceholderText = getDefaultPlaceholderText(project);
     CCCreateAnswerPlaceholderDialog dlg = createDialog(project, answerPlaceholder);
     if (!dlg.showAndGet()) {
       return;
@@ -83,6 +86,19 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
     AddAction action = new AddAction(project, answerPlaceholder, taskFile, editor);
     EduUtils.runUndoableAction(project, EduCoreBundle.message("action.add.answer.placeholder.text"), action);
+  }
+
+  @NotNull
+  private static String getDefaultPlaceholderText(@NotNull final Project project) {
+    final Course course = StudyTaskManager.getInstance(project).getCourse();
+    if (course == null) {
+      return CCUtils.DEFAULT_PLACEHOLDER_TEXT;
+    }
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
+    if (configurator == null) {
+      return CCUtils.DEFAULT_PLACEHOLDER_TEXT;
+    }
+    return configurator.getDefaultPlaceholderText();
   }
 
   static class AddAction extends TaskFileUndoableAction {

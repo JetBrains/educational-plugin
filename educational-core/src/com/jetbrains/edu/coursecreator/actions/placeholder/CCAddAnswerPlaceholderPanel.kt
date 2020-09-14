@@ -58,8 +58,5 @@ class CCAddAnswerPlaceholderPanel(@NonNls placeholderText: String) : JPanel() {
 
   companion object {
     const val PLACEHOLDER_PANEL_WIDTH = 400
-
-    @NonNls
-    const val DEFAULT_PLACEHOLDER_TEXT = "type here"
   }
 }

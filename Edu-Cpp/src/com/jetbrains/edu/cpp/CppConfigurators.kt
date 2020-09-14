@@ -65,6 +65,9 @@ open class CppConfigurator : EduConfigurator<CppProjectSettings> {
     return file.path.startsWith(buildDirPrefix) || file.path.startsWith(googleTestDirPrefix)
   }
 
+  override val defaultPlaceholderText: String
+    get() = "/* TODO */"
+
   companion object {
     const val MAIN_CPP = "main.cpp"
     const val TASK_CPP = "task.cpp"

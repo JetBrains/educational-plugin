@@ -33,6 +33,9 @@ open class PyConfigurator : EduConfigurator<PyNewProjectSettings> {
   override val isCourseCreatorEnabled: Boolean
     get() = false
 
+  override val defaultPlaceholderText: String
+    get() = "# TODO"
+
   companion object {
     const val TESTS_PY = "tests.py"
     const val TASK_PY = "task.py"

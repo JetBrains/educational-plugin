@@ -40,6 +40,9 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
     super.excludeFromArchive(project, file) || file.path.contains("node_modules") || "package-lock.json" == file.name
 
+  override val defaultPlaceholderText: String
+    get() = "/* TODO */"
+
   companion object {
     const val MAIN_JS = "main.js"
     const val TASK_JS = "task.js"

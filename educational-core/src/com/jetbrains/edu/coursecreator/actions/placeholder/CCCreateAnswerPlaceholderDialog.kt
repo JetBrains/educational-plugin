@@ -10,7 +10,7 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderPanel.Companion.DEFAULT_PLACEHOLDER_TEXT
+import com.jetbrains.edu.coursecreator.CCUtils.DEFAULT_PLACEHOLDER_TEXT
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderPanel.Companion.PLACEHOLDER_PANEL_WIDTH
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency

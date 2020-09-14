@@ -45,4 +45,7 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
       // so disable Rust support for all versions below 0.2.106
       return VersionComparatorUtil.compare(rustPluginVersion, "0.2.106") >= 0
     }
+
+  override val defaultPlaceholderText: String
+    get() = "/* TODO */"
 }

@@ -12,7 +12,6 @@ import java.util.*
 
 abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
   companion object {
-    const val DEFAULT_PLACEHOLDER_TEXT = "type here"
     const val DEFAULT_TASK_TEXT = "fun foo(): String = TODO()"
   }
 
@@ -21,7 +20,7 @@ abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
     action: CCAnswerPlaceholderAction,
     taskFile: TaskFile,
     taskFileExpected: TaskFile,
-    selection: CCAddAnswerPlaceholderActionTest.Selection? = null
+    selection: CCAddAnswerPlaceholderActionTestBase.Selection? = null
   ) {
     val taskFileUnchanged = copy(taskFile)
     val virtualFile = findFile(name)

@@ -42,6 +42,9 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
   override val logo: Icon
     get() = EducationalCoreIcons.ScalaLogo
 
+  override val defaultPlaceholderText: String
+    get() = "/* TODO */"
+
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
     return super.excludeFromArchive(project, file) ||
            generateSequence(file, VirtualFile::getParent).any { it.name == "target" || it.name == "project" }

@@ -45,6 +45,7 @@ object CCUtils {
 
   const val GENERATED_FILES_FOLDER = ".coursecreator"
   const val COURSE_MODE = "Course Creator"
+  const val DEFAULT_PLACEHOLDER_TEXT = "type here"
 
   /**
    * This method decreases index and updates directory names of

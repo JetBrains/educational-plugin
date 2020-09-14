@@ -171,4 +171,7 @@ interface EduConfigurator<Settings> {
    * @see com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
    */
   fun additionalTaskTab(currentTask: Task?, project: Project): AdditionalTabPanel? = null
+
+  val defaultPlaceholderText: String
+    get() = CCUtils.DEFAULT_PLACEHOLDER_TEXT
 }

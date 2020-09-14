@@ -38,6 +38,9 @@ class GoConfigurator : EduConfigurator<GoProjectSettings> {
       override fun getCodeExecutor(): CodeExecutor = GoCodeExecutor()
     }
 
+  override val defaultPlaceholderText: String
+    get() = "/* TODO */"
+
   companion object {
     const val TEST_GO = "task_test.go"
     const val TASK_GO = "task.go"

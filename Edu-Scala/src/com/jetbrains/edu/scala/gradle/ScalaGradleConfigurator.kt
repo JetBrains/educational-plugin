@@ -31,6 +31,9 @@ class ScalaGradleConfigurator : GradleConfiguratorBase() {
   override val logo: Icon
     get() = EducationalCoreIcons.ScalaLogo
 
+  override val defaultPlaceholderText: String
+    get() = "/* TODO */"
+
   companion object {
     const val TEST_SCALA = "Test.scala"
     const val TASK_SCALA = "Task.scala"

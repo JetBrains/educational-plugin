@@ -25,6 +25,9 @@ open class KtConfigurator : GradleConfiguratorBase() {
   override val logo: Icon
     get() = KotlinIcons.SMALL_LOGO
 
+  override val defaultPlaceholderText: String
+    get() = "TODO()"
+
   companion object {
     const val TESTS_KT = "Tests.kt"
     const val TASK_KT = "Task.kt"

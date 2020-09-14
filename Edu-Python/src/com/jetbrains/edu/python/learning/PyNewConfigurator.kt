@@ -31,6 +31,9 @@ open class PyNewConfigurator : EduConfigurator<PyNewProjectSettings> {
   override val logo: Icon
     get() = PythonIcons.Python.Python
 
+  override val defaultPlaceholderText: String
+    get() = "# TODO"
+
   companion object {
     const val TEST_FILE_NAME = "test_task.py"
     const val TEST_FOLDER = "tests"

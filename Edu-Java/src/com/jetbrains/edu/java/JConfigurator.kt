@@ -32,6 +32,9 @@ class JConfigurator : GradleConfiguratorBase() {
   override val logo: Icon
     get() = EducationalCoreIcons.JavaLogo
 
+  override val defaultPlaceholderText: String
+    get() = "/* TODO */"
+
   companion object {
     const val TEST_JAVA = "Tests.java"
     const val TASK_JAVA = "Task.java"
