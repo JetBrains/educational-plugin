@@ -8,10 +8,12 @@ import com.intellij.openapi.util.Condition
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
+import icons.EducationalCoreIcons
 
 class CheckDetailsToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     toolWindow.stripeTitle = "Check Details"
+    toolWindow.setIcon(EducationalCoreIcons.CheckDetailsIcon)
     toolWindow.setToHideOnEmptyContent(true)
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object: FileEditorManagerListener {
       override fun selectionChanged(event: FileEditorManagerEvent) {
