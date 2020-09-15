@@ -211,7 +211,7 @@ abstract class CoursesPanel(
     return filteredCourses
   }
 
-  protected fun updateModel(courses: List<Course>, courseToSelect: Course?, filterCourses: Boolean = true) {
+  fun updateModel(courses: List<Course>, courseToSelect: Course?, filterCourses: Boolean = true) {
     val coursesToAdd = if (filterCourses) filterCourses(courses) else courses
     val courseInfos = coursesToAdd.map {
       CourseInfo(it,
