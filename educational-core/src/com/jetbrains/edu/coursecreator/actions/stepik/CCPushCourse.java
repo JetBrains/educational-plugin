@@ -37,6 +37,7 @@ import static com.jetbrains.edu.coursecreator.StudyItemType.COURSE_TYPE;
 import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.*;
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 import static com.jetbrains.edu.learning.messages.UtilsKt.makeLazy;
+import static com.jetbrains.edu.learning.stepik.StepikUtils.UPDATE_NOTIFICATION_GROUP_ID;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushCourse extends DumbAwareAction {
@@ -118,7 +119,7 @@ public class CCPushCourse extends DumbAwareAction {
       EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId(), null, true);
       if (courseInfo == null) {
         Notification notification =
-          new Notification("update.course", EduCoreBundle.message("error.failed.to.update"),
+          new Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("error.failed.to.update"),
                            EduCoreBundle.message("error.failed.to.update.no.course.on.stepik", StepikNames.STEPIK, getUploadTitleText()),
                            NotificationType.ERROR, createPostCourseNotificationListener(project, course));
         notification.notify(project);
@@ -126,7 +127,7 @@ public class CCPushCourse extends DumbAwareAction {
       }
       if (courseInfo.getFormatVersion() < EduVersions.JSON_FORMAT_VERSION) {
         Notification notification =
-          new Notification("update.course", EduCoreBundle.message("error.mismatch.format.version"),
+          new Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("error.mismatch.format.version"),
                            EduCoreBundle.message("error.mismatch.format.version.invalid.plugin.version",
                                                  PluginUtils.pluginVersion(EduNames.PLUGIN_ID), getUpdateTitleText()),
                            NotificationType.WARNING, createUpdateCourseNotificationListener(project, course));
