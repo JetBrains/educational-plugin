@@ -1,11 +1,13 @@
 package com.jetbrains.edu.learning.framework.impl
 
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
@@ -26,7 +28,7 @@ import java.io.IOException
  * without rewriting whole task content.
  * It can be essential in large projects like Android applications where a lot of files are the same between two consecutive tasks
  */
-class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLessonManager {
+class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLessonManager, Disposable {
 
   @VisibleForTesting
   var storage: FrameworkStorage = createStorage(project)
@@ -313,6 +315,10 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
 
     return taskFiles to testFiles
+  }
+
+  override fun dispose() {
+    Disposer.dispose(storage)
   }
 
   companion object {
