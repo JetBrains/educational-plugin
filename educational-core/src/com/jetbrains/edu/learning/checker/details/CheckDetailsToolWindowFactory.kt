@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.checker.details
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.vfs.VirtualFile
@@ -10,7 +11,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import icons.EducationalCoreIcons
 
-class CheckDetailsToolWindowFactory : ToolWindowFactory {
+class CheckDetailsToolWindowFactory : ToolWindowFactory, DumbAware {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     toolWindow.stripeTitle = "Check Details"
     toolWindow.setIcon(EducationalCoreIcons.CheckDetailsIcon)
