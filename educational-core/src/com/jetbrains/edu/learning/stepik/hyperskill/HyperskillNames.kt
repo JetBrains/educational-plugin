@@ -24,7 +24,6 @@ var CLIENT_ID = HyperskillOAuthBundle.valueOrDefault("hyperskillClientId", "")
 var CLIENT_SECRET = HyperskillOAuthBundle.valueOrDefault("hyperskillClientSecret", "")
 const val HYPERSKILL_PROJECT_NOT_SUPPORTED = "Selected project is not supported yet. " +
                                              "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select another project</a> "
-const val LOADING_PROJECT_STAGES = "Loading Project Stages"
 const val SELECT_PROJECT = "Please <a href=\"$HYPERSKILL_PROJECTS_URL\">select a project</a> on ${EduNames.JBA}"
 const val SYNCHRONIZE_JBA_ACCOUNT = "Synchronizing ${EduNames.JBA} Account"
 

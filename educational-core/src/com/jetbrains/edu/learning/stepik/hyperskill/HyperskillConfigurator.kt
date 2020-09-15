@@ -4,11 +4,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseBuilder
@@ -69,7 +72,13 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean = baseConfigurator.excludeFromArchive(project, file)
   override fun isTestFile(project: Project, file: VirtualFile): Boolean = baseConfigurator.isTestFile(project, file)
   override fun getMockFileName(text: String): String? = baseConfigurator.getMockFileName(text)
-  override fun beforeCourseStarted(course: Course) = baseConfigurator.beforeCourseStarted(course)
+
+  override fun beforeCourseStarted(course: Course) {
+    baseConfigurator.beforeCourseStarted(course)
+    computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.stages")) {
+      HyperskillConnector.getInstance().loadStages(course as HyperskillCourse)
+    }
+  }
 
   open fun getCodeTaskFile(project: Project, task: Task): TaskFile? = task.getCodeTaskFile()
 

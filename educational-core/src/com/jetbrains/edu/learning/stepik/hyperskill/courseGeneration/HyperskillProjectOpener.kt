@@ -55,7 +55,7 @@ object HyperskillProjectOpener {
       }
       is HyperskillOpenStageRequest -> {
         if (hyperskillCourse.getProjectLesson() == null) {
-          computeUnderProgress(project, LOADING_PROJECT_STAGES) {
+          computeUnderProgress(project, EduCoreBundle.message("hyperskill.loading.stages")) {
             HyperskillConnector.getInstance().loadStages(hyperskillCourse)
           }
           hyperskillCourse.init(null, null, false)
@@ -168,7 +168,7 @@ object HyperskillProjectOpener {
           hyperskillCourse.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
         }
         is HyperskillOpenStageRequest -> {
-          indicator.text2 = LOADING_PROJECT_STAGES
+          indicator.text2 = EduCoreBundle.message("hyperskill.loading.stages")
           HyperskillConnector.getInstance().loadStages(hyperskillCourse)
           hyperskillCourse.putUserData(HYPERSKILL_SELECTED_STAGE, request.stageId)
         }

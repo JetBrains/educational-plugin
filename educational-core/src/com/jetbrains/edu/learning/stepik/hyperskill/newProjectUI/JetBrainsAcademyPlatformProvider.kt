@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
@@ -42,6 +43,10 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
                           courseMode: CourseMode,
                           coursePanel: CoursePanel) {
 
+    if (courseInfo.course is HyperskillCourse) {
+      super.joinAction(courseInfo, courseMode, coursePanel)
+      return
+    }
     val account = HyperskillSettings.INSTANCE.account ?: return
 
     val isOpened = HyperskillProjectAction.openHyperskillProject(account) { errorMessage ->
