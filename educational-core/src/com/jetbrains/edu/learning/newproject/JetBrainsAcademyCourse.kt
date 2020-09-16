@@ -11,6 +11,7 @@ class JetBrainsAcademyCourse : Course() {
   init {
     course.name = "JetBrains Academy Track"
     visibility = CourseVisibility.FeaturedVisibility(1)
+    language = "NoLanguage" // to avoid accidental usage of default value - Python
     description = """
      Learn to program by creating working applications:
      

@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.stepik.StepikNames
 
@@ -24,6 +25,10 @@ sealed class CourseCompatibility {
 
     @JvmStatic
     fun forCourse(courseInfo: Course): CourseCompatibility {
+      if (courseInfo is JetBrainsAcademyCourse) {
+        return Compatible
+      }
+
       // @formatter:off
       return courseInfo.versionCompatibility() ?:
              courseInfo.pluginCompatibility() ?:
