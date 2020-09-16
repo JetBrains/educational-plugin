@@ -48,6 +48,7 @@ class JetBrainsAcademyCourse : Course() {
       EduNames.JAVA,
       EduNames.KOTLIN,
       EduNames.PYTHON,
+      EduNames.JAVASCRIPT
     )
   }
 }
